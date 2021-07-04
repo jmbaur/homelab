@@ -50,6 +50,7 @@ in {
       gh
       fd
       ffmpeg-full
+      sshping
       tig
       w3m
       xsel
@@ -75,6 +76,7 @@ in {
 
       # Unfree
       spotify
+      discord
       zoom-us
       slack
       brave

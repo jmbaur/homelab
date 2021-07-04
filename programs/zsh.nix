@@ -14,6 +14,9 @@
       enable = true;
       plugins = [ "git" "systemd" ];
       theme = "risto";
+      extraConfig = ''
+        DISABLE_AUTO_TITLE=1
+      '';
     };
     initExtra = ''
       bindkey \^U backward-kill-line

@@ -59,6 +59,7 @@
         kitty
         zathura
         mpv
+        screenkey
         brightnessctl
         gsettings-desktop-schemas
         gnome.adwaita-icon-theme
