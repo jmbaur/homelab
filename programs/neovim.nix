@@ -20,6 +20,8 @@
       gopls
       rnix-lsp
       pyright
+      tree-sitter
+      nodejs
     ];
     plugins = with pkgs.vimPlugins; [
       awesome-vim-colorschemes
