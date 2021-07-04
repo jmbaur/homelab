@@ -1,4 +1,4 @@
-Steps for a new machine:
+Steps for a new host:
 
 1. Install NixOS (https://nixos.org/manual/nixos/stable/index.html#ch-installation)
 1. Reboot into new installation and `cd /etc/nixos`
@@ -10,3 +10,4 @@ Steps for a new machine:
 1. `cp ./configuration.nix ./hosts/<hostname>/configuration.nix`
 1. Change imports in `./hosts/<hostname>/configuration.nix` to point to correct hardware-configuration.nix
 1. Change imports in `./configuration.nix` to just import `./hosts/<hostname>/configuration.nix`
+1. Commit changes and `git push --set-upstream origin main`
