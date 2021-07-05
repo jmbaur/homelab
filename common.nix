@@ -23,10 +23,20 @@
       enable = true;
       terminal = "screen-256color";
       keyMode = "vi";
+      escapeTime = 10;
       clock24 = true;
       baseIndex = 1;
       shortcut = "a";
       newSession = true;
+      secureSocket = true;
+      extraConfig = ''
+        set -g renumber-windows on
+        set -g update-environment "SSH_AUTH_SOCK SSH_CONNECTION"
+        set-option -sa terminal-overrides ',xterm-256color:RGB'
+        bind-key b set-option status
+        bind-key / command-prompt "split-window 'exec man %%'"
+        bind-key S command-prompt "new-window -n %1 'ssh %1'"
+      '';
     };
   };
 
