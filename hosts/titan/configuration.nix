@@ -82,7 +82,10 @@ in {
     ];
   };
 
-  services.grafana = { enable = true; };
+  services.grafana = {
+    enable = true;
+    addr = "";
+  };
 
   systemd.services.tailscale-autoconnect = {
     description = "Automatic connection to Tailscale";
