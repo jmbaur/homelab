@@ -151,6 +151,7 @@ in {
             tls_servername dns.google
             health_check 5s
           }
+          prometheus :9153
         }
 
         # Internal zone
@@ -162,6 +163,7 @@ in {
             ${server.ipAddress} ${server.hostName}.lan
             ${laptop.ipAddress} ${laptop.hostName}.lan
           }
+          prometheus :9153
         }
       '';
     };
