@@ -1,5 +1,8 @@
-{ config, pkgs, ... }: {
-
+{ config, pkgs, ... }:
+let
+  unstableTarball = fetchTarball
+    "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz";
+in {
   imports = [
     "${
       builtins.fetchGit {
@@ -9,9 +12,16 @@
       }
     }/lenovo/thinkpad/x13"
     ../../hardware-configuration.nix
+    ../../common.nix
     ../../xorg.nix
     ../../user-profile.nix
   ];
+
+  nixpkgs.config = {
+    packageOverrides = pkgs: {
+      unstable = import unstableTarball { config = config.nixpkgs.config; };
+    };
+  };
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -22,20 +32,12 @@
     preLVM = true;
     allowDiscards = true;
   };
-  boot.extraModulePackages = with pkgs; [ linuxPackages.v4l2loopback ];
 
-  networking.hostName = "arche"; # Define your hostname.
+  networking.hostName = "arche";
   networking.networkmanager.enable = true;
 
-  # Set your time zone.
   time.timeZone = "America/Los_Angeles";
-
-  # Select internationalisation properties.
-  i18n.defaultLocale = "en_US.UTF-8";
-  console = {
-    font = "Lat2-Terminus16";
-    useXkbConfig = true;
-  };
+  console.useXkbConfig = true;
 
   services.fwupd.enable = true;
   services.udisks2.enable = true;
@@ -53,33 +55,28 @@
     liberation_ttf
   ];
 
-  # Enable sound.
   sound.enable = true;
   hardware.pulseaudio.enable = true;
   hardware.bluetooth.enable = true;
   hardware.cpu.amd.updateMicrocode = true;
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
   environment.systemPackages = with pkgs; [
-    nixfmt
-    git
-    vim
+    unstable.neovim
+    gnupg
+    pinentry
     nix-prefetch-git
-    killall
-    lm_sensors
-    iputils
-    inetutils
-    dnsutils
-    dig
-    tcpdump
-    iperf3
     file
     zip
     unzip
   ];
-  programs.ssh.startAgent = true;
-  environment.binsh = "${pkgs.dash}/bin/dash";
+
+  programs.gnupg = {
+    agent = {
+      enable = true;
+      pinentryFlavor = "tty";
+      enableSSHSupport = true;
+    };
+  };
 
   virtualisation.podman.enable = true;
   virtualisation.podman.dockerCompat = true;

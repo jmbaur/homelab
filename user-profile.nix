@@ -45,6 +45,7 @@ in {
       jq
       htop
       ripgrep
+      pass
       tmux
       gh
       fd
