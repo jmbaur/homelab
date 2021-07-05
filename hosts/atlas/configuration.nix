@@ -3,7 +3,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, lib, ... }:
+{ lib, config, pkgs, ... }:
 let hosts = import ../hosts.nix;
 in {
   imports = [
@@ -120,7 +120,7 @@ in {
 
     coredns = {
       enable = true;
-      config = with hosts; ''
+      config = ''
         # Root zone
         . {
           forward . tls://8.8.8.8 tls://8.8.4.4 tls://2001:4860:4860::8888 tls://2001:4860:4860::8844 {
@@ -131,12 +131,12 @@ in {
         }
 
         # Internal zone
-        ${domain} {
+        ${hosts.domain} {
           hosts {
             ${
-              lib.strings.concatMapString (host: ''
-                ${host.ipAddress} ${host.hostName}.${domain}
-              '') (lib.attrsets.attrVals hosts)
+              lib.strings.concatMapStrings (host: ''
+                ${host.ipAddress} ${host.hostName}.${hosts.domain}
+              '') (lib.attrsets.attrValues hosts.hosts)
             }
           }
           prometheus :9153
@@ -147,7 +147,7 @@ in {
     dhcpd4 = {
       enable = true;
       interfaces = [ "enp2s0" ];
-      machines = hosts.hosts;
+      machines = lib.attrsets.attrValues hosts.hosts;
       extraConfig = with hosts; ''
         ddns-update-style none;
 
@@ -208,8 +208,8 @@ in {
 
   nix = {
     distributedBuilds = true;
-    buildMachines = with hosts; [{
-      hostName = server.hostName;
+    buildMachines = [{
+      hostName = hosts.hosts.server.hostName;
       system = "x86_64-linux";
       maxJobs = 8;
       speedFactor = 2;
