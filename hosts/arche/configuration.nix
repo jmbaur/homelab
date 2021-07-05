@@ -1,5 +1,8 @@
-{ config, pkgs, ... }: {
-
+{ config, pkgs, ... }:
+let
+  unstableTarball = fetchTarball
+    "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz";
+in {
   imports = [
     "${
       builtins.fetchGit {
@@ -12,6 +15,12 @@
     ../../xorg.nix
     ../../user-profile.nix
   ];
+
+  nixpkgs.config = {
+    packageOverrides = pkgs: {
+      unstable = import unstableTarball { config = config.nixpkgs.config; };
+    };
+  };
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -62,6 +71,7 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    unstable.neovim
     nixfmt
     git
     vim
