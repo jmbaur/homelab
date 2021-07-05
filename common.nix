@@ -16,7 +16,7 @@
     (vim_configurable.customize {
       name = "vim";
       vimrcConfig.packages.myplugins = with pkgs.vimPlugins; {
-        start = [ vim-nix vim-lastplace fugitive commentary surround ];
+        start = [ vim-nix vim-lastplace fugitive commentary surround repeat ];
         opt = [ ];
       };
       vimrcConfig.customRC = ''

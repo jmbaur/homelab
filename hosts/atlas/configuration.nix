@@ -1,4 +1,3 @@
-# vim: set ts=2 sw=2 ft=nix et:
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
@@ -69,10 +68,6 @@ in {
       enp2s0.useDHCP = false;
       enp3s0.useDHCP = false;
       enp4s0.useDHCP = false;
-      # enp2s0.ipv4.addresses = [{
-      #   address = "192.168.1.1";
-      #   prefixLength = 24;
-      # }];
       lan.ipv4.addresses = [{
         address = "192.168.1.1";
         prefixLength = 24;
@@ -113,17 +108,13 @@ in {
       externalInterface = "enp1s0";
       internalIPs =
         [ "192.168.1.0/24" "192.168.2.0/24" "192.168.3.0/24" "192.168.4.0/24" ];
-      internalInterfaces = [
-        # "enp2s0"
-        "lan"
-        "lab"
-        "guest"
-        "iot"
-      ];
+      internalInterfaces = [ "lan" "lab" "guest" "iot" ];
     };
 
+    # TODO: learn iptables
     firewall = {
       enable = true;
+      extraPackages = [ pkgs.ipset ];
       allowPing = true;
       interfaces = {
         enp1s0 = {
@@ -131,14 +122,9 @@ in {
           allowedUDPPorts = [ config.services.tailscale.port ];
         };
       };
-      trustedInterfaces = [
-        # "enp2s0"
-        "lan"
-        "lab"
-        "guest"
-        "iot"
-        "tailscale0"
-      ];
+      trustedInterfaces = [ "lan" "lab" "guest" "iot" "tailscale0" ];
+      # logRefusedConnections = true;
+      extraCommands = "";
     };
 
   };
@@ -193,13 +179,7 @@ in {
 
     dhcpd4 = {
       enable = true;
-      interfaces = [
-        # "enp2s0"
-        "lan"
-        "lab"
-        "guest"
-        "iot"
-      ];
+      interfaces = [ "lan" "lab" "guest" "iot" ];
       machines = lib.attrsets.attrValues hosts.hosts;
       extraConfig = with hosts; ''
         ddns-update-style none;
