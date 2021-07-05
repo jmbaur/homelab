@@ -13,7 +13,6 @@ in {
     ./programs/kitty.nix
     ./programs/autorandr.nix
     ./programs/neovim.nix
-    ./programs/zsh.nix
     ./programs/tmux.nix
     ./programs/git.nix
     ./programs/vscode.nix
@@ -32,7 +31,7 @@ in {
     home = "/home/jared";
     description = "Jared Baur";
     extraGroups = [ "wheel" "networkmanager" "video" "wireshark" ];
-    shell = pkgs.zsh;
+    shell = pkgs.bash;
   };
 
   nixpkgs.config.allowUnfree = true;
