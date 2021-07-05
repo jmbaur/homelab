@@ -12,7 +12,7 @@ in {
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = with hosts; hosts.server.hostName;
+  networking.hostName = hosts.hosts.server.hostName;
 
   networking.interfaces.eno1.useDHCP = true;
   networking.interfaces.eno2.useDHCP = true;
@@ -34,7 +34,7 @@ in {
     };
     scrapeConfigs = with hosts; [
       {
-        job_name = hosts.server.hostName;
+        job_name = hosts.hosts.server.hostName;
         static_configs = with config.services.prometheus.exporters; [{
           targets = [ "127.0.0.1:${toString node.port}" ];
         }];
