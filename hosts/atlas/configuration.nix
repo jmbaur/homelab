@@ -4,8 +4,8 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, ... }:
-
-{
+let hosts = import ../hosts.nix;
+in {
   imports = [
     ../../hardware-configuration.nix
     "${
@@ -40,13 +40,13 @@
     "net.ipv6.conf.enp1s0.autoconf" = 1;
   };
 
-  networking = {
+  networking = with hosts; {
     useDHCP = false;
-    hostName = "atlas";
+    hostName = router.hostName;
     nameservers = [ "127.0.0.1" "::1" ];
 
     interfaces = {
-      enp1s0.useDHCP = true; # WAN
+      enp1s0.useDHCP = true;
       enp2s0 = {
         useDHCP = false;
         ipv4.addresses = [{
@@ -56,6 +56,23 @@
       };
       enp3s0.useDHCP = false;
       enp4s0.useDHCP = false;
+    };
+
+    dhcpcd = {
+      enable = true;
+      persistent = true;
+      allowInterfaces = [ "enp1s0" ];
+      extraConfig = ''
+        noipv6rs
+        interface enp1s0
+          # TODO: look into this
+          # ipv6rs
+          # ia_na 0
+          # ia_pd 1/::/64
+          static domain_name_servers=127.0.0.1
+          static domain_search=
+          static domain_name=
+      '';
     };
 
     nat = {
@@ -75,18 +92,6 @@
         };
       };
       trustedInterfaces = [ "enp2s0" "tailscale0" ];
-    };
-
-    wireguard = {
-      enable = false;
-      interfaces = {
-        wg0 = {
-          privateKeyFile = "/var/lib/wireguard/wg0.key";
-          listenPort = 51820;
-          ips = [ "10.0.0.1/24" ];
-          peers = [ ];
-        };
-      };
     };
 
   };
@@ -135,15 +140,27 @@
 
     tftpd.enable = true;
 
-    tailscale.enable = true;
+    tailscale.enable = false;
 
     coredns = {
       enable = true;
-      config = ''
+      config = with hosts; ''
+        # Root zone
         . {
           forward . tls://8.8.8.8 tls://8.8.4.4 tls://2001:4860:4860::8888 tls://2001:4860:4860::8844 {
             tls_servername dns.google
             health_check 5s
+          }
+        }
+
+        # Internal zone
+        lan {
+          hosts {
+            ${router.ipAddress} ${router.hostName}.lan
+            ${switch.ipAddress} ${switch.hostName}.lan
+            ${ap.ipAddress} ${ap.hostName}.lan
+            ${server.ipAddress} ${server.hostName}.lan
+            ${laptop.ipAddress} ${laptop.hostName}.lan
           }
         }
       '';
@@ -152,32 +169,17 @@
     dhcpd4 = {
       enable = true;
       interfaces = [ "enp2s0" ];
-      machines = [
-        {
-          ipAddress = "192.168.1.2";
-          ethernetAddress = "94:a6:7e:69:99:3e";
-          hostName = "GS308EP";
-        }
-        {
-          ipAddress = "192.168.1.3";
-          ethernetAddress = "9c:c9:eb:9d:d5:9f";
-          hostName = "NETGEAR9DD59F";
-        }
-        {
-          ipAddress = "192.168.1.4";
-          ethernetAddress = "14:02:ec:49:2c:c5";
-          hostName = "titan";
-        }
-        {
-          ipAddress = "192.168.1.5";
-          ethernetAddress = "00:2b:67:b2:e9:52";
-          hostName = "arche";
-        }
+      machines = with hosts; [
+        hosts.switch
+        hosts.ap
+        hosts.server
+        hosts.laptop
       ];
       extraConfig = ''
-        allow booting;
-        next-server 192.168.1.1;
-        option bootfile-name "netboot.xyz.kpxe";
+        ddns-update-style none;
+
+        default-lease-time 86400;
+        max-lease-time 86400;
 
         subnet 192.168.1.0 netmask 255.255.255.0 {
           option routers 192.168.1.1;
@@ -185,6 +187,13 @@
           option subnet-mask 255.255.255.0;
           option domain-name-servers 192.168.1.1;
           range 192.168.1.100 192.168.1.200;
+
+          allow booting;
+          next-server 192.168.1.1;
+          option bootfile-name "netboot.xyz.kpxe";
+
+          option domain-search "lan";
+          option domain-name "lan";
         }
       '';
     };
@@ -215,6 +224,15 @@
   };
 
   programs.vim.defaultEditor = true;
+  programs.tmux = {
+    enable = true;
+    terminal = "screen-256color";
+    keyMode = "vi";
+    clock24 = true;
+    baseIndex = 1;
+    shortcut = "a";
+    newSession = true;
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
