@@ -88,7 +88,15 @@ in {
     zip
     unzip
   ];
-  programs.ssh.startAgent = true;
+
+  programs.gnupg = {
+    agent = {
+      enable = true;
+      pinentryFlavor = "curses";
+      enableSSHSupport = true;
+    };
+  };
+
   environment.binsh = "${pkgs.dash}/bin/dash";
 
   virtualisation.podman.enable = true;
