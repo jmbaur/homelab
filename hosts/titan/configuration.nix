@@ -4,15 +4,15 @@
 
 { config, pkgs, ... }:
 
-{
-
+let hosts = import ../hosts.nix;
+in {
   imports = [ ../../hardware-configuration.nix ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "titan"; # Define your hostname.
+  networking.hostName = hosts.server.hostName; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Set your time zone.
@@ -54,8 +54,35 @@
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
-  services.openssh.enable = true;
+  services.openssh = {
+    enable = true;
+    passwordAuthentication = false;
+  };
   services.tailscale.enable = true;
+
+  services.prometheus = {
+    enable = true;
+    exporters = {
+      node = {
+        enable = true;
+        enabledCollectors = [ "systemd" ];
+      };
+    };
+    scrapeConfigs = with hosts; [
+      {
+        job_name = server.hostName;
+        static_configs = with config.services.prometheus.exporters; [{
+          targets = [ "127.0.0.1:${toString node.port}" ];
+        }];
+      }
+      {
+        job_name = router.hostName;
+        static_configs = [{ targets = [ "${router.ipAddress}:9153" ]; }];
+      }
+    ];
+  };
+
+  services.grafana = { enable = true; };
 
   systemd.services.tailscale-autoconnect = {
     description = "Automatic connection to Tailscale";
@@ -99,7 +126,7 @@
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+  networking.firewall.enable = false;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
@@ -108,5 +135,9 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "21.05"; # Did you read the comment?
+
+  users.users.root.openssh.authorizedKeys.keys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBoevyW2csdOqpNeqxXr4X/Sg9yF5nIGAVqjS8S0oBkM root@atlas"
+  ];
 }
 
