@@ -1,4 +1,4 @@
-# vim: set ts=2 sw=2 et
+# vim: set ts=2 sw=2 ft=nix et:
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
@@ -45,17 +45,50 @@ in {
     hostName = router.hostName;
     nameservers = [ "127.0.0.1" "::1" ];
 
+    vlans = {
+      lan = {
+        id = 1;
+        interface = "enp2s0";
+      };
+      lab = {
+        id = 2;
+        interface = "enp3s0";
+      };
+      guest = {
+        id = 3;
+        interface = "enp4s0";
+      };
+      iot = {
+        id = 4;
+        interface = "enp4s0";
+      };
+    };
+
     interfaces = {
       enp1s0.useDHCP = true;
-      enp2s0 = {
-        useDHCP = false;
-        ipv4.addresses = with hosts; [{
-          address = router.ipAddress;
-          prefixLength = 24;
-        }];
-      };
+      enp2s0.useDHCP = false;
       enp3s0.useDHCP = false;
       enp4s0.useDHCP = false;
+      # enp2s0.ipv4.addresses = [{
+      #   address = "192.168.1.1";
+      #   prefixLength = 24;
+      # }];
+      lan.ipv4.addresses = [{
+        address = "192.168.1.1";
+        prefixLength = 24;
+      }];
+      lab.ipv4.addresses = [{
+        address = "192.168.2.1";
+        prefixLength = 24;
+      }];
+      guest.ipv4.addresses = [{
+        address = "192.168.3.1";
+        prefixLength = 24;
+      }];
+      iot.ipv4.addresses = [{
+        address = "192.168.4.1";
+        prefixLength = 24;
+      }];
     };
 
     dhcpcd = {
@@ -78,8 +111,15 @@ in {
     nat = {
       enable = true;
       externalInterface = "enp1s0";
-      internalIPs = [ "192.168.1.0/24" ];
-      internalInterfaces = [ "enp2s0" ];
+      internalIPs =
+        [ "192.168.1.0/24" "192.168.2.0/24" "192.168.3.0/24" "192.168.4.0/24" ];
+      internalInterfaces = [
+        # "enp2s0"
+        "lan"
+        "lab"
+        "guest"
+        "iot"
+      ];
     };
 
     firewall = {
@@ -91,7 +131,14 @@ in {
           allowedUDPPorts = [ config.services.tailscale.port ];
         };
       };
-      trustedInterfaces = [ "enp2s0" "tailscale0" ];
+      trustedInterfaces = [
+        # "enp2s0"
+        "lan"
+        "lab"
+        "guest"
+        "iot"
+        "tailscale0"
+      ];
     };
 
   };
@@ -123,8 +170,8 @@ in {
       config = ''
         # Root zone
         . {
-          forward . tls://8.8.8.8 tls://8.8.4.4 tls://2001:4860:4860::8888 tls://2001:4860:4860::8844 {
-            tls_servername dns.google
+          forward . tls://1.1.1.1 tls://1.0.0.1 tls://2606:4700:4700::1111 tls://2606:4700:4700::1001 {
+            tls_servername tls.cloudflare-dns.com
             health_check 5s
           }
           prometheus :9153
@@ -136,7 +183,7 @@ in {
             ${
               lib.strings.concatMapStrings (host: ''
                 ${host.ipAddress} ${host.hostName}.${hosts.domain}
-              '') (lib.attrsets.attrValues hosts.hosts)
+              '') (lib.attrsets.attrValues hosts.hosts ++ [ hosts.router ])
             }
           }
           prometheus :9153
@@ -146,7 +193,13 @@ in {
 
     dhcpd4 = {
       enable = true;
-      interfaces = [ "enp2s0" ];
+      interfaces = [
+        # "enp2s0"
+        "lan"
+        "lab"
+        "guest"
+        "iot"
+      ];
       machines = lib.attrsets.attrValues hosts.hosts;
       extraConfig = with hosts; ''
         ddns-update-style none;
@@ -158,15 +211,52 @@ in {
           option routers ${router.ipAddress};
           option broadcast-address 192.168.1.255;
           option subnet-mask 255.255.255.0;
-          option domain-name-servers ${router.ipAddress};
+          option domain-name-servers 192.168.1.1;
           range 192.168.1.100 192.168.1.200;
 
           allow booting;
-          next-server ${router.ipAddress};
+          next-server 192.168.1.1;
           option bootfile-name "netboot.xyz.kpxe";
 
           option domain-search "${domain}";
           option domain-name "${domain}";
+        }
+
+        subnet 192.168.2.0 netmask 255.255.255.0 {
+          option routers 192.168.2.1;
+          option broadcast-address 192.168.2.255;
+          option subnet-mask 255.255.255.0;
+          option domain-name-servers 192.168.2.1;
+          range 192.168.2.100 192.168.2.200;
+
+          allow booting;
+          next-server 192.168.2.1;
+          option bootfile-name "netboot.xyz.kpxe";
+
+          option domain-search "lab";
+          option domain-name "lab";
+        }
+
+        subnet 192.168.3.0 netmask 255.255.255.0 {
+          option routers 192.168.3.1;
+          option broadcast-address 192.168.3.255;
+          option subnet-mask 255.255.255.0;
+          option domain-name-servers 192.168.3.1;
+          range 192.168.3.100 192.168.3.200;
+
+          option domain-search "guest";
+          option domain-name "guest";
+        }
+
+        subnet 192.168.4.0 netmask 255.255.255.0 {
+          option routers 192.168.4.1;
+          option broadcast-address 192.168.4.255;
+          option subnet-mask 255.255.255.0;
+          option domain-name-servers 192.168.4.1;
+          range 192.168.4.100 192.168.4.200;
+
+          option domain-search "iot";
+          option domain-name "iot";
         }
       '';
     };
@@ -209,7 +299,7 @@ in {
   nix = {
     distributedBuilds = true;
     buildMachines = [{
-      hostName = hosts.hosts.server.hostName;
+      hostName = "${hosts.hosts.server.hostName}.${hosts.domain}";
       system = "x86_64-linux";
       maxJobs = 8;
       speedFactor = 2;

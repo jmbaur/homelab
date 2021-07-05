@@ -6,15 +6,15 @@
     ipAddress = "192.168.1.1";
   };
   hosts = {
-    # Switch
+    # Switch (GS308EP)
     switch = {
-      hostName = "GS308EP";
+      hostName = "switch";
       ipAddress = "192.168.1.2";
       ethernetAddress = "94:a6:7e:69:99:3e";
     };
-    # AP
+    # AP (NETGEAR9DD59F)
     ap = {
-      hostName = "NETGEAR9DD59F";
+      hostName = "ap";
       ipAddress = "192.168.1.3";
       ethernetAddress = "9c:c9:eb:9d:d5:9f";
     };

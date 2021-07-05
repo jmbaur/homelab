@@ -1,7 +1,7 @@
 { config, pkgs, ... }: {
+
   environment.systemPackages = with pkgs; [
     tmux
-    vim
     git
     curl
     htop
@@ -13,6 +13,22 @@
     dmidecode
     killall
     lm_sensors
+    (vim_configurable.customize {
+      name = "vim";
+      vimrcConfig.packages.myplugins = with pkgs.vimPlugins; {
+        start = [ vim-nix vim-lastplace fugitive commentary surround ];
+        opt = [ ];
+      };
+      vimrcConfig.customRC = ''
+        set nocompatible
+        set backspace=indent,eol,start
+        color elflord
+        set hidden
+        set noswapfile
+        set sw=2 ts=2 et
+        set colorcolumn=80 
+      '';
+    })
   ];
 
   i18n.defaultLocale = "en_US.UTF-8";
