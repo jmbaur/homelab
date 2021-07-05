@@ -3,7 +3,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 let hosts = import ../hosts.nix;
 in {
   imports = [
@@ -15,6 +15,7 @@ in {
         ref = "master";
       }
     }/pcengines/apu"
+    ../../common.nix
   ];
 
   boot.loader.grub.enable = true;
@@ -41,7 +42,6 @@ in {
   };
 
   networking = with hosts; {
-    useDHCP = false;
     hostName = router.hostName;
     nameservers = [ "127.0.0.1" "::1" ];
 
@@ -49,8 +49,8 @@ in {
       enp1s0.useDHCP = true;
       enp2s0 = {
         useDHCP = false;
-        ipv4.addresses = [{
-          address = "192.168.1.1";
+        ipv4.addresses = with hosts; [{
+          address = router.ipAddress;
           prefixLength = 24;
         }];
       };
@@ -96,33 +96,9 @@ in {
 
   };
 
-  i18n.defaultLocale = "en_US.UTF-8";
-
-  users.users.jared = {
-    isNormalUser = true;
-    home = "/home/jared";
-    description = "Jared Baur";
-    extraGroups = [ "wheel" ];
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKU/J9T/6BwzloIiXP5wCkgkJbSl5B3z+c6Z/J3baa/u"
-      "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDOTuM+py6p17ysZ3UXJHvwPZip58/+aGHKqbcKJlkbbA4wOOsWhlEhtunX139mNUoU9TtlzlcmlbAsAqP7Z05srOghO71Z48UqO5X7fnN3bP6k8/3FagYI1+JJs29Tp7bvKvjk+GT5AAiTW5cXaiWBkJ42wMJHi1CTI23V96U9TJA0suAkCYFie/cL0pWYljBCog3yrH8y629+p2IFNcIsHMcV0LvHmMQet5p4Cxg08+FX8nVWa+ZnpKNAEJ6M2Z84S4MKMiZ22MIqK4PeGEAesoeZ7PmDFEuE0STwiZ1IHkFoCj5Z/0hl2b0roQbzsoaklN2Sv8T+KfpD48TqEqCRozn6J5jqwq7dzKKr7HVUDSw+jjMzSSZKLr2CGoe790ljZTpHjftUyEO8OhuVh7jhbPEaPwikkqgvFBLdhL0uv3o4avs5vVxkpBpgjWCip1Z14iRjEWgxfOcPjS6LLs9IkgrUkTKvGAl+rhtqV6oZekYGjGxWN5UdMwfcmGijYhE="
-    ];
-  };
-
   environment.systemPackages = with pkgs; [
-    tmux
-    vim
-    git
-    curl
-    htop
-    nixfmt
-    tcpdump
     ppp
-    iperf3
-    dnsutils
-    iputils
     flashrom
-    dmidecode
     ethtool
     conntrack-tools
   ];
@@ -155,13 +131,13 @@ in {
         }
 
         # Internal zone
-        lan {
+        ${domain} {
           hosts {
-            ${router.ipAddress} ${router.hostName}.lan
-            ${switch.ipAddress} ${switch.hostName}.lan
-            ${ap.ipAddress} ${ap.hostName}.lan
-            ${server.ipAddress} ${server.hostName}.lan
-            ${laptop.ipAddress} ${laptop.hostName}.lan
+            ${
+              lib.strings.concatMapString (host: ''
+                ${host.ipAddress} ${host.hostName}.${domain}
+              '') (lib.attrsets.attrVals hosts)
+            }
           }
           prometheus :9153
         }
@@ -171,31 +147,26 @@ in {
     dhcpd4 = {
       enable = true;
       interfaces = [ "enp2s0" ];
-      machines = with hosts; [
-        hosts.switch
-        hosts.ap
-        hosts.server
-        hosts.laptop
-      ];
-      extraConfig = ''
+      machines = hosts.hosts;
+      extraConfig = with hosts; ''
         ddns-update-style none;
 
         default-lease-time 86400;
         max-lease-time 86400;
 
         subnet 192.168.1.0 netmask 255.255.255.0 {
-          option routers 192.168.1.1;
+          option routers ${router.ipAddress};
           option broadcast-address 192.168.1.255;
           option subnet-mask 255.255.255.0;
-          option domain-name-servers 192.168.1.1;
+          option domain-name-servers ${router.ipAddress};
           range 192.168.1.100 192.168.1.200;
 
           allow booting;
-          next-server 192.168.1.1;
+          next-server ${router.ipAddress};
           option bootfile-name "netboot.xyz.kpxe";
 
-          option domain-search "lan";
-          option domain-name "lan";
+          option domain-search "${domain}";
+          option domain-name "${domain}";
         }
       '';
     };
@@ -225,16 +196,6 @@ in {
     '';
   };
 
-  programs.vim.defaultEditor = true;
-  programs.tmux = {
-    enable = true;
-    terminal = "screen-256color";
-    keyMode = "vi";
-    clock24 = true;
-    baseIndex = 1;
-    shortcut = "a";
-    newSession = true;
-  };
   programs.ssh.extraConfig = "IdentityFile /etc/ssh/ssh_host_ed25519_key";
 
   # This value determines the NixOS release from which the default
@@ -256,4 +217,3 @@ in {
     }];
   };
 }
-

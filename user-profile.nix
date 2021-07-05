@@ -45,9 +45,7 @@ in {
       jq
       htop
       ripgrep
-      gnupg
       pass
-      pinentry_curses
       tmux
       gh
       fd
