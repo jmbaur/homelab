@@ -14,6 +14,7 @@
     dmidecode
     killall
     lm_sensors
+    renameutils
   ];
 
   i18n.defaultLocale = "en_US.UTF-8";
