@@ -17,7 +17,6 @@ in {
     ./programs/vscode.nix
     ./programs/obs.nix
     ./programs/psql.nix
-    ./programs/podman.nix
     ./programs/i3.nix
     ./programs/i3status.nix
     ./programs/rofi.nix
@@ -40,28 +39,19 @@ in {
       wget
       jq
       htop
-      ripgrep
       pass
-      tmux
-      gh
-      fd
       nvme-cli
       ffmpeg-full
       sshping
-      tig
       w3m
       xsel
       xclip
       pulsemixer
       glib
       neofetch
-      nixfmt
       speedtest-cli
       tree
       pstree
-      skopeo
-      buildah
-      podman-compose
 
       # GUI
       firefox

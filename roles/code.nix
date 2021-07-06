@@ -11,6 +11,14 @@
     pyright
     tree-sitter
     nodejs
+    # programming utilities
+    fd
+    gh
+    tig
+    ripgrep
+    skopeo
+    buildah
+    podman-compose
   ];
 
   nixpkgs.overlays = [
@@ -52,4 +60,14 @@
       };
     };
   };
+
+  virtualisation = {
+    podman.enable = true;
+    podman.dockerCompat = true;
+    containers.enable = true;
+    containers.containersConf.settings = {
+      engine = { detach_keys = "ctrl-e,ctrl-q"; };
+    };
+  };
+
 }
