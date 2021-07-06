@@ -1,9 +1,6 @@
-{ config, pkgs, ... }:
-let
-  unstableTarball = fetchTarball
-    "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz";
-in {
+{ config, pkgs, ... }: {
   imports = [
+    ../../hardware-configuration.nix
     "${
       builtins.fetchGit {
         url = "https://github.com/NixOS/nixos-hardware.git";
@@ -11,17 +8,10 @@ in {
         ref = "master";
       }
     }/lenovo/thinkpad/x13"
-    ../../hardware-configuration.nix
     ../../common.nix
     ../../xorg.nix
     ../../user-profile.nix
   ];
-
-  nixpkgs.config = {
-    packageOverrides = pkgs: {
-      unstable = import unstableTarball { config = config.nixpkgs.config; };
-    };
-  };
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -61,7 +51,6 @@ in {
   hardware.cpu.amd.updateMicrocode = true;
 
   environment.systemPackages = with pkgs; [
-    unstable.neovim
     gnupg
     pinentry
     nix-prefetch-git

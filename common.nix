@@ -1,6 +1,7 @@
 { config, pkgs, ... }: {
 
   environment.systemPackages = with pkgs; [
+    bc
     tmux
     git
     curl
@@ -14,29 +15,57 @@
     dmidecode
     killall
     lm_sensors
-    (vim_configurable.customize {
-      name = "vim";
-      vimrcConfig.packages.myplugins = with pkgs.vimPlugins; {
-        start = [ vim-nix vim-lastplace fugitive commentary surround repeat ];
-        opt = [ ];
-      };
-      vimrcConfig.customRC = ''
-        set nocompatible
-        set backspace=indent,eol,start
-        color elflord
-        set hidden
-        set nowrap
-        set noswapfile
-        set sw=2 ts=2 et
-        set colorcolumn=80 
-      '';
-    })
   ];
 
   i18n.defaultLocale = "en_US.UTF-8";
 
+  nixpkgs.overlays = [
+    (import (builtins.fetchTarball {
+      url =
+        "https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz";
+    }))
+  ];
+
   programs = {
-    vim.defaultEditor = true;
+    # packages needed for language servers:
+    #   gcc
+    #   haskell-language-server
+    #   nodePackages.typescript-language-server
+    #   nodePackages.bash-language-server
+    #   gopls
+    #   rnix-lsp
+    #   pyright
+    #   tree-sitter
+    #   nodejs
+    neovim = {
+      enable = true;
+      viAlias = true;
+      vimAlias = true;
+      defaultEditor = true;
+      configure = {
+        packages.myPlugins = with pkgs.vimPlugins; {
+          start = [
+            vim-lastplace
+            vim-nix
+            typescript-vim
+            vim-commentary
+            vim-fugitive
+            vim-surround
+            vim-repeat
+            vim-rsi
+            nvim-treesitter
+            nvim-treesitter-textobjects
+            nvim-lspconfig
+            telescope-nvim
+            popup-nvim
+            plenary-nvim
+            nvim-autopairs
+          ];
+          opt = [ ];
+        };
+        customRC = builtins.readFile ./programs/init.vim;
+      };
+    };
     tmux = {
       enable = true;
       terminal = "screen-256color";

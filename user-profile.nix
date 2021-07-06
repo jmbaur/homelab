@@ -12,7 +12,6 @@ in {
     ./programs/alacritty.nix
     ./programs/kitty.nix
     ./programs/autorandr.nix
-    ./programs/neovim.nix
     ./programs/tmux.nix
     ./programs/git.nix
     ./programs/vscode.nix
@@ -49,6 +48,7 @@ in {
       tmux
       gh
       fd
+      nvme-cli
       ffmpeg-full
       sshping
       tig
@@ -115,11 +115,11 @@ in {
           "video/mp4" = [ "mpv.desktop" ];
           "video/webm" = [ "mpv.desktop" ];
           "application/pdf" = [ "zathura.desktop" ];
-          "text/html" = [ "firefox.desktop" ];
-          "x-scheme-handler/http" = [ "firefox.desktop" ];
-          "x-scheme-handler/https" = [ "firefox.desktop" ];
-          "x-scheme-handler/about" = [ "firefox.desktop" ];
-          "x-scheme-handler/unknown" = [ "firefox.desktop" ];
+          "text/html" = [ "google-chrome.desktop" ];
+          "x-scheme-handler/http" = [ "google-chrome.desktop" ];
+          "x-scheme-handler/https" = [ "google-chrome.desktop" ];
+          "x-scheme-handler/about" = [ "google-chrome.desktop" ];
+          "x-scheme-handler/unknown" = [ "google-chrome.desktop" ];
         };
       };
       userDirs = {

@@ -10,7 +10,6 @@
     customPaneNavigationAndResize = true;
     newSession = true;
     terminal = "tmux-256color";
-    shell = "${pkgs.zsh}/bin/zsh";
     baseIndex = 1;
     sensibleOnTop = false;
     secureSocket = true;
