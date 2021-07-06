@@ -156,6 +156,9 @@
 
     bar {
       position top
+      mode hide
+      hidden_state hide
+      modifier $mod
       status_command i3status-rs $HOME/.config/i3status-rust/config-top.toml
 
       colors {
