@@ -12,6 +12,7 @@
     tree-sitter
     nodejs
   ];
+
   nixpkgs.overlays = [
     (import (builtins.fetchTarball {
       url =
@@ -28,6 +29,7 @@
       configure = {
         packages.myPlugins = with pkgs.vimPlugins; {
           start = [
+            awesome-vim-colorschemes
             vim-lastplace
             vim-nix
             typescript-vim

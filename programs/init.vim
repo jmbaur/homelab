@@ -1,3 +1,15 @@
+function! MyHighlights() abort
+  highlight Normal     ctermbg=NONE
+  highlight NonText    ctermbg=NONE
+endfunction
+
+augroup MyColors
+    autocmd!
+    autocmd ColorScheme * call MyHighlights()
+augroup END
+
+color snow
+
 lua << EOF
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "maintained",
