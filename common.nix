@@ -10,6 +10,7 @@
     iperf3
     dnsutils
     iputils
+    traceroute
     dmidecode
     killall
     lm_sensors
@@ -24,6 +25,7 @@
         set backspace=indent,eol,start
         color elflord
         set hidden
+        set nowrap
         set noswapfile
         set sw=2 ts=2 et
         set colorcolumn=80 

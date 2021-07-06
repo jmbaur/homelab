@@ -7,6 +7,7 @@ let hosts = import ../hosts.nix;
 in {
   imports = [
     ../../hardware-configuration.nix
+    ../../common.nix
     "${
       builtins.fetchGit {
         url = "https://github.com/NixOS/nixos-hardware.git";
@@ -14,7 +15,10 @@ in {
         ref = "master";
       }
     }/pcengines/apu"
-    ../../common.nix
+    ./dhcpd4.nix
+    ./dhcpcd.nix
+    ./coredns.nix
+    ./nftables.nix
   ];
 
   boot.loader.grub.enable = true;
@@ -45,7 +49,7 @@ in {
     nameservers = [ "127.0.0.1" "::1" ];
 
     vlans = {
-      lan = {
+      mgmt = {
         id = 1;
         interface = "enp2s0";
       };
@@ -68,7 +72,7 @@ in {
       enp2s0.useDHCP = false;
       enp3s0.useDHCP = false;
       enp4s0.useDHCP = false;
-      lan.ipv4.addresses = [{
+      mgmt.ipv4.addresses = [{
         address = "192.168.1.1";
         prefixLength = 24;
       }];
@@ -86,47 +90,6 @@ in {
       }];
     };
 
-    dhcpcd = {
-      enable = true;
-      persistent = true;
-      allowInterfaces = [ "enp1s0" ];
-      extraConfig = ''
-        noipv6rs
-        interface enp1s0
-          # TODO: look into this
-          # ipv6rs
-          # ia_na 0
-          # ia_pd 1/::/64
-          static domain_name_servers=127.0.0.1
-          static domain_search=
-          static domain_name=
-      '';
-    };
-
-    nat = {
-      enable = true;
-      externalInterface = "enp1s0";
-      internalIPs =
-        [ "192.168.1.0/24" "192.168.2.0/24" "192.168.3.0/24" "192.168.4.0/24" ];
-      internalInterfaces = [ "lan" "lab" "guest" "iot" ];
-    };
-
-    # TODO: learn iptables
-    firewall = {
-      enable = true;
-      extraPackages = [ pkgs.ipset ];
-      allowPing = true;
-      interfaces = {
-        enp1s0 = {
-          allowedTCPPorts = [ ];
-          allowedUDPPorts = [ config.services.tailscale.port ];
-        };
-      };
-      trustedInterfaces = [ "lan" "lab" "guest" "iot" "tailscale0" ];
-      # logRefusedConnections = true;
-      extraCommands = "";
-    };
-
   };
 
   environment.systemPackages = with pkgs; [
@@ -142,129 +105,42 @@ in {
       enable = true;
       passwordAuthentication = false;
       permitRootLogin = "no";
-      openFirewall = false; # thanks, VPN!
     };
 
     sshguard.enable = true;
 
     tftpd.enable = true;
 
-    tailscale.enable = true;
+    # tailscale.enable = true;
 
-    coredns = {
+    avahi = {
+      interfaces = [ "guest" "iot" ];
       enable = true;
-      config = ''
-        # Root zone
-        . {
-          forward . tls://1.1.1.1 tls://1.0.0.1 tls://2606:4700:4700::1111 tls://2606:4700:4700::1001 {
-            tls_servername tls.cloudflare-dns.com
-            health_check 5s
-          }
-          prometheus :9153
-        }
-
-        # Internal zone
-        ${hosts.domain} {
-          hosts {
-            ${
-              lib.strings.concatMapStrings (host: ''
-                ${host.ipAddress} ${host.hostName}.${hosts.domain}
-              '') (lib.attrsets.attrValues hosts.hosts ++ [ hosts.router ])
-            }
-          }
-          prometheus :9153
-        }
-      '';
-    };
-
-    dhcpd4 = {
-      enable = true;
-      interfaces = [ "lan" "lab" "guest" "iot" ];
-      machines = lib.attrsets.attrValues hosts.hosts;
-      extraConfig = with hosts; ''
-        ddns-update-style none;
-
-        default-lease-time 86400;
-        max-lease-time 86400;
-
-        subnet 192.168.1.0 netmask 255.255.255.0 {
-          option routers ${router.ipAddress};
-          option broadcast-address 192.168.1.255;
-          option subnet-mask 255.255.255.0;
-          option domain-name-servers 192.168.1.1;
-          range 192.168.1.100 192.168.1.200;
-
-          allow booting;
-          next-server 192.168.1.1;
-          option bootfile-name "netboot.xyz.kpxe";
-
-          option domain-search "${domain}";
-          option domain-name "${domain}";
-        }
-
-        subnet 192.168.2.0 netmask 255.255.255.0 {
-          option routers 192.168.2.1;
-          option broadcast-address 192.168.2.255;
-          option subnet-mask 255.255.255.0;
-          option domain-name-servers 192.168.2.1;
-          range 192.168.2.100 192.168.2.200;
-
-          allow booting;
-          next-server 192.168.2.1;
-          option bootfile-name "netboot.xyz.kpxe";
-
-          option domain-search "lab";
-          option domain-name "lab";
-        }
-
-        subnet 192.168.3.0 netmask 255.255.255.0 {
-          option routers 192.168.3.1;
-          option broadcast-address 192.168.3.255;
-          option subnet-mask 255.255.255.0;
-          option domain-name-servers 192.168.3.1;
-          range 192.168.3.100 192.168.3.200;
-
-          option domain-search "guest";
-          option domain-name "guest";
-        }
-
-        subnet 192.168.4.0 netmask 255.255.255.0 {
-          option routers 192.168.4.1;
-          option broadcast-address 192.168.4.255;
-          option subnet-mask 255.255.255.0;
-          option domain-name-servers 192.168.4.1;
-          range 192.168.4.100 192.168.4.200;
-
-          option domain-search "iot";
-          option domain-name "iot";
-        }
-      '';
+      reflector = true;
+      # openFirewall = false;
     };
 
   };
 
-  systemd.services.tailscale-autoconnect = {
-    description = "Automatic connection to Tailscale";
-
-    # make sure tailscale is running before trying to connect to tailscale
-    after = [ "network-pre.target" "tailscale.service" ];
-    wants = [ "network-pre.target" "tailscale.service" ];
-    wantedBy = [ "multi-user.target" ];
-
-    # set this service as a oneshot job
-    serviceConfig.Type = "oneshot";
-
-    # have the job run this shell script
-    script = with pkgs; ''
-      sleep 2
-      status="$(${tailscale}/bin/tailscale status -json | ${jq}/bin/jq -r .BackendState)"
-      if [ $status = "Running" ]; then
-        exit 0
-      fi
-      ${tailscale}/bin/tailscale up -authkey $(cat /var/lib/tailscale.key)
-      rm /var/lib/tailscale.key
-    '';
-  };
+  # systemd.services.tailscale-autoconnect = {
+  #   description = "Automatic connection to Tailscale";
+  #   # make sure tailscale is running before trying to connect to tailscale
+  #   after = [ "network-pre.target" "tailscale.service" ];
+  #   wants = [ "network-pre.target" "tailscale.service" ];
+  #   wantedBy = [ "multi-user.target" ];
+  #   # set this service as a oneshot job
+  #   serviceConfig.Type = "oneshot";
+  #   # have the job run this shell script
+  #   script = with pkgs; ''
+  #     sleep 2
+  #     status="$(${tailscale}/bin/tailscale status -json | ${jq}/bin/jq -r .BackendState)"
+  #     if [ $status = "Running" ]; then
+  #       exit 0
+  #     fi
+  #     ${tailscale}/bin/tailscale up -authkey $(cat /var/lib/tailscale.key)
+  #     rm /var/lib/tailscale.key
+  #   '';
+  # };
 
   programs.ssh.extraConfig = "IdentityFile /etc/ssh/ssh_host_ed25519_key";
 
