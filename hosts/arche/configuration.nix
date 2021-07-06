@@ -1,4 +1,11 @@
-{ config, pkgs, ... }: {
+{ config, pkgs, ... }:
+let
+  home-manager = builtins.fetchGit {
+    url = "https://github.com/nix-community/home-manager.git";
+    rev = "35a24648d155843a4d162de98c17b1afd5db51e4";
+    ref = "release-21.05";
+  };
+in {
   imports = [
     ../../hardware-configuration.nix
     "${
@@ -8,10 +15,14 @@
         ref = "master";
       }
     }/lenovo/thinkpad/x13"
+    (import "${home-manager}/nixos")
+    ../../programs/tmux.nix
+    ../../programs/git.nix
+    ../../programs/psql.nix
+    ../../programs/email.nix
     ../../roles/common.nix
+    ../../roles/desktop.nix
     ../../roles/code.nix
-    ../../xorg.nix
-    ../../user-profile.nix
   ];
 
   # Use the systemd-boot EFI boot loader.
@@ -58,6 +69,23 @@
     file
     zip
     unzip
+    curl
+    wget
+    jq
+    htop
+    pass
+    nvme-cli
+    ffmpeg-full
+    sshping
+    w3m
+    xsel
+    xclip
+    pulsemixer
+    glib
+    neofetch
+    speedtest-cli
+    tree
+    pstree
   ];
 
   programs.gnupg = {
@@ -66,6 +94,11 @@
       pinentryFlavor = "tty";
       enableSSHSupport = true;
     };
+  };
+
+  users.users.jared = {
+    extraGroups = [ "networkmanager" "video" "wireshark" ];
+    shell = pkgs.bash;
   };
 
   # This value determines the NixOS release from which the default
