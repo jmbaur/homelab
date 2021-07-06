@@ -6,7 +6,11 @@
 
 let hosts = import ../hosts.nix;
 in {
-  imports = [ ../../hardware-configuration.nix ../../common.nix ];
+  imports = [
+    ../../hardware-configuration.nix
+    ../../roles/common.nix
+    ../../roles/code.nix
+  ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;

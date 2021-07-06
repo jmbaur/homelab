@@ -8,7 +8,8 @@
         ref = "master";
       }
     }/lenovo/thinkpad/x13"
-    ../../common.nix
+    ../../roles/common.nix
+    ../../roles/code.nix
     ../../xorg.nix
     ../../user-profile.nix
   ];

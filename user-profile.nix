@@ -26,10 +26,7 @@ in {
   ];
 
   users.users.jared = {
-    isNormalUser = true;
-    home = "/home/jared";
-    description = "Jared Baur";
-    extraGroups = [ "wheel" "networkmanager" "video" "wireshark" ];
+    extraGroups = [ "networkmanager" "video" "wireshark" ];
     shell = pkgs.bash;
   };
 

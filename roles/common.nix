@@ -1,12 +1,11 @@
 { config, pkgs, ... }: {
-
   environment.systemPackages = with pkgs; [
     bc
+    vim
     tmux
     git
     curl
     htop
-    nixfmt
     tcpdump
     iperf3
     dnsutils
@@ -19,53 +18,9 @@
 
   i18n.defaultLocale = "en_US.UTF-8";
 
-  nixpkgs.overlays = [
-    (import (builtins.fetchTarball {
-      url =
-        "https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz";
-    }))
-  ];
+  environment.sessionVariables = { EDITOR = "vim"; };
 
   programs = {
-    # packages needed for language servers:
-    #   gcc
-    #   haskell-language-server
-    #   nodePackages.typescript-language-server
-    #   nodePackages.bash-language-server
-    #   gopls
-    #   rnix-lsp
-    #   pyright
-    #   tree-sitter
-    #   nodejs
-    neovim = {
-      enable = true;
-      viAlias = true;
-      vimAlias = true;
-      defaultEditor = true;
-      configure = {
-        packages.myPlugins = with pkgs.vimPlugins; {
-          start = [
-            vim-lastplace
-            vim-nix
-            typescript-vim
-            vim-commentary
-            vim-fugitive
-            vim-surround
-            vim-repeat
-            vim-rsi
-            nvim-treesitter
-            nvim-treesitter-textobjects
-            nvim-lspconfig
-            telescope-nvim
-            popup-nvim
-            plenary-nvim
-            nvim-autopairs
-          ];
-          opt = [ ];
-        };
-        customRC = builtins.readFile ./programs/init.vim;
-      };
-    };
     tmux = {
       enable = true;
       terminal = "screen-256color";

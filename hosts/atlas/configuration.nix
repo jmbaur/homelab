@@ -7,7 +7,7 @@ let hosts = import ../hosts.nix;
 in {
   imports = [
     ../../hardware-configuration.nix
-    ../../common.nix
+    ../../roles/common.nix
     "${
       builtins.fetchGit {
         url = "https://github.com/NixOS/nixos-hardware.git";
