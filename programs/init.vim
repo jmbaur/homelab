@@ -1,6 +1,6 @@
 function! MyHighlights() abort
-  highlight Normal     ctermbg=NONE
-  highlight NonText    ctermbg=NONE
+  highlight Normal     ctermbg=NONE guibg=NONE
+  highlight NonText    ctermbg=NONE guibg=NONE
 endfunction
 
 augroup MyColors
@@ -19,6 +19,7 @@ require'nvim-treesitter.configs'.setup {
 }
 require('nvim-autopairs').setup()
 
+vim.opt.termguicolors = true
 vim.opt.wrap = false
 vim.opt.expandtab = true
 vim.opt.shiftwidth = 2
