@@ -1,6 +1,5 @@
 { config, pkgs, ... }: {
   imports = [
-    ../programs/i3.nix
     ../programs/i3status.nix
     ../programs/rofi.nix
     ../programs/dunst.nix
@@ -24,10 +23,6 @@
     displayManager.lightdm.enable = true;
     displayManager.autoLogin.enable = true;
     displayManager.autoLogin.user = "jared";
-    displayManager.sessionCommands = ''
-      xsetroot -solid '#2E3436'
-      autorandr -c
-    '';
     deviceSection = ''
       Option "TearFree" "true"
     '';
@@ -42,6 +37,10 @@
 
     windowManager.i3 = {
       enable = true;
+      extraSessionCommands = ''
+        xsetroot -solid '#2E3436'
+        autorandr -c
+      '';
       extraPackages = with pkgs; [
         i3lock
         dmenu
@@ -59,6 +58,7 @@
         brightnessctl
         gsettings-desktop-schemas
         gnome.adwaita-icon-theme
+        i3status-rust
       ];
     };
   };
@@ -82,6 +82,7 @@
   ];
 
   home-manager.users.jared = {
+    home.file.".config/i3/config".text = builtins.readFile ../programs/i3config;
     xdg = {
       mime.enable = true;
       mimeApps = {
