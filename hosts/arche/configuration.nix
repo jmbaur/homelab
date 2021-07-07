@@ -86,6 +86,7 @@ in {
     speedtest-cli
     tree
     pstree
+    break-time
   ];
 
   programs.gnupg = {

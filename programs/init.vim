@@ -8,8 +8,6 @@ augroup MyColors
     autocmd ColorScheme * call MyHighlights()
 augroup END
 
-color snow
-
 lua << EOF
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "maintained",
@@ -18,6 +16,8 @@ require'nvim-treesitter.configs'.setup {
   },
 }
 require('nvim-autopairs').setup()
+
+vim.cmd('color snow')
 
 vim.opt.termguicolors = true
 vim.opt.wrap = false

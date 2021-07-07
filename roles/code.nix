@@ -12,6 +12,8 @@
     tree-sitter
     nodejs
     # programming utilities
+    direnv
+    nix-direnv
     fd
     gh
     tig
@@ -28,6 +30,14 @@
     }))
   ];
 
+  environment.pathsToLink = [ "/share/nix-direnv" ];
+
+  # So GC doesn't clean up nix shells
+  nix.extraOptions = ''
+    keep-outputs = true
+    keep-derivations = true
+  '';
+
   programs = {
     neovim = {
       enable = true;
@@ -38,6 +48,7 @@
         packages.myPlugins = with pkgs.vimPlugins; {
           start = [
             awesome-vim-colorschemes
+            vim-better-whitespace
             vim-lastplace
             vim-nix
             typescript-vim
