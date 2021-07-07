@@ -46,6 +46,18 @@ in {
   services.printing.enable = true;
   services.geoclue2.enable = true;
   services.tailscale.enable = false;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    # alsa.support32Bit = true;
+    pulse.enable = true;
+    # If you want to use JACK applications, uncomment this
+    #jack.enable = true;
+
+    # use the example session manager (no others are packaged yet so this is enabled by default,
+    # no need to redefine it in your config for now)
+    #media-session.enable = true;
+  };
 
   fonts.fonts = with pkgs; [
     noto-fonts
@@ -58,11 +70,11 @@ in {
   ];
 
   sound.enable = true;
-  hardware.pulseaudio.enable = true;
   hardware.bluetooth.enable = true;
   hardware.cpu.amd.updateMicrocode = true;
 
   environment.systemPackages = with pkgs; [
+    pulsemixer
     gnupg
     pinentry
     nix-prefetch-git
@@ -80,7 +92,6 @@ in {
     w3m
     xsel
     xclip
-    pulsemixer
     glib
     neofetch
     speedtest-cli
