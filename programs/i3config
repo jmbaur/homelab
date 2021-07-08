@@ -1,8 +1,14 @@
 set $mod Mod4
 font pango:Hack 12
 
+workspace_auto_back_and_forth yes
 focus_follows_mouse yes
+floating_modifier $mod
 
+assign [class="Slack"] 10
+assign [class="Spotify"] 10
+
+bindsym $mod+Tab workspace back_and_forth
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
 bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
@@ -13,8 +19,6 @@ bindsym $mod+backslash exec --no-startup-id "CM_LAUNCHER=rofi clipmenu"
 bindsym $mod+p exec --no-startup-id "rofi -modi drun,ssh -show drun"
 bindsym $mod+Return exec kitty
 bindsym $mod+Shift+q kill
-
-floating_modifier $mod
 
 bindsym $mod+h focus left
 bindsym $mod+j focus down
@@ -94,59 +98,10 @@ bindsym $mod+r mode "resize"
 bindsym $mod+Shift+minus move scratchpad
 bindsym $mod+minus scratchpad show
 
-workspace_auto_back_and_forth yes
-bindsym $mod+Tab workspace back_and_forth
 
 bindsym $mod+m exec i3-input -F 'mark %s' -l 1 -P 'Mark: '
 bindsym $mod+Shift+m exec i3-input -F 'unmark %s' -l 1 -P 'Unmark: '
 bindsym $mod+g exec i3-input -F '[con_mark="%s"] focus' -l 1 -P 'Goto: '
-
-# $i3-status
-# color_bad = "#CC0000"
-# color_degraded = "#EDD400"
-# color_good = "#73D216"
-
-# $i3-theme-window
-# tango dark
-set $darkblue 		#204A87
-set $darkbrown		#8F5902
-set $darkgreen 		#4E9A06
-set $darkmagenta 	#5C3566
-set $darkred 		#A40000
-set $darkyellow 	#C4A000
-set $darkorange		#CE5C00
-
-# tango light
-set $lightblue 		#729FCF
-set $lightbrown		#E9B96E
-set $lightgreen 	#8AE234
-set $lightmagenta 	#AD7FA8
-set $lightred 		#EF2929
-set $lightyellow 	#FCE94F
-set $lightorange	#FCAF3E
-
-# tango normal
-set $blue 		#3465A4
-set $brown		#C17D11
-set $green 		#73D216
-set $magenta 		#75507B
-set $red 		#CC0000
-set $yellow 		#EDD400
-set $orange		#F57900
-
-# tango mono
-set $black 		#555753
-set $grey		#BABDB6
-set $white 		#EEEEEC
-set $darkblack 		#2E3436
-set $darkgrey 		#888A85
-set $darkwhite 		#D3D7CF
-
-# tango <clientclass> <border> <backg> <text> <indicator>
-client.focused          $blue $darkblue $white $blue
-client.focused_inactive $darkgrey $black $grey $darkgrey
-client.unfocused        $black $darkblack $grey $darkgrey
-client.urgent           $lightred $red $white $lightred
 
 bar {
   position top
@@ -154,15 +109,4 @@ bar {
   hidden_state hide
   modifier $mod
   status_command i3status-rs $HOME/.config/i3status-rust/config-top.toml
-
-  colors {
-    # tango <workclass> <border> <backg> <text>
-    focused_workspace 	$blue $darkblue $white
-    active_workspace 	$grey $darkgrey $grey
-    inactive_workspace	$black $darkblack $grey
-    urgent_workspace 	$red $darkred $white
-    background #222222
-    separator  #444444
-    statusline $darkgrey
-  }
 }

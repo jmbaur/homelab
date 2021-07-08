@@ -38,7 +38,7 @@
             format = "%F %T";
           }
         ];
-        settings = { theme.name = "native"; };
+        theme = "native";
       };
     };
   };

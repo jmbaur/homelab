@@ -1,13 +1,3 @@
-function! MyHighlights() abort
-  highlight Normal     ctermbg=NONE guibg=NONE
-  highlight NonText    ctermbg=NONE guibg=NONE
-endfunction
-
-augroup MyColors
-    autocmd!
-    autocmd ColorScheme * call MyHighlights()
-augroup END
-
 lua << EOF
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "maintained",
@@ -17,7 +7,8 @@ require'nvim-treesitter.configs'.setup {
 }
 require('nvim-autopairs').setup()
 
-vim.cmd('color snow')
+vim.g.ayucolor = "dark"
+vim.cmd('color ayu')
 
 vim.opt.termguicolors = true
 vim.opt.wrap = false

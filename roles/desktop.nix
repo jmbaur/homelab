@@ -1,4 +1,20 @@
-{ config, pkgs, ... }: {
+{ config, pkgs, ... }:
+let
+  startRecording = pkgs.writeScriptBin "startRecording" ''
+    #!${pkgs.stdenv.shell}
+    lsmod | grep v4l2loopback || \
+      sudo modprobe v4l2loopback video_nr=9 exclusive_caps=1 card_label=VirtualVideoDevice
+    v4l2-ctl --list-devices
+    echo "Capture (1) entire screen or (2) portion of screen?"
+    read choice
+    if [ $choice -eq 1 ]
+    then
+      wf-recorder --muxer=v4l2 --codec=rawvideo --file=/dev/video9 -x yuv420p
+    else
+      wf-recorder -g "$(slurp)" --muxer=v4l2 --codec=rawvideo --file=/dev/video9 -x yuv420p
+    fi
+  '';
+in {
   imports = [
     ../programs/i3status.nix
     ../programs/rofi.nix
@@ -45,13 +61,14 @@
         i3lock
         dmenu
         rofi
+        scrot
         dunst
         xss-lock
         libnotify
         autorandr
-        sxiv
         alacritty
         kitty
+        sxiv
         zathura
         mpv
         screenkey
@@ -67,11 +84,13 @@
 
   environment.systemPackages = with pkgs; [
     firefox
+    chromium
     signal-desktop
     wireshark
     qgis
     gimp
     bitwarden
+    startRecording
     # Unfree
     spotify
     discord
@@ -79,6 +98,16 @@
     slack
     brave
     google-chrome
+  ];
+
+  fonts.fonts = with pkgs; [
+    noto-fonts
+    noto-fonts-cjk
+    noto-fonts-emoji
+    hack-font
+    ibm-plex
+    dejavu_fonts
+    liberation_ttf
   ];
 
   home-manager.users.jared = {

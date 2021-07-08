@@ -20,6 +20,7 @@ in {
     ../../programs/git.nix
     ../../programs/psql.nix
     ../../programs/email.nix
+    ../../programs/emacs.nix
     ../../roles/common.nix
     ../../roles/desktop.nix
     ../../roles/code.nix
@@ -34,6 +35,7 @@ in {
     preLVM = true;
     allowDiscards = true;
   };
+  boot.extraModulePackages = with config.boot.kernelPackages; [ v4l2loopback ];
 
   networking.hostName = "arche";
   networking.networkmanager.enable = true;
@@ -41,6 +43,7 @@ in {
   time.timeZone = "America/Los_Angeles";
   console.useXkbConfig = true;
 
+  security.pam.services.jared.gnupg.enable = true;
   services.fwupd.enable = true;
   services.udisks2.enable = true;
   services.printing.enable = true;
@@ -49,25 +52,8 @@ in {
   services.pipewire = {
     enable = true;
     alsa.enable = true;
-    # alsa.support32Bit = true;
     pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
   };
-
-  fonts.fonts = with pkgs; [
-    noto-fonts
-    noto-fonts-cjk
-    noto-fonts-emoji
-    hack-font
-    ibm-plex
-    dejavu_fonts
-    liberation_ttf
-  ];
 
   sound.enable = true;
   hardware.bluetooth.enable = true;
@@ -77,6 +63,7 @@ in {
     pulsemixer
     gnupg
     pinentry
+    pinentry-gtk2
     nix-prefetch-git
     file
     zip
@@ -100,17 +87,21 @@ in {
     break-time
   ];
 
-  programs.gnupg = {
-    agent = {
-      enable = true;
-      pinentryFlavor = "tty";
-      enableSSHSupport = true;
-    };
-  };
-
   users.users.jared = {
     extraGroups = [ "networkmanager" "video" "wireshark" ];
     shell = pkgs.bash;
+  };
+
+  home-manager.users.jared = {
+    services.gpg-agent = {
+      enable = true;
+      enableSshSupport = true;
+      defaultCacheTtl = 60480000;
+      maxCacheTtl = 60480000;
+      maxCacheTtlSsh = 60480000;
+      pinentryFlavor = "gtk2";
+    };
+    services.gnome-keyring.enable = true;
   };
 
   # This value determines the NixOS release from which the default

@@ -51,6 +51,7 @@
             vim-better-whitespace
             vim-lastplace
             vim-nix
+            ayu-vim
             typescript-vim
             vim-commentary
             vim-fugitive

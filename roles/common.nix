@@ -6,6 +6,7 @@
     git
     curl
     htop
+    atop
     tcpdump
     iperf3
     dnsutils
