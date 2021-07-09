@@ -1,13 +1,6 @@
-{ config, pkgs, ... }:
-let
-  home-manager = builtins.fetchGit {
-    url = "https://github.com/nix-community/home-manager.git";
-    rev = "35a24648d155843a4d162de98c17b1afd5db51e4";
-    ref = "release-21.05";
-  };
-in {
+{ config, pkgs, ... }: {
   imports = [
-    ../../hardware-configuration.nix
+    ./hardware-configuration.nix
     "${
       builtins.fetchGit {
         url = "https://github.com/NixOS/nixos-hardware.git";
@@ -15,9 +8,8 @@ in {
         ref = "master";
       }
     }/lenovo/thinkpad/x13"
-    (import "${home-manager}/nixos")
+    ../../roles/home.nix
     ../../programs/tmux.nix
-    ../../programs/git.nix
     ../../programs/psql.nix
     ../../programs/email.nix
     ../../programs/emacs.nix
@@ -58,6 +50,8 @@ in {
   sound.enable = true;
   hardware.bluetooth.enable = true;
   hardware.cpu.amd.updateMicrocode = true;
+
+  environment.etc = { gitconfig.source = ../../configs/gitconfig; };
 
   environment.systemPackages = with pkgs; [
     pulsemixer
