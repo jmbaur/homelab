@@ -98,6 +98,19 @@
     services.gnome-keyring.enable = true;
   };
 
+  systemd.services.batteryThreshold = {
+    wantedBy = [ "multi-user.target" ];
+    after = [ "multi-user.target" ];
+    description = "Set battery charging thresholds";
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = ''
+        ${pkgs.coreutils}/bin/echo 40 > /sys/class/power_supply/BAT0/charge_control_start_threshold && \
+          ${pkgs.coreutils}/bin/echo 60 > /sys/class/power_supply/BAT0/charge_control_end_threshold
+      '';
+    };
+  };
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
