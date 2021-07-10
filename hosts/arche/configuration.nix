@@ -12,7 +12,7 @@
     ../../programs/tmux.nix
     ../../programs/psql.nix
     ../../programs/email.nix
-    ../../programs/emacs.nix
+    ../../programs/neovim.nix
     ../../roles/common.nix
     ../../roles/desktop.nix
     ../../roles/code.nix

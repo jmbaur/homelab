@@ -46,7 +46,9 @@
         opt = [ ];
       };
       customRC = ''
-        luafile ${builtins.readFile ../configs/init.lua}
+        lua << EOF
+        ${builtins.readFile ../configs/init.lua}
+        EOF
       '';
     };
   };
