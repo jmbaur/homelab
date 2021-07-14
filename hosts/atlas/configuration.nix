@@ -25,6 +25,11 @@ in {
   boot.loader.grub.version = 2;
   boot.loader.grub.device = "/dev/sda"; # or "nodev" for efi only
   boot.kernelParams = [ "console=ttyS0,115200" "console=tty1" ];
+  # boot.loader.grub.extraConfig = ''
+  #   serial --unit=0 --speed=115200 --word=8 --parity=no --stop=1
+  #   terminal_input --append serial
+  #   terminal_output --append serial
+  # '';
 
   boot.kernel.sysctl = {
     # if you use ipv4, this is all you need
