@@ -49,8 +49,7 @@ let
     url = "https://github.com/nix-community/home-manager";
     ref = "release-21.05";
   };
-in
-{
+in {
   nix.extraOptions = ''
     keep-outputs = true
     keep-derivations = true
@@ -59,14 +58,10 @@ in
   imports = [ (import "${home-manager}/nixos") ];
 
   nixpkgs.overlays = [
-    (
-      import (
-        builtins.fetchTarball {
-          url =
-            "https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz";
-        }
-      )
-    )
+    (import (builtins.fetchTarball {
+      url =
+        "https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz";
+    }))
   ];
 
   environment.binsh = "${pkgs.dash}/bin/dash";
@@ -203,7 +198,8 @@ in
   services.xserver = {
     displayManager.lightdm = {
       enable = true;
-      background = pkgs.nixos-artwork.wallpapers.nineish-dark-gray.gnomeFilePath;
+      background =
+        pkgs.nixos-artwork.wallpapers.nineish-dark-gray.gnomeFilePath;
     };
     deviceSection = ''
       Option "TearFree" "true"
@@ -291,10 +287,6 @@ in
       gtk-application-prefer-dark-theme = true
     '';
     xdg.configFile."dunst/dunstrc".source = ./dunstrc;
-    xdg.configFile."containers/containers.conf".text = ''
-      [engine]
-      detach_keys="ctrl-q,ctrl-q"
-    '';
     xdg.configFile."kitty/kitty.conf".source = ./kitty.conf;
     xdg.configFile."kitty/GruvboxMaterialDarkMedium.conf".source =
       ./GruvboxMaterialDarkMedium.conf;
