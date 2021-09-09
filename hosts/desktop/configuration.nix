@@ -45,22 +45,11 @@
         i3lock
         i3status-rust
         dmenu
-        dunst
-        scrot
-        xsel
-        xclip
-        sxiv
-        mpv
-        zathura
-        gnome.adwaita-icon-theme
       ];
       extraSessionCommands = ''
         xsetroot -solid black
       '';
     };
-    deviceSection = ''
-      Option "TearFree" "true"
-    '';
   };
 
   security.sudo.wheelNeedsPassword = false;

@@ -52,7 +52,8 @@ let
     url = "https://github.com/nix-community/home-manager";
     ref = "release-21.05";
   };
-in {
+in
+{
   nix.extraOptions = ''
     keep-outputs = true
     keep-derivations = true
@@ -61,10 +62,14 @@ in {
   imports = [ (import "${home-manager}/nixos") ];
 
   nixpkgs.overlays = [
-    (import (builtins.fetchTarball {
-      url =
-        "https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz";
-    }))
+    (
+      import (
+        builtins.fetchTarball {
+          url =
+            "https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz";
+        }
+      )
+    )
   ];
 
   environment.variables = { EDITOR = "vim"; };
@@ -144,6 +149,14 @@ in {
     nodePackages.typescript-language-server
     nodePackages.bash-language-server
 
+    dunst
+    scrot
+    xsel
+    xclip
+    sxiv
+    mpv
+    zathura
+    gnome.adwaita-icon-theme
     kitty
     bitwarden
     signal-desktop
@@ -179,11 +192,19 @@ in {
   services.printing.enable = true;
   services.redshift.enable = true;
   location.provider = "geoclue2";
-
+  services.xserver = {
+    displayManager.lightdm = {
+      enable = true;
+      background = pkgs.nixos-artwork.wallpapers.nineish-dark-gray.gnomeFilePath;
+    };
+    deviceSection = ''
+      Option "TearFree" "true"
+    '';
+  };
   security.sudo.wheelNeedsPassword = false;
+  security.rtkit.enable = true;
 
   sound.enable = false;
-  security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
     alsa.enable = true;
