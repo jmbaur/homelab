@@ -1,0 +1,20 @@
+[core]
+  editor = vim
+
+[user]
+  email = jaredbaur@fastmail.com
+  # signingKey = jaredbaur@fastmail.com
+  name = Jared Baur
+
+[pull]
+  rebase = false
+
+[alias]
+  st = status --short --branch
+  di = diff
+  br = branch
+  co = checkout
+  lg = log --graph --decorate --pretty=oneline --abbrev-commit --all
+
+[commit]
+  gpgsign = true
