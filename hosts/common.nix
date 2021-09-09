@@ -2,10 +2,7 @@
 
 let
   proj = pkgs.writeShellScriptBin "proj" ''
-    DIR=$HOME/Projects
-    if [ -n "$PROJ_DIR" ]; then
-      DIR=$PROJ_DIR
-    fi
+    DIR=''${PROJ_DIR:-$HOME/Projects}
     if [ ! -d $DIR ]; then
       echo "Cannot find project directory"
       exit 1
