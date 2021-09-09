@@ -86,7 +86,6 @@ in {
     firefox
     chromium
     signal-desktop
-    wireshark
     qgis
     gimp
     bitwarden
@@ -98,16 +97,6 @@ in {
     slack
     brave
     google-chrome
-  ];
-
-  fonts.fonts = with pkgs; [
-    noto-fonts
-    noto-fonts-cjk
-    noto-fonts-emoji
-    hack-font
-    ibm-plex
-    dejavu_fonts
-    liberation_ttf
   ];
 
   home-manager.users.jared = {

@@ -69,6 +69,7 @@ in
     )
   ];
 
+  environment.binsh = "${pkgs.dash}/bin/dash";
   environment.variables = { EDITOR = "vim"; };
   environment.systemPackages = with pkgs; [
     proj
@@ -76,94 +77,104 @@ in
     gosee
     fdroidcl
 
-    pciutils
-    usbutils
-    wget
-    curl
-    tmux
-    vim
-    nixfmt
-    git
+    atop
     bc
-    tree
-    file
-    zip
-    unzip
     bind
-    nnn
-    neovim-nightly
-    tig
-    jq
-    htop
-    gotop
-    w3m
-    iperf3
+    buildah
+    curl
+    ddcutil
+    dmidecode
+    dnsutils
+    file
     fzf
-    ydiff
-    gnupg
     gh
+    git
+    gnupg
+    gomuks
+    gotop
+    htop
+    iperf3
+    iputils
+    jq
+    keybase
+    killall
+    libsecret
+    lm_sensors
+    neovim-nightly
+    nixfmt
+    nnn
+    pciutils
     pinentry
     pinentry-curses
-    yubikey-personalization
-    lm_sensors
-    ddcutil
     pulseaudio
-    xdg-user-dirs
-    libsecret
+    renameutils
     skopeo
-    buildah
-    keybase
-    gomuks
+    tcpdump
+    tig
+    tmux
+    tmux
+    traceroute
+    tree
+    unzip
+    usbutils
+    vim
+    w3m
+    wget
+    xdg-user-dirs
+    ydiff
+    yubikey-personalization
+    zip
 
-    fd
-    starship
-    ripgrep
-    zoxide
-    xsv
     bat
-    exa
-    procs
-    sd
-    dust
-    tokei
-    grex
     delta
+    dust
+    exa
+    fd
+    grex
     nushell
+    procs
+    ripgrep
+    sd
+    starship
     tealdeer
+    tokei
+    xsv
+    zoxide
 
-    tree-sitter
-    shfmt
-    shellcheck
-    go
-    nodejs
-    python3
     clang
+    go
     gopls
-    pyright
-    rnix-lsp
-    yaml-language-server
     haskell-language-server
-    nodePackages.typescript-language-server
     nodePackages.bash-language-server
+    nodePackages.typescript-language-server
+    nodejs
+    pyright
+    python3
+    rnix-lsp
+    shellcheck
+    shfmt
+    tree-sitter
+    yaml-language-server
 
+    bitwarden
+    brave
+    chromium
     dunst
-    scrot
-    xsel
-    xclip
-    sxiv
-    mpv
-    zathura
+    element-desktop
+    firefox
+    freetube
+    gimp
     gnome.adwaita-icon-theme
     kitty
-    bitwarden
-    signal-desktop
-    element-desktop
-    gimp
-    freetube
-    firefox
-    chromium
-    brave
     libreoffice
+    mpv
+    scrot
+    signal-desktop
+    sxiv
+    wireshark
+    xclip
+    xsel
+    zathura
 
     spotify
     zoom-us
@@ -209,8 +220,14 @@ in
     pulse.enable = true;
   };
 
-  virtualisation.podman.enable = true;
-  virtualisation.podman.dockerCompat = true;
+  virtualisation = {
+    podman.enable = true;
+    podman.dockerCompat = true;
+    containers.enable = true;
+    containers.containersConf.settings = {
+      engine = { detach_keys = "ctrl-e,ctrl-q"; };
+    };
+  };
 
   programs.adb.enable = true;
   programs = { ssh.startAgent = false; };
