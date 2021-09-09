@@ -33,6 +33,7 @@
       enable = true;
       touchpad.tapping = true;
       touchpad.naturalScrolling = true;
+      touchpad.disableWhileTyping = true;
     };
     windowManager.xmonad = {
       enable = true;
