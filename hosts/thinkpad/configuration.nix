@@ -1,23 +1,7 @@
 { config, pkgs, ... }:
 
-let
-  home-manager = builtins.fetchGit {
-    url = "https://github.com/nix-community/home-manager.git";
-    ref = "release-21.05";
-  };
-in {
-  imports = [
-    ./hardware-configuration.nix
-    ./t470p.nix
-    (import "${home-manager}/nixos")
-  ];
-  nixpkgs.overlays = [
-    (import (builtins.fetchTarball {
-      url =
-        "https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz";
-    }))
-  ];
-
+{
+  imports = [ ./hardware-configuration.nix ./t470p.nix ../common.nix ];
   nix.nixPath = [
     "nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos"
     "nixos-config=/home/jared/Projects/nixos-configs/hosts/thinkpad/configuration.nix"
@@ -67,19 +51,6 @@ in {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" ];
   };
-  security.sudo.wheelNeedsPassword = false;
-  home-manager.users.jared = {
-    services.gpg-agent = {
-      enable = true;
-      enableScDaemon = true;
-      enableSshSupport = true;
-      defaultCacheTtl = 60480000;
-      maxCacheTtl = 60480000;
-      pinentryFlavor = "gnome3";
-    };
-  };
-
-  environment.variables = { EDITOR = "vim"; };
 
   environment.systemPackages = with pkgs; [
     # specific to the laptop
@@ -87,29 +58,7 @@ in {
     geteltorito
     brightnessctl
 
-    git
-    gh
-    nixfmt
-    vim
-    neovim-nightly
-    tmux
-    gnupg
-    htop
-    gotop
-    curl
-    wget
-    pciutils
-    usbutils
-    pulseaudio
     xmobar
-    kitty
-    firefox
-    chromium
-    bitwarden
-    signal-desktop
-
-    google-chrome
-    slack
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -120,20 +69,9 @@ in {
   #   enableSSHSupport = true;
   # };
 
-  security.rtkit.enable = true;
-
   # List services that you want to enable:
   services.udev.packages = [ pkgs.yubikey-personalization ];
   services.dbus.packages = [ pkgs.gcr ];
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    pulse.enable = true;
-  };
-  services.fwupd.enable = true;
-  services.printing.enable = true;
-  services.redshift.enable = true;
-  location.provider = "geoclue2";
 
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
@@ -143,11 +81,6 @@ in {
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
-
-  virtualisation.podman = {
-    enable = true;
-    dockerCompat = true;
-  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
