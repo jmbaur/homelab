@@ -18,6 +18,11 @@ in {
     }))
   ];
 
+  nix.nixPath = [
+    "nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos"
+    "nixos-config=/home/jared/Projects/nixos-configs/hosts/thinkpad/configuration.nix"
+    "/nix/var/nix/profiles/per-user/root/channels"
+  ];
   nixpkgs.config.allowUnfree = true;
 
   boot.loader.systemd-boot.enable = true;
@@ -74,11 +79,7 @@ in {
     };
   };
 
-  environment.variables = {
-    EDITOR = "vim";
-    NIXOS_CONFIG =
-      "/home/jared/Projects/nixos-configs/hosts/thinkpad/configuration.nix";
-  };
+  environment.variables = { EDITOR = "vim"; };
 
   environment.systemPackages = with pkgs; [
     # specific to the laptop
