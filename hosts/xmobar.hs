@@ -1,10 +1,7 @@
--- vim: set filetype=haskell:
 Config
   { font = "xft:Hack:pixelsize=14"
-  , bgColor = "#282828"
-  , fgColor = "#ebdbb2"
   , commands =
-      [ Run Cpu ["-L", "3", "-H", "50", "--normal", "#98971a", "--high", "#cc241d"] 10
+      [ Run Cpu [] 10
       , Run Memory ["-t", "Mem: <usedratio>%"] 10
       , Run Swap [] 10
       , Run Date "%T %F" "date" 10
