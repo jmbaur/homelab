@@ -87,6 +87,7 @@ in {
     gnupg
     gomuks
     gotop
+    gron
     htop
     iperf3
     iputils
@@ -116,6 +117,7 @@ in {
     wget
     xdg-user-dirs
     ydiff
+    yq
     yubikey-personalization
     zip
 
@@ -139,6 +141,7 @@ in {
     go
     gopls
     haskell-language-server
+    luaformatter
     nixfmt
     nodePackages.bash-language-server
     nodePackages.typescript-language-server
