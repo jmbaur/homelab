@@ -172,11 +172,11 @@ in {
     xsel
     zathura
 
-    spotify
-    zoom-us
-    slack
     google-chrome
+    slack
+    spotify
     vscode-fhs
+    zoom-us
   ];
 
   fonts.fonts = with pkgs; [
