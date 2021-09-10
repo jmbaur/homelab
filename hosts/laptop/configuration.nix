@@ -1,10 +1,20 @@
 { config, pkgs, ... }:
 
-{
-  imports = [ ./hardware-configuration.nix ./t470p.nix ../common.nix ];
+let
+  nixos-hardware =
+    builtins.fetchGit { url = "https://github.com/NixOS/nixos-hardware.git"; };
+in {
+  imports = [
+    ./hardware-configuration.nix
+    "${nixos-hardware}/lenovo/thinkpad"
+    "${nixos-hardware}/common/cpu/intel"
+    "${nixos-hardware}/common/gpu/nvidia.nix"
+    "${nixos-hardware}/common/pc/laptop/acpi_call.nix"
+    ../common.nix
+  ];
   nix.nixPath = [
     "nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos"
-    "nixos-config=/home/jared/Projects/nixos-configs/hosts/thinkpad/configuration.nix"
+    "nixos-config=/home/jared/Projects/nixos-configs/hosts/laptop/configuration.nix"
     "/nix/var/nix/profiles/per-user/root/channels"
   ];
   nixpkgs.config.allowUnfree = true;
@@ -13,22 +23,11 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_5_13;
 
-  networking.hostName = "thinkpad";
+  networking.hostName = "laptop";
   networking.networkmanager.enable = true;
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  time.timeZone = "America/Los_Angeles";
-
-  i18n.defaultLocale = "en_US.UTF-8";
-  console = {
-    font = "Lat2-Terminus16";
-    keyMap = "us";
-  };
 
   services.xserver = {
     enable = true;
-    layout = "us";
-    xkbOptions = "ctrl:nocaps";
     libinput = {
       enable = true;
       touchpad.tapping = true;
@@ -53,35 +52,10 @@
     extraGroups = [ "wheel" "networkmanager" ];
   };
 
-  environment.systemPackages = with pkgs; [
-    # specific to the laptop
-    acpi
-    geteltorito
-    brightnessctl
+  environment.systemPackages = with pkgs; [ geteltorito brightnessctl xmobar ];
 
-    xmobar
-  ];
-
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  # List services that you want to enable:
   services.udev.packages = [ pkgs.yubikey-personalization ];
   services.dbus.packages = [ pkgs.gcr ];
-
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
@@ -92,4 +66,3 @@
   system.stateVersion = "21.05"; # Did you read the comment?
 
 }
-

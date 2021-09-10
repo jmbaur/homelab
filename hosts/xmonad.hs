@@ -8,6 +8,7 @@ import           XMonad.Prompt
 import           XMonad.Prompt.Shell
 import           XMonad.Prompt.Ssh
 import           XMonad.Prompt.XMonad
+import           XMonad.Util.Cursor
 import           XMonad.Util.Run
 
 joinWith :: [String] -> String -> String
@@ -16,15 +17,16 @@ joinWith xs sep = concat . init . concat $ [[x, sep] | x <- xs]
 main = do
   h <- spawnPipe $ joinWith ["xmobar", "-F", "\"" ++ fg ++ "\"", "-B", "\"" ++ bg ++ "\""] " "
   xmonad $ docks $ def
-    { terminal = myTerminal
+    { borderWidth = 2
     , focusFollowsMouse = True
-    , modMask = mod4Mask
-    , borderWidth = 2
-    , normalBorderColor = bg
     , focusedBorderColor = blue
     , keys = myKeys <+> keys def
-    , manageHook = manageDocks <+> manageHook def
+    , modMask = mod4Mask
+    , normalBorderColor = bg
+    , terminal = myTerminal
     , layoutHook = avoidStruts $ smartBorders $ layoutHook def
+    , manageHook = manageDocks <+> manageHook def
+    , startupHook = setDefaultCursor xC_left_ptr
     , logHook = dynamicLogWithPP xmobarPP
       { ppCurrent = xmobarColor fg bg2 . wrap " " " "
       , ppVisible = wrap " " " "

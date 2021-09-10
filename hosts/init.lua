@@ -9,11 +9,10 @@ if fn.empty(fn.glob(install_path)) > 0 then
     vim.cmd 'packadd packer.nvim'
 end
 
--- packer
 require'packer'.startup(function(use)
+    -- let packer manage itself
     use 'wbthomason/packer.nvim'
-    use 'tpope/vim-fugitive'
-    use 'tpope/vim-rsi'
+    -- colorscheme
     use {
         'ellisonleao/gruvbox.nvim',
         requires = {'rktjmp/lush.nvim'},
@@ -22,21 +21,29 @@ require'packer'.startup(function(use)
             vim.cmd [[colorscheme gruvbox]]
         end
     }
-    use {
-        'b3nj5m1n/kommentary',
-        config = function()
-            require'kommentary.config'.configure_language('default', {
-                prefer_single_line_comments = true
-            })
-        end
-    }
+    -- language specific plugins
+    use 'neovimhaskell/haskell-vim'
+    use 'LnL7/vim-nix'
+    use 'leafgarland/typescript-vim'
+    -- tpope
+    use 'tpope/vim-fugitive'
+    use 'tpope/vim-rsi'
     use 'tpope/vim-surround'
+    -- neovim specific plugins
     use {
         'blackCauldron7/surround.nvim',
         disable = true,
         config = function()
             vim.g.surround_mappings_style = 'surround'
             require'surround'.setup {}
+        end
+    }
+    use {
+        'b3nj5m1n/kommentary',
+        config = function()
+            require'kommentary.config'.configure_language('default', {
+                prefer_single_line_comments = true
+            })
         end
     }
     use {

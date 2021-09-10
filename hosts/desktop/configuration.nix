@@ -4,7 +4,7 @@
   imports = [ ./hardware-configuration.nix ];
   nix.nixPath = [
     "nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos"
-    "nixos-config=/home/jared/Projects/nixos-configs/hosts/thinkpad/configuration.nix"
+    "nixos-config=/home/jared/Projects/nixos-configs/hosts/desktop/configuration.nix"
     "/nix/var/nix/profiles/per-user/root/channels"
   ];
 
@@ -41,11 +41,7 @@
     enable = true;
     windowManager.i3 = {
       enable = true;
-      extraPackages = with pkgs; [
-        i3lock
-        i3status-rust
-        dmenu
-      ];
+      extraPackages = with pkgs; [ i3lock i3status-rust dmenu ];
       extraSessionCommands = ''
         xsetroot -solid black
       '';

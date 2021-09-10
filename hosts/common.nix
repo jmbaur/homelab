@@ -8,7 +8,7 @@ let
       exit 1
     fi
     PROJ=$(${pkgs.fd}/bin/fd -t d -H ^.git$ $DIR | xargs dirname | ${pkgs.fzf}/bin/fzf)
-    if [ -z "$PROJ" ];then
+    if [ -z "$PROJ" ]; then
       exit 1
     fi
     TMUX_SESSION_NAME=$(basename $PROJ)
@@ -64,14 +64,21 @@ in {
     }))
   ];
 
+  time.timeZone = "America/Los_Angeles";
+  i18n.defaultLocale = "en_US.UTF-8";
+  console.useXkbConfig = true;
+
   environment.binsh = "${pkgs.dash}/bin/dash";
   environment.variables = { EDITOR = "vim"; };
   environment.systemPackages = with pkgs; [
+    # self-packaged
     audio
     fdroidcl
     gosee
     proj
 
+    # cli
+    acpi
     atop
     bc
     bind
@@ -96,6 +103,7 @@ in {
     killall
     libsecret
     lm_sensors
+    neofetch
     neovim-nightly
     nnn
     pciutils
@@ -121,6 +129,7 @@ in {
     yubikey-personalization
     zip
 
+    # rustlang stuff
     bat
     delta
     dust
@@ -137,6 +146,7 @@ in {
     xsv
     zoxide
 
+    # programming utils
     clang
     go
     gopls
@@ -155,6 +165,7 @@ in {
     tree-sitter
     yaml-language-server
 
+    # gui
     bitwarden
     brave
     chromium
@@ -176,6 +187,7 @@ in {
     xsel
     zathura
 
+    # unfree
     google-chrome
     slack
     spotify
@@ -201,10 +213,40 @@ in {
   services.redshift.enable = true;
   location.provider = "geoclue2";
   services.xserver = {
+    layout = "us";
+    xkbOptions = "ctrl:nocaps";
+    displayManager.sessionCommands = ''
+      xsetroot -solid "#282828"
+    '';
     displayManager.lightdm = {
       enable = true;
-      background =
-        pkgs.nixos-artwork.wallpapers.nineish-dark-gray.gnomeFilePath;
+      # background = pkgs.nixos-artwork.wallpapers.nineish-dark-gray.gnomeFilePath;
+      greeters.mini = {
+        enable = true;
+        user = "jared";
+        extraConfig = ''
+          [greeter]
+          show-password-label = false
+          [greeter-theme]
+          # The default text color
+          text-color = "#ebdbb2"
+          # The color of the error text
+          error-color = "#cc241d"
+          # The screen's background color.
+          background-color = "#282828"
+          # The password window's background color
+          window-color = "#1d2021"
+          # The color of the password window's border
+          border-color = "#98971a"
+          # The color of the text in the password input.
+          password-color = "#ebdbb2"
+          # The background color of the password input.
+          password-background-color = "#282828"
+          # The color of the password input's border.
+          # Falls back to `border-color` if missing.
+          # password-border-color = ""
+        '';
+      };
     };
     deviceSection = ''
       Option "TearFree" "true"
@@ -232,10 +274,6 @@ in {
 
   programs.adb.enable = true;
   programs = { ssh.startAgent = false; };
-  environment.shellInit = ''
-    gpg-connect-agent /bye
-    export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
-  '';
 
   home-manager.users.jared = {
     services.clipmenu.enable = true;
@@ -261,6 +299,10 @@ in {
         la = "exa -ahl";
         grep = "grep --color=auto";
       };
+      initExtra = ''
+        gpg-connect-agent /bye
+        export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+      '';
       bashrcExtra = ''
         eval "$(${pkgs.starship}/bin/starship init bash)"
         eval "$(${pkgs.zoxide}/bin/zoxide init bash)"
