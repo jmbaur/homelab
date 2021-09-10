@@ -3,28 +3,32 @@ import           Graphics.X11.ExtraTypes.XF86
 import           XMonad
 import           XMonad.Hooks.DynamicLog
 import           XMonad.Hooks.ManageDocks
+import           XMonad.Layout.NoBorders
 import           XMonad.Prompt
 import           XMonad.Prompt.Shell
 import           XMonad.Prompt.Ssh
 import           XMonad.Prompt.XMonad
 import           XMonad.Util.Run
 
+joinWith :: [String] -> String -> String
+joinWith xs sep = concat . init . concat $ [[x, sep] | x <- xs]
+
 main = do
-  h <- spawnPipe "xmobar"
+  h <- spawnPipe $ joinWith ["xmobar", "-F", "\"" ++ fg ++ "\"", "-B", "\"" ++ bg ++ "\""] " "
   xmonad $ docks $ def
-    { terminal = "kitty"
+    { terminal = myTerminal
     , focusFollowsMouse = True
     , modMask = mod4Mask
     , borderWidth = 2
-    , normalBorderColor = "#474646"
-    , focusedBorderColor = "#83a598"
+    , normalBorderColor = bg
+    , focusedBorderColor = blue
     , keys = myKeys <+> keys def
     , manageHook = manageDocks <+> manageHook def
-    , layoutHook = avoidStruts $ layoutHook def
+    , layoutHook = avoidStruts $ smartBorders $ layoutHook def
     , logHook = dynamicLogWithPP xmobarPP
-      { ppCurrent = xmobarColor "#ebdbb2" "#474646" . wrap " " " "
+      { ppCurrent = xmobarColor fg bg2 . wrap " " " "
       , ppVisible = wrap " " " "
-      , ppTitle = xmobarColor "#98971a" ""
+      , ppTitle = xmobarColor green ""
       , ppOutput = hPutStrLn h
       }
     }
@@ -45,10 +49,17 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
 myXPConfig =
   def
     { font = "xft:Hack:pixelsize=14"
-    , bgColor = "#282828"
-    , fgColor = "#ebdbb2"
-    , bgHLight = "#474646"
-    , fgHLight = "#ebdbb2"
-    , borderColor = "#83a598"
+    , bgColor = bg
+    , fgColor = fg
+    , bgHLight = bg2
+    , fgHLight = fg
     , position = Top
     }
+
+myTerminal = "kitty"
+bg = "#282828"
+bg2 = "#504945"
+fg = "#ebdbb2"
+green = "#98971a"
+blue = "#458588"
+red = "#cc241d"
