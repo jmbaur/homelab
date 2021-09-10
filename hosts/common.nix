@@ -67,10 +67,10 @@ in {
   environment.binsh = "${pkgs.dash}/bin/dash";
   environment.variables = { EDITOR = "vim"; };
   environment.systemPackages = with pkgs; [
-    proj
     audio
-    gosee
     fdroidcl
+    gosee
+    proj
 
     atop
     bc
@@ -96,7 +96,6 @@ in {
     libsecret
     lm_sensors
     neovim-nightly
-    nixfmt
     nnn
     pciutils
     pinentry
@@ -140,6 +139,7 @@ in {
     go
     gopls
     haskell-language-server
+    nixfmt
     nodePackages.bash-language-server
     nodePackages.typescript-language-server
     nodejs
@@ -148,6 +148,7 @@ in {
     rnix-lsp
     shellcheck
     shfmt
+    stylish-haskell
     tree-sitter
     yaml-language-server
 
@@ -280,6 +281,8 @@ in {
       Inherits=Adwaita
     '';
     home.file.".tmux.conf".source = ./tmux.conf;
+    home.file.".xmonad/xmonad.hs".source = ./xmonad.hs;
+    home.file.".xmobarrc".source = ./xmobarrc;
     xdg.configFile."gtk-3.0/settings.ini".text = ''
       [Settings]
       gtk-key-theme-name = Emacs
