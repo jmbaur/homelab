@@ -1,4 +1,5 @@
-import qualified Data.Map                as M
+import qualified Data.Map                     as M
+import           Graphics.X11.ExtraTypes.XF86
 import           XMonad
 import           XMonad.Hooks.DynamicLog
 import           XMonad.Prompt
@@ -24,6 +25,12 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
     [ ((modm, xK_x), xmonadPrompt myXPConfig)
     , ((modm, xK_p), shellPrompt myXPConfig)
     , ((modm, xK_s), sshPrompt myXPConfig)
+    , ((0, xF86XK_AudioRaiseVolume), spawn "pactl set-sink-volume @DEFAULT_SINK@ +5%")
+    , ((0, xF86XK_AudioLowerVolume), spawn "pactl set-sink-volume @DEFAULT_SINK@ -5%")
+    , ((0, xF86XK_AudioMute), spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle")
+    , ((0, xF86XK_AudioMicMute), spawn "pactl set-source-mute @DEFAULT_SOURCE@ toggle")
+    , ((0, xF86XK_MonBrightnessUp), spawn "brightnessctl set +10%")
+    , ((0, xF86XK_MonBrightnessDown), spawn "brightnessctl set 10%-")
     ]
 
 myXPConfig =
