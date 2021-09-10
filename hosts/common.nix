@@ -180,16 +180,16 @@ in {
   ];
 
   fonts.fonts = with pkgs; [
+    dejavu_fonts
+    fira-code
+    hack-font
+    inconsolata
+    liberation_ttf
+    liberation_ttf
     noto-fonts
     noto-fonts-cjk
     noto-fonts-emoji
-    hack-font
     source-code-pro
-    inconsolata
-    liberation_ttf
-    dejavu_fonts
-    liberation_ttf
-    fira-code
   ];
 
   services.fwupd.enable = true;
