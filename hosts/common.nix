@@ -266,7 +266,6 @@ in {
     home.file.".vimrc".text = ''
       set noswapfile
       set hidden
-      set nu rnu
     '';
     home.file.".Xresources".text = ''
       Xcursor.theme: Adwaita
