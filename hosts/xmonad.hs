@@ -2,15 +2,16 @@ import qualified Data.Map                     as M
 import           Graphics.X11.ExtraTypes.XF86
 import           XMonad
 import           XMonad.Hooks.DynamicLog
+import           XMonad.Hooks.ManageDocks
 import           XMonad.Prompt
 import           XMonad.Prompt.Shell
 import           XMonad.Prompt.Ssh
 import           XMonad.Prompt.XMonad
+import           XMonad.Util.Run
 
-main = xmonad =<< xmobar myConfig
-
-myConfig =
-  def
+main = do
+  h <- spawnPipe "xmobar"
+  xmonad $ docks $ def
     { terminal = "kitty"
     , focusFollowsMouse = True
     , modMask = mod4Mask
@@ -18,6 +19,14 @@ myConfig =
     , normalBorderColor = "#474646"
     , focusedBorderColor = "#83a598"
     , keys = myKeys <+> keys def
+    , manageHook = manageDocks <+> manageHook def
+    , layoutHook = avoidStruts $ layoutHook def
+    , logHook = dynamicLogWithPP xmobarPP
+      { ppCurrent = xmobarColor "#ebdbb2" "#474646" . wrap " " " "
+      , ppVisible = wrap " " " "
+      , ppTitle = xmobarColor "#98971a" ""
+      , ppOutput = hPutStrLn h
+      }
     }
 
 myKeys conf@(XConfig {XMonad.modMask = modm}) =
