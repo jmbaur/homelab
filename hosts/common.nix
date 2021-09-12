@@ -82,13 +82,18 @@ in {
     # cli
     acpi
     atop
+    bat
     bc
     bind
     buildah
     curl
     ddcutil
+    delta
     dmidecode
     dnsutils
+    dust
+    exa
+    fd
     file
     fzf
     gh
@@ -96,6 +101,7 @@ in {
     gnupg
     gomuks
     gotop
+    grex
     gron
     htop
     iperf3
@@ -108,16 +114,22 @@ in {
     neofetch
     neovim-nightly
     nnn
+    nushell
     pciutils
     pinentry
     pinentry-curses
+    procs
     pulseaudio
     renameutils
+    ripgrep
+    sd
     skopeo
     tcpdump
+    tealdeer
     tig
     tmux
     tmux
+    tokei
     traceroute
     tree
     unzip
@@ -126,25 +138,11 @@ in {
     w3m
     wget
     xdg-user-dirs
+    xsv
     ydiff
     yq
     yubikey-personalization
     zip
-
-    # rustlang stuff
-    bat
-    delta
-    dust
-    exa
-    fd
-    grex
-    nushell
-    procs
-    ripgrep
-    sd
-    tealdeer
-    tokei
-    xsv
     zoxide
 
     # programming utils
@@ -228,7 +226,7 @@ in {
       enable = true;
       extraPackages = with pkgs; [ i3lock i3status-rust dmenu ];
       extraSessionCommands = ''
-        xsetroot -solid black
+        xsetroot -solid "#222222"
       '';
     };
     deviceSection = ''
@@ -239,7 +237,7 @@ in {
   programs.xss-lock = {
     enable = true;
     lockerCommand = ''
-      ${pkgs.i3lock}/bin/i3lock -c 000000
+      ${pkgs.i3lock}/bin/i3lock -c 222222
     '';
   };
 
@@ -306,6 +304,7 @@ in {
     };
     home.sessionVariables = { EDITOR = "vim"; };
     home.file.".vimrc".text = ''
+      color ron
       set noswapfile
       set hidden
     '';
@@ -325,18 +324,52 @@ in {
       Inherits=Adwaita
     '';
     home.file.".tmux.conf".source = ./tmux.conf;
-    xdg.configFile."gtk-3.0/settings.ini".text = ''
-      [Settings]
-      gtk-key-theme-name = Emacs
-      gtk-cursor-theme-name=Adwaita
-      gtk-application-prefer-dark-theme = true
-    '';
-    xdg.configFile."dunst/dunstrc".source = ./dunstrc;
-    xdg.configFile."kitty/kitty.conf".source = ./kitty.conf;
-    xdg.configFile."alacritty/alacritty.yml".source = ./alacritty.yml;
-    xdg.configFile."i3/config".source = ./i3config;
-    xdg.configFile."i3status-rust/config.toml".source = ./i3status.toml;
-    xdg.configFile."git/config".source = ./gitconfig;
-    xdg.configFile."nvim/init.lua".source = ./init.lua;
+    gtk = {
+      enable = true;
+      gtk3.extraConfig = {
+        gtk-theme-name = "Adwaita";
+        gtk-cursor-theme-name = "Adwaita";
+        gtk-icon-theme-name = "Adwaita";
+        gtk-key-theme-name = "Emacs";
+        gtk-application-prefer-dark-theme = true;
+      };
+    };
+    xdg = {
+      # configFile."gtk-3.0/settings.ini".text = ''
+      #   [Settings]
+      #   gtk-key-theme-name = Emacs
+      #   gtk-cursor-theme-name=Adwaita
+      #   gtk-application-prefer-dark-theme = true
+      # '';
+      configFile."dunst/dunstrc".source = ./dunstrc;
+      configFile."kitty/kitty.conf".source = ./kitty.conf;
+      configFile."alacritty/alacritty.yml".source = ./alacritty.yml;
+      configFile."i3/config".source = ./i3config;
+      configFile."i3status-rust/config.toml".source = ./i3status.toml;
+      configFile."git/config".source = ./gitconfig;
+      configFile."nvim/init.lua".source = ./init.lua;
+
+      mime.enable = true;
+      userDirs = {
+        enable = true;
+        createDirectories = true;
+      };
+      mimeApps = {
+        enable = true;
+        defaultApplications = {
+          "image/png" = [ "sxiv.desktop" ];
+          "image/jpg" = [ "sxiv.desktop" ];
+          "image/jpeg" = [ "sxiv.desktop" ];
+          "video/mp4" = [ "mpv.desktop" ];
+          "video/webm" = [ "mpv.desktop" ];
+          "application/pdf" = [ "org.pwmt.zathura.desktop" ];
+          "text/html" = [ "firefox.desktop" ];
+          "x-scheme-handler/http" = [ "firefox.desktop" ];
+          "x-scheme-handler/https" = [ "firefox.desktop" ];
+          "x-scheme-handler/about" = [ "firefox.desktop" ];
+          "x-scheme-handler/unknown" = [ "firefox.desktop" ];
+        };
+      };
+    };
   };
 }
