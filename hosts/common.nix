@@ -68,6 +68,8 @@ in {
   i18n.defaultLocale = "en_US.UTF-8";
   console.useXkbConfig = true;
 
+  networking.networkmanager.enable = true;
+
   environment.binsh = "${pkgs.dash}/bin/dash";
   environment.variables = { EDITOR = "vim"; };
   environment.systemPackages = with pkgs; [
@@ -140,7 +142,6 @@ in {
     procs
     ripgrep
     sd
-    starship
     tealdeer
     tokei
     xsv
@@ -220,10 +221,25 @@ in {
       background =
         pkgs.nixos-artwork.wallpapers.nineish-dark-gray.gnomeFilePath;
     };
+    windowManager.i3 = {
+      enable = true;
+      extraPackages = with pkgs; [ i3lock i3status-rust dmenu ];
+      extraSessionCommands = ''
+        xsetroot -solid black
+      '';
+    };
     deviceSection = ''
       Option "TearFree" "true"
     '';
   };
+
+  programs.xss-lock = {
+    enable = true;
+    lockerCommand = ''
+      ${pkgs.i3lock}/bin/i3lock -c 000000
+    '';
+  };
+
   security.sudo.wheelNeedsPassword = false;
   security.rtkit.enable = true;
 
@@ -276,7 +292,6 @@ in {
         export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
       '';
       bashrcExtra = ''
-        eval "$(${pkgs.starship}/bin/starship init bash)"
         eval "$(${pkgs.zoxide}/bin/zoxide init bash)"
       '';
     };

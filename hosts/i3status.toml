@@ -30,8 +30,7 @@ interval = 1
 format = "{1m}"
 
 [[block]]
-block = "net"
-format = "{ip} {speed_up;K*b} {speed_down;K*b}"
+block = "networkmanager"
 
 [[block]]
 block = "sound"

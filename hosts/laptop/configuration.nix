@@ -19,7 +19,6 @@ in {
   boot.kernelPackages = pkgs.linuxPackages_5_13;
 
   networking.hostName = "laptop";
-  networking.networkmanager.enable = true;
 
   services.xserver = {
     enable = true;
@@ -30,12 +29,6 @@ in {
       touchpad.disableWhileTyping = true;
     };
     videoDrivers = [ "modesetting" "nvidia" ];
-    displayManager.defaultSession = "xfce";
-    desktopManager.xfce = { enable = true; };
-    windowManager.xmonad = {
-      enable = false;
-      enableContribAndExtras = true;
-    };
   };
 
   hardware.nvidia.prime = {
@@ -49,7 +42,7 @@ in {
     extraGroups = [ "wheel" "networkmanager" ];
   };
 
-  environment.systemPackages = with pkgs; [ geteltorito brightnessctl xmobar ];
+  environment.systemPackages = with pkgs; [ brightnessctl geteltorito ];
 
   services.udev.packages = [ pkgs.yubikey-personalization ];
   services.dbus.packages = [ pkgs.gcr ];
