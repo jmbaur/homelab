@@ -13,14 +13,7 @@ require'packer'.startup(function(use)
     -- let packer manage itself
     use 'wbthomason/packer.nvim'
     -- colorscheme
-    use {
-        'ellisonleao/gruvbox.nvim',
-        requires = {'rktjmp/lush.nvim'},
-        config = function()
-            vim.o.background = 'dark'
-            vim.cmd [[colorscheme gruvbox]]
-        end
-    }
+    use 'tjdevries/colorbuddy.nvim'
     -- language specific plugins
     use 'neovimhaskell/haskell-vim'
     use 'LnL7/vim-nix'
@@ -84,6 +77,7 @@ vim.o.smartcase = true
 vim.o.hidden = true
 vim.o.number = true
 vim.o.relativenumber = true
+vim.o.cursorline = true
 vim.o.scrolloff = 5
 vim.o.sidescrolloff = 5
 vim.o.clipboard = 'unnamedplus'
@@ -176,3 +170,46 @@ vim.cmd [[nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()
 vim.cmd [[nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>]]
 vim.cmd [[nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>]]
 vim.cmd [[nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>]]
+
+-- colorbuddy
+local Color, colors, Group, groups, styles = require'colorbuddy'.setup {}
+
+-- black
+Color.new('color0', '#000000')
+Color.new('color8', '#767676')
+-- red
+Color.new('color1', '#cc0403')
+Color.new('color9', '#f2201f')
+-- green
+Color.new('color2', '#19cb00')
+Color.new('color10', '#23fd00')
+-- yellow
+Color.new('color3', '#cecb00')
+Color.new('color11', '#fffd00')
+-- blue
+Color.new('color4', '#0d73cc')
+Color.new('color12', '#1a8fff')
+-- magenta
+Color.new('color5', '#cb1ed1')
+Color.new('color13', '#fd28ff')
+-- cyan
+Color.new('color6', '#0dcdcd')
+Color.new('color14', '#14ffff')
+-- white
+Color.new('color7', '#dddddd')
+Color.new('color15', '#ffffff')
+
+Group.new('Comment', colors.color2, nil, styles.italic)
+Group.new('CursorLine', nil, nil, nil)
+Group.new('CursorLineNr', colors.color7, nil, styles.bold)
+Group.new('LineNr', colors.color8, nil, nil)
+Group.new('NonText', colors.color8, nil, nil)
+Group.new('Pmenu', nil, colors.color8, nil)
+Group.new('PmenuSbar', nil, colors.color13, styles.bold)
+Group.new('PmenuSel', nil, colors.color5, nil)
+Group.new('PmenuThumb', nil, nil, nil)
+Group.new('Search', colors.color0, colors.color11, nil)
+Group.new('SignColumn', nil, colors.color0, nil)
+Group.new('StatusLine', colors.color0, colors.color7, styles.bold)
+Group.new('StatusLineNC', colors.color8, colors.color7, nil)
+Group.new('Visual', nil, colors.color8, nil)

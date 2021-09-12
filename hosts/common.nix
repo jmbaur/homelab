@@ -292,6 +292,7 @@ in {
         export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
       '';
       bashrcExtra = ''
+        PS1="\W $ "
         eval "$(${pkgs.zoxide}/bin/zoxide init bash)"
       '';
     };
@@ -310,43 +311,12 @@ in {
       XTerm.vt100.ttyModes: erase ^?
       XTerm.vt100.bellIsUrgent: true
       *.faceName: Hack:size=14:antialias=true
-      ! colorscheme
-      ! hard contrast: *background: #1d2021
-      *background: #282828
-      ! soft contrast: *background: #32302f
-      *foreground: #ebdbb2
-      ! Black + DarkGrey
-      *color0:  #282828
-      *color8:  #928374
-      ! DarkRed + Red
-      *color1:  #cc241d
-      *color9:  #fb4934
-      ! DarkGreen + Green
-      *color2:  #98971a
-      *color10: #b8bb26
-      ! DarkYellow + Yellow
-      *color3:  #d79921
-      *color11: #fabd2f
-      ! DarkBlue + Blue
-      *color4:  #458588
-      *color12: #83a598
-      ! DarkMagenta + Magenta
-      *color5:  #b16286
-      *color13: #d3869b
-      ! DarkCyan + Cyan
-      *color6:  #689d6a
-      *color14: #8ec07c
-      ! LightGrey + White
-      *color7:  #a89984
-      *color15: #ebdbb2
     '';
     home.file.".icons/default/index.theme".text = ''
       [icon theme] 
       Inherits=Adwaita
     '';
     home.file.".tmux.conf".source = ./tmux.conf;
-    home.file.".xmonad/xmonad.hs".source = ./xmonad.hs;
-    home.file.".xmobarrc".source = ./xmobar.hs;
     xdg.configFile."gtk-3.0/settings.ini".text = ''
       [Settings]
       gtk-key-theme-name = Emacs
@@ -356,8 +326,6 @@ in {
     xdg.configFile."dunst/dunstrc".source = ./dunstrc;
     xdg.configFile."kitty/kitty.conf".source = ./kitty.conf;
     xdg.configFile."alacritty/alacritty.yml".source = ./alacritty.yml;
-    xdg.configFile."kitty/GruvboxMaterialDarkMedium.conf".source =
-      ./GruvboxMaterialDarkMedium.conf;
     xdg.configFile."i3/config".source = ./i3config;
     xdg.configFile."i3status-rust/config.toml".source = ./i3status.toml;
     xdg.configFile."git/config".source = ./gitconfig;
