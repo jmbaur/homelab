@@ -212,6 +212,9 @@ in {
   services.fwupd.enable = true;
   services.printing.enable = true;
   services.redshift.enable = true;
+  services.dbus.packages = [ pkgs.gcr ];
+  services.gnome.gnome-keyring.enable = true;
+  services.udev.packages = [ pkgs.yubikey-personalization ];
   location.provider = "geoclue2";
   services.xserver = {
     layout = "us";
@@ -262,6 +265,11 @@ in {
 
   programs.adb.enable = true;
   programs = { ssh.startAgent = false; };
+
+  users.users.jared = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" "networkmanager" "adbusers" ];
+  };
 
   home-manager.users.jared = {
     services.clipmenu.enable = true;

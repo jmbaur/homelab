@@ -10,15 +10,6 @@
 
   networking.hostName = "okra";
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  users.users.jared = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" "adbusers" ];
-  };
-
   nixpkgs.config.allowUnfree = true;
   environment.systemPackages = with pkgs; [ nvme-cli ];
 
@@ -28,12 +19,6 @@
 
   # List services that you want to enable:
   services.udev.extraRules = ''KERNEL=="i2c-[0-9]*", GROUP+="users"'';
-
-  services.dbus.packages = [ pkgs.gcr ];
-  services.gnome.gnome-keyring.enable = true;
-
-  services.pcscd.enable = false;
-  services.udev.packages = with pkgs; [ yubikey-personalization ];
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;

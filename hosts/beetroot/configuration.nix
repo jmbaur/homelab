@@ -37,15 +37,7 @@ in {
     nvidiaBusId = "PCI:02:00:0";
   };
 
-  users.users.jared = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" ];
-  };
-
   environment.systemPackages = with pkgs; [ brightnessctl geteltorito ];
-
-  services.udev.packages = [ pkgs.yubikey-personalization ];
-  services.dbus.packages = [ pkgs.gcr ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
