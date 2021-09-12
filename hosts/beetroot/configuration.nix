@@ -18,7 +18,7 @@ in {
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_5_13;
 
-  networking.hostName = "laptop";
+  networking.hostName = "beetroot";
 
   services.xserver = {
     enable = true;

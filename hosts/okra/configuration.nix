@@ -8,7 +8,7 @@
   boot.kernelPackages = pkgs.linuxPackages_5_13;
   boot.kernelModules = [ "i2c-dev" ];
 
-  networking.hostName = "desktop";
+  networking.hostName = "okra";
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";

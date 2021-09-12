@@ -1,7 +1,7 @@
 mkfile_path := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
-laptop:
-	NIXOS_CONFIG=${mkfile_path}./hosts/laptop/configuration.nix nixos-rebuild switch
+beetroot:
+	NIXOS_CONFIG=${mkfile_path}./hosts/beetroot/configuration.nix nixos-rebuild switch
 
 desktop:
 	NIXOS_CONFIG=${mkfile_path}./hosts/desktop/configuration.nix nixos-rebuild switch
