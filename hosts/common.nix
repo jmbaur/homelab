@@ -215,38 +215,10 @@ in {
   services.xserver = {
     layout = "us";
     xkbOptions = "ctrl:nocaps";
-    displayManager.sessionCommands = ''
-      xsetroot -solid "#282828"
-    '';
     displayManager.lightdm = {
       enable = true;
-      # background = pkgs.nixos-artwork.wallpapers.nineish-dark-gray.gnomeFilePath;
-      greeters.mini = {
-        enable = true;
-        user = "jared";
-        extraConfig = ''
-          [greeter]
-          show-password-label = false
-          [greeter-theme]
-          # The default text color
-          text-color = "#ebdbb2"
-          # The color of the error text
-          error-color = "#cc241d"
-          # The screen's background color.
-          background-color = "#282828"
-          # The password window's background color
-          window-color = "#1d2021"
-          # The color of the password window's border
-          border-color = "#98971a"
-          # The color of the text in the password input.
-          password-color = "#ebdbb2"
-          # The background color of the password input.
-          password-background-color = "#282828"
-          # The color of the password input's border.
-          # Falls back to `border-color` if missing.
-          # password-border-color = ""
-        '';
-      };
+      background =
+        pkgs.nixos-artwork.wallpapers.nineish-dark-gray.gnomeFilePath;
     };
     deviceSection = ''
       Option "TearFree" "true"

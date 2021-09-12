@@ -17,4 +17,4 @@
   lg = log --graph --decorate --pretty=oneline --abbrev-commit --all
 
 [commit]
-  gpgsign = true
+  gpgsign = false

@@ -12,11 +12,6 @@ in {
     "${nixos-hardware}/common/pc/laptop/acpi_call.nix"
     ../common.nix
   ];
-  nix.nixPath = [
-    "nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos"
-    "nixos-config=/home/jared/Projects/nixos-configs/hosts/laptop/configuration.nix"
-    "/nix/var/nix/profiles/per-user/root/channels"
-  ];
   nixpkgs.config.allowUnfree = true;
 
   boot.loader.systemd-boot.enable = true;
@@ -34,11 +29,13 @@ in {
       touchpad.naturalScrolling = true;
       touchpad.disableWhileTyping = true;
     };
+    videoDrivers = [ "modesetting" "nvidia" ];
+    displayManager.defaultSession = "xfce";
+    desktopManager.xfce = { enable = true; };
     windowManager.xmonad = {
-      enable = true;
+      enable = false;
       enableContribAndExtras = true;
     };
-    videoDrivers = [ "modesetting" "nvidia" ];
   };
 
   hardware.nvidia.prime = {
