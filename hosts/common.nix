@@ -1,38 +1,6 @@
 { config, pkgs, ... }:
 
 let
-  proj = pkgs.writeShellScriptBin "proj" ''
-    DIR=''${PROJ_DIR:-$HOME/Projects}
-    if [ ! -d $DIR ]; then
-      echo "Cannot find project directory"
-      exit 1
-    fi
-    PROJ=$(${pkgs.fd}/bin/fd -t d -H ^.git$ $DIR | xargs dirname | ${pkgs.fzf}/bin/fzf)
-    if [ -z "$PROJ" ]; then
-      exit 1
-    fi
-    TMUX_SESSION_NAME=$(basename $PROJ)
-    ${pkgs.tmux}/bin/tmux new-session -d -c $PROJ -s $TMUX_SESSION_NAME
-    if [ -n "$TMUX" ]; then
-      ${pkgs.tmux}/bin/tmux switch-client -t $TMUX_SESSION_NAME
-    else
-      ${pkgs.tmux}/bin/tmux attach-session -t $TMUX_SESSION_NAME
-    fi
-  '';
-  audio = pkgs.writeShellScriptBin "audio" ''
-    case $1 in
-    "sink")
-      pactl set-default-sink $(pactl list sinks short | awk '{print $2}' | fzf)
-      ;;
-    "source")
-      pactl set-default-source $(pactl list sources short | awk '{print $2}' | fzf | awk '{print $1}')
-      ;;
-    *)
-      echo "Argument must be 'sink' or 'source'"
-      exit 1
-      ;;
-    esac
-  '';
   gosee = pkgs.buildGoModule {
     name = "gosee";
     src = builtins.fetchGit { url = "https://github.com/jmbaur/gosee.git"; };
@@ -45,24 +13,15 @@ let
     vendorSha256 = "11q0gy3wfjaqyfj015yw3wfz2j1bsq6gchjhjs6fxfjmb77ikwjb";
     runVend = true;
   };
-  home-manager = builtins.fetchGit {
-    url = "https://github.com/nix-community/home-manager";
-    ref = "release-21.05";
-  };
+  home-manager = import ./home-manager.nix { ref = "release-21.05"; };
 in {
   nix.extraOptions = ''
     keep-outputs = true
     keep-derivations = true
   '';
 
-  imports = [ (import "${home-manager}/nixos") ];
-
-  nixpkgs.overlays = [
-    (import (builtins.fetchTarball {
-      url =
-        "https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz";
-    }))
-  ];
+  imports =
+    [ (import "${home-manager}/nixos") ./neovim.nix ./audio.nix ./proj.nix ];
 
   time.timeZone = "America/Los_Angeles";
   i18n.defaultLocale = "en_US.UTF-8";
@@ -74,10 +33,8 @@ in {
   environment.variables = { EDITOR = "vim"; };
   environment.systemPackages = with pkgs; [
     # self-packaged
-    audio
     fdroidcl
     gosee
-    proj
 
     # cli
     acpi
@@ -112,7 +69,6 @@ in {
     libsecret
     lm_sensors
     neofetch
-    neovim-nightly
     nnn
     nushell
     pciutils
@@ -165,6 +121,7 @@ in {
     yaml-language-server
 
     # gui
+    alacritty
     bitwarden
     brave
     chromium
@@ -175,7 +132,6 @@ in {
     gimp
     gnome.adwaita-icon-theme
     kitty
-    alacritty
     libreoffice
     mpv
     scrot
@@ -250,6 +206,32 @@ in {
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
+    media-session.config.bluez-monitor.rules = [
+      {
+        # Matches all cards
+        matches = [{ "device.name" = "~bluez_card.*"; }];
+        actions = {
+          "update-props" = {
+            "bluez5.reconnect-profiles" = [ "hfp_hf" "hsp_hs" "a2dp_sink" ];
+            # mSBC is not expected to work on all headset + adapter combinations.
+            "bluez5.msbc-support" = true;
+            # SBC-XQ is not expected to work on all headset + adapter combinations.
+            "bluez5.sbc-xq-support" = true;
+          };
+        };
+      }
+      {
+        matches = [
+          # Matches all sources
+          {
+            "node.name" = "~bluez_input.*";
+          }
+          # Matches all outputs
+          { "node.name" = "~bluez_output.*"; }
+        ];
+        actions = { "node.pause-on-idle" = false; };
+      }
+    ];
   };
 
   virtualisation = {
@@ -335,19 +317,12 @@ in {
       };
     };
     xdg = {
-      # configFile."gtk-3.0/settings.ini".text = ''
-      #   [Settings]
-      #   gtk-key-theme-name = Emacs
-      #   gtk-cursor-theme-name=Adwaita
-      #   gtk-application-prefer-dark-theme = true
-      # '';
       configFile."dunst/dunstrc".source = ./dunstrc;
       configFile."kitty/kitty.conf".source = ./kitty.conf;
       configFile."alacritty/alacritty.yml".source = ./alacritty.yml;
       configFile."i3/config".source = ./i3config;
-      configFile."i3status-rust/config.toml".source = ./i3status.toml;
+      configFile."i3status-rust/config.toml".source = ./i3status-laptop.toml;
       configFile."git/config".source = ./gitconfig;
-      configFile."nvim/init.lua".source = ./init.lua;
 
       mime.enable = true;
       userDirs = {
