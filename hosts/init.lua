@@ -6,7 +6,7 @@ if fn.empty(fn.glob(install_path)) > 0 then
         'git', 'clone', 'https://github.com/wbthomason/packer.nvim',
         install_path
     })
-    vim.cmd 'packadd packer.nvim'
+    vim.cmd [[packadd packer.nvim]]
 end
 
 require'packer'.startup(function(use)
@@ -65,22 +65,23 @@ require'packer'.startup(function(use)
 end)
 
 vim.g.mapleader = ','
-vim.o.termguicolors = true
-vim.o.shiftwidth = 2
-vim.o.tabstop = 2
-vim.o.softtabstop = 2
+vim.o.clipboard = 'unnamedplus'
+vim.o.colorcolumn = '80'
+vim.o.cursorline = true
 vim.o.expandtab = true
-vim.o.wrap = false
-vim.o.showmatch = true
-vim.o.ignorecase = true
-vim.o.smartcase = true
 vim.o.hidden = true
+vim.o.ignorecase = true
 vim.o.number = true
 vim.o.relativenumber = true
-vim.o.cursorline = true
 vim.o.scrolloff = 5
+vim.o.shiftwidth = 2
+vim.o.showmatch = true
 vim.o.sidescrolloff = 5
-vim.o.clipboard = 'unnamedplus'
+vim.o.smartcase = true
+vim.o.softtabstop = 2
+vim.o.tabstop = 2
+vim.o.termguicolors = true
+vim.o.wrap = false
 
 -- LSP
 local lspconfig = require 'lspconfig'
@@ -199,17 +200,20 @@ Color.new('color14', '#14ffff')
 Color.new('color7', '#dddddd')
 Color.new('color15', '#ffffff')
 
+Group.new('ColorColumn', nil, colors.color0:light(), nil)
 Group.new('Comment', colors.color8:light(), nil, styles.italic)
 Group.new('CursorLine', nil, nil, nil)
 Group.new('CursorLineNr', colors.color7, nil, styles.bold)
 Group.new('LineNr', colors.color8:dark(), nil, nil)
-Group.new('NonText', colors.color8, nil, nil)
+Group.new('NonText', colors.color8:dark(), nil, nil)
 Group.new('Pmenu', nil, colors.color8, nil)
 Group.new('PmenuSbar', nil, colors.color13, styles.bold)
 Group.new('PmenuSel', nil, colors.color5, nil)
 Group.new('PmenuThumb', nil, nil, nil)
-Group.new('Search', colors.color0, colors.color11, nil)
+Group.new('Search', colors.color0, colors.color11:dark(), nil)
 Group.new('SignColumn', nil, colors.color0, nil)
-Group.new('StatusLine', colors.color0, colors.color7, styles.bold)
-Group.new('StatusLineNC', colors.color8, colors.color7, nil)
+Group.new('StatusLine', colors.color0, colors.color7:dark(), nil)
+Group.new('StatusLineNC', colors.color7, colors.color0:light(), nil)
+Group.new('TODO', colors.color0, colors.color13:light(), nil)
+Group.new('VertSplit', colors.color8:dark(), colors.color0, nil)
 Group.new('Visual', nil, colors.color8:dark(), nil)
