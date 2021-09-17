@@ -3,7 +3,8 @@
 let
   nixos-hardware =
     builtins.fetchGit { url = "https://github.com/NixOS/nixos-hardware.git"; };
-in {
+in
+{
   imports = [
     ./hardware-configuration.nix
     "${nixos-hardware}/lenovo/thinkpad"
@@ -12,11 +13,9 @@ in {
     "${nixos-hardware}/common/pc/laptop/acpi_call.nix"
     ../common.nix
   ];
-  nixpkgs.config.allowUnfree = true;
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelPackages = pkgs.linuxPackages_5_13;
 
   networking.hostName = "beetroot";
 
