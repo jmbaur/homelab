@@ -69,6 +69,7 @@ in {
     libsecret
     lm_sensors
     neofetch
+    nixops
     nnn
     nushell
     pciutils

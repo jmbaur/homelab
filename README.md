@@ -20,6 +20,7 @@ List from https://www.vegetables.co.nz/vegetables-a-z/.
 ## Taken
 
 - Beetroot - Rengakura
+- Kale and Cavolo Nero
 - Okra
 
 ## Available
@@ -46,7 +47,6 @@ List from https://www.vegetables.co.nz/vegetables-a-z/.
 - Garlic - Kārika
 - Ginger - Tinitia
 - Indian vegetables - Īniana huawhenua
-- Kale and Cavolo Nero
 - Kohlrabi - Okapi/Kara-rapi
 - Kūmara - Kūmara
 - Leeks - Riki/Rikiroa
