@@ -24,7 +24,11 @@ in
   imports =
     [ (import "${home-manager}/nixos") ./neovim.nix ./audio.nix ./proj.nix ];
 
-  boot.kernelPackages = pkgs.linuxPackages_5_13;
+  boot = {
+    kernelPackages = pkgs.linuxPackages_5_13;
+    cleanTmpDir = true;
+  };
+
   time.timeZone = "America/Los_Angeles";
   i18n.defaultLocale = "en_US.UTF-8";
   console.useXkbConfig = true;
@@ -34,7 +38,10 @@ in
   nixpkgs.config.allowUnfree = true;
 
   environment.binsh = "${pkgs.dash}/bin/dash";
-  environment.variables = { EDITOR = "vim"; };
+  environment.variables = {
+    EDITOR = "vim";
+    NNN_TRASH = "1";
+  };
   environment.systemPackages = with pkgs; [
     # self-packaged
     fdroidcl
@@ -291,10 +298,6 @@ in
         eval "$(${pkgs.zoxide}/bin/zoxide init bash)"
       '';
     };
-    home.sessionVariables = {
-      EDITOR = "vim";
-      NNN_TRASH = 1;
-    };
     home.file.".vimrc".text = ''
       color ron
       set noswapfile
@@ -331,7 +334,7 @@ in
       configFile."kitty/kitty.conf".source = ./kitty.conf;
       configFile."alacritty/alacritty.yml".source = ./alacritty.yml;
       configFile."i3/config".source = ./i3config;
-      configFile."i3status-rust/config.toml".source = ./i3status-laptop.toml;
+      configFile."i3status-rust/config.toml".source = ./i3status.toml;
       configFile."git/config".source = ./gitconfig;
 
       mime.enable = true;
