@@ -173,6 +173,7 @@ vim.cmd [[nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr
 vim.cmd [[nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>]]
 
 -- colorbuddy
+vim.cmd [[color desert]]
 local Color, colors, Group, groups, styles = require'colorbuddy'.setup {}
 
 -- black
@@ -204,8 +205,11 @@ Group.new('ColorColumn', nil, colors.color0:light(), nil)
 Group.new('Comment', colors.color8:light(), nil, styles.italic)
 Group.new('CursorLine', nil, nil, nil)
 Group.new('CursorLineNr', colors.color7, nil, styles.bold)
+Group.new('Error', nil, colors.color1, styles.bold)
+Group.new('ErrorMsg', nil, colors.color1, styles.bold)
 Group.new('LineNr', colors.color8:dark(), nil, nil)
 Group.new('NonText', colors.color8:dark(), nil, nil)
+Group.new('Normal', nil, colors.color0, nil)
 Group.new('Pmenu', nil, colors.color8, nil)
 Group.new('PmenuSbar', nil, colors.color13, styles.bold)
 Group.new('PmenuSel', nil, colors.color5, nil)
