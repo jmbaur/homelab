@@ -80,6 +80,7 @@ in {
     ripgrep
     sd
     skopeo
+    tailscale
     tcpdump
     tealdeer
     tig
@@ -87,6 +88,7 @@ in {
     tmux
     tokei
     traceroute
+    trash-cli
     tree
     unzip
     usbutils
@@ -284,7 +286,10 @@ in {
         eval "$(${pkgs.zoxide}/bin/zoxide init bash)"
       '';
     };
-    home.sessionVariables = { EDITOR = "vim"; };
+    home.sessionVariables = {
+      EDITOR = "vim";
+      NNN_TRASH = 1;
+    };
     home.file.".vimrc".text = ''
       color ron
       set noswapfile

@@ -1,7 +1,7 @@
-mkfile_path := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+config_path := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))hosts/$(shell hostname)/configuration.nix
 
-beetroot:
-	NIXOS_CONFIG=${mkfile_path}./hosts/beetroot/configuration.nix nixos-rebuild switch
+switch:
+	NIXOS_CONFIG=${config_path} nixos-rebuild switch
 
-okra:
-	NIXOS_CONFIG=${mkfile_path}./hosts/okra/configuration.nix nixos-rebuild switch
+test:
+	NIXOS_CONFIG=${config_path} nixos-rebuild test
