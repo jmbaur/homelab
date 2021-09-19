@@ -14,7 +14,8 @@ let
     runVend = true;
   };
   home-manager = import ./home-manager.nix { ref = "release-21.05"; };
-in {
+in
+{
   nix.extraOptions = ''
     keep-outputs = true
     keep-derivations = true
@@ -23,14 +24,24 @@ in {
   imports =
     [ (import "${home-manager}/nixos") ./neovim.nix ./audio.nix ./proj.nix ];
 
+  boot = {
+    kernelPackages = pkgs.linuxPackages_5_13;
+    cleanTmpDir = true;
+  };
+
   time.timeZone = "America/Los_Angeles";
   i18n.defaultLocale = "en_US.UTF-8";
   console.useXkbConfig = true;
 
   networking.networkmanager.enable = true;
 
+  nixpkgs.config.allowUnfree = true;
+
   environment.binsh = "${pkgs.dash}/bin/dash";
-  environment.variables = { EDITOR = "vim"; };
+  environment.variables = {
+    EDITOR = "vim";
+    NNN_TRASH = "1";
+  };
   environment.systemPackages = with pkgs; [
     # self-packaged
     fdroidcl
@@ -213,7 +224,7 @@ in {
     media-session.config.bluez-monitor.rules = [
       {
         # Matches all cards
-        matches = [{ "device.name" = "~bluez_card.*"; }];
+        matches = [ { "device.name" = "~bluez_card.*"; } ];
         actions = {
           "update-props" = {
             "bluez5.reconnect-profiles" = [ "hfp_hf" "hsp_hs" "a2dp_sink" ];
@@ -288,10 +299,6 @@ in {
         eval "$(${pkgs.zoxide}/bin/zoxide init bash)"
       '';
     };
-    home.sessionVariables = {
-      EDITOR = "vim";
-      NNN_TRASH = 1;
-    };
     home.file.".vimrc".text = ''
       color ron
       set noswapfile
@@ -328,7 +335,7 @@ in {
       configFile."kitty/kitty.conf".source = ./kitty.conf;
       configFile."alacritty/alacritty.yml".source = ./alacritty.yml;
       configFile."i3/config".source = ./i3config;
-      configFile."i3status-rust/config.toml".source = ./i3status-laptop.toml;
+      configFile."i3status-rust/config.toml".source = ./i3status.toml;
       configFile."git/config".source = ./gitconfig;
 
       mime.enable = true;
