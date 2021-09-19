@@ -22,6 +22,7 @@ List from https://www.vegetables.co.nz/vegetables-a-z/.
 - Beetroot - Rengakura
 - Kale and Cavolo Nero
 - Okra
+- Rhubarb - Rūpapa
 
 ## Available
 
@@ -59,7 +60,6 @@ List from https://www.vegetables.co.nz/vegetables-a-z/.
 - Potatoes, purple - Taewa/Riwai
 - Pūhā/Rauriki
 - Radishes - Uhikura
-- Rhubarb - Rūpapa
 - Salad greens
 - Silverbeet - Kōrare
 - Spinach - Rengamutu/Kōkihi
