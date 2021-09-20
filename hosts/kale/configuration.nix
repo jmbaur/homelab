@@ -13,59 +13,74 @@
   networking.interfaces.eno1.useDHCP = true;
   networking.interfaces.eno2.useDHCP = true;
 
-  # Enable CUPS to print documents.
-  # services.printing.enable = true;
-
   services.openssh.enable = true;
   services.syncthing = {
     enable = true;
     configDir = "/data/syncthing/.config/syncthing";
     dataDir = "/data/syncthing";
     openDefaultPorts = true;
-    declarative.overrideFolders = true;
-    declarative.overrideDevices = true;
-    declarative.folders = {
-      documents = {
-        path = "/data/syncthing/Documents";
-        versioning = {
-          type = "simple";
-          params = { keep = "10"; };
-        };
+    declarative = {
+      overrideFolders = true;
+      overrideDevices = true;
+      devices = {
+        okra.id =
+          "E6ANVH5-N55GABM-ND5DCYD-PAFN3UU-KOILXIQ-HKVIANN-R5K3HYF-O4BMWQT";
       };
-      downloads = {
-        path = "/data/syncthing/Downloads";
-        versioning = {
-          type = "simple";
-          params = { keep = "10"; };
+      folders = {
+        Desktop = {
+          devices = [ "okra" ];
+          path = "/data/syncthing/Desktop";
+          versioning = {
+            type = "simple";
+            params = { keep = "10"; };
+          };
         };
-      };
-      pictures = {
-        path = "/data/syncthing/Pictures";
-        versioning = {
-          type = "simple";
-          params = { keep = "10"; };
+        Documents = {
+          devices = [ "okra" ];
+          path = "/data/syncthing/Documents";
+          versioning = {
+            type = "simple";
+            params = { keep = "10"; };
+          };
         };
-      };
-      music = {
-        path = "/data/syncthing/Music";
-        versioning = {
-          type = "simple";
-          params = { keep = "10"; };
+        Downloads = {
+          devices = [ "okra" ];
+          path = "/data/syncthing/Downloads";
+          versioning = {
+            type = "simple";
+            params = { keep = "10"; };
+          };
         };
-      };
-      videos = {
-        path = "/data/syncthing/Videos";
-        versioning = {
-          type = "simple";
-          params = { keep = "10"; };
+        Pictures = {
+          devices = [ "okra" ];
+          path = "/data/syncthing/Pictures";
+          versioning = {
+            type = "simple";
+            params = { keep = "10"; };
+          };
+        };
+        Music = {
+          devices = [ "okra" ];
+          path = "/data/syncthing/Music";
+          versioning = {
+            type = "simple";
+            params = { keep = "10"; };
+          };
+        };
+        Videos = {
+          devices = [ "okra" ];
+          path = "/data/syncthing/Videos";
+          versioning = {
+            type = "simple";
+            params = { keep = "10"; };
+          };
         };
       };
     };
-    declarative.devices = { };
   };
 
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 8384 ];
+  # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
