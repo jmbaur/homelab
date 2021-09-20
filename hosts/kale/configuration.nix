@@ -23,12 +23,14 @@
       overrideFolders = true;
       overrideDevices = true;
       devices = {
+        beetroot.id =
+          "HGJFKKG-54YJP2N-4NN73LJ-NDQIWHK-D32LJP2-R2ON3AY-D52452Y-FADBWQX";
         okra.id =
           "E6ANVH5-N55GABM-ND5DCYD-PAFN3UU-KOILXIQ-HKVIANN-R5K3HYF-O4BMWQT";
       };
       folders = {
         Desktop = {
-          devices = [ "okra" ];
+          devices = [ "beetroot" "okra" ];
           path = "/data/syncthing/Desktop";
           versioning = {
             type = "simple";
@@ -36,7 +38,7 @@
           };
         };
         Documents = {
-          devices = [ "okra" ];
+          devices = [ "beetroot" "okra" ];
           path = "/data/syncthing/Documents";
           versioning = {
             type = "simple";
@@ -44,7 +46,7 @@
           };
         };
         Downloads = {
-          devices = [ "okra" ];
+          devices = [ "beetroot" "okra" ];
           path = "/data/syncthing/Downloads";
           versioning = {
             type = "simple";
@@ -52,7 +54,7 @@
           };
         };
         Pictures = {
-          devices = [ "okra" ];
+          devices = [ "beetroot" "okra" ];
           path = "/data/syncthing/Pictures";
           versioning = {
             type = "simple";
@@ -60,7 +62,7 @@
           };
         };
         Music = {
-          devices = [ "okra" ];
+          devices = [ "beetroot" "okra" ];
           path = "/data/syncthing/Music";
           versioning = {
             type = "simple";
@@ -68,7 +70,7 @@
           };
         };
         Videos = {
-          devices = [ "okra" ];
+          devices = [ "beetroot" "okra" ];
           path = "/data/syncthing/Videos";
           versioning = {
             type = "simple";
