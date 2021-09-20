@@ -6,12 +6,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.supportedFilesystems = [ "zfs" ];
 
-  nix.trustedUsers = [ "nixops" ];
-  users.users.nixops = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" ];
-  };
-  security.sudo.wheelNeedsPassword = false;
+  users.extraUsers.root.openssh.authorizedKeys.keys = [ (import ../pubSshKey.nix) ];
 
   networking.hostName = "kale";
   networking.hostId = "9fd326e4";
