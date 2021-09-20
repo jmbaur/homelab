@@ -98,6 +98,7 @@ in
     pulseaudio
     renameutils
     ripgrep
+    rtorrent
     sd
     skopeo
     tailscale
