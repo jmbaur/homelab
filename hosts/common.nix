@@ -21,7 +21,15 @@ in {
   '';
 
   imports =
-    [ (import "${home-manager}/nixos") ./neovim.nix ./audio.nix ./proj.nix ];
+    [
+      (import "${home-manager}/nixos")
+      ../programs/audio.nix
+      ../programs/i3.nix
+      ../programs/i3status-rust.nix
+      ../programs/neovim/neovim.nix
+      ../programs/proj.nix
+      ../programs/weechat.nix
+    ];
 
   boot = {
     cleanTmpDir = true;
@@ -68,7 +76,6 @@ in {
     git
     gnupg
     gomuks
-    gotop
     grex
     gron
     htop
@@ -84,6 +91,7 @@ in {
     nnn
     nushell
     pciutils
+    picocom
     pinentry
     pinentry-curses
     procs
@@ -107,6 +115,7 @@ in {
     usbutils
     vim
     w3m
+    weechat
     wget
     xdg-user-dirs
     xsv
@@ -264,6 +273,7 @@ in {
   users.users.jared = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" "adbusers" ];
+    openssh.authorizedKeys.keys = [ (import ./pubSshKey.nix) ];
   };
 
   home-manager.users.jared = {
@@ -284,7 +294,6 @@ in {
       enable = true;
       enableVteIntegration = true;
       shellAliases = {
-        vim = "nvim";
         ls = "exa";
         ll = "exa -hl";
         la = "exa -ahl";
@@ -299,27 +308,84 @@ in {
         eval "$(${pkgs.zoxide}/bin/zoxide init bash)"
       '';
     };
-    home.file.".vimrc".text = ''
-      color ron
-      set noswapfile
-      set hidden
-    '';
-    home.file.".Xresources".text = ''
-      Xcursor.theme: Adwaita
-      XTerm.termName: xterm-256color
-      XTerm.vt100.locale: false
-      XTerm.vt100.utf8: true
-      XTerm.vt100.metaSendsEscape: true
-      XTerm.vt100.backarrowKey: false
-      XTerm.vt100.ttyModes: erase ^?
-      XTerm.vt100.bellIsUrgent: true
-      *.faceName: Hack:size=14:antialias=true
-    '';
+    programs.vim = {
+      enable = true;
+      settings = {
+        hidden = true;
+        expandtab = true;
+      };
+    };
+    xresources.properties = {
+      "*.faceName" = "Hack:size=14:antialias=true";
+      "XTerm.termName" = "xterm-256color";
+      "XTerm.vt100.backarrowKey" = false;
+      "XTerm.vt100.bellIsUrgent" = true;
+      "XTerm.vt100.locale" = false;
+      "XTerm.vt100.metaSendsEscape" = true;
+      "XTerm.vt100.ttyModes" = "erase ^?";
+      "XTerm.vt100.utf8" = true;
+      "Xcursor.theme" = "Adwaita";
+    };
     home.file.".icons/default/index.theme".text = ''
       [icon theme] 
       Inherits=Adwaita
     '';
-    home.file.".tmux.conf".source = ./tmux.conf;
+    programs.tmux = {
+      enable = true;
+      aggressiveResize = true;
+      baseIndex = 1;
+      clock24 = true;
+      disableConfirmationPrompt = true;
+      escapeTime = 10;
+      keyMode = "vi";
+      prefix = "C-s";
+      sensibleOnTop = false;
+      terminal = "tmux-256color";
+      plugins = with pkgs.tmuxPlugins; [
+        yank
+        resurrect
+        logging
+      ];
+      extraConfig = ''
+        set -g set-clipboard on
+        set -g renumber-windows on
+        set-option -g focus-events on
+        set-option -ga terminal-overrides ',xterm-256color:Tc'
+      '';
+    };
+    programs.git = {
+      enable = true;
+      aliases = {
+        st = "status --short --branch";
+        di = "diff";
+        br = "branch";
+        co = "checkout";
+        lg = "log --graph --decorate --pretty=oneline --abbrev-commit --all";
+      };
+      delta.enable = true;
+      ignores = [ "*~" "*.swp" ];
+      userEmail = "jaredbaur@fastmail.com";
+      userName = "Jared Baur";
+      extraConfig = {
+        pull = {
+          rebase = false;
+        };
+      };
+    };
+    programs.kitty = {
+      enable = true;
+      font = {
+        package = pkgs.hack-font;
+        name = "Hack";
+        size = 14;
+      };
+      settings = {
+        copy_on_select = true;
+        enable_audio_bell = false;
+        term = "xterm-256color";
+        update_check_interval = 0;
+      };
+    };
     gtk = {
       enable = true;
       gtk3.extraConfig = {
@@ -331,13 +397,6 @@ in {
       };
     };
     xdg = {
-      configFile."dunst/dunstrc".source = ./dunstrc;
-      configFile."kitty/kitty.conf".source = ./kitty.conf;
-      configFile."alacritty/alacritty.yml".source = ./alacritty.yml;
-      configFile."i3/config".source = ./i3config;
-      configFile."i3status-rust/config.toml".source = ./i3status.toml;
-      configFile."git/config".source = ./gitconfig;
-
       mime.enable = true;
       userDirs = {
         enable = true;
@@ -357,6 +416,14 @@ in {
           "x-scheme-handler/https" = [ "firefox.desktop" ];
           "x-scheme-handler/about" = [ "firefox.desktop" ];
           "x-scheme-handler/unknown" = [ "firefox.desktop" ];
+        };
+      };
+    };
+    services.dunst = {
+      enable = true;
+      settings = {
+        global = {
+          font = "DejaVu Sans Mono 10";
         };
       };
     };
