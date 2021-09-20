@@ -86,6 +86,7 @@ in {
     killall
     libsecret
     lm_sensors
+    mob
     neofetch
     nixops
     nnn
