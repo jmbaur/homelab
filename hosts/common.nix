@@ -273,6 +273,7 @@ in
   users.users.jared = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" "adbusers" ];
+    openssh.authorizedKeys.keys = [ (import ./pubSshKey.nix) ];
   };
 
   home-manager.users.jared = {
