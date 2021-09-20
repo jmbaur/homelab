@@ -169,6 +169,7 @@ in {
 
     # unfree
     google-chrome
+    postman
     slack
     spotify
     vscode-fhs

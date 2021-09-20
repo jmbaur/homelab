@@ -5,15 +5,32 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  # Networking
+  networking.hostName = "kale";
+  networking.interfaces.eno1.useDHCP = true;
+  networking.interfaces.eno2.useDHCP = true;
+  networking.firewall.allowedTCPPorts = [ 2049 ];
+  # networking.firewall.allowedUDPPorts = [ ... ];
+
+  # NFS
+  fileSystems."/srv/nfs/kodi" = {
+    device = "/data/kodi";
+    options = [ "bind" ];
+  };
+  services.nfs.server = {
+    enable = true;
+    exports = ''
+      /srv/nfs       kodi.lan(rw,fsid=0,no_subtree_check)
+      /srv/nfs/kodi  kodi.lan(rw,nohide,insecure,no_subtree_check)
+    '';
+  };
+
+  # SSH
+  services.openssh.enable = true;
   users.extraUsers.root.openssh.authorizedKeys.keys =
     [ (import ../pubSshKey.nix) ];
 
-  networking.hostName = "kale";
-
-  networking.interfaces.eno1.useDHCP = true;
-  networking.interfaces.eno2.useDHCP = true;
-
-  services.openssh.enable = true;
+  # Syncthing
   services.syncthing = {
     enable = true;
     configDir = "/data/syncthing/.config/syncthing";
@@ -80,12 +97,6 @@
       };
     };
   };
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
