@@ -14,8 +14,7 @@ let
     runVend = true;
   };
   home-manager = import ./home-manager.nix { ref = "release-21.05"; };
-in
-{
+in {
   nix.extraOptions = ''
     keep-outputs = true
     keep-derivations = true
@@ -25,8 +24,9 @@ in
     [ (import "${home-manager}/nixos") ./neovim.nix ./audio.nix ./proj.nix ];
 
   boot = {
-    kernelPackages = pkgs.linuxPackages_5_13;
     cleanTmpDir = true;
+    kernelPackages = pkgs.linuxPackages_5_13;
+    tmpOnTmpfs = true;
   };
 
   time.timeZone = "America/Los_Angeles";
@@ -224,7 +224,7 @@ in
     media-session.config.bluez-monitor.rules = [
       {
         # Matches all cards
-        matches = [ { "device.name" = "~bluez_card.*"; } ];
+        matches = [{ "device.name" = "~bluez_card.*"; }];
         actions = {
           "update-props" = {
             "bluez5.reconnect-profiles" = [ "hfp_hf" "hsp_hs" "a2dp_sink" ];
