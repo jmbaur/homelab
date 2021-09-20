@@ -18,15 +18,6 @@ in {
         { class = "^MuPDF$"; }
         { class = "^zoom$"; }
       ];
-      bars = [{
-        statusCommand =
-          "${pkgs.i3status-rust}/bin/i3status-rs ~/.config/i3status-rust/config-okra.toml";
-        position = "top";
-        fonts = {
-          names = [ "DejaVu Sans Mono" ];
-          size = 10.0;
-        };
-      }];
       fonts = {
         names = [ "DejaVu Sans Mono" ];
         size = 10.0;

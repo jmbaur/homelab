@@ -3,8 +3,8 @@
 let
   nixos-hardware =
     builtins.fetchGit { url = "https://github.com/NixOS/nixos-hardware.git"; };
-in
-{
+  home-manager = import ./home-manager.nix { ref = "release-21.05"; };
+in {
   imports = [
     ./hardware-configuration.nix
     "${nixos-hardware}/lenovo/thinkpad"
@@ -38,6 +38,16 @@ in
   };
 
   environment.systemPackages = with pkgs; [ brightnessctl geteltorito ];
+
+  home-manager.users.jared.xsession.windowManager.i3.config.bars = [{
+    statusCommand =
+      "${pkgs.i3status-rust}/bin/i3status-rs ~/.config/i3status-rust/config-beetroot.toml";
+    position = "top";
+    fonts = {
+      names = [ "DejaVu Sans Mono" ];
+      size = 10.0;
+    };
+  }];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

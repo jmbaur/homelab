@@ -1,6 +1,7 @@
 { config, pkgs, ... }:
 
-{
+let home-manager = import ./home-manager.nix { ref = "release-21.05"; };
+in {
   imports = [ ./hardware-configuration.nix ../common.nix ];
 
   boot.loader.systemd-boot.enable = true;
@@ -14,6 +15,16 @@
   services.udev.extraRules = ''KERNEL=="i2c-[0-9]*", GROUP+="users"'';
   services.openssh.enable = true;
   services.xserver.enable = true;
+
+  home-manager.users.jared.xsession.windowManager.i3.config.bars = [{
+    statusCommand =
+      "${pkgs.i3status-rust}/bin/i3status-rs ~/.config/i3status-rust/config-okra.toml";
+    position = "top";
+    fonts = {
+      names = [ "DejaVu Sans Mono" ];
+      size = 10.0;
+    };
+  }];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
