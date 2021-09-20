@@ -24,12 +24,12 @@ in
   imports =
     [
       (import "${home-manager}/nixos")
-      ../programs/neovim/neovim.nix
-      ../weechat.nix
       ../programs/audio.nix
-      ..programs/proj.nix
       ../programs/i3.nix
       ../programs/i3status-rust.nix
+      ../programs/neovim/neovim.nix
+      ../programs/proj.nix
+      ../programs/weechat.nix
     ];
 
   boot = {
