@@ -20,8 +20,8 @@
   services.nfs.server = {
     enable = true;
     exports = ''
-      /srv/nfs       rhubarb.lan(rw,fsid=0,no_subtree_check)
-      /srv/nfs/kodi  rhubarb.lan(rw,nohide,insecure,no_subtree_check)
+      /srv/nfs       rhubarb.lan(rw,sync,crossmnt,fsid=0)
+      /srv/nfs/kodi  rhubarb.lan(rw,all_squash,insecure)
     '';
   };
 
