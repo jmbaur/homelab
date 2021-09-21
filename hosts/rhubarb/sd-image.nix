@@ -3,4 +3,5 @@
   users.extraUsers.root.openssh.authorizedKeys.keys =
     [ (import ../pubSshKey.nix) ];
   environment.etc."nixos/configuration.nix".source = ./configuration.nix;
+  environment.systemPackage = [ pkgs.raspberrypi-eeprom ];
 }
