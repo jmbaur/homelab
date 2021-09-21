@@ -20,18 +20,18 @@ in {
     keep-derivations = true
   '';
 
-  imports =
-    [
-      (import "${home-manager}/nixos")
-      ../programs/audio.nix
-      ../programs/i3.nix
-      ../programs/i3status-rust.nix
-      ../programs/neovim/neovim.nix
-      ../programs/proj.nix
-      ../programs/weechat.nix
-    ];
+  imports = [
+    (import "${home-manager}/nixos")
+    ../programs/audio.nix
+    ../programs/i3.nix
+    ../programs/i3status-rust.nix
+    ../programs/neovim/neovim.nix
+    ../programs/proj.nix
+    ../programs/weechat.nix
+  ];
 
   boot = {
+    binfmt.emulatedSystems = [ "aarch64-linux" ];
     cleanTmpDir = true;
     kernelPackages = pkgs.linuxPackages_5_13;
     tmpOnTmpfs = true;
@@ -84,6 +84,7 @@ in {
     jq
     keybase
     killall
+    libnotify
     libsecret
     lm_sensors
     mob
@@ -125,7 +126,6 @@ in {
     yubikey-personalization
     zip
     zoxide
-
     # programming utils
     clang
     go
@@ -343,11 +343,7 @@ in {
       prefix = "C-s";
       sensibleOnTop = false;
       terminal = "tmux-256color";
-      plugins = with pkgs.tmuxPlugins; [
-        yank
-        resurrect
-        logging
-      ];
+      plugins = with pkgs.tmuxPlugins; [ yank resurrect logging ];
       extraConfig = ''
         set -g set-clipboard on
         set -g renumber-windows on
@@ -368,11 +364,7 @@ in {
       ignores = [ "*~" "*.swp" ];
       userEmail = "jaredbaur@fastmail.com";
       userName = "Jared Baur";
-      extraConfig = {
-        pull = {
-          rebase = false;
-        };
-      };
+      extraConfig = { pull = { rebase = false; }; };
     };
     programs.kitty = {
       enable = true;
@@ -426,6 +418,40 @@ in {
       settings = {
         global = {
           font = "DejaVu Sans Mono 10";
+          geometry = "300x5-30+20";
+          notification_height = 0;
+          separator_height = 2;
+          padding = 8;
+          horizontal_padding = 8;
+          text_icon_padding = 0;
+          frame_width = 3;
+          frame_color = "#aaaaaa";
+          separator_color = "frame";
+          sort = "yes";
+          line_height = 0;
+          markup = "full";
+          format = ''
+            <b>%s</b>
+            %b'';
+          alignment = "left";
+          vertical_alignment = "center";
+          icon_position = "left";
+        };
+        urgency_low = {
+          background = "#222222";
+          foreground = "#888888";
+          timeout = 10;
+        };
+        urgency_normal = {
+          background = "#285577";
+          foreground = "#ffffff";
+          timeout = 10;
+        };
+        urgency_critical = {
+          background = "#900000";
+          foreground = "#ffffff";
+          frame_color = "#ff0000";
+          timeout = 0;
         };
       };
     };
