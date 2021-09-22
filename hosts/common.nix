@@ -458,8 +458,8 @@ in {
           show_indicators = "yes";
           min_icon_size = 0;
           max_icon_size = 32;
-          icon_path =
-            "${pkgs.gnome.adwaita-icon-theme}/share/icons/Adwaita/16x16/status/:${pkgs.gnome.adwaita-icon-theme}/share/icons/Adwaita/16x16/devices/";
+          # icon_path =
+          #   "${pkgs.gnome.adwaita-icon-theme}/share/icons/Adwaita/16x16/status/:${pkgs.gnome.adwaita-icon-theme}/share/icons/Adwaita/16x16/devices/";
           sticky_history = "yes";
           history_length = 20;
           dmenu =
