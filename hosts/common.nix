@@ -62,6 +62,7 @@ in {
     bc
     bind
     buildah
+    cmus
     curl
     ddcutil
     delta
@@ -126,6 +127,7 @@ in {
     yubikey-personalization
     zip
     zoxide
+
     # programming utils
     clang
     go
