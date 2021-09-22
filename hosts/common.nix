@@ -343,7 +343,7 @@ in {
       prefix = "C-s";
       sensibleOnTop = false;
       terminal = "tmux-256color";
-      plugins = with pkgs.tmuxPlugins; [ yank resurrect logging ];
+      plugins = with pkgs.tmuxPlugins; [ logging resurrect yank ];
       extraConfig = ''
         set -g set-clipboard on
         set -g renumber-windows on
@@ -436,7 +436,47 @@ in {
           alignment = "left";
           vertical_alignment = "center";
           icon_position = "left";
+          monitor = 0;
+          follow = "mouse";
+          progress_bar = true;
+          progress_bar_height = 10;
+          progress_bar_frame_width = 1;
+          progress_bar_min_width = 150;
+          progress_bar_max_width = 300;
+          indicate_hidden = "yes";
+          shrink = "no";
+          transparency = 0;
+          idle_threshold = 120;
+          show_age_threshold = 60;
+          word_wrap = "yes";
+          ellipsize = "middle";
+          ignore_newline = "no";
+          stack_duplicates = true;
+          hide_duplicate_count = false;
+          show_indicators = "yes";
+          min_icon_size = 0;
+          max_icon_size = 32;
+          icon_path =
+            "${pkgs.gnome.adwaita-icon-theme}/share/icons/Adwaita/16x16/status/:${pkgs.gnome.adwaita-icon-theme}/share/icons/Adwaita/16x16/devices/";
+          sticky_history = "yes";
+          history_length = 20;
+          dmenu =
+            ''${pkgs.dmenu}/bin/dmenu -fn "DejaVu Sans Mono:10" -p dunst:'';
+          browser = "${pkgs.firefox}/bin/firefox -new-tab";
+          always_run_script = true;
+          title = "Dunst";
+          class = "Dunst";
+          startup_notification = false;
+          verbosity = "mesg";
+          corner_radius = 0;
+          ignore_dbusclose = false;
+          force_xwayland = false;
+          force_xinerama = false;
+          mouse_left_click = "close_current";
+          mouse_middle_click = "do_action, close_current";
+          mouse_right_click = "close_all";
         };
+        experimental = { per_monitor_dpi = false; };
         urgency_low = {
           background = "#222222";
           foreground = "#888888";

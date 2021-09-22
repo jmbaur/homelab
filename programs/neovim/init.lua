@@ -22,6 +22,7 @@ require'packer'.startup(function(use)
     use 'tpope/vim-fugitive'
     use 'tpope/vim-rsi'
     use 'tpope/vim-surround'
+    use 'tpope/vim-repeat'
     -- neovim specific plugins
     use {
         'blackCauldron7/surround.nvim',
