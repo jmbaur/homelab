@@ -7,10 +7,7 @@ let
 in {
   imports = [
     ./hardware-configuration.nix
-    "${nixos-hardware}/lenovo/thinkpad"
-    "${nixos-hardware}/common/cpu/intel"
-    "${nixos-hardware}/common/gpu/nvidia.nix"
-    "${nixos-hardware}/common/pc/laptop/acpi_call.nix"
+    "${nixos-hardware}/lenovo/thinkpad/t495"
     ../common.nix
   ];
 
