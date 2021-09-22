@@ -24,15 +24,9 @@ in {
       touchpad.naturalScrolling = true;
       touchpad.disableWhileTyping = true;
     };
-    videoDrivers = [ "modesetting" "nvidia" ];
   };
 
   hardware.bluetooth.enable = true;
-  hardware.nvidia.prime = {
-    offload.enable = true;
-    intelBusId = "PCI:00:02:0";
-    nvidiaBusId = "PCI:02:00:0";
-  };
 
   environment.systemPackages = with pkgs; [ brightnessctl geteltorito ];
 
