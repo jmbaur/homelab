@@ -14,6 +14,14 @@ require'packer'.startup(function(use)
     use 'wbthomason/packer.nvim'
     -- colorscheme
     use 'tjdevries/colorbuddy.nvim'
+    use {
+        'overcache/NeoSolarized',
+        config = function()
+            vim.g.neosolarized_contrast = "high"
+            vim.cmd [[colorscheme NeoSolarized]]
+            vim.cmd [[hi Normal guibg=none]]
+        end
+    }
     -- language specific plugins
     use 'neovimhaskell/haskell-vim'
     use 'LnL7/vim-nix'
@@ -68,7 +76,7 @@ end)
 vim.g.mapleader = ','
 vim.o.clipboard = 'unnamedplus'
 vim.o.colorcolumn = '80'
-vim.o.cursorline = true
+vim.o.cursorline = false
 vim.o.expandtab = true
 vim.o.hidden = true
 vim.o.ignorecase = true
@@ -80,6 +88,8 @@ vim.o.showmatch = true
 vim.o.sidescrolloff = 5
 vim.o.smartcase = true
 vim.o.softtabstop = 2
+vim.o.splitbelow = true
+vim.o.splitright = true
 vim.o.tabstop = 2
 vim.o.termguicolors = true
 vim.o.wrap = false
@@ -149,10 +159,13 @@ for _, lsp in ipairs(servers) do
 end
 
 function org_imports(wait_ms)
+    vim.lsp.buf.formatting()
+
     local params = vim.lsp.util.make_range_params()
     params.context = {only = {"source.organizeImports"}}
     local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction",
                                             params, wait_ms)
+
     for _, res in pairs(result or {}) do
         for _, r in pairs(res.result or {}) do
             if r.edit then
@@ -162,7 +175,6 @@ function org_imports(wait_ms)
             end
         end
     end
-    vim.lsp.buf.formatting()
 end
 
 vim.api.nvim_command("au BufWritePre *.go lua org_imports(1000)")
@@ -191,53 +203,3 @@ vim.cmd [[nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()
 vim.cmd [[nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>]]
 vim.cmd [[nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>]]
 vim.cmd [[nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>]]
-
--- colorbuddy
-vim.cmd [[color desert]]
-local Color, colors, Group, groups, styles = require'colorbuddy'.setup {}
-
--- black
-Color.new('color0', '#000000')
-Color.new('color8', '#767676')
--- red
-Color.new('color1', '#cc0403')
-Color.new('color9', '#f2201f')
--- green
-Color.new('color2', '#19cb00')
-Color.new('color10', '#23fd00')
--- yellow
-Color.new('color3', '#cecb00')
-Color.new('color11', '#fffd00')
--- blue
-Color.new('color4', '#0d73cc')
-Color.new('color12', '#1a8fff')
--- magenta
-Color.new('color5', '#cb1ed1')
-Color.new('color13', '#fd28ff')
--- cyan
-Color.new('color6', '#0dcdcd')
-Color.new('color14', '#14ffff')
--- white
-Color.new('color7', '#dddddd')
-Color.new('color15', '#ffffff')
-
-Group.new('ColorColumn', nil, colors.color0:light(), nil)
-Group.new('Comment', colors.color8:light(), nil, styles.italic)
-Group.new('CursorLine', nil, nil, nil)
-Group.new('CursorLineNr', colors.color7, nil, styles.bold)
-Group.new('Error', nil, colors.color1, styles.bold)
-Group.new('ErrorMsg', nil, colors.color1, styles.bold)
-Group.new('LineNr', colors.color8:dark(), nil, nil)
-Group.new('NonText', colors.color8:dark(), nil, nil)
-Group.new('Normal', nil, colors.color0, nil)
-Group.new('Pmenu', nil, colors.color8, nil)
-Group.new('PmenuSbar', nil, colors.color13, styles.bold)
-Group.new('PmenuSel', nil, colors.color0:light(), nil)
-Group.new('PmenuThumb', nil, nil, nil)
-Group.new('Search', colors.color0, colors.color11:dark(), nil)
-Group.new('SignColumn', nil, colors.color0, nil)
-Group.new('StatusLine', colors.color0, colors.color7:dark(), nil)
-Group.new('StatusLineNC', colors.color7, colors.color0:light(), nil)
-Group.new('TODO', colors.color0, colors.color13:light(), nil)
-Group.new('VertSplit', colors.color8:dark(), colors.color0, nil)
-Group.new('Visual', nil, colors.color8:dark(), nil)

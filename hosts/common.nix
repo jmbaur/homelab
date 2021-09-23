@@ -13,6 +13,7 @@ let
     vendorSha256 = "11q0gy3wfjaqyfj015yw3wfz2j1bsq6gchjhjs6fxfjmb77ikwjb";
     runVend = true;
   };
+  kitty-themes = builtins.fetchGit "https://github.com/dexpota/kitty-themes";
   home-manager = import ./home-manager.nix { ref = "release-21.05"; };
 in {
   nix.extraOptions = ''
@@ -362,11 +363,18 @@ in {
         co = "checkout";
         lg = "log --graph --decorate --pretty=oneline --abbrev-commit --all";
       };
-      delta.enable = true;
+      delta = {
+        enable = true;
+        options = { syntax-theme = "Solarized (dark)"; };
+      };
       ignores = [ "*~" "*.swp" ];
       userEmail = "jaredbaur@fastmail.com";
       userName = "Jared Baur";
       extraConfig = { pull = { rebase = false; }; };
+    };
+    programs.bat = {
+      enable = true;
+      config = { theme = "Solarized (dark)"; };
     };
     programs.kitty = {
       enable = true;
@@ -381,6 +389,9 @@ in {
         term = "xterm-256color";
         update_check_interval = 0;
       };
+      extraConfig = ''
+        include ${kitty-themes}/themes/Solarized_Dark_Higher_Contrast.conf
+      '';
     };
     gtk = {
       enable = true;
