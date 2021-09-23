@@ -15,14 +15,16 @@ require'packer'.startup(function(use)
     -- colorscheme
     use {'tjdevries/colorbuddy.nvim', config = colorbuddy_setup}
     -- language specific plugins
-    use 'neovimhaskell/haskell-vim'
     use 'LnL7/vim-nix'
     use 'leafgarland/typescript-vim'
+    use 'neovimhaskell/haskell-vim'
     -- tpope
     use 'tpope/vim-fugitive'
+    use 'tpope/vim-repeat'
     use 'tpope/vim-rsi'
     use 'tpope/vim-surround'
-    use 'tpope/vim-repeat'
+    -- misc
+    use 'ntpeters/vim-better-whitespace'
     -- neovim specific plugins
     use {
         'blackCauldron7/surround.nvim',
