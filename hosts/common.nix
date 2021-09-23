@@ -365,7 +365,9 @@ in {
       };
       delta = {
         enable = true;
-        options = { syntax-theme = "Solarized (dark)"; };
+        options = {
+          # syntax-theme = "Monokai Extended";
+        };
       };
       ignores = [ "*~" "*.swp" ];
       userEmail = "jaredbaur@fastmail.com";
@@ -374,7 +376,9 @@ in {
     };
     programs.bat = {
       enable = true;
-      config = { theme = "Solarized (dark)"; };
+      config = {
+        # theme = "Monokai Extended";
+      };
     };
     programs.kitty = {
       enable = true;
@@ -390,7 +394,7 @@ in {
         update_check_interval = 0;
       };
       extraConfig = ''
-        include ${kitty-themes}/themes/Solarized_Dark_Higher_Contrast.conf
+        include ${kitty-themes}/themes/Pro.conf
       '';
     };
     gtk = {
