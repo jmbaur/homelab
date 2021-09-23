@@ -13,7 +13,7 @@ require'packer'.startup(function(use)
     -- let packer manage itself
     use 'wbthomason/packer.nvim'
     -- colorscheme
-    use {'tjdevries/colorbuddy.nvim', config = colorbuddy_setup}
+    use 'tjdevries/colorbuddy.nvim'
     -- language specific plugins
     use 'LnL7/vim-nix'
     use 'leafgarland/typescript-vim'
@@ -90,15 +90,7 @@ vim.o.wrap = false
 
 -- LSP
 local lspconfig = require 'lspconfig'
-local function organize_imports()
-    local params = {
-        command = '_typescript.organizeImports',
-        arguments = {vim.api.nvim_buf_get_name(0)},
-        title = ''
-    }
-    vim.lsp.buf.execute_command(params)
-end
-local on_attach = function(client, bufnr)
+local function common_on_attach()
     local function buf_set_keymap(...)
         vim.api.nvim_buf_set_keymap(bufnr, ...)
     end
@@ -144,15 +136,15 @@ local on_attach = function(client, bufnr)
     buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>',
                    opts)
 end
-local servers = {'gopls', 'bashls', 'yamlls', 'rnix', 'hls', 'pyright'}
-for _, lsp in ipairs(servers) do
+local basic_servers = {'bashls', 'yamlls', 'rnix', 'hls', 'pyright'}
+for _, lsp in ipairs(basic_servers) do
     lspconfig[lsp].setup {
-        on_attach = on_attach,
+        on_attach = common_on_attach,
         flags = {debounce_text_changes = 150}
     }
 end
 
-function org_imports(wait_ms)
+function go_organize_imports(wait_ms)
     vim.lsp.buf.formatting()
 
     local params = vim.lsp.util.make_range_params()
@@ -170,15 +162,34 @@ function org_imports(wait_ms)
         end
     end
 end
+lspconfig.gopls.setup {
+    on_attach = function()
+        common_on_attach()
+        vim.api.nvim_command(
+            "autocmd BufWritePre *.go lua go_organize_imports(1000)")
+    end,
+    flags = {debounce_text_changes = 150}
+}
 
-vim.api.nvim_command("au BufWritePre *.go lua org_imports(1000)")
-
+local function ts_organize_imports()
+    local params = {
+        command = '_typescript.organizeImports',
+        arguments = {vim.api.nvim_buf_get_name(0)},
+        title = ''
+    }
+    vim.lsp.buf.execute_command(params)
+end
 lspconfig.tsserver.setup {
-    on_attach = on_attach,
+    on_attach = function()
+        common_on_attach()
+        vim.api.nvim_command(
+            "autocmd BufWritePre *.ts lua vim.lsp.buf.formatting_sync(nil, 1000)")
+    end,
     flags = {debounce_text_changes = 150},
     commands = {
-        OrganizeImports = {organize_imports, description = 'Organize Imports'}
+        OrganizeImports = {ts_organize_imports, description = 'Organize Imports'}
     }
+
 }
 
 -- snippets
@@ -199,52 +210,50 @@ vim.cmd [[nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr
 vim.cmd [[nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>]]
 
 -- colorbuddy
-function colorbuddy_setup()
-    local Color, colors, Group, groups, styles = require'colorbuddy'.setup {}
+local Color, colors, Group, groups, styles = require'colorbuddy'.setup {}
 
-    -- black
-    Color.new('color0', '#000000')
-    Color.new('color8', '#666666')
-    -- red
-    Color.new('color1', '#990000')
-    Color.new('color9', '#e50000')
-    -- green
-    Color.new('color2', '#00a600')
-    Color.new('color10', '#00d900')
-    -- yellow
-    Color.new('color3', '#999900')
-    Color.new('color11', '#e5e500')
-    -- blue
-    Color.new('color4', '#1f08db')
-    Color.new('color12', '#0000ff')
-    -- magenta
-    Color.new('color5', '#b200b2')
-    Color.new('color13', '#e500e5')
-    -- cyan
-    Color.new('color6', '#00a6b2')
-    Color.new('color14', '#00e5e5')
-    -- white
-    Color.new('color7', '#bfbfbf')
-    Color.new('color15', '#e5e5e5')
+-- black
+Color.new('color0', '#000000')
+Color.new('color8', '#666666')
+-- red
+Color.new('color1', '#990000')
+Color.new('color9', '#e50000')
+-- green
+Color.new('color2', '#00a600')
+Color.new('color10', '#00d900')
+-- yellow
+Color.new('color3', '#999900')
+Color.new('color11', '#e5e500')
+-- blue
+Color.new('color4', '#1f08db')
+Color.new('color12', '#0000ff')
+-- magenta
+Color.new('color5', '#b200b2')
+Color.new('color13', '#e500e5')
+-- cyan
+Color.new('color6', '#00a6b2')
+Color.new('color14', '#00e5e5')
+-- white
+Color.new('color7', '#bfbfbf')
+Color.new('color15', '#e5e5e5')
 
-    Group.new('ColorColumn', nil, colors.color0:light(), nil)
-    Group.new('Comment', colors.color8:light(), nil, nil)
-    Group.new('CursorLine', nil, colors.color0, styles.NONE)
-    Group.new('CursorLineNr', colors.color7, nil, styles.NONE)
-    Group.new('Error', nil, colors.color1, styles.bold)
-    Group.new('ErrorMsg', nil, colors.color1, styles.bold)
-    Group.new('LineNr', colors.color8:dark(), nil, nil)
-    Group.new('NonText', nil, nil, nil)
-    Group.new('Normal', nil, nil, nil)
-    Group.new('Pmenu', nil, colors.color8, nil)
-    Group.new('PmenuSbar', nil, colors.color13, styles.bold)
-    Group.new('PmenuSel', nil, colors.color0:light(), nil)
-    Group.new('PmenuThumb', nil, nil, nil)
-    Group.new('Search', colors.color0, colors.color11:dark(), nil)
-    Group.new('SignColumn', nil, colors.color0, nil)
-    Group.new('StatusLine', colors.color0, colors.color7:dark(), nil)
-    Group.new('StatusLineNC', colors.color7, colors.color0:light(), nil)
-    Group.new('TODO', colors.color0, colors.color13:light(), nil)
-    Group.new('VertSplit', colors.color8:dark(), colors.color0, nil)
-    Group.new('Visual', nil, colors.color8:dark(), nil)
-end
+Group.new('ColorColumn', nil, colors.color0:light(), nil)
+Group.new('Comment', colors.color8:light(), nil, nil)
+Group.new('CursorLine', nil, colors.color0, styles.NONE)
+Group.new('CursorLineNr', colors.color7, nil, styles.NONE)
+Group.new('Error', nil, colors.color1, styles.bold)
+Group.new('ErrorMsg', nil, colors.color1, styles.bold)
+Group.new('LineNr', colors.color8:dark(), nil, nil)
+Group.new('NonText', nil, nil, nil)
+Group.new('Normal', nil, nil, nil)
+Group.new('Pmenu', nil, colors.color8, nil)
+Group.new('PmenuSbar', nil, colors.color13, styles.bold)
+Group.new('PmenuSel', nil, colors.color0:light(), nil)
+Group.new('PmenuThumb', nil, nil, nil)
+Group.new('Search', colors.color0, colors.color11:dark(), nil)
+Group.new('SignColumn', nil, colors.color0, nil)
+Group.new('StatusLine', colors.color0, colors.color7:dark(), nil)
+Group.new('StatusLineNC', colors.color7, colors.color0:light(), nil)
+Group.new('TODO', colors.color0, colors.color13:light(), nil)
+Group.new('VertSplit', colors.color8:dark(), colors.color0, nil)
+Group.new('Visual', nil, colors.color8:dark(), nil)
