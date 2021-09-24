@@ -136,6 +136,10 @@ local function common_on_attach()
                    '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
     buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>',
                    opts)
+
+    -- format on save
+    vim.api.nvim_command(
+        "autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync(nil, 1000)")
 end
 local basic_servers = {'bashls', 'yamlls', 'rnix', 'hls', 'pyright', 'zls'}
 for _, lsp in ipairs(basic_servers) do
@@ -146,8 +150,6 @@ for _, lsp in ipairs(basic_servers) do
 end
 
 function go_organize_imports(wait_ms)
-    vim.lsp.buf.formatting()
-
     local params = vim.lsp.util.make_range_params()
     params.context = {only = {"source.organizeImports"}}
     local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction",
@@ -172,23 +174,20 @@ lspconfig.gopls.setup {
     flags = {debounce_text_changes = 150}
 }
 
-local function ts_organize_imports()
-    local params = {
-        command = '_typescript.organizeImports',
-        arguments = {vim.api.nvim_buf_get_name(0)},
-        title = ''
-    }
-    vim.lsp.buf.execute_command(params)
-end
 lspconfig.tsserver.setup {
-    on_attach = function()
-        common_on_attach()
-        vim.api.nvim_command(
-            "autocmd BufWritePre *.ts lua vim.lsp.buf.formatting_sync(nil, 1000)")
-    end,
+    on_attach = common_on_attach,
     flags = {debounce_text_changes = 150},
     commands = {
-        OrganizeImports = {ts_organize_imports, description = 'Organize Imports'}
+        OrganizeImports = {
+            function()
+                vim.lsp.buf.execute_command {
+                    command = '_typescript.organizeImports',
+                    arguments = {vim.api.nvim_buf_get_name(0)},
+                    title = ''
+                }
+            end,
+            description = 'Organize Imports'
+        }
     }
 
 }

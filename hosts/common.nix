@@ -25,7 +25,8 @@ let
     (builtins.fetchTarball "https://github.com/nixos/nixpkgs/tarball/master")
     # reuse the current configuration
     { config = config.nixpkgs.config; };
-in {
+in
+{
   nix.extraOptions = ''
     keep-outputs = true
     keep-derivations = true
@@ -63,11 +64,13 @@ in {
   };
   environment.systemPackages = with pkgs; [
     # self-packaged
+
     fdroidcl
     gosee
     sshf
 
     # cli
+
     acpi
     atop
     bat
@@ -103,6 +106,7 @@ in {
     mob
     neofetch
     nixops
+    nmap
     nnn
     nushell
     pciutils
@@ -141,12 +145,13 @@ in {
     zoxide
 
     # programming utils
+
     clang
     go
     gopls
     haskell-language-server
     luaformatter
-    nixfmt
+    nixpkgs-fmt
     nodePackages.bash-language-server
     nodePackages.typescript-language-server
     nodejs
@@ -157,10 +162,12 @@ in {
     shfmt
     stylish-haskell
     tree-sitter
+    unstable.zig
     unstable.zls
     yaml-language-server
 
     # gui
+
     alacritty
     bitwarden
     brave
@@ -183,6 +190,7 @@ in {
     zathura
 
     # unfree
+
     google-chrome
     postman
     slack
@@ -421,6 +429,9 @@ in {
     };
     xdg = {
       mime.enable = true;
+      configFile."zls.json".text = ''
+        {"enable_semantic_tokens":false}
+      '';
       userDirs = {
         enable = true;
         createDirectories = true;

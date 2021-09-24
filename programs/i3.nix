@@ -2,7 +2,8 @@
 let
   modifier = "Mod4";
   home-manager = import ./home-manager.nix { ref = "release-21.05"; };
-in {
+in
+{
   home-manager.users.jared.xsession.windowManager.i3 = {
     enable = true;
     config = {
@@ -10,7 +11,7 @@ in {
         "7" = [{ class = "^Firefox$"; }];
         "8" = [{ class = "^Signal$"; }];
         "9" = [{ class = "^Spotify$"; }];
-        "10" = [ { class = "^Slack$"; } { class = "^zoom$"; } ];
+        "10" = [{ class = "^Slack$"; } { class = "^zoom$"; }];
       };
       floating.criteria = [
         { class = "^Sxiv$"; }
@@ -74,6 +75,9 @@ in {
         "${modifier}+r" = ''mode "resize"'';
         "${modifier}+s" = "layout stacking";
         "${modifier}+space" = "focus mode_toggle";
+        "${modifier}+u" = ''
+          exec sshf -term kitty
+        '';
         "${modifier}+v" = "split v";
         "${modifier}+w" = "layout tabbed";
         "XF86AudioLowerVolume" =
