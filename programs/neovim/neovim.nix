@@ -1,4 +1,4 @@
-{ pkgs, configs, ... }:
+{ pkgs, config, ... }:
 let
   kitty-to-colorbuddy = pkgs.writeShellScriptBin "kitty-to-colorbuddy" ''
     grep ^color $1 | sed -r "s/(color[0-9]+).*(\#[a-z0-9]{6}$)/Color.new('\1', '\2')/"
@@ -11,6 +11,7 @@ in {
         "https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz";
     }))
   ];
+
   environment.systemPackages = [ kitty-to-colorbuddy pkgs.neovim-nightly ];
   home-manager.users.jared.programs.neovim = {
     enable = true;

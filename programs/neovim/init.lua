@@ -18,6 +18,7 @@ require'packer'.startup(function(use)
     use 'LnL7/vim-nix'
     use 'leafgarland/typescript-vim'
     use 'neovimhaskell/haskell-vim'
+    use 'ziglang/zig.vim'
     -- tpope
     use 'tpope/vim-fugitive'
     use 'tpope/vim-repeat'
@@ -136,7 +137,7 @@ local function common_on_attach()
     buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>',
                    opts)
 end
-local basic_servers = {'bashls', 'yamlls', 'rnix', 'hls', 'pyright'}
+local basic_servers = {'bashls', 'yamlls', 'rnix', 'hls', 'pyright', 'zls'}
 for _, lsp in ipairs(basic_servers) do
     lspconfig[lsp].setup {
         on_attach = common_on_attach,
