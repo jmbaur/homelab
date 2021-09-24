@@ -3,7 +3,7 @@
 let
   home-manager = import ../misc/home-manager.nix { ref = "release-21.05"; };
   kitty-themes = builtins.fetchTarball "https://github.com/dexpota/kitty-themes/tarball/master";
-  unstable = import ../misc/unstable.nix { config = config.nixpkgs.config; };
+
 in
 {
   nix.extraOptions = ''
@@ -14,8 +14,6 @@ in
   imports = [
     (import "${home-manager}/nixos")
     ../programs/audio.nix
-    ../programs/fdroidcl.nix
-    ../programs/gosee.nix
     ../programs/i3.nix
     ../programs/i3status-rust.nix
     ../programs/neovim/neovim.nix
@@ -45,138 +43,134 @@ in
     EDITOR = "vim";
     NNN_TRASH = "1";
   };
-  environment.systemPackages = with pkgs; [
+  environment.systemPackages = (
     # cli
-
-    acpi
-    atop
-    bat
-    bc
-    bind
-    buildah
-    cmus
-    curl
-    ddcutil
-    delta
-    dmidecode
-    dnsutils
-    dust
-    exa
-    fd
-    file
-    fzf
-    gh
-    git
-    gnupg
-    gomuks
-    gotop
-    grex
-    gron
-    htop
-    iperf3
-    iputils
-    jq
-    keybase
-    killall
-    libnotify
-    libsecret
-    lm_sensors
-    mob
-    neofetch
-    nixops
-    nmap
-    nnn
-    nushell
-    pciutils
-    picocom
-    pinentry
-    pinentry-curses
-    procs
-    pulseaudio
-    renameutils
-    ripgrep
-    rtorrent
-    sd
-    skopeo
-    tailscale
-    tcpdump
-    tealdeer
-    tig
-    tmux
-    tmux
-    tokei
-    traceroute
-    trash-cli
-    tree
-    unzip
-    usbutils
-    vim
-    w3m
-    weechat
-    wget
-    xdg-user-dirs
-    xsv
-    ydiff
-    yq
-    yubikey-personalization
-    zip
-    zoxide
-
-    # programming utils
-
-    clang
-    go
-    gopls
-    haskell-language-server
-    luaformatter
-    nixpkgs-fmt
-    nodePackages.bash-language-server
-    nodePackages.typescript-language-server
-    nodejs
-    pyright
-    python3
-    rnix-lsp
-    shellcheck
-    shfmt
-    stylish-haskell
-    sumneko-lua-language-server
-    tree-sitter
-    unstable.zig
-    unstable.zls
-    yaml-language-server
-
+    with pkgs; [
+      acpi
+      atop
+      bat
+      bc
+      bind
+      buildah
+      cmus
+      curl
+      ddcutil
+      delta
+      dmidecode
+      dnsutils
+      dust
+      exa
+      fd
+      file
+      fzf
+      gh
+      git
+      gnupg
+      gomuks
+      gotop
+      grex
+      gron
+      htop
+      iperf3
+      iputils
+      jq
+      keybase
+      killall
+      libnotify
+      libsecret
+      lm_sensors
+      mob
+      neofetch
+      nixops
+      nmap
+      nnn
+      nushell
+      pciutils
+      picocom
+      pinentry
+      pinentry-curses
+      procs
+      pulseaudio
+      renameutils
+      ripgrep
+      rtorrent
+      sd
+      skopeo
+      tailscale
+      tcpdump
+      tealdeer
+      tig
+      tmux
+      tmux
+      tokei
+      traceroute
+      trash-cli
+      tree
+      unzip
+      usbutils
+      vim
+      w3m
+      weechat
+      wget
+      xdg-user-dirs
+      xsv
+      ydiff
+      yq
+      yubikey-personalization
+      zip
+      zoxide
+    ]
+  ) ++ (
     # gui
-
-    alacritty
-    bitwarden
-    brave
-    chromium
-    dunst
-    element-desktop
-    firefox
-    freetube
-    gimp
-    gnome.adwaita-icon-theme
-    kitty
-    libreoffice
-    mpv
-    scrot
-    signal-desktop
-    sxiv
-    wireshark
-    xclip
-    xsel
-    zathura
-
+    with pkgs; [
+      alacritty
+      bitwarden
+      brave
+      chromium
+      dunst
+      element-desktop
+      firefox
+      freetube
+      gimp
+      gnome.adwaita-icon-theme
+      kitty
+      libreoffice
+      mpv
+      scrot
+      signal-desktop
+      sxiv
+      wireshark
+      xclip
+      xsel
+      zathura
+    ]
+  )
+  ++ (
     # unfree
-
-    google-chrome
-    postman
-    slack
-    spotify
-    vscode-fhs
-    zoom-us
-  ];
+    with pkgs; [
+      google-chrome
+      postman
+      slack
+      spotify
+      vscode-fhs
+      zoom-us
+    ]
+  )
+  ++ (
+    # self-packaged
+    [
+      (
+        pkgs.callPackage
+          ../programs/gosee.nix
+          { }
+      )
+      (
+        pkgs.callPackage
+          ../programs/fdroidcl.nix
+          { }
+      )
+    ]
+  );
 
   fonts.fonts = with pkgs; [
     dejavu_fonts

@@ -3,6 +3,8 @@ let
   kitty-to-colorbuddy = pkgs.writeShellScriptBin "kitty-to-colorbuddy" ''
     grep ^color $1 | sed -r "s/(color[0-9]+).*(\#[a-z0-9]{6}$)/Color.new('\1', '\2')/"
   '';
+  efm-langserver = pkgs.callPackage ../efm-ls.nix { };
+  unstable = import ../../misc/unstable.nix { config = config.nixpkgs.config; };
 in
 {
   nixpkgs.overlays = [
@@ -16,7 +18,37 @@ in
     )
   ];
 
-  environment.systemPackages = [ kitty-to-colorbuddy pkgs.neovim-nightly ];
+  environment.systemPackages = with pkgs; [
+    clang
+    efm-langserver
+    go
+    gopls
+    haskell-language-server
+    kitty-to-colorbuddy
+    luaformatter
+    neovim-nightly
+    nixpkgs-fmt
+    nodejs
+    pyright
+    python3
+    rnix-lsp
+    shellcheck
+    shfmt
+    stylish-haskell
+    sumneko-lua-language-server
+    tree-sitter
+    yaml-language-server
+  ] ++ (
+    with pkgs.nodePackages; [
+      bash-language-server
+      typescript-language-server
+    ]
+  ) ++ (
+    with unstable; [
+      zig
+      zls
+    ]
+  );
   home-manager.users.jared.programs.neovim = {
     enable = true;
     package = pkgs.neovim-nightly;
