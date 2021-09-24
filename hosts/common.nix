@@ -21,6 +21,7 @@ in
     ../programs/neovim/neovim.nix
     ../programs/proj.nix
     ../programs/rofi.nix
+    ../programs/ssh.nix
     ../programs/weechat.nix
   ];
 

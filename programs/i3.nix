@@ -1,7 +1,6 @@
 { config, pkgs, ... }:
 let
   modifier = "Mod4";
-  home-manager = import ../misc/home-manager.nix { ref = "release-21.05"; };
 in
 {
   home-manager.users.jared.xsession.windowManager.i3 = {

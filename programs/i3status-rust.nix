@@ -1,7 +1,4 @@
 { config, pkgs, ... }:
-let
-  home-manager = import ./home-manager.nix { ref = "release-21.05"; };
-in
 {
   home-manager.users.jared.programs.i3status-rust = {
     enable = true;

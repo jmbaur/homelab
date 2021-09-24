@@ -3,7 +3,6 @@ let
   kitty-to-colorbuddy = pkgs.writeShellScriptBin "kitty-to-colorbuddy" ''
     grep ^color $1 | sed -r "s/(color[0-9]+).*(\#[a-z0-9]{6}$)/Color.new('\1', '\2')/"
   '';
-  home-manager = import ../misc/home-manager.nix { ref = "release-21.05"; };
 in
 {
   nixpkgs.overlays = [
