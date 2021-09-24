@@ -17,6 +17,8 @@ in
 
   networking.hostName = "beetroot";
 
+  services.power-profiles-daemon.enable = true;
+
   services.xserver = {
     enable = true;
     libinput = {
@@ -31,15 +33,17 @@ in
 
   environment.systemPackages = with pkgs; [ brightnessctl geteltorito ];
 
-  home-manager.users.jared.xsession.windowManager.i3.config.bars = [{
-    statusCommand =
-      "${pkgs.i3status-rust}/bin/i3status-rs ~/.config/i3status-rust/config-beetroot.toml";
-    position = "top";
-    fonts = {
-      names = [ "DejaVu Sans Mono" ];
-      size = 10.0;
-    };
-  }];
+  home-manager.users.jared.xsession.windowManager.i3.config.bars = [
+    {
+      statusCommand =
+        "${pkgs.i3status-rust}/bin/i3status-rs ~/.config/i3status-rust/config-beetroot.toml";
+      position = "top";
+      fonts = {
+        names = [ "DejaVu Sans Mono" ];
+        size = 10.0;
+      };
+    }
+  ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
