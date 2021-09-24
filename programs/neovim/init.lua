@@ -13,7 +13,14 @@ require'packer'.startup(function(use)
     -- let packer manage itself
     use 'wbthomason/packer.nvim'
     -- colorscheme
-    use 'tjdevries/colorbuddy.nvim'
+    use {
+        "ellisonleao/gruvbox.nvim",
+        requires = {"rktjmp/lush.nvim"},
+        config = function()
+            vim.o.background = "dark" -- or "light" for light mode
+            vim.cmd([[colorscheme gruvbox]])
+        end
+    }
     -- language specific plugins
     use 'LnL7/vim-nix'
     use 'leafgarland/typescript-vim'
@@ -71,7 +78,7 @@ end)
 vim.g.mapleader = ','
 vim.o.clipboard = 'unnamedplus'
 vim.o.colorcolumn = '80'
-vim.o.cursorline = true
+vim.o.cursorline = false
 vim.o.expandtab = true
 vim.o.hidden = true
 vim.o.ignorecase = true
@@ -149,7 +156,7 @@ for _, lsp in ipairs(basic_servers) do
     }
 end
 
-function go_organize_imports(wait_ms)
+function Go_organize_imports(wait_ms)
     local params = vim.lsp.util.make_range_params()
     params.context = {only = {"source.organizeImports"}}
     local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction",
@@ -169,7 +176,7 @@ lspconfig.gopls.setup {
     on_attach = function()
         common_on_attach()
         vim.api.nvim_command(
-            "autocmd BufWritePre *.go lua go_organize_imports(1000)")
+            "autocmd BufWritePre *.go lua Go_organize_imports(1000)")
     end,
     flags = {debounce_text_changes = 150}
 }
@@ -192,6 +199,18 @@ lspconfig.tsserver.setup {
 
 }
 
+local f = io.popen("readlink $(which lua-language-server)", "r")
+local sumneko_bin = string.gsub(f:read("*a"), "%s+", "")
+local sumneko_main = sumneko_bin .. "/../../extras/main.lua"
+f:close()
+
+lspconfig.sumneko_lua.setup {
+    on_attach = common_on_attach,
+    cmd = { sumneko_bin, "-E", sumneko_main },
+    settings = {Lua = {diagnostics = {globals = {'vim', 'bufnr'}}}},
+    telemetry = {enable = false}
+}
+
 -- snippets
 require'snippets'.snippets = {
     _global = {
@@ -208,52 +227,3 @@ vim.cmd [[nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()
 vim.cmd [[nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>]]
 vim.cmd [[nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>]]
 vim.cmd [[nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>]]
-
--- colorbuddy
-local Color, colors, Group, groups, styles = require'colorbuddy'.setup {}
-
--- black
-Color.new('color0', '#000000')
-Color.new('color8', '#666666')
--- red
-Color.new('color1', '#990000')
-Color.new('color9', '#e50000')
--- green
-Color.new('color2', '#00a600')
-Color.new('color10', '#00d900')
--- yellow
-Color.new('color3', '#999900')
-Color.new('color11', '#e5e500')
--- blue
-Color.new('color4', '#1f08db')
-Color.new('color12', '#0000ff')
--- magenta
-Color.new('color5', '#b200b2')
-Color.new('color13', '#e500e5')
--- cyan
-Color.new('color6', '#00a6b2')
-Color.new('color14', '#00e5e5')
--- white
-Color.new('color7', '#bfbfbf')
-Color.new('color15', '#e5e5e5')
-
-Group.new('ColorColumn', nil, colors.color0:light(), nil)
-Group.new('Comment', colors.color8:light(), nil, nil)
-Group.new('CursorLine', nil, colors.color0, styles.NONE)
-Group.new('CursorLineNr', colors.color7, nil, styles.NONE)
-Group.new('Error', nil, colors.color1, styles.bold)
-Group.new('ErrorMsg', nil, colors.color1, styles.bold)
-Group.new('LineNr', colors.color8:dark(), nil, nil)
-Group.new('NonText', nil, nil, nil)
-Group.new('Normal', nil, nil, nil)
-Group.new('Pmenu', nil, colors.color8, nil)
-Group.new('PmenuSbar', nil, colors.color13, styles.bold)
-Group.new('PmenuSel', nil, colors.color0:light(), nil)
-Group.new('PmenuThumb', nil, nil, nil)
-Group.new('Search', colors.color0, colors.color11:dark(), nil)
-Group.new('SignColumn', nil, colors.color0, nil)
-Group.new('StatusLine', colors.color0, colors.color7:dark(), nil)
-Group.new('StatusLineNC', colors.color7, colors.color0:light(), nil)
-Group.new('TODO', colors.color0, colors.color13:light(), nil)
-Group.new('VertSplit', colors.color8:dark(), colors.color0, nil)
-Group.new('Visual', nil, colors.color8:dark(), nil)

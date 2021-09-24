@@ -1,7 +1,8 @@
 { config, pkgs, ... }:
 
-let home-manager = import ./home-manager.nix { ref = "release-21.05"; };
-in {
+let home-manager = import ../misc/home-manager.nix { ref = "release-21.05"; };
+in
+{
   imports = [ ./hardware-configuration.nix ../common.nix ];
 
   boot.loader.systemd-boot.enable = true;

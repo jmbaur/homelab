@@ -3,8 +3,9 @@
 let
   nixos-hardware =
     builtins.fetchGit { url = "https://github.com/NixOS/nixos-hardware.git"; };
-  home-manager = import ./home-manager.nix { ref = "release-21.05"; };
-in {
+  home-manager = import ../misc/home-manager.nix { ref = "release-21.05"; };
+in
+{
   imports = [
     ./hardware-configuration.nix
     "${nixos-hardware}/lenovo/thinkpad/t495"

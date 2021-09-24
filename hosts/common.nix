@@ -1,30 +1,9 @@
 { config, pkgs, ... }:
 
 let
-  gosee = pkgs.buildGoModule {
-    name = "gosee";
-    src = builtins.fetchGit { url = "https://github.com/jmbaur/gosee.git"; };
-    vendorSha256 = "07q9war08k1pqg5hz6pvc1pf1s9k70jgfwp7inxygh9p4k7lwnr1";
-    runVend = true;
-  };
-  sshf = pkgs.buildGoModule {
-    name = "sshf";
-    src = builtins.fetchGit { url = "https://github.com/jmbaur/sshf.git"; };
-    vendorSha256 = "0sjjj9z1dhilhpc8pq4154czrb79z9cm044jvn75kxcjv6v5l2m5";
-    runVend = true;
-  };
-  fdroidcl = pkgs.buildGoModule {
-    name = "fdroidcl";
-    src = builtins.fetchGit { url = "https://github.com/mvdan/fdroidcl.git"; };
-    vendorSha256 = "11q0gy3wfjaqyfj015yw3wfz2j1bsq6gchjhjs6fxfjmb77ikwjb";
-    runVend = true;
-  };
-  kitty-themes = builtins.fetchGit "https://github.com/dexpota/kitty-themes";
-  home-manager = import ./home-manager.nix { ref = "release-21.05"; };
-  unstable = import
-    (builtins.fetchTarball "https://github.com/nixos/nixpkgs/tarball/master")
-    # reuse the current configuration
-    { config = config.nixpkgs.config; };
+  home-manager = import ../misc/home-manager.nix { ref = "release-21.05"; };
+  kitty-themes = builtins.fetchTarball "https://github.com/dexpota/kitty-themes/tarball/master";
+  unstable = import ../misc/unstable.nix { config = config.nixpkgs.config; };
 in
 {
   nix.extraOptions = ''
@@ -35,10 +14,13 @@ in
   imports = [
     (import "${home-manager}/nixos")
     ../programs/audio.nix
+    ../programs/fdroidcl.nix
+    ../programs/gosee.nix
     ../programs/i3.nix
     ../programs/i3status-rust.nix
     ../programs/neovim/neovim.nix
     ../programs/proj.nix
+    ../programs/rofi.nix
     ../programs/weechat.nix
   ];
 
@@ -63,12 +45,6 @@ in
     NNN_TRASH = "1";
   };
   environment.systemPackages = with pkgs; [
-    # self-packaged
-
-    fdroidcl
-    gosee
-    sshf
-
     # cli
 
     acpi
@@ -92,6 +68,7 @@ in
     git
     gnupg
     gomuks
+    gotop
     grex
     gron
     htop
@@ -161,6 +138,7 @@ in
     shellcheck
     shfmt
     stylish-haskell
+    sumneko-lua-language-server
     tree-sitter
     unstable.zig
     unstable.zls
@@ -329,7 +307,6 @@ in
         export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
       '';
       bashrcExtra = ''
-        PS1="\W $ "
         eval "$(${pkgs.zoxide}/bin/zoxide init bash)"
       '';
     };
@@ -352,7 +329,7 @@ in
       "Xcursor.theme" = "Adwaita";
     };
     home.file.".icons/default/index.theme".text = ''
-      [icon theme] 
+      [icon theme]
       Inherits=Adwaita
     '';
     programs.tmux = {
@@ -365,7 +342,7 @@ in
       keyMode = "vi";
       prefix = "C-s";
       sensibleOnTop = false;
-      terminal = "tmux-256color";
+      terminal = "screen-256color";
       plugins = with pkgs.tmuxPlugins; [ logging resurrect yank ];
       extraConfig = ''
         set -g set-clipboard on
@@ -386,7 +363,7 @@ in
       delta = {
         enable = true;
         options = {
-          # syntax-theme = "Monokai Extended";
+          syntax-theme = "gruvbox-dark";
         };
       };
       ignores = [ "*~" "*.swp" ];
@@ -397,7 +374,7 @@ in
     programs.bat = {
       enable = true;
       config = {
-        # theme = "Monokai Extended";
+        theme = "gruvbox-dark";
       };
     };
     programs.kitty = {
@@ -414,7 +391,7 @@ in
         update_check_interval = 0;
       };
       extraConfig = ''
-        include ${kitty-themes}/themes/Pro.conf
+        include ${kitty-themes}/themes/gruvbox_dark.conf
       '';
     };
     gtk = {

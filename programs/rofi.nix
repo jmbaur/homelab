@@ -1,8 +1,7 @@
-{ config, pkgs, ... }: {
+{ pkgs, config, ... }: {
   home-manager.users.jared.programs.rofi = {
     enable = true;
-    font = "Hack 12";
-    # plugins = with pkgs; [ rofi-file-browser rofi-power-menu ];
+    font = "DejaVu Sans Mono 10";
     extraConfig = {
       modi = "drun,ssh,run";
       kb-primary-paste = "Control+V,Shift+Insert";

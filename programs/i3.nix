@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 let
   modifier = "Mod4";
-  home-manager = import ./home-manager.nix { ref = "release-21.05"; };
+  home-manager = import ../misc/home-manager.nix { ref = "release-21.05"; };
 in
 {
   home-manager.users.jared.xsession.windowManager.i3 = {
@@ -59,7 +59,7 @@ in
         "${modifier}+a" = "focus parent";
         "${modifier}+b" = "split h";
         "${modifier}+c" =
-          ''exec ${pkgs.clipmenu}/bin/clipmenu -fn "DejaVu Sans Mono:10"'';
+          ''exec CM_LAUNCHER=rofi ${pkgs.clipmenu}/bin/clipmenu -fn "DejaVu Sans Mono:10"'';
         "${modifier}+e" = "layout toggle split";
         "${modifier}+f" = "fullscreen toggle";
         "${modifier}+g" =
@@ -70,14 +70,10 @@ in
         "${modifier}+l" = "focus right";
         "${modifier}+m" = "exec i3-input -F 'mark %s' -l 1 -P 'Mark: '";
         "${modifier}+minus" = "scratchpad show";
-        "${modifier}+p" =
-          ''exec ${pkgs.dmenu}/bin/dmenu_run -fn "DejaVu Sans Mono:10" -l 10'';
-        "${modifier}+r" = ''mode "resize"'';
+        "${modifier}+p" = ''exec ${pkgs.rofi}/bin/rofi -show drun'';
+        "${modifier}+r" = "mode resize";
         "${modifier}+s" = "layout stacking";
         "${modifier}+space" = "focus mode_toggle";
-        "${modifier}+u" = ''
-          exec sshf -term kitty
-        '';
         "${modifier}+v" = "split v";
         "${modifier}+w" = "layout tabbed";
         "XF86AudioLowerVolume" =
@@ -91,6 +87,7 @@ in
         "XF86MonBrightnessDown" = "exec --no-startup-id brightnessctl set 10%-";
         "XF86MonBrightnessUp" = "exec --no-startup-id brightnessctl set +10%";
       };
+      modes = { resize = { j = "resize grow height 10 px or 10 ppt"; Escape = "mode default"; "${modifier}+r" = "mode default"; h = "resize shrink width 10 px or 10 ppt"; Return = "mode default"; l = "resize grow width 10 px or 10 ppt"; k = "resize shrink height 10 px or 10 ppt"; }; };
       modifier = modifier;
       workspaceAutoBackAndForth = true;
     };
