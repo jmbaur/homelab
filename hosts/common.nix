@@ -3,7 +3,7 @@
 let
   home-manager = import ../misc/home-manager.nix { ref = "release-21.05"; };
   kitty-themes = builtins.fetchTarball "https://github.com/dexpota/kitty-themes/tarball/master";
-  gosee = import (builtins.fetchGit { "url" = "https://github.com/jmbaur/gosee.git"; ref = "main"; });
+  gosee = import (builtins.fetchGit { "url" = "https://github.com/jmbaur/gosee.git"; ref = "1109d14614f1e2379df865ddd58e2a7d8ca85f80"; });
 in
 {
   nix.extraOptions = ''
