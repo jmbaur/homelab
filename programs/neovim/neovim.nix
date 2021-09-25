@@ -58,6 +58,9 @@ in
     vimdiffAlias = true;
     extraConfig = ''
       lua << EOF
+      -- Used in ./init.lua
+      Sumneko_bin = "${pkgs.sumneko-lua-language-server}/bin/lua-language-server"
+      Sumneko_main = "${pkgs.sumneko-lua-language-server}/extras/main.lua"
       ${builtins.readFile ./init.lua}
       EOF
     '';

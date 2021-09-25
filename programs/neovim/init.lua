@@ -197,20 +197,19 @@ lspconfig.efm.setup {
     }
 }
 
-local f = io.popen("readlink $(which lua-language-server)", "r")
-local sumneko_bin = string.gsub(f:read("*a"), "%s+", "")
-local sumneko_main = sumneko_bin .. "/../../extras/main.lua"
-f:close()
-
 lspconfig.sumneko_lua.setup {
     on_attach = function(client, bufnr)
         client.resolved_capabilities.document_formatting = false
         on_attach(client, bufnr)
     end,
-    cmd = {sumneko_bin, "-E", sumneko_main},
+    cmd = {Sumneko_bin, "-E", Sumneko_main},
     settings = {Lua = {diagnostics = {globals = {'vim'}}}},
     telemetry = {enable = false}
 }
+
+-- reassigned variables defined in ./neovim.nix so that the LSP is happy
+Sumneko_bin = ""
+Sumneko_main = ""
 
 -- snippets
 require'snippets'.snippets = {
