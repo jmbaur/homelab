@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-while read app 
-do
-  fdroidcl install $app
-done <<< "com.jonjomckay.fritter
+while read app; do
+	echo "installing $app"
+	fdroidcl install $app
+done <<<"com.jonjomckay.fritter
 com.tailscale.ipn
 com.wireguard.android
 de.danoeh.antennapod
@@ -15,5 +15,4 @@ org.mozilla.fennec_fdroid
 org.schabi.newpipe
 org.shadowice.flocke.andotp
 org.xbmc.kore
-se.leap.riseupvpn
-"
+se.leap.riseupvpn"
