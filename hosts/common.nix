@@ -3,7 +3,7 @@
 let
   home-manager = import ../misc/home-manager.nix { ref = "release-21.05"; };
   kitty-themes = builtins.fetchTarball "https://github.com/dexpota/kitty-themes/tarball/master";
-
+  gosee = import (builtins.fetchGit { "url" = "https://github.com/jmbaur/gosee.git"; ref = "main"; });
 in
 {
   nix.extraOptions = ''
@@ -160,9 +160,7 @@ in
     # self-packaged
     [
       (
-        pkgs.callPackage
-          ../programs/gosee.nix
-          { }
+        pkgs.callPackage gosee { }
       )
       (
         pkgs.callPackage
