@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 while read app; do
 	echo "installing $app"
 	fdroidcl install $app
