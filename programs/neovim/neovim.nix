@@ -22,6 +22,7 @@ in
     clang
     efm-langserver
     go
+    goimports
     gopls
     haskell-language-server
     kitty-to-colorbuddy
@@ -41,6 +42,7 @@ in
   ] ++ (
     with pkgs.nodePackages; [
       bash-language-server
+      prettier
       typescript-language-server
     ]
   ) ++ (

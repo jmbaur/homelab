@@ -98,9 +98,11 @@ vim.o.wrap = false
 
 -- LSP
 local lspconfig = require 'lspconfig'
-local function common_on_attach()
-    local function buf_set_keymap(...)
-        vim.api.nvim_buf_set_keymap(bufnr, ...)
+local function on_attach(_, bufnr)
+    local function lsp_nmap(mapping, cmd)
+        local opts = {noremap = true, silent = true}
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', mapping,
+                                    '<cmd>' .. cmd .. '<CR>', opts)
     end
     local function buf_set_option(...)
         vim.api.nvim_buf_set_option(bufnr, ...)
@@ -109,80 +111,51 @@ local function common_on_attach()
     -- Enable completion triggered by <c-x><c-o>
     buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
-    -- Mappings.
-    local opts = {noremap = true, silent = true}
-
     -- See `:help vim.lsp.*` for documentation on any of the below functions
-    buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-    buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-    buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-    buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-    buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>',
-                   opts)
-    buf_set_keymap('n', '<space>wa',
-                   '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-    buf_set_keymap('n', '<space>wr',
-                   '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-    buf_set_keymap('n', '<space>wl',
-                   '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>',
-                   opts)
-    buf_set_keymap('n', '<space>D',
-                   '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-    buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-    buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>',
-                   opts)
-    buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-    buf_set_keymap('n', '<space>e',
-                   '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>',
-                   opts)
-    buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>',
-                   opts)
-    buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>',
-                   opts)
-    buf_set_keymap('n', '<space>q',
-                   '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-    buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>',
-                   opts)
+    lsp_nmap('<C-k>', 'lua vim.lsp.buf.signature_help()')
+    lsp_nmap('<leader>D', 'lua vim.lsp.buf.type_definition()')
+    lsp_nmap('<leader>ca', 'lua vim.lsp.buf.code_action()')
+    lsp_nmap('<leader>e', 'lua vim.lsp.diagnostic.show_line_diagnostics()')
+    lsp_nmap('<leader>q', 'lua vim.lsp.diagnostic.set_loclist()')
+    lsp_nmap('<leader>rn', 'lua vim.lsp.buf.rename()')
+    lsp_nmap('K', 'lua vim.lsp.buf.hover()')
+    lsp_nmap('[d', 'lua vim.lsp.diagnostic.goto_prev()')
+    lsp_nmap(']d', 'lua vim.lsp.diagnostic.goto_next()')
+    lsp_nmap('gD', 'lua vim.lsp.buf.declaration()')
+    lsp_nmap('gd', 'lua vim.lsp.buf.definition()')
+    lsp_nmap('gi', 'lua vim.lsp.buf.implementation()')
+    lsp_nmap('gr', 'lua vim.lsp.buf.references()')
 
     -- format on save
-    vim.api.nvim_command(
-        "autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync(nil, 1000)")
+    vim.cmd [[
+        augroup Format
+          au! * <buffer>
+          au BufWritePre <buffer> lua vim.lsp.buf.formatting_sync(nil, 1000)
+        augroup END
+    ]]
 end
+
 local basic_servers = {'bashls', 'yamlls', 'rnix', 'hls', 'pyright', 'zls'}
 for _, lsp in ipairs(basic_servers) do
     lspconfig[lsp].setup {
-        on_attach = common_on_attach,
+        on_attach = on_attach,
         flags = {debounce_text_changes = 150}
     }
 end
 
-function Go_organize_imports(wait_ms)
-    local params = vim.lsp.util.make_range_params()
-    params.context = {only = {"source.organizeImports"}}
-    local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction",
-                                            params, wait_ms)
-
-    for _, res in pairs(result or {}) do
-        for _, r in pairs(res.result or {}) do
-            if r.edit then
-                vim.lsp.util.apply_workspace_edit(r.edit)
-            else
-                vim.lsp.buf.execute_command(r.command)
-            end
-        end
-    end
-end
 lspconfig.gopls.setup {
-    on_attach = function()
-        common_on_attach()
-        vim.api.nvim_command(
-            "autocmd BufWritePre *.go lua Go_organize_imports(1000)")
+    on_attach = function(client)
+        client.resolved_capabilities.document_formatting = false
+        on_attach(client)
     end,
     flags = {debounce_text_changes = 150}
 }
 
 lspconfig.tsserver.setup {
-    on_attach = common_on_attach,
+    on_attach = function(client)
+        client.resolved_capabilities.document_formatting = false
+        on_attach(client)
+    end,
     flags = {debounce_text_changes = 150},
     commands = {
         OrganizeImports = {
@@ -196,7 +169,32 @@ lspconfig.tsserver.setup {
             description = 'Organize Imports'
         }
     }
+}
 
+local goimports = {formatCommand = "goimports", formatStdin = true}
+local lua_format = {formatCommand = "lua-format -i", formatStdin = true}
+local prettier = {
+    formatCommand = 'prettier --stdin-filepath ${INPUT}',
+    formatStdin = true
+}
+lspconfig.efm.setup {
+    on_attach = on_attach,
+    init_options = {documentFormatting = true, codeAction = true},
+    settings = {
+        rootMarkers = {".git/"},
+        languages = {
+            lua = {lua_format},
+            javascript = {prettier},
+            go = {goimports},
+            json = {prettier},
+            markdown = {prettier},
+            typescript = {prettier},
+            yaml = {prettier}
+        }
+    },
+    filetypes = {
+        'lua', 'javascript', 'json', 'markdown', 'typescript', 'yaml', 'go'
+    }
 }
 
 local f = io.popen("readlink $(which lua-language-server)", "r")
@@ -205,9 +203,12 @@ local sumneko_main = sumneko_bin .. "/../../extras/main.lua"
 f:close()
 
 lspconfig.sumneko_lua.setup {
-    on_attach = common_on_attach,
-    cmd = { sumneko_bin, "-E", sumneko_main },
-    settings = {Lua = {diagnostics = {globals = {'vim', 'bufnr'}}}},
+    on_attach = function(client, bufnr)
+        client.resolved_capabilities.document_formatting = false
+        on_attach(client, bufnr)
+    end,
+    cmd = {sumneko_bin, "-E", sumneko_main},
+    settings = {Lua = {diagnostics = {globals = {'vim'}}}},
     telemetry = {enable = false}
 }
 
@@ -216,7 +217,7 @@ require'snippets'.snippets = {
     _global = {
         todo = 'TODO(jared): ',
         date = function() return os.date() end,
-        time = function() return os.time() end
+        time = function() return tostring(os.time()) end
     }
 }
 vim.cmd [[inoremap <c-k> <cmd>lua return require'snippets'.expand_or_advance(1)<CR>]]
@@ -227,3 +228,14 @@ vim.cmd [[nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()
 vim.cmd [[nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>]]
 vim.cmd [[nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>]]
 vim.cmd [[nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>]]
+
+-- custom keymappings
+vim.cmd [[nnoremap n nzzzv]]
+vim.cmd [[nnoremap N Nzzzv]]
+vim.cmd [[nnoremap J mzJ`z]]
+vim.cmd [[inoremap , ,<c-g>u]]
+vim.cmd [[inoremap . .<c-g>u]]
+vim.cmd [[inoremap ! !<c-g>u]]
+vim.cmd [[inoremap ? ?<c-g>u]]
+vim.cmd [[nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . 'k']]
+vim.cmd [[nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . 'j']]
