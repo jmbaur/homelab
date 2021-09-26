@@ -3,7 +3,10 @@
 let
   home-manager = import ../misc/home-manager.nix { ref = "release-21.05"; };
   kitty-themes = builtins.fetchTarball "https://github.com/dexpota/kitty-themes/tarball/master";
+  audio = import ../programs/audio.nix;
+  proj = import ../programs/proj.nix;
   gosee = import (builtins.fetchGit { "url" = "https://github.com/jmbaur/gosee.git"; ref = "9fdd41bd6061bd9a8a8daa69166e4f5007f2584a"; });
+  fdroidcl = import ../programs/fdroidcl.nix;
 in
 {
   nix.extraOptions = ''
@@ -13,16 +16,23 @@ in
 
   imports = [
     (import "${home-manager}/nixos")
-    ../programs/audio.nix
-    ../programs/i3.nix
-    ../programs/i3status-rust.nix
     ../programs/neovim/neovim.nix
-    ../programs/proj.nix
-    ../programs/rofi.nix
-    ../programs/ssh.nix
-    ../programs/weechat.nix
   ];
 
+  nixpkgs.overlays = [
+    (
+      self: super: {
+        weechat = super.weechat.override {
+          configure = { availablePlugins, ... }: {
+            scripts = with super.weechatScripts; [
+              weechat-matrix
+              wee-slack
+            ];
+          };
+        };
+      }
+    )
+  ];
   boot = {
     binfmt.emulatedSystems = [ "aarch64-linux" ];
     cleanTmpDir = true;
@@ -159,14 +169,10 @@ in
   ++ (
     # self-packaged
     [
-      (
-        pkgs.callPackage gosee { }
-      )
-      (
-        pkgs.callPackage
-          ../programs/fdroidcl.nix
-          { }
-      )
+      (pkgs.callPackage fdroidcl { })
+      (pkgs.callPackage gosee { })
+      (pkgs.callPackage audio { })
+      (pkgs.callPackage proj { })
     ]
   );
 
@@ -273,6 +279,12 @@ in
   };
 
   home-manager.users.jared = {
+    imports = [
+      ../programs/rofi.nix
+      ../programs/ssh.nix
+      ../programs/i3status-rust.nix
+      ../programs/i3.nix
+    ];
     services.clipmenu.enable = true;
     services.gpg-agent = {
       enable = true;
@@ -286,6 +298,9 @@ in
     services.udiskie.enable = true;
     programs.direnv.enable = true;
     programs.direnv.nix-direnv.enable = true;
+    programs.zsh = {
+      enable = true;
+    };
     programs.bash = {
       enable = true;
       enableVteIntegration = true;
@@ -321,10 +336,6 @@ in
       "XTerm.vt100.utf8" = true;
       "Xcursor.theme" = "Adwaita";
     };
-    home.file.".icons/default/index.theme".text = ''
-      [icon theme]
-      Inherits=Adwaita
-    '';
     programs.tmux = {
       enable = true;
       aggressiveResize = true;

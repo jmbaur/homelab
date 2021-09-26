@@ -1,6 +1,6 @@
 { config, pkgs, ... }:
 {
-  home-manager.users.jared.programs.i3status-rust = {
+  programs.i3status-rust = {
     enable = true;
     bars.okra = {
       theme = "native";

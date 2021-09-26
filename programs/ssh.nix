@@ -1,6 +1,6 @@
 { config, pkgs, ... }:
 {
-  home-manager.users.jared.programs.ssh = {
+  programs.ssh = {
     enable = true;
     controlMaster = "auto";
     controlPath = "/tmp/ssh_%r@%h:%p";

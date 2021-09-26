@@ -1,5 +1,5 @@
 { pkgs, config, ... }: {
-  home-manager.users.jared.programs.rofi = {
+  programs.rofi = {
     enable = true;
     font = "DejaVu Sans Mono 10";
     extraConfig = {
