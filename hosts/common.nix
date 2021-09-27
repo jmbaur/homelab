@@ -353,7 +353,7 @@ in
         numb-nvim
         tempus-themes-vim
       ];
-      extraPackages = [ ] ++ (
+      extraPackages = (
         with pkgs;
         [
           clang
