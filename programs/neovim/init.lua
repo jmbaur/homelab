@@ -15,9 +15,6 @@ require"nvim-treesitter.configs".setup {
     ensure_installed = "maintained",
     highlight = {enable = true}
 }
-require"kommentary.config".configure_language("default", {
-    prefer_single_line_comments = true
-})
 
 vim.g.mapleader = ","
 vim.o.clipboard = "unnamedplus"

@@ -3,14 +3,13 @@
 let
   audio = import ../programs/audio.nix;
   fdroidcl = import ../programs/fdroidcl.nix;
-  gosee = import (builtins.fetchGit { "url" = "https://github.com/jmbaur/gosee.git"; ref = "main"; rev = "9fdd41bd6061bd9a8a8daa69166e4f5007f2584a"; });
+  gosee = import (builtins.fetchGit { "url" = "https://github.com/jmbaur/gosee.git"; ref = "main"; });
   home-manager = import ../misc/home-manager.nix { ref = "release-21.05"; };
   proj = import ../programs/proj.nix;
 
   # neovim
   efm-langserver = pkgs.callPackage ../programs/efm-ls.nix { };
   fugitive = pkgs.vimUtils.buildVimPlugin { name = "vim-fugitive"; src = builtins.fetchGit { url = "https://github.com/tpope/vim-fugitive"; ref = "master"; }; };
-  kommentary = pkgs.vimUtils.buildVimPlugin { name = "kommentary"; src = builtins.fetchGit { url = "https://github.com/b3nj5m1n/kommentary"; ref = "main"; }; };
   numb-nvim = pkgs.vimUtils.buildVimPlugin { name = "numb-nvim"; src = builtins.fetchGit { url = "https://github.com/nacro90/numb.nvim"; ref = "master"; }; };
 
   zig = pkgs.callPackage ../programs/zig.nix { };
@@ -80,7 +79,6 @@ in
         gh
         git
         gnupg
-        gomuks
         gotop
         grex
         gron
@@ -133,6 +131,7 @@ in
         zoxide
       ]
     ) ++ (
+      # xfce
       with pkgs.xfce; [
         orage
         parole
@@ -147,13 +146,10 @@ in
     ) ++ (
       # gui
       with pkgs; [
-        alacritty
         bitwarden
-        brave
         chromium
         element-desktop
         firefox
-        freetube
         gimp
         gnome.adwaita-icon-theme
         kitty
@@ -163,13 +159,11 @@ in
         wireshark
         xclip
         xsel
-        zathura
       ]
     )
     ++ (
       # unfree
       with pkgs; [
-        google-chrome
         postman
         slack
         spotify
@@ -303,7 +297,6 @@ in
         zig-vim
       ] ++ [
         fugitive
-        kommentary
         numb-nvim
       ];
       extraPackages =
