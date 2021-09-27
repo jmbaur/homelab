@@ -1,9 +1,9 @@
-{ config, pkgs, ... }:
+{ config, pkgs, system ? builtins.currentSystem, ... }:
 
 let
   audio = import ../programs/audio.nix;
   fdroidcl = import ../programs/fdroidcl.nix;
-  gosee = import (builtins.fetchGit { "url" = "https://github.com/jmbaur/gosee.git"; ref = "9fdd41bd6061bd9a8a8daa69166e4f5007f2584a"; });
+  gosee = import (builtins.fetchGit { "url" = "https://github.com/jmbaur/gosee.git"; ref = "main"; rev = "9fdd41bd6061bd9a8a8daa69166e4f5007f2584a"; });
   home-manager = import ../misc/home-manager.nix { ref = "release-21.05"; };
   proj = import ../programs/proj.nix;
 
@@ -12,8 +12,8 @@ let
   fugitive = pkgs.vimUtils.buildVimPlugin { name = "vim-fugitive"; src = builtins.fetchGit { url = "https://github.com/tpope/vim-fugitive"; ref = "master"; }; };
   kommentary = pkgs.vimUtils.buildVimPlugin { name = "kommentary"; src = builtins.fetchGit { url = "https://github.com/b3nj5m1n/kommentary"; ref = "main"; }; };
   numb-nvim = pkgs.vimUtils.buildVimPlugin { name = "numb-nvim"; src = builtins.fetchGit { url = "https://github.com/nacro90/numb.nvim"; ref = "master"; }; };
-  tempus-themes-vim = pkgs.vimUtils.buildVimPlugin { name = "tempus-themes-vim"; src = builtins.fetchGit { url = "https://gitlab.com/protesilaos/tempus-themes-vim"; ref = "master"; }; };
-  unstable = import (builtins.fetchTarball "https://github.com/nixos/nixpkgs/tarball/master") { config = config.nixpkgs.config; };
+
+  zig = pkgs.callPackage ../programs/zig.nix { };
 in
 {
   nix.extraOptions = ''
@@ -54,132 +54,138 @@ in
     EDITOR = "vim";
     NNN_TRASH = "1";
   };
-  environment.systemPackages = [ pkgs.neovim-nightly ] ++ (
-    # cli
-    with pkgs; [
-      acpi
-      atop
-      bat
-      bc
-      bind
-      buildah
-      cmus
-      curl
-      ddcutil
-      delta
-      dmidecode
-      dnsutils
-      dust
-      exa
-      fd
-      file
-      fzf
-      gh
-      git
-      gnupg
-      gomuks
-      gotop
-      grex
-      gron
-      htop
-      iperf3
-      iputils
-      jq
-      keybase
-      killall
-      libnotify
-      libsecret
-      lm_sensors
-      mob
-      neofetch
-      nixops
-      nmap
-      nnn
-      nushell
-      pciutils
-      picocom
-      pinentry
-      pinentry-curses
-      procs
-      renameutils
-      ripgrep
-      rtorrent
-      sd
-      skopeo
-      tailscale
-      tcpdump
-      tealdeer
-      tig
-      tmux
-      tmux
-      tokei
-      traceroute
-      trash-cli
-      tree
-      unzip
-      usbutils
-      vim
-      w3m
-      wget
-      xdg-user-dirs
-      xsv
-      ydiff
-      yq
-      yubikey-personalization
-      zip
-      zoxide
-    ]
-  ) ++ (
-    with pkgs.xfce; [
-      xfce4-battery-plugin
-      xfce4-clipman-plugin
-      xfce4-notifyd
-      xfce4-panel
-      xfce4-pulseaudio-plugin
-      xfce4-whiskermenu-plugin
-    ]
-  ) ++ (
-    # gui
-    with pkgs; [
-      alacritty
-      bitwarden
-      brave
-      chromium
-      element-desktop
-      firefox
-      freetube
-      gimp
-      gnome.adwaita-icon-theme
-      kitty
-      libreoffice
-      mpv
-      signal-desktop
-      wireshark
-      xclip
-      xsel
-      zathura
-    ]
-  )
+  environment.systemPackages =
+    [ pkgs.neovim-nightly ]
     ++ (
-    # unfree
-    with pkgs; [
-      google-chrome
-      postman
-      slack
-      spotify
-      vscode-fhs
-      zoom-us
-    ]
-  )
+      # cli
+      with pkgs; [
+        acpi
+        atop
+        bat
+        bc
+        bind
+        buildah
+        cmus
+        curl
+        ddcutil
+        delta
+        dmidecode
+        dnsutils
+        dust
+        exa
+        fd
+        ffmpeg
+        file
+        fzf
+        gh
+        git
+        gnupg
+        gomuks
+        gotop
+        grex
+        gron
+        htop
+        iperf3
+        iputils
+        jq
+        keybase
+        killall
+        libnotify
+        libsecret
+        lm_sensors
+        mob
+        neofetch
+        nixops
+        nmap
+        nnn
+        nushell
+        pciutils
+        picocom
+        pinentry
+        pinentry-curses
+        procs
+        renameutils
+        ripgrep
+        rtorrent
+        sd
+        skopeo
+        tailscale
+        tcpdump
+        tealdeer
+        tig
+        tmux
+        tmux
+        tokei
+        traceroute
+        trash-cli
+        tree
+        unzip
+        usbutils
+        vim
+        w3m
+        wget
+        xdg-user-dirs
+        xsv
+        ydiff
+        yq
+        yubikey-personalization
+        zip
+        zoxide
+      ]
+    ) ++ (
+      with pkgs.xfce; [
+        orage
+        parole
+        ristretto
+        xfce4-battery-plugin
+        xfce4-clipman-plugin
+        xfce4-notifyd
+        xfce4-panel
+        xfce4-pulseaudio-plugin
+        xfce4-whiskermenu-plugin
+      ]
+    ) ++ (
+      # gui
+      with pkgs; [
+        alacritty
+        bitwarden
+        brave
+        chromium
+        element-desktop
+        firefox
+        freetube
+        gimp
+        gnome.adwaita-icon-theme
+        kitty
+        libreoffice
+        signal-desktop
+        thunderbird
+        wireshark
+        xclip
+        xsel
+        zathura
+      ]
+    )
     ++ (
-    # self-packaged
-    [
-      (pkgs.callPackage fdroidcl { })
-      (pkgs.callPackage gosee { })
-      (pkgs.callPackage audio { })
-      (pkgs.callPackage proj { })
-    ]
-  );
+      # unfree
+      with pkgs; [
+        google-chrome
+        postman
+        slack
+        spotify
+        vscode-fhs
+        zoom-us
+      ]
+    )
+    ++ (
+      # self-packaged
+      [
+        (pkgs.callPackage fdroidcl { })
+        (pkgs.callPackage gosee { })
+        (pkgs.callPackage audio { })
+        (pkgs.callPackage proj { })
+      ]
+    );
 
   fonts.fonts = with pkgs; [
     dejavu_fonts
@@ -260,6 +266,10 @@ in
 
     programs.direnv.enable = true;
     programs.direnv.nix-direnv.enable = true;
+    programs.bat = {
+      enable = true;
+      config.theme = "gruvbox_dark";
+    };
     programs.zsh.enable = true;
     programs.vim = {
       enable = true;
@@ -275,9 +285,9 @@ in
       vimdiffAlias = true;
       plugins = with pkgs.vimPlugins; [
         commentary
+        gruvbox-nvim
         lsp-colors-nvim
         nvim-autopairs
-        nvim-colorizer-lua
         nvim-dap
         nvim-lspconfig
         nvim-treesitter
@@ -295,37 +305,37 @@ in
         fugitive
         kommentary
         numb-nvim
-        tempus-themes-vim
       ];
-      extraPackages = (
-        with pkgs;
-        [
-          clang
-          efm-langserver
-          go
-          goimports
-          gopls
-          luaformatter
-          nixpkgs-fmt
-          nodejs
-          pyright
-          python3
-          rnix-lsp
-          shellcheck
-          shfmt
-          sumneko-lua-language-server
-          tree-sitter
-          yaml-language-server
-        ]
-      ) ++ (
-        with pkgs.nodePackages; [
-          bash-language-server
-          prettier
-          typescript-language-server
-        ]
-      ) ++ (with unstable;[ zig zls ]);
+      extraPackages =
+        ([ zig ]) ++ (
+          with pkgs;
+          [
+            clang
+            efm-langserver
+            go
+            goimports
+            gopls
+            luaformatter
+            nixpkgs-fmt
+            nodejs
+            pyright
+            python3
+            rnix-lsp
+            shellcheck
+            shfmt
+            sumneko-lua-language-server
+            tree-sitter
+            yaml-language-server
+            zls
+          ]
+        ) ++ (
+          with pkgs.nodePackages; [
+            bash-language-server
+            prettier
+            typescript-language-server
+          ]
+        );
       extraConfig = ''
-        set termguicolors
         lua << EOF
         -- Used in ../program/neovim/init.lua
         Sumneko_bin = "${pkgs.sumneko-lua-language-server}/bin/lua-language-server"
@@ -335,28 +345,6 @@ in
       '';
     };
 
-
-
-    gtk = {
-      enable = true;
-      gtk3.extraConfig = {
-        gtk-theme-name = "Adwaita";
-        gtk-cursor-theme-name = "Adwaita";
-        gtk-icon-theme-name = "Adwaita";
-        gtk-key-theme-name = "Emacs";
-      };
-    };
-    xresources.properties = {
-      #   "*.faceName" = "Hack:size=14:antialias=true";
-      #   "XTerm.termName" = "xterm-256color";
-      #   "XTerm.vt100.backarrowKey" = false;
-      #   "XTerm.vt100.bellIsUrgent" = true;
-      #   "XTerm.vt100.locale" = false;
-      #   "XTerm.vt100.metaSendsEscape" = true;
-      #   "XTerm.vt100.ttyModes" = "erase ^?";
-      #   "XTerm.vt100.utf8" = true;
-      "Xcursor.theme" = "Adwaita";
-    };
     xdg = {
       configFile."zls.json".text = ''
         {"enable_semantic_tokens":false}

@@ -1,6 +1,6 @@
 { config, pkgs, ... }:
 let
-  tempus-themes = builtins.fetchGit { url = "https://gitlab.com/protesilaos/tempus-themes"; ref = "master"; };
+  kitty-themes = builtins.fetchGit { url = "https://github.com/dexpota/kitty-themes"; ref = "master"; };
 in
 {
   programs.kitty = {
@@ -17,7 +17,7 @@ in
       update_check_interval = 0;
     };
     extraConfig = ''
-      include ${tempus-themes}/kitty/tempus_night.conf
+      include ${kitty-themes}/themes/gruvbox_dark.conf
     '';
   };
 }

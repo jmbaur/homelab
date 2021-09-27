@@ -1,4 +1,4 @@
-vim.cmd [[colorscheme tempus_night]]
+vim.cmd [[colorscheme gruvbox]]
 vim.cmd [[nnoremap n nzzzv]]
 vim.cmd [[nnoremap N Nzzzv]]
 vim.cmd [[nnoremap J mzJ`z]]
@@ -11,7 +11,6 @@ vim.cmd [[nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . "j"]]
 
 require"numb".setup {}
 require"nvim-autopairs".setup {}
-require"colorizer".setup {}
 require"nvim-treesitter.configs".setup {
     ensure_installed = "maintained",
     highlight = {enable = true}
@@ -38,7 +37,7 @@ vim.o.softtabstop = 2
 vim.o.splitbelow = true
 vim.o.splitright = true
 vim.o.tabstop = 2
--- vim.o.termguicolors = true
+vim.o.termguicolors = true
 vim.o.wrap = false
 
 -- LSP
