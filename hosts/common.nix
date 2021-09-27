@@ -334,6 +334,7 @@ in
         haskell-vim
         lsp-colors-nvim
         nvim-autopairs
+        nvim-colorizer-lua
         nvim-dap
         nvim-lspconfig
         nvim-treesitter
@@ -383,6 +384,7 @@ in
         ]
       ) ++ (with unstable;[ zig zls ]);
       extraConfig = ''
+        set termguicolors
         lua << EOF
         -- Used in ../programs/neovim/init.lua
         Sumneko_bin = "${pkgs.sumneko-lua-language-server}/bin/lua-language-server"
