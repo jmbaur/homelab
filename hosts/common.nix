@@ -7,6 +7,8 @@ let
   proj = import ../programs/proj.nix;
   gosee = import (builtins.fetchGit { "url" = "https://github.com/jmbaur/gosee.git"; ref = "9fdd41bd6061bd9a8a8daa69166e4f5007f2584a"; });
   fdroidcl = import ../programs/fdroidcl.nix;
+  efm-langserver = pkgs.callPackage ../programs/efm-ls.nix { };
+  unstable = import ../misc/unstable.nix { config = config.nixpkgs.config; };
 in
 {
   nix.extraOptions = ''
@@ -16,10 +18,17 @@ in
 
   imports = [
     (import "${home-manager}/nixos")
-    ../programs/neovim/neovim.nix
   ];
 
   nixpkgs.overlays = [
+    (
+      import (
+        builtins.fetchTarball {
+          url =
+            "https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz";
+        }
+      )
+    )
     (
       self: super: {
         weechat = super.weechat.override {
@@ -131,6 +140,37 @@ in
       zoxide
     ]
   ) ++ (
+    with pkgs;
+    [
+      clang
+      efm-langserver
+      go
+      goimports
+      gopls
+      haskell-language-server
+      luaformatter
+      neovim-nightly
+      nixpkgs-fmt
+      nodejs
+      pyright
+      python3
+      rnix-lsp
+      shellcheck
+      shfmt
+      stylish-haskell
+      sumneko-lua-language-server
+      tree-sitter
+      yaml-language-server
+    ]
+  ) ++ (
+    with pkgs.nodePackages; [
+      bash-language-server
+      prettier
+      typescript-language-server
+    ]
+  ) ++
+  (with unstable;[ zig zls ]) ++
+  (
     # gui
     with pkgs; [
       alacritty
@@ -324,6 +364,20 @@ in
         hidden = true;
         expandtab = true;
       };
+    };
+    programs.neovim = {
+      enable = true;
+      package = pkgs.neovim-nightly;
+      vimAlias = true;
+      vimdiffAlias = true;
+      extraConfig = ''
+        lua << EOF
+        -- Used in ../programs/neovim/init.lua
+        Sumneko_bin = "${pkgs.sumneko-lua-language-server}/bin/lua-language-server"
+        Sumneko_main = "${pkgs.sumneko-lua-language-server}/extras/main.lua"
+        ${builtins.readFile ../programs/neovim/init.lua}
+        EOF
+      '';
     };
     xresources.properties = {
       "*.faceName" = "Hack:size=14:antialias=true";
