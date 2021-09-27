@@ -213,7 +213,6 @@ in
   };
 
   security.sudo.wheelNeedsPassword = false;
-  security.rtkit.enable = true;
 
   sound.enable = true;
   hardware.pulseaudio.enable = true;
