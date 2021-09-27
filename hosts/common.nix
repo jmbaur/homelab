@@ -1,14 +1,18 @@
 { config, pkgs, ... }:
 
 let
-  home-manager = import ../misc/home-manager.nix { ref = "release-21.05"; };
-  kitty-themes = builtins.fetchTarball "https://github.com/dexpota/kitty-themes/tarball/master";
   audio = import ../programs/audio.nix;
-  proj = import ../programs/proj.nix;
-  gosee = import (builtins.fetchGit { "url" = "https://github.com/jmbaur/gosee.git"; ref = "9fdd41bd6061bd9a8a8daa69166e4f5007f2584a"; });
-  fdroidcl = import ../programs/fdroidcl.nix;
   efm-langserver = pkgs.callPackage ../programs/efm-ls.nix { };
-  unstable = import ../misc/unstable.nix { config = config.nixpkgs.config; };
+  fdroidcl = import ../programs/fdroidcl.nix;
+  fugitive = pkgs.vimUtils.buildVimPlugin { name = "vim-fugitive"; src = builtins.fetchGit { url = "https://github.com/tpope/vim-fugitive"; ref = "master"; }; };
+  gosee = import (builtins.fetchGit { "url" = "https://github.com/jmbaur/gosee.git"; ref = "9fdd41bd6061bd9a8a8daa69166e4f5007f2584a"; });
+  home-manager = import ../misc/home-manager.nix { ref = "release-21.05"; };
+  kommentary = pkgs.vimUtils.buildVimPlugin { name = "kommentary"; src = builtins.fetchGit { url = "https://github.com/b3nj5m1n/kommentary"; ref = "main"; }; };
+  numb-nvim = pkgs.vimUtils.buildVimPlugin { name = "numb-nvim"; src = builtins.fetchGit { url = "https://github.com/nacro90/numb.nvim"; ref = "master"; }; };
+  proj = import ../programs/proj.nix;
+  tempus-themes = builtins.fetchGit { url = "https://gitlab.com/protesilaos/tempus-themes"; ref = "master"; };
+  tempus-themes-vim = pkgs.vimUtils.buildVimPlugin { name = "tempus-themes-vim"; src = builtins.fetchGit { url = "https://gitlab.com/protesilaos/tempus-themes-vim"; ref = "master"; }; };
+  unstable = import (builtins.fetchTarball "https://github.com/nixos/nixpkgs/tarball/master") { config = config.nixpkgs.config; };
 in
 {
   nix.extraOptions = ''
@@ -16,9 +20,7 @@ in
     keep-derivations = true
   '';
 
-  imports = [
-    (import "${home-manager}/nixos")
-  ];
+  imports = [ (import "${home-manager}/nixos") ];
 
   nixpkgs.overlays = [
     (
@@ -29,19 +31,8 @@ in
         }
       )
     )
-    (
-      self: super: {
-        weechat = super.weechat.override {
-          configure = { availablePlugins, ... }: {
-            scripts = with super.weechatScripts; [
-              weechat-matrix
-              wee-slack
-            ];
-          };
-        };
-      }
-    )
   ];
+
   boot = {
     binfmt.emulatedSystems = [ "aarch64-linux" ];
     cleanTmpDir = true;
@@ -129,7 +120,6 @@ in
       usbutils
       vim
       w3m
-      weechat
       wget
       xdg-user-dirs
       xsv
@@ -140,37 +130,6 @@ in
       zoxide
     ]
   ) ++ (
-    with pkgs;
-    [
-      clang
-      efm-langserver
-      go
-      goimports
-      gopls
-      haskell-language-server
-      luaformatter
-      neovim-nightly
-      nixpkgs-fmt
-      nodejs
-      pyright
-      python3
-      rnix-lsp
-      shellcheck
-      shfmt
-      stylish-haskell
-      sumneko-lua-language-server
-      tree-sitter
-      yaml-language-server
-    ]
-  ) ++ (
-    with pkgs.nodePackages; [
-      bash-language-server
-      prettier
-      typescript-language-server
-    ]
-  ) ++
-  (with unstable;[ zig zls ]) ++
-  (
     # gui
     with pkgs; [
       alacritty
@@ -248,7 +207,7 @@ in
       enable = true;
       extraPackages = with pkgs; [ i3lock i3status-rust dmenu ];
       extraSessionCommands = ''
-        xsetroot -solid "#222222"
+        xsetroot -solid "#1a1a1a"
       '';
     };
     deviceSection = ''
@@ -259,7 +218,7 @@ in
   programs.xss-lock = {
     enable = true;
     lockerCommand = ''
-      ${pkgs.i3lock}/bin/i3lock -c 222222
+      ${pkgs.i3lock}/bin/i3lock -c 1a1a1a
     '';
   };
 
@@ -370,6 +329,59 @@ in
       package = pkgs.neovim-nightly;
       vimAlias = true;
       vimdiffAlias = true;
+      plugins = with pkgs.vimPlugins; [
+        commentary
+        haskell-vim
+        lsp-colors-nvim
+        nvim-autopairs
+        nvim-dap
+        nvim-lspconfig
+        nvim-treesitter
+        plenary-nvim
+        repeat
+        snippets-nvim
+        surround
+        telescope-nvim
+        typescript-vim
+        vim-better-whitespace
+        vim-nix
+        vim-rsi
+        zig-vim
+      ] ++ [
+        fugitive
+        kommentary
+        numb-nvim
+        tempus-themes-vim
+      ];
+      extraPackages = [ ] ++ (
+        with pkgs;
+        [
+          clang
+          efm-langserver
+          go
+          goimports
+          gopls
+          haskell-language-server
+          luaformatter
+          nixpkgs-fmt
+          nodejs
+          pyright
+          python3
+          rnix-lsp
+          shellcheck
+          shfmt
+          stylish-haskell
+          sumneko-lua-language-server
+          tree-sitter
+          yaml-language-server
+        ]
+      ) ++ (
+        with pkgs.nodePackages; [
+          bash-language-server
+          prettier
+          typescript-language-server
+        ]
+      ) ++ (with unstable;[ zig zls ]);
       extraConfig = ''
         lua << EOF
         -- Used in ../programs/neovim/init.lua
@@ -449,7 +461,7 @@ in
         update_check_interval = 0;
       };
       extraConfig = ''
-        include ${kitty-themes}/themes/gruvbox_dark.conf
+        include ${tempus-themes}/kitty/tempus_night.conf
       '';
     };
     gtk = {
