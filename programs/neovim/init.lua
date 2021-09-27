@@ -1,11 +1,11 @@
-vim.cmd [[ colorscheme tempus_night ]]
+vim.cmd [[colorscheme tempus_night]]
 
+require"numb".setup {}
+require"nvim-autopairs".setup {}
 require"nvim-treesitter.configs".setup {
     ensure_installed = "maintained",
     highlight = {enable = true}
 }
-require"nvim-autopairs".setup {}
-require"numb".setup {}
 require"kommentary.config".configure_language("default", {
     prefer_single_line_comments = true
 })
