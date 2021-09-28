@@ -43,7 +43,7 @@
       nnoremap N Nzzzv
       nnoremap n nzzzv
       set background=dark
-      set clipboard=unnamedplus
+      set clipboard=unnamed
       set colorcolumn=80
       set expandtab
       set hidden
