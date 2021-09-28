@@ -18,6 +18,7 @@ in
   networking.hostName = "beetroot";
 
   services.blueman.enable = true;
+  services.fprintd.enable = true;
   hardware.bluetooth.enable = true;
 
   services.power-profiles-daemon.enable = true;
