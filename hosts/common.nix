@@ -42,6 +42,7 @@ in
     with pkgs; [
       acpi
       atop
+      awscli
       bat
       bc
       bind
@@ -84,6 +85,7 @@ in
       picocom
       pinentry
       pinentry-curses
+      podman-compose
       procs
       renameutils
       ripgrep
