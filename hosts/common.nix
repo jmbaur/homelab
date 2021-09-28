@@ -28,10 +28,7 @@ in
   i18n.defaultLocale = "en_US.UTF-8";
   console.useXkbConfig = true;
 
-  networking.networkmanager = {
-    enable = true;
-    wifi.backend = "iwd";
-  };
+  networking.networkmanager.enable = true;
 
   nixpkgs.config.allowUnfree = true;
 
