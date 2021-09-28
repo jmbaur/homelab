@@ -50,6 +50,7 @@ in
       bind
       buildah
       cmus
+      ctags
       curl
       ddcutil
       delta

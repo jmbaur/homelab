@@ -17,6 +17,7 @@
       vim-better-whitespace
       vim-eunuch
       vim-go
+      vim-gutentags
       vim-javascript
       vim-markdown
       vim-nix
@@ -28,6 +29,7 @@
     extraConfig = ''
       colorscheme solarized
       let g:go_bin_path="/home/jared/go/bin"
+      let g:gutentags_file_list_command="${pkgs.ripgrep}/bin/rg --files"
       let mapleader = ","
       inoremap ! !<c-g>u
       inoremap , ,<c-g>u
@@ -61,6 +63,7 @@
       set softtabstop=2
       set splitbelow
       set splitright
+      set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
       set tabstop=2
     '';
   };

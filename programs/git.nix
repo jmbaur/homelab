@@ -14,7 +14,7 @@
     ignores = [ "*~" "*.swp" ];
     userEmail = "jaredbaur@fastmail.com";
     userName = "Jared Baur";
-    extraConfig = { pull = { rebase = false; }; };
+    extraConfig = { pull = { rebase = false; }; "credential \"https://github.com\"" = { helper = "\!${pkgs.gh}/bin/gh auth git-credential"; }; };
   };
 
 }
