@@ -119,7 +119,6 @@ in
       ristretto
       xfce4-battery-plugin
       xfce4-clipman-plugin
-      xfce4-notifyd
       xfce4-panel
       xfce4-pulseaudio-plugin
       xfce4-whiskermenu-plugin
@@ -132,12 +131,12 @@ in
       element-desktop
       firefox
       gimp
-      gnome.adwaita-icon-theme
       libreoffice
       signal-desktop
       thunderbird
       wireshark
       xclip
+      xlockmore
       xsel
     ]
   )
@@ -189,7 +188,6 @@ in
   ];
 
   services.fwupd.enable = true;
-  services.upower.enable = true;
   services.printing.enable = true;
   services.redshift.enable = true;
   services.dbus.packages = [ pkgs.gcr ];
@@ -242,7 +240,6 @@ in
     ];
 
     services.syncthing.enable = true;
-    services.udiskie.enable = true;
     services.gpg-agent = {
       enable = true;
       enableScDaemon = true;

@@ -37,9 +37,10 @@
       nnoremap J mzJ`z
       nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . "k"
       nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . "j"
+      nnoremap <leader>b :Buffers!<CR>
       nnoremap <leader>f :Files!<CR>
       nnoremap <leader>g :GFiles!<CR>
-      nnoremap <leader>b :Buffers!<CR>
+      nnoremap <leader>r :Rg!<CR>
       set background=dark
       set clipboard="unnamedplus"
       set colorcolumn="80"
