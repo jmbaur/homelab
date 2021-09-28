@@ -26,28 +26,30 @@
       zig-vim
     ];
     extraConfig = ''
-      let mapleader = ","
       colorscheme solarized
+      let g:go_bin_path="/home/jared/go/bin"
+      let mapleader = ","
+      inoremap ! !<c-g>u
       inoremap , ,<c-g>u
       inoremap . .<c-g>u
-      inoremap ! !<c-g>u
       inoremap ? ?<c-g>u
-      nnoremap n nzzzv
-      nnoremap N Nzzzv
-      nnoremap J mzJ`z
-      nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . "k"
       nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . "j"
+      nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . "k"
       nnoremap <leader>b :Buffers!<CR>
       nnoremap <leader>f :Files!<CR>
       nnoremap <leader>g :GFiles!<CR>
       nnoremap <leader>r :Rg!<CR>
+      nnoremap J mzJ`z
+      nnoremap N Nzzzv
+      nnoremap n nzzzv
       set background=dark
-      set clipboard="unnamedplus"
-      set colorcolumn="80"
+      set clipboard=unnamedplus
+      set colorcolumn=80
       set expandtab
       set hidden
       set ignorecase
       set nocursorline
+      set notermguicolors
       set nowrap
       set number
       set relativenumber
@@ -60,8 +62,6 @@
       set splitbelow
       set splitright
       set tabstop=2
-      set notermguicolors
-      let g:go_bin_path="/home/jared/go/bin"
     '';
   };
 }
