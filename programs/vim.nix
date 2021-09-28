@@ -12,6 +12,7 @@
       rust-vim
       solarized
       surround
+      tagbar
       tsuquyomi
       typescript-vim
       vim-better-whitespace
@@ -41,6 +42,7 @@
       nnoremap <leader>f :Files!<CR>
       nnoremap <leader>g :GFiles!<CR>
       nnoremap <leader>r :Rg!<CR>
+      nnoremap <leader>t :TagbarToggle<CR>
       nnoremap J mzJ`z
       nnoremap N Nzzzv
       nnoremap n nzzzv
@@ -65,6 +67,42 @@
       set splitright
       set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
       set tabstop=2
+
+      let g:tagbar_type_typescript = {
+        \ "ctagstype": "typescript",
+        \ "kinds": [
+          \ "c:classes",
+          \ "n:modules",
+          \ "f:functions",
+          \ "v:variables",
+          \ "v:varlambdas",
+          \ "m:members",
+          \ "i:interfaces",
+          \ "e:enums",
+        \ ]
+      \ }
+
+      let g:tagbar_type_zig = {
+        \ "ctagstype": "zig",
+        \ "kinds" : [
+           \ "f:functions",
+           \ "s:structs",
+           \ "e:enums",
+           \ "u:unions",
+           \ "E:errors",
+         \ ]
+      \ }
+
+      let g:tagbar_type_go = {
+        \ "ctagstype": "go",
+        \ "kinds" : [
+          \ "p:package",
+          \ "f:function",
+          \ "v:variables",
+          \ "t:type",
+          \ "c:const"
+        \ ]
+      \ }
     '';
   };
 }
