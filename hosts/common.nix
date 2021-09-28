@@ -3,16 +3,11 @@
 let
   audio = import ../programs/audio.nix;
   fdroidcl = import ../programs/fdroidcl.nix;
+  efm-langserver = import ../programs/efm-ls.nix;
   gosee = import (builtins.fetchGit { "url" = "https://github.com/jmbaur/gosee.git"; ref = "main"; });
   home-manager = import ../misc/home-manager.nix { ref = "release-21.05"; };
   proj = import ../programs/proj.nix;
-
-  # neovim
-  efm-langserver = pkgs.callPackage ../programs/efm-ls.nix { };
-  fugitive = pkgs.vimUtils.buildVimPlugin { name = "vim-fugitive"; src = builtins.fetchGit { url = "https://github.com/tpope/vim-fugitive"; ref = "master"; }; };
-  numb-nvim = pkgs.vimUtils.buildVimPlugin { name = "numb-nvim"; src = builtins.fetchGit { url = "https://github.com/nacro90/numb.nvim"; ref = "master"; }; };
-
-  zig = pkgs.callPackage ../programs/zig.nix { };
+  zig = import ../programs/zig.nix;
 in
 {
   nix.extraOptions = ''
@@ -21,17 +16,6 @@ in
   '';
 
   imports = [ (import "${home-manager}/nixos") ];
-
-  nixpkgs.overlays = [
-    (
-      import (
-        builtins.fetchTarball {
-          url =
-            "https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz";
-        }
-      )
-    )
-  ];
 
   boot = {
     binfmt.emulatedSystems = [ "aarch64-linux" ];
@@ -53,133 +37,143 @@ in
     EDITOR = "vim";
     NNN_TRASH = "1";
   };
-  environment.systemPackages =
-    [ pkgs.neovim-nightly ]
-    ++ (
-      # cli
-      with pkgs; [
-        acpi
-        atop
-        bat
-        bc
-        bind
-        buildah
-        cmus
-        curl
-        ddcutil
-        delta
-        dmidecode
-        dnsutils
-        dust
-        exa
-        fd
-        ffmpeg
-        file
-        fzf
-        gh
-        git
-        gnupg
-        gotop
-        grex
-        gron
-        htop
-        iperf3
-        iputils
-        jq
-        keybase
-        killall
-        libnotify
-        libsecret
-        lm_sensors
-        mob
-        neofetch
-        nixops
-        nmap
-        nnn
-        nushell
-        pciutils
-        picocom
-        pinentry
-        pinentry-curses
-        procs
-        renameutils
-        ripgrep
-        rtorrent
-        sd
-        skopeo
-        tailscale
-        tcpdump
-        tealdeer
-        tig
-        tmux
-        tmux
-        tokei
-        traceroute
-        trash-cli
-        tree
-        unzip
-        usbutils
-        vim
-        w3m
-        wget
-        xdg-user-dirs
-        xsv
-        ydiff
-        yq
-        yubikey-personalization
-        zip
-        zoxide
-      ]
-    ) ++ (
-      # xfce
-      with pkgs.xfce; [
-        orage
-        parole
-        ristretto
-        xfce4-battery-plugin
-        xfce4-clipman-plugin
-        xfce4-notifyd
-        xfce4-panel
-        xfce4-pulseaudio-plugin
-        xfce4-whiskermenu-plugin
-      ]
-    ) ++ (
-      # gui
-      with pkgs; [
-        bitwarden
-        chromium
-        element-desktop
-        firefox
-        gimp
-        gnome.adwaita-icon-theme
-        kitty
-        libreoffice
-        signal-desktop
-        thunderbird
-        wireshark
-        xclip
-        xsel
-      ]
-    )
-    ++ (
-      # unfree
-      with pkgs; [
-        postman
-        slack
-        spotify
-        vscode-fhs
-        zoom-us
-      ]
-    )
-    ++ (
-      # self-packaged
-      [
-        (pkgs.callPackage fdroidcl { })
-        (pkgs.callPackage gosee { })
-        (pkgs.callPackage audio { })
-        (pkgs.callPackage proj { })
-      ]
-    );
+  environment.systemPackages = (
+    # cli
+    with pkgs; [
+      acpi
+      atop
+      bat
+      bc
+      bind
+      buildah
+      cmus
+      curl
+      ddcutil
+      delta
+      dmidecode
+      dnsutils
+      dust
+      exa
+      fd
+      ffmpeg
+      file
+      fzf
+      gh
+      git
+      gnupg
+      gotop
+      grex
+      gron
+      htop
+      iperf3
+      iputils
+      jq
+      keybase
+      killall
+      libnotify
+      libsecret
+      lm_sensors
+      mob
+      neofetch
+      nixops
+      nmap
+      nnn
+      nushell
+      pciutils
+      picocom
+      pinentry
+      pinentry-curses
+      procs
+      renameutils
+      ripgrep
+      rtorrent
+      sd
+      skopeo
+      tailscale
+      tcpdump
+      tealdeer
+      tig
+      tmux
+      tmux
+      tokei
+      traceroute
+      trash-cli
+      tree
+      unzip
+      usbutils
+      vim
+      w3m
+      wget
+      xdg-user-dirs
+      xsv
+      ydiff
+      yq
+      yubikey-personalization
+      zip
+      zoxide
+    ]
+  ) ++ (
+    # xfce
+    with pkgs.xfce; [
+      parole
+      ristretto
+      xfce4-battery-plugin
+      xfce4-clipman-plugin
+      xfce4-notifyd
+      xfce4-panel
+      xfce4-pulseaudio-plugin
+      xfce4-whiskermenu-plugin
+    ]
+  ) ++ (
+    # gui
+    with pkgs; [
+      bitwarden
+      chromium
+      element-desktop
+      firefox
+      gimp
+      gnome.adwaita-icon-theme
+      libreoffice
+      signal-desktop
+      thunderbird
+      wireshark
+      xclip
+      xsel
+    ]
+  )
+  ++ (
+    # unfree
+    with pkgs; [
+      postman
+      slack
+      spotify
+      vscode-fhs
+      zoom-us
+    ]
+  )
+  ++ (
+    # self-packaged
+    [
+      (pkgs.callPackage audio { })
+      (pkgs.callPackage fdroidcl { })
+      (pkgs.callPackage gosee { })
+      (pkgs.callPackage proj { })
+      (pkgs.callPackage zig { })
+    ]
+  ) ++ (
+    with pkgs;
+    [
+      clang
+      go
+      nixpkgs-fmt
+      nodePackages.prettier
+      nodePackages.typescript
+      nodejs
+      python3
+      shellcheck
+      shfmt
+    ]
+  );
 
   fonts.fonts = with pkgs; [
     dejavu_fonts
@@ -195,6 +189,7 @@ in
   ];
 
   services.fwupd.enable = true;
+  services.upower.enable = true;
   services.printing.enable = true;
   services.redshift.enable = true;
   services.dbus.packages = [ pkgs.gcr ];
@@ -241,7 +236,7 @@ in
     imports = [
       ../programs/bash.nix
       ../programs/git.nix
-      ../programs/kitty.nix
+      ../programs/vim.nix
       ../programs/ssh.nix
       ../programs/tmux.nix
     ];
@@ -261,81 +256,9 @@ in
     programs.direnv.nix-direnv.enable = true;
     programs.bat = {
       enable = true;
-      config.theme = "gruvbox_dark";
+      config.theme = "Solarized (dark)";
     };
     programs.zsh.enable = true;
-    programs.vim = {
-      enable = true;
-      settings = {
-        hidden = true;
-        expandtab = true;
-      };
-    };
-    programs.neovim = {
-      enable = true;
-      package = pkgs.neovim-nightly;
-      vimAlias = true;
-      vimdiffAlias = true;
-      plugins = with pkgs.vimPlugins; [
-        commentary
-        gruvbox-nvim
-        lsp-colors-nvim
-        nvim-autopairs
-        nvim-dap
-        nvim-lspconfig
-        nvim-treesitter
-        plenary-nvim
-        repeat
-        snippets-nvim
-        surround
-        telescope-nvim
-        typescript-vim
-        vim-better-whitespace
-        vim-nix
-        vim-rsi
-        zig-vim
-      ] ++ [
-        fugitive
-        numb-nvim
-      ];
-      extraPackages =
-        ([ zig ]) ++ (
-          with pkgs;
-          [
-            clang
-            efm-langserver
-            go
-            goimports
-            gopls
-            luaformatter
-            nixpkgs-fmt
-            nodejs
-            pyright
-            python3
-            rnix-lsp
-            shellcheck
-            shfmt
-            sumneko-lua-language-server
-            tree-sitter
-            yaml-language-server
-            zls
-          ]
-        ) ++ (
-          with pkgs.nodePackages; [
-            bash-language-server
-            prettier
-            typescript-language-server
-          ]
-        );
-      extraConfig = ''
-        lua << EOF
-        -- Used in ../program/neovim/init.lua
-        Sumneko_bin = "${pkgs.sumneko-lua-language-server}/bin/lua-language-server"
-        Sumneko_main = "${pkgs.sumneko-lua-language-server}/extras/main.lua"
-        ${builtins.readFile ../programs/neovim/init.lua}
-        EOF
-      '';
-    };
 
     xdg = {
       configFile."zls.json".text = ''

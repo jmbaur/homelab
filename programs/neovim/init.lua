@@ -1,4 +1,4 @@
-vim.cmd [[colorscheme gruvbox]]
+vim.cmd [[colorscheme NeoSolarized]]
 vim.cmd [[nnoremap n nzzzv]]
 vim.cmd [[nnoremap N Nzzzv]]
 vim.cmd [[nnoremap J mzJ`z]]
