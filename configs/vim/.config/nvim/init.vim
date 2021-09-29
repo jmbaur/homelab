@@ -10,11 +10,14 @@ endif
 
 call plug#begin()
 
+Plug 'LnL7/vim-nix'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/vim-easy-align'
+Plug 'leafgarland/typescript-vim'
 Plug 'neovim/nvim-lspconfig'
 Plug 'norcalli/snippets.nvim'
+Plug 'ntpeters/vim-better-whitespace'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-fugitive'
@@ -28,11 +31,7 @@ Plug 'ziglang/zig.vim'
 call plug#end()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-syntax enable
-filetype plugin indent on
-
-colorscheme jared
-
+set background=dark
 set clipboard=unnamedplus
 set colorcolumn=80
 set completeopt-=preview " Prevent LSP preview window from opening on omnifunc
@@ -53,9 +52,17 @@ set smartcase
 set softtabstop=2
 set splitbelow
 set splitright
+set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
 set tabstop=2
 
-let g:markdown_fenced_languages = ['bash=sh']
+colorscheme jared
+
+syntax enable
+filetype plugin indent on
+
+let g:markdown_fenced_languages=['bash=sh']
+let g:fzf_preview_window=[]
+let g:fzf_layout={'window':'enew'}
 let mapleader=','
 
 inoremap ! !<c-g>u
