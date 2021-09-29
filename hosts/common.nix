@@ -7,10 +7,14 @@
     }))
   ];
 
+  # nix-direnv
   nix.extraOptions = ''
     keep-outputs = true
     keep-derivations = true
   '';
+  environment.pathsToLink = [
+    "/share/nix-direnv"
+  ];
 
   boot = {
     cleanTmpDir = true;
@@ -49,6 +53,7 @@
       curl
       ddcutil
       delta
+      direnv
       dmidecode
       dnsutils
       dunst
@@ -78,6 +83,7 @@
       mob
       neofetch
       neovim-nightly
+      nix-direnv
       nixops
       nmap
       nnn
@@ -89,10 +95,13 @@
       pinentry-curses
       podman-compose
       procs
+      python3
       renameutils
       ripgrep
       rtorrent
       sd
+      shellcheck
+      shfmt
       skopeo
       tailscale
       tcpdump
@@ -102,9 +111,6 @@
       tokei
       traceroute
       trash-cli
-      python3
-      shellcheck
-      shfmt
       tree
       unzip
       usbutils
