@@ -1,5 +1,10 @@
 { config, pkgs, ... }:
 
+let
+  fdroidcl = pkgs.callPackage (import ../programs/fdroidcl.nix) { };
+  proj = pkgs.callPackage (import ../programs/proj.nix) { };
+  gosee = pkgs.callPackage (import (builtins.fetchTarball "https://github.com/jmbaur/gosee/archive/main.tar.gz")) { };
+in
 {
   nixpkgs.overlays = [
     (import (builtins.fetchTarball {
@@ -7,7 +12,7 @@
     }))
   ];
 
-  # nix-direnv
+  # nix-direnv, prevent nix shells from being wiped on garbage collection
   nix.extraOptions = ''
     keep-outputs = true
     keep-derivations = true
@@ -60,6 +65,7 @@
       dust
       exa
       fd
+      fdroidcl
       ffmpeg
       file
       firefox
@@ -69,6 +75,9 @@
       git
       gnumake
       gnupg
+      go
+      gopls
+      gosee
       gotop
       grex
       gron
@@ -85,8 +94,12 @@
       neovim-nightly
       nix-direnv
       nixops
+      nixpkgs-fmt
       nmap
       nnn
+      nodePackages.prettier
+      nodePackages.typescript-language-server
+      nodejs
       nushell
       nvme-cli
       pciutils
@@ -95,6 +108,7 @@
       pinentry-curses
       podman-compose
       procs
+      proj
       python3
       renameutils
       ripgrep
@@ -145,16 +159,6 @@
       spotify
       zoom-us
     ]
-  ) ++ (
-    with pkgs;
-    [
-      go
-      gopls
-      nixpkgs-fmt
-      nodePackages.prettier
-      nodePackages.typescript-language-server
-      nodejs
-    ]
   );
 
   programs.bash = {
@@ -181,11 +185,12 @@
 
   services.fwupd.enable = true;
   services.printing.enable = true;
+
+  location.provider = "geoclue2";
   services.redshift.enable = true;
 
   # Yubikey GPG and SSH support
   services.udev.packages = [ pkgs.yubikey-personalization ];
-
   programs = {
     ssh.startAgent = false;
     gnupg.agent = {
@@ -195,7 +200,6 @@
     };
   };
 
-  location.provider = "geoclue2";
   services.xserver = {
     enable = true;
     layout = "us";
@@ -205,7 +209,6 @@
       autoLogin.enable = true;
       autoLogin.user = "jared";
     };
-
     desktopManager.xterm.enable = true;
     windowManager.i3 = {
       enable = true;
