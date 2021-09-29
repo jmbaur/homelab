@@ -2,8 +2,8 @@
 
 let
   fdroidcl = pkgs.callPackage (import ../programs/fdroidcl.nix) { };
-  proj = pkgs.callPackage (import ../programs/proj.nix) { };
   gosee = pkgs.callPackage (import (builtins.fetchTarball "https://github.com/jmbaur/gosee/archive/main.tar.gz")) { };
+  proj = pkgs.callPackage (import ../programs/proj.nix) { };
 in
 {
   nixpkgs.overlays = [
