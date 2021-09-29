@@ -103,6 +103,7 @@
       shellcheck
       shfmt
       skopeo
+      stow
       tailscale
       tcpdump
       tealdeer
