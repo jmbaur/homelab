@@ -12,6 +12,8 @@ stow_with_flags alacritty
 stow_with_flags git
 stow_with_flags gtk
 stow_with_flags i3
+stow_with_flags psql
+stow_with_flags ssh
 stow_with_flags tmux
 stow_with_flags vim
 stow_with_flags zsh
