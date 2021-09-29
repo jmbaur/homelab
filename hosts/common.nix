@@ -150,6 +150,15 @@
     ]
   );
 
+  programs.bash = {
+    vteIntegration = true;
+    undistractMe.enable = true;
+  };
+
+  programs.zsh = {
+    enable = true;
+    vteIntegration = true;
+  };
 
   fonts.fonts = with pkgs; [
     dejavu_fonts
@@ -169,11 +178,6 @@
 
   # Yubikey GPG and SSH support
   services.udev.packages = [ pkgs.yubikey-personalization ];
-  environment.shellInit = ''
-    export GPG_TTY="$(tty)"
-    gpg-connect-agent /bye
-    export SSH_AUTH_SOCK="/run/user/$UID/gnupg/S.gpg-agent.ssh"
-  '';
 
   programs = {
     ssh.startAgent = false;
@@ -189,6 +193,12 @@
     enable = true;
     layout = "us";
     xkbOptions = "ctrl:nocaps";
+    displayManager = {
+      defaultSession = "none+i3";
+      autoLogin.enable = true;
+      autoLogin.user = "jared";
+    };
+
     desktopManager.xterm.enable = true;
     windowManager.i3 = {
       enable = true;
@@ -220,8 +230,9 @@
 
   users.users.jared = {
     description = "Jared Baur";
-    isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" "adbusers" ];
+    isNormalUser = true;
     openssh.authorizedKeys.keys = [ (import ./pubSshKey.nix) ];
+    shell = pkgs.zsh;
   };
 }

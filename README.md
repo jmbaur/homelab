@@ -1,30 +1,79 @@
-Steps for a new host:
+# My NixOS configs
 
-1. Install NixOS (https://nixos.org/manual/nixos/stable/index.html#ch-installation)
-1. Reboot into new installation and `cd /etc/nixos`
-1. `sudo chown -R $(whoami):users .`
-1. `git init .`
-1. `git remote add origin https://github.com/jmbaur/nixos-configs`
-1. `git branch -M main`
-1. `git pull origin main`
-1. `cp ./configuration.nix ./hosts/${HOSTNAME}/configuration.nix`
-1. Change imports in `./hosts/${HOSTNAME}/configuration.nix` to point to correct hardware-configuration.nix
-1. Change imports in `./configuration.nix` to just import `./hosts/${HOSTNAME}/configuration.nix`
-1. Commit changes and `git push --set-upstream origin main`
+## Encrypted root setup
 
+Assumptions:
 
-# Hostnames
+- The device installing NixOS on is /dev/sda.
+- A gpg card is readily available.
+
+```bash
+parted /dev/sda -- mklabel gpt
+parted /dev/sda -- mkpart primary 512MiB 100% # soon-to-be luks device
+parted /dev/sda -- mkpart ESP fat32 1MiB 512MiB # boot partition
+parted /dev/sda -- set 2 esp on
+
+dd if=/dev/urandom of=disk.key bs=4096 count=1 # create key file
+
+cryptsetup luksFormat --key-file=disk.key /dev/sda1 # use key file to create luks device
+cryptsetup luksOpen --key-file=disk.key /dev/sda1 cryptlvm # use key file to open luks device
+
+# LVM stuff
+pvcreate /dev/mapper/cryptlvm
+vgcreate vg /dev/mapper/cryptlvm
+lvcreate -L 8G -n swap vg # create 8GB swap space
+lvcreate -l '100%FREE' -n root vg # use rest for root
+
+# Format & mount partitions
+mkfs.ext4 -L root /dev/vg/root
+mkswap -L swap /dev/vg/swap
+mkfs.vfat -F 32 -n boot /dev/sda2
+mount /dev/vg/root /mnt
+mkdir /mnt/boot
+mount /dev/sda2 /mnt/boot
+swapon /dev/vg/swap # optional
+
+nix-shell -p gnupg
+gpg --encrypt --output=disk.key.gpg --recipient=jaredbaur@fastmail.com disk.key # encrypt key file
+mv disk.key.gpg /mnt/etc/nixos
+curl -OL https://keybase.io/jaredbaur/pgp_keys.asc
+mv pgp_keys.asc /mnt/etc/nixos
+
+# NixOS stuff
+nixos-generate-config --root /mnt
+uuid=$(blkid -s UUID /dev/sda1 | cut -d\" -f2)
+echo << EOF
+# Put this in your /etc/nixos/hardware-configuration.nix
+boot.initrd.luks = {
+  gpgSupport = true;
+  devices.cryptlvm = {
+    allowDiscards = true;
+    device = "/dev/disk/by-uuid/${uuid}";
+    preLVM = true;
+    gpgCard = {
+      publicKey = ./pgp_keys.asc;
+      encryptedPass = ./disk.key.gpg;
+      gracePeriod = 30; # seconds
+    };
+  };
+};
+EOF
+nixos-install
+reboot
+```
+
+## Hostnames
 
 List from https://www.vegetables.co.nz/vegetables-a-z/.
 
-## Taken
+### Taken
 
 - Beetroot - Rengakura
 - Kale and Cavolo Nero
 - Okra
 - Rhubarb - Rūpapa
 
-## Available
+### Available
 
 - Artichokes, globe - Atihoka
 - Artichokes, Jerusalem - Atihoka
