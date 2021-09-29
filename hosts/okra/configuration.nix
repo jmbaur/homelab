@@ -11,8 +11,6 @@ in
 
   networking.hostName = "okra";
 
-  environment.systemPackages = with pkgs; [ nvme-cli ];
-
   services.udev.extraRules = ''KERNEL=="i2c-[0-9]*", GROUP+="users"'';
   services.openssh.enable = true;
   services.xserver.enable = true;

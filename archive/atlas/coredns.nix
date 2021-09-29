@@ -1,6 +1,7 @@
 { config, lib, pkgs, ... }:
 let hosts = import ../hosts.nix;
-in {
+in
+{
   services.coredns = {
     enable = true;
     config = ''

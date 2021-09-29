@@ -9,7 +9,8 @@ let
       parameter-problem,
     } counter accept
   '';
-in {
+in
+{
   # Disable these explicitly since we will be handling them with nftables.
   networking.firewall.enable = false;
   networking.nat.enable = false;

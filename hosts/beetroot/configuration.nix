@@ -1,45 +1,27 @@
 { config, pkgs, ... }:
-
-let
-  nixos-hardware =
-    builtins.fetchGit { url = "https://github.com/NixOS/nixos-hardware.git"; };
-  home-manager = import ../misc/home-manager.nix { ref = "release-21.05"; };
-in
 {
   imports = [
-    ./hardware-configuration.nix
-    "${nixos-hardware}/lenovo/thinkpad/t495"
     ../common.nix
+    ./hardware-configuration.nix
   ];
+
+  hardware.cpu.amd.updateMicrocode = true;
+
+  networking.hostName = "beetroot";
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "beetroot";
+  programs.mtr.enable = true;
 
-  services.blueman.enable = true;
-  services.fprintd = {
+  services.xserver.libinput = {
     enable = true;
-    tod = {
-      enable = true;
-      driver = pkgs.libfprint-2-tod1-goodix;
+    touchpad = {
+      accelProfile = "flat";
+      tapping = true;
+      naturalScrolling = true;
     };
   };
-  hardware.bluetooth.enable = true;
-
-  services.power-profiles-daemon.enable = true;
-
-  services.xserver = {
-    enable = true;
-    libinput = {
-      enable = true;
-      touchpad.tapping = true;
-      touchpad.naturalScrolling = true;
-      touchpad.disableWhileTyping = true;
-    };
-  };
-
-  environment.systemPackages = with pkgs; [ geteltorito ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

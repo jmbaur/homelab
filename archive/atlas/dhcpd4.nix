@@ -1,6 +1,7 @@
 { config, lib, pkgs, ... }:
 let hosts = import ../hosts.nix;
-in {
+in
+{
   services.dhcpd4 = {
     enable = true;
     interfaces = [ "mgmt" "lab" "guest" "iot" ];
