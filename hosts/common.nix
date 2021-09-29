@@ -219,6 +219,7 @@ in
     containers.containersConf.settings = {
       engine = { detach_keys = "ctrl-e,ctrl-q"; };
     };
+    virtualbox.host.enable = true;
   };
 
   programs.adb.enable = true;
@@ -227,7 +228,7 @@ in
   users.users.jared = {
     description = "Jared Baur";
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "adbusers" ];
+    extraGroups = [ "wheel" "networkmanager" "adbusers" "vboxusers" ];
     openssh.authorizedKeys.keys = [ (import ./pubSshKey.nix) ];
   };
 

@@ -13,12 +13,10 @@
       solarized
       surround
       tagbar
-      tsuquyomi
       typescript-vim
+      vim-lsp
       vim-better-whitespace
       vim-eunuch
-      vim-go
-      vim-gutentags
       vim-javascript
       vim-markdown
       vim-nix
@@ -28,24 +26,6 @@
       zig-vim
     ];
     extraConfig = ''
-      colorscheme solarized
-      let g:go_bin_path="/home/jared/go/bin"
-      let g:gutentags_file_list_command="${pkgs.ripgrep}/bin/rg --files"
-      let mapleader = ","
-      inoremap ! !<c-g>u
-      inoremap , ,<c-g>u
-      inoremap . .<c-g>u
-      inoremap ? ?<c-g>u
-      nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . "j"
-      nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . "k"
-      nnoremap <leader>b :Buffers!<CR>
-      nnoremap <leader>f :Files!<CR>
-      nnoremap <leader>g :GFiles!<CR>
-      nnoremap <leader>r :Rg!<CR>
-      nnoremap <leader>t :TagbarToggle<CR>
-      nnoremap J mzJ`z
-      nnoremap N Nzzzv
-      nnoremap n nzzzv
       set background=dark
       set clipboard=unnamed
       set colorcolumn=80
@@ -68,41 +48,70 @@
       set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
       set tabstop=2
 
-      let g:tagbar_type_typescript = {
-        \ "ctagstype": "typescript",
-        \ "kinds": [
-          \ "c:classes",
-          \ "n:modules",
-          \ "f:functions",
-          \ "v:variables",
-          \ "v:varlambdas",
-          \ "m:members",
-          \ "i:interfaces",
-          \ "e:enums",
-        \ ]
-      \ }
+      colorscheme solarized
 
-      let g:tagbar_type_zig = {
-        \ "ctagstype": "zig",
-        \ "kinds" : [
-           \ "f:functions",
-           \ "s:structs",
-           \ "e:enums",
-           \ "u:unions",
-           \ "E:errors",
-         \ ]
-      \ }
+      " Leader assignment must be above custom mappings for it to take effect.
+      let mapleader=","
+      let g:fzf_preview_window=[]
+      let g:fzf_layout={'window':'enew'}
 
-      let g:tagbar_type_go = {
-        \ "ctagstype": "go",
-        \ "kinds" : [
-          \ "p:package",
-          \ "f:function",
-          \ "v:variables",
-          \ "t:type",
-          \ "c:const"
-        \ ]
-      \ }
+      inoremap ! !<c-g>u
+      inoremap , ,<c-g>u
+      inoremap . .<c-g>u
+      inoremap ? ?<c-g>u
+      nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . "j"
+      nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . "k"
+      nnoremap <leader>b :Buffers<CR>
+      nnoremap <leader>f :Files<CR>
+      nnoremap <leader>g :GFiles<CR>
+      nnoremap <leader>r :Rg<CR>
+      nnoremap J mzJ`z
+      nnoremap N Nzzzv
+      nnoremap n nzzzv
+
+      if executable('gopls')
+        au User lsp_setup call lsp#register_server({
+        \ 'name': 'gopls',
+        \ 'cmd': {server_info->['gopls']},
+        \ 'allowlist': ['go'],
+        \ })
+      endif
+
+      if executable('typescript-language-server')
+        au User lsp_setup call lsp#register_server({
+        \ 'name': 'typescript-language-server',
+        \ 'cmd': {server_info->['typescript-language-server', '--stdio']},
+        \ 'allowlist': ['typescript'],
+        \ })
+      endif
+
+      function! s:on_lsp_buffer_enabled() abort
+        setlocal omnifunc=lsp#complete
+        setlocal signcolumn=yes
+        if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+        nmap <buffer> gd <plug>(lsp-definition)
+        nmap <buffer> gs <plug>(lsp-document-symbol-search)
+        nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
+        nmap <buffer> gr <plug>(lsp-references)
+        nmap <buffer> gi <plug>(lsp-implementation)
+        nmap <buffer> gt <plug>(lsp-type-definition)
+        nmap <buffer> <leader>rn <plug>(lsp-rename)
+        nmap <buffer> [g <plug>(lsp-previous-diagnostic)
+        nmap <buffer> ]g <plug>(lsp-next-diagnostic)
+        nmap <buffer> K <plug>(lsp-hover)
+        inoremap <buffer> <expr><c-f> lsp#scroll(+4)
+        inoremap <buffer> <expr><c-d> lsp#scroll(-4)
+
+        let g:lsp_format_sync_timeout = 1000
+        autocmd! BufWritePre *.rs,*.go call execute('LspDocumentFormatSync')
+
+        " refer to doc to add more commands
+      endfunction
+
+      augroup lsp_install
+        au!
+        autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+      augroup END
     '';
   };
 }
