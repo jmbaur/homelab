@@ -148,15 +148,16 @@ in
       element-desktop
       firefox
       gimp
-      libreoffice
       google-chrome
+      libreoffice
+      pavucontrol
+      postman
       signal-desktop
+      slack
+      spotify
       wireshark
       xclip
       xsel
-      postman
-      slack
-      spotify
       zoom-us
     ]
   );
