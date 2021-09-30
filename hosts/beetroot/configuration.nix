@@ -9,6 +9,8 @@
 
   networking.hostName = "beetroot";
 
+  hardware.bluetooth.enable = true;
+
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 

@@ -4,7 +4,10 @@ set -e
 
 pushd "$(dirname "$0")" >/dev/null
 
+HOST="${1:-$HOSTNAME}"
+
 stow_with_flags() {
+	echo Stowing "$@"
 	stow --restow --no-folding --dir="${PWD}" --target="${HOME}" "$@"
 }
 
@@ -17,5 +20,10 @@ stow_with_flags ssh
 stow_with_flags tmux
 stow_with_flags vim
 stow_with_flags zsh
+
+# Host specific configs
+if [[ -d "${HOST}" ]]; then
+	stow_with_flags "${HOST}"
+fi
 
 popd >/dev/null
