@@ -1,9 +1,10 @@
 { config, pkgs, ... }:
 
 let
-  fdroidcl = pkgs.callPackage (import ../programs/fdroidcl.nix) { };
-  gosee = pkgs.callPackage (import (builtins.fetchTarball "https://github.com/jmbaur/gosee/archive/main.tar.gz")) { };
-  proj = pkgs.callPackage (import ../programs/proj.nix) { };
+  efm-langserver = import ../programs/efm-langserver {};
+  fdroidcl = import ../programs/fdroidcl { };
+  gosee = import (builtins.fetchTarball "https://github.com/jmbaur/gosee/archive/main.tar.gz") {};
+  proj = import ../programs/proj{};
 in
 {
   nixpkgs.overlays = [
@@ -85,6 +86,7 @@ in
       iperf3
       iputils
       jq
+      efm-langserver
       keybase
       killall
       libnotify
