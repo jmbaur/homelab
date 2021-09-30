@@ -192,6 +192,17 @@ in
   location.provider = "geoclue2";
   services.redshift.enable = true;
 
+  services.syncthing = {
+    enable = true;
+    user = "jared";
+    group = "users";
+    dataDir = "/home/jared";
+    configDir = "/home/jared/.config/syncthing";
+    # openDefaultPorts = true;
+    declarative.overrideFolders = false;
+    declarative.overrideDevices = true;
+  };
+
   # Yubikey GPG and SSH support
   services.udev.packages = [ pkgs.yubikey-personalization ];
   programs = {
