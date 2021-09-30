@@ -5,7 +5,7 @@ set -e
 pushd "$(dirname "$0")" >/dev/null
 
 stow_with_flags() {
-	stow --no-folding --dir="${PWD}" --target="${HOME}" "$@"
+	stow --restow --no-folding --dir="${PWD}" --target="${HOME}" "$@"
 }
 
 stow_with_flags alacritty
