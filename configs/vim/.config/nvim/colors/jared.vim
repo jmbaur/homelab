@@ -7,7 +7,7 @@ let g:colors_name = "jared"
 
 hi clear Visual
 
-hi ColorColumn		ctermbg=1
+hi ColorColumn		ctermbg=8
 hi CursorLine		cterm=NONE
 hi CursorLineNr		cterm=NONE	ctermfg=7
 hi LineNr		ctermfg=8
