@@ -109,6 +109,7 @@ in
       podman-compose
       procs
       proj
+      pyright
       python3
       renameutils
       ripgrep
@@ -244,6 +245,6 @@ in
     extraGroups = [ "wheel" "networkmanager" "adbusers" ];
     isNormalUser = true;
     openssh.authorizedKeys.keys = [ (import ./pubSshKey.nix) ];
-    shell = pkgs.zsh;
+    shell = pkgs.bash;
   };
 }

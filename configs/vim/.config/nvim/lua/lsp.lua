@@ -38,7 +38,7 @@ end
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-local servers = {'gopls', 'tsserver'}
+local servers = {'gopls', 'tsserver', 'pyright'}
 for _, server in ipairs(servers) do
     lsp[server].setup {
         on_attach = on_attach,
