@@ -52,6 +52,7 @@ shred -u disk.key
 uuid=$(blkid -s UUID /dev/sda1 | cut -d\" -f2)
 echo << EOF
 # Put this in your /etc/nixos/hardware-configuration.nix
+services.udev.packages = [ pkgs.yubikey-personalization ];
 boot.initrd.luks = {
   gpgSupport = true;
   devices.cryptlvm = {
