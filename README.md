@@ -33,14 +33,22 @@ mkdir /mnt/boot
 mount /dev/sda2 /mnt/boot
 swapon /dev/vg/swap # optional
 
+# Generate base NixOS config
+nixos-generate-config --root /mnt
+
+# GPG stuff
 nix-shell -p gnupg
+# Do these things:
+#   gpg --card-edit
+#   fetch
+#   quit
 gpg --encrypt --output=disk.key.gpg --recipient=jaredbaur@fastmail.com disk.key # encrypt key file
 mv disk.key.gpg /mnt/etc/nixos
 curl -OL https://keybase.io/jaredbaur/pgp_keys.asc
 mv pgp_keys.asc /mnt/etc/nixos
+shred -u disk.key
 
 # NixOS stuff
-nixos-generate-config --root /mnt
 uuid=$(blkid -s UUID /dev/sda1 | cut -d\" -f2)
 echo << EOF
 # Put this in your /etc/nixos/hardware-configuration.nix
