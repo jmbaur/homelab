@@ -36,7 +36,6 @@ set clipboard=unnamedplus
 set colorcolumn=80
 set completeopt-=preview " Prevent LSP preview window from opening on omnifunc
 set cursorline
-set expandtab
 set hidden
 set ignorecase
 set noswapfile
@@ -45,15 +44,12 @@ set nowrap
 set number
 set relativenumber
 set scrolloff=5
-set shiftwidth=2
 set showmatch
 set sidescrolloff=5
 set smartcase
-set softtabstop=2
 set splitbelow
 set splitright
 set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
-set tabstop=2
 
 colorscheme jared
 

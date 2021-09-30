@@ -207,6 +207,9 @@ in
     enable = true;
     layout = "us";
     xkbOptions = "ctrl:nocaps";
+    deviceSection = ''
+      Option "TearFree" "true"
+    '';
     displayManager = {
       defaultSession = "none+i3";
       autoLogin.enable = true;
@@ -216,11 +219,20 @@ in
     windowManager.i3 = {
       enable = true;
       extraSessionCommands = ''
-        xsetroot -solid black
+        xsetroot -solid "#000000"
       '';
+      extraPackages = with pkgs; [
+        dmenu
+        i3lock
+        i3status-rust
+      ];
     };
-    deviceSection = ''
-      Option "TearFree" "true"
+  };
+
+  programs.xss-lock = {
+    enable = true;
+    lockerCommand = ''
+      ${pkgs.i3lock}/bin/i3lock -c 000000
     '';
   };
 
