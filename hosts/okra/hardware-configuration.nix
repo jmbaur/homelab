@@ -4,27 +4,44 @@
 { config, lib, pkgs, modulesPath, ... }:
 
 {
-  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
+  imports =
+    [
+      (modulesPath + "/installer/scan/not-detected.nix")
+    ];
 
-  boot.initrd.availableKernelModules =
-    [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" ];
-  boot.initrd.kernelModules = [ ];
+  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" ];
+  boot.initrd.kernelModules = [ "dm-snapshot" ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
-  fileSystems."/" = {
-    device = "/dev/disk/by-uuid/4c93cea9-e9e5-4b3c-bfc7-fa1e322f4406";
-    fsType = "ext4";
+  boot.initrd.luks = {
+    gpgSupport = true;
+    devices.cryptlvm = {
+      allowDiscards = true;
+      device = "/dev/disk/by-uuid/1ced5915-7dd2-4bbb-90cd-b2e48c605286";
+      preLVM = true;
+      gpgCard = {
+        publicKey = ../pgp_keys.asc;
+        encryptedPass = ./disk.key.gpg;
+        gracePeriod = 30;
+      };
+    };
   };
 
-  fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/9CE8-7A0D";
-    fsType = "vfat";
-  };
+  fileSystems."/" =
+    {
+      device = "/dev/disk/by-uuid/88f3f518-27ab-4b6b-b658-d33c9f7caf8c";
+      fsType = "ext4";
+    };
+
+  fileSystems."/boot" =
+    {
+      device = "/dev/disk/by-uuid/9D34-F1F0";
+      fsType = "vfat";
+    };
 
   swapDevices =
-    [{ device = "/dev/disk/by-uuid/ba329610-502f-46b3-9e03-624fdc1d996a"; }];
+    [{ device = "/dev/disk/by-uuid/568b470c-9f32-4f35-9150-b35b1eb8c860"; }];
 
-  # high-resolution display
-  hardware.video.hidpi.enable = lib.mkDefault true;
 }
+

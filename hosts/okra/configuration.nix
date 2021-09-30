@@ -1,15 +1,20 @@
 { config, pkgs, ... }:
 
 {
-  imports = [ ./hardware-configuration.nix ../common.nix ];
+  imports =
+    [
+      ./hardware-configuration.nix
+      ../common.nix
+    ];
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+
   boot.kernelModules = [ "i2c-dev" ];
+  services.udev.extraRules = ''KERNEL=="i2c-[0-9]*", GROUP+="users"'';
 
   networking.hostName = "okra";
 
-  services.udev.extraRules = ''KERNEL=="i2c-[0-9]*", GROUP+="users"'';
   services.openssh.enable = true;
   services.xserver.enable = true;
 
@@ -22,3 +27,4 @@
   system.stateVersion = "21.05"; # Did you read the comment?
 
 }
+
