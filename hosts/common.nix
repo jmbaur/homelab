@@ -102,6 +102,7 @@ in
       nodejs
       nushell
       nvme-cli
+      pass
       pciutils
       picocom
       pinentry
