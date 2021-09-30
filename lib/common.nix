@@ -245,7 +245,7 @@ in
     description = "Jared Baur";
     extraGroups = [ "wheel" "networkmanager" "adbusers" ];
     isNormalUser = true;
-    openssh.authorizedKeys.keys = [ (import ./pubSshKey.nix) ];
+    openssh.authorizedKeys.keys = [ "${builtins.readFile ./publicSSHKey.txt}" ];
     shell = pkgs.bash;
   };
 }

@@ -28,7 +28,7 @@
   # SSH
   services.openssh.enable = true;
   users.extraUsers.root.openssh.authorizedKeys.keys =
-    [ (import ../pubSshKey.nix) ];
+    [ "${builtins.readFile ../../lib/publicSSHKey.txt}" ];
 
   # Syncthing
   services.syncthing = {

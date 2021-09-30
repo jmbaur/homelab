@@ -21,7 +21,7 @@
       device = "/dev/disk/by-uuid/1ced5915-7dd2-4bbb-90cd-b2e48c605286";
       preLVM = true;
       gpgCard = {
-        publicKey = ../pgp_keys.asc;
+        publicKey = ../../lib/pgp_keys.asc;
         encryptedPass = ./disk.key.gpg;
         gracePeriod = 30;
       };
