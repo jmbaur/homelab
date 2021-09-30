@@ -47,7 +47,7 @@ in
       acpi
       alacritty
       atop
-      awscli
+      awscli2
       bat
       bc
       bind
