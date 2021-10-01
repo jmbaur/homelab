@@ -2,6 +2,8 @@
 
 set -e
 
+fdroidcl update
+
 while read app; do
 	echo "installing $app"
 	fdroidcl install $app

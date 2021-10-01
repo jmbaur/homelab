@@ -7,5 +7,5 @@ test:
 	NIXOS_CONFIG=${config_path} nixos-rebuild test
 
 switch:
-	NIXOS_CONFIG=${config_path} nixos-rebuild switch
-	bash configs/setup.sh ${host}
+	NIXOS_CONFIG=${config_path} nixos-rebuild switch && \
+		     bash configs/setup.sh ${host}
