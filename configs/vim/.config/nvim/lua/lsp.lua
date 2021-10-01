@@ -3,6 +3,8 @@ local lsp = require('lspconfig')
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)
+    client.resolved_capabilities.document_formatting = false
+
     local function buf_set_keymap(...)
         vim.api.nvim_buf_set_keymap(bufnr, ...)
     end
@@ -36,12 +38,31 @@ local on_attach = function(client, bufnr)
     buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
 end
 
--- Use a loop to conveniently call 'setup' on multiple servers and
--- map buffer local keybindings when the language server attaches
-local servers = {'gopls', 'tsserver', 'pyright'}
-for _, server in ipairs(servers) do
+for _, server in ipairs {'gopls', 'pyright', 'tsserver'} do
     lsp[server].setup {
         on_attach = on_attach,
         flags = {debounce_text_changes = 150}
     }
 end
+
+local efm_languages = {
+    go = {{formatCommand = "goimports", formatStdin = true}},
+    python = {{formatCommand = "black --quiet -", formatStdin = true}},
+    typescript = {
+        {formatCommand = "prettier --parser=typescript", formatStdin = true}
+    }
+}
+
+lsp.efm.setup {
+    on_attach = function()
+        vim.cmd [[
+          augroup Format
+            au! * <buffer>
+            au BufWritePre <buffer> lua vim.lsp.buf.formatting_sync(nil, 1000)
+          augroup END
+        ]]
+    end,
+    init_options = {documentFormatting = true},
+    settings = {rootMarkers = {".git/"}, languages = efm_languages},
+    filetypes = vim.tbl_keys(efm_languages)
+}

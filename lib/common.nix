@@ -1,10 +1,10 @@
 { config, pkgs, ... }:
 
 let
-  efm-langserver = import ../programs/efm-langserver {};
+  efm-langserver = import ../programs/efm-langserver { };
   fdroidcl = import ../programs/fdroidcl { };
-  gosee = import (builtins.fetchTarball "https://github.com/jmbaur/gosee/archive/main.tar.gz") {};
-  proj = import ../programs/proj{};
+  gosee = import (builtins.fetchTarball "https://github.com/jmbaur/gosee/archive/main.tar.gz") { };
+  proj = import ../programs/proj { };
 in
 {
   nixpkgs.overlays = [
@@ -52,6 +52,7 @@ in
       bat
       bc
       bind
+      black
       brightnessctl
       buildah
       cmus
@@ -64,6 +65,7 @@ in
       dnsutils
       dunst
       dust
+      efm-langserver
       exa
       fd
       fdroidcl
@@ -77,6 +79,7 @@ in
       gnumake
       gnupg
       go
+      goimports
       gopls
       gosee
       gotop
@@ -86,11 +89,11 @@ in
       iperf3
       iputils
       jq
-      efm-langserver
       keybase
       killall
       libnotify
       lm_sensors
+      luaformatter
       mob
       neofetch
       neovim-nightly
