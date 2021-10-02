@@ -115,6 +115,7 @@ in
       podman-compose
       procs
       proj
+      pwgen
       pyright
       python3
       renameutils

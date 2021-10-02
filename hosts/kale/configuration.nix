@@ -5,6 +5,8 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  time.timeZone = "Etc/UTC";
+
   # Networking
   networking.hostName = "kale";
   networking.interfaces.eno1.useDHCP = true;
@@ -43,7 +45,7 @@
         beetroot.id =
           "E3ZRKPY-56IA2P4-R2VKPOT-A3AHXAC-OQ3SY2U-IFOJ4PO-AA6R6X2-3ARBKAJ";
         okra.id =
-          "E6ANVH5-N55GABM-ND5DCYD-PAFN3UU-KOILXIQ-HKVIANN-R5K3HYF-O4BMWQT";
+          "TF2ZKRU-G2EJKBJ-JLSGABK-UHQMZGB-SFCO7X3-A4EB674-3LMSNAL-3QPCVQE";
       };
       folders = {
         Desktop = {
@@ -97,6 +99,37 @@
       };
     };
   };
+
+
+  virtualisation.oci-containers = {
+    backend = "podman";
+    containers = {
+      "gitea" = {
+        autoStart = true;
+        image = "docker.io/gitea/gitea:1";
+        environmentFiles = [ /run/keys/gitea ];
+        extraOptions = [ "--pod=gitea_pod" ];
+        volumes = [
+          "/data/gitea:/data"
+          # TODO(jared): Determine what bad things could happen if we don't do
+          # these volume mounts.
+          # "/etc/timezone:/etc/timezone:ro"
+          # "/etc/localtime:/etc/localtime:ro"
+        ];
+        dependsOn = [ "gitea_db" ];
+      };
+      "gitea_db" = {
+        autoStart = true;
+        image = "docker.io/library/postgres:14-alpine";
+        environmentFiles = [ /run/keys/gitea_db ];
+        extraOptions = [ "--pod=gitea_pod" ];
+        volumes = [
+          "/data/gitea_db:/var/lib/postgresql/data"
+        ];
+      };
+    };
+  };
+
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
