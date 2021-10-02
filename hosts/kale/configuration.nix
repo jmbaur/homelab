@@ -5,6 +5,8 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  time.timeZone = "Etc/UTC";
+
   # Networking
   networking.hostName = "kale";
   networking.interfaces.eno1.useDHCP = true;
@@ -97,6 +99,37 @@
       };
     };
   };
+
+
+  virtualisation.oci-containers = {
+    backend = "podman";
+    containers = {
+      "gitea" = {
+        autoStart = true;
+        image = "docker.io/gitea/gitea:1";
+        environmentFiles = [ /run/keys/gitea ];
+        extraOptions = [ "--pod=gitea_pod" ];
+        volumes = [
+          "/data/gitea:/data"
+          # TODO(jared): Determine what bad things could happen if we don't do
+          # these volume mounts.
+          # "/etc/timezone:/etc/timezone:ro"
+          # "/etc/localtime:/etc/localtime:ro"
+        ];
+        dependsOn = [ "gitea_db" ];
+      };
+      "gitea_db" = {
+        autoStart = true;
+        image = "docker.io/library/postgres:14-alpine";
+        environmentFiles = [ /run/keys/gitea_db ];
+        extraOptions = [ "--pod=gitea_pod" ];
+        volumes = [
+          "/data/gitea_db:/var/lib/postgresql/data"
+        ];
+      };
+    };
+  };
+
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
