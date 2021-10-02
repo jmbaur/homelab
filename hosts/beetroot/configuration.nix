@@ -1,9 +1,31 @@
 { config, pkgs, ... }:
+let
+  nixos-hardware = builtins.fetchTarball "https://github.com/nixos/nixos-hardware/archive/master.tar.gz";
+in
 {
   imports = [
-    ../../lib/common.nix
     ./hardware-configuration.nix
+    ../../lib/common.nix
+    "${nixos-hardware}/lenovo/thinkpad/t495"
   ];
+
+  boot.initrd.luks = {
+    gpgSupport = true;
+    devices.cryptlvm = {
+      allowDiscards = true;
+      device = "/dev/disk/by-uuid/25d5e7ed-7def-408f-922b-41ecf319e19b";
+      preLVM = true;
+      gpgCard = {
+        publicKey = ../../lib/pgp_keys.asc;
+        encryptedPass = ./disk.key.gpg;
+        gracePeriod = 30;
+      };
+    };
+  };
+
+  # TLP causing issues with USB ports turning off. Override TLP set from
+  # https://github.com/NixOS/nixos-hardware/blob/master/common/pc/laptop/default.nix
+  services.power-profiles-daemon.enable = true;
 
   hardware.cpu.amd.updateMicrocode = true;
 

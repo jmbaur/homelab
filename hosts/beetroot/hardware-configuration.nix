@@ -15,22 +15,6 @@
   boot.extraModulePackages = [ ];
 
 
-  boot.initrd.luks = {
-    gpgSupport = true;
-    devices.cryptlvm = {
-      allowDiscards = true;
-      device = "/dev/disk/by-uuid/25d5e7ed-7def-408f-922b-41ecf319e19b";
-      preLVM = true;
-      gpgCard = {
-        publicKey = ../../lib/pgp_keys.asc;
-        encryptedPass = ./disk.key.gpg;
-        gracePeriod = 30;
-      };
-    };
-
-  };
-
-
   fileSystems."/" =
     {
       device = "/dev/disk/by-uuid/fb5273e7-0b9f-49a9-99ee-91346e700787";
