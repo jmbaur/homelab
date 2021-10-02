@@ -8,7 +8,7 @@ in
     [
       ./hardware-configuration.nix
       ../../lib/common.nix
-      "${nixos-hardware}/common/amd"
+      "${nixos-hardware}/common/cpu/amd"
       "${nixos-hardware}/common/pc/ssd"
     ];
 
