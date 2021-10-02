@@ -153,7 +153,6 @@ in
   ) ++ (
     # gui
     with pkgs; [
-      bitwarden
       chromium
       element-desktop
       firefox
@@ -274,7 +273,12 @@ in
 
   users.users.jared = {
     description = "Jared Baur";
-    extraGroups = [ "wheel" "networkmanager" "adbusers" ];
+    extraGroups = [
+      "adbusers"
+      "networkmanager"
+      "wheel"
+      "wireshark"
+    ];
     isNormalUser = true;
     openssh.authorizedKeys.keys = [ "${builtins.readFile ./publicSSHKey.txt}" ];
     shell = pkgs.bash;
