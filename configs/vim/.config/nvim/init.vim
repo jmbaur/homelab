@@ -11,6 +11,7 @@ endif
 call plug#begin()
 
 Plug 'LnL7/vim-nix'
+Plug 'RRethy/nvim-base16'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/vim-easy-align'
@@ -35,11 +36,11 @@ set background=dark
 set clipboard=unnamedplus
 set colorcolumn=80
 set completeopt-=preview " Prevent LSP preview window from opening on omnifunc
-set cursorline
+set nocursorline
 set hidden
 set ignorecase
 set noswapfile
-set notermguicolors
+set termguicolors
 set nowrap
 set number
 set relativenumber
@@ -52,7 +53,7 @@ set splitright
 set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
 set undofile
 
-colorscheme jared
+colorscheme base16-tomorrow-night
 
 syntax enable
 filetype plugin indent on
