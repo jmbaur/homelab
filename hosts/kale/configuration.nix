@@ -43,7 +43,7 @@
       overrideDevices = true;
       devices = {
         beetroot.id =
-          "E3ZRKPY-56IA2P4-R2VKPOT-A3AHXAC-OQ3SY2U-IFOJ4PO-AA6R6X2-3ARBKAJ";
+          "ECKHOPT-LWUOIFJ-ZRR2YA5-TQQQNOZ-LNSSNIQ-NHGC4EL-VLZCZQQ-G6WLOQA";
         okra.id =
           "TF2ZKRU-G2EJKBJ-JLSGABK-UHQMZGB-SFCO7X3-A4EB674-3LMSNAL-3QPCVQE";
       };
