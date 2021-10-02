@@ -13,6 +13,8 @@ in
     }))
   ];
 
+  hardware.enableRedistributableFirmware = true;
+
   # nix-direnv, prevent nix shells from being wiped on garbage collection
   nix.extraOptions = ''
     keep-outputs = true

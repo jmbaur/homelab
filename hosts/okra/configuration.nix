@@ -1,10 +1,15 @@
 { config, pkgs, ... }:
 
+let
+  nixos-hardware = builtins.fetchTarball "https://github.com/nixos/nixos-hardware/archive/master.tar.gz";
+in
 {
   imports =
     [
       ./hardware-configuration.nix
       ../../lib/common.nix
+      "${nixos-hardware}/common/amd"
+      "${nixos-hardware}/common/pc/ssd"
     ];
 
   boot.loader.systemd-boot.enable = true;

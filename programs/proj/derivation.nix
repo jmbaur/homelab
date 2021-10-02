@@ -1,4 +1,4 @@
-{   pkgs ? import <nixpkgs>{}}:
+{ pkgs ? import <nixpkgs> { } }:
 pkgs.writeShellScriptBin "proj" ''
   DIR=''${PROJ_DIR:-$HOME/Projects}
   if [ ! -d $DIR ]; then

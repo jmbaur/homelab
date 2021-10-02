@@ -7,6 +7,7 @@ in
     ./hardware-configuration.nix
     ../../lib/common.nix
     "${nixos-hardware}/lenovo/thinkpad/t495"
+    "${nixos-hardware}/common/pc/ssd"
   ];
 
   boot.initrd.luks = {
