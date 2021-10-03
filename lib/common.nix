@@ -160,6 +160,7 @@ in
       google-chrome
       libreoffice
       pavucontrol
+      pinentry-gnome
       postman
       signal-desktop
       slack
@@ -217,7 +218,7 @@ in
     gnupg.agent = {
       enable = true;
       enableSSHSupport = true;
-      pinentryFlavor = "curses";
+      pinentryFlavor = "gnome3";
     };
   };
 

@@ -11,7 +11,6 @@ endif
 call plug#begin()
 
 Plug 'LnL7/vim-nix'
-Plug 'RRethy/nvim-base16'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/vim-easy-align'
@@ -40,7 +39,7 @@ set nocursorline
 set hidden
 set ignorecase
 set noswapfile
-set termguicolors
+set notermguicolors
 set nowrap
 set number
 set relativenumber
@@ -53,7 +52,7 @@ set splitright
 set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
 set undofile
 
-colorscheme base16-tomorrow-night
+colorscheme jared
 
 syntax enable
 filetype plugin indent on
