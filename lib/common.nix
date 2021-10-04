@@ -213,6 +213,7 @@ in
 
   # Yubikey GPG and SSH support
   services.udev.packages = [ pkgs.yubikey-personalization ];
+  services.dbus.packages = [ pkgs.gcr ];
   programs = {
     ssh.startAgent = false;
     gnupg.agent = {
