@@ -130,6 +130,7 @@ in
       stow
       tailscale
       tcpdump
+      tea
       tealdeer
       tig
       tmux

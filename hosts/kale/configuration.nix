@@ -1,17 +1,18 @@
 { config, pkgs, ... }:
 
+let
+  nfs_port = 2049;
+in
 {
   imports = [ ./hardware-configuration.nix ];
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  time.timeZone = "Etc/UTC";
-
   # Networking
   networking.hostName = "kale";
   networking.interfaces.eno1.useDHCP = true;
   networking.interfaces.eno2.useDHCP = true;
-  networking.firewall.allowedTCPPorts = [ 2049 ];
+  networking.firewall.allowedTCPPorts = [ config.services.gitea.httpPort nfs_port ] ++ config.services.openssh.ports;
   # networking.firewall.allowedUDPPorts = [ ... ];
 
   # NFS
@@ -29,6 +30,7 @@
 
   # SSH
   services.openssh.enable = true;
+  services.openssh.ports = [ 22 2082 ];
   users.extraUsers.root.openssh.authorizedKeys.keys =
     [ "${builtins.readFile ../../lib/publicSSHKey.txt}" ];
 
@@ -100,36 +102,41 @@
     };
   };
 
+  users.users.gitea = {
+    group = "gitea";
+    extraGroups = [ "keys" ];
+    isSystemUser = true;
+  };
 
-  virtualisation.oci-containers = {
-    backend = "podman";
-    containers = {
-      "gitea" = {
-        autoStart = true;
-        image = "docker.io/gitea/gitea:1";
-        environmentFiles = [ /run/keys/gitea ];
-        extraOptions = [ "--pod=gitea_pod" ];
-        volumes = [
-          "/data/gitea:/data"
-          # TODO(jared): Determine what bad things could happen if we don't do
-          # these volume mounts.
-          # "/etc/timezone:/etc/timezone:ro"
-          # "/etc/localtime:/etc/localtime:ro"
-        ];
-        dependsOn = [ "gitea_db" ];
-      };
-      "gitea_db" = {
-        autoStart = true;
-        image = "docker.io/library/postgres:14-alpine";
-        environmentFiles = [ /run/keys/gitea_db ];
-        extraOptions = [ "--pod=gitea_pod" ];
-        volumes = [
-          "/data/gitea_db:/var/lib/postgresql/data"
-        ];
-      };
+  services.gitea = {
+    enable = true;
+    disableRegistration = true;
+    httpPort = 3000;
+    database = {
+      type = "postgres";
+      port = 5432;
+      passwordFile = "/run/keys/gitea_db_pass";
+    };
+    dump = {
+      enable = true;
+      backupDir = "/data/gitea_dump";
     };
   };
 
+  services.postgresql = {
+    enable = true;
+    authentication = ''
+      local gitea all ident map=gitea-users
+    '';
+    identMap = ''
+      gitea-users gitea gitea
+    '';
+  };
+
+  services.postgresqlBackup = {
+    enable = true;
+    location = "/data/postgresql_backup";
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
