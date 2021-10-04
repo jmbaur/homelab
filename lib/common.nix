@@ -26,7 +26,6 @@ in
 
   boot = {
     cleanTmpDir = true;
-    kernelPackages = pkgs.linuxPackages_5_13;
     tmpOnTmpfs = true;
   };
 
@@ -60,7 +59,6 @@ in
       cmus
       ctags
       curl
-      ddcutil
       delta
       direnv
       dmidecode

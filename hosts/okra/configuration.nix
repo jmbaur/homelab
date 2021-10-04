@@ -15,8 +15,14 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  boot.kernelModules = [ "i2c-dev" ];
+  boot = {
+    kernelPackages = pkgs.linuxPackages_latest;
+    extraModulePackages = with config.boot.kernelPackages; [ ddcci-driver ];
+    kernelModules = [ "i2c-dev" ];
+  };
   services.udev.extraRules = ''KERNEL=="i2c-[0-9]*", GROUP+="users"'';
+
+  environment.systemPackages = [ pkgs.ddcutil ];
 
   networking.hostName = "okra";
 
