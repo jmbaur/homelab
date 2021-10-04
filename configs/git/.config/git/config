@@ -11,3 +11,5 @@
 
 [pull]
 	rebase = false
+[credential "https://gitea.jmbaur.com"]
+	helper = !pass-git-helper $@

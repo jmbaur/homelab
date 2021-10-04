@@ -108,6 +108,7 @@ in
       nushell
       nvme-cli
       pass
+      pass-git-helper
       pciutils
       picocom
       pinentry
