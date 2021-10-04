@@ -17,7 +17,6 @@ in
 
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;
-    extraModulePackages = with config.boot.kernelPackages; [ ddcci-driver ];
     kernelModules = [ "i2c-dev" ];
   };
   services.udev.extraRules = ''KERNEL=="i2c-[0-9]*", GROUP+="users"'';
