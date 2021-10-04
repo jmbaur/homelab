@@ -6,6 +6,7 @@ in
   imports = [
     ./hardware-configuration.nix
     ../../lib/common.nix
+    ../../lib/desktop.nix
     "${nixos-hardware}/lenovo/thinkpad/t495"
     "${nixos-hardware}/common/pc/ssd"
   ];

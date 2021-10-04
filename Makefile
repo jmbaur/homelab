@@ -8,4 +8,4 @@ test:
 
 switch:
 	NIXOS_CONFIG=${config_path} nixos-rebuild switch && \
-		     bash configs/setup.sh ${host}
+		configs/setup.sh ${host}
