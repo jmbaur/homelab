@@ -58,6 +58,9 @@ bindsym $mod+p exec --no-startup-id dmenu_run -l 10 -fn "DejaVu Sans Mono:10"
 # .desktop file. It is a wrapper around dmenu, so you need that installed.
 # bindcode $mod+40 exec --no-startup-id i3-dmenu-desktop
 
+bindsym $mod+c exec clipmenu -l 10 -fn "DejaVu Sans Mono:10"
+bindsym $mod+Shift+p exec passmenu -l 10 -fn "DejaVu Sans Mono:10"
+
 # change focus
 bindsym $mod+$left focus left
 bindsym $mod+$down focus down

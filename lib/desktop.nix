@@ -18,8 +18,6 @@
     xsel
     zoom-us
   ];
-  location.provider = "geoclue2";
-  services.redshift.enable = true;
 
   fonts.fonts = with pkgs; [
     dejavu_fonts
@@ -33,6 +31,10 @@
     source-code-pro
   ];
 
+  location.provider = "geoclue2";
+  services.redshift.enable = true;
+
+  services.clipmenu.enable = true;
   services.fwupd.enable = true;
   services.printing.enable = true;
 
