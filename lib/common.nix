@@ -2,6 +2,7 @@
 let
   fdroidcl = import ../programs/fdroidcl { };
   gosee = import (builtins.fetchTarball "https://github.com/jmbaur/gosee/archive/main.tar.gz") { };
+  proj = import ../programs/proj { };
 in
 {
   hardware.enableRedistributableFirmware = true;
