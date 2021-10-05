@@ -38,7 +38,7 @@ local on_attach = function(client, bufnr)
     buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
 end
 
-for _, server in ipairs {'gopls', 'pyright', 'tsserver'} do
+for _, server in ipairs {'gopls', 'pyright', 'tsserver', 'zls'} do
     lsp[server].setup {
         on_attach = on_attach,
         flags = {debounce_text_changes = 150}

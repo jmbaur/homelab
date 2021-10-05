@@ -1,18 +1,9 @@
 { config, pkgs, ... }:
-
 let
-  efm-langserver = import ../programs/efm-langserver { };
   fdroidcl = import ../programs/fdroidcl { };
   gosee = import (builtins.fetchTarball "https://github.com/jmbaur/gosee/archive/main.tar.gz") { };
-  proj = import ../programs/proj { };
 in
 {
-  nixpkgs.overlays = [
-    (import (builtins.fetchTarball {
-      url = https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz;
-    }))
-  ];
-
   hardware.enableRedistributableFirmware = true;
 
   # nix-direnv, prevent nix shells from being wiped on garbage collection
@@ -51,19 +42,14 @@ in
     bat
     bc
     bind
-    black
     brightnessctl
-    buildah
     cmus
-    ctags
     curl
-    delta
     direnv
     dmidecode
     dnsutils
     dunst
     dust
-    efm-langserver
     exa
     fd
     fdroidcl
@@ -74,11 +60,7 @@ in
     geteltorito
     gh
     git
-    gnumake
     gnupg
-    go
-    goimports
-    gopls
     gosee
     gotop
     grex
@@ -91,18 +73,11 @@ in
     killall
     libnotify
     lm_sensors
-    luaformatter
-    mob
     neofetch
-    neovim-nightly
     nix-direnv
     nixops
-    nixpkgs-fmt
     nmap
     nnn
-    nodePackages.prettier
-    nodePackages.typescript-language-server
-    nodejs
     nushell
     nvme-cli
     pass
@@ -111,19 +86,13 @@ in
     picocom
     pinentry
     pinentry-curses
-    podman-compose
     procs
     proj
     pwgen
-    pyright
-    python3
     renameutils
     ripgrep
     rtorrent
     sd
-    shellcheck
-    shfmt
-    skopeo
     stow
     tailscale
     tcpdump
@@ -170,15 +139,6 @@ in
   };
 
   security.sudo.wheelNeedsPassword = false;
-
-  virtualisation = {
-    podman.enable = true;
-    podman.dockerCompat = true;
-    containers.enable = true;
-    containers.containersConf.settings = {
-      engine = { detach_keys = "ctrl-e,ctrl-q"; };
-    };
-  };
 
   programs.adb.enable = true;
 

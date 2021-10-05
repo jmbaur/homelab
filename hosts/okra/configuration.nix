@@ -9,6 +9,7 @@ in
       ./hardware-configuration.nix
       ../../lib/common.nix
       ../../lib/desktop.nix
+      ../../lib/dev.nix
       "${nixos-hardware}/common/cpu/amd"
       "${nixos-hardware}/common/pc/ssd"
     ];
