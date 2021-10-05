@@ -37,26 +37,22 @@ in
 
   environment.systemPackages = with pkgs; [
     acpi
-    alacritty
     atop
     awscli2
     bat
     bc
     bind
-    brightnessctl
     cmus
     curl
     direnv
     dmidecode
     dnsutils
-    dunst
     dust
     exa
     fd
     fdroidcl
     ffmpeg
     file
-    firefox
     fzf
     geteltorito
     gh

@@ -1,3 +1,4 @@
+.PHONY: configs
 .DEFAULT_GOAL := test
 
 host :=$(shell hostname)

@@ -1,11 +1,16 @@
 { config, pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
+    alacritty
+    brightnessctl
     chromium
+    dunst
     element-desktop
+    firefox
     firefox
     gimp
     google-chrome
+    kitty
     libreoffice
     pavucontrol
     pinentry-gnome
