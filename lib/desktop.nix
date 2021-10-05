@@ -39,6 +39,7 @@
   location.provider = "geoclue2";
   services.redshift.enable = true;
 
+  services.autorandr.enable = true;
   services.clipmenu.enable = true;
   services.fwupd.enable = true;
   services.printing.enable = true;
