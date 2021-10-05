@@ -10,7 +10,6 @@ HOST="${1:-$HOSTNAME}"
 stow_with_flags() {
 	echo Stowing "$@"
 	stow --no-folding --dir="${PWD}" --target="${HOME}" "$@"
-	echo $HOST $PWD $HOME
 }
 
 stow_with_flags alacritty
