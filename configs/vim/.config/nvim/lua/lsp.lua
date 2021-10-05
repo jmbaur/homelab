@@ -49,6 +49,7 @@ local efm_languages = {
     go = {{formatCommand = "goimports", formatStdin = true}},
     python = {{formatCommand = "black --quiet -", formatStdin = true}},
     nix = {{formatCommand = "nixpkgs-fmt", formatStdin = true}},
+    sh = {{formatCommand = "shfmt -ci -s -bn", formatStdin = true}},
     lua = {{formatCommand = "lua-format -i", formatStdin = true}},
     typescript = {
         {formatCommand = "prettier --parser=typescript", formatStdin = true}
