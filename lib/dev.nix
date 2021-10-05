@@ -30,7 +30,7 @@ in
     podman-compose
     pyright
     python3
-    rust_analyzer
+    rust-analyzer
     rustfmt
     shellcheck
     shfmt
