@@ -30,6 +30,8 @@ in
     podman-compose
     pyright
     python3
+    rust_analyzer
+    rustfmt
     shellcheck
     shfmt
     skopeo

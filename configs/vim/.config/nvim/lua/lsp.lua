@@ -38,7 +38,7 @@ local on_attach = function(client, bufnr)
     buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
 end
 
-for _, server in ipairs {'gopls', 'pyright', 'tsserver', 'zls'} do
+for _, server in ipairs {'gopls', 'pyright', 'rust_analyzer', 'tsserver', 'zls'} do
     lsp[server].setup {
         on_attach = on_attach,
         flags = {debounce_text_changes = 150}
@@ -47,10 +47,16 @@ end
 
 local efm_languages = {
     go = {{formatCommand = "goimports", formatStdin = true}},
-    python = {{formatCommand = "black --quiet -", formatStdin = true}},
-    nix = {{formatCommand = "nixpkgs-fmt", formatStdin = true}},
-    sh = {{formatCommand = "shfmt -ci -s -bn", formatStdin = true}},
     lua = {{formatCommand = "lua-format -i", formatStdin = true}},
+    nix = {{formatCommand = "nixpkgs-fmt", formatStdin = true}},
+    python = {{formatCommand = "black --quiet -", formatStdin = true}},
+    rust = {
+        {
+            formatCommand = 'rustfmt --emit stdout -q "${INPUT}"',
+            formatStdin = true
+        }
+    },
+    sh = {{formatCommand = "shfmt -ci -s -bn", formatStdin = true}},
     typescript = {
         {formatCommand = "prettier --parser=typescript", formatStdin = true}
     }
