@@ -9,7 +9,7 @@ HOST="${1:-$HOSTNAME}"
 
 stow_with_flags() {
 	echo Stowing "$@"
-	stow --restow --no-folding --dir="${PWD}" --target="${HOME}" "$@"
+	stow --no-folding --dir="${PWD}" --target="${HOME}" "$@"
 	echo $HOST $PWD $HOME
 }
 
@@ -17,6 +17,7 @@ stow_with_flags alacritty
 stow_with_flags git
 stow_with_flags gtk
 stow_with_flags i3
+stow_with_flags kitty
 stow_with_flags psql
 stow_with_flags ssh
 stow_with_flags tmux
