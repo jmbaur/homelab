@@ -13,6 +13,7 @@ in
     firefox
     gimp
     google-chrome
+    imv
     kitty
     libreoffice
     pa-switch
@@ -25,6 +26,7 @@ in
     wireshark
     xclip
     xsel
+    zathura
     zoom-us
   ];
 
