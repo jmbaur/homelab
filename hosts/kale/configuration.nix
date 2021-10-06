@@ -115,7 +115,6 @@ in
     database = {
       type = "postgres";
       port = 5432;
-      passwordFile = "/run/keys/gitea_db_pass";
     };
     dump = {
       enable = true;
