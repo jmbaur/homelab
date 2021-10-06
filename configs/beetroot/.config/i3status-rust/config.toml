@@ -39,12 +39,16 @@ block = "sound"
 device_kind = "sink"
 on_click = "pa-switch sink"
 format = "{output_name} {volume}"
+[block.mappings]
+"alsa_output.pci-0000_06_00.6.analog-stereo" = "Laptop"
 
 [[block]]
 block = "sound"
 device_kind = "source"
 on_click = "pa-switch source"
 format = "{output_name} {volume}"
+[block.mappings]
+"alsa_input.pci-0000_06_00.6.analog-stereo" = "Laptop"
 
 [[block]]
 block = "time"
