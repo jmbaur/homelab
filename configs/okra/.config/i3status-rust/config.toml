@@ -24,10 +24,20 @@ interval = 1
 [[block]]
 block = "sound"
 device_kind = "sink"
+on_click = "pa-switch sink"
+format = "{output_name} {volume}"
+[block.mappings]
+"alsa_output.pci-0000_05_00.6.analog-stereo" = "Speakers"
+"alsa_output.pci-0000_05_00.1.hdmi-stereo" = "Headphones"
 
 [[block]]
 block = "sound"
 device_kind = "source"
+on_click = "pa-switch source"
+format = "{output_name} {volume}"
+[block.mappings]
+"alsa_input.usb-046d_HD_Pro_Webcam_C920_E2C2D6EF-02.analog-stereo" = "Webcam"
+"alsa_input.usb-BLUE_MICROPHONE_Blue_Snowball_SUGA_2021_01_20_62712-00.mono-fallback" = "Blue"
 
 [[block]]
 block = "time"

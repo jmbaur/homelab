@@ -1,4 +1,7 @@
 { config, pkgs, ... }:
+let
+  pa-switch = import ../programs/pa-switch { };
+in
 {
   environment.systemPackages = with pkgs; [
     alacritty
@@ -12,6 +15,7 @@
     google-chrome
     kitty
     libreoffice
+    pa-switch
     pavucontrol
     pinentry-gnome
     postman
