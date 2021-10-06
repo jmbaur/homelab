@@ -70,6 +70,7 @@ in
     killall
     libnotify
     lm_sensors
+    mosh
     neofetch
     nix-direnv
     nixops
