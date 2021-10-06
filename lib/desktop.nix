@@ -19,7 +19,6 @@ in
     pa-switch
     pavucontrol
     pinentry-gnome
-    postman
     signal-desktop
     slack
     spotify

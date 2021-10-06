@@ -138,6 +138,20 @@ in
     location = "/data/postgresql_backup";
   };
 
+  systemd.timers."gitea-backup" = {
+    wantedBy = [ "timers.target" ];
+    timerConfig.OnCalendar = [ "*-*-* *:00:00" ];
+  };
+  systemd.services."gitea-backup" = {
+    serviceConfig = {
+      Type = "oneshot";
+      EnvironmentFile = "/run/keys/gitea_backup";
+    };
+    script = ''
+      echo hello, world
+    '';
+  };
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
