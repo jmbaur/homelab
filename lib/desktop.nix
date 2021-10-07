@@ -50,6 +50,7 @@ in
   services.clipmenu.enable = true;
   services.fwupd.enable = true;
   services.printing.enable = true;
+  services.fractalart.enable = true;
 
   services.syncthing = {
     enable = true;
@@ -81,9 +82,6 @@ in
     desktopManager.xterm.enable = true;
     windowManager.i3 = {
       enable = true;
-      extraSessionCommands = ''
-        xsetroot -solid "#000000"
-      '';
       extraPackages = with pkgs; [
         dmenu
         i3lock
