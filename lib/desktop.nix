@@ -3,13 +3,14 @@ let
   pa-switch = import ../programs/pa-switch { };
 in
 {
+  nixpkgs.config.allowUnfree = true;
+
   environment.systemPackages = with pkgs; [
     alacritty
     brightnessctl
     chromium
     dunst
     element-desktop
-    firefox
     firefox
     gimp
     google-chrome
@@ -22,6 +23,7 @@ in
     signal-desktop
     slack
     spotify
+    thunderbird
     wireshark
     xclip
     xsel

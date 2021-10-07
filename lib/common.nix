@@ -27,8 +27,6 @@ in
 
   networking.networkmanager.enable = true;
 
-  nixpkgs.config.allowUnfree = true;
-
   environment.binsh = "${pkgs.dash}/bin/dash";
   environment.variables = {
     EDITOR = "nvim";
