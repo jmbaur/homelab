@@ -112,15 +112,15 @@ in
     enable = true;
     disableRegistration = true;
     httpPort = 3000;
+    domain = "gitea.jmbaur.com";
+    rootUrl = "https://gitea.jmbaur.com";
+    cookieSecure = true;
     database = {
       type = "postgres";
       port = 5432;
       passwordFile = "/run/keys/gitea_db_pass";
     };
-    dump = {
-      enable = true;
-      backupDir = "/data/gitea_dump";
-    };
+    dump = { enable = true; backupDir = "/data/gitea_dump"; };
   };
 
   services.postgresql = {
@@ -161,3 +161,4 @@ in
   system.stateVersion = "21.05"; # Did you read the comment?
 
 }
+
