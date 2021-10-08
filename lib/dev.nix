@@ -5,8 +5,8 @@ let
   proj = import ../programs/proj { };
 in
 {
-  environment.systemPackages = [ unstable.neovim ]
-    ++ (with pkgs;
+  environment.systemPackages =
+    (with pkgs;
     [
       black
       buildah
@@ -31,9 +31,14 @@ in
       shellcheck
       shfmt
       skopeo
+    ])
+    ++
+    (with unstable; [
+      neovim
       zig
       zls
-    ]);
+    ])
+  ;
 
   virtualisation = {
     podman.enable = true;
