@@ -20,6 +20,7 @@ in
     pa-switch
     pavucontrol
     pinentry-gnome
+    scrot
     signal-desktop
     slack
     spotify

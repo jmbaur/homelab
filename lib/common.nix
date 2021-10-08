@@ -80,8 +80,6 @@ in
     pass-git-helper
     pciutils
     picocom
-    pinentry
-    pinentry-curses
     procs
     proj
     pwgen

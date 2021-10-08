@@ -74,6 +74,7 @@ nmap <leader>b :Buffers<CR>
 nmap <leader>f :Files<CR>
 nmap <leader>g :GFiles<CR>
 nmap <leader>r :Rg<CR>
+nnoremap <C-l> :nohlsearch<CR>
 nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . "j"
 nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . "k"
 nnoremap J mzJ`z
