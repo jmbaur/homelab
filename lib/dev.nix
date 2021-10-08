@@ -1,43 +1,39 @@
 { config, pkgs, ... }:
 let
+  unstable = import ./unstable.nix { };
   efm-langserver = import ../programs/efm-langserver { };
   proj = import ../programs/proj { };
 in
 {
-  nixpkgs.overlays = [
-    (import (builtins.fetchTarball {
-      url = https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz;
-    }))
-  ];
-
-  environment.systemPackages = with pkgs; [
-    black
-    buildah
-    ctags
-    delta
-    efm-langserver
-    gnumake
-    go
-    goimports
-    gopls
-    luaformatter
-    mob
-    neovim-nightly
-    nixpkgs-fmt
-    nodePackages.prettier
-    nodePackages.typescript-language-server
-    nodejs
-    podman-compose
-    pyright
-    python3
-    rust-analyzer
-    rustfmt
-    shellcheck
-    shfmt
-    skopeo
-    zig
-    zls
-  ];
+  environment.systemPackages = [ unstable.neovim ]
+    ++ (with pkgs;
+    [
+      black
+      buildah
+      ctags
+      delta
+      efm-langserver
+      gnumake
+      go
+      goimports
+      gopls
+      luaformatter
+      mob
+      nixpkgs-fmt
+      nodePackages.prettier
+      nodePackages.typescript-language-server
+      nodejs
+      podman-compose
+      pyright
+      python3
+      rust-analyzer
+      rustfmt
+      shellcheck
+      shfmt
+      skopeo
+      zig
+      zls
+    ]);
 
   virtualisation = {
     podman.enable = true;

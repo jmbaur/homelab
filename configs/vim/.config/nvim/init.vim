@@ -78,6 +78,7 @@ nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . "j"
 nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . "k"
 nnoremap J mzJ`z
 nnoremap N Nzzzv
+nnoremap Y y$
 nnoremap n nzzzv
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

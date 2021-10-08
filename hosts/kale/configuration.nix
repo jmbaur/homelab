@@ -2,6 +2,7 @@
 
 let
   nfs_port = 2049;
+  unstable = import ../../lib/unstable.nix { };
 in
 {
   imports = [ ./hardware-configuration.nix ];
@@ -110,6 +111,7 @@ in
 
   services.gitea = {
     enable = true;
+    package = unstable.gitea; # To get mirroring benefits from 1.15.x;
     disableRegistration = true;
     httpPort = 3000;
     domain = "gitea.jmbaur.com";
@@ -124,11 +126,10 @@ in
 
   services.postgresql = {
     enable = true;
+    # Allow gitea and postgres user to the gitea database
     authentication = ''
-      local gitea all ident map=gitea-users
-    '';
-    identMap = ''
-      gitea-users gitea gitea
+      local gitea gitea ident
+      local gitea postgres ident
     '';
   };
 
