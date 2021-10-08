@@ -74,13 +74,16 @@ nmap <leader>b :Buffers<CR>
 nmap <leader>f :Files<CR>
 nmap <leader>g :GFiles<CR>
 nmap <leader>r :Rg<CR>
-nnoremap <C-l> :nohlsearch<CR>
 nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . "j"
 nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . "k"
 nnoremap J mzJ`z
 nnoremap N Nzzzv
 nnoremap Y y$
 nnoremap n nzzzv
+
+if maparg('<C-L>', 'n') ==# ''
+		nnoremap <silent> <C-L> :nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>
+endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 luafile ~/.config/nvim/lua/init.lua
