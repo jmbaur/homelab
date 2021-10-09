@@ -50,8 +50,10 @@ in
   services.autorandr.enable = true;
   services.clipmenu.enable = true;
   services.fwupd.enable = true;
-  services.printing.enable = true;
   services.fractalart.enable = true;
+  services.printing.enable = true;
+  services.avahi.enable = true;
+  services.avahi.nssmdns = true;
 
   services.syncthing = {
     enable = true;
