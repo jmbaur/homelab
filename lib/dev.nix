@@ -22,6 +22,7 @@ in
       nixpkgs-fmt
       nodePackages.prettier
       nodePackages.typescript-language-server
+      nodePackages.yaml-language-server
       nodejs
       podman-compose
       pyright
