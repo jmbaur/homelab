@@ -140,15 +140,16 @@ in
 
   systemd.timers."gitea-backup" = {
     wantedBy = [ "timers.target" ];
-    timerConfig.OnCalendar = [ "*-*-* *:00:00" ];
+    timerConfig.OnCalendar = [ "weekly" ];
   };
   systemd.services."gitea-backup" = {
     serviceConfig = {
       Type = "oneshot";
-      EnvironmentFile = "/run/keys/gitea_backup";
+      EnvironmentFile = "/run/keys/gitea-backup";
     };
     script = ''
-      echo hello, world
+      ${pkgs.awscli}/bin/aws s3 sync --storage-class GLACIER /data/gitea_dump s3://''${S3_BUCKET}/gitea_dump
+      ${pkgs.awscli}/bin/aws s3 sync --storage-class GLACIER /data/postgresql_backup s3://''${S3_BUCKET}/postgresql_backup
     '';
   };
 
@@ -161,4 +162,5 @@ in
   system.stateVersion = "21.05"; # Did you read the comment?
 
 }
+
 
