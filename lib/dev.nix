@@ -33,6 +33,7 @@ in
       shellcheck
       shfmt
       skopeo
+      tree-sitter
     ])
     ++
     (with unstable; [
