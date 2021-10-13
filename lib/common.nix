@@ -2,6 +2,7 @@
 let
   fdroidcl = import ../programs/fdroidcl { };
   gosee = import (builtins.fetchTarball "https://gitea.jmbaur.com/jmbaur/gosee/archive/main.tar.gz") { };
+  htmlq = import ../programs/htmlq { };
   proj = import ../programs/proj { };
 in
 {
@@ -60,6 +61,7 @@ in
     gotop
     grex
     gron
+    htmlq
     htop
     iperf3
     iputils
