@@ -13,6 +13,7 @@ in
       ctags
       delta
       efm-langserver
+      gcc
       gnumake
       go
       goimports
