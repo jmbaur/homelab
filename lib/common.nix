@@ -2,6 +2,7 @@
 let
   fdroidcl = import ../programs/fdroidcl { };
   gosee = import (builtins.fetchTarball "https://gitea.jmbaur.com/jmbaur/gosee/archive/main.tar.gz") { };
+  htmlq = import ../programs/htmlq { };
   proj = import ../programs/proj { };
 in
 {
@@ -60,6 +61,7 @@ in
     gotop
     grex
     gron
+    htmlq
     htop
     iperf3
     iputils
@@ -115,11 +117,12 @@ in
   programs.bash = {
     vteIntegration = true;
     undistractMe.enable = true;
-  };
-
-  programs.zsh = {
-    enable = true;
-    vteIntegration = true;
+    shellAliases = { grep = "grep --color=auto"; };
+    enableLsColors = true;
+    enableCompletion = true;
+    shellInit = ''
+      export HISTCONTROL=ignoreboth:erasedups
+    '';
   };
 
   # Yubikey GPG and SSH support

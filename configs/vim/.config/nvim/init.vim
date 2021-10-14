@@ -20,6 +20,7 @@ Plug 'leafgarland/typescript-vim'
 Plug 'neovim/nvim-lspconfig'
 Plug 'norcalli/snippets.nvim'
 Plug 'ntpeters/vim-better-whitespace'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-fugitive'

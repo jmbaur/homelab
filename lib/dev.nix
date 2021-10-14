@@ -13,6 +13,7 @@ in
       ctags
       delta
       efm-langserver
+      gcc
       gnumake
       go
       goimports
@@ -32,6 +33,7 @@ in
       shellcheck
       shfmt
       skopeo
+      tree-sitter
     ])
     ++
     (with unstable; [
