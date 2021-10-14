@@ -13,6 +13,7 @@ call plug#begin()
 
 Plug 'LnL7/vim-nix'
 Plug 'farmergreg/vim-lastplace'
+Plug 'guns/xterm-color-table.vim'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/vim-easy-align'
