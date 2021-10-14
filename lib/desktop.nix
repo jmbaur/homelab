@@ -36,6 +36,7 @@ in
     dejavu_fonts
     hack-font
     inconsolata
+    iosevka
     liberation_ttf
     liberation_ttf
     noto-fonts
