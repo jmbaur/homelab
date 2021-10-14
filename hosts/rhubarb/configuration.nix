@@ -67,11 +67,6 @@
 
   users.extraUsers.kodi.isNormalUser = true;
 
-  # SSH
-  services.openssh.enable = true;
-  users.extraUsers.root.openssh.authorizedKeys.keys =
-    [ "${builtins.readFile ../../lib/publicSSHKey.txt}" ];
-
   services = {
     xserver = {
       enable = true;

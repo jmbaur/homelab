@@ -1,7 +1,10 @@
 {
-  network.description = "RPI4 running Kodi";
+  network.description = "rhubarb";
   rhubarb = { config, pkgs, ... }: {
     deployment.targetHost = "rhubarb.lan";
-    imports = [ ./configuration.nix ];
+    imports = [
+      ../../lib/nixops.nix
+      ./configuration.nix
+    ];
   };
 }
