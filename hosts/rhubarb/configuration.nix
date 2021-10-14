@@ -1,10 +1,16 @@
-{ config, lib, pkgs, ... }: {
+{ config, pkgs, ... }: {
   imports = [
     "${
       fetchTarball
       "https://github.com/NixOS/nixos-hardware/archive/936e4649098d6a5e0762058cb7687be1b2d90550.tar.gz"
     }/raspberry-pi/4"
   ];
+
+  # Define that we need to build for ARM
+  nixpkgs.localSystem = {
+    system = "aarch64-linux";
+    config = "aarch64-unknown-linux-gnu";
+  };
 
   boot = {
     kernelPackages = pkgs.linuxPackages_rpi4;
@@ -42,6 +48,7 @@
     };
   };
 
+  # TODO(jared): determine whether this can be done within the Kodi interface
   # fileSystems."/data/kodi" = {
   #   device = "kale.lan:/kodi";
   #   fsType = "nfs";
@@ -70,6 +77,7 @@
         autoLogin.user = "kodi";
       };
     };
+    # Allow for Kodi smartphone remote to work over the LAN
     avahi = {
       enable = true;
       publish.enable = true;
