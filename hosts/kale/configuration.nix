@@ -31,7 +31,6 @@ in
 
   # SSH
   services.openssh.enable = true;
-  services.openssh.ports = [ 22 2082 ];
   users.extraUsers.root.openssh.authorizedKeys.keys =
     [ "${builtins.readFile ../../lib/publicSSHKey.txt}" ];
 
