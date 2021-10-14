@@ -76,6 +76,14 @@
         autoLogin.user = "kodi";
       };
     };
+
+    # Wayland
+    cage = {
+      enable = false;
+      user = "kodi";
+      program = "${pkgs.kodi-wayland}/bin/kodi-standalone";
+    };
+
     # Allow for Kodi smartphone remote to work over the LAN
     avahi = {
       enable = true;
