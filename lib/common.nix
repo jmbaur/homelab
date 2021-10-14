@@ -20,6 +20,7 @@ in
   boot = {
     cleanTmpDir = true;
     tmpOnTmpfs = true;
+    binfmt.emulatedSystems = [ "aarch64-linux" ];
   };
 
   time.timeZone = "America/Los_Angeles";
