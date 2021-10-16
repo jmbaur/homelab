@@ -23,7 +23,10 @@ in
   };
   services.udev.extraRules = ''KERNEL=="i2c-[0-9]*", GROUP+="users"'';
 
-  environment.systemPackages = [ pkgs.ddcutil ];
+  virtualisation.virtualbox.host.enable = true;
+  users.extraGroups.vboxusers.members = [ "jared" ];
+
+  environment.systemPackages = with pkgs; [ ddcutil ];
 
   networking.hostName = "okra";
 

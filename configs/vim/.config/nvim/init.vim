@@ -12,6 +12,7 @@ endif
 call plug#begin()
 
 Plug 'LnL7/vim-nix'
+Plug 'ellisonleao/gruvbox.nvim'
 Plug 'farmergreg/vim-lastplace'
 Plug 'guns/xterm-color-table.vim'
 Plug 'junegunn/fzf'
@@ -22,7 +23,9 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'norcalli/snippets.nvim'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'rktjmp/lush.nvim'
 Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-dadbod'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-markdown'
@@ -43,7 +46,7 @@ set nocursorline
 set hidden
 set ignorecase
 set noswapfile
-set notermguicolors
+set termguicolors
 set nowrap
 set number
 set relativenumber
@@ -56,7 +59,7 @@ set splitright
 set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
 set undofile
 
-colorscheme jared
+colorscheme gruvbox
 
 syntax enable
 filetype plugin indent on
