@@ -1,4 +1,4 @@
-.PHONY: configs
+.PHONY: configs iso
 .DEFAULT_GOAL := test
 
 host :=$(shell hostname)
@@ -12,3 +12,6 @@ switch:
 
 configs:
 	configs/setup.sh ${host}
+
+iso:
+	nix-build '<nixpkgs/nixos>' -A config.system.build.isoImage -I nixos-config=iso/iso.nix
