@@ -2,5 +2,5 @@
 {
   services.openssh.enable = true;
   users.extraUsers.root.openssh.authorizedKeys.keys =
-    [ "${builtins.readFile ./publicSSHKey.txt}" ];
+    [ "${builtins.readFile ./desktopSshKey.txt}" "${builtins.readFile ./yubikeySshKey.txt}" ];
 }
