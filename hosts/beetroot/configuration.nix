@@ -115,7 +115,6 @@ in
     ripgrep
     signal-desktop
     slack
-    slock
     spotify
     thunderbird
     tokei
@@ -127,6 +126,7 @@ in
     zoom-us
   ];
 
+  programs.slock.enable = true;
   programs.adb.enable = true;
   programs.mtr.enable = true;
   programs.gnupg.agent = {
