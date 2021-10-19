@@ -7,10 +7,6 @@ let
     sha256 = "10g240brgjz7qi20adwajxwqrqb5zxc79ii1mc20fasgqlf2a8sx";
   };
 
-  gosee = import ../../pkgs/gosee { };
-  htmlq = import ../../pkgs/htmlq { };
-  fdroidcl = import ../../pkgs/fdroidcl { };
-
 in
 {
   imports = [
@@ -105,21 +101,26 @@ in
     bitwarden
     element-desktop
     fd
+    fdroidcl
     firefox
     gimp
     google-chrome
     gosee
+    htmlq
     htop
     libreoffice
     mob
+    pa-switch
     proj
     ripgrep
     signal-desktop
     slack
+    slock
     spotify
     thunderbird
     tokei
     vim
+    w3m
     wget
     xfce.xfce4-battery-plugin
     xfce.xfce4-clipman-plugin

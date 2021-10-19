@@ -6,8 +6,6 @@ let
 
   cfg = config.custom.neovim;
 
-  efm-langserver = import ../../pkgs/efm-langserver { };
-
 in
 {
   options = {
