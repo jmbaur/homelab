@@ -17,6 +17,8 @@ in
     ./hardware-configuration.nix
   ];
 
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
   # TLP causing issues with USB ports turning off. Override TLP set from
   # https://github.com/NixOS/nixos-hardware/blob/master/common/pc/laptop/default.nix
   services.power-profiles-daemon.enable = true;
@@ -108,6 +110,7 @@ in
     gosee
     htmlq
     htop
+    jq
     libreoffice
     mob
     pa-switch
@@ -134,7 +137,10 @@ in
     enableSSHSupport = true;
   };
 
-  virtualisation.podman.enable = true;
+  virtualisation.podman = {
+    enable = true;
+    dockerCompat = true;
+  };
   virtualisation.libvirtd.enable = true;
 
   # Open ports in the firewall.

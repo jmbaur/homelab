@@ -104,6 +104,9 @@ in
       gopls
       luaformatter
       nixpkgs-fmt
+      nodePackages.prettier
+      nodePackages.typescript-language-server
+      nodejs
       pyright
       python3
       rnix-lsp
