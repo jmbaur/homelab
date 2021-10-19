@@ -1,37 +1,134 @@
 { config, pkgs, ... }:
 
-let
-  nixos-hardware = builtins.fetchTarball "https://github.com/nixos/nixos-hardware/archive/master.tar.gz";
-in
 {
   imports =
     [
+      ../../config
+      ../../pkgs
       ./hardware-configuration.nix
-      ../../lib/common.nix
-      ../../lib/desktop.nix
-      ../../lib/dev.nix
-      "${nixos-hardware}/common/cpu/amd"
-      "${nixos-hardware}/common/pc/ssd"
     ];
+
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelModules = [ "i2c-dev" ];
+  services.udev.extraRules = ''KERNEL=="i2c-[0-9]*", GROUP+="users"'';
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  boot = {
-    kernelPackages = pkgs.linuxPackages_latest;
-    kernelModules = [ "i2c-dev" ];
-  };
-  services.udev.extraRules = ''KERNEL=="i2c-[0-9]*", GROUP+="users"'';
-
-  virtualisation.virtualbox.host.enable = true;
-  users.extraGroups.vboxusers.members = [ "jared" ];
-
-  environment.systemPackages = with pkgs; [ ddcutil ];
-
   networking.hostName = "okra";
+  networking.networkmanager.enable = true;
 
+  # Set your time zone.
+  time.timeZone = "America/Los_Angeles";
+
+  # Select internationalisation properties.
+  i18n.defaultLocale = "en_US.UTF-8";
+  console = {
+    font = "Lat2-Terminus16";
+    useXkbConfig = true;
+  };
+
+  custom = {
+    git.enable = true;
+    kitty.enable = true;
+    neovim.enable = true;
+    tmux.enable = true;
+    vscode.enable = true;
+  };
+
+  services.xserver = {
+    enable = true;
+    layout = "us";
+    xkbOptions = "ctrl:nocaps";
+    desktopManager.xfce.enable = true;
+    deviceSection = ''
+      Option "TearFree" "true"
+    '';
+  };
+
+
+  boot.initrd.luks.devices =
+    let
+      uuid = "b9b68eee-c3b9-48f0-9b8c-8c31fce4f185";
+    in
+    {
+      "${uuid}" = {
+        allowDiscards = true;
+        preLVM = true;
+        device = "/dev/disk/by-uuid/${uuid}";
+      };
+    };
+
+  nixpkgs.config.allowUnfree = true;
+
+  hardware.cpu.amd.updateMicrocode = true;
+
+  # Enable CUPS to print documents.
+  services.printing.enable = true;
+
+  # Enable sound.
+  sound.enable = true;
+  hardware.pulseaudio.enable = true;
+
+  # Define a user account. Don't forget to set a password with ‘passwd’.
+  users.users.jared = {
+    description = "Jared Baur";
+    isNormalUser = true;
+    extraGroups = [ "wheel" "networkmanager" "adbusers" ];
+  };
+
+  environment.variables.HISTCONTROL = "ignoredups";
+
+  environment.systemPackages = with pkgs; [
+    age
+    bat
+    bitwarden
+    element-desktop
+    fd
+    fdroidcl
+    firefox
+    gimp
+    google-chrome
+    gosee
+    htmlq
+    htop
+    libreoffice
+    mob
+    pa-switch
+    proj
+    ripgrep
+    signal-desktop
+    slack
+    spotify
+    thunderbird
+    tokei
+    vim
+    w3m
+    wget
+    xfce.xfce4-battery-plugin
+    xfce.xfce4-clipman-plugin
+    zoom-us
+  ];
+
+  programs.slock.enable = true;
+  programs.adb.enable = true;
+  programs.mtr.enable = true;
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
+  };
+
+  virtualisation.podman.enable = true;
+  virtualisation.libvirtd.enable = true;
+
+  # Enable the OpenSSH daemon.
   services.openssh.enable = true;
-  services.xserver.enable = true;
+
+  # Open ports in the firewall.
+  # networking.firewall.allowedTCPPorts = [ ... ];
+  # networking.firewall.allowedUDPPorts = [ ... ];
+  # Or disable the firewall altogether.
+  # networking.firewall.enable = false;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
@@ -42,4 +139,3 @@ in
   system.stateVersion = "21.05"; # Did you read the comment?
 
 }
-

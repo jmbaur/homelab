@@ -14,19 +14,34 @@
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
+  boot.initrd.luks = {
+    gpgSupport = true;
+    devices.cryptlvm = {
+      allowDiscards = true;
+      device = "/dev/disk/by-uuid/1ced5915-7dd2-4bbb-90cd-b2e48c605286";
+      preLVM = true;
+      gpgCard = {
+        publicKey = ../../lib/pgp_keys.asc;
+        encryptedPass = ./disk.key.gpg;
+        gracePeriod = 30;
+      };
+    };
+  };
+
   fileSystems."/" =
     {
-      device = "/dev/disk/by-uuid/11a89833-6977-405c-84f3-0964c19fd115";
+      device = "/dev/disk/by-uuid/88f3f518-27ab-4b6b-b658-d33c9f7caf8c";
       fsType = "ext4";
     };
 
   fileSystems."/boot" =
     {
-      device = "/dev/disk/by-uuid/48BF-27B1";
+      device = "/dev/disk/by-uuid/9D34-F1F0";
       fsType = "vfat";
     };
 
   swapDevices =
-    [{ device = "/dev/disk/by-uuid/e14d6baf-dc39-435e-a614-fe5a3c9bc9e9"; }];
+    [{ device = "/dev/disk/by-uuid/568b470c-9f32-4f35-9150-b35b1eb8c860"; }];
 
 }
+
