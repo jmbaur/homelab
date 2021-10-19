@@ -12,14 +12,13 @@ let
   fdroidcl = import ../../pkgs/fdroidcl { };
   proj = import ../../pkgs/proj { };
 
-
 in
 {
   imports = [
     ./hardware-configuration.nix
     "${nixos-hardware}/lenovo/thinkpad/t495"
     "${nixos-hardware}/common/pc/ssd"
-    ./config
+    ../../config
   ];
 
   # TLP causing issues with USB ports turning off. Override TLP set from
