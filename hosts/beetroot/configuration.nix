@@ -10,15 +10,15 @@ let
   gosee = import ../../pkgs/gosee { };
   htmlq = import ../../pkgs/htmlq { };
   fdroidcl = import ../../pkgs/fdroidcl { };
-  proj = import ../../pkgs/proj { };
 
 in
 {
   imports = [
-    ./hardware-configuration.nix
-    "${nixos-hardware}/lenovo/thinkpad/t495"
     "${nixos-hardware}/common/pc/ssd"
+    "${nixos-hardware}/lenovo/thinkpad/t495"
     ../../config
+    ../../pkgs
+    ./hardware-configuration.nix
   ];
 
   # TLP causing issues with USB ports turning off. Override TLP set from
@@ -108,19 +108,19 @@ in
     firefox
     gimp
     google-chrome
+    gosee
     htop
     libreoffice
     mob
+    proj
     ripgrep
     signal-desktop
     slack
     spotify
-    gosee
     thunderbird
     tokei
     vim
     wget
-    proj
     xfce.xfce4-battery-plugin
     xfce.xfce4-clipman-plugin
     zoom-us
