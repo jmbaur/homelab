@@ -1,24 +1,26 @@
 { config, pkgs, ... }:
 
 let
-  nixos-hardware = builtins.fetchTarball "https://github.com/nixos/nixos-hardware/archive/master.tar.gz";
+
+  nixos-hardware = builtins.fetchTarball {
+    url = "https://github.com/nixos/nixos-hardware/archive/3aabf78bfcae62f5f99474f2ebbbe418f1c6e54f.tar.gz";
+    sha256 = "10g240brgjz7qi20adwajxwqrqb5zxc79ii1mc20fasgqlf2a8sx";
+  };
+
+  gosee = import ../../pkgs/gosee { };
+  htmlq = import ../../pkgs/htmlq { };
+  fdroidcl = import ../../pkgs/fdroidcl { };
+  proj = import ../../pkgs/proj { };
+
+
 in
 {
   imports = [
-    "${nixos-hardware}/common/pc/ssd"
-    "${nixos-hardware}/lenovo/thinkpad/t495"
-    ../../custom/vim
-    ../../custom/xmonad
     ./hardware-configuration.nix
+    "${nixos-hardware}/lenovo/thinkpad/t495"
+    "${nixos-hardware}/common/pc/ssd"
+    ./config
   ];
-
-  custom = {
-    vim.enable = true;
-    xmonad.enable = true;
-  };
-
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
 
   # TLP causing issues with USB ports turning off. Override TLP set from
   # https://github.com/NixOS/nixos-hardware/blob/master/common/pc/laptop/default.nix
@@ -30,6 +32,57 @@ in
 
   hardware.bluetooth.enable = true;
 
+  nixpkgs.config.allowUnfree = true;
+
+  custom = {
+    git.enable = true;
+    kitty.enable = true;
+    neovim.enable = true;
+    tmux.enable = true;
+    vscode.enable = true;
+  };
+
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
+  boot.initrd.luks.devices =
+    let
+      uuid = "d4b7e0c9-1d9e-47d3-b96c-1033c3adca44";
+    in
+    {
+      "${uuid}" = {
+        device = "/dev/disk/by-uuid/${uuid}";
+        allowDiscards = true;
+        preLVM = true;
+      };
+    };
+
+  networking.hostName = "beetroot";
+  networking.networkmanager.enable = true;
+
+  time.timeZone = "America/Los_Angeles";
+
+  i18n.defaultLocale = "en_US.UTF-8";
+  console = {
+    font = "Lat2-Terminus16";
+    useXkbConfig = true;
+  };
+
+  services.xserver = {
+    enable = true;
+    layout = "us";
+    xkbOptions = "ctrl:nocaps";
+    desktopManager.xfce.enable = true;
+    deviceSection = ''
+      Option "TearFree" "true"
+    '';
+  };
+
+  services.printing.enable = true;
+
+  sound.enable = true;
+  hardware.pulseaudio.enable = true;
+
   services.xserver.libinput = {
     enable = true;
     touchpad = {
@@ -39,71 +92,42 @@ in
     };
   };
 
-  services.udev.packages = [ pkgs.yubikey-personalization ];
-  boot.initrd.luks = {
-    gpgSupport = true;
-    devices.cryptlvm = {
-      allowDiscards = true;
-      device = "/dev/disk/by-uuid/957a8112-c937-40b4-a8f9-47c7218a46a1";
-      preLVM = true;
-      gpgCard = {
-        publicKey = ../../lib/pgp_keys.asc;
-        encryptedPass = ./disk.key.gpg;
-        gracePeriod = 30;
-      };
-    };
-  };
-
-  environment.variables = {
-    HISTCONTROL = "ignoredups";
-  };
-
-  time.timeZone = "America/Los_Angeles";
-
-  networking.hostName = "beetroot";
-  networking.wireless.enable = true;
-  networking.wireless.interfaces = [ "wlp1s0" ];
-
-  networking.interfaces.enp3s0f0.useDHCP = true;
-  networking.interfaces.enp4s0.useDHCP = true;
-  networking.interfaces.wlp1s0.useDHCP = true;
-
-  i18n.defaultLocale = "en_US.UTF-8";
-  console = {
-    font = "Lat2-Terminus16";
-    useXkbConfig = true;
-  };
-
-
-  services.xserver.layout = "us";
-  services.xserver.xkbOptions = "ctrl:nocaps";
-
-  services.printing.enable = true;
-
-  sound.enable = true;
-  hardware.pulseaudio.enable = true;
-
   users.users.jared = {
     description = "Jared Baur";
     isNormalUser = true;
-    extraGroups = [ "wheel" ];
+    extraGroups = [ "wheel" "networkmanager" "adbusers" ];
   };
 
+  environment.variables.HISTCONTROL = "ignoredups";
+
   environment.systemPackages = with pkgs; [
-    curl
+    age
+    bat
+    bitwarden
+    element-desktop
     fd
     firefox
-    git
+    gimp
+    google-chrome
     htop
-    kitty
-    neofetch
-    pass
+    libreoffice
+    mob
     ripgrep
-    tmux
-    w3m
+    signal-desktop
+    slack
+    spotify
+    gosee
+    thunderbird
+    tokei
+    vim
     wget
+    proj
+    xfce.xfce4-battery-plugin
+    xfce.xfce4-clipman-plugin
+    zoom-us
   ];
 
+  programs.adb.enable = true;
   programs.mtr.enable = true;
   programs.gnupg.agent = {
     enable = true;
@@ -113,6 +137,12 @@ in
   virtualisation.podman.enable = true;
   virtualisation.libvirtd.enable = true;
 
+  # Open ports in the firewall.
+  # networking.firewall.allowedTCPPorts = [ ... ];
+  # networking.firewall.allowedUDPPorts = [ ... ];
+  # Or disable the firewall altogether.
+  # networking.firewall.enable = false;
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
@@ -120,4 +150,6 @@ in
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "21.05"; # Did you read the comment?
+
 }
+
