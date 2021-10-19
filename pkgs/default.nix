@@ -2,6 +2,6 @@
 {
   nixpkgs.overlays =
     [
-      (import ./proj)
+      (self: super: { proj = super.callPackage ./proj { }; })
     ];
 }
