@@ -92,8 +92,10 @@
     gosee
     htmlq
     htop
+    jq
     libreoffice
     mob
+    nushell
     pa-switch
     proj
     ripgrep
@@ -118,7 +120,10 @@
     enableSSHSupport = true;
   };
 
-  virtualisation.podman.enable = true;
+  virtualisation.podman = {
+    enable = true;
+    dockerCompat = true;
+  };
   virtualisation.libvirtd.enable = true;
 
   # Enable the OpenSSH daemon.
