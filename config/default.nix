@@ -1,7 +1,6 @@
 { config, pkgs, ... }:
 {
   imports = [
-    ./alacritty
     ./ddcci
     ./git
     ./gnome
