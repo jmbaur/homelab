@@ -86,9 +86,11 @@ in
     };
 
     environment.systemPackages = with pkgs; [
+      bat
       black
       efm-langserver
       gcc
+      git
       go
       goimports
       gopls
@@ -99,7 +101,9 @@ in
       nodejs
       pyright
       python3
+      ripgrep
       rnix-lsp
+      rust-analyzer
       sumneko-lua-language-server
       tree-sitter
     ];

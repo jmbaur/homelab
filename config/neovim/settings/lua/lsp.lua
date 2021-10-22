@@ -42,19 +42,17 @@ local on_attach = function(client, bufnr)
     buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
 end
 
-local servers = {
-    gopls = nil,
-    pyright = nil,
-    rust_analyzer = nil,
-    sumneko_lua = nil,
-    tsserver = nil,
-    yamlls = nil,
-    zls = nil
-}
+for _, server in ipairs {
+    'gopls', 'pyright', 'rust_analyzer', 'sumneko_lua', 'tsserver', 'yamlls',
+    'zls'
+} do
+    lsp[server]
+        .setup {on_attach = on_attach, flags = {debounce_text_changes = 150}}
+end
 
 local sumneko_root_path = os.getenv("SUMNEKO_ROOT_PATH")
 if sumneko_root_path ~= nil then
-    servers.sumneko_lua = {
+    lsp.sumneko_lua.setup {
         cmd = {
             sumneko_root_path .. "/bin/lua-language-server", "-E",
             sumneko_root_path .. "/extras/main.lua"
@@ -83,7 +81,7 @@ local efm_languages = {
     }
 }
 
-servers.efm = {
+lsp.efm.setup {
     on_attach = function()
         vim.cmd [[
           augroup Format
@@ -96,16 +94,3 @@ servers.efm = {
     settings = {rootMarkers = {".git/"}, languages = efm_languages},
     filetypes = vim.tbl_keys(efm_languages)
 }
-
-local default_config = {
-    on_attach = on_attach,
-    flags = {debounce_text_changes = 150}
-}
-
-for server, custom_config in pairs(servers) do
-    if custom_config ~= nil then
-        lsp[server].setup(custom_config)
-    else
-        lsp[server].setup(default_config)
-    end
-end
