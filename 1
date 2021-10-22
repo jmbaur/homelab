@@ -66,6 +66,19 @@ if sumneko_root_path ~= nil then
     }
 end
 
+local default_config = {
+    on_attach = on_attach,
+    flags = {debounce_text_changes = 150}
+}
+
+for name, custom_config in pairs(servers) do
+    if custom_config ~= nil then
+        lsp[name].setup(custom_config)
+    else
+        lsp[name].setup(default_config)
+    end
+end
+
 local efm_languages = {
     go = {{formatCommand = "goimports", formatStdin = true}},
     lua = {{formatCommand = "lua-format -i", formatStdin = true}},
@@ -83,7 +96,7 @@ local efm_languages = {
     }
 }
 
-servers.efm = {
+lsp.efm.setup {
     on_attach = function()
         vim.cmd [[
           augroup Format
@@ -96,16 +109,3 @@ servers.efm = {
     settings = {rootMarkers = {".git/"}, languages = efm_languages},
     filetypes = vim.tbl_keys(efm_languages)
 }
-
-local default_config = {
-    on_attach = on_attach,
-    flags = {debounce_text_changes = 150}
-}
-
-for server, custom_config in pairs(servers) do
-    if custom_config ~= nil then
-        lsp[server].setup(custom_config)
-    else
-        lsp[server].setup(default_config)
-    end
-end

@@ -103,6 +103,7 @@
     slack
     spotify
     thunderbird
+    tig
     tokei
     vim
     w3m

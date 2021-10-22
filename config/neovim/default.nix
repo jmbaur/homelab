@@ -75,17 +75,6 @@ in
             )
             (
               pkgs.vimUtils.buildVimPlugin {
-                name = "stabilize-nvim";
-                src = pkgs.fetchFromGitHub {
-                  owner = "luukvbaal";
-                  repo = "stabilize.nvim";
-                  rev = "0b9d82a6aaf2ccb8e7c07f99ba463505de8033e8";
-                  sha256 = "101bq44wxcqy07lyihwiz1b48rzdb5wgjkvjw6nlzqk9034zqn2p";
-                };
-              }
-            )
-            (
-              pkgs.vimUtils.buildVimPlugin {
                 name = "settings";
                 src = builtins.path { path = ./settings; };
               }
@@ -101,6 +90,7 @@ in
       efm-langserver
       gcc
       go
+      goimports
       gopls
       luaformatter
       nixpkgs-fmt
@@ -110,8 +100,11 @@ in
       pyright
       python3
       rnix-lsp
+      sumneko-lua-language-server
       tree-sitter
     ];
+
+    environment.variables.SUMNEKO_ROOT_PATH = "${pkgs.sumneko-lua-language-server}";
 
   };
 }
