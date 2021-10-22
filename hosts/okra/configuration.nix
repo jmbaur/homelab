@@ -9,19 +9,14 @@
     ];
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.kernelModules = [ "i2c-dev" ];
-  services.udev.extraRules = ''KERNEL=="i2c-[0-9]*", GROUP+="users"'';
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "okra";
-  networking.networkmanager.enable = true;
 
-  # Set your time zone.
   time.timeZone = "America/Los_Angeles";
 
-  # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
   console = {
     font = "Lat2-Terminus16";
@@ -29,23 +24,13 @@
   };
 
   custom = {
+    ddcci.enable = true;
     git.enable = true;
-    kitty.enable = true;
+    gnome.enable = true;
     neovim.enable = true;
     tmux.enable = true;
     vscode.enable = true;
   };
-
-  services.xserver = {
-    enable = true;
-    layout = "us";
-    xkbOptions = "ctrl:nocaps";
-    desktopManager.xfce.enable = true;
-    deviceSection = ''
-      Option "TearFree" "true"
-    '';
-  };
-
 
   boot.initrd.luks.devices =
     let
@@ -63,14 +48,6 @@
 
   hardware.cpu.amd.updateMicrocode = true;
 
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
-
-  # Enable sound.
-  sound.enable = true;
-  hardware.pulseaudio.enable = true;
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.jared = {
     description = "Jared Baur";
     isNormalUser = true;
@@ -108,14 +85,13 @@
     vim
     w3m
     wget
-    xfce.xfce4-battery-plugin
-    xfce.xfce4-clipman-plugin
     zoom-us
   ];
 
-  programs.slock.enable = true;
   programs.adb.enable = true;
   programs.mtr.enable = true;
+
+  services.udev.packages = [ pkgs.yubikey-personalization ];
   programs.gnupg.agent = {
     enable = true;
     enableSSHSupport = true;
@@ -127,14 +103,7 @@
   };
   virtualisation.libvirtd.enable = true;
 
-  # Enable the OpenSSH daemon.
   services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

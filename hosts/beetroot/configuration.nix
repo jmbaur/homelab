@@ -19,10 +19,6 @@ in
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  # TLP causing issues with USB ports turning off. Override TLP set from
-  # https://github.com/NixOS/nixos-hardware/blob/master/common/pc/laptop/default.nix
-  services.power-profiles-daemon.enable = true;
-  services.upower.enable = true;
   services.fwupd.enable = true;
 
   hardware.cpu.amd.updateMicrocode = true;
@@ -32,7 +28,9 @@ in
   nixpkgs.config.allowUnfree = true;
 
   custom = {
+    alacritty.enable = true;
     git.enable = true;
+    gnome = { enable = true; laptop = true; };
     kitty.enable = true;
     neovim.enable = true;
     tmux.enable = true;
@@ -55,7 +53,6 @@ in
     };
 
   networking.hostName = "beetroot";
-  networking.networkmanager.enable = true;
 
   time.timeZone = "America/Los_Angeles";
 
@@ -63,30 +60,6 @@ in
   console = {
     font = "Lat2-Terminus16";
     useXkbConfig = true;
-  };
-
-  services.xserver = {
-    enable = true;
-    layout = "us";
-    xkbOptions = "ctrl:nocaps";
-    desktopManager.xfce.enable = true;
-    deviceSection = ''
-      Option "TearFree" "true"
-    '';
-  };
-
-  services.printing.enable = true;
-
-  sound.enable = true;
-  hardware.pulseaudio.enable = true;
-
-  services.xserver.libinput = {
-    enable = true;
-    touchpad = {
-      accelProfile = "flat";
-      tapping = true;
-      naturalScrolling = true;
-    };
   };
 
   users.users.jared = {
@@ -124,12 +97,9 @@ in
     vim
     w3m
     wget
-    xfce.xfce4-battery-plugin
-    xfce.xfce4-clipman-plugin
     zoom-us
   ];
 
-  programs.slock.enable = true;
   programs.adb.enable = true;
   programs.mtr.enable = true;
   programs.gnupg.agent = {
