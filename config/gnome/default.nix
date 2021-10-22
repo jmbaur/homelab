@@ -29,14 +29,13 @@ in
 
   config = mkIf cfg.enable {
 
-    environment.systemPackages =
-      (with pkgs.gnomeExtensions; [
-        appindicator
-        system-monitor
-      ]) ++ (with pkgs.gnome;
-      [
-        pomodoro
-      ]);
+    environment.systemPackages = with pkgs; [
+      gnome.pomodoro
+      gnomeExtensions.appindicator
+      gnomeExtensions.system-monitor
+      pulseaudio
+      xorg.xeyes
+    ];
 
     programs.gnupg.agent.pinentryFlavor = "gnome3";
 
