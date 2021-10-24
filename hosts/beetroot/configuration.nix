@@ -28,10 +28,8 @@ in
   nixpkgs.config.allowUnfree = true;
 
   custom = {
-    alacritty.enable = true;
     git.enable = true;
     gnome = { enable = true; laptop = true; };
-    kitty.enable = true;
     neovim.enable = true;
     tmux.enable = true;
     vscode.enable = true;
