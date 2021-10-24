@@ -72,6 +72,7 @@
     jq
     libreoffice
     mob
+    nixopsUnstable
     nushell
     pa-switch
     proj
