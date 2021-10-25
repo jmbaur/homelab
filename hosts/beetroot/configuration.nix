@@ -84,6 +84,8 @@ in
     jq
     libreoffice
     mob
+    nix-tree
+    nixos-generators
     pa-switch
     proj
     ripgrep
