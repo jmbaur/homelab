@@ -1,5 +1,4 @@
 { config, pkgs, ... }:
-
 let
 
   nixos-hardware = builtins.fetchTarball {
@@ -17,6 +16,15 @@ in
     ./hardware-configuration.nix
   ];
 
+  security.tpm2.enable = true;
+
+  nix = {
+    package = pkgs.nixUnstable;
+    extraOptions = ''
+      experimental-features = nix-command flakes
+    '';
+  };
+
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   services.fwupd.enable = true;
@@ -29,7 +37,7 @@ in
 
   custom = {
     git.enable = true;
-    gnome = { enable = true; laptop = true; };
+    sway.enable = true;
     neovim.enable = true;
     tmux.enable = true;
     vscode.enable = true;
@@ -38,19 +46,24 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+
   boot.initrd.luks.devices =
     let
-      uuid = "d4b7e0c9-1d9e-47d3-b96c-1033c3adca44";
+      uuid = "8d642c40-ad46-407f-ba23-07be974c033f";
     in
     {
       "${uuid}" = {
-        device = "/dev/disk/by-uuid/${uuid}";
         allowDiscards = true;
+        device = "/dev/disk/by-uuid/${uuid}";
         preLVM = true;
       };
     };
 
   networking.hostName = "beetroot";
+  networking.networkmanager.enable = true;
+
+  services.power-profiles-daemon.enable = true;
+  services.upower.enable = true;
 
   time.timeZone = "America/Los_Angeles";
 
@@ -63,7 +76,7 @@ in
   users.users.jared = {
     description = "Jared Baur";
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "adbusers" ];
+    extraGroups = [ "video" "wheel" "networkmanager" "adbusers" ];
   };
 
   environment.variables.HISTCONTROL = "ignoredups";
@@ -86,15 +99,14 @@ in
     mob
     nix-tree
     nixos-generators
+    p
     pa-switch
-    proj
     ripgrep
     signal-desktop
     slack
     spotify
     thunderbird
     tokei
-    vim
     w3m
     wget
     zoom-us
@@ -113,19 +125,12 @@ in
   };
   virtualisation.libvirtd.enable = true;
 
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "21.05"; # Did you read the comment?
+  system.stateVersion = "21.11"; # Did you read the comment?
 
 }
-

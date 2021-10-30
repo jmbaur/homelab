@@ -44,7 +44,7 @@ endif
 let g:markdown_fenced_languages=['bash=sh', 'python']
 let mapleader=','
 
-colorscheme gruvbox
+colorscheme tempus_totus
 
 filetype plugin indent on
 syntax enable
