@@ -112,6 +112,7 @@ in
       python3
       ripgrep
       rust-analyzer
+      shfmt
       sumneko-lua-language-server
       tree-sitter
     ];
