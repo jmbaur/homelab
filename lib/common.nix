@@ -1,18 +1,19 @@
-{ config, pkgs, ... }:
-let
-  fdroidcl = import ../programs/fdroidcl { };
-  gosee = import (builtins.fetchTarball "https://gitea.jmbaur.com/jmbaur/gosee/archive/main.tar.gz") { };
-  htmlq = import ../programs/htmlq { };
-  proj = import ../programs/proj { };
-in
-{
-  hardware.enableRedistributableFirmware = true;
+{ config, lib, pkgs, ... }:
 
-  # nix-direnv, prevent nix shells from being wiped on garbage collection
-  nix.extraOptions = ''
-    keep-outputs = true
-    keep-derivations = true
-  '';
+with lib;
+
+{
+  nix = {
+    # Enable flakes and prevent nix shells from being wiped on garbage
+    # collection.
+    package = pkgs.nixUnstable;
+    extraOptions = ''
+      experimental-features = nix-command flakes
+      keep-outputs = true
+      keep-derivations = true
+    '';
+  };
+
   environment.pathsToLink = [
     "/share/nix-direnv"
   ];
@@ -20,81 +21,104 @@ in
   boot = {
     cleanTmpDir = true;
     tmpOnTmpfs = true;
-    binfmt.emulatedSystems = [ "aarch64-linux" ];
+    # binfmt.emulatedSystems = [ "aarch64-linux" ];
   };
 
-  time.timeZone = "America/Los_Angeles";
   i18n.defaultLocale = "en_US.UTF-8";
-  console.useXkbConfig = true;
+  console = {
+    font = "Lat2-Terminus16";
+    useXkbConfig = mkIf config.services.xserver.enable true;
+  };
 
   networking.networkmanager.enable = true;
 
   environment.binsh = "${pkgs.dash}/bin/dash";
-  environment.variables = {
-    EDITOR = "nvim";
-    NNN_TRASH = "1";
-  };
+  environment.variables = { NNN_TRASH = "1"; };
 
   environment.systemPackages = with pkgs; [
     acpi
+    age
     atop
     awscli2
     bat
     bc
     bind
+    bitwarden
+    brave
+    brightnessctl
+    chromium
     cmus
     curl
     direnv
     dmidecode
     dnsutils
+    dunst
     dust
+    element-desktop
     exa
     fd
     fdroidcl
     ffmpeg
     file
+    firefox
     fzf
     geteltorito
     gh
+    gimp
     git
     gnupg
+    google-chrome
     gosee
     gotop
     grex
     gron
     htmlq
     htop
+    imv
     iperf3
     iputils
     jq
     keybase
     killall
     libnotify
+    libreoffice
     lm_sensors
+    mob
     mosh
     neofetch
     nix-direnv
-    nixops
+    nix-tree
+    nixopsUnstable
+    nixos-generators
     nmap
     nnn
     nushell
     nvme-cli
+    p
+    pa-switch
     pass
     pass-git-helper
+    pavucontrol
     pciutils
     picocom
+    pinentry-gnome
     procs
     proj
     pwgen
     renameutils
     ripgrep
     rtorrent
+    scrot
     sd
+    signal-desktop
+    slack
+    spotify
     stow
     tailscale
     tcpdump
     tea
     tealdeer
+    thunderbird
     tig
     tmux
     tokei
@@ -103,27 +127,32 @@ in
     tree
     unzip
     usbutils
-    vim
     w3m
     wget
+    wireshark
+    xclip
     xdg-user-dirs
+    xsel
     xsv
     ydiff
     yq
     yubikey-personalization
+    zathura
     zip
+    zoom-us
     zoxide
   ];
 
+  programs.adb.enable = true;
+  programs.mtr.enable = true;
+
+  environment.variables.HISTCONTROL = "ignoredups";
   programs.bash = {
     vteIntegration = true;
     undistractMe.enable = true;
     shellAliases = { grep = "grep --color=auto"; };
     enableLsColors = true;
     enableCompletion = true;
-    shellInit = ''
-      export HISTCONTROL=ignoreboth:erasedups
-    '';
   };
 
   # Yubikey GPG and SSH support
@@ -133,23 +162,16 @@ in
     gnupg.agent = {
       enable = true;
       enableSSHSupport = true;
+      pinentryFlavor = "gnome3";
     };
   };
 
-  security.sudo.wheelNeedsPassword = false;
-
-  programs.adb.enable = true;
-
   users.users.jared = {
     description = "Jared Baur";
-    extraGroups = [
-      "adbusers"
-      "networkmanager"
-      "wheel"
-      "wireshark"
-    ];
+    extraGroups = [ "adbusers" "networkmanager" "wheel" "wireshark" ];
     isNormalUser = true;
     openssh.authorizedKeys.keys = [ "${builtins.readFile ./publicSSHKey.txt}" ];
     shell = pkgs.bash;
   };
+  security.sudo.wheelNeedsPassword = false;
 }

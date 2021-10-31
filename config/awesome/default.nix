@@ -32,6 +32,9 @@ in
       source-code-pro
     ];
 
+    location.provider = "geoclue2";
+    services.redshift.enable = true;
+
     environment = {
       etc = {
         "xdg/awesome/rc.lua".source = ./rc.lua;
@@ -89,13 +92,29 @@ in
       };
     };
 
-    programs.xss-lock = {
-      enable = true;
-      extraOptions = [ "-n" "${pkgs.xsecurelock}/libexec/xsecurelock/dimmer" "-l" ];
-      lockerCommand = ''
-        XSECURELOCK_AUTH_BACKGROUND_COLOR="#1a1a1a" XSECURELOCK_AUTH_FOREGROUND_COLOR="#e0e0e0" XSECURELOCK_AUTH_WARNING_COLOR="#ff929f" XSECURELOCK_DIM_COLOR="#1a1a1a" XSECURELOCK_FONT="DejaVu Sans Mono:size=14" ${pkgs.xsecurelock}/bin/xsecurelock
-      '';
-    };
+    programs.xss-lock =
+      let
+        xsecurelock = pkgs.symlinkJoin {
+          name = "xsecurelock";
+          paths = [ pkgs.xsecurelock ];
+          buildInputs = [ pkgs.makeWrapper ];
+          postBuild = ''
+            wrapProgram $out/bin/xsecurelock \
+              --set XSECURELOCK_AUTH_BACKGROUND_COLOR "#1a1a1a" \
+              --set XSECURELOCK_AUTH_FOREGROUND_COLOR "#e0e0e0" \
+              --set XSECURELOCK_AUTH_WARNING_COLOR "#ff929f" \
+              --set XSECURELOCK_DIM_COLOR "#1a1a1a" \
+              --set XSECURELOCK_FONT "DejaVu Sans Mono:size=14"
+          '';
+        };
+      in
+      {
+        enable = true;
+        extraOptions = [ "-n" "${xsecurelock}/libexec/xsecurelock/dimmer" "-l" ];
+        lockerCommand = ''
+          ${xsecurelock}/bin/xsecurelock
+        '';
+      };
   };
 
 }

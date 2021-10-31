@@ -13,42 +13,20 @@ in
     "${nixos-hardware}/lenovo/thinkpad/t495"
     ../../config
     ../../pkgs
+    ../../lib/common.nix
     ./hardware-configuration.nix
   ];
 
   security.tpm2.enable = true;
 
-  nix = {
-    package = pkgs.nixUnstable;
-    extraOptions = ''
-      experimental-features = nix-command flakes
-    '';
+  hardware = {
+    bluetooth.enable = true;
+    cpu.amd.updateMicrocode = true;
+    enableRedistributableFirmware = true;
   };
 
+  boot.plymouth.enable = true;
   boot.kernelPackages = pkgs.linuxPackages_latest;
-
-  services.fwupd.enable = true;
-
-  services.avahi.enable = true;
-  services.avahi.nssmdns = true;
-
-  hardware.cpu.amd.updateMicrocode = true;
-
-  hardware.bluetooth.enable = true;
-
-  nixpkgs.config.allowUnfree = true;
-
-  custom = {
-    awesome.enable = true;
-    awesome.laptop = true;
-    git.enable = true;
-    kitty.enable = true;
-    neovim.enable = true;
-    pipewire.enable = true;
-    tmux.enable = true;
-    vscode.enable = true;
-  };
-
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
@@ -66,66 +44,37 @@ in
 
   networking.hostName = "beetroot";
   networking.networkmanager.enable = true;
-
-  services.power-profiles-daemon.enable = true;
-  services.upower.enable = true;
-
   time.timeZone = "America/Los_Angeles";
 
-  i18n.defaultLocale = "en_US.UTF-8";
-  console = {
-    font = "Lat2-Terminus16";
-    useXkbConfig = true;
+  nixpkgs.config.allowUnfree = true;
+
+  custom = {
+    awesome = { enable = true; laptop = true; };
+    git.enable = true;
+    kitty.enable = true;
+    neovim.enable = true;
+    pipewire.enable = true;
+    tmux.enable = true;
+    vscode.enable = true;
   };
 
-  users.users.jared = {
-    description = "Jared Baur";
-    isNormalUser = true;
-    extraGroups = [ "video" "wheel" "networkmanager" "adbusers" ];
-  };
-
-  environment.variables.HISTCONTROL = "ignoredups";
-
-  environment.systemPackages = with pkgs; [
-    age
-    bat
-    bitwarden
-    brave
-    chromium
-    element-desktop
-    fd
-    fdroidcl
-    file
-    firefox
-    gimp
-    google-chrome
-    gosee
-    htmlq
-    htop
-    jq
-    libreoffice
-    mob
-    nix-tree
-    nixos-generators
-    p
-    pa-switch
-    ripgrep
-    signal-desktop
-    slack
-    spotify
-    thunderbird
-    tokei
-    w3m
-    wget
-    zip
-    zoom-us
-  ];
-
-  programs.adb.enable = true;
-  programs.mtr.enable = true;
-  programs.gnupg.agent = {
-    enable = true;
-    enableSSHSupport = true;
+  services.fwupd.enable = true;
+  services.autorandr.enable = true;
+  services.clipmenu.enable = true;
+  services.printing.enable = true;
+  services.avahi.enable = true;
+  services.avahi.nssmdns = true;
+  services.power-profiles-daemon.enable = true;
+  services.upower.enable = true;
+  services.syncthing = {
+    enable = false;
+    user = "jared";
+    group = "users";
+    dataDir = "/home/jared";
+    configDir = "/home/jared/.config/syncthing";
+    openDefaultPorts = true;
+    declarative.overrideFolders = false;
+    declarative.overrideDevices = true;
   };
 
   virtualisation.podman = {

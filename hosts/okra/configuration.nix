@@ -1,33 +1,42 @@
 { config, pkgs, ... }:
 
+let
+
+  nixos-hardware = builtins.fetchTarball {
+    url = "https://github.com/nixos/nixos-hardware/archive/3aabf78bfcae62f5f99474f2ebbbe418f1c6e54f.tar.gz";
+    sha256 = "10g240brgjz7qi20adwajxwqrqb5zxc79ii1mc20fasgqlf2a8sx";
+  };
+
+in
 {
   imports =
     [
+      "${nixos-hardware}/common/pc/ssd"
+      "${nixos-hardware}/common/cpu/amd"
       ../../config
       ../../pkgs
+      ../../lib/common.nix
       ./hardware-configuration.nix
     ];
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  security.tpm2.enable = true;
 
+  boot.plymouth.enable = true;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "okra";
-
+  networking.networkmanager.enable = true;
   time.timeZone = "America/Los_Angeles";
 
-  i18n.defaultLocale = "en_US.UTF-8";
-  console = {
-    font = "Lat2-Terminus16";
-    useXkbConfig = true;
-  };
-
   custom = {
+    awesome = { enable = true; laptop = true; };
     ddcci.enable = true;
     git.enable = true;
-    gnome.enable = true;
+    kitty.enable = true;
     neovim.enable = true;
+    pipewire.enable = true;
     tmux.enable = true;
     vscode.enable = true;
   };
@@ -48,54 +57,23 @@
 
   hardware.cpu.amd.updateMicrocode = true;
 
-  users.users.jared = {
-    description = "Jared Baur";
-    isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "adbusers" ];
-  };
-
-  environment.variables.HISTCONTROL = "ignoredups";
-
-  environment.systemPackages = with pkgs; [
-    age
-    bat
-    bitwarden
-    element-desktop
-    fd
-    fdroidcl
-    firefox
-    gimp
-    google-chrome
-    gosee
-    htmlq
-    htop
-    jq
-    libreoffice
-    mob
-    nixopsUnstable
-    nushell
-    pa-switch
-    proj
-    ripgrep
-    signal-desktop
-    slack
-    spotify
-    thunderbird
-    tig
-    tokei
-    vim
-    w3m
-    wget
-    zoom-us
-  ];
-
-  programs.adb.enable = true;
-  programs.mtr.enable = true;
-
-  services.udev.packages = [ pkgs.yubikey-personalization ];
-  programs.gnupg.agent = {
-    enable = true;
-    enableSSHSupport = true;
+  services.fwupd.enable = true;
+  services.autorandr.enable = true;
+  services.clipmenu.enable = true;
+  services.printing.enable = true;
+  services.avahi.enable = true;
+  services.avahi.nssmdns = true;
+  services.power-profiles-daemon.enable = true;
+  services.upower.enable = true;
+  services.syncthing = {
+    enable = false;
+    user = "jared";
+    group = "users";
+    dataDir = "/home/jared";
+    configDir = "/home/jared/.config/syncthing";
+    openDefaultPorts = true;
+    declarative.overrideFolders = false;
+    declarative.overrideDevices = true;
   };
 
   virtualisation.podman = {
