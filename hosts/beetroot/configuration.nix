@@ -1,9 +1,14 @@
+# --
+# --
+
+
+
 { config, pkgs, ... }:
 let
 
   nixos-hardware = builtins.fetchTarball {
-    url = "https://github.com/nixos/nixos-hardware/archive/3aabf78bfcae62f5f99474f2ebbbe418f1c6e54f.tar.gz";
-    sha256 = "10g240brgjz7qi20adwajxwqrqb5zxc79ii1mc20fasgqlf2a8sx";
+    url = "https://github.com/nixos/nixos-hardware/archive/518b9c2159e7d4b7696ee18b8828f9086012923b.tar.gz";
+    sha256 = "02ybg89zj8x3i5xd70rysizbzx8d8bijml7l62n32i991244rf4b";
   };
 
 in
@@ -49,7 +54,24 @@ in
   nixpkgs.config.allowUnfree = true;
 
   custom = {
-    awesome = { enable = true; laptop = true; };
+    awesome = {
+      enable = true;
+      laptop = true;
+      custom-widgets = {
+        enable = true;
+        text = ''
+          local wibox = require("wibox")
+          local awful = require("awful")
+          return {
+            awful.widget.watch("cat /sys/class/power_supply/BAT0/capacity", 60,
+              function(widget, stdout)
+                widget:set_text(string.format("%d%%", stdout))
+              end
+            )
+          }
+        '';
+      };
+    };
     git.enable = true;
     kitty.enable = true;
     neovim.enable = true;

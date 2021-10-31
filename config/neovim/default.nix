@@ -45,7 +45,7 @@ in
           in
           {
             start = [
-              gruvbox-nvim
+              lsp-colors-nvim
               nvim-autopairs
               nvim-colorizer-lua
               nvim-lspconfig
@@ -81,8 +81,8 @@ in
                 src = pkgs.fetchFromGitHub {
                   owner = "tpope";
                   repo = "vim-fugitive";
-                  rev = "4d29c1d6a0def18923b4762c8f85ca3ee5ae6c83";
-                  sha256 = "1m8qw6pqgyvfnbph8xwpsvgwdyapsg2abxbpqvsjhcg6ylbxfx17";
+                  rev = "174fd6a39b7e162ca707c87582d1b7979fba95f4";
+                  sha256 = "sha256-1drj/BvifcEmb2LSJVw+KJer5MxemEYhig713f39zW0=";
                 };
               })
               (pkgs.vimUtils.buildVimPlugin {
@@ -99,7 +99,6 @@ in
       bat
       black
       efm-langserver
-      gcc
       git
       go
       goimports

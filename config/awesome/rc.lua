@@ -155,6 +155,7 @@ end
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 screen.connect_signal("property::geometry", set_wallpaper)
 
+local customwidgets = require('customwidgets')
 awful.screen.connect_for_each_screen(function(s)
     -- Wallpaper
     set_wallpaper(s)
@@ -208,14 +209,11 @@ awful.screen.connect_for_each_screen(function(s)
         s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
-            wibox.widget.textbox(' '),
-            awful.widget.watch('cat /sys/class/power_supply/BAT0/capacity', 60,
-                               function(widget, stdout)
-                widget:set_text(string.format("%d%%", stdout))
-            end),
-            wibox.widget.textbox(' | '),
+            wibox.widget.textbox(" "),
+            table.unpack(customwidgets),
+            wibox.widget.textbox(" "),
             mytextclock,
-            wibox.widget.textbox(' '),
+            wibox.widget.textbox(" "),
             wibox.widget.systray(),
             s.mylayoutbox
         }

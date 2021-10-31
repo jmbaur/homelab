@@ -31,7 +31,7 @@ in
   time.timeZone = "America/Los_Angeles";
 
   custom = {
-    awesome = { enable = true; laptop = true; };
+    awesome.enable = true;
     ddcci.enable = true;
     git.enable = true;
     kitty.enable = true;

@@ -4,6 +4,10 @@ let
 
   cfg = config.custom.awesome;
 
+  default-custom-widgets = ''
+    return {}
+  '';
+
 in
 {
 
@@ -16,6 +20,16 @@ in
       laptop = mkOption {
         type = types.bool;
         default = false;
+      };
+      custom-widgets = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+        };
+        text = mkOption {
+          type = types.str;
+          default = default-custom-widgets;
+        };
       };
     };
   };
@@ -40,6 +54,10 @@ in
         "xdg/awesome/rc.lua".source = ./rc.lua;
         "xdg/awesome/theme.lua".source = ./theme.lua;
         "xdg/awesome/wallpaper.jpg".source = ./sebastian-svenson-d2w-_1LJioQ-unsplash.jpg;
+        "xdg/awesome/customwidgets.lua".text =
+          if cfg.custom-widgets.enable then
+            cfg.custom-widgets.text
+          else default-custom-widgets;
         "xdg/gtk-3.0/settings.ini".text = ''
           [Settings]
           gtk-application-prefer-dark-theme=1
