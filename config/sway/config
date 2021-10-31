@@ -74,6 +74,7 @@ bindsym $mod+space focus mode_toggle
 bindsym $mod+a focus parent
 bindsym $mod+Shift+minus move scratchpad
 bindsym $mod+minus scratchpad show
+bindsym $mod+tab workspace back_and_forth
 mode "resize" {
         bindsym $left resize shrink width 10px
         bindsym $down resize grow height 10px

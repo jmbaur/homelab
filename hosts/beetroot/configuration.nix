@@ -93,7 +93,6 @@ in
     age
     bat
     bitwarden
-    brave-wayland
     chromium-wayland
     element-desktop
     fd

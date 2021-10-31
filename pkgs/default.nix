@@ -2,7 +2,6 @@
 {
   nixpkgs.overlays = [
     (self: super: {
-      brave-wayland = super.callPackage ./brave-wayland { };
       chromium-wayland = super.callPackage ./chromium-wayland { };
       efm-langserver = super.callPackage ./efm-langserver { };
       fdroidcl = super.callPackage ./fdroidcl { };

@@ -25,9 +25,20 @@ in
       noto-fonts-emoji
       source-code-pro
     ];
+
     programs.sway = {
       enable = true;
       wrapperFeatures.gtk = true;
+      extraSessionCommands = ''
+        # SDL:
+        export SDL_VIDEODRIVER=wayland
+        # QT (needs qt5.qtwayland in systemPackages):
+        export QT_QPA_PLATFORM=wayland-egl
+        export QT_WAYLAND_DISABLE_WINDOWDECORATION="1"
+        # Fix for some Java AWT applications (e.g. Android Studio),
+        # use this if they aren't displayed properly:
+        export _JAVA_AWT_WM_NONREPARENTING=1
+      '';
       extraPackages = with pkgs; [
         bemenu
         brightnessctl
@@ -52,12 +63,20 @@ in
       ];
     };
 
-    environment.etc."sway/config".source = ./config;
-    environment.etc."gtk-3.0/settings.ini".text = ''
-      [Settings]
-      gtk-cursor-theme-name=Adwaita
-      gtk-key-theme-name=Emacs
-    '';
+    environment.etc =
+      let gtk-settings = ''
+        [Settings]
+        gtk-application-prefer-dark-theme = true
+        gtk-theme-name = Adwaita
+        gtk-cursor-theme-name = Adwaita
+        gtk-key-theme-name = Emacs
+      '';
+      in
+      {
+        "sway/config".source = ./config;
+        "gtk-3.0/settings.ini".text = gtk-settings;
+        "gtk-4.0/settings.ini".text = gtk-settings;
+      };
 
     environment.variables = {
       XCURSOR_THEME = "Adwaita";
