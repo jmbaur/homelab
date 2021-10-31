@@ -185,7 +185,7 @@ with lib;
     description = "Jared Baur";
     extraGroups = [ "adbusers" "networkmanager" "wheel" "wireshark" ];
     isNormalUser = true;
-    openssh.authorizedKeys.keys = [ "${builtins.readFile ./publicSSHKey.txt}" ];
+    openssh.authorizedKeys.keys = [ "${builtins.readFile ./yubikeySshKey.txt}" ];
     shell = pkgs.bash;
   };
   security.sudo.wheelNeedsPassword = false;
