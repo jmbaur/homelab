@@ -9,6 +9,7 @@
       google-chrome-wayland = super.callPackage ./google-chrome-wayland { };
       gosee = super.callPackage ./gosee { };
       htmlq = super.callPackage ./htmlq { };
+      nix-direnv = super.nix-direnv.override { enableFlakes = true; };
       p = super.callPackage ./p { };
       pa-switch = super.callPackage ./pa-switch { };
       slack-wayland = super.callPackage ./slack-wayland { };

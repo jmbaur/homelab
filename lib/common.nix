@@ -153,7 +153,22 @@ with lib;
     shellAliases = { grep = "grep --color=auto"; };
     enableLsColors = true;
     enableCompletion = true;
+    shellInit = ''
+      eval "$(${pkgs.direnv}/bin/direnv hook bash)"
+    '';
   };
+  system.userActivationScripts.nix-direnv.text =
+    let
+      direnvrc = pkgs.writeTextFile {
+        name = "direnvrc";
+        text = ''
+          source ${pkgs.nix-direnv}/share/nix-direnv/direnvrc
+        '';
+      };
+    in
+    ''
+      ln -sf ${direnvrc} ''${HOME}/.direnvrc
+    '';
 
   # Yubikey GPG and SSH support
   services.udev.packages = [ pkgs.yubikey-personalization ];
