@@ -129,7 +129,6 @@ with lib;
     usbutils
     w3m
     wget
-    wireshark
     xclip
     xdg-user-dirs
     xsel
@@ -143,6 +142,7 @@ with lib;
     zoxide
   ];
 
+  programs.wireshark.enable = true;
   programs.adb.enable = true;
   programs.mtr.enable = true;
 
