@@ -7,27 +7,28 @@ local dpi = xresources.apply_dpi
 
 local gfs = require("gears.filesystem")
 local themes_path = gfs.get_themes_dir()
+local configuration_path = gfs.get_configuration_dir()
 
 local theme = {}
 
 theme.font = "DejaVu Sans Mono 10"
 
 theme.bg_normal = "#1a1a1a"
-theme.bg_focus = "#535d6c"
-theme.bg_urgent = "#ff0000"
-theme.bg_minimize = "#444444"
+theme.bg_focus = "#242536"
+theme.bg_urgent = "#ff929f"
+theme.bg_minimize = "#242536"
 theme.bg_systray = theme.bg_normal
 
-theme.fg_normal = "#aaaaaa"
-theme.fg_focus = "#ffffff"
-theme.fg_urgent = "#ffffff"
-theme.fg_minimize = "#ffffff"
+theme.fg_normal = "#c4bdaf"
+theme.fg_focus = "#e0e0e0"
+theme.fg_urgent = "#e0e0e0"
+theme.fg_minimize = "#e0e0e0"
 
 theme.useless_gap = dpi(0)
 theme.border_width = dpi(1)
-theme.border_normal = "#000000"
-theme.border_focus = "#535d6c"
-theme.border_marked = "#91231c"
+theme.border_normal = "#1a1a1a"
+theme.border_focus = "#242536"
+theme.border_marked = "#ff929f"
 
 -- There are other variable sets
 -- overriding the default one when
@@ -114,7 +115,7 @@ theme.titlebar_maximized_button_normal_active = themes_path ..
 theme.titlebar_maximized_button_focus_active = themes_path ..
                                                    "default/titlebar/maximized_focus_active.png"
 
-theme.wallpaper = themes_path .. "default/background.png"
+theme.wallpaper = configuration_path .. "wallpaper.jpg"
 
 -- You can use your own layout icons like this:
 theme.layout_fairh = themes_path .. "default/layouts/fairhw.png"

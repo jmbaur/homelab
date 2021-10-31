@@ -90,6 +90,7 @@ in
     age
     bat
     bitwarden
+    brave
     chromium
     element-desktop
     fd

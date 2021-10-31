@@ -47,6 +47,7 @@ in
             start = [
               gruvbox-nvim
               nvim-autopairs
+              nvim-colorizer-lua
               nvim-lspconfig
               snippets-nvim
               telescope-nvim
