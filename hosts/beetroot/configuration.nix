@@ -54,7 +54,7 @@ in
 
   boot.initrd.luks.devices =
     let
-      uuid = "8d642c40-ad46-407f-ba23-07be974c033f";
+      uuid = "44ab6197-5392-40bf-9e1a-651be31e285d";
     in
     {
       "${uuid}" = {

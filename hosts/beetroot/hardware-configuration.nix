@@ -16,17 +16,17 @@
 
   fileSystems."/" =
     {
-      device = "/dev/disk/by-uuid/52f45825-3737-4d6d-95f6-8a7ec213cf55";
+      device = "/dev/disk/by-uuid/7d824d73-1fd6-491c-b405-fd3a0f5ee30d";
       fsType = "ext4";
     };
 
   fileSystems."/boot" =
     {
-      device = "/dev/disk/by-uuid/A4B9-D9AD";
+      device = "/dev/disk/by-uuid/3998-687D";
       fsType = "vfat";
     };
 
   swapDevices =
-    [{ device = "/dev/disk/by-uuid/3a44bb21-e7bd-4073-9d56-4e20bd9b3381"; }];
+    [{ device = "/dev/disk/by-uuid/fae079a0-cf21-481c-ac09-296261170549"; }];
 
 }

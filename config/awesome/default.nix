@@ -30,6 +30,8 @@ in
       source-code-pro
     ];
 
+    environment.etc."xdg/awesome/rc.lua".source = ./rc.lua;
+
     services.xserver = {
       enable = true;
       layout = "us";
