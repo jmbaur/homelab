@@ -67,6 +67,11 @@ in
         EOF
       '';
       displayManager = {
+        lightdm = {
+          enable = true;
+          background = ./sebastian-svenson-d2w-_1LJioQ-unsplash.jpg;
+          greeters.gtk.theme.name = "Adwaita-dark";
+        };
         defaultSession = "none+awesome";
         autoLogin = { enable = true; user = "jared"; };
       };
