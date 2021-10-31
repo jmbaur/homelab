@@ -1,12 +1,18 @@
 { config, lib, pkgs, ... }:
 {
-  nixpkgs.overlays =
-    [
-      (self: super: { efm-langserver = super.callPackage ./efm-langserver { }; })
-      (self: super: { fdroidcl = super.callPackage ./fdroidcl { }; })
-      (self: super: { gosee = super.callPackage ./gosee { }; })
-      (self: super: { htmlq = super.callPackage ./htmlq { }; })
-      (self: super: { pa-switch = super.callPackage ./pa-switch { }; })
-      (self: super: { p = super.callPackage ./p { }; })
-    ];
+  nixpkgs.overlays = [
+    (self: super: {
+      brave-wayland = super.callPackage ./brave-wayland { };
+      chromium-wayland = super.callPackage ./chromium-wayland { };
+      efm-langserver = super.callPackage ./efm-langserver { };
+      fdroidcl = super.callPackage ./fdroidcl { };
+      firefox-wayland = super.callPackage ./firefox-wayland { };
+      google-chrome-wayland = super.callPackage ./google-chrome-wayland { };
+      gosee = super.callPackage ./gosee { };
+      htmlq = super.callPackage ./htmlq { };
+      p = super.callPackage ./p { };
+      pa-switch = super.callPackage ./pa-switch { };
+      slack-wayland = super.callPackage ./slack-wayland { };
+    })
+  ];
 }

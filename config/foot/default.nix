@@ -6,7 +6,7 @@ let
     url = "https://codeberg.org/dnkl/foot";
     rev = "9a04c741a094b97f4502d4c098fca8c19cb3647b";
   };
-  tempus-totus = "${foot}/themes/tempus-totus";
+  tempus-night = "${foot}/themes/tempus-night";
 in
 {
 
@@ -23,11 +23,12 @@ in
     environment.systemPackages = [ pkgs.foot ];
     environment.etc."xdg/foot/foot.ini".text = ''
       [main]
+      font=Hack:size=8
       term=xterm-256color
       selection-target=both
       [mouse]
       hide-when-typing=yes
-      ${builtins.readFile tempus-totus}
+      ${builtins.readFile tempus-night}
     '';
   };
 

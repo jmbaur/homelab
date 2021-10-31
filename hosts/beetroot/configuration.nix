@@ -29,6 +29,9 @@ in
 
   services.fwupd.enable = true;
 
+  services.avahi.enable = true;
+  services.avahi.nssmdns = true;
+
   hardware.cpu.amd.updateMicrocode = true;
 
   hardware.bluetooth.enable = true;
@@ -46,6 +49,11 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  programs.bash.loginShellInit = ''
+    if [ -z $DISPLAY ] && [ "$(tty)" = "/dev/tty1" ]; then
+      exec sway
+    fi
+  '';
 
   boot.initrd.luks.devices =
     let
@@ -85,12 +93,15 @@ in
     age
     bat
     bitwarden
+    brave-wayland
+    chromium-wayland
     element-desktop
     fd
     fdroidcl
-    firefox
+    file
+    firefox-wayland
     gimp
-    google-chrome
+    google-chrome-wayland
     gosee
     htmlq
     htop
@@ -103,13 +114,13 @@ in
     pa-switch
     ripgrep
     signal-desktop
-    slack
+    slack-wayland
     spotify
     thunderbird
     tokei
     w3m
     wget
-    zoom-us
+    zip
   ];
 
   programs.adb.enable = true;

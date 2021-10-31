@@ -32,8 +32,9 @@ in
         unbind C-b
         set -g prefix C-s
         bind C-s send-prefix
-        set -g set-clipboard on
         set -g renumber-windows on
+        set -g set-clipboard on
+        set-option -g default-shell $SHELL
       '';
     };
   };

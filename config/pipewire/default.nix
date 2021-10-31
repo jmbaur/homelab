@@ -9,14 +9,18 @@ in
     custom.pipewire = {
       enable = mkOption {
         type = types.bool;
-        default = config.custom.sway.enable;
+        default = false;
+      };
+      bluetooth = mkOption {
+        type = types.bool;
+        default = true;
       };
     };
   };
 
   config = mkIf cfg.enable {
 
-    hardware.bluetooth.enable = true;
+    hardware.bluetooth.enable = mkIf cfg.bluetooth true;
     security.rtkit.enable = true;
     services.pipewire = {
       enable = true;

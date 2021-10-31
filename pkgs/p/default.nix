@@ -1,31 +1,31 @@
 { pkgs ? import <nixpkgs> { } }:
 pkgs.writeShellScriptBin "p" ''
   usage() {
-          echo "usage: p <dir>"
-          echo
-          echo "The default projects directory is \$HOME/Projects. This can be"
-          echo "overridden by setting the \$PROJ_DIR environment variable."
+    echo "usage: p <dir>"
+    echo
+    echo "The default projects directory is \$HOME/Projects. This can be"
+    echo "overridden by setting the \$PROJ_DIR environment variable."
   }
   DIR=''${PROJ_DIR:-''${HOME}/Projects}
   SEARCH=$1
   if [ -z "''${SEARCH}" ];then
-          usage
-          exit 1
+  usage
+  exit 1
   fi
   if [ ! -d $DIR ]; then
-          echo "Cannot find project directory"
-          exit 2
+  echo "Cannot find project directory"
+  exit 2
   fi
   PROJ=$(${pkgs.fd}/bin/fd -t d -H ^.git$ $DIR | xargs ${pkgs.coreutils}/bin/dirname | ${pkgs.gnugrep}/bin/grep ".*''${SEARCH}.*")
   if [ -z "$PROJ" ]; then
-          echo "Cannot find project with search term ''${SEARCH}"
-          exit 3
+  echo "Cannot find project with search term ''${SEARCH}"
+  exit 3
   fi
   TMUX_SESSION_NAME=$(basename $PROJ)
   ${pkgs.tmux}/bin/tmux new-session -d -c $PROJ -s $TMUX_SESSION_NAME
   if [ -n "$TMUX" ]; then
-          ${pkgs.tmux}/bin/tmux switch-client -t $TMUX_SESSION_NAME
+  ${pkgs.tmux}/bin/tmux switch-client -t $TMUX_SESSION_NAME
   else
-          ${pkgs.tmux}/bin/tmux attach-session -t $TMUX_SESSION_NAME
+  ${pkgs.tmux}/bin/tmux attach-session -t $TMUX_SESSION_NAME
   fi
 ''

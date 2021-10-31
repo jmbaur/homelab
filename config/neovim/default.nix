@@ -111,7 +111,6 @@ in
       pyright
       python3
       ripgrep
-      rnix-lsp
       rust-analyzer
       sumneko-lua-language-server
       tree-sitter
