@@ -39,21 +39,18 @@ in
   nixpkgs.config.allowUnfree = true;
 
   custom = {
+    awesome.enable = true;
+    awesome.laptop = true;
     git.enable = true;
-    sway.enable = true;
+    kitty.enable = true;
     neovim.enable = true;
+    pipewire.enable = true;
     tmux.enable = true;
     vscode.enable = true;
   };
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-
-  programs.bash.loginShellInit = ''
-    if [ -z $DISPLAY ] && [ "$(tty)" = "/dev/tty1" ]; then
-      exec sway
-    fi
-  '';
 
   boot.initrd.luks.devices =
     let
@@ -93,14 +90,14 @@ in
     age
     bat
     bitwarden
-    chromium-wayland
+    chromium
     element-desktop
     fd
     fdroidcl
     file
-    firefox-wayland
+    firefox
     gimp
-    google-chrome-wayland
+    google-chrome
     gosee
     htmlq
     htop
@@ -113,13 +110,14 @@ in
     pa-switch
     ripgrep
     signal-desktop
-    slack-wayland
+    slack
     spotify
     thunderbird
     tokei
     w3m
     wget
     zip
+    zoom-us
   ];
 
   programs.adb.enable = true;

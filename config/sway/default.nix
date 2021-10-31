@@ -47,7 +47,6 @@ in
         kanshi
         mako
         pulseaudio
-        rofi
         slurp
         swayidle
         swaylock
@@ -73,7 +72,7 @@ in
       '';
       in
       {
-        "sway/config".source = ./config;
+        # "sway/config".source = ./config;
         "gtk-3.0/settings.ini".text = gtk-settings;
         "gtk-4.0/settings.ini".text = gtk-settings;
       };
@@ -87,8 +86,15 @@ in
 
     custom.pipewire.enable = true;
 
-    xdg.portal.enable = mkForce true;
-    xdg.portal.extraPortals = with pkgs; [ xdg-desktop-portal-wlr ];
+    programs.dconf.enable = true;
+
+    xdg.portal = {
+      enable = true;
+      extraPortals = with pkgs; [
+        xdg-desktop-portal-wlr
+      ];
+    };
+
   };
 
 }

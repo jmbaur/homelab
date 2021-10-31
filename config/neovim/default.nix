@@ -24,12 +24,12 @@ in
 
     nixpkgs.overlays =
       let
-        commit-hash = "1dd99a6c91b4a6909e66d0ee69b3f31995f38851";
+        commit-hash = "0f574809bca4045f90d078e0f29f89f24b0563f0";
       in
       [
         (import (builtins.fetchTarball {
           url = "https://github.com/nix-community/neovim-nightly-overlay/archive/${commit-hash}.tar.gz";
-          sha256 = "1z8gx1cqd18s8zgqksjbyinwgcbndg2r6wv59c4qs24rbgcsvny9";
+          sha256 = "143k5igvazf9ml3pb2rshkwdzqyncpfsll4zfqnzrgx8nc5flghq";
         }))
       ];
 

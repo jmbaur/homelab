@@ -1,6 +1,7 @@
 { config, pkgs, ... }:
 {
   imports = [
+    ./awesome
     ./ddcci
     ./foot
     ./git

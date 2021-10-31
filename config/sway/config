@@ -1,4 +1,5 @@
 # vim: set ft=conf:
+exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
 exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
 font pango:Hack 8
 set $mod Mod4
@@ -10,10 +11,10 @@ set $term foot
 set $menu bemenu-run --fn "Hack 8" --line-height 20 | xargs swaymsg exec --
 seat seat0 xcursor_theme Adwaita 16
 exec swayidle -w \
-        timeout 300 "swaylock -f -c 222222" \
+        timeout 300 "swaylock -f -c 1a1a1a" \
         timeout 600 "swaymsg \"output * dpms off\"" resume "swaymsg \"output * dpms on\"" \
-        before-sleep "swaylock -f -c 222222"
-output * bg "#222222" solid_color
+        before-sleep "swaylock -f -c 1a1a1a"
+output * bg "#1a1a1a" solid_color
 input "2:7:SynPS/2_Synaptics_TouchPad" {
         dwt enabled
         tap enabled
