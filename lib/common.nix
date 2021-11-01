@@ -111,6 +111,7 @@ with lib;
     scrot
     sd
     signal-desktop
+    sl
     slack
     spotify
     stow
