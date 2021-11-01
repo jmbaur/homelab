@@ -76,12 +76,6 @@ in
     declarative.overrideDevices = true;
   };
 
-  virtualisation.podman = {
-    enable = true;
-    dockerCompat = true;
-  };
-  virtualisation.libvirtd.enable = true;
-
   services.openssh.enable = true;
 
   # This value determines the NixOS release from which the default

@@ -34,7 +34,7 @@ in
         bind C-s send-prefix
         set -g renumber-windows on
         set -g set-clipboard on
-        set-option -g default-shell $SHELL
+        set -g default-command "''${SHELL}"
         set-option -g focus-events on
         set-option -sa terminal-overrides ',xterm-256color:RGB'
       '';

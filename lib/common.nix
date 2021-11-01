@@ -154,7 +154,10 @@ with lib;
     shellAliases = { grep = "grep --color=auto"; };
     enableLsColors = true;
     enableCompletion = true;
-    shellInit = ''
+    promptInit = ''
+      eval "$(${pkgs.starship}/bin/starship init bash)"
+    '';
+    interactiveShellInit = ''
       eval "$(${pkgs.direnv}/bin/direnv hook bash)"
     '';
   };
@@ -190,4 +193,14 @@ with lib;
     shell = pkgs.bash;
   };
   security.sudo.wheelNeedsPassword = false;
+
+  virtualisation = {
+    containers = {
+      enable = true;
+      containersConf.settings.engine.detach_keys = "ctrl-e,ctrl-q";
+    };
+    podman = { enable = true; dockerCompat = true; };
+    libvirtd.enable = true;
+  };
+
 }
