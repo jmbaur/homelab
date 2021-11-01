@@ -154,9 +154,6 @@ with lib;
     shellAliases = { grep = "grep --color=auto"; };
     enableLsColors = true;
     enableCompletion = true;
-    promptInit = ''
-      eval "$(${pkgs.starship}/bin/starship init bash)"
-    '';
     interactiveShellInit = ''
       eval "$(${pkgs.direnv}/bin/direnv hook bash)"
     '';
