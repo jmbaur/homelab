@@ -77,7 +77,7 @@ in
     neovim.enable = true;
     pipewire.enable = true;
     tmux.enable = true;
-    vscode.enable = true;
+    vscode.enable = false;
   };
 
   services.fwupd.enable = true;
