@@ -11,9 +11,9 @@ in
   imports = [
     "${nixos-hardware}/common/pc/ssd"
     "${nixos-hardware}/lenovo/thinkpad/t495"
-    ./config
-    ./pkgs
-    ./lib/common.nix
+    ../../config
+    ../../pkgs
+    ../../lib/common.nix
     ./hardware-configuration.nix
   ];
 

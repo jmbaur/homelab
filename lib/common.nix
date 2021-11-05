@@ -2,6 +2,10 @@
 
 with lib;
 
+let
+  unstable = pkgs.callPackage (builtins.fetchTarball "https://github.com/nixos/nixpkgs/archive/master.tar.gz") { };
+in
+
 {
   nix = {
     # Enable flakes and prevent nix shells from being wiped on garbage
@@ -43,7 +47,6 @@ with lib;
     bat
     bc
     bind
-    bitwarden
     brave
     brightnessctl
     chromium
@@ -142,6 +145,8 @@ with lib;
     zip
     zoom-us
     zoxide
+  ] ++ [
+    unstable.bitwarden # TODO(jared): just a workaround until 21.11
   ];
 
   programs.wireshark.enable = true;
