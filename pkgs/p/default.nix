@@ -24,8 +24,8 @@ pkgs.writeShellScriptBin "p" ''
   fi
   PROJ=''${DIRS[$IDX - 1]}
   PROJECT_NAME=$(basename $PROJ)
-  TMUX_SESSION_NAME=${PROJECT_NAME:0:7}
-  ${pkgs.tmux}/bin/tmux new-session -d -c ${PROJ} -s $TMUX_SESSION_NAME
+  TMUX_SESSION_NAME=''${PROJECT_NAME:0:7}
+  ${pkgs.tmux}/bin/tmux new-session -d -c ''${PROJ} -s $TMUX_SESSION_NAME
   if [ -n "$TMUX" ]; then
     ${pkgs.tmux}/bin/tmux switch-client -t $TMUX_SESSION_NAME
   else

@@ -1,10 +1,10 @@
 { config, pkgs, ... }:
 {
   imports = [
-    ./awesome
     ./ddcci
     ./foot
     ./git
+    ./i3
     ./gnome
     ./kitty
     ./neovim

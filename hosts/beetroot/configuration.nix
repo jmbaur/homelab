@@ -1,8 +1,3 @@
-# --
-# --
-
-
-
 { config, pkgs, ... }:
 let
 
@@ -16,9 +11,9 @@ in
   imports = [
     "${nixos-hardware}/common/pc/ssd"
     "${nixos-hardware}/lenovo/thinkpad/t495"
-    ../../config
-    ../../pkgs
-    ../../lib/common.nix
+    ./config
+    ./pkgs
+    ./lib/common.nix
     ./hardware-configuration.nix
   ];
 
@@ -30,14 +25,12 @@ in
     enableRedistributableFirmware = true;
   };
 
-  boot.plymouth.enable = true;
-  boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
   boot.initrd.luks.devices =
     let
-      uuid = "44ab6197-5392-40bf-9e1a-651be31e285d";
+      uuid = "b3368b3a-40ee-4966-8471-9bdfb7efbd5f";
     in
     {
       "${uuid}" = {
@@ -54,25 +47,8 @@ in
   nixpkgs.config.allowUnfree = true;
 
   custom = {
-    awesome = {
-      enable = true;
-      laptop = true;
-      custom-widgets = {
-        enable = true;
-        text = ''
-          local wibox = require("wibox")
-          local awful = require("awful")
-          return {
-            awful.widget.watch("cat /sys/class/power_supply/BAT0/capacity", 60,
-              function(widget, stdout)
-                widget:set_text(string.format("%d%%", stdout))
-              end
-            )
-          }
-        '';
-      };
-    };
     git.enable = true;
+    i3.enable = true;
     kitty.enable = true;
     neovim.enable = true;
     pipewire.enable = true;
@@ -111,6 +87,6 @@ in
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "21.11"; # Did you read the comment?
+  system.stateVersion = "21.05"; # Did you read the comment?
 
 }
