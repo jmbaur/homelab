@@ -177,6 +177,27 @@ in
       ln -sf ${direnvrc} ''${HOME}/.direnvrc
     '';
 
+  environment.variables.DISABLE_AUTO_TITLE = "true";
+  programs.zsh = {
+    enable = true;
+    ohMyZsh = {
+      enable = true;
+      theme = "sunaku";
+      plugins = [ "git" ];
+    };
+    syntaxHighlighting.enable = false;
+    # Prevent zsh-newuser-install from showing
+    shellInit = ''
+      export DISABLE_AUTO_TITLE=true
+      zsh-newuser-install() { :; }
+    '';
+    interactiveShellInit = ''
+      eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
+    '';
+  };
+
+
+
   # Yubikey GPG and SSH support
   services.udev.packages = [ pkgs.yubikey-personalization ];
   programs = {
@@ -193,7 +214,7 @@ in
     extraGroups = [ "adbusers" "networkmanager" "wheel" "wireshark" ];
     isNormalUser = true;
     openssh.authorizedKeys.keys = [ "${builtins.readFile ./yubikeySshKey.txt}" ];
-    shell = pkgs.bash;
+    shell = pkgs.zsh;
   };
   security.sudo.wheelNeedsPassword = false;
 

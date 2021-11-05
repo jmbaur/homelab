@@ -5,4 +5,3 @@ require 'troublings'
 require 'treesitter'
 
 require'nvim-autopairs'.setup {}
-require'colorizer'.setup {}

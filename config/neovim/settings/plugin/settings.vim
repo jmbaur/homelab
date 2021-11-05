@@ -24,6 +24,7 @@ if has('gui_running')
         set guioptions=-T
         set guioptions=-m
         set guioptions=-r
+        set guifont=monospace\ 14
 endif
 
 inoremap ! !<c-g>u
@@ -46,5 +47,7 @@ let mapleader=','
 
 filetype plugin indent on
 syntax enable
+
+color industry
 
 lua require('init')

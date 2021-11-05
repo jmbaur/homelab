@@ -47,7 +47,6 @@ in
             start = [
               lsp-colors-nvim
               nvim-autopairs
-              nvim-colorizer-lua
               nvim-lspconfig
               snippets-nvim
               telescope-nvim
