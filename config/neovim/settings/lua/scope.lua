@@ -1,18 +1,11 @@
-require'telescope'.setup {
-    defaults = {
-        layout_config = {
-            vertical = {width = 0.5}
-            -- other layout configuration here
-        }
-        -- other defaults configuration here
-    }
-    -- other configuration values here
+require"telescope".setup {}
 
-}
+local function nnoremap(key, cmd)
+    vim.api.nvim_set_keymap("n", key, cmd .. " " .. "previewer=false" .. "<cr>",
+                            {noremap = true, silent = true})
+end
 
-vim.cmd [[
-    nnoremap <leader>f <cmd>Telescope find_files<cr>
-    nnoremap <leader>g <cmd>Telescope live_grep<cr>
-    nnoremap <leader>b <cmd>Telescope buffers<cr>
-    nnoremap <leader>h <cmd>Telescope help_tags<cr>
-]]
+nnoremap("<leader>f", "<cmd>Telescope find_files")
+nnoremap("<leader>g", "<cmd>Telescope live_grep")
+nnoremap("<leader>b", "<cmd>Telescope buffers")
+nnoremap("<leader>h", "<cmd>Telescope help_tags")

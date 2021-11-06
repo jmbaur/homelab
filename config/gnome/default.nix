@@ -86,7 +86,7 @@ in
         desktopManager.gnome.enable = true;
         desktopManager.gnome.extraGSettingsOverrides = ''
           [org.gnome.desktop.interface]
-          gtk-theme = 'Adwaita-dark'
+          gtk-theme = 'Adwaita'
           gtk-key-theme = 'Emacs'
         '';
 

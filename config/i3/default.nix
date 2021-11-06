@@ -53,6 +53,7 @@ in
 
     environment = {
       etc = {
+        "dunst/dunstrc".source = ./dunstrc;
         "xdg/gtk-3.0/settings.ini".text = ''
           [Settings]
           gtk-application-prefer-dark-theme=1
@@ -94,11 +95,12 @@ in
           extraPackages = with pkgs; [
             brightnessctl
             dmenu
+            dunst
             i3lock
             i3status
+            libnotify
             pulseaudio
-            xclip
-            xsel
+            scrot
           ];
           configFile = ./config;
         };

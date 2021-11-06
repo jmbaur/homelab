@@ -2,12 +2,14 @@ set background=dark
 set belloff=all
 set clipboard=unnamedplus
 set colorcolumn=80
+set cursorline
 set expandtab
 set hidden
 set ignorecase
 set mouse=a
 set nocursorline
 set noswapfile
+set notermguicolors
 set nowrap
 set number
 set relativenumber
@@ -16,7 +18,6 @@ set smartcase
 set splitbelow
 set splitright
 set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
-set termguicolors
 set undofile
 
 if has('gui_running')
@@ -48,6 +49,6 @@ let mapleader=','
 filetype plugin indent on
 syntax enable
 
-color industry
+color jared
 
 lua require('init')
