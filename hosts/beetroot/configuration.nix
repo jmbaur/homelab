@@ -7,7 +7,7 @@ let
     url = "https://github.com/nixos/nixos-hardware/archive/518b9c2159e7d4b7696ee18b8828f9086012923b.tar.gz";
     sha256 = "02ybg89zj8x3i5xd70rysizbzx8d8bijml7l62n32i991244rf4b";
   };
-  unstable = pkgs.callPackage (builtins.fetchTarball "https://github.com/nixos/nixpkgs/archive/master.tar.gz") { };
+  unstable = import ../../lib/unstable.nix { };
 
 in
 {

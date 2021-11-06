@@ -1,4 +1,5 @@
 { config, lib, pkgs, ... }:
+
 with lib;
 
 let
@@ -50,6 +51,8 @@ in
 
     location.provider = "geoclue2";
     services.redshift.enable = true;
+
+    services.clipmenu.enable = true;
 
     environment = {
       etc = {
