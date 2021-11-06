@@ -28,7 +28,7 @@ in
       enable_audio_bell no
       font_family DejaVu Sans Mono
       font_size 14
-      include ${kitty-themes}/themes/LiquidCarbonTransparent.conf
+      include ${kitty-themes}/themes/Pro.conf
       term xterm-256color
       update_check_interval 0
     '';
