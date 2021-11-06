@@ -5,6 +5,7 @@ with lib;
 let
 
   cfg = config.custom.neovim;
+  unstable = import ../../lib/unstable.nix { };
 
 in
 {
@@ -105,7 +106,8 @@ in
       shfmt
       sumneko-lua-language-server
       tree-sitter
-    ];
+    ] ++ (with unstable;
+      [ zig zls ]);
 
     environment.variables.SUMNEKO_ROOT_PATH = "${pkgs.sumneko-lua-language-server}";
 
