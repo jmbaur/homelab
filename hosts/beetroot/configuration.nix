@@ -35,7 +35,7 @@ in
   boot = {
     cleanTmpDir = true;
     tmpOnTmpfs = true;
-    # binfmt.emulatedSystems = [ "aarch64-linux" ];
+    binfmt.emulatedSystems = [ "aarch64-linux" ]; # allow building for RPI4
   };
 
   i18n.defaultLocale = "en_US.UTF-8";
@@ -92,7 +92,6 @@ in
   programs.mtr.enable = true;
 
   services.fwupd.enable = true;
-  services.autorandr.enable = true;
   services.clipmenu.enable = true;
   services.printing.enable = true;
   services.avahi.enable = true;

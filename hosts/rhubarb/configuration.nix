@@ -6,7 +6,7 @@
     }/raspberry-pi/4"
   ];
 
-  # Define that we need to build for ARM
+  # Define that we need to build for ARM, helps with nixops
   nixpkgs.localSystem = {
     system = "aarch64-linux";
     config = "aarch64-unknown-linux-gnu";
@@ -24,9 +24,6 @@
       raspberryPi = {
         enable = true;
         version = 4;
-        firmwareConfig = ''
-          dtparam=audio=on
-        '';
       };
     };
   };
@@ -34,11 +31,7 @@
   hardware = {
     enableRedistributableFirmware = true;
     raspberry-pi."4".fkms-3d.enable = true;
-    pulseaudio.enable = true;
-    bluetooth.enable = true;
   };
-
-  sound.enable = true;
 
   fileSystems = {
     "/" = {
@@ -48,47 +41,22 @@
     };
   };
 
-  # TODO(jared): determine whether this can be done within the Kodi interface
-  # fileSystems."/data/kodi" = {
-  #   device = "kale.lan:/kodi";
-  #   fsType = "nfs";
-  #   options = [ "x-systemd.automount" "noauto" ];
-  # };
-
   networking = {
     hostName = "rhubarb";
-    wireless.iwd.enable = true;
     interfaces.eth0.useDHCP = true;
-    firewall = {
-      allowedTCPPorts = [ 8080 ];
-      allowedUDPPorts = [ 8080 ];
-    };
   };
 
-  users.extraUsers.kodi.isNormalUser = true;
+  users.mutableUsers = false;
 
-  services = {
-    xserver = {
-      enable = true;
-      desktopManager.kodi.enable = true;
-      displayManager = {
-        autoLogin.enable = true;
-        autoLogin.user = "kodi";
-      };
+  systemd.services.pomtop = {
+    description = "pomtop on tty1";
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${pkgs.htop}/bin/htop";
+      StandardInput = "tty-force";
+      StandardOutput = "tty-force";
+      TTYPath = "/dev/tty1";
     };
-
-    # Wayland
-    cage = {
-      enable = false;
-      user = "kodi";
-      program = "${pkgs.kodi-wayland}/bin/kodi-standalone";
-    };
-
-    # Allow for Kodi smartphone remote to work over the LAN
-    avahi = {
-      enable = true;
-      publish.enable = true;
-      publish.userServices = true;
-    };
+    wantedBy = [ "multi-user.target" ];
   };
 }
