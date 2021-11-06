@@ -7,7 +7,6 @@ set expandtab
 set hidden
 set ignorecase
 set mouse=a
-set nocursorline
 set noswapfile
 set notermguicolors
 set nowrap
