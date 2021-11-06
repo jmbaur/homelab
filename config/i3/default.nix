@@ -74,6 +74,10 @@ in
     };
 
     services = {
+      autorandr = {
+        enable = true;
+        defaultTarget = "laptop";
+      };
       xserver = {
         enable = true;
         layout = "us";
@@ -95,6 +99,9 @@ in
         };
         windowManager.i3 = {
           enable = true;
+          extraSessionCommands = ''
+            ${pkgs.xorg.xsetroot}/bin/xsetroot -solid "#4d4d4d"
+          '';
           extraPackages = with pkgs; [
             brightnessctl
             dmenu

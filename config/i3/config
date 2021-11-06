@@ -43,6 +43,7 @@ bindsym $mod+Shift+l move right
 bindsym $mod+Shift+minus move scratchpad
 bindsym $mod+Shift+q kill
 bindsym $mod+Shift+r restart
+bindsym $mod+Shift+s sticky toggle
 bindsym $mod+Shift+space floating toggle
 bindsym $mod+Tab workspace back_and_forth
 bindsym $mod+a focus parent
