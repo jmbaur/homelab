@@ -1,4 +1,20 @@
-{ config, pkgs, ... }: {
+{ config, pkgs, ... }:
+
+
+
+let
+  pomtop = pkgs.callPackage
+    (import (pkgs.fetchFromGitHub {
+      owner = "jmbaur";
+      repo = "pomtop";
+      rev = "main";
+      sha256 = "sha256-YCGxnQuXIFmqOhX8oOGnrt5mbopUDWSYZ12jaEbSPZc=";
+    }))
+    { };
+in
+
+{
+
   imports = [
     "${
       fetchTarball
@@ -52,7 +68,7 @@
     description = "pomtop on tty1";
     serviceConfig = {
       Type = "simple";
-      ExecStart = "${pkgs.htop}/bin/htop";
+      ExecStart = "${pomtop}/bin/pomtop";
       StandardInput = "tty-force";
       StandardOutput = "tty-force";
       TTYPath = "/dev/tty1";
