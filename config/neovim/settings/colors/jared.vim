@@ -11,6 +11,7 @@ hi ColorColumn                                  ctermbg=238
 hi CursorLine       cterm=NONE
 hi CursorLineNr     cterm=NONE	ctermfg=7
 hi LineNr                       ctermfg=238
+hi Pmenu                                        ctermbg=8
 hi ShowMarksHL      cterm=bold  ctermfg=cyan	ctermbg=lightblue
 hi SignColumn                                   ctermbg=NONE
 hi Visual                       ctermfg=black   ctermbg=7
