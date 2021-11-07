@@ -92,7 +92,7 @@ in
       sumneko-lua-language-server
       tree-sitter
       zig
-      # zls
+      zls
     ];
 
     environment.variables.SUMNEKO_ROOT_PATH = "${pkgs.sumneko-lua-language-server}";

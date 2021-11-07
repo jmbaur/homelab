@@ -245,12 +245,14 @@ in
     enable = true;
     syntaxHighlighting.enable = false;
     promptInit = ''
-      PS1="%F{blue}%n@%m%f %F{green}%c%f %% "
+      PS1="%F{cyan}%n@%m%f:%F{green}%c%f %% "
     '';
     # Prevent zsh-newuser-install from showing
     shellInit = ''
       export DISABLE_AUTO_TITLE=true
       zsh-newuser-install() { :; }
+      bindkey -e
+      bindkey \^U backward-kill-line
     '';
     interactiveShellInit = ''
       eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
