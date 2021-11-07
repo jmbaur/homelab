@@ -244,7 +244,7 @@ in
   programs.zsh = {
     enable = true;
     syntaxHighlighting.enable = false;
-    promptShellInit = ''
+    promptInit = ''
       PS1="%F{blue}%n@%m%f %F{green}%c%f %% "
     '';
     # Prevent zsh-newuser-install from showing
