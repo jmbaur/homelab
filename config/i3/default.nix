@@ -4,6 +4,8 @@ with lib;
 
 let
   cfg = config.custom.i3;
+  cursorTheme = "Adwaita";
+  cursorSize = "16";
 in
 {
 
@@ -60,13 +62,15 @@ in
         "xdg/gtk-3.0/settings.ini".text = ''
           [Settings]
           gtk-application-prefer-dark-theme=1
-          gtk-cursor-theme-name=Adwaita
+          gtk-cursor-theme-name=${cursorTheme}
+          gtk-cursor-theme-size=${cursorSize}
           gtk-key-theme-name=Emacs
           gtk-theme-name=Adwaita
         '';
       };
       variables = {
-        XCURSOR_THEME = "Adwaita";
+        XcursorTheme = cursorTheme;
+        XcursorSize = cursorSize;
         XCURSOR_PATH = mkForce [
           "${pkgs.gnome.adwaita-icon-theme}/share/icons"
         ];
@@ -90,7 +94,8 @@ in
           autoLogin = { enable = true; user = "jared"; };
           sessionCommands = ''
             ${pkgs.xorg.xrdb}/bin/xrdb -merge <<EOF
-              Xcursor.theme: Adwaita
+              Xcursor.theme: ${cursorTheme}
+              Xcursor.size: ${cursorSize}
               *.termName: xterm-256color
               *.vt100.faceName: DejaVu Sans Mono:size=14:antialias=true
               *.vt100.reverseVideo: true
