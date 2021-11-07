@@ -3,10 +3,7 @@
 with lib;
 
 let
-
   cfg = config.custom.neovim;
-  unstable = import ../../lib/unstable.nix { };
-
 in
 {
   options = {
@@ -22,18 +19,6 @@ in
   };
 
   config = mkIf cfg.enable {
-
-    nixpkgs.overlays =
-      let
-        commit-hash = "0f574809bca4045f90d078e0f29f89f24b0563f0";
-      in
-      [
-        (import (builtins.fetchTarball {
-          url = "https://github.com/nix-community/neovim-nightly-overlay/archive/${commit-hash}.tar.gz";
-          sha256 = "143k5igvazf9ml3pb2rshkwdzqyncpfsll4zfqnzrgx8nc5flghq";
-        }))
-      ];
-
     programs.neovim = {
       enable = true;
       vimAlias = true;
@@ -106,8 +91,9 @@ in
       shfmt
       sumneko-lua-language-server
       tree-sitter
-    ] ++ (with unstable;
-      [ zig zls ]);
+      zig
+      # zls
+    ];
 
     environment.variables.SUMNEKO_ROOT_PATH = "${pkgs.sumneko-lua-language-server}";
 
