@@ -121,6 +121,7 @@ in
     chromium
     curl
     direnv
+    discord
     dmidecode
     dnsutils
     dunst
@@ -242,12 +243,10 @@ in
   environment.variables.DISABLE_AUTO_TITLE = "true";
   programs.zsh = {
     enable = true;
-    ohMyZsh = {
-      enable = true;
-      theme = "sunaku";
-      plugins = [ "git" ];
-    };
     syntaxHighlighting.enable = false;
+    promptShellInit = ''
+      PS1="%F{blue}%n@%m%f %F{green}%c%f %% "
+    '';
     # Prevent zsh-newuser-install from showing
     shellInit = ''
       export DISABLE_AUTO_TITLE=true
