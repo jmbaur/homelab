@@ -3,16 +3,8 @@
 
 
 let
-  pomtop = pkgs.callPackage
-    (import (pkgs.fetchFromGitHub {
-      owner = "jmbaur";
-      repo = "pomtop";
-      rev = "main";
-      sha256 = "sha256-YCGxnQuXIFmqOhX8oOGnrt5mbopUDWSYZ12jaEbSPZc=";
-    }))
-    { };
+  promtop = pkgs.callPackage (import (builtins.fetchTarball "https://github.com/jmbaur/promtop/archive/main.tar.gz")) { };
 in
-
 {
 
   imports = [
@@ -64,11 +56,13 @@ in
 
   users.mutableUsers = false;
 
-  systemd.services.pomtop = {
-    description = "pomtop on tty1";
+  environment.systemPackages = [ promtop ];
+
+  systemd.services.promtop = {
+    description = "promtop on tty1";
     serviceConfig = {
       Type = "simple";
-      ExecStart = "${pomtop}/bin/pomtop";
+      ExecStart = "${promtop}/bin/promtop";
       StandardInput = "tty-force";
       StandardOutput = "tty-force";
       TTYPath = "/dev/tty1";
