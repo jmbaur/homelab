@@ -21,6 +21,7 @@ in
   config = mkIf cfg.enable {
     programs.neovim = {
       enable = true;
+      viAlias = true;
       vimAlias = true;
       defaultEditor = true;
       package = pkgs.neovim-nightly;
