@@ -58,8 +58,8 @@ in
                 src = pkgs.fetchFromGitHub {
                   owner = "tpope";
                   repo = "vim-fugitive";
-                  rev = "174fd6a39b7e162ca707c87582d1b7979fba95f4";
-                  sha256 = "sha256-1drj/BvifcEmb2LSJVw+KJer5MxemEYhig713f39zW0=";
+                  rev = "2e4ee0b5d6e61c6b3bc48e844343f89615dfc6e0";
+                  sha256 = "sha256-OqBd/2yiSo58HuJWJsB1nTO1nPz5UTO9LvuyCEfQc0U=";
                 };
               })
               (pkgs.vimUtils.buildVimPlugin {

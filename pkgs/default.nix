@@ -1,14 +1,15 @@
 { config, lib, pkgs, ... }:
+with pkgs;
 let
-  zig-overlay = pkgs.callPackage (import (builtins.fetchTarball "https://github.com/arqv/zig-overlay/archive/84b12f2f19dd90ee170f4966429635beadd5b647.tar.gz")) { };
+  zig-overlay = callPackage (import (builtins.fetchTarball "https://github.com/arqv/zig-overlay/archive/84b12f2f19dd90ee170f4966429635beadd5b647.tar.gz")) { };
   zig = zig-overlay.master.latest;
 in
 {
   nixpkgs.overlays = [
     (import
       (builtins.fetchTarball {
-        url = "https://github.com/nix-community/neovim-nightly-overlay/archive/8e6ae6ff52545382ca3c786c64948970cfadfe91.tar.gz";
-        sha256 = "1xcg23mfx29q8w2lq0rp05whry0vrzz6k3pjqciqd285vl93xykn";
+        url = "https://github.com/nix-community/neovim-nightly-overlay/archive/d93da6ae01cffcaadecc6b1cd119d0f21001bce3.tar.gz";
+        sha256 = "04d51s52nddf1669wdvacvm952f7f3m8dpddx4ndnvp9bvdn0nzs";
       }))
     (self: super: {
 

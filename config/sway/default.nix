@@ -72,7 +72,7 @@ in
       '';
       in
       {
-        # "sway/config".source = ./config;
+        "sway/config".source = ./config;
         "gtk-3.0/settings.ini".text = gtk-settings;
         "gtk-4.0/settings.ini".text = gtk-settings;
       };
@@ -84,7 +84,7 @@ in
       ];
     };
 
-    custom.pipewire.enable = true;
+    custom.pipewire.enable = mkDefault true;
 
     programs.dconf.enable = true;
 

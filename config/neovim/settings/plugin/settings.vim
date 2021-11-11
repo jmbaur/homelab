@@ -42,7 +42,7 @@ if maparg('<C-L>', 'n') ==# ''
         nnoremap <silent> <C-L> :nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>
 endif
 
-let g:markdown_fenced_languages=['bash=sh', 'python']
+let g:markdown_fenced_languages=['bash=sh', 'python', 'typescript', 'go']
 let mapleader=','
 
 filetype plugin indent on

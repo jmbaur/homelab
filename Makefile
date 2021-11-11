@@ -5,13 +5,10 @@ host :=$(shell hostname)
 config_path := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))hosts/$(host)/configuration.nix
 
 test:
-	NIXOS_CONFIG=${config_path} nixos-rebuild test
+	nixos-rebuild -I nixos-config=${config_path} test
 
 switch:
-	NIXOS_CONFIG=${config_path} nixos-rebuild switch
-
-configs:
-	configs/setup.sh ${host}
+	nixos-rebuild -I nixos-config=${config_path} switch
 
 iso:
 	nix-build '<nixpkgs/nixos>' -A config.system.build.isoImage -I nixos-config=iso/iso.nix
