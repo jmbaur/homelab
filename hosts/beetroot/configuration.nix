@@ -138,6 +138,7 @@ in
     gh
     gimp
     git
+    git-get
     gnupg
     gosee
     gotop
