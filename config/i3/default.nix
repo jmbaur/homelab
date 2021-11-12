@@ -90,6 +90,7 @@ in
           Option "TearFree" "true"
         '';
         displayManager = {
+          lightdm.background = pkgs.nixos-artwork.wallpapers.nineish-dark-gray.gnomeFilePath;
           defaultSession = "none+i3";
           autoLogin = { enable = true; user = "jared"; };
           sessionCommands = ''
@@ -105,7 +106,7 @@ in
         windowManager.i3 = {
           enable = true;
           extraSessionCommands = ''
-            ${pkgs.xorg.xsetroot}/bin/xsetroot -solid "#4d4d4d"
+            ${pkgs.hsetroot}/bin/hsetroot -cover ${pkgs.nixos-artwork.wallpapers.nineish-dark-gray.gnomeFilePath}
           '';
           extraPackages = with pkgs; [
             brightnessctl
@@ -131,5 +132,7 @@ in
     };
 
   };
+
+
 
 }

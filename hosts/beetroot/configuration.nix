@@ -13,11 +13,16 @@ in
 {
   imports = [
     "${nixos-hardware}/common/pc/ssd"
-    "${nixos-hardware}/lenovo/thinkpad/t495"
+    "${nixos-hardware}/common/cpu/amd"
+    "${nixos-hardware}/common/gpu/amd"
+    "${nixos-hardware}/common/pc/laptop/acpi_call.nix"
+    "${nixos-hardware}/lenovo/thinkpad"
     ../../config
     ../../pkgs
     ./hardware-configuration.nix
   ];
+
+  boot.kernelParams = [ "amdgpu.backlight=0" "acpi_backlight=none" ];
 
   nix = {
     # Enable flakes and prevent nix shells from being wiped on garbage
@@ -33,9 +38,19 @@ in
     "/share/nix-direnv"
   ];
   boot = {
+    kernelPackages = pkgs.linuxPackages_5_14;
     cleanTmpDir = true;
     tmpOnTmpfs = true;
     binfmt.emulatedSystems = [ "aarch64-linux" ]; # allow building for RPI4
+    loader = {
+      systemd-boot.enable = true;
+      efi.canTouchEfiVariables = true;
+    };
+    initrd.luks.devices.cryptlvm = {
+      allowDiscards = true;
+      preLVM = true;
+      device = "/dev/disk/by-uuid/951caec2-ca49-4e30-bfbf-0d53e12ee5ca";
+    };
   };
 
   i18n.defaultLocale = "en_US.UTF-8";
@@ -51,21 +66,6 @@ in
     cpu.amd.updateMicrocode = true;
     enableRedistributableFirmware = true;
   };
-
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-
-  boot.initrd.luks.devices =
-    let
-      uuid = "b3368b3a-40ee-4966-8471-9bdfb7efbd5f";
-    in
-    {
-      "${uuid}" = {
-        allowDiscards = true;
-        device = "/dev/disk/by-uuid/${uuid}";
-        preLVM = true;
-      };
-    };
 
   networking.hostName = "beetroot";
   networking.networkmanager.enable = true;
