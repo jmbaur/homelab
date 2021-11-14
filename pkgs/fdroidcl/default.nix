@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> { } }:
+{ pkgs }:
 pkgs.buildGoModule {
   name = "fdroidcl";
   src = pkgs.fetchFromGitHub {
