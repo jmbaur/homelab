@@ -65,6 +65,7 @@ in
       ExecStart = "${promtop}/bin/promtop";
       StandardInput = "tty-force";
       StandardOutput = "tty-force";
+      StandardError = "journal";
       TTYPath = "/dev/tty1";
     };
     wantedBy = [ "multi-user.target" ];
