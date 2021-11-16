@@ -45,7 +45,7 @@ in
           fuzzel
           glib
           grim
-          kanshi
+          kanshi-wrapped
           mako
           pulseaudio
           slurp
