@@ -97,11 +97,11 @@ bindsym $mod+Shift+s sticky toggle
 bindsym $mod+Shift+space floating toggle
 bindsym $mod+a focus parent
 bindsym $mod+b splith
-bindsym $mod+c exec clipman pick --tool=bemenu --tool-args='--fn "Hack 8" --line-height 20' | xargs swaymsg exec --
+bindsym $mod+c exec clipman pick --tool=CUSTOM --tool-args='fuzzel -d -w 100 -f Hack' | xargs swaymsg exec --
 bindsym $mod+e layout toggle split
 bindsym $mod+f fullscreen
 bindsym $mod+minus scratchpad show
-bindsym $mod+p exec bemenu-run --fn "Hack 8" --line-height 20 | xargs swaymsg exec --
+bindsym $mod+p exec fuzzel -f Hack -T foot | xargs swaymsg exec --
 bindsym $mod+r mode "resize"
 bindsym $mod+s layout stacking
 bindsym $mod+space focus mode_toggle
