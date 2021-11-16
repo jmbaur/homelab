@@ -1,4 +1,12 @@
 # vim: set ft=conf:
+set $down j
+set $left h
+set $mod Mod4
+set $right l
+set $term foot
+set $up k
+set $gnome-schema org.gnome.desktop.interface
+
 exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
 exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
 exec kanshi -c /etc/kanshi/config
@@ -7,16 +15,15 @@ exec swayidle -w \
         timeout 600 "swaymsg \"output * dpms off\"" resume "swaymsg \"output * dpms on\"" \
         before-sleep "swaylock -f -c 1a1a1a"
 exec wl-paste -t text --watch clipman store
+exec_always {
+        gsettings set $gnome-schema gtk-key-theme 'Emacs'
+        gsettings set $gnome-schema icon-theme 'Adwaita'
+        gsettings set $gnome-schema cursor-theme 'Adwaita'
+        gsettings set $gnome-schema font-name 'Hack'
+}
 
 font pango:Hack 8
-
-set $down j
-set $left h
-set $mod Mod4
-set $right l
-set $term foot
-set $up k
-
+workspace_auto_back_and_forth yes
 floating_modifier $mod normal
 
 seat seat0 xcursor_theme Adwaita 16
@@ -48,8 +55,10 @@ for_window [title="[zZ]oom.*"] floating enable
 
 bar {
         icon_theme Adwaita
-        position top
+        mode hide
+        position bottom
         status_command swaystatus
+        tray_output primary
 }
 
 bindsym $mod+$down focus down
@@ -83,6 +92,7 @@ bindsym $mod+Shift+c reload
 bindsym $mod+Shift+e exit
 bindsym $mod+Shift+minus move scratchpad
 bindsym $mod+Shift+q kill
+bindsym $mod+Shift+s sticky toggle
 bindsym $mod+Shift+space floating toggle
 bindsym $mod+a focus parent
 bindsym $mod+b splith

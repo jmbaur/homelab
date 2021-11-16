@@ -29,28 +29,34 @@ in
         # use this if they aren't displayed properly:
         export _JAVA_AWT_WM_NONREPARENTING=1
       '';
-      extraPackages = with pkgs; [
-        bemenu
-        brightnessctl
-        clipman
-        grim
-        kanshi
-        mako
-        pulseaudio
-        slurp
-        swayidle
-        swaylock
-        wf-recorder
-        wl-clipboard
-        xorg.xeyes
-        xwayland
-        (writeShellScriptBin "swaystatus" ''
-          while true; do
-            printf "%d%% | %s" "$(cat /sys/class/power_supply/BAT0/capacity)" "$(date +'%F %T')"
-            sleep 1
-          done
-        '')
-      ];
+      extraPackages = with pkgs;
+        let
+          swaystatus = writeShellScriptBin "swaystatus" ''
+            while true; do
+              printf "%d%% | %s" "$(cat /sys/class/power_supply/BAT0/capacity)" "$(date +'%F %T')"
+              sleep 1
+            done
+          '';
+        in
+        [
+          bemenu
+          brightnessctl
+          clipman
+          fuzzel
+          glib
+          grim
+          kanshi
+          mako
+          pulseaudio
+          slurp
+          swayidle
+          swaylock
+          swaystatus
+          wf-recorder
+          wl-clipboard
+          xorg.xeyes
+          xwayland
+        ];
     };
 
     environment.etc = {
@@ -84,6 +90,15 @@ in
       ];
     };
 
+    services.greetd = {
+      enable = true;
+      settings = {
+        default_session = {
+          command = "${pkgs.greetd.greetd}/bin/agreety --cmd sway";
+        };
+      };
+    };
+
     custom.pipewire.enable = mkDefault true;
     custom.foot.enable = mkDefault true;
 
@@ -91,7 +106,18 @@ in
 
     xdg.portal = {
       enable = true;
-      extraPortals = [ pkgs.xdg-desktop-portal-wlr ];
+      wlr = {
+        enable = true;
+        # settings = {
+        #   screencast = {
+        #     max_fps = 30;
+        #     exec_before = "disable_notifications.sh";
+        #     exec_after = "enable_notifications.sh";
+        #     chooser_type = "simple";
+        #     chooser_cmd = "${pkgs.slurp}/bin/slurp -f %o -or";
+        #   };
+        # };
+      };
     };
 
   };
