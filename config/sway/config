@@ -9,12 +9,12 @@ set $gnome-schema org.gnome.desktop.interface
 
 exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
 exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
-exec kanshi -c /etc/kanshi/config
 exec swayidle -w \
         timeout 300 "swaylock -f -c 1a1a1a" \
         timeout 600 "swaymsg \"output * dpms off\"" resume "swaymsg \"output * dpms on\"" \
         before-sleep "swaylock -f -c 1a1a1a"
 exec wl-paste -t text --watch clipman store
+exec_always pkill kanshi; exec kanshi
 exec_always {
         gsettings set $gnome-schema gtk-key-theme 'Emacs'
         gsettings set $gnome-schema icon-theme 'Adwaita'
@@ -22,9 +22,10 @@ exec_always {
         gsettings set $gnome-schema font-name 'Hack'
 }
 
-font pango:Hack 8
-workspace_auto_back_and_forth yes
 floating_modifier $mod normal
+font pango:Hack 8
+workspace number 1
+workspace_auto_back_and_forth yes
 
 seat seat0 xcursor_theme Adwaita 16
 

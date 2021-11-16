@@ -128,6 +128,10 @@ in
   };
 
   environment.systemPackages = with pkgs; [
+    # TODO(jared): Currently broken:
+    # pass
+    # pass-git-helper
+    # tree
     acpi
     age
     atop
@@ -135,6 +139,7 @@ in
     bat
     bc
     bind
+    bitwarden
     curl
     direnv
     discord
@@ -171,6 +176,7 @@ in
     lm_sensors
     mob
     mosh
+    mpv
     nix-direnv
     nix-tree
     nixops
@@ -205,7 +211,6 @@ in
     tokei
     traceroute
     trash-cli
-    bitwarden
     unzip
     usbutils
     w3m
@@ -224,10 +229,6 @@ in
     zip
     zoom-us
     zoxide
-    # TODO(jared): Currently broken:
-    # tree
-    # pass
-    # pass-git-helper
   ] ++ (
     with pkgs; if config.custom.sway.enable then [
       (chromium.override
@@ -242,9 +243,9 @@ in
         buildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/slack \
-          --add-flags "--enable-features=UseOzonePlatform" \
-          --add-flags "--ozone-platform=wayland" \
-          --add-flags "--enable-features=WebRTCPipeWireCapturer"
+            --add-flags "--enable-features=UseOzonePlatform" \
+            --add-flags "--ozone-platform=wayland" \
+            --add-flags "--enable-features=WebRTCPipeWireCapturer"
         '';
       })
       thunderbird-wayland
@@ -281,7 +282,6 @@ in
       ln -sf ${direnvrc} ''${HOME}/.direnvrc
     '';
 
-  environment.variables.DISABLE_AUTO_TITLE = "true";
   programs.zsh = {
     enable = true;
     syntaxHighlighting.enable = false;
@@ -299,8 +299,6 @@ in
       eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
     '';
   };
-
-
 
   # Yubikey GPG and SSH support
   services.udev.packages = [ pkgs.yubikey-personalization ];
