@@ -77,6 +77,7 @@ List from https://www.vegetables.co.nz/vegetables-a-z/.
 
 ### Taken
 
+- Asparagus - Apareka/Pikopiko Pākehā
 - Beetroot - Rengakura
 - Kale and Cavolo Nero
 - Okra
@@ -87,7 +88,6 @@ List from https://www.vegetables.co.nz/vegetables-a-z/.
 - Artichokes, globe - Atihoka
 - Artichokes, Jerusalem - Atihoka
 - Asian greens
-- Asparagus - Apareka/Pikopiko Pākehā
 - Beans - Pine/Pīni
 - Broccoli - Pūpihi/Poroki
 - Brussels sprouts - Aonanī

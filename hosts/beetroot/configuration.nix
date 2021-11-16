@@ -111,7 +111,6 @@ in
   programs.mtr.enable = true;
 
   services.fwupd.enable = true;
-  services.clipmenu.enable = true;
   services.printing.enable = true;
   services.avahi.enable = true;
   services.avahi.nssmdns = true;
@@ -124,8 +123,8 @@ in
     dataDir = "/home/jared";
     configDir = "/home/jared/.config/syncthing";
     openDefaultPorts = true;
-    declarative.overrideFolders = false;
-    declarative.overrideDevices = true;
+    # declarative.overrideFolders = false;
+    # declarative.overrideDevices = true;
   };
 
   environment.systemPackages = with pkgs; [
@@ -174,7 +173,7 @@ in
     mosh
     nix-direnv
     nix-tree
-    nixopsUnstable
+    nixops
     nixos-generators
     nmap
     nnn
@@ -182,8 +181,6 @@ in
     nvme-cli
     p
     pa-switch
-    # pass
-    # pass-git-helper
     pavucontrol
     pciutils
     pfetch
@@ -203,13 +200,11 @@ in
     tcpdump
     tea
     tealdeer
-    thunderbird
     tig
     tmux
     tokei
     traceroute
     trash-cli
-    # tree
     bitwarden
     unzip
     usbutils
@@ -229,6 +224,10 @@ in
     zip
     zoom-us
     zoxide
+    # TODO(jared): Currently broken:
+    # tree
+    # pass
+    # pass-git-helper
   ] ++ (
     with pkgs; if config.custom.sway.enable then [
       (brave.override
@@ -252,12 +251,14 @@ in
           --add-flags "--enable-features=WebRTCPipeWireCapturer"
         '';
       })
+      thunderbird-wayland
     ] else [
       brave
       chromium
       element-desktop
       firefox
       slack
+      thunderbird
     ]
   );
 
