@@ -144,7 +144,6 @@ in
     drawio
     dunst
     dust
-    element-desktop
     exa
     fd
     fdroidcl
@@ -183,8 +182,8 @@ in
     nvme-cli
     p
     pa-switch
-    pass
-    pass-git-helper
+    # pass
+    # pass-git-helper
     pavucontrol
     pciutils
     pfetch
@@ -198,7 +197,6 @@ in
     sd
     signal-desktop
     sl
-    slack
     spotify
     stow
     tailscale
@@ -211,8 +209,8 @@ in
     tokei
     traceroute
     trash-cli
-    tree
-    unstable.bitwarden # TODO(jared): just a workaround until 21.11
+    # tree
+    bitwarden
     unzip
     usbutils
     w3m
@@ -233,7 +231,7 @@ in
     zoxide
   ] ++ (
     with pkgs; if config.custom.sway.enable then [
-      (unstable.brave.override
+      (brave.override
         {
           commandLineArgs = [ "--enable-features=UseOzonePlatform" "--ozone-platform=wayland" ];
         })
@@ -241,6 +239,7 @@ in
         {
           commandLineArgs = [ "--enable-features=UseOzonePlatform" "--ozone-platform=wayland" ];
         })
+      element-desktop-wayland
       firefox-wayland
       (symlinkJoin {
         name = "slack";
@@ -254,8 +253,9 @@ in
         '';
       })
     ] else [
-      unstable.brave
+      brave
       chromium
+      element-desktop
       firefox
       slack
     ]
