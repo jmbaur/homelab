@@ -16,6 +16,9 @@ in
   };
 
   config = mkIf cfg.enable {
+    programs.dconf.enable = true;
+    programs.wshowkeys.enable = true;
+
     programs.sway = {
       enable = true;
       wrapperFeatures.gtk = true;
@@ -92,8 +95,6 @@ in
 
     custom.pipewire.enable = mkDefault true;
     custom.foot.enable = mkDefault true;
-
-    programs.dconf.enable = true;
 
     xdg.portal = {
       enable = true;
