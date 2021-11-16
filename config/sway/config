@@ -43,7 +43,8 @@ mode "resize" {
         bindsym Escape mode "default"
 }
 
-for_window [title="Firefox\ —\ Sharing\ Indicator"] floating enable, sticky enable
+for_window [title=".+[sS]haring (Indicator|your screen)"] floating enable, sticky enable, no focus
+for_window [title="[zZ]oom.*"] floating enable
 
 bar {
         icon_theme Adwaita
