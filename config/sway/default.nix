@@ -16,16 +16,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    fonts.fonts = with pkgs; [
-      dejavu_fonts
-      hack-font
-      inconsolata
-      liberation_ttf
-      noto-fonts
-      noto-fonts-emoji
-      source-code-pro
-    ];
-
     programs.sway = {
       enable = true;
       wrapperFeatures.gtk = true;
@@ -52,8 +42,9 @@ in
         swaylock
         wf-recorder
         wl-clipboard
+        xorg.xeyes
         xwayland
-        (pkgs.writeShellScriptBin "swaystatus" ''
+        (writeShellScriptBin "swaystatus" ''
           while true; do
             printf "%d%% | %s" "$(cat /sys/class/power_supply/BAT0/capacity)" "$(date +'%F %T')"
             sleep 1
@@ -62,20 +53,16 @@ in
       ];
     };
 
-    environment.etc =
-      let gtk-settings = ''
+    environment.etc = {
+      "sway/config".source = ./config;
+      "xdg/gtk-3.0/settings.ini".text = ''
         [Settings]
-        gtk-application-prefer-dark-theme = true
-        gtk-theme-name = Adwaita
-        gtk-cursor-theme-name = Adwaita
-        gtk-key-theme-name = Emacs
+        gtk-application-prefer-dark-theme=true
+        gtk-theme-name=Adwaita
+        gtk-cursor-theme-name=Adwaita
+        gtk-key-theme-name=Emacs
       '';
-      in
-      {
-        "sway/config".source = ./config;
-        "gtk-3.0/settings.ini".text = gtk-settings;
-        "gtk-4.0/settings.ini".text = gtk-settings;
-      };
+    };
 
     environment.variables = {
       XCURSOR_THEME = "Adwaita";
@@ -85,14 +72,13 @@ in
     };
 
     custom.pipewire.enable = mkDefault true;
+    custom.foot.enable = mkDefault true;
 
     programs.dconf.enable = true;
 
     xdg.portal = {
       enable = true;
-      extraPortals = with pkgs; [
-        xdg-desktop-portal-wlr
-      ];
+      extraPortals = [ pkgs.xdg-desktop-portal-wlr ];
     };
 
   };

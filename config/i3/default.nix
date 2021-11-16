@@ -41,16 +41,6 @@ in
         lockerCommand = "${xsecurelock}/bin/xsecurelock";
       };
 
-    fonts.fonts = with pkgs; [
-      dejavu_fonts
-      hack-font
-      inconsolata
-      liberation_ttf
-      noto-fonts
-      noto-fonts-emoji
-      source-code-pro
-    ];
-
     location.provider = "geoclue2";
     services.redshift.enable = true;
 
@@ -120,19 +110,8 @@ in
           ];
           configFile = ./config;
         };
-        libinput = {
-          enable = true;
-          touchpad = {
-            accelProfile = "flat";
-            tapping = true;
-            naturalScrolling = true;
-          };
-        };
       };
     };
-
   };
-
-
 
 }

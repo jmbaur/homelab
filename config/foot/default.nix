@@ -6,7 +6,6 @@ let
     url = "https://codeberg.org/dnkl/foot";
     rev = "9a04c741a094b97f4502d4c098fca8c19cb3647b";
   };
-  tempus-night = "${foot}/themes/tempus-night";
 in
 {
 
@@ -14,7 +13,7 @@ in
     custom.foot = {
       enable = mkOption {
         type = types.bool;
-        default = config.custom.sway.enable;
+        default = false;
       };
     };
   };
@@ -28,7 +27,7 @@ in
       selection-target=both
       [mouse]
       hide-when-typing=yes
-      ${builtins.readFile tempus-night}
+      ${builtins.readFile "${foot}/themes/tango"}
     '';
   };
 

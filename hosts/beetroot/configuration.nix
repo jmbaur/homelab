@@ -78,12 +78,32 @@ in
 
   custom = {
     git.enable = true;
-    i3.enable = true;
+    i3.enable = false;
+    sway.enable = true;
     kitty.enable = true;
     neovim.enable = true;
     pipewire.enable = true;
     tmux.enable = true;
     vscode.enable = false;
+  };
+
+  fonts.fonts = with pkgs; [
+    dejavu_fonts
+    hack-font
+    inconsolata
+    liberation_ttf
+    noto-fonts
+    noto-fonts-emoji
+    source-code-pro
+  ];
+
+  services.xserver.libinput = mkIf config.services.xserver.enable {
+    enable = true;
+    touchpad = {
+      accelProfile = "flat";
+      tapping = true;
+      naturalScrolling = true;
+    };
   };
 
   programs.wireshark.enable = true;
@@ -116,8 +136,6 @@ in
     bat
     bc
     bind
-    brave
-    chromium
     curl
     direnv
     discord
@@ -132,7 +150,6 @@ in
     fdroidcl
     ffmpeg
     file
-    firefox
     fzf
     geteltorito
     gh
@@ -214,7 +231,35 @@ in
     zip
     zoom-us
     zoxide
-  ];
+  ] ++ (
+    with pkgs; if config.custom.sway.enable then [
+      (unstable.brave.override
+        {
+          commandLineArgs = [ "--enable-features=UseOzonePlatform" "--ozone-platform=wayland" ];
+        })
+      (chromium.override
+        {
+          commandLineArgs = [ "--enable-features=UseOzonePlatform" "--ozone-platform=wayland" ];
+        })
+      firefox-wayland
+      (symlinkJoin {
+        name = "slack";
+        paths = [ pkgs.slack ];
+        buildInputs = [ pkgs.makeWrapper ];
+        postBuild = ''
+          wrapProgram $out/bin/slack \
+          --add-flags "--enable-features=UseOzonePlatform" \
+          --add-flags "--ozone-platform=wayland" \
+          --add-flags "--enable-features=WebRTCPipeWireCapturer"
+        '';
+      })
+    ] else [
+      unstable.brave
+      chromium
+      firefox
+      slack
+    ]
+  );
 
   environment.variables.HISTCONTROL = "ignoredups";
   programs.bash = {
