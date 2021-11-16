@@ -146,7 +146,6 @@ in
     dmidecode
     dnsutils
     drawio
-    dunst
     dust
     exa
     fd
