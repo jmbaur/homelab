@@ -92,6 +92,7 @@ in
       shfmt
       sumneko-lua-language-server
       tree-sitter
+      yaml-language-server
       zig
       zls
     ];
