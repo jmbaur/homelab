@@ -230,10 +230,6 @@ in
     # pass-git-helper
   ] ++ (
     with pkgs; if config.custom.sway.enable then [
-      (brave.override
-        {
-          commandLineArgs = [ "--enable-features=UseOzonePlatform" "--ozone-platform=wayland" ];
-        })
       (chromium.override
         {
           commandLineArgs = [ "--enable-features=UseOzonePlatform" "--ozone-platform=wayland" ];
@@ -253,7 +249,6 @@ in
       })
       thunderbird-wayland
     ] else [
-      brave
       chromium
       element-desktop
       firefox
