@@ -123,6 +123,7 @@ in
     discord
     dmidecode
     dnsutils
+    drawio
     dunst
     dust
     element-desktop
@@ -194,6 +195,7 @@ in
     traceroute
     trash-cli
     tree
+    unstable.bitwarden # TODO(jared): just a workaround until 21.11
     unzip
     usbutils
     w3m
@@ -212,7 +214,6 @@ in
     zip
     zoom-us
     zoxide
-    unstable.bitwarden # TODO(jared): just a workaround until 21.11
   ];
 
   environment.variables.HISTCONTROL = "ignoredups";
