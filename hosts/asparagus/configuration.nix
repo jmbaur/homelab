@@ -22,6 +22,10 @@
     useXkbConfig = true;
   };
 
+  services.avahi.enable = true;
+  services.avahi.publish.enable = true;
+  services.avahi.publish.userServices = true;
+
   services.xserver = {
     enable = true;
     layout = "us";
