@@ -58,6 +58,7 @@ in
           v4l-utils
           wf-recorder
           wl-clipboard
+          wlr-randr
           xorg.xeyes
           xwayland
         ];
