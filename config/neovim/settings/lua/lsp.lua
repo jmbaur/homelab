@@ -43,8 +43,7 @@ local on_attach = function(client, bufnr)
 end
 
 for _, server in ipairs {
-    'gopls', 'pyright', 'rust_analyzer', 'sumneko_lua', 'tsserver', 'yamlls',
-    'zls'
+    'gopls', 'pyright', 'rust_analyzer', 'sumneko_lua', 'tsserver', 'zls'
 } do
     lsp[server]
         .setup {on_attach = on_attach, flags = {debounce_text_changes = 150}}
