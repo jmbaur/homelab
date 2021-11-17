@@ -132,7 +132,6 @@ in
     # pass
     # pass-git-helper
     # tree
-    (wrapOBS { plugins = with obs-studio-plugins; [ wlrobs ]; })
     acpi
     age
     atop
@@ -230,31 +229,40 @@ in
     zoom-us
     zoxide
   ] ++ (
-    with pkgs; if config.custom.sway.enable then [
-      (chromium.override
-        {
-          commandLineArgs = [ "--enable-features=UseOzonePlatform" "--ozone-platform=wayland" ];
-        })
-      element-desktop-wayland
-      firefox-wayland
-      (symlinkJoin {
-        name = "slack";
-        paths = [ pkgs.slack ];
-        buildInputs = [ pkgs.makeWrapper ];
-        postBuild = ''
-          wrapProgram $out/bin/slack \
-            --add-flags "--ozone-platform=wayland" \
-            --add-flags "--enable-features=UseOzonePlatform,WebRTCPipeWireCapturer"
-        '';
-      })
-      thunderbird-wayland
-    ] else [
-      chromium
-      element-desktop
-      firefox
-      slack
-      thunderbird
-    ]
+    if config.custom.sway.enable then
+      let
+        chromium-wayland = (chromium.override
+          {
+            commandLineArgs = [ "--enable-features=UseOzonePlatform" "--ozone-platform=wayland" ];
+          });
+        obs-studio-wayland = (wrapOBS { plugins = with obs-studio-plugins; [ wlrobs ]; });
+        slack-wayland = (symlinkJoin {
+          name = "slack";
+          paths = [ pkgs.slack ];
+          buildInputs = [ pkgs.makeWrapper ];
+          postBuild = ''
+            wrapProgram $out/bin/slack \
+              --add-flags "--ozone-platform=wayland" \
+              --add-flags "--enable-features=UseOzonePlatform,WebRTCPipeWireCapturer"
+          '';
+        });
+      in
+      [
+        chromium-wayland
+        obs-studio-wayland
+        pkgs.element-desktop-wayland
+        pkgs.firefox-wayland
+        pkgs.thunderbird-wayland
+        slack-wayland
+      ] else
+      with pkgs; [
+        chromium
+        element-desktop
+        firefox
+        obs-studio
+        slack
+        thunderbird
+      ]
   );
 
   environment.variables.HISTCONTROL = "ignoredups";
