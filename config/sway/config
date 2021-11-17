@@ -52,7 +52,7 @@ mode "resize" {
 }
 
 for_window [title=".+[sS]haring (Indicator|your screen)"] floating enable, sticky enable, no focus
-for_window [title="[zZ]oom.*"] floating enable
+for_window [title="^[zZ]oom.*"] floating enable, sticky enable, no focus
 
 bar {
         icon_theme Adwaita
