@@ -128,6 +128,7 @@ in
     # tree
     acpi
     age
+    alacritty
     atop
     awscli2
     bat
