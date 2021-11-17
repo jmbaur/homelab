@@ -21,7 +21,6 @@ in
     ./hardware-configuration.nix
   ];
 
-  boot.kernelParams = [ "amdgpu.backlight=0" "acpi_backlight=none" ];
 
   nix = {
     # Enable flakes and prevent nix shells from being wiped on garbage
@@ -37,19 +36,14 @@ in
     "/share/nix-direnv"
   ];
   boot = {
-    kernelPackages = pkgs.linuxPackages_5_14;
-    cleanTmpDir = true;
-    tmpOnTmpfs = true;
     binfmt.emulatedSystems = [ "aarch64-linux" ]; # allow building for RPI4
-    loader = {
-      systemd-boot.enable = true;
-      efi.canTouchEfiVariables = true;
-    };
-    initrd.luks.devices.cryptlvm = {
-      allowDiscards = true;
-      preLVM = true;
-      device = "/dev/disk/by-uuid/951caec2-ca49-4e30-bfbf-0d53e12ee5ca";
-    };
+    cleanTmpDir = true;
+    extraModulePackages = with config.boot.kernelPackages; [ v4l2loopback ];
+    initrd.luks.devices.cryptlvm = { allowDiscards = true; preLVM = true; device = "/dev/disk/by-uuid/951caec2-ca49-4e30-bfbf-0d53e12ee5ca"; };
+    kernelPackages = pkgs.linuxPackages_5_14;
+    kernelParams = [ "amdgpu.backlight=0" "acpi_backlight=none" ];
+    loader = { systemd-boot.enable = true; efi.canTouchEfiVariables = true; };
+    tmpOnTmpfs = true;
   };
 
   i18n.defaultLocale = "en_US.UTF-8";

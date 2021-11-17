@@ -55,6 +55,7 @@ in
           swayidle
           swaylock
           swaystatus
+          v4l-utils
           wf-recorder
           wl-clipboard
           xorg.xeyes
