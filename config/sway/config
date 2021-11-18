@@ -75,6 +75,7 @@ bindsym $mod+6 workspace number 6
 bindsym $mod+7 workspace number 7
 bindsym $mod+8 workspace number 8
 bindsym $mod+9 workspace number 9
+bindsym $mod+Control+space exec makoctl dismiss --all
 bindsym $mod+Return exec $term
 bindsym $mod+Shift+$down move down
 bindsym $mod+Shift+$left move left
