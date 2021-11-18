@@ -41,7 +41,7 @@ in
         grim
         i3status-rust-wrapped
         kanshi-wrapped
-        mako
+        mako-wrapped
         pulseaudio
         slurp
         swayidle

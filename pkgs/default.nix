@@ -23,6 +23,7 @@ in
       htmlq = super.callPackage ./htmlq { };
       i3status-rust-wrapped = super.callPackage ./i3status-rust { };
       kanshi-wrapped = super.callPackage ./kanshi { };
+      mako-wrapped = super.callPackage ./mako { };
       nix-direnv = super.nix-direnv.override { enableFlakes = true; };
       p = super.callPackage ./p { };
       pa-switch = super.callPackage ./pa-switch { };
