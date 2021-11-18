@@ -6,6 +6,7 @@ let
       name = "mako-config";
       text = ''
         icon-path=${pkgs.gnome.adwaita-icon-theme}/share/icons/Adwaita
+        default-timeout=15
       '';
     };
 in
