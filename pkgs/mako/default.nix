@@ -16,6 +16,7 @@ symlinkJoin {
   buildInputs = [ makeWrapper ];
   postBuild = ''
     wrapProgram $out/bin/mako \
+      --set XCURSOR_THEME "Adwaita" \
       --add-flags "--config=${mako-config}"
   '';
 }
