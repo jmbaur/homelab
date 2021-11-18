@@ -32,37 +32,28 @@ in
         # use this if they aren't displayed properly:
         export _JAVA_AWT_WM_NONREPARENTING=1
       '';
-      extraPackages = with pkgs;
-        let
-          swaystatus = writeShellScriptBin "swaystatus" ''
-            while true; do
-              printf "%d%% | %s" "$(cat /sys/class/power_supply/BAT0/capacity)" "$(date +'%F %T')"
-              sleep 1
-            done
-          '';
-        in
-        [
-          bemenu
-          brightnessctl
-          clipman
-          fuzzel
-          glib
-          grim
-          i3status-rust
-          kanshi-wrapped
-          mako
-          pulseaudio
-          slurp
-          swayidle
-          swaylock
-          swaystatus
-          v4l-utils
-          wf-recorder
-          wl-clipboard
-          wlr-randr
-          xorg.xeyes
-          xwayland
-        ];
+      extraPackages = with pkgs; [
+        bemenu
+        brightnessctl
+        clipman
+        fuzzel
+        glib
+        grim
+        i3status-rust-wrapped
+        kanshi-wrapped
+        mako
+        pulseaudio
+        slurp
+        swayidle
+        swaylock
+        swaystatus
+        v4l-utils
+        wf-recorder
+        wl-clipboard
+        wlr-randr
+        xorg.xeyes
+        xwayland
+      ];
     };
 
     environment.etc = {

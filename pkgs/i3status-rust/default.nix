@@ -1,11 +1,10 @@
 { pkgs ? import <nixpkgs> { } }:
 with pkgs;
 
-
 let
   config-file = writeTextFile {
     name = "i3status-rs-config";
-    source = ./config.toml;
+    text = builtins.readFile ./config.toml;
   };
 in
 symlinkJoin {
