@@ -6,6 +6,13 @@ interval = 10
 format = "{percentage:6#100} {percentage} {time}"
 
 [[block]]
+block = "networkmanager"
+on_click = "foot -e nmtui"
+ap_format = "{ssid^10}"
+# device_format = "{name} {ap} {ips}"
+device_format = "{name} {ips}"
+
+[[block]]
 block = "disk_space"
 path = "/"
 alias = "/"
