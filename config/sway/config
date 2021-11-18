@@ -15,6 +15,7 @@ exec swayidle -w \
         before-sleep "swaylock -f -c 1a1a1a"
 exec wl-paste -t text --watch clipman store
 exec_always pkill kanshi; exec kanshi
+exec_always pkill mako; exec mako
 exec_always {
         gsettings set $gnome-schema gtk-key-theme 'Emacs'
         gsettings set $gnome-schema icon-theme 'Adwaita'
