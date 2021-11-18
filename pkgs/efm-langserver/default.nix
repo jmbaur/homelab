@@ -1,12 +1,13 @@
 { pkgs ? import <nixpkgs> }:
-pkgs.buildGoModule {
+with pkgs;
+buildGoModule {
   name = "efm-langserver";
-  src = pkgs.fetchFromGitHub {
+  src = fetchFromGitHub {
     owner = "mattn";
     repo = "efm-langserver";
-    rev = "d5f5b9aedaf654c158af9312a69ed717d5bf6bf5";
-    sha256 = "096xh1j7dmm0jjww8zg2db8ffb4n9crb1pq1117z05k7g0p3mfi0";
+    rev = "899ab62a08e8eff1b1f0f89d899a5832c8cd361a";
+    sha256 = "sha256-+Q3vSifPiE9PyxJnoapJ1CBKUioTHExwBbWJgWD1iNI=";
   };
-  vendorSha256 = "1d1zbzlvbiqy4y1409prkl9sslgzjxc602pqq3n9j07zg32v93v3";
+  vendorSha256 = "sha256-Y4+0xXj/AJnswPgKYFiX/1GtE535JkCCJx7HtelfP7Q=";
   runVend = true;
 }

@@ -46,7 +46,6 @@ in
         slurp
         swayidle
         swaylock
-        swaystatus
         v4l-utils
         wf-recorder
         wl-clipboard
