@@ -17,7 +17,6 @@ in
         sha256 = "04d51s52nddf1669wdvacvm952f7f3m8dpddx4ndnvp9bvdn0nzs";
       }))
     (self: super: {
-      efm-langserver = super.callPackage ./efm-langserver { };
       fdroidcl = super.callPackage ./fdroidcl { };
       git-get = super.callPackage ./git-get { };
       gosee = super.callPackage ./gosee { };
