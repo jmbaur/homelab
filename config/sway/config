@@ -58,7 +58,7 @@ bar {
         icon_theme Adwaita
         mode hide
         position bottom
-        status_command swaystatus
+        status_command i3status-rs
         tray_output primary
 }
 

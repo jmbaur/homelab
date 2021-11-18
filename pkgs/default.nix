@@ -22,6 +22,7 @@ in
       git-get = super.callPackage ./git-get { };
       gosee = super.callPackage ./gosee { };
       htmlq = super.callPackage ./htmlq { };
+      i3status-rust = super.callPackage ./i3status-rust { };
       kanshi-wrapped = super.callPackage ./kanshi { };
       nix-direnv = super.nix-direnv.override { enableFlakes = true; };
       p = super.callPackage ./p { };

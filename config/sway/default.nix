@@ -48,6 +48,7 @@ in
           fuzzel
           glib
           grim
+          i3status-rust
           kanshi-wrapped
           mako
           pulseaudio
