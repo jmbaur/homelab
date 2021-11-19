@@ -215,6 +215,7 @@ in
     xclip
     xcolor
     xdg-user-dirs
+    xdg-utils
     xsel
     xsv
     ydiff
