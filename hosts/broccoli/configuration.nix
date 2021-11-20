@@ -1,4 +1,8 @@
 { config, pkgs, ... }:
+with pkgs;
+let
+  domain = "home.arpa.";
+in
 {
   imports = [ ./hardware-configuration.nix ];
 
@@ -49,7 +53,7 @@
       openFirewall = false;
       listenAddresses = [
         {
-          addr = "192.168.100.1";
+          addr = "192.168.1.1";
           port = 22;
         }
       ];
@@ -57,34 +61,53 @@
     dhcpd4 = {
       enable = true;
       interfaces = [ "eno2" ];
+      machines = [
+        { ethernetAddress = "94:a6:7e:69:99:3e"; hostName = "GS308EP"; ipAddress = "192.168.1.13"; }
+        { ethernetAddress = "9c:c9:eb:9d:d5:9f"; hostName = "NETGEAR9DD59F"; ipAddress = "192.168.1.14"; }
+        { ethernetAddress = "5c:80:b6:92:eb:27"; hostName = "asparagus"; ipAddress = "192.168.1.15"; }
+        { ethernetAddress = "b0:e4:d5:cb:ac:33"; hostName = "Chromecast"; ipAddress = "192.168.1.16"; }
+        { ethernetAddress = "dc:a6:32:20:50:f2"; hostName = "rhubarb"; ipAddress = "192.168.1.17"; }
+      ];
       extraConfig = ''
         ddns-update-style none;
+
+        option domain-search "${domain}";
+        option domain-name "${domain}";
 
         default-lease-time 86400;
         max-lease-time 86400;
 
-        subnet 192.168.100.0 netmask 255.255.255.0 {
-          range 192.168.100.100 192.168.100.200;
-          option routers 192.168.100.1;
-          option broadcast-address 192.168.100.255;
+        subnet 192.168.1.0 netmask 255.255.255.0 {
+          range 192.168.1.100 192.168.1.200;
+          option routers 192.168.1.1;
+          option broadcast-address 192.168.1.255;
           option subnet-mask 255.255.255.0;
-          option domain-name-servers 192.168.100.1;
-          option domain-search "home.arpa.";
-          option domain-name "home.arpa.";
+          option domain-name-servers 192.168.1.1;
         }
       '';
     };
     coredns = {
       enable = true;
-      config = ''
-        . {
-           forward . tls://1.1.1.1 tls://1.0.0.1 tls://2606:4700:4700::1111 tls://2606:4700:4700::1001 {
-             tls_servername tls.cloudflare-dns.com
-             health_check 5s
-           }
-           prometheus localhost:9153
-         }
-      '';
+      config =
+        let
+          extraMachines = [
+            { ethernetAddress = "00:25:90:47:a9:5b"; hostName = "broccoli"; ipAddress = "192.168.1.1"; } # eno2
+          ];
+        in
+        ''
+          . {
+            forward . tls://1.1.1.1 tls://1.0.0.1 tls://2606:4700:4700::1111 tls://2606:4700:4700::1001 {
+              tls_servername tls.cloudflare-dns.com
+              health_check 5s
+            }
+            prometheus localhost:9153
+          }
+          ${domain} {
+            hosts {
+              ${lib.concatMapStrings (machine: "${machine.ipAddress} ${machine.hostName}.${domain}\n    ") (config.services.dhcpd4.machines ++ extraMachines)}
+            }
+          }
+        '';
     };
     corerad = {
       enable = true;
@@ -123,7 +146,7 @@
       eno1.useDHCP = true;
       eno2 = {
         useDHCP = false;
-        ipv4.addresses = [{ address = "192.168.100.1"; prefixLength = 24; }];
+        ipv4.addresses = [{ address = "192.168.1.1"; prefixLength = 24; }];
         ipv6.addresses = [{ address = "2001:470:f457:1000::1"; prefixLength = 64; }];
       };
       hurricane = {
