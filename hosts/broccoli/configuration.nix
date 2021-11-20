@@ -24,10 +24,13 @@
 
   environment.systemPackages = with pkgs; [
     conntrack-tools
+    dig
     ethtool
     htop
     powertop
     ppp
+    tcpdump
+    tmux
     vim
   ];
 
@@ -37,6 +40,8 @@
     avahi = {
       enable = true;
       reflector = true;
+      ipv4 = true;
+      ipv6 = true;
     };
     openssh = {
       enable = true;
@@ -77,14 +82,36 @@
              tls_servername tls.cloudflare-dns.com
              health_check 5s
            }
-           prometheus :9153
+           prometheus localhost:9153
          }
       '';
+    };
+    corerad = {
+      enable = true;
+      settings = {
+        interfaces = [
+          {
+            name = "eno2";
+            advertise = true;
+            managed = false;
+            prefix = [{ prefix = "::/64"; }];
+          }
+        ];
+        debug = {
+          address = "localhost:9430";
+          prometheus = true;
+        };
+      };
     };
   };
 
   networking = {
     hostName = "broccoli";
+    nameservers = [ "127.0.0.1" "::1" ];
+    defaultGateway6 = {
+      address = "2001:470:c:10c9::1";
+      interface = "hurricane";
+    };
     nat = {
       enable = true;
       externalInterface = "eno1";
@@ -95,7 +122,17 @@
       eno2 = {
         useDHCP = false;
         ipv4.addresses = [{ address = "192.168.100.1"; prefixLength = 24; }];
+        ipv6.addresses = [{ address = "2001:470:f457:1000::1"; prefixLength = 64; }];
       };
+      hurricane = {
+        useDHCP = false;
+        ipv6.addresses = [{ address = "2001:470:c:10c9::2"; prefixLength = 64; }];
+      };
+    };
+    sits.hurricane = {
+      dev = "eno1";
+      remote = "66.220.18.42";
+      ttl = 255;
     };
     dhcpcd = {
       enable = true;
@@ -119,5 +156,11 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "21.05"; # Did you read the comment?
+
+
+
+
+
+
 
 }

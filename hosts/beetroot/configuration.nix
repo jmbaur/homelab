@@ -168,6 +168,7 @@ in
     keybase
     killall
     libreoffice
+    librespeed-cli
     lm_sensors
     mob
     mosh
@@ -195,6 +196,7 @@ in
     sd
     signal-desktop
     sl
+    speedtest-cli
     spotify
     stow
     tailscale
