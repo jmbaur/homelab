@@ -249,7 +249,8 @@ in
           postBuild = ''
             wrapProgram $out/bin/slack \
               --add-flags "--ozone-platform=wayland" \
-              --add-flags "--enable-features=UseOzonePlatform,WebRTCPipeWireCapturer"
+              --add-flags "--enable-features=WebRTCPipeWireCapturer" \
+              --add-flags "--enable-features=UseOzonePlatform"
           '';
         });
       in

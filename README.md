@@ -79,6 +79,7 @@ List from https://www.vegetables.co.nz/vegetables-a-z/.
 
 - Asparagus - Apareka/Pikopiko Pākehā
 - Beetroot - Rengakura
+- Broccoli - Pūpihi/Poroki
 - Kale and Cavolo Nero
 - Okra
 - Rhubarb - Rūpapa
@@ -89,7 +90,6 @@ List from https://www.vegetables.co.nz/vegetables-a-z/.
 - Artichokes, Jerusalem - Atihoka
 - Asian greens
 - Beans - Pine/Pīni
-- Broccoli - Pūpihi/Poroki
 - Brussels sprouts - Aonanī
 - Cabbages - Kāpeti
 - Capsicums - Rapikama
