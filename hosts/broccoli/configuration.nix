@@ -22,7 +22,14 @@
 
   users.mutableUsers = false;
 
-  environment.systemPackages = with pkgs; [ conntrack-tools ppp ethtool vim ];
+  environment.systemPackages = with pkgs; [
+    conntrack-tools
+    ethtool
+    htop
+    powertop
+    ppp
+    vim
+  ];
 
   programs.mtr.enable = true;
 
