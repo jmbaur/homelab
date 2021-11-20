@@ -69,8 +69,8 @@
           option broadcast-address 192.168.100.255;
           option subnet-mask 255.255.255.0;
           option domain-name-servers 192.168.100.1;
-          option domain-search "home.arpa";
-          option domain-name "home.arpa";
+          option domain-search "home.arpa.";
+          option domain-name "home.arpa.";
         }
       '';
     };
@@ -108,6 +108,8 @@
   networking = {
     hostName = "broccoli";
     nameservers = [ "127.0.0.1" "::1" ];
+    search = [ ];
+    # The default gateway for IPv4 is populated by dhcpcd.
     defaultGateway6 = {
       address = "2001:470:c:10c9::1";
       interface = "hurricane";
