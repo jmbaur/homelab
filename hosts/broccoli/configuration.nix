@@ -34,11 +34,17 @@
     openssh = {
       enable = true;
       passwordAuthentication = false;
-      # listenAddresses = []; # TODO(jared): Configure this to only listen on management port, not WAN port.
+      openFirewall = false;
+      listenAddresses = [
+        {
+          addr = "192.168.100.1";
+          port = 22;
+        }
+      ];
     };
     dhcpd4 = {
       enable = true;
-      interfaces = [ "eno2" "enp1s0f0" "enp1s0f1" ];
+      interfaces = [ "eno2" ];
       extraConfig = ''
         ddns-update-style none;
 
@@ -51,24 +57,6 @@
           option broadcast-address 192.168.100.255;
           option subnet-mask 255.255.255.0;
           option domain-name-servers 192.168.100.1;
-          option domain-search "home.arpa";
-          option domain-name "home.arpa";
-        }
-        subnet 192.168.101.0 netmask 255.255.255.0 {
-          range 192.168.101.100 192.168.101.200;
-          option routers 192.168.101.1;
-          option broadcast-address 192.168.101.255;
-          option subnet-mask 255.255.255.0;
-          option domain-name-servers 192.168.101.1;
-          option domain-search "home.arpa";
-          option domain-name "home.arpa";
-        }
-        subnet 192.168.102.0 netmask 255.255.255.0 {
-          range 192.168.102.100 192.168.102.200;
-          option routers 192.168.102.1;
-          option broadcast-address 192.168.102.255;
-          option subnet-mask 255.255.255.0;
-          option domain-name-servers 192.168.102.1;
           option domain-search "home.arpa";
           option domain-name "home.arpa";
         }
@@ -93,12 +81,7 @@
     nat = {
       enable = true;
       externalInterface = "eno1";
-      internalInterfaces = [ "eno2" "enp1s0f0" "enp1s0f1" ];
-    };
-    dhcpcd = {
-      enable = true;
-      persistent = true;
-      allowInterfaces = [ "eno1" ];
+      internalInterfaces = [ "eno2" ];
     };
     interfaces = {
       eno1.useDHCP = true;
@@ -106,19 +89,19 @@
         useDHCP = false;
         ipv4.addresses = [{ address = "192.168.100.1"; prefixLength = 24; }];
       };
-      enp1s0f0 = {
-        useDHCP = false;
-        ipv4.addresses = [{ address = "192.168.101.1"; prefixLength = 24; }];
-      };
-      enp1s0f1 = {
-        useDHCP = false;
-        ipv4.addresses = [{ address = "192.168.102.1"; prefixLength = 24; }];
-      };
+    };
+    dhcpcd = {
+      enable = true;
+      persistent = true;
+      allowInterfaces = [ "eno1" ];
     };
     firewall = {
       enable = true;
       package = pkgs.iptables-nftables-compat;
       trustedInterfaces = [ "eno2" "enp1s0f0" "enp1s0f1" ];
+      interfaces = {
+        eno2.allowedTCPPorts = [ 22 ];
+      };
     };
   };
 
