@@ -2,6 +2,23 @@
 with pkgs;
 let
   domain = "home.arpa.";
+  dynamic-hosts-file = "/var/run/hosts";
+  update-hosts-script = writeShellScriptBin "update-hosts" ''
+    case $1 in
+      "commit")
+        if [ "$2" != "" ] && [ "$3" != "" ] && ! grep -q "^$2 $3.${domain}$" ${dynamic-hosts-file}
+        then
+          echo "$2 $3.${domain}" >> ${dynamic-hosts-file}
+        fi
+      ;;
+      "release")
+        sed -i "/^$2 $3.${domain}$/d" ${dynamic-hosts-file}
+      ;;
+      "expiry")
+        sed -i "/^$2 $3.${domain}$/d" ${dynamic-hosts-file}
+      ;;
+    esac
+  '';
 in
 {
   imports = [ ./hardware-configuration.nix ];
@@ -84,16 +101,33 @@ in
           option subnet-mask 255.255.255.0;
           option domain-name-servers 192.168.1.1;
         }
+
+        on commit {
+          set clientip = binary-to-ascii(10, 8, ".", leased-address);
+          set clientmac = binary-to-ascii(16, 8, ":", substring(hardware, 1, 6));
+          set clienthost = pick-first-value (option fqdn.hostname, option host-name, "");
+          log(concat("Commit: IP: ", clientip, " Mac: ", clientmac, " Host: ", clienthost));
+          execute("${update-hosts-script}/bin/update-hosts", "commit", clientip, clienthost);
+        }
+        on release {
+          set clientip = binary-to-ascii(10, 8, ".", leased-address);
+          set clientmac = binary-to-ascii(16, 8, ":", substring(hardware, 1, 6));
+          set clienthost = pick-first-value (option fqdn.hostname, option host-name, "");
+          log(concat("Release: IP: ", clientip, " Mac: ", clientmac, " Host: ", clienthost));
+          execute("${update-hosts-script}/bin/update-hosts", "release", clientip, clienthost);
+        }
+        on expiry {
+          set clientip = binary-to-ascii(10, 8, ".", leased-address);
+          set clientmac = binary-to-ascii(16, 8, ":", substring(hardware, 1, 6));
+          set clienthost = pick-first-value (option fqdn.hostname, option host-name, "");
+          log(concat("Expiry: IP: ", clientip, " Mac: ", clientmac, " Host: ", clienthost));
+          execute("${update-hosts-script}/bin/update-hosts", "expiry", clientip, clienthost);
+        }
       '';
     };
     coredns = {
       enable = true;
       config =
-        let
-          extraMachines = [
-            { ethernetAddress = "00:25:90:47:a9:5b"; hostName = "broccoli"; ipAddress = "192.168.1.1"; } # eno2
-          ];
-        in
         ''
           . {
             forward . tls://1.1.1.1 tls://1.0.0.1 tls://2606:4700:4700::1111 tls://2606:4700:4700::1001 {
@@ -103,8 +137,8 @@ in
             prometheus localhost:9153
           }
           ${domain} {
-            hosts {
-              ${lib.concatMapStrings (machine: "${machine.ipAddress} ${machine.hostName}.${domain}\n    ") (config.services.dhcpd4.machines ++ extraMachines)}
+            hosts ${dynamic-hosts-file} {
+              192.168.1.1 ${config.networking.hostName}.${domain}
             }
           }
         '';
@@ -131,7 +165,7 @@ in
   networking = {
     hostName = "broccoli";
     nameservers = [ "127.0.0.1" "::1" ];
-    search = [ ];
+    search = [ domain ];
     # The default gateway for IPv4 is populated by dhcpcd.
     defaultGateway6 = {
       address = "2001:470:c:10c9::1";
@@ -163,6 +197,8 @@ in
       enable = true;
       persistent = true;
       allowInterfaces = [ "eno1" ];
+      extraConfig = ''
+      '';
     };
     firewall = {
       enable = true;
@@ -174,6 +210,16 @@ in
     };
   };
 
+  system.activationScripts = {
+    dynamic-hosts-file.text = ''
+      if [ ! -f ${dynamic-hosts-file} ]
+      then
+        touch ${dynamic-hosts-file}
+        chown dhcpd:nogroup ${dynamic-hosts-file}
+      fi
+    '';
+  };
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
@@ -181,11 +227,5 @@ in
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "21.05"; # Did you read the comment?
-
-
-
-
-
-
 
 }
