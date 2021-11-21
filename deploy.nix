@@ -1,7 +1,10 @@
 {
-  network.description = "homelab";
+  network = {
+    description = "homelab";
+    enableRollback = true;
+  };
   broccoli = { config, pkgs, ... }: {
-    deployment.targetHost = "192.168.1.1";
+    deployment.targetHost = "broccoli.home.arpa.";
     imports = [ ./lib/nixops.nix ./hosts/broccoli/configuration.nix ];
   };
   # rhubarb = { config, pkgs, ... }: {

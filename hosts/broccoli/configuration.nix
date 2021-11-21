@@ -2,35 +2,35 @@
 with pkgs;
 let
   domain = "home.arpa.";
-  dynamic-hosts-file = "/var/run/hosts";
+  dynamic-hosts-file = "/var/lib/dhcp/hosts";
   update-hosts-script = writeShellScriptBin "update-hosts" ''
-    case $1 in
-      "commit")
-        if [ "$2" != "" ] && [ "$3" != "" ] && ! grep -q "^$2 $3.${domain}$" ${dynamic-hosts-file}
-        then
-          echo "$2 $3.${domain}" >> ${dynamic-hosts-file}
-        fi
-      ;;
-      "release")
-        sed -i "/^$2 $3.${domain}$/d" ${dynamic-hosts-file}
-      ;;
-      "expiry")
-        sed -i "/^$2 $3.${domain}$/d" ${dynamic-hosts-file}
-      ;;
-    esac
+    # Always remove old lease, failing silenty
+    sed -i "/^$2 $3.${domain}$/d" ${dynamic-hosts-file}
+
+    if [ "$1" == "commit" ] && [ "$2" != "" ] && [ "$3" != "" ]
+    then
+      sed -i "1i $2 $3.${domain}" ${dynamic-hosts-file}
+    fi
   '';
+  dhcpd-event-config = (event: ''
+    set clientip = binary-to-ascii(10, 8, ".", leased-address);
+    set clientmac = binary-to-ascii(16, 8, ":", substring(hardware, 1, 6));
+    set clienthost = pick-first-value (option fqdn.hostname, option host-name, "");
+    log(concat("${event}: IP: ", clientip, " Mac: ", clientmac, " Host: ", clienthost));
+    execute("${update-hosts-script}/bin/update-hosts", "${event}", clientip, clienthost);
+  '');
+  steven-black-hosts = fetchFromGitHub {
+    owner = "StevenBlack";
+    repo = "hosts";
+    rev = "56312e0607d9057689c93825c4a2f82d657eaabf";
+    sha256 = "sha256-XrLwEdVlFg+7g9+JnMoezHimYSKUJsFFxtkcIZj8NAY=";
+  };
 in
 {
-  imports = [ ./hardware-configuration.nix ];
+  imports = [ ./options.nix ./secrets.nix ./hardware-configuration.nix ];
 
   boot = {
-    loader = {
-      grub = {
-        enable = true;
-        version = 2;
-        device = "/dev/sda";
-      };
-    };
+    loader = { grub = { enable = true; version = 2; device = "/dev/sda"; }; };
     kernelParams = [ "console=ttyS0,115200" "console=tty1" ];
     kernel.sysctl = {
       "net.ipv4.conf.all.forwarding" = true;
@@ -58,87 +58,69 @@ in
   programs.mtr.enable = true;
 
   services = {
-    avahi = {
-      enable = true;
-      reflector = true;
-      ipv4 = true;
-      ipv6 = true;
-    };
-    openssh = {
+    avahi = { enable = true; reflector = true; ipv4 = true; ipv6 = true; };
+    openssh = with config.networking.interfaces; {
       enable = true;
       passwordAuthentication = false;
       openFirewall = false;
-      listenAddresses = [
-        {
-          addr = "192.168.1.1";
-          port = 22;
-        }
-      ];
+      listenAddresses =
+        builtins.map
+          (ifi: {
+            addr = ifi.address;
+            port = 22;
+          })
+          (eno2.ipv4.addresses ++ eno2.ipv6.addresses);
     };
-    dhcpd4 = {
-      enable = true;
-      interfaces = [ "eno2" ];
-      machines = [
-        { ethernetAddress = "94:a6:7e:69:99:3e"; hostName = "GS308EP"; ipAddress = "192.168.1.13"; }
-        { ethernetAddress = "9c:c9:eb:9d:d5:9f"; hostName = "NETGEAR9DD59F"; ipAddress = "192.168.1.14"; }
-        { ethernetAddress = "5c:80:b6:92:eb:27"; hostName = "asparagus"; ipAddress = "192.168.1.15"; }
-        { ethernetAddress = "b0:e4:d5:cb:ac:33"; hostName = "Chromecast"; ipAddress = "192.168.1.16"; }
-        { ethernetAddress = "dc:a6:32:20:50:f2"; hostName = "rhubarb"; ipAddress = "192.168.1.17"; }
-      ];
-      extraConfig = ''
-        ddns-update-style none;
+    dhcpd4 =
+      with config.custom.dhcpd4;
+      {
+        enable = true;
+        interfaces = [ "eno2" ];
+        extraConfig =
+          ''
+            ddns-update-style none;
 
-        option domain-search "${domain}";
-        option domain-name "${domain}";
+            option domain-search "${domain}";
+            option domain-name "${domain}";
 
-        default-lease-time 86400;
-        max-lease-time 86400;
+            ${lib.concatMapStrings
+              (ifi: with builtins.getAttr ifi interfaces; ''
+                subnet ${subnet} netmask ${netmask} {
+                  range ${start} ${end};
+                  option routers ${router}; # TODO(jared): make this a list
+                  option broadcast-address ${broadcast};
+                  option subnet-mask ${netmask};
+                  option domain-name-servers ${dns};
+                }
+              '')
+              (builtins.attrNames interfaces)}
 
-        subnet 192.168.1.0 netmask 255.255.255.0 {
-          range 192.168.1.100 192.168.1.200;
-          option routers 192.168.1.1;
-          option broadcast-address 192.168.1.255;
-          option subnet-mask 255.255.255.0;
-          option domain-name-servers 192.168.1.1;
-        }
-
-        on commit {
-          set clientip = binary-to-ascii(10, 8, ".", leased-address);
-          set clientmac = binary-to-ascii(16, 8, ":", substring(hardware, 1, 6));
-          set clienthost = pick-first-value (option fqdn.hostname, option host-name, "");
-          log(concat("Commit: IP: ", clientip, " Mac: ", clientmac, " Host: ", clienthost));
-          execute("${update-hosts-script}/bin/update-hosts", "commit", clientip, clienthost);
-        }
-        on release {
-          set clientip = binary-to-ascii(10, 8, ".", leased-address);
-          set clientmac = binary-to-ascii(16, 8, ":", substring(hardware, 1, 6));
-          set clienthost = pick-first-value (option fqdn.hostname, option host-name, "");
-          log(concat("Release: IP: ", clientip, " Mac: ", clientmac, " Host: ", clienthost));
-          execute("${update-hosts-script}/bin/update-hosts", "release", clientip, clienthost);
-        }
-        on expiry {
-          set clientip = binary-to-ascii(10, 8, ".", leased-address);
-          set clientmac = binary-to-ascii(16, 8, ":", substring(hardware, 1, 6));
-          set clienthost = pick-first-value (option fqdn.hostname, option host-name, "");
-          log(concat("Expiry: IP: ", clientip, " Mac: ", clientmac, " Host: ", clienthost));
-          execute("${update-hosts-script}/bin/update-hosts", "expiry", clientip, clienthost);
-        }
-      '';
-    };
-    coredns = {
+            ${lib.concatMapStrings (event: ''
+              on ${event} {
+                ${dhcpd-event-config event}
+              }
+            '') ["commit" "release" "expiry"]}
+          '';
+      };
+    coredns = with config.networking.interfaces; {
       enable = true;
       config =
         ''
           . {
+            hosts ${steven-black-hosts}/hosts {
+              fallthrough
+            }
             forward . tls://1.1.1.1 tls://1.0.0.1 tls://2606:4700:4700::1111 tls://2606:4700:4700::1001 {
               tls_servername tls.cloudflare-dns.com
               health_check 5s
             }
-            prometheus localhost:9153
+            prometheus :9153
           }
           ${domain} {
             hosts ${dynamic-hosts-file} {
-              192.168.1.1 ${config.networking.hostName}.${domain}
+              ${lib.concatMapStrings (ifi: ''
+                ${ifi.address} ${config.networking.hostName}.${domain}
+              '') (eno2.ipv4.addresses ++ eno2.ipv6.addresses)}
             }
           }
         '';
@@ -155,7 +137,7 @@ in
           }
         ];
         debug = {
-          address = "localhost:9430";
+          address = ":9430";
           prometheus = true;
         };
       };
@@ -167,10 +149,7 @@ in
     nameservers = [ "127.0.0.1" "::1" ];
     search = [ domain ];
     # The default gateway for IPv4 is populated by dhcpcd.
-    defaultGateway6 = {
-      address = "2001:470:c:10c9::1";
-      interface = "hurricane";
-    };
+    defaultGateway6.interface = "hurricane";
     nat = {
       enable = true;
       externalInterface = "eno1";
@@ -178,19 +157,11 @@ in
     };
     interfaces = {
       eno1.useDHCP = true;
-      eno2 = {
-        useDHCP = false;
-        ipv4.addresses = [{ address = "192.168.1.1"; prefixLength = 24; }];
-        ipv6.addresses = [{ address = "2001:470:f457:1000::1"; prefixLength = 64; }];
-      };
-      hurricane = {
-        useDHCP = false;
-        ipv6.addresses = [{ address = "2001:470:c:10c9::2"; prefixLength = 64; }];
-      };
+      eno2.useDHCP = false;
+      hurricane.useDHCP = false;
     };
     sits.hurricane = {
       dev = "eno1";
-      remote = "66.220.18.42";
       ttl = 255;
     };
     dhcpcd = {
@@ -198,12 +169,18 @@ in
       persistent = true;
       allowInterfaces = [ "eno1" ];
       extraConfig = ''
+        # Override domain settings sent from ISP DHCPD
+        static domain_name_servers=
+        static domain_search=
+        static domain_name=
+        # Disable ipv6 router solicitation
+        noipv6rs
       '';
     };
     firewall = {
       enable = true;
       package = pkgs.iptables-nftables-compat;
-      trustedInterfaces = [ "eno2" "enp1s0f0" "enp1s0f1" ];
+      trustedInterfaces = [ "eno2" ];
       interfaces = {
         eno2.allowedTCPPorts = [ 22 ];
       };
@@ -214,7 +191,9 @@ in
     dynamic-hosts-file.text = ''
       if [ ! -f ${dynamic-hosts-file} ]
       then
-        touch ${dynamic-hosts-file}
+        # Always ensures there is at minimum 1 line in the file so that the
+        # script that updates this file can just do `sed -i "1i ..." ...`.
+        echo > ${dynamic-hosts-file}
         chown dhcpd:nogroup ${dynamic-hosts-file}
       fi
     '';
