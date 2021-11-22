@@ -4,12 +4,14 @@ let
   domain = "home.arpa.";
   dynamic-hosts-file = "/var/lib/dhcp/hosts";
   update-hosts-script = writeShellScriptBin "update-hosts" ''
+    ENTRY="$2 $3.${domain} $3"
+
     # Always remove old lease, failing silenty
-    sed -i "/^$2 $3.${domain}$/d" ${dynamic-hosts-file}
+    sed -i "/^''${ENTRY}$/d" ${dynamic-hosts-file}
 
     if [ "$1" == "commit" ] && [ "$2" != "" ] && [ "$3" != "" ]
     then
-      sed -i "1i $2 $3.${domain}" ${dynamic-hosts-file}
+      sed -i "1i ''${ENTRY}" ${dynamic-hosts-file}
     fi
   '';
   dhcpd-event-config = (event: ''
@@ -71,37 +73,35 @@ in
           })
           (eno2.ipv4.addresses ++ eno2.ipv6.addresses);
     };
-    dhcpd4 =
-      with config.custom.dhcpd4;
-      {
-        enable = true;
-        interfaces = [ "eno2" ];
-        extraConfig =
-          ''
-            ddns-update-style none;
+    dhcpd4 = with config.custom.dhcpd4; {
+      enable = true;
+      interfaces = [ "eno2" ];
+      extraConfig =
+        ''
+          ddns-update-style none;
 
-            option domain-search "${domain}";
-            option domain-name "${domain}";
+          option domain-search "${domain}";
+          option domain-name "${domain}";
 
-            ${lib.concatMapStrings
-              (ifi: with builtins.getAttr ifi interfaces; ''
-                subnet ${subnet} netmask ${netmask} {
-                  range ${start} ${end};
-                  option routers ${router}; # TODO(jared): make this a list
-                  option broadcast-address ${broadcast};
-                  option subnet-mask ${netmask};
-                  option domain-name-servers ${dns};
-                }
-              '')
-              (builtins.attrNames interfaces)}
-
-            ${lib.concatMapStrings (event: ''
-              on ${event} {
-                ${dhcpd-event-config event}
+          ${lib.concatMapStrings
+            (ifi: with builtins.getAttr ifi interfaces; ''
+              subnet ${subnet} netmask ${netmask} {
+                range ${start} ${end};
+                option routers ${router}; # TODO(jared): make this a list
+                option broadcast-address ${broadcast};
+                option subnet-mask ${netmask};
+                option domain-name-servers ${dns};
               }
-            '') ["commit" "release" "expiry"]}
-          '';
-      };
+            '')
+            (builtins.attrNames interfaces)}
+
+          ${lib.concatMapStrings (event: ''
+            on ${event} {
+              ${dhcpd-event-config event}
+            }
+          '') ["commit" "release" "expiry"]}
+        '';
+    };
     coredns = with config.networking.interfaces; {
       enable = true;
       config =
@@ -125,23 +125,27 @@ in
           }
         '';
     };
-    corerad = {
+    corerad = with config.networking.interfaces; {
       enable = true;
       settings = {
-        interfaces = [
-          {
-            name = "eno2";
-            advertise = true;
-            managed = false;
-            prefix = [{ prefix = "::/64"; }];
-          }
-        ];
-        debug = {
-          address = ":9430";
-          prometheus = true;
-        };
+        interfaces = [{
+          verbose = true;
+          name = "eno2";
+          advertise = true;
+          prefix = builtins.map
+            (ifi: {
+              prefix = "::/" + builtins.toString ifi.prefixLength;
+            })
+            eno2.ipv6.addresses;
+          rdnss = [{
+            servers = builtins.map (ifi: ifi.address) eno2.ipv6.addresses;
+          }];
+          dnssl = [{ domain_names = [ domain ]; }];
+        }];
+        debug = { address = ":9430"; prometheus = true; };
       };
     };
+    iperf3.enable = true;
   };
 
   networking = {
@@ -206,5 +210,7 @@ in
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "21.05"; # Did you read the comment?
+
+
 
 }
