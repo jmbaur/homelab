@@ -59,19 +59,24 @@ in
 
   programs.mtr.enable = true;
 
+  security.sudo.enable = false;
+
   services = {
     avahi = { enable = true; reflector = true; ipv4 = true; ipv6 = true; };
     openssh = with config.networking.interfaces; {
       enable = true;
       passwordAuthentication = false;
       openFirewall = false;
-      listenAddresses =
-        builtins.map
-          (ifi: {
-            addr = ifi.address;
-            port = 22;
-          })
-          (eno2.ipv4.addresses ++ eno2.ipv6.addresses);
+      allowSFTP = false;
+      listenAddresses = (
+        (builtins.map
+          (ifi: { port = 22; addr = ifi.address; })
+          eno2.ipv4.addresses)
+        ++
+        (builtins.map
+          (ifi: { port = 22; addr = "[" + ifi.address + "]"; })
+          eno2.ipv6.addresses)
+      );
     };
     dhcpd4 = with config.custom.dhcpd4; {
       enable = true;
@@ -173,12 +178,12 @@ in
       persistent = true;
       allowInterfaces = [ "eno1" ];
       extraConfig = ''
+        # Disable ipv6 router solicitation
+        noipv6rs
         # Override domain settings sent from ISP DHCPD
         static domain_name_servers=
         static domain_search=
         static domain_name=
-        # Disable ipv6 router solicitation
-        noipv6rs
       '';
     };
     firewall = {
@@ -210,7 +215,5 @@ in
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "21.05"; # Did you read the comment?
-
-
 
 }
