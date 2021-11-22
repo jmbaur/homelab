@@ -175,7 +175,7 @@ in
     mpv
     nix-direnv
     nix-tree
-    nixops
+    nixopsUnstable
     nixos-generators
     nmap
     nnn
