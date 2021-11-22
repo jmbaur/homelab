@@ -2,7 +2,7 @@ set background=dark
 set belloff=all
 set clipboard=unnamedplus
 set colorcolumn=80
-set cursorline
+set nocursorline
 set expandtab
 set hidden
 set ignorecase

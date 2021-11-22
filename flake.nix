@@ -1,11 +1,14 @@
 {
-  description = "NixOS configuration";
+  description = "NixOS configurations for homelab";
+
   inputs = {
     nixpkgs.url = github:nixos/nixpkgs/nixos-unstable;
     nixpkgs-stable.url = github:nixos/nixpkgs/nixos-21.05;
     nixos-hardware.url = github:NixOS/nixos-hardware/master;
   };
+
   outputs = { self, nixpkgs, nixpkgs-stable, nixos-hardware }: {
+
     nixosConfigurations.beetroot = with nixos-hardware.nixosModules; nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
@@ -17,6 +20,7 @@
         ./hosts/beetroot/configuration.nix
       ];
     };
+
     nixopsConfigurations.default = with nixos-hardware.nixosModules; {
       nixpkgs = nixpkgs-stable;
       network = {
@@ -51,5 +55,7 @@
         ];
       };
     };
+
   };
+
 }

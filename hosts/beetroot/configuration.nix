@@ -34,7 +34,7 @@ with lib;
 
   i18n.defaultLocale = "en_US.UTF-8";
   console = {
-    font = "Lat2-Terminus16";
+    font = "ter-x24b";
     useXkbConfig = mkIf config.services.xserver.enable true;
   };
 
@@ -74,7 +74,11 @@ with lib;
     liberation_ttf
     noto-fonts
     noto-fonts-emoji
+    proggyfonts
     source-code-pro
+    spleen
+    terminus_font
+    tewi-font
   ];
 
   services.xserver.libinput = mkIf config.services.xserver.enable {
