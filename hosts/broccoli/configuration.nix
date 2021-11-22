@@ -33,6 +33,7 @@ in
 
   boot = {
     loader = { grub = { enable = true; version = 2; device = "/dev/sda"; }; };
+    kernelModules = [ "ipmi_devintf" "ipmi_si" ];
     kernelParams = [ "console=ttyS0,115200" "console=tty1" ];
     kernel.sysctl = {
       "net.ipv4.conf.all.forwarding" = true;
@@ -50,6 +51,7 @@ in
     dig
     ethtool
     htop
+    ipmitool
     powertop
     ppp
     tcpdump
@@ -188,7 +190,6 @@ in
     };
     firewall = {
       enable = true;
-      package = pkgs.iptables-nftables-compat;
       trustedInterfaces = [ "eno2" ];
       interfaces = {
         eno2.allowedTCPPorts = [ 22 ];
@@ -215,5 +216,7 @@ in
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "21.05"; # Did you read the comment?
+
+
 
 }

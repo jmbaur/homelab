@@ -4,14 +4,6 @@ let
   promtop = pkgs.callPackage (import (builtins.fetchTarball "https://github.com/jmbaur/promtop/archive/main.tar.gz")) { };
 in
 {
-
-  imports = [
-    "${
-      fetchTarball
-      "https://github.com/NixOS/nixos-hardware/archive/936e4649098d6a5e0762058cb7687be1b2d90550.tar.gz"
-    }/raspberry-pi/4"
-  ];
-
   # Define that we need to build for ARM, helps with nixops
   nixpkgs.localSystem = {
     system = "aarch64-linux";
