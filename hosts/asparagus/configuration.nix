@@ -45,10 +45,10 @@
     users.kodi.isNormalUser = true;
   };
 
-  environment.systemPackages = with pkgs; [ vim ];
-
   networking.firewall.allowedTCPPorts = [ 8080 ];
   networking.firewall.allowedUDPPorts = [ 8080 ];
+
+  security.sudo.enable = false;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

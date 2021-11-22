@@ -1,7 +1,5 @@
 { config, pkgs, ... }:
 
-
-
 let
   promtop = pkgs.callPackage (import (builtins.fetchTarball "https://github.com/jmbaur/promtop/archive/main.tar.gz")) { };
 in
@@ -19,6 +17,8 @@ in
     system = "aarch64-linux";
     config = "aarch64-unknown-linux-gnu";
   };
+
+  security.sudo.enable = false;
 
   boot = {
     kernelPackages = pkgs.linuxPackages_rpi4;
