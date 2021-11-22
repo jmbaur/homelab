@@ -45,6 +45,7 @@ in
               vim-dadbod
               vim-easy-align
               vim-eunuch
+              vim-fugitive
               vim-lastplace
               vim-nix
               vim-repeat
@@ -54,12 +55,12 @@ in
               zig-vim
             ] ++ [
               (pkgs.vimUtils.buildVimPlugin {
-                name = "vim-fugitive";
-                src = pkgs.fetchFromGitHub {
-                  owner = "tpope";
-                  repo = "vim-fugitive";
-                  rev = "2e4ee0b5d6e61c6b3bc48e844343f89615dfc6e0";
-                  sha256 = "sha256-OqBd/2yiSo58HuJWJsB1nTO1nPz5UTO9LvuyCEfQc0U=";
+                name = "acme.nvim";
+                src = pkgs.fetchFromGitLab {
+                  owner = "__tpb";
+                  repo = "acme.nvim";
+                  rev = "bee75f69289bb82e06263d8f2d403f183cf9c4d4";
+                  sha256 = "sha256-fWpYtQ8gBFjrM4zLtomszkvMAGYyx/PdcRyWVyryKP0=";
                 };
               })
               (pkgs.vimUtils.buildVimPlugin {

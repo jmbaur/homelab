@@ -8,7 +8,6 @@ set hidden
 set ignorecase
 set mouse=a
 set noswapfile
-set notermguicolors
 set nowrap
 set number
 set relativenumber
@@ -48,6 +47,6 @@ let mapleader=','
 filetype plugin indent on
 syntax enable
 
-color jared
+color acme
 
 lua require('init')
