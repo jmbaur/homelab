@@ -1,4 +1,4 @@
-.PHONY: test, switch, iso
+.PHONY: test, switch, iso, deploy, encrypt
 .DEFAULT_GOAL := test
 
 test:
