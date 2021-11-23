@@ -180,6 +180,7 @@ with lib;
     pfetch
     picocom
     pinentry-gnome
+    plan9port
     procs
     pwgen
     renameutils
