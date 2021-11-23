@@ -22,7 +22,7 @@ in
     environment.systemPackages = [ pkgs.foot ];
     environment.etc."xdg/foot/foot.ini".text = ''
       [main]
-      font=Source Code Pro:size=12
+      font=Iosevka:size=10
       term=xterm-256color
       selection-target=both
 

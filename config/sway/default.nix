@@ -64,7 +64,7 @@ in
         gtk-icon-theme-name=Adwaita
         gtk-cursor-theme-name=Adwaita
         gtk-key-theme-name=Emacs
-        gtk-font-name=Source Sans Pro
+        gtk-font-name=Iosevka
       '';
     };
 

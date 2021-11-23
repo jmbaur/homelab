@@ -72,6 +72,7 @@ with lib;
     dina-font
     hack-font
     inconsolata
+    iosevka
     liberation_ttf
     noto-fonts
     noto-fonts-emoji

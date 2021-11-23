@@ -26,7 +26,7 @@ in
       copy_on_select yes
       disable_ligatures always
       enable_audio_bell no
-      font_family Source Code Pro
+      font_family Iosevka
       font_size 14
       term xterm-256color
       update_check_interval 0
