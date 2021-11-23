@@ -5,7 +5,8 @@ local function nnoremap(key, cmd)
                             {noremap = true, silent = true})
 end
 
-nnoremap("<leader>f", "<cmd>Telescope find_files")
+nnoremap("<leader>f",
+         "<cmd>Telescope find_files find_command=rg,--ignore,--hidden,--files")
 nnoremap("<leader>g", "<cmd>Telescope live_grep")
 nnoremap("<leader>b", "<cmd>Telescope buffers")
 nnoremap("<leader>h", "<cmd>Telescope help_tags")
