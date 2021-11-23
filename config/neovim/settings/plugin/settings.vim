@@ -1,4 +1,3 @@
-set background=dark
 set belloff=all
 set clipboard=unnamedplus
 set colorcolumn=80
@@ -23,7 +22,7 @@ if has('gui_running')
         set guioptions=-T
         set guioptions=-m
         set guioptions=-r
-        set guifont=monospace\ 14
+        set guifont=Source\ Code\ Pro\ 14
 endif
 
 inoremap ! !<c-g>u

@@ -69,6 +69,7 @@ with lib;
 
   fonts.fonts = with pkgs; [
     dejavu_fonts
+    dina-font
     hack-font
     inconsolata
     liberation_ttf
@@ -76,6 +77,7 @@ with lib;
     noto-fonts-emoji
     proggyfonts
     source-code-pro
+    source-sans-pro
     spleen
     terminus_font
     tewi-font

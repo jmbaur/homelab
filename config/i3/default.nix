@@ -27,7 +27,7 @@ in
           buildInputs = [ pkgs.makeWrapper ];
           postBuild = ''
             wrapProgram $out/bin/xsecurelock \
-              --set XSECURELOCK_FONT "DejaVu Sans Mono:size=14"
+              --set XSECURELOCK_FONT "Source Sans Pro:size=14"
           '';
         };
       in

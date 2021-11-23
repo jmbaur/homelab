@@ -10,9 +10,9 @@ set $gnome-schema org.gnome.desktop.interface
 exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
 exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
 exec swayidle -w \
-        timeout 300 "swaylock -f -c 1a1a1a" \
+        timeout 300 "swaylock -f -c 444444" \
         timeout 600 "swaymsg \"output * dpms off\"" resume "swaymsg \"output * dpms on\"" \
-        before-sleep "swaylock -f -c 1a1a1a"
+        before-sleep "swaylock -f -c 444444"
 exec wl-paste -t text --watch clipman store
 exec_always pkill kanshi; exec kanshi
 exec_always pkill mako; exec mako
@@ -20,17 +20,17 @@ exec_always {
         gsettings set $gnome-schema gtk-key-theme 'Emacs'
         gsettings set $gnome-schema icon-theme 'Adwaita'
         gsettings set $gnome-schema cursor-theme 'Adwaita'
-        gsettings set $gnome-schema font-name 'Hack'
+        gsettings set $gnome-schema font-name 'Source Sans Pro'
 }
 
 floating_modifier $mod normal
-font pango:Hack 8
+font pango:Source Sans Pro 10
 workspace number 1
 workspace_auto_back_and_forth yes
 
 seat seat0 xcursor_theme Adwaita 16
 
-output * bg "#1a1a1a" solid_color
+output * bg "#444444" solid_color
 
 input "2:7:SynPS/2_Synaptics_TouchPad" {
         dwt enabled
@@ -99,11 +99,11 @@ bindsym $mod+Shift+s sticky toggle
 bindsym $mod+Shift+space floating toggle
 bindsym $mod+a focus parent
 bindsym $mod+b splith
-bindsym $mod+c exec clipman pick --tool=CUSTOM --tool-args='fuzzel -d -w 100 -f Hack' | xargs swaymsg exec --
+bindsym $mod+c exec clipman pick --tool=CUSTOM --tool-args='fuzzel -d -w 100 -f Source Sans Pro' | xargs swaymsg exec --
 bindsym $mod+e layout toggle split
 bindsym $mod+f fullscreen
 bindsym $mod+minus scratchpad show
-bindsym $mod+p exec fuzzel -f Hack -T foot | xargs swaymsg exec --
+bindsym $mod+p exec fuzzel -f Source Sans Pro -T foot | xargs swaymsg exec --
 bindsym $mod+r mode "resize"
 bindsym $mod+s layout stacking
 bindsym $mod+space focus mode_toggle
