@@ -11,11 +11,6 @@ let
 in
 {
   nixpkgs.overlays = [
-    (import
-      (builtins.fetchTarball {
-        url = "https://github.com/nix-community/neovim-nightly-overlay/archive/d93da6ae01cffcaadecc6b1cd119d0f21001bce3.tar.gz";
-        sha256 = "04d51s52nddf1669wdvacvm952f7f3m8dpddx4ndnvp9bvdn0nzs";
-      }))
     (self: super: {
       fdroidcl = super.callPackage ./fdroidcl { };
       git-get = super.callPackage ./git-get { };
@@ -31,5 +26,7 @@ in
       zls = super.callPackage ./zls { inherit zig; };
     })
   ];
+
+
 
 }

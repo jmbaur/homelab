@@ -5,11 +5,12 @@
     nixpkgs.url = github:nixos/nixpkgs/nixos-unstable;
     nixpkgs-stable.url = github:nixos/nixpkgs/nixos-21.05;
     nixos-hardware.url = github:NixOS/nixos-hardware/master;
+    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-stable, nixos-hardware }: {
+  outputs = { self, ... }@inputs: {
 
-    nixosConfigurations.beetroot = with nixos-hardware.nixosModules; nixpkgs.lib.nixosSystem {
+    nixosConfigurations.beetroot = with inputs.nixos-hardware.nixosModules; inputs.nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
         common-pc-ssd
@@ -18,11 +19,12 @@
         common-pc-laptop-acpi_call
         lenovo-thinkpad
         ./hosts/beetroot/configuration.nix
+        { nixpkgs.overlays = [ inputs.neovim-nightly-overlay.overlay ]; }
       ];
     };
 
-    nixopsConfigurations.default = with nixos-hardware.nixosModules; {
-      nixpkgs = nixpkgs-stable;
+    nixopsConfigurations.default = with inputs.nixos-hardware.nixosModules; {
+      nixpkgs = inputs.nixpkgs-stable;
       network = {
         description = "homelab";
         enableRollback = true;
