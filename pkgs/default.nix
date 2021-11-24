@@ -1,6 +1,7 @@
 { config, lib, pkgs, ... }:
 {
   nixpkgs.overlays = [
+
     (import ./chromium.nix)
     (import ./fdroidcl.nix)
     (import ./git-get.nix)
@@ -17,6 +18,23 @@
     })
     (self: super: {
       nix-direnv = super.nix-direnv.override { enableFlakes = true; };
+    })
+
+    (self: super: {
+      bat = super.bat.overrideAttrs (old: {
+        postInstall = ''
+          wrapProgram $out/bin/bat --add-flags "--theme=ansi"
+        '';
+      });
+    })
+
+    (self: super: {
+      gotop = super.gotop.overrideAttrs (old: {
+        nativeBuildInputs = old.nativeBuildInputs ++ [ super.makeWrapper ];
+        postInstall = ''
+          wrapProgram $out/bin/gotop --add-flags "--color=default-dark"
+        '';
+      });
     })
 
     (self: super: {
