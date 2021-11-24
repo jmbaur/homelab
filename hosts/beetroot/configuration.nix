@@ -115,10 +115,6 @@ with lib;
   };
 
   environment.systemPackages = with pkgs; [
-    # TODO(jared): Currently broken:
-    # pass
-    # pass-git-helper
-    # tree
     acpi
     age
     alacritty
@@ -176,6 +172,8 @@ with lib;
     nvme-cli
     p
     pa-switch
+    pass
+    pass-git-helper
     pavucontrol
     pciutils
     pfetch
@@ -202,6 +200,7 @@ with lib;
     tokei
     traceroute
     trash-cli
+    tree
     unzip
     usbutils
     w3m
