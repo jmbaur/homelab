@@ -124,6 +124,7 @@ with lib;
     bc
     bind
     bitwarden
+    buildah
     chromium
     curl
     direnv
@@ -190,6 +191,7 @@ with lib;
     rtorrent
     sd
     signal-desktop
+    skopeo
     sl
     slack
     speedtest-cli
