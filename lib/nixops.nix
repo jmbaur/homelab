@@ -1,7 +1,8 @@
 { lib, ... }:
 with lib;
 {
-  nix.gc.automatic = mkDefault true;
+  imports = [ ./common.nix ];
+  security.sudo.enable = mkDefault false;
   services.openssh.enable = mkDefault true;
   users.extraUsers.root.openssh.authorizedKeys.keys =
     [ "${builtins.readFile ./yubikeySshKey.txt}" ];

@@ -41,9 +41,6 @@ in
     };
   };
 
-  i18n.defaultLocale = "en_US.UTF-8";
-  console = { font = "Lat2-Terminus16"; keyMap = "us"; };
-
   users.mutableUsers = false;
 
   environment.systemPackages = with pkgs; [
@@ -60,8 +57,6 @@ in
   ];
 
   programs.mtr.enable = true;
-
-  security.sudo.enable = false;
 
   services = {
     avahi = { enable = true; reflector = true; ipv4 = true; ipv6 = true; };

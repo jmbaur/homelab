@@ -10,11 +10,8 @@ in
     config = "aarch64-unknown-linux-gnu";
   };
 
-  security.sudo.enable = false;
-
   boot = {
     kernelPackages = pkgs.linuxPackages_rpi4;
-    tmpOnTmpfs = true;
     initrd.availableKernelModules = [ "usbhid" "usb_storage" ];
     kernelParams =
       [ "8250.nr_uarts=1" "console=ttyAMA0,115200" "console=tty1" "cma=128M" ];

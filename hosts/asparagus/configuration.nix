@@ -16,12 +16,6 @@
   networking.interfaces.eth0.useDHCP = true;
   networking.interfaces.wlan0.useDHCP = true;
 
-  i18n.defaultLocale = "en_US.UTF-8";
-  console = {
-    font = "Lat2-Terminus16";
-    useXkbConfig = true;
-  };
-
   services.avahi.enable = true;
   services.avahi.publish.enable = true;
   services.avahi.publish.userServices = true;
@@ -47,8 +41,6 @@
 
   networking.firewall.allowedTCPPorts = [ 8080 ];
   networking.firewall.allowedUDPPorts = [ 8080 ];
-
-  security.sudo.enable = false;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

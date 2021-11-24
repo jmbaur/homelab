@@ -1,9 +1,9 @@
 { config, lib, pkgs, ... }:
 with lib;
-
 {
   imports = [
     ../../config
+    ../../lib/common.nix
     ../../pkgs
     ./hardware-configuration.nix
   ];
@@ -23,19 +23,11 @@ with lib;
   ];
   boot = {
     binfmt.emulatedSystems = [ "aarch64-linux" ]; # allow building for RPI4
-    cleanTmpDir = true;
     extraModulePackages = with config.boot.kernelPackages; [ v4l2loopback ];
     initrd.luks.devices.cryptlvm = { allowDiscards = true; preLVM = true; device = "/dev/disk/by-uuid/951caec2-ca49-4e30-bfbf-0d53e12ee5ca"; };
     kernelPackages = pkgs.linuxPackages_5_14;
     kernelParams = [ "amdgpu.backlight=0" "acpi_backlight=none" ];
     loader = { systemd-boot.enable = true; efi.canTouchEfiVariables = true; };
-    tmpOnTmpfs = true;
-  };
-
-  i18n.defaultLocale = "en_US.UTF-8";
-  console = {
-    font = "ter-x24b";
-    useXkbConfig = mkIf config.services.xserver.enable true;
   };
 
   security.tpm2.enable = true;
@@ -50,9 +42,7 @@ with lib;
   networking.networkmanager.enable = true;
   time.timeZone = "America/Los_Angeles";
 
-  environment.binsh = "${pkgs.dash}/bin/dash";
   environment.variables = { NNN_TRASH = "1"; };
-
 
   nixpkgs.config.allowUnfree = true;
 
@@ -80,7 +70,6 @@ with lib;
     source-code-pro
     source-sans-pro
     spleen
-    terminus_font
     tewi-font
   ];
 
@@ -115,22 +104,15 @@ with lib;
   };
 
   environment.systemPackages = with pkgs; [
-    acpi
     age
     alacritty
-    atop
     awscli2
     bat
-    bc
-    bind
     bitwarden
     buildah
     chromium
-    curl
     direnv
     discord
-    dmidecode
-    dnsutils
     drawio
     dust
     element-desktop-wayland
@@ -139,7 +121,6 @@ with lib;
     fdroidcl
     ffmpeg
     ffmpeg-full
-    file
     firefox-wayland
     fzf
     geteltorito
@@ -153,16 +134,11 @@ with lib;
     grex
     gron
     htmlq
-    htop
     imv
-    iperf3
-    iputils
     jq
     keybase
-    killall
     libreoffice
     librespeed-cli
-    lm_sensors
     mob
     mosh
     mpv
@@ -170,7 +146,6 @@ with lib;
     nix-tree
     nixopsUnstable
     nixos-generators
-    nmap
     nnn
     nushell
     nvme-cli
@@ -179,12 +154,9 @@ with lib;
     pass
     pass-git-helper
     pavucontrol
-    pciutils
-    pfetch
     picocom
     pinentry-gnome
     plan9port
-    procs
     pwgen
     renameutils
     ripgrep
@@ -205,22 +177,13 @@ with lib;
     tealdeer
     thunderbird-wayland
     tig
-    tmux
     tokei
-    traceroute
     trash-cli
-    tree
     unzip
     usbutils
-    w3m
-    wget
     wireshark
-    xclip
-    xclip
-    xcolor
     xdg-user-dirs
     xdg-utils
-    xsel
     xsv
     ydiff
     yq
