@@ -2,10 +2,10 @@
   description = "NixOS configurations for homelab";
 
   inputs = {
-    nixpkgs.url = github:nixos/nixpkgs/nixos-unstable;
-    nixpkgs-stable.url = github:nixos/nixpkgs/nixos-21.05;
-    nixos-hardware.url = github:NixOS/nixos-hardware/master;
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+    nixos-hardware.url = github:NixOS/nixos-hardware/master;
+    nixpkgs-stable.url = github:nixos/nixpkgs/nixos-21.05;
+    nixpkgs.url = github:nixos/nixpkgs/nixos-unstable;
   };
 
   outputs = { self, ... }@inputs: {
