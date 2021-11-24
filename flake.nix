@@ -3,14 +3,14 @@
 
   inputs = {
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
-    nixos-hardware.url = github:NixOS/nixos-hardware/master;
-    nixpkgs-stable.url = github:nixos/nixpkgs/nixos-21.05;
-    nixpkgs.url = github:nixos/nixpkgs/nixos-unstable;
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    nixpkgs-stable.url = "nixpkgs/nixos-21.05";
+    nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
   };
 
   outputs = { self, ... }@inputs: {
 
-    nixosConfigurations.beetroot = with inputs.nixos-hardware.nixosModules; inputs.nixpkgs.lib.nixosSystem {
+    nixosConfigurations.beetroot = with inputs.nixos-hardware.nixosModules; inputs.nixpkgs-unstable.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
         common-pc-ssd
