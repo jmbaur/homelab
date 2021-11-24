@@ -1,5 +1,8 @@
-.PHONY: test, switch, iso, deploy, encrypt
-.DEFAULT_GOAL := test
+.PHONY: build, test, switch, iso, deploy, encrypt
+.DEFAULT_GOAL := build
+
+build:
+	nixos-rebuild --flake '.#' build
 
 test:
 	nixos-rebuild --flake '.#' test

@@ -6,10 +6,12 @@ let
   };
 in
 {
-  i3status-rust = super.i3status-rust.overrideAttrs (old: {
-    postInstall = ''
-      wrapProgram $out/bin/i3status-rs \
-        --add-flags "${config-file}"
+  i3status-rust = super.symlinkJoin {
+    name = "i3status-rust";
+    paths = [ super.i3status-rust ];
+    buildInputs = [ super.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/i3status-rs --add-flags "${config-file}"
     '';
-  });
+  };
 }
