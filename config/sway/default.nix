@@ -39,9 +39,9 @@ in
         fuzzel
         glib
         grim
-        i3status-rust-wrapped
-        kanshi-wrapped
-        mako-wrapped
+        i3status-rust
+        kanshi
+        mako
         pulseaudio
         slurp
         swayidle

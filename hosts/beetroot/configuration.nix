@@ -124,6 +124,7 @@ with lib;
     bc
     bind
     bitwarden
+    chromium
     curl
     direnv
     discord
@@ -131,12 +132,14 @@ with lib;
     dnsutils
     drawio
     dust
+    element-desktop-wayland
     exa
     fd
     fdroidcl
     ffmpeg
     ffmpeg-full
     file
+    firefox-wayland
     fzf
     geteltorito
     gh
@@ -188,13 +191,17 @@ with lib;
     sd
     signal-desktop
     sl
+    slack
     speedtest-cli
     spotify
+    start-recording
+    stop-recording
     stow
     tailscale
     tcpdump
     tea
     tealdeer
+    thunderbird-wayland
     tig
     tmux
     tokei
@@ -220,54 +227,7 @@ with lib;
     zip
     zoom-us
     zoxide
-  ] ++ (
-    if config.custom.sway.enable then
-      let
-        start-recording = writeShellScriptBin "start-recording" ''
-          LABEL="WfRecorder"
-          sudo modprobe v4l2loopback exclusive_caps=1 card_label=$LABEL
-          DEVICE=$(${pkgs.v4l-utils}/bin/v4l2-ctl --list-devices | grep $LABEL -A1 | tail -n1 | sed 's/\s//')
-          ${pkgs.wf-recorder}/bin/wf-recorder --muxer=v4l2 --codec=rawvideo --file=$DEVICE -x yuv420p
-        '';
-        stop-recording = writeShellScriptBin "stop-recording" ''
-          sudo modprobe --remove v4l2loopback
-        '';
-        chromium-wayland = (chromium.override
-          {
-            commandLineArgs = [ "--enable-features=UseOzonePlatform" "--ozone-platform=wayland" ];
-          });
-        obs-studio-wayland = (wrapOBS { plugins = with obs-studio-plugins; [ wlrobs ]; });
-        slack-wayland = (symlinkJoin {
-          name = "slack";
-          paths = [ pkgs.slack ];
-          buildInputs = [ pkgs.makeWrapper ];
-          postBuild = ''
-            wrapProgram $out/bin/slack \
-              --add-flags "--ozone-platform=wayland" \
-              --add-flags "--enable-features=WebRTCPipeWireCapturer" \
-              --add-flags "--enable-features=UseOzonePlatform"
-          '';
-        });
-      in
-      [
-        chromium-wayland
-        obs-studio-wayland
-        pkgs.element-desktop-wayland
-        pkgs.firefox-wayland
-        pkgs.thunderbird-wayland
-        slack-wayland
-        start-recording
-        stop-recording
-      ] else
-      with pkgs; [
-        chromium
-        element-desktop
-        firefox
-        obs-studio
-        slack
-        thunderbird
-      ]
-  );
+  ];
 
   environment.variables.HISTCONTROL = "ignoredups";
   programs.bash = {

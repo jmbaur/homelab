@@ -1,18 +1,15 @@
-{ pkgs ? import <nixpkgs> { } }:
-with pkgs;
-
+self: super:
 let
-  config-file = writeTextFile {
+  config-file = super.writeTextFile {
     name = "i3status-rs-config";
     text = builtins.readFile ./config.toml;
   };
 in
-symlinkJoin {
-  name = "i3status-rust";
-  paths = [ i3status-rust ];
-  buildInputs = [ makeWrapper ];
-  postBuild = ''
-    wrapProgram $out/bin/i3status-rs \
-      --add-flags "${config-file}"
-  '';
+{
+  i3status-rust = super.i3status-rust.overrideAttrs (old: {
+    postInstall = ''
+      wrapProgram $out/bin/i3status-rs \
+        --add-flags "${config-file}"
+    '';
+  });
 }
