@@ -10,11 +10,11 @@ with lib;
 
   i18n.defaultLocale = "en_US.UTF-8";
   console = {
+    earlySetup = true;
     font = "ter-v24n";
-    useXkbConfig = mkIf config.services.xserver.enable true;
+    keyMap = "us";
+    packages = [ pkgs.terminus_font ];
   };
-
-  fonts.fonts = [ pkgs.terminus_font ];
 
   environment.binsh = "${pkgs.dash}/bin/dash";
   environment.systemPackages = with pkgs; [
