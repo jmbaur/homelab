@@ -251,7 +251,7 @@ with lib;
     description = "Jared Baur";
     extraGroups = [ "adbusers" "networkmanager" "wheel" "wireshark" ];
     isNormalUser = true;
-    shell = pkgs.bash;
+    shell = pkgs.zsh;
   };
   security.sudo.wheelNeedsPassword = false;
 

@@ -4,11 +4,11 @@
   inputs = {
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-    nixpkgs-stable.url = "nixpkgs/nixos-21.05";
+    nixpkgs.url = "nixpkgs/nixos-21.05";
     nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
   };
 
-  outputs = { self, ... }@inputs: {
+  outputs = { self, ... }@inputs: rec {
 
     nixosConfigurations.beetroot = with inputs.nixos-hardware.nixosModules; inputs.nixpkgs-unstable.lib.nixosSystem {
       system = "x86_64-linux";
@@ -24,7 +24,7 @@
     };
 
     nixopsConfigurations.default = with inputs.nixos-hardware.nixosModules; {
-      nixpkgs = inputs.nixpkgs-stable;
+      nixpkgs = inputs.nixpkgs;
       network = {
         description = "homelab";
         enableRollback = true;
@@ -59,5 +59,4 @@
     };
 
   };
-
 }
