@@ -6,15 +6,7 @@ let
 in
 {
   options = {
-    custom.git = {
-      enable = mkOption {
-        type = types.bool;
-        default = false;
-        description = ''
-          Enable custom git settings.
-        '';
-      };
-    };
+    custom.git.enable = mkEnableOption "Custom git setup";
   };
   config = mkIf cfg.enable {
     environment.systemPackages = [ pkgs.git ];

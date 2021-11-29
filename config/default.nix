@@ -2,7 +2,6 @@
 {
   imports = [
     ./ddcci
-    ./foot
     ./git
     ./i3
     ./gnome

@@ -10,12 +10,7 @@ in
 {
 
   options = {
-    custom.i3 = {
-      enable = mkOption {
-        type = types.bool;
-        default = false;
-      };
-    };
+    custom.i3.enable = mkEnableOption "custom i3 setup";
   };
 
   config = mkIf cfg.enable {

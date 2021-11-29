@@ -7,15 +7,7 @@ let
 in
 {
   options = {
-    custom.neovim = {
-      enable = mkOption {
-        type = types.bool;
-        default = false;
-        description = ''
-          Enable custom neovim setup.
-        '';
-      };
-    };
+    custom.neovim.enable = mkEnableOption "Custom neovim setup";
   };
 
   config = mkIf cfg.enable {

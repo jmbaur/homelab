@@ -6,15 +6,10 @@ in
 {
 
   options = {
-    custom.pipewire = {
-      enable = mkOption {
-        type = types.bool;
-        default = false;
-      };
-      bluetooth = mkOption {
-        type = types.bool;
-        default = true;
-      };
+    custom.pipewire.enable = mkEnableOption "Pipewire setup";
+    custom.pipewire.bluetooth = mkOption {
+      type = types.bool;
+      default = true;
     };
   };
 
@@ -27,7 +22,7 @@ in
       alsa.enable = true;
       alsa.support32Bit = true;
       pulse.enable = true;
-      media-session.config.bluez-monitor.rules = [
+      media-session.config.bluez-monitor.rules = mkIf cfg.bluetooth [
         {
           # Matches all cards
           matches = [{ "device.name" = "~bluez_card.*"; }];
