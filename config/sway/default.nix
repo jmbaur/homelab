@@ -33,14 +33,17 @@ in
         export _JAVA_AWT_WM_NONREPARENTING=1
       '';
       extraPackages = with pkgs; [
+        alacritty
         bemenu
         brightnessctl
         clipman
+        foot
         fuzzel
         glib
         grim
         i3status-rust
         kanshi
+        kitty
         mako
         pulseaudio
         slurp
@@ -89,7 +92,6 @@ in
     };
 
     custom.pipewire.enable = mkDefault true;
-    custom.foot.enable = mkDefault true;
 
     xdg.portal = {
       enable = true;

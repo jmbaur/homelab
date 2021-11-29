@@ -1,26 +1,9 @@
-{ config, lib, pkgs, ... }:
-with lib;
+self: super:
+
 let
-  cfg = config.custom.foot;
-  foot = builtins.fetchGit {
-    url = "https://codeberg.org/dnkl/foot";
-    rev = "9a04c741a094b97f4502d4c098fca8c19cb3647b";
-  };
-in
-{
-
-  options = {
-    custom.foot = {
-      enable = mkOption {
-        type = types.bool;
-        default = false;
-      };
-    };
-  };
-
-  config = mkIf cfg.enable {
-    environment.systemPackages = [ pkgs.foot ];
-    environment.etc."xdg/foot/foot.ini".text = ''
+  foot-config = super.writeTextFile {
+    name = "foot-config.ini";
+    text = ''
       [main]
       font=Iosevka:size=10
       term=xterm-256color
@@ -53,5 +36,16 @@ in
       bright7=ffffeb
     '';
   };
+in
+{
+  foot = super.foot.overrideAttrs (old: {
+    buildInputs = old.buildInputs ++ [ super.makeWrapper ];
+    postInstall = ''
+      ${old.postInstall}
+      wrapProgram $out/bin/foot \
+        --add-flags "--config=${foot-config}"
+    '';
+  });
+
 
 }

@@ -4,6 +4,7 @@
 
     (import ./chromium.nix)
     (import ./fdroidcl.nix)
+    (import ./foot.nix)
     (import ./git-get.nix)
     (import ./gosee.nix)
     (import ./i3status-rust)

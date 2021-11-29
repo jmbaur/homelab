@@ -2,7 +2,6 @@
   description = "NixOS configurations for homelab";
 
   inputs = {
-    flake-utils.url = "github:numtide/flake-utils";
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
@@ -12,14 +11,12 @@
   outputs =
     { self
     , nixpkgs
-    , flake-utils
     , nixos-hardware
     , nixpkgs-unstable
     , neovim-nightly-overlay
-    }:
-    flake-utils.lib.eachSystem [ "x86_64-linux" ] (system: {
+    }: rec {
       nixosConfigurations.beetroot = with nixos-hardware.nixosModules; nixpkgs-unstable.lib.nixosSystem {
-        inherit system;
+        system = "x86_64-linux";
         modules = [
           common-pc-ssd
           common-cpu-amd
@@ -65,17 +62,5 @@
           ];
         };
       };
-
-      devShell =
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-        in
-        pkgs.mkShell {
-          buildInputs = with pkgs; [
-            git
-            gnumake
-          ];
-        };
-    });
-
+    };
 }
