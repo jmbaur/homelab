@@ -56,8 +56,6 @@ in
     vim
   ];
 
-  programs.mtr.enable = true;
-
   services = {
     avahi = { enable = true; reflector = true; ipv4 = true; ipv6 = true; };
     openssh = with config.networking.interfaces; {

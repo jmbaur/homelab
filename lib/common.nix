@@ -16,6 +16,9 @@ with lib;
     packages = [ pkgs.terminus_font ];
   };
 
+  programs.mtr.enable = true;
+  programs.traceroute.enable = true;
+
   environment.binsh = "${pkgs.dash}/bin/dash";
   environment.systemPackages = with pkgs; [
     acpi

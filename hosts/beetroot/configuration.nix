@@ -84,7 +84,6 @@ with lib;
 
   programs.wireshark.enable = true;
   programs.adb.enable = true;
-  programs.mtr.enable = true;
 
   services.fwupd.enable = true;
   services.printing.enable = true;
