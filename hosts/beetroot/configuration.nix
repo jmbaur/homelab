@@ -50,7 +50,6 @@ with lib;
     git.enable = true;
     i3.enable = false;
     sway.enable = true;
-    kitty.enable = true;
     neovim.enable = true;
     pipewire.enable = true;
     tmux.enable = true;

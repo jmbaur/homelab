@@ -24,6 +24,7 @@ in
           in
           {
             start = [
+              gruvbox-nvim
               lsp-colors-nvim
               nvim-autopairs
               nvim-lspconfig

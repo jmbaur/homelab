@@ -9,6 +9,7 @@
     (import ./gosee.nix)
     (import ./i3status-rust)
     (import ./kanshi.nix)
+    (import ./kitty.nix)
     (import ./mako.nix)
     (import ./slack.nix)
     (import ./zig.nix)
@@ -24,7 +25,7 @@
     (self: super: {
       bat = super.bat.overrideAttrs (old: {
         postInstall = ''
-          wrapProgram $out/bin/bat --add-flags "--theme=ansi"
+          wrapProgram $out/bin/bat --add-flags "--theme=gruvbox-dark"
         '';
       });
     })

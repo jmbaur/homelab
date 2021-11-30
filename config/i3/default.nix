@@ -46,11 +46,10 @@ in
         "dunst/dunstrc".source = ./dunstrc;
         "xdg/gtk-3.0/settings.ini".text = ''
           [Settings]
-          gtk-application-prefer-dark-theme=1
           gtk-cursor-theme-name=${cursorTheme}
           gtk-cursor-theme-size=${cursorSize}
           gtk-key-theme-name=Emacs
-          gtk-theme-name=Adwaita
+          gtk-theme-name=Adwaita-dark
         '';
       };
       variables = {

@@ -4,6 +4,7 @@ let
     {
       name = "mako-config";
       text = ''
+        font=Iosevka 10
         icon-path=${super.gnome.adwaita-icon-theme}/share/icons/Adwaita
         default-timeout=15000
       '';

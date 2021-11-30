@@ -62,8 +62,7 @@ in
       "sway/config".source = ./config;
       "xdg/gtk-3.0/settings.ini".text = ''
         [Settings]
-        gtk-application-prefer-dark-theme=0
-        gtk-theme-name=Adwaita
+        gtk-theme-name=Adwaita-dark
         gtk-icon-theme-name=Adwaita
         gtk-cursor-theme-name=Adwaita
         gtk-key-theme-name=Emacs

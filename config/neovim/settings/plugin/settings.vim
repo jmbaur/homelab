@@ -1,11 +1,11 @@
 set belloff=all
 set clipboard=unnamedplus
 set colorcolumn=80
-set nocursorline
 set expandtab
 set hidden
 set ignorecase
 set mouse=a
+set nocursorline
 set noswapfile
 set nowrap
 set number
@@ -15,6 +15,7 @@ set smartcase
 set splitbelow
 set splitright
 set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
+set termguicolors
 set undofile
 
 if has('gui_running')
@@ -46,6 +47,6 @@ let mapleader=','
 filetype plugin indent on
 syntax enable
 
-color acme
+color gruvbox
 
 lua require('init')

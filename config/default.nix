@@ -5,7 +5,6 @@
     ./git
     ./i3
     ./gnome
-    ./kitty
     ./neovim
     ./pipewire
     ./sway
