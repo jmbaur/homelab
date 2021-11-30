@@ -59,7 +59,10 @@ in
     };
 
     environment.etc = {
-      "sway/config".source = ./config;
+      "sway/config".text = ''
+        ${builtins.readFile ./config}
+        output * bg ${pkgs.nixos-artwork.wallpapers.nineish-dark-gray.gnomeFilePath} fill "#444444"
+      '';
       "xdg/gtk-3.0/settings.ini".text = ''
         [Settings]
         gtk-application-prefer-dark-theme=1

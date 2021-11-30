@@ -10,9 +10,9 @@ set $gnome-schema org.gnome.desktop.interface
 include /etc/sway/config.d/*
 
 exec swayidle -w \
-        timeout 300 "swaylock -f -c 444444" \
+        timeout 300 "swaylock -f -c 222222" \
         timeout 600 "swaymsg \"output * dpms off\"" resume "swaymsg \"output * dpms on\"" \
-        before-sleep "swaylock -f -c 444444"
+        before-sleep "swaylock -f -c 222222"
 exec wl-paste -t text --watch clipman store
 exec_always pkill kanshi; exec kanshi
 exec_always pkill mako; exec mako
@@ -29,8 +29,6 @@ workspace number 1
 workspace_auto_back_and_forth yes
 
 seat seat0 xcursor_theme Adwaita 16
-
-output * bg "#444444" solid_color
 
 input "2:7:SynPS/2_Synaptics_TouchPad" {
         dwt enabled
