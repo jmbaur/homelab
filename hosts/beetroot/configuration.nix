@@ -48,7 +48,6 @@ with lib;
 
   custom = {
     git.enable = true;
-    i3.enable = false;
     sway.enable = true;
     neovim.enable = true;
     pipewire.enable = true;
