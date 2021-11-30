@@ -6,3 +6,4 @@
 
 1. Provide public SSH key for remote access.
 1. Enable console to serial port for physical access.
+1. Provide install script.
