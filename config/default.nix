@@ -7,7 +7,6 @@
     ./pipewire
     ./sway
     ./tmux
-    ./vscode
   ];
 }
 

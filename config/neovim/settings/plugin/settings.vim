@@ -2,6 +2,7 @@ set belloff=all
 set clipboard=unnamedplus
 set colorcolumn=80
 set expandtab
+set guifont=Iosevka:h14
 set hidden
 set ignorecase
 set mouse=a
@@ -17,14 +18,6 @@ set splitright
 set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
 set termguicolors
 set undofile
-
-if has('gui_running')
-        set guioptions=-L
-        set guioptions=-T
-        set guioptions=-m
-        set guioptions=-r
-        set guifont=Source\ Code\ Pro\ 14
-endif
 
 inoremap ! !<c-g>u
 inoremap , ,<c-g>u

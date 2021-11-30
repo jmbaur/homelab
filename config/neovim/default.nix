@@ -75,6 +75,7 @@ in
       goimports
       gopls
       luaformatter
+      neovide
       nixpkgs-fmt
       nodePackages.prettier
       nodePackages.typescript-language-server

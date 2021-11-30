@@ -7,8 +7,8 @@ set $term foot
 set $up k
 set $gnome-schema org.gnome.desktop.interface
 
-exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
-exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
+include /etc/sway/config.d/*
+
 exec swayidle -w \
         timeout 300 "swaylock -f -c 444444" \
         timeout 600 "swaymsg \"output * dpms off\"" resume "swaymsg \"output * dpms on\"" \

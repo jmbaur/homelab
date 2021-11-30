@@ -52,7 +52,6 @@ with lib;
     neovim.enable = true;
     pipewire.enable = true;
     tmux.enable = true;
-    vscode.enable = false;
   };
 
   fonts.fonts = with pkgs; [
@@ -179,6 +178,7 @@ with lib;
     trash-cli
     unzip
     usbutils
+    vscode-with-extensions
     wireshark
     xdg-user-dirs
     xdg-utils
