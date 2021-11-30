@@ -146,6 +146,7 @@ with lib;
     nnn
     nushell
     nvme-cli
+    openssl
     p
     pa-switch
     pass

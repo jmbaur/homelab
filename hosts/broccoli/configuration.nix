@@ -41,7 +41,14 @@ in
     };
   };
 
-  users.mutableUsers = false;
+  users = {
+    mutableUsers = false;
+    users.mgmt-user = {
+      isNormalUser = true;
+      passwordFile = "/run/keys/mgmt-user";
+      openssh.authorizedKeys.keys = [ (builtins.readFile ../../lib/yubikeySshKey.txt) ];
+    };
+  };
 
   environment.systemPackages = with pkgs; [
     conntrack-tools
