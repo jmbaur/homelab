@@ -204,6 +204,25 @@ with lib;
       eval "$(${pkgs.direnv}/bin/direnv hook bash)"
     '';
   };
+
+  programs.zsh = {
+    enable = true;
+    syntaxHighlighting.enable = false;
+    shellAliases = { grep = "grep --color=auto"; };
+    promptInit = ''
+      PS1="%F{cyan}%n@%m%f:%F{green}%c%f %% "
+    '';
+    # Prevent zsh-newuser-install from showing
+    shellInit = ''
+      zsh-newuser-install() { :; }
+      bindkey -e
+      bindkey \^U backward-kill-line
+    '';
+    interactiveShellInit = ''
+      eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
+    '';
+  };
+
   system.userActivationScripts.nix-direnv.text =
     let
       direnvrc = pkgs.writeTextFile {
@@ -217,23 +236,6 @@ with lib;
       ln -sf ${direnvrc} ''${HOME}/.direnvrc
     '';
 
-  programs.zsh = {
-    enable = true;
-    syntaxHighlighting.enable = false;
-    promptInit = ''
-      PS1="%F{cyan}%n@%m%f:%F{green}%c%f %% "
-    '';
-    # Prevent zsh-newuser-install from showing
-    shellInit = ''
-      export DISABLE_AUTO_TITLE=true
-      zsh-newuser-install() { :; }
-      bindkey -e
-      bindkey \^U backward-kill-line
-    '';
-    interactiveShellInit = ''
-      eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
-    '';
-  };
 
   # Yubikey GPG and SSH support
   services.udev.packages = [ pkgs.yubikey-personalization ];

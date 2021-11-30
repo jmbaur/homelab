@@ -78,6 +78,7 @@ in
       neovide
       nixpkgs-fmt
       nodePackages.prettier
+      nodePackages.typescript
       nodePackages.typescript-language-server
       nodejs
       pyright
