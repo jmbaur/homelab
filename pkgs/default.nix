@@ -1,7 +1,8 @@
-{ config, lib, pkgs, ... }:
+{ pkgs, ... }:
 {
   nixpkgs.overlays = [
 
+    (import ./alacritty.nix)
     (import ./chromium.nix)
     (import ./fdroidcl.nix)
     (import ./foot.nix)

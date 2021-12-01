@@ -101,7 +101,6 @@ with lib;
 
   environment.systemPackages = with pkgs; [
     age
-    alacritty
     awscli2
     bat
     bitwarden
