@@ -197,17 +197,15 @@ in
     };
   };
 
-  system.activationScripts = {
-    dynamic-hosts-file.text = ''
-      if [ ! -f ${dynamic-hosts-file} ]
-      then
-        # Always ensures there is at minimum 1 line in the file so that the
-        # script that updates this file can just do `sed -i "1i ..." ...`.
-        echo > ${dynamic-hosts-file}
-        chown dhcpd:nogroup ${dynamic-hosts-file}
-      fi
-    '';
-  };
+  system.activationScripts.dynamic-hosts-file.text = ''
+    if [ ! -f ${dynamic-hosts-file} ]
+    then
+      # Always ensures there is at minimum 1 line in the file so that the
+      # script that updates this file can just do `sed -i "1i ..." ...`.
+      echo > ${dynamic-hosts-file}
+      chown dhcpd:nogroup ${dynamic-hosts-file}
+    fi
+  '';
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

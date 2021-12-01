@@ -9,12 +9,17 @@
   networking.wireless = {
     enable = true;
     interfaces = [ "wlan0" ];
-    environmentFile = "/run/keys/wireless";
+    environmentFile = "/var/persist/wireless";
     networks.Silence_of_the_LANs = {
       pskRaw = "@PSK_RAW@";
       authProtocols = [ "WPA-PSK" ];
     };
   };
+
+  system.activationScripts.wireless.text = ''
+    mkdir -p /var/persist
+    cp /run/keys/wireless /var/persist/wireless
+  '';
 
   time.timeZone = "America/Los_Angeles";
 

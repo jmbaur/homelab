@@ -25,7 +25,7 @@ with lib;
     binfmt.emulatedSystems = [ "aarch64-linux" ]; # allow building for RPI4
     extraModulePackages = with config.boot.kernelPackages; [ v4l2loopback ];
     initrd.luks.devices.cryptlvm = { allowDiscards = true; preLVM = true; device = "/dev/disk/by-uuid/951caec2-ca49-4e30-bfbf-0d53e12ee5ca"; };
-    kernelPackages = pkgs.linuxPackages_5_14;
+    kernelPackages = pkgs.linuxPackages_5_15;
     kernelParams = [ "amdgpu.backlight=0" "acpi_backlight=none" ];
     loader = { systemd-boot.enable = true; efi.canTouchEfiVariables = true; };
   };
