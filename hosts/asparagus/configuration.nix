@@ -9,6 +9,8 @@
   networking.wireless = {
     enable = true;
     interfaces = [ "wlan0" ];
+    environmentFile = "/run/keys/wireless";
+    networks.Silence_of_the_LANs.pskRaw = "@PSKRAW@";
   };
 
   time.timeZone = "America/Los_Angeles";

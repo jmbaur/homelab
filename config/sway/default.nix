@@ -58,21 +58,29 @@ in
       ];
     };
 
-    environment.etc = {
-      "sway/config".text = ''
-        ${builtins.readFile ./config}
-        output * bg ${pkgs.nixos-artwork.wallpapers.nineish-dark-gray.gnomeFilePath} fill "#444444"
-      '';
-      "xdg/gtk-3.0/settings.ini".text = ''
-        [Settings]
-        gtk-application-prefer-dark-theme=1
-        gtk-theme-name=Adwaita
-        gtk-icon-theme-name=Adwaita
-        gtk-cursor-theme-name=Adwaita
-        gtk-key-theme-name=Emacs
-        gtk-font-name=Iosevka
-      '';
-    };
+    environment.etc =
+      let
+        wallpaper = pkgs.nixos-artwork.wallpapers.nineish-dark-gray.gnomeFilePath;
+      in
+      {
+        "sway/config".text = ''
+          ${builtins.readFile ./config}
+          exec swayidle -w \
+                  timeout 300 "swaylock -f -i ${wallpaper}" \
+                  timeout 600 "swaymsg \"output * dpms off\"" resume "swaymsg \"output * dpms on\"" \
+                  before-sleep "swaylock -f -i ${wallpaper}"
+          output * bg ${wallpaper} fill
+        '';
+        "xdg/gtk-3.0/settings.ini".text = ''
+          [Settings]
+          gtk-application-prefer-dark-theme=1
+          gtk-theme-name=Adwaita
+          gtk-icon-theme-name=Adwaita
+          gtk-cursor-theme-name=Adwaita
+          gtk-key-theme-name=Emacs
+          gtk-font-name=Iosevka
+        '';
+      };
 
     location.provider = "geoclue2";
     services.redshift.enable = true;

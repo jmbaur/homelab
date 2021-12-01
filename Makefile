@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := build
-.PHONY: build test switch iso deploy encrypt
+.PHONY: build test switch deploy encrypt
 
 build:
 	nixos-rebuild --flake '.#' build
@@ -9,9 +9,6 @@ test:
 
 switch:
 	nixos-rebuild --flake '.#' switch
-
-iso:
-	nix-build '<nixpkgs/nixos>' -A config.system.build.isoImage -I nixos-config=iso/iso.nix
 
 deploy:
 	nixops deploy

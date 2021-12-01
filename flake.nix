@@ -4,18 +4,18 @@
   inputs = {
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-    nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
-    nixpkgs.url = "nixpkgs/nixos-21.05";
+    nixpkgs-stable-small.url = "nixpkgs/nixos-21.11-small";
+    nixpkgs.url = "nixpkgs/nixos-unstable";
   };
 
   outputs =
     { self
-    , nixpkgs
-    , nixos-hardware
-    , nixpkgs-unstable
     , neovim-nightly-overlay
+    , nixos-hardware
+    , nixpkgs-stable-small
+    , nixpkgs
     }: rec {
-      nixosConfigurations.beetroot = with nixos-hardware.nixosModules; nixpkgs-unstable.lib.nixosSystem {
+      nixosConfigurations.beetroot = with nixos-hardware.nixosModules; nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
           common-pc-ssd
@@ -23,17 +23,17 @@
           common-gpu-amd
           common-pc-laptop-acpi_call
           lenovo-thinkpad
-          ./hosts/beetroot/configuration.nix
           { nixpkgs.overlays = [ neovim-nightly-overlay.overlay ]; }
+          ./hosts/beetroot/configuration.nix
         ];
       };
 
       nixopsConfigurations.default = with nixos-hardware.nixosModules; {
-        inherit nixpkgs;
+        nixpkgs = nixpkgs-stable-small;
         network = {
           description = "homelab";
           enableRollback = true;
-          storage.legacy.databasefile = "~/.nixops/deployments.nixops";
+          storage.legacy = { };
         };
         broccoli = { config, pkgs, ... }: {
           deployment.targetHost = "broccoli.home.arpa.";
