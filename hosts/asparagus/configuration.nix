@@ -10,7 +10,10 @@
     enable = true;
     interfaces = [ "wlan0" ];
     environmentFile = "/run/keys/wireless";
-    networks.Silence_of_the_LANs.pskRaw = "@PSKRAW@";
+    networks.Silence_of_the_LANs = {
+      pskRaw = "@PSK_RAW@";
+      authProtocols = [ "WPA-PSK" ];
+    };
   };
 
   time.timeZone = "America/Los_Angeles";
