@@ -43,6 +43,7 @@ with lib;
     tmux
     traceroute
     tree
+    usbutils
     vim
     w3m
     wget

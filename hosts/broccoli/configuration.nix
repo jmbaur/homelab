@@ -63,8 +63,72 @@ in
     vim
   ];
 
+  hardware.printers =
+    let
+      default = "KodakESP5200+0822";
+    in
+    {
+      ensureDefaultPrinter = default;
+      ensurePrinters = [{
+        name = default;
+        location = "Office";
+        model = "drv:///KodakESP_16.drv/Kodak_ESP_52xx_Series.ppd"; # lpinfo -m
+        deviceUri = "dnssd://KodakESP5200+0822._pdl-datastream._tcp.local/"; # lpinfo -v
+      }];
+    };
+
   services = {
-    avahi = { enable = true; reflector = true; ipv4 = true; ipv6 = true; };
+    printing = with config.networking.interfaces; {
+      enable = true;
+      browsing = true;
+      defaultShared = true;
+      logLevel = "debug";
+      listenAddresses =
+        (builtins.map (ifi: ifi.address + ":631") eno2.ipv4.addresses) ++
+        (builtins.map (ifi: "[" + ifi.address + "]:631") eno2.ipv6.addresses);
+      allowFrom = [ "all" ];
+      drivers = [
+        (stdenv.mkDerivation rec {
+          name = "c2esp";
+          version = "27";
+          nativeBuildInputs = with pkgs; [ cups cups-filters jbigkit zlib ];
+          src = fetchurl {
+            url = "mirror://sourceforge/cupsdriverkodak/${name}-${version}.tar.gz";
+            sha256 = "sha256-8JX5y7U5zUi3XOxv4vhEugy4hmzl5DGK1MpboCJDltQ=";
+          };
+          # prevent ppdc not finding <font.defs>
+          CUPS_DATADIR = "${pkgs.cups}/share/cups";
+          preConfigure = ''
+            configureFlags="--with-cupsfilterdir=$out/lib/cups/filter"
+          '';
+          NIX_CFLAGS_COMPILE = [ "-include stdio.h" ];
+          installPhase = ''
+            mkdir -p $out/lib/cups/filter $out/lib/cups/ppd $out/share/cups/drv
+
+            substituteInPlace src/KodakESP_16.drv \
+              --replace "/usr" "$out"
+            substituteInPlace src/KodakESP_16.drv \
+              --replace "/usr" "$out"
+
+            cp ppd/*.ppd $out/lib/cups/ppd/
+            cp src/*.drv $out/share/cups/drv/
+            cp src/c2esp $out/lib/cups/filter/c2esp
+            cp src/c2espC $out/lib/cups/filter/c2espC
+            cp src/command2esp $out/lib/cups/filter/command2esp
+          '';
+        })
+      ];
+    };
+    avahi = {
+      enable = true;
+      reflector = true;
+      ipv4 = true;
+      ipv6 = true;
+      publish = {
+        enable = true;
+        userServices = true;
+      };
+    };
     openssh = with config.networking.interfaces; {
       enable = true;
       passwordAuthentication = false;
@@ -83,31 +147,31 @@ in
     dhcpd4 = with config.custom.dhcpd4; {
       enable = true;
       interfaces = [ "eno2" ];
-      extraConfig =
-        ''
-          ddns-update-style none;
+      extraConfig = ''
+        ddns-update-style none;
+        option domain-search "${domain}";
+        option domain-name "${domain}";
 
-          option domain-search "${domain}";
-          option domain-name "${domain}";
+        ${lib.concatMapStrings
+        (ifi: with builtins.getAttr ifi interfaces; ''
+          subnet ${subnet} netmask ${netmask} {
+            range ${start} ${end};
+            option routers ${router}; # TODO(jared): make this a list
+            option broadcast-address ${broadcast};
+            option subnet-mask ${netmask};
+            option domain-name-servers ${dns};
+          }
+        '')
+        (builtins.attrNames interfaces)}
 
-          ${lib.concatMapStrings
-            (ifi: with builtins.getAttr ifi interfaces; ''
-              subnet ${subnet} netmask ${netmask} {
-                range ${start} ${end};
-                option routers ${router}; # TODO(jared): make this a list
-                option broadcast-address ${broadcast};
-                option subnet-mask ${netmask};
-                option domain-name-servers ${dns};
-              }
-            '')
-            (builtins.attrNames interfaces)}
-
-          ${lib.concatMapStrings (event: ''
-            on ${event} {
-              ${dhcpd-event-config event}
-            }
-          '') ["commit" "release" "expiry"]}
-        '';
+        ${lib.concatMapStrings
+        (event: ''
+          on ${event} {
+            ${dhcpd-event-config event}
+          }
+        '')
+        ["commit" "release" "expiry"]}
+      '';
     };
     coredns = with config.networking.interfaces; {
       enable = true;
@@ -214,7 +278,5 @@ in
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "21.05"; # Did you read the comment?
-
-
 
 }

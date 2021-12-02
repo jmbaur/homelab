@@ -151,6 +151,7 @@ with lib;
     mosh
     mpv
     nix-direnv
+    nix-prefetch-docker
     nix-tree
     nixopsUnstable
     nixos-generators
@@ -162,6 +163,7 @@ with lib;
     pa-switch
     pass
     pass-git-helper
+    patchelf
     pavucontrol
     picocom
     pinentry-gnome
