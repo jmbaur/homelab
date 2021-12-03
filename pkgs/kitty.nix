@@ -14,7 +14,7 @@ let
       disable_ligatures always
       enable_audio_bell no
       font_family Iosevka
-      font_size 14
+      font_size 16
       term xterm-256color
       update_check_interval 0
       ${builtins.readFile "${kitty-themes}/themes/gruvbox_dark.conf"}

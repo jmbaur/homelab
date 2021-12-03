@@ -2,7 +2,7 @@ set belloff=all
 set clipboard=unnamedplus
 set colorcolumn=80
 set expandtab
-set guifont=Iosevka:h14
+set guifont=Iosevka:h16
 set hidden
 set ignorecase
 set mouse=a
