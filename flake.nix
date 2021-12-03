@@ -26,7 +26,7 @@
       devShell.${system} = pkgs.mkShell {
         buildInputs = with pkgs;[ git gnumake ];
       };
-      checks.${system}.pre-commit-check = pre-commit-hooks.${system}.run {
+      checks.${system}.pre-commit-check = pre-commit-hooks.lib.${system}.run {
         inherit src;
         hooks.nixpkgs-fmt.enable = true;
       };
