@@ -19,11 +19,10 @@ in
       package = pkgs.neovim-nightly;
       configure = {
         packages.myPlugins = with pkgs.vimPlugins;
-          let
-            tree-sitter = (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars));
-          in
           {
             start = [
+              (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars))
+              (pkgs.vimUtils.buildVimPlugin { name = "settings"; src = builtins.path { path = ./settings; }; })
               comment-nvim
               gruvbox-nvim
               lsp-colors-nvim
@@ -31,7 +30,7 @@ in
               nvim-lspconfig
               snippets-nvim
               telescope-nvim
-              tree-sitter
+              toggleterm-nvim
               trouble-nvim
               typescript-vim
               vim-better-whitespace
@@ -46,20 +45,6 @@ in
               vim-surround
               vim-vinegar
               zig-vim
-            ] ++ [
-              (pkgs.vimUtils.buildVimPlugin {
-                name = "acme.nvim";
-                src = pkgs.fetchFromGitLab {
-                  owner = "__tpb";
-                  repo = "acme.nvim";
-                  rev = "bee75f69289bb82e06263d8f2d403f183cf9c4d4";
-                  sha256 = "sha256-fWpYtQ8gBFjrM4zLtomszkvMAGYyx/PdcRyWVyryKP0=";
-                };
-              })
-              (pkgs.vimUtils.buildVimPlugin {
-                name = "settings";
-                src = builtins.path { path = ./settings; };
-              })
             ];
             opt = [ editorconfig-vim ];
           };

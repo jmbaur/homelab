@@ -6,6 +6,7 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nixpkgs-stable-small.url = "nixpkgs/nixos-21.11-small";
     nixpkgs.url = "nixpkgs/nixos-unstable";
+    pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
   };
 
   outputs =
@@ -14,9 +15,23 @@
     , nixos-hardware
     , nixpkgs-stable-small
     , nixpkgs
-    }: rec {
+    , pre-commit-hooks
+    }:
+    let
+      system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
+      src = builtins.path { path = ./.; };
+    in
+    rec {
+      devShell.${system} = pkgs.mkShell {
+        buildInputs = with pkgs;[ git gnumake ];
+      };
+      checks.${system}.pre-commit-check = pre-commit-hooks.${system}.run {
+        inherit src;
+        hooks.nixpkgs-fmt.enable = true;
+      };
       nixosConfigurations.beetroot = with nixos-hardware.nixosModules; nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
+        inherit system;
         modules = [
           common-pc-ssd
           common-cpu-amd

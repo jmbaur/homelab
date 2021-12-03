@@ -1,6 +1,6 @@
 require'nvim-treesitter.configs'.setup {
     ensure_installed = {}, -- ensure_installed must not be set!
-    highlight = {enable = false, additional_vim_regex_highlighting = false},
+    highlight = {enable = true, additional_vim_regex_highlighting = true},
     incremental_selection = {
         enable = true,
         keymaps = {
