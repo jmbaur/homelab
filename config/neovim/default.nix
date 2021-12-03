@@ -24,6 +24,7 @@ in
           in
           {
             start = [
+              comment-nvim
               gruvbox-nvim
               lsp-colors-nvim
               nvim-autopairs
@@ -34,7 +35,6 @@ in
               trouble-nvim
               typescript-vim
               vim-better-whitespace
-              vim-commentary
               vim-dadbod
               vim-easy-align
               vim-eunuch
