@@ -100,11 +100,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1638647458,
-        "narHash": "sha256-4eHXioXgimnBPIzCdWA+zFHUWrnpuTRWkWy3MolPCeE=",
+        "lastModified": 1638657319,
+        "narHash": "sha256-V83BgDw4VZS7cCPEueyWwj4/4sy8YdCsERFpBhwZxDQ=",
         "owner": "jmbaur",
         "repo": "gosee",
-        "rev": "6657094d82cfae3d3261de490e49ce97fcfdf071",
+        "rev": "2493ebaf95023be3046658a105ee2d1274fd4ea0",
         "type": "github"
       },
       "original": {
