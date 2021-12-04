@@ -1,8 +1,9 @@
 require'toggleterm'.setup {}
 
-local function nnoremap(key, cmd)
-    vim.api.nvim_set_keymap("n", key, cmd .. "<cr>",
+local function noremap(mode, key, cmd)
+    vim.api.nvim_set_keymap(mode, key, cmd .. "<cr>",
                             {noremap = true, silent = true})
 end
 
-nnoremap("<leader>t", "<cmd>ToggleTerm")
+noremap("n", "<leader>t", "<cmd>ToggleTerm")
+noremap("t", "<leader>t", "<cmd>ToggleTerm")
