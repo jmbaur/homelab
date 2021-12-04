@@ -23,9 +23,10 @@
           p = super.callPackage ./pkgs/p.nix { };
           zig = inputs.zig.packages.${system}.master.latest;
         })
-        (import ./pkgs/zls.nix)
-        (import ./pkgs/tmux.nix)
         (import ./pkgs/neovim.nix)
+        (import ./pkgs/nix-direnv.nix)
+        (import ./pkgs/tmux.nix)
+        (import ./pkgs/zls.nix)
       ];
       };
       src = builtins.path { path = ./.; };
@@ -42,6 +43,12 @@
         let
           myProfile = pkgs.writeText "my-profile" ''
             export SUMNEKO_ROOT_PATH=${pkgs.sumneko-lua-language-server}
+
+            eval "$(${pkgs.direnv}/bin/direnv hook bash)"
+
+            if [ ! -f $HOME/.direnvrc ]; then
+              printf "source ${pkgs.nix-direnv}/share/nix-direnv/direnvrc" > $HOME/.direnvrc
+            fi
           '';
         in
         pkgs.buildEnv {

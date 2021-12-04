@@ -12,10 +12,8 @@
     (import ./slack.nix)
     (import ./zig.nix)
     (import ./zls.nix)
+    (import ./nix-direnv.nix)
 
-    (self: super: {
-      nix-direnv = super.nix-direnv.override { enableFlakes = true; };
-    })
     (self: super: {
       fdroidcl = super.callPackage ./fdroidcl.nix { };
     })
