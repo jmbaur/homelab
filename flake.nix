@@ -42,7 +42,14 @@
       packages.${system}.all =
         let
           myProfile = pkgs.writeText "my-profile" ''
-            export GIT_CONFIG_GLOBAL=${pkgs.writeText "gitconfig" "${builtins.readFile ./config/git/gitconfig}"}
+            export EDITOR=nvim
+
+            export GIT_CONFIG_GLOBAL=${pkgs.writeText "gitconfig" ''
+              ${builtins.readFile ./config/git/gitconfig}
+              [credential "https://github.com"]
+                helper =
+                helper = !${pkgs.gh}/bin/gh auth git-credential
+            ''}
 
             export SUMNEKO_ROOT_PATH=${pkgs.sumneko-lua-language-server}
 
