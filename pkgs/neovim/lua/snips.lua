@@ -9,7 +9,8 @@ require"snippets".snippets = {
         log = [[console.log("${1}", $1)]],
         info = [[console.info("${1}", $1)]],
         error = [[console.error("${1}", $1)]]
-    }
+    },
+    zig = {print = [[std.debug.print("\n$1: {$2}\n", .{$1});]]}
 }
 
 local function inoremap(key, cmd)
