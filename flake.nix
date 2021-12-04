@@ -41,34 +41,33 @@
       };
       packages.${system}.all =
         let
-          myProfile = pkgs.writeText "my-profile" ''
-            PS1="\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "
+          myProfile = pkgs.runCommand "profile" { } ''
+              mkdir -p $out/etc/profile.d
+              cp ${pkgs.writeText "my-profile" ''
+              PS1="\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "
 
-            export EDITOR=nvim
+              export EDITOR=nvim
 
-            export GIT_CONFIG_GLOBAL=${pkgs.writeText "gitconfig" ''
-              ${builtins.readFile ./config/git/gitconfig}
-              [credential "https://github.com"]
-                helper =
-                helper = !${pkgs.gh}/bin/gh auth git-credential
-            ''}
+              export GIT_CONFIG_GLOBAL=${pkgs.writeText "gitconfig" ''
+                ${builtins.readFile ./config/git/gitconfig}
+                [credential "https://github.com"]
+                  helper =
+                  helper = !${pkgs.gh}/bin/gh auth git-credential
+              ''}
 
-            export SUMNEKO_ROOT_PATH=${pkgs.sumneko-lua-language-server}
+              export SUMNEKO_ROOT_PATH=${pkgs.sumneko-lua-language-server}
 
-            eval "$(${pkgs.direnv}/bin/direnv hook bash)"
+              eval "$(${pkgs.direnv}/bin/direnv hook bash)"
 
-            if [ ! -f $HOME/.direnvrc ]; then
-              printf "source ${pkgs.nix-direnv}/share/nix-direnv/direnvrc" > $HOME/.direnvrc
-            fi
+              if [ ! -f $HOME/.direnvrc ]; then
+                printf "source ${pkgs.nix-direnv}/share/nix-direnv/direnvrc" > $HOME/.direnvrc
+              fi
+            ''} $out/etc/profile.d/my-profile.sh
           '';
         in
         pkgs.buildEnv {
           name = "all";
           paths = with pkgs; [
-            (runCommand "profile" { } ''
-              mkdir -p $out/etc/profile.d
-              cp ${myProfile} $out/etc/profile.d/my-profile.sh
-            '')
             age
             awscli2
             bat
@@ -104,6 +103,7 @@
             mob
             mosh
             mpv
+            myProfile
             neovim
             nix-direnv
             nix-prefetch-docker
@@ -166,17 +166,18 @@
           ];
         };
       defaultPackage.${system} = packages.${system}.all;
-      nixosConfigurations.beetroot = with inputs.nixos-hardware.nixosModules; inputs.nixpkgs.lib.nixosSystem {
-        inherit system;
-        modules = [
-          common-pc-ssd
-          common-cpu-amd
-          common-gpu-amd
-          common-pc-laptop-acpi_call
-          lenovo-thinkpad
-          ./hosts/beetroot/configuration.nix
-        ];
-      };
+      nixosConfigurations.beetroot = with inputs.nixos-hardware.nixosModules; inputs.nixpkgs.lib.nixosSystem
+        {
+          inherit system;
+          modules = [
+            common-pc-ssd
+            common-cpu-amd
+            common-gpu-amd
+            common-pc-laptop-acpi_call
+            lenovo-thinkpad
+            ./hosts/beetroot/configuration.nix
+          ];
+        };
 
       nixopsConfigurations.default = with inputs.nixos-hardware.nixosModules; {
         nixpkgs = inputs.nixpkgs-stable-small;
@@ -213,6 +214,8 @@
         };
       };
     };
+
+
 
 
 
