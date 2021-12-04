@@ -3,3 +3,4 @@
 /.pre-commit-config.yaml
 result*
 secrets.nix
+.pre-commit-config.yaml
