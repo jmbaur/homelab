@@ -7,6 +7,8 @@
     nixpkgs.url = "nixpkgs/nixos-unstable";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     zig.url = "github:arqv/zig-overlay?rev=080ef681b4ab24f96096ca5d7672d5336006fa65";
+    gosee.url = "github:jmbaur/gosee";
+    git-get.url = "github:jmbaur/git-get";
   };
 
   outputs = inputs:
@@ -16,8 +18,8 @@
         inherit system; overlays = [
         (self: super: {
           fdroidcl = super.callPackage ./pkgs/fdroidcl.nix { };
-          git-get = super.callPackage ./pkgs/git-get.nix { };
-          gosee = super.callPackage ./pkgs/gosee.nix { };
+          git-get = inputs.git-get.defaultPackage.${system};
+          gosee = inputs.gosee.defaultPackage.${system};
           p = super.callPackage ./pkgs/p.nix { };
           zig = inputs.zig.packages.${system}.master.latest;
         })
@@ -193,6 +195,8 @@
         };
       };
     };
+
+
 
 
 }
