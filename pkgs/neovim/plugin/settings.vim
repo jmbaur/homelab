@@ -40,6 +40,4 @@ let mapleader=','
 filetype plugin indent on
 syntax enable
 
-color gruvbox
-
 lua require('init')

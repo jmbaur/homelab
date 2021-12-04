@@ -1,6 +1,9 @@
 .DEFAULT_GOAL := build
 .PHONY: build test switch deploy encrypt
 
+profile:
+	nix profile upgrade '.#' 0
+
 build:
 	nixos-rebuild --flake '.#' build
 
