@@ -135,7 +135,6 @@ with lib;
     gimp
     git
     git-get
-    gnumake
     gnupg
     gosee
     gotop

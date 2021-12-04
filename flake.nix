@@ -42,6 +42,8 @@
       packages.${system}.all =
         let
           myProfile = pkgs.writeText "my-profile" ''
+            export GIT_CONFIG_GLOBAL=${pkgs.writeText "gitconfig" "${builtins.readFile ./config/git/gitconfig}"}
+
             export SUMNEKO_ROOT_PATH=${pkgs.sumneko-lua-language-server}
 
             eval "$(${pkgs.direnv}/bin/direnv hook bash)"
