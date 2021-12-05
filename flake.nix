@@ -50,6 +50,7 @@
 
                 export EDITOR=nvim
 
+                export GIT_SSH=/usr/bin/ssh
                 export GIT_CONFIG_GLOBAL=${pkgs.writeText "gitconfig" ''
                   ${builtins.readFile ./config/git/gitconfig}
                   [credential "https://github.com"]
