@@ -59,6 +59,9 @@
 
                 export SUMNEKO_ROOT_PATH=${pkgs.sumneko-lua-language-server}
 
+                unset SSH_AUTH_SOCK
+                export SSH_AUTH_SOCK=$(gpgconf --list-dir agent-ssh-socket)
+
                 eval "$(${pkgs.direnv}/bin/direnv hook bash)"
 
                 if [ ! -f $HOME/.direnvrc ]; then
@@ -98,6 +101,7 @@
               grex
               gron
               htmlq
+              htop
               jq
               keybase
               librespeed-cli
