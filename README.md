@@ -13,10 +13,8 @@ parted /dev/sda -- mkpart primary 512MiB 100% # soon-to-be luks device
 parted /dev/sda -- mkpart ESP fat32 1MiB 512MiB # boot partition
 parted /dev/sda -- set 2 esp on
 
-dd if=/dev/urandom of=disk.key bs=4096 count=1 # create key file
-
-cryptsetup luksFormat --key-file=disk.key /dev/sda1 # use key file to create luks device
-cryptsetup luksOpen --key-file=disk.key /dev/sda1 cryptlvm # use key file to open luks device
+cryptsetup luksFormat /dev/sda1 # use key file to create luks device
+cryptsetup luksOpen /dev/sda1 cryptlvm # use key file to open luks device
 
 # LVM stuff
 pvcreate /dev/mapper/cryptlvm
@@ -36,38 +34,18 @@ swapon /dev/vg/swap # optional
 # Generate base NixOS config
 nixos-generate-config --root /mnt
 
-# GPG stuff
-nix-shell -p gnupg
-# Do these things:
-#   gpg --card-edit
-#   fetch
-#   quit
-gpg --encrypt --output=disk.key.gpg --recipient=jaredbaur@fastmail.com disk.key # encrypt key file
-mv disk.key.gpg /mnt/etc/nixos
-curl -OL https://keybase.io/jaredbaur/pgp_keys.asc
-mv pgp_keys.asc /mnt/etc/nixos
-shred -u disk.key
-
 # NixOS stuff
 uuid=$(blkid -s UUID /dev/sda1 | cut -d\" -f2)
 echo << EOF
 # Put this in your /etc/nixos/hardware-configuration.nix
 services.udev.packages = [ pkgs.yubikey-personalization ];
-boot.initrd.luks = {
-  gpgSupport = true;
-  devices.cryptlvm = {
-    allowDiscards = true;
-    device = "/dev/disk/by-uuid/${uuid}";
-    preLVM = true;
-    gpgCard = {
-      publicKey = ./pgp_keys.asc;
-      encryptedPass = ./disk.key.gpg;
-      gracePeriod = 30; # seconds
-    };
-  };
+boot.initrd.luks.devices.cryptlvm = {
+  allowDiscards = true;
+  device = "/dev/disk/by-uuid/${uuid}";
+  preLVM = true;
 };
 EOF
-nixos-install
+nixos-install --no-root-passwd # make sure that users.users.<name>.initialPassword is set!
 reboot
 ```
 
