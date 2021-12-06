@@ -18,31 +18,20 @@ with lib;
       keep-derivations = true
     '';
   };
-  environment.pathsToLink = [
-    "/share/nix-direnv"
-  ];
+  environment.pathsToLink = [ "/share/nix-direnv" ];
   boot = {
     binfmt.emulatedSystems = [ "aarch64-linux" ]; # allow building for RPI4
     extraModulePackages = with config.boot.kernelPackages; [ v4l2loopback ];
-    initrd.luks = {
-      gpgSupport = true;
-      devices.cryptlvm = {
-        allowDiscards = true;
-        preLVM = true;
-        device = "/dev/disk/by-uuid/951caec2-ca49-4e30-bfbf-0d53e12ee5ca";
-        fallbackToPassword = true;
-        gpgCard = {
-          encryptedPass = ./keyfile.gpg;
-          publicKey = ../../lib/pgp_keys.asc;
-        };
-      };
+    initrd.luks.devices.cryptlvm = {
+      allowDiscards = true;
+      device = "/dev/disk/by-uuid/91d0d31c-9669-4476-9b46-66680f312a3c";
+      preLVM = true;
+      # fallbackToPassword = true;
     };
     kernelPackages = pkgs.linuxPackages_5_15;
     kernelParams = [ "amdgpu.backlight=0" "acpi_backlight=none" ];
     loader = { systemd-boot.enable = true; efi.canTouchEfiVariables = true; };
   };
-
-  security.tpm2.enable = true;
 
   hardware = {
     bluetooth.enable = true;
@@ -60,13 +49,14 @@ with lib;
 
   custom = {
     git.enable = true;
-    sway.enable = true;
+    sway.enable = false;
     neovim.enable = true;
     pipewire.enable = true;
     tmux.enable = true;
   };
 
   fonts.fonts = with pkgs; [
+    recursive
     dejavu_fonts
     dina-font
     hack-font
@@ -82,7 +72,15 @@ with lib;
     tewi-font
   ];
 
-  services.xserver.libinput = mkIf config.services.xserver.enable {
+  services.xserver.enable = true;
+  services.xserver.layout = "us";
+  services.xserver.xkbOptions = "ctrl:nocaps";
+  services.xserver.deviceSection = ''
+    Option "TearFree" "true"
+  '';
+  services.xserver.displayManager.startx.enable = true;
+  services.xserver.windowManager.i3.enable = true;
+  services.xserver.libinput = {
     enable = true;
     touchpad = {
       accelProfile = "flat";
@@ -90,10 +88,57 @@ with lib;
       naturalScrolling = true;
     };
   };
+  services.greetd = {
+    enable = true;
+    settings = {
+      default_session = {
+        command =
+          let
+            agreety = "${pkgs.greetd.greetd}/bin/agreety";
+            tuigreet = "${pkgs.greetd.tuigreet}/bin/tuigreet";
+            startx = "${pkgs.xorg.xinit}/bin/startx";
+            i3 = "${pkgs.i3}/bin/i3";
+            i3-config = pkgs.callPackage ../../config/i3/config.nix { };
+          in
+          "${tuigreet} --time --asterisks --cmd '${startx} ${i3} -c ${i3-config}'";
+        # user = "jared";
+      };
+    };
+  };
+  programs.xss-lock =
+    let
+      xsecurelock = pkgs.symlinkJoin {
+        name = "xsecurelock";
+        paths = [ pkgs.xsecurelock ];
+        buildInputs = [ pkgs.makeWrapper ];
+        postBuild = ''
+          wrapProgram $out/bin/xsecurelock \
+          --set XSECURELOCK_FONT "Iosevka:size=14"
+        '';
+      };
+    in
+    {
+      enable = true;
+      extraOptions =
+        [
+          "-n"
+          "${xsecurelock}/libexec/xsecurelock/dimmer"
+          "-l"
+        ];
+      lockerCommand = "${xsecurelock}/bin/xsecurelock";
+    };
+  environment.etc."xdg/gtk-3.0/settings.ini".text = ''
+    [Settings]
+    gtk-application-prefer-dark-theme=1
+    gtk-theme-name=Adwaita
+    gtk-icon-theme-name=Adwaita
+    gtk-cursor-theme-name=Adwaita
+    gtk-key-theme-name=Emacs
+  '';
 
-  programs.wireshark.enable = true;
-  programs.adb.enable = true;
-
+  location.provider = "geoclue2";
+  services.redshift.enable = true;
+  services.clipmenu.enable = true;
   services.fwupd.enable = true;
   services.printing.enable = true;
   services.avahi.enable = true;
@@ -112,31 +157,33 @@ with lib;
   };
 
   environment.systemPackages = with pkgs; [
+    # git-get
+    # gosee
     age
+    alacritty
     awscli2
     bat
     bitwarden
+    brightnessctl
     buildah
     chromium
     direnv
     discord
     drawio
+    dunst
     dust
-    element-desktop-wayland
+    element-desktop
     exa
     fd
     fdroidcl
-    ffmpeg
     ffmpeg-full
-    firefox-wayland
+    firefox
     fzf
     geteltorito
     gh
     gimp
     git
-    git-get
     gnupg
-    gosee
     gotop
     grex
     gron
@@ -144,6 +191,7 @@ with lib;
     imv
     jq
     keybase
+    kitty
     libreoffice
     librespeed-cli
     mob
@@ -171,6 +219,7 @@ with lib;
     renameutils
     ripgrep
     rtorrent
+    scrot
     sd
     signal-desktop
     skopeo
@@ -185,7 +234,7 @@ with lib;
     tcpdump
     tea
     tealdeer
-    thunderbird-wayland
+    thunderbird
     tig
     tokei
     trash-cli
@@ -237,34 +286,25 @@ with lib;
 
   system.userActivationScripts.nix-direnv.text =
     let
-      direnvrc = pkgs.writeTextFile {
-        name = "direnvrc";
-        text = ''
-          source ${pkgs.nix-direnv}/share/nix-direnv/direnvrc
-        '';
-      };
+      direnvrc = pkgs.writeText "direnvrc" ''
+        source ${pkgs.nix-direnv}/share/nix-direnv/direnvrc
+      '';
     in
     ''
       ln -sf ${direnvrc} ''${HOME}/.direnvrc
     '';
 
 
-  # Yubikey GPG and SSH support
   services.udev.packages = [ pkgs.yubikey-personalization ];
-  programs = {
-    ssh.startAgent = false;
-    gnupg.agent = {
-      enable = true;
-      enableSSHSupport = true;
-      pinentryFlavor = "gnome3";
-    };
-  };
+  programs.ssh.startAgent = true;
+  programs.wireshark.enable = true;
+  programs.adb.enable = true;
 
   users.users.jared = {
     description = "Jared Baur";
-    extraGroups = [ "adbusers" "networkmanager" "wheel" "wireshark" ];
     isNormalUser = true;
-    shell = pkgs.zsh;
+    extraGroups = [ "adbusers" "networkmanager" "wheel" "wireshark" ];
+    initialPassword = "helloworld";
   };
   security.sudo.wheelNeedsPassword = false;
 
@@ -286,3 +326,4 @@ with lib;
   system.stateVersion = "21.05"; # Did you read the comment?
 
 }
+

@@ -3,35 +3,19 @@
   nixpkgs.overlays = [
 
     (import ./alacritty.nix)
-    (import ./chromium.nix)
-    (import ./foot.nix)
+    # (import ./chromium.nix)
+    # (import ./foot.nix)
     (import ./i3status-rust)
-    (import ./kanshi.nix)
+    # (import ./kanshi.nix)
     (import ./kitty.nix)
-    (import ./mako.nix)
-    (import ./slack.nix)
+    # (import ./mako.nix)
+    # (import ./slack.nix)
     (import ./zig.nix)
     (import ./zls.nix)
     (import ./nix-direnv.nix)
 
     (self: super: {
       fdroidcl = super.callPackage ./fdroidcl.nix { };
-    })
-
-    (self: super: {
-      gosee = super.callPackage ./gosee.nix { };
-    })
-
-    (self: super: {
-      git-get = super.callPackage ./git-get.nix { };
-    })
-
-    (self: super: {
-      bat = super.bat.overrideAttrs (old: {
-        postInstall = ''
-          wrapProgram $out/bin/bat --add-flags "--theme=gruvbox-dark"
-        '';
-      });
     })
 
     (self: super: {

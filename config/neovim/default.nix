@@ -16,21 +16,20 @@ in
       viAlias = true;
       vimAlias = true;
       defaultEditor = true;
-      package = pkgs.neovim-nightly;
       configure = {
         packages.myPlugins = with pkgs.vimPlugins;
           {
             start = [
               (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars))
-              (pkgs.vimUtils.buildVimPlugin { name = "settings"; src = builtins.path { path = ./settings; }; })
+              (pkgs.vimUtils.buildVimPlugin { name = "settings"; src = builtins.path { path = ../../pkgs/neovim; }; })
               comment-nvim
-              gruvbox-nvim
               lsp-colors-nvim
               nvim-autopairs
               nvim-lspconfig
               snippets-nvim
               telescope-nvim
               toggleterm-nvim
+              tokyonight-nvim
               trouble-nvim
               typescript-vim
               vim-better-whitespace
