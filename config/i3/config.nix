@@ -122,10 +122,9 @@ writeText "i3-config" ''
 
   bindsym $mod+r mode "resize"
 
-
   bar {
           mode hide
-          position top
+          position bottom
           status_command i3status
           tray_output primary
   }

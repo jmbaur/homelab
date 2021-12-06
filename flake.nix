@@ -12,7 +12,7 @@
     zig.url = "github:arqv/zig-overlay?rev=080ef681b4ab24f96096ca5d7672d5336006fa65";
   };
 
-  outputs = inputs: inputs.flake-utils.lib.eachDefaultSystem
+  outputs = inputs: inputs.flake-utils.lib.eachSystem inputs.flake-utils.lib.allSystems
     (system:
       let pkgs = inputs.nixpkgs.legacyPackages.${system}; in
       rec {
@@ -33,6 +33,14 @@
         common-gpu-amd
         common-pc-laptop-acpi_call
         lenovo-thinkpad
+        (import ./pkgs/overlays.nix {
+          extraOverlays = [
+            (self: super: {
+              gosee = inputs.gosee.defaultPackage.${system};
+              git-get = inputs.git-get.defaultPackage.${system};
+            })
+          ];
+        })
         ./hosts/beetroot/configuration.nix
       ];
     };

@@ -4,7 +4,6 @@ with lib;
   imports = [
     ../../config
     ../../lib/common.nix
-    ../../pkgs
     ./hardware-configuration.nix
   ];
 
@@ -94,7 +93,6 @@ with lib;
       default_session = {
         command =
           let
-            agreety = "${pkgs.greetd.greetd}/bin/agreety";
             tuigreet = "${pkgs.greetd.tuigreet}/bin/tuigreet";
             startx = "${pkgs.xorg.xinit}/bin/startx";
             i3 = "${pkgs.i3}/bin/i3";
@@ -104,28 +102,15 @@ with lib;
       };
     };
   };
-  programs.xss-lock =
-    let
-      xsecurelock = pkgs.symlinkJoin {
-        name = "xsecurelock";
-        paths = [ pkgs.xsecurelock ];
-        buildInputs = [ pkgs.makeWrapper ];
-        postBuild = ''
-          wrapProgram $out/bin/xsecurelock \
-          --set XSECURELOCK_FONT "Iosevka:size=14"
-        '';
-      };
-    in
-    {
-      enable = true;
-      extraOptions =
-        [
-          "-n"
-          "${xsecurelock}/libexec/xsecurelock/dimmer"
-          "-l"
-        ];
-      lockerCommand = "${xsecurelock}/bin/xsecurelock";
-    };
+  programs.xss-lock = {
+    enable = true;
+    lockerCommand = "${pkgs.xsecurelock}/bin/xsecurelock";
+    extraOptions = [
+      "-n"
+      "${pkgs.xsecurelock}/libexec/xsecurelock/dimmer"
+      "-l"
+    ];
+  };
   environment.etc."xdg/gtk-3.0/settings.ini".text = ''
     [Settings]
     gtk-application-prefer-dark-theme=1
@@ -156,8 +141,6 @@ with lib;
   };
 
   environment.systemPackages = with pkgs; [
-    # git-get
-    # gosee
     age
     alacritty
     awscli2
@@ -182,7 +165,9 @@ with lib;
     gh
     gimp
     git
+    git-get
     gnupg
+    gosee
     gotop
     grex
     gron
