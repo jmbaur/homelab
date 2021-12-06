@@ -1,11 +1,7 @@
 { config, lib, pkgs, ... }:
 with lib;
 {
-  imports = [
-    ../../config
-    ../../lib/common.nix
-    ./hardware-configuration.nix
-  ];
+  imports = [ ./hardware-configuration.nix ];
 
   nix = {
     # Enable flakes and prevent nix shells from being wiped on garbage
@@ -119,6 +115,12 @@ with lib;
     gtk-cursor-theme-name=Adwaita
     gtk-key-theme-name=Emacs
   '';
+  environment.variables = {
+    # XCURSOR_THEME = "Adwaita";
+    XCURSOR_PATH = mkForce [
+      "${pkgs.gnome.adwaita-icon-theme}/share/icons"
+    ];
+  };
 
   location.provider = "geoclue2";
   services.redshift.enable = true;

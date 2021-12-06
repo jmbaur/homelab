@@ -41,6 +41,8 @@
             })
           ];
         })
+        ./config
+        ./lib/common.nix
         ./hosts/beetroot/configuration.nix
       ];
     };
