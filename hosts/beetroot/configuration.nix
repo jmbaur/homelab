@@ -38,7 +38,7 @@ with lib;
   networking.networkmanager.enable = true;
   time.timeZone = "America/Los_Angeles";
 
-  environment.variables = { NNN_TRASH = "1"; };
+  environment.variables.NNN_TRASH = "1";
 
   nixpkgs.config.allowUnfree = true;
 
@@ -67,29 +67,33 @@ with lib;
     tewi-font
   ];
 
-  services.xserver.enable = true;
-  services.xserver.layout = "us";
-  services.xserver.xkbOptions = "ctrl:nocaps";
-  services.xserver.deviceSection = ''
-    Option "TearFree" "true"
-  '';
-  services.xserver.windowManager.i3.enable = true;
-  services.xserver.windowManager.i3.configFile = pkgs.callPackage ../../config/i3/config.nix { };
-  services.xserver.displayManager = {
-    defaultSession = "none+i3";
-    autoLogin = { enable = true; user = "jared"; };
-    sessionCommands = ''
-      ${pkgs.xorg.xrdb}/bin/xrdb -merge <<EOF
-        Xcursor.theme: Adwaita
-      EOF
-    '';
-  };
-  services.xserver.libinput = {
+  services.xserver = {
     enable = true;
-    touchpad = {
-      accelProfile = "flat";
-      tapping = true;
-      naturalScrolling = true;
+    layout = "us";
+    xkbOptions = "ctrl:nocaps";
+    deviceSection = ''
+      Option "TearFree" "true"
+    '';
+    libinput = {
+      enable = true;
+      touchpad = { accelProfile = "flat"; tapping = true; naturalScrolling = true; };
+    };
+    displayManager = {
+      lightdm.background = pkgs.nixos-artwork.wallpapers.nineish-dark-gray.gnomeFilePath;
+      defaultSession = "none+i3";
+      autoLogin = { enable = true; user = "jared"; };
+      sessionCommands = ''
+        ${pkgs.xorg.xrdb}/bin/xrdb -merge <<EOF
+          Xcursor.theme: Adwaita
+        EOF
+      '';
+    };
+    windowManager.i3 = {
+      enable = true;
+      configFile = pkgs.callPackage ../../config/i3/config.nix { };
+      extraSessionCommands = ''
+        ${pkgs.hsetroot}/bin/hsetroot -cover ${pkgs.nixos-artwork.wallpapers.nineish-dark-gray.gnomeFilePath}
+      '';
     };
   };
   services.greetd = {
@@ -124,12 +128,7 @@ with lib;
     gtk-cursor-theme-name=Adwaita
     gtk-key-theme-name=Emacs
   '';
-  environment.variables = {
-    # XCURSOR_THEME = "Adwaita";
-    XCURSOR_PATH = mkForce [
-      "${pkgs.gnome.adwaita-icon-theme}/share/icons"
-    ];
-  };
+  environment.variables.XCURSOR_PATH = mkForce [ "${pkgs.gnome.adwaita-icon-theme}/share/icons" ];
 
   location.provider = "geoclue2";
   services.redshift.enable = true;

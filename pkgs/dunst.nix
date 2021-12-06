@@ -112,7 +112,7 @@ let
 
         ### Text ###
 
-        font = Rec Mono Linear 10
+        font = Rec Mono Linear 12
 
         # The spacing between lines.  If the height is smaller than the
         # font height, it will get raised to the font height.
