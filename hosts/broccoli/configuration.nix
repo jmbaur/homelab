@@ -73,7 +73,7 @@ in
         name = kodak;
         location = "Office";
         model = "drv:///KodakESP_16.drv/Kodak_ESP_52xx_Series.ppd"; # lpinfo -m
-        deviceUri = "dnssd://KodakESP5200+0822._pdl-datastream._tcp.local/"; # lpinfo -v
+        deviceUri = "usb://Eastman%20Kodak%20Company/KODAK%20ESP%205200%20Series%20AiO?serial=G217374&interface=1"; # lpinfo -v
       }];
     };
 
@@ -83,7 +83,7 @@ in
       browsing = true;
       defaultShared = true;
       logLevel = "debug";
-      listenAddresses =
+      listenAddresses = lib.singleton "localhost:631" ++
         (builtins.map (ifi: ifi.address + ":631") eno2.ipv4.addresses) ++
         (builtins.map (ifi: "[" + ifi.address + "]:631") eno2.ipv6.addresses);
       allowFrom = [ "all" ];
