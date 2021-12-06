@@ -3,6 +3,7 @@
   nixpkgs.overlays = [
 
     (import ./alacritty.nix)
+    (import ./dunst.nix)
     (import ./foot.nix)
     (import ./i3status-rust)
     (import ./kanshi.nix)

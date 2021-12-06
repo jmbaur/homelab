@@ -1,14 +1,6 @@
 { config, pkgs, ... }:
 
-let
-  promtop = pkgs.callPackage (import (builtins.fetchTarball "https://github.com/jmbaur/promtop/archive/main.tar.gz")) { };
-in
 {
-  # Define that we need to build for ARM, helps with nixops
-  nixpkgs.localSystem = {
-    system = "aarch64-linux";
-    config = "aarch64-unknown-linux-gnu";
-  };
 
   boot = {
     kernelPackages = pkgs.linuxPackages_rpi4;
@@ -45,13 +37,13 @@ in
 
   users.mutableUsers = false;
 
-  environment.systemPackages = [ promtop ];
+  environment.systemPackages = [ pkgs.promtop ];
 
   systemd.services.promtop = {
     description = "promtop on tty1";
     serviceConfig = {
       Type = "simple";
-      ExecStart = "${promtop}/bin/promtop";
+      ExecStart = "${pkgs.promtop}/bin/promtop";
       StandardInput = "tty-force";
       StandardOutput = "tty-force";
       StandardError = "journal";

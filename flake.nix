@@ -9,6 +9,7 @@
     nixpkgs-stable-small.url = "nixpkgs/nixos-21.11-small";
     nixpkgs.url = "nixpkgs/nixos-unstable";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
+    promtop.url = "github:jmbaur/promtop";
     zig.url = "github:arqv/zig-overlay?rev=080ef681b4ab24f96096ca5d7672d5336006fa65";
   };
 
@@ -43,6 +44,7 @@
         })
         ./config
         ./lib/common.nix
+
         ./hosts/beetroot/configuration.nix
       ];
     };
@@ -55,7 +57,7 @@
         enableRollback = true;
         storage.legacy = { };
       };
-      broccoli = { config, pkgs, ... }: {
+      broccoli = { ... }: {
         deployment.targetHost = "broccoli.home.arpa.";
         imports = [
           common-pc-ssd
@@ -64,15 +66,21 @@
           ./hosts/broccoli/configuration.nix
         ];
       };
-      rhubarb = { config, pkgs, ... }: {
-        deployment.targetHost = "rhubarb.home.arpa.";
-        imports = [
-          raspberry-pi-4
-          ./lib/nixops.nix
-          ./hosts/rhubarb/configuration.nix
-        ];
-      };
-      asparagus = { config, pkgs, ... }: {
+      rhubarb = { ... }:
+        let system = "aarch64-linux"; in
+        {
+          deployment.targetHost = "rhubarb.home.arpa.";
+          nixpkgs.overlays = [ (self: super: { promtop = inputs.promtop.defaultPackage.${system}; }) ];
+          # Allows for nixops to build for this system;
+          nixpkgs.localSystem = { inherit system; config = "aarch64-unknown-linux-gnu"; };
+
+          imports = [
+            raspberry-pi-4
+            ./lib/nixops.nix
+            ./hosts/rhubarb/configuration.nix
+          ];
+        };
+      asparagus = { ... }: {
         deployment.targetHost = "asparagus.home.arpa.";
         imports = [
           common-pc-ssd

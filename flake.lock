@@ -62,6 +62,36 @@
     },
     "flake-utils_5": {
       "locked": {
+        "lastModified": 1638122382,
+        "narHash": "sha256-sQzZzAbvKEqN9s0bzWuYmRaA03v40gaJ4+iL1LXjaeI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "74f7e4319258e287b0f9cb95426c9853b282730b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "flake-utils_6": {
+      "locked": {
+        "lastModified": 1629481132,
+        "narHash": "sha256-JHgasjPR0/J1J3DRm4KxM4zTyAj4IOJY8vIl75v/kPI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "997f7efcb746a9c140ce1f13c72263189225f482",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "flake-utils_7": {
+      "locked": {
         "lastModified": 1629481132,
         "narHash": "sha256-JHgasjPR0/J1J3DRm4KxM4zTyAj4IOJY8vIl75v/kPI=",
         "owner": "numtide",
@@ -145,11 +175,11 @@
     },
     "nixpkgs-stable-small": {
       "locked": {
-        "lastModified": 1638741096,
-        "narHash": "sha256-W5IObTF+qTlHOAfltTHu/diTqaGMrBJXGMeN9hc1mqs=",
+        "lastModified": 1638787439,
+        "narHash": "sha256-1Lptae0EZ/vugPJSEfmY9qEi+5li+Z8HgQNGL5gnpXE=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "2ba3922bb8238f14462ca1bd8944acf1cf926066",
+        "rev": "93a707704d0ba1316cd01a205c3163e764f05fad",
         "type": "github"
       },
       "original": {
@@ -203,6 +233,36 @@
     },
     "nixpkgs_5": {
       "locked": {
+        "lastModified": 1638814958,
+        "narHash": "sha256-P7KVJTqhTuqEIlUqS3ljJhsfYkT5jGx9ddjCCgVdaNk=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "75ef7d62b0ca2253d72f4dccefe71660c30ba6b4",
+        "type": "github"
+      },
+      "original": {
+        "id": "nixpkgs",
+        "type": "indirect"
+      }
+    },
+    "nixpkgs_6": {
+      "locked": {
+        "lastModified": 1631288242,
+        "narHash": "sha256-sXm4KiKs7qSIf5oTAmrlsEvBW193sFj+tKYVirBaXz0=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "0e24c87754430cb6ad2f8c8c8021b29834a8845e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_7": {
+      "locked": {
         "lastModified": 1631288242,
         "narHash": "sha256-sXm4KiKs7qSIf5oTAmrlsEvBW193sFj+tKYVirBaXz0=",
         "owner": "NixOS",
@@ -236,6 +296,26 @@
         "type": "github"
       }
     },
+    "promtop": {
+      "inputs": {
+        "flake-utils": "flake-utils_5",
+        "nixpkgs": "nixpkgs_5",
+        "zig": "zig"
+      },
+      "locked": {
+        "lastModified": 1638819938,
+        "narHash": "sha256-Q67aq0vnoAeJkKIo97uRQfYEplqIKsFVNupuAAkVUec=",
+        "owner": "jmbaur",
+        "repo": "promtop",
+        "rev": "1305cdfdb99aeee703240956ced175ee58de5171",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jmbaur",
+        "repo": "promtop",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
@@ -245,13 +325,33 @@
         "nixpkgs": "nixpkgs_3",
         "nixpkgs-stable-small": "nixpkgs-stable-small",
         "pre-commit-hooks": "pre-commit-hooks",
-        "zig": "zig"
+        "promtop": "promtop",
+        "zig": "zig_2"
       }
     },
     "zig": {
       "inputs": {
-        "flake-utils": "flake-utils_5",
-        "nixpkgs": "nixpkgs_5"
+        "flake-utils": "flake-utils_6",
+        "nixpkgs": "nixpkgs_6"
+      },
+      "locked": {
+        "lastModified": 1638750426,
+        "narHash": "sha256-+yOaBvHMh6dc3lcpQ622RR7EelNkz6w+phQlCxxeSpg=",
+        "owner": "arqv",
+        "repo": "zig-overlay",
+        "rev": "6b2d2c52f7c569cf01d529458622ff78c91591b8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "arqv",
+        "repo": "zig-overlay",
+        "type": "github"
+      }
+    },
+    "zig_2": {
+      "inputs": {
+        "flake-utils": "flake-utils_7",
+        "nixpkgs": "nixpkgs_7"
       },
       "locked": {
         "lastModified": 1638318450,
