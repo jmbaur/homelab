@@ -101,7 +101,6 @@ with lib;
             i3-config = pkgs.callPackage ../../config/i3/config.nix { };
           in
           "${tuigreet} --time --asterisks --cmd '${startx} ${i3} -c ${i3-config}'";
-        # user = "jared";
       };
     };
   };
