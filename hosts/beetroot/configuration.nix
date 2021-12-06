@@ -73,8 +73,17 @@ with lib;
   services.xserver.deviceSection = ''
     Option "TearFree" "true"
   '';
-  services.xserver.displayManager.startx.enable = true;
   services.xserver.windowManager.i3.enable = true;
+  services.xserver.windowManager.i3.configFile = pkgs.callPackage ../../config/i3/config.nix { };
+  services.xserver.displayManager = {
+    defaultSession = "none+i3";
+    autoLogin = { enable = true; user = "jared"; };
+    sessionCommands = ''
+      ${pkgs.xorg.xrdb}/bin/xrdb -merge <<EOF
+        Xcursor.theme: Adwaita
+      EOF
+    '';
+  };
   services.xserver.libinput = {
     enable = true;
     touchpad = {
@@ -84,7 +93,7 @@ with lib;
     };
   };
   services.greetd = {
-    enable = true;
+    enable = false;
     settings = {
       default_session = {
         command =
