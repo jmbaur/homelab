@@ -10,7 +10,7 @@
     nixpkgs.url = "github:jmbaur/nixpkgs?rev=ea8a7c133b819a0a24ead0d8aab19a1f2d9f75b4";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     promtop.url = "github:jmbaur/promtop";
-    zig.url = "github:arqv/zig-overlay?rev=080ef681b4ab24f96096ca5d7672d5336006fa65";
+    zig.url = "github:arqv/zig-overlay";
   };
 
   outputs = inputs: inputs.flake-utils.lib.eachSystem inputs.flake-utils.lib.allSystems

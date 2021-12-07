@@ -187,7 +187,6 @@ with lib;
     gimp
     git
     git-get
-    gnupg
     gosee
     gotop
     grex
@@ -302,7 +301,13 @@ with lib;
 
 
   services.udev.packages = [ pkgs.yubikey-personalization ];
-  programs.ssh.startAgent = true;
+  programs.ssh = {
+    startAgent = true;
+  };
+  programs.gnupg.agent = {
+    enable = true;
+    pinentryFlavor = "gtk2";
+  };
   programs.wireshark.enable = true;
   programs.adb.enable = true;
 
@@ -312,7 +317,16 @@ with lib;
     extraGroups = [ "adbusers" "networkmanager" "wheel" "wireshark" ];
     initialPassword = "helloworld";
   };
-  security.sudo.wheelNeedsPassword = false;
+  security.sudo.wheelNeedsPassword = true;
+  security.pam = {
+    u2f = {
+      enable = true;
+      cue = true;
+      authFile = pkgs.writeText "u2f-authfile" ''
+        jared:NMlszg4/i0xAOtisiybK2V0nVytHo/iqtaYFQn1SeJgEDalkP/1YX2yE53eUMRUmiUcHz3CvIGyFjvyNUXzgPQ==,01T5an89gTXEmCxt0tQzSIG2p1U/GgRfFuPir41lZQMiedsYfFDNLeAxuc0+Qp5L5ZPFHzD6fGEVOKkE22poZw==,es256,+presence
+      '';
+    };
+  };
 
   virtualisation = {
     containers = {
