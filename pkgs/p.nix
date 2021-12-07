@@ -26,7 +26,7 @@ writeShellApplication {
     fi
 
     existing_session=
-    if tmux list-sessions 2>/dev/null; then
+    if tmux list-sessions > /dev/null 2>&1; then
       existing_session=$(tmux list-sessions -F "#{session_path}:#{session_name}" | { grep "''${tmux_session_path}\:.*" || true; } | sed "s,''${tmux_session_path}:\(.*\),\1,")
     fi
     if [ -z "$existing_session" ]; then
