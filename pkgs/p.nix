@@ -9,28 +9,33 @@ writeShellApplication {
             echo "The default projects directory is \$HOME/Projects. This can be"
             echo "overridden by setting the \$PROJ_DIR environment variable."
     }
-    DIR=''${PROJ_DIR:-''${HOME}/Projects}
-    SEARCH=$1
-    if [ -z "''${SEARCH}" ]; then
+    directory=''${PROJ_DIR:-''${HOME}/Projects}
+    search=''${1:-}
+    if [ -z "$search" ]; then
             usage
             exit 1
     fi
-    if [ ! -d "$DIR" ]; then
+    if [ ! -d "$directory" ]; then
             echo "Cannot find project directory"
             exit 2
     fi
-    MATCH=$(fd --type=directory --max-depth=4 --hidden "^.git$" "$DIR" | sed "s/\/\.git//" | grep ".*''${SEARCH}.*" | fzf -0 -1)
-    if [ -z "''${MATCH}" ]; then
-            echo "Cannot find project with search term ''${SEARCH}"
+    tmux_session_path=$(fd --type=directory --max-depth=4 --hidden "^.git$" "$directory" | sed "s,/\.git,," | { grep ".*''${search}.*" || true; } | fzf -1)
+    if [ -z "$tmux_session_path" ]; then
+            echo "Cannot find project with search term $search"
             exit 3
     fi
-    PROJECT_NAME=$(basename "$MATCH")
-    TMUX_SESSION_NAME=''${PROJECT_NAME:0:7}
-    tmux new-session -d -c "''${MATCH}" -s "$TMUX_SESSION_NAME"
-    if [ -n "$TMUX" ]; then
-            tmux switch-client -t "$TMUX_SESSION_NAME"
+
+    existing_session=
+    if tmux list-sessions 2>/dev/null; then
+      existing_session=$(tmux list-sessions -F "#{session_path}:#{session_name}" | { grep "''${tmux_session_path}\:.*" || true; } | sed "s,''${tmux_session_path}:\(.*\),\1,")
+    fi
+    if [ -z "$existing_session" ]; then
+            existing_session=$(tmux new-session -d -c "$tmux_session_path" -P -F "#{session_name}")
+    fi
+    if test -n "''${TMUX:-}"; then
+            tmux switch-client -t "$existing_session"
     else
-            tmux attach-session -t "$TMUX_SESSION_NAME"
+            tmux attach-session -t "$existing_session"
     fi
   '';
 }
