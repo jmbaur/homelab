@@ -15,19 +15,22 @@ with lib;
   };
   environment.pathsToLink = [ "/share/nix-direnv" ];
 
-  # sudo systemd-cryptenroll --fido2-device=auto /dev/disk/by-uuid/91d0d31c-9669-4476-9b46-66680f312a3c
-  environment.etc."crypttab".text = ''
-    cryptlvm /dev/nvme0n1p1 - fido2-device=auto
-  '';
   boot = {
     binfmt.emulatedSystems = [ "aarch64-linux" ]; # allow building for RPI4
     extraModulePackages = with config.boot.kernelPackages; [ v4l2loopback ];
 
-    initrd.luks.devices.cryptlvm = {
-      allowDiscards = true;
-      device = "/dev/disk/by-uuid/91d0d31c-9669-4476-9b46-66680f312a3c";
-      preLVM = true;
-      fallbackToPassword = true; # TODO(jared): set this to false
+    initrd.luks = {
+      fido2Support = true;
+      devices.cryptlvm = {
+        fido2 = {
+          credential = "f217ebbfb939aaaf0e65a811f639ea221c63319e0eba8f5df3279d55060cc6413c5e198c2146d4709f88e9a94a78e3a8";
+          passwordLess = true; # no salt
+          askForPin = true;
+        };
+        allowDiscards = true;
+        device = "/dev/disk/by-uuid/91d0d31c-9669-4476-9b46-66680f312a3c";
+        preLVM = true;
+      };
     };
     kernelPackages = pkgs.linuxPackages_5_15;
     kernelParams = [ "amdgpu.backlight=0" "acpi_backlight=none" ];
@@ -242,6 +245,7 @@ with lib;
     trash-cli
     unzip
     usbutils
+    ventoy-bin
     vscode-with-extensions
     wireshark
     xdg-user-dirs
