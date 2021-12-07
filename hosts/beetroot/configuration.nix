@@ -15,7 +15,7 @@ with lib;
   };
   environment.pathsToLink = [ "/share/nix-direnv" ];
 
-  # sudo systemd-cryptenroll --fido2-device=auto /dev/nvme0n1p1
+  # sudo systemd-cryptenroll --fido2-device=auto /dev/disk/by-uuid/91d0d31c-9669-4476-9b46-66680f312a3c
   environment.etc."crypttab".text = ''
     cryptlvm /dev/nvme0n1p1 - fido2-device=auto
   '';
@@ -27,7 +27,7 @@ with lib;
       allowDiscards = true;
       device = "/dev/disk/by-uuid/91d0d31c-9669-4476-9b46-66680f312a3c";
       preLVM = true;
-      fallbackToPassword = true;
+      fallbackToPassword = true; # TODO(jared): set this to false
     };
     kernelPackages = pkgs.linuxPackages_5_15;
     kernelParams = [ "amdgpu.backlight=0" "acpi_backlight=none" ];
