@@ -44,7 +44,6 @@
         })
         ./config
         ./lib/common.nix
-
         ./hosts/beetroot/configuration.nix
       ];
     };
@@ -73,7 +72,6 @@
           nixpkgs.overlays = [ (self: super: { promtop = inputs.promtop.defaultPackage.${system}; }) ];
           # Allows for nixops to build for this system;
           nixpkgs.localSystem = { inherit system; config = "aarch64-unknown-linux-gnu"; };
-
           imports = [
             raspberry-pi-4
             ./lib/nixops.nix

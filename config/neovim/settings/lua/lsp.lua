@@ -56,11 +56,12 @@ local on_attach = function(uses_efm)
 end
 
 for k, v in pairs {
+    clangd = {uses_efm = true},
     gopls = {uses_efm = true},
     pyright = {uses_efm = true},
     rust_analyzer = {uses_efm = true},
     sumneko_lua = {uses_efm = true},
-    tsserver = {uses_efm = false},
+    tsserver = {uses_efm = true},
     zls = {uses_efm = false}
 } do
     lsp[k].setup {
@@ -83,8 +84,13 @@ if sumneko_root_path ~= nil then
     }
 end
 
+-- local clang_format_options = {
+--     {formatCommand = "clang-format --assume-filename=${INPUT}"},
+--     formatStdin = true
+-- }
+
 local efm_languages = {
-    go = {{formatCommand = "goimports", formatStdin = true}},
+    go = {{formatCommand = "goimports", formatStdin = true}}, -- TODO(jared): use gopls formatting with some custom code that does imports
     lua = {{formatCommand = "lua-format -i", formatStdin = true}},
     nix = {{formatCommand = "nixpkgs-fmt", formatStdin = true}},
     python = {{formatCommand = "black --quiet -", formatStdin = true}},

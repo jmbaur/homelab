@@ -21,7 +21,7 @@ in
           {
             start = [
               (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars))
-              (pkgs.vimUtils.buildVimPlugin { name = "settings"; src = builtins.path { path = ../../pkgs/neovim; }; })
+              (pkgs.vimUtils.buildVimPlugin { name = "settings"; src = builtins.path { path = ./settings; }; })
               comment-nvim
               lsp-colors-nvim
               nvim-autopairs
@@ -33,6 +33,7 @@ in
               trouble-nvim
               typescript-vim
               vim-better-whitespace
+              vim-clang-format
               vim-dadbod
               vim-easy-align
               vim-eunuch
@@ -53,6 +54,7 @@ in
     environment.systemPackages = with pkgs; [
       bat
       black
+      clang-tools
       efm-langserver
       git
       go
@@ -61,7 +63,6 @@ in
       luaformatter
       neovide
       nixpkgs-fmt
-      nodePackages.prettier
       nodePackages.typescript
       nodePackages.typescript-language-server
       nodejs
