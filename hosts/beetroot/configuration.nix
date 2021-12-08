@@ -129,6 +129,7 @@ with lib;
       "-l"
     ];
   };
+  environment.variables.XCURSOR_PATH = mkForce [ "${pkgs.gnome.adwaita-icon-theme}/share/icons" ];
   environment.etc."xdg/gtk-3.0/settings.ini".text = ''
     [Settings]
     gtk-application-prefer-dark-theme=1
@@ -137,12 +138,20 @@ with lib;
     gtk-cursor-theme-name=Adwaita
     gtk-key-theme-name=Emacs
   '';
-  environment.variables.XCURSOR_PATH = mkForce [ "${pkgs.gnome.adwaita-icon-theme}/share/icons" ];
+
+  services.autorandr.enable = true;
+  services.autorandr.defaultTarget = "laptop";
+  environment.etc."xdg/autorandr/dock/config".source = ./autorandr/dock/config;
+  environment.etc."xdg/autorandr/dock/setup".source = ./autorandr/dock/setup;
+  environment.etc."xdg/autorandr/laptop/config".source = ./autorandr/laptop/config;
+  environment.etc."xdg/autorandr/laptop/setup".source = ./autorandr/laptop/setup;
+  environment.etc."xdg/autorandr/postswitch".source = "${(pkgs.writeShellScriptBin "autorandr-postswitch" ''
+    ${pkgs.hsetroot}/bin/hsetroot -cover ${pkgs.nixos-artwork.wallpapers.nineish-dark-gray.gnomeFilePath}
+    ${pkgs.libnotify}/bin/notify-send "Autorandr" "Profile switched"
+  '')}/bin/autorandr-postswitch";
 
   location.provider = "geoclue2";
   services.redshift.enable = true;
-  services.autorandr.enable = true;
-  services.autorandr.defaultTarget = "laptop";
   services.clipmenu.enable = true;
   services.fwupd.enable = true;
   services.printing.enable = true;
