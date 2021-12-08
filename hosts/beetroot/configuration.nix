@@ -47,17 +47,17 @@ with lib;
   networking.networkmanager.enable = true;
   time.timeZone = "America/Los_Angeles";
 
-  environment.variables.NNN_TRASH = "1";
 
   nixpkgs.config.allowUnfree = true;
 
   custom = {
     git.enable = true;
-    sway.enable = false;
-    neovim.enable = true;
     pipewire.enable = true;
     tmux.enable = true;
+    neovim.enable = true;
   };
+
+  environment.variables.NNN_TRASH = "1";
 
   fonts.fonts = with pkgs; [
     recursive
@@ -245,6 +245,7 @@ with lib;
     unzip
     usbutils
     ventoy-bin
+    vim
     vscode-with-extensions
     wireshark
     xdg-user-dirs

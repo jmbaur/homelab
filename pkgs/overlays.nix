@@ -20,7 +20,6 @@
       fdroidcl = super.callPackage ./fdroidcl.nix { };
     })
 
-
     (self: super: {
       start-recording = (super.callPackage ./recording.nix { }).start;
       stop-recording = (super.callPackage ./recording.nix { }).stop;
@@ -33,5 +32,4 @@
     })
 
   ] ++ extraOverlays;
-
 }

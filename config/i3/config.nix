@@ -1,4 +1,23 @@
-{ writeText, pulseaudio, kitty, brightnessctl }:
+{ writeText
+, pulseaudio
+, kitty
+, brightnessctl
+, writeShellScriptBin
+, xsel
+, systemd
+, gnused
+, neovim
+, neovide
+}:
+let
+  vim-anywhere = writeShellScriptBin "vim-anywhere" ''
+    export DISPLAY="$(${systemd}/bin/systemctl --user show-environment | ${gnused}/bin/sed 's/^DISPLAY=\(.*\)/\1/; t; d')"
+    file=$(mktemp)
+    ${neovide}/bin/neovide --nofork --x11-wm-class=floatme --geometry=75x25 $file
+    ${xsel}/bin/xsel -b <$file
+    rm $file
+  '';
+in
 writeText "i3-config" ''
   set $mod    Mod4
   set $left   h
@@ -22,6 +41,7 @@ writeText "i3-config" ''
   workspace_auto_back_and_forth yes
 
   for_window [all] title_window_icon on
+  for_window [class="floatme"] focus, floating enable
 
   bindsym $mod+Tab workspace back_and_forth
 
@@ -40,8 +60,8 @@ writeText "i3-config" ''
   bindsym $mod+Shift+q kill
 
   bindsym $mod+p exec --no-startup-id dmenu_run -fn Rec\ Mono\ Linear
-
   bindsym $mod+c exec --no-startup-id clipmenu -fn Rec\ Mono\ Linear
+  bindsym --release $mod+Shift+v exec --no-startup-id ${vim-anywhere}/bin/vim-anywhere
 
   bindsym $mod+$left focus left
   bindsym $mod+$down focus down
