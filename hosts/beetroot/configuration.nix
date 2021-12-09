@@ -341,7 +341,7 @@ with lib;
   virtualisation = {
     containers = {
       enable = true;
-      containersConf.settings.engine.detach_keys = "ctrl-e,ctrl-q";
+      containersConf.settings.engine.detach_keys = "ctrl-q,ctrl-e";
     };
     podman = { enable = true; dockerCompat = true; };
     libvirtd.enable = true;
