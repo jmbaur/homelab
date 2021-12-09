@@ -324,7 +324,13 @@ with lib;
   users.users.jared = {
     description = "Jared Baur";
     isNormalUser = true;
-    extraGroups = [ "adbusers" "networkmanager" "wheel" "wireshark" ];
+    extraGroups = [
+      "adbusers"
+      "libvirtd"
+      "networkmanager"
+      "wheel"
+      "wireshark"
+    ];
     initialPassword = "helloworld";
   };
   security.sudo.wheelNeedsPassword = true;
