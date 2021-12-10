@@ -123,11 +123,7 @@ with lib;
   programs.xss-lock = {
     enable = true;
     lockerCommand = "${pkgs.xsecurelock}/bin/xsecurelock";
-    extraOptions = [
-      "-n"
-      "${pkgs.xsecurelock}/libexec/xsecurelock/dimmer"
-      "-l"
-    ];
+    extraOptions = [ "-n" "${pkgs.xsecurelock}/libexec/xsecurelock/dimmer" "-l" ];
   };
   environment.variables.XCURSOR_PATH = mkForce [ "${pkgs.gnome.adwaita-icon-theme}/share/icons" ];
   environment.etc."xdg/gtk-3.0/settings.ini".text = ''
@@ -338,7 +334,9 @@ with lib;
     u2f = {
       enable = true;
       cue = true;
+      # generated with `pamu2fcfg`
       authFile = pkgs.writeText "u2f-authfile" ''
+        jared:uBcyq24C/03R9XDcANHHbIRBVwnVy4+OZ5GCYfpGMqE9796kd+Jkzr+Eaigdrv8yIuBYVtX0myQgCs9leTjf5A==,j94fLX44pik4JLmo72d22uuM3mUEP9yQmvOTXotGNkgNzPWV9aMz5zHFnhEL4gKyIGSxvr/RYg7eI+DCeoxMBg==,es256,+presence
         jared:NMlszg4/i0xAOtisiybK2V0nVytHo/iqtaYFQn1SeJgEDalkP/1YX2yE53eUMRUmiUcHz3CvIGyFjvyNUXzgPQ==,01T5an89gTXEmCxt0tQzSIG2p1U/GgRfFuPir41lZQMiedsYfFDNLeAxuc0+Qp5L5ZPFHzD6fGEVOKkE22poZw==,es256,+presence
       '';
     };

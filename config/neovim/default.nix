@@ -53,6 +53,7 @@ in
     environment.systemPackages = with pkgs; [
       bat
       black
+      cargo
       clang-tools
       efm-langserver
       git
