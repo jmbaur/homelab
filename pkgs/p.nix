@@ -4,38 +4,41 @@ writeShellApplication {
   runtimeInputs = [ fzf fd tmux ];
   text = ''
     usage() {
-            echo "usage: p <dir>"
-            echo
-            echo "The default projects directory is \$HOME/Projects. This can be"
-            echo "overridden by setting the \$PROJ_DIR environment variable."
+            cat <<EOF
+    Usage: p <dir>
+
+    The default projects directory is \$HOME/Projects. This can be
+    overridden by setting the \$PROJ_DIR environment variable.
+    EOF
     }
+
     directory=''${PROJ_DIR:-''${HOME}/Projects}
     search=''${1:-}
-    if [ -z "$search" ]; then
+    if test -z "$search"; then
             usage
             exit 1
     fi
-    if [ ! -d "$directory" ]; then
-            echo "Cannot find project directory"
+    if ! test -d "$directory"; then
+            echo "Cannot find projects directory"
+            usage
             exit 2
     fi
     tmux_session_path=$(fd --type=directory --max-depth=4 --hidden "^.git$" "$directory" | sed "s,/\.git,," | { grep ".*''${search}.*" || true; } | fzf -1)
-    if [ -z "$tmux_session_path" ]; then
+    if test -z "$tmux_session_path"; then
             echo "Cannot find project with search term $search"
             exit 3
     fi
 
-    existing_session=
-    if tmux list-sessions > /dev/null 2>&1; then
-      existing_session=$(tmux list-sessions -F "#{session_path}:#{session_name}" | { grep "''${tmux_session_path}\:.*" || true; } | sed "s,''${tmux_session_path}:\(.*\),\1,")
+    tmux_session_name=$(echo -n "$tmux_session_path" | sed "s,$directory/,," | sed "s,\.,_,")
+
+    if ! tmux list-sessions -F "#{session_name}" | grep --quiet "$tmux_session_name"; then
+            tmux new-session -d -s "$tmux_session_name" -c "$tmux_session_path"
     fi
-    if [ -z "$existing_session" ]; then
-            existing_session=$(tmux new-session -d -c "$tmux_session_path" -P -F "#{session_name}")
-    fi
+
     if test -n "''${TMUX:-}"; then
-            tmux switch-client -t "$existing_session"
+            tmux switch-client -t "$tmux_session_name"
     else
-            tmux attach-session -t "$existing_session"
+            tmux attach-session -t "$tmux_session_name"
     fi
   '';
 }
