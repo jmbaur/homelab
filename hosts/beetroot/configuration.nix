@@ -23,7 +23,10 @@ with lib;
       fido2Support = true;
       devices.cryptlvm = {
         fido2 = {
-          credential = "f217ebbfb939aaaf0e65a811f639ea221c63319e0eba8f5df3279d55060cc6413c5e198c2146d4709f88e9a94a78e3a8";
+          credential = pkgs.lib.concatStringsSep "," [
+            "c4c1c74167f8eeab98b2659b22d9a60654253b7882243820550fe67b66bb5fb8d46e90ff39733fdb6b03d7cbedc4a6b2"
+            "f217ebbfb939aaaf0e65a811f639ea221c63319e0eba8f5df3279d55060cc6413c5e198c2146d4709f88e9a94a78e3a8"
+          ];
           passwordLess = true; # no salt
           askForPin = true;
         };
@@ -185,6 +188,7 @@ with lib;
     fd
     fdroidcl
     ffmpeg-full
+    fido2luks
     firefox
     fzf
     geteltorito
