@@ -70,6 +70,7 @@ in
       python3
       ripgrep
       rust-analyzer
+      rustfmt
       shfmt
       sumneko-lua-language-server
       tree-sitter
