@@ -29,7 +29,7 @@ writeShellApplication {
             exit 3
     fi
 
-    tmux_session_name=$(echo -n "$tmux_session_path" | sed "s,$directory/,," | sed "s,\.,_,")
+    tmux_session_name=$(echo -n "$tmux_session_path" | sed "s,$directory/,," | sed "s,\.,_,g")
 
     if ! tmux list-sessions -F "#{session_name}" | grep --quiet "$tmux_session_name"; then
             tmux new-session -d -s "$tmux_session_name" -c "$tmux_session_path"
