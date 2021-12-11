@@ -15,7 +15,6 @@ let
     font_size 12
     term xterm-256color
     update_check_interval 0
-    ${builtins.readFile "${kitty-themes}/themes/Pro.conf"}
   '';
 in
 {

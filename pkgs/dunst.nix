@@ -1,6 +1,6 @@
 self: super:
 let
-  dunst-config = super.writeText "dunst-config" ''
+  dunstrc = super.writeText "dunstrc" ''
     [global]
         ### Display ###
 
@@ -112,7 +112,7 @@ let
 
         ### Text ###
 
-        font = Rec Mono Linear 16
+        font = Rec Mono Linear 10
 
         # The spacing between lines.  If the height is smaller than the
         # font height, it will get raised to the font height.
@@ -197,7 +197,7 @@ let
         max_icon_size = 32
 
         # Paths to default icons.
-        icon_path = ${super.gnome.adwaita-icon-theme}/share/icons/Adwaita/16x16/status/:${super.gnome.adwaita-icon-theme}/share/icons/Adwaita/16x16/devices/
+        icon_path = ${super.gnome.adwaita-icon-theme}/share/icons/Adwaita/16x16/status/:${super.gnome.adwaita-icon-theme}/share/icons/Adwaita/16x16/devices/:${super.gnome.adwaita-icon-theme}/share/icons/Adwaita/16x16/legacy/
 
         ### History ###
 
@@ -281,13 +281,11 @@ let
   '';
 in
 {
-  dunst = super.symlinkJoin {
-    inherit (super.dunst) name;
-    paths = [ super.dunst ];
-    buildInputs = [ super.makeWrapper ];
-    postBuild = ''
-      wrapProgram $out/bin/dunst \
-        --add-flags "-conf ${dunst-config}"
+  dunst = super.dunst.overrideAttrs (old: {
+    postInstall = ''
+      ${old.postInstall}
+      mkdir -p $out/etc/xdg/dunst
+      ln -s ${dunstrc} $out/etc/xdg/dunst/dunstrc
     '';
-  };
+  });
 }
