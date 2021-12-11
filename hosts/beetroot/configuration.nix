@@ -262,6 +262,7 @@ with lib;
     xsv
     ydiff
     yq
+    yubikey-manager
     yubikey-personalization
     zathura
     zip
@@ -310,10 +311,12 @@ with lib;
     '';
 
 
-  services.udev.packages = [ pkgs.yubikey-personalization ];
-  programs.ssh = {
-    startAgent = true;
-  };
+  services.pcscd.enable = false;
+  services.udev.packages = with pkgs; [
+    yubikey-personalization
+    yubikey-manager
+  ];
+  programs.ssh.startAgent = true;
   programs.gnupg.agent = {
     enable = true;
     pinentryFlavor = "gtk2";
