@@ -261,6 +261,25 @@ in
     };
   };
 
+  systemd.services.update-tunnelbroker-ip = {
+    serviceConfig = {
+      Type = "oneshot";
+      EnvironmentFile = "/run/keys/tunnelbroker";
+    };
+    path = with pkgs; [ bash curl ];
+    script = ''
+      curl --data "hostname=''${TUNNEL_ID}" --user "''${USERNAME}:''${PASSWORD}" https://ipv4.tunnelbroker.net/nic/update
+    '';
+  };
+  systemd.timers.update-tunnelbroker-ip = {
+    timerConfig = {
+      OnCalendar = "hourly";
+      Unit = "update-tunnelbroker-ip.service";
+    };
+    wantedBy = [ "timers.target" ];
+    partOf = [ "update-tunnelbroker-ip.service" ];
+  };
+
   system.activationScripts.dynamic-hosts-file.text = ''
     if [ ! -f ${dynamic-hosts-file} ]; then
       # Always ensures there is at minimum 1 line in the file so that the

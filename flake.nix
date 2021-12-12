@@ -7,7 +7,7 @@
     gosee.url = "github:jmbaur/gosee";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nixpkgs-stable-small.url = "nixpkgs/nixos-21.11-small";
-    nixpkgs.url = "github:jmbaur/nixpkgs?rev=4a2b3a2950b9371ebe3cb49592a2064e8656fa37";
+    nixpkgs.url = "github:jmbaur/nixpkgs?rev=fc08d514494feef4dede4f65aed89e45aa1fecb4";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     promtop.url = "github:jmbaur/promtop";
     zig.url = "github:arqv/zig-overlay";
@@ -54,7 +54,7 @@
       network = {
         description = "homelab";
         enableRollback = true;
-        storage.legacy = { };
+        storage.memory = { };
       };
       broccoli = { ... }: {
         deployment.targetHost = "broccoli.home.arpa.";
