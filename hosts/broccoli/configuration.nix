@@ -268,7 +268,10 @@ in
     };
     path = with pkgs; [ bash curl ];
     script = ''
-      curl --data "hostname=''${TUNNEL_ID}" --user "''${USERNAME}:''${PASSWORD}" https://ipv4.tunnelbroker.net/nic/update
+      curl --verbose \
+        --data "hostname=''${TUNNEL_ID}" \
+        --user "''${USERNAME}:''${PASSWORD}" \
+        https://ipv4.tunnelbroker.net/nic/update
     '';
   };
   systemd.timers.update-tunnelbroker-ip = {
