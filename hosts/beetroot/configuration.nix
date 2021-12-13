@@ -207,6 +207,7 @@ with lib;
     kitty
     libreoffice
     librespeed-cli
+    minecraft
     mob
     mosh
     mpv

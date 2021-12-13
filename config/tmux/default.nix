@@ -32,7 +32,6 @@ in
         unbind C-b
         set -g prefix C-s
         bind C-s send-prefix
-        set -g mouse off
         set -g renumber-windows on
         set -g set-clipboard on
         set -g default-command "''${SHELL}"
