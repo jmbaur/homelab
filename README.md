@@ -61,6 +61,7 @@ List from https://www.vegetables.co.nz/vegetables-a-z/.
 - Kale and Cavolo Nero
 - Okra
 - Rhubarb - Rūpapa
+- Spinach - Rengamutu/Kōkihi
 
 ### Available
 
@@ -98,7 +99,6 @@ List from https://www.vegetables.co.nz/vegetables-a-z/.
 - Radishes - Uhikura
 - Salad greens
 - Silverbeet - Kōrare
-- Spinach - Rengamutu/Kōkihi
 - Spring onions
 - Sprouted beans and seeds - Pihi pīni
 - Swedes - Tuwīti tānapu

@@ -123,6 +123,7 @@ writeText "i3-config" ''
   bindsym $mod+Shift+c reload
   bindsym $mod+Shift+r restart
   bindsym $mod+Shift+e exit
+  bindsym $mod+Shift+s sticky toggle
 
   mode "resize" {
           bindsym $left resize shrink width 10 px or 10 ppt

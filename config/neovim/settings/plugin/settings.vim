@@ -42,4 +42,6 @@ let mapleader=','
 filetype plugin indent on
 syntax enable
 
+colorscheme jared
+
 lua require('init')

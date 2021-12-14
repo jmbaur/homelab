@@ -28,7 +28,6 @@ in
               snippets-nvim
               telescope-nvim
               toggleterm-nvim
-              tokyonight-nvim
               trouble-nvim
               typescript-vim
               vim-better-whitespace
