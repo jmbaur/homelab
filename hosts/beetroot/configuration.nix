@@ -97,6 +97,7 @@ with lib;
       sessionCommands = ''
         ${pkgs.xorg.xrdb}/bin/xrdb -merge <<EOF
           Xcursor.theme: Adwaita
+          Xcursor.size: 24
         EOF
       '';
     };
@@ -131,11 +132,12 @@ with lib;
   environment.variables.XCURSOR_PATH = mkForce [ "${pkgs.gnome.adwaita-icon-theme}/share/icons" ];
   environment.etc."xdg/gtk-3.0/settings.ini".text = ''
     [Settings]
-    gtk-application-prefer-dark-theme=1
+    gtk-key-theme-name=Emacs
     gtk-theme-name=Adwaita
+    gtk-application-prefer-dark-theme=1
     gtk-icon-theme-name=Adwaita
     gtk-cursor-theme-name=Adwaita
-    gtk-key-theme-name=Emacs
+    gtk-cursor-theme-size=24
   '';
 
   services.autorandr.enable = true;
@@ -256,7 +258,6 @@ with lib;
     usbutils
     ventoy-bin
     vim
-    vscode-with-extensions
     wireshark
     xdg-user-dirs
     xdg-utils
