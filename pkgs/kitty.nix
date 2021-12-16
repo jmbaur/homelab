@@ -15,7 +15,7 @@ let
     font_size 12
     term xterm-256color
     update_check_interval 0
-    include ${kitty-themes}/themes/gruvbox_dark.conf
+    ${builtins.readFile "${kitty-themes}/themes/gruvbox_dark.conf"}
   '';
 in
 {

@@ -23,9 +23,9 @@ let
       bold_italic:
         family: Rec Mono Linear
         style: Bold Italic
-      size: 10
+      size: 8
 
-    ${builtins.readFile "${alacritty-themes}/themes/Tokyonight_Night.yml"}
+    ${builtins.readFile "${alacritty-themes}/themes/Gruvbox-Dark.yml"}
   '';
 in
 {
