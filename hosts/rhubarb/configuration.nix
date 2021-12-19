@@ -37,7 +37,7 @@
 
   users.mutableUsers = false;
 
-  environment.systemPackages = [ pkgs.promtop ];
+  environment.systemPackages = with pkgs; [ picocom promtop ];
 
   systemd.services.promtop = {
     description = "promtop on tty1";

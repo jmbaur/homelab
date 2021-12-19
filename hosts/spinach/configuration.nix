@@ -1,4 +1,6 @@
-{ config, pkgs, ... }: {
+{ config, lib, pkgs, ... }:
+with lib;
+{
   imports = [ ./hardware-configuration.nix ];
 
   boot.loader.grub = {
@@ -9,11 +11,21 @@
 
   networking.hostName = "spinach";
   networking.interfaces.eno1.useDHCP = true;
-  networking.interfaces.eno2.useDHCP = true;
-  networking.interfaces.eno3.useDHCP = true;
-  networking.interfaces.eno4.useDHCP = true;
-  networking.firewall.allowedTCPPorts = [ 2222 ];
-  networking.firewall.allowedUDPPorts = [ ];
+  networking.interfaces.eno2.useDHCP = false;
+  # networking.interfaces.eno3.useDHCP = true;
+  # networking.interfaces.eno4.useDHCP = true;
+  # networking.interfaces.eno2.ipv4.addresses = mkForce [ ];
+  # networking.macvlans.mv-eno2-host = {
+  #   interface = "eno2";
+  #   mode = "bridge";
+  # };
+  # networking.interfaces.mv-eno2-host = {
+  #   ipv4.addresses = [{ address = "192.168.1.60"; prefixLength = 24; }];
+  # };
+  # networking.firewall.allowedTCPPorts = [ ];
+  # networking.firewall.allowedUDPPorts = [ ];
+
+  security.sudo.enable = true; # TODO(jared): delete me
 
   users = {
     mutableUsers = false;
@@ -26,16 +38,31 @@
 
   programs.mtr.enable = true;
 
-  services.openssh.enable = true;
-
   containers.dev = {
     config = import ./containers/dev.nix;
-    bindMounts = { };
-    allowedDevices = [{ modifier = "rw"; node = "/dev/fuse"; }];
-    forwardPorts = [{ hostPort = 2222; }];
-    enableTun = true;
+    bindMounts = {
+      "/run/podman/podman.sock" = {
+        hostPath = "/run/podman/podman.sock";
+        isReadOnly = false;
+      };
+    };
+    # allowedDevices = [{ modifier = "rwm"; node = "/dev/fuse"; }];
+    # extraFlags = [ "--system-call-filter=add_key" "--system-call-filter=keyctl" ];
+    # additionalCapabilities = [ "CAP_MKNOD" ];
+    # forwardPorts = [{ hostPort = 2222; }]; # container port = host port, if not specified
+    # enableTun = true;
+    # macvlans = [ "eno2" ];
+    # privateNetwork = true;
     autoStart = true;
   };
+
+  virtualisation.podman.enable = true;
+  # systemd.services.podman = {
+  #   systemConfig = {
+  #     DynamicUser = "yes";
+  #     ExecStart = "${pkgs.podman}/bin/podman system service";
+  #   };
+  # };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
