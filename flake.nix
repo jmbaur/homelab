@@ -54,7 +54,7 @@
       network = {
         description = "homelab";
         enableRollback = true;
-        storage.memory = { };
+        storage.legacy = { };
       };
       broccoli = { ... }: {
         deployment.targetHost = "broccoli.home.arpa.";

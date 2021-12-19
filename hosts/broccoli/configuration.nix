@@ -265,7 +265,11 @@ in
     serviceConfig = {
       Type = "oneshot";
       EnvironmentFile = "/run/keys/tunnelbroker";
+      RemainAfterExit = true;
+      Restart = "on-failure";
+      RestartSec = 3;
     };
+    wantedBy = [ "dhcpcd.service" ];
     path = with pkgs; [ bash curl ];
     script = ''
       curl --verbose \
@@ -273,14 +277,6 @@ in
         --user "''${USERNAME}:''${PASSWORD}" \
         https://ipv4.tunnelbroker.net/nic/update
     '';
-  };
-  systemd.timers.update-tunnelbroker-ip = {
-    timerConfig = {
-      OnCalendar = "hourly";
-      Unit = "update-tunnelbroker-ip.service";
-    };
-    wantedBy = [ "timers.target" ];
-    partOf = [ "update-tunnelbroker-ip.service" ];
   };
 
   system.activationScripts.dynamic-hosts-file.text = ''
