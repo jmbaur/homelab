@@ -47,8 +47,7 @@
         ./hosts/beetroot/configuration.nix
       ];
     };
-  }) //
-  rec {
+  }) // {
     nixopsConfigurations.default = with inputs.nixos-hardware.nixosModules; {
       nixpkgs = inputs.nixpkgs-stable-small;
       network = {
@@ -62,6 +61,7 @@
           common-pc-ssd
           common-cpu-intel
           ./lib/nixops.nix
+          ./lib/supermicro.nix
           ./hosts/broccoli/configuration.nix
         ];
       };
@@ -87,7 +87,16 @@
           ./hosts/asparagus/configuration.nix
         ];
       };
+      spinach = { ... }: {
+        deployment.targetHost = "spinach.home.arpa.";
+        imports = [
+          # common-pc-ssd # TODO(jared): enable this?
+          common-cpu-intel
+          ./lib/nixops.nix
+          ./lib/supermicro.nix
+          ./hosts/spinach/configuration.nix
+        ];
+      };
     };
   };
-
 }

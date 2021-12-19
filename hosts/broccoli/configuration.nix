@@ -32,8 +32,7 @@ in
   imports = [ ./options.nix ./secrets.nix ./hardware-configuration.nix ];
 
   boot = {
-    loader = { grub = { enable = true; version = 2; device = "/dev/sda"; }; };
-    kernelModules = [ "ipmi_devintf" "ipmi_si" ];
+    loader.grub = { enable = true; version = 2; device = "/dev/sda"; };
     kernelParams = [ "console=ttyS0,115200" "console=tty1" ];
     kernel.sysctl = {
       "net.ipv4.conf.all.forwarding" = true;

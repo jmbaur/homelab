@@ -231,6 +231,7 @@ with lib;
     picocom
     pinentry-gnome
     plan9port
+    pstree
     pwgen
     renameutils
     ripgrep

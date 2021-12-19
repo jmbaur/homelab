@@ -40,6 +40,7 @@ with lib;
     pciutils
     pfetch
     procs
+    pstree
     tmux
     traceroute
     tree
