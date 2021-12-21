@@ -140,6 +140,8 @@ with lib;
     gtk-cursor-theme-size=24
   '';
 
+  xdg.portal.enable = true;
+  services.flatpak.enable = true;
   services.autorandr.enable = true;
   services.autorandr.defaultTarget = "laptop";
   environment.etc."xdg/autorandr/dock/config".source = ./autorandr/dock/config;
