@@ -178,26 +178,22 @@ with lib;
     alacritty
     awscli2
     bat
-    bitwarden
     brightnessctl
     buildah
-    chromium
     direnv
     discord
     drawio
     dunst
     dust
-    element-desktop
     exa
     fd
     fdroidcl
     ffmpeg-full
     fido2luks
-    firefox
+    firefox # TODO(jared): delete in favor of flatpak
     fzf
     geteltorito
     gh
-    gimp
     git
     git-get
     gosee
@@ -209,9 +205,7 @@ with lib;
     jq
     keybase
     kitty
-    libreoffice
     librespeed-cli
-    minecraft
     mob
     mosh
     mpv
@@ -229,7 +223,6 @@ with lib;
     pass
     pass-git-helper
     patchelf
-    pavucontrol
     picocom
     pinentry-gnome
     plan9port
@@ -240,12 +233,9 @@ with lib;
     rtorrent
     scrot
     sd
-    signal-desktop
     skopeo
     sl
-    slack
     speedtest-cli
-    spotify
     start-recording
     stop-recording
     stow
@@ -253,7 +243,6 @@ with lib;
     tcpdump
     tea
     tealdeer
-    thunderbird
     tig
     tokei
     trash-cli
@@ -261,7 +250,6 @@ with lib;
     usbutils
     ventoy-bin
     vim
-    wireshark
     xdg-user-dirs
     xdg-utils
     xsv
@@ -271,7 +259,6 @@ with lib;
     yubikey-personalization
     zathura
     zip
-    zoom-us
     zoxide
   ];
 
