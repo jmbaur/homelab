@@ -4,7 +4,7 @@ let
     {
       name = "mako-config";
       text = ''
-        font=Iosevka 10
+        font=Rec Mono Linear 10
         icon-path=${super.gnome.adwaita-icon-theme}/share/icons/Adwaita
         default-timeout=15000
       '';
@@ -13,11 +13,9 @@ in
 {
   mako = super.mako.overrideAttrs (old: rec {
     version = "master";
-    src = super.fetchFromGitHub {
-      owner = "emersion";
-      repo = old.pname;
-      rev = version;
-      sha256 = "sha256-8VwBfzC5OfzdxTCPgKm6SwH9SJhHYel/9Kbxn12uNvA=";
+    src = builtins.fetchTarball {
+      url = "https://github.com/emersion/mako/archive/1af224eaaab99f44fe7fe9a47a207adecda3569a.tar.gz";
+      sha256 = "0af6f92w0d7jwxh67ha5y5cbl45i0vra908ajsjsmpbjl0jmda8r";
     };
     postInstall = ''
       wrapProgram $out/bin/mako \

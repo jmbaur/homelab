@@ -5,7 +5,7 @@ let
     name = "foot-config.ini";
     text = ''
       [main]
-      font=Iosevka:size=10
+      font=Rec Mono Linear:size=10
       term=xterm-256color
       selection-target=both
 

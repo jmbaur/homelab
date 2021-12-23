@@ -58,6 +58,7 @@ with lib;
     pipewire.enable = true;
     tmux.enable = true;
     neovim.enable = true;
+    sway.enable = true;
   };
 
   environment.variables.NNN_TRASH = "1";
@@ -79,83 +80,11 @@ with lib;
     tewi-font
   ];
 
-  services.xserver = {
-    enable = true;
-    layout = "us";
-    xkbOptions = "ctrl:nocaps";
-    deviceSection = ''
-      Option "TearFree" "true"
-    '';
-    libinput = {
-      enable = true;
-      touchpad = { accelProfile = "flat"; tapping = true; naturalScrolling = true; };
-    };
-    displayManager = {
-      lightdm.background = pkgs.nixos-artwork.wallpapers.nineish-dark-gray.gnomeFilePath;
-      defaultSession = "none+i3";
-      autoLogin = { enable = true; user = "jared"; };
-      sessionCommands = ''
-        ${pkgs.xorg.xrdb}/bin/xrdb -merge <<EOF
-          Xcursor.theme: Adwaita
-          Xcursor.size: 24
-        EOF
-      '';
-    };
-    windowManager.i3 = {
-      enable = true;
-      configFile = pkgs.callPackage ../../config/i3/config.nix { };
-      extraSessionCommands = ''
-        ${pkgs.hsetroot}/bin/hsetroot -cover ${pkgs.nixos-artwork.wallpapers.nineish-dark-gray.gnomeFilePath}
-      '';
-    };
-  };
-  services.greetd = {
-    enable = false;
-    settings = {
-      default_session = {
-        command =
-          let
-            tuigreet = "${pkgs.greetd.tuigreet}/bin/tuigreet";
-            startx = "${pkgs.xorg.xinit}/bin/startx";
-            i3 = "${pkgs.i3}/bin/i3";
-            i3-config = pkgs.callPackage ../../config/i3/config.nix { };
-          in
-          "${tuigreet} --time --asterisks --cmd '${startx} ${i3} -c ${i3-config}'";
-      };
-    };
-  };
-  programs.xss-lock = {
-    enable = true;
-    lockerCommand = "${pkgs.xsecurelock}/bin/xsecurelock";
-    extraOptions = [ "-n" "${pkgs.xsecurelock}/libexec/xsecurelock/dimmer" "-l" ];
-  };
-  environment.variables.XCURSOR_PATH = mkForce [ "${pkgs.gnome.adwaita-icon-theme}/share/icons" ];
-  environment.etc."xdg/gtk-3.0/settings.ini".text = ''
-    [Settings]
-    gtk-key-theme-name=Emacs
-    gtk-theme-name=Adwaita
-    gtk-application-prefer-dark-theme=1
-    gtk-icon-theme-name=Adwaita
-    gtk-cursor-theme-name=Adwaita
-    gtk-cursor-theme-size=24
-  '';
-
   xdg.portal.enable = true;
   services.flatpak.enable = true;
   services.autorandr.enable = true;
   services.autorandr.defaultTarget = "laptop";
-  environment.etc."xdg/autorandr/dock/config".source = ./autorandr/dock/config;
-  environment.etc."xdg/autorandr/dock/setup".source = ./autorandr/dock/setup;
-  environment.etc."xdg/autorandr/laptop/config".source = ./autorandr/laptop/config;
-  environment.etc."xdg/autorandr/laptop/setup".source = ./autorandr/laptop/setup;
-  environment.etc."xdg/autorandr/postswitch".source = "${(pkgs.writeShellScriptBin "autorandr-postswitch" ''
-    ${pkgs.hsetroot}/bin/hsetroot -cover ${pkgs.nixos-artwork.wallpapers.nineish-dark-gray.gnomeFilePath}
-    ${pkgs.libnotify}/bin/notify-send "Autorandr" "Profile switched"
-  '')}/bin/autorandr-postswitch";
 
-  location.provider = "geoclue2";
-  services.redshift.enable = true;
-  services.clipmenu.enable = true;
   services.fwupd.enable = true;
   services.printing.enable = true;
   services.avahi.enable = true;
@@ -190,7 +119,6 @@ with lib;
     fdroidcl
     ffmpeg-full
     fido2luks
-    firefox # TODO(jared): delete in favor of flatpak
     fzf
     geteltorito
     gh

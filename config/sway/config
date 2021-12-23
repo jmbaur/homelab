@@ -16,11 +16,10 @@ exec_always {
         gsettings set $gnome-schema gtk-key-theme 'Emacs'
         gsettings set $gnome-schema icon-theme 'Adwaita'
         gsettings set $gnome-schema cursor-theme 'Adwaita'
-        gsettings set $gnome-schema font-name 'Iosevka'
 }
 
 floating_modifier $mod normal
-font pango:Iosevka 10
+font pango:Rec Mono Linear 10
 workspace number 1
 workspace_auto_back_and_forth yes
 
@@ -93,11 +92,11 @@ bindsym $mod+Shift+s sticky toggle
 bindsym $mod+Shift+space floating toggle
 bindsym $mod+a focus parent
 bindsym $mod+b splith
-bindsym $mod+c exec clipman pick --tool=bemenu --tool-args="--fn=Iosevka --line-height=27" | xargs swaymsg exec --
+bindsym $mod+c exec clipman pick --tool=bemenu --tool-args="--fn='Rec Mono Linear' --line-height=27" | xargs swaymsg exec --
 bindsym $mod+e layout toggle split
 bindsym $mod+f fullscreen
 bindsym $mod+minus scratchpad show
-bindsym $mod+p exec bemenu-run --fn=Iosevka --line-height=27 | xargs swaymsg exec --
+bindsym $mod+p exec bemenu-run --fn="Rec Mono Linear" --line-height=27 | xargs swaymsg exec --
 bindsym $mod+r mode "resize"
 bindsym $mod+s layout stacking
 bindsym $mod+space focus mode_toggle

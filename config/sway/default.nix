@@ -73,12 +73,12 @@ in
         '';
         "xdg/gtk-3.0/settings.ini".text = ''
           [Settings]
-          gtk-application-prefer-dark-theme=1
+          gtk-key-theme-name=Emacs
           gtk-theme-name=Adwaita
+          gtk-application-prefer-dark-theme=1
           gtk-icon-theme-name=Adwaita
           gtk-cursor-theme-name=Adwaita
-          gtk-key-theme-name=Emacs
-          gtk-font-name=Iosevka
+          gtk-cursor-theme-size=24
         '';
       };
 
@@ -88,9 +88,7 @@ in
 
     environment.variables = {
       XCURSOR_THEME = "Adwaita";
-      XCURSOR_PATH = mkForce [
-        "${pkgs.gnome.adwaita-icon-theme}/share/icons"
-      ];
+      XCURSOR_PATH = mkForce [ "${pkgs.gnome.adwaita-icon-theme}/share/icons" ];
     };
 
     services.greetd = {
