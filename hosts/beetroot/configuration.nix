@@ -111,7 +111,6 @@ with lib;
     buildah
     deploy-rs
     direnv
-    dunst
     dust
     exa
     fd
