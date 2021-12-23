@@ -1,30 +1,16 @@
 { config, pkgs, ... }: {
-  imports = [ ./secrets.nix ./hardware-configuration.nix ];
+  imports = [ ./hardware-configuration.nix ];
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelParams = [ "net.ifnames=0" ];
 
   networking.hostName = "asparagus";
-  networking.wireless = {
-    enable = true;
-    interfaces = [ "wlan0" ];
-    environmentFile = "/var/persist/wireless";
-    networks.Silence_of_the_LANs = {
-      pskRaw = "@PSK_RAW@";
-      authProtocols = [ "WPA-PSK" ];
-    };
-  };
-
-  system.activationScripts.wireless.text = ''
-    mkdir -p /var/persist
-    cp /run/keys/wireless /var/persist/wireless
-  '';
 
   time.timeZone = "America/Los_Angeles";
 
   networking.interfaces.eth0.useDHCP = true;
-  networking.interfaces.wlan0.useDHCP = true;
+  networking.interfaces.wlan0.useDHCP = false;
 
   services.avahi.enable = true;
   services.avahi.publish.enable = true;
