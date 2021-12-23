@@ -2,6 +2,7 @@
   description = "NixOS configurations for homelab";
 
   inputs = {
+    deploy-rs.url = "github:serokell/deploy-rs";
     flake-utils.url = "github:numtide/flake-utils";
     git-get.url = "github:jmbaur/git-get";
     gosee.url = "github:jmbaur/gosee";
@@ -37,8 +38,9 @@
         (import ./pkgs/overlays.nix {
           extraOverlays = [
             (self: super: {
-              gosee = inputs.gosee.defaultPackage.${system};
+              deploy-rs = inputs.deploy-rs.defaultPackage.${system}; # TODO(jared): use overlay defined in flake
               git-get = inputs.git-get.defaultPackage.${system};
+              gosee = inputs.gosee.defaultPackage.${system};
             })
           ];
         })

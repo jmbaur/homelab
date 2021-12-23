@@ -109,9 +109,8 @@ with lib;
     bat
     brightnessctl
     buildah
+    deploy-rs
     direnv
-    discord
-    drawio
     dunst
     dust
     exa
@@ -288,4 +287,3 @@ with lib;
   system.stateVersion = "21.05"; # Did you read the comment?
 
 }
-
