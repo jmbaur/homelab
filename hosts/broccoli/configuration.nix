@@ -84,7 +84,11 @@ in
       logLevel = "debug";
       listenAddresses = lib.singleton "localhost:631" ++
         (builtins.map (ifi: ifi.address + ":631") eno2.ipv4.addresses) ++
-        (builtins.map (ifi: "[" + ifi.address + "]:631") eno2.ipv6.addresses);
+        (builtins.map (ifi: "[" + ifi.address + "]:631") eno2.ipv6.addresses) ++
+        (builtins.map (ifi: ifi.address + ":631") eno3.ipv4.addresses) ++
+        (builtins.map (ifi: "[" + ifi.address + "]:631") eno3.ipv6.addresses) ++
+        (builtins.map (ifi: ifi.address + ":631") eno4.ipv4.addresses) ++
+        (builtins.map (ifi: "[" + ifi.address + "]:631") eno4.ipv6.addresses);
       allowFrom = [ "all" ];
       drivers = [
         (stdenv.mkDerivation rec {
@@ -141,11 +145,28 @@ in
         (builtins.map
           (ifi: { port = 22; addr = "[" + ifi.address + "]"; })
           eno2.ipv6.addresses)
+        ++
+        (builtins.map
+          (ifi: { port = 22; addr = ifi.address; })
+          eno3.ipv4.addresses)
+        ++
+        (builtins.map
+          (ifi: { port = 22; addr = "[" + ifi.address + "]"; })
+          eno3.ipv6.addresses)
+        ++
+        (builtins.map
+          (ifi: { port = 22; addr = ifi.address; })
+          eno4.ipv4.addresses)
+        ++
+        (builtins.map
+          (ifi: { port = 22; addr = "[" + ifi.address + "]"; })
+          eno4.ipv6.addresses)
+
       );
     };
     dhcpd4 = with config.custom.dhcpd4; {
       enable = true;
-      interfaces = [ "eno2" ];
+      interfaces = [ "eno2" "eno3" "eno4" ];
       extraConfig = ''
         ddns-update-style none;
         option domain-search "${domain}";
@@ -191,6 +212,12 @@ in
               ${lib.concatMapStrings (ifi: ''
                 ${ifi.address} ${config.networking.hostName}.${domain}
               '') (eno2.ipv4.addresses ++ eno2.ipv6.addresses)}
+              ${lib.concatMapStrings (ifi: ''
+                ${ifi.address} ${config.networking.hostName}.${domain}
+              '') (eno3.ipv4.addresses ++ eno3.ipv6.addresses)}
+              ${lib.concatMapStrings (ifi: ''
+                ${ifi.address} ${config.networking.hostName}.${domain}
+              '') (eno4.ipv4.addresses ++ eno4.ipv6.addresses)}
             }
           }
         '';
@@ -198,20 +225,24 @@ in
     corerad = with config.networking.interfaces; {
       enable = true;
       settings = {
-        interfaces = [{
-          verbose = true;
-          name = "eno2";
-          advertise = true;
-          prefix = builtins.map
-            (ifi: {
-              prefix = "::/" + builtins.toString ifi.prefixLength;
-            })
-            eno2.ipv6.addresses;
-          rdnss = [{
-            servers = builtins.map (ifi: ifi.address) eno2.ipv6.addresses;
-          }];
-          dnssl = [{ domain_names = [ domain ]; }];
-        }];
+        interfaces = builtins.map
+          (ifi:
+            {
+              verbose = true;
+              name = ifi.name;
+              advertise = true;
+              prefix = builtins.map
+                (addr: {
+                  prefix = "::/" + builtins.toString addr.prefixLength;
+                })
+                ifi.ipv6.addresses;
+              rdnss = [{
+                servers = builtins.map (addr: addr.address) ifi.ipv6.addresses;
+              }];
+              dnssl = [{ domain_names = [ domain ]; }];
+            }
+          ) [ eno2 eno3 eno4 ]
+        ;
         debug = { address = ":9430"; prometheus = true; };
       };
     };
@@ -227,11 +258,13 @@ in
     nat = {
       enable = true;
       externalInterface = "eno1";
-      internalInterfaces = [ "eno2" ];
+      internalInterfaces = [ "eno2" "eno3" "eno4" ];
     };
     interfaces = {
       eno1.useDHCP = true;
       eno2.useDHCP = false;
+      eno3.useDHCP = false;
+      eno4.useDHCP = false;
       hurricane.useDHCP = false;
     };
     sits.hurricane = {
@@ -253,9 +286,11 @@ in
     };
     firewall = {
       enable = true;
-      trustedInterfaces = [ "eno2" ];
+      trustedInterfaces = [ "eno2" "eno3" "eno4" ];
       interfaces = {
         eno2.allowedTCPPorts = [ 22 ];
+        eno3.allowedTCPPorts = [ 22 ];
+        eno4.allowedTCPPorts = [ 22 ];
       };
     };
   };
