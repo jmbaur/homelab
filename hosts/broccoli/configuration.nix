@@ -2,16 +2,16 @@
 with pkgs;
 let
   domain = "home.arpa.";
-  dynamic-hosts-file = "/var/lib/dhcp/hosts";
+  dhcpd-hosts-file = "/var/lib/dhcp/hosts";
   update-hosts-script = writeShellScriptBin "update-hosts" ''
     HOST_ENTRY="$3.${domain} $3"
     FULL_ENTRY="$2 ''${HOST_ENTRY}"
 
     # Always remove old lease with same hostname
-    sed -i "/^.*''${HOST_ENTRY}$/d" ${dynamic-hosts-file}
+    sed -i "/^.*''${HOST_ENTRY}$/d" ${dhcpd-hosts-file}
 
     if [ "$1" == "commit" ] && [ "$2" != "" ] && [ "$3" != "" ]; then
-      sed -i "1i ''${FULL_ENTRY}" ${dynamic-hosts-file}
+      sed -i "1i ''${FULL_ENTRY}" ${dhcpd-hosts-file}
     fi
   '';
   dhcpd-event-config = (event: ''
@@ -187,7 +187,7 @@ in
             prometheus :9153
           }
           ${domain} {
-            hosts ${dynamic-hosts-file} {
+            hosts ${dhcpd-hosts-file} {
               ${lib.concatMapStrings (ifi: ''
                 ${ifi.address} ${config.networking.hostName}.${domain}
               '') (eno2.ipv4.addresses ++ eno2.ipv6.addresses)}
@@ -278,12 +278,12 @@ in
     '';
   };
 
-  system.activationScripts.dynamic-hosts-file.text = ''
-    if [ ! -f ${dynamic-hosts-file} ]; then
+  system.activationScripts.dhcpd-hosts-file.text = ''
+    if [ ! -f ${dhcpd-hosts-file} ]; then
       # Always ensures there is at minimum 1 line in the file so that the
       # script that updates this file can just do `sed -i "1i ..." ...`.
-      echo > ${dynamic-hosts-file}
-      chown dhcpd:nogroup ${dynamic-hosts-file}
+      echo > ${dhcpd-hosts-file}
+      chown dhcpd:nogroup ${dhcpd-hosts-file}
     fi
   '';
 
