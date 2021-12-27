@@ -8,7 +8,7 @@
     gosee.url = "github:jmbaur/gosee";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nixpkgs-stable-small.url = "nixpkgs/nixos-21.11-small";
-    nixpkgs.url = "github:jmbaur/nixpkgs?rev=71df3a64c600e8f2ccab7f495d7a33e18d6533dc";
+    nixpkgs.url = "github:jmbaur/nixpkgs/fido2luks-pin"; # pinned on latest commits from this branch
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     promtop.url = "github:jmbaur/promtop";
     zig.url = "github:arqv/zig-overlay";
@@ -16,14 +16,14 @@
 
   outputs = inputs: inputs.flake-utils.lib.eachSystem inputs.flake-utils.lib.allSystems
     (system:
-      let pkgs = inputs.nixpkgs.legacyPackages.${system}; in
+      let pkgs = inputs.nixpkgs-stable-small.legacyPackages.${system}; in
       rec {
         checks.pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
           src = builtins.path { path = ./.; };
           hooks.nixpkgs-fmt.enable = true;
         };
         devShell = pkgs.mkShell {
-          buildInputs = with pkgs;[ git gnumake ];
+          buildInputs = with pkgs; [ git gnumake ];
           inherit (checks.pre-commit-check) shellHook;
         };
       }) // inputs.flake-utils.lib.eachSystem [ "aarch64-linux" "x86_64-linux" ] (system: {
