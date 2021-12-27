@@ -79,10 +79,10 @@ in
       listenAddresses = lib.singleton "localhost:631" ++
         (builtins.map (ifi: ifi.address + ":631") eno2.ipv4.addresses) ++
         (builtins.map (ifi: "[" + ifi.address + "]:631") eno2.ipv6.addresses) ++
-        (builtins.map (ifi: ifi.address + ":631") eno3.ipv4.addresses) ++
-        (builtins.map (ifi: "[" + ifi.address + "]:631") eno3.ipv6.addresses) ++
-        (builtins.map (ifi: ifi.address + ":631") eno4.ipv4.addresses) ++
-        (builtins.map (ifi: "[" + ifi.address + "]:631") eno4.ipv6.addresses);
+        (builtins.map (ifi: ifi.address + ":631") enp1s0f0.ipv4.addresses) ++
+        (builtins.map (ifi: "[" + ifi.address + "]:631") enp1s0f0.ipv6.addresses) ++
+        (builtins.map (ifi: ifi.address + ":631") enp1s0f1.ipv4.addresses) ++
+        (builtins.map (ifi: "[" + ifi.address + "]:631") enp1s0f1.ipv6.addresses);
       allowFrom = [ "all" ];
       drivers = [
         (stdenv.mkDerivation rec {
@@ -142,25 +142,25 @@ in
         ++
         (builtins.map
           (ifi: { port = 22; addr = ifi.address; })
-          eno3.ipv4.addresses)
+          enp1s0f0.ipv4.addresses)
         ++
         (builtins.map
           (ifi: { port = 22; addr = "[" + ifi.address + "]"; })
-          eno3.ipv6.addresses)
+          enp1s0f0.ipv6.addresses)
         ++
         (builtins.map
           (ifi: { port = 22; addr = ifi.address; })
-          eno4.ipv4.addresses)
+          enp1s0f1.ipv4.addresses)
         ++
         (builtins.map
           (ifi: { port = 22; addr = "[" + ifi.address + "]"; })
-          eno4.ipv6.addresses)
+          enp1s0f1.ipv6.addresses)
 
       );
     };
     dhcpd4 = with config.custom.dhcpd4; {
       enable = true;
-      interfaces = [ "eno2" "eno3" "eno4" ];
+      interfaces = [ "eno2" "enp1s0f0" "enp1s0f1" ];
       extraConfig = ''
         ddns-update-style none;
         option domain-search "${domain}";
@@ -220,10 +220,10 @@ in
               '') (eno2.ipv4.addresses ++ eno2.ipv6.addresses)}
               ${lib.concatMapStrings (ifi: ''
                 ${ifi.address} ${config.networking.hostName}.${domain}
-              '') (eno3.ipv4.addresses ++ eno3.ipv6.addresses)}
+              '') (enp1s0f0.ipv4.addresses ++ enp1s0f0.ipv6.addresses)}
               ${lib.concatMapStrings (ifi: ''
                 ${ifi.address} ${config.networking.hostName}.${domain}
-              '') (eno4.ipv4.addresses ++ eno4.ipv6.addresses)}
+              '') (enp1s0f1.ipv4.addresses ++ enp1s0f1.ipv6.addresses)}
             }
           }
         '';
@@ -247,7 +247,7 @@ in
               }];
               dnssl = [{ domain_names = [ domain ]; }];
             }
-          ) [ eno2 eno3 eno4 ]
+          ) [ eno2 enp1s0f0 enp1s0f1 ]
         ;
         debug = { address = ":9430"; prometheus = true; };
       };
@@ -264,13 +264,13 @@ in
     nat = {
       enable = true;
       externalInterface = "eno1";
-      internalInterfaces = [ "eno2" "eno3" "eno4" ];
+      internalInterfaces = [ "eno2" "enp1s0f0" "enp1s0f1" ];
     };
     interfaces = {
       eno1.useDHCP = true;
       eno2.useDHCP = false;
-      eno3.useDHCP = false;
-      eno4.useDHCP = false;
+      enp1s0f0.useDHCP = false;
+      enp1s0f1.useDHCP = false;
       hurricane.useDHCP = false;
     };
     sits.hurricane = {
@@ -292,11 +292,11 @@ in
     };
     firewall = {
       enable = true;
-      trustedInterfaces = [ "eno2" "eno3" "eno4" ];
+      trustedInterfaces = [ "eno2" "enp1s0f0" "enp1s0f1" ];
       interfaces = {
         eno2.allowedTCPPorts = [ 22 ];
-        eno3.allowedTCPPorts = [ 22 ];
-        eno4.allowedTCPPorts = [ 22 ];
+        enp1s0f0.allowedTCPPorts = [ 22 ];
+        enp1s0f1.allowedTCPPorts = [ 22 ];
       };
     };
   };
