@@ -21,12 +21,6 @@ let
     log(concat("${event}: IP: ", clientip, " Mac: ", clientmac, " Host: ", clienthost));
     execute("${update-hosts-script}/bin/update-hosts", "${event}", clientip, clienthost);
   '');
-  steven-black-hosts = fetchFromGitHub {
-    owner = "StevenBlack";
-    repo = "hosts";
-    rev = "56312e0607d9057689c93825c4a2f82d657eaabf";
-    sha256 = "sha256-XrLwEdVlFg+7g9+JnMoezHimYSKUJsFFxtkcIZj8NAY=";
-  };
 in
 {
   imports = [ ./options.nix ./secrets.nix ./hardware-configuration.nix ];
@@ -84,7 +78,11 @@ in
       logLevel = "debug";
       listenAddresses = lib.singleton "localhost:631" ++
         (builtins.map (ifi: ifi.address + ":631") eno2.ipv4.addresses) ++
-        (builtins.map (ifi: "[" + ifi.address + "]:631") eno2.ipv6.addresses);
+        (builtins.map (ifi: "[" + ifi.address + "]:631") eno2.ipv6.addresses) ++
+        (builtins.map (ifi: ifi.address + ":631") eno3.ipv4.addresses) ++
+        (builtins.map (ifi: "[" + ifi.address + "]:631") eno3.ipv6.addresses) ++
+        (builtins.map (ifi: ifi.address + ":631") eno4.ipv4.addresses) ++
+        (builtins.map (ifi: "[" + ifi.address + "]:631") eno4.ipv6.addresses);
       allowFrom = [ "all" ];
       drivers = [
         (stdenv.mkDerivation rec {
@@ -141,11 +139,28 @@ in
         (builtins.map
           (ifi: { port = 22; addr = "[" + ifi.address + "]"; })
           eno2.ipv6.addresses)
+        ++
+        (builtins.map
+          (ifi: { port = 22; addr = ifi.address; })
+          eno3.ipv4.addresses)
+        ++
+        (builtins.map
+          (ifi: { port = 22; addr = "[" + ifi.address + "]"; })
+          eno3.ipv6.addresses)
+        ++
+        (builtins.map
+          (ifi: { port = 22; addr = ifi.address; })
+          eno4.ipv4.addresses)
+        ++
+        (builtins.map
+          (ifi: { port = 22; addr = "[" + ifi.address + "]"; })
+          eno4.ipv6.addresses)
+
       );
     };
     dhcpd4 = with config.custom.dhcpd4; {
       enable = true;
-      interfaces = [ "eno2" ];
+      interfaces = [ "eno2" "eno3" "eno4" ];
       extraConfig = ''
         ddns-update-style none;
         option domain-search "${domain}";
@@ -175,12 +190,24 @@ in
     coredns = with config.networking.interfaces; {
       enable = true;
       config =
+        let
+          steven-black-hosts = fetchFromGitHub {
+            owner = "StevenBlack";
+            repo = "hosts";
+            rev = "56312e0607d9057689c93825c4a2f82d657eaabf";
+            sha256 = "sha256-XrLwEdVlFg+7g9+JnMoezHimYSKUJsFFxtkcIZj8NAY=";
+          };
+          cloudflare-ipv4-1 = "1.1.1.1";
+          cloudflare-ipv4-2 = "1.0.0.1";
+          cloudflare-ipv6-1 = "2606:4700:4700::1111";
+          cloudflare-ipv6-2 = "2606:4700:4700::1001";
+        in
         ''
           . {
             hosts ${steven-black-hosts}/hosts {
               fallthrough
             }
-            forward . tls://1.1.1.1 tls://1.0.0.1 tls://2606:4700:4700::1111 tls://2606:4700:4700::1001 {
+            forward . tls://${cloudflare-ipv4-1} tls://${cloudflare-ipv4-2} tls://${cloudflare-ipv6-1} tls://${cloudflare-ipv6-2} {
               tls_servername tls.cloudflare-dns.com
               health_check 5s
             }
@@ -191,6 +218,12 @@ in
               ${lib.concatMapStrings (ifi: ''
                 ${ifi.address} ${config.networking.hostName}.${domain}
               '') (eno2.ipv4.addresses ++ eno2.ipv6.addresses)}
+              ${lib.concatMapStrings (ifi: ''
+                ${ifi.address} ${config.networking.hostName}.${domain}
+              '') (eno3.ipv4.addresses ++ eno3.ipv6.addresses)}
+              ${lib.concatMapStrings (ifi: ''
+                ${ifi.address} ${config.networking.hostName}.${domain}
+              '') (eno4.ipv4.addresses ++ eno4.ipv6.addresses)}
             }
           }
         '';
@@ -198,20 +231,24 @@ in
     corerad = with config.networking.interfaces; {
       enable = true;
       settings = {
-        interfaces = [{
-          verbose = true;
-          name = "eno2";
-          advertise = true;
-          prefix = builtins.map
-            (ifi: {
-              prefix = "::/" + builtins.toString ifi.prefixLength;
-            })
-            eno2.ipv6.addresses;
-          rdnss = [{
-            servers = builtins.map (ifi: ifi.address) eno2.ipv6.addresses;
-          }];
-          dnssl = [{ domain_names = [ domain ]; }];
-        }];
+        interfaces = builtins.map
+          (ifi:
+            {
+              verbose = true;
+              name = ifi.name;
+              advertise = true;
+              prefix = builtins.map
+                (addr: {
+                  prefix = "::/" + builtins.toString addr.prefixLength;
+                })
+                ifi.ipv6.addresses;
+              rdnss = [{
+                servers = builtins.map (addr: addr.address) ifi.ipv6.addresses;
+              }];
+              dnssl = [{ domain_names = [ domain ]; }];
+            }
+          ) [ eno2 eno3 eno4 ]
+        ;
         debug = { address = ":9430"; prometheus = true; };
       };
     };
@@ -227,11 +264,13 @@ in
     nat = {
       enable = true;
       externalInterface = "eno1";
-      internalInterfaces = [ "eno2" ];
+      internalInterfaces = [ "eno2" "eno3" "eno4" ];
     };
     interfaces = {
       eno1.useDHCP = true;
       eno2.useDHCP = false;
+      eno3.useDHCP = false;
+      eno4.useDHCP = false;
       hurricane.useDHCP = false;
     };
     sits.hurricane = {
@@ -253,9 +292,11 @@ in
     };
     firewall = {
       enable = true;
-      trustedInterfaces = [ "eno2" ];
+      trustedInterfaces = [ "eno2" "eno3" "eno4" ];
       interfaces = {
         eno2.allowedTCPPorts = [ 22 ];
+        eno3.allowedTCPPorts = [ 22 ];
+        eno4.allowedTCPPorts = [ 22 ];
       };
     };
   };
