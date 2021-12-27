@@ -21,12 +21,6 @@ let
     log(concat("${event}: IP: ", clientip, " Mac: ", clientmac, " Host: ", clienthost));
     execute("${update-hosts-script}/bin/update-hosts", "${event}", clientip, clienthost);
   '');
-  steven-black-hosts = fetchFromGitHub {
-    owner = "StevenBlack";
-    repo = "hosts";
-    rev = "56312e0607d9057689c93825c4a2f82d657eaabf";
-    sha256 = "sha256-XrLwEdVlFg+7g9+JnMoezHimYSKUJsFFxtkcIZj8NAY=";
-  };
 in
 {
   imports = [ ./options.nix ./secrets.nix ./hardware-configuration.nix ];
@@ -196,12 +190,24 @@ in
     coredns = with config.networking.interfaces; {
       enable = true;
       config =
+        let
+          steven-black-hosts = fetchFromGitHub {
+            owner = "StevenBlack";
+            repo = "hosts";
+            rev = "56312e0607d9057689c93825c4a2f82d657eaabf";
+            sha256 = "sha256-XrLwEdVlFg+7g9+JnMoezHimYSKUJsFFxtkcIZj8NAY=";
+          };
+          cloudflare-ipv4-1 = "1.1.1.1";
+          cloudflare-ipv4-2 = "1.0.0.1";
+          cloudflare-ipv6-1 = "2606:4700:4700::1111";
+          cloudflare-ipv6-2 = "2606:4700:4700::1001";
+        in
         ''
           . {
             hosts ${steven-black-hosts}/hosts {
               fallthrough
             }
-            forward . tls://1.1.1.1 tls://1.0.0.1 tls://2606:4700:4700::1111 tls://2606:4700:4700::1001 {
+            forward . tls://${cloudflare-ipv4-1} tls://${cloudflare-ipv4-2} tls://${cloudflare-ipv6-1} tls://${cloudflare-ipv6-2} {
               tls_servername tls.cloudflare-dns.com
               health_check 5s
             }
