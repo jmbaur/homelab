@@ -250,6 +250,7 @@ with lib;
     isNormalUser = true;
     extraGroups = [
       "adbusers"
+      "dialout"
       "libvirtd"
       "networkmanager"
       "wheel"
