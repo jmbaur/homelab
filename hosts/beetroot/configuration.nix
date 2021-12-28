@@ -234,10 +234,13 @@ with lib;
     yubikey-personalization
     yubikey-manager
   ];
-  programs.ssh.startAgent = true;
+  programs.ssh = {
+    startAgent = true;
+    askPassword = "${pkgs.gnome.seahorse}/libexec/seahorse/ssh-askpass";
+  };
   programs.gnupg.agent = {
     enable = true;
-    pinentryFlavor = "gtk2";
+    pinentryFlavor = "gnome3";
   };
   programs.wireshark.enable = true;
   programs.adb.enable = true;
