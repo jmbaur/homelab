@@ -15,11 +15,13 @@ let
     fi
   '';
   dhcpd-event-config = (event: ''
-    set clientip = binary-to-ascii(10, 8, ".", leased-address);
-    set clientmac = binary-to-ascii(16, 8, ":", substring(hardware, 1, 6));
-    set clienthost = pick-first-value (option fqdn.hostname, option host-name, "");
-    log(concat("${event}: IP: ", clientip, " Mac: ", clientmac, " Host: ", clienthost));
-    execute("${update-hosts-script}/bin/update-hosts", "${event}", clientip, clienthost);
+    on ${event} {
+      set clientip = binary-to-ascii(10, 8, ".", leased-address);
+      set clientmac = binary-to-ascii(16, 8, ":", substring(hardware, 1, 6));
+      set clienthost = pick-first-value (option fqdn.hostname, option host-name, "");
+      log(concat("${event}: IP: ", clientip, " Mac: ", clientmac, " Host: ", clienthost));
+      execute("${update-hosts-script}/bin/update-hosts", "${event}", clientip, clienthost);
+    }
   '');
 in
 {
@@ -78,11 +80,7 @@ in
       logLevel = "debug";
       listenAddresses = lib.singleton "localhost:631" ++
         (builtins.map (ifi: ifi.address + ":631") eno2.ipv4.addresses) ++
-        (builtins.map (ifi: "[" + ifi.address + "]:631") eno2.ipv6.addresses) ++
-        (builtins.map (ifi: ifi.address + ":631") enp1s0f0.ipv4.addresses) ++
-        (builtins.map (ifi: "[" + ifi.address + "]:631") enp1s0f0.ipv6.addresses) ++
-        (builtins.map (ifi: ifi.address + ":631") enp1s0f1.ipv4.addresses) ++
-        (builtins.map (ifi: "[" + ifi.address + "]:631") enp1s0f1.ipv6.addresses);
+        (builtins.map (ifi: "[" + ifi.address + "]:631") eno2.ipv6.addresses);
       allowFrom = [ "all" ];
       drivers = [
         (stdenv.mkDerivation rec {
@@ -139,28 +137,11 @@ in
         (builtins.map
           (ifi: { port = 22; addr = "[" + ifi.address + "]"; })
           eno2.ipv6.addresses)
-        ++
-        (builtins.map
-          (ifi: { port = 22; addr = ifi.address; })
-          enp1s0f0.ipv4.addresses)
-        ++
-        (builtins.map
-          (ifi: { port = 22; addr = "[" + ifi.address + "]"; })
-          enp1s0f0.ipv6.addresses)
-        ++
-        (builtins.map
-          (ifi: { port = 22; addr = ifi.address; })
-          enp1s0f1.ipv4.addresses)
-        ++
-        (builtins.map
-          (ifi: { port = 22; addr = "[" + ifi.address + "]"; })
-          enp1s0f1.ipv6.addresses)
-
       );
     };
     dhcpd4 = with config.custom.dhcpd4; {
       enable = true;
-      interfaces = [ "eno2" "enp1s0f0" "enp1s0f1" ];
+      interfaces = builtins.attrNames interfaces;
       extraConfig = ''
         ddns-update-style none;
         option domain-search "${domain}";
@@ -178,13 +159,7 @@ in
         '')
         (builtins.attrNames interfaces)}
 
-        ${lib.concatMapStrings
-        (event: ''
-          on ${event} {
-            ${dhcpd-event-config event}
-          }
-        '')
-        ["commit" "release" "expiry"]}
+        ${lib.concatMapStrings dhcpd-event-config ["commit" "release" "expiry"]}
       '';
     };
     coredns = with config.networking.interfaces; {
@@ -218,12 +193,6 @@ in
               ${lib.concatMapStrings (ifi: ''
                 ${ifi.address} ${config.networking.hostName}.${domain}
               '') (eno2.ipv4.addresses ++ eno2.ipv6.addresses)}
-              ${lib.concatMapStrings (ifi: ''
-                ${ifi.address} ${config.networking.hostName}.${domain}
-              '') (enp1s0f0.ipv4.addresses ++ enp1s0f0.ipv6.addresses)}
-              ${lib.concatMapStrings (ifi: ''
-                ${ifi.address} ${config.networking.hostName}.${domain}
-              '') (enp1s0f1.ipv4.addresses ++ enp1s0f1.ipv6.addresses)}
             }
           }
         '';
@@ -247,7 +216,7 @@ in
               }];
               dnssl = [{ domain_names = [ domain ]; }];
             }
-          ) [ eno2 enp1s0f0 enp1s0f1 ]
+          ) [ eno2 ]
         ;
         debug = { address = ":9430"; prometheus = true; };
       };
@@ -264,7 +233,7 @@ in
     nat = {
       enable = true;
       externalInterface = "eno1";
-      internalInterfaces = [ "eno2" "enp1s0f0" "enp1s0f1" ];
+      internalInterfaces = [ "eno2" ];
     };
     interfaces = {
       eno1.useDHCP = true;
@@ -292,11 +261,9 @@ in
     };
     firewall = {
       enable = true;
-      trustedInterfaces = [ "eno2" "enp1s0f0" "enp1s0f1" ];
+      trustedInterfaces = [ "eno2" ];
       interfaces = {
         eno2.allowedTCPPorts = [ 22 ];
-        enp1s0f0.allowedTCPPorts = [ 22 ];
-        enp1s0f1.allowedTCPPorts = [ 22 ];
       };
     };
   };

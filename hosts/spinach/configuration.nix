@@ -12,8 +12,8 @@ with lib;
   networking.hostName = "spinach";
   networking.interfaces.eno1.useDHCP = true;
   networking.interfaces.eno2.useDHCP = false;
-  # networking.interfaces.eno3.useDHCP = true;
-  # networking.interfaces.eno4.useDHCP = true;
+  networking.interfaces.eno3.useDHCP = false;
+  networking.interfaces.eno4.useDHCP = false;
   # networking.interfaces.eno2.ipv4.addresses = mkForce [ ];
   # networking.macvlans.mv-eno2-host = {
   #   interface = "eno2";
@@ -40,12 +40,12 @@ with lib;
 
   containers.dev = {
     config = import ./containers/dev.nix;
-    bindMounts = {
-      "/run/podman/podman.sock" = {
-        hostPath = "/run/podman/podman.sock";
-        isReadOnly = false;
-      };
-    };
+    # bindMounts = {
+    #   "/run/podman/podman.sock" = {
+    #     hostPath = "/run/podman/podman.sock";
+    #     isReadOnly = false;
+    #   };
+    # };
     # allowedDevices = [{ modifier = "rwm"; node = "/dev/fuse"; }];
     # extraFlags = [ "--system-call-filter=add_key" "--system-call-filter=keyctl" ];
     # additionalCapabilities = [ "CAP_MKNOD" ];
