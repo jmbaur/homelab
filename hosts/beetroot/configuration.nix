@@ -80,7 +80,6 @@ with lib;
     tewi-font
   ];
 
-  xdg.portal.enable = true;
   services.flatpak.enable = true;
   services.autorandr.enable = true;
   services.autorandr.defaultTarget = "laptop";
@@ -244,6 +243,7 @@ with lib;
   };
   programs.wireshark.enable = true;
   programs.adb.enable = true;
+  programs.dconf.enable = true;
 
   users.users.jared = {
     description = "Jared Baur";
