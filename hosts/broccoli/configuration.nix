@@ -61,68 +61,13 @@ in
     vim
   ];
 
-  hardware.printers = let kodak = "KodakESP5200+0822"; in
-    {
-      ensureDefaultPrinter = kodak;
-      ensurePrinters = [{
-        name = kodak;
-        location = "Office";
-        model = "drv:///KodakESP_16.drv/Kodak_ESP_52xx_Series.ppd"; # lpinfo -m
-        deviceUri = "usb://Eastman%20Kodak%20Company/KODAK%20ESP%205200%20Series%20AiO?serial=G217374&interface=1"; # lpinfo -v
-      }];
-    };
 
   services = {
-    printing = with config.networking.interfaces; {
-      enable = true;
-      browsing = true;
-      defaultShared = true;
-      logLevel = "debug";
-      listenAddresses = lib.singleton "localhost:631" ++
-        (builtins.map (ifi: ifi.address + ":631") eno2.ipv4.addresses) ++
-        (builtins.map (ifi: "[" + ifi.address + "]:631") eno2.ipv6.addresses);
-      allowFrom = [ "all" ];
-      drivers = [
-        (stdenv.mkDerivation rec {
-          name = "c2esp";
-          version = "27";
-          nativeBuildInputs = with pkgs; [ cups cups-filters jbigkit zlib ];
-          src = fetchurl {
-            url = "mirror://sourceforge/cupsdriverkodak/${name}-${version}.tar.gz";
-            sha256 = "sha256-8JX5y7U5zUi3XOxv4vhEugy4hmzl5DGK1MpboCJDltQ=";
-          };
-          # prevent ppdc not finding <font.defs>
-          CUPS_DATADIR = "${pkgs.cups}/share/cups";
-          preConfigure = ''
-            configureFlags="--with-cupsfilterdir=$out/lib/cups/filter"
-          '';
-          NIX_CFLAGS_COMPILE = [ "-include stdio.h" ];
-          installPhase = ''
-            mkdir -p $out/lib/cups/filter $out/lib/cups/ppd $out/share/cups/drv
-
-            substituteInPlace src/KodakESP_16.drv \
-              --replace "/usr" "$out"
-            substituteInPlace src/KodakESP_16.drv \
-              --replace "/usr" "$out"
-
-            cp ppd/*.ppd $out/lib/cups/ppd/
-            cp src/*.drv $out/share/cups/drv/
-            cp src/c2esp $out/lib/cups/filter/c2esp
-            cp src/c2espC $out/lib/cups/filter/c2espC
-            cp src/command2esp $out/lib/cups/filter/command2esp
-          '';
-        })
-      ];
-    };
     avahi = {
       enable = true;
       reflector = true;
       ipv4 = true;
       ipv6 = true;
-      publish = {
-        enable = true;
-        userServices = true;
-      };
     };
     openssh = with config.networking.interfaces; {
       enable = true;
