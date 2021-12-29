@@ -13,6 +13,16 @@
   networking.interfaces.mv-eno2.useDHCP = true;
 
   programs.mosh.enable = true;
+  programs.bash = {
+    vteIntegration = true;
+    undistractMe.enable = true;
+    shellAliases = { grep = "grep --color=auto"; };
+    enableLsColors = true;
+    enableCompletion = true;
+    interactiveShellInit = ''
+      eval "$(${pkgs.direnv}/bin/direnv hook bash)"
+    '';
+  };
 
   environment.systemPackages = with pkgs; [
     bind
