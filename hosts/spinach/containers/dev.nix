@@ -127,6 +127,7 @@
     mutableUsers = false;
     users.jared = {
       isNormalUser = true;
+      extraGroups = [ "wheel" ];
       openssh.authorizedKeys.keys = builtins.filter
         (str: builtins.stringLength str != 0)
         (lib.splitString "\n" (builtins.readFile ../../../lib/ssh_keys.txt));
