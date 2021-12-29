@@ -25,16 +25,78 @@
   };
 
   environment.systemPackages = with pkgs; [
+    age
+    awscli2
+    bat
     bind
     buildah
+    buildah
+    direnv
+    dust
+    exa
+    fd
+    ffmpeg-full
+    fzf
+    gh
+    gh
+    git
     git
     gotop
+    gotop
+    grex
+    gron
+    htmlq
     htop
+    jq
+    keybase
+    librespeed-cli
+    mob
     mosh
-    neovim
+    nix-direnv
+    nix-prefetch-docker
+    nix-tree
+    nixopsUnstable
+    nixos-generators
+    nnn
+    nushell
+    openssl
+    pass
+    pass-git-helper
+    patchelf
+    picocom
+    pstree
+    pwgen
+    renameutils
+    ripgrep
+    rtorrent
+    sd
     skopeo
+    skopeo
+    sl
+    speedtest-cli
+    stow
+    tailscale
+    tcpdump
+    tea
+    tealdeer
+    tig
+    tig
     tmux
+    tokei
+    trash-cli
+    unzip
+    usbutils
+    vim
     wget
+    xdg-user-dirs
+    xdg-utils
+    xsv
+    ydiff
+    yq
+    yubikey-manager
+    yubikey-personalization
+    zip
+    zoxide
   ];
 
   services.openssh = { enable = true; ports = [ 2222 ]; };
