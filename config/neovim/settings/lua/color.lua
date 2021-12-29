@@ -1,1 +1,1 @@
-vim.cmd [[ color gruvbox ]]
+vim.cmd [[ color jared ]]
