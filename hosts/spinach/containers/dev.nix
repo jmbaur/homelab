@@ -13,16 +13,24 @@
   networking.interfaces.mv-eno2.useDHCP = true;
 
   programs.mosh.enable = true;
-  programs.bash = {
-    vteIntegration = true;
-    undistractMe.enable = true;
+  programs.zsh = {
+    enable = true;
+    syntaxHighlighting.enable = false;
     shellAliases = { grep = "grep --color=auto"; };
-    enableLsColors = true;
-    enableCompletion = true;
+    promptInit = ''
+      PS1="%F{cyan}%n@%m%f:%F{green}%c%f %% "
+    '';
+    # Prevent zsh-newuser-install from showing
+    shellInit = ''
+      zsh-newuser-install() { :; }
+      bindkey -e
+      bindkey \^U backward-kill-line
+    '';
     interactiveShellInit = ''
-      eval "$(${pkgs.direnv}/bin/direnv hook bash)"
+      eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
     '';
   };
+
 
   environment.systemPackages = with pkgs; [
     age
@@ -119,10 +127,10 @@
     mutableUsers = false;
     users.jared = {
       isNormalUser = true;
-      extraGroups = [ "wheel" ]; # TODO(jared): delete me
       openssh.authorizedKeys.keys = builtins.filter
         (str: builtins.stringLength str != 0)
         (lib.splitString "\n" (builtins.readFile ../../../lib/ssh_keys.txt));
+      shell = pkgs.zsh;
     };
   };
 }
