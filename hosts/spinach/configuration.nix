@@ -11,18 +11,20 @@ with lib;
 
   networking.hostName = "spinach";
   networking.interfaces.eno1.useDHCP = true;
-  networking.interfaces.eno2.useDHCP = false;
-  networking.interfaces.eno3.useDHCP = false;
-  networking.interfaces.eno4.useDHCP = false;
-  # networking.interfaces.eno2.ipv4.addresses = mkForce [ ];
-  # networking.macvlans.mv-eno2-host = {
-  #   interface = "eno2";
-  #   mode = "bridge";
-  # };
-  # networking.interfaces.mv-eno2-host = {
-  #   ipv4.addresses = [{ address = "192.168.1.60"; prefixLength = 24; }];
-  # };
-  # networking.firewall.allowedTCPPorts = [ ];
+  networking.interfaces.eno2 = {
+    ipv4.addresses = mkForce [ ];
+    ipv6.addresses = mkForce [ ];
+  };
+  networking.macvlans.mv-eno2-host = {
+    interface = "eno2";
+    mode = "bridge";
+  };
+  networking.interfaces.mv-eno2-host = {
+    #   ipv4.addresses = [{ address = "172.16.1.1"; prefixLength = 24; }];
+  };
+  networking.firewall.allowedTCPPorts = [
+    2049 # nfs
+  ];
   # networking.firewall.allowedUDPPorts = [ ];
 
   security.sudo.enable = true; # TODO(jared): delete me
@@ -40,29 +42,21 @@ with lib;
 
   containers.dev = {
     config = import ./containers/dev.nix;
-    # bindMounts = {
-    #   "/run/podman/podman.sock" = {
-    #     hostPath = "/run/podman/podman.sock";
-    #     isReadOnly = false;
-    #   };
-    # };
-    # allowedDevices = [{ modifier = "rwm"; node = "/dev/fuse"; }];
-    # extraFlags = [ "--system-call-filter=add_key" "--system-call-filter=keyctl" ];
-    # additionalCapabilities = [ "CAP_MKNOD" ];
-    # forwardPorts = [{ hostPort = 2222; }]; # container port = host port, if not specified
-    # enableTun = true;
-    # macvlans = [ "eno2" ];
-    # privateNetwork = true;
+    privateNetwork = true;
+    macvlans = [ "eno2" ];
     autoStart = true;
   };
 
-  virtualisation.podman.enable = true;
-  # systemd.services.podman = {
-  #   systemConfig = {
-  #     DynamicUser = "yes";
-  #     ExecStart = "${pkgs.podman}/bin/podman system service";
-  #   };
-  # };
+  containers.kodi = {
+    config = import ./containers/kodi.nix;
+    autoStart = true;
+    privateNetwork = true;
+    macvlans = [ "eno2" ];
+    forwardPorts = [{
+      hostPort = 2049; # nfs
+    }];
+    bindMounts."/mnt/kodi".hostPath = "/data/tmp";
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

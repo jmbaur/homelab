@@ -35,6 +35,19 @@
     users.kodi.isNormalUser = true;
   };
 
+  fileSystems."/home/kodi/Kodi" = {
+    device = "kodi.home.arpa.:/kodi";
+    fsType = "nfs";
+    options = [
+      "_netdev"
+      "noauto"
+      "x-systemd.automount"
+      "x-systemd.mount-timeout=10"
+      "timeo=14"
+      "x-systemd.idle-timeout=1min"
+    ];
+  };
+
   networking.firewall.allowedTCPPorts = [ 8080 ];
   networking.firewall.allowedUDPPorts = [ 8080 ];
 
@@ -45,4 +58,5 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "21.05"; # Did you read the comment?
+
 }
