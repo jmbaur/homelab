@@ -108,7 +108,6 @@ with lib;
     bat
     brightnessctl
     buildah
-    deploy-rs
     direnv
     dust
     exa

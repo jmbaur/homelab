@@ -43,7 +43,6 @@
         (import ./pkgs/overlays.nix {
           extraOverlays = [
             (self: super: {
-              deploy-rs = inputs.deploy-rs.defaultPackage.${system}; # TODO(jared): use overlay defined in flake
               git-get = inputs.git-get.defaultPackage.${system};
               gosee = inputs.gosee.defaultPackage.${system};
             })
