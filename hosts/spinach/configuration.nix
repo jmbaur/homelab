@@ -52,10 +52,8 @@ with lib;
     autoStart = true;
     privateNetwork = true;
     macvlans = [ "eno2" ];
-    forwardPorts = [{
-      hostPort = 2049; # nfs
-    }];
     bindMounts."/mnt/kodi".hostPath = "/data/kodi";
+    forwardPorts = [{ hostPort = 2049; /* nfs */ }];
   };
 
   # This value determines the NixOS release from which the default
