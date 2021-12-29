@@ -1,10 +1,43 @@
 { config, lib, pkgs, ... }: {
   imports = [ ../../../lib/nix-unstable.nix ];
+
+  nixpkgs.config.allowUnfree = true;
+
   networking.hostName = "dev";
   networking.interfaces.mv-eno2.useDHCP = true;
+  networking.firewall.allowedUDPPortRanges = [{
+    from = 60000;
+    to = 61000;
+  }];
 
-  environment.systemPackages = with pkgs; [ bind git htop neovim tmux wget ];
-  services.openssh = { enable = false; ports = [ 2222 ]; };
+  environment.systemPackages = with pkgs; [
+    bind
+    buildah
+    git
+    gotop
+    htop
+    mosh
+    neovim
+    skopeo
+    tmux
+    wget
+  ];
+
+  services.openssh = { enable = true; ports = [ 2222 ]; };
+
+  virtualisation = {
+    podman = {
+      enable = true;
+      dockerCompat = true;
+    };
+    containers = {
+      enable = true;
+      containersConf.settings = {
+        containers.keyring = false; # TODO(jared): don't do this
+        engine.detach_keys = "ctrl-q,ctrl-e";
+      };
+    };
+  };
 
   users = {
     mutableUsers = false;

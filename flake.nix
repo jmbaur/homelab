@@ -29,7 +29,9 @@
             inherit (checks.pre-commit-check) shellHook;
 
           };
-      }) // inputs.flake-utils.lib.eachSystem [ "aarch64-linux" "x86_64-linux" ] (system: {
+      })
+  //
+  inputs.flake-utils.lib.eachSystem [ "aarch64-linux" "x86_64-linux" ] (system: {
     packages.nixosConfigurations.beetroot = inputs.nixpkgs.lib.nixosSystem {
       inherit system;
       modules = with inputs.nixos-hardware.nixosModules; [
@@ -52,7 +54,9 @@
         ./hosts/beetroot/configuration.nix
       ];
     };
-  }) // {
+  })
+  //
+  {
     nixopsConfigurations.default = with inputs.nixos-hardware.nixosModules;
       {
         nixpkgs = inputs.nixpkgs-stable-small;
@@ -75,9 +79,16 @@
           let system = "aarch64-linux"; in
           {
             deployment.targetHost = "rhubarb.home.arpa.";
-            nixpkgs.overlays = [ (self: super: { promtop = inputs.promtop.defaultPackage.${system}; }) ];
+            nixpkgs.overlays = [
+              (self: super: {
+                promtop = inputs.promtop.defaultPackage.${system};
+              })
+            ];
             # Allows for nixops to build for this system;
-            nixpkgs.localSystem = { inherit system; config = "aarch64-unknown-linux-gnu"; };
+            nixpkgs.localSystem = {
+              inherit system;
+              config = "aarch64-unknown-linux-gnu";
+            };
             imports = [
               raspberry-pi-4
               ./lib/nixops.nix

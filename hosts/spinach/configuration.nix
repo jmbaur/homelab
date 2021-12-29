@@ -19,12 +19,11 @@ with lib;
     interface = "eno2";
     mode = "bridge";
   };
-  networking.interfaces.mv-eno2-host = {
-    #   ipv4.addresses = [{ address = "172.16.1.1"; prefixLength = 24; }];
-  };
-  networking.firewall.allowedTCPPorts = [
-    2049 # nfs
-  ];
+  networking.firewall.allowedTCPPorts = [ 2049 /* nfs */ ];
+  networking.firewall.allowedUDPPortRanges = [{
+    from = 60000;
+    to = 61000;
+  }];
   # networking.firewall.allowedUDPPorts = [ ];
 
   security.sudo.enable = true; # TODO(jared): delete me
@@ -42,15 +41,19 @@ with lib;
 
   containers.dev = {
     config = import ./containers/dev.nix;
+    autoStart = true;
     privateNetwork = true;
     macvlans = [ "eno2" ];
-    autoStart = true;
-    forwardPorts = [{ hostPort = 2222; }];
+    forwardPorts = [{ hostPort = 2222; /* ssh */ }];
+    enableTun = true;
+    allowedDevices = [{ modifier = "rwm"; node = "/dev/fuse"; }];
+    bindMounts."/dev/fuse".hostPath = "/dev/fuse";
   };
 
   containers.kodi = {
     config = import ./containers/kodi.nix;
     autoStart = true;
+    ephemeral = true;
     privateNetwork = true;
     macvlans = [ "eno2" ];
     bindMounts."/mnt/kodi".hostPath = "/data/kodi";
