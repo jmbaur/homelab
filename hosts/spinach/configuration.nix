@@ -55,7 +55,7 @@ with lib;
     forwardPorts = [{
       hostPort = 2049; # nfs
     }];
-    bindMounts."/mnt/kodi".hostPath = "/data/tmp";
+    bindMounts."/mnt/kodi".hostPath = "/data/kodi";
   };
 
   # This value determines the NixOS release from which the default
