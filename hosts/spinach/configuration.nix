@@ -19,23 +19,17 @@ with lib;
     interface = "eno2";
     mode = "bridge";
   };
-  networking.firewall.allowedTCPPorts = [ 2049 /* nfs */ ];
+  networking.firewall.allowedTCPPorts = [
+    2049 /* nfs */
+    25565 /* minecraft */
+  ];
+  networking.firewall.allowedUDPPorts = [
+    25565 /* minecraft */
+  ];
   networking.firewall.allowedUDPPortRanges = [{
     from = 60000;
     to = 61000;
   }];
-  # networking.firewall.allowedUDPPorts = [ ];
-
-  users = {
-    mutableUsers = false;
-    users.jared = {
-      isNormalUser = true;
-      extraGroups = [ "wheel" ];
-      initialPassword = "helloworld";
-    };
-  };
-
-  programs.mtr.enable = true;
 
   containers.dev = {
     config = import ./containers/dev.nix;
@@ -61,6 +55,23 @@ with lib;
     bindMounts."/mnt/kodi".hostPath = "/data/kodi";
     forwardPorts = [{ hostPort = 2049; /* nfs */ }];
   };
+
+  containers.minecraft = {
+    config = import ./containers/minecraft.nix;
+    autoStart = true;
+    ephemeral = true;
+    privateNetwork = true;
+    macvlans = [ "eno2" ];
+    bindMounts."/var/lib/minecraft" = {
+      hostPath = "/data/minecraft";
+      isReadOnly = false;
+    };
+    forwardPorts =
+      builtins.map
+        (protocol: { inherit protocol; hostPort = 25565; })
+        [ "tcp" "udp" ];
+  };
+
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

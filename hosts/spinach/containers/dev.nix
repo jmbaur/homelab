@@ -119,8 +119,7 @@
     mutableUsers = false;
     users.jared = {
       isNormalUser = true;
-      initialPassword = "helloworld";
-      extraGroups = [ "wheel" ];
+      extraGroups = [ "wheel" ]; # TODO(jared): delete me
       openssh.authorizedKeys.keys = builtins.filter
         (str: builtins.stringLength str != 0)
         (lib.splitString "\n" (builtins.readFile ../../../lib/ssh_keys.txt));
