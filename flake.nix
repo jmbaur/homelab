@@ -22,40 +22,13 @@
           src = builtins.path { path = ./.; };
           hooks.nixpkgs-fmt.enable = true;
         };
-        devShell = pkgs.mkShell
-          {
-            buildInputs = with pkgs; [ git gnumake nixopsUnstable ] ++
-              pkgs.lib.singleton inputs.deploy-rs.defaultPackage.${system};
-            inherit (checks.pre-commit-check) shellHook;
-
-          };
-      })
-  //
-  inputs.flake-utils.lib.eachSystem [ "aarch64-linux" "x86_64-linux" ] (system: {
-    packages.nixosConfigurations.beetroot = inputs.nixpkgs.lib.nixosSystem {
-      inherit system;
-      modules = with inputs.nixos-hardware.nixosModules; [
-        common-pc-ssd
-        common-cpu-amd
-        common-gpu-amd
-        common-pc-laptop-acpi_call
-        lenovo-thinkpad
-        (import ./pkgs/overlays.nix {
-          extraOverlays = [
-            (self: super: {
-              git-get = inputs.git-get.defaultPackage.${system};
-              gosee = inputs.gosee.defaultPackage.${system};
-            })
-          ];
-        })
-        ./config
-        ./lib/common.nix
-        ./hosts/beetroot/configuration.nix
-      ];
-    };
-  })
-  //
-  {
+        devShell = pkgs.mkShell {
+          buildInputs = with pkgs; [ git gnumake nixopsUnstable ] ++
+            pkgs.lib.singleton inputs.deploy-rs.defaultPackage.${system};
+          inherit (checks.pre-commit-check) shellHook;
+        };
+        packages.p = pkgs.callPackage ./pkgs/p.nix { };
+      }) // {
     nixopsConfigurations.default = with inputs.nixos-hardware.nixosModules;
       {
         nixpkgs = inputs.nixpkgs-stable-small;
