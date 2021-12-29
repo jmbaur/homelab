@@ -45,6 +45,7 @@ with lib;
     privateNetwork = true;
     macvlans = [ "eno2" ];
     autoStart = true;
+    forwardPorts = [{ hostPort = 2222; }];
   };
 
   containers.kodi = {

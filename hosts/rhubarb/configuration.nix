@@ -1,6 +1,4 @@
-{ config, pkgs, ... }:
-
-{
+{ config, pkgs, ... }: {
 
   boot = {
     kernelPackages = pkgs.linuxPackages_rpi4;
