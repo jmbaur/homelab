@@ -7,8 +7,7 @@
     git-get.url = "github:jmbaur/git-get";
     gosee.url = "github:jmbaur/gosee";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-    nixpkgs-stable-small.url = "nixpkgs/nixos-21.11-small";
-    nixpkgs.url = "github:jmbaur/nixpkgs/fido2luks-pin"; # pinned on latest commits from this branch
+    nixpkgs.url = "nixpkgs/nixos-21.11-small";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     promtop.url = "github:jmbaur/promtop";
     zig.url = "github:arqv/zig-overlay";
@@ -16,7 +15,7 @@
 
   outputs = inputs: inputs.flake-utils.lib.eachDefaultSystem
     (system:
-      let pkgs = inputs.nixpkgs-stable-small.legacyPackages.${system}; in
+      let pkgs = inputs.nixpkgs.legacyPackages.${system}; in
       rec {
         checks.pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
           src = builtins.path { path = ./.; };
@@ -30,7 +29,7 @@
         packages.p = pkgs.callPackage ./pkgs/p.nix { };
       }) // {
     nixopsConfigurations.default = with inputs.nixos-hardware.nixosModules; {
-      nixpkgs = inputs.nixpkgs-stable-small;
+      nixpkgs = inputs.nixpkgs;
       network = {
         description = "homelab";
         enableRollback = true;
@@ -50,11 +49,7 @@
         let system = "aarch64-linux"; in
         {
           deployment.targetHost = "rhubarb.home.arpa.";
-          nixpkgs.overlays = [
-            (self: super: {
-              promtop = inputs.promtop.defaultPackage.${system};
-            })
-          ];
+          nixpkgs.overlays = [ promtop.overlay.${system} ];
           # Allows for nixops to build for this system;
           nixpkgs.localSystem = {
             inherit system;
