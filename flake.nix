@@ -49,7 +49,7 @@
         let system = "aarch64-linux"; in
         {
           deployment.targetHost = "rhubarb.home.arpa.";
-          nixpkgs.overlays = [ promtop.overlay.${system} ];
+          nixpkgs.overlays = [ inputs.promtop.overlay.${system} ];
           # Allows for nixops to build for this system;
           nixpkgs.localSystem = {
             inherit system;
