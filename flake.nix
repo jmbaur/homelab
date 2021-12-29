@@ -14,7 +14,7 @@
     zig.url = "github:arqv/zig-overlay";
   };
 
-  outputs = inputs: inputs.flake-utils.lib.eachSystem inputs.flake-utils.lib.allSystems
+  outputs = inputs: inputs.flake-utils.lib.eachSystem inputs.flake-utils.lib.eachDefaultSystem
     (system:
       let pkgs = inputs.nixpkgs-stable-small.legacyPackages.${system}; in
       rec {
@@ -23,7 +23,8 @@
           hooks.nixpkgs-fmt.enable = true;
         };
         devShell = pkgs.mkShell {
-          buildInputs = with pkgs; [ git gnumake ];
+          buildInputs = with pkgs; [ git gnumake nixopsUnstable ] ++
+            pkgs.lib.singleton inputs.deploy-rs.defaultPackage.${system};
           inherit (checks.pre-commit-check) shellHook;
         };
       }) // inputs.flake-utils.lib.eachSystem [ "aarch64-linux" "x86_64-linux" ] (system: {
