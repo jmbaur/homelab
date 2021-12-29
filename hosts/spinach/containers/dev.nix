@@ -11,6 +11,7 @@
 
   networking.hostName = "dev";
   networking.interfaces.mv-eno2.useDHCP = true;
+
   programs.mosh.enable = true;
 
   environment.systemPackages = with pkgs; [
