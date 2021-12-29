@@ -48,7 +48,7 @@ with lib;
     bindMounts."/dev/fuse".hostPath = "/dev/fuse";
     extraFlags = [
       "--property='MemoryHigh=8G'"
-      "--property='CPUQuota=1000%'"
+      "--property='CPUQuota=1000%'" # 10 cores
     ];
   };
 
