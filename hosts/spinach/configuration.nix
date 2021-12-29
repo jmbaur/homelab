@@ -26,8 +26,6 @@ with lib;
   }];
   # networking.firewall.allowedUDPPorts = [ ];
 
-  security.sudo.enable = true; # TODO(jared): delete me
-
   users = {
     mutableUsers = false;
     users.jared = {
