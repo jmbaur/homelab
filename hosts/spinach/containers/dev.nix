@@ -1,14 +1,17 @@
 { config, lib, pkgs, ... }: {
-  imports = [ ../../../lib/nix-unstable.nix ];
+  imports = [ ../../../lib/nix-unstable.nix ../../../config ];
 
   nixpkgs.config.allowUnfree = true;
 
+  custom = {
+    git.enable = true;
+    neovim.enable = true;
+    tmux.enable = true;
+  };
+
   networking.hostName = "dev";
   networking.interfaces.mv-eno2.useDHCP = true;
-  networking.firewall.allowedUDPPortRanges = [{
-    from = 60000;
-    to = 61000;
-  }];
+  programs.mosh.enable = true;
 
   environment.systemPackages = with pkgs; [
     bind
