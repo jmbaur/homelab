@@ -16,7 +16,7 @@ set smartcase
 set splitbelow
 set splitright
 set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
-set termguicolors
+set notermguicolors
 set undofile
 
 inoremap ! !<c-g>u
