@@ -37,7 +37,8 @@
       modules = with inputs.nixos-hardware.nixosModules; [
         common-pc-ssd
         common-cpu-intel
-        ./lib/nixops.nix
+        ./lib/common.nix
+        ./lib/deploy.nix
         ./hosts/asparagus/configuration.nix
       ];
     };
@@ -63,7 +64,8 @@
             };
           })
           raspberry-pi-4
-          ./lib/nixops.nix
+          ./lib/common.nix
+          ./lib/deploy.nix
           ./hosts/rhubarb/configuration.nix
         ];
       };
@@ -82,7 +84,8 @@
       modules = with inputs.nixos-hardware.nixosModules; [
         # common-pc-ssd # TODO(jared): enable this?
         common-cpu-intel
-        ./lib/nixops.nix
+        ./lib/common.nix
+        ./lib/deploy.nix
         ./lib/supermicro.nix
         ./hosts/spinach/configuration.nix
       ];
@@ -105,11 +108,11 @@
           targetHost = "broccoli.home.arpa.";
           targetUser = "deploy";
         };
-        nix.trustedUsers = [ "deploy" ];
         imports = with inputs.nixos-hardware.nixosModules; [
           common-pc-ssd
           common-cpu-intel
-          ./lib/nixops.nix
+          ./lib/common.nix
+          ./lib/deploy.nix
           ./lib/supermicro.nix
           ./hosts/broccoli/configuration.nix
         ];
