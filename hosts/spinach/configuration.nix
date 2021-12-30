@@ -4,7 +4,11 @@ with lib;
   imports = [ ./hardware-configuration.nix ];
 
   boot = {
-    binfmt.emulatedSystems = [ "aarch64-linux" ];
+    binfmt.emulatedSystems = [
+      "wasm32-wasi"
+      "x86_64-windows"
+      "aarch64-linux"
+    ];
     loader.grub = {
       enable = true;
       version = 2;
