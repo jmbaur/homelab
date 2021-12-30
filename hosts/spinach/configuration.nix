@@ -3,10 +3,13 @@ with lib;
 {
   imports = [ ./hardware-configuration.nix ];
 
-  boot.loader.grub = {
-    enable = true;
-    version = 2;
-    device = "/dev/sda";
+  boot = {
+    binfmt.emulatedSystems = [ "aarch64-linux" ];
+    loader.grub = {
+      enable = true;
+      version = 2;
+      device = "/dev/sda";
+    };
   };
 
   networking.hostName = "spinach";
@@ -71,7 +74,6 @@ with lib;
         (protocol: { inherit protocol; hostPort = 25565; })
         [ "tcp" "udp" ];
   };
-
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

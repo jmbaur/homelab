@@ -17,10 +17,6 @@
     (system:
       let pkgs = inputs.nixpkgs.legacyPackages.${system}; in
       rec {
-        # checks.pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
-        #   src = builtins.path { path = ./.; };
-        #   hooks.nixpkgs-fmt.enable = true;
-        # };
         devShell = pkgs.mkShell {
           buildInputs = with pkgs; [ git gnumake nixopsUnstable ] ++
             pkgs.lib.singleton inputs.deploy-rs.defaultPackage.${system};
@@ -31,6 +27,10 @@
 
     # recommended by deploy-rs
     checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks deploy) inputs.deploy-rs.lib;
+    # checks.pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
+    #   src = builtins.path { path = ./.; };
+    #   hooks.nixpkgs-fmt.enable = true;
+    # };
 
     nixosConfigurations.asparagus = inputs.nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
