@@ -36,18 +36,6 @@ in
     };
   };
 
-  users = {
-    mutableUsers = false;
-    users.mgmt-user = {
-      isNormalUser = true;
-      passwordFile = "/run/keys/mgmt-user";
-      openssh.authorizedKeys.keys =
-        builtins.filter
-          (str: builtins.stringLength str != 0)
-          (lib.splitString "\n" (builtins.readFile ../../lib/ssh_keys.txt));
-    };
-  };
-
   environment.systemPackages = with pkgs; [
     conntrack-tools
     dig
@@ -60,7 +48,6 @@ in
     tmux
     vim
   ];
-
 
   services = {
     avahi = {
@@ -172,7 +159,7 @@ in
   networking = {
     hostName = "broccoli";
     nameservers = [ "127.0.0.1" "::1" ];
-    search = [ domain ];
+    search = lib.singleton domain;
     # The default gateway for IPv4 is populated by dhcpcd.
     defaultGateway6.interface = "hurricane";
     nat = {
@@ -203,6 +190,22 @@ in
         static domain_search=
         static domain_name=
       '';
+      runHook = ''
+        env
+        case "$reason" in
+          "BOUND")
+            if [ ! -f /run/keys/tunnelbroker ]; then
+              echo "no tunnelbroker secrets"
+              exit 1
+            fi
+            . /run/keys/tunnelbroker
+            ${pkgs.curl}/bin/curl --verbose \
+              --data "hostname=''${TUNNEL_ID}" \
+              --user "''${USERNAME}:''${PASSWORD}" \
+              https://ipv4.tunnelbroker.net/nic/update
+          ;;
+        esac
+      '';
     };
     firewall = {
       enable = true;
@@ -211,24 +214,6 @@ in
         eno2.allowedTCPPorts = [ 22 ];
       };
     };
-  };
-
-  systemd.services.update-tunnelbroker-ip = {
-    serviceConfig = {
-      Type = "oneshot";
-      EnvironmentFile = "/run/keys/tunnelbroker";
-      RemainAfterExit = true;
-      Restart = "on-failure";
-      RestartSec = 3;
-    };
-    wantedBy = [ "dhcpcd.service" ];
-    path = with pkgs; [ bash curl ];
-    script = ''
-      curl --verbose \
-        --data "hostname=''${TUNNEL_ID}" \
-        --user "''${USERNAME}:''${PASSWORD}" \
-        https://ipv4.tunnelbroker.net/nic/update
-    '';
   };
 
   system.activationScripts.dhcpd-hosts-file.text = ''
