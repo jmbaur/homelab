@@ -13,6 +13,7 @@ in
   config = mkIf cfg.enable {
     programs.neovim = {
       enable = true;
+      package = pkgs.neovim;
       vimAlias = true;
       defaultEditor = true;
       configure = {

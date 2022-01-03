@@ -1,4 +1,4 @@
-{ config, lib, ... }: with lib; {
+{ config, lib, ... }: {
   nix.trustedUsers = [ "deploy" ];
   security.sudo = {
     enable = mkForce true;
@@ -10,9 +10,7 @@
     users.deploy = {
       isNormalUser = true;
       extraGroups = [ "wheel" ];
-      openssh.authorizedKeys.keys = builtins.filter
-        (str: builtins.stringLength str != 0)
-        (lib.splitString "\n" (builtins.readFile ./ssh_keys.txt));
+      openssh.authorizedKeys.keyFiles = lib.singleton (import ./sshKeys.nix);
     };
   };
 }

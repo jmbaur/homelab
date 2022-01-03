@@ -6,6 +6,7 @@
     flake-utils.url = "github:numtide/flake-utils";
     git-get.url = "github:jmbaur/git-get";
     gosee.url = "github:jmbaur/gosee";
+    neovim.url = "github:neovim/neovim?dir=contrib";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nixpkgs.url = "nixpkgs/nixos-21.11-small";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
@@ -52,23 +53,22 @@
       };
     };
 
-    nixosConfigurations.rhubarb =
-      let system = "aarch64-linux"; in
-      inputs.nixpkgs.lib.nixosSystem {
-        modules = with inputs.nixos-hardware.nixosModules;[
-          ({ ... }: {
-            nixpkgs.overlays = [ inputs.promtop.overlay.${system} ];
-            nixpkgs.localSystem = {
-              inherit system;
-              config = "aarch64-unknown-linux-gnu";
-            };
-          })
-          raspberry-pi-4
-          ./lib/common.nix
-          ./lib/deploy.nix
-          ./hosts/rhubarb/configuration.nix
-        ];
-      };
+    nixosConfigurations.rhubarb = inputs.nixpkgs.lib.nixosSystem rec {
+      system = "aarch64-linux";
+      modules = with inputs.nixos-hardware.nixosModules; [
+        ({ ... }: {
+          nixpkgs.overlays = [ inputs.promtop.overlay.${system} ];
+          nixpkgs.localSystem = {
+            inherit system;
+            config = "aarch64-unknown-linux-gnu";
+          };
+        })
+        raspberry-pi-4
+        ./lib/common.nix
+        ./lib/deploy.nix
+        ./hosts/rhubarb/configuration.nix
+      ];
+    };
 
     deploy.nodes.rhubarb = {
       hostname = "rhubarb.home.arpa.";
@@ -79,17 +79,27 @@
       };
     };
 
-    nixosConfigurations.spinach = inputs.nixpkgs.lib.nixosSystem {
+    nixosConfigurations.dev = inputs.nixpkgs.lib.nixosSystem rec {
       system = "x86_64-linux";
-      modules = with inputs.nixos-hardware.nixosModules; [
-        # common-pc-ssd # TODO(jared): enable this?
-        common-cpu-intel
-        ./lib/common.nix
-        ./lib/deploy.nix
-        ./lib/supermicro.nix
-        ./hosts/spinach/configuration.nix
+      modules = [
+        ({ ... }: { nixpkgs.overlays = [ inputs.neovim.overlay ]; })
+        ./hosts/dev/configuration.nix
+        ./config
       ];
     };
+
+    nixosConfigurations.spinach = inputs.nixpkgs.lib.nixosSystem
+      {
+        system = "x86_64-linux";
+        modules = with inputs.nixos-hardware.nixosModules; [
+          # common-pc-ssd # TODO(jared): enable this?
+          common-cpu-intel
+          ./lib/common.nix
+          ./lib/deploy.nix
+          ./lib/supermicro.nix
+          ./hosts/spinach/configuration.nix
+        ];
+      };
 
     deploy.nodes.spinach = {
       hostname = "spinach.home.arpa.";
@@ -119,4 +129,5 @@
       };
     };
   };
+
 }
