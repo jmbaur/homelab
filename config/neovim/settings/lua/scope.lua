@@ -7,8 +7,7 @@ local function nnoremap(key, cmd)
                             {noremap = true, silent = true})
 end
 
-nnoremap("<leader>f",
-         "lua require('telescope.builtin').find_files({find_command={'rg','--ignore','--files'},layout_strategy='vertical',previewer=false,layout_config={height=0.95,width=0.95}})")
+nnoremap("<leader>f", "Telescope find_files")
 nnoremap("<leader>g", "Telescope live_grep")
 nnoremap("<leader>b", "Telescope buffers")
 nnoremap("<leader>h", "Telescope help_tags")
