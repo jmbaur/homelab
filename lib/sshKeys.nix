@@ -1,4 +1,4 @@
 builtins.fetchurl {
-	url = "https://github.com/jmbaur.keys";
-	sha256 = "1drdx9fxcl8lbzbcv8q45k7r419v7jmnvhn8sd10xr0yan907ydb";
+  url = "https://github.com/jmbaur.keys";
+  sha256 = "0fw564slnqcvbs22qkf9sai6zj787sp4dg595s46j4kxpqg5v8kh";
 }

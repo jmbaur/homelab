@@ -5,13 +5,27 @@
     package = pkgs.nixUnstable;
     extraOptions = ''
       experimental-features = nix-command flakes
+      keep-outputs = true
+      keep-derivations = true
     '';
   };
+  environment.pathsToLink = [ "/share/nix-direnv" ];
 
   custom.neovim.enable = true;
   custom.tmux.enable = true;
   custom.git.enable = true;
 
+  system.userActivationScripts.nix-direnv.text =
+    let
+      direnvrc = pkgs.writeText "direnvrc" ''
+        source ${pkgs.nix-direnv}/share/nix-direnv/direnvrc
+      '';
+    in
+    ''
+      ln -sf ${direnvrc} ''${HOME}/.direnvrc
+    '';
+
+  environment.variables.HISTCONTROL = "ignoredups";
   programs.zsh = {
     enable = true;
     syntaxHighlighting.enable = false;
@@ -65,6 +79,8 @@
     fzf
     gh
     gh
+    git-get
+    gosee
     gotop
     grex
     gron
@@ -85,7 +101,6 @@
     nushell
     openssl
     patchelf
-    picocom
     pstree
     pwgen
     renameutils

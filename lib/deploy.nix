@@ -1,12 +1,12 @@
-{ config, lib, ... }: {
+{ lib, ... }: {
   nix.trustedUsers = [ "deploy" ];
   security.sudo = {
-    enable = mkForce true;
-    wheelNeedsPassword = mkForce false;
+    enable = lib.mkForce true;
+    wheelNeedsPassword = lib.mkForce false;
   };
-  services.openssh.enable = mkForce true;
+  services.openssh.enable = lib.mkForce true;
   users = {
-    mutableUsers = mkForce false;
+    mutableUsers = lib.mkForce false;
     users.deploy = {
       isNormalUser = true;
       extraGroups = [ "wheel" ];

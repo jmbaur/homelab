@@ -82,7 +82,17 @@
     nixosConfigurations.dev = inputs.nixpkgs.lib.nixosSystem rec {
       system = "x86_64-linux";
       modules = [
-        ({ ... }: { nixpkgs.overlays = [ inputs.neovim.overlay ]; })
+        ({ ... }: {
+          nixpkgs.overlays = [
+            inputs.neovim.overlay
+            inputs.git-get.overlay.${system}
+            inputs.gosee.overlay.${system}
+            (import ./pkgs/zig.nix)
+            (import ./pkgs/zls.nix)
+            (import ./pkgs/nix-direnv.nix)
+            (self: super: { p = super.callPackage ./pkgs/p.nix { }; })
+          ];
+        })
         ./hosts/dev/configuration.nix
         ./config
       ];
