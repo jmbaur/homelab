@@ -10,7 +10,7 @@
     users.deploy = {
       isNormalUser = true;
       extraGroups = [ "wheel" ];
-      openssh.authorizedKeys.keyFiles = lib.singleton (import ./sshKeys.nix);
+      openssh.authorizedKeys.keyFiles = lib.singleton (import ./ssh-keys.nix);
     };
   };
 }

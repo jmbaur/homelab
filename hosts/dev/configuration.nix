@@ -62,7 +62,7 @@
     extraGroups = [ "wheel" ];
     initialPassword = "helloworld"; # TODO(jared): remove me
     shell = pkgs.zsh;
-    openssh.authorizedKeys.keyFiles = lib.singleton (import ../../lib/sshKeys.nix);
+    openssh.authorizedKeys.keyFiles = lib.singleton (import ../../lib/ssh-keys.nix);
   };
 
   environment.systemPackages = with pkgs; [
@@ -120,6 +120,7 @@
     tig
     tokei
     trash-cli
+    tree
     unzip
     usbutils
     vim
