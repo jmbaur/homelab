@@ -1,4 +1,4 @@
-{ extraOverlays ? [], ... }:
+{ extraOverlays ? [ ], ... }:
 {
   nixpkgs.overlays = [
 
