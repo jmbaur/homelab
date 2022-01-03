@@ -23,6 +23,7 @@ in
               (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars))
               (pkgs.vimUtils.buildVimPlugin { name = "settings"; src = builtins.path { path = ./settings; }; })
               comment-nvim
+              gruvbox
               lsp-colors-nvim
               nvim-autopairs
               nvim-lspconfig
