@@ -139,9 +139,9 @@
   programs.mosh.enable = true;
 
   services.openssh.enable = true;
-  services.qemuGuest.enable
+  services.qemuGuest.enable = true;
 
-    networking.firewall.enable = false;
+  networking.firewall.enable = false;
 
   virtualisation = {
     podman = {
