@@ -2,6 +2,7 @@
   imports = [ ./hardware-configuration.nix ];
 
   nix = {
+    gc.automatic = true;
     package = pkgs.nixUnstable;
     extraOptions = ''
       experimental-features = nix-command flakes
@@ -100,6 +101,7 @@
     nnn
     nushell
     openssl
+    p
     patchelf
     pstree
     pwgen
