@@ -1,5 +1,7 @@
 { config, lib, pkgs, ... }: {
-  imports = [ ./hardware-configuration.nix ];
+
+  # Use flakes-enabled nix package so that deploy-rs works.
+  imports = [ ../../lib/nix-unstable.nix ./hardware-configuration.nix ];
 
   boot.loader.grub.enable = true;
   boot.loader.grub.version = 2;
