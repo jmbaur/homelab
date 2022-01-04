@@ -98,25 +98,20 @@
       ];
     };
 
-    nixosConfigurations.spinach = inputs.nixpkgs.lib.nixosSystem
-      {
-        system = "x86_64-linux";
-        modules = with inputs.nixos-hardware.nixosModules; [
-          # common-pc-ssd # TODO(jared): enable this?
-          common-cpu-intel
-          ./lib/common.nix
-          ./lib/deploy.nix
-          ./lib/supermicro.nix
-          ./hosts/spinach/configuration.nix
-        ];
-      };
+    nixosConfigurations.kodi = inputs.nixpkgs.lib.nixosSystem rec {
+      system = "x86_64-linux";
+      modules = [
+        ./hosts/kodi/configuration.nix
+        ./lib/deploy.nix
+      ];
+    };
 
-    deploy.nodes.spinach = {
-      hostname = "spinach.home.arpa.";
+    deploy.nodes.kodi = {
+      hostname = "kodi.home.arpa.";
       profiles.system = {
         user = "root";
         sshUser = "deploy";
-        path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos nixosConfigurations.spinach;
+        path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos nixosConfigurations.kodi;
       };
     };
 

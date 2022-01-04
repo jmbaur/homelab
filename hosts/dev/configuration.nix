@@ -1,6 +1,8 @@
 { config, lib, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
 
+  boot.binfmt.emulatedSystems = [ "wasm32-wasi" "aarch64-linux" ];
+
   nix = {
     gc.automatic = true;
     package = pkgs.nixUnstable;
