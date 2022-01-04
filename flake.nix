@@ -115,6 +115,23 @@
       };
     };
 
+    nixosConfigurations.deploy = inputs.nixpkgs.lib.nixosSystem rec {
+      system = "x86_64-linux";
+      modules = [
+        ./hosts/deploy/configuration.nix
+        ./lib/deploy.nix
+      ];
+    };
+
+    deploy.nodes.deploy = {
+      hostname = "deploy.home.arpa.";
+      profiles.system = {
+        user = "root";
+        sshUser = "deploy";
+        path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos nixosConfigurations.deploy;
+      };
+    };
+
     nixopsConfigurations.default = {
       nixpkgs = inputs.nixpkgs;
       network = { description = "homelab"; storage.memory = { }; };
