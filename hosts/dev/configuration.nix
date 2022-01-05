@@ -14,9 +14,11 @@
   };
   environment.pathsToLink = [ "/share/nix-direnv" ];
 
-  custom.neovim.enable = true;
-  custom.tmux.enable = true;
-  custom.git.enable = true;
+  custom = {
+    git.enable = true;
+    neovim.enable = true;
+    tmux.enable = true;
+  };
 
   system.userActivationScripts.nix-direnv.text =
     let
