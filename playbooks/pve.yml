@@ -32,9 +32,9 @@
       apt:
         update_cache: yes
         upgrade: dist
-    - name: install curl
+    - name: install curl and jq
       apt:
-        name: curl
+        name: curl,jq
         state: present
     - name: download nixos 21.11
       get_url:
