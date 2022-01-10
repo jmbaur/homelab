@@ -34,6 +34,7 @@
         "${inputs.nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
         "${inputs.nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
       ];
+      environment.etc."nixos/bootstrap-configuration.nix".source = ./bootstrap-configuration.nix;
       environment.shellInit = "${packages.installer}/bin/install";
       services.qemuGuest.enable = true;
     };
