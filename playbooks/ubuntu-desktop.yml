@@ -1,12 +1,12 @@
 ---
-hosts: jared-ThinkPad-T480
+- hosts: jared-ThinkPad-T480
 
-tasks:
-  - name: set emacs keybindings for UI
-    dconf:
-      key: "/org/gnome/desktop/interface/gtk-key-theme"
-      value: "Emacs"
-  - name: set control to override caps lock
-    dconf:
-      key: "/org/gnome/desktop/input-sources/xkb-options"
-      value: "['ctrl:nocaps']"
+  tasks:
+    - name: set emacs keybindings for UI
+      dconf:
+        key: "/org/gnome/desktop/interface/gtk-key-theme"
+        value: "Emacs"
+    - name: set control to override caps lock
+      dconf:
+        key: "/org/gnome/desktop/input-sources/xkb-options"
+        value: "['ctrl:nocaps']"
