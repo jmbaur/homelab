@@ -19,7 +19,7 @@
       let pkgs = inputs.nixpkgs.legacyPackages.${system}; in
       rec {
         devShell = pkgs.mkShell {
-          buildInputs = with pkgs; [ git gnumake nixopsUnstable ] ++
+          buildInputs = with pkgs; [ git gnumake nixopsUnstable terraform ansible ] ++
             pkgs.lib.singleton inputs.deploy-rs.defaultPackage.${system};
           # inherit (checks.pre-commit-check) shellHook;
         };
