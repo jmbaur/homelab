@@ -26,29 +26,21 @@
         packages.p = pkgs.callPackage ./pkgs/p.nix { };
       })
   //
-  inputs.flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-linux" ] (system: {
+  inputs.flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-linux" ] (system: rec {
+    packages.installer = inputs.nixpkgs.legacyPackages.${system}.callPackage ./installer.nix { };
     packages.iso = (import "${inputs.nixpkgs}/nixos" {
       inherit system; configuration = { config, pkgs, ... }: {
       imports = [
         "${inputs.nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
         "${inputs.nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
       ];
-
-      systemd.services.sshd.wantedBy = pkgs.lib.mkForce [ "multi-user.target" ];
-      users.users.root.openssh.authorizedKeys.keyFiles = [
-        (builtins.fetchurl {
-          url = "https://github.com/jmbaur.keys";
-          sha256 = "1w3f101ri4rf0d98zf4zcdc5i0nv29mcz39p558l5r38p2s7nbrm";
-        })
-      ];
-
+      environment.shellInit = "${packages.installer}/bin/install";
       services.qemuGuest.enable = true;
     };
     }).config.system.build.isoImage;
   })
   //
   rec {
-
     # recommended by deploy-rs
     checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks deploy) inputs.deploy-rs.lib;
     # checks.pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
