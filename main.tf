@@ -14,7 +14,7 @@ provider "proxmox" {
 resource "proxmox_vm_qemu" "dev" {
   name        = "dev"
   target_node = "pve"
-  iso   = "local:iso/nixos-minimal-21.11-x86_64-linux.iso"
+  iso   = "local:iso/nixos-custom.iso"
   vmid  = 101
   agent = 1
   cores = 12

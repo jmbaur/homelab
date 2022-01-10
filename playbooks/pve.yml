@@ -41,6 +41,11 @@
         url: https://channels.nixos.org/nixos-21.11/latest-nixos-minimal-x86_64-linux.iso
         dest: /var/lib/vz/template/iso/nixos-minimal-21.11-x86_64-linux.iso
         checksum: sha256:bcc26dfd483a1a568e250fcb0f3624c45748b0a5788b465bec073eba1073716c
+    - name: upload custom nixos iso
+      copy:
+        # TODO: use a more repeatable path
+        src: /home/jared/Documents/homelab/result/iso/nixos-21.11pre-git-x86_64-linux.iso
+        dest: /var/lib/vz/template/iso/nixos-custom.iso
 
   handlers:
     - name: update grub

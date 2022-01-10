@@ -1,11 +1,4 @@
-# My NixOS configs
-
-## Encrypted root setup
-
-Assumptions:
-
-- The device installing NixOS on is /dev/sda.
-- A gpg card is readily available.
+# Homelab
 
 ```bash
 parted /dev/sda -- mklabel gpt
@@ -48,70 +41,3 @@ EOF
 nixos-install --no-root-passwd # make sure that users.users.<name>.initialPassword is set!
 reboot
 ```
-
-## Hostnames
-
-List from https://www.vegetables.co.nz/vegetables-a-z/.
-
-### Taken
-
-- Asparagus - Apareka/Pikopiko Pākehā
-- Beetroot - Rengakura
-- Broccoli - Pūpihi/Poroki
-- Kale and Cavolo Nero
-- Okra
-- Rhubarb - Rūpapa
-- Spinach - Rengamutu/Kōkihi
-
-### Available
-
-- Artichokes, globe - Atihoka
-- Artichokes, Jerusalem - Atihoka
-- Asian greens
-- Beans - Pine/Pīni
-- Brussels sprouts - Aonanī
-- Cabbages - Kāpeti
-- Capsicums - Rapikama
-- Carrots - Uhikaramea/Kāreti
-- Cauliflower - Puānīko/Pūputi/Kareparāoa
-- Celeriac
-- Celery - Tutaekōau/Hereri/Herewī
-- Chilli peppers
-- Chokos
-- Courgettes and Scallopini - Roroa iti
-- Cucumber - Kūkamo
-- Eggplant
-- Fennel - Taru haunga
-- Garlic - Kārika
-- Ginger - Tinitia
-- Indian vegetables - Īniana huawhenua
-- Kohlrabi - Okapi/Kara-rapi
-- Kūmara - Kūmara
-- Leeks - Riki/Rikiroa
-- Microgreens
-- Mushrooms - Harore
-- Onions - Riki/Aniana
-- Parsnips - Tāmore mā/Uhitea
-- Peas, snow peas, sugar snap peas - Pī
-- Potatoes - Rīwai
-- Potatoes, purple - Taewa/Riwai
-- Pūhā/Rauriki
-- Radishes - Uhikura
-- Salad greens
-- Silverbeet - Kōrare
-- Spring onions
-- Sprouted beans and seeds - Pihi pīni
-- Swedes - Tuwīti tānapu
-- Sweet corn - Kānga
-- Taro - Taro
-- Tomatoes - Tōmato
-- Turnips - Kotami
-- Watercress - Wātakirihi
-- Witloof
-- Yams - Uwhiuwhi
-- Lettuce - Rētehi
-- Pumpkins - Paukena
-- Fresh herbs, flowers - e.g. Tāima, Pāhiri, Pāhiri
-- Melons - Merengi 
-- Shallots
-- Turmeric

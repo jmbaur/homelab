@@ -44,8 +44,7 @@
 
       services.qemuGuest.enable = true;
     };
-    }
-      ).config.system.build.isoImage;
+    }).config.system.build.isoImage;
   })
   //
   rec {
