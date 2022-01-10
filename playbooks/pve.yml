@@ -9,17 +9,29 @@
       apt_repository:
         repo: deb http://download.proxmox.com/debian/pve bullseye pve-no-subscription
         state: present
-    # NOTE: this requires executing `update-grub` and a reboot afterwards if this block makes changes
-    - name: enable IOMMU
+    - name: check if IOMMU is enabled
       lineinfile:
         backup: yes
         path: /etc/default/grub
-        regexp: '^GRUB_CMDLINE_LINUX_DEFAULT'
-        line: 'GRUB_CMDLINE_LINUX_DEFAULT="quiet amd_iommu=on"'
+        state: absent
+        regexp: '^GRUB_CMDLINE_LINUX_DEFAULT=".*amd_iommu=on'
+      check_mode: true
+      register: grub_cmdline_check
+      changed_when: false
+    - name: enable IOMMU
+      lineinfile:
+        backrefs: true
+        path: /etc/default/grub
+        regexp: '^(GRUB_CMDLINE_LINUX_DEFAULT=".*)"$'
+        line: '\1 amd_iommu=on"'
+      when: grub_cmdline_check.found == 0
+      notify:
+        - update grub
+        - reboot
     - name: apt upgrade
       apt:
         update_cache: yes
-        upgrade: yes
+        upgrade: dist
     - name: install curl
       apt:
         name: curl
@@ -29,3 +41,9 @@
         url: https://channels.nixos.org/nixos-21.11/latest-nixos-minimal-x86_64-linux.iso
         dest: /var/lib/vz/template/iso/nixos-minimal-21.11-x86_64-linux.iso
         checksum: sha256:bcc26dfd483a1a568e250fcb0f3624c45748b0a5788b465bec073eba1073716c
+
+  handlers:
+    - name: update grub
+      shell: update-grub
+    - name: reboot
+      reboot:
