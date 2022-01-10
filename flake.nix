@@ -24,7 +24,31 @@
           # inherit (checks.pre-commit-check) shellHook;
         };
         packages.p = pkgs.callPackage ./pkgs/p.nix { };
-      }) // rec {
+      })
+  //
+  inputs.flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-linux" ] (system: {
+    packages.iso = (import "${inputs.nixpkgs}/nixos" {
+      inherit system; configuration = { config, pkgs, ... }: {
+      imports = [
+        "${inputs.nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
+        "${inputs.nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
+      ];
+
+      systemd.services.sshd.wantedBy = pkgs.lib.mkForce [ "multi-user.target" ];
+      users.users.root.openssh.authorizedKeys.keyFiles = [
+        (builtins.fetchurl {
+          url = "https://github.com/jmbaur.keys";
+          sha256 = "1w3f101ri4rf0d98zf4zcdc5i0nv29mcz39p558l5r38p2s7nbrm";
+        })
+      ];
+
+      services.qemuGuest.enable = true;
+    };
+    }
+      ).config.system.build.isoImage;
+  })
+  //
+  rec {
 
     # recommended by deploy-rs
     checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks deploy) inputs.deploy-rs.lib;
@@ -32,6 +56,7 @@
     #   src = builtins.path { path = ./.; };
     #   hooks.nixpkgs-fmt.enable = true;
     # };
+
 
     nixosConfigurations.asparagus = inputs.nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
