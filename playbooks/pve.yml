@@ -9,6 +9,13 @@
       apt_repository:
         repo: deb http://download.proxmox.com/debian/pve bullseye pve-no-subscription
         state: present
+    # NOTE: this requires executing `update-grub` and a reboot afterwards if this block makes changes
+    - name: enable IOMMU
+      lineinfile:
+        backup: yes
+        path: /etc/default/grub
+        regexp: '^GRUB_CMDLINE_LINUX_DEFAULT'
+        line: 'GRUB_CMDLINE_LINUX_DEFAULT="quiet amd_iommu=on"'
     - name: apt upgrade
       apt:
         update_cache: yes
