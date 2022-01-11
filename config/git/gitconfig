@@ -13,4 +13,6 @@
 	rebase = false
 
 [credential "https://github.com"]
-        helper = "!gh auth git-credential"
+	helper = 
+[credential "https://github"]
+	com = !gh auth git-credential
