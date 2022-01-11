@@ -27,6 +27,7 @@
           - curl
           - diodon
           - git
+          - iperf3
           - jq
           - kitty
           - mosh
