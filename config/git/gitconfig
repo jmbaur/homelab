@@ -1,18 +1,17 @@
 [user]
-	name = Jared Baur
-	email = jaredbaur@fastmail.com
+        name = Jared Baur
+        email = jaredbaur@fastmail.com
 
 [alias]
-	st = status --short --branch
-	di = diff
-	br = branch
-	co = checkout
-	lg = log --graph --decorate --pretty=oneline --abbrev-commit --all
+        st = status --short --branch
+        di = diff
+        br = branch
+        co = checkout
+        lg = log --graph --decorate --pretty=oneline --abbrev-commit --all
 
 [pull]
-	rebase = false
+        rebase = false
 
 [credential "https://github.com"]
-	helper = 
-[credential "https://github"]
-	com = !gh auth git-credential
+        helper = 
+        helper = !gh auth git-credential
