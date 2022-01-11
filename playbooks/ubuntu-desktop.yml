@@ -18,6 +18,7 @@
           - jq
           - mosh
           - python3-psutil # required by ansible dconf module
+          - systemd-container
           - tmux
           - vim-gtk3
     - name: install snap packages
@@ -27,9 +28,11 @@
           - bitwarden
           - brave
           - chromium
+          - discord
           - fractal
           - signal-desktop
           - spotify
+          - zoom-client
     - name: install snap packages with --classic
       become: yes
       snap:
