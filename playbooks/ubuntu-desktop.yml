@@ -1,5 +1,5 @@
 ---
-- hosts: jared-ThinkPad-T480
+- hosts: all
 
   tasks:
     - name: set emacs keybindings for UI
