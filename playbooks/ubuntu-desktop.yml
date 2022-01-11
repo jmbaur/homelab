@@ -93,7 +93,7 @@
     - name: diodon shortcut binding
       dconf:
         key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/binding"
-        value: "<Shift><Super>c"
+        value: "'<Shift><Super>c'"
 
 # - name: enable custom keybindings
 # dconf:
