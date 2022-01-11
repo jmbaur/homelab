@@ -9,15 +9,28 @@
       become: yes
       apt:
         upgrade: dist
-    - name: install some packages
+    - name: install apt packages
       become: yes
       apt:
         name:
-          - python3-psutil
+          - ansible
           - git
+          - jq
+          - mosh
+          - python3-psutil # required by ansible dconf module
           - tmux
           - vim-gtk3
-          - jq
+    - name: install snap packages
+      snap:
+        name:
+          - spotify
+          - bitwarden
+    - name: install snap packages with --classic
+      snap:
+        classic: yes
+        name:
+          - code
+          - slack
     - name: set emacs keybindings for UI
       dconf:
         key: "/org/gnome/desktop/interface/gtk-key-theme"
