@@ -82,3 +82,19 @@
       dconf:
         key: "/org/gnome/desktop/input-sources/xkb-options"
         value: "['ctrl:nocaps']"
+    - name: diodon shortcut name
+      dconf:
+        key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/name"
+        value: "'diodon'"
+    - name: diodon shortcut command
+      dconf:
+        key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/command"
+        value: "'diodon'"
+    - name: diodon shortcut binding
+      dconf:
+        key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/binding"
+        value: "<Shift><Super>c"
+    - name: enable custom keybindings
+      dconf:
+        key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings"
+        value: "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']"
