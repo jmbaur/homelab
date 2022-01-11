@@ -24,6 +24,8 @@
       apt:
         name:
           - ansible
+          - curl
+          - diodon
           - git
           - jq
           - kitty

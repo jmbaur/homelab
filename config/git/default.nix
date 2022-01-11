@@ -10,6 +10,6 @@ in
   };
   config = mkIf cfg.enable {
     environment.systemPackages = [ pkgs.git ];
-    environment.etc."gitconfig".source = ./gitconfig;
+    environment.etc."gitconfig".source = ../../playbooks/files/gitconfig;
   };
 }
