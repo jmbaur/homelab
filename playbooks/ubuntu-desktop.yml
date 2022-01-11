@@ -52,6 +52,10 @@
         name:
           - code
           - slack
+    - name: copy kitty config
+      copy:
+        src: kitty.conf
+        dest: /home/jared/.config/kitty/kitty.conf
     - name: get kitty-themes
       git:
         repo: "https://github.com/dexpota/kitty-themes"
