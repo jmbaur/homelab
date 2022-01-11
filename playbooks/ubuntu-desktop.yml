@@ -58,6 +58,10 @@
       copy:
         src: kitty.conf
         dest: /home/jared/.config/kitty/kitty.conf
+    - name: copy git config
+      copy:
+        src: gitconfig
+        dest: /home/jared/.config/git/gitconfig
     - name: get kitty-themes
       git:
         repo: "https://github.com/dexpota/kitty-themes"
