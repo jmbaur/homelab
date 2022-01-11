@@ -6,7 +6,6 @@
     flake-utils.url = "github:numtide/flake-utils";
     git-get.url = "github:jmbaur/git-get";
     gosee.url = "github:jmbaur/gosee";
-    neovim.url = "github:neovim/neovim?dir=contrib";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nixpkgs.url = "nixpkgs/nixos-21.11-small";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
@@ -19,7 +18,7 @@
       let pkgs = inputs.nixpkgs.legacyPackages.${system}; in
       rec {
         devShell = pkgs.mkShell {
-          buildInputs = with pkgs; [ git gnumake nixopsUnstable terraform ansible ] ++
+          buildInputs = with pkgs; [ git gnumake nixopsUnstable ] ++
             pkgs.lib.singleton inputs.deploy-rs.defaultPackage.${system};
           # inherit (checks.pre-commit-check) shellHook;
         };
@@ -101,7 +100,6 @@
       modules = [
         ({ ... }: {
           nixpkgs.overlays = [
-            inputs.neovim.overlay
             inputs.git-get.overlay.${system}
             inputs.gosee.overlay.${system}
             (import ./pkgs/zig.nix)
