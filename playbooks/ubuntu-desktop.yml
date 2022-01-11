@@ -62,6 +62,14 @@
       copy:
         src: gitconfig
         dest: /home/jared/.gitconfig
+    - name: copy vimrc
+      copy:
+        src: vimrc
+        dest: /home/jared/.vimrc
+    - name: copy tmux.conf
+      copy:
+        src: tmux.conf
+        dest: /home/jared/.tmux.conf
     - name: get kitty-themes
       git:
         repo: "https://github.com/dexpota/kitty-themes"
