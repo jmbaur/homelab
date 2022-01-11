@@ -21,11 +21,13 @@
           - tmux
           - vim-gtk3
     - name: install snap packages
+      become: yes
       snap:
         name:
           - spotify
           - bitwarden
     - name: install snap packages with --classic
+      become: yes
       snap:
         classic: yes
         name:
