@@ -2,6 +2,20 @@
 - hosts: localhost
 
   tasks:
+    - name: update cache
+      apt:
+        update_cache: yes
+    - name: upgrade OS
+      apt:
+        upgrade: dist
+    - name: install some packages
+      apt:
+        name:
+          - python3-psutil
+          - git
+          - tmux
+          - vim-gtk3
+          - jq
     - name: set emacs keybindings for UI
       dconf:
         key: "/org/gnome/desktop/interface/gtk-key-theme"
