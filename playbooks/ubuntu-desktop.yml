@@ -56,8 +56,6 @@
       git:
         repo: "https://github.com/dexpota/kitty-themes"
         dest: /home/jared/.config/kitty/kitty-themes
-        single_branch: yes
-        version: master
     - name: set emacs keybindings for UI
       dconf:
         key: "/org/gnome/desktop/interface/gtk-key-theme"
