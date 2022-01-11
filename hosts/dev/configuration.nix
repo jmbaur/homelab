@@ -1,8 +1,6 @@
 { config, lib, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
 
-  boot.binfmt.emulatedSystems = [ "wasm32-wasi" "aarch64-linux" ];
-
   nix = {
     gc.automatic = true;
     package = pkgs.nixUnstable;
@@ -59,12 +57,13 @@
   networking.useDHCP = false;
   networking.interfaces.ens18.useDHCP = true;
 
-  security.sudo.enable = true;
-  security.sudo.wheelNeedsPassword = false;
+  security.sudo={
+    enable = true;
+    wheelNeedsPassword = false;
+  };
   users.users.jared = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
-    initialPassword = "helloworld"; # TODO(jared): remove me
     shell = pkgs.zsh;
     openssh.authorizedKeys.keyFiles = lib.singleton (import ../../lib/ssh-keys.nix);
   };
@@ -183,7 +182,6 @@
     containers = {
       enable = true;
       containersConf.settings = {
-        containers.keyring = false; # TODO(jared): don't do this
         engine.detach_keys = "ctrl-q,ctrl-e";
       };
     };
