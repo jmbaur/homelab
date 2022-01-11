@@ -1,6 +1,16 @@
 ---
 - hosts: localhost
   tasks:
+    - name: add tailscale gpg key
+      become: yes
+      apt_key:
+        url: https://pkgs.tailscale.com/stable/ubuntu/focal.gpg
+        state: present
+    - name: add tailscale repo
+      become: yes
+      apt_repository:
+        repo: deb https://pkgs.tailscale.com/stable/ubuntu focal main
+        state: present
     - name: update cache
       become: yes
       apt:
@@ -19,6 +29,7 @@
           - mosh
           - python3-psutil # required by ansible dconf module
           - systemd-container
+          - tailscale
           - tmux
           - vim-gtk3
     - name: install snap packages
