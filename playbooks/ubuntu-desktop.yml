@@ -25,6 +25,8 @@
       snap:
         name:
           - bitwarden
+          - brave
+          - chromium
           - fractal
           - signal-desktop
           - spotify
@@ -34,7 +36,7 @@
         classic: yes
         name:
           - code
-          - slack-desktop
+          - slack
     - name: set emacs keybindings for UI
       dconf:
         key: "/org/gnome/desktop/interface/gtk-key-theme"
