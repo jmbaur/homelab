@@ -57,7 +57,7 @@
   networking.useDHCP = false;
   networking.interfaces.ens18.useDHCP = true;
 
-  security.sudo={
+  security.sudo = {
     enable = true;
     wheelNeedsPassword = false;
   };
@@ -106,6 +106,7 @@
     openssl
     p
     patchelf
+    podman-compose
     pstree
     pwgen
     renameutils
