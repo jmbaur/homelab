@@ -26,6 +26,7 @@
           - ansible
           - curl
           - diodon
+          - fonts-proggy
           - git
           - iperf3
           - jq
