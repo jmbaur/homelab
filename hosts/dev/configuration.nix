@@ -92,6 +92,7 @@
     htop
     jq
     keybase
+    killall
     librespeed-cli
     mob
     mosh
