@@ -32,6 +32,7 @@
           - jq
           - kitty
           - mosh
+          - nmap
           - python3-psutil # required by ansible dconf module
           - systemd-container
           - tailscale
