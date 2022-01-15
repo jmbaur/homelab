@@ -38,6 +38,7 @@
           - tailscale
           - tmux
           - vim-gtk3
+          - wine
     - name: install snap packages
       become: yes
       snap:
