@@ -19,6 +19,14 @@ set splitright
 set notermguicolors
 set undofile
 
+if has('gui_running')
+        set guifont=Monospace\ 12
+        set guioptions-=L
+        set guioptions-=T
+        set guioptions-=m
+        set guioptions-=r
+endif
+
 if !isdirectory($HOME."/.vim")
         call mkdir($HOME."/.vim", "", 0770)
 endif
