@@ -1,0 +1,64 @@
+---
+- hosts: router
+  connection: network_cli
+  tasks:
+    - name: Collect all facts from the device
+      community.routeros.facts:
+        gather_subset: all
+    - debug:
+        msg: "First IP address: {{ ansible_net_all_ipv4_addresses[0] }}"
+    # - name: Set hostname
+    #   community.routeros.command:
+    #     commands: /system/identity/set name=router
+    # - name: Add IP addresses for networks
+    #   community.routeros.command:
+    #     commands: 
+    #       - >
+            # {
+            #   local combo1Addr [/ip address find interface=combo1];
+            #   if ($combo1Addr != nil) do={
+            # /ip address remove interface=combo1
+              # }
+            # }
+          # - >
+          #   {
+          #     :local ether1Addr [/ip address find interface=ether1];
+          #     :put $ether1Addr
+          #     if ($ether1Addr == nil) do={
+          #       /ip address add address=192.168.11.1/24 network=192.168.11.0 interface=ether1
+          #     } else={
+          #       /ip address set $ether1Addr address=192.168.1.1/24 network=192.168.1.0 interface=ether1
+          #     }
+          #   }
+          # - /ip address add address=192.168.22.1/24 network=192.168.22.0 interface=ether2
+          # - /ip address add address=192.168.3.1/24 network=192.168.3.0 interface=ether3
+          # - /ip address add address=192.168.88.1/24 network=192.168.88.0 interface=ether7
+          # - /ip address remove [find where invalid]
+      # register: command_output
+    # - debug:
+      #   var: command_output.stdout
+
+    # - name: Configure DHCP server
+    #   routeros_command:
+    #     commands:
+    #       - |
+    #         {
+    #           :local dhcpServer [/ip dhcp-server network find where address="192.168.3.0/24"]
+    #           :if ($dhcpServer)
+    #           do={
+    #                   /ip dhcp-server network set $dhcpServer address="192.168.3.0/24" gateway=192.168.3.1 dns-server=192.168.3.1
+    #           } else={
+    #                   /ip dhcp-server network add address="192.168.3.0/24" gateway=192.168.3.1 dns-server=192.168.3.1
+    #           }
+    #         }
+
+# - hosts: switch
+# connection: network_cli
+# tasks:
+# - name: Enable IOT vlan
+# routeros_command:
+# commands: interface vlan add name=iot vlan-id=2 interface=ether1 disabled=no
+# - name: Add IP for IOT network
+# routeros_command:
+# commands: ip address add address=192.168.2.
+# 
