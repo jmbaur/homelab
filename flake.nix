@@ -7,7 +7,7 @@
     git-get.url = "github:jmbaur/git-get";
     gosee.url = "github:jmbaur/gosee";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-    nixpkgs.url = "nixpkgs/nixos-21.11-small";
+    nixpkgs.url = "nixpkgs/nixos-21.11";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     promtop.url = "github:jmbaur/promtop";
     zig.url = "github:arqv/zig-overlay";
