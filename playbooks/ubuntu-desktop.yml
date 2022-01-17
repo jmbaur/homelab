@@ -26,11 +26,9 @@
           - ansible
           - curl
           - diodon
-          - fonts-firacode
           - git
           - iperf3
           - jq
-          - kitty
           - mosh
           - nmap
           - python3-psutil # required by ansible dconf module
@@ -60,10 +58,6 @@
         name:
           - code
           - slack
-    - name: copy kitty config
-      copy:
-        src: kitty.conf
-        dest: /home/jared/.config/kitty/kitty.conf
     - name: copy git config
       copy:
         src: gitconfig
@@ -76,10 +70,6 @@
       copy:
         src: tmux.conf
         dest: /home/jared/.tmux.conf
-    - name: get kitty-themes
-      git:
-        repo: "https://github.com/dexpota/kitty-themes"
-        dest: /home/jared/.config/kitty/kitty-themes
     - name: set emacs keybindings for UI
       dconf:
         key: "/org/gnome/desktop/interface/gtk-key-theme"
