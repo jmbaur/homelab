@@ -15,7 +15,7 @@ set smartcase
 set splitbelow
 set splitright
 set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
-set notermguicolors
+set termguicolors
 set undofile
 
 inoremap ! !<c-g>u
@@ -40,5 +40,7 @@ let mapleader=','
 
 filetype plugin indent on
 syntax enable
+
+colorscheme NeoSolarized
 
 lua require('init')

@@ -23,7 +23,15 @@ writeShellApplication {
             usage
             exit 2
     fi
-    tmux_session_path=$(fd --type=directory --max-depth=4 --hidden "^.git$" "$directory" | sed "s,/\.git,," | { grep ".*''${search}.*" || true; } | fzf -1)
+
+    fzf_prg=
+    if test -n "''${TMUX:-}"; then
+      fzf_prg=fzf-tmux
+    else
+      fzf_prg=fzf
+    fi
+
+    tmux_session_path=$(fd --type=directory --max-depth=4 --hidden "^.git$" "$directory" | sed "s,/\.git,," | { grep ".*''${search}.*" || true; } | $fzf_prg -1)
     if test -z "$tmux_session_path"; then
             echo "Cannot find project with search term $search"
             exit 3

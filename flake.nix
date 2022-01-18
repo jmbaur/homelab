@@ -8,6 +8,7 @@
     gosee.url = "github:jmbaur/gosee";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nixpkgs.url = "nixpkgs/nixos-21.11";
+    nixpkgs-personal.url = "github:jmbaur/nixpkgs/31aa6abb9727736e2f3be2e8dea5d0e38f749416";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     promtop.url = "github:jmbaur/promtop";
     zig.url = "github:arqv/zig-overlay";
@@ -106,6 +107,7 @@
             (import ./pkgs/zls.nix)
             (import ./pkgs/nix-direnv.nix)
             (self: super: { p = super.callPackage ./pkgs/p.nix { }; })
+            (self: super: { mosh = inputs.nixpkgs-personal.legacyPackages.${system}.mosh; })
           ];
         })
         ./hosts/dev/configuration.nix

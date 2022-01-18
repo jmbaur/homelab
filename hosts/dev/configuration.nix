@@ -39,11 +39,15 @@
     # Prevent zsh-newuser-install from showing
     shellInit = ''
       zsh-newuser-install() { :; }
-      bindkey -e
-      bindkey \^U backward-kill-line
     '';
     interactiveShellInit = ''
+      bindkey -e
+
       eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
+      source ${pkgs.fzf}/share/fzf/key-bindings.zsh
+
+      bindkey \^U backward-kill-line # more sane than the default
+      bindkey \^T transpose-chars # reset fzf keybinding
     '';
   };
 
@@ -95,7 +99,6 @@
     killall
     librespeed-cli
     mob
-    mosh
     nix-direnv
     nix-prefetch-docker
     nix-tree
