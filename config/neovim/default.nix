@@ -33,6 +33,7 @@ in
               typescript-vim
               vim-better-whitespace
               vim-clang-format
+              vim-cue
               vim-dadbod
               vim-easy-align
               vim-eunuch

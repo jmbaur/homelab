@@ -84,6 +84,7 @@
     exa
     fd
     ffmpeg-full
+    file
     fzf
     gh
     gh
