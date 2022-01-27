@@ -8,6 +8,7 @@
     gosee.url = "github:jmbaur/gosee";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nixpkgs.url = "nixpkgs/nixos-21.11";
+    nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
     nixpkgs-personal.url = "github:jmbaur/nixpkgs/31aa6abb9727736e2f3be2e8dea5d0e38f749416";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     promtop.url = "github:jmbaur/promtop";
@@ -19,154 +20,62 @@
       let pkgs = inputs.nixpkgs.legacyPackages.${system}; in
       rec {
         devShell = pkgs.mkShell {
-          buildInputs = with pkgs; [ git gnumake nixopsUnstable ] ++
+          buildInputs = with pkgs; [ git gnumake ] ++
             pkgs.lib.singleton inputs.deploy-rs.defaultPackage.${system};
-          # inherit (checks.pre-commit-check) shellHook;
         };
         packages.p = pkgs.callPackage ./pkgs/p.nix { };
       })
   //
-  inputs.flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-linux" ] (system: rec {
-    packages.installer = inputs.nixpkgs.legacyPackages.${system}.callPackage ./installer.nix { };
-    packages.iso = (import "${inputs.nixpkgs}/nixos" {
-      inherit system; configuration = { config, pkgs, ... }: {
-      imports = [
-        "${inputs.nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
-        "${inputs.nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
-      ];
-      environment.etc."nixos/bootstrap-configuration.nix".source = ./bootstrap-configuration.nix;
-      environment.shellInit = "sudo ${packages.installer}/bin/install";
-      services.qemuGuest.enable = true;
-    };
-    }).config.system.build.isoImage;
-  })
-  //
   rec {
-    # recommended by deploy-rs
     checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks deploy) inputs.deploy-rs.lib;
-    # checks.pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
-    #   src = builtins.path { path = ./.; };
-    #   hooks.nixpkgs-fmt.enable = true;
+
+    nixosConfigurations.beetroot = inputs.nixpkgs-unstable.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = with inputs.nixos-hardware.nixosModules; [
+        lenovo-thinkpad-t480
+        ./modules
+        ./lib/common.nix
+        ./hosts/beetroot/configuration.nix
+      ];
+    };
+
+    nixosConfigurations.kale = inputs.nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = with inputs.nixos-hardware.nixosModules; [
+        common-cpu-amd
+        ./lib/common.nix
+        ./lib/deploy.nix
+        ./hosts/kale/configuration.nix
+      ];
+    };
+
+    deploy.nodes.kale = {
+      hostname = "kale.home.arpa.";
+      profiles.system = {
+        user = "root";
+        sshUser = "deploy";
+        path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos nixosConfigurations.kale;
+      };
+    };
+
+    # nixosConfigurations.dev = inputs.nixpkgs.lib.nixosSystem rec {
+    #   system = "x86_64-linux";
+    #   modules = [
+    #     ({ ... }: {
+    #       nixpkgs.overlays = [
+    #         inputs.git-get.overlay.${system}
+    #         inputs.gosee.overlay.${system}
+    #         (import ./pkgs/zig.nix)
+    #         (import ./pkgs/zls.nix)
+    #         (import ./pkgs/nix-direnv.nix)
+    #         (self: super: { p = super.callPackage ./pkgs/p.nix { }; })
+    #         (self: super: { mosh = inputs.nixpkgs-personal.legacyPackages.${system}.mosh; })
+    #       ];
+    #     })
+    #     ./hosts/dev/configuration.nix
+    #     ./modules
+    #   ];
     # };
-
-
-    nixosConfigurations.asparagus = inputs.nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = with inputs.nixos-hardware.nixosModules; [
-        common-pc-ssd
-        common-cpu-intel
-        ./lib/common.nix
-        ./lib/deploy.nix
-        ./hosts/asparagus/configuration.nix
-      ];
-    };
-
-    deploy.nodes.asparagus = {
-      hostname = "asparagus.home.arpa.";
-      profiles.system = {
-        user = "root";
-        sshUser = "deploy";
-        path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos nixosConfigurations.asparagus;
-      };
-    };
-
-    nixosConfigurations.rhubarb = inputs.nixpkgs.lib.nixosSystem rec {
-      system = "aarch64-linux";
-      modules = with inputs.nixos-hardware.nixosModules; [
-        ({ ... }: {
-          nixpkgs.overlays = [ inputs.promtop.overlay.${system} ];
-          nixpkgs.localSystem = {
-            inherit system;
-            config = "aarch64-unknown-linux-gnu";
-          };
-        })
-        raspberry-pi-4
-        ./lib/common.nix
-        ./lib/deploy.nix
-        ./hosts/rhubarb/configuration.nix
-      ];
-    };
-
-    deploy.nodes.rhubarb = {
-      hostname = "rhubarb.home.arpa.";
-      profiles.system = {
-        user = "root";
-        sshUser = "deploy";
-        path = inputs.deploy-rs.lib.aarch64-linux.activate.nixos nixosConfigurations.rhubarb;
-      };
-    };
-
-    nixosConfigurations.dev = inputs.nixpkgs.lib.nixosSystem rec {
-      system = "x86_64-linux";
-      modules = [
-        ({ ... }: {
-          nixpkgs.overlays = [
-            inputs.git-get.overlay.${system}
-            inputs.gosee.overlay.${system}
-            (import ./pkgs/zig.nix)
-            (import ./pkgs/zls.nix)
-            (import ./pkgs/nix-direnv.nix)
-            (self: super: { p = super.callPackage ./pkgs/p.nix { }; })
-            (self: super: { mosh = inputs.nixpkgs-personal.legacyPackages.${system}.mosh; })
-          ];
-        })
-        ./hosts/dev/configuration.nix
-        ./config
-      ];
-    };
-
-    nixosConfigurations.kodi = inputs.nixpkgs.lib.nixosSystem rec {
-      system = "x86_64-linux";
-      modules = [
-        ./hosts/kodi/configuration.nix
-        ./lib/deploy.nix
-      ];
-    };
-
-    deploy.nodes.kodi = {
-      hostname = "kodi.home.arpa.";
-      profiles.system = {
-        user = "root";
-        sshUser = "deploy";
-        path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos nixosConfigurations.kodi;
-      };
-    };
-
-    nixosConfigurations.deploy = inputs.nixpkgs.lib.nixosSystem rec {
-      system = "x86_64-linux";
-      modules = [
-        ./hosts/deploy/configuration.nix
-        ./lib/deploy.nix
-      ];
-    };
-
-    deploy.nodes.deploy = {
-      hostname = "deploy.home.arpa.";
-      profiles.system = {
-        user = "root";
-        sshUser = "deploy";
-        path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos nixosConfigurations.deploy;
-      };
-    };
-
-    nixopsConfigurations.default = {
-      nixpkgs = inputs.nixpkgs;
-      network = { description = "homelab"; storage.memory = { }; };
-      broccoli = { ... }: {
-        deployment = {
-          targetHost = "broccoli.home.arpa.";
-          targetUser = "deploy";
-        };
-        imports = with inputs.nixos-hardware.nixosModules; [
-          common-pc-ssd
-          common-cpu-intel
-          ./lib/common.nix
-          ./lib/deploy.nix
-          ./lib/supermicro.nix
-          ./hosts/broccoli/configuration.nix
-        ];
-      };
-    };
   };
 
 }

@@ -1,192 +1,168 @@
-{ config, lib, pkgs, ... }:
-with lib;
-{
+{ config, lib, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
 
-  nix = {
-    # Enable flakes and prevent nix shells from being wiped on garbage
-    # collection.
-    package = pkgs.nixUnstable;
-    extraOptions = ''
-      experimental-features = nix-command flakes
-      keep-outputs = true
-      keep-derivations = true
-    '';
-  };
-  environment.pathsToLink = [ "/share/nix-direnv" ];
+  hardware.bluetooth.enable = true;
+  hardware.cpu.intel.updateMicrocode = true;
+  hardware.enableRedistributableFirmware = true;
 
-  boot = {
-    binfmt.emulatedSystems = [ "aarch64-linux" ]; # allow building for RPI4
-    extraModulePackages = with config.boot.kernelPackages; [ v4l2loopback ];
+  boot.kernelPackages = pkgs.linuxPackages_5_15;
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
 
-    initrd.luks = {
-      fido2Support = true;
-      devices.cryptlvm = {
-        fido2 = {
-          credential = pkgs.lib.concatStringsSep "," [
-            "c4c1c74167f8eeab98b2659b22d9a60654253b7882243820550fe67b66bb5fb8d46e90ff39733fdb6b03d7cbedc4a6b2"
-            "f217ebbfb939aaaf0e65a811f639ea221c63319e0eba8f5df3279d55060cc6413c5e198c2146d4709f88e9a94a78e3a8"
-          ];
-          passwordLess = true; # no salt
-          askForPin = true;
-        };
-        allowDiscards = true;
-        device = "/dev/disk/by-uuid/91d0d31c-9669-4476-9b46-66680f312a3c";
-        preLVM = true;
-      };
-    };
-    kernelPackages = pkgs.linuxPackages_5_15;
-    kernelParams = [ "amdgpu.backlight=0" "acpi_backlight=none" ];
-    loader = { systemd-boot.enable = true; efi.canTouchEfiVariables = true; };
-  };
-
-  hardware = {
-    bluetooth.enable = true;
-    cpu.amd.updateMicrocode = true;
-    enableRedistributableFirmware = true;
-  };
-
+  networking.useDHCP = false;
   networking.hostName = "beetroot";
-  networking.networkmanager.enable = true;
+  networking.wireless.iwd.enable = true;
+  networking.interfaces.enp0s31f6.useDHCP = true;
+  networking.interfaces.enp9s0u1u3u3.useDHCP = true;
+  networking.interfaces.wlan0.useDHCP = true;
+
   time.timeZone = "America/Los_Angeles";
 
+  custom.neovim.enable = true;
+  custom.tmux.enable = true;
+  custom.git.enable = true;
 
-  nixpkgs.config.allowUnfree = true;
-
-  custom = {
-    git.enable = true;
-    pipewire.enable = true;
-    tmux.enable = true;
-    neovim.enable = true;
-    sway.enable = true;
+  users.users.jared = {
+    isNormalUser = true;
+    initialPassword = "helloworld";
+    extraGroups = [
+      "adbusers"
+      "dialout"
+      "libvirtd"
+      "wheel"
+      "wireshark"
+    ];
   };
 
-  environment.variables.NNN_TRASH = "1";
+  environment.variables = {
+    XCURSOR_PATH = lib.mkForce [ "${pkgs.gnome.adwaita-icon-theme}/share/icons" ];
+  };
 
-  fonts.fonts = with pkgs; [
-    recursive
-    dejavu_fonts
-    dina-font
-    hack-font
-    inconsolata
-    iosevka
-    liberation_ttf
-    noto-fonts
-    noto-fonts-emoji
-    proggyfonts
-    source-code-pro
-    source-sans-pro
-    spleen
-    tewi-font
+  nixpkgs.overlays = [
+    (self: super: {
+      nix-direnv = super.nix-direnv.override { enableFlakes = true; };
+    })
   ];
-
-  services.flatpak.enable = true;
-  services.autorandr.enable = true;
-  services.autorandr.defaultTarget = "laptop";
-
-  services.fwupd.enable = true;
-  services.printing.enable = true;
-  services.avahi.enable = true;
-  services.avahi.nssmdns = true;
-  services.power-profiles-daemon.enable = true;
-  services.upower.enable = true;
-  services.syncthing = {
-    enable = false;
-    user = "jared";
-    group = "users";
-    dataDir = "/home/jared";
-    configDir = "/home/jared/.config/syncthing";
-    openDefaultPorts = true;
-    # declarative.overrideFolders = false;
-    # declarative.overrideDevices = true;
-  };
 
   environment.systemPackages = with pkgs; [
-    age
-    alacritty
-    awscli2
-    bat
-    brightnessctl
-    buildah
+    bitwarden
+    chromium
     direnv
-    dust
-    exa
-    fd
-    fdroidcl
-    ffmpeg-full
-    fido2luks
-    fzf
-    geteltorito
-    gh
+    element-desktop-wayland
+    ffmpeg
+    firefox-wayland
     git
-    git-get
-    gosee
-    gotop
-    grex
-    gron
-    htmlq
     imv
-    jq
-    keybase
-    kitty
-    librespeed-cli
-    mob
-    mosh
     mpv
     nix-direnv
-    nix-prefetch-docker
-    nix-tree
-    nixopsUnstable
-    nixos-generators
-    nnn
-    nushell
-    nvme-cli
-    openssl
-    p
-    pa-switch
-    pass
-    pass-git-helper
-    patchelf
     picocom
-    pinentry-gnome
-    plan9port
-    pstree
-    pwgen
-    renameutils
-    ripgrep
-    rtorrent
-    scrot
-    sd
-    skopeo
-    sl
-    speedtest-cli
-    start-recording
-    stop-recording
-    stow
-    tailscale
-    tcpdump
-    tea
-    tealdeer
-    tig
-    tokei
-    trash-cli
-    unzip
-    usbutils
-    ventoy-bin
+    signal-desktop
+    thunderbird-wayland
+    tmux
     vim
-    xdg-user-dirs
-    xdg-utils
-    xsv
-    ydiff
-    yq
-    yubikey-manager
-    yubikey-personalization
-    zathura
-    zip
-    zoxide
+    wine64
   ];
 
-  environment.variables.HISTCONTROL = "ignoredups";
+  programs.ssh.startAgent = true;
+
+  programs.mtr.enable = true;
+
+  programs.sway = {
+    enable = true;
+    wrapperFeatures.gtk = true;
+    extraSessionCommands = ''
+      export XCURSOR_THEME=Adwaita
+      # SDL:
+      export SDL_VIDEODRIVER=wayland
+      # QT (needs qt5.qtwayland in systemPackages):
+      export QT_QPA_PLATFORM=wayland-egl
+      export QT_WAYLAND_DISABLE_WINDOWDECORATION="1"
+      # Fix for some Java AWT applications (e.g. Android Studio),
+      # use this if they aren't displayed properly:
+      export _JAVA_AWT_WM_NONREPARENTING=1
+    '';
+    extraPackages = with pkgs; [
+      alacritty
+      bemenu
+      brightnessctl
+      clipman
+      fnott
+      foot
+      fuzzel
+      grim
+      kanshi
+      kitty
+      mako
+      slurp
+      swayidle
+      swaylock
+      wev
+      wl-clipboard
+      wofi
+      wtype
+    ];
+  };
+
+  services.greetd = {
+    enable = true;
+    settings = {
+      default_session = {
+        command = "${pkgs.greetd.greetd}/bin/agreety --cmd sway";
+      };
+    };
+  };
+
+  xdg.portal = {
+    enable = true;
+    wlr.enable = true;
+  };
+
+  xdg.mime.defaultApplications = {
+    "application/pdf" = "firefox.desktop";
+    "image/png" = "imv.desktop";
+  };
+
+  programs.wshowkeys.enable = true;
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    # If you want to use JACK applications, uncomment this
+    #jack.enable = true;
+
+    # use the example session manager (no others are packaged yet so this is enabled by default,
+    # no need to redefine it in your config for now)
+    #media-session.enable = true;
+    media-session.config.bluez-monitor.rules = [
+      {
+        # Matches all cards
+        matches = [{ "device.name" = "~bluez_card.*"; }];
+        actions = {
+          "update-props" = {
+            "bluez5.reconnect-profiles" = [ "hfp_hf" "hsp_hs" "a2dp_sink" ];
+            # mSBC is not expected to work on all headset + adapter combinations.
+            "bluez5.msbc-support" = true;
+            # SBC-XQ is not expected to work on all headset + adapter combinations.
+            "bluez5.sbc-xq-support" = true;
+          };
+        };
+      }
+      {
+        matches = [
+          # Matches all sources
+          { "node.name" = "~bluez_input.*"; }
+          # Matches all outputs
+          { "node.name" = "~bluez_output.*"; }
+        ];
+        actions = {
+          "node.pause-on-idle" = false;
+        };
+      }
+    ];
+  };
+
   programs.bash = {
     vteIntegration = true;
     undistractMe.enable = true;
@@ -197,25 +173,6 @@ with lib;
       eval "$(${pkgs.direnv}/bin/direnv hook bash)"
     '';
   };
-
-  programs.zsh = {
-    enable = true;
-    syntaxHighlighting.enable = false;
-    shellAliases = { grep = "grep --color=auto"; };
-    promptInit = ''
-      PS1="%F{cyan}%n@%m%f:%F{green}%c%f %% "
-    '';
-    # Prevent zsh-newuser-install from showing
-    shellInit = ''
-      zsh-newuser-install() { :; }
-      bindkey -e
-      bindkey \^U backward-kill-line
-    '';
-    interactiveShellInit = ''
-      eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
-    '';
-  };
-
   system.userActivationScripts.nix-direnv.text =
     let
       direnvrc = pkgs.writeText "direnvrc" ''
@@ -225,50 +182,19 @@ with lib;
     ''
       ln -sf ${direnvrc} ''${HOME}/.direnvrc
     '';
-
-
-  services.pcscd.enable = false;
-  services.udev.packages = with pkgs; [
-    yubikey-personalization
-    yubikey-manager
-  ];
-  programs.ssh = {
-    startAgent = true;
-    askPassword = "${pkgs.gnome.seahorse}/libexec/seahorse/ssh-askpass";
-  };
-  programs.gnupg.agent = {
-    enable = true;
-    pinentryFlavor = "gnome3";
-  };
   programs.wireshark.enable = true;
   programs.adb.enable = true;
-  programs.dconf.enable = true;
 
-  users.users.jared = {
-    description = "Jared Baur";
-    isNormalUser = true;
-    extraGroups = [
-      "adbusers"
-      "dialout"
-      "libvirtd"
-      "networkmanager"
-      "wheel"
-      "wireshark"
-    ];
-    initialPassword = "helloworld";
-  };
-  security.sudo.wheelNeedsPassword = true;
-  security.pam = {
-    u2f = {
-      enable = true;
-      cue = true;
-      # generated with `pamu2fcfg`
-      authFile = pkgs.writeText "u2f-authfile" (pkgs.lib.concatStringsSep ":" [
-        "jared"
-        "uBcyq24C/03R9XDcANHHbIRBVwnVy4+OZ5GCYfpGMqE9796kd+Jkzr+Eaigdrv8yIuBYVtX0myQgCs9leTjf5A==,j94fLX44pik4JLmo72d22uuM3mUEP9yQmvOTXotGNkgNzPWV9aMz5zHFnhEL4gKyIGSxvr/RYg7eI+DCeoxMBg==,es256,+presence"
-        "NMlszg4/i0xAOtisiybK2V0nVytHo/iqtaYFQn1SeJgEDalkP/1YX2yE53eUMRUmiUcHz3CvIGyFjvyNUXzgPQ==,01T5an89gTXEmCxt0tQzSIG2p1U/GgRfFuPir41lZQMiedsYfFDNLeAxuc0+Qp5L5ZPFHzD6fGEVOKkE22poZw==,es256,+presence"
-      ]);
-    };
+  services.fwupd.enable = true;
+  services.hardware.bolt.enable = true;
+  services.upower.enable = true;
+  services.power-profiles-daemon.enable = true;
+  services.printing.enable = true;
+
+  networking.firewall.enable = false;
+  networking.nftables = {
+    enable = true;
+    rulesetFile = ./desktop.nft;
   };
 
   virtualisation = {
@@ -276,9 +202,16 @@ with lib;
       enable = true;
       containersConf.settings.engine.detach_keys = "ctrl-q,ctrl-e";
     };
-    podman = { enable = true; dockerCompat = true; };
+    podman.enable = true;
     libvirtd.enable = true;
   };
+
+
+  nix.extraOptions = ''
+    experimental-features = nix-command flakes
+    keep-outputs = true
+    keep-derivations = true
+  '';
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
@@ -286,6 +219,6 @@ with lib;
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "21.05"; # Did you read the comment?
+  system.stateVersion = "21.11"; # Did you read the comment?
 
 }

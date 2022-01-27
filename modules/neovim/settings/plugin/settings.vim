@@ -41,6 +41,4 @@ let mapleader=','
 filetype plugin indent on
 syntax enable
 
-colorscheme NeoSolarized
-
 lua require('init')

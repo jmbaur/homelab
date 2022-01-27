@@ -1,14 +1,14 @@
 { config, lib, pkgs, ... }:
 with lib;
 {
-  boot = {
-    tmpOnTmpfs = mkDefault true;
-    cleanTmpDir = mkDefault true;
-  };
+  # boot = {
+  #   tmpOnTmpfs = mkDefault true;
+  #   cleanTmpDir = mkDefault true;
+  # };
 
   nix.gc.automatic = mkDefault true;
 
-  networking.useDHCP = false;
+  networking.useDHCP = mkForce false;
 
   i18n.defaultLocale = "en_US.UTF-8";
   console = {

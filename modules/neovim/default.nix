@@ -14,6 +14,36 @@ in
     programs.neovim = {
       enable = true;
       vimAlias = true;
+      package = pkgs.symlinkJoin {
+        name = "custom-neovim";
+        paths = with pkgs; [
+          bat
+          black
+          cargo
+          clang-tools
+          efm-langserver
+          git
+          go
+          goimports
+          gopls
+          luaformatter
+          neovim-unwrapped
+          nixpkgs-fmt
+          nodePackages.typescript
+          nodePackages.typescript-language-server
+          nodejs
+          pyright
+          python3
+          ripgrep
+          rust-analyzer
+          rustfmt
+          shfmt
+          sumneko-lua-language-server
+          tree-sitter
+          zig
+          zls
+        ];
+      };
       defaultEditor = true;
       configure = {
         packages.myPlugins = with pkgs.vimPlugins;
@@ -21,7 +51,6 @@ in
             start = [
               (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars))
               (pkgs.vimUtils.buildVimPlugin { name = "settings"; src = builtins.path { path = ./settings; }; })
-              NeoSolarized
               comment-nvim
               lsp-colors-nvim
               nvim-autopairs
@@ -51,34 +80,6 @@ in
       };
     };
 
-    environment.systemPackages = with pkgs; [
-      bat
-      black
-      cargo
-      clang-tools
-      efm-langserver
-      git
-      go
-      goimports
-      gopls
-      luaformatter
-      nixpkgs-fmt
-      nodePackages.typescript
-      nodePackages.typescript-language-server
-      nodejs
-      pyright
-      python3
-      ripgrep
-      rust-analyzer
-      rustfmt
-      shfmt
-      sumneko-lua-language-server
-      tree-sitter
-      zig
-      zls
-    ];
-
     environment.variables.SUMNEKO_ROOT_PATH = "${pkgs.sumneko-lua-language-server}";
-
   };
 }

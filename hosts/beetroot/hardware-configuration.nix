@@ -9,24 +9,53 @@
       (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "usb_storage" "usbhid" "sd_mod" "rtsx_pci_sdmmc" ];
-  boot.initrd.kernelModules = [ "dm-snapshot" ];
-  boot.kernelModules = [ "kvm-amd" ];
+  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" ];
+  boot.initrd.kernelModules = [ ];
+  boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
     {
-      device = "/dev/disk/by-uuid/59ec0a44-baab-4351-9064-447cb687b540";
-      fsType = "ext4";
+      device = "/dev/disk/by-uuid/ba7def78-16e5-4a70-8eca-2e16b3ec69de";
+      fsType = "btrfs";
+      options = [ "subvol=@" "noatime" "compress=zstd" "discard=async" ];
+    };
+
+  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/433cdbe9-79ba-4353-b374-0cbd07a151f9";
+
+  fileSystems."/.snapshots" =
+    {
+      device = "/dev/disk/by-uuid/ba7def78-16e5-4a70-8eca-2e16b3ec69de";
+      fsType = "btrfs";
+      options = [ "subvol=@snapshots" "noatime" "compress=zstd" "discard=async" ];
+    };
+
+  fileSystems."/home" =
+    {
+      device = "/dev/disk/by-uuid/ba7def78-16e5-4a70-8eca-2e16b3ec69de";
+      fsType = "btrfs";
+      options = [ "subvol=@home" "noatime" "compress=zstd" "discard=async" ];
+    };
+
+  fileSystems."/nix" =
+    {
+      device = "/dev/disk/by-uuid/ba7def78-16e5-4a70-8eca-2e16b3ec69de";
+      fsType = "btrfs";
+      options = [ "subvol=@nix" "noatime" "compress=zstd" "discard=async" ];
     };
 
   fileSystems."/boot" =
     {
-      device = "/dev/disk/by-uuid/25C3-873D";
+      device = "/dev/disk/by-uuid/2E16-F769";
       fsType = "vfat";
     };
 
-  swapDevices =
-    [{ device = "/dev/disk/by-uuid/8f04e26b-0ab6-4eb7-ba9b-f5482a64e670"; }];
+  swapDevices = [ ];
+  zramSwap = {
+    enable = true;
+    swapDevices = 1;
+  };
 
+  powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
+  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
