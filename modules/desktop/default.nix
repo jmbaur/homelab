@@ -68,7 +68,7 @@ with lib;
         default_session = {
           command =
             let
-              configFile = pkgs.writeText "sway-config" (builtins.readFile ./sway.conf);
+              configFile = pkgs.writeText "sway-config" (builtins.readFile ./sway.config);
             in
             "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd 'sway --config ${configFile}'";
         };
