@@ -40,18 +40,20 @@
     rec {
       checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks deploy) deploy-rs.lib;
 
-      overlays = (import ./pkgs/overlays.nix) ++ [
-        git-get.overlay
-        gobar.overlay
-        gosee.overlay
-        promtop.overlay
-        (final: prev: { zig = zig.packages.${prev.system}.master.latest; })
-      ];
-
       nixosConfigurations.beetroot = nixpkgs-unstable.lib.nixosSystem {
         system = "x86_64-linux";
         modules = with inputs.nixos-hardware.nixosModules; [
-          ({ ... }: { nixpkgs.overlays = self.overlays; })
+          ({ ... }: {
+            nixpkgs.overlays = (import ./pkgs/overlays.nix) ++ [
+              git-get.overlay
+              gobar.overlay
+              gosee.overlay
+              promtop.overlay
+              (final: prev: {
+                zig = zig.packages.${prev.system}.master.latest;
+              })
+            ];
+          })
           lenovo-thinkpad-t480
           ./modules
           ./hosts/beetroot/configuration.nix
