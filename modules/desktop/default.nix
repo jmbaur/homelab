@@ -32,13 +32,12 @@ with lib;
         bemenu
         brightnessctl
         clipman
-        fnott
         foot
-        fuzzel
         gobar
         grim
         kanshi
         kitty
+        libnotify
         mako
         pulseaudio
         slurp
@@ -190,6 +189,28 @@ with lib;
         '';
       };
     };
+
+    systemd.user.services.mako = {
+      description = "Notification daemon for Wayland";
+      documentation = [ "man:mako(1)" ];
+      wantedBy = [ "sway-session.target" ];
+      partOf = [ "graphical-session.target" ];
+      path = [ pkgs.bash ];
+      serviceConfig = {
+        Type = "dbus";
+        BusName = "org.freedesktop.Notifications";
+        ExecCondition = ''
+          /bin/sh -c '[ -n "$WAYLAND_DISPLAY" ]'
+        '';
+        ExecStart = ''
+          ${pkgs.mako}/bin/mako
+        '';
+        ExecReload = ''
+          ${pkgs.mako}/bin/makoctl reload
+        '';
+      };
+    };
+
 
   };
 

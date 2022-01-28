@@ -51,7 +51,7 @@
     chromium
     direnv
     dust
-    element-desktop-wayland
+    element-desktop
     exa
     fd
     fdroidcl
@@ -98,6 +98,7 @@
     signal-desktop
     skopeo
     sl
+    slack
     speedtest-cli
     spotify
     stow
@@ -126,6 +127,14 @@
     zsh
   ];
 
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+  programs.chromium = {
+    enable = true;
+    extensions = [
+      "dbepggeogbaibhgnhhndojpepiihcmeb" # vimium
+      "eimadpbcbfnmbkopoojfekhnkhdbieeh" # darkreader
+    ];
+  };
   programs.ssh.startAgent = true;
   programs.mtr.enable = true;
   programs.wireshark.enable = true;
