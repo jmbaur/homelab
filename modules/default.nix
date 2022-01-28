@@ -3,6 +3,7 @@
   imports = [
     ./common
     ./deploy
+    ./desktop
     ./git
     ./neovim
     ./tmux
