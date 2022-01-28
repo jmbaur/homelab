@@ -17,10 +17,14 @@ with lib;
     networking.useDHCP = mkForce false;
 
     i18n.defaultLocale = "en_US.UTF-8";
+    services.xserver.layout = "us";
+    services.xserver.xkbModel = "pc104";
+    services.xserver.xkbVariant = "qwerty";
+    services.xserver.xkbOptions = "ctrl:nocaps";
     console = {
       earlySetup = true;
       font = "ter-v24n";
-      keyMap = "us";
+      useXkbConfig = true;
       packages = [ pkgs.terminus_font ];
     };
 

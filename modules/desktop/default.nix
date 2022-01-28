@@ -68,7 +68,11 @@ with lib;
       enable = true;
       settings = {
         default_session = {
-          command = "${pkgs.greetd.greetd}/bin/agreety --cmd sway";
+          command =
+            let
+              configFile = pkgs.writeText "sway-config" (builtins.readFile ./sway.conf);
+            in
+            "${pkgs.greetd.tuigreet}/bin/tuigreet --issue --time --cmd 'sway --config ${configFile}'";
         };
       };
     };
@@ -140,7 +144,6 @@ with lib;
           '';
         in
         {
-          # TODO(jared): Use config file with the flag `--config`.
           ExecStart = ''
             ${pkgs.kanshi}/bin/kanshi --config ${configFile}
           '';
@@ -157,9 +160,9 @@ with lib;
       path = [ pkgs.bash ];
       serviceConfig = {
         ExecStart = ''
-          swayidle -w \
-            timeout 600 '${pkgs.swaylock}/bin/swaylock' \
-            timeout 605 '${pkgs.sway}/bin/swaymsg "output * dpms off"' \
+          ${pkgs.swayidle}/bin/swayidle -w \
+            timeout 300 '${pkgs.swaylock}/bin/swaylock' \
+            timeout 600 '${pkgs.sway}/bin/swaymsg "output * dpms off"' \
             resume '${pkgs.sway}/bin/swaymsg "output * dpms on"'
         '';
       };
@@ -177,6 +180,16 @@ with lib;
       };
     };
 
+    systemd.user.services.clipman = {
+      description = "A clipboard manager for Wayland";
+      wantedBy = [ "sway-session.target" ];
+      partOf = [ "graphical-session.target" ];
+      serviceConfig = {
+        ExecStart = ''
+          ${pkgs.wl-clipboard}/bin/wl-paste -t text --watch ${pkgs.clipman}/bin/clipman store --no-persist
+        '';
+      };
+    };
 
   };
 
