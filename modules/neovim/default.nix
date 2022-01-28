@@ -45,38 +45,50 @@ in
         ];
       };
       defaultEditor = true;
-      configure = {
-        packages.myPlugins = with pkgs.vimPlugins;
-          {
-            start = [
-              (pkgs.vimUtils.buildVimPlugin { name = "settings"; src = builtins.path { path = ./settings; }; })
-              comment-nvim
-              lsp-colors-nvim
-              nvim-autopairs
-              nvim-lspconfig
-              snippets-nvim
-              telescope-nvim
-              toggleterm-nvim
-              trouble-nvim
-              typescript-vim
-              vim-better-whitespace
-              vim-clang-format
-              vim-cue
-              vim-dadbod
-              vim-easy-align
-              vim-eunuch
-              vim-fugitive
-              vim-lastplace
-              vim-nix
-              vim-repeat
-              vim-rsi
-              vim-surround
-              vim-vinegar
-              zig-vim
-            ];
-            opt = [ editorconfig-vim ];
+      configure =
+        let
+          settings = pkgs.vimUtils.buildVimPlugin { name = "settings"; src = builtins.path { path = ./settings; }; };
+          monokai-nvim = pkgs.vimUtils.buildVimPlugin {
+            name = "monokai-nvim";
+            src = pkgs.fetchFromGitHub {
+              owner = "tanvirtin";
+              repo = "monokai.nvim";
+              rev = "a840804f5624f03bb6a4bd9358ac10700e2d9ab7";
+              sha256 = "sha256-aFNhB6BONQsDwyhC/lwCYZdN6ex7TgagGpm+iwgGvXo=";
+            };
           };
-      };
+        in
+        {
+          packages.myPlugins = with pkgs.vimPlugins;
+            {
+              start = [
+                comment-nvim
+                lsp-colors-nvim
+                nvim-autopairs
+                nvim-lspconfig
+                snippets-nvim
+                telescope-nvim
+                toggleterm-nvim
+                trouble-nvim
+                typescript-vim
+                vim-better-whitespace
+                vim-clang-format
+                vim-cue
+                vim-dadbod
+                vim-easy-align
+                vim-eunuch
+                vim-fugitive
+                vim-lastplace
+                vim-nix
+                vim-repeat
+                vim-rsi
+                vim-surround
+                vim-vinegar
+                zig-vim
+              ] ++ [ monokai-nvim settings ];
+              opt = [ editorconfig-vim ];
+            };
+        };
     };
 
     environment.variables.SUMNEKO_ROOT_PATH = "${pkgs.sumneko-lua-language-server}";

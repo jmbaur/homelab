@@ -34,6 +34,7 @@
 
   environment.variables = {
     XCURSOR_PATH = lib.mkForce [ "${pkgs.gnome.adwaita-icon-theme}/share/icons" ];
+    NNN_TRASH = "1";
   };
 
   nixpkgs.overlays = [
@@ -43,33 +44,113 @@
   ];
 
   environment.systemPackages = with pkgs; [
+    # fdroidcl
+    # fido2luks
+    # start-recording
+    # stop-recording
+    age
+    awscli2
+    bat
     bitwarden
+    buildah
     chromium
     direnv
+    dust
     element-desktop-wayland
-    ffmpeg
+    exa
+    fd
+    ffmpeg-full
     firefox-wayland
+    fzf
+    geteltorito
+    gh
     git
+    git-get
+    gosee
+    gotop
+    grex
+    gron
+    htmlq
     imv
+    jq
+    keybase
+    librespeed-cli
+    mob
+    mosh
     mpv
     nix-direnv
+    nix-prefetch-docker
+    nix-tree
+    nixos-generators
+    nnn
+    nushell
+    nvme-cli
+    openssl
+    p
+    pass
+    pass-git-helper
+    patchelf
     picocom
+    plan9port
+    pstree
+    pwgen
+    renameutils
+    ripgrep
+    rtorrent
+    scrot
+    sd
     signal-desktop
+    skopeo
+    sl
+    speedtest-cli
+    stow
     tailscale
+    tcpdump
+    tea
+    tealdeer
     thunderbird-wayland
-    tmux
+    tig
+    tokei
+    trash-cli
+    unzip
+    usbutils
+    ventoy-bin
     vim
     wine64
+    xdg-user-dirs
+    xdg-utils
+    xsv
+    ydiff
+    yq
+    yubikey-manager
+    yubikey-personalization
+    zip
+    zoxide
+    zsh
   ];
 
   programs.ssh.startAgent = true;
-
   programs.mtr.enable = true;
+  programs.wireshark.enable = true;
+  programs.adb.enable = true;
+
+  environment.etc = {
+    "xdg/gtk-2.0/gtkrc".source = pkgs.writeText "gtkrc" ''
+      gtk-theme-name = "Adwaita-dark"
+    '';
+    "xdg/gtk-3.0/settings.ini".source = pkgs.writeText "settings.ini" ''
+      [Settings]
+      gtk-theme-name = Adwaita-dark
+      gtk-application-prefer-dark-theme = true
+      gtk-key-theme-name = Emacs
+    '';
+  };
 
   programs.sway = {
     enable = true;
     wrapperFeatures.gtk = true;
     extraSessionCommands = ''
+      export GTK_THEME=Adwaita-dark
       export XCURSOR_THEME=Adwaita
       # SDL:
       export SDL_VIDEODRIVER=wayland
@@ -88,10 +169,12 @@
       fnott
       foot
       fuzzel
+      gobar
       grim
       kanshi
       kitty
       mako
+      pulseaudio
       slurp
       swayidle
       swaylock
@@ -99,6 +182,7 @@
       wl-clipboard
       wofi
       wtype
+      zathura
     ];
   };
 
@@ -164,7 +248,6 @@
 
   programs.bash = {
     vteIntegration = true;
-    undistractMe.enable = true;
     shellAliases = { grep = "grep --color=auto"; };
     enableLsColors = true;
     enableCompletion = true;
@@ -181,9 +264,8 @@
     ''
       ln -sf ${direnvrc} ''${HOME}/.direnvrc
     '';
-  programs.wireshark.enable = true;
-  programs.adb.enable = true;
 
+  services.pcscd.enable = false;
   services.fwupd.enable = true;
   services.hardware.bolt.enable = true;
   services.upower.enable = true;
