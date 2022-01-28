@@ -153,7 +153,7 @@
   programs.adb.enable = true;
 
   xdg.mime.defaultApplications = {
-    "application/pdf" = "firefox.desktop";
+    "application/pdf" = "org.pwmt.zathura.desktop";
     "image/png" = "imv.desktop";
   };
 
