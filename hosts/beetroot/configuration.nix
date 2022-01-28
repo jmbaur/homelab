@@ -18,6 +18,16 @@
 
   custom.common.enable = true;
   custom.desktop.enable = true;
+  custom.desktop.kanshi-config = ''
+    profile {
+      output "Unknown 0x0446 0x00000000" enable
+    }
+
+    profile {
+      output "Unknown 0x0446 0x00000000" disable
+      output "Lenovo Group Limited LEN P24q-20 V306P4GR" enable mode 2560x1440@74.780Hz
+    }
+  '';
   custom.git.enable = true;
   custom.neovim.enable = true;
   custom.tmux.enable = true;
@@ -133,7 +143,8 @@
     enable = true;
     extensions = [
       "dbepggeogbaibhgnhhndojpepiihcmeb" # vimium
-      "eimadpbcbfnmbkopoojfekhnkhdbieeh" # darkreader
+      "nngceckbapebfimnlniiiahkandclblb" # bitwarden
+      # "eimadpbcbfnmbkopoojfekhnkhdbieeh" # darkreader
     ];
   };
   programs.ssh.startAgent = true;

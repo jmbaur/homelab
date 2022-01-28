@@ -9,6 +9,10 @@ with lib;
 
   options = {
     custom.desktop.enable = mkEnableOption "Enable custom desktop config";
+    custom.desktop.kanshi-config = mkOption {
+      default = "";
+      type = types.str;
+    };
   };
 
   config = mkIf cfg.enable {
@@ -136,11 +140,7 @@ with lib;
       partOf = [ "graphical-session.target" ];
       serviceConfig =
         let
-          configFile = pkgs.writeText "kanshi-config" ''
-            profile {
-              output eDP-1 enable scale 1
-            }
-          '';
+          configFile = pkgs.writeText "kanshi-config" cfg.kanshi-config;
         in
         {
           ExecStart = ''
