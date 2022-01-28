@@ -15,7 +15,7 @@ in
       enable = true;
       vimAlias = true;
       package = pkgs.symlinkJoin {
-        name = "custom-neovim";
+        name = "nvim-custom";
         paths = with pkgs; [
           bat
           black
