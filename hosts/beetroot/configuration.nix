@@ -17,6 +17,7 @@
   time.timeZone = "America/Los_Angeles";
 
   custom.common.enable = true;
+  custom.virtualisation.enable = true;
   custom.desktop.enable = true;
   custom.desktop.kanshi-config = ''
     profile {
@@ -188,16 +189,6 @@
     enable = true;
     rulesetFile = ./desktop.nft;
   };
-
-  virtualisation = {
-    containers = {
-      enable = true;
-      containersConf.settings.engine.detach_keys = "ctrl-q,ctrl-e";
-    };
-    podman.enable = true;
-    libvirtd.enable = true;
-  };
-
 
   nix.extraOptions = ''
     experimental-features = nix-command flakes
