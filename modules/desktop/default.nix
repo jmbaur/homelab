@@ -47,6 +47,9 @@ with lib;
     };
     environment.variables.XCURSOR_PATH = lib.mkForce [ "${pkgs.gnome.adwaita-icon-theme}/share/icons" ];
     environment.etc = {
+      "xdg/kitty/kitty.conf".source = ./kitty.conf;
+      "xdg/foot/foot.ini".source = ./foot.ini;
+      "xdg/alacritty/alacritty.yml".source = ./alacritty.yml;
       "xdg/gtk-2.0/gtkrc".source = pkgs.writeText "gtkrc" ''
         gtk-theme-name = "Adwaita-dark"
       '';
@@ -66,7 +69,7 @@ with lib;
             let
               configFile = pkgs.writeText "sway-config" (builtins.readFile ./sway.conf);
             in
-            "${pkgs.greetd.tuigreet}/bin/tuigreet --issue --time --cmd 'sway --config ${configFile}'";
+            "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd 'sway --config ${configFile}'";
         };
       };
     };
@@ -155,9 +158,10 @@ with lib;
       serviceConfig = {
         ExecStart = ''
           ${pkgs.swayidle}/bin/swayidle -w \
-            timeout 300 '${pkgs.swaylock}/bin/swaylock' \
+            timeout 300 '${pkgs.swaylock}/bin/swaylock -c 000000' \
             timeout 600 '${pkgs.sway}/bin/swaymsg "output * dpms off"' \
-            resume '${pkgs.sway}/bin/swaymsg "output * dpms on"'
+            resume '${pkgs.sway}/bin/swaymsg "output * dpms on"' \
+            before-sleep '${pkgs.swaylock}/bin/swaylock -c 000000'
         '';
       };
     };
