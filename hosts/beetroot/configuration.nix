@@ -15,6 +15,7 @@
 
   time.timeZone = "America/Los_Angeles";
 
+  custom.common.enable = true;
   custom.neovim.enable = true;
   custom.tmux.enable = true;
   custom.git.enable = true;

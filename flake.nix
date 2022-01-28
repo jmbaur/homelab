@@ -54,7 +54,6 @@
           ({ ... }: { nixpkgs.overlays = self.overlays; })
           lenovo-thinkpad-t480
           ./modules
-          ./lib/common.nix
           ./hosts/beetroot/configuration.nix
         ];
       };
@@ -63,7 +62,6 @@
         system = "x86_64-linux";
         modules = with nixos-hardware.nixosModules; [
           common-cpu-amd
-          ./lib/common.nix
           ./lib/deploy.nix
           ./hosts/kale/configuration.nix
         ];

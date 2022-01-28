@@ -3,6 +3,8 @@
 
   hardware.cpu.amd.updateMicrocode = true;
 
+  custom.common.enable = true;
+
   systemd.services."serial-getty@ttyS2" = {
     enable = true;
     wantedBy = [ "getty.target" ]; # to start at boot
