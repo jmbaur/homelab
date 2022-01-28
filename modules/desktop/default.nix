@@ -5,11 +5,10 @@ in
 
 with lib;
 
-
 {
 
   options = {
-    custom.desktop.enable = mkEnableOption "Enable custom.desktop config";
+    custom.desktop.enable = mkEnableOption "Enable custom desktop config";
   };
 
   config = mkIf cfg.enable {
@@ -119,6 +118,66 @@ with lib;
         }
       ];
     };
+
+    systemd.user.targets.sway-session = {
+      description = "Sway compositor session";
+      documentation = [ "man:systemd.special(7)" ];
+      bindsTo = [ "graphical-session.target" ];
+      wants = [ "graphical-session-pre.target" ];
+      after = [ "graphical-session-pre.target" ];
+    };
+
+    systemd.user.services.kanshi = {
+      description = "Kanshi output autoconfig ";
+      wantedBy = [ "graphical-session.target" ];
+      partOf = [ "graphical-session.target" ];
+      serviceConfig =
+        let
+          configFile = pkgs.writeText "kanshi-config" ''
+            profile {
+              output eDP-1 enable scale 1
+            }
+          '';
+        in
+        {
+          # TODO(jared): Use config file with the flag `--config`.
+          ExecStart = ''
+            ${pkgs.kanshi}/bin/kanshi --config ${configFile}
+          '';
+          RestartSec = 5;
+          Restart = "always";
+        };
+    };
+
+    systemd.user.services.swayidle = {
+      description = "Idle Manager for Wayland";
+      documentation = [ "man:swayidle(1)" ];
+      wantedBy = [ "sway-session.target" ];
+      partOf = [ "graphical-session.target" ];
+      path = [ pkgs.bash ];
+      serviceConfig = {
+        ExecStart = ''
+          swayidle -w \
+            timeout 600 '${pkgs.swaylock}/bin/swaylock' \
+            timeout 605 '${pkgs.sway}/bin/swaymsg "output * dpms off"' \
+            resume '${pkgs.sway}/bin/swaymsg "output * dpms on"'
+        '';
+      };
+    };
+
+    systemd.user.services.wlsunset = {
+      description = "Day/night gamma adjustments for Wayland compositors";
+      documentation = [ "man:wlsunset(1)" ];
+      wantedBy = [ "sway-session.target" ];
+      partOf = [ "graphical-session.target" ];
+      serviceConfig = {
+        ExecStart = ''
+          ${pkgs.wlsunset}/bin/wlsunset
+        '';
+      };
+    };
+
+
   };
 
 }
