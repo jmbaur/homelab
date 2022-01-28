@@ -22,7 +22,12 @@
     ssh = {
       enable = true;
       hostKeys = [ "/etc/ssh/ssh_host_ed25519_key" "/etc/ssh/ssh_host_rsa_key" ];
-      authorizedKeys = config.users.users.jared.openssh.authorizedKeys.keys;
+      authorizedKeys = builtins.filter
+        (key: key != "")
+        (lib.splitString
+          "\n"
+          (builtins.readFile (import ../../lib/ssh-keys.nix))
+        );
     };
   };
 
@@ -33,19 +38,10 @@
   networking.interfaces.enp3s0.useDHCP = true;
   networking.interfaces.enp5s0.useDHCP = true;
 
-  i18n.defaultLocale = "en_US.UTF-8";
-  console = {
-    font = "Lat2-Terminus16";
-    keyMap = "us";
-  };
-
   users.users.jared = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
-    openssh.authorizedKeys.keys = builtins.filter
-      (key: key != "")
-      (lib.splitString "\n" (builtins.readFile (builtins.fetchurl { url = "https://github.com/jmbaur.keys"; sha256 = "1gp5dy7il6yqyjb9s9g47ajqy5kj414nhixrmim84dm85xb3fyl3"; })))
-    ;
+    openssh.authorizedKeys.keyFiles = lib.singleton (import ../../lib/ssh-keys.nix);
   };
 
   environment.systemPackages = with pkgs; [ tmux vim ];
@@ -57,23 +53,6 @@
   networking.nftables = {
     enable = true;
   };
-
-
-
-  ########################################
-  nix.trustedUsers = [ "deploy" ];
-  security.sudo = {
-    enable = lib.mkForce true;
-    wheelNeedsPassword = lib.mkForce false;
-  };
-  services.openssh.enable = lib.mkForce true;
-  users.mutableUsers = lib.mkForce false;
-  users.users.deploy = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" ];
-    openssh.authorizedKeys.keys = config.users.users.jared.openssh.authorizedKeys.keys;
-  };
-  ########################################
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

@@ -11,10 +11,7 @@
 
   networking.useDHCP = false;
   networking.hostName = "beetroot";
-  networking.wireless.iwd.enable = true;
-  networking.interfaces.enp0s31f6.useDHCP = true;
-  networking.interfaces.enp9s0u1u3u3.useDHCP = true;
-  networking.interfaces.wlan0.useDHCP = true;
+  networking.networkmanager.enable = true;
 
   time.timeZone = "America/Los_Angeles";
 
@@ -29,6 +26,7 @@
       "adbusers"
       "dialout"
       "libvirtd"
+      "networkmanager"
       "wheel"
       "wireshark"
     ];
@@ -57,6 +55,7 @@
     nix-direnv
     picocom
     signal-desktop
+    tailscale
     thunderbird-wayland
     tmux
     vim
