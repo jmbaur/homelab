@@ -42,6 +42,7 @@ with lib;
         wl-clipboard
         wofi
         wtype
+        xorg.xeyes
         zathura
       ];
     };

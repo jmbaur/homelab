@@ -62,6 +62,7 @@
     gh
     git
     git-get
+    gmni
     gosee
     gotop
     grex
