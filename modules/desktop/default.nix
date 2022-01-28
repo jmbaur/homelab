@@ -35,14 +35,9 @@ with lib;
         foot
         gobar
         grim
-        kanshi
         kitty
-        libnotify
-        mako
         pulseaudio
         slurp
-        swayidle
-        swaylock
         wev
         wl-clipboard
         wofi
