@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 {
   imports = [
-    ./common.nix
+    ./common
     ./git
     ./neovim
     ./tmux
