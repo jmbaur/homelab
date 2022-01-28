@@ -36,6 +36,7 @@ with lib;
         gobar
         grim
         kitty
+        mako
         pulseaudio
         slurp
         wev
