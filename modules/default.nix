@@ -2,6 +2,7 @@
 {
   imports = [
     ./common
+    ./deploy
     ./git
     ./neovim
     ./tmux

@@ -62,7 +62,7 @@
         system = "x86_64-linux";
         modules = with nixos-hardware.nixosModules; [
           common-cpu-amd
-          ./lib/deploy.nix
+          ./modules
           ./hosts/kale/configuration.nix
         ];
       };

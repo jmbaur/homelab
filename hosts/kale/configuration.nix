@@ -4,6 +4,7 @@
   hardware.cpu.amd.updateMicrocode = true;
 
   custom.common.enable = true;
+  custom.deploy.enable = true;
 
   systemd.services."serial-getty@ttyS2" = {
     enable = true;
