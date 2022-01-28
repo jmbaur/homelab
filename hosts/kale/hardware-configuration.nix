@@ -4,29 +4,29 @@
 { config, lib, pkgs, modulesPath, ... }:
 
 {
-  imports =
-    [
-      (modulesPath + "/installer/scan/not-detected.nix")
-    ];
+  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
   boot.initrd.availableKernelModules = [ "igb" "xhci_pci" "ahci" "nvme" "usb_storage" "usbhid" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
-  fileSystems."/" =
-    {
-      device = "/dev/disk/by-uuid/8741fae3-808c-4376-838c-1e90dbc50ff8";
-      fsType = "btrfs";
-      options = [ "subvol=@" "noatime" "compress=zstd" "discard=async" ];
-    };
-
+  boot.initrd.luks.reusePassphrases = true;
   boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/d27a75ca-474f-4859-a608-cb2859f98cd9";
+  boot.initrd.luks.devices."cryptfast0".device = "/dev/disk/by-uuid/fe11928a-a8cc-432f-a26f-247ceb752133";
+  boot.initrd.luks.devices."cryptfast1".device = "/dev/disk/by-uuid/585155c2-ff8f-4102-95cf-71031b9b4ab9";
 
   fileSystems."/boot" =
     {
       device = "/dev/disk/by-uuid/2D8C-C352";
       fsType = "vfat";
+    };
+
+  fileSystems."/" =
+    {
+      device = "/dev/disk/by-uuid/8741fae3-808c-4376-838c-1e90dbc50ff8";
+      fsType = "btrfs";
+      options = [ "subvol=@" "noatime" "compress=zstd" "discard=async" ];
     };
 
   fileSystems."/nix" =
@@ -41,6 +41,13 @@
       device = "/dev/disk/by-uuid/8741fae3-808c-4376-838c-1e90dbc50ff8";
       fsType = "btrfs";
       options = [ "subvol=@home" "noatime" "compress=zstd" "discard=async" ];
+    };
+
+  fileSystems."/fast" =
+    {
+      device = "/dev/disk/by-uuid/33485395-bf33-481c-b5a1-10e39b577ba9";
+      fsType = "btrfs";
+      options = [ "device=/dev/mapper/cryptfast0" "device=/dev/mapper/cryptfast1" "subvol=@" "autodefrag" "noatime" "compress=zstd" "discard=async" ];
     };
 
   swapDevices = [ ];
