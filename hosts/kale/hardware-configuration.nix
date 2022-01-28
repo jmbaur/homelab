@@ -15,6 +15,8 @@
   boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/d27a75ca-474f-4859-a608-cb2859f98cd9";
   boot.initrd.luks.devices."cryptfast0".device = "/dev/disk/by-uuid/fe11928a-a8cc-432f-a26f-247ceb752133";
   boot.initrd.luks.devices."cryptfast1".device = "/dev/disk/by-uuid/585155c2-ff8f-4102-95cf-71031b9b4ab9";
+  boot.initrd.luks.devices."cryptbig0".device = "/dev/disk/by-uuid/5abf67a7-3020-408a-a59f-0b899a59fcbb";
+  boot.initrd.luks.devices."cryptbig1".device = "/dev/disk/by-uuid/b3adb35b-b9fa-45bf-8556-6083ad1e5f37";
 
   fileSystems."/boot" =
     {
@@ -48,6 +50,13 @@
       device = "/dev/disk/by-uuid/33485395-bf33-481c-b5a1-10e39b577ba9";
       fsType = "btrfs";
       options = [ "device=/dev/mapper/cryptfast0" "device=/dev/mapper/cryptfast1" "subvol=@" "autodefrag" "noatime" "compress=zstd" "discard=async" ];
+    };
+
+  fileSystems."/big" =
+    {
+      device = "/dev/disk/by-uuid/e27d861d-d2b9-4831-897c-3f8ea185cde0";
+      fsType = "btrfs";
+      options = [ "device=/dev/mapper/cryptbig0" "device=/dev/mapper/cryptbig1" "subvol=@" "autodefrag" "noatime" "compress=zstd" ];
     };
 
   swapDevices = [ ];
