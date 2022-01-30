@@ -35,7 +35,10 @@
       rec {
         devShell = pkgs.mkShell {
           buildInputs = with pkgs; [ git gnumake ] ++
-            pkgs.lib.singleton deploy-rs.defaultPackage.${system};
+            [
+              deploy-rs.defaultPackage.${system}
+              (pkgs.callPackage ./winbox.nix { })
+            ];
         };
       })
     //
