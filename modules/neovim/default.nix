@@ -48,15 +48,6 @@ in
       configure =
         let
           settings = pkgs.vimUtils.buildVimPlugin { name = "settings"; src = builtins.path { path = ./settings; }; };
-          monokai-nvim = pkgs.vimUtils.buildVimPlugin {
-            name = "monokai-nvim";
-            src = pkgs.fetchFromGitHub {
-              owner = "tanvirtin";
-              repo = "monokai.nvim";
-              rev = "a840804f5624f03bb6a4bd9358ac10700e2d9ab7";
-              sha256 = "sha256-aFNhB6BONQsDwyhC/lwCYZdN6ex7TgagGpm+iwgGvXo=";
-            };
-          };
         in
         {
           packages.myPlugins = with pkgs.vimPlugins;
@@ -85,7 +76,7 @@ in
                 vim-surround
                 vim-vinegar
                 zig-vim
-              ] ++ [ monokai-nvim settings ];
+              ] ++ [ settings ];
               opt = [ editorconfig-vim ];
             };
         };

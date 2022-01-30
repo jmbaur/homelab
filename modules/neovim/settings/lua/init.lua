@@ -1,5 +1,4 @@
 require 'autopairs'
-require 'color'
 require 'comment'
 require 'lsp'
 require 'scope'

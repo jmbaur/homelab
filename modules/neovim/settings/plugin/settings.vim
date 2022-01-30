@@ -43,4 +43,6 @@ autocmd FileType gitcommit setlocal spell complete+=kspell
 filetype plugin indent on
 syntax enable
 
+color jared
+
 lua require('init')
