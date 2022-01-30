@@ -43,6 +43,7 @@ with lib;
         mako
         pulseaudio
         slurp
+        swaylock
         wev
         wl-clipboard
         wofi
@@ -159,10 +160,12 @@ with lib;
       path = [ pkgs.bash ];
       serviceConfig = {
         ExecStart = ''
-          ${pkgs.swayidle}/bin/swayidle -w \
-            timeout 300 '${pkgs.swaylock}/bin/swaylock -c 000000' \
+          ${pkgs.swayidle}/bin/swayidle -d -w \
+            timeout 300 '${pkgs.swaylock}/bin/swaylock --debug -c 000000' \
             timeout 600 '${pkgs.sway}/bin/swaymsg "output * dpms off"' \
-            resume '${pkgs.sway}/bin/swaymsg "output * dpms on"'
+            resume '${pkgs.sway}/bin/swaymsg "output * dpms on"' \
+            before-sleep '${pkgs.swaylock}/bin/swaylock --debug -c 000000' \
+            lock '${pkgs.swaylock}/bin/swaylock --debug -c 000000'
         '';
       };
     };

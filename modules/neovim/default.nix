@@ -8,6 +8,10 @@ in
 {
   options = {
     custom.neovim.enable = mkEnableOption "Custom neovim setup";
+    custom.neovim.package = mkOption {
+      type = types.package;
+      default = pkgs.neovim-unwrapped;
+    };
   };
 
   config = mkIf cfg.enable {
@@ -16,7 +20,7 @@ in
       vimAlias = true;
       package = pkgs.symlinkJoin {
         name = "nvim-custom";
-        paths = with pkgs; [
+        paths = [ cfg.package ] ++ (with pkgs; [
           bat
           black
           cargo
@@ -27,7 +31,6 @@ in
           goimports
           gopls
           luaformatter
-          neovim-unwrapped
           nixpkgs-fmt
           nodePackages.typescript
           nodePackages.typescript-language-server
@@ -42,7 +45,7 @@ in
           tree-sitter
           zig
           zls
-        ];
+        ]);
       };
       defaultEditor = true;
       configure =

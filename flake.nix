@@ -7,7 +7,8 @@
     git-get.url = "github:jmbaur/git-get";
     gobar.url = "github:jmbaur/gobar";
     gosee.url = "github:jmbaur/gosee";
-    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    neovim.url = "github:neovim/neovim/release-0.6?dir=contrib";
+    nixos-hardware.url = "github:NixOS/nixos-hardware";
     nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
     nixpkgs.url = "nixpkgs/nixos-21.11";
     promtop.url = "github:jmbaur/promtop";
@@ -21,6 +22,7 @@
     , git-get
     , gobar
     , gosee
+    , neovim
     , nixos-hardware
     , nixpkgs
     , nixpkgs-unstable
@@ -40,7 +42,7 @@
     rec {
       checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks deploy) deploy-rs.lib;
 
-      nixosConfigurations.beetroot = nixpkgs-unstable.lib.nixosSystem {
+      nixosConfigurations.beetroot = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = with inputs.nixos-hardware.nixosModules; [
           ({ ... }: {
@@ -48,6 +50,7 @@
               git-get.overlay
               gobar.overlay
               gosee.overlay
+              neovim.overlay
               promtop.overlay
               (final: prev: {
                 zig = zig.packages.${prev.system}.master.latest;

@@ -31,6 +31,7 @@
   '';
   custom.git.enable = true;
   custom.neovim.enable = true;
+  custom.neovim.package = pkgs.neovim; # from github:neovim/neovim flake overlay
   custom.tmux.enable = true;
 
   users.users.jared = {
@@ -142,8 +143,12 @@
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
   programs.chromium = {
     enable = true;
+    homepageLocation = "file://${pkgs.writeText "homepage.html" ''
+      <h1>Hello, Jared</h1>
+    ''}";
     extensions = [
       "dbepggeogbaibhgnhhndojpepiihcmeb" # vimium
+      "fmaeeiocbalinknpdkjjfogehkdcbkcd" # zoom-redirector
       "nngceckbapebfimnlniiiahkandclblb" # bitwarden
       # "eimadpbcbfnmbkopoojfekhnkhdbieeh" # darkreader
     ];
@@ -190,6 +195,7 @@
     rulesetFile = ./desktop.nft;
   };
 
+  nix.package = pkgs.nixFlakes;
   nix.extraOptions = ''
     experimental-features = nix-command flakes
     keep-outputs = true
