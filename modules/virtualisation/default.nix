@@ -10,6 +10,7 @@ with lib;
   };
 
   config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [ buildah skopeo podman-compose ];
     virtualisation = {
       containers = {
         enable = true;
