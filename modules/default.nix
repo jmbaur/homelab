@@ -6,6 +6,7 @@
     ./desktop
     ./git
     ./neovim
+    ./obs
     ./tmux
     ./virtualisation
   ];

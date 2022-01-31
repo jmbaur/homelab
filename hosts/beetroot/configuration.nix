@@ -17,7 +17,6 @@
   time.timeZone = "America/Los_Angeles";
 
   custom.common.enable = true;
-  custom.virtualisation.enable = true;
   custom.desktop.enable = true;
   custom.desktop.kanshi-config = ''
     profile {
@@ -31,8 +30,10 @@
   '';
   custom.git.enable = true;
   custom.neovim.enable = true;
-  custom.neovim.package = pkgs.neovim; # from github:neovim/neovim flake overlay
+  # custom.neovim.package = pkgs.neovim; # from github:neovim/neovim flake overlay
+  custom.obs.enable = true;
   custom.tmux.enable = true;
+  custom.virtualisation.enable = true;
 
   users.users.jared = {
     isNormalUser = true;
@@ -59,7 +60,6 @@
     awscli2
     bat
     bitwarden
-    buildah
     chromium
     direnv
     dust
@@ -109,7 +109,6 @@
     scrot
     sd
     signal-desktop
-    skopeo
     sl
     slack
     speedtest-cli
