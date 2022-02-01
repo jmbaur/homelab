@@ -28,6 +28,9 @@
       output "Lenovo Group Limited LEN P24q-20 V306P4GR" enable mode 2560x1440@74.780Hz
     }
   '';
+  custom.desktop.mako-config = ''
+    default-timeout=10000
+  '';
   custom.git.enable = true;
   custom.neovim.enable = true;
   # custom.neovim.package = pkgs.neovim; # from github:neovim/neovim flake overlay

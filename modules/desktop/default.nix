@@ -12,6 +12,12 @@ with lib;
     custom.desktop.kanshi-config = mkOption {
       default = "";
       type = types.str;
+      description = "man:kanshi(5)";
+    };
+    custom.desktop.mako-config = mkOption {
+      default = "";
+      type = types.str;
+      description = "man:mako(5)";
     };
   };
 
@@ -205,9 +211,13 @@ with lib;
         ExecCondition = ''
           /bin/sh -c '[ -n "$WAYLAND_DISPLAY" ]'
         '';
-        ExecStart = ''
-          ${pkgs.mako}/bin/mako
-        '';
+        ExecStart =
+          let
+            configFile = pkgs.writeText "mako-config" cfg.mako-config;
+          in
+          ''
+            ${pkgs.mako}/bin/mako --config ${configFile}
+          '';
         ExecReload = ''
           ${pkgs.mako}/bin/makoctl reload
         '';
