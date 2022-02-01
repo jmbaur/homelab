@@ -161,8 +161,8 @@ with lib;
       serviceConfig = {
         ExecStart = ''
           ${pkgs.swayidle}/bin/swayidle -w \
-            timeout 300 '${pkgs.swaylock}/bin/swaylock -c 000000' \
-            timeout 600 '${pkgs.sway}/bin/swaymsg "output * dpms off"' \
+            timeout 900 '${pkgs.swaylock}/bin/swaylock -c 000000' \
+            timeout 905 '${pkgs.sway}/bin/swaymsg "output * dpms off"' \
             resume '${pkgs.sway}/bin/swaymsg "output * dpms on"' \
             before-sleep '${pkgs.swaylock}/bin/swaylock -c 000000' \
             lock '${pkgs.swaylock}/bin/swaylock -c 000000'
