@@ -10,6 +10,7 @@
     neovim.url = "github:neovim/neovim/release-0.6?dir=contrib";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
     nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
+    nixpkgs-staging-next.url = "github:nixos/nixpkgs/staging-next";
     nixpkgs.url = "nixpkgs/nixos-21.11";
     promtop.url = "github:jmbaur/promtop";
     zig.url = "github:arqv/zig-overlay";
@@ -26,6 +27,7 @@
     , nixos-hardware
     , nixpkgs
     , nixpkgs-unstable
+    , nixpkgs-staging-next
     , promtop
     , zig
     }@inputs: flake-utils.lib.eachDefaultSystem
@@ -45,7 +47,7 @@
     rec {
       checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks deploy) deploy-rs.lib;
 
-      nixosConfigurations.beetroot = nixpkgs.lib.nixosSystem {
+      nixosConfigurations.beetroot = nixpkgs-unstable.lib.nixosSystem {
         system = "x86_64-linux";
         modules = with inputs.nixos-hardware.nixosModules; [
           ({ ... }: {
@@ -55,6 +57,10 @@
               gosee.overlay
               neovim.overlay
               promtop.overlay
+              # can remove once https://github.com/NixOS/nixpkgs/pull/157215 is in nixos-unstable
+              (final: prev: {
+                swaylock = prev.swaylock.override { pam = nixpkgs-staging-next.legacyPackages.${prev.system}.pam; };
+              })
               (final: prev: {
                 zig = zig.packages.${prev.system}.master.latest;
               })
