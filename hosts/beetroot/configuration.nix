@@ -141,6 +141,7 @@
     signal-desktop
     sl
     slack
+    smartmontools
     speedtest-cli
     spotify
     stow
