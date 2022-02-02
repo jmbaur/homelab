@@ -7,10 +7,10 @@ with lib;
   };
 
   config = mkIf cfg.enable {
-    # boot = {
-    #   tmpOnTmpfs = mkDefault true;
-    #   cleanTmpDir = mkDefault true;
-    # };
+    boot = {
+      # tmpOnTmpfs = mkDefault true;
+      cleanTmpDir = mkDefault true;
+    };
 
     nix.gc.automatic = mkDefault true;
 
