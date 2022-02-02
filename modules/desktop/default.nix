@@ -24,6 +24,11 @@ with lib;
       type = types.str;
       description = "man:kitty.conf(5)";
     };
+    custom.desktop.foot-config = mkOption {
+      default = "";
+      type = types.str;
+      description = "man:foot.ini(5)";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -43,7 +48,6 @@ with lib;
         export _JAVA_AWT_WM_NONREPARENTING=1
       '';
       extraPackages = with pkgs; [
-        alacritty
         bemenu
         brightnessctl
         clipman
@@ -66,8 +70,7 @@ with lib;
     environment.variables.XCURSOR_PATH = lib.mkForce [ "${pkgs.gnome.adwaita-icon-theme}/share/icons" ];
     environment.etc = {
       "xdg/kitty/kitty.conf".text = cfg.kitty-config;
-      "xdg/foot/foot.ini".source = ./foot.ini;
-      "xdg/alacritty/alacritty.yml".source = ./alacritty.yml;
+      "xdg/foot/foot.ini".text = cfg.foot-config;
       "xdg/gtk-2.0/gtkrc".source = pkgs.writeText "gtkrc" ''
         gtk-theme-name = "Adwaita-dark"
       '';

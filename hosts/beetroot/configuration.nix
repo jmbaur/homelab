@@ -28,6 +28,16 @@
       output "Lenovo Group Limited LEN P24q-20 V306P4GR" enable mode 2560x1440@74.780Hz
     }
   '';
+  custom.desktop.foot-config = ''
+    [main]
+    term=xterm-256color
+    selection-target=both
+
+    [mouse]
+    hide-when-typing=yes
+
+    ${builtins.readFile "${pkgs.foot.src}/themes/tempus-night"}
+  '';
   custom.desktop.kitty-config =
     let
       modus-themes = pkgs.fetchFromGitLab {
