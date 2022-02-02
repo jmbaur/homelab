@@ -103,7 +103,6 @@ with lib;
 
   environment.systemPackages = with pkgs; [
     age
-    alacritty
     awscli2
     bat
     brightnessctl
@@ -128,7 +127,6 @@ with lib;
     imv
     jq
     keybase
-    kitty
     librespeed-cli
     mob
     mosh
