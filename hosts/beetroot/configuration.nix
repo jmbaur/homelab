@@ -28,6 +28,23 @@
       output "Lenovo Group Limited LEN P24q-20 V306P4GR" enable mode 2560x1440@74.780Hz
     }
   '';
+  custom.desktop.kitty-config =
+    let
+      modus-themes = pkgs.fetchFromGitLab {
+        owner = "protesilaos";
+        repo = "tempus-themes";
+        rev = "ac5aa5456d210c7b8444e6d61d751085147fd587";
+        sha256 = "sha256-TPp/F3F5zfZoWO58gF/rjopDJ7YGzBcoSqiHoPQOVtI=";
+      };
+    in
+    ''
+      copy_on_select yes
+      enable_audio_bell no
+      font_size 14.0
+      include ${modus-themes}/kitty/tempus_night.conf
+      term xterm-256color
+      update_check_interval 0
+    '';
   custom.desktop.mako-config = ''
     default-timeout=10000
   '';

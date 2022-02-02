@@ -19,6 +19,11 @@ with lib;
       type = types.str;
       description = "man:mako(5)";
     };
+    custom.desktop.kitty-config = mkOption {
+      default = "";
+      type = types.str;
+      description = "man:kitty.conf(5)";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -60,7 +65,7 @@ with lib;
     };
     environment.variables.XCURSOR_PATH = lib.mkForce [ "${pkgs.gnome.adwaita-icon-theme}/share/icons" ];
     environment.etc = {
-      "xdg/kitty/kitty.conf".source = ./kitty.conf;
+      "xdg/kitty/kitty.conf".text = cfg.kitty-config;
       "xdg/foot/foot.ini".source = ./foot.ini;
       "xdg/alacritty/alacritty.yml".source = ./alacritty.yml;
       "xdg/gtk-2.0/gtkrc".source = pkgs.writeText "gtkrc" ''

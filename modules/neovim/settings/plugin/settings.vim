@@ -15,6 +15,7 @@ set smartcase
 set splitbelow
 set splitright
 set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
+set termguicolors
 set undofile
 
 inoremap ! !<c-g>u
@@ -43,6 +44,6 @@ autocmd FileType gitcommit setlocal spell complete+=kspell
 filetype plugin indent on
 syntax enable
 
-color jared
+color tempus_night
 
 lua require('init')

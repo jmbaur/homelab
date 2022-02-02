@@ -23,6 +23,15 @@ in
       configure =
         let
           settings = pkgs.vimUtils.buildVimPlugin { name = "settings"; src = builtins.path { path = ./settings; }; };
+          tempus-themes-vim = pkgs.vimUtils.buildVimPlugin {
+            name = "tempus-themes-vim";
+            src = pkgs.fetchFromGitLab {
+              owner = "protesilaos";
+              repo = "tempus-themes-vim";
+              rev = "b720ee2d4c5588b5a27bb3544d3ded5ee1acab45";
+              sha256 = "sha256-szM6S+qfhM3U+x9heooDFcMlOOAZj6Wp70WN92boWGQ=";
+            };
+          };
         in
         {
           packages.myPlugins = with pkgs.vimPlugins;
@@ -51,7 +60,7 @@ in
                 vim-surround
                 vim-vinegar
                 zig-vim
-              ] ++ [ settings ];
+              ] ++ [ settings tempus-themes-vim ];
               opt = [ editorconfig-vim ];
             };
         };
