@@ -13,6 +13,10 @@ with lib;
     };
 
     nix.gc.automatic = mkDefault true;
+    nix.package = pkgs.nixUnstable;
+    nix.extraOptions = ''
+      experimental-features = nix-command flakes
+    '';
 
     networking.useDHCP = mkForce false;
 
