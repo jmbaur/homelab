@@ -266,29 +266,13 @@
         "type": "github"
       }
     },
-    "nixpkgs-staging-next": {
-      "locked": {
-        "lastModified": 1643824871,
-        "narHash": "sha256-tzQC6MK6qY6SdkSlfo5DoA1VInAogGOT2DeKt6Qytpc=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "f2c25f5ea26ecde4d0ecc1488d5ddfbfec7323ed",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "ref": "staging-next",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1643524588,
-        "narHash": "sha256-Qh5AazxdOQRORbGkkvpKoovDl6ej/4PhDabFsqnueqw=",
+        "lastModified": 1643805626,
+        "narHash": "sha256-AXLDVMG+UaAGsGSpOtQHPIKB+IZ0KSd9WS77aanGzgc=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "efeefb2af1469a5d1f0ae7ca8f0dfd9bb87d5cfb",
+        "rev": "554d2d8aa25b6e583575459c297ec23750adb6cb",
         "type": "github"
       },
       "original": {
@@ -360,11 +344,11 @@
     },
     "nixpkgs_6": {
       "locked": {
-        "lastModified": 1643503720,
-        "narHash": "sha256-tJic20ufuRnG8V+fTCd3YU6xl1ImxNspoEkXHct0AG4=",
+        "lastModified": 1643592650,
+        "narHash": "sha256-+sRq+O/rJz4rp0lqQvzoaJNtSrYfImtjWgAgbfgiigs=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "0f316e4d72daed659233817ffe52bf08e081b5de",
+        "rev": "ceaca998029d4b1ac7fd2bee985a3b0f37a786b5",
         "type": "github"
       },
       "original": {
@@ -450,7 +434,6 @@
         "neovim": "neovim",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_6",
-        "nixpkgs-staging-next": "nixpkgs-staging-next",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "promtop": "promtop",
         "zig": "zig_2"
@@ -496,11 +479,11 @@
         "nixpkgs": "nixpkgs_9"
       },
       "locked": {
-        "lastModified": 1643761742,
-        "narHash": "sha256-N91puKu+ACK2D4yGGPO/ODtloEA0OK6aF25iQL4OARQ=",
+        "lastModified": 1643848029,
+        "narHash": "sha256-v2VFFbV5L0qFi6SK2V73KrQ0gtixrQWQchIXxa2Kj9I=",
         "owner": "arqv",
         "repo": "zig-overlay",
-        "rev": "45bc5bfce6c86c72766381e4f175a22dc00428c2",
+        "rev": "c96d6df65741cd3e62613c43f22dd065574a3f10",
         "type": "github"
       },
       "original": {
