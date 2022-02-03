@@ -30,7 +30,7 @@
     , nixpkgs-staging-next
     , promtop
     , zig
-    }@inputs: flake-utils.lib.eachDefaultSystem
+    }@inputs: flake-utils.lib.eachSystem [ "x86_64-linux" ]
       (system:
       let pkgs = nixpkgs.legacyPackages.${system};
       in
@@ -90,24 +90,24 @@
         };
       };
 
-      # nixosConfigurations.dev = inputs.nixpkgs.lib.nixosSystem rec {
-      #   system = "x86_64-linux";
-      #   modules = [
-      #     ({ ... }: {
-      #       nixpkgs.overlays = [
-      #         inputs.git-get.overlay.${system}
-      #         inputs.gosee.overlay.${system}
-      #         (import ./pkgs/zig.nix)
-      #         (import ./pkgs/zls.nix)
-      #         (import ./pkgs/nix-direnv.nix)
-      #         (self: super: { p = super.callPackage ./pkgs/p.nix { }; })
-      #         (self: super: { mosh = inputs.nixpkgs-personal.legacyPackages.${system}.mosh; })
-      #       ];
-      #     })
-      #     ./hosts/dev/configuration.nix
-      #     ./modules
-      #   ];
-      # };
+      nixosConfigurations.rhubarb = nixpkgs.lib.nixosSystem {
+        system = "aarch64-linux";
+        modules = with nixos-hardware.nixosModules; [
+          raspberry-pi-4
+          ./modules
+          ./hosts/rhubarb/configuration.nix
+        ];
+      };
+
+      deploy.nodes.rhubarb = {
+        hostname = "192.168.20.192";
+        profiles.system = {
+          user = "root";
+          sshUser = "deploy";
+          path = deploy-rs.lib.aarch64-linux.activate.nixos nixosConfigurations.rhubarb;
+        };
+      };
+
     };
 
 

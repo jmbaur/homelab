@@ -7,6 +7,7 @@
 
   boot.kernelParams = [ "quiet" ];
   boot.kernelPackages = pkgs.linuxPackages_5_15;
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 

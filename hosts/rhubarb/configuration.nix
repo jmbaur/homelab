@@ -1,52 +1,51 @@
 { config, pkgs, ... }: {
+  custom.common.enable = true;
+  custom.deploy.enable = true;
 
-  boot = {
-    kernelPackages = pkgs.linuxPackages_rpi4;
-    initrd.availableKernelModules = [ "usbhid" "usb_storage" ];
-    kernelParams =
-      [ "8250.nr_uarts=1" "console=ttyAMA0,115200" "console=tty1" "cma=128M" ];
-    loader = {
-      grub.enable = false;
-      generic-extlinux-compatible.enable = true;
-      raspberryPi = {
-        enable = true;
-        version = 4;
-      };
-    };
+  zramSwap = {
+    enable = true;
+    swapDevices = 1;
   };
 
-  hardware = {
-    enableRedistributableFirmware = true;
-    raspberry-pi."4".fkms-3d.enable = true;
+  hardware.raspberry-pi."4".fkms-3d.enable = true;
+  hardware.raspberry-pi."4".audio.enable = true;
+  hardware.pulseaudio.enable = true;
+  hardware.bluetooth.enable = true;
+
+  fileSystems."/" = {
+    device = "/dev/disk/by-label/NIXOS_SD";
+    fsType = "ext4";
+    options = [ "noatime" ];
   };
 
-  fileSystems = {
-    "/" = {
-      device = "/dev/disk/by-label/NIXOS_SD";
-      fsType = "ext4";
-      options = [ "noatime" ];
-    };
-  };
-
+  time.timeZone = "America/Los_Angeles";
   networking = {
     hostName = "rhubarb";
-    interfaces.eth0.useDHCP = true;
+    networkmanager.enable = true;
+    firewall.allowedTCPPorts = [ 8080 ];
+    firewall.allowedUDPPorts = [ 8080 ];
   };
 
-  users.mutableUsers = false;
+  services.avahi = {
+    enable = true;
+    publish.enable = true;
+    publish.userServices = true;
+  };
 
-  environment.systemPackages = with pkgs; [ picocom promtop ];
-
-  systemd.services.promtop = {
-    description = "promtop on tty1";
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${pkgs.promtop}/bin/promtop";
-      StandardInput = "tty-force";
-      StandardOutput = "tty-force";
-      StandardError = "journal";
-      TTYPath = "/dev/tty1";
+  services.spotifyd = {
+    enable = true;
+    settings = {
+      username = "5hwn4ipbrmdi9z3vmkerzoh6n";
+      backend = "pulseaudio";
+      device = "default";
     };
-    wantedBy = [ "multi-user.target" ];
   };
+
+  users.users.kodi.isNormalUser = true;
+  services.cage = {
+    enable = true;
+    user = "kodi";
+    program = "${pkgs.kodi-wayland}/bin/kodi-standalone";
+  };
+
 }
