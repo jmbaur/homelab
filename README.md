@@ -15,15 +15,15 @@ mkfs.vfat -F 32 -n boot /dev/sda2
 mount /dev/mapper/cryptroot /mnt
 mkdir -p /mnt/{boot,nix,home,home/.snapshots}
 mount /dev/sda2 /mnt/boot
-sudo btrfs subvolume create /mnt/@
-sudo btrfs subvolume create /mnt/@nix
-sudo btrfs subvolume create /mnt/@home
-sudo btrfs subvolume create /mnt/@home/.snapshots
-sudo umount /dev/mapper/cryptroot
-sudo mount -o subvol=@ /dev/mapper/cryptroot /mnt
-sudo mount -o subvol=@nix /dev/mapper/cryptroot /mnt/nix
-sudo mount -o subvol=@home /dev/mapper/cryptroot /mnt/home
-sudo mount -o subvol=@home/.snapshots /dev/mapper/cryptroot /mnt/home/.snapshots
+btrfs subvolume create /mnt/@
+btrfs subvolume create /mnt/@nix
+btrfs subvolume create /mnt/@home
+btrfs subvolume create /mnt/@home/.snapshots
+umount /dev/mapper/cryptroot
+mount -o subvol=@ /dev/mapper/cryptroot /mnt
+mount -o subvol=@nix /dev/mapper/cryptroot /mnt/nix
+mount -o subvol=@home /dev/mapper/cryptroot /mnt/home
+mount -o subvol=@home/.snapshots /dev/mapper/cryptroot /mnt/home/.snapshots
 
 # Generate base NixOS config
 nixos-generate-config --root /mnt
