@@ -1,4 +1,13 @@
-{ config, lib, pkgs, ... }: {
+{ config, lib, pkgs, ... }:
+let
+  mgmt-iface = "enp5s0";
+  mgmt-address = "192.168.88.3";
+  mgmt-network = "192.168.88.0";
+  mgmt-gateway = "192.168.88.1";
+  mgmt-netmask = "255.255.255.0";
+  mgmt-prefix = 24;
+in
+{
   imports = [ ./hardware-configuration.nix ];
 
   hardware.cpu.amd.updateMicrocode = true;
@@ -12,7 +21,7 @@
     serviceConfig.Restart = "always"; # restart when session is closed
   };
   boot.kernelParams = [
-    "ip=::::${config.networking.hostName}:enp5s0:dhcp:::"
+    "ip=${mgmt-address}::${mgmt-gateway}:${mgmt-netmask}:${config.networking.hostName}:${mgmt-iface}::::"
     "console=ttyS2,115200"
     "console=tty1"
   ];
@@ -38,18 +47,18 @@
   networking.hostName = "kale";
   time.timeZone = "America/Los_Angeles";
 
-  networking.useDHCP = false;
+  networking.interfaces.${mgmt-iface} = {
+    useDHCP = false;
+    ipv4.addresses = [{ address = mgmt-address; prefixLength = mgmt-prefix; }];
+    ipv4.routes = [{ address = mgmt-network; prefixLength = mgmt-prefix; via = mgmt-gateway; }];
+  };
   networking.interfaces.enp3s0.useDHCP = true;
-  networking.interfaces.enp5s0.useDHCP = true;
 
   users.users.jared = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
     openssh.authorizedKeys.keyFiles = lib.singleton (import ../../lib/ssh-keys.nix);
   };
-
-  environment.systemPackages = with pkgs; [ tmux vim ];
-  environment.variables.EDITOR = "vim";
 
   services.iperf3.enable = true;
 
