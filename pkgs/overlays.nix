@@ -1,10 +1,10 @@
 [
+  (self: super: {
+    zf = super.callPackage ./zf.nix { };
+  })
   (import ./chromium.nix)
   (import ./mako.nix)
   (import ./nix-direnv.nix)
-  (self: super: {
-    zls = super.callPackage ./zls.nix { };
-  })
   (self: super: {
     fdroidcl = super.callPackage ./fdroidcl.nix { };
   })

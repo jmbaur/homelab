@@ -1,6 +1,7 @@
-require"telescope".setup {
-    defaults = {layout_config = {vertical = {height = 1.0}}}
-}
+local telescope = require "telescope"
+
+telescope.setup {defaults = {layout_config = {vertical = {height = 1.0}}}}
+telescope.load_extension("zf-native")
 
 local function nnoremap(key, cmd)
     vim.api.nvim_set_keymap("n", key, '<cmd>' .. cmd .. "<cr>",

@@ -27,6 +27,15 @@ in
       configure =
         let
           settings = pkgs.vimUtils.buildVimPlugin { name = "settings"; src = builtins.path { path = ./settings; }; };
+          telescope-zf-native = pkgs.vimUtils.buildVimPlugin {
+            name = "telescope-zf-native.nvim";
+            src = pkgs.fetchFromGitHub {
+              owner = "natecraddock";
+              repo = "telescope-zf-native.nvim";
+              rev = "76ae732e4af79298cf3582ec98234ada9e466b58";
+              sha256 = "sha256-acV3sXcVohjpOd9M2mf7EJ7jqGI+zj0BH9l0DJa14ak=";
+            };
+          };
           tempus-themes-vim = pkgs.vimUtils.buildVimPlugin {
             name = "tempus-themes-vim";
             src = pkgs.fetchFromGitLab {
@@ -41,35 +50,41 @@ in
           customRC = ''
             colorscheme ${cfg.colorscheme}
           '';
-          packages.myPlugins = with pkgs.vimPlugins;
-            {
-              start = [
-                comment-nvim
-                lsp-colors-nvim
-                nvim-autopairs
-                nvim-lspconfig
-                snippets-nvim
-                telescope-nvim
-                toggleterm-nvim
-                trouble-nvim
-                typescript-vim
-                vim-better-whitespace
-                vim-clang-format
-                vim-cue
-                vim-dadbod
-                vim-easy-align
-                vim-eunuch
-                vim-fugitive
-                vim-lastplace
-                vim-nix
-                vim-repeat
-                vim-rsi
-                vim-surround
-                vim-vinegar
-                zig-vim
-              ] ++ [ settings tempus-themes-vim ];
-              opt = [ editorconfig-vim ];
-            };
+          packages.myPlugins = with pkgs.vimPlugins; {
+            start = [
+              (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars))
+              comment-nvim
+              gruvbox-nvim
+              lsp-colors-nvim
+              lualine-nvim
+              neogit
+              nvim-autopairs
+              nvim-lspconfig
+              snippets-nvim
+              telescope-nvim
+              toggleterm-nvim
+              trouble-nvim
+              typescript-vim
+              vim-better-whitespace
+              vim-clang-format
+              vim-cue
+              vim-dadbod
+              vim-easy-align
+              vim-eunuch
+              vim-lastplace
+              vim-nix
+              vim-repeat
+              vim-rsi
+              vim-surround
+              vim-vinegar
+              zig-vim
+            ] ++ [
+              settings
+              tempus-themes-vim
+              telescope-zf-native
+            ];
+            opt = [ editorconfig-vim ];
+          };
         };
     };
 

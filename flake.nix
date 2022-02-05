@@ -12,7 +12,6 @@
     nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
     nixpkgs.url = "nixpkgs/nixos-21.11";
     promtop.url = "github:jmbaur/promtop";
-    zig.url = "github:arqv/zig-overlay";
   };
 
   outputs =
@@ -27,14 +26,13 @@
     , nixpkgs
     , nixpkgs-unstable
     , promtop
-    , zig
     }@inputs: flake-utils.lib.eachSystem [ "x86_64-linux" ]
       (system:
       let pkgs = nixpkgs.legacyPackages.${system};
       in
       rec {
         devShell = pkgs.mkShell {
-          buildInputs = with pkgs; [ git gnumake ] ++
+          buildInputs = with pkgs; [ terraform git gnumake ] ++
             [
               deploy-rs.defaultPackage.${system}
               (pkgs.callPackage ./winbox.nix { })
@@ -55,7 +53,6 @@
               gosee.overlay
               neovim.overlay
               promtop.overlay
-              (final: prev: { zig = zig.packages.${prev.system}.master.latest; })
             ];
           })
           lenovo-thinkpad-t480
