@@ -1,20 +1,23 @@
 set belloff=all
 set clipboard=unnamedplus
 set colorcolumn=80
-set expandtab
 set hidden
 set ignorecase
 set mouse=a
 set nocursorline
+set noexpandtab
 set noswapfile
 set nowrap
 set number
 set relativenumber
+set shiftwidth=4
 set showmatch
 set smartcase
+set softtabstop=4
 set splitbelow
 set splitright
 set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
+set tabstop=4
 set termguicolors
 set undofile
 
@@ -43,7 +46,5 @@ autocmd FileType gitcommit setlocal spell complete+=kspell
 
 filetype plugin indent on
 syntax enable
-
-color tempus_night
 
 lua require('init')

@@ -12,6 +12,10 @@ in
       type = types.package;
       default = pkgs.neovim-unwrapped;
     };
+    custom.neovim.colorscheme = mkOption {
+      type = types.str;
+      default = "default";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -34,6 +38,9 @@ in
           };
         in
         {
+          customRC = ''
+            colorscheme ${cfg.colorscheme}
+          '';
           packages.myPlugins = with pkgs.vimPlugins;
             {
               start = [

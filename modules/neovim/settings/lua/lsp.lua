@@ -98,7 +98,8 @@ local efm_languages = {
             formatStdin = true
         }
     },
-    sh = {{formatCommand = "shfmt -ci -s -bn", formatStdin = true}}
+    sh = {{formatCommand = "shfmt -ci -s -bn", formatStdin = true}},
+    tex = {{formatCommand = "latexindent", formatStdin = true}}
 }
 
 lsp.efm.setup {

@@ -74,7 +74,7 @@
       };
 
       deploy.nodes.kale = {
-        hostname = "kale.home.arpa.";
+        hostname = "192.168.88.3";
         profiles.system = {
           user = "root";
           sshUser = "deploy";

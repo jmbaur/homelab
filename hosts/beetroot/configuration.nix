@@ -37,7 +37,7 @@
     [mouse]
     hide-when-typing=yes
 
-    ${builtins.readFile "${pkgs.foot.src}/themes/tempus-night"}
+    ${builtins.readFile "${pkgs.foot.src}/themes/tempus-classic"}
   '';
   custom.desktop.kitty-config =
     let
@@ -52,7 +52,7 @@
       copy_on_select yes
       enable_audio_bell no
       font_size 14.0
-      include ${modus-themes}/kitty/tempus_night.conf
+      include ${modus-themes}/kitty/tempus_classic.conf
       term xterm-256color
       update_check_interval 0
     '';
@@ -61,7 +61,7 @@
   '';
   custom.git.enable = true;
   custom.neovim.enable = true;
-  # custom.neovim.package = pkgs.neovim; # from github:neovim/neovim flake overlay
+  custom.neovim.colorscheme = "tempus_classic";
   custom.obs.enable = true;
   custom.tmux.enable = true;
   custom.virtualisation.enable = true;
@@ -158,6 +158,7 @@
     usbutils
     ventoy-bin
     vim
+    wf-recorder
     wine64
     xdg-user-dirs
     xdg-utils
@@ -194,6 +195,7 @@
     "image/png" = "imv.desktop";
   };
 
+  environment.variables.HISTCONTROL = "ignoredups";
   programs.bash = {
     vteIntegration = true;
     shellAliases = { grep = "grep --color=auto"; };
