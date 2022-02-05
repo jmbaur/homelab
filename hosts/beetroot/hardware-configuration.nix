@@ -37,6 +37,13 @@
       options = [ "subvol=@home" "noatime" "compress=zstd" "discard=async" ];
     };
 
+  fileSystems."/home/.snapshots" =
+    {
+      device = "/dev/disk/by-uuid/ba7def78-16e5-4a70-8eca-2e16b3ec69de";
+      fsType = "btrfs";
+      options = [ "subvol=@home/snapshots" "noatime" "compress=zstd" "discard=async" ];
+    };
+
   fileSystems."/nix" =
     {
       device = "/dev/disk/by-uuid/ba7def78-16e5-4a70-8eca-2e16b3ec69de";

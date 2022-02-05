@@ -221,6 +221,7 @@
   services.upower.enable = true;
   services.power-profiles-daemon.enable = true;
   services.printing.enable = true;
+  services.avahi.enable = true;
 
   networking.firewall.enable = false;
   networking.nftables = {
@@ -232,6 +233,22 @@
     keep-outputs = true
     keep-derivations = true
   '';
+
+  services.snapper.configs.root = {
+    subvolume = "/";
+    extraConfig = ''
+      TIMELINE_CREATE=yes
+      TIMELINE_CLEANUP=yes
+    '';
+  };
+
+  services.snapper.configs.home = {
+    subvolume = "/home/.snaphots";
+    extraConfig = ''
+      TIMELINE_CREATE=yes
+      TIMELINE_CLEANUP=yes
+    '';
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
