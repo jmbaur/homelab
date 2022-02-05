@@ -78,6 +78,13 @@
       "wireshark"
     ];
   };
+  services.snapper.configs.home = {
+    subvolume = "/home";
+    extraConfig = ''
+      TIMELINE_CREATE=yes
+      TIMELINE_CLEANUP=yes
+    '';
+  };
 
   environment.variables.NNN_TRASH = "1";
 
@@ -160,6 +167,7 @@
     vim
     wf-recorder
     wine64
+    wireshark
     xdg-user-dirs
     xdg-utils
     xsv
@@ -233,22 +241,6 @@
     keep-outputs = true
     keep-derivations = true
   '';
-
-  services.snapper.configs.root = {
-    subvolume = "/";
-    extraConfig = ''
-      TIMELINE_CREATE=yes
-      TIMELINE_CLEANUP=yes
-    '';
-  };
-
-  services.snapper.configs.home = {
-    subvolume = "/home";
-    extraConfig = ''
-      TIMELINE_CREATE=yes
-      TIMELINE_CLEANUP=yes
-    '';
-  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
