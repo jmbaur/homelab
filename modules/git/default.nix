@@ -25,8 +25,20 @@ in
       [pull]
               rebase = false
 
-      [credential]
-              helper = store
+      [core]
+              pager = ${pkgs.delta}/bin/delta
+
+      [interactive]
+              diffFilter = ${pkgs.delta}/bin/delta --color-only
+
+      [delta]
+              navigate = true  # use n and N to move between diff sections
+
+      [merge]
+              conflictstyle = diff3
+
+      [diff]
+              colorMoved = default
     '';
   };
 }
