@@ -29,6 +29,7 @@
       output "Lenovo Group Limited LEN P24q-20 V306P4GR" enable mode 2560x1440@74.780Hz
     }
   '';
+  environment.variables.BAT_THEME = "gruvbox-dark";
   custom.desktop.foot-config = ''
     [main]
     term=xterm-256color
@@ -37,11 +38,17 @@
     [mouse]
     hide-when-typing=yes
 
-    ${builtins.readFile "${pkgs.foot.src}/themes/tempus-classic"}
+    ${builtins.readFile "${pkgs.foot.src}/themes/gruvbox-dark"}
   '';
   custom.desktop.kitty-config =
     let
-      modus-themes = pkgs.fetchFromGitLab {
+      kitty-themes = pkgs.fetchFromGitHub {
+        owner = "dexpota";
+        repo = "kitty-themes";
+        rev = "b1abdd54ba655ef34f75a568d78625981bf1722c";
+        sha256 = "1064hbg3dm45sigdp07chdfzxc25knm0mwbxz5y7sdfvaxkydh25";
+      };
+      tempus-themes = pkgs.fetchFromGitLab {
         owner = "protesilaos";
         repo = "tempus-themes";
         rev = "ac5aa5456d210c7b8444e6d61d751085147fd587";
@@ -52,7 +59,7 @@
       copy_on_select yes
       enable_audio_bell no
       font_size 14.0
-      include ${modus-themes}/kitty/tempus_classic.conf
+      include ${kitty-themes}/themes/gruvbox_dark.conf
       term xterm-256color
       update_check_interval 0
     '';
@@ -61,7 +68,7 @@
   '';
   custom.git.enable = true;
   custom.neovim.enable = true;
-  custom.neovim.colorscheme = "tempus_classic";
+  custom.neovim.colorscheme = "gruvbox";
   custom.obs.enable = true;
   custom.tmux.enable = true;
   custom.virtualisation.enable = true;
@@ -85,8 +92,6 @@
       TIMELINE_CLEANUP=yes
     '';
   };
-
-  environment.variables.NNN_TRASH = "1";
 
   nixpkgs.config.allowUnfree = true;
 
@@ -127,6 +132,7 @@
     mpv
     nix-direnv
     nix-prefetch-docker
+    nix-prefetch-git
     nix-tree
     nixos-generators
     nnn
@@ -175,12 +181,13 @@
     yq
     yubikey-manager
     yubikey-personalization
+    zf
     zip
     zoxide
     zsh
   ];
 
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+  environment.variables.NIXOS_OZONE_WL = "1";
   programs.chromium = {
     enable = true;
     homepageLocation = "file://${pkgs.writeText "homepage.html" ''
@@ -203,6 +210,7 @@
     "image/png" = "imv.desktop";
   };
 
+  environment.variables.NNN_TRASH = "1";
   environment.variables.HISTCONTROL = "ignoredups";
   programs.bash = {
     vteIntegration = true;
