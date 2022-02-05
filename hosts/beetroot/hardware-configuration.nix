@@ -23,25 +23,11 @@
 
   boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/433cdbe9-79ba-4353-b374-0cbd07a151f9";
 
-  fileSystems."/.snapshots" =
-    {
-      device = "/dev/disk/by-uuid/ba7def78-16e5-4a70-8eca-2e16b3ec69de";
-      fsType = "btrfs";
-      options = [ "subvol=@snapshots" "noatime" "compress=zstd" "discard=async" ];
-    };
-
   fileSystems."/home" =
     {
       device = "/dev/disk/by-uuid/ba7def78-16e5-4a70-8eca-2e16b3ec69de";
       fsType = "btrfs";
       options = [ "subvol=@home" "noatime" "compress=zstd" "discard=async" ];
-    };
-
-  fileSystems."/home/.snapshots" =
-    {
-      device = "/dev/disk/by-uuid/ba7def78-16e5-4a70-8eca-2e16b3ec69de";
-      fsType = "btrfs";
-      options = [ "subvol=@home/snapshots" "noatime" "compress=zstd" "discard=async" ];
     };
 
   fileSystems."/nix" =

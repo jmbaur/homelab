@@ -243,7 +243,7 @@
   };
 
   services.snapper.configs.home = {
-    subvolume = "/home/.snaphots";
+    subvolume = "/home";
     extraConfig = ''
       TIMELINE_CREATE=yes
       TIMELINE_CLEANUP=yes
