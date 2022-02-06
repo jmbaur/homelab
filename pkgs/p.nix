@@ -1,7 +1,11 @@
-{ writeShellApplication, fd, tmux, fzf }:
+{ writeShellApplication
+, fd
+, tmux
+, zf
+}:
 writeShellApplication {
   name = "p";
-  runtimeInputs = [ fzf fd tmux ];
+  runtimeInputs = [ fd tmux zf ];
   text = ''
     usage() {
             cat <<EOF
@@ -13,29 +17,14 @@ writeShellApplication {
     }
 
     directory=''${PROJ_DIR:-''${HOME}/Projects}
-    search=''${1:-}
-    if test -z "$search"; then
-            usage
-            exit 1
-    fi
     if ! test -d "$directory"; then
             echo "Cannot find projects directory"
             usage
             exit 2
     fi
 
-    fzf_prg=
-    if test -n "''${TMUX:-}"; then
-      fzf_prg=fzf-tmux
-    else
-      fzf_prg=fzf
-    fi
-
-    tmux_session_path=$(fd --type=directory --max-depth=4 --hidden "^.git$" "$directory" | sed "s,/\.git,," | { grep ".*''${search}.*" || true; } | $fzf_prg -1)
-    if test -z "$tmux_session_path"; then
-            echo "Cannot find project with search term $search"
-            exit 3
-    fi
+    # TODO(jared): don't hardcode depth
+    tmux_session_path=$(fd --type=directory --max-depth=4 --hidden "^.git$" "$directory" | sed "s,/\.git,," | zf)
 
     tmux_session_name=$(echo -n "$tmux_session_path" | sed "s,$directory/,," | sed "s,\.,_,g")
 
