@@ -76,6 +76,7 @@ in
               vim-repeat
               vim-rsi
               vim-surround
+              vim-terraform
               vim-vinegar
               zig-vim
             ] ++ [

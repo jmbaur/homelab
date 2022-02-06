@@ -32,7 +32,7 @@
       in
       rec {
         devShell = pkgs.mkShell {
-          buildInputs = with pkgs; [ git gnumake terraform winbox ] ++
+          buildInputs = with pkgs; [ git gnumake terraform ] ++
             [ deploy-rs.defaultPackage.${system} ];
         };
       })

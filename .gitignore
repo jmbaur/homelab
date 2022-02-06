@@ -1,4 +1,2 @@
 .direnv
 result*
-secrets.nix
-winbox64.exe

@@ -172,6 +172,7 @@
     ventoy-bin
     vim
     wf-recorder
+    winbox
     wine64
     wireshark
     xdg-user-dirs
