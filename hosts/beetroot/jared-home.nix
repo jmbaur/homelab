@@ -328,6 +328,12 @@ with lib;
         # use this if they aren't displayed properly:
         export _JAVA_AWT_WM_NONREPARENTING=1
       '';
+      extraConfig = ''
+        output * bg ${builtins.fetchurl {
+          url = "https://raw.githubusercontent.com/jonascarpay/Wallpapers/master/papes/34d34ee2b688a2e5dde8f3df1e4fec37c80b7d2b.jpg";
+          sha256 = "1570n5ij78dvmfyfiman85vnb5syvxlv13iisspdaxi9ldrykjn1";
+        }} fill
+      '';
       config = rec {
         terminal = "${pkgs.kitty}/bin/kitty";
         modifier = "Mod4";
