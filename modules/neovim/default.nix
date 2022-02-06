@@ -60,6 +60,7 @@ in
               neogit
               nvim-autopairs
               nvim-lspconfig
+              nvim-treesitter-textobjects
               snippets-nvim
               telescope-nvim
               toggleterm-nvim
