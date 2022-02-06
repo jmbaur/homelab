@@ -7,8 +7,8 @@ writeShellApplication {
   name = "p";
   runtimeInputs = [ fd tmux zf ];
   text = ''
-    usage() {
-            cat <<EOF
+    function usage() {
+      cat <<EOF
     Usage: p <dir>
 
     The default projects directory is \$HOME/Projects. This can be
@@ -18,9 +18,9 @@ writeShellApplication {
 
     directory=''${PROJ_DIR:-''${HOME}/Projects}
     if ! test -d "$directory"; then
-            echo "Cannot find projects directory"
-            usage
-            exit 2
+      echo "Cannot find projects directory"
+      usage
+      exit 2
     fi
 
     # TODO(jared): don't hardcode depth
@@ -28,14 +28,14 @@ writeShellApplication {
 
     tmux_session_name=$(echo -n "$tmux_session_path" | sed "s,$directory/,," | sed "s,\.,_,g")
 
-    if ! tmux list-sessions -F "#{session_name}" | grep --quiet "$tmux_session_name"; then
-            tmux new-session -d -s "$tmux_session_name" -c "$tmux_session_path"
+    if ! tmux list-sessions -F "#{session_name}" 2>/dev/null | grep --quiet "$tmux_session_name"; then
+      tmux new-session -d -s "$tmux_session_name" -c "$tmux_session_path"
     fi
 
     if test -n "''${TMUX:-}"; then
-            tmux switch-client -t "$tmux_session_name"
+      tmux switch-client -t "$tmux_session_name"
     else
-            tmux attach-session -t "$tmux_session_name"
+      tmux attach-session -t "$tmux_session_name"
     fi
   '';
 }
