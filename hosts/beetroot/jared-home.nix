@@ -185,10 +185,8 @@ with lib;
             };
           };
         in
-        [
-          settings
-          telescope-zf-native
-        ] ++ (with pkgs.vimPlugins; [
+        [ settings telescope-zf-native ]
+        ++ (with pkgs.vimPlugins; [
           (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars))
           comment-nvim
           editorconfig-vim
