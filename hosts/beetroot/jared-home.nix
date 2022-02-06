@@ -309,7 +309,7 @@ with lib;
       iconTheme.name = "Adwaita";
       theme.package = pkgs.gnome_themes_standard;
       theme.name = "Adwaita-dark";
-      gtk3.extraConfig = { gtk-key-theme = "Emacs"; };
+      gtk3.extraConfig = { gtk-key-theme-name = "Emacs"; };
       gtk4.extraConfig = gtk3.extraConfig;
     };
 
@@ -469,6 +469,17 @@ with lib;
         ];
       };
     };
+
+    systemd.user.targets.tray = {
+      Unit = {
+        Description = "System tray";
+        Documentation = [ "man:systemd.special(7)" ];
+        Requires = [ "graphical-session-pre.target" ];
+      };
+    };
+
+    # Requires tray target
+    services.udiskie.enable = desktopEnabled;
 
   };
 }
