@@ -303,14 +303,14 @@ with lib;
       };
     };
 
-    gtk = mkIf desktopEnabled {
+    gtk = mkIf desktopEnabled rec {
       enable = true;
       iconTheme.package = pkgs.gnome_themes_standard;
       iconTheme.name = "Adwaita";
       theme.package = pkgs.gnome_themes_standard;
       theme.name = "Adwaita-dark";
       gtk3.extraConfig = { gtk-key-theme = "Emacs"; };
-      gtk4.extraConfig = { gtk-key-theme = "Emacs"; };
+      gtk4.extraConfig = gtk3.extraConfig;
     };
 
     # home.sessionVariables.NIXOS_OZONE_WL = "1";
