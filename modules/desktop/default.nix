@@ -9,54 +9,15 @@ with lib;
 
   options = {
     custom.desktop.enable = mkEnableOption "Enable custom desktop config";
-    custom.desktop.kanshi-config = mkOption {
-      default = "";
-      type = types.str;
-      description = "man:kanshi(5)";
-    };
-    custom.desktop.mako-config = mkOption {
-      default = "";
-      type = types.str;
-      description = "man:mako(5)";
-    };
-    custom.desktop.kitty-config = mkOption {
-      default = "";
-      type = types.str;
-      description = "man:kitty.conf(5)";
-    };
-    custom.desktop.foot-config = mkOption {
-      default = "";
-      type = types.str;
-      description = "man:foot.ini(5)";
-    };
   };
 
   config = mkIf cfg.enable {
     programs.sway = {
       enable = true;
-      wrapperFeatures.gtk = true;
-      extraSessionCommands = ''
-        export GTK_THEME=Adwaita-dark
-        export XCURSOR_THEME=Adwaita
-        # SDL:
-        export SDL_VIDEODRIVER=wayland
-        # QT (needs qt5.qtwayland in systemPackages):
-        export QT_QPA_PLATFORM=wayland-egl
-        export QT_WAYLAND_DISABLE_WINDOWDECORATION="1"
-        # Fix for some Java AWT applications (e.g. Android Studio),
-        # use this if they aren't displayed properly:
-        export _JAVA_AWT_WM_NONREPARENTING=1
-      '';
       extraPackages = with pkgs; [
-        bemenu
-        brightnessctl
-        clipman
         foot
         gobar
         grim
-        kitty
-        mako
-        pulseaudio
         slurp
         swaylock
         wev
@@ -67,30 +28,12 @@ with lib;
         zathura
       ];
     };
-    environment.variables.XCURSOR_PATH = lib.mkForce [ "${pkgs.gnome.adwaita-icon-theme}/share/icons" ];
-    environment.etc = {
-      "xdg/kitty/kitty.conf".text = cfg.kitty-config;
-      "xdg/foot/foot.ini".text = cfg.foot-config;
-      "xdg/gtk-2.0/gtkrc".source = pkgs.writeText "gtkrc" ''
-        gtk-theme-name = "Adwaita-dark"
-      '';
-      "xdg/gtk-3.0/settings.ini".source = pkgs.writeText "settings.ini" ''
-        [Settings]
-        gtk-theme-name = Adwaita-dark
-        gtk-application-prefer-dark-theme = true
-        gtk-key-theme-name = Emacs
-      '';
-    };
 
     services.greetd = {
       enable = true;
       settings = {
         default_session = {
-          command =
-            let
-              configFile = pkgs.writeText "sway-config" (builtins.readFile ./sway.config);
-            in
-            "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd 'sway --config ${configFile}'";
+          command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd ${pkgs.sway}/bin/sway";
         };
       };
     };
@@ -149,53 +92,6 @@ with lib;
       after = [ "graphical-session-pre.target" ];
     };
 
-    systemd.user.services.kanshi = {
-      description = "Kanshi output autoconfig ";
-      wantedBy = [ "graphical-session.target" ];
-      partOf = [ "graphical-session.target" ];
-      serviceConfig =
-        let
-          configFile = pkgs.writeText "kanshi-config" cfg.kanshi-config;
-        in
-        {
-          ExecStart = ''
-            ${pkgs.kanshi}/bin/kanshi --config ${configFile}
-          '';
-          RestartSec = 5;
-          Restart = "always";
-        };
-    };
-
-    systemd.user.services.swayidle = {
-      description = "Idle Manager for Wayland";
-      documentation = [ "man:swayidle(1)" ];
-      wantedBy = [ "sway-session.target" ];
-      partOf = [ "graphical-session.target" ];
-      path = [ pkgs.bash ];
-      serviceConfig = {
-        ExecStart = ''
-          ${pkgs.swayidle}/bin/swayidle -w \
-            timeout 900 '${pkgs.swaylock}/bin/swaylock -c 000000' \
-            timeout 905 '${pkgs.sway}/bin/swaymsg "output * dpms off"' \
-            resume '${pkgs.sway}/bin/swaymsg "output * dpms on"' \
-            before-sleep '${pkgs.swaylock}/bin/swaylock -c 000000' \
-            lock '${pkgs.swaylock}/bin/swaylock -c 000000'
-        '';
-      };
-    };
-
-    systemd.user.services.wlsunset = {
-      description = "Day/night gamma adjustments for Wayland compositors";
-      documentation = [ "man:wlsunset(1)" ];
-      wantedBy = [ "sway-session.target" ];
-      partOf = [ "graphical-session.target" ];
-      serviceConfig = {
-        ExecStart = ''
-          ${pkgs.wlsunset}/bin/wlsunset
-        '';
-      };
-    };
-
     systemd.user.services.clipman = {
       description = "A clipboard manager for Wayland";
       wantedBy = [ "sway-session.target" ];
@@ -206,32 +102,6 @@ with lib;
         '';
       };
     };
-
-    systemd.user.services.mako = {
-      description = "Notification daemon for Wayland";
-      documentation = [ "man:mako(1)" ];
-      wantedBy = [ "sway-session.target" ];
-      partOf = [ "graphical-session.target" ];
-      path = [ pkgs.bash ];
-      serviceConfig = {
-        Type = "dbus";
-        BusName = "org.freedesktop.Notifications";
-        ExecCondition = ''
-          /bin/sh -c '[ -n "$WAYLAND_DISPLAY" ]'
-        '';
-        ExecStart =
-          let
-            configFile = pkgs.writeText "mako-config" cfg.mako-config;
-          in
-          ''
-            ${pkgs.mako}/bin/mako --config ${configFile}
-          '';
-        ExecReload = ''
-          ${pkgs.mako}/bin/makoctl reload
-        '';
-      };
-    };
-
 
   };
 

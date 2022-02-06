@@ -4,10 +4,6 @@
     ./common
     ./deploy
     ./desktop
-    ./git
-    ./neovim
-    ./obs
-    ./tmux
     ./virtualisation
   ];
 }

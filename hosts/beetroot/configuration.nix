@@ -1,5 +1,8 @@
 { config, lib, pkgs, ... }: {
-  imports = [ ./hardware-configuration.nix ];
+  imports = [
+    ./hardware-configuration.nix
+    ./jared-home.nix
+  ];
 
   hardware.bluetooth.enable = true;
   hardware.cpu.intel.updateMicrocode = true;
@@ -19,60 +22,9 @@
 
   custom.common.enable = true;
   custom.desktop.enable = true;
-  custom.desktop.kanshi-config = ''
-    profile {
-      output "Unknown 0x0446 0x00000000" enable
-    }
-
-    profile {
-      output "Unknown 0x0446 0x00000000" disable
-      output "Lenovo Group Limited LEN P24q-20 V306P4GR" enable mode 2560x1440@74.780Hz
-    }
-  '';
-  environment.variables.BAT_THEME = "gruvbox-dark";
-  custom.desktop.foot-config = ''
-    [main]
-    term=xterm-256color
-    selection-target=both
-
-    [mouse]
-    hide-when-typing=yes
-
-    ${builtins.readFile "${pkgs.foot.src}/themes/gruvbox-dark"}
-  '';
-  custom.desktop.kitty-config =
-    let
-      kitty-themes = pkgs.fetchFromGitHub {
-        owner = "dexpota";
-        repo = "kitty-themes";
-        rev = "b1abdd54ba655ef34f75a568d78625981bf1722c";
-        sha256 = "1064hbg3dm45sigdp07chdfzxc25knm0mwbxz5y7sdfvaxkydh25";
-      };
-      tempus-themes = pkgs.fetchFromGitLab {
-        owner = "protesilaos";
-        repo = "tempus-themes";
-        rev = "ac5aa5456d210c7b8444e6d61d751085147fd587";
-        sha256 = "sha256-TPp/F3F5zfZoWO58gF/rjopDJ7YGzBcoSqiHoPQOVtI=";
-      };
-    in
-    ''
-      copy_on_select yes
-      enable_audio_bell no
-      font_size 14.0
-      include ${kitty-themes}/themes/gruvbox_dark.conf
-      term xterm-256color
-      update_check_interval 0
-    '';
-  custom.desktop.mako-config = ''
-    default-timeout=10000
-  '';
-  custom.git.enable = true;
-  custom.neovim.enable = true;
-  custom.neovim.colorscheme = "gruvbox";
-  custom.obs.enable = true;
-  custom.tmux.enable = true;
   custom.virtualisation.enable = true;
 
+  users.mutableUsers = lib.mkForce true;
   users.users.jared = {
     isNormalUser = true;
     initialPassword = "helloworld";
@@ -95,156 +47,20 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  environment.systemPackages = with pkgs; [
-    # fido2luks
-    # start-recording
-    # stop-recording
-    age
-    awscli2
-    bat
-    bitwarden
-    chromium
-    direnv
-    dust
-    element-desktop
-    exa
-    fd
-    fdroidcl
-    ffmpeg-full
-    firefox-wayland
-    fzf
-    geteltorito
-    gh
-    git
-    git-get
-    gmni
-    gosee
-    gotop
-    grex
-    gron
-    htmlq
-    imv
-    jq
-    keybase
-    librespeed-cli
-    mob
-    mosh
-    mpv
-    nix-direnv
-    nix-prefetch-docker
-    nix-prefetch-git
-    nix-tree
-    nixos-generators
-    nnn
-    nushell
-    nvme-cli
-    openssl
-    p
-    pass
-    pass-git-helper
-    patchelf
-    picocom
-    plan9port
-    pstree
-    pwgen
-    renameutils
-    ripgrep
-    rtorrent
-    scrot
-    sd
-    signal-desktop
-    sl
-    slack
-    smartmontools
-    speedtest-cli
-    spotify
-    stow
-    tailscale
-    tcpdump
-    tea
-    tealdeer
-    thunderbird-wayland
-    tig
-    tokei
-    trash-cli
-    unzip
-    usbutils
-    ventoy-bin
-    vim
-    wf-recorder
-    winbox
-    wine64
-    wireshark
-    xdg-user-dirs
-    xdg-utils
-    xsv
-    ydiff
-    yq
-    yubikey-manager
-    yubikey-personalization
-    zf
-    zip
-    zoxide
-    zsh
-  ];
-
-  environment.variables.NIXOS_OZONE_WL = "1";
-  programs.chromium = {
-    enable = true;
-    homepageLocation = "file://${pkgs.writeText "homepage.html" ''
-      <h1>Hello, Jared</h1>
-    ''}";
-    extensions = [
-      "dbepggeogbaibhgnhhndojpepiihcmeb" # vimium
-      "fmaeeiocbalinknpdkjjfogehkdcbkcd" # zoom-redirector
-      "nngceckbapebfimnlniiiahkandclblb" # bitwarden
-      # "eimadpbcbfnmbkopoojfekhnkhdbieeh" # darkreader
-    ];
-  };
-  programs.ssh.startAgent = true;
-  programs.mtr.enable = true;
-  programs.wireshark.enable = true;
   programs.adb.enable = true;
+  programs.mtr.enable = true;
+  programs.ssh.startAgent = true;
+  programs.wireshark.enable = true;
 
-  xdg.mime.defaultApplications = {
-    "application/pdf" = "org.pwmt.zathura.desktop";
-    "image/png" = "imv.desktop";
-  };
-
-  environment.variables.NNN_TRASH = "1";
-  environment.variables.HISTCONTROL = "ignoredups";
-  programs.bash = {
-    vteIntegration = true;
-    shellAliases = { grep = "grep --color=auto"; };
-    enableLsColors = true;
-    enableCompletion = true;
-    interactiveShellInit = ''
-      eval "$(${pkgs.direnv}/bin/direnv hook bash)"
-    '';
-  };
-  system.userActivationScripts.nix-direnv.text =
-    let
-      direnvrc = pkgs.writeText "direnvrc" ''
-        source ${pkgs.nix-direnv}/share/nix-direnv/direnvrc
-      '';
-    in
-    ''
-      ln -sf ${direnvrc} ''${HOME}/.direnvrc
-    '';
-
-  services.pcscd.enable = false;
+  services.avahi.enable = true;
   services.fwupd.enable = true;
   services.hardware.bolt.enable = true;
-  services.upower.enable = true;
+  services.pcscd.enable = false;
   services.power-profiles-daemon.enable = true;
   services.printing.enable = true;
-  services.avahi.enable = true;
+  services.upower.enable = true;
 
-  networking.firewall.enable = false;
-  networking.nftables = {
-    enable = true;
-    rulesetFile = ./desktop.nft;
-  };
+  networking.firewall.enable = true;
 
   nix.extraOptions = ''
     keep-outputs = true

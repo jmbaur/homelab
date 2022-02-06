@@ -7,6 +7,7 @@
     git-get.url = "github:jmbaur/git-get";
     gobar.url = "github:jmbaur/gobar";
     gosee.url = "github:jmbaur/gosee";
+    home-manager.url = "github:nix-community/home-manager";
     neovim.url = "github:neovim/neovim/release-0.6?dir=contrib";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
     nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
@@ -21,6 +22,7 @@
     , git-get
     , gobar
     , gosee
+    , home-manager
     , neovim
     , nixos-hardware
     , nixpkgs
@@ -43,7 +45,7 @@
       nixosConfigurations.beetroot = nixpkgs-unstable.lib.nixosSystem {
         system = "x86_64-linux";
         modules = with inputs.nixos-hardware.nixosModules; [
-          ({ ... }: {
+          ({
             nixpkgs.overlays = (import ./pkgs/overlays.nix) ++ [
               git-get.overlay
               gobar.overlay
@@ -52,6 +54,7 @@
               promtop.overlay
             ];
           })
+          home-manager.nixosModules.home-manager
           lenovo-thinkpad-t480
           ./modules
           ./hosts/beetroot/configuration.nix

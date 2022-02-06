@@ -20,6 +20,8 @@ set tabstop=4
 set termguicolors
 set undofile
 
+colorscheme gruvbox
+
 inoremap ! !<c-g>u
 inoremap , ,<c-g>u
 inoremap . .<c-g>u
