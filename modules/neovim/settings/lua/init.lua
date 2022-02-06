@@ -1,6 +1,5 @@
 require 'autopairs'
 require 'comment'
-require 'git'
 require 'lsp'
 require 'scope'
 require 'sitter'

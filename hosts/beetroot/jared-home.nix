@@ -193,7 +193,6 @@ with lib;
           gruvbox-nvim
           lsp-colors-nvim
           lualine-nvim
-          neogit
           nvim-autopairs
           nvim-lspconfig
           nvim-treesitter-textobjects
@@ -208,6 +207,7 @@ with lib;
           vim-dadbod
           vim-easy-align
           vim-eunuch
+          vim-fugitive
           vim-lastplace
           vim-nix
           vim-repeat
