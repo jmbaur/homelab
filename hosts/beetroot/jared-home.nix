@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }: {
+{ config, lib, pkgs, ... }:
+let
+  desktopEnabled = config.custom.desktop.enable;
+in
+with lib;
+{
   home-manager.useUserPackages = true;
   home-manager.useGlobalPkgs = true;
   home-manager.users.jared = {
@@ -6,15 +11,10 @@
       age
       awscli2
       bat
-      bitwarden
       direnv
       dust
-      element-desktop
       exa
       fd
-      fdroidcl
-      ffmpeg-full
-      firefox-wayland
       fzf
       geteltorito
       gh
@@ -24,16 +24,12 @@
       gotop
       grex
       gron
-      hack-font
       htmlq
-      imv
       jq
       keybase
       librespeed-cli
       mob
       mosh
-      mpv
-      nix-direnv
       nix-prefetch-docker
       nix-prefetch-git
       nix-tree
@@ -43,29 +39,21 @@
       nvme-cli
       openssl
       p
-      pass
-      pass-git-helper
       patchelf
       picocom
-      plan9port
       pstree
       pwgen
       ripgrep
       rtorrent
-      scrot
       sd
-      signal-desktop
       sl
-      slack
       smartmontools
       speedtest-cli
-      spotify
       stow
       tailscale
       tcpdump
       tea
       tealdeer
-      thunderbird-wayland
       tig
       tokei
       trash-cli
@@ -73,10 +61,6 @@
       usbutils
       ventoy-bin
       vim
-      wf-recorder
-      winbox
-      wine64
-      wireshark
       xdg-user-dirs
       xdg-utils
       xsv
@@ -88,7 +72,34 @@
       zip
       zoxide
       zsh
-    ];
+    ] ++ (if desktopEnabled then
+      (with pkgs; [
+        bitwarden
+        element-desktop
+        fdroidcl
+        ffmpeg-full
+        firefox-wayland
+        gobar
+        grim
+        hack-font
+        imv
+        mpv
+        plan9port
+        signal-desktop
+        slack
+        slurp
+        spotify
+        thunderbird-wayland
+        wev
+        wf-recorder
+        winbox
+        wine64
+        wireshark
+        wl-clipboard
+        wtype
+        xorg.xeyes
+        zathura
+      ]) else [ ]);
 
     home.sessionVariables.NNN_TRASH = "1";
 
@@ -236,12 +247,12 @@
       ];
     };
 
-    programs.obs-studio = {
+    programs.obs-studio = mkIf desktopEnabled {
       enable = true;
       plugins = with pkgs.obs-studio-plugins; [ wlrobs ];
     };
 
-    programs.kitty = {
+    programs.kitty = mkIf desktopEnabled {
       enable = true;
       font.name = "Hack";
       font.size = 14;
@@ -263,7 +274,7 @@
       '';
     };
 
-    programs.chromium = {
+    programs.chromium = mkIf desktopEnabled {
       enable = true;
       commandLineArgs = [ "--ozone-platform-hint=auto" ];
       extensions = [
@@ -273,9 +284,9 @@
       ];
     };
 
-    fonts.fontconfig.enable = true;
+    fonts.fontconfig.enable = desktopEnabled;
 
-    xdg.mimeApps = {
+    xdg.mimeApps = mkIf desktopEnabled {
       enable = true;
       defaultApplications = {
         "image/*" = [ "imv.desktop" ];
@@ -294,7 +305,7 @@
       };
     };
 
-    gtk = {
+    gtk = mkIf desktopEnabled {
       enable = true;
       iconTheme.package = pkgs.gnome_themes_standard;
       iconTheme.name = "Adwaita";
@@ -305,7 +316,7 @@
     };
 
     # home.sessionVariables.NIXOS_OZONE_WL = "1";
-    wayland.windowManager.sway = {
+    wayland.windowManager.sway = mkIf desktopEnabled {
       enable = true;
       systemdIntegration = true;
       wrapperFeatures.gtk = true;
@@ -334,25 +345,24 @@
             xcursor_theme = "Adwaita 16";
           };
         };
-        input = {
-          "1:1:AT_Translated_Set_2_keyboard" = {
-            xkb_options = "ctrl:nocaps";
-            xkb_layout = "us";
-          };
-          "1739:0:Synaptics_TM3276-022" = {
-            natural_scroll = "enabled";
-            dwt = "enabled";
-            accel_profile = "flat";
-            tap = "enabled";
-            middle_emulation = "disabled";
-          };
+        input."1:1:AT_Translated_Set_2_keyboard" = {
+          xkb_options = "ctrl:nocaps";
+          xkb_layout = "us";
+        };
+        input."1739:0:Synaptics_TM3276-022" = {
+          accel_profile = "flat";
+          dwt = "enabled";
+          middle_emulation = "disabled";
+          natural_scroll = "enabled";
+          pointer_accel = "1";
+          tap = "enabled";
         };
         defaultWorkspace = "workspace number 1";
         keybindings = lib.mkOptionDefault {
           "${modifier}+p" = "exec ${pkgs.bemenu}/bin/bemenu-run --line-height=25 --list=10 | ${pkgs.findutils}/bin/xargs ${pkgs.sway}/bin/swaymsg exec --";
           "${modifier}+Control+l" = "exec ${pkgs.swaylock}/bin/swaylock -c 000000";
-          "${modifier}+Control+space" = "exec makoctl dismiss --all";
-          "${modifier}+c" = "exec ${pkgs.clipman}/bin/clipman pick --tool=${pkgs.bemenu}/bin/bemenu --tool-args=\"--line-height=25 --list=10\" | ${pkgs.findutils}/bin/xargs ${pkgs.sway}/bin/swaymsg exec --";
+          "${modifier}+Control+space" = "exec ${pkgs.mako}/bin/makoctl dismiss --all";
+          "${modifier}+c" = "exec ${pkgs.clipman}/bin/clipman pick --tool=CUSTOM --tool-args=\"${pkgs.bemenu}/bin/bemenu --line-height=25 --list=10\" | ${pkgs.findutils}/bin/xargs ${pkgs.sway}/bin/swaymsg exec --";
           "${modifier}+tab" = "workspace back_and_forth";
           "XF86AudioLowerVolume" = "exec ${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%";
           "XF86AudioMicMute" = "exec ${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle";
@@ -361,10 +371,10 @@
           "XF86MonBrightnessDown" = "exec ${pkgs.brightnessctl}/bin/brightnessctl set 5%-";
           "XF86MonBrightnessUp" = "exec ${pkgs.brightnessctl}/bin/brightnessctl set +5%";
         };
-        floating.criteria = [{
-          title = ".+[sS]haring (Indicator|your screen)";
-          window_role = "(pop-up|bubble|dialog)";
-        }];
+        floating.criteria = [
+          { title = ".+[sS]haring (Indicator|your screen)"; }
+          { window_role = "(pop-up|bubble|dialog)"; }
+        ];
         bars = [{
           position = "top";
           statusCommand = "${pkgs.gobar}/bin/gobar";
@@ -377,12 +387,12 @@
       };
     };
 
-    programs.mako = {
+    programs.mako = mkIf desktopEnabled {
       enable = true;
       defaultTimeout = 10000;
     };
 
-    services.swayidle = {
+    services.swayidle = mkIf desktopEnabled {
       enable = true;
       timeouts = [
         {
@@ -407,16 +417,35 @@
       ];
     };
 
-    services.wlsunset = {
+    services.gammastep = mkIf desktopEnabled {
       enable = true;
-      gamma = "1.0";
-      latitude = "34.0";
-      longitude = "-118.0";
+      dawnTime = "6:00-7:45";
+      duskTime = "18:35-20:15";
+      provider = "geoclue2";
       temperature.day = 6500;
       temperature.night = 4000;
+      settings.general.adjustment-method = "wayland";
     };
 
-    services.kanshi = {
+    systemd.user.services.clipman = mkIf desktopEnabled {
+      Unit = {
+        Description = "A clipboard manager for Wayland";
+        PartOf = [ "sway-session.target" ];
+        Requires = [ "sway-session.target" ];
+      };
+      Install = {
+        WantedBy = [ "sway-session.target" ];
+      };
+      Service = {
+        Type = "simple";
+        Restart = "always";
+        ExecStart = ''
+          ${pkgs.wl-clipboard}/bin/wl-paste -t text --watch ${pkgs.clipman}/bin/clipman store --no-persist
+        '';
+      };
+    };
+
+    services.kanshi = mkIf desktopEnabled {
       enable = true;
       profiles = {
         undocked.outputs = [{

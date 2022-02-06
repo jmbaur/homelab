@@ -17,6 +17,7 @@
   networking.useDHCP = false;
   networking.hostName = "beetroot";
   networking.networkmanager.enable = true;
+  networking.firewall.enable = true;
 
   time.timeZone = "America/Los_Angeles";
 
@@ -47,20 +48,11 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  programs.adb.enable = true;
   programs.mtr.enable = true;
   programs.ssh.startAgent = true;
-  programs.wireshark.enable = true;
 
-  services.avahi.enable = true;
   services.fwupd.enable = true;
-  services.hardware.bolt.enable = true;
   services.pcscd.enable = false;
-  services.power-profiles-daemon.enable = true;
-  services.printing.enable = true;
-  services.upower.enable = true;
-
-  networking.firewall.enable = true;
 
   nix.extraOptions = ''
     keep-outputs = true

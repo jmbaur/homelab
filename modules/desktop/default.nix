@@ -2,33 +2,24 @@
 let
   cfg = config.custom.desktop;
 in
-
 with lib;
-
 {
-
   options = {
     custom.desktop.enable = mkEnableOption "Enable custom desktop config";
   };
 
   config = mkIf cfg.enable {
-    programs.sway = {
+    programs.sway.enable = true; # enables swaylock in pam, dconf, etc.
+
+    xdg.portal = {
       enable = true;
-      extraPackages = with pkgs; [
-        foot
-        gobar
-        grim
-        slurp
-        swaylock
-        wev
-        wl-clipboard
-        wofi
-        wtype
-        xorg.xeyes
-        zathura
-      ];
+      wlr.enable = true;
     };
 
+    programs.wshowkeys.enable = true;
+    programs.adb.enable = true;
+    programs.wireshark.enable = true;
+    security.rtkit.enable = true;
     services.greetd = {
       enable = true;
       settings = {
@@ -37,14 +28,12 @@ with lib;
         };
       };
     };
-
-    xdg.portal = {
-      enable = true;
-      wlr.enable = true;
-    };
-
-    programs.wshowkeys.enable = true;
-    security.rtkit.enable = true;
+    services.avahi.enable = true;
+    services.geoclue2.enable = true;
+    services.hardware.bolt.enable = true;
+    services.power-profiles-daemon.enable = true;
+    services.upower.enable = true;
+    services.printing.enable = true;
     services.pipewire = {
       enable = true;
       alsa.enable = true;
@@ -82,25 +71,6 @@ with lib;
           };
         }
       ];
-    };
-
-    systemd.user.targets.sway-session = {
-      description = "Sway compositor session";
-      documentation = [ "man:systemd.special(7)" ];
-      bindsTo = [ "graphical-session.target" ];
-      wants = [ "graphical-session-pre.target" ];
-      after = [ "graphical-session-pre.target" ];
-    };
-
-    systemd.user.services.clipman = {
-      description = "A clipboard manager for Wayland";
-      wantedBy = [ "sway-session.target" ];
-      partOf = [ "graphical-session.target" ];
-      serviceConfig = {
-        ExecStart = ''
-          ${pkgs.wl-clipboard}/bin/wl-paste -t text --watch ${pkgs.clipman}/bin/clipman store --no-persist
-        '';
-      };
     };
 
   };
