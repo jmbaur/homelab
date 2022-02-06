@@ -478,8 +478,8 @@ with lib;
       };
     };
 
-    # Requires tray target
     services.udiskie.enable = desktopEnabled;
+    services.udiskie.tray = "never";
 
   };
 }
