@@ -60,6 +60,24 @@
         ];
       };
 
+      nixosConfigurations.asparagus = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = with nixos-hardware.nixosModules; [
+          intel-nuc-8i7beh
+          ./modules
+          ./hosts/asparagus/configuration.nix
+        ];
+      };
+
+      deploy.nodes.asparagus = {
+        hostname = "asparagus";
+        profiles.system = {
+          user = "root";
+          sshUser = "deploy";
+          path = deploy-rs.lib.x86_64-linux.activate.nixos nixosConfigurations.asparagus;
+        };
+      };
+
       nixosConfigurations.kale = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = with nixos-hardware.nixosModules; [
@@ -70,7 +88,7 @@
       };
 
       deploy.nodes.kale = {
-        hostname = "192.168.88.3";
+        hostname = "kale";
         profiles.system = {
           user = "root";
           sshUser = "deploy";

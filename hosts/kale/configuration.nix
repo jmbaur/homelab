@@ -20,19 +20,18 @@ in
     wantedBy = [ "getty.target" ]; # to start at boot
     serviceConfig.Restart = "always"; # restart when session is closed
   };
-  boot.kernelParams = [
-    "ip=${mgmt-address}::${mgmt-gateway}:${mgmt-netmask}:${config.networking.hostName}:${mgmt-iface}::::"
-    "console=ttyS2,115200"
-    "console=tty1"
-  ];
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_5_15;
   boot.binfmt.emulatedSystems = [
     "aarch64-linux"
     "riscv64-linux"
   ];
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-
+  boot.kernelParams = [
+    "ip=${mgmt-address}::${mgmt-gateway}:${mgmt-netmask}:${config.networking.hostName}:${mgmt-iface}::::"
+    "console=ttyS2,115200"
+    "console=tty1"
+  ];
   boot.initrd.network = {
     enable = true;
     ssh = {

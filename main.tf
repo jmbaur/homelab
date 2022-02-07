@@ -70,3 +70,9 @@ resource "mikrotik_dns_record" "kale_dns_record" {
   address = "192.168.88.3"
   ttl = 300
 }
+
+resource "mikrotik_dns_record" "asparagus_dns_record" {
+  name = "asparagus.home.arpa"
+  address = "192.168.88.4"
+  ttl = 300
+}

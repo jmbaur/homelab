@@ -5,8 +5,7 @@
 
 {
   imports =
-    [
-      (modulesPath + "/installer/scan/not-detected.nix")
+    [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
@@ -15,19 +14,36 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    {
-      device = "/dev/disk/by-uuid/c453e5e3-a23b-4242-8d3b-b88744dd8064";
-      fsType = "ext4";
+    { device = "/dev/disk/by-uuid/a9811113-eab7-4fc7-b3f7-78bacc334cac";
+      fsType = "btrfs";
+      options = [ "subvol=@" "noatime" "discard=async" "compress=zstd"];
+    };
+
+  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/3454b48e-1f08-4595-990d-64a79152c619";
+
+  fileSystems."/nix" =
+    { device = "/dev/disk/by-uuid/a9811113-eab7-4fc7-b3f7-78bacc334cac";
+      fsType = "btrfs";
+      options = [ "subvol=@nix" "noatime" "discard=async" "compress=zstd"];
+    };
+
+  fileSystems."/home" =
+    { device = "/dev/disk/by-uuid/a9811113-eab7-4fc7-b3f7-78bacc334cac";
+      fsType = "btrfs";
+      options = [ "subvol=@home" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/boot" =
-    {
-      device = "/dev/disk/by-uuid/AC5E-965A";
+    { device = "/dev/disk/by-uuid/01C6-3E85";
       fsType = "vfat";
     };
 
-  swapDevices =
-    [{ device = "/dev/disk/by-uuid/fe4887c2-7650-4974-a3e3-51953c30056c"; }];
+  swapDevices = [ ];
+  zramSwap = {
+    enable = true;
+    swapDevices = 1;
+  };
 
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
+  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
