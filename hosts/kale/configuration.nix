@@ -56,6 +56,7 @@ in
   networking = {
     hostName = "kale";
     firewall.enable = true;
+    nameservers = lib.singleton "192.168.10.1";
     defaultGateway.address = "192.168.10.1";
     defaultGateway.interface = "trusted";
     interfaces.${mgmt-iface} = {
