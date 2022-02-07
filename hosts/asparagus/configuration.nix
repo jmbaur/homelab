@@ -54,6 +54,28 @@ with lib;
     interfaces.wlp0s20f3.useDHCP = false;
   };
 
+  programs.ssh.extraConfig = ''
+    Host kale
+      Hostname kale
+      IdentityFile /etc/ssh/ssh_host_rsa_key
+      User root
+  '';
+  programs.ssh.knownHosts.kale = {
+    publicKey = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCdlL4oE5WXdJG0l9Cv31vuPkCHeh1m5ciLC+1iOR3PuFZBx5vlDig6v1Th4V2rL9UMP769+0NmHXXXH92IYz0/9Bt0Sv3vwfZlVA7Bhi2m1VWhaabMSXRpJ5r0FuG/FHTcIyg2yWRaf0S2CyJ0bTMD8CkzR/W05zaK32op6SUGAE8RqSWO3I4O5j4/wPEkY4Jjfry/sDnaOdMd1gd24p+xcdHWrJLQpzpkmJCViNSN5zMXvoccx5XuV1cFIp5HOKAC1QDoZ8n0iaj3H7GJ5f3iZcCNUNIJLFNkeYWLNGFz15xgxQ/Bngl7gJmwjchCm72s3lJMpWfX589PwkBg/hrpunT44oJ9dARdZY+V9ydFqu3jjP6xDYKVduVMeUZEBSvjmsWjmXnrciDO/4vWNBi9d+2NPXT3iLjIktx7SklYj40A/jOOHog1KLD36RYYqli9SidzUQhyvzytkh2Xe/TbGTG2Yhm7+0j7aelkvtDKq/dW5lmkZx6AcI04QOBJ2O+V98MLBWixkD9KQmBQsNr9gJKwAuu6IDi2ZtmVhHmcr+zQk8o7ixeOGc7x7BjSGTSgjrRsqGBzwNFBmtBWiLPJKwjKQd5obVFE16Sdb+8uVASeK117Kj6nnJIT6OrV89lJF4+tnsgkBSlvzs3tN06DqSTs7w4sxKku9wCQOjHI/w==";
+    hostNames = [ "kale" ];
+  };
+  nix.buildMachines = [
+    {
+      hostName = "kale";
+      systems = [ "x86_64-linux" "aarch64-linux" "riscv64-linux" ];
+      maxJobs = 24; # number of cores
+      speedFactor = 100; # arbitrary
+      supportedFeatures = [ "nixos-test" "benchmark" "big-parallel" "kvm" ];
+      mandatoryFeatures = [ ];
+    }
+  ];
+  nix.distributedBuilds = true;
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
