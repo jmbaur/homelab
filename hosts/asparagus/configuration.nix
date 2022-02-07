@@ -69,7 +69,7 @@ with lib;
       hostName = "kale";
       systems = [ "x86_64-linux" "aarch64-linux" "riscv64-linux" ];
       maxJobs = 24; # number of cores
-      speedFactor = 100; # arbitrary
+      speedFactor = 2; # arbitrary
       supportedFeatures = [ "nixos-test" "benchmark" "big-parallel" "kvm" ];
       mandatoryFeatures = [ ];
     }
