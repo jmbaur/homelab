@@ -6,15 +6,15 @@ parted /dev/sda -- mkpart ESP fat32 1MiB 512MiB # boot partition
 parted /dev/sda -- mkpart primary 512MiB 100% # soon-to-be luks device
 parted /dev/sda -- set 1 esp on
 
-cryptsetup luksFormat /dev/sda1
-cryptsetup luksOpen /dev/sda1 cryptroot
+cryptsetup luksFormat /dev/sda2
+cryptsetup luksOpen /dev/sda2 cryptroot
 
 # Format & mount partitions
 mkfs.btrfs -L root /dev/mapper/cryptroot
-mkfs.vfat -F 32 -n boot /dev/sda2
+mkfs.vfat -F 32 -n boot /dev/sda1
 mount /dev/mapper/cryptroot /mnt
 mkdir -p /mnt/{boot,nix,home,home/.snapshots}
-mount /dev/sda2 /mnt/boot
+mount /dev/sda1 /mnt/boot
 btrfs subvolume create /mnt/@
 btrfs subvolume create /mnt/@nix
 btrfs subvolume create /mnt/@home
