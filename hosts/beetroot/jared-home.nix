@@ -365,10 +365,11 @@ with lib;
         };
         defaultWorkspace = "workspace number 1";
         keybindings = lib.mkOptionDefault {
-          "${modifier}+p" = "exec ${pkgs.bemenu}/bin/bemenu-run --line-height=25 --list=10 | ${pkgs.findutils}/bin/xargs ${pkgs.sway}/bin/swaymsg exec --";
           "${modifier}+Control+l" = "exec ${pkgs.swaylock}/bin/swaylock -c 000000";
           "${modifier}+Control+space" = "exec ${pkgs.mako}/bin/makoctl dismiss --all";
+          "${modifier}+Shift+s" = "sticky toggle";
           "${modifier}+c" = "exec ${pkgs.clipman}/bin/clipman pick --tool=CUSTOM --tool-args=\"${pkgs.bemenu}/bin/bemenu --line-height=25 --list=10\" | ${pkgs.findutils}/bin/xargs ${pkgs.sway}/bin/swaymsg exec --";
+          "${modifier}+p" = "exec ${pkgs.bemenu}/bin/bemenu-run --line-height=25 --list=10 | ${pkgs.findutils}/bin/xargs ${pkgs.sway}/bin/swaymsg exec --";
           "${modifier}+tab" = "workspace back_and_forth";
           "XF86AudioLowerVolume" = "exec ${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%";
           "XF86AudioMicMute" = "exec ${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle";
