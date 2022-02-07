@@ -19,7 +19,8 @@ with lib;
       users.deploy = {
         isNormalUser = true;
         extraGroups = [ "wheel" ];
-        openssh.authorizedKeys.keyFiles = singleton (import ../../lib/ssh-keys.nix);
+        openssh.authorizedKeys.keys = (import ../../data/manager-ssh-keys.nix);
+        openssh.authorizedKeys.keyFiles = singleton (import ../../data/ssh-keys.nix);
       };
     };
   };

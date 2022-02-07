@@ -46,7 +46,7 @@ in
         (key: key != "")
         (lib.splitString
           "\n"
-          (builtins.readFile (import ../../lib/ssh-keys.nix))
+          (builtins.readFile (import ../../data/ssh-keys.nix))
         );
     };
   };
@@ -76,7 +76,7 @@ in
 
   users.users.jared = {
     isNormalUser = true;
-    openssh.authorizedKeys.keyFiles = lib.singleton (import ../../lib/ssh-keys.nix);
+    openssh.authorizedKeys.keyFiles = lib.singleton (import ../../data/ssh-keys.nix);
   };
 
   services.openssh.permitRootLogin = "yes";

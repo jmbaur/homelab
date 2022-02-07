@@ -29,7 +29,7 @@ with lib;
         (key: key != "")
         (lib.splitString
           "\n"
-          (builtins.readFile (import ../../lib/ssh-keys.nix))
+          (builtins.readFile (import ../../data/ssh-keys.nix))
         );
     };
   };
