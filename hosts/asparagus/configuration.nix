@@ -78,6 +78,10 @@ with lib;
     }
   ];
   nix.distributedBuilds = true;
+  # let the remote builder do the fetching over the network
+  nix.extraOptions = ''
+    builders-use-substitutes = true
+  '';
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
