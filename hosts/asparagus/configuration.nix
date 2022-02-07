@@ -54,6 +54,8 @@ with lib;
     interfaces.wlp0s20f3.useDHCP = false;
   };
 
+  services.apcupsd.enable = true;
+
   programs.ssh.extraConfig = ''
     Host *
       IdentityFile /etc/ssh/ssh_host_rsa_key
