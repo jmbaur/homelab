@@ -54,17 +54,26 @@ in
   networking = {
     hostName = "kale";
     firewall.enable = true;
+    defaultGateway.address = "192.168.10.1";
+    defaultGateway.interface = "trusted";
     interfaces.${mgmt-iface} = {
       useDHCP = false;
       ipv4.addresses = [{ address = mgmt-address; prefixLength = mgmt-prefix; }];
       ipv4.routes = [{ address = mgmt-network; prefixLength = mgmt-prefix; via = mgmt-gateway; }];
     };
-    interfaces.enp3s0.useDHCP = true;
+    vlans.trusted = { id = 10; interface = "enp3s0"; };
+    interfaces.trusted = {
+      ipv4.addresses = [{ address = "192.168.10.10"; prefixLength = 24; }];
+    };
+    vlans.iot = { id = 20; interface = "enp3s0"; };
+    interfaces.iot = {
+      ipv4.addresses = [{ address = "192.168.20.40"; prefixLength = 24; }];
+      ipv4.routes = [{ address = "192.168.20.0"; prefixLength = 24; via = "192.168.20.1"; }];
+    };
   };
 
   users.users.jared = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ];
     openssh.authorizedKeys.keyFiles = lib.singleton (import ../../lib/ssh-keys.nix);
   };
 
