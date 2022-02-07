@@ -116,6 +116,8 @@ with lib;
       historyFile = "${config.users.users.jared.home}/.bash_history";
       shellAliases = { grep = "grep --color=auto"; };
     };
+    programs.zsh.enable = true;
+    programs.nushell.enable = true;
 
     programs.git = {
       enable = true;
