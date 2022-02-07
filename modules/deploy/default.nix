@@ -9,16 +9,17 @@ with lib;
   config = mkIf cfg.enable {
     nix.trustedUsers = [ "deploy" ];
     security.sudo = {
-      enable = lib.mkForce true;
-      wheelNeedsPassword = lib.mkForce false;
+      enable = mkForce true;
+      wheelNeedsPassword = mkForce false;
     };
-    services.openssh.enable = lib.mkForce true;
+    services.openssh.enable = mkForce true;
+    services.openssh.passwordAuthentication = mkForce false;
     users = {
-      mutableUsers = lib.mkForce false;
+      mutableUsers = mkForce false;
       users.deploy = {
         isNormalUser = true;
         extraGroups = [ "wheel" ];
-        openssh.authorizedKeys.keyFiles = lib.singleton (import ../../lib/ssh-keys.nix);
+        openssh.authorizedKeys.keyFiles = singleton (import ../../lib/ssh-keys.nix);
       };
     };
   };

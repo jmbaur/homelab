@@ -8,7 +8,7 @@
     gobar.url = "github:jmbaur/gobar";
     gosee.url = "github:jmbaur/gosee";
     home-manager.url = "github:nix-community/home-manager";
-    neovim.url = "github:neovim/neovim/release-0.6?dir=contrib";
+    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
     nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
     nixpkgs.url = "nixpkgs/nixos-21.11";
@@ -23,7 +23,7 @@
     , gobar
     , gosee
     , home-manager
-    , neovim
+    , neovim-nightly-overlay
     , nixos-hardware
     , nixpkgs
     , nixpkgs-unstable
@@ -38,8 +38,7 @@
             [ deploy-rs.defaultPackage.${system} ];
         };
       })
-    //
-    rec {
+    // rec {
       checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks deploy) deploy-rs.lib;
 
       nixosConfigurations.beetroot = nixpkgs-unstable.lib.nixosSystem {
@@ -50,7 +49,7 @@
               git-get.overlay
               gobar.overlay
               gosee.overlay
-              neovim.overlay
+              neovim-nightly-overlay.overlay
               promtop.overlay
             ];
           })
