@@ -46,7 +46,7 @@ in
         (key: key != "")
         (lib.splitString
           "\n"
-          (builtins.readFile (import ../../data/ssh-keys.nix))
+          (builtins.readFile (import ../../data/jmbaur-ssh-keys.nix))
         );
     };
   };
@@ -76,14 +76,14 @@ in
 
   users.users.jared = {
     isNormalUser = true;
-    openssh.authorizedKeys.keyFiles = lib.singleton (import ../../data/ssh-keys.nix);
+    openssh.authorizedKeys.keyFiles = lib.singleton (import ../../data/jmbaur-ssh-keys.nix);
   };
 
   services.openssh.permitRootLogin = "yes";
-  users.users.root.openssh.authorizedKeys.keys = [
-    "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCkCEtRXKnC9trPlUjc2ogZOx87cCmRz7eQkJRlQahubHhwN/IhzKR9sybSr7+ejdb+nR9uN8FyBtrV4BRuKNLOoQs2r1WZZfXzYQJWQg0B1vSvwjsL30lRE+i1InzVUbS/iDHgckM9OAMNqaMrTY9C4uepHUnFLu6U7GaeyPk/caz0eCnnOh0JDAcHytIRPC35/9+VO80DIJIwLycdtbVhRoQQJfl0kfNLCR71TmE50+7/tfBlzLjDmZqtPnuFnhSGOdRlB8SoXFQQGooryoaSXXqVHOAM5hXgsjtHMo4+9Orf01Y+RERuvhEH6tK3bxG6visgaofp+JJRzx2cpTKOZnZOO541YlWGEneXpGXwh3eoVKNArG+hPg1KURl7p5KDL4VaGK19XqFJpYb+LrgCWQcFRzkHVikcK+zOjS9rB5RrcdLwd5YQUzFVyTim/3BgUdfaoKknoUod2smj4bPZYaStcmMNMzNjR2WqfIeSglu2Xmru14smxxr10NBi6xrLy3nnxG+j/2RQFmQwvd2UoAWcJHZOCuukvpxIanZDO0X+y0hAuKGZEwfV2bk6F+nWKKXGod1qnG538M2ybUen5dwvfmjkcEoLwQHWaRMzViGwrL3juGsvOzYl5N8Es0X67jL8eVkIJvxeTEVPqpa9p30LimOMCi+aWncwSiAQdQ== root@beetroot"
-    "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC5dMl+q7pQzJpu/Op4MIuDyL6Dzyxf2nPlYWDqI+ZeXAFB/aPJ/gLMQJidm0EVKpH+9CXGcdeZz+ijJy9jpW4QJCPnHgdzAVEQkmrzCfnb5/omDA+2WEuLNxfqwOvFg4VG3OEXXrCDhEhv1jL1RW2jNnkyui3A56nHix2x1EobqaTCPM+shzyXz09zUnSEAcPVOlJ+NRqZoqGXuxGmsEMGF6V1VV7B9jIVg8IqvTdedX4+ds50gEBDSxZZFPPtvvRPcYYiHYqhDW7A1VPCEz2f7+/CnlZANIEgpJwpUxKy+PnG1tw6a7FxUP4PleLQV3Usrx708gS+EkDxWo7wbhIr/ivW7N719Mh5v770Ym5auU4+dAMq9Sp4dAdhkTqO0uR1g+KXqbZswZsvXAlxUXK02mFwaRapFDhhcbFcq6YKv+B1PowcxYqAzeQptgZLeS/zaGP6NdcfQdDwmAKLOiDCixiyNiCSQTCdF0KBKzqUUbfH+zsa+e4n60pY3dM0ia7X0fkHhzZa/uHh2/I7xgxWxXgrcIwKuVX21gfia7Qmfwar5CdC075DQnbsBqFnJOWmd3cOpfseZbEjR8OJFt/OTo/2WpTuZ/rYRc00cFFSpm3IxF0pJzBbQLGr386BvKnhMzH9JokPoMIJWLvvV1eZlEDqqHhOo4W+2hMKh5w5+w== root@asparagus"
-  ];
+  users.users.root.openssh.authorizedKeys.keys =
+    (import ../../data/asparagus-ssh-keys.nix)
+    ++
+    (import ../../data/beetroot-ssh-keys.nix);
 
   services.iperf3.enable = true;
 
