@@ -4,10 +4,12 @@ let
 in
 with lib;
 {
-  options = { custom.deploy.enable = mkEnableOption "Make this machine a deploy target"; };
+  options = {
+    custom.deploy.enable = mkEnableOption "Make this machine a deploy target";
+  };
 
   config = mkIf cfg.enable {
-    nix.trustedUsers = [ "deploy" ];
+    nix.settings.trusted-users = [ "deploy" ];
     security.sudo = {
       enable = mkForce true;
       wheelNeedsPassword = mkForce false;

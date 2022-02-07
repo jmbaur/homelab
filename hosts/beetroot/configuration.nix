@@ -1,7 +1,6 @@
 { config, lib, pkgs, ... }: {
   imports = [
     ./hardware-configuration.nix
-    ./jared-home.nix
   ];
 
   hardware.bluetooth.enable = true;
@@ -26,6 +25,7 @@
 
   custom.common.enable = true;
   custom.desktop.enable = true;
+  custom.home.enable = true;
   custom.virtualisation.enable = true;
 
   users.mutableUsers = lib.mkForce true;
