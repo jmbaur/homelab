@@ -339,6 +339,7 @@ with lib;
         terminal = "${pkgs.kitty}/bin/kitty";
         modifier = "Mod4";
         workspaceAutoBackAndForth = true;
+        window.titlebar = true;
         fonts = {
           names = [ "Hack" ];
           style = "Regular";
@@ -435,15 +436,13 @@ with lib;
     systemd.user.services.clipman = mkIf desktopEnabled {
       Unit = {
         Description = "A clipboard manager for Wayland";
-        PartOf = [ "sway-session.target" ];
-        Requires = [ "sway-session.target" ];
+        PartOf = [ "graphical-session.target" ];
       };
       Install = {
         WantedBy = [ "sway-session.target" ];
       };
       Service = {
         Type = "simple";
-        Restart = "always";
         ExecStart = ''
           ${pkgs.wl-clipboard}/bin/wl-paste -t text --watch ${pkgs.clipman}/bin/clipman store --no-persist
         '';
