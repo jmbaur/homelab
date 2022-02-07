@@ -52,3 +52,21 @@ resource "mikrotik_pool" "guest_pool" {
   ranges  = "192.168.10.100-192.168.10.200"
   comment = "DHCP pool for the Guest LAN"
 }
+
+resource "mikrotik_dns_record" "router_dns_record" {
+  name = "router.home.arpa"
+  address = "192.168.88.1"
+  ttl = 300
+}
+
+resource "mikrotik_dns_record" "switch_dns_record" {
+  name = "switch.home.arpa"
+  address = "192.168.88.2"
+  ttl = 300
+}
+
+resource "mikrotik_dns_record" "kale_dns_record" {
+  name = "kale.home.arpa"
+  address = "192.168.88.3"
+  ttl = 300
+}
