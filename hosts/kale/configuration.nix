@@ -34,6 +34,9 @@ in
   ];
   boot.initrd.network = {
     enable = true;
+    postCommands = ''
+      echo "cryptsetup-askpass; exit" > /root/.profile
+    '';
     ssh = {
       enable = true;
       hostKeys = [ "/etc/ssh/ssh_host_ed25519_key" "/etc/ssh/ssh_host_rsa_key" ];

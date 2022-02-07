@@ -5,36 +5,41 @@
 
 {
   imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
+    [
+      (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
+  boot.initrd.availableKernelModules = [ "e1000e" "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/a9811113-eab7-4fc7-b3f7-78bacc334cac";
+    {
+      device = "/dev/disk/by-uuid/a9811113-eab7-4fc7-b3f7-78bacc334cac";
       fsType = "btrfs";
-      options = [ "subvol=@" "noatime" "discard=async" "compress=zstd"];
+      options = [ "subvol=@" "noatime" "discard=async" "compress=zstd" ];
     };
 
   boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/3454b48e-1f08-4595-990d-64a79152c619";
 
   fileSystems."/nix" =
-    { device = "/dev/disk/by-uuid/a9811113-eab7-4fc7-b3f7-78bacc334cac";
+    {
+      device = "/dev/disk/by-uuid/a9811113-eab7-4fc7-b3f7-78bacc334cac";
       fsType = "btrfs";
-      options = [ "subvol=@nix" "noatime" "discard=async" "compress=zstd"];
+      options = [ "subvol=@nix" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/a9811113-eab7-4fc7-b3f7-78bacc334cac";
+    {
+      device = "/dev/disk/by-uuid/a9811113-eab7-4fc7-b3f7-78bacc334cac";
       fsType = "btrfs";
       options = [ "subvol=@home" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/01C6-3E85";
+    {
+      device = "/dev/disk/by-uuid/01C6-3E85";
       fsType = "vfat";
     };
 

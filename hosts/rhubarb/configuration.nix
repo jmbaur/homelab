@@ -1,4 +1,6 @@
-{ config, pkgs, ... }: {
+{ config, lib, pkgs, ... }:
+with lib;
+{
   custom.common.enable = true;
   custom.deploy.enable = true;
 
@@ -21,7 +23,20 @@
   time.timeZone = "America/Los_Angeles";
   networking = {
     hostName = "rhubarb";
-    networkmanager.enable = true;
+    domain = "home.arpa";
+    nameservers = singleton "192.168.20.1";
+    defaultGateway.address = "192.168.20.1";
+    defaultGateway.interface = "eth0";
+    wireless.enable = true;
+    wireless.interfaces = singleton "wlan0";
+    interfaces.wlan0.useDHCP = true;
+    interfaces.eth0 = {
+      useDHCP = false;
+      ipv4.addresses = [{
+        address = "192.168.20.50";
+        prefixLength = 24;
+      }];
+    };
     firewall.allowedTCPPorts = [ 8080 ];
     firewall.allowedUDPPorts = [ 8080 ];
   };

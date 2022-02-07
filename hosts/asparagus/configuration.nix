@@ -19,6 +19,9 @@ with lib;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.initrd.network = {
     enable = true;
+    postCommands = ''
+      echo "cryptsetup-askpass; exit" > /root/.profile
+    '';
     ssh = {
       enable = true;
       hostKeys = [ "/etc/ssh/ssh_host_ed25519_key" "/etc/ssh/ssh_host_rsa_key" ];
@@ -34,16 +37,21 @@ with lib;
   custom.common.enable = true;
   custom.deploy.enable = true;
 
-  networking.hostName = "asparagus";
   time.timeZone = "America/Los_Angeles";
-
-  networking.useDHCP = false;
-  networking.interfaces.${mgmt-iface} = {
-    useDHCP = false;
-    ipv4.addresses = [{ address = mgmt-address; prefixLength = mgmt-prefix; }];
-    ipv4.routes = [{ address = mgmt-network; prefixLength = mgmt-prefix; via = mgmt-gateway; }];
+  networking = {
+    hostName = "asparagus";
+    domain = "home.arpa";
+    nameservers = singleton mgmt-gateway;
+    defaultGateway.address = mgmt-gateway;
+    interfaces.${mgmt-iface} = {
+      useDHCP = false;
+      ipv4.addresses = [{
+        address = mgmt-address;
+        prefixLength = mgmt-prefix;
+      }];
+    };
+    interfaces.wlp0s20f3.useDHCP = false;
   };
-  networking.interfaces.wlp0s20f3.useDHCP = false;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
