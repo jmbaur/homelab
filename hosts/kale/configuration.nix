@@ -49,15 +49,18 @@ in
     };
   };
 
-  networking.hostName = "kale";
   time.timeZone = "America/Los_Angeles";
 
-  networking.interfaces.${mgmt-iface} = {
-    useDHCP = false;
-    ipv4.addresses = [{ address = mgmt-address; prefixLength = mgmt-prefix; }];
-    ipv4.routes = [{ address = mgmt-network; prefixLength = mgmt-prefix; via = mgmt-gateway; }];
+  networking = {
+    hostName = "kale";
+    firewall.enable = true;
+    interfaces.${mgmt-iface} = {
+      useDHCP = false;
+      ipv4.addresses = [{ address = mgmt-address; prefixLength = mgmt-prefix; }];
+      ipv4.routes = [{ address = mgmt-network; prefixLength = mgmt-prefix; via = mgmt-gateway; }];
+    };
+    interfaces.enp3s0.useDHCP = true;
   };
-  networking.interfaces.enp3s0.useDHCP = true;
 
   users.users.jared = {
     isNormalUser = true;
@@ -71,8 +74,6 @@ in
   ];
 
   services.iperf3.enable = true;
-
-  networking.firewall.enable = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

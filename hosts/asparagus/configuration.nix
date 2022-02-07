@@ -41,6 +41,7 @@ with lib;
   networking = {
     hostName = "asparagus";
     domain = "home.arpa";
+    firewall.enable = true;
     nameservers = singleton mgmt-gateway;
     defaultGateway.address = mgmt-gateway;
     interfaces.${mgmt-iface} = {
