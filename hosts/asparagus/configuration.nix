@@ -55,8 +55,7 @@ with lib;
   };
 
   programs.ssh.extraConfig = ''
-    Host kale
-      Hostname kale
+    Host *
       IdentityFile /etc/ssh/ssh_host_rsa_key
       User root
   '';
