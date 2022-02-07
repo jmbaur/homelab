@@ -28,7 +28,7 @@
     , nixpkgs
     , nixpkgs-unstable
     , promtop
-    }@inputs: flake-utils.lib.eachSystem [ "x86_64-linux" ]
+    }@inputs: flake-utils.lib.eachDefaultSystem
       (system:
       let pkgs = nixpkgs.legacyPackages.${system};
       in
@@ -106,7 +106,7 @@
       };
 
       deploy.nodes.rhubarb = {
-        hostname = "192.168.20.192";
+        hostname = "rhubarb";
         profiles.system = {
           user = "root";
           sshUser = "deploy";
