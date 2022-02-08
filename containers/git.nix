@@ -9,5 +9,7 @@
     gitweb.enable = true;
   };
   networking.firewall.allowedTCPPorts = [ 80 ];
-  networking.interfaces.mv-trusted.useDHCP = true;
+  networking.interfaces.mv-trusted = {
+    ipv4.addresses = [{ address = "192.168.10.21"; prefixLength = 24; }];
+  };
 }
