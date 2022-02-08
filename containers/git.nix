@@ -8,6 +8,5 @@
     gitweb.enable = true;
   };
   users.mutableUsers = false;
-  users.users.root.password = "helloworld";
   networking.interfaces.mv-trusted.useDHCP = true;
 }
