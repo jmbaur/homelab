@@ -87,6 +87,7 @@ with lib;
           grim
           hack-font
           imv
+          libreoffice
           mpv
           plan9port
           signal-desktop
@@ -324,7 +325,7 @@ with lib;
         gtk4.extraConfig = gtk3.extraConfig;
       };
 
-      home.sessionVariables.NIXOS_OZONE_WL = "0";
+      # home.sessionVariables.NIXOS_OZONE_WL = "1";
       wayland.windowManager.sway = mkIf desktopEnabled {
         enable = true;
         systemdIntegration = true;
@@ -375,7 +376,7 @@ with lib;
           };
           defaultWorkspace = "workspace number 1";
           keybindings = lib.mkOptionDefault {
-            "${modifier}+Control+l" = "exec ${pkgs.swaylock}/bin/swaylock -c 000000";
+            "${modifier}+Control+l" = "exec ${pkgs.swaylock}/bin/swaylock -c 282828";
             "${modifier}+Control+space" = "exec ${pkgs.mako}/bin/makoctl dismiss --all";
             "${modifier}+Shift+s" = "sticky toggle";
             "${modifier}+c" = "exec ${pkgs.clipman}/bin/clipman pick --tool=CUSTOM --tool-args=\"${pkgs.bemenu}/bin/bemenu --line-height=25 --list=10\" | ${pkgs.findutils}/bin/xargs ${pkgs.sway}/bin/swaymsg exec --";
@@ -414,7 +415,7 @@ with lib;
         timeouts = [
           {
             timeout = 900;
-            command = "${pkgs.swaylock}/bin/swaylock";
+            command = "${pkgs.swaylock}/bin/swaylock -c 282828";
           }
           {
             timeout = 905;
@@ -425,11 +426,11 @@ with lib;
         events = [
           {
             event = "before-sleep";
-            command = "${pkgs.swaylock}/bin/swaylock";
+            command = "${pkgs.swaylock}/bin/swaylock -c 282828";
           }
           {
             event = "lock";
-            command = "${pkgs.swaylock}/bin/swaylock";
+            command = "${pkgs.swaylock}/bin/swaylock -c 282828";
           }
         ];
       };
