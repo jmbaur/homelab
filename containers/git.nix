@@ -2,6 +2,7 @@
   services.gitDaemon = {
     enable = true;
     exportAll = true;
+    basePath = "/srv/git";
   };
   services.gitweb.gitwebTheme = true;
   services.nginx = {
@@ -13,6 +14,7 @@
   services.openssh.enable = true;
   services.openssh.passwordAuthentication = false;
   users.users.git = {
+    home = services.gitDaemon.basePath;
     shell = "${pkgs.git}/bin/git-shell";
     openssh.authorizedKeys.keyFiles = lib.singleton (import ../data/jmbaur-ssh-keys.nix);
   };
