@@ -57,7 +57,12 @@ in
   networking = {
     hostName = "kale";
     domain = "home.arpa";
-    firewall.enable = true;
+    firewall = {
+      enable = true;
+      interfaces.trusted = {
+        allowedTCPPorts = [ 80 ];
+      };
+    };
     nameservers = lib.singleton "192.168.10.1";
     defaultGateway.address = "192.168.10.1";
     defaultGateway.interface = "trusted";
