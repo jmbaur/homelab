@@ -99,6 +99,7 @@ in
     enable = true;
     gitweb = {
       enable = true;
+      location = "/";
       virtualHost = "git";
     };
   };
