@@ -4,15 +4,16 @@
     exportAll = true;
     basePath = "/srv/git";
   };
-  services.gitweb = {
-    gitwebTheme = true;
-    projectroot = config.services.gitDaemon.basePath;
-  };
-  services.nginx = {
-    enable = true;
-    gitweb.enable = true;
-    gitweb.location = "";
-  };
+  # services.gitweb = {
+  #   gitwebTheme = true;
+  #   projectroot = config.services.gitDaemon.basePath;
+  # };
+  # services.nginx = {
+  #   enable = true;
+  #   gitweb.enable = true;
+  # };
+  services.lighttpd.enable = true;
+  services.lighttpd.cgit.enable = true;
   networking.firewall.allowedTCPPorts = [ 80 ];
   networking.interfaces.mv-trusted.useDHCP = true;
   services.openssh.enable = true;
