@@ -3,6 +3,7 @@
     enable = true;
     exportAll = true;
   };
+  services.gitweb.gitwebTheme = true;
   services.nginx = {
     enable = true;
     gitweb.enable = true;
