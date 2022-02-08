@@ -72,14 +72,21 @@ in
       ipv4.routes = [{ address = mgmt-network; prefixLength = mgmt-prefix; via = mgmt-gateway; }];
     };
     vlans.trusted = { id = 10; interface = "enp3s0"; };
-    interfaces.trusted = {
-      ipv4.addresses = [{ address = "192.168.10.10"; prefixLength = 24; }];
-    };
     vlans.iot = { id = 20; interface = "enp3s0"; };
-    interfaces.iot = {
-      ipv4.addresses = [{ address = "192.168.20.40"; prefixLength = 24; }];
-      ipv4.routes = [{ address = "192.168.20.0"; prefixLength = 24; via = "192.168.20.1"; }];
-    };
+    vlans.guest = { id = 30; interface = "enp3s0"; };
+    # interfaces.trusted = {
+    #   ipv4.addresses = [{ address = "192.168.10.10"; prefixLength = 24; }];
+    # };
+    # interfaces.iot = {
+    #   ipv4.addresses = [{ address = "192.168.20.40"; prefixLength = 24; }];
+    #   ipv4.routes = [{ address = "192.168.20.0"; prefixLength = 24; via = "192.168.20.1"; }];
+    # };
+  };
+
+  containers.git = {
+    macvlans = [ "trusted" ];
+    autoStart = true;
+    bindMounts."/srv/git".hostPath = "/fast/git";
   };
 
   users.users.jared = {
@@ -93,18 +100,16 @@ in
     ++
     (import ../../data/beetroot-ssh-keys.nix);
 
-  services.iperf3.enable = true;
-  services.gitDaemon = {
-    enable = true;
-    basePath = "/fast/git";
-  };
-  services.gitweb.projectroot = "/fast/git";
-  services.nginx = {
-    enable = true;
-    gitweb.enable = true;
-    gitweb.user = "git";
-    gitweb.group = "git";
-  };
+  # services.iperf3.enable = true;
+  # services.gitDaemon = {
+  #   enable = true;
+  #   basePath = "/fast/git";
+  # };
+  # services.gitweb.projectroot = "/fast/git";
+  # services.nginx = {
+  #   enable = true;
+  #   gitweb.enable = true;
+  # };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
