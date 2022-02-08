@@ -11,7 +11,7 @@
   services.nginx = {
     enable = true;
     gitweb.enable = true;
-    gitweb.location = "/";
+    gitweb.location = "";
   };
   networking.firewall.allowedTCPPorts = [ 80 ];
   networking.interfaces.mv-trusted.useDHCP = true;
