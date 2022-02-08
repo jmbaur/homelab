@@ -14,6 +14,12 @@
   # };
   services.lighttpd.enable = true;
   services.lighttpd.cgit.enable = true;
+  services.lighttpd.cgit.configTxt = ''
+    source-filter=${pkgs.cgit}/lib/cgit/filters/syntax-highlighting.py
+    about-filter=${pkgs.cgit}/lib/cgit/filters/about-formatting.sh
+    cache-size=1000
+    scan-path=${config.services.gitDaemon.basePath}
+  '';
   networking.firewall.allowedTCPPorts = [ 80 ];
   networking.interfaces.mv-trusted.useDHCP = true;
   services.openssh.enable = true;
