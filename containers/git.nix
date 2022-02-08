@@ -12,5 +12,8 @@
   networking.interfaces.mv-trusted.useDHCP = true;
   services.openssh.enable = true;
   services.openssh.passwordAuthentication = false;
-  users.users.git.openssh.authorizedKeys.keyFiles = lib.singleton (import ../data/jmbaur-ssh-keys.nix);
+  users.users.git = {
+    shell = "${pkgs.git}/bin/git-shell";
+    openssh.authorizedKeys.keyFiles = lib.singleton (import ../data/jmbaur-ssh-keys.nix);
+  };
 }
