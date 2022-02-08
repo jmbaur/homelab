@@ -7,5 +7,9 @@
     enable = true;
     gitweb.enable = true;
   };
-  users.users.root.initialPassword = "helloworld";
+  users.mutableUsers = false;
+  users.users.jared.isNormalUser = true;
+  users.users.jared.password = "helloworld";
+  networking.useDHCP = true;
+  # networking.interfaces.mv-trusted = { };
 }
