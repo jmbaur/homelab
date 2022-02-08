@@ -7,6 +7,5 @@
     enable = true;
     gitweb.enable = true;
   };
-  users.mutableUsers = false;
   networking.interfaces.mv-trusted.useDHCP = true;
 }
