@@ -87,7 +87,8 @@ in
     macvlans = [ "trusted" ];
     autoStart = true;
     bindMounts."/srv/git".hostPath = "/fast/git";
-    config = { };
+    forwardPorts = [{ containerPort = 80; }];
+    config = import ../../containers/git.nix;
   };
 
   users.users.jared = {
@@ -102,15 +103,6 @@ in
     (import ../../data/beetroot-ssh-keys.nix);
 
   # services.iperf3.enable = true;
-  # services.gitDaemon = {
-  #   enable = true;
-  #   basePath = "/fast/git";
-  # };
-  # services.gitweb.projectroot = "/fast/git";
-  # services.nginx = {
-  #   enable = true;
-  #   gitweb.enable = true;
-  # };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
