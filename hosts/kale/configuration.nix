@@ -102,6 +102,8 @@ in
   services.nginx = {
     enable = true;
     gitweb.enable = true;
+    gitweb.user = "git";
+    gitweb.group = "git";
   };
 
   # This value determines the NixOS release from which the default
