@@ -9,5 +9,5 @@
   };
   users.mutableUsers = false;
   users.users.root.password = "helloworld";
-  # networking.interfaces.mv-trusted = { };
+  networking.interfaces.mv-trusted.useDHCP = true;
 }
