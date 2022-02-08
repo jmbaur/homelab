@@ -8,7 +8,6 @@
     gitweb.enable = true;
   };
   users.mutableUsers = false;
-  users.users.jared.isNormalUser = true;
-  users.users.jared.password = "helloworld";
+  users.users.root.password = "helloworld";
   # networking.interfaces.mv-trusted = { };
 }
