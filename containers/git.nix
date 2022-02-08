@@ -14,7 +14,7 @@
   services.openssh.enable = true;
   services.openssh.passwordAuthentication = false;
   users.users.git = {
-    home = services.gitDaemon.basePath;
+    home = config.services.gitDaemon.basePath;
     shell = "${pkgs.git}/bin/git-shell";
     openssh.authorizedKeys.keyFiles = lib.singleton (import ../data/jmbaur-ssh-keys.nix);
   };
