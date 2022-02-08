@@ -94,6 +94,10 @@ in
     (import ../../data/beetroot-ssh-keys.nix);
 
   services.iperf3.enable = true;
+  services.gitDaemon = {
+    enable = true;
+    basePath = "/fast/git";
+  };
   services.gitweb.projectroot = "/fast/git";
   services.nginx = {
     enable = true;
