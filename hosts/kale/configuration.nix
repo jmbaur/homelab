@@ -79,7 +79,10 @@ in
   containers.git = {
     macvlans = [ "trusted" ];
     autoStart = true;
-    bindMounts."/srv/git".hostPath = "/fast/git";
+    bindMounts."/srv/git" = {
+      hostPath = "/fast/git";
+      isReadOnly = false;
+    };
     forwardPorts = [{ containerPort = 80; }];
     config = import ../../containers/git.nix;
   };
