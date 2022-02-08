@@ -97,11 +97,7 @@ in
   services.gitweb.projectroot = "/fast/git";
   services.nginx = {
     enable = true;
-    gitweb = {
-      enable = true;
-      location = "/";
-      # virtualHost = "git";
-    };
+    gitweb.enable = true;
   };
 
   # This value determines the NixOS release from which the default
