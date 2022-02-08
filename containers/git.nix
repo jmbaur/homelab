@@ -4,22 +4,19 @@
     exportAll = true;
     basePath = "/srv/git";
   };
-  # services.gitweb = {
-  #   gitwebTheme = true;
-  #   projectroot = config.services.gitDaemon.basePath;
-  # };
-  # services.nginx = {
-  #   enable = true;
-  #   gitweb.enable = true;
-  # };
-  services.lighttpd.enable = true;
-  services.lighttpd.cgit.enable = true;
-  services.lighttpd.cgit.configTxt = ''
-    source-filter=${pkgs.cgit}/lib/cgit/filters/syntax-highlighting.py
-    about-filter=${pkgs.cgit}/lib/cgit/filters/about-formatting.sh
-    cache-size=1000
-    scan-path=${config.services.gitDaemon.basePath}
-  '';
+  services.lighttpd = {
+    enable = true;
+    cgit = {
+      enable = true;
+      subdir = "";
+      configText = ''
+        source-filter=${pkgs.cgit}/lib/cgit/filters/syntax-highlighting.py
+        about-filter=${pkgs.cgit}/lib/cgit/filters/about-formatting.sh
+        cache-size=1000
+        scan-path=${config.services.gitDaemon.basePath}
+      '';
+    };
+  };
   networking.firewall.allowedTCPPorts = [ 80 ];
   networking.interfaces.mv-trusted.useDHCP = true;
   services.openssh.enable = true;
