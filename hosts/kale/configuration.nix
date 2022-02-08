@@ -87,6 +87,7 @@ in
     macvlans = [ "trusted" ];
     autoStart = true;
     bindMounts."/srv/git".hostPath = "/fast/git";
+    config = { };
   };
 
   users.users.jared = {
