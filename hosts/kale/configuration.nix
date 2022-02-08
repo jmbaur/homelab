@@ -63,9 +63,9 @@ in
         allowedTCPPorts = [ 80 ];
       };
     };
-    nameservers = lib.singleton "192.168.10.1";
-    defaultGateway.address = "192.168.10.1";
-    defaultGateway.interface = "trusted";
+    nameservers = lib.singleton "192.168.88.1";
+    defaultGateway.address = "192.168.88.1";
+    defaultGateway.interface = "enp5s0";
     interfaces.${mgmt-iface} = {
       useDHCP = false;
       ipv4.addresses = [{ address = mgmt-address; prefixLength = mgmt-prefix; }];
@@ -74,9 +74,9 @@ in
     vlans.trusted = { id = 10; interface = "enp3s0"; };
     vlans.iot = { id = 20; interface = "enp3s0"; };
     vlans.guest = { id = 30; interface = "enp3s0"; };
-    interfaces.trusted = {
-      ipv4.addresses = [{ address = "192.168.10.10"; prefixLength = 24; }];
-    };
+    # interfaces.trusted = {
+    #   ipv4.addresses = [{ address = "192.168.10.10"; prefixLength = 24; }];
+    # };
     # interfaces.iot = {
     #   ipv4.addresses = [{ address = "192.168.20.40"; prefixLength = 24; }];
     #   ipv4.routes = [{ address = "192.168.20.0"; prefixLength = 24; via = "192.168.20.1"; }];
