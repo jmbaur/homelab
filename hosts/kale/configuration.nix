@@ -100,7 +100,7 @@ in
     gitweb = {
       enable = true;
       location = "/";
-      virtualHost = "git";
+      # virtualHost = "git";
     };
   };
 
