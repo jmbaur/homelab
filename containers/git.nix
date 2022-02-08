@@ -7,5 +7,6 @@
     enable = true;
     gitweb.enable = true;
   };
+  networking.firewall.allowedTCPPorts = [ 80 ];
   networking.interfaces.mv-trusted.useDHCP = true;
 }
