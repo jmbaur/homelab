@@ -71,6 +71,7 @@ in
       ipv4.addresses = [{ address = mgmt-address; prefixLength = mgmt-prefix; }];
       ipv4.routes = [{ address = mgmt-network; prefixLength = mgmt-prefix; via = mgmt-gateway; }];
     };
+    bridges.virbr0.interfaces = [ "enp5s0" ];
     vlans.trusted = { id = 10; interface = "enp3s0"; };
     vlans.iot = { id = 20; interface = "enp3s0"; };
     vlans.guest = { id = 30; interface = "enp3s0"; };
