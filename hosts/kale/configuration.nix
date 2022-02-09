@@ -91,7 +91,7 @@ in
   users.users.jared = {
     isNormalUser = true;
     openssh.authorizedKeys.keyFiles = lib.singleton (import ../../data/jmbaur-ssh-keys.nix);
-    extraGroups = [ "libvirt" ];
+    extraGroups = [ "libvirtd" ];
   };
 
   services.openssh.permitRootLogin = "yes";
