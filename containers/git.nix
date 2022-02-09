@@ -31,6 +31,9 @@
           RewriteCond %{QUERY_STRING} service=git-receive-pack
           RewriteRule .* - [END,F]
         </Directory>
+        Alias /cgit.png ${pkgs.cgit}/cgit/cgit.png
+        Alias /cgit.css ${pkgs.cgit}/cgit/cgit.css
+        Alias / ${pkgs.cgit}/cgit/cgit.cgi/
       '';
     };
   };
