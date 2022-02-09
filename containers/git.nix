@@ -28,4 +28,5 @@
     shell = "${pkgs.git}/bin/git-shell";
     openssh.authorizedKeys.keyFiles = lib.singleton (import ../data/jmbaur-ssh-keys.nix);
   };
+  users.users.lighttpd.extraGroups = [ config.services.gitDaemon.group ];
 }
