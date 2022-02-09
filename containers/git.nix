@@ -16,6 +16,7 @@
   };
   services.httpd = {
     enable = true;
+    adminAddr = "jaredbaur@fastmail.com";
     extraConfig = ''
       <Directory "${pkgs.cgit}/cgit">
         Options +ExecCGI
