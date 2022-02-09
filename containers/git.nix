@@ -1,18 +1,21 @@
-{ config, lib, pkgs, ... }: {
-  services.gitDaemon = {
-    enable = true;
-    exportAll = true;
-    basePath = "/srv/git";
-  };
-  environment.etc."cgitrc".text = ''
+{ config, lib, pkgs, ... }:
+let
+  cgitrc = pkgs.writeText "cgitrc" ''
     source-filter=''${pkgs.cgit}/lib/cgit/filters/syntax-highlighting.py
     about-filter=''${pkgs.cgit}/lib/cgit/filters/about-formatting.sh
     cache-size=1000
     scan-path=${config.services.gitDaemon.basePath}
   '';
+in
+{
+  services.gitDaemon = {
+    enable = true;
+    exportAll = true;
+    basePath = "/srv/git";
+  };
   services.lighttpd = {
     enable = true;
-    enableModules = [ "mod_cgi" "mod_alias" "mod_setenv" ];
+    enableModules = [ "mod_cgi" "mod_rewrite" "mod_setenv" ];
     extraConfig = ''
       #$SERVER["socket"] == ":443" {
       $SERVER["socket"] == ":80" {
@@ -29,6 +32,9 @@
               "^/cgit/cgit.css"   => "/cgit.css",
               "^/cgit/cgit.png"   => "/cgit.png",
               "^/([^?/]+/[^?]*)?(?:\?(.*))?$"   => "/cgit.cgi?url=$1&$2",
+          )
+          setenv.add-environment = (
+              "CGIT_CONFIG" => "${cgitrc}"
           )
       }
     '';
