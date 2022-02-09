@@ -74,7 +74,10 @@ in
     vlans.trusted = { id = 10; interface = "enp3s0"; };
     vlans.iot = { id = 20; interface = "enp3s0"; };
     vlans.guest = { id = 30; interface = "enp3s0"; };
-    macvlans.ubuntu.interface = "trusted";
+    macvlans.test = {
+      mode = "bridge";
+      interface = "trusted";
+    };
   };
 
   containers.git = {
