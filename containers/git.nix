@@ -17,19 +17,21 @@
   services.httpd = {
     enable = true;
     adminAddr = "jaredbaur@fastmail.com";
-    extraConfig = ''
-      <Directory "${pkgs.cgit}/cgit">
-        Options +ExecCGI
-        AddHandler cgi-script .cgi
-        DirectoryIndex cgit.cgi
-        RewriteEngine on
-        RewriteCond %{REQUEST_FILENAME} !-f
-        RewriteCond %{REQUEST_FILENAME} !-d
-        RewriteRule (.*) /cgit.cgi/$1 [END,QSA]
-        RewriteCond %{QUERY_STRING} service=git-receive-pack
-        RewriteRule .* - [END,F]
-      </Directory>
-    '';
+    virtualHosts.localhost = {
+      extraConfig = ''
+        <Directory "${pkgs.cgit}/cgit">
+          Options +ExecCGI
+          AddHandler cgi-script .cgi
+          DirectoryIndex cgit.cgi
+          RewriteEngine on
+          RewriteCond %{REQUEST_FILENAME} !-f
+          RewriteCond %{REQUEST_FILENAME} !-d
+          RewriteRule (.*) /cgit.cgi/$1 [END,QSA]
+          RewriteCond %{QUERY_STRING} service=git-receive-pack
+          RewriteRule .* - [END,F]
+        </Directory>
+      '';
+    };
   };
   networking.firewall.allowedTCPPorts = [ 80 ];
   networking.interfaces.mv-trusted.useDHCP = true;
