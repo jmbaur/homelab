@@ -10,20 +10,33 @@
     cache-size=1000
     scan-path=${config.services.gitDaemon.basePath}
   '';
-  services.caddy = {
+  services.lighttpd = {
     enable = true;
-    virtualHosts."git.jmbaur.com" = {
-      listenAddresses = [ "127.0.0.1" "::1" ];
-      extraConfig = ''
-        root * ${pkgs.cgit}/cgit
-        cgi {
-          match /
-          exec ${pkgs.cgit}/cgit/cgit.cgi
-          except /cgit.png /favicon.ico /cgit.css /robots.txt
-        }
-      '';
-    };
+    enableModules = [ "mod_cgi" "mod_alias" "mod_setenv" ];
+    extraConfig = ''
+      #$SERVER["socket"] == ":443" {
+      $SERVER["socket"] == ":80" {
+          #ssl.engine                    = "enable"
+          #ssl.pemfile                   = "/etc/lighttpd/ssl/git.example.com.pem"
+
+          server.name          = "git.example.com"
+          server.document-root = "${pkgs.cgit}/cgit/"
+
+          index-file.names     = ( "cgit.cgi" )
+          cgi.assign           = ( "cgit.cgi" => "" )
+          mimetype.assign      = ( ".css" => "text/css" )
+          url.rewrite-once     = (
+              "^/cgit/cgit.css"   => "/cgit.css",
+              "^/cgit/cgit.png"   => "/cgit.png",
+              "^/([^?/]+/[^?]*)?(?:\?(.*))?$"   => "/cgit.cgi?url=$1&$2",
+          )
+      }
+    '';
   };
+  systemd.services.lighttpd.preStart = ''
+    mkdir -p /var/cache/cgit
+    chown lighttpd:lighttpd /var/cache/cgit
+  '';
   networking.firewall.allowedTCPPorts = [ 80 ];
   networking.interfaces.mv-trusted.useDHCP = true;
   services.openssh.enable = true;
