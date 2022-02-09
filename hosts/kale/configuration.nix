@@ -71,18 +71,31 @@ in
       ipv4.addresses = [{ address = mgmt-address; prefixLength = mgmt-prefix; }];
       ipv4.routes = [{ address = mgmt-network; prefixLength = mgmt-prefix; via = mgmt-gateway; }];
     };
-    vlans.trusted = { id = 10; interface = "enp3s0"; };
-    vlans.iot = { id = 20; interface = "enp3s0"; };
-    vlans.guest = { id = 30; interface = "enp3s0"; };
-    macvlans.git = {
-      mode = "bridge";
-      interface = "trusted";
+    # vlans.trusted = { id = 10; interface = "enp3s0"; };
+    # vlans.iot = { id = 20; interface = "enp3s0"; };
+    # vlans.guest = { id = 30; interface = "enp3s0"; };
+  };
+
+  systemd.network = {
+    netdevs.trusted = {
+      netdevConfig.kind = "vlan";
+      vlanConfig.Id = "10";
+    };
+    networks.enp3s0 = {
+      vlan = [ "trusted" ];
+      networkConfig = {
+        LinkLocalAddressing = "no";
+        LLDP = "no";
+        EmitLLDP = "no";
+        IPv6AcceptRA = "no";
+        IPv6SendRA = "no";
+      };
     };
   };
 
   containers.git = {
     # macvlans = [ "trusted" ];
-    interfaces = [ "git" ];
+    # interfaces = [ "git" ];
     autoStart = true;
     ephemeral = true;
     bindMounts."/srv/git" = {
