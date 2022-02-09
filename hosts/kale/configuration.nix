@@ -79,6 +79,7 @@ in
   containers.git = {
     macvlans = [ "trusted" ];
     autoStart = true;
+    ephemeral = true;
     bindMounts."/srv/git" = {
       hostPath = "/fast/git";
       isReadOnly = false;

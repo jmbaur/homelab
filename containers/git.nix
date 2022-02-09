@@ -4,19 +4,22 @@
     exportAll = true;
     basePath = "/srv/git";
   };
-  services.lighttpd = {
+  services.caddy = {
     enable = true;
-    cgit = {
-      enable = true;
-      subdir = "";
-      configText = ''
-        source-filter=${pkgs.cgit}/lib/cgit/filters/syntax-highlighting.py
-        about-filter=${pkgs.cgit}/lib/cgit/filters/about-formatting.sh
-        cache-size=1000
-        scan-path=${config.services.gitDaemon.basePath}
-      '';
-    };
   };
+  # services.lighttpd = {
+  #   enable = true;
+  #   cgit = {
+  #     enable = true;
+  #     subdir = "";
+  #     configText = ''
+  #       source-filter=${pkgs.cgit}/lib/cgit/filters/syntax-highlighting.py
+  #       about-filter=${pkgs.cgit}/lib/cgit/filters/about-formatting.sh
+  #       cache-size=1000
+  #       scan-path=${config.services.gitDaemon.basePath}
+  #     '';
+  #   };
+  # };
   networking.firewall.allowedTCPPorts = [ 80 ];
   networking.interfaces.mv-trusted.useDHCP = true;
   services.openssh.enable = true;
