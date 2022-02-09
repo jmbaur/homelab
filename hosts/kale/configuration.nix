@@ -82,6 +82,7 @@ in
 
   containers.git = {
     # macvlans = [ "trusted" ];
+    interfaces = [ "git" ];
     autoStart = true;
     ephemeral = true;
     bindMounts."/srv/git" = {
