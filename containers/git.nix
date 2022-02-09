@@ -41,6 +41,7 @@
   networking.interfaces.mv-trusted.useDHCP = true;
   services.openssh.enable = true;
   services.openssh.passwordAuthentication = false;
+  users.users.${config.services.httpd.user}.extraGroups = [ config.services.gitDaemon.group ];
   users.users.git = {
     home = config.services.gitDaemon.basePath;
     createHome = true;
