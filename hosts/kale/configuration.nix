@@ -74,7 +74,7 @@ in
     vlans.trusted = { id = 10; interface = "enp3s0"; };
     vlans.iot = { id = 20; interface = "enp3s0"; };
     vlans.guest = { id = 30; interface = "enp3s0"; };
-    bridges.virbr0.interfaces = [ "trusted" ];
+    macvlans.ubuntu.interface = "trusted";
   };
 
   containers.git = {

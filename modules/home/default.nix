@@ -53,6 +53,7 @@ with lib;
         sl
         smartmontools
         speedtest-cli
+        sshfs
         stow
         tailscale
         tcpdump
@@ -95,6 +96,7 @@ with lib;
           slurp
           spotify
           thunderbird-wayland
+          virt-manager
           wev
           wf-recorder
           winbox
