@@ -18,6 +18,7 @@
     enable = true;
     adminAddr = "jaredbaur@fastmail.com";
     virtualHosts.localhost = {
+      documentRoot = "${pkgs.cgit}/cgit";
       extraConfig = ''
         <Directory "${pkgs.cgit}/cgit">
           Options +ExecCGI
