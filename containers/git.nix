@@ -12,17 +12,17 @@
   '';
   services.caddy = {
     enable = true;
-    config = ''
-      git.example.com {
-        # other settings such as TLS, headers, ...
+    virtualHosts."git.jmbaur.com" = {
+      listenAddresses = [ "127.0.0.1" "::1" ];
+      extraConfig = ''
         root ${pkgs.cgit}/cgit
         cgi {
           match /
           exec  ${pkgs.cgit}/cgit/cgit.cgi
           except /cgit.png /favicon.ico /cgit.css /robots.txt
         }
-      }
-    '';
+      '';
+    };
   };
   networking.firewall.allowedTCPPorts = [ 80 ];
   networking.interfaces.mv-trusted.useDHCP = true;
