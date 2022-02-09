@@ -17,7 +17,7 @@
   services.httpd = {
     enable = true;
     extraConfig = ''
-      <Directory "${pkgs.cgi}/cgit">
+      <Directory "${pkgs.cgit}/cgit">
         Options +ExecCGI
         AddHandler cgi-script .cgi
         DirectoryIndex cgit.cgi
