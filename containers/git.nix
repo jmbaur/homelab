@@ -32,6 +32,12 @@ in
   services.nginx = {
     enable = true;
     virtualHosts.localhost = {
+      locations."~* ^.+(cgit.(css|png)|favicon.ico|robots.txt)" = {
+        extraConfig = ''
+          root ${pkgs.cgit}/cgit;
+          expires 30d;
+        '';
+      };
       locations."/" = {
         extraConfig = ''
           include ${pkgs.nginx}/conf/fastcgi_params;
