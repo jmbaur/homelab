@@ -1,8 +1,8 @@
 { config, lib, pkgs, ... }:
 let
   cgitrc = pkgs.writeText "cgitrc" ''
-    source-filter=''${pkgs.cgit}/lib/cgit/filters/syntax-highlighting.py
-    about-filter=''${pkgs.cgit}/lib/cgit/filters/about-formatting.sh
+    source-filter=${pkgs.cgit}/lib/cgit/filters/syntax-highlighting.py
+    about-filter=${pkgs.cgit}/lib/cgit/filters/about-formatting.sh
     cache-size=1000
     scan-path=${config.services.gitDaemon.basePath}
   '';
