@@ -68,45 +68,50 @@ in
     defaultGateway.interface = mgmtIface;
   };
 
-  systemd.network = {
-    enable = true;
-    netdevs.trusted = {
-      netdevConfig = {
-        Name = "trusted";
-        Kind = "vlan";
+  systemd.network =
+    let
+      unconfiguredMasterNetworkConfig = {
+        LinkLocalAddressing = "no";
+        LLDP = "no";
+        EmitLLDP = "no";
+        IPv6AcceptRA = "no";
+        IPv6SendRA = "no";
       };
-      vlanConfig.Id = 10;
-    };
-    netdevs.git = {
-      netdevConfig = {
-        Name = "git";
-        Kind = "macvlan";
+    in
+    {
+      enable = true;
+      netdevs.trusted = {
+        netdevConfig = {
+          Name = "trusted";
+          Kind = "vlan";
+        };
+        vlanConfig.Id = 10;
       };
-      macvlanConfig.Mode = "bridge";
-    };
-    networks.enp5s0 = {
-      matchConfig.Name = "enp5s0";
-      networkConfig = {
-        Address = mgmtAddress + "/" + toString mgmtPrefix;
-        Gateway = mgmtGateway;
+      netdevs.git = {
+        netdevConfig = {
+          Name = "git";
+          Kind = "macvlan";
+        };
+        macvlanConfig.Mode = "bridge";
+      };
+      networks.enp5s0 = {
+        matchConfig.Name = "enp5s0";
+        networkConfig = {
+          Address = mgmtAddress + "/" + toString mgmtPrefix;
+          Gateway = mgmtGateway;
+        };
+      };
+      networks.enp3s0 = {
+        matchConfig.Name = "enp3s0";
+        vlan = [ "trusted" ];
+        networkConfig = unconfiguredMasterNetworkConfig;
+      };
+      networks.trusted = {
+        matchConfig.Name = "trusted";
+        macvlan = [ "git" ];
+        networkConfig = unconfiguredMasterNetworkConfig;
       };
     };
-    networks.enp3s0 = {
-      matchConfig.Name = "enp3s0";
-      vlan = [ "trusted" ];
-      # networkConfig = {
-      #   LinkLocalAddressing = "no";
-      #   LLDP = "no";
-      #   EmitLLDP = "no";
-      #   IPv6AcceptRA = "no";
-      #   IPv6SendRA = "no";
-      # };
-    };
-    networks.trusted = {
-      matchConfig.Name = "trusted";
-      macvlan = [ "git" ];
-    };
-  };
 
   containers.git = {
     # macvlans = [ "trusted" ];
