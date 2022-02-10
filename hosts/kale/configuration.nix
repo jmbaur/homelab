@@ -63,25 +63,37 @@ in
         allowedTCPPorts = [ 80 ];
       };
     };
-    nameservers = lib.singleton "192.168.88.1";
-    defaultGateway.address = "192.168.88.1";
-    defaultGateway.interface = "enp5s0";
-    interfaces.${mgmt-iface} = {
-      useDHCP = false;
-      ipv4.addresses = [{ address = mgmt-address; prefixLength = mgmt-prefix; }];
-      ipv4.routes = [{ address = mgmt-network; prefixLength = mgmt-prefix; via = mgmt-gateway; }];
-    };
+    nameservers = lib.singleton mgmt-gateway;
+    defaultGateway.address = mgmt-gateway;
+    defaultGateway.interface = mgmt-iface;
+    # interfaces.${mgmt-iface} = {
+    #   useDHCP = false;
+    #   ipv4.addresses = [{ address = mgmt-address; prefixLength = mgmt-prefix; }];
+    #   ipv4.routes = [{ address = mgmt-network; prefixLength = mgmt-prefix; via = mgmt-gateway; }];
+    # };
     # vlans.trusted = { id = 10; interface = "enp3s0"; };
     # vlans.iot = { id = 20; interface = "enp3s0"; };
     # vlans.guest = { id = 30; interface = "enp3s0"; };
   };
 
   systemd.network = {
+    enable = true;
     netdevs.trusted = {
-      netdevConfig.kind = "vlan";
-      vlanConfig.Id = "10";
+      netdevConfig = {
+        Name = "trusted";
+        Kind = "vlan";
+      };
+      vlanConfig.Id = 10;
+    };
+    networks.enp5s0 = {
+      matchConfig.Name = "enp5s0";
+      networkConfig = {
+        Address = mgmt-address;
+        Gateway = mgmt-gateway;
+      };
     };
     networks.enp3s0 = {
+      matchConfig.Name = "enp3s0";
       vlan = [ "trusted" ];
       networkConfig = {
         LinkLocalAddressing = "no";
