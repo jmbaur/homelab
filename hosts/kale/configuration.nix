@@ -75,11 +75,10 @@ in
     interfaces.trusted.ipv4.addresses = lib.mkForce [ ];
     macvlans.mv-trusted-host = { interface = "trusted"; mode = "bridge"; };
     interfaces.mv-trusted-host.ipv4.addresses = [{ address = "192.168.10.19"; prefixLength = 24; }];
-    macvlans.mv-trusted = { interface = "trusted"; mode = "bridge"; };
   };
 
   containers.git = {
-    interfaces = lib.singleton "mv-trusted";
+    macvlans = lib.singleton "trusted";
     autoStart = true;
     ephemeral = true;
     bindMounts."/srv/git" = {
