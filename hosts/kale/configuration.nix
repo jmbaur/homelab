@@ -87,7 +87,6 @@ in
     };
     bindMounts."/etc/ssh/ssh_host_rsa_key".hostPath = "/etc/ssh/ssh_host_rsa_key";
     bindMounts."/etc/ssh/ssh_host_ed25519_key".hostPath = "/etc/ssh/ssh_host_ed25519_key";
-    forwardPorts = [{ containerPort = 80; }];
     config = {
       imports = [ ../../containers/git.nix ];
       networking.interfaces.mv-trusted.ipv4.addresses = [{
