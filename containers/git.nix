@@ -12,7 +12,7 @@ in
 {
   networking = {
     firewall.allowedTCPPorts = [ 80 ];
-    interfaces.mv-trusted.useDHCP = true;
+    interfaces.git.useDHCP = true;
   };
   users.users = {
     # "${config.services.fcgiwrap.user}".extraGroups = [ config.services.gitDaemon.group ];

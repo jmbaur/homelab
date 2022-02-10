@@ -111,10 +111,6 @@ in
         macvlan = [ "git" ];
         networkConfig = unconfiguredMasterNetworkConfig;
       };
-      networks.git = {
-        matchConfig.Name = "git";
-        networkConfig.DHCP = "yes";
-      };
     };
 
   containers.git = {
