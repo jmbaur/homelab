@@ -88,11 +88,17 @@ in
         vlanConfig.Id = 10;
       };
       netdevs.git = {
-        netdevConfig = {
-          Name = "git";
-          Kind = "macvlan";
-        };
+        netdevConfig.Name = "git";
+        netdevConfig.Kind = "macvlan";
         macvlanConfig.Mode = "bridge";
+      };
+      netdevs.ubuntu = {
+        netdevConfig.Name = "ubuntu";
+        netdevConfig.Kind = "macvtap";
+        extraConfig = ''
+          [MACVTAP]
+          Mode=bridge
+        '';
       };
       networks.enp5s0 = {
         matchConfig.Name = "enp5s0";
@@ -108,13 +114,16 @@ in
       };
       networks.trusted = {
         matchConfig.Name = "trusted";
-        macvlan = [ "git" ];
         networkConfig = unconfiguredMasterNetworkConfig;
+        macvlan = [ "git" ];
+        extraConfig = ''
+          MACVTAP=ubuntu
+        '';
       };
     };
 
   containers.git = {
-    interfaces = [ "git" ];
+    interfaces = lib.singleton "git";
     autoStart = true;
     ephemeral = true;
     bindMounts."/srv/git" = {
@@ -130,7 +139,7 @@ in
   users.users.jared = {
     isNormalUser = true;
     openssh.authorizedKeys.keyFiles = lib.singleton (import ../../data/jmbaur-ssh-keys.nix);
-    extraGroups = [ "libvirtd" ];
+    extraGroups = lib.singleton "libvirtd";
   };
 
   services.openssh.permitRootLogin = "yes";
