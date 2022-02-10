@@ -11,7 +11,7 @@ let
   '';
 in
 networkConfig // {
-  networking.allowedTCPPorts = [ 80 ];
+  networking.firewall.allowedTCPPorts = [ 80 ];
   users.users = {
     # "${config.services.fcgiwrap.user}".extraGroups = [ config.services.gitDaemon.group ];
     git = {
