@@ -16,7 +16,7 @@ in
   custom.deploy.enable = true;
   custom.home.enable = true;
   custom.virtualisation.enable = true;
-  # custom.virtualisation.variant = "normal";
+  custom.virtualisation.variant = "normal";
 
   systemd.services."serial-getty@ttyS2" = {
     enable = true;
