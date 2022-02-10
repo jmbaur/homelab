@@ -72,9 +72,13 @@ in
     };
     interfaces.enp3s0.ipv4.addresses = lib.mkForce [ ];
     vlans.trusted = { id = 10; interface = "enp3s0"; };
+    vlans.iot = { id = 20; interface = "enp3s0"; };
     interfaces.trusted.ipv4.addresses = lib.mkForce [ ];
+    interfaces.iot.ipv4.addresses = lib.mkForce [ ];
     macvlans.mv-trusted-host = { interface = "trusted"; mode = "bridge"; };
+    macvlans.mv-iot-host = { interface = "iot"; mode = "bridge"; };
     interfaces.mv-trusted-host.ipv4.addresses = [{ address = "192.168.10.19"; prefixLength = 24; }];
+    interfaces.mv-iot-host.ipv4.addresses = [{ address = "192.168.20.19"; prefixLength = 24; }];
   };
 
   containers.git = {
@@ -91,6 +95,20 @@ in
       imports = [ ../../containers/git.nix ];
       networking.interfaces.mv-trusted.ipv4.addresses = [{
         address = "192.168.10.21";
+        prefixLength = 24;
+      }];
+    };
+  };
+
+  containers.media = {
+    macvlans = lib.singleton "iot";
+    autoStart = true;
+    ephemeral = true;
+    bindMounts."/kodi".hostPath = "/big/kodi";
+    config = {
+      imports = [ ../../containers/media.nix ];
+      networking.interfaces.mv-iot.ipv4.addresses = [{
+        address = "192.168.20.29";
         prefixLength = 24;
       }];
     };

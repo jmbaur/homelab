@@ -19,6 +19,18 @@ with lib;
     fsType = "ext4";
     options = [ "noatime" ];
   };
+  fileSystems."/home/kodi/Kodi" = {
+    device = "media.home.arpa:/srv/kodi";
+    fsType = "nfs";
+    options = [
+      "_netdev"
+      "noauto"
+      "x-systemd.automount"
+      "x-systemd.mount-timeout=10"
+      "timeo=14"
+      "x-systemd.idle-timeout=1min"
+    ];
+  };
 
   time.timeZone = "America/Los_Angeles";
   networking = {

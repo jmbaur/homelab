@@ -85,6 +85,12 @@ resource "mikrotik_dns_record" "rhubarb_dns_record" {
 
 resource "mikrotik_dns_record" "builder_dns_record" {
   name = "builder.home.arpa"
-  address = "192.168.10.10"
+  address = "192.168.10.19"
+  ttl = 300
+}
+
+resource "mikrotik_dns_record" "media_dns_record" {
+  name = "media.home.arpa"
+  address = "192.168.20.29"
   ttl = 300
 }
