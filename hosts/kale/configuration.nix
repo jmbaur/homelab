@@ -87,20 +87,24 @@ in
     networks.enp5s0 = {
       matchConfig.Name = "enp5s0";
       networkConfig = {
-        Address = mgmtAddress + "/" + lib.toString mgmtPrefix;
+        Address = mgmtAddress + "/" + toString mgmtPrefix;
         Gateway = mgmtGateway;
       };
     };
     networks.enp3s0 = {
       matchConfig.Name = "enp3s0";
       vlan = [ "trusted" ];
-      networkConfig = {
-        LinkLocalAddressing = "no";
-        LLDP = "no";
-        EmitLLDP = "no";
-        IPv6AcceptRA = "no";
-        IPv6SendRA = "no";
-      };
+      # networkConfig = {
+      #   LinkLocalAddressing = "no";
+      #   LLDP = "no";
+      #   EmitLLDP = "no";
+      #   IPv6AcceptRA = "no";
+      #   IPv6SendRA = "no";
+      # };
+    };
+    networks.trusted = {
+      matchConfig.Name = "trusted";
+      macvlan = [ "git" ];
     };
   };
 
