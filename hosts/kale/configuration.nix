@@ -76,19 +76,26 @@ in
     vlans.trusted = { id = 10; interface = "enp3s0"; };
   };
 
-  containers.git = {
-    macvlans = lib.singleton "trusted";
-    autoStart = true;
-    ephemeral = true;
-    bindMounts."/srv/git" = {
-      hostPath = "/fast/git";
-      isReadOnly = false;
-    };
-    bindMounts."/etc/ssh/ssh_host_rsa_key".hostPath = "/etc/ssh/ssh_host_rsa_key";
-    bindMounts."/etc/ssh/ssh_host_ed25519_key".hostPath = "/etc/ssh/ssh_host_ed25519_key";
-    forwardPorts = [{ containerPort = 80; }];
-    config = import ../../containers/git.nix;
-  };
+  # containers.git = {
+  #   macvlans = lib.singleton "trusted";
+  #   autoStart = true;
+  #   ephemeral = true;
+  #   bindMounts."/srv/git" = {
+  #     hostPath = "/fast/git";
+  #     isReadOnly = false;
+  #   };
+  #   bindMounts."/etc/ssh/ssh_host_rsa_key".hostPath = "/etc/ssh/ssh_host_rsa_key";
+  #   bindMounts."/etc/ssh/ssh_host_ed25519_key".hostPath = "/etc/ssh/ssh_host_ed25519_key";
+  #   forwardPorts = [{ containerPort = 80; }];
+  #   config = (import ../../containers/git.nix {
+  #     networkConfig = {
+  #       networking.interfaces.mv-trusted.ipv4.addresses = [{
+  #         address = "192.168.10.21";
+  #         prefixLength = 24;
+  #       }];
+  #     };
+  #   });
+  # };
 
   users.users.jared = {
     isNormalUser = true;

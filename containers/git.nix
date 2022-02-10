@@ -1,3 +1,4 @@
+{ networkConfig ? { } }:
 { config, lib, pkgs, ... }:
 let
   cgitrc = pkgs.writeText "cgitrc" ''
@@ -9,11 +10,8 @@ let
     scan-path=${config.services.gitDaemon.basePath}
   '';
 in
-{
-  networking = {
-    firewall.allowedTCPPorts = [ 80 ];
-    interfaces.mv-trusted.ipv4.addresses = [{ address = "192.168.10.21"; prefixLength = 24; }];
-  };
+networkConfig // {
+  networking.allowedTCPPorts = [ 80 ];
   users.users = {
     # "${config.services.fcgiwrap.user}".extraGroups = [ config.services.gitDaemon.group ];
     git = {
@@ -28,9 +26,7 @@ in
     exportAll = true;
     basePath = "/srv/git";
   };
-  services.fcgiwrap = {
-    enable = true;
-  };
+  services.fcgiwrap. enable = true;
   services.nginx = {
     enable = true;
     virtualHosts.localhost = {
