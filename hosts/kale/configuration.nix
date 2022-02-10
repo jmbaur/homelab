@@ -70,9 +70,10 @@ in
       useDHCP = false;
       ipv4.addresses = [{ address = mgmtAddress; prefixLength = mgmtPrefix; }];
     };
-    interfaces.enp3s0.useDHCP = false;
+    networking.interfaces.enp3s0.ipv4.addresses = lib.mkForce [ ];
     vlans.trusted = { id = 10; interface = "enp3s0"; };
-    interfaces.trusted.useDHCP = false;
+    networking.interfaces.trusted.ipv4.addresses = lib.mkForce [ ];
+    macvlans.mv-trusted-host = { interface = "trusted"; mode = "bridge"; };
   };
 
   containers.git = {
