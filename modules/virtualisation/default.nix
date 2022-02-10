@@ -26,7 +26,6 @@ with lib;
     virtualisation.podman.enable = true;
     virtualisation.libvirtd = mkIf (cfg.variant == "normal") {
       enable = true;
-      # allowedBridges = mkForce [ ];
     };
   };
 

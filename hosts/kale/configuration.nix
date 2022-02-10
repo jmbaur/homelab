@@ -66,69 +66,18 @@ in
     nameservers = lib.singleton mgmtGateway;
     defaultGateway.address = mgmtGateway;
     defaultGateway.interface = mgmtIface;
+    interfaces.${mgmtIface} = {
+      useDHCP = false;
+      ipv4.addresses = [{ address = mgmtAddress; prefixLength = mgmtPrefix; }];
+    };
+    interfaces.enp3s0 = {
+      useDHCP = false;
+    };
+    vlans.trusted = { id = 10; interface = "enp3s0"; };
   };
 
-  systemd.network =
-    let
-      unconfiguredMasterNetworkConfig = {
-        LinkLocalAddressing = "no";
-        LLDP = "no";
-        EmitLLDP = "no";
-        IPv6AcceptRA = "no";
-        IPv6SendRA = "no";
-      };
-    in
-    {
-      enable = true;
-      netdevs.trusted = {
-        netdevConfig = {
-          Name = "trusted";
-          Kind = "vlan";
-        };
-        vlanConfig.Id = 10;
-      };
-      netdevs.git = {
-        netdevConfig.Name = "git";
-        netdevConfig.Kind = "macvlan";
-        macvlanConfig.Mode = "bridge";
-      };
-      netdevs.ubuntu = {
-        netdevConfig.Name = "ubuntu";
-        netdevConfig.Kind = "macvtap";
-        extraConfig = ''
-          [MACVTAP]
-          Mode=bridge
-        '';
-      };
-      networks.enp5s0 = {
-        matchConfig.Name = "enp5s0";
-        networkConfig = {
-          Address = mgmtAddress + "/" + toString mgmtPrefix;
-          Gateway = mgmtGateway;
-        };
-      };
-      networks.enp3s0 = {
-        matchConfig.Name = "enp3s0";
-        vlan = [ "trusted" ];
-        networkConfig = unconfiguredMasterNetworkConfig;
-      };
-      networks.trusted = {
-        matchConfig.Name = "trusted";
-        networkConfig = unconfiguredMasterNetworkConfig;
-        macvlan = [ "git" ];
-        # TODO(jared): figure out how to get this in the [Network] section
-        extraConfig = ''
-          MACVTAP=ubuntu
-        '';
-      };
-      networks.ubuntu = {
-        matchConfig.Name = "ubuntu";
-        networkConfig = unconfiguredMasterNetworkConfig;
-      };
-    };
-
   containers.git = {
-    interfaces = lib.singleton "git";
+    macvlans = lib.singleton "trusted";
     autoStart = true;
     ephemeral = true;
     bindMounts."/srv/git" = {
