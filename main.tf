@@ -77,6 +77,12 @@ resource "mikrotik_dns_record" "asparagus_dns_record" {
   ttl = 300
 }
 
+resource "mikrotik_dns_record" "cap_dns_record" {
+  name = "cap.home.arpa"
+  address = "192.168.88.5"
+  ttl = 300
+}
+
 resource "mikrotik_dns_record" "rhubarb_dns_record" {
   name = "rhubarb.home.arpa"
   address = "192.168.20.50"
