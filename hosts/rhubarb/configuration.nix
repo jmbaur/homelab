@@ -68,7 +68,7 @@ with lib;
   # services.xserver.displayManager.autoLogin.user = "kodi";
 
   # wayland
-  environment.variables.WLR_LIBINPUT_NO_DEVICES = "1";
+  systemd.services."cage-tty1".envirnment.WLR_LIBINPUT_NO_DEVICES = "1";
   services.cage = {
     enable = true;
     user = "kodi";
