@@ -1,11 +1,11 @@
 { config, lib, pkgs, ... }:
 let
-  mgmt-iface = "enp5s0";
-  mgmt-address = "192.168.88.3";
-  mgmt-network = "192.168.88.0";
-  mgmt-gateway = "192.168.88.1";
-  mgmt-netmask = "255.255.255.0";
-  mgmt-prefix = 24;
+  mgmtIface = "enp5s0";
+  mgmtAddress = "192.168.88.3";
+  mgmtNetwork = "192.168.88.0";
+  mgmtGateway = "192.168.88.1";
+  mgmtNetmask = "255.255.255.0";
+  mgmtPrefix = 24;
 in
 {
   imports = [ ./hardware-configuration.nix ];
@@ -31,7 +31,7 @@ in
     "riscv64-linux"
   ];
   boot.kernelParams = [
-    "ip=${mgmt-address}::${mgmt-gateway}:${mgmt-netmask}:${config.networking.hostName}:${mgmt-iface}::::"
+    "ip=${mgmtAddress}::${mgmtGateway}:${mgmtNetmask}:${config.networking.hostName}:${mgmtIface}::::"
     "console=ttyS2,115200"
     "console=tty1"
   ];
@@ -63,17 +63,9 @@ in
         allowedTCPPorts = [ 80 ];
       };
     };
-    nameservers = lib.singleton mgmt-gateway;
-    defaultGateway.address = mgmt-gateway;
-    defaultGateway.interface = mgmt-iface;
-    # interfaces.${mgmt-iface} = {
-    #   useDHCP = false;
-    #   ipv4.addresses = [{ address = mgmt-address; prefixLength = mgmt-prefix; }];
-    #   ipv4.routes = [{ address = mgmt-network; prefixLength = mgmt-prefix; via = mgmt-gateway; }];
-    # };
-    # vlans.trusted = { id = 10; interface = "enp3s0"; };
-    # vlans.iot = { id = 20; interface = "enp3s0"; };
-    # vlans.guest = { id = 30; interface = "enp3s0"; };
+    nameservers = lib.singleton mgmtGateway;
+    defaultGateway.address = mgmtGateway;
+    defaultGateway.interface = mgmtIface;
   };
 
   systemd.network = {
@@ -85,11 +77,18 @@ in
       };
       vlanConfig.Id = 10;
     };
+    netdevs.git = {
+      netdevConfig = {
+        Name = "git";
+        Kind = "macvlan";
+      };
+      macvlanConfig.Mode = "bridge";
+    };
     networks.enp5s0 = {
       matchConfig.Name = "enp5s0";
       networkConfig = {
-        Address = mgmt-address;
-        Gateway = mgmt-gateway;
+        Address = mgmtAddress + "/" + lib.toString mgmtPrefix;
+        Gateway = mgmtGateway;
       };
     };
     networks.enp3s0 = {
