@@ -89,6 +89,12 @@ resource "mikrotik_dns_record" "builder_dns_record" {
   ttl = 300
 }
 
+resource "mikrotik_dns_record" "git_dns_record" {
+  name = "git.home.arpa"
+  address = "192.168.10.21"
+  ttl = 300
+}
+
 resource "mikrotik_dns_record" "media_dns_record" {
   name = "media.home.arpa"
   address = "192.168.20.29"
