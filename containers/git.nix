@@ -1,4 +1,3 @@
-{ networkConfig ? { } }:
 { config, lib, pkgs, ... }:
 let
   cgitrc = pkgs.writeText "cgitrc" ''
@@ -10,7 +9,7 @@ let
     scan-path=${config.services.gitDaemon.basePath}
   '';
 in
-networkConfig // {
+{
   networking.firewall.allowedTCPPorts = [ 80 ];
   users.users = {
     # "${config.services.fcgiwrap.user}".extraGroups = [ config.services.gitDaemon.group ];

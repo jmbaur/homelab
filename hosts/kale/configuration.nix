@@ -75,10 +75,11 @@ in
     interfaces.trusted.ipv4.addresses = lib.mkForce [ ];
     macvlans.mv-trusted-host = { interface = "trusted"; mode = "bridge"; };
     interfaces.mv-trusted-host.ipv4.addresses = [{ address = "192.168.10.19"; prefixLength = 24; }];
+    macvlans.mv-trusted = { interface = "trusted"; mode = "bridge"; };
   };
 
   containers.git = {
-    macvlans = lib.singleton "trusted";
+    interfaces = lib.singleton "mv-trusted";
     autoStart = true;
     ephemeral = true;
     bindMounts."/srv/git" = {
@@ -88,14 +89,13 @@ in
     bindMounts."/etc/ssh/ssh_host_rsa_key".hostPath = "/etc/ssh/ssh_host_rsa_key";
     bindMounts."/etc/ssh/ssh_host_ed25519_key".hostPath = "/etc/ssh/ssh_host_ed25519_key";
     forwardPorts = [{ containerPort = 80; }];
-    config = (import ../../containers/git.nix {
-      networkConfig = {
-        networking.interfaces.mv-trusted.ipv4.addresses = [{
-          address = "192.168.10.21";
-          prefixLength = 24;
-        }];
-      };
-    });
+    config = {
+      imports = [ ../../containers/git.nix ];
+      networking.interfaces.mv-trusted.ipv4.addresses = [{
+        address = "192.168.10.21";
+        prefixLength = 24;
+      }];
+    };
   };
 
   users.users.jared = {
