@@ -26,8 +26,6 @@ local organize_imports_on_save = [[
 
 local on_attach = function(cfg)
     return function(client, bufnr)
-        vim.pretty_print(cfg)
-
         if cfg.uses_efm then
             client.resolved_capabilities.document_formatting = false
         elseif client.resolved_capabilities.document_formatting then
