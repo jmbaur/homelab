@@ -116,9 +116,14 @@ in
         matchConfig.Name = "trusted";
         networkConfig = unconfiguredMasterNetworkConfig;
         macvlan = [ "git" ];
+        # TODO(jared): figure out how to get this in the [Network] section
         extraConfig = ''
           MACVTAP=ubuntu
         '';
+      };
+      networks.ubuntu = {
+        matchConfig.Name = "ubuntu";
+        networkConfig = unconfiguredMasterNetworkConfig;
       };
     };
 
