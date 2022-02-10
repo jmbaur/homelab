@@ -114,8 +114,7 @@ in
     };
 
   containers.git = {
-    # macvlans = [ "trusted" ];
-    # interfaces = [ "git" ];
+    interfaces = [ "git" ];
     autoStart = true;
     ephemeral = true;
     bindMounts."/srv/git" = {
