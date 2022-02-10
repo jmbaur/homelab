@@ -17,10 +17,7 @@ set softtabstop=4
 set splitbelow
 set splitright
 set tabstop=4
-set termguicolors
 set undofile
-
-colorscheme gruvbox
 
 inoremap ! !<c-g>u
 inoremap , ,<c-g>u
@@ -34,8 +31,6 @@ nnoremap Y y$
 if maparg('<C-L>', 'n') ==# ''
 		nnoremap <silent> <C-L> :nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>
 endif
-
-let g:clang_format#auto_format=1
 
 let g:markdown_fenced_languages=['bash=sh', 'python', 'typescript', 'go']
 let mapleader=','

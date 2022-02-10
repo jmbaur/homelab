@@ -1,19 +1,40 @@
 local lsp = require('lspconfig')
 
+function OrganizeImports(wait_ms)
+    local params = vim.lsp.util.make_range_params()
+    params.context = {only = {"source.organizeImports"}}
+    local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction",
+                                            params, wait_ms)
+    for _, res in pairs(result or {}) do
+        for _, r in pairs(res.result or {}) do
+            if r.edit then
+                vim.lsp.util.apply_workspace_edit(r.edit, "utf-16")
+            else
+                vim.lsp.buf.execute_command(r.command)
+            end
+        end
+    end
+end
+
 local format_on_save = [[
-          augroup Format
-            au! * <buffer>
-            au BufWritePre <buffer> lua vim.lsp.buf.formatting_sync(nil, 1000)
-          augroup END
+    autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync(nil, 1000)
 ]]
 
-local on_attach = function(uses_efm)
+local organize_imports_on_save = [[
+    autocmd BufWritePre <buffer> lua OrganizeImports(nil, 1000)
+]]
+
+local on_attach = function(cfg)
     return function(client, bufnr)
-        if (uses_efm) then
+        vim.pretty_print(cfg)
+
+        if cfg.uses_efm then
             client.resolved_capabilities.document_formatting = false
-        elseif (client.resolved_capabilities.document_formatting) then
+        elseif client.resolved_capabilities.document_formatting then
             vim.cmd(format_on_save)
         end
+
+        if cfg.organize_imports then vim.cmd(organize_imports_on_save) end
 
         -- Prevent LSP preview window from opening on omnifunc
         vim.cmd [[set completeopt-=preview]]
@@ -54,18 +75,16 @@ local on_attach = function(uses_efm)
 end
 
 for k, v in pairs {
-    clangd = {uses_efm = true},
-    gopls = {uses_efm = true},
+    clangd = {uses_efm = false},
+    gopls = {uses_efm = false, organize_imports = true},
     pyright = {uses_efm = true},
     rust_analyzer = {uses_efm = true},
     sumneko_lua = {uses_efm = true},
-    tsserver = {uses_efm = true},
+    tsserver = {uses_efm = false},
     zls = {uses_efm = false}
 } do
-    lsp[k].setup {
-        on_attach = on_attach(v.uses_efm),
-        flags = {debounce_text_changes = 150}
-    }
+    lsp[k]
+        .setup {on_attach = on_attach(v), flags = {debounce_text_changes = 150}}
 end
 
 local sumneko_root_path = os.getenv("SUMNEKO_ROOT_PATH")
@@ -82,13 +101,7 @@ if sumneko_root_path ~= nil then
     }
 end
 
--- local clang_format_options = {
---     {formatCommand = "clang-format --assume-filename=${INPUT}"},
---     formatStdin = true
--- }
-
 local efm_languages = {
-    go = {{formatCommand = "goimports", formatStdin = true}}, -- TODO(jared): use gopls formatting with some custom code that does imports
     lua = {{formatCommand = "lua-format -i", formatStdin = true}},
     nix = {{formatCommand = "nixpkgs-fmt", formatStdin = true}},
     python = {{formatCommand = "black --quiet -", formatStdin = true}},

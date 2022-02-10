@@ -185,6 +185,10 @@ with lib;
         enable = true;
         vimAlias = true;
         vimdiffAlias = true;
+        extraConfig = ''
+          set termguicolors
+          colorscheme gruvbox
+        '';
         plugins =
           let
             # TODO(jared): Move the settings directory
@@ -216,7 +220,6 @@ with lib;
             trouble-nvim
             typescript-vim
             vim-better-whitespace
-            vim-clang-format
             vim-cue
             vim-dadbod
             vim-easy-align
