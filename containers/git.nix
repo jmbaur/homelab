@@ -12,7 +12,7 @@ in
 {
   networking = {
     firewall.allowedTCPPorts = [ 80 ];
-    interfaces.git.ipv4.addresses = [{ address = "192.168.10.21"; prefixLength = 24; }];
+    interfaces.mv-trusted.ipv4.addresses = [{ address = "192.168.10.21"; prefixLength = 24; }];
   };
   users.users = {
     # "${config.services.fcgiwrap.user}".extraGroups = [ config.services.gitDaemon.group ];
