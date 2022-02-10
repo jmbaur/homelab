@@ -39,7 +39,7 @@ with lib;
     nameservers = singleton "192.168.20.1";
     defaultGateway.address = "192.168.20.1";
     defaultGateway.interface = "eth0";
-    wireless.enable = true;
+    wireless.enable = false;
     wireless.interfaces = singleton "wlan0";
     interfaces.wlan0.useDHCP = true;
     interfaces.eth0 = {
@@ -57,15 +57,6 @@ with lib;
     enable = true;
     publish.enable = true;
     publish.userServices = true;
-  };
-
-  services.spotifyd = {
-    enable = true;
-    settings = {
-      username = "5hwn4ipbrmdi9z3vmkerzoh6n";
-      backend = "pulseaudio";
-      device = "default";
-    };
   };
 
   users.users.kodi.isNormalUser = true;
