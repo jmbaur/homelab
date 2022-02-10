@@ -121,6 +121,8 @@ in
       hostPath = "/fast/git";
       isReadOnly = false;
     };
+    bindMounts."/etc/ssh/ssh_host_rsa_key".hostPath = "/etc/ssh/ssh_host_rsa_key";
+    bindMounts."/etc/ssh/ssh_host_ed25519_key".hostPath = "/etc/ssh/ssh_host_ed25519_key";
     forwardPorts = [{ containerPort = 80; }];
     config = import ../../containers/git.nix;
   };
