@@ -58,6 +58,7 @@ with lib;
       pfetch
       procs
       pstree
+      tcpdump
       tmux
       traceroute
       tree
