@@ -121,6 +121,26 @@ in
     };
   };
 
+  containers.minecraft = {
+    macvlans = lib.singleton "publan";
+    autoStart = true;
+    ephemeral = true;
+    bindMounts."/var/lib/minecraft".hostPath = "/fast/minecraft";
+    config = {
+      imports = [ ../../containers/minecraft.nix ];
+      networking = {
+        defaultGateway.interface = "mv-publan";
+        defaultGateway.address = "192.168.20.1";
+        nameservers = lib.singleton "192.168.20.1";
+        domain = "home.arpa";
+        interfaces.mv-publan.ipv4.addresses = [{
+          address = "192.168.20.32";
+          prefixLength = 24;
+        }];
+      };
+    };
+  };
+
   users.users.jared = {
     isNormalUser = true;
     openssh.authorizedKeys.keyFiles = lib.singleton (import ../../data/jmbaur-ssh-keys.nix);
