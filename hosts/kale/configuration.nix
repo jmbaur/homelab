@@ -88,7 +88,7 @@ in
     bindMounts."/etc/ssh/ssh_host_ed25519_key".hostPath = "/etc/ssh/ssh_host_ed25519_key";
     config = {
       imports = [ ../../containers/git.nix ];
-      networking.interfaces.mv-trusted.ipv4.addresses = [{
+      networking.interfaces.mv-pubwan.ipv4.addresses = [{
         address = "192.168.10.21";
         prefixLength = 24;
       }];
@@ -102,7 +102,7 @@ in
     bindMounts."/kodi".hostPath = "/big/kodi";
     config = {
       imports = [ ../../containers/media.nix ];
-      networking.interfaces.mv-iot.ipv4.addresses = [{
+      networking.interfaces.mv-publan.ipv4.addresses = [{
         address = "192.168.20.29";
         prefixLength = 24;
       }];
