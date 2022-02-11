@@ -125,7 +125,10 @@ in
     macvlans = lib.singleton "publan";
     autoStart = true;
     ephemeral = true;
-    bindMounts."/var/lib/minecraft".hostPath = "/fast/minecraft";
+    bindMounts."/var/lib/minecraft" = {
+      hostPath = "/fast/minecraft";
+      isReadOnly = false;
+    };
     config = {
       imports = [ ../../containers/minecraft.nix ];
       networking = {
