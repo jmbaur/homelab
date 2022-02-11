@@ -89,6 +89,7 @@ with lib;
           hack-font
           imv
           libreoffice
+          minecraft
           mpv
           plan9port
           signal-desktop

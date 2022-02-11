@@ -36,8 +36,8 @@ with lib;
   networking = {
     hostName = "rhubarb";
     domain = "home.arpa";
-    nameservers = singleton "192.168.20.1";
-    defaultGateway.address = "192.168.20.1";
+    nameservers = singleton "192.168.40.1";
+    defaultGateway.address = "192.168.40.1";
     defaultGateway.interface = "eth0";
     wireless.enable = false;
     wireless.interfaces = singleton "wlan0";
@@ -45,7 +45,7 @@ with lib;
     interfaces.eth0 = {
       useDHCP = false;
       ipv4.addresses = [{
-        address = "192.168.20.50";
+        address = "192.168.40.50";
         prefixLength = 24;
       }];
     };
@@ -60,12 +60,6 @@ with lib;
   };
 
   users.users.kodi.isNormalUser = true;
-
-  # xorg
-  # services.xserver.enable = true;
-  # services.xserver.desktopManager.kodi.enable = true;
-  # services.xserver.displayManager.autoLogin.enable = true;
-  # services.xserver.displayManager.autoLogin.user = "kodi";
 
   # wayland
   systemd.services."cage-tty1".environment.WLR_LIBINPUT_NO_DEVICES = "1";

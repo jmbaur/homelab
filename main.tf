@@ -103,7 +103,7 @@ resource "mikrotik_dns_record" "git_dns_record" {
 
 resource "mikrotik_dns_record" "rhubarb_dns_record" {
   name = "rhubarb.home.arpa"
-  address = "192.168.20.50"
+  address = "192.168.40.50"
   ttl = 300
 }
 
