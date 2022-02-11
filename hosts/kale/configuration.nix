@@ -57,12 +57,7 @@ in
   networking = {
     hostName = "kale";
     domain = "home.arpa";
-    firewall = {
-      enable = true;
-      interfaces.trusted = {
-        allowedTCPPorts = [ 80 ];
-      };
-    };
+    firewall.enable = true;
     nameservers = lib.singleton mgmtGateway;
     defaultGateway.address = mgmtGateway;
     defaultGateway.interface = mgmtIface;
@@ -71,18 +66,18 @@ in
       ipv4.addresses = [{ address = mgmtAddress; prefixLength = mgmtPrefix; }];
     };
     interfaces.enp3s0.ipv4.addresses = lib.mkForce [ ];
-    vlans.trusted = { id = 10; interface = "enp3s0"; };
-    vlans.iot = { id = 20; interface = "enp3s0"; };
-    interfaces.trusted.ipv4.addresses = lib.mkForce [ ];
-    interfaces.iot.ipv4.addresses = lib.mkForce [ ];
-    macvlans.mv-trusted-host = { interface = "trusted"; mode = "bridge"; };
-    macvlans.mv-iot-host = { interface = "iot"; mode = "bridge"; };
-    interfaces.mv-trusted-host.ipv4.addresses = [{ address = "192.168.10.19"; prefixLength = 24; }];
-    interfaces.mv-iot-host.ipv4.addresses = [{ address = "192.168.20.19"; prefixLength = 24; }];
+    vlans.pubwan = { id = 10; interface = "enp3s0"; };
+    vlans.publan = { id = 20; interface = "enp3s0"; };
+    interfaces.pubwan.ipv4.addresses = lib.mkForce [ ];
+    interfaces.publan.ipv4.addresses = lib.mkForce [ ];
+    macvlans.mv-pubwan-host = { interface = "pubwan"; mode = "bridge"; };
+    macvlans.mv-publan-host = { interface = "publan"; mode = "bridge"; };
+    interfaces.mv-pubwan-host.ipv4.addresses = [{ address = "192.168.10.5"; prefixLength = 24; }];
+    interfaces.mv-publan-host.ipv4.addresses = [{ address = "192.168.20.5"; prefixLength = 24; }];
   };
 
   containers.git = {
-    macvlans = lib.singleton "trusted";
+    macvlans = lib.singleton "pubwan";
     autoStart = true;
     ephemeral = true;
     bindMounts."/srv/git" = {
@@ -101,7 +96,7 @@ in
   };
 
   containers.media = {
-    macvlans = lib.singleton "iot";
+    macvlans = lib.singleton "publan";
     autoStart = true;
     ephemeral = true;
     bindMounts."/kodi".hostPath = "/big/kodi";
