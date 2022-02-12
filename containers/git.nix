@@ -11,7 +11,7 @@ let
   };
   create-repo = pkgs.writeShellApplication rec {
     name = "create-repo";
-    runtimeInputs = [ git ];
+    runtimeInputs = [ pkgs.git ];
     text = ''
       if [ -z "$1" ]; then
         echo "no repo name provided, exiting"
