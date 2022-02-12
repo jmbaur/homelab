@@ -1,8 +1,24 @@
-{ config, lib, pkgs, ... }: {
+{ config, lib, pkgs, ... }:
+let
+  no-interactive-login = pkgs.writeShellApplication {
+    name = "no-interactive-login";
+    runtimeInputs = [ ];
+    text = ''
+      printf '%s\n' "Hi $USER! You've successfully authenticated, but I do not"
+      printf '%s\n' "provide interactive shell access."
+      exit 128
+    '';
+  };
+  git-shell-commands = pkgs.symlinkJoin {
+    name = "git-shell-commands";
+    paths = [ no-interactive-login ];
+  };
+in
+{
   networking.firewall.allowedTCPPorts = [ 5678 ];
   users.users = {
     git = {
-      home = config.services.gitDaemon.basePath;
+      home = "${git-shell-commands}/bin";
       createHome = true;
       shell = "${pkgs.git}/bin/git-shell";
       openssh.authorizedKeys.keyFiles = lib.singleton (import ../data/jmbaur-ssh-keys.nix);
