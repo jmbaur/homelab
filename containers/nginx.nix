@@ -7,7 +7,7 @@ let
     # cache-size=1000
     # cache-root=/var/cache/cgit
     remove-suffix=1
-    scan-path=${config.services.gitDaemon.basePath}
+    scan-path=/srv/git
   '';
 in
 {
@@ -20,7 +20,7 @@ in
         index = pkgs.runCommandNoCC "index" { } ''
           mkdir -p $out
           cat > $out/index.html << EOF
-          <h1>These aren’t the droids you’re looking for.</h1>
+          <h1>These aren't the droids you're looking for.</h1>
           EOF
         '';
       in
