@@ -9,9 +9,21 @@ let
       exit 128
     '';
   };
+  create-repo = pkgs.writeShellApplication rec {
+    name = "create-repo";
+    runtimeInputs = [ git ];
+    text = ''
+      if [ -z "$1" ]; then
+        echo "no repo name provided, exiting"
+        echo "usage: ${name} <my-repo-name>"
+        exit 1
+      fi
+      git init --bare --initial-branch main "${config.services.gitDaemon.basePath}/$1"
+    '';
+  };
   commands = pkgs.symlinkJoin {
     name = "git-shell-commands-environment";
-    paths = [ no-interactive-login ];
+    paths = [ create-repo ];
   };
   git-shell-commands = pkgs.runCommandNoCC "git-shell-commands" { } ''
     mkdir -p $out
