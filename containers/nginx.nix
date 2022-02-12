@@ -9,12 +9,18 @@ let
     remove-suffix=1
     scan-path=/srv/git
   '';
-  virtualHostSsl = {
+  vhostSsl = {
     forceSSL = true;
     sslCertificate = "/var/lib/nginx/jmbaur.com.cert";
     sslCertificateKey = "/var/lib/nginx/jmbaur.com.key";
   };
-  mkVirtualHost = settings: settings // virtualHostSsl;
+  vhostLogging = {
+    extraConfig = ''
+      error_log syslog:server=unix:/dev/log;
+      access_log syslog:server=unix:/dev/log combined_host;
+    '';
+  };
+  mkVhost = settings: settings // vhostSsl // vhostLogging;
 in
 {
   # TODO(jared): don't open 80
@@ -30,14 +36,14 @@ in
           EOF
         '';
       in
-      mkVirtualHost {
+      mkVhost {
         default = true;
         locations."/" = {
           root = index;
           index = "index.html";
         };
       };
-    virtualHosts."git.jmbaur.com" = mkVirtualHost {
+    virtualHosts."git.jmbaur.com" = mkVhost {
       locations."~* ^.+(cgit.(css|png)|favicon.ico|robots.txt)" = {
         root = "${pkgs.cgit}/cgit";
         extraConfig = ''
