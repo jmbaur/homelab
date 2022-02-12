@@ -42,16 +42,15 @@ let
 in
 {
   networking.firewall.allowedTCPPorts = [ 5678 ];
-  system.userActivationScripts.git-shell-commands.text = ''
-    ln -sf ${commands}/bin ~/git-shell-commands
+  system.activationScripts.git-shell-commands.text = ''
+    ln -sf ${commands}/bin ${config.users.users.git.home}/git-shell-commands
+    chown -R ${config.services.gitDaemon.user} ${config.users.users.git.home}/git-shell-commands
   '';
-  users.users = {
-    git = {
-      home = config.services.gitDaemon.basePath;
-      createHome = true;
-      shell = "${pkgs.git}/bin/git-shell";
-      openssh.authorizedKeys.keyFiles = lib.singleton (import ../data/jmbaur-ssh-keys.nix);
-    };
+  users.users.git = {
+    home = config.services.gitDaemon.basePath;
+    createHome = true;
+    shell = "${pkgs.git}/bin/git-shell";
+    openssh.authorizedKeys.keyFiles = lib.singleton (import ../data/jmbaur-ssh-keys.nix);
   };
   services.gitDaemon = {
     enable = true;
