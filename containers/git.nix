@@ -18,7 +18,7 @@ let
 
       if [ -z "$name" ]; then
         echo "no repo name provided, exiting"
-        echo "usage: ${name} <my-repo-name>"
+        echo "usage: ${name} \"<my-repo-name>\" \"<my-repo-description>\""
         exit 1
       fi
 
