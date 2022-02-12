@@ -10,7 +10,7 @@ let
   '';
 in
 {
-  networking.firewall.allowedTCPPorts = [ 80 ];
+  networking.firewall.allowedTCPPorts = [ 5678 ];
   users.users = {
     git = {
       home = config.services.gitDaemon.basePath;
