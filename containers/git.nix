@@ -28,7 +28,11 @@ in
   services.fcgiwrap. enable = true;
   services.nginx = {
     enable = true;
-    virtualHosts.localhost = {
+    virtualHosts."_" = {
+      default = true;
+      locations."/" = { extraConfig = "empty_gif"; };
+    };
+    virtualHosts."git.jmbaur.com" = {
       locations."~* ^.+(cgit.(css|png)|favicon.ico|robots.txt)" = {
         extraConfig = ''
           root ${pkgs.cgit}/cgit;
