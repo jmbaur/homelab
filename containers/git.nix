@@ -13,12 +13,26 @@ let
     name = "create-repo";
     runtimeInputs = [ pkgs.git ];
     text = ''
-      if [ -z "$1" ]; then
+      if [ -z "''${1:-}" ]; then
         echo "no repo name provided, exiting"
         echo "usage: ${name} <my-repo-name>"
         exit 1
       fi
-      git init --bare --initial-branch main "${config.services.gitDaemon.basePath}/$1"
+
+      repo_name=
+      case "$1" in
+      *.git$)
+        repo_name="$1";;
+      *)
+        repo_name="$1.git";;
+      esac
+
+      if test -d "${config.services.gitDaemon.basePath}/''${repo_name}"; then
+        echo "repo $repo_name already exists, exiting"
+        exit 2
+      fi
+
+      git init --bare --initial-branch main "${config.services.gitDaemon.basePath}/''${repo_name}"
     '';
   };
   commands = pkgs.symlinkJoin {
