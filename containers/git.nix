@@ -9,16 +9,20 @@ let
       exit 128
     '';
   };
-  git-shell-commands = pkgs.symlinkJoin {
-    name = "git-shell-commands";
+  commands = pkgs.symlinkJoin {
+    name = "git-shell-commands-environment";
     paths = [ no-interactive-login ];
   };
+  git-shell-commands = pkgs.runCommandNoCC "git-shell-commands" { } ''
+    mkdir -p $out
+    ln -s ${commands}/bin $out/git-shell-commands
+  '';
 in
 {
   networking.firewall.allowedTCPPorts = [ 5678 ];
   users.users = {
     git = {
-      home = "${git-shell-commands}/bin";
+      home = git-shell-commands;
       createHome = true;
       shell = "${pkgs.git}/bin/git-shell";
       openssh.authorizedKeys.keyFiles = lib.singleton (import ../data/jmbaur-ssh-keys.nix);
