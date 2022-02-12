@@ -28,14 +28,20 @@ in
   services.fcgiwrap. enable = true;
   services.nginx = {
     enable = true;
-    virtualHosts."_" = {
-      default = true;
-      locations."/" = {
-        extraConfig = ''
-          empty_gif;
+    virtualHosts."_" =
+      let
+        index = pkgs.writeText "index.html" ''
+          <h1>These aren’t the droids you’re looking for.</h1>
         '';
+      in
+      {
+        default = true;
+        locations."/" = {
+          extraConfig = ''
+            index ${index}
+          '';
+        };
       };
-    };
     virtualHosts."git.jmbaur.com" = {
       locations."~* ^.+(cgit.(css|png)|favicon.ico|robots.txt)" = {
         extraConfig = ''
