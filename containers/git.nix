@@ -11,18 +11,10 @@ let
   };
   create-repo = pkgs.writeShellApplication rec {
     name = "create-repo";
-    runtimeInputs = [ pkgs.vim pkgs.git ];
+    runtimeInputs = [ pkgs.git ];
     text = ''
-      file=$(mktemp)
-      cat >"$file" <<EOF
-      name=
-      description=
-      EOF
-
-      vim "$file"
-
-      name=$(grep "^name" "$file" | cut -d "=" -f 2)
-      description=$(grep "^description" "$file" | cut -d "=" -f 2)
+      name=''${1:-}
+      description=''${2:-}
 
       if [ -z "$name" ]; then
         echo "no repo name provided, exiting"
