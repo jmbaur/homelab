@@ -16,34 +16,38 @@ in
     enable = true;
     virtualHosts."_" =
       let
-        index = pkgs.writeText "index.html" ''
+        index = pkgs.runCommandNoCC "index" { } ''
+          mkdir -p $out
+          cat > $out/index.html << EOF
           <h1>These aren’t the droids you’re looking for.</h1>
+          EOF
         '';
       in
       {
         default = true;
         locations."/" = {
-          extraConfig = ''
-            index ${index};
-          '';
+          root = index;
+          index = "index.html";
         };
       };
     virtualHosts."git.jmbaur.com" = {
       locations."~* ^.+(cgit.(css|png)|favicon.ico|robots.txt)" = {
+        root = "${pkgs.cgit}/cgit";
         extraConfig = ''
-          root ${pkgs.cgit}/cgit;
           expires 30d;
         '';
       };
       locations."/" = {
+        fastcgiParams = {
+          CGIT_CONFIG = "${cgitrc}";
+          SCRIPT_FILENAME = "${pkgs.cgit}/cgit/cgit.cgi";
+          PATH_INFO = "$fastcgi_path_info";
+          QUERY_STRING = "$args";
+          HTTP_HOST = "$server_name";
+        };
         extraConfig = ''
           include ${pkgs.nginx}/conf/fastcgi_params;
-          fastcgi_param CGIT_CONFIG ${cgitrc};
-          fastcgi_param SCRIPT_FILENAME ${pkgs.cgit}/cgit/cgit.cgi;
           fastcgi_split_path_info ^(/?)(.+)$;
-          fastcgi_param PATH_INFO $fastcgi_path_info;
-          fastcgi_param QUERY_STRING $args;
-          fastcgi_param HTTP_HOST $server_name;
           fastcgi_pass 192.168.10.21:5678;
         '';
       };
