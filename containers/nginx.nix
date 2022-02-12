@@ -17,7 +17,7 @@ let
   vhostLogging = {
     extraConfig = ''
       error_log syslog:server=unix:/dev/log;
-      access_log syslog:server=unix:/dev/log combined_host;
+      access_log syslog:server=unix:/dev/log combined;
     '';
   };
   mkVhost = settings: settings // vhostSsl // vhostLogging;
