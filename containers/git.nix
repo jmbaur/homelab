@@ -28,8 +28,8 @@ in
     enable = true;
     socketType = "tcp";
     socketAddress = "0.0.0.0:5678";
-    user = services.gitDaemon.user;
-    group = services.gitDaemon.group;
+    user = config.services.gitDaemon.user;
+    group = config.services.gitDaemon.group;
   };
   services.openssh = {
     enable = true;
