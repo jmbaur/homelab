@@ -12,7 +12,6 @@ in
 {
   networking.firewall.allowedTCPPorts = [ 80 ];
   users.users = {
-    # "${config.services.fcgiwrap.user}".extraGroups = [ config.services.gitDaemon.group ];
     git = {
       home = config.services.gitDaemon.basePath;
       createHome = true;
@@ -25,43 +24,12 @@ in
     exportAll = true;
     basePath = "/srv/git";
   };
-  services.fcgiwrap. enable = true;
-  services.nginx = {
+  services.fcgiwrap = {
     enable = true;
-    virtualHosts."_" =
-      let
-        index = pkgs.writeText "index.html" ''
-          <h1>These aren’t the droids you’re looking for.</h1>
-        '';
-      in
-      {
-        default = true;
-        locations."/" = {
-          extraConfig = ''
-            index ${index}
-          '';
-        };
-      };
-    virtualHosts."git.jmbaur.com" = {
-      locations."~* ^.+(cgit.(css|png)|favicon.ico|robots.txt)" = {
-        extraConfig = ''
-          root ${pkgs.cgit}/cgit;
-          expires 30d;
-        '';
-      };
-      locations."/" = {
-        extraConfig = ''
-          include ${pkgs.nginx}/conf/fastcgi_params;
-          fastcgi_param CGIT_CONFIG ${cgitrc};
-          fastcgi_param SCRIPT_FILENAME ${pkgs.cgit}/cgit/cgit.cgi;
-          fastcgi_split_path_info ^(/?)(.+)$;
-          fastcgi_param PATH_INFO $fastcgi_path_info;
-          fastcgi_param QUERY_STRING $args;
-          fastcgi_param HTTP_HOST $server_name;
-          fastcgi_pass unix:${config.services.fcgiwrap.socketAddress};
-        '';
-      };
-    };
+    socketType = "tcp";
+    socketAddress = "0.0.0.0:5678";
+    user = services.gitDaemon.user;
+    group = services.gitDaemon.group;
   };
   services.openssh = {
     enable = true;
