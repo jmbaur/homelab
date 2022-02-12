@@ -44,8 +44,7 @@ in
   networking.firewall.allowedTCPPorts = [ 5678 ];
   system.activationScripts.git-shell-commands.text = ''
     ln -sf ${commands}/bin ${config.users.users.git.home}/git-shell-commands
-    user=${config.services.gitDaemon.user}
-    chown -R $user:$user ${config.users.users.git.home}/git-shell-commands
+    chown -R ${config.services.gitDaemon.user}:${config.users.extraGroups.users.name} ${config.users.users.git.home}/git-shell-commands
   '';
   users.users.git = {
     home = config.services.gitDaemon.basePath;
