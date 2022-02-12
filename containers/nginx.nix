@@ -6,7 +6,7 @@ let
     about-filter=${pkgs.cgit}/lib/cgit/filters/about-formatting.sh
     source-filter=${pkgs.cgit}/lib/cgit/filters/syntax-highlighting.py
     enable-http-clone=1
-    clone-url=https://$HTTP_HOST$SCRIPT_NAME/$CGIT_REPO_URL
+    clone-url=https://$HTTP_HOST$SCRIPT_NAME$CGIT_REPO_URL
     snapshots=tar.gz zip
     remove-suffix=1
     scan-path=/srv/git
