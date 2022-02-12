@@ -25,7 +25,6 @@ let
   mkVhost = settings: settings // vhostSsl // vhostLogging;
 in
 {
-  # TODO(jared): don't open 80
   networking.firewall.allowedTCPPorts = [ 80 443 ];
   services.nginx = {
     enable = true;
@@ -45,7 +44,17 @@ in
           index = "index.html";
         };
       };
+    virtualHosts."cache.jmbaur.com" = mkVhost {
+      serverAliases = [ "cache" ];
+      locations."/".extraConfig = ''
+        proxy_pass http://192.168.10.24:5000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      '';
+    };
     virtualHosts."git.jmbaur.com" = mkVhost {
+      serverAliases = [ "git" ];
       locations."~* ^.+(cgit.(css|png)|favicon.ico|robots.txt)" = {
         root = "${pkgs.cgit}/cgit";
         extraConfig = ''

@@ -121,6 +121,26 @@ in
     };
   };
 
+  containers.nix-serve = {
+    macvlans = lib.singleton "pubwan";
+    autoStart = true;
+    ephemeral = true;
+    bindMounts."/var/lib/nix-serve".hostPath = "/var/lib/nix-serve";
+    config = {
+      imports = [ ../../containers/nix-serve.nix ];
+      networking = {
+        defaultGateway.interface = "mv-pubwan";
+        defaultGateway.address = "192.168.10.1";
+        nameservers = lib.singleton "192.168.10.1";
+        domain = "home.arpa";
+        interfaces.mv-pubwan.ipv4.addresses = [{
+          address = "192.168.10.24";
+          prefixLength = 24;
+        }];
+      };
+    };
+  };
+
   containers.media = {
     macvlans = lib.singleton "publan";
     autoStart = true;
