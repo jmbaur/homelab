@@ -11,8 +11,8 @@ let
   '';
   virtualHostSsl = {
     forceSSL = true;
-    sslCertificate = "/var/lib/nginx/host.cert";
-    sslCertificateKey = "/var/lib/nginx/host.key";
+    sslCertificate = "/var/lib/nginx/jmbaur.com.cert";
+    sslCertificateKey = "/var/lib/nginx/jmbaur.com.key";
   };
   mkVirtualHost = settings: settings // virtualHostSsl;
 in
