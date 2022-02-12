@@ -72,7 +72,7 @@
   services.fwupd.enable = true;
   services.pcscd.enable = false;
 
-  nix.settings.substituters = [ "cache.jmbaur.com" ];
+  nix.settings.substituters = [ "https://cache.jmbaur.com/" ];
   nix.settings.trusted-public-keys = [ "cache.jmbaur.com:Zw4UQwDtZLWHgNrgKiwIyMDWsBVLvtDMg3zcebvgG8c=" ];
   nix.settings.trusted-users = [ "@wheel" ];
   nix.extraOptions = ''
