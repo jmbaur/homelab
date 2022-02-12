@@ -4,6 +4,7 @@ let
     about-filter=${pkgs.cgit}/lib/cgit/filters/about-formatting.sh
     source-filter=${pkgs.cgit}/lib/cgit/filters/syntax-highlighting.py
     snapshots=tar.gz zip
+    clone-url=https://$HTTP_HOST$SCRIPT_NAME/$CGIT_REPO_URL
     # cache-size=1000
     # cache-root=/var/cache/cgit
     remove-suffix=1
