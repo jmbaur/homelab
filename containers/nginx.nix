@@ -9,6 +9,12 @@ let
     remove-suffix=1
     scan-path=/srv/git
   '';
+  virtualHostSsl = {
+    forceSSL = true;
+    sslCertificate = "/var/host.cert";
+    sslCertificateKey = "/var/host.key";
+  };
+  mkVirtualHost = settings: settings // virtualHostSsl;
 in
 {
   # TODO(jared): don't open 80
@@ -24,14 +30,14 @@ in
           EOF
         '';
       in
-      {
+      mkVirtualHost {
         default = true;
         locations."/" = {
           root = index;
           index = "index.html";
         };
       };
-    virtualHosts."git.jmbaur.com" = {
+    virtualHosts."git.jmbaur.com" = mkVirtualHost {
       locations."~* ^.+(cgit.(css|png)|favicon.ico|robots.txt)" = {
         root = "${pkgs.cgit}/cgit";
         extraConfig = ''
