@@ -30,7 +30,11 @@ in
     enable = true;
     virtualHosts."_" = {
       default = true;
-      locations."/" = { extraConfig = "empty_gif"; };
+      locations."/" = {
+        extraConfig = ''
+          empty_gif;
+        '';
+      };
     };
     virtualHosts."git.jmbaur.com" = {
       locations."~* ^.+(cgit.(css|png)|favicon.ico|robots.txt)" = {
