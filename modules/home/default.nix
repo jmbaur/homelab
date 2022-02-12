@@ -153,11 +153,7 @@ with lib;
         prefix = "C-s";
         terminal = "screen-256color";
         shell = "\${SHELL}";
-        plugins = with pkgs.tmuxPlugins; [
-          gruvbox
-          fingers
-          logging
-        ];
+        plugins = with pkgs.tmuxPlugins; [ fingers logging ];
         extraConfig = ''
           set -g renumber-windows on
           set -g set-clipboard on
