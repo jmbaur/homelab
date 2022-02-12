@@ -1,4 +1,15 @@
-{ config, lib, pkgs, ... }: {
+{ config, lib, pkgs, ... }:
+let
+  cgitrc = pkgs.writeText "cgitrc" ''
+    about-filter=${pkgs.cgit}/lib/cgit/filters/about-formatting.sh
+    source-filter=${pkgs.cgit}/lib/cgit/filters/syntax-highlighting.py
+    snapshots=tar.gz zip
+    cache-size=1000
+    remove-suffix=1
+    scan-path=${config.services.gitDaemon.basePath}
+  '';
+in
+{
   # TODO(jared): don't open 80
   networking.firewall.allowedTCPPorts = [ 80 443 ];
   services.nginx = {
