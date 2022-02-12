@@ -11,28 +11,45 @@ let
   };
   create-repo = pkgs.writeShellApplication rec {
     name = "create-repo";
-    runtimeInputs = [ pkgs.git ];
+    runtimeInputs = [ pkgs.vim pkgs.git ];
     text = ''
-      if [ -z "''${1:-}" ]; then
+      file=$(mktemp)
+      cat >"$file" <<EOF
+      name=
+      description=
+      EOF
+
+      vim "$file"
+
+      name=$(grep "^name" "$file" | cut -d "=" -f 2)
+      description=$(grep "^description" "$file" | cut -d "=" -f 2)
+
+      if [ -z "$name" ]; then
         echo "no repo name provided, exiting"
         echo "usage: ${name} <my-repo-name>"
         exit 1
       fi
 
-      repo_name=
-      case "$1" in
+      final_name=
+      case "$name" in
       *.git$)
-        repo_name="$1";;
+        final_name="''${name}";;
       *)
-        repo_name="$1.git";;
+        final_name="''${name}.git";;
       esac
 
-      if test -d "${config.services.gitDaemon.basePath}/''${repo_name}"; then
-        echo "repo $repo_name already exists, exiting"
+      full_path="${config.services.gitDaemon.basePath}/''${final_name}"
+
+      if [ -d "$full_path" ]; then
+        echo "repo $final_name already exists, exiting"
         exit 2
       fi
 
-      git init --bare --initial-branch main "${config.services.gitDaemon.basePath}/''${repo_name}"
+      git init --bare --initial-branch main "$full_path"
+
+      if [ -n "$description" ]; then
+        echo "$description" > "''${full_path}/description"
+      fi
     '';
   };
   commands = pkgs.symlinkJoin {
