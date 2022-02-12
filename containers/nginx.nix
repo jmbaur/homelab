@@ -1,11 +1,13 @@
 { config, lib, pkgs, ... }:
 let
   cgitrc = pkgs.writeText "cgitrc" ''
-    about-filter=${pkgs.cgit}/lib/cgit/filters/about-formatting.sh
-    source-filter=${pkgs.cgit}/lib/cgit/filters/syntax-highlighting.py
-    snapshots=tar.gz zip
     # cache-size=1000
     # cache-root=/var/cache/cgit
+    about-filter=${pkgs.cgit}/lib/cgit/filters/about-formatting.sh
+    source-filter=${pkgs.cgit}/lib/cgit/filters/syntax-highlighting.py
+    enable-http-clone=1
+    clone-url=https://$HTTP_HOST$SCRIPT_NAME/$CGIT_REPO_URL
+    snapshots=tar.gz zip
     remove-suffix=1
     scan-path=/srv/git
   '';
