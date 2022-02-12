@@ -4,7 +4,8 @@ let
     about-filter=${pkgs.cgit}/lib/cgit/filters/about-formatting.sh
     source-filter=${pkgs.cgit}/lib/cgit/filters/syntax-highlighting.py
     snapshots=tar.gz zip
-    cache-size=1000
+    # cache-size=1000
+    # cache-root=/var/cache/cgit
     remove-suffix=1
     scan-path=${config.services.gitDaemon.basePath}
   '';
