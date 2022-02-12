@@ -11,8 +11,8 @@ let
   '';
   virtualHostSsl = {
     forceSSL = true;
-    sslCertificate = "/var/host.cert";
-    sslCertificateKey = "/var/host.key";
+    sslCertificate = "/var/lib/nginx/host.cert";
+    sslCertificateKey = "/var/lib/nginx/host.key";
   };
   mkVirtualHost = settings: settings // virtualHostSsl;
 in

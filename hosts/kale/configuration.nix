@@ -80,6 +80,7 @@ in
     macvlans = lib.singleton "pubwan";
     autoStart = true;
     ephemeral = true;
+    bindMounts."/var/lib/nginx".hostPath = "/var/lib/nginx";
     config = {
       imports = [ ../../containers/nginx.nix ];
       networking = {
