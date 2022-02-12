@@ -39,16 +39,15 @@ let
     name = "git-shell-commands-environment";
     paths = [ create-repo ];
   };
-  git-shell-commands = pkgs.runCommandNoCC "git-shell-commands" { } ''
-    mkdir -p $out
-    ln -s ${commands}/bin $out/git-shell-commands
-  '';
 in
 {
   networking.firewall.allowedTCPPorts = [ 5678 ];
+  system.userActivationScripts.git-shell-commands.text = ''
+    ln -sf ${commands}/bin ~/git-shell-commands
+  '';
   users.users = {
     git = {
-      home = git-shell-commands;
+      home = config.services.gitDaemon.basePath;
       createHome = true;
       shell = "${pkgs.git}/bin/git-shell";
       openssh.authorizedKeys.keyFiles = lib.singleton (import ../data/jmbaur-ssh-keys.nix);
