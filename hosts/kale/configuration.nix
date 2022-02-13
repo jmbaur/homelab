@@ -57,7 +57,12 @@ in
   networking = {
     hostName = "kale";
     domain = "home.arpa";
-    firewall.enable = true;
+    firewall = {
+      enable = true;
+      interfaces.${mgmtIface} = {
+        allowedTCPPorts = config.services.openssh.ports;
+      };
+    };
     nameservers = lib.singleton mgmtGateway;
     defaultGateway.address = mgmtGateway;
     defaultGateway.interface = mgmtIface;
@@ -75,6 +80,9 @@ in
     interfaces.mv-pubwan-host.ipv4.addresses = [{ address = "192.168.10.5"; prefixLength = 24; }];
     interfaces.mv-publan-host.ipv4.addresses = [{ address = "192.168.20.5"; prefixLength = 24; }];
   };
+
+  services.openssh.permitRootLogin = "yes";
+  services.openssh.openFirewall = false;
 
   containers.builder = {
     macvlans = lib.singleton "publan";
@@ -208,14 +216,6 @@ in
     openssh.authorizedKeys.keyFiles = lib.singleton (import ../../data/jmbaur-ssh-keys.nix);
     extraGroups = lib.singleton "libvirtd";
   };
-
-  services.openssh.permitRootLogin = "yes";
-  users.users.root.openssh.authorizedKeys.keys =
-    (import ../../data/asparagus-ssh-keys.nix)
-    ++
-    (import ../../data/beetroot-ssh-keys.nix);
-
-  # services.iperf3.enable = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
