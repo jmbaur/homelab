@@ -35,6 +35,11 @@ in
     "console=ttyS2,115200"
     "console=tty1"
   ];
+  boot.kernel.sysctl = {
+    "net.ipv6.conf.all.accept_ra" = 0;
+    "net.ipv6.conf.all.autoconf" = 0;
+    "net.ipv6.conf.all.use_tempaddr" = 0;
+  };
   boot.initrd.network = {
     enable = true;
     postCommands = ''
