@@ -76,6 +76,25 @@ in
     interfaces.mv-publan-host.ipv4.addresses = [{ address = "192.168.20.5"; prefixLength = 24; }];
   };
 
+  containers.builder = {
+    macvlans = lib.singleton "publan";
+    autoStart = true;
+    ephemeral = true;
+    config = {
+      imports = [ ../../containers/builder.nix ];
+      networking = {
+        defaultGateway.interface = "mv-publan";
+        defaultGateway.address = "192.168.20.1";
+        nameservers = lib.singleton "192.168.20.1";
+        domain = "home.arpa";
+        interfaces.mv-publan.ipv4.addresses = [{
+          address = "192.168.20.23";
+          prefixLength = 24;
+        }];
+      };
+    };
+  };
+
   containers.nginx = {
     macvlans = lib.singleton "pubwan";
     autoStart = true;
