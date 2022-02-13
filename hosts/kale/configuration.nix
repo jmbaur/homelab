@@ -60,7 +60,9 @@ in
     firewall = {
       enable = true;
       interfaces.${mgmtIface} = {
-        allowedTCPPorts = config.services.openssh.ports;
+        allowedTCPPorts = config.services.openssh.ports ++ [
+          config.services.prometheus.exporters.node.port
+        ];
       };
     };
     nameservers = lib.singleton mgmtGateway;
@@ -86,13 +88,22 @@ in
     openFirewall = false;
   };
 
+  services.prometheus.exporters.node = {
+    enable = true;
+    openFirewall = false;
+  };
+
   containers.nginx = {
-    macvlans = lib.singleton "pubwan";
+    macvlans = [ "pubwan" "publan" ];
     autoStart = true;
     ephemeral = true;
     bindMounts."/var/lib/nginx".hostPath = "/var/lib/nginx";
-    config = {
+    config = { config, ... }: {
       imports = [ ../../containers/nginx.nix ];
+      services.prometheus.exporters.nginx = {
+        enable = true;
+        openFirewall = false;
+      };
       networking = {
         defaultGateway.interface = "mv-pubwan";
         defaultGateway.address = "192.168.10.1";
@@ -100,6 +111,13 @@ in
         domain = "home.arpa";
         interfaces.mv-pubwan.ipv4.addresses = [{
           address = "192.168.10.11";
+          prefixLength = 24;
+        }];
+        firewall.interfaces.mv-publan.allowedTCPPorts = [
+          config.services.prometheus.exporters.nginx.port
+        ];
+        interfaces.mv-publan.ipv4.addresses = [{
+          address = "192.168.20.11";
           prefixLength = 24;
         }];
       };
