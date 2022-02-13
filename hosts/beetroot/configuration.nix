@@ -7,7 +7,6 @@
   hardware.cpu.intel.updateMicrocode = true;
   hardware.enableRedistributableFirmware = true;
 
-  boot.kernelParams = [ "quiet" ];
   boot.kernelPackages = pkgs.linuxPackages_5_15;
   boot.binfmt.emulatedSystems = [
     "aarch64-linux"
