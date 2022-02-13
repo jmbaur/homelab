@@ -39,7 +39,7 @@ with lib;
     nameservers = singleton "192.168.40.1";
     defaultGateway.address = "192.168.40.1";
     defaultGateway.interface = "eth0";
-    wireless.enable = false;
+    wireless.enable = true;
     wireless.interfaces = singleton "wlan0";
     interfaces.wlan0.useDHCP = true;
     interfaces.eth0 = {
