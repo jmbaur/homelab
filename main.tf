@@ -101,6 +101,18 @@ resource "mikrotik_dns_record" "git_dns_record" {
   ttl = 300
 }
 
+resource "mikrotik_dns_record" "www_dns_record" {
+  name = "www.home.arpa"
+  address = "192.168.10.11"
+  ttl = 300
+}
+
+resource "mikrotik_dns_record" "cache_dns_record" {
+  name = "cache.home.arpa"
+  address = "192.168.10.24"
+  ttl = 300
+}
+
 resource "mikrotik_dns_record" "rhubarb_dns_record" {
   name = "rhubarb.home.arpa"
   address = "192.168.40.50"
@@ -116,5 +128,11 @@ resource "mikrotik_dns_record" "builder_dns_record" {
 resource "mikrotik_dns_record" "media_dns_record" {
   name = "media.home.arpa"
   address = "192.168.20.29"
+  ttl = 300
+}
+
+resource "mikrotik_dns_record" "minecraft_dns_record" {
+  name = "minecraft.home.arpa"
+  address = "192.168.20.32"
   ttl = 300
 }
