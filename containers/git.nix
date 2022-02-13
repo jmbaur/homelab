@@ -59,6 +59,7 @@ in
     home = config.services.gitDaemon.basePath;
     createHome = true;
     shell = "${pkgs.git}/bin/git-shell";
+    description = "Jared Baur";
     openssh.authorizedKeys.keyFiles = lib.singleton (import ../data/jmbaur-ssh-keys.nix);
   };
   services.gitDaemon = {
@@ -77,4 +78,5 @@ in
     enable = true;
     passwordAuthentication = false;
   };
+  services.fail2ban.enable = true;
 }
