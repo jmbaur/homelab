@@ -88,6 +88,8 @@ in
     macvlans = lib.singleton "publan";
     autoStart = true;
     ephemeral = true;
+    bindMounts."/etc/ssh/ssh_host_rsa_key".hostPath = "/etc/ssh/ssh_host_rsa_key";
+    bindMounts."/etc/ssh/ssh_host_ed25519_key".hostPath = "/etc/ssh/ssh_host_ed25519_key";
     config = {
       imports = [ ../../containers/builder.nix ];
       networking = {
