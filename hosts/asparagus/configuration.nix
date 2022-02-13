@@ -17,6 +17,10 @@ with lib;
   ];
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.binfmt.emulatedSystems = [
+    "aarch64-linux"
+    "riscv64-linux"
+  ];
   boot.initrd.network = {
     enable = true;
     postCommands = ''
