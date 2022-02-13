@@ -108,7 +108,9 @@ in
       services.prometheus.exporters.nginx = {
         enable = true;
         openFirewall = false;
+        insecure = true;
       };
+      services.nginx.statusPage = true;
       networking = {
         defaultGateway.interface = "mv-pubwan";
         defaultGateway.address = "192.168.10.1";
