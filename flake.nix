@@ -53,6 +53,7 @@
           promtop.overlay
           self.overlay
           (final: prev: { zig = nixpkgs-unstable.legacyPackages.${prev.system}.zig; })
+          (final: prev: { zls = nixpkgs-unstable.legacyPackages.${prev.system}.zls; })
         ];
       };
 
