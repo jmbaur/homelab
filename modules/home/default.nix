@@ -412,26 +412,6 @@ with lib;
         defaultTimeout = 10000;
       };
 
-      # systemd.user.services.swayidle = mkIf desktopEnabled {
-      #   Unit = {
-      #     Description = "Idle manager for Wayland";
-      #     PartOf = [ "graphical-session.target" ];
-      #   };
-      #   Install = {
-      #     WantedBy = [ "sway-session.target" ];
-      #   };
-      #   Service = {
-      #     Type = "simple";
-      #     ExecStart = ''
-      #       ${pkgs.swayidle}/bin/swayidle -w \
-      #         timeout 900 '${pkgs.swaylock}/bin/swaylock -f -c 282828' \
-      #         timeout 1200 '${pkgs.sway}/bin/swaymsg "output * dpms off"' \
-      #         resume '${pkgs.sway}/bin/swaymsg "output * dpms on"' \
-      #         before-sleep '${pkgs.swaylock}/bin/swaylock -f -c 282828'
-      #     '';
-      #   };
-      # };
-
       services.swayidle = mkIf desktopEnabled {
         enable = true;
         timeouts = [
