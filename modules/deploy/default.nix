@@ -9,7 +9,7 @@ with lib;
   };
 
   config = mkIf cfg.enable {
-    nix.trustedUsers = [ "deploy" ];
+    nix.settings.trusted-users = [ "deploy" ];
     security.sudo = {
       enable = mkForce true;
       wheelNeedsPassword = mkForce false;

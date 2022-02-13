@@ -7,11 +7,10 @@
     git-get.url = "github:jmbaur/git-get";
     gobar.url = "github:jmbaur/gobar";
     gosee.url = "github:jmbaur/gosee";
-    home-manager.url = "github:nix-community/home-manager/release-21.11";
+    home-manager.url = "github:nix-community/home-manager";
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
-    nixpkgs.url = "nixpkgs/nixos-21.11";
-    nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
+    nixpkgs.url = "nixpkgs/master";
     promtop.url = "github:jmbaur/promtop";
   };
 
@@ -26,7 +25,6 @@
     , neovim-nightly-overlay
     , nixos-hardware
     , nixpkgs
-    , nixpkgs-unstable
     , promtop
     }@inputs: flake-utils.lib.eachDefaultSystem
       (system:
@@ -52,8 +50,6 @@
           neovim-nightly-overlay.overlay
           promtop.overlay
           self.overlay
-          (final: prev: { zig = nixpkgs-unstable.legacyPackages.${prev.system}.zig; })
-          (final: prev: { zls = nixpkgs-unstable.legacyPackages.${prev.system}.zls; })
         ];
       };
 
