@@ -81,28 +81,9 @@ in
     interfaces.mv-publan-host.ipv4.addresses = [{ address = "192.168.20.5"; prefixLength = 24; }];
   };
 
-  services.openssh.permitRootLogin = "yes";
-  services.openssh.openFirewall = false;
-
-  containers.builder = {
-    macvlans = lib.singleton "publan";
-    autoStart = true;
-    ephemeral = true;
-    bindMounts."/etc/ssh/ssh_host_rsa_key".hostPath = "/etc/ssh/ssh_host_rsa_key";
-    bindMounts."/etc/ssh/ssh_host_ed25519_key".hostPath = "/etc/ssh/ssh_host_ed25519_key";
-    config = {
-      imports = [ ../../containers/builder.nix ];
-      networking = {
-        defaultGateway.interface = "mv-publan";
-        defaultGateway.address = "192.168.20.1";
-        nameservers = lib.singleton "192.168.20.1";
-        domain = "home.arpa";
-        interfaces.mv-publan.ipv4.addresses = [{
-          address = "192.168.20.23";
-          prefixLength = 24;
-        }];
-      };
-    };
+  services.openssh = {
+    permitRootLogin = "yes";
+    openFirewall = false;
   };
 
   containers.nginx = {
@@ -170,6 +151,25 @@ in
     };
   };
 
+  containers.builder = {
+    macvlans = lib.singleton "publan";
+    autoStart = true;
+    ephemeral = true;
+    config = {
+      imports = [ ../../containers/builder.nix ];
+      networking = {
+        defaultGateway.interface = "mv-publan";
+        defaultGateway.address = "192.168.20.1";
+        nameservers = lib.singleton "192.168.20.1";
+        domain = "home.arpa";
+        interfaces.mv-publan.ipv4.addresses = [{
+          address = "192.168.20.23";
+          prefixLength = 24;
+        }];
+      };
+    };
+  };
+
   containers.media = {
     macvlans = lib.singleton "publan";
     autoStart = true;
@@ -216,7 +216,7 @@ in
   users.users.jared = {
     isNormalUser = true;
     openssh.authorizedKeys.keyFiles = lib.singleton (import ../../data/jmbaur-ssh-keys.nix);
-    extraGroups = lib.singleton "libvirtd";
+    extraGroups = [ "libvirtd" ];
   };
 
   # This value determines the NixOS release from which the default
