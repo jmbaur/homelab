@@ -1,5 +1,7 @@
 { config, lib, pkgs, ... }:
-let cfg = config.custom.common; in
+let
+  cfg = config.custom.common;
+in
 with lib;
 {
   options = {
@@ -7,19 +9,16 @@ with lib;
   };
 
   config = mkIf cfg.enable {
-    boot = {
-      # tmpOnTmpfs = mkDefault true;
-      cleanTmpDir = mkDefault true;
-    };
+    networking.useDHCP = mkForce false;
 
-    nix.gc.automatic = mkDefault true;
-    nix.gc.dates = mkDefault "weekly";
     nix.package = pkgs.nixUnstable;
     nix.extraOptions = ''
       experimental-features = nix-command flakes
     '';
+    boot.cleanTmpDir = mkDefault true;
 
-    networking.useDHCP = mkForce false;
+    nix.gc.automatic = mkDefault true;
+    nix.gc.dates = mkDefault "weekly";
 
     i18n.defaultLocale = "en_US.UTF-8";
     services.xserver.layout = "us";

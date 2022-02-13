@@ -1,4 +1,4 @@
-{ overlays }: {
+{ overlays ? [ ] }: {
   imports = [
     ./common
     ./deploy
