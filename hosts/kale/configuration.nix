@@ -239,7 +239,7 @@ in
   users.users.jared = {
     isNormalUser = true;
     openssh.authorizedKeys.keyFiles = lib.singleton (import ../../data/jmbaur-ssh-keys.nix);
-    extraGroups = [ "libvirtd" ];
+    extraGroups = [ "wheel" "libvirtd" ];
   };
 
   # This value determines the NixOS release from which the default
