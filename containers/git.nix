@@ -59,7 +59,7 @@ in
     home = config.services.gitDaemon.basePath;
     createHome = true;
     shell = "${pkgs.git}/bin/git-shell";
-    description = "Jared Baur";
+    description = lib.mkForce "Jared Baur";
     openssh.authorizedKeys.keyFiles = lib.singleton (import ../data/jmbaur-ssh-keys.nix);
   };
   services.gitDaemon = {
