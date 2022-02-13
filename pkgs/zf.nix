@@ -1,6 +1,6 @@
 { stdenvNoCC
 , fetchFromGitHub
-, zig
+, zigUnstable
 }:
 stdenvNoCC.mkDerivation rec {
   pname = "zf";
@@ -15,7 +15,6 @@ stdenvNoCC.mkDerivation rec {
     export HOME=$TMPDIR
   '';
   installPhase = ''
-    ${zig}/bin/zig version
-    ${zig}/bin/zig build --prefix $out install
+    ${zigUnstable}/bin/zig build --prefix $out install
   '';
 }
