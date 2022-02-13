@@ -5,8 +5,8 @@
   '';
   services.openssh.enable = true;
   services.openssh.passwordAuthentication = false;
-  users.users.root.openssh.authorizedKeys.keys = [
+  users.users.root.openssh.authorizedKeys.keys =
     (import ../data/asparagus-ssh-keys.nix)
-    (import ../data/beetroot-ssh-keys.nix)
-  ];
+    ++
+    (import ../data/beetroot-ssh-keys.nix);
 }
