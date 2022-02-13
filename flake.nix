@@ -11,8 +11,8 @@
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
     nixpkgs.url = "nixpkgs/nixos-21.11";
+    nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
     promtop.url = "github:jmbaur/promtop";
-    zig.url = "github:roarkanize/zig-overlay";
   };
 
   outputs =
@@ -26,8 +26,8 @@
     , neovim-nightly-overlay
     , nixos-hardware
     , nixpkgs
+    , nixpkgs-unstable
     , promtop
-    , zig
     }@inputs: flake-utils.lib.eachDefaultSystem
       (system:
       let pkgs = nixpkgs.legacyPackages.${system};
@@ -52,7 +52,7 @@
           neovim-nightly-overlay.overlay
           promtop.overlay
           self.overlay
-          (final: prev: { zigUnstable = zig.packages.${prev.system}.master.latest; })
+          (final: prev: { zig = nixpkgs.legacyPackages.${prev.system}.zig; })
         ];
       };
 
