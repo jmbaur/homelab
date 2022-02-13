@@ -17,10 +17,8 @@ with lib;
     nix.extraOptions = ''
       experimental-features = nix-command flakes
     '';
-    nix.settings = {
-      substituters = [ "https://cache.jmbaur.com/" ];
-      trusted-public-keys = [ "cache.jmbaur.com:Zw4UQwDtZLWHgNrgKiwIyMDWsBVLvtDMg3zcebvgG8c=" ];
-    };
+    nix.binaryCaches = [ "https://cache.jmbaur.com/" ];
+    nix.binaryCachePublicKeys = [ "cache.jmbaur.com:Zw4UQwDtZLWHgNrgKiwIyMDWsBVLvtDMg3zcebvgG8c=" ];
 
     nix.gc.automatic = mkDefault true;
     nix.gc.dates = mkDefault "weekly";

@@ -288,7 +288,7 @@ with lib;
 
       programs.chromium = mkIf desktopEnabled {
         enable = true;
-        commandLineArgs = [ "--ozone-platform-hint=auto" ];
+        # commandLineArgs = [ "--ozone-platform-hint=auto" ];
         extensions = [
           { id = "dbepggeogbaibhgnhhndojpepiihcmeb"; } # vimium
           { id = "fmaeeiocbalinknpdkjjfogehkdcbkcd"; } # zoom-redirector
@@ -324,7 +324,7 @@ with lib;
         theme.package = pkgs.gnome_themes_standard;
         theme.name = "Adwaita-dark";
         gtk3.extraConfig = { gtk-key-theme-name = "Emacs"; };
-        gtk4.extraConfig = gtk3.extraConfig;
+        # gtk4.extraConfig = gtk3.extraConfig;
       };
 
       # home.sessionVariables.NIXOS_OZONE_WL = "1";
@@ -412,30 +412,50 @@ with lib;
         defaultTimeout = 10000;
       };
 
-      services.swayidle = mkIf desktopEnabled {
-        enable = true;
-        timeouts = [
-          {
-            timeout = 900;
-            command = "${pkgs.swaylock}/bin/swaylock -c 282828";
-          }
-          {
-            timeout = 905;
-            command = "${pkgs.sway}/bin/swaymsg \"output * dpms off\"";
-            resumeCommand = "${pkgs.sway}/bin/swaymsg \"output * dpms on\"";
-          }
-        ];
-        events = [
-          {
-            event = "before-sleep";
-            command = "${pkgs.swaylock}/bin/swaylock -c 282828";
-          }
-          {
-            event = "lock";
-            command = "${pkgs.swaylock}/bin/swaylock -c 282828";
-          }
-        ];
+      systemd.user.services.swayidle = mkIf desktopEnabled {
+        Unit = {
+          Description = "Idle manager for Wayland";
+          PartOf = [ "graphical-session.target" ];
+        };
+        Install = {
+          WantedBy = [ "sway-session.target" ];
+        };
+        Service = {
+          Type = "simple";
+          ExecStart = ''
+            ${pkgs.swayidle}/bin/swayidle -w \
+              timeout 900 '${pkgs.swaylock}/bin/swaylock -f -c 282828' \
+              timeout 1200 '${pkgs.sway}/bin/swaymsg "output * dpms off"' \
+              resume '${pkgs.sway}/bin/swaymsg "output * dpms on"' \
+              before-sleep '${pkgs.swaylock}/bin/swaylock -f -c 282828'
+          '';
+        };
       };
+
+      # services.swayidle = mkIf desktopEnabled {
+      #   enable = true;
+      #   timeouts = [
+      #     {
+      #       timeout = 900;
+      #       command = "${pkgs.swaylock}/bin/swaylock -c 282828";
+      #     }
+      #     {
+      #       timeout = 905;
+      #       command = "${pkgs.sway}/bin/swaymsg \"output * dpms off\"";
+      #       resumeCommand = "${pkgs.sway}/bin/swaymsg \"output * dpms on\"";
+      #     }
+      #   ];
+      #   events = [
+      #     {
+      #       event = "before-sleep";
+      #       command = "${pkgs.swaylock}/bin/swaylock -c 282828";
+      #     }
+      #     {
+      #       event = "lock";
+      #       command = "${pkgs.swaylock}/bin/swaylock -c 282828";
+      #     }
+      #   ];
+      # };
 
       services.gammastep = mkIf desktopEnabled {
         enable = true;

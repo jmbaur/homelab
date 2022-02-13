@@ -7,10 +7,10 @@
     git-get.url = "github:jmbaur/git-get";
     gobar.url = "github:jmbaur/gobar";
     gosee.url = "github:jmbaur/gosee";
-    home-manager.url = "github:nix-community/home-manager";
+    home-manager.url = "github:nix-community/home-manager/release-21.11";
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
-    nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixpkgs.url = "nixpkgs/nixos-21.11";
     promtop.url = "github:jmbaur/promtop";
   };
 
