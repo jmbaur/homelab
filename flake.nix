@@ -52,7 +52,7 @@
           neovim-nightly-overlay.overlay
           promtop.overlay
           self.overlay
-          (final: prev: { zig = nixpkgs.legacyPackages.${prev.system}.zig; })
+          (final: prev: { zig = nixpkgs-unstable.legacyPackages.${prev.system}.zig; })
         ];
       };
 
