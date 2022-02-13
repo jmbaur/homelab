@@ -72,13 +72,14 @@
   services.fwupd.enable = true;
   services.pcscd.enable = false;
 
-  nix.settings.substituters = [ "https://cache.jmbaur.com/" ];
-  nix.settings.trusted-public-keys = [ "cache.jmbaur.com:Zw4UQwDtZLWHgNrgKiwIyMDWsBVLvtDMg3zcebvgG8c=" ];
-  nix.settings.trusted-users = [ "@wheel" ];
+  # for direnv
   nix.extraOptions = ''
     keep-outputs = true
     keep-derivations = true
   '';
+  # for distributed builds
+  nix.settings.trusted-users = [ "@wheel" ];
+  nix.distributedBuilds = true;
   nix.buildMachines = [
     {
       hostName = "builder";
@@ -89,7 +90,6 @@
       mandatoryFeatures = [ ];
     }
   ];
-  nix.distributedBuilds = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

@@ -9,13 +9,18 @@ with lib;
   };
 
   config = mkIf cfg.enable {
+    boot.cleanTmpDir = mkDefault true;
+
     networking.useDHCP = mkForce false;
 
     nix.package = pkgs.nixUnstable;
     nix.extraOptions = ''
       experimental-features = nix-command flakes
     '';
-    boot.cleanTmpDir = mkDefault true;
+    nix.settings = {
+      substituters = [ "https://cache.jmbaur.com/" ];
+      trusted-public-keys = [ "cache.jmbaur.com:Zw4UQwDtZLWHgNrgKiwIyMDWsBVLvtDMg3zcebvgG8c=" ];
+    };
 
     nix.gc.automatic = mkDefault true;
     nix.gc.dates = mkDefault "weekly";
