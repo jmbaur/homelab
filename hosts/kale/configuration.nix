@@ -36,12 +36,18 @@ in
     "console=tty1"
   ];
   boot.kernel.sysctl = {
-    "net.ipv6.conf.pubwan.accept_ra" = 0;
-    "net.ipv6.conf.pubwan.autoconf" = 0;
-    "net.ipv6.conf.pubwan.use_tempaddr" = 0;
-    "net.ipv6.conf.publan.accept_ra" = 0;
-    "net.ipv6.conf.publan.autoconf" = 0;
-    "net.ipv6.conf.publan.use_tempaddr" = 0;
+    "net.ipv6.conf.enp5s0.accept_ra" = lib.mkForce 0;
+    "net.ipv6.conf.enp5s0.autoconf" = lib.mkForce 0;
+    "net.ipv6.conf.enp5s0.use_tempaddr" = lib.mkForce 0;
+    "net.ipv6.conf.enp3s0.accept_ra" = lib.mkForce 0;
+    "net.ipv6.conf.enp3s0.autoconf" = lib.mkForce 0;
+    "net.ipv6.conf.enp3s0.use_tempaddr" = lib.mkForce 0;
+    "net.ipv6.conf.pubwan.accept_ra" = lib.mkForce 0;
+    "net.ipv6.conf.pubwan.autoconf" = lib.mkForce 0;
+    "net.ipv6.conf.pubwan.use_tempaddr" = lib.mkForce 0;
+    "net.ipv6.conf.publan.accept_ra" = lib.mkForce 0;
+    "net.ipv6.conf.publan.autoconf" = lib.mkForce 0;
+    "net.ipv6.conf.publan.use_tempaddr" = lib.mkForce 0;
   };
   boot.initrd.network = {
     enable = true;
