@@ -36,9 +36,6 @@ in
     "console=tty1"
   ];
   boot.kernel.sysctl = {
-    "net.ipv6.conf.enp5s0.accept_ra" = 0;
-    "net.ipv6.conf.enp5s0.autoconf" = 0;
-    "net.ipv6.conf.enp5s0.use_tempaddr" = 0;
     "net.ipv6.conf.pubwan.accept_ra" = 0;
     "net.ipv6.conf.pubwan.autoconf" = 0;
     "net.ipv6.conf.pubwan.use_tempaddr" = 0;
