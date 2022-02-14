@@ -13,6 +13,8 @@ with lib;
 
     networking.useDHCP = mkForce false;
 
+    security.pki.certificateFiles = lib.singleton ../../data/jmbaur.com.cert;
+
     nix.package = pkgs.nixUnstable;
     nix.extraOptions = ''
       experimental-features = nix-command flakes

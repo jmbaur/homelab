@@ -114,7 +114,6 @@ in
         enable = true;
         openFirewall = false;
       };
-      security.pki.certificateFiles = lib.singleton ../../data/jmbaur.com.cert;
       services.nginx.statusPage = true;
       networking = {
         useHostResolvConf = false;
