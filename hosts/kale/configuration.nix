@@ -101,43 +101,43 @@ in
   services.prometheus.exporters.node = {
     enable = true;
     openFirewall = false;
+    enabledCollectors = [ "systemd" ];
   };
 
   containers.www = {
-    macvlans = [ "pubwan" "publan" ];
+    macvlans = [ "pubwan" ];
     autoStart = true;
     ephemeral = true;
     bindMounts."/var/lib/nginx".hostPath = "/var/lib/nginx";
+    bindMounts."/srv/git".hostPath = "/fast/git";
+    bindMounts."/var/lib/nix-serve".hostPath = "/var/lib/nix-serve";
     config = { config, ... }: {
-      imports = [ ../../containers/nginx.nix ];
-      services.prometheus.exporters.nginx = {
-        enable = true;
-        openFirewall = false;
-      };
+      imports = [ ../../containers/www.nix ];
+      # services.prometheus.exporters.nginx = {
+      #   enable = true;
+      #   openFirewall = false;
+      # };
       services.nginx.statusPage = true;
       networking = {
         useHostResolvConf = false;
+        defaultGateway.address = "192.168.10.1";
+        defaultGateway.interface = "mv-pubwan";
         nameservers = lib.singleton "192.168.10.1";
         domain = "home.arpa";
         interfaces.mv-pubwan.ipv4.addresses = [{
           address = "192.168.10.11";
           prefixLength = 24;
         }];
-        interfaces.mv-pubwan.ipv4.routes = [{
-          address = "192.168.10.0";
-          prefixLength = 24;
-          via = "192.168.10.1";
+        interfaces.mv-pubwan.ipv6.addresses = [{
+          address = "2001:470:f001:10::11";
+          prefixLength = 64;
         }];
-        interfaces.mv-publan.useDHCP = true;
-        firewall.interfaces.mv-publan.allowedTCPPorts = [
-          config.services.prometheus.exporters.nginx.port
-        ];
       };
     };
   };
 
   containers.git = {
-    macvlans = [ "pubwan" "publan" ];
+    macvlans = [ "publan" ];
     autoStart = true;
     ephemeral = true;
     bindMounts."/srv/git" = {
@@ -148,36 +148,25 @@ in
     bindMounts."/etc/ssh/ssh_host_ed25519_key".hostPath = "/etc/ssh/ssh_host_ed25519_key";
     config = { config, ... }: {
       imports = [ ../../containers/git.nix ];
-      services.openssh.openFirewall = lib.mkForce false;
       networking = {
         useHostResolvConf = false;
-        nameservers = lib.singleton "192.168.10.1";
-        domain = "home.arpa";
-        firewall.interfaces.mv-publan.allowedTCPPorts = config.services.openssh.ports;
-        interfaces.mv-pubwan.ipv4.addresses = [{
-          address = "192.168.10.21";
-          prefixLength = 24;
-        }];
         interfaces.mv-publan.useDHCP = true;
       };
     };
   };
 
-  containers.cache = {
-    macvlans = [ "pubwan" "publan" ];
+  containers.grafana = {
+    macvlans = [ "publan" ];
     autoStart = true;
     ephemeral = true;
-    bindMounts."/var/lib/nix-serve".hostPath = "/var/lib/nix-serve";
-    config = {
-      imports = [ ../../containers/nix-serve.nix ];
+    bindMounts."/var/lib/grafana" = {
+      hostPath = "/var/lib/grafana";
+      isReadOnly = false;
+    };
+    config = { config, ... }: {
+      imports = [ ../../containers/grafana.nix ];
       networking = {
         useHostResolvConf = false;
-        nameservers = lib.singleton "192.168.10.1";
-        domain = "home.arpa";
-        interfaces.mv-pubwan.ipv4.addresses = [{
-          address = "192.168.10.24";
-          prefixLength = 24;
-        }];
         interfaces.mv-publan.useDHCP = true;
       };
     };

@@ -50,7 +50,6 @@ let
   };
 in
 {
-  networking.firewall.allowedTCPPorts = [ 5678 ];
   system.activationScripts.git-shell-commands.text = ''
     ln -sfT ${commands}/bin ${config.users.users.git.home}/git-shell-commands
     chown -R ${config.services.gitDaemon.user}:${config.users.extraGroups.users.name} ${config.users.users.git.home}/git-shell-commands
@@ -66,13 +65,6 @@ in
     enable = true;
     exportAll = true;
     basePath = "/srv/git";
-  };
-  services.fcgiwrap = {
-    enable = true;
-    socketType = "tcp";
-    socketAddress = "0.0.0.0:5678";
-    user = config.services.gitDaemon.user;
-    group = config.services.gitDaemon.group;
   };
   services.openssh = {
     enable = true;

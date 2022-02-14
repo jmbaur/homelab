@@ -26,6 +26,12 @@ let
 in
 {
   networking.firewall.allowedTCPPorts = [ 80 443 ];
+  services.fcgiwrap.enable = true;
+  services.nix-serve = {
+    enable = true;
+    openFirewall = false;
+    secretKeyFile = "/var/lib/nix-serve/cache-priv-key.pem";
+  };
   services.nginx = {
     enable = true;
     virtualHosts."_" =
@@ -47,7 +53,7 @@ in
     virtualHosts."cache.jmbaur.com" = mkVhost {
       serverAliases = [ "cache" ];
       locations."/".extraConfig = ''
-        proxy_pass http://192.168.10.24:5000;
+        proxy_pass http://localhost:${toString config.services.nix-serve.port};
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -72,7 +78,7 @@ in
         extraConfig = ''
           include ${pkgs.nginx}/conf/fastcgi_params;
           fastcgi_split_path_info ^(/?)(.+)$;
-          fastcgi_pass 192.168.10.21:5678;
+          fastcgi_pass unix:${config.services.fcgiwrap.socketAddress};
         '';
       };
     };
