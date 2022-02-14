@@ -97,19 +97,19 @@ resource "mikrotik_dns_record" "cap_dns_record" {
 
 resource "mikrotik_dns_record" "git_dns_record" {
   name = "git.home.arpa"
-  address = "192.168.10.21"
+  address = "192.168.20.21"
   ttl = 300
 }
 
 resource "mikrotik_dns_record" "www_dns_record" {
   name = "www.home.arpa"
-  address = "192.168.10.11"
+  address = "192.168.20.11"
   ttl = 300
 }
 
 resource "mikrotik_dns_record" "cache_dns_record" {
   name = "cache.home.arpa"
-  address = "192.168.10.24"
+  address = "192.168.20.24"
   ttl = 300
 }
 

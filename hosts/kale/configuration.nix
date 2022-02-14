@@ -132,7 +132,7 @@ in
   };
 
   containers.git = {
-    macvlans = lib.singleton "pubwan";
+    macvlans = [ "pubwan" "publan" ];
     autoStart = true;
     ephemeral = true;
     bindMounts."/srv/git" = {
@@ -143,13 +143,19 @@ in
     bindMounts."/etc/ssh/ssh_host_ed25519_key".hostPath = "/etc/ssh/ssh_host_ed25519_key";
     config = {
       imports = [ ../../containers/git.nix ];
+      services.openssh.openFirewall = lib.mkForce false;
       networking = {
         defaultGateway.interface = "mv-pubwan";
         defaultGateway.address = "192.168.10.1";
         nameservers = lib.singleton "192.168.10.1";
         domain = "home.arpa";
+        firewall.interfaces.mv-publan.allowedTCPPorts = [ 22 ];
         interfaces.mv-pubwan.ipv4.addresses = [{
           address = "192.168.10.21";
+          prefixLength = 24;
+        }];
+        interfaces.mv-publan.ipv4.addresses = [{
+          address = "192.168.20.21";
           prefixLength = 24;
         }];
       };
@@ -157,7 +163,7 @@ in
   };
 
   containers.nix-serve = {
-    macvlans = lib.singleton "pubwan";
+    macvlans = [ "pubwan" "publan" ];
     autoStart = true;
     ephemeral = true;
     bindMounts."/var/lib/nix-serve".hostPath = "/var/lib/nix-serve";
@@ -170,6 +176,10 @@ in
         domain = "home.arpa";
         interfaces.mv-pubwan.ipv4.addresses = [{
           address = "192.168.10.24";
+          prefixLength = 24;
+        }];
+        interfaces.mv-pubwan.ipv4.addresses = [{
+          address = "192.168.20.24";
           prefixLength = 24;
         }];
       };
