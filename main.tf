@@ -47,6 +47,12 @@ resource "mikrotik_ip_address" "guest_ip" {
   interface = "guest"
 }
 
+resource "mikrotik_pool" "publan_pool" {
+  name    = "publan_pool"
+  ranges  = "192.168.20.100-192.168.20.200"
+  comment = "DHCP pool for the PubLan LAN"
+}
+
 resource "mikrotik_pool" "trusted_pool" {
   name    = "trusted_pool"
   ranges  = "192.168.30.100-192.168.30.200"
