@@ -117,18 +117,17 @@ in
       security.pki.certificateFiles = lib.singleton ../../data/jmbaur.com.cert;
       services.nginx.statusPage = true;
       networking = {
-        defaultGateway.interface = "mv-pubwan";
-        defaultGateway.address = "192.168.10.1";
+        useHostResolvConf = false;
         nameservers = lib.singleton "192.168.10.1";
         domain = "home.arpa";
         interfaces.mv-pubwan.ipv4.addresses = [{
           address = "192.168.10.11";
           prefixLength = 24;
         }];
+        interfaces.mv-publan.useDHCP = true;
         firewall.interfaces.mv-publan.allowedTCPPorts = [
           config.services.prometheus.exporters.nginx.port
         ];
-        interfaces.mv-publan.useDHCP = true;
       };
     };
   };
@@ -143,15 +142,14 @@ in
     };
     bindMounts."/etc/ssh/ssh_host_rsa_key".hostPath = "/etc/ssh/ssh_host_rsa_key";
     bindMounts."/etc/ssh/ssh_host_ed25519_key".hostPath = "/etc/ssh/ssh_host_ed25519_key";
-    config = {
+    config = { config, ... }: {
       imports = [ ../../containers/git.nix ];
       services.openssh.openFirewall = lib.mkForce false;
       networking = {
-        defaultGateway.interface = "mv-pubwan";
-        defaultGateway.address = "192.168.10.1";
+        useHostResolvConf = false;
         nameservers = lib.singleton "192.168.10.1";
         domain = "home.arpa";
-        firewall.interfaces.mv-publan.allowedTCPPorts = [ 22 ];
+        firewall.interfaces.mv-publan.allowedTCPPorts = config.services.openssh.ports;
         interfaces.mv-pubwan.ipv4.addresses = [{
           address = "192.168.10.21";
           prefixLength = 24;
@@ -169,8 +167,7 @@ in
     config = {
       imports = [ ../../containers/nix-serve.nix ];
       networking = {
-        defaultGateway.interface = "mv-pubwan";
-        defaultGateway.address = "192.168.10.1";
+        useHostResolvConf = false;
         nameservers = lib.singleton "192.168.10.1";
         domain = "home.arpa";
         interfaces.mv-pubwan.ipv4.addresses = [{
@@ -189,10 +186,7 @@ in
     config = {
       imports = [ ../../containers/builder.nix ];
       networking = {
-        defaultGateway.interface = "mv-publan";
-        defaultGateway.address = "192.168.20.1";
-        nameservers = lib.singleton "192.168.20.1";
-        domain = "home.arpa";
+        useHostResolvConf = false;
         interfaces.mv-publan.useDHCP = true;
       };
     };
@@ -206,10 +200,7 @@ in
     config = {
       imports = [ ../../containers/media.nix ];
       networking = {
-        defaultGateway.interface = "mv-publan";
-        defaultGateway.address = "192.168.20.1";
-        nameservers = lib.singleton "192.168.20.1";
-        domain = "home.arpa";
+        useHostResolvConf = false;
         interfaces.mv-publan.useDHCP = true;
       };
     };
@@ -226,10 +217,7 @@ in
     config = {
       imports = [ ../../containers/minecraft.nix ];
       networking = {
-        defaultGateway.interface = "mv-publan";
-        defaultGateway.address = "192.168.20.1";
-        nameservers = lib.singleton "192.168.20.1";
-        domain = "home.arpa";
+        useHostResolvConf = false;
         interfaces.mv-publan.useDHCP = true;
       };
     };
