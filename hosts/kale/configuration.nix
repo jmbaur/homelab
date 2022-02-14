@@ -178,7 +178,7 @@ in
           address = "192.168.10.24";
           prefixLength = 24;
         }];
-        interfaces.mv-pubwan.ipv4.addresses = [{
+        interfaces.mv-publan.ipv4.addresses = [{
           address = "192.168.20.24";
           prefixLength = 24;
         }];
