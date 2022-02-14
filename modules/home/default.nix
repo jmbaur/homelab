@@ -477,7 +477,7 @@ with lib;
             }
             {
               criteria = "Lenovo Group Limited LEN P24q-20 V306P4GR";
-              mode = "2560x1440@74.780Hz";
+              mode = "2560x1440@59.951Hz";
               status = "enable";
             }
           ];
