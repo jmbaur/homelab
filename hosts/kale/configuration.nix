@@ -132,10 +132,7 @@ in
         firewall.interfaces.mv-publan.allowedTCPPorts = [
           config.services.prometheus.exporters.nginx.port
         ];
-        interfaces.mv-publan.ipv4.addresses = [{
-          address = "192.168.20.11";
-          prefixLength = 24;
-        }];
+        interfaces.mv-publan.useDHCP = true;
       };
     };
   };
@@ -163,15 +160,12 @@ in
           address = "192.168.10.21";
           prefixLength = 24;
         }];
-        interfaces.mv-publan.ipv4.addresses = [{
-          address = "192.168.20.21";
-          prefixLength = 24;
-        }];
+        interfaces.mv-publan.useDHCP = true;
       };
     };
   };
 
-  containers.nix-serve = {
+  containers.cache = {
     macvlans = [ "pubwan" "publan" ];
     autoStart = true;
     ephemeral = true;
@@ -187,16 +181,13 @@ in
           address = "192.168.10.24";
           prefixLength = 24;
         }];
-        interfaces.mv-publan.ipv4.addresses = [{
-          address = "192.168.20.24";
-          prefixLength = 24;
-        }];
+        interfaces.mv-publan.useDHCP = true;
       };
     };
   };
 
   containers.builder = {
-    macvlans = lib.singleton "publan";
+    macvlans = [ "publan" ];
     autoStart = true;
     ephemeral = true;
     config = {
@@ -206,16 +197,13 @@ in
         defaultGateway.address = "192.168.20.1";
         nameservers = lib.singleton "192.168.20.1";
         domain = "home.arpa";
-        interfaces.mv-publan.ipv4.addresses = [{
-          address = "192.168.20.23";
-          prefixLength = 24;
-        }];
+        interfaces.mv-publan.useDHCP = true;
       };
     };
   };
 
   containers.media = {
-    macvlans = lib.singleton "publan";
+    macvlans = [ "publan" ];
     autoStart = true;
     ephemeral = true;
     bindMounts."/kodi".hostPath = "/big/kodi";
@@ -226,16 +214,13 @@ in
         defaultGateway.address = "192.168.20.1";
         nameservers = lib.singleton "192.168.20.1";
         domain = "home.arpa";
-        interfaces.mv-publan.ipv4.addresses = [{
-          address = "192.168.20.29";
-          prefixLength = 24;
-        }];
+        interfaces.mv-publan.useDHCP = true;
       };
     };
   };
 
   containers.minecraft = {
-    macvlans = lib.singleton "publan";
+    macvlans = [ "publan" ];
     autoStart = true;
     ephemeral = true;
     bindMounts."/var/lib/minecraft" = {
@@ -249,10 +234,7 @@ in
         defaultGateway.address = "192.168.20.1";
         nameservers = lib.singleton "192.168.20.1";
         domain = "home.arpa";
-        interfaces.mv-publan.ipv4.addresses = [{
-          address = "192.168.20.32";
-          prefixLength = 24;
-        }];
+        interfaces.mv-publan.useDHCP = true;
       };
     };
   };
