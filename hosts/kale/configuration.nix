@@ -123,6 +123,11 @@ in
           address = "192.168.10.11";
           prefixLength = 24;
         }];
+        interfaces.mv-pubwan.ipv4.routes = [{
+          address = "192.168.10.0";
+          prefixLength = 24;
+          via = "192.168.10.1";
+        }];
         interfaces.mv-publan.useDHCP = true;
         firewall.interfaces.mv-publan.allowedTCPPorts = [
           config.services.prometheus.exporters.nginx.port
