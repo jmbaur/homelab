@@ -110,6 +110,7 @@ in
         openFirewall = false;
         insecure = true;
       };
+      security.pki.certificateFiles = lib.singleton ../../data/jmbaur.com.cert;
       services.nginx.statusPage = true;
       networking = {
         defaultGateway.interface = "mv-pubwan";
