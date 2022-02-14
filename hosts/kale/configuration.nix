@@ -91,10 +91,6 @@ in
     vlans.publan = { id = 20; interface = "enp3s0"; };
     interfaces.pubwan.ipv4.addresses = lib.mkForce [ ];
     interfaces.publan.ipv4.addresses = lib.mkForce [ ];
-    macvlans.mv-pubwan-host = { interface = "pubwan"; mode = "bridge"; };
-    macvlans.mv-publan-host = { interface = "publan"; mode = "bridge"; };
-    interfaces.mv-pubwan-host.ipv4.addresses = [{ address = "192.168.10.5"; prefixLength = 24; }];
-    interfaces.mv-publan-host.ipv4.addresses = [{ address = "192.168.20.5"; prefixLength = 24; }];
   };
 
   services.openssh = {
@@ -107,7 +103,7 @@ in
     openFirewall = false;
   };
 
-  containers.nginx = {
+  containers.www = {
     macvlans = [ "pubwan" "publan" ];
     autoStart = true;
     ephemeral = true;
