@@ -10,7 +10,7 @@
     home-manager.url = "github:nix-community/home-manager";
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
-    nixpkgs.url = "nixpkgs/master";
+    nixpkgs.url = "github:nixos/nixpkgs?rev=cc04e93dd65092c795b4c4d44544062c606642a6";
     promtop.url = "github:jmbaur/promtop";
   };
 
