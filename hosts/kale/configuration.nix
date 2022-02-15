@@ -199,6 +199,23 @@ in
     };
   };
 
+  containers.torrent = {
+    macvlans = [ "publan" ];
+    autoStart = true;
+    ephemeral = true;
+    bindMounts."/var/lib/transmission/Downloads" = {
+      hostPath = "/big/downloads";
+      isReadOnly = false;
+    };
+    config = {
+      imports = [ ../../containers/torrent.nix ];
+      networking = {
+        useHostResolvConf = false;
+        interfaces.mv-publan.useDHCP = true;
+      };
+    };
+  };
+
   containers.minecraft = {
     macvlans = [ "publan" ];
     autoStart = true;
