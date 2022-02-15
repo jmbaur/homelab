@@ -1,5 +1,12 @@
 # Homelab
 
+## TODO
+
+Write an activation script (`system.activationScript`) to create directories
+for bind mounts that NixOS containers use that do not yet exist.
+
+## Generic install guide
+
 ```bash
 parted /dev/sda -- mklabel gpt
 parted /dev/sda -- mkpart ESP fat32 1MiB 512MiB # boot partition
