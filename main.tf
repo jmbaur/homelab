@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "mikrotik" {
-  host = "192.168.88.1:8728"
+  host = "localhost:8728"
 }
 
 resource "mikrotik_ip_address" "mgmt_ip" {
@@ -69,6 +69,30 @@ resource "mikrotik_pool" "guest_pool" {
   name    = "guest_pool"
   ranges  = "192.168.50.100-192.168.50.200"
   comment = "DHCP pool for the Guest LAN"
+}
+
+resource "mikrotik_dns_record" "google_dns_record1" {
+  name = "dns.google"
+  address = "8.8.8.8"
+  ttl = 300
+}
+
+resource "mikrotik_dns_record" "google_dns_record2" {
+  name = "dns.google"
+  address = "8.8.4.4"
+  ttl = 300
+}
+
+resource "mikrotik_dns_record" "quad9_dns_record1" {
+  name = "dns.quad9.net"
+  address = "9.9.9.9"
+  ttl = 300
+}
+
+resource "mikrotik_dns_record" "quad9_dns_record2" {
+  name = "dns.quad9.net"
+  address = "149.112.112.112"
+  ttl = 300
 }
 
 resource "mikrotik_dns_record" "router_dns_record" {
