@@ -2,6 +2,12 @@
 let
   cfg = config.custom.home;
   desktopEnabled = config.custom.desktop.enable;
+  nightfox = pkgs.fetchFromGitHub {
+    owner = "EdenEast";
+    repo = "nightfox.nvim";
+    rev = "90e616ac6ee2363577cc54f87c50dd958c2e32f9";
+    sha256 = "1x87d69fypz0k424xzd8vy1x4lwhgb8hkmc7mybl4bqfdwi00fhr";
+  };
 in
 with lib;
 {
@@ -135,7 +141,6 @@ with lib;
           lg = "log --graph --decorate --pretty=oneline --abbrev-commit --all";
         };
         delta.enable = true;
-        delta.options.syntax-theme = "gruvbox-dark";
         extraConfig.pull.rebase = false;
         ignores = [ "*~" "*.swp" ];
         userEmail = "jaredbaur@fastmail.com";
@@ -166,7 +171,6 @@ with lib;
 
       programs.bat = {
         enable = true;
-        config.theme = "gruvbox-dark";
       };
 
       programs.direnv = {
@@ -183,8 +187,7 @@ with lib;
         vimAlias = true;
         vimdiffAlias = true;
         extraConfig = ''
-          set termguicolors
-          colorscheme gruvbox
+          colorscheme nightfox
         '';
         plugins =
           let
@@ -205,9 +208,9 @@ with lib;
             (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars))
             comment-nvim
             editorconfig-vim
-            gruvbox-nvim
             lsp-colors-nvim
             lualine-nvim
+            nightfox-nvim
             nvim-autopairs
             nvim-lspconfig
             nvim-treesitter-textobjects
@@ -275,14 +278,7 @@ with lib;
           update_check_interval = 0;
         };
         extraConfig = ''
-          include ${
-            pkgs.fetchFromGitHub {
-              owner = "dexpota";
-              repo = "kitty-themes";
-              rev = "b1abdd54ba655ef34f75a568d78625981bf1722c";
-              sha256 = "1064hbg3dm45sigdp07chdfzxc25knm0mwbxz5y7sdfvaxkydh25";
-            }
-          }/themes/gruvbox_dark.conf
+          include ${nightfox}/extra/nightfox/nightfox_kitty.conf
         '';
       };
 
