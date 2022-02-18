@@ -2,12 +2,6 @@
 let
   cfg = config.custom.home;
   desktopEnabled = config.custom.desktop.enable;
-  nightfox = pkgs.fetchFromGitHub {
-    owner = "EdenEast";
-    repo = "nightfox.nvim";
-    rev = "90e616ac6ee2363577cc54f87c50dd958c2e32f9";
-    sha256 = "1x87d69fypz0k424xzd8vy1x4lwhgb8hkmc7mybl4bqfdwi00fhr";
-  };
 in
 with lib;
 {
@@ -186,9 +180,6 @@ with lib;
         enable = true;
         vimAlias = true;
         vimdiffAlias = true;
-        extraConfig = ''
-          colorscheme nightfox
-        '';
         plugins =
           let
             # TODO(jared): Move the settings directory
@@ -210,13 +201,14 @@ with lib;
             editorconfig-vim
             lsp-colors-nvim
             lualine-nvim
-            nightfox-nvim
+            lush-nvim
             nvim-autopairs
             nvim-lspconfig
             nvim-treesitter-textobjects
             snippets-nvim
             telescope-nvim
             toggleterm-nvim
+            tokyonight-nvim
             trouble-nvim
             typescript-vim
             vim-better-whitespace
@@ -274,11 +266,12 @@ with lib;
         settings = {
           copy_on_select = "yes";
           enable_audio_bell = "no";
+          mouse_hide_wait = 0;
           term = "xterm-256color";
           update_check_interval = 0;
         };
         extraConfig = ''
-          include ${nightfox}/extra/nightfox/nightfox_kitty.conf
+          include ${pkgs.vimPlugins.tokyonight-nvim.src}/extras/kitty_tokyonight_night.conf
         '';
       };
 
@@ -339,10 +332,7 @@ with lib;
           export _JAVA_AWT_WM_NONREPARENTING=1
         '';
         extraConfig = ''
-          output * bg ${builtins.fetchurl {
-            url = "https://raw.githubusercontent.com/jonascarpay/Wallpapers/master/papes/34d34ee2b688a2e5dde8f3df1e4fec37c80b7d2b.jpg";
-            sha256 = "1570n5ij78dvmfyfiman85vnb5syvxlv13iisspdaxi9ldrykjn1";
-          }} fill
+          output * bg "#222222" solid_color
         '';
         config = rec {
           terminal = "${pkgs.kitty}/bin/kitty";
@@ -374,7 +364,7 @@ with lib;
           };
           defaultWorkspace = "workspace number 1";
           keybindings = lib.mkOptionDefault {
-            "${modifier}+Control+l" = "exec ${pkgs.swaylock}/bin/swaylock -c 282828";
+            "${modifier}+Control+l" = "exec ${pkgs.swaylock}/bin/swaylock -c 000000";
             "${modifier}+Control+space" = "exec ${pkgs.mako}/bin/makoctl dismiss --all";
             "${modifier}+Shift+s" = "sticky toggle";
             "${modifier}+c" = "exec ${pkgs.clipman}/bin/clipman pick --tool=CUSTOM --tool-args=\"${pkgs.bemenu}/bin/bemenu --line-height=25 --list=10\" | ${pkgs.findutils}/bin/xargs ${pkgs.sway}/bin/swaymsg exec --";
@@ -413,7 +403,7 @@ with lib;
         timeouts = [
           {
             timeout = 900;
-            command = "${pkgs.swaylock}/bin/swaylock -c 282828";
+            command = "${pkgs.swaylock}/bin/swaylock -c 222222";
           }
           {
             timeout = 905;
@@ -424,11 +414,7 @@ with lib;
         events = [
           {
             event = "before-sleep";
-            command = "${pkgs.swaylock}/bin/swaylock -c 282828";
-          }
-          {
-            event = "lock";
-            command = "${pkgs.swaylock}/bin/swaylock -c 282828";
+            command = "${pkgs.swaylock}/bin/swaylock -c 222222";
           }
         ];
       };
