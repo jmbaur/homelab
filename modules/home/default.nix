@@ -54,6 +54,7 @@ with lib;
         smartmontools
         speedtest-cli
         sshfs
+        ssm-session-manager-plugin
         stow
         tailscale
         tcpdump
@@ -114,6 +115,17 @@ with lib;
       programs.ssh = {
         enable = true;
         controlMaster = "auto";
+        matchBlocks."i-* mi-*" = {
+          proxyCommand = "${pkgs.bash}/bin/sh -c \"${pkgs.awscli}/bin/aws ssm start-session --target %h --document-name AWS-StartSSHSession --parameters 'portNumber=%p'\"";
+        };
+      };
+
+      programs.gpg = {
+        enable = true;
+        publicKeys = [{
+          source = import ../../data/pgp-keys.nix;
+          trust = 5;
+        }];
       };
 
       programs.bash = {
@@ -135,7 +147,13 @@ with lib;
           lg = "log --graph --decorate --pretty=oneline --abbrev-commit --all";
         };
         delta.enable = true;
-        extraConfig.pull.rebase = false;
+        extraConfig = {
+          pull.rebase = false;
+          # gpg = {
+          # format = "ssh";
+          # ssh.defaultKeyCommand = "${pkgs.openssh}/bin/ssh-add -L";
+          # };
+        };
         ignores = [ "*~" "*.swp" ];
         userEmail = "jaredbaur@fastmail.com";
         userName = "Jared Baur";
