@@ -78,7 +78,7 @@ for k, v in pairs {
     pyright = {uses_efm = true},
     rust_analyzer = {uses_efm = true},
     sumneko_lua = {uses_efm = true},
-    tsserver = {uses_efm = false},
+    tsserver = {uses_efm = true},
     zls = {uses_efm = false}
 } do
     lsp[k]
@@ -110,6 +110,18 @@ local efm_languages = {
         }
     },
     sh = {{formatCommand = "shfmt -ci -s -bn", formatStdin = true}},
+    javascript = {
+        {
+            formatCommand = "clang-format --assume-filename=foobar.js",
+            formatStdin = true
+        }
+    },
+    typescript = {
+        {
+            formatCommand = "clang-format --assume-filename=foobar.ts",
+            formatStdin = true
+        }
+    },
     tex = {{formatCommand = "latexindent", formatStdin = true}}
 }
 
