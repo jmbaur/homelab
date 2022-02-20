@@ -45,6 +45,7 @@ with lib;
         p
         patchelf
         picocom
+        pinentry
         pstree
         pwgen
         ripgrep
@@ -128,6 +129,14 @@ with lib;
         }];
       };
 
+      services.gpg-agent = {
+        enable = true;
+        pinentryFlavor = "tty";
+        extraConfig = ''
+          allow-loopback-pinentry
+        '';
+      };
+
       programs.bash = {
         enable = true;
         enableVteIntegration = true;
@@ -147,14 +156,12 @@ with lib;
           lg = "log --graph --decorate --pretty=oneline --abbrev-commit --all";
         };
         delta.enable = true;
-        extraConfig = {
-          pull.rebase = false;
-          # gpg = {
-          # format = "ssh";
-          # ssh.defaultKeyCommand = "${pkgs.openssh}/bin/ssh-add -L";
-          # };
-        };
+        extraConfig.pull.rebase = false;
         ignores = [ "*~" "*.swp" ];
+        signing = {
+          key = "7EB08143";
+          signByDefault = false;
+        };
         userEmail = "jaredbaur@fastmail.com";
         userName = "Jared Baur";
       };

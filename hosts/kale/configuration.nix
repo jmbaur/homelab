@@ -199,6 +199,20 @@ in
     };
   };
 
+  containers.plex = {
+    macvlans = [ "publan" ];
+    autoStart = true;
+    ephemeral = true;
+    bindMounts."/var/lib/plex".hostPath = "/fast/plex";
+    config = {
+      imports = [ ../../containers/plex.nix ];
+      networking = {
+        useHostResolvConf = false;
+        interfaces.mv-publan.useDHCP = true;
+      };
+    };
+  };
+
   containers.torrent = {
     macvlans = [ "publan" ];
     autoStart = true;
