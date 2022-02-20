@@ -12,6 +12,8 @@ in
 
   hardware.cpu.amd.updateMicrocode = true;
 
+  nixpkgs.config.allowUnfree = true;
+
   custom.common.enable = true;
   custom.deploy.enable = true;
   custom.home.enable = true;
