@@ -205,7 +205,10 @@ in
     macvlans = [ "publan" ];
     autoStart = true;
     ephemeral = true;
-    bindMounts."/var/lib/plex".hostPath = "/fast/plex";
+    bindMounts."/var/lib/plex" = {
+      hostPath = "/fast/plex";
+      isReadOnly = false;
+    };
     config = {
       imports = [ ../../containers/plex.nix ];
       networking = {
