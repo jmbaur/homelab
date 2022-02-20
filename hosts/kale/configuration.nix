@@ -205,6 +205,7 @@ in
     macvlans = [ "publan" ];
     autoStart = true;
     ephemeral = true;
+    bindMounts."/opt/media".hostPath = "/big/kodi";
     bindMounts."/var/lib/plex" = {
       hostPath = "/fast/plex";
       isReadOnly = false;
