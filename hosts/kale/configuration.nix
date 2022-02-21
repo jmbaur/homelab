@@ -187,25 +187,11 @@ in
     };
   };
 
-  containers.media = {
-    macvlans = [ "publan" ];
-    autoStart = true;
-    ephemeral = true;
-    bindMounts."/kodi".hostPath = "/big/kodi";
-    config = {
-      imports = [ ../../containers/media.nix ];
-      networking = {
-        useHostResolvConf = false;
-        interfaces.mv-publan.useDHCP = true;
-      };
-    };
-  };
-
   containers.plex = {
     macvlans = [ "publan" ];
     autoStart = true;
     ephemeral = true;
-    bindMounts."/opt/media".hostPath = "/big/kodi";
+    bindMounts."/opt/media".hostPath = "/big/media";
     bindMounts."/var/lib/plex" = {
       hostPath = "/fast/plex";
       isReadOnly = false;
