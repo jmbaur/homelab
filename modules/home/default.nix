@@ -491,14 +491,6 @@ with lib;
         };
       };
 
-      systemd.user.targets.tray = {
-        Unit = {
-          Description = "System tray";
-          Documentation = [ "man:systemd.special(7)" ];
-          Requires = [ "graphical-session-pre.target" ];
-        };
-      };
-
       services.udiskie.enable = desktopEnabled;
       services.udiskie.tray = "never";
     };
