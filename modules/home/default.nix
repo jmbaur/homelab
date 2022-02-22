@@ -259,7 +259,7 @@ with lib;
           clang-tools
           efm-langserver
           git
-          go
+          go_1_18
           goimports
           gopls
           luaformatter
