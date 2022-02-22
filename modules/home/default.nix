@@ -94,6 +94,7 @@ with lib;
           minecraft
           mpv
           plan9port
+          plex-media-player
           signal-desktop
           slack
           slurp
