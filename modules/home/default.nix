@@ -492,8 +492,16 @@ with lib;
         };
       };
 
-      services.udiskie.enable = desktopEnabled;
-      services.udiskie.tray = "never";
+      services.wlsunset = mkIf desktopEnabled {
+        enable = true;
+        latitude = "38.0";
+        longitude = "-118.0";
+      };
+
+      services.udiskie = mkIf desktopEnabled {
+        enable = desktopEnabled;
+        tray = "never";
+      };
     };
 
   };
