@@ -9,7 +9,7 @@ let
     clone-url=https://$HTTP_HOST$SCRIPT_NAME$CGIT_REPO_URL
     snapshots=tar.gz zip
     remove-suffix=1
-    scan-path=/srv/git
+    scan-path=${config.services.gitDaemon.basePath}
   '';
   vhostSsl = {
     forceSSL = true;
@@ -31,6 +31,11 @@ in
     enable = true;
     openFirewall = false;
     secretKeyFile = "/var/lib/nix-serve/cache-priv-key.pem";
+  };
+  services.gitDaemon = {
+    enable = true;
+    exportAll = true;
+    basePath = "/srv/git";
   };
   services.nginx = {
     enable = true;

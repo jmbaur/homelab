@@ -30,7 +30,7 @@ let
         final_name="''${name}.git";;
       esac
 
-      full_path="${config.services.gitDaemon.basePath}/''${final_name}"
+      full_path="srv/git/''${final_name}"
 
       if [ -d "$full_path" ]; then
         echo "repo $final_name already exists, exiting"
@@ -52,19 +52,14 @@ in
 {
   system.activationScripts.git-shell-commands.text = ''
     ln -sfT ${commands}/bin ${config.users.users.git.home}/git-shell-commands
-    chown -R ${config.services.gitDaemon.user}:${config.users.extraGroups.users.name} ${config.users.users.git.home}/git-shell-commands
+    chown -R git:git ${config.users.users.git.home}/git-shell-commands
   '';
   users.users.git = {
-    home = config.services.gitDaemon.basePath;
+    home = "/srv/git";
     createHome = true;
     shell = "${pkgs.git}/bin/git-shell";
     description = lib.mkForce "Jared Baur";
     openssh.authorizedKeys.keyFiles = lib.singleton (import ../data/jmbaur-ssh-keys.nix);
-  };
-  services.gitDaemon = {
-    enable = true;
-    exportAll = true;
-    basePath = "/srv/git";
   };
   services.openssh = {
     enable = true;
