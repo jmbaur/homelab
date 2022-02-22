@@ -142,7 +142,7 @@ in
     macvlans = [ "publan" ];
     autoStart = true;
     ephemeral = true;
-    bindMounts."/srv/git" = {
+    bindMounts."/home/jared" = {
       hostPath = "/fast/git";
       isReadOnly = false;
     };

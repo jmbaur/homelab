@@ -30,7 +30,7 @@ let
         final_name="''${name}.git";;
       esac
 
-      full_path="srv/git/''${final_name}"
+      full_path="''${HOME}/''${final_name}"
 
       if [ -d "$full_path" ]; then
         echo "repo $final_name already exists, exiting"
@@ -50,15 +50,13 @@ let
   };
 in
 {
-  system.activationScripts.git-shell-commands.text = ''
-    ln -sfT ${commands}/bin ${config.users.users.git.home}/git-shell-commands
-    chown -R git:git ${config.users.users.git.home}/git-shell-commands
+  system.userActivationScripts.git-shell-commands.text = ''
+    ln -sfT ${commands}/bin $HOME/git-shell-commands
   '';
-  users.users.git = {
-    home = "/srv/git";
-    createHome = true;
+  users.users.jared = {
+    isNormalUser = true;
     shell = "${pkgs.git}/bin/git-shell";
-    description = lib.mkForce "Jared Baur";
+    description = "Jared Baur";
     openssh.authorizedKeys.keyFiles = lib.singleton (import ../data/jmbaur-ssh-keys.nix);
   };
   services.openssh = {
