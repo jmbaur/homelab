@@ -230,6 +230,7 @@ with lib;
             lush-nvim
             nvim-autopairs
             nvim-lspconfig
+            nvim-treesitter-context
             nvim-treesitter-textobjects
             snippets-nvim
             telescope-nvim
