@@ -156,7 +156,11 @@ with lib;
           lg = "log --graph --decorate --pretty=oneline --abbrev-commit --all";
         };
         delta.enable = true;
-        extraConfig.pull.rebase = false;
+        extraConfig = {
+          pull.rebase = false;
+          diff.sopsdiffer.textconv = "${pkgs.sops}/bin/sops -d";
+        };
+        attributes = [ "*.yaml diff=sopsdiffer" ];
         ignores = [ "*~" "*.swp" ];
         signing = {
           key = "7EB08143";
