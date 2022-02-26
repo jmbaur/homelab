@@ -109,10 +109,8 @@ in
   sops = {
     defaultSopsFile = ./secrets.yaml;
     age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-    secrets.eweka = {
-      username = { };
-      password = { };
-    };
+    secrets."eweka/username" = { };
+    secrets."eweka/password" = { };
   };
 
   containers.www = {
