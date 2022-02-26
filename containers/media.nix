@@ -8,6 +8,9 @@
     enable = true;
     configFile = "/run/secrets/sabnzbd.ini";
   };
+  systemd.services.sabnzbd = {
+    serviceConfig.SupplementaryGroups = [ config.users.groups.keys.name ];
+  };
   services.lidarr = {
     enable = true;
     openFirewall = true;
