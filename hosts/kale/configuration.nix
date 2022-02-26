@@ -199,20 +199,20 @@ in
     macvlans = [ "publan" ];
     autoStart = true;
     ephemeral = true;
-    bindMounts."/fast/containers/torrent/jackett" = {
-      hostPath = "/var/lib/jackett";
+    bindMounts."/var/lib/jackett" = {
+      hostPath = "/fast/containers/torrent/jackett";
       isReadOnly = false;
     };
-    bindMounts."/fast/containers/torrent/sonarr" = {
-      hostPath = "/var/lib/sonarr";
+    bindMounts."/var/lib/sonarr" = {
+      hostPath = "/fast/containers/torrent/sonarr";
       isReadOnly = false;
     };
-    bindMounts."/fast/containers/torrent/lidarr" = {
-      hostPath = "/var/lib/lidarr";
+    bindMounts."/var/lib/lidarr" = {
+      hostPath = "/fast/containers/torrent/lidarr";
       isReadOnly = false;
     };
-    bindMounts."/fast/containers/torrent/radarr" = {
-      hostPath = "/var/lib/radarr";
+    bindMounts."/var/lib/radarr" = {
+      hostPath = "/fast/containers/torrent/radarr";
       isReadOnly = false;
     };
     bindMounts."/media" = {
