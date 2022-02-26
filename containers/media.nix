@@ -7,13 +7,11 @@
   services.nzbget = {
     enable = true;
     settings = {
-      Server1 = {
-        Port = 563;
-        Host = "news.eweka.nl";
-        Username = "$(cat /run/secrets/eweka/username)";
-        Password = "$(cat /run/secrets/eweka/password)";
-        Encryption = true;
-      };
+      "Server1.Port" = 563;
+      "Server1.Host" = "news.eweka.nl";
+      "Server1.Username" = "$(cat /run/secrets/eweka/username)";
+      "Server1.Password" = "$(cat /run/secrets/eweka/password)";
+      "Server1.Encryption" = true;
     };
   };
   services.lidarr = {
