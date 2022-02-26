@@ -110,9 +110,18 @@ in
     macvlans = [ "pubwan" ];
     autoStart = true;
     ephemeral = true;
-    bindMounts."/var/lib/nginx".hostPath = "/var/lib/nginx";
-    bindMounts."/srv/git".hostPath = "/fast/git";
-    bindMounts."/var/lib/nix-serve".hostPath = "/var/lib/nix-serve";
+    bindMounts."/home/jared" = {
+      hostPath = "/fast/containers/www/git";
+      isReadOnly = false;
+    };
+    bindMounts."/var/cache/cgit" = {
+      hostPath = "/fast/containers/www/cgit";
+      isReadOnly = false;
+    };
+    bindMounts."/var/lib/nginx".hostPath = "/fast/containers/www/nginx";
+    bindMounts."/var/lib/nix-serve".hostPath = "/fast/containers/www/nix-serve";
+    bindMounts."/etc/ssh/ssh_host_rsa_key".hostPath = "/etc/ssh/ssh_host_rsa_key";
+    bindMounts."/etc/ssh/ssh_host_ed25519_key".hostPath = "/etc/ssh/ssh_host_ed25519_key";
     config = { config, ... }: {
       imports = [ ../../containers/www.nix ];
       # services.prometheus.exporters.nginx = {
@@ -138,31 +147,12 @@ in
     };
   };
 
-  containers.git = {
-    macvlans = [ "publan" ];
-    autoStart = true;
-    ephemeral = true;
-    bindMounts."/home/jared" = {
-      hostPath = "/fast/git";
-      isReadOnly = false;
-    };
-    bindMounts."/etc/ssh/ssh_host_rsa_key".hostPath = "/etc/ssh/ssh_host_rsa_key";
-    bindMounts."/etc/ssh/ssh_host_ed25519_key".hostPath = "/etc/ssh/ssh_host_ed25519_key";
-    config = { config, ... }: {
-      imports = [ ../../containers/git.nix ];
-      networking = {
-        useHostResolvConf = false;
-        interfaces.mv-publan.useDHCP = true;
-      };
-    };
-  };
-
   containers.grafana = {
     macvlans = [ "publan" ];
     autoStart = true;
     ephemeral = true;
     bindMounts."/var/lib/grafana" = {
-      hostPath = "/var/lib/grafana";
+      hostPath = "/fast/containers/grafana";
       isReadOnly = false;
     };
     config = { config, ... }: {
@@ -191,9 +181,9 @@ in
     macvlans = [ "publan" ];
     autoStart = true;
     ephemeral = true;
-    bindMounts."/opt/media".hostPath = "/big/media";
+    bindMounts."/media".hostPath = "/big/media";
     bindMounts."/var/lib/plex" = {
-      hostPath = "/fast/plex";
+      hostPath = "/fast/containers/plex";
       isReadOnly = false;
     };
     config = {
@@ -209,8 +199,24 @@ in
     macvlans = [ "publan" ];
     autoStart = true;
     ephemeral = true;
-    bindMounts."/var/lib/transmission/Downloads" = {
-      hostPath = "/big/downloads";
+    bindMounts."/fast/containers/torrent/jackett" = {
+      hostPath = "/var/lib/jackett";
+      isReadOnly = false;
+    };
+    bindMounts."/fast/containers/torrent/sonarr" = {
+      hostPath = "/var/lib/sonarr";
+      isReadOnly = false;
+    };
+    bindMounts."/fast/containers/torrent/lidarr" = {
+      hostPath = "/var/lib/lidarr";
+      isReadOnly = false;
+    };
+    bindMounts."/fast/containers/torrent/radarr" = {
+      hostPath = "/var/lib/radarr";
+      isReadOnly = false;
+    };
+    bindMounts."/big/media" = {
+      hostPath = "/media";
       isReadOnly = false;
     };
     config = {
@@ -238,7 +244,7 @@ in
     autoStart = true;
     ephemeral = true;
     bindMounts."/var/lib/minecraft" = {
-      hostPath = "/fast/minecraft";
+      hostPath = "/fast/containers/minecraft";
       isReadOnly = false;
     };
     config = {
