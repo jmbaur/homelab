@@ -1,5 +1,6 @@
 { ... }: {
   imports = [
+    ./cache
     ./common
     ./deploy
     ./desktop

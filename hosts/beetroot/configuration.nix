@@ -16,6 +16,7 @@
 
   time.timeZone = "America/Los_Angeles";
 
+  custom.cache.enable = true;
   custom.common.enable = true;
   custom.desktop.enable = true;
   custom.home.enable = true;
