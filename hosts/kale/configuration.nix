@@ -177,28 +177,18 @@ in
     };
   };
 
-  containers.plex = {
+  containers.media = {
     macvlans = [ "publan" ];
     autoStart = true;
     ephemeral = true;
-    bindMounts."/media".hostPath = "/big/media";
+    bindMounts."/media" = {
+      hostPath = "/big/containers/media/content";
+      isReadOnly = false;
+    };
     bindMounts."/var/lib/plex" = {
       hostPath = "/fast/containers/plex";
       isReadOnly = false;
     };
-    config = {
-      imports = [ ../../containers/plex.nix ];
-      networking = {
-        useHostResolvConf = false;
-        interfaces.mv-publan.useDHCP = true;
-      };
-    };
-  };
-
-  containers.torrent = {
-    macvlans = [ "publan" ];
-    autoStart = true;
-    ephemeral = true;
     bindMounts."/var/lib/jackett" = {
       hostPath = "/fast/containers/torrent/jackett";
       isReadOnly = false;
@@ -215,11 +205,8 @@ in
       hostPath = "/fast/containers/torrent/radarr";
       isReadOnly = false;
     };
-    bindMounts."/media" = {
-      hostPath = "/big/media";
-      isReadOnly = false;
-    };
     config = {
+      imports = [ ../../containers/media.nix ];
       networking = {
         useHostResolvConf = false;
         defaultGateway.address = "192.168.20.1";
@@ -235,7 +222,6 @@ in
           prefixLength = 64;
         }];
       };
-      imports = [ ../../containers/torrent.nix ];
     };
   };
 
