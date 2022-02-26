@@ -106,6 +106,13 @@ in
     enabledCollectors = [ "systemd" ];
   };
 
+  sops = {
+    defaultSopsFile = ./secrets.yaml;
+    age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+    secrets.hello = { };
+  };
+
+
   containers.www = {
     macvlans = [ "pubwan" ];
     autoStart = true;
