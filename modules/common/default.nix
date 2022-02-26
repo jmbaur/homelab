@@ -9,7 +9,11 @@ with lib;
   };
 
   config = mkIf cfg.enable {
-    boot.cleanTmpDir = mkDefault true;
+    boot = {
+      cleanTmpDir = mkDefault true;
+      loader.grub.configurationLimit = mkDefault 50;
+      loader.systemd-boot.configurationLimit = mkDefault 50;
+    };
 
     networking.useDHCP = mkForce false;
 
@@ -27,7 +31,7 @@ with lib;
 
     i18n.defaultLocale = "en_US.UTF-8";
     console.useXkbConfig = true;
-    services.xserver={
+    services.xserver = {
       layout = "us";
       xkbModel = "pc104";
       xkbVariant = "qwerty";
