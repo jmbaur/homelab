@@ -444,6 +444,21 @@
         "type": "github"
       }
     },
+    "nur": {
+      "locked": {
+        "lastModified": 1645841630,
+        "narHash": "sha256-ipESS1mmInVf3g8xoQNbmiI1mzHr2m8Rl3kOvzPgAuI=",
+        "owner": "nix-community",
+        "repo": "nur",
+        "rev": "795a5e8b74ce5286749dabed05be742439466b6e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "nur",
+        "type": "github"
+      }
+    },
     "promtop": {
       "inputs": {
         "flake-utils": "flake-utils_6",
@@ -475,6 +490,7 @@
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_7",
+        "nur": "nur",
         "promtop": "promtop",
         "sops-nix": "sops-nix"
       }

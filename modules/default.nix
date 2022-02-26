@@ -1,4 +1,4 @@
-{ overlays ? [ ] }: {
+{ ... }: {
   imports = [
     ./common
     ./deploy
@@ -6,6 +6,4 @@
     ./home
     ./virtualisation
   ];
-
-  nixpkgs.overlays = overlays;
 }

@@ -11,6 +11,7 @@
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
     nixpkgs.url = "nixpkgs/nixos-unstable";
+    nur.url = "github:nix-community/nur";
     promtop.url = "github:jmbaur/promtop";
     sops-nix.url = "github:mic92/sops-nix";
   };
@@ -26,6 +27,7 @@
     , neovim-nightly-overlay
     , nixos-hardware
     , nixpkgs
+    , nur
     , promtop
     , sops-nix
     }@inputs: flake-utils.lib.eachDefaultSystem
@@ -44,12 +46,14 @@
 
       overlay = import ./pkgs/overlay.nix;
 
-      nixosModule = import ./modules {
-        overlays = [
+      nixosModule = { ... }: {
+        imports = [ ./modules ];
+        nixpkgs.overlays = [
           git-get.overlay
           gobar.overlay
           gosee.overlay
           neovim-nightly-overlay.overlay
+          nur.overlay
           promtop.overlay
           self.overlay
         ];

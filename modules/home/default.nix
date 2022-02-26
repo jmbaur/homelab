@@ -85,7 +85,6 @@ with lib;
           element-desktop
           fdroidcl
           ffmpeg-full
-          firefox-wayland
           gobar
           grim
           hack-font
@@ -302,9 +301,20 @@ with lib;
         '';
       };
 
+      programs.firefox = {
+        enable = true;
+        # package = pkgs.firefox-wayland;
+        extensions = with pkgs.nur.repos.rycee.firefox-addons; [
+          bitwarden
+          multi-account-containers
+          vimium
+        ];
+        profiles.default = { };
+      };
+
       programs.chromium = mkIf desktopEnabled {
         enable = true;
-        commandLineArgs = [ "--ozone-platform-hint=auto" ];
+        # commandLineArgs = [ "--ozone-platform-hint=auto" ];
         extensions = [
           { id = "dbepggeogbaibhgnhhndojpepiihcmeb"; } # vimium
           { id = "fmaeeiocbalinknpdkjjfogehkdcbkcd"; } # zoom-redirector
