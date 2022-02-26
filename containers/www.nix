@@ -1,9 +1,5 @@
 { config, lib, pkgs, ... }:
 let
-  dark-mode = fetchurl {
-    url = "https://gist.githubusercontent.com/Yoplitein/f4b671a2ec70c9e743fa/raw/863b50cef7cc7880332be6e63df2492a1121c7c9/gistfile1.css";
-    sha256 = "1w5d140wvcx5dhbp7ri9dfy9a891a7w3m3gzwakxqsfn4lwfd8yr";
-  };
   cgitrc = pkgs.writeText "cgitrc" ''
     # cache-size=1000
     # cache-root=/var/cache/cgit
@@ -14,7 +10,6 @@ let
     snapshots=tar.gz zip
     remove-suffix=1
     scan-path=${config.services.gitDaemon.basePath}
-    css=${dark-mode}
   '';
   vhostSsl = {
     forceSSL = true;

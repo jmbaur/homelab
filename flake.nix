@@ -61,20 +61,20 @@
 
       nixosConfigurations.beetroot = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        modules = with inputs.nixos-hardware.nixosModules; [
+        modules = [
           ./hosts/beetroot/configuration.nix
           home-manager.nixosModules.home-manager
-          lenovo-thinkpad-t480
+          nixos-hardware.nixosModules.lenovo-thinkpad-t480
           nixosModule
         ];
       };
 
       nixosConfigurations.asparagus = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        modules = with nixos-hardware.nixosModules; [
+        modules = [
           ./hosts/asparagus/configuration.nix
           home-manager.nixosModules.home-manager
-          intel-nuc-8i7beh
+          nixos-hardware.nixosModules.intel-nuc-8i7beh
           nixosModule
           sops-nix.nixosModules.sops
         ];
@@ -91,12 +91,12 @@
 
       nixosConfigurations.kale = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        modules = with nixos-hardware.nixosModules; [
+        modules = [
           ./hosts/kale/configuration.nix
-          common-cpu-amd
           home-manager.nixosModules.home-manager
+          nixos-hardware.nixosModules.common-cpu-amd
           nixosModule
-          sops-nix.nixosModule.sops
+          sops-nix.nixosModules.sops
         ];
       };
 
@@ -111,11 +111,12 @@
 
       nixosConfigurations.rhubarb = nixpkgs.lib.nixosSystem {
         system = "aarch64-linux";
-        modules = with nixos-hardware.nixosModules; [
+        modules = [
           ./hosts/rhubarb/configuration.nix
           home-manager.nixosModules.home-manager
+          nixos-hardware.nixosModules.raspberry-pi-4
           nixosModule
-          raspberry-pi-4
+          sops-nix.nixosModules.sops
         ];
       };
 
