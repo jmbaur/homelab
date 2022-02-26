@@ -1,5 +1,5 @@
 { config, lib, pkgs, ... }: {
-  services.rtorrent = {
+  services.transmission = {
     enable = true;
   };
   services.sonarr = {
