@@ -26,4 +26,7 @@
     config.services.radarr.group
     config.services.sonarr.group
   ];
+  users.users.lidarr.extraGroups = [ config.services.nzbget.group ];
+  users.users.radarr.extraGroups = [ config.services.nzbget.group ];
+  users.users.sonarr.extraGroups = [ config.services.nzbget.group ];
 }
