@@ -106,15 +106,6 @@ in
     enabledCollectors = [ "systemd" ];
   };
 
-  sops = {
-    defaultSopsFile = ./secrets.yaml;
-    age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-    secrets."sabnzbd.ini" = {
-      owner = "38";
-      group = "194";
-    };
-  };
-
   containers.www = {
     macvlans = [ "pubwan" ];
     autoStart = true;
@@ -132,7 +123,7 @@ in
     bindMounts."/etc/ssh/ssh_host_rsa_key".hostPath = "/etc/ssh/ssh_host_rsa_key";
     bindMounts."/etc/ssh/ssh_host_ed25519_key".hostPath = "/etc/ssh/ssh_host_ed25519_key";
     config = { config, ... }: {
-      imports = [ ../../containers/www.nix ];
+      imports = [ ../../containers/www ];
       # services.prometheus.exporters.nginx = {
       #   enable = true;
       #   openFirewall = false;
@@ -165,7 +156,7 @@ in
       isReadOnly = false;
     };
     config = { config, ... }: {
-      imports = [ ../../containers/grafana.nix ];
+      imports = [ ../../containers/grafana ];
       networking = {
         useHostResolvConf = false;
         interfaces.mv-publan.useDHCP = true;
@@ -178,7 +169,7 @@ in
     autoStart = true;
     ephemeral = true;
     config = {
-      imports = [ ../../containers/builder.nix ];
+      imports = [ ../../containers/builder ];
       networking = {
         useHostResolvConf = false;
         interfaces.mv-publan.useDHCP = true;
@@ -190,33 +181,28 @@ in
     macvlans = [ "publan" ];
     autoStart = true;
     ephemeral = true;
-    bindMounts."/run/secrets/sabnzbd.ini".hostPath = "/run/secrets/sabnzbd.ini";
     bindMounts."/media" = {
       hostPath = "/big/containers/media/content";
       isReadOnly = false;
     };
     bindMounts."/var/lib/plex" = {
-      hostPath = "/fast/containers/plex";
-      isReadOnly = false;
-    };
-    bindMounts."/var/lib/jackett" = {
-      hostPath = "/fast/containers/torrent/jackett";
+      hostPath = "/fast/containers/media/plex";
       isReadOnly = false;
     };
     bindMounts."/var/lib/sonarr" = {
-      hostPath = "/fast/containers/torrent/sonarr";
+      hostPath = "/fast/containers/media/sonarr";
       isReadOnly = false;
     };
     bindMounts."/var/lib/lidarr" = {
-      hostPath = "/fast/containers/torrent/lidarr";
+      hostPath = "/fast/containers/media/lidarr";
       isReadOnly = false;
     };
     bindMounts."/var/lib/radarr" = {
-      hostPath = "/fast/containers/torrent/radarr";
+      hostPath = "/fast/containers/media/radarr";
       isReadOnly = false;
     };
     config = {
-      imports = [ ../../containers/media.nix ];
+      imports = [ ../../containers/media ];
       networking = {
         useHostResolvConf = false;
         defaultGateway.address = "192.168.20.1";
@@ -244,7 +230,7 @@ in
       isReadOnly = false;
     };
     config = {
-      imports = [ ../../containers/minecraft.nix ];
+      imports = [ ../../containers/minecraft ];
       networking = {
         useHostResolvConf = false;
         interfaces.mv-publan.useDHCP = true;

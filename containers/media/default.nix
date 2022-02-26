@@ -1,12 +1,26 @@
 { config, lib, pkgs, ... }: {
   nixpkgs.config.allowUnfree = true;
+  services.openssh = {
+    enable = true;
+    startWhenNeeded = false;
+    passwordAuthentication = false;
+  };
+  users.users.root.openssh.authorizedKeys.keyFiles = lib.singleton (import ../data/jmbaur-ssh-keys.nix);
+  sops = {
+    # defaultSopsFile = ./secrets.yaml;
+    age.generateKey = true;
+    # secrets."sabnzbd.ini" = {
+    #   owner = config.services.sabnzbd.user;
+    #   group = config.services.sabnzbd.group;
+    # };
+  };
   services.plex = {
     enable = true;
     openFirewall = true;
   };
   services.sabnzbd = {
     enable = true;
-    configFile = "/run/secrets/sabnzbd.ini";
+    # configFile = "/run/secrets/sabnzbd.ini";
   };
   systemd.services.sabnzbd = {
     serviceConfig.SupplementaryGroups = [ config.users.groups.keys.name ];
