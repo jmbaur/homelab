@@ -147,40 +147,40 @@ in
     };
   };
 
-  containers.grafana = {
-    macvlans = [ "publan" ];
-    autoStart = true;
-    ephemeral = true;
-    bindMounts."/var/lib/grafana" = {
-      hostPath = "/fast/containers/grafana";
-      isReadOnly = false;
-    };
-    config = { config, ... }: {
-      imports = [ ../../containers/grafana ];
-      networking = {
-        useHostResolvConf = false;
-        interfaces.mv-publan.useDHCP = true;
-      };
-    };
-  };
+  # containers.grafana = {
+  #   macvlans = [ "publan" ];
+  #   autoStart = true;
+  #   ephemeral = true;
+  #   bindMounts."/var/lib/grafana" = {
+  #     hostPath = "/fast/containers/grafana";
+  #     isReadOnly = false;
+  #   };
+  #   config = { config, ... }: {
+  #     imports = [ ../../containers/grafana ];
+  #     networking = {
+  #       useHostResolvConf = false;
+  #       interfaces.mv-publan.useDHCP = true;
+  #     };
+  #   };
+  # };
 
-  containers.builder = {
-    macvlans = [ "publan" ];
-    autoStart = true;
-    ephemeral = true;
-    config = {
-      imports = [ ../../containers/builder ];
-      networking = {
-        useHostResolvConf = false;
-        interfaces.mv-publan.useDHCP = true;
-      };
-    };
-  };
+  # containers.builder = {
+  #   autoStart = true;
+  #   ephemeral = true;
+  #   macvlans = [ "publan" ];
+  #   config = {
+  #     imports = [ ../../containers/builder ];
+  #     networking = {
+  #       useHostResolvConf = false;
+  #       interfaces.mv-publan.useDHCP = true;
+  #     };
+  #   };
+  # };
 
   containers.media = {
-    macvlans = [ "publan" ];
     autoStart = true;
     ephemeral = true;
+    macvlans = [ "publan" ];
     bindMounts."/media" = {
       hostPath = "/big/containers/media/content";
       isReadOnly = false;
@@ -201,42 +201,25 @@ in
       hostPath = "/fast/containers/media/radarr";
       isReadOnly = false;
     };
-    config = {
-      imports = [ ../../containers/media ];
-      networking = {
-        useHostResolvConf = false;
-        defaultGateway.address = "192.168.20.1";
-        defaultGateway.interface = "mv-publan";
-        nameservers = lib.singleton "192.168.20.1";
-        domain = "home.arpa";
-        interfaces.mv-publan.ipv4.addresses = [{
-          address = "192.168.20.29";
-          prefixLength = 24;
-        }];
-        interfaces.mv-publan.ipv6.addresses = [{
-          address = "2001:470:f001:20::29";
-          prefixLength = 64;
-        }];
-      };
-    };
+    path = "/nix/var/nix/profiles/per-container/media";
   };
 
-  containers.minecraft = {
-    macvlans = [ "publan" ];
-    autoStart = true;
-    ephemeral = true;
-    bindMounts."/var/lib/minecraft" = {
-      hostPath = "/fast/containers/minecraft";
-      isReadOnly = false;
-    };
-    config = {
-      imports = [ ../../containers/minecraft ];
-      networking = {
-        useHostResolvConf = false;
-        interfaces.mv-publan.useDHCP = true;
-      };
-    };
-  };
+  # containers.minecraft = {
+  #   macvlans = [ "publan" ];
+  #   autoStart = true;
+  #   ephemeral = true;
+  #   bindMounts."/var/lib/minecraft" = {
+  #     hostPath = "/fast/containers/minecraft";
+  #     isReadOnly = false;
+  #   };
+  #   config = {
+  #     imports = [ ../../containers/minecraft ];
+  #     networking = {
+  #       useHostResolvConf = false;
+  #       interfaces.mv-publan.useDHCP = true;
+  #     };
+  #   };
+  # };
 
   users.users.jared = {
     isNormalUser = true;

@@ -47,7 +47,11 @@
       overlay = import ./pkgs/overlay.nix;
 
       nixosModule = { ... }: {
-        imports = [ ./modules ];
+        imports = [
+          ./modules
+          home-manager.nixosModules.home-manager
+          sops-nix.nixosModules.sops
+        ];
         nixpkgs.overlays = [
           git-get.overlay
           gobar.overlay
@@ -63,7 +67,6 @@
         system = "x86_64-linux";
         modules = [
           ./hosts/beetroot/configuration.nix
-          home-manager.nixosModules.home-manager
           nixos-hardware.nixosModules.lenovo-thinkpad-t480
           nixosModule
         ];
@@ -73,10 +76,8 @@
         system = "x86_64-linux";
         modules = [
           ./hosts/asparagus/configuration.nix
-          home-manager.nixosModules.home-manager
           nixos-hardware.nixosModules.intel-nuc-8i7beh
           nixosModule
-          sops-nix.nixosModules.sops
         ];
       };
 
@@ -93,11 +94,14 @@
         system = "x86_64-linux";
         modules = [
           ./hosts/kale/configuration.nix
-          home-manager.nixosModules.home-manager
           nixos-hardware.nixosModules.common-cpu-amd
           nixosModule
-          sops-nix.nixosModules.sops
         ];
+      };
+
+      nixosConfigurations.media = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [ ./containers/media sops-nix.nixosModules.sops ];
       };
 
       deploy.nodes.kale = {
@@ -107,16 +111,20 @@
           sshUser = "deploy";
           path = deploy-rs.lib.x86_64-linux.activate.nixos nixosConfigurations.kale;
         };
+        profiles.media = {
+          user = "root";
+          sshUser = "deploy";
+          profilePath = "/nix/var/nix/profiles/per-container/media";
+          path = deploy-rs.lib.x86_64-linux.activate.nixos nixosConfigurations.media;
+        };
       };
 
       nixosConfigurations.rhubarb = nixpkgs.lib.nixosSystem {
         system = "aarch64-linux";
         modules = [
           ./hosts/rhubarb/configuration.nix
-          home-manager.nixosModules.home-manager
           nixos-hardware.nixosModules.raspberry-pi-4
           nixosModule
-          sops-nix.nixosModules.sops
         ];
       };
 

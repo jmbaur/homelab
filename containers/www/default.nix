@@ -73,6 +73,26 @@ let
   mkVhost = settings: settings // vhostSsl // vhostLogging;
 in
 {
+  # services.prometheus.exporters.nginx = {
+  #   enable = true;
+  #   openFirewall = false;
+  # };
+  services.nginx.statusPage = true;
+  networking = {
+    useHostResolvConf = false;
+    defaultGateway.address = "192.168.10.1";
+    defaultGateway.interface = "mv-pubwan";
+    nameservers = lib.singleton "192.168.10.1";
+    domain = "home.arpa";
+    interfaces.mv-pubwan.ipv4.addresses = [{
+      address = "192.168.10.11";
+      prefixLength = 24;
+    }];
+    interfaces.mv-pubwan.ipv6.addresses = [{
+      address = "2001:470:f001:10::11";
+      prefixLength = 64;
+    }];
+  };
   networking.firewall.allowedTCPPorts = [ 80 443 ];
   services.fcgiwrap.enable = true;
   services.nix-serve = {
@@ -143,7 +163,7 @@ in
     isNormalUser = true;
     shell = "${pkgs.git}/bin/git-shell";
     description = "Jared Baur";
-    openssh.authorizedKeys.keyFiles = lib.singleton (import ../data/jmbaur-ssh-keys.nix);
+    openssh.authorizedKeys.keyFiles = lib.singleton (import ../../data/jmbaur-ssh-keys.nix);
   };
   services.openssh = {
     enable = true;

@@ -6,6 +6,10 @@ let
   });
 in
 {
+  networking = {
+    useHostResolvConf = false;
+    interfaces.mv-publan.useDHCP = true;
+  };
   networking.firewall.allowedTCPPorts = [ config.services.grafana.port ];
   services.prometheus = {
     enable = true;
