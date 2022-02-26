@@ -4,15 +4,9 @@
     enable = true;
     openFirewall = true;
   };
-  services.nzbget = {
+  services.sabnzbd = {
     enable = true;
-    settings = {
-      "Server1.Port" = 563;
-      "Server1.Host" = "news.eweka.nl";
-      "Server1.Username" = "$(cat /run/secrets/eweka/username)";
-      "Server1.Password" = "$(cat /run/secrets/eweka/password)";
-      "Server1.Encryption" = true;
-    };
+    configFile = "/run/secrets/sabnzbd.ini";
   };
   services.lidarr = {
     enable = true;
@@ -31,7 +25,7 @@
     config.services.radarr.group
     config.services.sonarr.group
   ];
-  users.users.lidarr.extraGroups = [ config.services.nzbget.group ];
-  users.users.radarr.extraGroups = [ config.services.nzbget.group ];
-  users.users.sonarr.extraGroups = [ config.services.nzbget.group ];
+  users.users.lidarr.extraGroups = [ config.services.sabnzbd.group ];
+  users.users.radarr.extraGroups = [ config.services.sabnzbd.group ];
+  users.users.sonarr.extraGroups = [ config.services.sabnzbd.group ];
 }
