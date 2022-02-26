@@ -109,8 +109,7 @@ in
   sops = {
     defaultSopsFile = ./secrets.yaml;
     age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-    secrets."eweka/username" = { };
-    secrets."eweka/password" = { };
+    secrets."sabnzbd.ini" = { };
   };
 
   containers.www = {
@@ -188,7 +187,7 @@ in
     macvlans = [ "publan" ];
     autoStart = true;
     ephemeral = true;
-    bindMounts."/run/secrets/eweka".hostPath = "/run/secrets/eweka";
+    bindMounts."/run/secrets/sabnzbd.ini".hostPath = "/run/secrets/sabnzbd.ini";
     bindMounts."/media" = {
       hostPath = "/big/containers/media/content";
       isReadOnly = false;
