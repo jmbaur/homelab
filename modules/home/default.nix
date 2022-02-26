@@ -391,6 +391,7 @@ with lib;
           };
           defaultWorkspace = "workspace number 1";
           keybindings = lib.mkOptionDefault {
+            "${modifier}+Shift+e" = "exit";
             "${modifier}+Control+l" = "exec ${pkgs.swaylock}/bin/swaylock -c 000000";
             "${modifier}+Control+space" = "exec ${pkgs.mako}/bin/makoctl dismiss --all";
             "${modifier}+Shift+s" = "sticky toggle";
@@ -493,16 +494,6 @@ with lib;
         };
       };
 
-      services.wlsunset = mkIf desktopEnabled {
-        enable = true;
-        latitude = "38.0";
-        longitude = "-118.0";
-      };
-
-      services.udiskie = mkIf desktopEnabled {
-        enable = desktopEnabled;
-        tray = "never";
-      };
     };
 
   };
