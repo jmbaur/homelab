@@ -5,11 +5,7 @@
     enable = true;
     openFirewall = true;
   };
-  services.sonarr = {
-    enable = true;
-    openFirewall = true;
-  };
-  services.radarr = {
+  services.jackett = {
     enable = true;
     openFirewall = true;
   };
@@ -17,20 +13,26 @@
     enable = true;
     openFirewall = true;
   };
-  services.jackett = {
+  services.radarr = {
     enable = true;
     openFirewall = true;
   };
-  users.users.sonarr.extraGroups = [
-    config.services.plex.group
+  services.sonarr = {
+    enable = true;
+    openFirewall = true;
+  };
+  users.users.plex.extraGroups = [
+    config.services.lidarr.group
+    config.services.radarr.group
+    config.services.sonarr.group
+  ];
+  users.users.lidarr.extraGroups = [
     config.services.transmission.group
   ];
   users.users.radarr.extraGroups = [
-    config.services.plex.group
     config.services.transmission.group
   ];
-  users.users.lidarr.extraGroups = [
-    config.services.plex.group
+  users.users.sonarr.extraGroups = [
     config.services.transmission.group
   ];
 }
