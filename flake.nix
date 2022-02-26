@@ -12,6 +12,7 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware";
     nixpkgs.url = "nixpkgs/nixos-unstable";
     promtop.url = "github:jmbaur/promtop";
+    sops-nix.url = "github:mic92/sops-nix";
   };
 
   outputs =
@@ -26,6 +27,7 @@
     , nixos-hardware
     , nixpkgs
     , promtop
+    , sops-nix
     }@inputs: flake-utils.lib.eachDefaultSystem
       (system:
       let pkgs = nixpkgs.legacyPackages.${system};
@@ -56,20 +58,21 @@
       nixosConfigurations.beetroot = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = with inputs.nixos-hardware.nixosModules; [
+          ./hosts/beetroot/configuration.nix
           home-manager.nixosModules.home-manager
           lenovo-thinkpad-t480
           nixosModule
-          ./hosts/beetroot/configuration.nix
         ];
       };
 
       nixosConfigurations.asparagus = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = with nixos-hardware.nixosModules; [
-          intel-nuc-8i7beh
-          home-manager.nixosModules.home-manager
-          nixosModule
           ./hosts/asparagus/configuration.nix
+          home-manager.nixosModules.home-manager
+          intel-nuc-8i7beh
+          nixosModule
+          sops-nix.nixosModules.sops
         ];
       };
 
@@ -85,10 +88,11 @@
       nixosConfigurations.kale = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = with nixos-hardware.nixosModules; [
+          ./hosts/kale/configuration.nix
           common-cpu-amd
           home-manager.nixosModules.home-manager
           nixosModule
-          ./hosts/kale/configuration.nix
+          sops-nix.nixosModule.sops
         ];
       };
 
@@ -104,10 +108,10 @@
       nixosConfigurations.rhubarb = nixpkgs.lib.nixosSystem {
         system = "aarch64-linux";
         modules = with nixos-hardware.nixosModules; [
-          raspberry-pi-4
+          ./hosts/rhubarb/configuration.nix
           home-manager.nixosModules.home-manager
           nixosModule
-          ./hosts/rhubarb/configuration.nix
+          raspberry-pi-4
         ];
       };
 

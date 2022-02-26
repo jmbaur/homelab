@@ -1,24 +1,18 @@
 { config, lib, pkgs, ... }: {
-  imports = [
-    ./hardware-configuration.nix
-  ];
+  imports = [ ./hardware-configuration.nix ];
 
   hardware.bluetooth.enable = true;
-  hardware.cpu.intel.updateMicrocode = true;
   hardware.enableRedistributableFirmware = true;
 
   boot.kernelPackages = pkgs.linuxPackages_5_15;
-  boot.binfmt.emulatedSystems = [
-    "aarch64-linux"
-    "riscv64-linux"
-  ];
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.useDHCP = false;
   networking.hostName = "beetroot";
-  networking.networkmanager.enable = true;
+  networking.wireless.enable = true;
   networking.firewall.enable = true;
+  networking.interfaces.enp0s31f6.useDHCP = true;
+  networking.interfaces.wlp3s0.useDHCP = true;
 
   time.timeZone = "America/Los_Angeles";
 
@@ -34,8 +28,6 @@
     extraGroups = [
       "adbusers"
       "dialout"
-      "libvirtd"
-      "networkmanager"
       "wheel"
       "wireshark"
     ];
@@ -53,15 +45,9 @@
   programs.mtr.enable = true;
   programs.ssh.startAgent = true;
 
-  services.openssh.enable = true;
-  services.openssh.listenAddresses = [
-    { addr = "127.0.0.1"; port = 22; }
-    { addr = "[::1]"; port = 22; }
-  ];
   services.fwupd.enable = true;
-  services.pcscd.enable = false;
 
-  # for direnv
+  # for nix-direnv
   nix.extraOptions = ''
     keep-outputs = true
     keep-derivations = true

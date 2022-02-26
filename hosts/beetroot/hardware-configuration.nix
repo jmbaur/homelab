@@ -5,8 +5,7 @@
 
 {
   imports =
-    [
-      (modulesPath + "/installer/scan/not-detected.nix")
+    [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" ];
@@ -15,46 +14,41 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    {
-      device = "/dev/disk/by-uuid/ba7def78-16e5-4a70-8eca-2e16b3ec69de";
+    { device = "/dev/disk/by-uuid/3bed3a4d-e749-4192-9210-ce4cc49251a2";
       fsType = "btrfs";
-      options = [ "subvol=@" "noatime" "compress=zstd" "discard=async" ];
+      options = [ "subvol=@" "noatime" "discard=async" "compress=zstd" ];
     };
 
-  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/433cdbe9-79ba-4353-b374-0cbd07a151f9";
+  boot.initrd.luks.devices."cryptnixos".device = "/dev/disk/by-uuid/8bd1e199-9dfc-489c-8c8e-5614ac5f4d78";
+
+  fileSystems."/nix" =
+    { device = "/dev/disk/by-uuid/3bed3a4d-e749-4192-9210-ce4cc49251a2";
+      fsType = "btrfs";
+      options = [ "subvol=@nix" "noatime" "discard=async" "compress=zstd"  ];
+    };
 
   fileSystems."/home" =
-    {
-      device = "/dev/disk/by-uuid/ba7def78-16e5-4a70-8eca-2e16b3ec69de";
+    { device = "/dev/disk/by-uuid/3bed3a4d-e749-4192-9210-ce4cc49251a2";
       fsType = "btrfs";
-      options = [ "subvol=@home" "noatime" "compress=zstd" "discard=async" ];
+      options = [ "subvol=@home" "noatime" "discard=async" "compress=zstd"  ];
     };
 
   fileSystems."/home/.snapshots" =
-    {
-      device = "/dev/disk/by-uuid/ba7def78-16e5-4a70-8eca-2e16b3ec69de";
+    { device = "/dev/disk/by-uuid/3bed3a4d-e749-4192-9210-ce4cc49251a2";
       fsType = "btrfs";
-      options = [ "subvol=@home/.snapshots" "noatime" "compress=zstd" "discard=async" ];
-    };
-
-  fileSystems."/nix" =
-    {
-      device = "/dev/disk/by-uuid/ba7def78-16e5-4a70-8eca-2e16b3ec69de";
-      fsType = "btrfs";
-      options = [ "subvol=@nix" "noatime" "compress=zstd" "discard=async" ];
+      options = [ "subvol=@home/.snapshots"  "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/boot" =
-    {
-      device = "/dev/disk/by-uuid/2E16-F769";
+    { device = "/dev/disk/by-uuid/CF99-3B3F";
       fsType = "vfat";
     };
 
+zramSwap = {
+enable  = true;
+swapDevices = 1;
+};
   swapDevices = [ ];
-  zramSwap = {
-    enable = true;
-    swapDevices = 1;
-  };
 
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;

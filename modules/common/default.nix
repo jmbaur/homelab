@@ -13,9 +13,7 @@ with lib;
 
     networking.useDHCP = mkForce false;
 
-    security.pki.certificateFiles = lib.singleton ../../data/jmbaur.com.cert;
-
-    nix.package = pkgs.nixUnstable;
+    nix.package = pkgs.nixFlakes;
     nix.extraOptions = ''
       experimental-features = nix-command flakes
     '';
@@ -28,15 +26,12 @@ with lib;
     nix.gc.dates = mkDefault "weekly";
 
     i18n.defaultLocale = "en_US.UTF-8";
-    services.xserver.layout = "us";
-    services.xserver.xkbModel = "pc104";
-    services.xserver.xkbVariant = "qwerty";
-    services.xserver.xkbOptions = "ctrl:nocaps";
-    console = {
-      earlySetup = true;
-      font = "ter-v24n";
-      useXkbConfig = true;
-      packages = [ pkgs.terminus_font ];
+    console.useXkbConfig = true;
+    services.xserver={
+      layout = "us";
+      xkbModel = "pc104";
+      xkbVariant = "qwerty";
+      xkbOptions = "ctrl:nocaps";
     };
 
     programs.mtr.enable = true;
