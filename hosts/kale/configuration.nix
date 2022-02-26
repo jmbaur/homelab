@@ -215,8 +215,8 @@ in
       hostPath = "/var/lib/radarr";
       isReadOnly = false;
     };
-    bindMounts."/big/media" = {
-      hostPath = "/media";
+    bindMounts."/media" = {
+      hostPath = "/big/media";
       isReadOnly = false;
     };
     config = {
