@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }: {
   nixpkgs.config.allowUnfree = true;
-  services.transmission.enable = true;
+  services.nzbget.enable = true;
   services.plex = {
     enable = true;
     openFirewall = true;
@@ -25,14 +25,5 @@
     config.services.lidarr.group
     config.services.radarr.group
     config.services.sonarr.group
-  ];
-  users.users.lidarr.extraGroups = [
-    config.services.transmission.group
-  ];
-  users.users.radarr.extraGroups = [
-    config.services.transmission.group
-  ];
-  users.users.sonarr.extraGroups = [
-    config.services.transmission.group
   ];
 }
