@@ -104,6 +104,11 @@
         modules = [ ./containers/media sops-nix.nixosModules.sops ];
       };
 
+      nixosConfigurations.www = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [ ./containers/www sops-nix.nixosModules.sops ];
+      };
+
       deploy.nodes.kale = {
         hostname = "kale";
         profiles.system = {
@@ -114,8 +119,12 @@
         profiles.media = {
           user = "root";
           sshUser = "deploy";
-          profilePath = "/nix/var/nix/profiles/per-container/media";
           path = deploy-rs.lib.x86_64-linux.activate.nixos nixosConfigurations.media;
+        };
+        profiles.www = {
+          user = "root";
+          sshUser = "deploy";
+          path = deploy-rs.lib.x86_64-linux.activate.nixos nixosConfigurations.www;
         };
       };
 

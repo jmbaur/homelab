@@ -2,7 +2,6 @@
   boot.isContainer = true;
   networking = {
     useDHCP = false;
-    hostName = "media";
     useHostResolvConf = false;
     defaultGateway.address = "192.168.20.1";
     defaultGateway.interface = "mv-publan";
@@ -23,15 +22,18 @@
     "d ${config.services.lidarr.dataDir} 700 ${config.services.lidarr.user} ${config.services.lidarr.group} -"
     "d ${config.services.radarr.dataDir} 700 ${config.services.radarr.user} ${config.services.radarr.group} -"
   ];
+  sops = {
+    defaultSopsFile = ./secrets.yaml;
+    age = {
+      generateKey = true;
+      keyFile = "/var/lib/sops-nix/key.txt";
+    };
+    secrets."sabnzbd.ini" = {
+      owner = config.services.sabnzbd.user;
+      group = config.services.sabnzbd.group;
+    };
+  };
   nixpkgs.config.allowUnfree = true;
-  # sops = {
-  # defaultSopsFile = ./secrets.yaml;
-  # age.generateKey = true;
-  # secrets."sabnzbd.ini" = {
-  #   owner = config.services.sabnzbd.user;
-  #   group = config.services.sabnzbd.group;
-  # };
-  # };
   services.plex = {
     enable = true;
     openFirewall = true;

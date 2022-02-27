@@ -77,6 +77,7 @@ in
   #   enable = true;
   #   openFirewall = false;
   # };
+  boot.isContainer = true;
   services.nginx.statusPage = true;
   networking = {
     useHostResolvConf = false;
@@ -92,8 +93,8 @@ in
       address = "2001:470:f001:10::11";
       prefixLength = 64;
     }];
+    firewall.allowedTCPPorts = [ 80 443 ];
   };
-  networking.firewall.allowedTCPPorts = [ 80 443 ];
   services.fcgiwrap.enable = true;
   services.nix-serve = {
     enable = true;
