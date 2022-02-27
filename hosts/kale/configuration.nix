@@ -106,24 +106,23 @@ in
     enabledCollectors = [ "systemd" ];
   };
 
-  # containers.www = {
-  #   macvlans = [ "pubwan" ];
-  #   autoStart = true;
-  #   ephemeral = true;
-  #   bindMounts."/home/jared" = {
-  #     hostPath = "/fast/containers/www/git";
-  #     isReadOnly = false;
-  #   };
-  #   bindMounts."/var/cache/cgit" = {
-  #     hostPath = "/fast/containers/www/cgit";
-  #     isReadOnly = false;
-  #   };
-  #   bindMounts."/var/lib/nginx".hostPath = "/fast/containers/www/nginx";
-  #   bindMounts."/var/lib/nix-serve".hostPath = "/fast/containers/www/nix-serve";
-  #   bindMounts."/etc/ssh/ssh_host_rsa_key".hostPath = "/etc/ssh/ssh_host_rsa_key";
-  #   bindMounts."/etc/ssh/ssh_host_ed25519_key".hostPath = "/etc/ssh/ssh_host_ed25519_key";
-  #   path = "/nix/var/nix/profiles/per-container/www";
-  # };
+  containers.www = {
+    autoStart = true;
+    ephemeral = true;
+    macvlans = [ "pubwan" ];
+    bindMounts."/home/jared" = {
+      hostPath = "/fast/containers/www/git";
+      isReadOnly = false;
+    };
+    bindMounts."/var/cache/cgit" = {
+      hostPath = "/fast/containers/www/cgit";
+      isReadOnly = false;
+    };
+    bindMounts."/etc/ssh" = {
+      hostPath = "/fast/containers/www/ssh";
+      isReadOnly = false;
+    };
+  };
 
   # containers.grafana = {
   #   macvlans = [ "publan" ];
@@ -155,36 +154,35 @@ in
   #   };
   # };
 
-  # containers.media = {
-  #   autoStart = true;
-  #   ephemeral = true;
-  #   macvlans = [ "publan" ];
-  #   bindMounts."/media" = {
-  #     hostPath = "/big/containers/media/content";
-  #     isReadOnly = false;
-  #   };
-  #   bindMounts."/var/lib/plex" = {
-  #     hostPath = "/fast/containers/media/plex";
-  #     isReadOnly = false;
-  #   };
-  #   bindMounts."/var/lib/sonarr" = {
-  #     hostPath = "/fast/containers/media/sonarr";
-  #     isReadOnly = false;
-  #   };
-  #   bindMounts."/var/lib/lidarr" = {
-  #     hostPath = "/fast/containers/media/lidarr";
-  #     isReadOnly = false;
-  #   };
-  #   bindMounts."/var/lib/radarr" = {
-  #     hostPath = "/fast/containers/media/radarr";
-  #     isReadOnly = false;
-  #   };
-  #   bindMounts."/var/lib/sops-nix" = {
-  #     hostPath = "fast/containers/media/sops-nix";
-  #     isReadOnly = false;
-  #   };
-  #   path = "/nix/var/nix/profiles/per-container/media";
-  # };
+  containers.media = {
+    autoStart = true;
+    ephemeral = true;
+    macvlans = [ "publan" ];
+    bindMounts."/media" = {
+      hostPath = "/big/containers/media/content";
+      isReadOnly = false;
+    };
+    bindMounts."/var/lib/plex" = {
+      hostPath = "/fast/containers/media/plex";
+      isReadOnly = false;
+    };
+    bindMounts."/var/lib/sonarr" = {
+      hostPath = "/fast/containers/media/sonarr";
+      isReadOnly = false;
+    };
+    bindMounts."/var/lib/lidarr" = {
+      hostPath = "/fast/containers/media/lidarr";
+      isReadOnly = false;
+    };
+    bindMounts."/var/lib/radarr" = {
+      hostPath = "/fast/containers/media/radarr";
+      isReadOnly = false;
+    };
+    bindMounts."/var/lib/sops-nix" = {
+      hostPath = "/fast/containers/media/sops-nix";
+      isReadOnly = false;
+    };
+  };
 
   # containers.minecraft = {
   #   macvlans = [ "publan" ];

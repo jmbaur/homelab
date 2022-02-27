@@ -1,6 +1,7 @@
 creation_rules:
-  - path_regex: hosts\/kale\/.*yaml$
+  - path_regex: containers\/www\/.*yaml$
     pgp: D4A0692874AA71B7F1281491BB8667EA7EB08143
-    age: age14zz6ja0ect776aj9r2nwxfc5rtc4qxphs4azjvcpqen9rqceud9sdy7680
+    age: age1zthtkpwk7pt9prkkcfcavr6ntm34l43rsvkacu2ee4ydvv2k85fqwx4ajp
   - path_regex: containers\/media\/.*yaml$
     pgp: D4A0692874AA71B7F1281491BB8667EA7EB08143
+    age: age12lgr04rnzswqzfegj0wnn68kv9kr3puu3r8qqvvklqskwupluufs88uqyw

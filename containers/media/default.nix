@@ -3,6 +3,7 @@
   networking = {
     useDHCP = false;
     useHostResolvConf = false;
+    hostName = "media";
     defaultGateway.address = "192.168.20.1";
     defaultGateway.interface = "mv-publan";
     nameservers = lib.singleton "192.168.20.1";

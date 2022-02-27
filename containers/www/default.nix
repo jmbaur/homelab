@@ -61,8 +61,8 @@ let
   '';
   vhostSsl = {
     forceSSL = true;
-    sslCertificate = "/var/lib/nginx/jmbaur.com.cert";
-    sslCertificateKey = "/var/lib/nginx/jmbaur.com.key";
+    sslCertificate = ../../data/jmbaur.com.cert;
+    sslCertificateKey = "/run/secrets/jmbaur.com.key";
   };
   vhostLogging = {
     extraConfig = ''
@@ -73,14 +73,43 @@ let
   mkVhost = settings: settings // vhostSsl // vhostLogging;
 in
 {
-  # services.prometheus.exporters.nginx = {
-  #   enable = true;
-  #   openFirewall = false;
-  # };
   boot.isContainer = true;
-  services.nginx.statusPage = true;
+  sops = {
+    defaultSopsFile = ./secrets.yaml;
+    age = {
+      sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+    };
+    secrets = {
+      "cache-priv-key.pem" = {
+        owner = config.systemd.services.nix-serve.serviceConfig.User;
+        group = config.systemd.services.nix-serve.serviceConfig.Group;
+      };
+      "jmbaur.com.key" = {
+        owner = config.services.nginx.user;
+        group = config.services.nginx.group;
+      };
+    };
+  };
+  systemd.services.nix-serve = {
+    serviceConfig.DynamicUser = lib.mkForce false;
+    serviceConfig.SupplementaryGroups = [ config.users.groups.keys.name ];
+  };
+  users.users.nix-serve = {
+    isSystemUser = true;
+    group = config.users.groups.nix-serve.name;
+  };
+  users.groups.nix-serve = { };
+  systemd.services.nginx = {
+    serviceConfig.SupplementaryGroups = [ config.users.groups.keys.name ];
+  };
+  services.prometheus.exporters.nginx = {
+    enable = true;
+    openFirewall = false;
+  };
   networking = {
+    useDHCP = false;
     useHostResolvConf = false;
+    hostName = "www";
     defaultGateway.address = "192.168.10.1";
     defaultGateway.interface = "mv-pubwan";
     nameservers = lib.singleton "192.168.10.1";
@@ -95,11 +124,15 @@ in
     }];
     firewall.allowedTCPPorts = [ 80 443 ];
   };
-  services.fcgiwrap.enable = true;
+  services.fcgiwrap = {
+    enable = true;
+    user = config.services.nginx.user;
+    group = config.services.nginx.group;
+  };
   services.nix-serve = {
     enable = true;
     openFirewall = false;
-    secretKeyFile = "/var/lib/nix-serve/cache-priv-key.pem";
+    secretKeyFile = "/run/secrets/cache-priv-key.pem";
   };
   services.gitDaemon = {
     enable = true;
@@ -108,12 +141,14 @@ in
   };
   services.nginx = {
     enable = true;
+    statusPage = true;
     virtualHosts."_" =
       let
         index = pkgs.runCommandNoCC "index" { } ''
           mkdir -p $out
           cat > $out/index.html << EOF
-          <h1>These aren't the droids you're looking for.</h1>
+          <!DOCTYPE html>
+          These aren't the droids you're looking for.
           EOF
         '';
       in
@@ -165,10 +200,12 @@ in
     shell = "${pkgs.git}/bin/git-shell";
     description = "Jared Baur";
     openssh.authorizedKeys.keyFiles = lib.singleton (import ../../data/jmbaur-ssh-keys.nix);
+    extraGroups = [ config.services.gitDaemon.group ];
   };
   services.openssh = {
     enable = true;
     passwordAuthentication = false;
+    startWhenNeeded = false; # needed to automatically create host keys
   };
   services.fail2ban.enable = true;
 }

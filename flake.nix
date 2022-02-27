@@ -90,13 +90,9 @@
         };
       };
 
-      nixosConfigurations.kale = nixpkgs.lib.nixosSystem {
+      nixosConfigurations.www = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        modules = [
-          ./hosts/kale/configuration.nix
-          nixos-hardware.nixosModules.common-cpu-amd
-          nixosModule
-        ];
+        modules = [ ./containers/www sops-nix.nixosModules.sops ];
       };
 
       nixosConfigurations.media = nixpkgs.lib.nixosSystem {
@@ -104,9 +100,17 @@
         modules = [ ./containers/media sops-nix.nixosModules.sops ];
       };
 
-      nixosConfigurations.www = nixpkgs.lib.nixosSystem {
+      nixosConfigurations.kale = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        modules = [ ./containers/www sops-nix.nixosModules.sops ];
+        modules = [
+          ./hosts/kale/configuration.nix
+          nixos-hardware.nixosModules.common-cpu-amd
+          nixosModule
+          ({
+            containers.www.path = nixosConfigurations.www.config.system.build.toplevel;
+            containers.media.path = nixosConfigurations.media.config.system.build.toplevel;
+          })
+        ];
       };
 
       deploy.nodes.kale = {
@@ -116,26 +120,17 @@
           sshUser = "deploy";
           path = deploy-rs.lib.x86_64-linux.activate.nixos nixosConfigurations.kale;
         };
-        profiles.media = {
-          user = "root";
-          sshUser = "deploy";
-          path = deploy-rs.lib.x86_64-linux.activate.nixos nixosConfigurations.media;
-        };
-        profiles.www = {
-          user = "root";
-          sshUser = "deploy";
-          path = deploy-rs.lib.x86_64-linux.activate.nixos nixosConfigurations.www;
-        };
       };
 
-      nixosConfigurations.rhubarb = nixpkgs.lib.nixosSystem {
-        system = "aarch64-linux";
-        modules = [
-          ./hosts/rhubarb/configuration.nix
-          nixos-hardware.nixosModules.raspberry-pi-4
-          nixosModule
-        ];
-      };
+      nixosConfigurations.rhubarb = nixpkgs.lib.nixosSystem
+        {
+          system = "aarch64-linux";
+          modules = [
+            ./hosts/rhubarb/configuration.nix
+            nixos-hardware.nixosModules.raspberry-pi-4
+            nixosModule
+          ];
+        };
 
       deploy.nodes.rhubarb = {
         hostname = "rhubarb";
