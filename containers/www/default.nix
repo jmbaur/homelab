@@ -52,6 +52,7 @@ let
   cgitrc = pkgs.writeText "cgitrc" ''
     cache-size=1000
     cache-root=${cgit-cache-root}
+    readme=:README.md
     about-filter=${pkgs.cgit}/lib/cgit/filters/about-formatting.sh
     source-filter=${pkgs.cgit}/lib/cgit/filters/syntax-highlighting.py
     enable-index-owner=0
