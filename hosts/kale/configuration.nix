@@ -106,6 +106,19 @@ in
     enabledCollectors = [ "systemd" ];
   };
 
+  # Ensure that bind mount directories exist on the host.
+  systemd.tmpfiles.rules = [
+    "d /fast/containers/www/git 700 root root -"
+    "d /fast/containers/www/acme 700 root root -"
+    "d /fast/containers/www/ssh 700 root root -"
+    "d /fast/containers/media/plex 700 root root -"
+    "d /fast/containers/media/sonarr 700 root root -"
+    "d /fast/containers/media/lidarr 700 root root -"
+    "d /fast/containers/media/radarr 700 root root -"
+    "d /fast/containers/media/sops-nix 700 root root -"
+    "d /big/containers/media/content 700 root root -"
+  ];
+
   containers.www = {
     autoStart = true;
     ephemeral = true;

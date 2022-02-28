@@ -158,6 +158,7 @@ with lib;
         delta.enable = true;
         extraConfig = {
           pull.rebase = false;
+          init.defaultBranch = "main";
         };
         attributes = [ ];
         ignores = [ "*~" "*.swp" ];
