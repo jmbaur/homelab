@@ -61,8 +61,7 @@ let
   '';
   vhostSsl = {
     forceSSL = true;
-    sslCertificate = ../../data/jmbaur.com.cert;
-    sslCertificateKey = "/run/secrets/jmbaur.com.key";
+    useACMEHost = "jmbaur.com";
   };
   vhostLogging = {
     extraConfig = ''
@@ -74,6 +73,9 @@ let
 in
 {
   boot.isContainer = true;
+  systemd.tmpfiles.rules = [
+    "d /var/lib/acme 700 acme acme -"
+  ];
   sops = {
     defaultSopsFile = ./secrets.yaml;
     age = {
@@ -84,10 +86,21 @@ in
         owner = config.systemd.services.nix-serve.serviceConfig.User;
         group = config.systemd.services.nix-serve.serviceConfig.Group;
       };
-      "jmbaur.com.key" = {
+      "cloudflare" = {
         owner = config.services.nginx.user;
         group = config.services.nginx.group;
       };
+    };
+  };
+  security.acme = {
+    acceptTerms = true;
+    defaults.email = "jaredbaur@fastmail.com";
+    certs."jmbaur.com" = {
+      domain = "*.jmbaur.com";
+      dnsProvider = "cloudflare";
+      credentialsFile = "/run/secrets/cloudflare";
+      dnsPropagationCheck = true;
+      group = config.services.nginx.group;
     };
   };
   systemd.services.nix-serve = {
@@ -154,6 +167,7 @@ in
       in
       mkVhost {
         default = true;
+        serverAliases = [ "www" ];
         locations."/" = {
           root = index;
           index = "index.html";

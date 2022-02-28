@@ -20,7 +20,7 @@
 		:local token "TODO"
 		:local type "A"
 		:local name "TODO"
-		:local proxied true
+		:local proxied false
 		:local url "https://api.cloudflare.com/client/v4/zones/$zoneid/dns_records/$recordid"
 		:local headers "Content-Type: application/json,Authorization: Bearer $token"
 		:local data "{\"type\":\"$type\",\"name\":\"$name\",\"content\":\"$content\",\"proxied\":$proxied}"

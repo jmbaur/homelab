@@ -118,6 +118,10 @@ in
       hostPath = "/fast/containers/www/cgit";
       isReadOnly = false;
     };
+    bindMounts."/var/lib/acme" = {
+      hostPath = "/fast/containers/www/acme";
+      isReadOnly = false;
+    };
     bindMounts."/etc/ssh" = {
       hostPath = "/fast/containers/www/ssh";
       isReadOnly = false;
