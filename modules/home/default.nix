@@ -158,9 +158,8 @@ with lib;
         delta.enable = true;
         extraConfig = {
           pull.rebase = false;
-          diff.sopsdiffer.textconv = "${pkgs.sops}/bin/sops -d";
         };
-        attributes = [ "*.yaml diff=sopsdiffer" ];
+        attributes = [ ];
         ignores = [ "*~" "*.swp" ];
         signing = {
           key = "7EB08143";
