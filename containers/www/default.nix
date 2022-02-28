@@ -48,14 +48,18 @@ let
     name = "git-shell-commands-environment";
     paths = [ create-repo ];
   };
+  cgit-cache-root = "/var/cache/cgit";
   cgitrc = pkgs.writeText "cgitrc" ''
     cache-size=1000
-    cache-root=/var/cache/cgit
+    cache-root=${cgit-cache-root}
     about-filter=${pkgs.cgit}/lib/cgit/filters/about-formatting.sh
     source-filter=${pkgs.cgit}/lib/cgit/filters/syntax-highlighting.py
+    enable-index-owner=0
     enable-http-clone=1
     clone-url=https://$HTTP_HOST$SCRIPT_NAME$CGIT_REPO_URL
     snapshots=tar.gz zip
+    root-title=git.jmbaur.com
+    root-desc="Jared's Git Repositories"
     remove-suffix=1
     scan-path=${config.services.gitDaemon.basePath}
   '';
@@ -73,8 +77,27 @@ let
 in
 {
   boot.isContainer = true;
+  networking = {
+    useDHCP = false;
+    useHostResolvConf = false;
+    hostName = "www";
+    defaultGateway.address = "192.168.10.1";
+    defaultGateway.interface = "mv-pubwan";
+    nameservers = lib.singleton "192.168.10.1";
+    domain = "home.arpa";
+    interfaces.mv-pubwan.ipv4.addresses = [{
+      address = "192.168.10.11";
+      prefixLength = 24;
+    }];
+    interfaces.mv-pubwan.ipv6.addresses = [{
+      address = "2001:470:f001:10::11";
+      prefixLength = 64;
+    }];
+    firewall.allowedTCPPorts = [ 80 443 ];
+  };
   systemd.tmpfiles.rules = [
     "d /var/lib/acme 700 acme acme -"
+    "d ${cgit-cache-root} 700 ${config.services.fcgiwrap.user} ${config.services.fcgiwrap.group} -"
   ];
   sops = {
     defaultSopsFile = ./secrets.yaml;
@@ -112,6 +135,7 @@ in
     group = config.users.groups.nix-serve.name;
   };
   users.groups.nix-serve = { };
+  users.users.nginx.extraGroups = [ config.users.users.git.group ];
   systemd.services.nginx = {
     serviceConfig.SupplementaryGroups = [ config.users.groups.keys.name ];
   };
@@ -119,28 +143,10 @@ in
     enable = true;
     openFirewall = false;
   };
-  networking = {
-    useDHCP = false;
-    useHostResolvConf = false;
-    hostName = "www";
-    defaultGateway.address = "192.168.10.1";
-    defaultGateway.interface = "mv-pubwan";
-    nameservers = lib.singleton "192.168.10.1";
-    domain = "home.arpa";
-    interfaces.mv-pubwan.ipv4.addresses = [{
-      address = "192.168.10.11";
-      prefixLength = 24;
-    }];
-    interfaces.mv-pubwan.ipv6.addresses = [{
-      address = "2001:470:f001:10::11";
-      prefixLength = 64;
-    }];
-    firewall.allowedTCPPorts = [ 80 443 ];
-  };
   services.fcgiwrap = {
     enable = true;
-    user = config.services.nginx.user;
-    group = config.services.nginx.group;
+    user = config.services.gitDaemon.user;
+    group = config.services.gitDaemon.group;
   };
   services.nix-serve = {
     enable = true;
@@ -150,7 +156,7 @@ in
   services.gitDaemon = {
     enable = true;
     exportAll = true;
-    basePath = config.users.users.jared.home;
+    basePath = "/srv/git";
   };
   services.nginx = {
     enable = true;
@@ -206,19 +212,19 @@ in
       };
     };
   };
-  system.userActivationScripts.git-shell-commands.text = ''
-    ln -sfT ${commands}/bin $HOME/git-shell-commands
+  system.activationScripts.git-shell-commands.text = ''
+    ln -sfT ${commands}/bin ${config.services.gitDaemon.basePath}/git-shell-commands
+    chown -R ${config.users.users.git.name}:${config.users.users.git.group} ${config.users.users.git.home}
   '';
-  users.users.jared = {
-    isNormalUser = true;
+  users.users.git = {
+    isSystemUser = true;
+    home = config.services.gitDaemon.basePath;
     shell = "${pkgs.git}/bin/git-shell";
-    description = "Jared Baur";
     openssh.authorizedKeys.keyFiles = lib.singleton (import ../../data/jmbaur-ssh-keys.nix);
-    extraGroups = [ config.services.gitDaemon.group ];
   };
   services.openssh = {
     enable = true;
-    passwordAuthentication = false;
+    passwordAuthentication = lib.mkForce false;
     startWhenNeeded = false; # needed to automatically create host keys
   };
   services.fail2ban.enable = true;

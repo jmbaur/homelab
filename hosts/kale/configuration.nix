@@ -110,12 +110,8 @@ in
     autoStart = true;
     ephemeral = true;
     macvlans = [ "pubwan" ];
-    bindMounts."/home/jared" = {
+    bindMounts."/srv/git" = {
       hostPath = "/fast/containers/www/git";
-      isReadOnly = false;
-    };
-    bindMounts."/var/cache/cgit" = {
-      hostPath = "/fast/containers/www/cgit";
       isReadOnly = false;
     };
     bindMounts."/var/lib/acme" = {
