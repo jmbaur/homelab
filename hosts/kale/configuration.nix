@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }:
 let
-  dataIface = "enp1s0f0";
+  dataIface = "enp1s0f1";
   mgmtIface = "enp35s0";
   mgmtAddress = "192.168.88.3";
   mgmtNetwork = "192.168.88.0";
