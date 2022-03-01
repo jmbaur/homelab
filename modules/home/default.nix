@@ -157,7 +157,7 @@ with lib;
         };
         delta.enable = true;
         extraConfig = {
-          pull.rebase = false;
+          pull.rebase = true;
           init.defaultBranch = "main";
         };
         attributes = [ ];
@@ -278,6 +278,7 @@ with lib;
           rustfmt
           shfmt
           sumneko-lua-language-server
+          texlive.combined.scheme-medium
           tree-sitter
           zig
           zls
