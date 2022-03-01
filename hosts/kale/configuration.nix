@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }:
 let
-  dataIface = "enp1s0f0";
+  dataIface = "enp36s0";
   mgmtIface = "enp35s0";
   mgmtAddress = "192.168.88.3";
   mgmtNetwork = "192.168.88.0";
@@ -119,6 +119,8 @@ in
     extraGroups = [ "wheel" "libvirtd" ];
     openssh.authorizedKeys.keyFiles = lib.singleton (import ../../data/jmbaur-ssh-keys.nix);
   };
+
+  services.fwupd.enable = true;
 
   services.openssh = {
     permitRootLogin = "yes";
