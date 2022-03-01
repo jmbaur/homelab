@@ -1,6 +1,7 @@
 { config, lib, pkgs, ... }:
 let
-  mgmtIface = "enp5s0";
+  dataIface = "enp1s0f0";
+  mgmtIface = "enp35s0";
   mgmtAddress = "192.168.88.3";
   mgmtNetwork = "192.168.88.0";
   mgmtGateway = "192.168.88.1";
@@ -38,12 +39,12 @@ in
     "console=tty1"
   ];
   boot.kernel.sysctl = {
-    "net.ipv6.conf.enp5s0.accept_ra" = lib.mkForce 0;
-    "net.ipv6.conf.enp5s0.autoconf" = lib.mkForce 0;
-    "net.ipv6.conf.enp5s0.use_tempaddr" = lib.mkForce 0;
-    "net.ipv6.conf.enp3s0.accept_ra" = lib.mkForce 0;
-    "net.ipv6.conf.enp3s0.autoconf" = lib.mkForce 0;
-    "net.ipv6.conf.enp3s0.use_tempaddr" = lib.mkForce 0;
+    "net.ipv6.conf.${mgmtIface}.accept_ra" = lib.mkForce 0;
+    "net.ipv6.conf.${mgmtIface}.autoconf" = lib.mkForce 0;
+    "net.ipv6.conf.${mgmtIface}.use_tempaddr" = lib.mkForce 0;
+    "net.ipv6.conf.${dataIface}.accept_ra" = lib.mkForce 0;
+    "net.ipv6.conf.${dataIface}.autoconf" = lib.mkForce 0;
+    "net.ipv6.conf.${dataIface}.use_tempaddr" = lib.mkForce 0;
     "net.ipv6.conf.pubwan.accept_ra" = lib.mkForce 0;
     "net.ipv6.conf.pubwan.autoconf" = lib.mkForce 0;
     "net.ipv6.conf.pubwan.use_tempaddr" = lib.mkForce 0;
@@ -88,9 +89,9 @@ in
       useDHCP = false;
       ipv4.addresses = [{ address = mgmtAddress; prefixLength = mgmtPrefix; }];
     };
-    interfaces.enp3s0.ipv4.addresses = lib.mkForce [ ];
-    vlans.pubwan = { id = 10; interface = "enp3s0"; };
-    vlans.publan = { id = 20; interface = "enp3s0"; };
+    interfaces.${dataIface}.ipv4.addresses = lib.mkForce [ ];
+    vlans.pubwan = { id = 10; interface = dataIface; };
+    vlans.publan = { id = 20; interface = dataIface; };
     interfaces.pubwan.ipv4.addresses = lib.mkForce [ ];
     interfaces.publan.ipv4.addresses = lib.mkForce [ ];
   };
@@ -122,7 +123,7 @@ in
   containers.www = {
     autoStart = true;
     ephemeral = true;
-    macvlans = [ "pubwan" ];
+    macvlans = [ "pubwan" "publan" ];
     bindMounts."/srv/git" = {
       hostPath = "/fast/containers/www/git";
       isReadOnly = false;
