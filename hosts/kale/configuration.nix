@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }:
 let
-  dataIface = "enp1s0f1";
+  dataIface = "enp1s0f0";
   mgmtIface = "enp35s0";
   mgmtAddress = "192.168.88.3";
   mgmtNetwork = "192.168.88.0";
@@ -21,7 +21,7 @@ in
   custom.virtualisation.enable = true;
   custom.virtualisation.variant = "normal";
 
-  systemd.services."serial-getty@ttyS2" = {
+  systemd.services."serial-getty@ttyS0" = {
     enable = true;
     wantedBy = [ "getty.target" ]; # to start at boot
     serviceConfig.Restart = "always"; # restart when session is closed
@@ -35,7 +35,7 @@ in
   ];
   boot.kernelParams = [
     "ip=${mgmtAddress}::${mgmtGateway}:${mgmtNetmask}:${config.networking.hostName}:${mgmtIface}::::"
-    "console=ttyS2,115200"
+    "console=ttyS0,115200"
     "console=tty1"
   ];
   boot.kernel.sysctl = {
