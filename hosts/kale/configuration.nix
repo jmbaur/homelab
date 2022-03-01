@@ -17,7 +17,7 @@ in
 
   custom.common.enable = true;
   custom.deploy.enable = true;
-  custom.home.enable = true;
+  custom.home.enable = false;
   custom.virtualisation.enable = true;
   custom.virtualisation.variant = "normal";
 
@@ -86,14 +86,38 @@ in
     defaultGateway.address = mgmtGateway;
     defaultGateway.interface = mgmtIface;
     interfaces.${mgmtIface} = {
-      useDHCP = false;
-      ipv4.addresses = [{ address = mgmtAddress; prefixLength = mgmtPrefix; }];
+      ipv4.addresses = [{
+        address = mgmtAddress;
+        prefixLength = mgmtPrefix;
+      }];
     };
-    interfaces.${dataIface}.ipv4.addresses = lib.mkForce [ ];
-    vlans.pubwan = { id = 10; interface = dataIface; };
-    vlans.publan = { id = 20; interface = dataIface; };
-    interfaces.pubwan.ipv4.addresses = lib.mkForce [ ];
-    interfaces.publan.ipv4.addresses = lib.mkForce [ ];
+    interfaces.${dataIface} = {
+      ipv4.addresses = lib.mkForce [ ];
+      ipv6.addresses = lib.mkForce [ ];
+    };
+    vlans.pubwan = {
+      id = 10;
+      interface = dataIface;
+    };
+    vlans.publan = {
+      id = 20;
+      interface = dataIface;
+    };
+    interfaces.pubwan = {
+      ipv4.addresses = lib.mkForce [ ];
+      ipv6.addresses = lib.mkForce [ ];
+    };
+    interfaces.publan = {
+      ipv4.addresses = lib.mkForce [ ];
+      ipv6.addresses = lib.mkForce [ ];
+    };
+  };
+
+  users.users.jared = {
+    isNormalUser = true;
+    initialPassword = "helloworld";
+    extraGroups = [ "wheel" "libvirtd" ];
+    openssh.authorizedKeys.keyFiles = lib.singleton (import ../../data/jmbaur-ssh-keys.nix);
   };
 
   services.openssh = {
@@ -214,12 +238,6 @@ in
   #     };
   #   };
   # };
-
-  users.users.jared = {
-    isNormalUser = true;
-    openssh.authorizedKeys.keyFiles = lib.singleton (import ../../data/jmbaur-ssh-keys.nix);
-    extraGroups = [ "wheel" "libvirtd" ];
-  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

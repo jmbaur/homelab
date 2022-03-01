@@ -6,13 +6,22 @@
 {
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
-  boot.initrd.availableKernelModules = [ "igb" "xhci_pci" "ahci" "nvme" "usb_storage" "usbhid" "sd_mod" ];
+  boot.initrd.availableKernelModules = [
+    "xhci_pci"
+    "ahci"
+    "nvme"
+    "usb_storage"
+    "usbhid"
+    "sd_mod"
+  ] ++ [
+    "igb" # for initrd network support
+  ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
   boot.initrd.luks.reusePassphrases = true;
-  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/d27a75ca-474f-4859-a608-cb2859f98cd9";
+  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/f21ee887-1fd6-4f5b-9a93-5cadc76dc9d0";
   boot.initrd.luks.devices."cryptfast0".device = "/dev/disk/by-uuid/fe11928a-a8cc-432f-a26f-247ceb752133";
   boot.initrd.luks.devices."cryptfast1".device = "/dev/disk/by-uuid/585155c2-ff8f-4102-95cf-71031b9b4ab9";
   boot.initrd.luks.devices."cryptbig0".device = "/dev/disk/by-uuid/5abf67a7-3020-408a-a59f-0b899a59fcbb";
@@ -20,29 +29,36 @@
 
   fileSystems."/boot" =
     {
-      device = "/dev/disk/by-uuid/2D8C-C352";
+      device = "/dev/disk/by-uuid/EB16-015F";
       fsType = "vfat";
     };
 
   fileSystems."/" =
     {
-      device = "/dev/disk/by-uuid/8741fae3-808c-4376-838c-1e90dbc50ff8";
+      device = "/dev/disk/by-uuid/c04956b8-c80d-4c79-ab8b-ed4562df6e2f";
       fsType = "btrfs";
-      options = [ "subvol=@" "noatime" "compress=zstd" "discard=async" ];
+      options = [ "subvol=@" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/nix" =
     {
-      device = "/dev/disk/by-uuid/8741fae3-808c-4376-838c-1e90dbc50ff8";
+      device = "/dev/disk/by-uuid/c04956b8-c80d-4c79-ab8b-ed4562df6e2f";
       fsType = "btrfs";
-      options = [ "subvol=@nix" "noatime" "compress=zstd" "discard=async" ];
+      options = [ "subvol=@nix" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/home" =
     {
-      device = "/dev/disk/by-uuid/8741fae3-808c-4376-838c-1e90dbc50ff8";
+      device = "/dev/disk/by-uuid/c04956b8-c80d-4c79-ab8b-ed4562df6e2f";
       fsType = "btrfs";
-      options = [ "subvol=@home" "noatime" "compress=zstd" "discard=async" ];
+      options = [ "subvol=@home" "noatime" "discard=async" "compress=zstd" ];
+    };
+
+  fileSystems."/home/.snapshots" =
+    {
+      device = "/dev/disk/by-uuid/c04956b8-c80d-4c79-ab8b-ed4562df6e2f";
+      fsType = "btrfs";
+      options = [ "subvol=@home/.snapshots" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/fast" =

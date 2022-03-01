@@ -85,7 +85,6 @@
         hostname = "asparagus";
         profiles.system = {
           user = "root";
-          sshUser = "deploy";
           path = deploy-rs.lib.x86_64-linux.activate.nixos nixosConfigurations.asparagus;
         };
       };
@@ -117,7 +116,6 @@
         hostname = "kale";
         profiles.system = {
           user = "root";
-          sshUser = "deploy";
           path = deploy-rs.lib.x86_64-linux.activate.nixos nixosConfigurations.kale;
         };
       };
@@ -136,7 +134,6 @@
         hostname = "rhubarb";
         profiles.system = {
           user = "root";
-          sshUser = "deploy";
           path = deploy-rs.lib.aarch64-linux.activate.nixos nixosConfigurations.rhubarb;
         };
       };
