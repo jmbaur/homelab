@@ -17,10 +17,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "beetroot";
-  networking.wireless.enable = true;
-  networking.firewall.enable = true;
-  networking.interfaces.enp0s31f6.useDHCP = true;
-  networking.interfaces.wlp3s0.useDHCP = true;
+  networking.networkmanager.enable = true;
 
   time.timeZone = "America/Los_Angeles";
 
@@ -37,6 +34,7 @@
     extraGroups = [
       "adbusers"
       "dialout"
+      "networkmanager"
       "wheel"
       "wireshark"
     ];
