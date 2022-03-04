@@ -36,7 +36,7 @@
               # accepting ping (icmp-echo-request) for diagnostic purposes.
               icmp type echo-request limit rate 5/second accept
 
-              # allow DHCP, DNS and SSH from the private network
+              # allow DHCP, DNS and SSH from the private trusted network
               ip protocol . th dport vmap { tcp . 22 : accept, udp . 53 : accept, tcp . 53 : accept, udp . 67 : accept}
           }
 
