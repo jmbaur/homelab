@@ -21,6 +21,20 @@
     "net.ipv6.conf.all.forwarding" = true;
   };
 
+  sops = {
+    defaultSopsFile = ./secrets.yaml;
+    age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+    secrets.wg0 = {};
+    secrets.cloudflare = {
+      owner = config.users.users.dhcpcd.name;
+      group = config.users.users.dhcpcd.group;
+    };
+    secrets.he_tunnelbroker = {
+      owner = config.users.users.dhcpcd.name;
+      group = config.users.users.dhcpcd.group;
+    };
+  };
+
   environment.systemPackages = with pkgs; [
     conntrack-tools
     dig

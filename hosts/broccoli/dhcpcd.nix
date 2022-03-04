@@ -1,17 +1,4 @@
 { config, pkgs, ... }: {
-  sops = {
-    defaultSopsFile = ./secrets.yaml;
-    age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-    secrets.cloudflare = {
-      owner = config.users.users.dhcpcd.name;
-      group = config.users.users.dhcpcd.group;
-    };
-    secrets.he_tunnelbroker = {
-      owner = config.users.users.dhcpcd.name;
-      group = config.users.users.dhcpcd.group;
-    };
-  };
-
   systemd.services.dhcpcd.serviceConfig.SupplementaryGroups = [ config.users.groups.keys.name ];
 
   networking.dhcpcd = {
