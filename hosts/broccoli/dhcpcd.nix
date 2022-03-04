@@ -3,12 +3,12 @@
     defaultSopsFile = ./secrets.yaml;
     age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
     secrets.cloudflare = {
-      owner = users.users.dhcpcd.name;
-      group = users.users.dhcpcd.group;
+      owner = config.users.users.dhcpcd.name;
+      group = config.users.users.dhcpcd.group;
     };
     secrets.he_tunnelbroker = {
-      owner = users.users.dhcpcd.name;
-      group = users.users.dhcpcd.group;
+      owner = config.users.users.dhcpcd.name;
+      group = config.users.users.dhcpcd.group;
     };
   };
 
@@ -31,16 +31,19 @@
         "BOUND")
           source /run/secrets/he_tunnelbroker
           source /run/secrets/cloudflare
-          ipaddr=$(ip -4 address show dev "$interface" | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+          ipaddr=$(${pkgs.iproute2}/bin/ip -4 address show dev "$interface" | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+          echo Updating hurricane electric tunnelbroker with new IP
           ${pkgs.curl}/bin/curl \
             --data "hostname=''${TUNNEL_ID}" \
             --user "''${USERNAME}:''${PASSWORD}" \
             https://ipv4.tunnelbroker.net/nic/update
-          ${pkgs.curl}/bin/curl -X POST \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer ''${CF_DNS_API_TOKEN}" \
+          echo Updating Cloudflare DNS with new IP
+          ${pkgs.curl}/bin/curl \
+            --request PUT \
+            --header "Content-Type: application/json" \
+            --header "Authorization: Bearer ''${CF_DNS_API_TOKEN}" \
             --data '{"type":"A","name":"jmbaur.com","content":"'"''${ipaddr}"'","proxied":false}' \
-            "https://api.cloudflare.com/client/v4/zones/''${ZONE_ID}/dns_records/''${RECORD_ID}"
+            "https://api.cloudflare.com/client/v4/zones/''${ZONE_ID}/dns_records/''${RECORD_ID}" | ${pkgs.jq}/bin/jq 
           ;;
         esac
     '';
