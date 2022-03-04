@@ -8,6 +8,7 @@
     gobar.url = "github:jmbaur/gobar";
     gosee.url = "github:jmbaur/gosee";
     home-manager.url = "github:nix-community/home-manager";
+    hosts.url = "github:StevenBlack/hosts";
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
     nixpkgs.url = "nixpkgs/nixos-unstable";
@@ -24,6 +25,7 @@
     , gobar
     , gosee
     , home-manager
+    , hosts
     , neovim-nightly-overlay
     , nixos-hardware
     , nixpkgs
@@ -50,6 +52,7 @@
         imports = [
           ./modules
           home-manager.nixosModules.home-manager
+          hosts.nixosModule
           sops-nix.nixosModules.sops
         ];
         nixpkgs.overlays = [
@@ -61,6 +64,22 @@
           promtop.overlay
           self.overlay
         ];
+      };
+
+      nixosConfigurations.broccoli = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./hosts/broccoli/configuration.nix
+          nixosModule
+        ];
+      };
+
+      deploy.nodes.broccoli = {
+        hostname = "broccoli";
+        profiles.system = {
+          user = "root";
+          path = deploy-rs.lib.x86_64-linux.activate.nixos nixosConfigurations.broccoli;
+        };
       };
 
       nixosConfigurations.beetroot = nixpkgs.lib.nixosSystem {

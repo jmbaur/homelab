@@ -5,7 +5,8 @@
 
 {
   imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
+    [
+      (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" ];
@@ -14,7 +15,8 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/3bed3a4d-e749-4192-9210-ce4cc49251a2";
+    {
+      device = "/dev/disk/by-uuid/3bed3a4d-e749-4192-9210-ce4cc49251a2";
       fsType = "btrfs";
       options = [ "subvol=@" "noatime" "discard=async" "compress=zstd" ];
     };
@@ -22,32 +24,36 @@
   boot.initrd.luks.devices."cryptnixos".device = "/dev/disk/by-uuid/8bd1e199-9dfc-489c-8c8e-5614ac5f4d78";
 
   fileSystems."/nix" =
-    { device = "/dev/disk/by-uuid/3bed3a4d-e749-4192-9210-ce4cc49251a2";
+    {
+      device = "/dev/disk/by-uuid/3bed3a4d-e749-4192-9210-ce4cc49251a2";
       fsType = "btrfs";
-      options = [ "subvol=@nix" "noatime" "discard=async" "compress=zstd"  ];
+      options = [ "subvol=@nix" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/3bed3a4d-e749-4192-9210-ce4cc49251a2";
+    {
+      device = "/dev/disk/by-uuid/3bed3a4d-e749-4192-9210-ce4cc49251a2";
       fsType = "btrfs";
-      options = [ "subvol=@home" "noatime" "discard=async" "compress=zstd"  ];
+      options = [ "subvol=@home" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/home/.snapshots" =
-    { device = "/dev/disk/by-uuid/3bed3a4d-e749-4192-9210-ce4cc49251a2";
+    {
+      device = "/dev/disk/by-uuid/3bed3a4d-e749-4192-9210-ce4cc49251a2";
       fsType = "btrfs";
-      options = [ "subvol=@home/.snapshots"  "noatime" "discard=async" "compress=zstd" ];
+      options = [ "subvol=@home/.snapshots" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/CF99-3B3F";
+    {
+      device = "/dev/disk/by-uuid/CF99-3B3F";
       fsType = "vfat";
     };
 
-zramSwap = {
-enable  = true;
-swapDevices = 1;
-};
+  zramSwap = {
+    enable = true;
+    swapDevices = 1;
+  };
   swapDevices = [ ];
 
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
