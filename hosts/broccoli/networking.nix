@@ -88,5 +88,17 @@ in
         ];
       };
     };
+    wireguard = {
+      enable = true;
+      interfaces.wg0 = {
+        ips = [
+          "192.168.111.1/24"
+          "${ulaPrefix}:6f::1/64"
+          "${guaPrefix}:6f::1/64"
+        ];
+        privateKeyFile = "/run/secrets/wg0";
+        peers = [];
+      };
+    };
   };
 }
