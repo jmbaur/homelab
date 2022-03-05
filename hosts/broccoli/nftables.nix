@@ -70,25 +70,29 @@
               # the rest is dropped by the above policy
           }
 
-          chain forward_to_wan {
+          chain not_in_internet {
               # Drop addresses that do not exist in the internet (RFC6890)
               ip daddr {
-                  != 0.0.0.0/8,
-                  != 10.0.0.0/8,
-                  != 100.64.0.0/10,
-                  != 127.0.0.0/8,
-                  != 169.254.0.0/16,
-                  != 172.16.0.0/12,
-                  != 192.0.0.0/24,
-                  != 192.0.2.0/24,
-                  != 192.168.0.0/16,
-                  != 192.88.99.0/24,
-                  != 198.18.0.0/15,
-                  != 198.51.100.0/24,
-                  != 203.0.113.0/24,
-                  != 224.0.0.0/4,
-                  != 240.0.0.0/4
-              } oifname $DEV_WAN accept
+                  0.0.0.0/8,
+                  10.0.0.0/8,
+                  100.64.0.0/10,
+                  127.0.0.0/8,
+                  169.254.0.0/16,
+                  172.16.0.0/12,
+                  192.0.0.0/24,
+                  192.0.2.0/24,
+                  192.168.0.0/16,
+                  192.88.99.0/24,
+                  198.18.0.0/15,
+                  198.51.100.0/24,
+                  203.0.113.0/24,
+                  224.0.0.0/4,
+                  240.0.0.0/4
+              } drop
+          }
+
+          chain allow_to_internet {
+              oifname $DEV_WAN accept
           }
 
           chain forward {
@@ -97,15 +101,17 @@
               # Allow traffic from established and related packets, drop invalid
               ct state vmap { established : accept, related : accept, invalid : drop }
 
+              oifname $DEV_WAN jump not_in_internet
+
               # connections from the internal net to the internet or to other
               # internal nets are allowed
               iifname vmap {
                   $DEV_PRIVATE : accept,
-                  $DEV_PUBWAN : jump forward_to_wan,
-                  $DEV_PUBLAN : jump forward_to_wan,
+                  $DEV_PUBWAN : jump allow_to_internet,
+                  $DEV_PUBLAN : jump allow_to_internet,
                   $DEV_TRUSTED : accept,
-                  $DEV_IOT : jump forward_to_wan,
-                  $DEV_GUEST : jump forward_to_wan,
+                  $DEV_IOT : jump allow_to_internet,
+                  $DEV_GUEST : jump allow_to_internet,
                   $DEV_MGMT : accept
               }
 
@@ -116,7 +122,7 @@
               type nat hook postrouting priority 100; policy accept;
 
               # masquerade private IP addresses
-              ip saddr $NET_ALL meta oifname $DEV_WAN counter masquerade
+              ip saddr $NET_ALL oifname $DEV_WAN masquerade
           }
       }
     '';
