@@ -44,8 +44,7 @@
           chain input_always_allowed {
               jump input_lan_icmp
 
-              tcp dport 53 accept
-              udp dport 53 accept
+              meta l4proto { tcp, udp } th dport 53 accept
               udp dport 67 accept
           }
 
