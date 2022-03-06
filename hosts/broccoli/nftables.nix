@@ -29,20 +29,24 @@
               icmp type echo-request limit rate 5/second accept
           }
 
-          chain input_private_trusted {
+          chain input_always_allowed {
               # accepting ping (icmp-echo-request) for diagnostic purposes.
               icmp type echo-request limit rate 5/second accept
 
-              # allow DHCP, DNS and SSH from the private trusted network
-              ip protocol . th dport vmap { tcp . 22 : accept, udp . 53 : accept, tcp . 53 : accept, udp . 67 : accept}
+              tcp dport 53 accept
+              udp dport 53 accept
+              udp dport 67 accept
+          }
+
+          chain input_private_trusted {
+              jump input_always_allowed
+
+              # allow SSH from the private trusted network
+              tcp dport 22 accept
           }
 
           chain input_private_untrusted {
-              # accepting ping (icmp-echo-request) for diagnostic purposes.
-              icmp type echo-request limit rate 5/second accept
-
-              # allow DHCP and DNS from the private untrusted network
-              ip protocol . th dport vmap { udp . 53 : accept, tcp . 53 : accept, udp . 67 : accept}
+              jump input_always_allowed
           }
 
           chain input {
