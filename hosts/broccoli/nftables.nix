@@ -19,21 +19,15 @@
               # However, it also lets probes discover this host is alive.
               # This sample accepts them within a certain rate limit:
  
-	      icmpv6 type {
-		  echo-request,
-		  destination-unreachable,
-		  packet-too-big,
-		  time-exceeded,
-		  parameter-problem,
-		  nd-neighbor-solicit,
-		  nd-neighbor-advert,
-	      } accept
-	      icmp type {
-		  echo-request,
-		  destination-unreachable,
-		  time-exceeded,
-		  parameter-problem,
-	      } accept
+              icmpv6 type {
+                  echo-request,
+                  mld-listener-query,
+                  nd-neighbor-advert,
+                  nd-neighbor-solicit,
+                  nd-router-advert,
+                  nd-router-solicit,
+              } accept
+	      icmp type { echo-request } accept
           }
 
           chain input_wan {
