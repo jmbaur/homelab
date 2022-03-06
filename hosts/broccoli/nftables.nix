@@ -19,7 +19,7 @@
               # However, it also lets probes discover this host is alive.
               # This sample accepts them within a certain rate limit:
  
-	      ip6 nexthdr icmpv6 icmpv6 type {
+	      icmpv6 type {
 		  echo-request,
 		  destination-unreachable,
 		  packet-too-big,
@@ -28,31 +28,31 @@
 		  nd-neighbor-solicit,
 		  nd-neighbor-advert,
 	      } accept
-	      ip protocol icmp icmp type {
+	      icmp type {
 		  echo-request,
 		  destination-unreachable,
 		  time-exceeded,
 		  parameter-problem,
-	      }  accept
+	      } accept
           }
 
           chain input_wan {
-              icmp type echo-request limit rate 5/second accept
               icmpv6 type echo-request limit rate 5/second accept
+              icmp type echo-request limit rate 5/second accept
           }
 
           chain input_always_allowed {
               jump input_lan_icmp
 
-              meta l4proto { tcp, udp } th dport 53 accept
-              udp dport 67 accept
+              meta l4proto { tcp, udp } th dport 53 accept # DNS
+              ip version 4 udp dport 67 accept # DHCP
           }
 
           chain input_private_trusted {
               jump input_always_allowed
 
               # allow SSH from the private trusted network
-              tcp dport ssh log prefix "input ssh - " accept
+              meta l4proto tcp th dport ssh log prefix "input ssh - " accept
           }
 
           chain input_private_untrusted {
