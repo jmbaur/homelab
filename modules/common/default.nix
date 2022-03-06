@@ -6,6 +6,7 @@ let
     vimrcConfig.packages.myplugins = with pkgs.vimPlugins; {
       start = [
         vim-eunuch
+        vim-fugitive
         vim-lastplace
         vim-nix
         vim-rsi
@@ -15,6 +16,8 @@ let
     };
     vimrcConfig.customRC = ''
       set hidden
+      set number
+      set relativenumber
     '';
   };
 in
@@ -69,6 +72,7 @@ with lib;
       dmidecode
       dnsutils
       file
+      git
       htop
       iftop
       iperf3
