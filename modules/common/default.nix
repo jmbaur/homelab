@@ -16,6 +16,7 @@ let
     };
     vimrcConfig.customRC = ''
       set hidden
+      set noswapfile
       set number
       set relativenumber
     '';
@@ -46,7 +47,6 @@ with lib;
         dates = mkDefault "weekly";
       };
     };
-
 
     i18n.defaultLocale = "en_US.UTF-8";
     console.useXkbConfig = true;
@@ -93,6 +93,14 @@ with lib;
       w3m
       wget
     ] ++ [ customVim ];
+
+    programs.tmux = {
+      enable = true;
+      terminal = "screen-256color";
+      clock24 = true;
+      baseIndex = 1;
+      keyMode = "vi";
+    };
   };
 
 }
