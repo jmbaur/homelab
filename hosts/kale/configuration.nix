@@ -2,11 +2,13 @@
 let
   dataIface = "enp36s0";
   mgmtIface = "enp35s0";
-  mgmtAddress = "192.168.88.3";
+  mgmtAddress = "192.168.88.7";
   mgmtNetwork = "192.168.88.0";
   mgmtGateway = "192.168.88.1";
   mgmtNetmask = "255.255.255.0";
   mgmtPrefix = 24;
+  mgmtAddress6 = "fd82:f21d:118d:1e::7";
+  mgmtPrefix6 = 64;
 in
 {
   imports = [ ./hardware-configuration.nix ];
@@ -90,6 +92,7 @@ in
         address = mgmtAddress;
         prefixLength = mgmtPrefix;
       }];
+      ipv6.addresses = [{ address = mgmtAddress6; prefixLength = 24; }];
     };
     interfaces.${dataIface} = {
       ipv4.addresses = lib.mkForce [ ];
@@ -103,11 +106,19 @@ in
       id = 20;
       interface = dataIface;
     };
+    vlans.trusted = {
+      id = 30;
+      interface = dataIface;
+    };
     interfaces.pubwan = {
       ipv4.addresses = lib.mkForce [ ];
       ipv6.addresses = lib.mkForce [ ];
     };
     interfaces.publan = {
+      ipv4.addresses = lib.mkForce [ ];
+      ipv6.addresses = lib.mkForce [ ];
+    };
+    interfaces.trusted = {
       ipv4.addresses = lib.mkForce [ ];
       ipv6.addresses = lib.mkForce [ ];
     };
@@ -222,6 +233,12 @@ in
       hostPath = "/fast/containers/media/sops-nix";
       isReadOnly = false;
     };
+  };
+
+  containers.dev = {
+    autoStart = true;
+    ephemeral = false;
+    macvlans = [ "trusted" ];
   };
 
   # containers.minecraft = {

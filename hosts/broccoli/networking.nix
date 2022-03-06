@@ -91,7 +91,7 @@ in
           "${guaPrefix}:6f::1/64"
         ];
         privateKeyFile = "/run/secrets/wg0";
-        peers = [];
+        peers = [ ];
       };
     };
   };

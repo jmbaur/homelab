@@ -5,6 +5,7 @@ let
     name = "vim";
     vimrcConfig.packages.myplugins = with pkgs.vimPlugins; {
       start = [
+        vim-commentary
         vim-eunuch
         vim-fugitive
         vim-lastplace
@@ -23,6 +24,7 @@ let
       set relativenumber
     '';
   };
+  isNotContainer = !config.boot.isContainer;
 in
 with lib;
 {
@@ -31,7 +33,7 @@ with lib;
   };
 
   config = mkIf cfg.enable {
-    boot = {
+    boot = mkIf isNotContainer {
       cleanTmpDir = mkDefault true;
       loader.grub.configurationLimit = mkDefault 50;
       loader.systemd-boot.configurationLimit = mkDefault 50;
@@ -44,7 +46,7 @@ with lib;
       extraOptions = ''
         experimental-features = nix-command flakes
       '';
-      gc = {
+      gc = mkIf isNotContainer {
         automatic = mkDefault true;
         dates = mkDefault "weekly";
       };

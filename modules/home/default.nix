@@ -264,8 +264,8 @@ with lib;
           efm-langserver
           git
           go_1_18
-          goimports
           gopls
+          gotools
           luaformatter
           nixpkgs-fmt
           nodePackages.typescript
