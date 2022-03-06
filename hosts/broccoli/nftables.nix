@@ -1,4 +1,9 @@
-{ config, lib, ... }: {
+{ config, lib, ... }: 
+let
+  wireguardIface = "wg0";
+  wireguardListenPort = config.networking.wireguard.interfaces.${wireguardIface}.listenPort;
+in
+{
   networking.nftables = {
     enable = true;
     ruleset = with config.networking.interfaces; ''
@@ -10,6 +15,7 @@
       define DEV_IOT = ${iot.name}
       define DEV_GUEST = ${guest.name}
       define DEV_MGMT = ${mgmt.name}
+      define DEV_VPN = ${wireguardIface}
       define NET_ALL = 192.168.0.0/16
 
       table inet filter {
@@ -42,6 +48,11 @@
               ip version 4 udp dport 67 accept # DHCP
           }
 
+          chain input_vpn {
+              jump input_always_allowed
+              meta l4proto { udp } th dport ${toString wireguardListenPort} accept
+          }
+
           chain input_private_trusted {
               jump input_always_allowed
 
@@ -70,6 +81,7 @@
                   $DEV_IOT : jump input_private_untrusted,
                   $DEV_GUEST : jump input_private_untrusted,
                   $DEV_MGMT : jump input_private_trusted,
+                  $DEV_VPN : jump input_vpn,
               }
 
               # the rest is dropped by the above policy
@@ -123,6 +135,7 @@
                   $DEV_IOT : jump iot,
                   $DEV_GUEST : jump allow_to_internet,
                   $DEV_MGMT : accept,
+                  $DEV_VPN : accept,
               }
 
               # the rest is dropped by the above policy

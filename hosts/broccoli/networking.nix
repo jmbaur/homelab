@@ -84,6 +84,7 @@ in
     wireguard = {
       enable = true;
       interfaces.wg0 = {
+        listenPort = 51820;
         ips = [
           "192.168.111.1/24"
           "${ulaPrefix}:6f::1/64"

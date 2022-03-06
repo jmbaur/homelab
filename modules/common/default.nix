@@ -11,12 +11,14 @@ let
         vim-nix
         vim-rsi
         vim-sensible
+        vim-surround
       ];
       opt = [ ];
     };
     vimrcConfig.customRC = ''
       set hidden
       set noswapfile
+      set nowrap
       set number
       set relativenumber
     '';
