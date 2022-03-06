@@ -34,13 +34,6 @@ in
         useDHCP = false;
         ipv6.addresses = [{ address = "2001:470:c:9::2"; prefixLength = 64; }];
       };
-      eno2 = {
-        ipv4.addresses = [{ address = "192.168.88.2"; prefixLength = 24; }];
-        ipv6.addresses = [
-          { address = "${guaPrefix}:58::2"; prefixLength = 64; }
-          { address = "${ulaPrefix}:58::2"; prefixLength = 64; }
-        ];
-      };
       enp1s0 = {
         ipv4.addresses = lib.mkForce [ ];
         ipv6.addresses = lib.mkForce [ ];

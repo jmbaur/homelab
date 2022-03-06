@@ -4,19 +4,12 @@
     ruleset = with config.networking.interfaces; ''
       define DEV_WAN = ${eno1.name}
       define DEV_WAN6 = ${hurricane.name}
-      define DEV_PRIVATE = ${eno2.name}
       define DEV_PUBWAN = ${pubwan.name}
       define DEV_PUBLAN = ${publan.name}
       define DEV_TRUSTED = ${trusted.name}
       define DEV_IOT = ${iot.name}
       define DEV_GUEST = ${guest.name}
       define DEV_MGMT = ${mgmt.name}
-      define NET_PUBWAN = 192.168.10.0/24
-      define NET_PUBLAN = 192.168.20.0/24
-      define NET_TRUSTED = 192.168.30.0/24
-      define NET_IOT = 192.168.40.0/24
-      define NET_GUEST = 192.168.50.0/24
-      define NET_MGMT = 192.168.88.0/24
       define NET_ALL = 192.168.0.0/16
 
       table inet filter {
@@ -78,7 +71,6 @@
                   lo : accept,
                   $DEV_WAN : jump input_wan,
                   $DEV_WAN6 : jump input_wan,
-                  $DEV_PRIVATE : jump input_private_trusted,
                   $DEV_PUBWAN : jump input_private_untrusted,
                   $DEV_PUBLAN : jump input_private_untrusted,
                   $DEV_TRUSTED : jump input_private_trusted,
@@ -132,7 +124,6 @@
               # connections from the internal net to the internet or to other
               # internal nets are allowed
               iifname vmap {
-                  $DEV_PRIVATE : accept,
                   $DEV_PUBWAN : jump allow_to_internet,
                   $DEV_PUBLAN : jump allow_to_internet,
                   $DEV_TRUSTED : accept,

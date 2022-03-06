@@ -60,11 +60,11 @@
       listenAddresses = (
         (builtins.map
           (ifi: { port = 22; addr = ifi.address; })
-          eno2.ipv4.addresses)
+          mgmt.ipv4.addresses)
         ++
         (builtins.map
           (ifi: { port = 22; addr = "[" + ifi.address + "]"; })
-          eno2.ipv6.addresses)
+          mgmt.ipv6.addresses)
       );
     };
     iperf3.enable = true;
