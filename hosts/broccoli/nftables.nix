@@ -21,17 +21,35 @@
 
       table inet filter {
 
-          chain input_wan {
+          chain input_lan_icmp {
               # accepting ping (icmp-echo-request) for diagnostic purposes.
               # However, it also lets probes discover this host is alive.
               # This sample accepts them within a certain rate limit:
-              #
+ 
+	      ip6 nexthdr icmpv6 icmpv6 type {
+		  echo-request,
+		  destination-unreachable,
+		  packet-too-big,
+		  time-exceeded,
+		  parameter-problem,
+		  nd-neighbor-solicit,
+		  nd-neighbor-advert,
+	      } accept
+	      ip protocol icmp icmp type {
+		  echo-request,
+		  destination-unreachable,
+		  time-exceeded,
+		  parameter-problem,
+	      }  accept
+          }
+
+          chain input_wan {
               icmp type echo-request limit rate 5/second accept
+              icmpv6 type echo-request limit rate 5/second accept
           }
 
           chain input_always_allowed {
-              # accepting ping (icmp-echo-request) for diagnostic purposes.
-              icmp type echo-request limit rate 5/second accept
+              jump input_lan_icmp
 
               tcp dport 53 accept
               udp dport 53 accept
@@ -42,7 +60,7 @@
               jump input_always_allowed
 
               # allow SSH from the private trusted network
-              tcp dport 22 accept
+              tcp dport ssh log prefix "input ssh - " accept
           }
 
           chain input_private_untrusted {
@@ -59,16 +77,18 @@
               iifname vmap {
                   lo : accept,
                   $DEV_WAN : jump input_wan,
+                  $DEV_WAN6 : jump input_wan,
                   $DEV_PRIVATE : jump input_private_trusted,
                   $DEV_PUBWAN : jump input_private_untrusted,
                   $DEV_PUBLAN : jump input_private_untrusted,
                   $DEV_TRUSTED : jump input_private_trusted,
                   $DEV_IOT : jump input_private_untrusted,
                   $DEV_GUEST : jump input_private_untrusted,
-                  $DEV_MGMT : jump input_private_trusted
+                  $DEV_MGMT : jump input_private_trusted,
               }
 
               # the rest is dropped by the above policy
+              log prefix "input drop - "
           }
 
           chain not_in_internet {
@@ -88,12 +108,12 @@
                   198.51.100.0/24,
                   203.0.113.0/24,
                   224.0.0.0/4,
-                  240.0.0.0/4
-              } drop
+                  240.0.0.0/4,
+              } log prefix "not in internet - " drop 
           }
 
           chain allow_to_internet {
-              oifname $DEV_WAN accept
+              oifname { $DEV_WAN, $DEV_WAN6 } accept
           }
 
           chain iot {
@@ -107,7 +127,7 @@
               # Allow traffic from established and related packets, drop invalid
               ct state vmap { established : accept, related : accept, invalid : drop }
 
-              oifname $DEV_WAN jump not_in_internet
+              oifname { $DEV_WAN } jump not_in_internet
 
               # connections from the internal net to the internet or to other
               # internal nets are allowed
@@ -118,11 +138,16 @@
                   $DEV_TRUSTED : accept,
                   $DEV_IOT : jump iot,
                   $DEV_GUEST : jump allow_to_internet,
-                  $DEV_MGMT : accept
+                  $DEV_MGMT : accept,
               }
 
               # the rest is dropped by the above policy
+              log prefix "forward drop - "
           }
+
+      }
+
+      table ip nat {
 
           chain postrouting {
               type nat hook postrouting priority 100; policy accept;
@@ -130,6 +155,7 @@
               # masquerade private IP addresses
               ip saddr $NET_ALL oifname $DEV_WAN masquerade
           }
+
       }
     '';
   };
