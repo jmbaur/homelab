@@ -19,7 +19,7 @@
       define NET_MGMT = 192.168.88.0/24
       define NET_ALL = 192.168.0.0/16
 
-      table ip global {
+      table inet filter {
 
           chain input_wan {
               # accepting ping (icmp-echo-request) for diagnostic purposes.
@@ -27,9 +27,6 @@
               # This sample accepts them within a certain rate limit:
               #
               icmp type echo-request limit rate 5/second accept
-
-              # allow SSH connections from some well-known internet host
-              # ip saddr 81.209.165.42 tcp dport ssh accept
           }
 
           chain input_private_trusted {
@@ -95,6 +92,11 @@
               oifname $DEV_WAN accept
           }
 
+          chain iot {
+              jump allow_to_internet
+              oifname $DEV_IOT accept
+          }
+
           chain forward {
               type filter hook forward priority 0; policy drop;
 
@@ -110,7 +112,7 @@
                   $DEV_PUBWAN : jump allow_to_internet,
                   $DEV_PUBLAN : jump allow_to_internet,
                   $DEV_TRUSTED : accept,
-                  $DEV_IOT : jump allow_to_internet,
+                  $DEV_IOT : jump iot,
                   $DEV_GUEST : jump allow_to_internet,
                   $DEV_MGMT : accept
               }
