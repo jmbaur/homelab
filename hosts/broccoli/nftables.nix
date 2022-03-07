@@ -1,4 +1,4 @@
-{ config, lib, ... }: 
+{ config, lib, ... }:
 let
   wireguardIface = "wg0";
   wireguardListenPort = config.networking.wireguard.interfaces.${wireguardIface}.listenPort;
@@ -33,7 +33,7 @@ in
                   nd-router-advert,
                   nd-router-solicit,
               } accept
-	      icmp type { echo-request } accept
+              icmp type { echo-request } accept
           }
 
           chain input_wan {

@@ -91,7 +91,12 @@ in
           "${guaPrefix}:6f::1/64"
         ];
         privateKeyFile = "/run/secrets/wg0";
-        peers = [ ];
+        peers = [
+          {
+            publicKey = "bsZPHPUPU2K9wMTO6dmvLCRwVJus8YPIJYl1S8f6YHg=";
+            allowedIPs = [ "192.168.111.100/32" "${ulaPrefix}:6f::64/128" "${guaPrefix}:6f::64/128" ];
+          }
+        ];
       };
     };
   };
