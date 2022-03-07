@@ -138,7 +138,7 @@
       user = {
         name = "Jared Baur";
         email = "jaredbaur@fastmail.com";
-        # signingKey = "sk-ecdsa-sha2-nistp256@openssh.com AAAAInNrLWVjZHNhLXNoYTItbmlzdHAyNTZAb3BlbnNzaC5jb20AAAAIbmlzdHAyNTYAAABBBD1B20XifI8PkPylgWlTaPUttRqeseqI0cwjaHH4jKItEhX8i5+4PcbtJAaJAOnFe28E8OMyxxm5Tl3POkdC8WsAAAAEc3NoOg==";
+        signingKey = "sk-ecdsa-sha2-nistp256@openssh.com AAAAInNrLWVjZHNhLXNoYTItbmlzdHAyNTZAb3BlbnNzaC5jb20AAAAIbmlzdHAyNTYAAABBBD1B20XifI8PkPylgWlTaPUttRqeseqI0cwjaHH4jKItEhX8i5+4PcbtJAaJAOnFe28E8OMyxxm5Tl3POkdC8WsAAAAEc3NoOg==";
       };
       alias = {
         st = "status --short --branch";
@@ -147,7 +147,7 @@
         co = "checkout";
         lg = "log --graph --decorate --pretty=oneline --abbrev-commit --all";
       };
-      # gpg.format = "ssh";
+      gpg.format = "ssh";
     };
   };
   programs.neovim =
