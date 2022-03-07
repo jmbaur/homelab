@@ -39,6 +39,8 @@ in
           chain input_wan {
               icmpv6 type echo-request limit rate 5/second accept
               icmp type echo-request limit rate 5/second accept
+
+              meta l4proto { udp } th dport ${toString wireguardListenPort} accept
           }
 
           chain input_always_allowed {
@@ -46,11 +48,6 @@ in
 
               meta l4proto { tcp, udp } th dport 53 accept # DNS
               ip version 4 udp dport 67 accept # DHCP
-          }
-
-          chain input_vpn {
-              jump input_always_allowed
-              meta l4proto { udp } th dport ${toString wireguardListenPort} accept
           }
 
           chain input_private_trusted {
@@ -81,7 +78,7 @@ in
                   $DEV_IOT : jump input_private_untrusted,
                   $DEV_GUEST : jump input_private_untrusted,
                   $DEV_MGMT : jump input_private_trusted,
-                  $DEV_VPN : jump input_vpn,
+                  $DEV_VPN : jump input_private_trusted,
               }
 
               # the rest is dropped by the above policy
