@@ -9,7 +9,6 @@
   users.users.jared = {
     isNormalUser = true;
     openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
-    extraGroups = [/*"wheel"*/];
   };
   nixpkgs.config.allowUnfree = true;
 
@@ -17,7 +16,7 @@
     ln -sfT ${pkgs.nix-direnv}/share/nix-direnv/direnvrc ''${HOME}/.direnvrc
   '';
   nixpkgs.overlays = [
-    (self: super: { nix-direnv = super.nix-direnv.override { enableFlakes = true; }; } )
+    (self: super: { nix-direnv = super.nix-direnv.override { enableFlakes = true; }; })
   ];
   environment.pathsToLink = [ "/share/nix-direnv" ];
   nix.extraOptions = ''
@@ -115,6 +114,7 @@
     zls
     zoxide
   ];
+  programs.mosh.enable = true;
   programs.bash = {
     interactiveShellInit = ''
       eval "$(${pkgs.direnv}/bin/direnv hook bash)"
@@ -141,11 +141,11 @@
         # signingKey = "sk-ecdsa-sha2-nistp256@openssh.com AAAAInNrLWVjZHNhLXNoYTItbmlzdHAyNTZAb3BlbnNzaC5jb20AAAAIbmlzdHAyNTYAAABBBD1B20XifI8PkPylgWlTaPUttRqeseqI0cwjaHH4jKItEhX8i5+4PcbtJAaJAOnFe28E8OMyxxm5Tl3POkdC8WsAAAAEc3NoOg==";
       };
       alias = {
-          st = "status --short --branch";
-          di = "diff";
-          br = "branch";
-          co = "checkout";
-          lg = "log --graph --decorate --pretty=oneline --abbrev-commit --all";
+        st = "status --short --branch";
+        di = "diff";
+        br = "branch";
+        co = "checkout";
+        lg = "log --graph --decorate --pretty=oneline --abbrev-commit --all";
       };
       # gpg.format = "ssh";
     };
@@ -164,47 +164,47 @@
       };
     in
     {
-    enable = true;
-    vimAlias = true;
-    defaultEditor = true;
-    configure = {
-      packages.myNvimPackage = with pkgs.vimPlugins; {
-        start = [
-          (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars))
-          comment-nvim
-          editorconfig-vim
-          lsp-colors-nvim
-          lualine-nvim
-          lush-nvim
-          nvim-autopairs
-          nvim-lspconfig
-          nvim-treesitter-context
-          nvim-treesitter-textobjects
-          settings
-          snippets-nvim
-          telescope-nvim
-          telescope-zf-native 
-          toggleterm-nvim
-          tokyonight-nvim
-          trouble-nvim
-          typescript-vim
-          vim-better-whitespace
-          vim-cue
-          vim-dadbod
-          vim-easy-align
-          vim-eunuch
-          vim-fugitive
-          vim-lastplace
-          vim-nix
-          vim-repeat
-          vim-rsi
-          vim-surround
-          vim-terraform
-          vim-vinegar
-          zig-vim
-        ];
-        opt = [];
+      enable = true;
+      vimAlias = true;
+      defaultEditor = true;
+      configure = {
+        packages.myNvimPackage = with pkgs.vimPlugins; {
+          start = [
+            (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars))
+            comment-nvim
+            editorconfig-vim
+            lsp-colors-nvim
+            lualine-nvim
+            lush-nvim
+            nvim-autopairs
+            nvim-lspconfig
+            nvim-treesitter-context
+            nvim-treesitter-textobjects
+            settings
+            snippets-nvim
+            telescope-nvim
+            telescope-zf-native
+            toggleterm-nvim
+            tokyonight-nvim
+            trouble-nvim
+            typescript-vim
+            vim-better-whitespace
+            vim-cue
+            vim-dadbod
+            vim-easy-align
+            vim-eunuch
+            vim-fugitive
+            vim-lastplace
+            vim-nix
+            vim-repeat
+            vim-rsi
+            vim-surround
+            vim-terraform
+            vim-vinegar
+            zig-vim
+          ];
+          opt = [ ];
+        };
       };
     };
-  };
 }
