@@ -38,7 +38,7 @@
       in
       rec {
         devShell = pkgs.mkShell {
-          buildInputs = with pkgs; [ git gnumake sops terraform ] ++
+          buildInputs = with pkgs; [ qrencode git gnumake sops terraform ] ++
             [ deploy-rs.defaultPackage.${system} ];
         };
       })
