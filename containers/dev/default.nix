@@ -129,6 +129,14 @@
     clock24 = true;
     baseIndex = 1;
     escapeTime = 10;
+    extraConfig = ''
+      set -g renumber-windows on
+      set -g set-clipboard on
+      set -g status-left-length 50
+      set -g status-right "%H:%M %d-%b-%y"
+      set-option -g focus-events on
+      set-option -sa terminal-overrides ',xterm-256color:RGB'
+    '';
   };
   programs.git = {
     enable = true;
