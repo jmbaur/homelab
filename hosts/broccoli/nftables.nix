@@ -24,7 +24,8 @@ in
               # accepting ping (icmp-echo-request) for diagnostic purposes.
               # However, it also lets probes discover this host is alive.
               # This sample accepts them within a certain rate limit:
- 
+
+              icmp type { echo-request } accept
               icmpv6 type {
                   echo-request,
                   mld-listener-query,
@@ -33,21 +34,19 @@ in
                   nd-router-advert,
                   nd-router-solicit,
               } accept
-              icmp type { echo-request } accept
           }
 
           chain input_wan {
-              icmpv6 type echo-request limit rate 5/second accept
               icmp type echo-request limit rate 5/second accept
-
+              icmpv6 type echo-request limit rate 5/second accept
               meta l4proto { udp } th dport ${toString wireguardListenPort} accept
           }
 
           chain input_always_allowed {
               jump input_lan_icmp
 
-              meta l4proto { tcp, udp } th dport 53 accept # DNS
               ip version 4 udp dport 67 accept # DHCP
+              meta l4proto { tcp, udp } th dport 53 accept # DNS
           }
 
           chain input_private_trusted {

@@ -7,7 +7,10 @@
     git-get.url = "github:jmbaur/git-get";
     gobar.url = "github:jmbaur/gobar";
     gosee.url = "github:jmbaur/gosee";
-    home-manager.url = "github:nix-community/home-manager";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     hosts.url = "github:StevenBlack/hosts";
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
@@ -65,6 +68,28 @@
           self.overlay
         ];
       };
+
+      homeConfigurations.jared = let username = "jared"; in
+        home-manager.lib.homeManagerConfiguration {
+          configuration = import ./homes/jared;
+          extraModules = [
+            ({
+              nixpkgs.overlays = [
+                git-get.overlay
+                gobar.overlay
+                gosee.overlay
+                neovim-nightly-overlay.overlay
+                nur.overlay
+                promtop.overlay
+                self.overlay
+              ];
+            })
+          ];
+          homeDirectory = "/home/${username}";
+          stateVersion = "21.11";
+          system = "x86_64-linux";
+          inherit username;
+        };
 
       nixosConfigurations.broccoli = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";

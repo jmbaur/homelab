@@ -4,7 +4,6 @@
     ./common
     ./deploy
     ./desktop
-    ./home
     ./virtualisation
   ];
 }
