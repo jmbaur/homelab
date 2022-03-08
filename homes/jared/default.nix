@@ -17,6 +17,7 @@
     gotop
     grex
     gron
+    home-manager
     htmlq
     jq
     keybase
@@ -81,7 +82,7 @@
   programs.gpg = {
     enable = true;
     publicKeys = [{
-      source = import ./data/pgp-keys.nix;
+      source = import ../../data/pgp-keys.nix;
       trust = 5;
     }];
   };
@@ -100,12 +101,14 @@
     historyControl = [ "ignoredups" ];
     shellAliases = { grep = "grep --color=auto"; };
     historyIgnore = [ "ls" "cd" "exit" ];
-    bashrcExtra = ''
-      PS1='\[\e[0m\]\u\[\e[0m\]@\[\e[0m\]\H \[\e[0m\]\w \[\e[0m\]$(git branch 2>/dev/null | grep '"'"'^*'"'"' | colrm 1 2) \[\e[0m\]$ \[\e[0m\]'
-    '';
   };
   programs.zsh.enable = true;
   programs.nushell.enable = true;
+  programs.starship = {
+    enable = true;
+    enableBashIntegration = true;
+    enableZshIntegration = true;
+  };
 
   programs.git = {
     enable = true;
@@ -173,7 +176,7 @@
     plugins =
       let
         # TODO(jared): Move the settings directory
-        settings = pkgs.vimUtils.buildVimPlugin { name = "settings"; src = builtins.path { path = ./modules/neovim/settings; }; };
+        settings = pkgs.vimUtils.buildVimPlugin { name = "settings"; src = builtins.path { path = ../../modules/neovim/settings; }; };
         telescope-zf-native = pkgs.vimUtils.buildVimPlugin {
           name = "telescope-zf-native.nvim";
           src = pkgs.fetchFromGitHub {
