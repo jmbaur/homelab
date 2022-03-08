@@ -70,6 +70,7 @@
   ];
 
   home.sessionVariables.NNN_TRASH = "1";
+  home.sessionVariables.BAT_THEME = "gruvbox-dark";
 
   programs.ssh = {
     enable = true;
@@ -187,11 +188,11 @@
           };
         };
       in
-      [ settings telescope-zf-native ]
-      ++ (with pkgs.vimPlugins; [
+      with pkgs.vimPlugins; [
         (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars))
         comment-nvim
         editorconfig-vim
+        gruvbox-nvim
         lsp-colors-nvim
         lualine-nvim
         lush-nvim
@@ -199,10 +200,11 @@
         nvim-lspconfig
         nvim-treesitter-context
         nvim-treesitter-textobjects
+        settings
         snippets-nvim
         telescope-nvim
+        telescope-zf-native
         toggleterm-nvim
-        tokyonight-nvim
         trouble-nvim
         typescript-vim
         vim-better-whitespace
@@ -219,7 +221,7 @@
         vim-terraform
         vim-vinegar
         zig-vim
-      ]);
+      ];
     extraPackages = with pkgs; [
       bat
       black
@@ -261,7 +263,7 @@
       update_check_interval = 0;
     };
     extraConfig = ''
-      include ${pkgs.vimPlugins.tokyonight-nvim.src}/extras/kitty_tokyonight_night.conf
+      include ${pkgs.kitty-themes}/themes/gruvbox-dark.conf
     '';
   };
 

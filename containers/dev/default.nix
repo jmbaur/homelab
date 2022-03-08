@@ -181,6 +181,7 @@
             (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars))
             comment-nvim
             editorconfig-vim
+            gruvbox-nvim
             lsp-colors-nvim
             lualine-nvim
             lush-nvim
@@ -193,7 +194,6 @@
             telescope-nvim
             telescope-zf-native
             toggleterm-nvim
-            tokyonight-nvim
             trouble-nvim
             typescript-vim
             vim-better-whitespace
