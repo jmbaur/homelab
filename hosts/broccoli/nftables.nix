@@ -102,7 +102,11 @@ in
                   203.0.113.0/24,
                   224.0.0.0/4,
                   240.0.0.0/4,
-              } log prefix "not in internet - " drop 
+              } log prefix "not in internet - " drop
+          }
+
+          chain forward_wan {
+              icmpv6 type { echo-request } accept
           }
 
           chain allow_to_internet {
@@ -125,6 +129,7 @@ in
               # connections from the internal net to the internet or to other
               # internal nets are allowed
               iifname vmap {
+                  $DEV_WAN6 : jump forward_wan,
                   $DEV_PUBWAN : jump allow_to_internet,
                   $DEV_PUBLAN : jump allow_to_internet,
                   $DEV_TRUSTED : accept,
