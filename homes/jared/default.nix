@@ -83,7 +83,7 @@
   programs.gpg = {
     enable = true;
     publicKeys = [{
-      source = import ../../data/pgp-keys.nix;
+      source = import ../../data/jmbaur-pgp-keys.nix;
       trust = 5;
     }];
   };
