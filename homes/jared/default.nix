@@ -91,6 +91,7 @@
   services.gpg-agent = {
     enable = true;
     pinentryFlavor = "tty";
+    defaultCacheTtl = 3600;
     extraConfig = ''
       allow-loopback-pinentry
     '';
