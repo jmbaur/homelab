@@ -126,7 +126,7 @@
       };
 
       deploy.nodes.asparagus = {
-        hostname = "asparagus";
+        hostname = "fd82:f21d:118d:1e:1e69:7aff:fe64:45b2";
         profiles.system = {
           user = "root";
           path = deploy-rs.lib.x86_64-linux.activate.nixos nixosConfigurations.asparagus;

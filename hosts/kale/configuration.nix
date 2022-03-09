@@ -19,7 +19,6 @@ in
 
   custom.common.enable = true;
   custom.deploy.enable = true;
-  custom.home.enable = false;
   custom.virtualisation.enable = true;
   custom.virtualisation.variant = "normal";
 

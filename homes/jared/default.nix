@@ -131,6 +131,9 @@
       key = "7EB08143";
       signByDefault = false;
     };
+    extraConfig = {
+      # gpg.format = "ssh";
+    };
     userEmail = "jaredbaur@fastmail.com";
     userName = "Jared Baur";
   };
