@@ -54,6 +54,7 @@ in
 
               # allow SSH from the private trusted network
               meta l4proto tcp th dport ssh log prefix "input ssh - " accept
+              meta l4proto udp th dport 69 log prefix "input tftp - " accept
           }
 
           chain input_private_untrusted {
