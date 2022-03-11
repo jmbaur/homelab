@@ -25,6 +25,7 @@
         option broadcast-address 192.168.30.255;
         option subnet-mask 255.255.255.0;
         option domain-name-servers 192.168.30.1;
+        filename "https://boot.netboot.xyz/ipxe/netboot.xyz.efi"
       }
 
       subnet 192.168.40.0 netmask 255.255.255.0 {
