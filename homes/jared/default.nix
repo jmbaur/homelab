@@ -61,7 +61,6 @@
     usbutils
     ventoy-bin
     vim
-    xdg-user-dirs
     xdg-utils
     xsv
     ydiff
@@ -99,6 +98,10 @@
       trust = 5;
     }];
   };
+
+  systemd.user.tmpfiles.rules = [
+    "d ${config.programs.gpg.homedir} 700 - - -"
+  ];
 
   services.gpg-agent = {
     enable = true;
@@ -165,9 +168,7 @@
     '';
   };
 
-  programs.bat = {
-    enable = true;
-  };
+  programs.bat.enable = true;
 
   programs.direnv = {
     enable = true;
@@ -259,6 +260,20 @@
     ];
   };
 
+  xdg.userDirs = {
+    enable = true;
+    createDirectories = true;
+  };
+
+  gtk = rec {
+    enable = true;
+    gtk3.extraConfig = {
+      gtk-key-theme-name = "Emacs";
+      gtk-application-prefer-dark-theme = true;
+    };
+    gtk4 = gtk3;
+  };
+
   programs.kitty = {
     enable = true;
     font.name = "Hack";
@@ -270,14 +285,32 @@
       term = "xterm-256color";
       update_check_interval = 0;
     };
-    extraConfig = ''
-      include ${pkgs.kitty-themes}/themes/gruvbox-dark.conf
-    '';
+    extraConfig =
+      let
+        gruvbox-theme = pkgs.fetchFromGitHub {
+          owner = "wdomitrz";
+          repo = "kitty-gruvbox-theme";
+          rev = "81af12d1cc811cde2e1bf3ec89da9cde8e654b9f";
+          sha256 = "158bvv147ksyk04jmmxx0fmsy65fi6pilbp67xlyknasn9cjahlf";
+        };
+      in
+      ''
+        include ${gruvbox-theme}/gruvbox_dark.conf
+      '';
   };
+
+  xresources.extraConfig = builtins.readFile (pkgs.fetchFromGitHub
+    {
+      repo = "gruvbox-contrib";
+      owner = "morhetz";
+      rev = "150e9ca30fcd679400dc388c24930e5ec8c98a9f";
+      sha256 = "181irx5jas3iqqdlc6v34673p2s6bsr8l0nqbs8gsv88r8q066l6";
+    } + "/xresources/gruvbox-dark.xresources");
 
   programs.i3status-rust = {
     enable = true;
     bars.default = {
+      theme = "plain";
       blocks = [
         {
           block = "battery";
@@ -313,6 +346,35 @@
     };
   };
 
+  programs.autorandr =
+    let
+      DP-2-3 = "00ffffffffffff0030aef561524734502f1e0104a5351e783ee235a75449a2250c5054bdef0081809500b300d1c0d100714f818f0101565e00a0a0a02950302035000f282100001a000000ff0056333036503447520a20202020000000fd00304c1e721e010a202020202020000000fc004c454e20503234712d32300a20015302031cf1490102030413901f1211230907078301000065030c001000011d007251d01e206e2855000f282100001ecc7400a0a0a01e50302035000f282100001a0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000009f";
+      eDP-1 = "00ffffffffffff0030e446040000000000170104951f1178ea4575a05b5592270c5054000000010101010101010101010101010101012e3680a070381f403020350035ae1000001a000000000000000000000000000000000000000000fe004c4720446973706c61790a2020000000fe004c503134305746332d53504c3100a8";
+    in
+    {
+      enable = true;
+      profiles.docked = {
+        fingerprint = { inherit DP-2-3 eDP-1; };
+        config.eDP-1.enable = false;
+        config.DP-2-3 = {
+          enable = true;
+          primary = true;
+          mode = "2560x1440";
+          rate = "74.78";
+        };
+      };
+      profiles.laptop = {
+        fingerprint = { inherit eDP-1; };
+        config.eDP-1.enable = true;
+      };
+    };
+
+  programs.rofi = {
+    enable = true;
+    theme = "gruvbox-dark-soft";
+    terminal = "${pkgs.kitty}/bin/kitty";
+  };
+
   xsession = {
     enable = true;
     pointerCursor.package = pkgs.vanilla-dmz;
@@ -328,7 +390,7 @@
             mod = config.xsession.windowManager.i3.config.modifier;
           in
           lib.mkOptionDefault {
-            "${mod}+p" = "exec ${pkgs.dmenu}/bin/dmenu_run";
+            "${mod}+p" = "exec rofi -show drun";
             "${mod}+h" = "focus left";
             "${mod}+j" = "focus down";
             "${mod}+k" = "focus up";
@@ -352,6 +414,11 @@
         for_window [all] title_window_icon on
       '';
     };
+  };
+
+  services.screen-locker = {
+    enable = true;
+    lockCmd = "${pkgs.i3lock}/bin/i3lock -n -c 282828";
   };
 
 }
