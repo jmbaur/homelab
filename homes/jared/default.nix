@@ -81,7 +81,6 @@
   ]);
 
   home.sessionVariables.NNN_TRASH = "1";
-  home.sessionVariables.BAT_THEME = "gruvbox-dark";
 
   programs.ssh = {
     enable = true;
@@ -168,6 +167,7 @@
     '';
   };
 
+  home.sessionVariables.BAT_THEME = "gruvbox-dark";
   programs.bat.enable = true;
 
   programs.direnv = {
@@ -381,6 +381,7 @@
     pointerCursor.name = "Vanilla-DMZ";
     initExtra = ''
       ${pkgs.xorg.xsetroot}/bin/xsetroot -solid "#282828"
+      ${pkgs.autorandr}/bin/autorandr --change
     '';
     windowManager.i3 = {
       enable = true;
@@ -393,17 +394,18 @@
             mod = config.xsession.windowManager.i3.config.modifier;
           in
           lib.mkOptionDefault {
-            "${mod}+p" = "exec rofi -show drun";
-            "${mod}+h" = "focus left";
-            "${mod}+j" = "focus down";
-            "${mod}+k" = "focus up";
-            "${mod}+l" = "focus right";
             "${mod}+Shift+h" = "move left";
             "${mod}+Shift+j" = "move down";
             "${mod}+Shift+k" = "move up";
             "${mod}+Shift+l" = "move right";
             "${mod}+Shift+s" = "sticky toggle";
             "${mod}+Tab" = "workspace back_and_forth";
+            "${mod}+c" = "exec clipmenu";
+            "${mod}+h" = "focus left";
+            "${mod}+j" = "focus down";
+            "${mod}+k" = "focus up";
+            "${mod}+l" = "focus right";
+            "${mod}+p" = "exec rofi -show drun";
           };
         bars = [{
           fonts.size = 10.0;
@@ -417,6 +419,16 @@
         for_window [all] title_window_icon on
       '';
     };
+  };
+
+  home.sessionVariables.CM_LAUNCHER = "rofi";
+  services.clipmenu.enable = true;
+
+  services.dunst.enable = true;
+
+  services.redshift = {
+    enable = true;
+    provider = "geoclue2";
   };
 
   services.screen-locker = {

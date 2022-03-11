@@ -141,11 +141,6 @@
         modules = [ ./containers/media sops-nix.nixosModules.sops ];
       };
 
-      nixosConfigurations.dev = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [ ./containers/dev nixosModule ];
-      };
-
       nixosConfigurations.kale = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
@@ -155,7 +150,6 @@
           ({
             containers.www.path = nixosConfigurations.www.config.system.build.toplevel;
             containers.media.path = nixosConfigurations.media.config.system.build.toplevel;
-            containers.dev.path = nixosConfigurations.dev.config.system.build.toplevel;
           })
         ];
       };
