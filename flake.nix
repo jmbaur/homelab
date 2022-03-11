@@ -40,10 +40,7 @@
       let pkgs = nixpkgs.legacyPackages.${system};
       in
       rec {
-        devShell = pkgs.mkShell {
-          buildInputs = with pkgs; [ qrencode git gnumake sops terraform ] ++
-            [ deploy-rs.defaultPackage.${system} ];
-        };
+        devShell = pkgs.mkShell { buildInputs = with pkgs; [ sops ]; };
       })
     //
     rec {
@@ -59,6 +56,7 @@
           sops-nix.nixosModules.sops
         ];
         nixpkgs.overlays = [
+          deploy-rs.overlay
           git-get.overlay
           gobar.overlay
           gosee.overlay

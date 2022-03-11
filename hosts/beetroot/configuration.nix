@@ -5,14 +5,10 @@
   hardware.enableRedistributableFirmware = true;
 
   boot.kernelPackages = pkgs.linuxPackages_5_15;
-  boot.binfmt.emulatedSystems = [
-    "aarch64-linux"
-    "riscv64-linux"
-  ];
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   boot.loader.systemd-boot = {
     enable = true;
     memtest86.enable = true;
-    netbootxyz.enable = true;
   };
   boot.loader.efi.canTouchEfiVariables = true;
 
@@ -23,21 +19,49 @@
 
   custom.cache.enable = false;
   custom.common.enable = true;
+  custom.sound.enable = true;
   custom.containers.enable = true;
-  custom.desktop.enable = true;
 
-  users.mutableUsers = lib.mkForce true;
-  users.users.jared = {
-    isNormalUser = true;
-    initialPassword = "helloworld";
-    extraGroups = [
-      "adbusers"
-      "dialout"
-      "networkmanager"
-      "wheel"
-      "wireshark"
-    ];
+  services.xserver = {
+    enable = true;
+    libinput.enable = true;
+    displayManager.lightdm.enable = true;
+    windowManager.i3.enable = true;
+    videoDrivers = [ "modesetting" ];
+    useGlamor = true;
   };
+
+  services.avahi.enable = true;
+  services.geoclue2.enable = true;
+  services.hardware.bolt.enable = true;
+  services.power-profiles-daemon.enable = true;
+  services.upower.enable = true;
+  services.printing.enable = true;
+  programs.adb.enable = true;
+  programs.wireshark.enable = true;
+
+  users = {
+    mutableUsers = false;
+    users.jared = {
+      isNormalUser = true;
+      hashedPassword = "$6$01ZXrxetiKaCW6Yx$RfI18qNyAYd9lU91wBNA9p0XREabwV4cv8DFqGH96SZnLJYmbGUTjNyqrVUgJorBn5RQzwwI4Ws3xMMU.fvYk/";
+      description = "Jared Baur";
+      extraGroups = [
+        "adbusers"
+        "dialout"
+        "networkmanager"
+        "wheel"
+        "wireshark"
+      ];
+    };
+  };
+
+  home-manager = {
+    useUserPackages = true;
+    useGlobalPkgs = true;
+    users.jared = import ../../homes/jared;
+  };
+
   services.snapper.configs.home = {
     subvolume = "/home";
     extraConfig = ''
@@ -65,6 +89,6 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "21.11"; # Did you read the comment?
+  system.stateVersion = "22.05"; # Did you read the comment?
 
 }

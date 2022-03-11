@@ -1,9 +1,9 @@
-{ ... }: {
+{
   imports = [
     ./cache
     ./common
-    ./deploy
-    ./desktop
     ./containers
+    ./deploy
+    ./sound
   ];
 }

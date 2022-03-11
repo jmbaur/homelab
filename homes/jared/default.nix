@@ -38,6 +38,7 @@
     pinentry
     podman-compose
     pstree
+    pulsemixer
     pwgen
     ripgrep
     rtorrent
@@ -70,7 +71,15 @@
     zf
     zip
     zoxide
-  ];
+  ] ++ (with pkgs; [
+    bitwarden
+    chromium
+    element-desktop
+    firefox
+    signal-desktop
+    slack
+    spotify
+  ]);
 
   home.sessionVariables.NNN_TRASH = "1";
   home.sessionVariables.BAT_THEME = "gruvbox-dark";
@@ -109,11 +118,6 @@
   };
   programs.zsh.enable = true;
   programs.nushell.enable = true;
-  programs.starship = {
-    enable = true;
-    enableBashIntegration = true;
-    enableZshIntegration = true;
-  };
 
   programs.git = {
     enable = true;
@@ -269,6 +273,85 @@
     extraConfig = ''
       include ${pkgs.kitty-themes}/themes/gruvbox-dark.conf
     '';
+  };
+
+  programs.i3status-rust = {
+    enable = true;
+    bars.default = {
+      blocks = [
+        {
+          block = "battery";
+          interval = 10;
+          format = "{percentage} {time}";
+        }
+        { block = "networkmanager"; }
+        {
+          block = "disk_space";
+          path = "/";
+          alias = "/";
+          info_type = "available";
+          unit = "GB";
+          interval = 60;
+          warning = 20.0;
+          alert = 10.0;
+        }
+        {
+          block = "memory";
+          display_type = "memory";
+          format_mem = "{mem_used_percents}";
+          format_swap = "{swap_used_percents}";
+        }
+        {
+          block = "cpu";
+          interval = 1;
+        }
+        {
+          block = "time";
+          format = "%F %T";
+        }
+      ];
+    };
+  };
+
+  xsession = {
+    enable = true;
+    pointerCursor.package = pkgs.vanilla-dmz;
+    pointerCursor.name = "Vanilla-DMZ";
+    windowManager.i3 = {
+      enable = true;
+      config = {
+        terminal = "kitty";
+        modifier = "Mod4";
+        fonts.size = 10.0;
+        keybindings =
+          let
+            mod = config.xsession.windowManager.i3.config.modifier;
+          in
+          lib.mkOptionDefault {
+            "${mod}+p" = "exec ${pkgs.dmenu}/bin/dmenu_run";
+            "${mod}+h" = "focus left";
+            "${mod}+j" = "focus down";
+            "${mod}+k" = "focus up";
+            "${mod}+l" = "focus right";
+            "${mod}+Shift+h" = "move left";
+            "${mod}+Shift+j" = "move down";
+            "${mod}+Shift+k" = "move up";
+            "${mod}+Shift+l" = "move right";
+            "${mod}+Shift+s" = "sticky toggle";
+            "${mod}+Tab" = "workspace back_and_forth";
+          };
+        bars = [{
+          fonts.size = 10.0;
+          statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs $HOME/.config/i3status-rust/config-default.toml";
+          trayOutput = "primary";
+          position = "top";
+        }];
+      };
+      extraConfig = ''
+        workspace_auto_back_and_forth yes
+        for_window [all] title_window_icon on
+      '';
+    };
   };
 
 }

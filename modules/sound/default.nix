@@ -1,40 +1,15 @@
 { config, lib, pkgs, ... }:
 let
-  cfg = config.custom.desktop;
+  cfg = config.custom.sound;
 in
 with lib;
 {
   options = {
-    custom.desktop.enable = mkEnableOption "Enable custom desktop config";
+    custom.sound.enable = mkEnableOption "Enable custom sound config";
   };
 
   config = mkIf cfg.enable {
-    programs.sway.enable = true; # enables swaylock in pam, dconf, etc.
-
-    xdg.portal = {
-      enable = true;
-      wlr.enable = true;
-    };
-
-    programs.wshowkeys.enable = true;
-    programs.adb.enable = true;
-    programs.wireshark.enable = true;
     security.rtkit.enable = true;
-    services.greetd = {
-      enable = true;
-      vt = 7;
-      settings = {
-        default_session = {
-          command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd ${pkgs.sway}/bin/sway";
-        };
-      };
-    };
-    services.avahi.enable = true;
-    services.geoclue2.enable = true;
-    services.hardware.bolt.enable = true;
-    services.power-profiles-daemon.enable = true;
-    services.upower.enable = true;
-    services.printing.enable = true;
     services.pipewire = {
       enable = true;
       alsa.enable = true;
