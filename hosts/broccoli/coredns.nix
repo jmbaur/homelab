@@ -27,7 +27,7 @@ in
             ${machine.ipAddress} ${machine.hostName}.${domain}
           '') config.services.dhcpd4.machines}
 
-          ${(lib.last config.networking.interfaces.mgmt.ipv4.addresses).address}${config.networking.hostName}.${domain}
+          ${(lib.last config.networking.interfaces.mgmt.ipv4.addresses).address} ${config.networking.hostName}.${domain}
         }
       }
     '';
