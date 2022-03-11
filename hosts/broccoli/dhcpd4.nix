@@ -2,6 +2,18 @@
   services.dhcpd4 = {
     enable = true;
     interfaces = [ "trusted" "iot" "guest" "mgmt" ];
+    machines = [
+      {
+        ipAddress = "192.168.88.201";
+        hostName = "broccoli-ipmi";
+        ethernetAddress = "00:25:90:46:38:3f";
+      }
+      {
+        ipAddress = "192.168.88.202";
+        hostName = "kale-ipmi";
+        ethernetAddress = "d0:50:99:f7:c4:8d";
+      }
+    ];
     extraConfig = ''
       ddns-update-style none;
       option domain-search "home.arpa";
