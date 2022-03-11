@@ -4,6 +4,6 @@
     ./common
     ./deploy
     ./desktop
-    ./virtualisation
+    ./containers
   ];
 }

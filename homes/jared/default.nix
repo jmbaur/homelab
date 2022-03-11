@@ -4,6 +4,7 @@
     age
     awscli2
     bat
+    buildah
     direnv
     dust
     exa
@@ -35,11 +36,13 @@
     patchelf
     picocom
     pinentry
+    podman-compose
     pstree
     pwgen
     ripgrep
     rtorrent
     sd
+    skopeo
     sl
     smartmontools
     speedtest-cli

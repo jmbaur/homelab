@@ -41,3 +41,10 @@ nixos-install --no-root-passwd # make sure that users.users.<name>.initialPasswo
 
 reboot
 ```
+
+## Libvirt
+
+To use a bridge device which gives a VM guest direct access to the host's
+network:
+
+https://libvirt.org/formatnetwork.html#examplesBridge

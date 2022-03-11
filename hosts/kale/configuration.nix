@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }:
 let
-  dataIface = "enp36s0";
+  dataIface = "enp1s0";
   mgmtIface = "enp35s0";
   mgmtAddress = "192.168.88.7";
   mgmtNetwork = "192.168.88.0";
@@ -19,8 +19,8 @@ in
 
   custom.common.enable = true;
   custom.deploy.enable = true;
-  custom.virtualisation.enable = true;
-  custom.virtualisation.variant = "normal";
+
+  virtualisation.libvirtd.enable = true;
 
   systemd.services."serial-getty@ttyS0" = {
     enable = true;
@@ -39,6 +39,7 @@ in
     "console=ttyS0,115200"
     "console=tty1"
   ];
+  # TODO(jared): Kernel not accepting these, look into removing
   boot.kernel.sysctl = {
     "net.ipv6.conf.${mgmtIface}.accept_ra" = lib.mkForce 0;
     "net.ipv6.conf.${mgmtIface}.autoconf" = lib.mkForce 0;
@@ -86,6 +87,7 @@ in
     nameservers = lib.singleton mgmtGateway;
     defaultGateway.address = mgmtGateway;
     defaultGateway.interface = mgmtIface;
+    bridges.virbr0.interfaces = [ "enp1s0d1" ];
     interfaces.${mgmtIface} = {
       ipv4.addresses = [{
         address = mgmtAddress;
@@ -232,12 +234,6 @@ in
       hostPath = "/fast/containers/media/sops-nix";
       isReadOnly = false;
     };
-  };
-
-  containers.dev = {
-    autoStart = true;
-    ephemeral = false;
-    macvlans = [ "trusted" ];
   };
 
   # containers.minecraft = {

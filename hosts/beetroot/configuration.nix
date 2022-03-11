@@ -23,8 +23,8 @@
 
   custom.cache.enable = false;
   custom.common.enable = true;
+  custom.containers.enable = true;
   custom.desktop.enable = true;
-  custom.virtualisation.enable = true;
 
   users.mutableUsers = lib.mkForce true;
   users.users.jared = {
