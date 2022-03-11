@@ -1,6 +1,6 @@
 { config, pkgs, ... }: {
   services.atftpd.enable = true;
-  systemd.activationScripts.netboot.text = ''
+  system.activationScripts.netboot.text = ''
     ln -sfT ${pkgs.netbootxyz-efi} ${config.services.atftpd.root}/netboot.xyz.efi
   '';
   services.dhcpd4 = {
