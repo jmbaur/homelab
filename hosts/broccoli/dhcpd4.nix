@@ -1,5 +1,8 @@
 { config, pkgs, ... }: {
   services.atftpd.enable = true;
+  systemd.tmpfiles.rules = [
+    "d ${config.services.atftpd.root} 755 root root -"
+  ];
   system.activationScripts.netboot.text = ''
     ln -sfT ${pkgs.netbootxyz-efi} ${config.services.atftpd.root}/netboot.xyz.efi
   '';
