@@ -379,6 +379,9 @@
     enable = true;
     pointerCursor.package = pkgs.vanilla-dmz;
     pointerCursor.name = "Vanilla-DMZ";
+    initExtra = ''
+      ${pkgs.xorg.xsetroot}/bin/xsetroot -solid "#282828"
+    '';
     windowManager.i3 = {
       enable = true;
       config = {

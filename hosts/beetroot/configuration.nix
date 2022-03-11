@@ -27,8 +27,11 @@
     libinput.enable = true;
     displayManager.lightdm.enable = true;
     windowManager.i3.enable = true;
-    videoDrivers = [ "modesetting" ];
-    useGlamor = true;
+    videoDrivers = [ "intel" ];
+    deviceSection = ''
+      Option "TripleBuffer" "true"
+      Option "TearFree" "true"
+    '';
   };
 
   services.avahi.enable = true;
