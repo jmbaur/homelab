@@ -152,7 +152,7 @@
       };
 
       deploy.nodes.rhubarb = {
-        hostname = "rhubarb";
+        hostname = "localhost";
         profiles.system = {
           sshUser = "root";
           path = deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigurations.rhubarb;

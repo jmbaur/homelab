@@ -40,6 +40,10 @@
   '';
 
   programs.ssh.knownHosts = {
+    localhost = {
+      hostNames = [ "localhost" ];
+      publicKeyFile = "/etc/ssh/ssh_host_ed25519_key.pub";
+    };
     broccoli = {
       hostNames = [ "broccoli" ];
       publicKey = "broccoli ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG5CvQypTDJ1jl+6/xBw7DLITOCzIwZRZIAefI3+uV6M";
