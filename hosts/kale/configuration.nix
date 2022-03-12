@@ -95,10 +95,9 @@ in
 
   users.users.jared = {
     isNormalUser = true;
-    initialPassword = "helloworld";
-    extraGroups = [ "wheel" "libvirtd" ];
+    hashedPassword = "$6$COYoxPUJ2GXytmXc$7XkhoFMy3KIatPD73I/zeDmseXH0l8pQ.kYrFvHphdqf.jitZ/PR2lhcSn67EsF4FwHIu85itj2ASEi3kGR/b/";
     openssh.authorizedKeys.keyFiles = lib.singleton (import ../../data/jmbaur-ssh-keys.nix);
-    hashedPassword = "$6$PAY4TgKrbjS2W0uF$hzN.XTe.Ih7t5yOOhIkd4GuCm409TcPc2bkmtvFE3zzAiFOq.c2AS9iGR0AK/LPtRtV0XLkbV7kTxV/xkhFTV1";
+    extraGroups = [ "wheel" "libvirtd" ];
   };
 
   services.fwupd.enable = true;
@@ -155,19 +154,6 @@ in
   #   };
   #   config = { config, ... }: {
   #     imports = [ ../../containers/grafana ];
-  #     networking = {
-  #       useHostResolvConf = false;
-  #       interfaces.mv-publan.useDHCP = true;
-  #     };
-  #   };
-  # };
-
-  # containers.builder = {
-  #   autoStart = true;
-  #   ephemeral = true;
-  #   macvlans = [ "publan" ];
-  #   config = {
-  #     imports = [ ../../containers/builder ];
   #     networking = {
   #       useHostResolvConf = false;
   #       interfaces.mv-publan.useDHCP = true;

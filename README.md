@@ -37,7 +37,7 @@ nixos-generate-config --root /mnt
 
 # edit /mnt/etc/nixos/hardware-configuration.nix and make sure luks device and subvolumes are present
 
-nixos-install --no-root-passwd # make sure that users.users.<name>.initialPassword is set!
+nixos-install --no-root-passwd # make sure that users.users.<name>.hashedPassword is set!
 
 reboot
 ```
