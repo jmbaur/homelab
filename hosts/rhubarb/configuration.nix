@@ -4,6 +4,8 @@ with lib;
   custom.common.enable = true;
   custom.deploy.enable = true;
 
+  boot.kernelPackages = pkgs.linuxPackages_5_15;
+
   zramSwap = {
     enable = true;
     swapDevices = 1;
