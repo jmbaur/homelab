@@ -2,13 +2,6 @@
 let
   dataIface = "enp1s0";
   mgmtIface = "enp35s0";
-  mgmtAddress = "192.168.88.7";
-  mgmtNetwork = "192.168.88.0";
-  mgmtGateway = "192.168.88.1";
-  mgmtNetmask = "255.255.255.0";
-  mgmtPrefix = 24;
-  mgmtAddress6 = "fd82:f21d:118d:1e::7";
-  mgmtPrefix6 = 64;
 in
 {
   imports = [ ./hardware-configuration.nix ];
@@ -59,7 +52,6 @@ in
 
   networking = {
     hostName = "kale";
-    domain = "home.arpa";
     firewall = {
       enable = true;
       interfaces.${mgmtIface} = {
@@ -68,18 +60,9 @@ in
         ];
       };
     };
-    nameservers = lib.singleton mgmtGateway;
-    defaultGateway.address = mgmtGateway;
-    defaultGateway.interface = mgmtIface;
     bridges.br0.interfaces = [ "enp1s0d1" ];
     interfaces.br0.useDHCP = true;
-    interfaces.${mgmtIface} = {
-      ipv4.addresses = [{
-        address = mgmtAddress;
-        prefixLength = mgmtPrefix;
-      }];
-      ipv6.addresses = [{ address = mgmtAddress6; prefixLength = 24; }];
-    };
+    interfaces.${mgmtIface}.useDHCP = true;
     interfaces.${dataIface} = {
       ipv4.addresses = lib.mkForce [ ];
       ipv6.addresses = lib.mkForce [ ];
