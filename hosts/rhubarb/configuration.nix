@@ -4,15 +4,10 @@ with lib;
   custom.common.enable = true;
   custom.deploy.enable = true;
 
-  boot.kernelPackages = pkgs.linuxPackages_5_15;
-
   zramSwap = {
     enable = true;
     swapDevices = 1;
   };
-
-  hardware.raspberry-pi."4".fkms-3d.enable = true;
-  hardware.raspberry-pi."4".audio.enable = true;
 
   fileSystems."/" = {
     device = "/dev/disk/by-label/NIXOS_SD";

@@ -30,14 +30,10 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_5_15;
-  boot.binfmt.emulatedSystems = [
-    "aarch64-linux"
-    "riscv64-linux"
-  ];
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   boot.kernelParams = [
     "ip=${mgmtAddress}::${mgmtGateway}:${mgmtNetmask}:${config.networking.hostName}:${mgmtIface}::::"
-    "console=ttyS0,115200"
-    "console=tty1"
+    "console=ttyS0,115200n8"
   ];
   # TODO(jared): Kernel not accepting these, look into removing
   boot.kernel.sysctl = {

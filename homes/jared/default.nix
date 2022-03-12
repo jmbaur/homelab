@@ -18,8 +18,8 @@
     gotop
     grex
     gron
-    home-manager
     htmlq
+    htop
     jq
     keybase
     librespeed-cli
@@ -60,7 +60,6 @@
     unzip
     usbutils
     ventoy-bin
-    vim
     xdg-utils
     xsv
     ydiff
@@ -388,6 +387,7 @@
       config = {
         terminal = "kitty";
         modifier = "Mod4";
+        defaultWorkspace = "workspace number 1";
         fonts.size = 10.0;
         keybindings =
           let

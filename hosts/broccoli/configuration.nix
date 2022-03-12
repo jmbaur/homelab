@@ -15,7 +15,7 @@
   boot.loader.grub.enable = true;
   boot.loader.grub.version = 2;
   boot.loader.grub.device = "/dev/sda";
-  boot.kernelParams = [ "console=ttyS0,115200" "console=tty1" ];
+  boot.kernelParams = [ "console=ttyS0,115200n8" ];
   boot.kernel.sysctl = {
     "net.ipv4.conf.all.forwarding" = true;
     "net.ipv6.conf.all.forwarding" = true;

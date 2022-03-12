@@ -50,16 +50,6 @@
 
       overlay = import ./pkgs/overlay.nix;
 
-      packages.aarch64-linux.rhubarb = nixos-generators.nixosGenerate {
-        pkgs = nixpkgs.legacyPackages.aarch64-linux;
-        modules = [
-          ./hosts/rhubarb/configuration.nix
-          nixos-hardware.nixosModules.raspberry-pi-4
-          self.nixosModule
-        ];
-        format = "sd-aarch64";
-      };
-
       nixosModule = { ... }: {
         imports = [
           ./modules
@@ -78,28 +68,6 @@
           self.overlay
         ];
       };
-
-      homeConfigurations.jared = let username = "jared"; in
-        home-manager.lib.homeManagerConfiguration {
-          configuration = import ./homes/jared;
-          extraModules = [
-            ({
-              nixpkgs.overlays = [
-                git-get.overlay
-                gobar.overlay
-                gosee.overlay
-                neovim-nightly-overlay.overlay
-                nur.overlay
-                promtop.overlay
-                self.overlay
-              ];
-            })
-          ];
-          homeDirectory = "/home/${username}";
-          stateVersion = "21.11";
-          system = "x86_64-linux";
-          inherit username;
-        };
 
       nixosConfigurations.broccoli = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
@@ -174,15 +142,14 @@
         };
       };
 
-      nixosConfigurations.rhubarb = nixpkgs.lib.nixosSystem
-        {
-          system = "aarch64-linux";
-          modules = [
-            ./hosts/rhubarb/configuration.nix
-            nixos-hardware.nixosModules.raspberry-pi-4
-            self.nixosModule
-          ];
-        };
+      nixosConfigurations.rhubarb = nixpkgs.lib.nixosSystem {
+        system = "aarch64-linux";
+        modules = [
+          ./hosts/rhubarb/configuration.nix
+          nixos-hardware.nixosModules.raspberry-pi-4
+          self.nixosModule
+        ];
+      };
 
       deploy.nodes.rhubarb = {
         hostname = "rhubarb";

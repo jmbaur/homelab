@@ -17,6 +17,16 @@
         hostName = "kale-ipmi";
         ethernetAddress = "d0:50:99:f7:c4:8d";
       }
+      {
+        ethernetAddress = "d0:50:99:fe:1e:e2";
+        hostName = "kale";
+        ipAddress = "192.168.88.7";
+      }
+      {
+        hostName = "rhubarb";
+        ipAddress = "192.168.88.88";
+        ethernetAddress = "dc:a6:32:20:50:f2";
+      }
     ];
     extraConfig = ''
       ddns-update-style none;
