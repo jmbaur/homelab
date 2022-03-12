@@ -35,24 +35,9 @@ in
   boot.kernelPackages = pkgs.linuxPackages_5_15;
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   boot.kernelParams = [
-    "ip=${mgmtAddress}::${mgmtGateway}:${mgmtNetmask}:${config.networking.hostName}:${mgmtIface}::::"
+    "ip=:::::${mgmtIface}:dhcp"
     "console=ttyS0,115200n8"
   ];
-  # TODO(jared): Kernel not accepting these, look into removing
-  boot.kernel.sysctl = {
-    "net.ipv6.conf.${mgmtIface}.accept_ra" = lib.mkForce 0;
-    "net.ipv6.conf.${mgmtIface}.autoconf" = lib.mkForce 0;
-    "net.ipv6.conf.${mgmtIface}.use_tempaddr" = lib.mkForce 0;
-    "net.ipv6.conf.${dataIface}.accept_ra" = lib.mkForce 0;
-    "net.ipv6.conf.${dataIface}.autoconf" = lib.mkForce 0;
-    "net.ipv6.conf.${dataIface}.use_tempaddr" = lib.mkForce 0;
-    "net.ipv6.conf.pubwan.accept_ra" = lib.mkForce 0;
-    "net.ipv6.conf.pubwan.autoconf" = lib.mkForce 0;
-    "net.ipv6.conf.pubwan.use_tempaddr" = lib.mkForce 0;
-    "net.ipv6.conf.publan.accept_ra" = lib.mkForce 0;
-    "net.ipv6.conf.publan.autoconf" = lib.mkForce 0;
-    "net.ipv6.conf.publan.use_tempaddr" = lib.mkForce 0;
-  };
   boot.initrd.network = {
     enable = true;
     postCommands = ''
