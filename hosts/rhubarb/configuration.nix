@@ -42,7 +42,7 @@
   programs.ssh.knownHosts = {
     localhost = {
       hostNames = [ "localhost" ];
-      publicKeyFile = "/etc/ssh/ssh_host_ed25519_key.pub";
+      publicKey = lib.last (import ../../data/rhubarb-ssh-keys.nix);
     };
     broccoli = {
       hostNames = [ "broccoli" ];
