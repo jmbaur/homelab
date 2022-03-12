@@ -22,7 +22,7 @@
   environment.systemPackages = with pkgs; [
     terraform
     ansible
-    deploy-rs
+    deploy-rs.deploy-rs
   ];
 
   nix.buildMachines = [{
