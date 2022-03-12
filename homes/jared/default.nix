@@ -306,43 +306,9 @@
       sha256 = "181irx5jas3iqqdlc6v34673p2s6bsr8l0nqbs8gsv88r8q066l6";
     } + "/xresources/gruvbox-dark.xresources");
 
-  programs.i3status-rust = {
+  programs.i3status = {
     enable = true;
-    bars.default = {
-      theme = "plain";
-      blocks = [
-        {
-          block = "battery";
-          interval = 10;
-          format = "{percentage} {time}";
-        }
-        { block = "networkmanager"; }
-        {
-          block = "disk_space";
-          path = "/";
-          alias = "/";
-          info_type = "available";
-          unit = "GB";
-          interval = 60;
-          warning = 20.0;
-          alert = 10.0;
-        }
-        {
-          block = "memory";
-          display_type = "memory";
-          format_mem = "{mem_used_percents}";
-          format_swap = "{swap_used_percents}";
-        }
-        {
-          block = "cpu";
-          interval = 1;
-        }
-        {
-          block = "time";
-          format = "%F %T";
-        }
-      ];
-    };
+    enableDefault = true;
   };
 
   programs.autorandr =
@@ -409,7 +375,7 @@
           };
         bars = [{
           fonts.size = 10.0;
-          statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs $HOME/.config/i3status-rust/config-default.toml";
+          statusCommand = "${pkgs.i3status}/bin/i3status";
           trayOutput = "primary";
           position = "top";
         }];
