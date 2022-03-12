@@ -20,7 +20,10 @@ in
   custom.common.enable = true;
   custom.deploy.enable = true;
 
-  virtualisation.libvirtd.enable = true;
+  virtualisation.libvirtd = {
+    enable = true;
+    allowedBridges = [ "virbr0" "br0" ];
+  };
 
   systemd.services."serial-getty@ttyS0" = {
     enable = true;
@@ -83,7 +86,8 @@ in
     nameservers = lib.singleton mgmtGateway;
     defaultGateway.address = mgmtGateway;
     defaultGateway.interface = mgmtIface;
-    bridges.virbr0.interfaces = [ "enp1s0d1" ];
+    bridges.br0.interfaces = [ "enp1s0d1" ];
+    interfaces.br0.useDHCP = true;
     interfaces.${mgmtIface} = {
       ipv4.addresses = [{
         address = mgmtAddress;
