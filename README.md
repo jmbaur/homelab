@@ -48,3 +48,8 @@ To use a bridge device which gives a VM guest direct access to the host's
 network:
 
 https://libvirt.org/formatnetwork.html#examplesBridge
+
+## Yubikey
+
+To require a touch of the Yubikey when using its smart card functionality:
+`ykman openpgp keys set-touch sig cached-fixed`
