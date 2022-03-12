@@ -40,6 +40,7 @@
   services.power-profiles-daemon.enable = true;
   services.upower.enable = true;
   services.printing.enable = true;
+  services.udev.packages = [ pkgs.yubikey-personalization ];
   programs.adb.enable = true;
   programs.wireshark.enable = true;
 
