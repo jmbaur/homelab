@@ -27,9 +27,7 @@
     libinput.enable = true;
     displayManager.lightdm.enable = true;
     windowManager.i3.enable = true;
-    videoDrivers = [ "intel" ];
     deviceSection = ''
-      Option "TripleBuffer" "true"
       Option "TearFree" "true"
     '';
   };
@@ -45,7 +43,6 @@
   programs.wireshark.enable = true;
 
   users = {
-    mutableUsers = false;
     users.jared = {
       isNormalUser = true;
       hashedPassword = "$6$01ZXrxetiKaCW6Yx$RfI18qNyAYd9lU91wBNA9p0XREabwV4cv8DFqGH96SZnLJYmbGUTjNyqrVUgJorBn5RQzwwI4Ws3xMMU.fvYk/";

@@ -10,6 +10,9 @@ with lib;
   };
 
   config = mkIf cfg.enable {
+
+    users.mutableUsers = mkDefault false;
+
     boot = mkIf isNotContainer {
       cleanTmpDir = mkDefault true;
       loader.grub.configurationLimit = mkDefault 50;
