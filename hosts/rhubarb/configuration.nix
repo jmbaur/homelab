@@ -18,4 +18,10 @@
     hostName = "rhubarb";
     interfaces.eth0.useDHCP = true;
   };
+
+  environment.systemPackages = with pkgs; [
+    terraform
+    ansible
+    deploy-rs
+  ];
 }
