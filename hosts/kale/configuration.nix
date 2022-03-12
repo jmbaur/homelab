@@ -98,6 +98,7 @@ in
     initialPassword = "helloworld";
     extraGroups = [ "wheel" "libvirtd" ];
     openssh.authorizedKeys.keyFiles = lib.singleton (import ../../data/jmbaur-ssh-keys.nix);
+    hashedPassword = "$6$PAY4TgKrbjS2W0uF$hzN.XTe.Ih7t5yOOhIkd4GuCm409TcPc2bkmtvFE3zzAiFOq.c2AS9iGR0AK/LPtRtV0XLkbV7kTxV/xkhFTV1";
   };
 
   services.fwupd.enable = true;
