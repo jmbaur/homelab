@@ -13,6 +13,10 @@
     };
     hosts.url = "github:StevenBlack/hosts";
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+    nixos-generators = {
+      url = "github:nix-community/nixos-generators";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixos-hardware.url = "github:NixOS/nixos-hardware";
     nixpkgs.url = "nixpkgs/nixos-unstable";
     nur.url = "github:nix-community/nur";
@@ -30,6 +34,7 @@
     , home-manager
     , hosts
     , neovim-nightly-overlay
+    , nixos-generators
     , nixos-hardware
     , nixpkgs
     , nur
@@ -37,16 +42,23 @@
     , sops-nix
     }@inputs: flake-utils.lib.eachDefaultSystem
       (system:
-      let pkgs = nixpkgs.legacyPackages.${system};
-      in
-      rec {
-        devShell = pkgs.mkShell { buildInputs = with pkgs; [ sops ]; };
-      })
+      let pkgs = nixpkgs.legacyPackages.${system}; in
+      { devShell = pkgs.mkShell { buildInputs = [ pkgs.sops ]; }; })
     //
-    rec {
-      checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks deploy) deploy-rs.lib;
+    {
+      checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
 
       overlay = import ./pkgs/overlay.nix;
+
+      packages.aarch64-linux.rhubarb = nixos-generators.nixosGenerate {
+        pkgs = nixpkgs.legacyPackages.aarch64-linux;
+        modules = [
+          ./hosts/rhubarb/configuration.nix
+          nixos-hardware.nixosModules.raspberry-pi-4
+          self.nixosModule
+        ];
+        format = "sd-aarch64";
+      };
 
       nixosModule = { ... }: {
         imports = [
@@ -93,7 +105,7 @@
         system = "x86_64-linux";
         modules = [
           ./hosts/broccoli/configuration.nix
-          nixosModule
+          self.nixosModule
         ];
       };
 
@@ -101,7 +113,7 @@
         hostname = "broccoli";
         profiles.system = {
           user = "root";
-          path = deploy-rs.lib.x86_64-linux.activate.nixos nixosConfigurations.broccoli;
+          path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.broccoli;
         };
       };
 
@@ -110,7 +122,7 @@
         modules = [
           ./hosts/beetroot/configuration.nix
           nixos-hardware.nixosModules.lenovo-thinkpad-t480
-          nixosModule
+          self.nixosModule
         ];
       };
 
@@ -119,7 +131,7 @@
         modules = [
           ./hosts/asparagus/configuration.nix
           nixos-hardware.nixosModules.intel-nuc-8i7beh
-          nixosModule
+          self.nixosModule
         ];
       };
 
@@ -127,7 +139,7 @@
         hostname = "fd82:f21d:118d:1e:1e69:7aff:fe64:45b2";
         profiles.system = {
           user = "root";
-          path = deploy-rs.lib.x86_64-linux.activate.nixos nixosConfigurations.asparagus;
+          path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.asparagus;
         };
       };
 
@@ -146,10 +158,10 @@
         modules = [
           ./hosts/kale/configuration.nix
           nixos-hardware.nixosModules.common-cpu-amd
-          nixosModule
+          self.nixosModule
           ({
-            containers.www.path = nixosConfigurations.www.config.system.build.toplevel;
-            containers.media.path = nixosConfigurations.media.config.system.build.toplevel;
+            containers.www.path = self.nixosConfigurations.www.config.system.build.toplevel;
+            containers.media.path = self.nixosConfigurations.media.config.system.build.toplevel;
           })
         ];
       };
@@ -158,7 +170,7 @@
         hostname = "kale";
         profiles.system = {
           user = "root";
-          path = deploy-rs.lib.x86_64-linux.activate.nixos nixosConfigurations.kale;
+          path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.kale;
         };
       };
 
@@ -168,7 +180,7 @@
           modules = [
             ./hosts/rhubarb/configuration.nix
             nixos-hardware.nixosModules.raspberry-pi-4
-            nixosModule
+            self.nixosModule
           ];
         };
 
@@ -176,7 +188,7 @@
         hostname = "rhubarb";
         profiles.system = {
           user = "root";
-          path = deploy-rs.lib.aarch64-linux.activate.nixos nixosConfigurations.rhubarb;
+          path = deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigurations.rhubarb;
         };
       };
     };
