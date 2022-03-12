@@ -80,7 +80,7 @@
       deploy.nodes.broccoli = {
         hostname = "broccoli";
         profiles.system = {
-          user = "root";
+          sshUser = "root";
           path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.broccoli;
         };
       };
@@ -106,7 +106,7 @@
       deploy.nodes.asparagus = {
         hostname = "fd82:f21d:118d:1e:1e69:7aff:fe64:45b2";
         profiles.system = {
-          user = "root";
+          sshUser = "root";
           path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.asparagus;
         };
       };
@@ -137,7 +137,7 @@
       deploy.nodes.kale = {
         hostname = "kale";
         profiles.system = {
-          user = "root";
+          sshUser = "root";
           path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.kale;
         };
       };
@@ -154,7 +154,7 @@
       deploy.nodes.rhubarb = {
         hostname = "rhubarb";
         profiles.system = {
-          user = "root";
+          sshUser = "root";
           path = deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigurations.rhubarb;
         };
       };
