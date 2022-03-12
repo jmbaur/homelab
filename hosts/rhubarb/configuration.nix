@@ -20,9 +20,10 @@
   };
 
   environment.systemPackages = with pkgs; [
-    terraform
     ansible
     deploy-rs.deploy-rs
+    git
+    terraform
   ];
 
   nix.buildMachines = [{
@@ -39,18 +40,26 @@
     builders-use-substitutes = true
   '';
 
-  programs.ssh.knownHosts = {
-    localhost = {
-      hostNames = [ "localhost" ];
-      publicKey = lib.last (import ../../data/rhubarb-ssh-keys.nix);
+  programs.ssh = {
+    knownHosts = {
+      localhost = {
+        hostNames = [ "localhost" ];
+        publicKey = lib.last (import ../../data/rhubarb-ssh-keys.nix);
+      };
+      broccoli = {
+        hostNames = [ "broccoli" ];
+        publicKey = "broccoli ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG5CvQypTDJ1jl+6/xBw7DLITOCzIwZRZIAefI3+uV6M";
+      };
+      kale = {
+        hostNames = [ "kale" ];
+        publicKey = "kale ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINSDTqHc9WfeZxTL97QzcmNAGUP/Qt2J5h3q1OqOvIen";
+      };
     };
-    broccoli = {
-      hostNames = [ "broccoli" ];
-      publicKey = "broccoli ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG5CvQypTDJ1jl+6/xBw7DLITOCzIwZRZIAefI3+uV6M";
-    };
-    kale = {
-      hostNames = [ "kale" ];
-      publicKey = "kale ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINSDTqHc9WfeZxTL97QzcmNAGUP/Qt2J5h3q1OqOvIen";
-    };
+    extraConfig = ''
+      Host *
+        User root
+        IdentitiesOnly yes
+        IdentityFile /etc/ssh/ssh_host_ed25519_key
+    '';
   };
 }
