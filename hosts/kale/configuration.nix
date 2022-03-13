@@ -62,21 +62,13 @@ in
         ];
       };
     };
-    # bridges.br0.interfaces = [ "enp1s0d1" ];
-    # interfaces.br0.useDHCP = true;
-    # interfaces.${mgmtIface}.useDHCP = true;
-    # interfaces.${dataIface} = { };
-    # vlans.pubwan = { id = 10; interface = dataIface; };
-    # vlans.publan = { id = 20; interface = dataIface; };
-    # interfaces.pubwan = { };
-    # interfaces.publan = { };
   };
 
   systemd.network = {
     enable = true;
     networks.${mgmtIface} = {
       name = mgmtIface;
-      networkConfig.DHCP = "ipv4"; # TODO(jared): setup dhcpv6 for mgmt network
+      networkConfig.DHCP = "ipv4";
     };
     networks.${dataIface} = {
       name = dataIface;
@@ -90,30 +82,16 @@ in
     };
     networks.br0.name = "br0";
     netdevs.br0 = {
-      netdevConfig = {
-        Name = "br0";
-        Kind = "bridge";
-      };
+      netdevConfig = { Name = "br0"; Kind = "bridge"; };
       extraConfig = ''
         [Bridge]
         VLANFiltering=yes
-        STP=no
       '';
     };
-    # netdevs.pubwan = {
-    #   netdevConfig = {
-    #     Name = "pubwan";
-    #     Kind = "vlan";
-    #   };
-    #   vlanConfig.Id = 10;
-    # };
-    # netdevs.publan = {
-    #   netdevConfig = {
-    #     Name = "publan";
-    #     Kind = "vlan";
-    #   };
-    #   vlanConfig.Id = 20;
-    # };
+    netdevs.v1 = {
+      netdevConfig = { Name = "v1"; Kind = "veth"; };
+      peerConfig.Name = "v2";
+    };
   };
 
   users.users.jared = {
