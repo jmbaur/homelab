@@ -52,6 +52,7 @@ in
 
   networking = {
     hostName = "kale";
+    useDHCP = false;
     firewall = {
       enable = true;
       interfaces.${mgmtIface} = {
@@ -63,26 +64,11 @@ in
     bridges.br0.interfaces = [ "enp1s0d1" ];
     interfaces.br0.useDHCP = true;
     interfaces.${mgmtIface}.useDHCP = true;
-    interfaces.${dataIface} = {
-      ipv4.addresses = lib.mkForce [ ];
-      ipv6.addresses = lib.mkForce [ ];
-    };
-    vlans.pubwan = {
-      id = 10;
-      interface = dataIface;
-    };
-    vlans.publan = {
-      id = 20;
-      interface = dataIface;
-    };
-    interfaces.pubwan = {
-      ipv4.addresses = lib.mkForce [ ];
-      ipv6.addresses = lib.mkForce [ ];
-    };
-    interfaces.publan = {
-      ipv4.addresses = lib.mkForce [ ];
-      ipv6.addresses = lib.mkForce [ ];
-    };
+    interfaces.${dataIface} = { };
+    vlans.pubwan = { id = 10; interface = dataIface; };
+    vlans.publan = { id = 20; interface = dataIface; };
+    interfaces.pubwan = { };
+    interfaces.publan = { };
   };
 
   users.users.jared = {
