@@ -39,16 +39,8 @@
         option broadcast-address 192.168.30.255;
         option subnet-mask 255.255.255.0;
         option domain-name-servers 192.168.30.1;
-        class "pxeclients"{
-          match if substring (option vendor-class-identifier, 0, 9) = "PXEClient";
-          next-server 192.168.30.1;
-          filename "netboot.xyz.efi";
-        }
-        class "httpclients" {
-          match if substring (option vendor-class-identifier, 0, 10) = "HTTPClient";
-          option vendor-class-identifier "HTTPClient";
-          filename "https://boot.netboot.xyz/ipxe/netboot.xyz.efi";
-        }
+        next-server 192.168.30.1;
+        filename "netboot.xyz.efi";
       }
 
       subnet 192.168.40.0 netmask 255.255.255.0 {

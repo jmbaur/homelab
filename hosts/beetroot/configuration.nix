@@ -42,18 +42,20 @@
     '';
   };
 
-  services.avahi.enable = true;
+  programs.adb.enable = true;
+  programs.seahorse.enable = true;
+  programs.wireshark.enable = true;
+  services.autorandr.enable = true;
+  services.avahi = { enable = true; nssmdns = true; };
+  services.dbus.packages = [ pkgs.gcr ];
   services.geoclue2.enable = true;
   services.hardware.bolt.enable = true;
+  services.pcscd.enable = false;
   services.power-profiles-daemon.enable = true;
-  services.upower.enable = true;
   services.printing.enable = true;
   services.udev.packages = [ pkgs.yubikey-personalization ];
-  services.dbus.packages = [ pkgs.gcr ];
-  services.pcscd.enable = false;
-  programs.adb.enable = true;
-  programs.wireshark.enable = true;
-  programs.seahorse.enable = true;
+  services.udisks2.enable = true;
+  services.upower.enable = true;
 
   fonts.fonts = [ pkgs.hack-font ];
 

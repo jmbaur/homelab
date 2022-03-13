@@ -46,6 +46,7 @@ with lib;
       curl
       dmidecode
       dnsutils
+      file
       htop
       iputils
       killall

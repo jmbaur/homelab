@@ -15,7 +15,7 @@ in
 
   virtualisation.libvirtd = {
     enable = true;
-    allowedBridges = [ "virbr0" "br0" ];
+    allowedBridges = [ "virbr0" "br-pubwan" "br-publan" "br-trusted" ];
   };
 
   systemd.services."serial-getty@ttyS0" = {
@@ -53,7 +53,6 @@ in
   networking = {
     hostName = "kale";
     useDHCP = false;
-    useNetworkd = true;
     firewall = {
       enable = true;
       interfaces.${mgmtIface} = {
@@ -62,36 +61,13 @@ in
         ];
       };
     };
-  };
-
-  systemd.network = {
-    enable = true;
-    networks.${mgmtIface} = {
-      name = mgmtIface;
-      networkConfig.DHCP = "ipv4";
-    };
-    networks.${dataIface} = {
-      name = dataIface;
-      bridge = [ "br0" ];
-      extraConfig = ''
-        [BridgeVLAN]
-        VLAN=10
-        [BridgeVLAN]
-        VLAN=20
-      '';
-    };
-    networks.br0.name = "br0";
-    netdevs.br0 = {
-      netdevConfig = { Name = "br0"; Kind = "bridge"; };
-      extraConfig = ''
-        [Bridge]
-        VLANFiltering=yes
-      '';
-    };
-    netdevs.v1 = {
-      netdevConfig = { Name = "v1"; Kind = "veth"; };
-      peerConfig.Name = "v2";
-    };
+    interfaces.${mgmtIface}.useDHCP = true;
+    vlans.pubwan = { id = 10; interface = dataIface; };
+    vlans.publan = { id = 20; interface = dataIface; };
+    vlans.trusted = { id = 30; interface = dataIface; };
+    bridges.br-pubwan.interfaces = [ "pubwan" ];
+    bridges.br-publan.interfaces = [ "publan" ];
+    bridges.br-trusted.interfaces = [ "trusted" ];
   };
 
   users.users.jared = {
