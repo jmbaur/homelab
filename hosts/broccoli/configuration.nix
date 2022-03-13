@@ -45,30 +45,35 @@
     tcpdump
   ];
 
-  services = {
-    avahi = {
-      enable = true;
-      reflector = true;
-      ipv4 = true;
-      ipv6 = true;
-    };
-    openssh = with config.networking.interfaces; {
-      enable = true;
-      passwordAuthentication = false;
-      openFirewall = false;
-      allowSFTP = false;
-      listenAddresses = (
-        (builtins.map
-          (ifi: { port = 22; addr = ifi.address; })
-          mgmt.ipv4.addresses)
-        ++
-        (builtins.map
-          (ifi: { port = 22; addr = "[" + ifi.address + "]"; })
-          mgmt.ipv6.addresses)
-      );
-    };
-    iperf3.enable = true;
+  users.users.jared = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" ];
+    hashedPassword = "$6$P6479NO62cb9PQAw$dEKrzW6W6TdEd6Kc8h.QrzhhzUJyyLBeJ.lVXGRn68xQOjcFe8xsJMnzf3PahUz0Msn44cowN8cvkG/45RR3E/";
+    openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
   };
+
+  services.avahi = {
+    enable = true;
+    reflector = true;
+    ipv4 = true;
+    ipv6 = true;
+  };
+  services.openssh = with config.networking.interfaces; {
+    enable = true;
+    passwordAuthentication = false;
+    openFirewall = false;
+    allowSFTP = false;
+    listenAddresses = (
+      (builtins.map
+        (ifi: { port = 22; addr = ifi.address; })
+        mgmt.ipv4.addresses)
+      ++
+      (builtins.map
+        (ifi: { port = 22; addr = "[" + ifi.address + "]"; })
+        mgmt.ipv6.addresses)
+    );
+  };
+  services.iperf3.enable = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

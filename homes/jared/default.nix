@@ -22,6 +22,7 @@
     htop
     jq
     keybase
+    libnotify
     librespeed-cli
     mob
     mosh
@@ -77,6 +78,7 @@
     signal-desktop
     slack
     spotify
+    zoom-us
   ]);
 
   home.sessionVariables.NNN_TRASH = "1";
@@ -276,6 +278,7 @@
   programs.kitty = {
     enable = true;
     font.name = "Hack";
+    font.package = pkgs.hack-font;
     font.size = 14;
     settings = {
       copy_on_select = "yes";
@@ -298,13 +301,18 @@
       '';
   };
 
-  xresources.extraConfig = builtins.readFile (pkgs.fetchFromGitHub
-    {
-      repo = "gruvbox-contrib";
-      owner = "morhetz";
-      rev = "150e9ca30fcd679400dc388c24930e5ec8c98a9f";
-      sha256 = "181irx5jas3iqqdlc6v34673p2s6bsr8l0nqbs8gsv88r8q066l6";
-    } + "/xresources/gruvbox-dark.xresources");
+  xresources = {
+    properties = {
+      "XTerm.vt100.faceName" = "Hack:size=14:antialias=true";
+    };
+    extraConfig = builtins.readFile (pkgs.fetchFromGitHub
+      {
+        repo = "gruvbox-contrib";
+        owner = "morhetz";
+        rev = "150e9ca30fcd679400dc388c24930e5ec8c98a9f";
+        sha256 = "181irx5jas3iqqdlc6v34673p2s6bsr8l0nqbs8gsv88r8q066l6";
+      } + "/xresources/gruvbox-dark.xresources");
+  };
 
   programs.i3status = {
     enable = true;
@@ -336,14 +344,17 @@
 
   programs.rofi = {
     enable = true;
+    plugins = [ pkgs.rofi-emoji ];
+    extraConfig.modi = "drun,emoji,ssh";
+    font = "Hack 12";
     theme = "gruvbox-dark-soft";
     terminal = "${pkgs.kitty}/bin/kitty";
   };
 
   xsession = {
     enable = true;
-    pointerCursor.package = pkgs.vanilla-dmz;
-    pointerCursor.name = "Vanilla-DMZ";
+    pointerCursor.package = pkgs.gnome.gnome-themes-extra;
+    pointerCursor.name = "Adwaita";
     initExtra = ''
       ${pkgs.xorg.xsetroot}/bin/xsetroot -solid "#282828"
       ${pkgs.autorandr}/bin/autorandr --change
@@ -354,7 +365,7 @@
         terminal = "kitty";
         modifier = "Mod4";
         defaultWorkspace = "workspace number 1";
-        fonts.size = 10.0;
+        fonts = { names = [ "Hack" ]; size = 10.0; };
         keybindings =
           let
             mod = config.xsession.windowManager.i3.config.modifier;
@@ -374,7 +385,7 @@
             "${mod}+p" = "exec rofi -show drun";
           };
         bars = [{
-          fonts.size = 10.0;
+          fonts = config.xsession.windowManager.i3.config.fonts;
           statusCommand = "${pkgs.i3status}/bin/i3status";
           trayOutput = "primary";
           position = "top";
@@ -390,7 +401,20 @@
   home.sessionVariables.CM_LAUNCHER = "rofi";
   services.clipmenu.enable = true;
 
-  services.dunst.enable = true;
+  services.dunst = {
+    enable = true;
+    iconTheme = {
+      package = pkgs.gnome.gnome-themes-extra;
+      name = "Adwaita";
+    };
+    settings = {
+      global = {
+        geometry = "300x5-30+50";
+        font = "Hack 12";
+      };
+    };
+
+  };
 
   services.redshift = {
     enable = true;

@@ -43,6 +43,8 @@
   programs.adb.enable = true;
   programs.wireshark.enable = true;
 
+  fonts.fonts = [ pkgs.hack-font ];
+
   users = {
     users.jared = {
       isNormalUser = true;

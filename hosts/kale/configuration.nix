@@ -95,9 +95,9 @@ in
 
   users.users.jared = {
     isNormalUser = true;
+    extraGroups = [ "wheel" "libvirtd" ];
     hashedPassword = "$6$COYoxPUJ2GXytmXc$7XkhoFMy3KIatPD73I/zeDmseXH0l8pQ.kYrFvHphdqf.jitZ/PR2lhcSn67EsF4FwHIu85itj2ASEi3kGR/b/";
     openssh.authorizedKeys.keyFiles = lib.singleton (import ../../data/jmbaur-ssh-keys.nix);
-    extraGroups = [ "wheel" "libvirtd" ];
   };
 
   services.fwupd.enable = true;
