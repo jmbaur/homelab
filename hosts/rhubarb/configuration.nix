@@ -1,5 +1,4 @@
-{ config, lib, pkgs, ... }:
-{
+{ config, lib, pkgs, ... }: {
   custom.common.enable = true;
   custom.deploy.enable = true;
 
@@ -63,5 +62,4 @@
         IdentityFile /etc/ssh/ssh_host_ed25519_key
     '';
   };
-};
 }
