@@ -51,6 +51,7 @@
   services.pcscd.enable = false;
   programs.adb.enable = true;
   programs.wireshark.enable = true;
+  programs.seahorse.enable = true;
 
   fonts.fonts = [ pkgs.hack-font ];
 
