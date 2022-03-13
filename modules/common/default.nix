@@ -46,9 +46,11 @@ with lib;
       curl
       dmidecode
       dnsutils
+      htop
       iputils
       killall
       lm_sensors
+      lsof
       pciutils
       tcpdump
       tmux

@@ -76,7 +76,11 @@ in
     enable = true;
     networks.${mgmtIface} = {
       matchConfig.Name = mgmtIface;
-      DHCP = "yes";
+      networkConfig.DHCP = "ipv4"; # TODO(jared): setup dhcpv6 for mgmt network
+    };
+    netdevs.br0.netdevConfig = {
+      Name = "br0";
+      Kind = "bridge";
     };
   };
 
