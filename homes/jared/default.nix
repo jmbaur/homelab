@@ -82,6 +82,7 @@
     signal-desktop
     slack
     spotify
+    virt-manager
     zoom-us
   ]);
 
