@@ -75,19 +75,11 @@ in
       id = 20;
       interface = dataIface;
     };
-    vlans.trusted = {
-      id = 30;
-      interface = dataIface;
-    };
     interfaces.pubwan = {
       ipv4.addresses = lib.mkForce [ ];
       ipv6.addresses = lib.mkForce [ ];
     };
     interfaces.publan = {
-      ipv4.addresses = lib.mkForce [ ];
-      ipv6.addresses = lib.mkForce [ ];
-    };
-    interfaces.trusted = {
       ipv4.addresses = lib.mkForce [ ];
       ipv6.addresses = lib.mkForce [ ];
     };

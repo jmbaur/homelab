@@ -33,6 +33,7 @@
     nix-prefetch-git
     nix-tree
     nixos-generators
+    nmap
     nnn
     nvme-cli
     openssl
