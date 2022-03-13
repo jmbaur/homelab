@@ -59,7 +59,7 @@
       '')
     ];
     extraConfig = ''
-      Host kale rhubarb asparagus broccoli
+      Host localhost kale broccoli
         User root
         IdentitiesOnly yes
         IdentityFile /etc/ssh/ssh_host_ed25519_key
