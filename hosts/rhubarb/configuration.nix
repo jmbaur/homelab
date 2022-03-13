@@ -29,7 +29,7 @@
   nix.buildMachines = [{
     hostName = "kale";
     systems = [ "x86_64-linux" "aarch64-linux" ];
-    maxJobs = 1;
+    maxJobs = 4;
     speedFactor = 2;
     supportedFeatures = [ "nixos-test" "benchmark" "big-parallel" "kvm" ];
     mandatoryFeatures = [ ];
