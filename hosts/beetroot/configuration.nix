@@ -13,6 +13,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "beetroot";
+  networking.useDHCP = false;
   networking.networkmanager.enable = true;
 
   time.timeZone = "America/Los_Angeles";

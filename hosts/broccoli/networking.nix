@@ -6,6 +6,7 @@ in
 {
   networking = {
     hostName = "broccoli";
+    useDHCP = false;
     nameservers = [ "127.0.0.1" "::1" ];
     search = [ "home.arpa" ];
     stevenBlackHosts.enable = true;
@@ -27,11 +28,8 @@ in
       mgmt = { id = 88; interface = "enp1s0"; };
     };
     interfaces = {
-      eno1 = {
-        useDHCP = true;
-      };
+      eno1.useDHCP = true;
       hurricane = {
-        useDHCP = false;
         ipv6.addresses = [{ address = "2001:470:c:9::2"; prefixLength = 64; }];
       };
       enp1s0 = {
