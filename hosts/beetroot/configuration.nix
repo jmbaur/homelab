@@ -24,10 +24,20 @@
 
   services.xserver = {
     enable = true;
-    libinput.enable = true;
+    libinput = {
+      enable = true;
+      touchpad = {
+        tapping = true;
+        naturalScrolling = true;
+        disableWhileTyping = true;
+        accelProfile = "flat";
+      };
+    };
     displayManager.lightdm.enable = true;
     windowManager.i3.enable = true;
+    videoDrivers = [ "intel" ];
     deviceSection = ''
+      Option "DRI" "2"
       Option "TearFree" "true"
     '';
   };

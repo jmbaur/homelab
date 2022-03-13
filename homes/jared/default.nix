@@ -1,5 +1,8 @@
 { config, lib, pkgs, ... }: {
   nixpkgs.config.allowUnfree = true;
+
+  home.keyboard.options = [ "ctrl:nocaps" ];
+
   home.packages = with pkgs; [
     age
     awscli2
@@ -401,6 +404,10 @@
   home.sessionVariables.CM_LAUNCHER = "rofi";
   services.clipmenu.enable = true;
 
+  services.poweralertd.enable = true;
+
+  services.xcape.enable = true;
+
   services.dunst = {
     enable = true;
     iconTheme = {
@@ -413,7 +420,6 @@
         font = "Hack 12";
       };
     };
-
   };
 
   services.redshift = {
