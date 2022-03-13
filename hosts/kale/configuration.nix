@@ -53,6 +53,7 @@ in
   networking = {
     hostName = "kale";
     useDHCP = false;
+    useNetworkd = true;
     firewall = {
       enable = true;
       interfaces.${mgmtIface} = {
@@ -61,14 +62,22 @@ in
         ];
       };
     };
-    bridges.br0.interfaces = [ "enp1s0d1" ];
-    interfaces.br0.useDHCP = true;
-    interfaces.${mgmtIface}.useDHCP = true;
-    interfaces.${dataIface} = { };
-    vlans.pubwan = { id = 10; interface = dataIface; };
-    vlans.publan = { id = 20; interface = dataIface; };
-    interfaces.pubwan = { };
-    interfaces.publan = { };
+    # bridges.br0.interfaces = [ "enp1s0d1" ];
+    # interfaces.br0.useDHCP = true;
+    # interfaces.${mgmtIface}.useDHCP = true;
+    # interfaces.${dataIface} = { };
+    # vlans.pubwan = { id = 10; interface = dataIface; };
+    # vlans.publan = { id = 20; interface = dataIface; };
+    # interfaces.pubwan = { };
+    # interfaces.publan = { };
+  };
+
+  systemd.network = {
+    enable = true;
+    networks.${mgmtIface} = {
+      matchConfig.Name = mgmtIface;
+      DHCP = "yes";
+    };
   };
 
   users.users.jared = {
@@ -104,23 +113,23 @@ in
     "d /big/containers/media/content 700 root root -"
   ];
 
-  containers.www = {
-    autoStart = true;
-    ephemeral = true;
-    macvlans = [ "pubwan" "publan" ];
-    bindMounts."/srv/git" = {
-      hostPath = "/fast/containers/www/git";
-      isReadOnly = false;
-    };
-    bindMounts."/var/lib/acme" = {
-      hostPath = "/fast/containers/www/acme";
-      isReadOnly = false;
-    };
-    bindMounts."/etc/ssh" = {
-      hostPath = "/fast/containers/www/ssh";
-      isReadOnly = false;
-    };
-  };
+  # containers.www = {
+  #   autoStart = true;
+  #   ephemeral = true;
+  #   macvlans = [ "pubwan" "publan" ];
+  #   bindMounts."/srv/git" = {
+  #     hostPath = "/fast/containers/www/git";
+  #     isReadOnly = false;
+  #   };
+  #   bindMounts."/var/lib/acme" = {
+  #     hostPath = "/fast/containers/www/acme";
+  #     isReadOnly = false;
+  #   };
+  #   bindMounts."/etc/ssh" = {
+  #     hostPath = "/fast/containers/www/ssh";
+  #     isReadOnly = false;
+  #   };
+  # };
 
   # containers.grafana = {
   #   macvlans = [ "publan" ];
@@ -139,35 +148,35 @@ in
   #   };
   # };
 
-  containers.media = {
-    autoStart = true;
-    ephemeral = true;
-    macvlans = [ "publan" ];
-    bindMounts."/media" = {
-      hostPath = "/big/containers/media/content";
-      isReadOnly = false;
-    };
-    bindMounts."/var/lib/plex" = {
-      hostPath = "/fast/containers/media/plex";
-      isReadOnly = false;
-    };
-    bindMounts."/var/lib/sonarr" = {
-      hostPath = "/fast/containers/media/sonarr";
-      isReadOnly = false;
-    };
-    bindMounts."/var/lib/lidarr" = {
-      hostPath = "/fast/containers/media/lidarr";
-      isReadOnly = false;
-    };
-    bindMounts."/var/lib/radarr" = {
-      hostPath = "/fast/containers/media/radarr";
-      isReadOnly = false;
-    };
-    bindMounts."/var/lib/sops-nix" = {
-      hostPath = "/fast/containers/media/sops-nix";
-      isReadOnly = false;
-    };
-  };
+  # containers.media = {
+  #   autoStart = true;
+  #   ephemeral = true;
+  #   macvlans = [ "publan" ];
+  #   bindMounts."/media" = {
+  #     hostPath = "/big/containers/media/content";
+  #     isReadOnly = false;
+  #   };
+  #   bindMounts."/var/lib/plex" = {
+  #     hostPath = "/fast/containers/media/plex";
+  #     isReadOnly = false;
+  #   };
+  #   bindMounts."/var/lib/sonarr" = {
+  #     hostPath = "/fast/containers/media/sonarr";
+  #     isReadOnly = false;
+  #   };
+  #   bindMounts."/var/lib/lidarr" = {
+  #     hostPath = "/fast/containers/media/lidarr";
+  #     isReadOnly = false;
+  #   };
+  #   bindMounts."/var/lib/radarr" = {
+  #     hostPath = "/fast/containers/media/radarr";
+  #     isReadOnly = false;
+  #   };
+  #   bindMounts."/var/lib/sops-nix" = {
+  #     hostPath = "/fast/containers/media/sops-nix";
+  #     isReadOnly = false;
+  #   };
+  # };
 
   # containers.minecraft = {
   #   macvlans = [ "publan" ];
