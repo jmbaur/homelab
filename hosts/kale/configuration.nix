@@ -75,13 +75,45 @@ in
   systemd.network = {
     enable = true;
     networks.${mgmtIface} = {
-      matchConfig.Name = mgmtIface;
+      name = mgmtIface;
       networkConfig.DHCP = "ipv4"; # TODO(jared): setup dhcpv6 for mgmt network
     };
-    netdevs.br0.netdevConfig = {
-      Name = "br0";
-      Kind = "bridge";
+    networks.${dataIface} = {
+      name = dataIface;
+      bridge = [ "br0" ];
+      extraConfig = ''
+        [BridgeVLAN]
+        VLAN=10
+        [BridgeVLAN]
+        VLAN=20
+      '';
     };
+    networks.br0.name = "br0";
+    netdevs.br0 = {
+      netdevConfig = {
+        Name = "br0";
+        Kind = "bridge";
+      };
+      extraConfig = ''
+        [Bridge]
+        VLANFiltering=yes
+        STP=no
+      '';
+    };
+    # netdevs.pubwan = {
+    #   netdevConfig = {
+    #     Name = "pubwan";
+    #     Kind = "vlan";
+    #   };
+    #   vlanConfig.Id = 10;
+    # };
+    # netdevs.publan = {
+    #   netdevConfig = {
+    #     Name = "publan";
+    #     Kind = "vlan";
+    #   };
+    #   vlanConfig.Id = 20;
+    # };
   };
 
   users.users.jared = {
