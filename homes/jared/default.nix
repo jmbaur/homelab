@@ -39,7 +39,7 @@
     p
     patchelf
     picocom
-    pinentry
+    pinentry-gnome
     podman-compose
     pstree
     pulsemixer
@@ -108,7 +108,7 @@
 
   services.gpg-agent = {
     enable = true;
-    pinentryFlavor = "tty";
+    pinentryFlavor = "gnome3";
     defaultCacheTtl = 3600;
     extraConfig = ''
       allow-loopback-pinentry

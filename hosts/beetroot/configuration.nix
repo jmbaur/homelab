@@ -48,6 +48,7 @@
   services.upower.enable = true;
   services.printing.enable = true;
   services.udev.packages = [ pkgs.yubikey-personalization ];
+  services.dbus.packages = [ pkgs.gcr ];
   services.pcscd.enable = false;
   programs.adb.enable = true;
   programs.wireshark.enable = true;
