@@ -371,6 +371,7 @@
         modifier = "Mod4";
         defaultWorkspace = "workspace number 1";
         fonts = { names = [ "Hack" ]; size = 10.0; };
+        floating.criteria = [{ class = "zoom"; }];
         keybindings =
           let
             mod = config.xsession.windowManager.i3.config.modifier;
