@@ -106,8 +106,9 @@ in
               } log prefix "not in internet - " drop
           }
 
-          chain forward_wan {
+          chain forward_from_wan {
               icmpv6 type { echo-request } accept
+              oifname $DEV_PUBWAN log prefix "forward pubwan - " accept
           }
 
           chain allow_to_internet {
@@ -116,7 +117,7 @@ in
 
           chain iot {
               jump allow_to_internet
-              oifname $DEV_IOT accept
+              oifname { $DEV_IOT, $DEV_PUBLAN } accept
           }
 
           chain forward {
@@ -130,7 +131,8 @@ in
               # connections from the internal net to the internet or to other
               # internal nets are allowed
               iifname vmap {
-                  $DEV_WAN6 : jump forward_wan,
+                  $DEV_WAN : jump forward_from_wan,
+                  $DEV_WAN6 : jump forward_from_wan,
                   $DEV_PUBWAN : jump allow_to_internet,
                   $DEV_PUBLAN : jump allow_to_internet,
                   $DEV_TRUSTED : accept,
@@ -148,11 +150,20 @@ in
 
       table ip nat {
 
+          chain prerouting {
+              type nat hook prerouting priority 100; policy accept;
+
+              iifname $DEV_WAN tcp dport { ssh, http, https } dnat to 192.168.10.10
+          }
+
           chain postrouting {
               type nat hook postrouting priority 100; policy accept;
 
               # masquerade private IP addresses
               ip saddr $NET_ALL oifname $DEV_WAN masquerade
+
+              # # hairpin NAT
+              # ip saddr $NET_ALL ip daddr $NET_ALL masquerade
           }
 
       }

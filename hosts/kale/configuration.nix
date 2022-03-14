@@ -103,23 +103,26 @@ in
     "d /big/containers/media/content 700 root root -"
   ];
 
-  # containers.www = {
-  #   autoStart = true;
-  #   ephemeral = true;
-  #   macvlans = [ "pubwan" "publan" ];
-  #   bindMounts."/srv/git" = {
-  #     hostPath = "/fast/containers/www/git";
-  #     isReadOnly = false;
-  #   };
-  #   bindMounts."/var/lib/acme" = {
-  #     hostPath = "/fast/containers/www/acme";
-  #     isReadOnly = false;
-  #   };
-  #   bindMounts."/etc/ssh" = {
-  #     hostPath = "/fast/containers/www/ssh";
-  #     isReadOnly = false;
-  #   };
-  # };
+  containers.www = {
+    autoStart = true;
+    ephemeral = true;
+    privateNetwork = true;
+    hostBridge = "br-pubwan";
+    localAddress = "192.168.10.10/24";
+    localAddress6 = "2001:470:f001:a::a/64";
+    bindMounts."/srv/git" = {
+      hostPath = "/fast/containers/www/git";
+      isReadOnly = false;
+    };
+    bindMounts."/var/lib/acme" = {
+      hostPath = "/fast/containers/www/acme";
+      isReadOnly = false;
+    };
+    bindMounts."/etc/ssh" = {
+      hostPath = "/fast/containers/www/ssh";
+      isReadOnly = false;
+    };
+  };
 
   # containers.grafana = {
   #   macvlans = [ "publan" ];

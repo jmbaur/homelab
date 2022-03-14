@@ -4,18 +4,12 @@
     useDHCP = false;
     useHostResolvConf = false;
     hostName = "media";
-    defaultGateway.address = "192.168.20.1";
-    defaultGateway.interface = "mv-publan";
-    nameservers = lib.singleton "192.168.20.1";
+    defaultGateway = {
+      address = "192.168.20.1";
+      interface = "eth0";
+    };
+    nameservers = [ "192.168.20.1" ];
     domain = "home.arpa";
-    interfaces.mv-publan.ipv4.addresses = [{
-      address = "192.168.20.29";
-      prefixLength = 24;
-    }];
-    interfaces.mv-publan.ipv6.addresses = [{
-      address = "2001:470:f001:20::29";
-      prefixLength = 64;
-    }];
   };
   systemd.tmpfiles.rules = [
     "d ${config.services.plex.dataDir} 700 ${config.services.plex.user} ${config.services.plex.group} -"

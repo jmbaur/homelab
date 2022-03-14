@@ -85,43 +85,13 @@ in
     domain = "jmbaur.com";
     defaultGateway = {
       address = "192.168.10.1";
-      interface = "mv-pubwan";
+      interface = "eth0";
     };
     defaultGateway6 = {
-      address = "2001:470:f001:10::1";
-      interface = "mv-pubwan";
+      address = "2001:470:f001:a::1";
+      interface = "eth0";
     };
-    nameservers = [ "192.168.10.1" "2001:470:f001:10::1" ];
-    interfaces.mv-pubwan = {
-      ipv4.addresses = [{
-        address = "192.168.10.11";
-        prefixLength = 24;
-      }];
-      ipv6.addresses = [{
-        address = "2001:470:f001:10::11";
-        prefixLength = 64;
-      }];
-    };
-    interfaces.mv-publan = {
-      ipv4.addresses = [{
-        address = "192.168.20.11";
-        prefixLength = 24;
-      }];
-      ipv4.routes = [{
-        address = "192.168.0.0";
-        prefixLength = 16;
-        via = "192.168.20.1";
-      }];
-      ipv6.addresses = [{
-        address = "2001:470:f001:20::11";
-        prefixLength = 64;
-      }];
-      ipv6.routes = [{
-        address = "2001:470:f001::";
-        prefixLength = 48;
-        via = "2001:470:f001:20::1";
-      }];
-    };
+    nameservers = [ "192.168.10.1" "2001:470:f001:a::1" ];
     firewall.allowedTCPPorts = [ 80 443 ];
   };
   systemd.tmpfiles.rules = [
