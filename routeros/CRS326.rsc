@@ -21,48 +21,31 @@ add bridge=bridge frame-types=admit-only-untagged-and-priority-tagged ingress-fi
     pvid=30
 add bridge=bridge frame-types=admit-only-untagged-and-priority-tagged ingress-filtering=yes interface=ether6 \
     pvid=30
-add bridge=bridge frame-types=admit-only-untagged-and-priority-tagged ingress-filtering=yes interface=ether7
-add bridge=bridge disabled=yes frame-types=admit-only-untagged-and-priority-tagged ingress-filtering=yes \
-    interface=ether8
-add bridge=bridge disabled=yes frame-types=admit-only-untagged-and-priority-tagged ingress-filtering=yes \
-    interface=ether9
-add bridge=bridge disabled=yes frame-types=admit-only-untagged-and-priority-tagged ingress-filtering=yes \
-    interface=ether10
-add bridge=bridge disabled=yes frame-types=admit-only-untagged-and-priority-tagged ingress-filtering=yes \
-    interface=ether11
-add bridge=bridge disabled=yes frame-types=admit-only-untagged-and-priority-tagged ingress-filtering=yes \
-    interface=ether12
-add bridge=bridge disabled=yes frame-types=admit-only-untagged-and-priority-tagged ingress-filtering=yes \
-    interface=ether13
-add bridge=bridge disabled=yes frame-types=admit-only-untagged-and-priority-tagged ingress-filtering=yes \
-    interface=ether14
-add bridge=bridge disabled=yes frame-types=admit-only-untagged-and-priority-tagged ingress-filtering=yes \
-    interface=ether15
-add bridge=bridge disabled=yes frame-types=admit-only-untagged-and-priority-tagged ingress-filtering=yes \
-    interface=ether16
-add bridge=bridge disabled=yes frame-types=admit-only-untagged-and-priority-tagged ingress-filtering=yes \
-    interface=ether17
-add bridge=bridge disabled=yes frame-types=admit-only-untagged-and-priority-tagged ingress-filtering=yes \
-    interface=ether18
-add bridge=bridge disabled=yes frame-types=admit-only-untagged-and-priority-tagged ingress-filtering=yes \
-    interface=ether19
-add bridge=bridge disabled=yes frame-types=admit-only-untagged-and-priority-tagged ingress-filtering=yes \
-    interface=ether20
-add bridge=bridge disabled=yes frame-types=admit-only-untagged-and-priority-tagged ingress-filtering=yes \
-    interface=ether21
-add bridge=bridge disabled=yes frame-types=admit-only-untagged-and-priority-tagged ingress-filtering=yes \
-    interface=ether22
-add bridge=bridge disabled=yes frame-types=admit-only-untagged-and-priority-tagged ingress-filtering=yes \
-    interface=ether23
-add bridge=bridge disabled=yes frame-types=admit-only-untagged-and-priority-tagged ingress-filtering=yes \
-    interface=ether24
+add bridge=bridge frame-types=admit-only-vlan-tagged ingress-filtering=yes interface=ether7
+add bridge=bridge disabled=yes interface=ether8
+add bridge=bridge disabled=yes interface=ether9
+add bridge=bridge disabled=yes interface=ether10
+add bridge=bridge disabled=yes interface=ether11
+add bridge=bridge disabled=yes interface=ether12
+add bridge=bridge disabled=yes interface=ether13
+add bridge=bridge disabled=yes interface=ether14
+add bridge=bridge disabled=yes interface=ether15
+add bridge=bridge disabled=yes interface=ether16
+add bridge=bridge disabled=yes interface=ether17
+add bridge=bridge disabled=yes interface=ether18
+add bridge=bridge disabled=yes interface=ether19
+add bridge=bridge disabled=yes interface=ether20
+add bridge=bridge disabled=yes interface=ether21
+add bridge=bridge disabled=yes interface=ether22
+add bridge=bridge disabled=yes interface=ether23
+add bridge=bridge disabled=yes interface=ether24
 add bridge=bridge frame-types=admit-only-vlan-tagged interface=sfp-sfpplus1
-add bridge=bridge disabled=yes frame-types=admit-only-vlan-tagged interface=sfp-sfpplus2
+add bridge=bridge disabled=yes interface=sfp-sfpplus2
 /ip neighbor discovery-settings
 set discover-interface-list=!dynamic
 /interface bridge vlan
 add bridge=bridge tagged=sfp-sfpplus1,ether7 vlan-ids=40
-add bridge=bridge tagged=sfp-sfpplus1,bridge untagged=ether1,ether2,ether3,ether4 vlan-ids=88
+add bridge=bridge tagged=sfp-sfpplus1,ether7,bridge untagged=ether1,ether2,ether3,ether4 vlan-ids=88
 add bridge=bridge tagged=sfp-sfpplus1,ether7 untagged=ether5,ether6 vlan-ids=30
 add bridge=bridge tagged=sfp-sfpplus1,ether7 untagged=ether8 vlan-ids=50
 /ip address
