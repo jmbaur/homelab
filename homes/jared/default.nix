@@ -71,6 +71,7 @@
     yq
     yubikey-manager
     yubikey-personalization
+    zellij
     zf
     zip
     zoxide
@@ -79,10 +80,13 @@
     chromium
     element-desktop
     firefox
+    mpv
+    obs-studio
     signal-desktop
     slack
     spotify
     virt-manager
+    zathura
     zoom-us
   ]);
 

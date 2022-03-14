@@ -5,12 +5,12 @@
 }:
 stdenvNoCC.mkDerivation rec {
   pname = "zf";
-  version = "readline";
+  version = "master";
   src = fetchFromGitHub {
-    owner = "jmbaur";
+    owner = "natecraddock";
     repo = "zf";
     rev = version;
-    sha256 = "sha256-B6VIQUIJnhIUJk/YteVEdTZZOqBLSd2poD5PMYl014E=";
+    sha256 = "13d96v9yni29qxb4kfcqxy9awy8c8yp7gnsjls8ndlhsq1hnz9l2";
   };
   preBuild = ''
     export HOME=$TMPDIR
