@@ -21,6 +21,27 @@ in
         prometheus :9153
       }
 
+      jmbaur.com {
+        hosts {
+          192.168.10.10 jmbaur.com
+          192.168.10.10 www.jmbaur.com
+          192.168.10.10 git.jmbaur.com
+          192.168.10.10 cache.jmbaur.com
+          2001:470:f001:a::a jmbaur.com
+          2001:470:f001:a::a www.jmbaur.com
+          2001:470:f001:a::a git.jmbaur.com
+          2001:470:f001:a::a cache.jmbaur.com
+          192.168.20.10 plex.jmbaur.com
+          192.168.20.10 radarr.jmbaur.com
+          192.168.20.10 sonarr.jmbaur.com
+          192.168.20.10 lidarr.jmbaur.com
+          fd82:f21d:118d:14::a plex.jmbaur.com
+          fd82:f21d:118d:14::a radarr.jmbaur.com
+          fd82:f21d:118d:14::a sonarr.jmbaur.com
+          fd82:f21d:118d:14::a lidarr.jmbaur.com
+        }
+      }
+
       ${domain} {
         hosts {
           ${lib.concatMapStrings (machine: ''

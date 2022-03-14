@@ -161,9 +161,6 @@ in
 
               # masquerade private IP addresses
               ip saddr $NET_ALL oifname $DEV_WAN masquerade
-
-              # # hairpin NAT
-              # ip saddr $NET_ALL ip daddr $NET_ALL masquerade
           }
 
       }

@@ -91,7 +91,12 @@ in
       address = "2001:470:f001:a::1";
       interface = "eth0";
     };
-    nameservers = [ "192.168.10.1" "2001:470:f001:a::1" ];
+    nameservers = with config.networking; [
+      defaultGateway.address
+      defaultGateway6.address
+    ];
+    interfaces.eth1.ipv4.routes = [{ address = "192.168.0.0"; prefixLength = 16; via = "192.168.20.1"; }];
+    interfaces.eth1.ipv6.routes = [{ address = "fd82:f21d:118d::"; prefixLength = 48; via = "fd82:f21d:118d:14::1"; }];
     firewall.allowedTCPPorts = [ 80 443 ];
   };
   systemd.tmpfiles.rules = [
@@ -160,21 +165,18 @@ in
   services.nginx = {
     enable = true;
     statusPage = true;
-    virtualHosts."_" =
-      let
-        index = pkgs.runCommandNoCC "index" { } ''
-          mkdir -p $out
-          cat > $out/index.html << EOF
-          <!DOCTYPE html>
-          These aren't the droids you're looking for.
-          EOF
-        '';
-      in
+    virtualHosts."www.jmbaur.com" =
       mkVhost {
         default = true;
         serverAliases = [ "www" ];
         locations."/" = {
-          root = index;
+          root = pkgs.runCommandNoCC "index" { } ''
+            mkdir -p $out
+            cat > $out/index.html << EOF
+            <!DOCTYPE html>
+            These aren't the droids you're looking for.
+            EOF
+          '';
           index = "index.html";
         };
       };
@@ -207,6 +209,36 @@ in
           include ${pkgs.nginx}/conf/fastcgi_params;
           fastcgi_split_path_info ^(/?)(.+)$;
           fastcgi_pass unix:${config.services.fcgiwrap.socketAddress};
+        '';
+      };
+    };
+    virtualHosts."plex.jmbaur.com" = mkVhost {
+      serverAliases = [ "plex" ];
+      http2 = true;
+      listen = [
+        { addr = "[fd82:f21d:118d:14::a]"; port = 443; ssl = true; }
+        { addr = "192.168.20.10"; port = 80; }
+      ];
+      locations."/" = {
+        proxyPass = "http://[fd82:f21d:118d:14::14]:32400";
+      };
+    };
+    virtualHosts."sonarr.jmbaur.com" = mkVhost {
+      serverAliases = [ "sonarr" ];
+      inherit (config.services.nginx.virtualHosts."plex.jmbaur.com") listen;
+      locations."/" = {
+        proxyPass = "http://[fd82:f21d:118d:14::14]:8989";
+      };
+    };
+    virtualHosts."radarr.jmbaur.com" = mkVhost {
+      serverAliases = [ "radarr" ];
+      inherit (config.services.nginx.virtualHosts."plex.jmbaur.com") listen;
+      locations."/" = {
+        proxyPass = "http://[fd82:f21d:118d:14::14]:7878";
+        extraConfig = ''
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         '';
       };
     };

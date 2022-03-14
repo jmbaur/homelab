@@ -4,18 +4,25 @@
     useDHCP = false;
     useHostResolvConf = false;
     hostName = "media";
+    domain = "home.arpa";
     defaultGateway = {
       address = "192.168.20.1";
       interface = "eth0";
     };
-    nameservers = [ "192.168.20.1" ];
-    domain = "home.arpa";
+    defaultGateway6 = {
+      address = "fd82:f21d:118d:14::1";
+      interface = "eth0";
+    };
+    nameservers = with config.networking; [
+      defaultGateway.address
+      defaultGateway6.address
+    ];
   };
   systemd.tmpfiles.rules = [
     "d ${config.services.plex.dataDir} 700 ${config.services.plex.user} ${config.services.plex.group} -"
     "d ${config.services.sonarr.dataDir} 700 ${config.services.sonarr.user} ${config.services.sonarr.group} -"
-    "d ${config.services.lidarr.dataDir} 700 ${config.services.lidarr.user} ${config.services.lidarr.group} -"
     "d ${config.services.radarr.dataDir} 700 ${config.services.radarr.user} ${config.services.radarr.group} -"
+    "d /media 770 ${config.services.plex.user} ${config.services.plex.group} -"
   ];
   sops = {
     defaultSopsFile = ./secrets.yaml;
@@ -40,24 +47,14 @@
   systemd.services.sabnzbd = {
     serviceConfig.SupplementaryGroups = [ config.users.groups.keys.name ];
   };
-  services.lidarr = {
-    enable = true;
-    openFirewall = true;
+  services.radarr = { enable = true; openFirewall = true; };
+  services.sonarr = { enable = true; openFirewall = true; };
+  users.users.radarr = {
+    createHome = true;
+    extraGroups = [ config.services.plex.group config.services.sabnzbd.group ];
   };
-  services.radarr = {
-    enable = true;
-    openFirewall = true;
+  users.users.sonarr = {
+    createHome = true;
+    extraGroups = [ config.services.plex.group config.services.sabnzbd.group ];
   };
-  services.sonarr = {
-    enable = true;
-    openFirewall = true;
-  };
-  users.users.plex.extraGroups = [
-    config.services.lidarr.group
-    config.services.radarr.group
-    config.services.sonarr.group
-  ];
-  users.users.lidarr.extraGroups = [ config.services.sabnzbd.group ];
-  users.users.radarr.extraGroups = [ config.services.sabnzbd.group ];
-  users.users.sonarr.extraGroups = [ config.services.sabnzbd.group ];
 }
