@@ -12,8 +12,7 @@ set [ find default=yes ] supplicant-identity=MikroTik
 add bridge=bridge interface=ether1 pvid=88
 add bridge=bridge frame-types=admit-only-vlan-tagged ingress-filtering=yes interface=sfp-sfpplus1
 add bridge=bridge frame-types=admit-only-vlan-tagged ingress-filtering=yes interface=sfp-sfpplus2
-add bridge=bridge disabled=yes frame-types=admit-only-vlan-tagged ingress-filtering=yes \
-    interface=sfp-sfpplus3
+add bridge=bridge disabled=yes interface=sfp-sfpplus3
 add bridge=bridge frame-types=admit-only-vlan-tagged ingress-filtering=yes interface=sfp-sfpplus4
 /interface bridge vlan
 add bridge=bridge tagged=sfp-sfpplus1,sfp-sfpplus2,sfp-sfpplus4 vlan-ids=10,20,30,40,50
