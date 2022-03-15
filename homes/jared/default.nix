@@ -178,7 +178,7 @@
     '';
   };
 
-  home.sessionVariables.BAT_THEME = "gruvbox-dark";
+  home.sessionVariables.BAT_THEME = "ansi"; # also configures git-delta
   programs.bat.enable = true;
 
   programs.direnv = {
@@ -196,8 +196,15 @@
     vimdiffAlias = true;
     plugins =
       let
-        # TODO(jared): Move the settings directory
-        settings = pkgs.vimUtils.buildVimPlugin { name = "settings"; src = builtins.path { path = ../../modules/neovim/settings; }; };
+        vim-dim = pkgs.vimUtils.buildVimPlugin {
+          name = "vim-dim";
+          src = pkgs.fetchFromGitHub {
+            owner = "jeffkreeftmeijer";
+            repo = "vim-dim";
+            rev = "8320a40f12cf89295afc4f13eb10159f29c43777";
+            sha256 = "0mnwr4kxhng4mzds8l72s5km1qww4bifn5pds68c7zzyyy17ffxh";
+          };
+        };
         telescope-zf-native = pkgs.vimUtils.buildVimPlugin {
           name = "telescope-zf-native.nvim";
           src = pkgs.fetchFromGitHub {
@@ -212,15 +219,11 @@
         (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars))
         comment-nvim
         editorconfig-vim
-        gruvbox-nvim
+        jmbaur-settings
         lsp-colors-nvim
-        lualine-nvim
-        lush-nvim
         nvim-autopairs
         nvim-lspconfig
-        nvim-treesitter-context
         nvim-treesitter-textobjects
-        settings
         snippets-nvim
         telescope-nvim
         telescope-zf-native
@@ -230,6 +233,8 @@
         vim-better-whitespace
         vim-cue
         vim-dadbod
+        vim-dim
+        vim-dirvish
         vim-easy-align
         vim-eunuch
         vim-fugitive
@@ -239,7 +244,6 @@
         vim-rsi
         vim-surround
         vim-terraform
-        vim-vinegar
         zig-vim
       ];
     extraPackages = with pkgs; [
@@ -290,6 +294,7 @@
     font.name = "Hack";
     font.package = pkgs.hack-font;
     font.size = 14;
+    theme = "Modus Vivendi";
     settings = {
       copy_on_select = "yes";
       enable_audio_bell = "no";
@@ -297,31 +302,10 @@
       term = "xterm-256color";
       update_check_interval = 0;
     };
-    extraConfig =
-      let
-        gruvbox-theme = pkgs.fetchFromGitHub {
-          owner = "wdomitrz";
-          repo = "kitty-gruvbox-theme";
-          rev = "81af12d1cc811cde2e1bf3ec89da9cde8e654b9f";
-          sha256 = "158bvv147ksyk04jmmxx0fmsy65fi6pilbp67xlyknasn9cjahlf";
-        };
-      in
-      ''
-        include ${gruvbox-theme}/gruvbox_dark.conf
-      '';
   };
 
   xresources = {
-    properties = {
-      "XTerm.vt100.faceName" = "Hack:size=14:antialias=true";
-    };
-    extraConfig = builtins.readFile (pkgs.fetchFromGitHub
-      {
-        repo = "gruvbox-contrib";
-        owner = "morhetz";
-        rev = "150e9ca30fcd679400dc388c24930e5ec8c98a9f";
-        sha256 = "181irx5jas3iqqdlc6v34673p2s6bsr8l0nqbs8gsv88r8q066l6";
-      } + "/xresources/gruvbox-dark.xresources");
+    properties = { "XTerm.vt100.faceName" = "Hack:size=14:antialias=true"; };
   };
 
   programs.i3status = {
@@ -364,7 +348,6 @@
     plugins = [ pkgs.rofi-emoji ];
     extraConfig.modi = "drun,emoji,ssh";
     font = "Hack 12";
-    theme = "gruvbox-dark-soft";
     terminal = "${pkgs.kitty}/bin/kitty";
   };
 
@@ -373,8 +356,7 @@
     pointerCursor.package = pkgs.gnome.gnome-themes-extra;
     pointerCursor.name = "Adwaita";
     initExtra = ''
-      ${pkgs.xorg.xsetroot}/bin/xsetroot -solid "#282828"
-      ${pkgs.autorandr}/bin/autorandr --change
+      ${pkgs.xorg.xsetroot}/bin/xsetroot -solid "#222222"
     '';
     windowManager.i3 = {
       enable = true;
@@ -450,7 +432,7 @@
 
   services.screen-locker = {
     enable = true;
-    lockCmd = "${pkgs.i3lock}/bin/i3lock -n -c 282828";
+    lockCmd = "${pkgs.i3lock}/bin/i3lock -n -c 222222";
   };
 
 }

@@ -35,9 +35,6 @@ endif
 let g:markdown_fenced_languages=['bash=sh', 'python', 'typescript', 'go']
 let mapleader=','
 
-autocmd FileType markdown setlocal spell complete+=kspell
-autocmd FileType gitcommit setlocal spell complete+=kspell
-
 filetype plugin indent on
 syntax enable
 
