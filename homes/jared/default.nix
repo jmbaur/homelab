@@ -333,9 +333,7 @@
         };
       };
       profiles.laptop = {
-        fingerprint = {
-          inherit eDP1;
-        };
+        fingerprint = { inherit eDP1; };
         config.eDP1 = {
           enable = true;
           primary = true;
@@ -359,6 +357,7 @@
     pointerCursor.name = "Adwaita";
     initExtra = ''
       ${pkgs.xorg.xsetroot}/bin/xsetroot -solid "#222222"
+      ${pkgs.autorandr}/bin/autorandr --change
     '';
     windowManager.i3 = {
       enable = true;
