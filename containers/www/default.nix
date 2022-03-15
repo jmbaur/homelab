@@ -165,23 +165,7 @@ in
   services.nginx = {
     enable = true;
     statusPage = true;
-    virtualHosts."www.jmbaur.com" =
-      mkVhost {
-        default = true;
-        serverAliases = [ "www" ];
-        locations."/" = {
-          root = pkgs.runCommandNoCC "index" { } ''
-            mkdir -p $out
-            cat > $out/index.html << EOF
-            <!DOCTYPE html>
-            These aren't the droids you're looking for.
-            EOF
-          '';
-          index = "index.html";
-        };
-      };
     virtualHosts."cache.jmbaur.com" = mkVhost {
-      serverAliases = [ "cache" ];
       locations."/".extraConfig = ''
         proxy_pass http://localhost:${toString config.services.nix-serve.port};
         proxy_set_header Host $host;
@@ -190,7 +174,6 @@ in
       '';
     };
     virtualHosts."git.jmbaur.com" = mkVhost {
-      serverAliases = [ "git" ];
       locations."~* ^.+(cgit.(css|png)|favicon.ico|robots.txt)" = {
         root = "${pkgs.cgit}/cgit";
         extraConfig = ''
@@ -213,26 +196,25 @@ in
       };
     };
     virtualHosts."plex.jmbaur.com" = mkVhost {
-      serverAliases = [ "plex" ];
       http2 = true;
-      listen = [
-        { addr = "[fd82:f21d:118d:14::a]"; port = 443; ssl = true; }
-        { addr = "192.168.20.10"; port = 80; }
+      listenAddresses = [
+        "127.0.0.1"
+        "192.168.20.10"
+        "[::1]"
+        "[fd82:f21d:118d:14::a]"
       ];
       locations."/" = {
         proxyPass = "http://[fd82:f21d:118d:14::14]:32400";
       };
     };
     virtualHosts."sonarr.jmbaur.com" = mkVhost {
-      serverAliases = [ "sonarr" ];
-      inherit (config.services.nginx.virtualHosts."plex.jmbaur.com") listen;
+      inherit (config.services.nginx.virtualHosts."plex.jmbaur.com") listenAddresses;
       locations."/" = {
         proxyPass = "http://[fd82:f21d:118d:14::14]:8989";
       };
     };
     virtualHosts."radarr.jmbaur.com" = mkVhost {
-      serverAliases = [ "radarr" ];
-      inherit (config.services.nginx.virtualHosts."plex.jmbaur.com") listen;
+      inherit (config.services.nginx.virtualHosts."plex.jmbaur.com") listenAddresses;
       locations."/" = {
         proxyPass = "http://[fd82:f21d:118d:14::14]:7878";
         extraConfig = ''
@@ -242,6 +224,21 @@ in
         '';
       };
     };
+    virtualHosts."_" =
+      mkVhost {
+        default = true;
+        serverAliases = [ "www.jmbaur.com" "jmbaur.com" ];
+        locations."/" = {
+          root = pkgs.runCommandNoCC "index" { } ''
+            mkdir -p $out
+            cat > $out/index.html << EOF
+            <!DOCTYPE html>
+            These aren't the droids you're looking for.
+            EOF
+          '';
+          index = "index.html";
+        };
+      };
   };
   system.activationScripts.git-shell-commands.text = ''
     ln -sfT ${commands}/bin ${config.services.gitDaemon.basePath}/git-shell-commands

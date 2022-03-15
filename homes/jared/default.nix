@@ -67,6 +67,7 @@
     unzip
     usbutils
     ventoy-bin
+    wireguard-tools
     xdg-utils
     xsv
     ydiff
