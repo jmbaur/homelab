@@ -45,6 +45,7 @@
     pstree
     pulsemixer
     pwgen
+    qemu
     ripgrep
     rtorrent
     sd
@@ -346,8 +347,15 @@
         };
       };
       profiles.laptop = {
-        fingerprint = { inherit eDP1; };
-        config.eDP1.enable = true;
+        fingerprint = {
+          inherit eDP1;
+        };
+        config.eDP1 = {
+          enable = true;
+          primary = true;
+          mode = "1920x1080";
+          rate = "60.02";
+        };
       };
     };
 
