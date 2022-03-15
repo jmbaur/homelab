@@ -8,6 +8,7 @@
     awscli2
     bat
     buildah
+    ddcutil
     direnv
     dust
     exa
@@ -87,6 +88,7 @@
     slack
     spotify
     virt-manager
+    wireshark
     zathura
     zoom-us
   ]);

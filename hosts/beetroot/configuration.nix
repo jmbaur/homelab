@@ -1,6 +1,7 @@
 { config, lib, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
 
+  hardware.i2c.enable = true;
   hardware.bluetooth.enable = true;
   hardware.enableRedistributableFirmware = true;
 
@@ -67,6 +68,7 @@
       extraGroups = [
         "adbusers"
         "dialout"
+        "i2c"
         "networkmanager"
         "wheel"
         "wireshark"
