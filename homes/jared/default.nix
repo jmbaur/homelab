@@ -382,7 +382,9 @@
             "${mod}+j" = "focus down";
             "${mod}+k" = "focus up";
             "${mod}+l" = "focus right";
-            "${mod}+p" = "exec ${pkgs.rofi}/bin/rofi -show drun";
+            # do not give full nix store path to rofi, custom `-modi` options
+            # will not work
+            "${mod}+p" = "exec rofi -show drun";
             "${mod}+Control+space" = "exec ${pkgs.dunst}/bin/dunstctl close-all";
             "XF86AudioLowerVolume" = "exec ${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%";
             "XF86AudioMicMute" = "exec ${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle";
