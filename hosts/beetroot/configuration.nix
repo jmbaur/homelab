@@ -39,6 +39,7 @@
     windowManager.i3.enable = true;
     videoDrivers = [ "intel" ];
     deviceSection = ''
+      Option "DRI" "2"
       Option "TearFree" "true"
     '';
   };
