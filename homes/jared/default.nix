@@ -2,6 +2,9 @@
   nixpkgs.config.allowUnfree = true;
 
   home.keyboard.options = [ "ctrl:nocaps" ];
+  home.shellAliases = {
+    grep = "grep --color=auto";
+  };
 
   home.packages = with pkgs; [
     age
@@ -127,12 +130,20 @@
 
   programs.bash = {
     enable = true;
-    enableVteIntegration = true;
     historyControl = [ "ignoredups" ];
-    shellAliases = { grep = "grep --color=auto"; };
     historyIgnore = [ "ls" "cd" "exit" ];
   };
-  programs.zsh.enable = true;
+  programs.zsh = {
+    enable = true;
+    defaultKeymap = "emacs";
+    history.ignorePatterns = [ "exit" "ls *" "cd *" "rm *" "pkill *" ];
+    initExtraFirst = ''
+      PS1="%F{cyan}%n@%m%f:%F{green}%c%f %# "
+    '';
+    initExtra = ''
+      bindkey \^U backward-kill-line
+    '';
+  };
   programs.nushell.enable = true;
 
   programs.git = {
@@ -169,7 +180,7 @@
     keyMode = "vi";
     prefix = "C-s";
     terminal = "screen-256color";
-    shell = "\${SHELL}";
+    shell = "${pkgs.zsh}/bin/zsh";
     plugins = with pkgs.tmuxPlugins; [ fingers logging ];
     extraConfig = ''
       set -g renumber-windows on

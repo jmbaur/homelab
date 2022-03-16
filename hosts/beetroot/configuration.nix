@@ -58,13 +58,12 @@
   services.udisks2.enable = true;
   services.upower.enable = true;
 
-  fonts.fonts = [ pkgs.hack-font ];
-
   users = {
     users.jared = {
       isNormalUser = true;
       hashedPassword = "$6$01ZXrxetiKaCW6Yx$RfI18qNyAYd9lU91wBNA9p0XREabwV4cv8DFqGH96SZnLJYmbGUTjNyqrVUgJorBn5RQzwwI4Ws3xMMU.fvYk/";
       description = "Jared Baur";
+      shell = pkgs.zsh;
       extraGroups = [
         "adbusers"
         "dialout"
@@ -97,7 +96,10 @@
 
   services.fwupd.enable = true;
 
-  # for nix-direnv
+  fonts.fonts = [ pkgs.hack-font ];
+
+
+  environment.pathsToLink = [ "/share/zsh" "/share/nix-direnv" ];
   nix.extraOptions = ''
     keep-outputs = true
     keep-derivations = true

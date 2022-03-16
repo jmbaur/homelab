@@ -32,6 +32,8 @@ if maparg('<C-L>', 'n') ==# ''
 		nnoremap <silent> <C-L> :nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>
 endif
 
+set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
+
 let g:markdown_fenced_languages=['bash=sh', 'python', 'typescript', 'go']
 let mapleader=','
 
