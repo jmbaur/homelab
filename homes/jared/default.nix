@@ -373,46 +373,56 @@
     '';
     windowManager.i3 = {
       enable = true;
-      config = {
-        terminal = "kitty";
-        modifier = "Mod4";
-        defaultWorkspace = "workspace number 1";
-        fonts = { names = [ "Hack" ]; size = 10.0; };
-        floating.criteria = [{ class = "zoom"; }];
-        keybindings =
-          let
-            mod = config.xsession.windowManager.i3.config.modifier;
-          in
-          lib.mkOptionDefault {
-            "${mod}+Shift+h" = "move left";
-            "${mod}+Shift+j" = "move down";
-            "${mod}+Shift+k" = "move up";
-            "${mod}+Shift+l" = "move right";
-            "${mod}+Shift+s" = "sticky toggle";
-            "${mod}+Tab" = "workspace back_and_forth";
-            "${mod}+c" = "exec ${pkgs.clipmenu}/bin/clipmenu";
-            "${mod}+h" = "focus left";
-            "${mod}+j" = "focus down";
-            "${mod}+k" = "focus up";
-            "${mod}+l" = "focus right";
-            # do not give full nix store path to rofi, custom `-modi` options
-            # will not work
-            "${mod}+p" = "exec rofi -show drun";
-            "${mod}+Control+space" = "exec ${pkgs.dunst}/bin/dunstctl close-all";
-            "XF86AudioLowerVolume" = "exec ${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%";
-            "XF86AudioMicMute" = "exec ${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle";
-            "XF86AudioMute" = "exec ${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
-            "XF86AudioRaiseVolume" = "exec ${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%";
-            "XF86MonBrightnessDown" = "exec ${pkgs.brightnessctl}/bin/brightnessctl set 5%-";
-            "XF86MonBrightnessUp" = "exec ${pkgs.brightnessctl}/bin/brightnessctl set +5%";
+      config =
+        let
+          mod = config.xsession.windowManager.i3.config.modifier;
+        in
+        {
+          terminal = "kitty";
+          modifier = "Mod4";
+          defaultWorkspace = "workspace number 1";
+          fonts = { names = [ "Hack" ]; size = 10.0; };
+          floating.criteria = [{ class = "zoom"; }];
+          keybindings =
+            lib.mkOptionDefault {
+              "${mod}+Control+space" = "exec ${pkgs.dunst}/bin/dunstctl close-all";
+              "${mod}+Shift+h" = "move left";
+              "${mod}+Shift+j" = "move down";
+              "${mod}+Shift+k" = "move up";
+              "${mod}+Shift+l" = "move right";
+              "${mod}+Shift+s" = "sticky toggle";
+              "${mod}+Tab" = "workspace back_and_forth";
+              "${mod}+c" = "exec ${pkgs.clipmenu}/bin/clipmenu";
+              "${mod}+h" = "focus left";
+              "${mod}+j" = "focus down";
+              "${mod}+k" = "focus up";
+              "${mod}+l" = "focus right";
+              "${mod}+p" = "exec rofi -show drun";
+              "${mod}+r" = "mode resize";
+              "XF86AudioLowerVolume" = "exec ${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%";
+              "XF86AudioMicMute" = "exec ${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle";
+              "XF86AudioMute" = "exec ${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
+              "XF86AudioRaiseVolume" = "exec ${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%";
+              "XF86MonBrightnessDown" = "exec ${pkgs.brightnessctl}/bin/brightnessctl set 5%-";
+              "XF86MonBrightnessUp" = "exec ${pkgs.brightnessctl}/bin/brightnessctl set +5%";
+              # do not give full nix store path to rofi, custom `-modi` options
+              # will not work
+            };
+          modes.resize = {
+            "${mod}+h" = "resize grow width 10 px or 10 ppt";
+            "${mod}+j" = "resize shrink height 10 px or 10 ppt";
+            "${mod}+k" = "resize grow height 10 px or 10 ppt";
+            "${mod}+l" = "resize shrink width 10 px or 10 ppt";
+            "${mod}+r" = "mode default"; # toggle
+            "Escape" = "mode default";
           };
-        bars = [{
-          fonts = config.xsession.windowManager.i3.config.fonts;
-          statusCommand = "${pkgs.i3status}/bin/i3status";
-          trayOutput = "primary";
-          position = "top";
-        }];
-      };
+          bars = [{
+            fonts = config.xsession.windowManager.i3.config.fonts;
+            statusCommand = "${pkgs.i3status}/bin/i3status";
+            trayOutput = "primary";
+            position = "top";
+          }];
+        };
       extraConfig = ''
         workspace_auto_back_and_forth yes
         for_window [all] title_window_icon on

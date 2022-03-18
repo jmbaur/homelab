@@ -16,4 +16,6 @@ let mapleader=','
 filetype plugin indent on
 syntax enable
 
+highlight WinSeparator ctermfg=None guifg=None
+
 lua require('init')
