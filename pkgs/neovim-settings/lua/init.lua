@@ -1,14 +1,23 @@
-require 'autopairs'
-require 'color'
-require 'comment'
-require 'lsp'
-require 'scope'
-require 'sitter'
-require 'snips'
-require 'term'
-require 'troublings'
-
+vim.g.mapleader = ","
 vim.g.markdown_fenced_languages = {'bash=sh', 'python', 'typescript', 'go'}
+
+local keymap = vim.api.nvim_set_keymap
+local function inoremap(mapping, action)
+    keymap("i", mapping, action, {noremap = true, silent = true})
+end
+local function nnoremap(mapping, action)
+    keymap("n", mapping, action, {noremap = true, silent = true})
+end
+
+nnoremap("J", "mzJ`z")
+nnoremap("Y", "y$")
+nnoremap("<C-L>",
+         ":nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>")
+
+inoremap("!", "!<c-g>u")
+inoremap(",", ",<c-g>u")
+inoremap(".", ".<c-g>u")
+inoremap("?", "?<c-g>u")
 
 vim.o.belloff = "all"
 vim.o.clipboard = "unnamedplus"
@@ -32,3 +41,21 @@ vim.o.swapfile = false
 vim.o.tabstop = 4
 vim.o.undofile = true
 vim.o.wrap = false
+
+require 'autopairs'
+require 'color'
+require 'comment'
+require 'lsp'
+require 'scope'
+require 'sitter'
+require 'snips'
+require 'term'
+require 'troublings'
+
+vim.cmd [[
+filetype plugin indent on
+highlight WinSeparator ctermfg=None guifg=None
+nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . "j"
+nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . "k"
+syntax enable
+]]
