@@ -45,6 +45,7 @@
   };
 
   programs.adb.enable = true;
+  programs.dconf.enable = true;
   programs.seahorse.enable = true;
   programs.wireshark.enable = true;
   services.autorandr.enable = true;

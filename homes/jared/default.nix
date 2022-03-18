@@ -296,6 +296,8 @@
 
   gtk = rec {
     enable = true;
+    cursorTheme.package = pkgs.gnome.gnome-themes-extra;
+    cursorTheme.name = "Adwaita";
     gtk3.extraConfig = {
       gtk-key-theme-name = "Emacs";
       gtk-application-prefer-dark-theme = true;
@@ -365,8 +367,6 @@
 
   xsession = {
     enable = true;
-    pointerCursor.package = pkgs.gnome.gnome-themes-extra;
-    pointerCursor.name = "Adwaita";
     initExtra = ''
       ${pkgs.xorg.xsetroot}/bin/xsetroot -solid "#222222"
       ${pkgs.autorandr}/bin/autorandr --change
