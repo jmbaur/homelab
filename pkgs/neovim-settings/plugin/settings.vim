@@ -1,3 +1,5 @@
+lua require('init')
+
 inoremap ! !<c-g>u
 inoremap , ,<c-g>u
 inoremap . .<c-g>u
@@ -17,5 +19,3 @@ filetype plugin indent on
 syntax enable
 
 highlight WinSeparator ctermfg=None guifg=None
-
-lua require('init')
