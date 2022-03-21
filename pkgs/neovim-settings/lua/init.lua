@@ -2,7 +2,6 @@ vim.g.mapleader = ","
 vim.g.markdown_fenced_languages = {'bash=sh', 'python', 'typescript', 'go'}
 
 require 'autopairs'
-require 'color'
 require 'comment'
 require 'lsp'
 require 'scope'
@@ -51,8 +50,10 @@ vim.o.swapfile = false
 vim.o.tabstop = 4
 vim.o.undofile = true
 vim.o.wrap = false
+vim.o.termguicolors = false
 
 vim.cmd [[
+colorscheme dim
 filetype plugin indent on
 highlight WinSeparator ctermfg=None guifg=None
 nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . "j"
