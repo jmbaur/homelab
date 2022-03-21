@@ -91,6 +91,7 @@
     signal-desktop
     slack
     spotify
+    teams
     virt-manager
     wireshark
     zathura
