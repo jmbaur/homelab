@@ -1,6 +1,16 @@
 vim.g.mapleader = ","
 vim.g.markdown_fenced_languages = {'bash=sh', 'python', 'typescript', 'go'}
 
+require 'autopairs'
+require 'color'
+require 'comment'
+require 'lsp'
+require 'scope'
+require 'sitter'
+require 'snips'
+require 'term'
+require 'troublings'
+
 local keymap = vim.api.nvim_set_keymap
 local function inoremap(mapping, action)
     keymap("i", mapping, action, {noremap = true, silent = true})
@@ -41,16 +51,6 @@ vim.o.swapfile = false
 vim.o.tabstop = 4
 vim.o.undofile = true
 vim.o.wrap = false
-
-require 'autopairs'
-require 'color'
-require 'comment'
-require 'lsp'
-require 'scope'
-require 'sitter'
-require 'snips'
-require 'term'
-require 'troublings'
 
 vim.cmd [[
 filetype plugin indent on

@@ -296,8 +296,6 @@
 
   gtk = rec {
     enable = true;
-    cursorTheme.package = pkgs.gnome.gnome-themes-extra;
-    cursorTheme.name = "Adwaita";
     gtk3.extraConfig = {
       gtk-key-theme-name = "Emacs";
       gtk-application-prefer-dark-theme = true;
@@ -310,7 +308,7 @@
     font.name = "Hack";
     font.package = pkgs.hack-font;
     font.size = 14;
-    theme = "Modus Vivendi";
+    theme = "modus-vivendi";
     settings = {
       copy_on_select = "yes";
       enable_audio_bell = "no";
@@ -367,6 +365,11 @@
 
   xsession = {
     enable = true;
+    pointerCursor = {
+      package = pkgs.gnome.gnome-themes-extra;
+      name = "Adwaita";
+      size = 16;
+    };
     initExtra = ''
       ${pkgs.xorg.xsetroot}/bin/xsetroot -solid "#222222"
       ${pkgs.autorandr}/bin/autorandr --change
