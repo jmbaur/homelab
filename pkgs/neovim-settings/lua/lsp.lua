@@ -102,7 +102,7 @@ end
 local efm_languages = {
     lua = {{formatCommand = "lua-format -i", formatStdin = true}},
     nix = {{formatCommand = "nixpkgs-fmt", formatStdin = true}},
-    python = {{formatCommand = "black --quiet -", formatStdin = true}},
+    python = {{formatCommand = "black --quiet --fast -", formatStdin = true}},
     rust = {
         {
             formatCommand = 'rustfmt --emit stdout -q "${INPUT}"',
