@@ -412,10 +412,10 @@
               # will not work
             };
           modes.resize = {
-            "${mod}+h" = "resize grow width 10 px or 10 ppt";
-            "${mod}+j" = "resize shrink height 10 px or 10 ppt";
-            "${mod}+k" = "resize grow height 10 px or 10 ppt";
-            "${mod}+l" = "resize shrink width 10 px or 10 ppt";
+            "h" = "resize grow width 10 px or 10 ppt";
+            "j" = "resize shrink height 10 px or 10 ppt";
+            "k" = "resize grow height 10 px or 10 ppt";
+            "l" = "resize shrink width 10 px or 10 ppt";
             "${mod}+r" = "mode default"; # toggle
             "Escape" = "mode default";
           };
