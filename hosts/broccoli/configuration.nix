@@ -12,6 +12,7 @@
   custom.common.enable = true;
   custom.deploy.enable = true;
 
+  boot.kernelPackages = pkgs.linuxPackages_5_16;
   boot.loader.grub.enable = true;
   boot.loader.grub.version = 2;
   boot.loader.grub.device = "/dev/sda";

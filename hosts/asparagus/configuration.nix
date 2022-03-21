@@ -3,7 +3,7 @@ with lib;
 {
   imports = [ ./hardware-configuration.nix ];
 
-  boot.kernelPackages = pkgs.linuxPackages_5_15;
+  boot.kernelPackages = pkgs.linuxPackages_5_16;
   boot.kernelParams = [
     "ip=192.168.30.50::192.168.30.1:255.255.255.0:${config.networking.hostName}:eno1::::"
   ];

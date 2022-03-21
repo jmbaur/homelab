@@ -5,7 +5,7 @@
   hardware.bluetooth.enable = true;
   hardware.enableRedistributableFirmware = true;
 
-  boot.kernelPackages = pkgs.linuxPackages_5_15;
+  boot.kernelPackages = pkgs.linuxPackages_5_16;
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   boot.loader.systemd-boot = {
     enable = true;
