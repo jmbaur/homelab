@@ -21,6 +21,7 @@
   custom.cache.enable = false;
   custom.common.enable = true;
   custom.containers.enable = true;
+  custom.deploy.enable = true;
   custom.desktop.enable = true;
   custom.gui.enable = true;
   custom.jared.enable = true;
