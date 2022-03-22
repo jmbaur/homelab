@@ -42,7 +42,7 @@ in
       settings = {
         copy_on_select = "yes";
         enable_audio_bell = "no";
-        mouse_hide_wait = 0;
+        mouse_hide_wait = 3;
         term = "xterm-256color";
         update_check_interval = 0;
       };

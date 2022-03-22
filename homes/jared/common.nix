@@ -28,7 +28,6 @@ in
       git-get
       gmni
       gosee
-      gotop
       grex
       gron
       htmlq
@@ -43,6 +42,7 @@ in
       nix-prefetch-git
       nix-tree
       nixos-generators
+      nload
       nmap
       nnn
       nvme-cli
