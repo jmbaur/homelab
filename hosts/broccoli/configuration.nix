@@ -56,6 +56,7 @@
   services.avahi = {
     enable = true;
     reflector = true;
+    interfaces = with config.networking.interfaces; [ trusted.name iot.name ];
     ipv4 = true;
     ipv6 = true;
   };
