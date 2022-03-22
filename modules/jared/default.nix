@@ -9,7 +9,6 @@ in
     users.users.jared = {
       isNormalUser = true;
       description = "Jared Baur";
-      shell = pkgs.zsh;
       extraGroups = [
         "adbusers" # adb
         "dialout" # picocom

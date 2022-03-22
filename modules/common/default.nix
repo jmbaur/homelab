@@ -11,7 +11,10 @@ with lib;
 
   config = mkIf cfg.enable {
 
-    users.mutableUsers = mkDefault false;
+    users = {
+      mutableUsers = mkDefault false;
+      defaultUserShell = pkgs.zsh;
+    };
 
     boot = mkIf isNotContainer {
       cleanTmpDir = mkDefault true;
