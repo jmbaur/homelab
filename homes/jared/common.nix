@@ -52,6 +52,7 @@ in
       picocom
       pinentry-gnome
       podman-compose
+      procs
       pstree
       pulsemixer
       pwgen
@@ -73,6 +74,7 @@ in
       tig
       tokei
       trash-cli
+      tree
       unzip
       usbutils
       ventoy-bin
