@@ -1,7 +1,6 @@
 { config, lib, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
 
-  hardware.i2c.enable = true;
   hardware.bluetooth.enable = true;
   hardware.enableRedistributableFirmware = true;
 
@@ -21,67 +20,19 @@
 
   custom.cache.enable = false;
   custom.common.enable = true;
-  custom.sound.enable = true;
   custom.containers.enable = true;
-
-  services.xserver = {
-    enable = true;
-    libinput = {
-      enable = true;
-      touchpad = {
-        tapping = true;
-        naturalScrolling = true;
-        disableWhileTyping = true;
-        accelProfile = "flat";
-      };
-    };
-    displayManager.lightdm.enable = true;
-    windowManager.i3.enable = true;
-    videoDrivers = [ "intel" ];
-    deviceSection = ''
-      Option "DRI" "2"
-      Option "TearFree" "true"
-    '';
+  custom.gui.enable = true;
+  custom.laptop.enable = true;
+  custom.sound.enable = true;
+  home-manager.users.jared = {
+    custom.common.enable = true;
+    custom.gui.enable = true;
+    custom.laptop.enable = true;
   };
 
-  programs.adb.enable = true;
-  programs.dconf.enable = true;
-  programs.seahorse.enable = true;
-  programs.wireshark.enable = true;
-  services.autorandr.enable = true;
-  services.avahi = { enable = true; nssmdns = true; };
-  services.dbus.packages = [ pkgs.gcr ];
-  services.geoclue2.enable = true;
   services.hardware.bolt.enable = true;
-  services.pcscd.enable = false;
-  services.power-profiles-daemon.enable = true;
-  services.printing.enable = true;
-  services.udev.packages = [ pkgs.yubikey-personalization ];
-  services.udisks2.enable = true;
-  services.upower.enable = true;
 
-  users = {
-    users.jared = {
-      isNormalUser = true;
-      hashedPassword = "$6$01ZXrxetiKaCW6Yx$RfI18qNyAYd9lU91wBNA9p0XREabwV4cv8DFqGH96SZnLJYmbGUTjNyqrVUgJorBn5RQzwwI4Ws3xMMU.fvYk/";
-      description = "Jared Baur";
-      shell = pkgs.zsh;
-      extraGroups = [
-        "adbusers"
-        "dialout"
-        "i2c"
-        "networkmanager"
-        "wheel"
-        "wireshark"
-      ];
-    };
-  };
-
-  home-manager = {
-    useUserPackages = true;
-    useGlobalPkgs = true;
-    users.jared = import ../../homes/jared;
-  };
+  users.users.jared.hashedPassword = "$6$01ZXrxetiKaCW6Yx$RfI18qNyAYd9lU91wBNA9p0XREabwV4cv8DFqGH96SZnLJYmbGUTjNyqrVUgJorBn5RQzwwI4Ws3xMMU.fvYk/";
 
   services.snapper.configs.home = {
     subvolume = "/home";
@@ -93,13 +44,7 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  programs.mtr.enable = true;
-  programs.ssh.startAgent = true;
-
   services.fwupd.enable = true;
-
-  fonts.fonts = [ pkgs.hack-font ];
-
 
   environment.pathsToLink = [ "/share/zsh" "/share/nix-direnv" ];
   nix.extraOptions = ''
