@@ -41,7 +41,7 @@ with lib;
     programs.traceroute.enable = true;
 
     environment.variables.EDITOR = "vim";
-
+    environment.shells = with pkgs; [ bashInteractive nushell zsh ];
     environment.binsh = "${pkgs.dash}/bin/dash";
     environment.systemPackages = with pkgs; [
       bc
