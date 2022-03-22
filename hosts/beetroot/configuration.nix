@@ -18,6 +18,14 @@
 
   time.timeZone = "America/Los_Angeles";
 
+  services.xserver = {
+    videoDrivers = [ "intel" ];
+    deviceSection = ''
+      Option "DRI" "2"
+      Option "TearFree" "true"
+    '';
+  };
+
   custom.cache.enable = false;
   custom.common.enable = true;
   custom.containers.enable = true;

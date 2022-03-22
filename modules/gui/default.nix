@@ -7,16 +7,9 @@ in
   config = lib.mkIf cfg.enable {
     services.xserver = {
       enable = true;
-      libinput = {
-        enable = true;
-      };
+      libinput.enable = true;
       displayManager.lightdm.enable = true;
       windowManager.i3.enable = true;
-      videoDrivers = [ "intel" ];
-      deviceSection = ''
-        Option "DRI" "2"
-        Option "TearFree" "true"
-      '';
     };
     fonts.fonts = [ pkgs.hack-font ];
     programs.adb.enable = true;
