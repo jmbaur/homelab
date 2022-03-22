@@ -9,45 +9,50 @@
       (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "e1000e" "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
+  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usbhid" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
     {
-      device = "/dev/disk/by-uuid/a9811113-eab7-4fc7-b3f7-78bacc334cac";
+      device = "/dev/disk/by-uuid/e11c1c25-47f4-4daf-9c62-86d425461404";
       fsType = "btrfs";
       options = [ "subvol=@" "noatime" "discard=async" "compress=zstd" ];
     };
 
-  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/3454b48e-1f08-4595-990d-64a79152c619";
+  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/b110813a-7849-4c8f-bf74-26c1cbe7739f";
 
   fileSystems."/nix" =
     {
-      device = "/dev/disk/by-uuid/a9811113-eab7-4fc7-b3f7-78bacc334cac";
+      device = "/dev/disk/by-uuid/e11c1c25-47f4-4daf-9c62-86d425461404";
       fsType = "btrfs";
       options = [ "subvol=@nix" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/home" =
     {
-      device = "/dev/disk/by-uuid/a9811113-eab7-4fc7-b3f7-78bacc334cac";
+      device = "/dev/disk/by-uuid/e11c1c25-47f4-4daf-9c62-86d425461404";
       fsType = "btrfs";
       options = [ "subvol=@home" "noatime" "discard=async" "compress=zstd" ];
     };
 
+  fileSystems."/home/.snapshots" =
+    {
+      device = "/dev/disk/by-uuid/e11c1c25-47f4-4daf-9c62-86d425461404";
+      fsType = "btrfs";
+      options = [ "subvol=@home/.snapshots" "noatime" "discard=async" "compress=zstd" ];
+    };
+
   fileSystems."/boot" =
     {
-      device = "/dev/disk/by-uuid/01C6-3E85";
+      device = "/dev/disk/by-uuid/07E2-FCF7";
       fsType = "vfat";
     };
 
   swapDevices = [ ];
-  zramSwap = {
-    enable = true;
-    swapDevices = 1;
-  };
+  zramSwap.enable = true;
+  zramSwap.swapDevices = 1;
 
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;

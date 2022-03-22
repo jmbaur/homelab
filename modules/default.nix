@@ -4,6 +4,7 @@
     ./common
     ./containers
     ./deploy
+    ./desktop
     ./sound
   ];
 }

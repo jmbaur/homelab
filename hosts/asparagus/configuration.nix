@@ -1,46 +1,54 @@
-{ config, lib, pkgs, ... }:
-with lib;
-{
+{ config, lib, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
 
-  boot.kernelPackages = pkgs.linuxPackages_5_16;
-  boot.kernelParams = [
-    "ip=192.168.30.50::192.168.30.1:255.255.255.0:${config.networking.hostName}:eno1::::"
-  ];
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
-  boot.initrd.network = {
-    enable = true;
-    postCommands = ''
-      echo "cryptsetup-askpass; exit" > /root/.profile
-    '';
-    ssh = {
-      enable = true;
-      hostKeys = [ "/etc/ssh/ssh_host_ed25519_key" "/etc/ssh/ssh_host_rsa_key" ];
-      authorizedKeys = builtins.filter
-        (key: key != "")
-        (lib.splitString
-          "\n"
-          (builtins.readFile (import ../../data/jmbaur-ssh-keys.nix))
-        );
-    };
-  };
+  hardware.i2c.enable = true;
+  hardware.bluetooth.enable = true;
+  hardware.enableRedistributableFirmware = true;
 
-  custom.common.enable = true;
-  custom.deploy.enable = true;
+  boot.kernelPackages = pkgs.linuxPackages_5_16;
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+  boot.loader.systemd-boot = {
+    enable = true;
+    memtest86.enable = true;
+  };
+  boot.loader.efi.canTouchEfiVariables = true;
+
+  networking.hostName = "asparagus";
+  networking.useDHCP = lib.mkForce false;
+  networking.interfaces.eno1.useDHCP = true;
 
   time.timeZone = "America/Los_Angeles";
-  networking = {
-    hostName = "asparagus";
-    firewall.enable = false;
-    interfaces.eno1.useDHCP = true;
-  };
+
+  custom.cache.enable = false;
+  custom.common.enable = true;
+  custom.containers.enable = true;
+  custom.desktop.enable = true;
+  custom.sound.enable = true;
+
+  services.hardware.bolt.enable = true;
 
   users.users.jared = {
-    isNormalUser = true;
-    openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
+    hashedPassword = "$6$01ZXrxetiKaCW6Yx$RfI18qNyAYd9lU91wBNA9p0XREabwV4cv8DFqGH96SZnLJYmbGUTjNyqrVUgJorBn5RQzwwI4Ws3xMMU.fvYk/";
+    extraGroups = [ "i2c" ]; # monitor controls
   };
+
+  services.snapper.configs.home = {
+    subvolume = "/home";
+    extraConfig = ''
+      TIMELINE_CREATE=yes
+      TIMELINE_CLEANUP=yes
+    '';
+  };
+
+  nixpkgs.config.allowUnfree = true;
+
+  services.fwupd.enable = true;
+
+  environment.pathsToLink = [ "/share/zsh" "/share/nix-direnv" ];
+  nix.extraOptions = ''
+    keep-outputs = true
+    keep-derivations = true
+  '';
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
@@ -48,6 +56,6 @@ with lib;
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "21.11"; # Did you read the comment?
+  system.stateVersion = "22.05"; # Did you read the comment?
 
 }
