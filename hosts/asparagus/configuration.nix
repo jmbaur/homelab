@@ -1,7 +1,6 @@
 { config, lib, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
 
-  hardware.i2c.enable = true;
   hardware.bluetooth.enable = true;
   hardware.enableRedistributableFirmware = true;
 
@@ -23,15 +22,18 @@
   custom.common.enable = true;
   custom.containers.enable = true;
   custom.desktop.enable = true;
+  custom.gui.enable = true;
   custom.jared.enable = true;
   custom.sound.enable = true;
+  home-manager.users.jared = {
+    custom.common.enable = true;
+    custom.desktop.enable = true;
+    custom.gui.enable = true;
+  };
 
   services.hardware.bolt.enable = true;
 
-  users.users.jared = {
-    hashedPassword = "$6$01ZXrxetiKaCW6Yx$RfI18qNyAYd9lU91wBNA9p0XREabwV4cv8DFqGH96SZnLJYmbGUTjNyqrVUgJorBn5RQzwwI4Ws3xMMU.fvYk/";
-    extraGroups = [ "i2c" ]; # monitor controls
-  };
+  users.users.jared.hashedPassword = "$6$01ZXrxetiKaCW6Yx$RfI18qNyAYd9lU91wBNA9p0XREabwV4cv8DFqGH96SZnLJYmbGUTjNyqrVUgJorBn5RQzwwI4Ws3xMMU.fvYk/";
 
   services.snapper.configs.home = {
     subvolume = "/home";

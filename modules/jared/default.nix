@@ -5,23 +5,24 @@ in
 {
   options.custom.jared.enable = lib.mkEnableOption "Enable jared user";
   config = lib.mkIf cfg.enable {
+
+    users.users.jared = {
+      isNormalUser = true;
+      description = "Jared Baur";
+      shell = pkgs.zsh;
+      extraGroups = [
+        "adbusers" # adb
+        "dialout" # picocom
+        "wheel" # sudo
+        "wireshark" # wireshark
+        (lib.optionalString config.hardware.i2c.enable "i2c")
+      ];
+    };
+
     home-manager = {
       useUserPackages = true;
       useGlobalPkgs = true;
       users.jared = import ../../homes/jared;
-    };
-    users = {
-      users.jared = {
-        isNormalUser = true;
-        description = "Jared Baur";
-        shell = pkgs.zsh;
-        extraGroups = [
-          "adbusers" # adb
-          "dialout" # picocom
-          "wheel" # sudo
-          "wireshark" # wireshark
-        ];
-      };
     };
   };
 }
