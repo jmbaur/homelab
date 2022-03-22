@@ -30,7 +30,7 @@ inoremap("?", "?<c-g>u")
 
 vim.o.belloff = "all"
 vim.o.clipboard = "unnamedplus"
-vim.o.colorcolumn = 80
+vim.o.colorcolumn = "80"
 vim.o.cursorline = false
 vim.o.expandtab = false
 vim.o.hidden = true
