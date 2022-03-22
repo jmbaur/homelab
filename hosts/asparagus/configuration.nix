@@ -23,6 +23,7 @@
   custom.common.enable = true;
   custom.containers.enable = true;
   custom.desktop.enable = true;
+  custom.jared.enable = true;
   custom.sound.enable = true;
 
   services.hardware.bolt.enable = true;

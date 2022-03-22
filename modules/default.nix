@@ -5,6 +5,7 @@
     ./containers
     ./deploy
     ./desktop
+    ./jared
     ./sound
   ];
 }
