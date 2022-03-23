@@ -47,6 +47,7 @@ with lib;
       '';
       loginShellInit = ''
         bindkey -e
+        bindkey \^U backward-kill-line
       '';
     };
 

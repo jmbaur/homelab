@@ -121,14 +121,7 @@ in
       '';
     };
 
-    programs.zsh = {
-      enable = true;
-      defaultKeymap = "emacs";
-      history.ignorePatterns = [ "exit" "ls *" "cd *" "rm *" "pkill *" ];
-      initExtra = ''
-        bindkey \^U backward-kill-line
-      '';
-    };
+    programs.zsh.enable = true;
     programs.nushell.enable = true;
 
     programs.git = {
