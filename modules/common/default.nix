@@ -40,6 +40,16 @@ with lib;
     programs.mtr.enable = true;
     programs.traceroute.enable = true;
 
+    programs.zsh = {
+      enable = true;
+      promptInit = ''
+        autoload -U promptinit && promptinit && prompt adam1 && setopt prompt_sp
+      '';
+      loginShellInit = ''
+        bindkey -e
+      '';
+    };
+
     environment.variables.EDITOR = "vim";
     environment.shells = with pkgs; [ bashInteractive nushell zsh ];
     environment.binsh = "${pkgs.dash}/bin/dash";

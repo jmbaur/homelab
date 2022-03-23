@@ -121,18 +121,10 @@ in
       '';
     };
 
-    programs.bash = {
-      enable = true;
-      historyControl = [ "ignoredups" ];
-      historyIgnore = [ "ls" "cd" "exit" ];
-    };
     programs.zsh = {
       enable = true;
       defaultKeymap = "emacs";
       history.ignorePatterns = [ "exit" "ls *" "cd *" "rm *" "pkill *" ];
-      initExtraFirst = ''
-        PS1="%F{cyan}%n@%m%f:%F{green}%c%f %# "
-      '';
       initExtra = ''
         bindkey \^U backward-kill-line
       '';
