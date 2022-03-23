@@ -27,6 +27,11 @@
         ipAddress = "192.168.88.88";
         ethernetAddress = "dc:a6:32:20:50:f2";
       }
+      {
+        hostName = "asparagus";
+        ipAddress = "192.168.30.17";
+        ethernetAddress = "1c:69:7a:64:45:b2";
+      }
     ];
     extraConfig = ''
       ddns-update-style none;
