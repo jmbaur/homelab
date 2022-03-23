@@ -13,7 +13,6 @@ in
         "adbusers" # adb
         "dialout" # picocom
         "wheel" # sudo
-        "wireshark" # wireshark
         (lib.optionalString config.hardware.i2c.enable "i2c")
         (lib.optionalString config.networking.networkmanager.enable "networkmanager")
       ];

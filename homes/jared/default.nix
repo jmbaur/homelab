@@ -1,8 +1,3 @@
 {
-  imports = [
-    ./common.nix
-    ./desktop.nix
-    ./gui.nix
-    ./laptop.nix
-  ];
+  imports = [ ./common.nix ./gui.nix ];
 }

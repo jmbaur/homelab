@@ -7,7 +7,6 @@ in
   config = lib.mkIf cfg.enable {
     nixpkgs.config.allowUnfree = true;
 
-    home.keyboard.options = [ "ctrl:nocaps" ];
     home.shellAliases = {
       grep = "grep --color=auto";
     };
@@ -50,7 +49,6 @@ in
       p
       patchelf
       picocom
-      pinentry-gnome
       podman-compose
       procs
       pstree
@@ -164,7 +162,7 @@ in
       escapeTime = 10;
       keyMode = "vi";
       prefix = "C-s";
-      terminal = "screen-256color";
+      terminal = "tmux-256color";
       shell = "${pkgs.zsh}/bin/zsh";
       plugins = with pkgs.tmuxPlugins; [ fingers logging ];
       extraConfig = ''
@@ -271,11 +269,6 @@ in
         zig
         zls
       ];
-    };
-
-    xdg.userDirs = {
-      enable = true;
-      createDirectories = true;
     };
 
   };

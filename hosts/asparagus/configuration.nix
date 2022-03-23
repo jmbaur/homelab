@@ -14,7 +14,7 @@
 
   networking.hostName = "asparagus";
   networking.useDHCP = lib.mkForce false;
-  networking.interfaces.eno1.useDHCP = true;
+  networking.networkmanager.enable = true;
 
   time.timeZone = "America/Los_Angeles";
 
@@ -28,7 +28,6 @@
   custom.sound.enable = true;
   home-manager.users.jared = {
     custom.common.enable = true;
-    custom.desktop.enable = true;
     custom.gui.enable = true;
   };
 
@@ -40,8 +39,6 @@
       Option "TearFree" "true"
     '';
   };
-
-  services.hardware.bolt.enable = true;
 
   users.users.jared.hashedPassword = "$6$01ZXrxetiKaCW6Yx$RfI18qNyAYd9lU91wBNA9p0XREabwV4cv8DFqGH96SZnLJYmbGUTjNyqrVUgJorBn5RQzwwI4Ws3xMMU.fvYk/";
 

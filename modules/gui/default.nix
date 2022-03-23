@@ -8,23 +8,22 @@ in
     services.xserver = {
       enable = true;
       libinput.enable = true;
-      displayManager.lightdm.enable = true;
-      windowManager.i3.enable = true;
+      displayManager.gdm.enable = true;
+      desktopManager.gnome = {
+        enable = true;
+        sessionPath = with pkgs.gnomeExtensions; [ night-theme-switcher ];
+      };
     };
-    fonts.fonts = [ pkgs.hack-font ];
+    qt5 = {
+      enable = true;
+      platformTheme = "gnome";
+    };
+    hardware.pulseaudio.enable = false;
     programs.adb.enable = true;
-    programs.dconf.enable = true;
-    programs.seahorse.enable = true;
     programs.ssh.startAgent = true;
-    programs.wireshark.enable = true;
-    services.avahi = { enable = true; nssmdns = true; };
-    services.dbus.packages = [ pkgs.gcr ];
-    services.geoclue2.enable = true;
-    services.pcscd.enable = false;
-    services.power-profiles-daemon.enable = true;
+    programs.gnupg.agent.pinentryFlavor = "gnome3";
     services.printing.enable = true;
+    services.pcscd.enable = false;
     services.udev.packages = [ pkgs.yubikey-personalization ];
-    services.udisks2.enable = true;
-    services.upower.enable = true;
   };
 }
