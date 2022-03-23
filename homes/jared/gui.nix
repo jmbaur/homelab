@@ -26,13 +26,24 @@ in
     };
 
     dconf.settings = {
-      "org/gnome/desktop/input-sources" = {
-        xkb-options = "[\"ctrl:nocaps\"]";
+      "org/settings-daemon/plugins/color" = {
+        night-light-enabled = true;
+      };
+      "org/gnome/desktop/background" = {
+        picture-uri = pkgs.nixos-artwork.wallpapers.simple-blue.gnomeFilePath;
+      };
+      "org/gnome/shell" = {
+        enabled-extensions = [ "nightthemeswitcher@romainvigier.fr" ];
+      };
+      "org/gnome/shell/extensions/nightthemeswitcher/time" = {
+        time-source = "nightlight";
       };
       "org/gnome/desktop/interface" = {
-        # gtk-theme = "Adwaita-dark";
         show-battery-percentage = true;
         gtk-key-theme = "Emacs";
+      };
+      "org/gnome/desktop/input-sources" = {
+        xkb-options = [ "ctrl:nocaps" ];
       };
       "org/gnome/desktop/peripherals/touchpad" = {
         tap-to-click = true;

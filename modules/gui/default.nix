@@ -19,6 +19,7 @@ in
       platformTheme = "gnome";
     };
     hardware.pulseaudio.enable = false;
+    location.provider = "geoclue2";
     programs.adb.enable = true;
     programs.ssh.startAgent = true;
     programs.gnupg.agent.pinentryFlavor = "gnome3";

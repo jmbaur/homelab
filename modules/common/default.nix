@@ -43,7 +43,7 @@ with lib;
     programs.zsh = {
       enable = true;
       promptInit = ''
-        autoload -U promptinit && promptinit && prompt adam1 && setopt prompt_sp
+        autoload -U promptinit && promptinit && prompt oliver && setopt prompt_sp
       '';
       loginShellInit = ''
         bindkey -e
