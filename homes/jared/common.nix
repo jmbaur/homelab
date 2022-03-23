@@ -121,7 +121,14 @@ in
       '';
     };
 
-    programs.zsh.enable = true;
+    programs.zsh = {
+      enable = true;
+      defaultKeymap = "emacs";
+      history.ignorePatterns = [ "exit" "ls *" "cd *" "rm *" "pkill *" ];
+      initExtra = ''
+        bindkey \^U backward-kill-line
+      '';
+    };
     programs.nushell.enable = true;
 
     programs.git = {
@@ -175,7 +182,6 @@ in
 
     programs.direnv = {
       enable = true;
-      enableBashIntegration = true;
       enableZshIntegration = true;
       nix-direnv.enable = true;
     };
