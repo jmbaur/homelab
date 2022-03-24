@@ -18,27 +18,18 @@
 
   time.timeZone = "America/Los_Angeles";
 
-  services.xserver = {
-    videoDrivers = [ "intel" ];
-    deviceSection = ''
-      Option "DRI" "2"
-      Option "TearFree" "true"
-    '';
-  };
-
   custom.cache.enable = false;
   custom.common.enable = true;
   custom.containers.enable = true;
   custom.gui.enable = true;
   custom.jared.enable = true;
-  custom.laptop.enable = true;
   custom.sound.enable = true;
   home-manager.users.jared = {
     custom.common.enable = true;
     custom.gui.enable = true;
   };
 
-  users.users.jared.hashedPassword = "$6$55d7EQl9IIMAuyHm$9CvNhY1gM7hZzaYdmBOugCKa.8cd2I4Myv7iMtzQ13aKDF4Dv8uNn41sOoh8JVjsFGIcjf2tZMb7T3/OgJh2/0";
+  users.users.jared.hashedPassword = "$6$TV/TwGGdE3/vYDn5$.Qs0EBuMnhah8DyoXLY7/F1Pjp7m27KxUGArgegfycHVx.HOUky85pNqxRpXbU2KZ58suLrEDfu7EbM.XvwtT0";
 
   services.snapper.configs.home = {
     subvolume = "/home";
@@ -52,7 +43,7 @@
 
   services.fwupd.enable = true;
 
-  environment.pathsToLink = [ "/share/zsh" "/share/nix-direnv" ];
+  environment.pathsToLink = [ "/share/nix-direnv" ];
   nix.extraOptions = ''
     keep-outputs = true
     keep-derivations = true

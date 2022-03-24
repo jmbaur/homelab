@@ -13,14 +13,8 @@
     };
     hosts.url = "github:StevenBlack/hosts";
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
-    nixos-generators = {
-      url = "github:nix-community/nixos-generators";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     nixos-hardware.url = "github:NixOS/nixos-hardware";
     nixpkgs.url = "nixpkgs/nixos-unstable";
-    nur.url = "github:nix-community/nur";
-    promtop.url = "github:jmbaur/promtop";
     sops-nix.url = "github:mic92/sops-nix";
   };
 
@@ -34,11 +28,8 @@
     , home-manager
     , hosts
     , neovim-nightly-overlay
-    , nixos-generators
     , nixos-hardware
     , nixpkgs
-    , nur
-    , promtop
     , sops-nix
     }@inputs: flake-utils.lib.eachDefaultSystem
       (system:
@@ -63,8 +54,6 @@
           gobar.overlay
           gosee.overlay
           neovim-nightly-overlay.overlay
-          nur.overlay
-          promtop.overlay
           self.overlay
         ];
       };

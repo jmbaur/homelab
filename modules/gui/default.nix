@@ -5,20 +5,22 @@ in
 {
   options.custom.gui.enable = lib.mkEnableOption "Enable gui config";
   config = lib.mkIf cfg.enable {
-    services.xserver = {
-      enable = true;
-      libinput.enable = true;
-      displayManager.gdm.enable = true;
-      desktopManager.gnome = {
+    fonts.fonts = with pkgs; [ iosevka-bin hack-font ];
+    programs.sway.enable = true;
+    xdg.portal = {
+      wlr = {
         enable = true;
-        sessionPath = with pkgs.gnomeExtensions; [ night-theme-switcher ];
+        settings = {
+          screencast = {
+            chooser_type = "simple";
+            chooser_cmd = "${pkgs.slurp}/bin/slurp -f %o -or";
+          };
+        };
       };
     };
-    qt5 = {
-      enable = true;
-      platformTheme = "gnome";
-    };
     hardware.pulseaudio.enable = false;
+    services.geoclue2.enable = true;
+    services.avahi.enable = true;
     location.provider = "geoclue2";
     programs.adb.enable = true;
     programs.ssh.startAgent = true;

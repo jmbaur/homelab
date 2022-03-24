@@ -5,8 +5,7 @@
 
 {
   imports =
-    [
-      (modulesPath + "/installer/scan/not-detected.nix")
+    [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usb_storage" "sd_mod" ];
@@ -15,46 +14,39 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    {
-      device = "/dev/disk/by-uuid/ab5a82ad-a46e-4acf-b462-dd00650d540f";
+    { device = "/dev/disk/by-uuid/ad77e635-d07f-45ac-822e-c451ace58445";
       fsType = "btrfs";
-      options = [ "subvol=@" "noatime" "discard=async" "compress=zstd" ];
+      options = [ "subvol=@" "compress=zstd" "noatime" "discard=async" ];
     };
 
-  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/316a2768-dfae-4f86-8886-55f1bda34da7";
+  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/4fa6bf95-b4be-4b89-acf8-a86fdab62aea";
 
   fileSystems."/nix" =
-    {
-      device = "/dev/disk/by-uuid/ab5a82ad-a46e-4acf-b462-dd00650d540f";
+    { device = "/dev/disk/by-uuid/ad77e635-d07f-45ac-822e-c451ace58445";
       fsType = "btrfs";
-      options = [ "subvol=@nix" "noatime" "discard=async" "compress=zstd" ];
+      options = [ "subvol=@nix""compress=zstd" "noatime" "discard=async"  ];
     };
 
   fileSystems."/home" =
-    {
-      device = "/dev/disk/by-uuid/ab5a82ad-a46e-4acf-b462-dd00650d540f";
+    { device = "/dev/disk/by-uuid/ad77e635-d07f-45ac-822e-c451ace58445";
       fsType = "btrfs";
-      options = [ "subvol=@home" "noatime" "discard=async" "compress=zstd" ];
-    };
-
-  fileSystems."/boot" =
-    {
-      device = "/dev/disk/by-uuid/AFF3-6821";
-      fsType = "vfat";
+      options = [ "subvol=@home" "compress=zstd" "noatime" "discard=async" ];
     };
 
   fileSystems."/home/.snapshots" =
-    {
-      device = "/dev/disk/by-uuid/ab5a82ad-a46e-4acf-b462-dd00650d540f";
+    { device = "/dev/disk/by-uuid/ad77e635-d07f-45ac-822e-c451ace58445";
       fsType = "btrfs";
-      options = [ "subvol=@home/.snapshots" "noatime" "discard=async" "compress=zstd" ];
+      options = [ "subvol=@home/.snapshots" "compress=zstd" "noatime" "discard=async" ];
+    };
+
+  fileSystems."/boot" =
+    { device = "/dev/disk/by-uuid/3557-88EC";
+      fsType = "vfat";
     };
 
   swapDevices = [ ];
-  zramSwap = {
-    enable = true;
-    swapDevices = 1;
-  };
+  zramSwap.enable= true;
+  zramSwap.swapDevices = 1;
 
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;

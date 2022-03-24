@@ -11,10 +11,7 @@ with lib;
 
   config = mkIf cfg.enable {
 
-    users = {
-      mutableUsers = mkDefault false;
-      defaultUserShell = pkgs.zsh;
-    };
+    users.mutableUsers = mkDefault false;
 
     boot = mkIf isNotContainer {
       cleanTmpDir = mkDefault true;
@@ -37,22 +34,7 @@ with lib;
     console.useXkbConfig = true;
     services.xserver.xkbOptions = "ctrl:nocaps";
 
-    programs.mtr.enable = true;
-    programs.traceroute.enable = true;
-
-    programs.zsh = {
-      enable = true;
-      promptInit = ''
-        autoload -U promptinit && promptinit && prompt oliver && setopt prompt_sp
-      '';
-      loginShellInit = ''
-        bindkey -e
-        bindkey \^U backward-kill-line
-      '';
-    };
-
     environment.variables.EDITOR = "vim";
-    environment.shells = with pkgs; [ bashInteractive nushell zsh ];
     environment.binsh = "${pkgs.dash}/bin/dash";
     environment.systemPackages = with pkgs; [
       bc

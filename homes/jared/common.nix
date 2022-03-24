@@ -119,16 +119,6 @@ in
       '';
     };
 
-    programs.zsh = {
-      enable = true;
-      defaultKeymap = "emacs";
-      history.ignorePatterns = [ "exit" "ls *" "cd *" "rm *" "pkill *" ];
-      initExtra = ''
-        bindkey \^U backward-kill-line
-      '';
-    };
-    programs.nushell.enable = true;
-
     programs.git = {
       enable = true;
       aliases = {
@@ -163,7 +153,6 @@ in
       keyMode = "vi";
       prefix = "C-s";
       terminal = "tmux-256color";
-      shell = "${pkgs.zsh}/bin/zsh";
       plugins = with pkgs.tmuxPlugins; [ fingers logging ];
       extraConfig = ''
         set -g renumber-windows on
@@ -178,13 +167,14 @@ in
     home.sessionVariables.BAT_THEME = "ansi"; # also configures git-delta
     programs.bat.enable = true;
 
+    programs.bash.enable = true;
+
     programs.direnv = {
       enable = true;
-      enableZshIntegration = true;
       nix-direnv.enable = true;
     };
 
-    home.sessionVariables.SUMNEKO_ROOT_PATH = "${pkgs.sumneko-lua-language-server}";
+    home.sessionVariables.SUMNEKO_ROOT_PATH = pkgs.sumneko-lua-language-server;
     home.sessionVariables.EDITOR = "nvim";
     programs.neovim = {
       enable = true;
@@ -192,20 +182,29 @@ in
       vimdiffAlias = true;
       plugins =
         let
-          vim-dim = pkgs.vimUtils.buildVimPlugin {
+          vim-dim = pkgs.vimUtils.buildVimPlugin rec {
             name = "vim-dim";
             src = pkgs.fetchFromGitHub {
               owner = "jeffkreeftmeijer";
-              repo = "vim-dim";
+              repo = name;
               rev = "8320a40f12cf89295afc4f13eb10159f29c43777";
               sha256 = "0mnwr4kxhng4mzds8l72s5km1qww4bifn5pds68c7zzyyy17ffxh";
             };
           };
-          telescope-zf-native = pkgs.vimUtils.buildVimPlugin {
+          modus-theme-vim = pkgs.vimUtils.buildVimPlugin rec {
+            name = "modus-theme-vim";
+            src = pkgs.fetchFromGitHub {
+              owner = "ishan9299";
+              repo = name;
+              rev = "5349a71c16f0cda1c00e0da353e3d4159d99d9cc";
+              sha256 = "1gyb8hcahkhyxndlvfy6941m4rh70x6npxaadxxr9bbsaszy4s6d";
+            };
+          };
+          telescope-zf-native = pkgs.vimUtils.buildVimPlugin rec {
             name = "telescope-zf-native.nvim";
             src = pkgs.fetchFromGitHub {
               owner = "natecraddock";
-              repo = "telescope-zf-native.nvim";
+              repo = name;
               rev = "76ae732e4af79298cf3582ec98234ada9e466b58";
               sha256 = "sha256-acV3sXcVohjpOd9M2mf7EJ7jqGI+zj0BH9l0DJa14ak=";
             };
@@ -217,6 +216,7 @@ in
           editorconfig-vim
           jmbaur-settings
           lsp-colors-nvim
+          modus-theme-vim
           nvim-autopairs
           nvim-lspconfig
           nvim-treesitter-textobjects
