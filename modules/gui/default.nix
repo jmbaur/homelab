@@ -5,8 +5,6 @@ in
 {
   options.custom.gui.enable = lib.mkEnableOption "Enable gui config";
   config = lib.mkIf cfg.enable {
-    fonts.fonts = with pkgs; [ iosevka-bin hack-font ];
-    programs.sway.enable = true;
     xdg.portal = {
       wlr = {
         enable = true;
@@ -18,15 +16,26 @@ in
         };
       };
     };
+    environment.loginShellInit = ''
+      if [ -z $DISPLAY ] && [ "$(tty)" = "/dev/tty1" ]; then
+        exec sway
+      fi
+    '';
+    environment.systemPackages = [ pkgs.pinentry-gnome ];
+    fonts.fonts = with pkgs; [ iosevka-bin hack-font ];
     hardware.pulseaudio.enable = false;
-    services.geoclue2.enable = true;
-    services.avahi.enable = true;
     location.provider = "geoclue2";
     programs.adb.enable = true;
-    programs.ssh.startAgent = true;
+    programs.dconf.enable = true;
     programs.gnupg.agent.pinentryFlavor = "gnome3";
-    services.printing.enable = true;
+    programs.seahorse.enable = true;
+    programs.ssh.startAgent = true;
+    programs.sway.enable = true;
+    services.avahi.enable = true;
+    services.dbus.packages = [ pkgs.gcr ];
+    services.geoclue2.enable = true;
     services.pcscd.enable = false;
+    services.printing.enable = true;
     services.udev.packages = [ pkgs.yubikey-personalization ];
   };
 }

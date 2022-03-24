@@ -9,15 +9,18 @@ in
     home.sessionVariables.NIXOS_OZONE_WL = "1";
     home.packages = with pkgs; [
       bitwarden
-      chromium
       element-desktop
       firefox-wayland
+      google-chrome
+      imv
+      mpv
       obs-studio
       signal-desktop
       slack
       spotify
-      teams
       virt-manager
+      wl-clipboard
+      zathura
       zoom-us
     ];
 
