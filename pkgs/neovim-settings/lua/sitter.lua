@@ -1,5 +1,5 @@
 require'nvim-treesitter.configs'.setup {
-    highlight = {enable = true, disable = {"lua"}},
+    highlight = {enable = true, disable = {"nix", "lua"}},
     textobjects = {
         select = {
             enable = true,

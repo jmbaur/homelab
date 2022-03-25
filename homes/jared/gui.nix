@@ -41,7 +41,7 @@ in
     gtk = {
       enable = true;
       gtk3.extraConfig = {
-        gtk-theme-name = "Adwaita-dark";
+        gtk-theme-name = "Adwaita";
         gtk-key-theme-name = "Emacs";
       };
       gtk4 = removeAttrs config.gtk.gtk3 [ "bookmarks" "extraCss" "waylandSupport" ];
@@ -61,7 +61,7 @@ in
         name = "Hack";
         size = 16;
       };
-      theme = "Tango Dark";
+      theme = "Tango Light";
       settings = {
         term = "xterm-256color";
         copy_on_select = true;
@@ -162,7 +162,6 @@ in
         bars = [{
           fonts = config.wayland.windowManager.sway.config.fonts;
           position = "top";
-          trayOutput = "primary";
         }];
       };
       extraConfig = ''

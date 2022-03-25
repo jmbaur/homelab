@@ -127,7 +127,10 @@ in
         co = "checkout";
         lg = "log --graph --decorate --pretty=oneline --abbrev-commit --all";
       };
-      delta.enable = true;
+      delta = {
+        enable = true;
+        options.syntax-theme = "GitHub";
+      };
       extraConfig = {
         pull.rebase = true;
         init.defaultBranch = "main";
@@ -163,8 +166,10 @@ in
       '';
     };
 
-    home.sessionVariables.BAT_THEME = "ansi"; # also configures git-delta
-    programs.bat.enable = true;
+    programs.bat = {
+      enable = true;
+      config.theme = "ansi";
+    };
 
     programs.bash = {
       enable = true;

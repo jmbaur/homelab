@@ -45,7 +45,6 @@ vim.o.smartcase = true
 vim.o.softtabstop = 4
 vim.o.splitbelow = true
 vim.o.splitright = true
-vim.o.statusline = "%<%f %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%) %P"
 vim.o.swapfile = false
 vim.o.tabstop = 4
 vim.o.undofile = true

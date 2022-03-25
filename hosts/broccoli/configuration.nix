@@ -1,12 +1,14 @@
 { config, pkgs, ... }: {
   imports = [
+    ./atftpd.nix
     ./coredns.nix
     ./corerad.nix
     ./dhcpcd.nix
     ./dhcpd4.nix
+    ./dhcpd6.nix
+    ./hardware-configuration.nix
     ./networking.nix
     ./nftables.nix
-    ./hardware-configuration.nix
   ];
 
   custom.common.enable = true;
