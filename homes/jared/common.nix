@@ -116,9 +116,6 @@ in
     services.gpg-agent = {
       enable = true;
       defaultCacheTtl = 3600;
-      extraConfig = ''
-        allow-loopback-pinentry
-      '';
     };
 
     programs.git = {

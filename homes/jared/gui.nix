@@ -15,6 +15,7 @@ in
       imv
       mpv
       obs-studio
+      pinentry-gnome
       signal-desktop
       slack
       spotify
@@ -23,6 +24,8 @@ in
       zathura
       zoom-us
     ];
+
+    services.gpg-agent.pinentryFlavor = "gnome3";
 
     xdg.userDirs = {
       enable = true;
