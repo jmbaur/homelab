@@ -43,6 +43,8 @@
 
   services.fwupd.enable = true;
 
+  programs.nix-ld.enable = true;
+
   environment.pathsToLink = [ "/share/nix-direnv" ];
   nix.extraOptions = ''
     keep-outputs = true

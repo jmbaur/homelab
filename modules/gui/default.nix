@@ -21,13 +21,12 @@ in
         exec sway
       fi
     '';
-    environment.systemPackages = [ pkgs.pinentry-gnome ];
-    fonts.fonts = with pkgs; [ iosevka-bin hack-font ];
     hardware.pulseaudio.enable = false;
     location.provider = "geoclue2";
     programs.adb.enable = true;
     programs.dconf.enable = true;
     programs.gnupg.agent.pinentryFlavor = "gnome3";
+    environment.systemPackages = [ pkgs.pinentry-gnome ];
     programs.seahorse.enable = true;
     programs.ssh.startAgent = true;
     programs.sway.enable = true;

@@ -31,6 +31,7 @@ in
       gron
       htmlq
       htop
+      iperf3
       jq
       keybase
       lf
@@ -196,15 +197,6 @@ in
               sha256 = "0mnwr4kxhng4mzds8l72s5km1qww4bifn5pds68c7zzyyy17ffxh";
             };
           };
-          modus-theme-vim = pkgs.vimUtils.buildVimPlugin rec {
-            name = "modus-theme-vim";
-            src = pkgs.fetchFromGitHub {
-              owner = "ishan9299";
-              repo = name;
-              rev = "5349a71c16f0cda1c00e0da353e3d4159d99d9cc";
-              sha256 = "1gyb8hcahkhyxndlvfy6941m4rh70x6npxaadxxr9bbsaszy4s6d";
-            };
-          };
           telescope-zf-native = pkgs.vimUtils.buildVimPlugin rec {
             name = "telescope-zf-native.nvim";
             src = pkgs.fetchFromGitHub {
@@ -221,7 +213,6 @@ in
           editorconfig-vim
           jmbaur-settings
           lsp-colors-nvim
-          modus-theme-vim
           nvim-autopairs
           nvim-lspconfig
           nvim-treesitter-textobjects

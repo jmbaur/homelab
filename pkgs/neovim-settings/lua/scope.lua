@@ -1,6 +1,15 @@
 local telescope = require "telescope"
 
-telescope.setup {defaults = {layout_config = {vertical = {height = 1.0}}}}
+telescope.setup {
+    defaults = {
+        layout_strategy = 'bottom_pane',
+        layout_config = {prompt_position = "bottom", height = 0.25},
+        border = true,
+        -- borderchars = {"─", "│", "─", "│", "", "", "", ""},
+        -- borderchars = {"─", "│", "─", "│", "╭", "╮", "╯", "╰"},
+        preview = false
+    }
+}
 telescope.load_extension("zf-native")
 
 local function nnoremap(key, cmd)

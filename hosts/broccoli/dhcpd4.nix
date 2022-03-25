@@ -10,7 +10,7 @@
       {
         ipAddress = "192.168.88.201";
         hostName = "broccoli-ipmi";
-        ethernetAddress = "00:25:90:46:38:3f";
+        ethernetAddress = "00:25:90:f7:32:08";
       }
       {
         ipAddress = "192.168.88.202";

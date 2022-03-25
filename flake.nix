@@ -62,6 +62,7 @@
         system = "x86_64-linux";
         modules = [
           ./hosts/broccoli/configuration.nix
+          nixos-hardware.nixosModules.supermicro
           self.nixosModule
         ];
       };
