@@ -61,6 +61,7 @@ in
         name = "Hack";
         size = 16;
       };
+      theme = "Tango Dark";
       settings = {
         term = "xterm-256color";
         copy_on_select = true;
@@ -104,7 +105,7 @@ in
     programs.i3status = {
       enable = true;
       general = {
-        colors = true;
+        colors = false;
         interval = 1;
       };
     };
