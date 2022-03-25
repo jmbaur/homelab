@@ -4,7 +4,7 @@
   networking.dhcpcd = {
     enable = true;
     persistent = true;
-    allowInterfaces = [ "eno1" ];
+    allowInterfaces = [ config.networking.interfaces.enp0s20f0.name ];
     extraConfig = ''
       # Disable ipv6 router solicitation
       noipv6rs

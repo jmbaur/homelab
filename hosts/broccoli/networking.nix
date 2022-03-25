@@ -15,24 +15,24 @@ in
     defaultGateway6.address = "2001:470:c:9::1";
     defaultGateway6.interface = "hurricane";
     sits.hurricane = {
-      dev = "eno1";
+      dev = "enp0s20f0";
       ttl = 255;
       remote = "66.220.18.42";
     };
     vlans = {
-      pubwan = { id = 10; interface = "enp1s0"; };
-      publan = { id = 20; interface = "enp1s0"; };
-      trusted = { id = 30; interface = "enp1s0"; };
-      iot = { id = 40; interface = "enp1s0"; };
-      guest = { id = 50; interface = "enp1s0"; };
-      mgmt = { id = 88; interface = "enp1s0"; };
+      pubwan = { id = 10; interface = "enp4s0"; };
+      publan = { id = 20; interface = "enp4s0"; };
+      trusted = { id = 30; interface = "enp4s0"; };
+      iot = { id = 40; interface = "enp4s0"; };
+      guest = { id = 50; interface = "enp4s0"; };
+      mgmt = { id = 88; interface = "enp4s0"; };
     };
     interfaces = {
-      eno1.useDHCP = true;
+      enp0s20f0.useDHCP = true;
       hurricane = {
         ipv6.addresses = [{ address = "2001:470:c:9::2"; prefixLength = 64; }];
       };
-      enp1s0 = {
+      enp4s0 = {
         ipv4.addresses = lib.mkForce [ ];
         ipv6.addresses = lib.mkForce [ ];
       };

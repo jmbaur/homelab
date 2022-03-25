@@ -7,7 +7,7 @@ in
   networking.nftables = {
     enable = true;
     ruleset = with config.networking.interfaces; ''
-      define DEV_WAN = ${eno1.name}
+      define DEV_WAN = ${enp0s20f0.name}
       define DEV_WAN6 = ${hurricane.name}
       define DEV_PUBWAN = ${pubwan.name}
       define DEV_PUBLAN = ${publan.name}

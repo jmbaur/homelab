@@ -5,7 +5,7 @@
   ];
   services.dhcpd4 = {
     enable = true;
-    interfaces = [ "trusted" "iot" "guest" "mgmt" ];
+    interfaces = with config.networking.interfaces; [ trusted.name iot.name guest.name mgmt.name ];
     machines = [
       {
         ipAddress = "192.168.88.201";
