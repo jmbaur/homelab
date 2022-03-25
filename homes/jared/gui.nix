@@ -35,10 +35,19 @@ in
       size = 16;
     };
 
+    gtk = {
+      enable = true;
+      gtk3.extraConfig = {
+        gtk-theme-name = "Adwaita-dark";
+        gtk-key-theme-name = "Emacs";
+      };
+      gtk4 = removeAttrs config.gtk.gtk3 [ "bookmarks" "extraCss" "waylandSupport" ];
+    };
+
     dconf.settings = {
-      "org/gnome/desktop/interface" = {
-        gtk-theme = "Adwaita-dark";
-        gtk-key-theme = "Emacs";
+      "org/gnome/desktop/interface" = with config.gtk.gtk3.extraConfig; {
+        gtk-theme = gtk-theme-name;
+        gtk-key-theme = gtk-key-theme-name;
       };
     };
 
@@ -51,10 +60,45 @@ in
       };
       theme = "modus-vivendi";
       settings = {
+        term = "xterm-256color";
         copy_on_select = true;
         scrollback_lines = 10000;
         enable_audio_bell = false;
         update_check_interval = 0;
+      };
+    };
+
+    programs.foot = {
+      enable = true;
+      settings = {
+        main = {
+          term = config.programs.kitty.settings.term;
+          font = "${config.programs.kitty.font.name}:size=${toString (config.programs.kitty.font.size - 4)}";
+        };
+        mouse.hide-when-typing = "yes";
+        cursor.color = "${theme-no-octothorpe.cursor_text_color} ${theme-no-octothorpe.cursor}";
+        colors = with theme-no-octothorpe;
+          {
+            inherit foreground background;
+            regular0 = color0;
+            regular1 = color1;
+            regular2 = color2;
+            regular3 = color3;
+            regular4 = color4;
+            regular5 = color5;
+            regular6 = color6;
+            regular7 = color7;
+            bright0 = color8;
+            bright1 = color9;
+            bright2 = color10;
+            bright3 = color11;
+            bright4 = color12;
+            bright5 = color13;
+            bright6 = color14;
+            bright7 = color15;
+            selection-foreground = selection_foreground;
+            selection-background = selection_background;
+          };
       };
     };
 
@@ -100,7 +144,7 @@ in
       backgroundColor = theme.selection_background;
       borderColor = theme.color8;
       defaultTimeout = 5000;
-      font = "${builtins.toString config.wayland.windowManager.sway.config.fonts.names} ${builtins.toString config.wayland.windowManager.sway.config.fonts.size}";
+      font = "${toString config.wayland.windowManager.sway.config.fonts.names} ${toString config.wayland.windowManager.sway.config.fonts.size}";
       iconPath = "${pkgs.gnome.gnome-themes-extra}/share/icons";
       progressColor = "over ${theme.color2}";
       textColor = theme.foreground;
@@ -109,12 +153,41 @@ in
     wayland.windowManager.sway = {
       enable = true;
       config = {
+        floating.criteria = [{ class = "zoom"; }];
         fonts = { names = [ "Iosevka" ]; size = 12.0; style = "Regular"; };
         menu = "${pkgs.bemenu}/bin/bemenu-run --ignorecase --line-height 27 --fn '${
-          builtins.toString config.wayland.windowManager.sway.config.fonts.names
+          toString config.wayland.windowManager.sway.config.fonts.names
         } ${
-          builtins.toString config.wayland.windowManager.sway.config.fonts.size
-        }' --nb '${theme.background}' --tb '${theme.background}' --sb '${theme.background}' | ${pkgs.findutils}/bin/xargs swaymsg exec --";
+          toString config.wayland.windowManager.sway.config.fonts.size
+        }' --tb '${
+          theme.background
+        }' --tf '${
+          theme.color12
+        }' --fb '${
+          theme.background
+        }' --ff '${
+          theme.foreground
+        }' --nb '${
+          theme.background
+        }' --nf '${
+          theme.foreground
+        }' --hb '${
+          theme.background
+        }' --hf '${
+          theme.color12
+        }' --fbb '${
+          theme.background
+        }' --fbf '${
+          theme.foreground
+        }' --sb '${
+          theme.background
+        }' --sf '${
+          theme.foreground
+        }' --scb '${
+          theme.background
+        }' --scf '${
+          theme.foreground
+        }' | ${pkgs.findutils}/bin/xargs swaymsg exec --";
 
         # -b, --bottom          appears at the bottom of the screen. (wx)
         # -c, --center          appears at the center of the screen. (wx)
@@ -174,7 +247,7 @@ in
             text = theme.color0;
           };
         };
-        seat."*".xcursor_theme = "${config.xsession.pointerCursor.name} ${builtins.toString config.xsession.pointerCursor.size}";
+        seat."*".xcursor_theme = "${config.xsession.pointerCursor.name} ${toString config.xsession.pointerCursor.size}";
         output."*".background = "${theme.selection_background} solid_color";
         keybindings =
           let

@@ -33,6 +33,7 @@ in
       htop
       jq
       keybase
+      lf
       libnotify
       librespeed-cli
       mob
@@ -167,7 +168,11 @@ in
     home.sessionVariables.BAT_THEME = "ansi"; # also configures git-delta
     programs.bat.enable = true;
 
-    programs.bash.enable = true;
+    programs.bash = {
+      enable = true;
+      historyControl = [ "ignoredups" "ignorespace" ];
+      historyIgnore = [ "ls" "cd" "exit" ];
+    };
 
     programs.direnv = {
       enable = true;

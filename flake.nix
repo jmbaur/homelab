@@ -67,7 +67,7 @@
       };
 
       deploy.nodes.broccoli = {
-        hostname = "broccoli";
+        hostname = "192.168.88.102";
         profiles.system = {
           sshUser = "root";
           path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.broccoli;
