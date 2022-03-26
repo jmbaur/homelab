@@ -14,7 +14,6 @@ in
     home.packages = with pkgs; [
       age
       awscli2
-      bat
       buildah
       ddcutil
       direnv
@@ -45,7 +44,6 @@ in
       nixos-generators
       nload
       nmap
-      nnn
       nvme-cli
       openssl
       p
@@ -73,7 +71,6 @@ in
       tealdeer
       tig
       tokei
-      trash-cli
       tree
       unzip
       usbutils
@@ -90,8 +87,6 @@ in
       zip
       zoxide
     ];
-
-    home.sessionVariables.NNN_TRASH = "1";
 
     programs.ssh = {
       enable = true;
@@ -127,10 +122,6 @@ in
         co = "checkout";
         lg = "log --graph --decorate --pretty=oneline --abbrev-commit --all";
       };
-      delta = {
-        enable = true;
-        options.syntax-theme = "GitHub";
-      };
       extraConfig = {
         pull.rebase = true;
         init.defaultBranch = "main";
@@ -155,20 +146,15 @@ in
       keyMode = "vi";
       prefix = "C-s";
       terminal = "tmux-256color";
-      plugins = with pkgs.tmuxPlugins; [ fingers logging ];
+      plugins = with pkgs.tmuxPlugins; [ logging ];
       extraConfig = ''
         set -g renumber-windows on
         set -g set-clipboard on
         set -g status-left-length 50
         set -g status-right "%H:%M %d-%b-%y"
-        set-option -g focus-events on
-        set-option -sa terminal-overrides ',xterm-256color:RGB'
+        set -g focus-events on
+        set -sa terminal-overrides ',xterm-256color:RGB'
       '';
-    };
-
-    programs.bat = {
-      enable = true;
-      config.theme = "ansi";
     };
 
     programs.bash = {
@@ -182,6 +168,7 @@ in
       nix-direnv.enable = true;
     };
 
+    home.sessionVariables.NO_COLOR = "1";
     home.sessionVariables.SUMNEKO_ROOT_PATH = pkgs.sumneko-lua-language-server;
     home.sessionVariables.EDITOR = "nvim";
     programs.neovim = {
@@ -190,15 +177,6 @@ in
       vimdiffAlias = true;
       plugins =
         let
-          vim-dim = pkgs.vimUtils.buildVimPlugin rec {
-            name = "vim-dim";
-            src = pkgs.fetchFromGitHub {
-              owner = "jeffkreeftmeijer";
-              repo = name;
-              rev = "8320a40f12cf89295afc4f13eb10159f29c43777";
-              sha256 = "0mnwr4kxhng4mzds8l72s5km1qww4bifn5pds68c7zzyyy17ffxh";
-            };
-          };
           telescope-zf-native = pkgs.vimUtils.buildVimPlugin rec {
             name = "telescope-zf-native.nvim";
             src = pkgs.fetchFromGitHub {
@@ -214,7 +192,6 @@ in
           comment-nvim
           editorconfig-vim
           jmbaur-settings
-          lsp-colors-nvim
           nvim-autopairs
           nvim-lspconfig
           nvim-treesitter-textobjects
@@ -227,7 +204,6 @@ in
           vim-better-whitespace
           vim-cue
           vim-dadbod
-          vim-dim
           vim-dirvish
           vim-easy-align
           vim-eunuch

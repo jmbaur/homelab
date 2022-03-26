@@ -27,6 +27,7 @@ in
     programs.dconf.enable = true;
     programs.ssh.startAgent = true;
     programs.sway.enable = true;
+    programs.wshowkeys.enable = true;
     services.avahi.enable = true;
     services.dbus.packages = [ pkgs.gcr ];
     services.geoclue2.enable = true;

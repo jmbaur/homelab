@@ -11,6 +11,7 @@ in
       element-desktop
       firefox-wayland
       google-chrome
+      grim
       hack-font
       imv
       mpv
@@ -18,9 +19,12 @@ in
       pinentry-gnome
       signal-desktop
       slack
+      slurp
       spotify
       virt-manager
+      wf-recorder
       wl-clipboard
+      wl-color-picker
       zathura
       zoom-us
     ];
@@ -61,7 +65,6 @@ in
         name = "Hack";
         size = 16;
       };
-      theme = "Tango Light";
       settings = {
         term = "xterm-256color";
         copy_on_select = true;
@@ -78,7 +81,7 @@ in
       settings = {
         main = {
           term = config.programs.kitty.settings.term;
-          font = "${config.programs.kitty.font.name}:size=${toString (config.programs.kitty.font.size - 4)}";
+          font = "${config.programs.kitty.font.name}:size=${toString (config.programs.kitty.font.size - 6)}";
         };
         mouse.hide-when-typing = "yes";
       };

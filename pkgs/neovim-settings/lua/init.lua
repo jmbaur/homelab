@@ -47,15 +47,13 @@ vim.o.splitbelow = true
 vim.o.splitright = true
 vim.o.swapfile = false
 vim.o.tabstop = 4
+vim.o.termguicolors = false
 vim.o.undofile = true
 vim.o.wrap = false
-vim.o.termguicolors = false
 
 vim.cmd [[
-colorscheme dim
 filetype plugin indent on
-highlight WinSeparator ctermfg=None guifg=None
 nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . "j"
 nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . "k"
-syntax enable
+syntax off
 ]]

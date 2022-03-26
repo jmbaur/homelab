@@ -3,10 +3,8 @@ local telescope = require "telescope"
 telescope.setup {
     defaults = {
         layout_strategy = 'bottom_pane',
-        layout_config = {prompt_position = "bottom", height = 0.25},
+        layout_config = {prompt_position = "bottom", height = 0.35},
         border = true,
-        -- borderchars = {"─", "│", "─", "│", "", "", "", ""},
-        -- borderchars = {"─", "│", "─", "│", "╭", "╮", "╯", "╰"},
         preview = false
     }
 }
