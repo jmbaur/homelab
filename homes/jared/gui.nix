@@ -66,6 +66,7 @@ in
         size = 16;
       };
       settings = {
+        cursor = "#fd28ff";
         term = "xterm-256color";
         copy_on_select = true;
         scrollback_lines = 10000;

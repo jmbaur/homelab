@@ -7,8 +7,6 @@ require 'lsp'
 require 'scope'
 require 'sitter'
 require 'snips'
-require 'term'
-require 'troublings'
 
 local keymap = vim.api.nvim_set_keymap
 local function inoremap(mapping, action)

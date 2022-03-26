@@ -15,7 +15,8 @@ local function nnoremap(key, cmd)
                             {noremap = true, silent = true})
 end
 
+nnoremap("<leader>b", "Telescope buffers")
+nnoremap("<leader>d", "Telescope diagnostics")
 nnoremap("<leader>f", "Telescope find_files")
 nnoremap("<leader>g", "Telescope live_grep")
-nnoremap("<leader>b", "Telescope buffers")
 nnoremap("<leader>h", "Telescope help_tags")

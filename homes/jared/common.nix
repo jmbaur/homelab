@@ -198,8 +198,6 @@ in
           snippets-nvim
           telescope-nvim
           telescope-zf-native
-          toggleterm-nvim
-          trouble-nvim
           typescript-vim
           vim-better-whitespace
           vim-cue
