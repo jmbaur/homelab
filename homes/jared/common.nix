@@ -168,7 +168,6 @@ in
       nix-direnv.enable = true;
     };
 
-    home.sessionVariables.NO_COLOR = "1";
     home.sessionVariables.SUMNEKO_ROOT_PATH = pkgs.sumneko-lua-language-server;
     home.sessionVariables.EDITOR = "nvim";
     programs.neovim = {

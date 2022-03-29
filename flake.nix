@@ -88,7 +88,8 @@
         system = "x86_64-linux";
         modules = [
           ./hosts/asparagus/configuration.nix
-          nixos-hardware.nixosModules.intel-nuc-8i7beh
+          nixos-hardware.nixosModules.common-cpu-amd
+          nixos-hardware.nixosModules.common-pc
           self.nixosModule
         ];
       };
