@@ -1,9 +1,28 @@
 { config, lib, pkgs, ... }:
 let
   cfg = config.custom.gui;
+  bemenuWithArgs = pkgs.symlinkJoin {
+    name = "bemenuWithArgs";
+    buildInputs = [ pkgs.makeWrapper ];
+    paths = [ pkgs.bemenu ];
+    postBuild = ''
+      for cmd in "bemenu" "bemenu-run"; do
+        wrapProgram $out/bin/$cmd \
+          --add-flags "--ignorecase" \
+          --add-flags "--list 10" \
+          --add-flags "--line-height 25" \
+          --add-flags "--fn ${toString config.wayland.windowManager.sway.config.fonts.names} ${toString config.wayland.windowManager.sway.config.fonts.size}"
+      done
+    '';
+  };
 in
 {
-  options.custom.gui.enable = lib.mkEnableOption "Enable gui configs";
+  options.custom.gui = {
+    enable = lib.mkEnableOption "Enable gui configs";
+    desktop.enable = lib.mkEnableOption "Enable gui configs tailored for a desktop";
+    laptop.enable = lib.mkEnableOption "Enable gui configs tailored for a laptop";
+  };
+
   config = lib.mkIf cfg.enable {
     home.sessionVariables.NIXOS_OZONE_WL = "1";
     home.packages = with pkgs; [
@@ -45,7 +64,7 @@ in
     gtk = {
       enable = true;
       gtk3.extraConfig = {
-        gtk-theme-name = "Adwaita";
+        gtk-theme-name = "Adwaita-dark";
         gtk-key-theme-name = "Emacs";
       };
       gtk4 = removeAttrs config.gtk.gtk3 [ "bookmarks" "extraCss" "waylandSupport" ];
@@ -66,7 +85,7 @@ in
         size = 16;
       };
       settings = {
-        cursor = "#fd28ff";
+        include = "${pkgs.vimPlugins.zenbones-nvim.src}/extras/kitty/neobones_dark.conf";
         term = "xterm-256color";
         copy_on_select = true;
         scrollback_lines = 10000;
@@ -91,13 +110,13 @@ in
     services.swayidle = {
       enable = true;
       events = [
-        { event = "lock"; command = "swaylock"; }
+        { event = "lock"; command = "swaylock -c 000000"; }
         { event = "before-sleep"; command = "loginctl lock-session"; }
       ];
-      timeouts = [{ timeout = 1800; command = "swaylock"; }];
+      timeouts = [{ timeout = 1800; command = "swaylock -c 000000"; }];
     };
 
-    services.kanshi = {
+    services.kanshi = lib.mkIf cfg.laptop.enable {
       enable = true;
     };
 
@@ -112,6 +131,56 @@ in
         colors = false;
         interval = 1;
       };
+      modules =
+        {
+          ipv6.enable = true;
+
+          "wireless _first_" = {
+            enable = cfg.laptop.enable;
+            settings = {
+              format_down = "W: down";
+              format_up = "W: (%quality at %essid) %ip";
+            };
+          };
+
+          "ethernet _first_" = {
+            enable = true;
+            settings = {
+              format_down = "E: down";
+              format_up = "E: %ip (%speed)";
+            };
+          };
+
+          "battery all" = {
+            enable = cfg.laptop.enable;
+            settings.format = "%status %percentage %remaining";
+          };
+
+          "disk /" = {
+            enable = true;
+            settings.format = "%avail";
+          };
+
+          load = {
+            enable = true;
+            settings.format = "%1min";
+          };
+
+          memory = {
+            enable = true;
+            settings = {
+              format = "%used | %available";
+              format_degraded = "MEMORY < %available";
+              threshold_degraded = "1G";
+            };
+          };
+
+          "tztime local" = {
+            enable = true;
+            settings.format = "%F %T";
+          };
+
+        };
     };
 
     programs.mako = {
@@ -126,11 +195,7 @@ in
       config = {
         floating.criteria = [{ class = "zoom"; }];
         fonts = { names = [ config.programs.kitty.font.name ]; size = 12.0; style = "Regular"; };
-        menu = "${pkgs.bemenu}/bin/bemenu-run --ignorecase --line-height 25 --fn '${
-          toString config.wayland.windowManager.sway.config.fonts.names
-        } ${
-          toString config.wayland.windowManager.sway.config.fonts.size
-        }' | ${pkgs.findutils}/bin/xargs swaymsg exec --";
+        menu = "${bemenuWithArgs}/bin/bemenu-run";
         terminal = "${pkgs.kitty}/bin/kitty";
         modifier = "Mod4";
         window = {
@@ -155,6 +220,7 @@ in
           lib.mkOptionDefault {
             "${mod}+Shift+s" = "sticky toggle";
             "${mod}+Tab" = "workspace back_and_forth";
+            "${mod}+c" = "exec ${pkgs.clipman}/bin/clipman pick --tool=CUSTOM --tool-args=${bemenuWithArgs}/bin/bemenu";
             "${mod}+p" = "exec ${config.wayland.windowManager.sway.config.menu}";
             "XF86AudioLowerVolume" = "exec ${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%";
             "XF86AudioMicMute" = "exec ${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle";
@@ -173,6 +239,27 @@ in
       '';
     };
 
+    systemd.user.services.clipman = {
+      Unit = {
+        Description = "Clipboard manager";
+        Documentation = "man:clipman(1)";
+        PartOf = [ "graphical-session.target" ];
+      };
+
+      Service = {
+        Type = "simple";
+        ExecStart = "${pkgs.wl-clipboard}/bin/wl-paste -t text --watch ${pkgs.clipman}/bin/clipman store";
+        Restart = "always";
+      };
+
+      Install.WantedBy = [ config.services.kanshi.systemdTarget ];
+    };
+
   };
 }
+
+
+
+
+
 

@@ -174,45 +174,35 @@ in
       enable = true;
       vimAlias = true;
       vimdiffAlias = true;
-      plugins =
-        let
-          telescope-zf-native = pkgs.vimUtils.buildVimPlugin rec {
-            name = "telescope-zf-native.nvim";
-            src = pkgs.fetchFromGitHub {
-              owner = "natecraddock";
-              repo = name;
-              rev = "76ae732e4af79298cf3582ec98234ada9e466b58";
-              sha256 = "sha256-acV3sXcVohjpOd9M2mf7EJ7jqGI+zj0BH9l0DJa14ak=";
-            };
-          };
-        in
-        with pkgs.vimPlugins; [
-          (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars))
-          comment-nvim
-          editorconfig-vim
-          jmbaur-settings
-          nvim-autopairs
-          nvim-lspconfig
-          nvim-treesitter-textobjects
-          snippets-nvim
-          telescope-nvim
-          telescope-zf-native
-          typescript-vim
-          vim-better-whitespace
-          vim-cue
-          vim-dadbod
-          vim-dirvish
-          vim-easy-align
-          vim-eunuch
-          vim-fugitive
-          vim-lastplace
-          vim-nix
-          vim-repeat
-          vim-rsi
-          vim-surround
-          vim-terraform
-          zig-vim
-        ];
+      plugins = with pkgs.vimPlugins; [
+        (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars))
+        comment-nvim
+        editorconfig-vim
+        jmbaur-settings
+        lush-nvim
+        nvim-autopairs
+        nvim-lspconfig
+        nvim-treesitter-textobjects
+        snippets-nvim
+        telescope-nvim
+        telescope-zf-native
+        typescript-vim
+        vim-better-whitespace
+        vim-cue
+        vim-dadbod
+        vim-dirvish
+        vim-easy-align
+        vim-eunuch
+        vim-fugitive
+        vim-lastplace
+        vim-nix
+        vim-repeat
+        vim-rsi
+        vim-surround
+        vim-terraform
+        zenbones-nvim
+        zig-vim
+      ];
       extraPackages = with pkgs; [
         bat
         black

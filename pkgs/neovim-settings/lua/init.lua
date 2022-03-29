@@ -45,13 +45,15 @@ vim.o.splitbelow = true
 vim.o.splitright = true
 vim.o.swapfile = false
 vim.o.tabstop = 4
-vim.o.termguicolors = false
+vim.o.termguicolors = true
 vim.o.undofile = true
 vim.o.wrap = false
 
 vim.cmd [[
+colorscheme neobones
 filetype plugin indent on
+highlight WinSeparator guifg=None
 nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . "j"
 nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . "k"
-syntax off
+syntax enable
 ]]

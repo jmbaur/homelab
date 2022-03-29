@@ -4,12 +4,12 @@
 }:
 stdenvNoCC.mkDerivation rec {
   pname = "zf";
-  version = "0.4";
+  version = "6a717d19f661b2ed31cedacac3708c35ba152242";
   src = fetchFromGitHub {
     owner = "natecraddock";
     repo = "zf";
     rev = version;
-    sha256 = "sha256-A9yTh0/xzpQ9PcmIx85Q7JHpJSdoeDOry/OKkiPj7cM=";
+    sha256 = "1rxh2sgmzpv1inpjsxak30mmma2j1w3ya2q4kcjy8sxyz7v7c4ka";
   };
   preBuild = ''
     export HOME=$TMPDIR
