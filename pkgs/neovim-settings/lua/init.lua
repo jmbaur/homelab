@@ -3,6 +3,7 @@ vim.g.markdown_fenced_languages = {'bash=sh', 'python', 'typescript', 'go'}
 
 require 'autopairs'
 require 'comment'
+require 'format'
 require 'lsp'
 require 'scope'
 require 'sitter'
@@ -53,7 +54,6 @@ vim.o.wrap = false
 vim.cmd [[
 colorscheme gruvbox
 filetype plugin indent on
-highlight WinSeparator guifg=None
 nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . "j"
 nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . "k"
 syntax enable

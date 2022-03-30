@@ -183,6 +183,7 @@ in
         (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars))
         comment-nvim
         editorconfig-vim
+        formatter-nvim
         gruvbox-nvim
         jmbaur-settings
         nvim-autopairs
