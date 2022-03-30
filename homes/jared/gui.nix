@@ -106,6 +106,7 @@ in
       enable = true;
       settings = {
         main = {
+          include = "${pkgs.foot.src}/themes/gruvbox-dark";
           term = config.programs.kitty.settings.term;
           font = "${config.programs.kitty.font.name}:size=${toString (config.programs.kitty.font.size - 6)}";
         };
