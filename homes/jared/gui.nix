@@ -4,9 +4,9 @@ let
   bemenuWithArgs = pkgs.symlinkJoin {
     name = "bemenuWithArgs";
     buildInputs = [ pkgs.makeWrapper ];
-    paths = [ pkgs.bemenu ];
+    paths = [ pkgs.bemenu pkgs.pinentry-bemenu ];
     postBuild = ''
-      for cmd in "bemenu" "bemenu-run"; do
+      for cmd in "bemenu" "bemenu-run" "pinentry-bemenu"; do
         wrapProgram $out/bin/$cmd \
           --add-flags "--ignorecase" \
           --add-flags "--list 10" \
@@ -34,7 +34,6 @@ in
       imv
       mpv
       obs-studio
-      pinentry-gnome
       signal-desktop
       slack
       slurp
@@ -47,7 +46,12 @@ in
       zoom-us
     ];
 
-    services.gpg-agent.pinentryFlavor = "gnome3";
+    services.gpg-agent = {
+      pinentryFlavor = null;
+      extraConfig = ''
+        pinentry-program ${bemenuWithArgs}/bin/pinentry-bemenu
+      '';
+    };
 
     xdg.userDirs = {
       enable = true;
@@ -264,9 +268,3 @@ in
 
   };
 }
-
-
-
-
-
-

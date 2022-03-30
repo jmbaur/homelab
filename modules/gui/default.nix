@@ -29,7 +29,6 @@ in
     programs.sway.enable = true;
     programs.wshowkeys.enable = true;
     services.avahi.enable = true;
-    services.dbus.packages = [ pkgs.gcr ];
     services.geoclue2.enable = true;
     services.pcscd.enable = false;
     services.printing.enable = true;

@@ -7,13 +7,10 @@
     git-get.url = "github:jmbaur/git-get";
     gobar.url = "github:jmbaur/gobar";
     gosee.url = "github:jmbaur/gosee";
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    home-manager = { url = "github:nix-community/home-manager"; inputs.nixpkgs.follows = "nixpkgs"; };
     hosts.url = "github:StevenBlack/hosts";
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
-    nixos-hardware.url = "github:NixOS/nixos-hardware";
+    nixos-hardware = { url = "github:NixOS/nixos-hardware"; inputs.nixpkgs.follows = "nixpkgs"; };
     nixpkgs.url = "nixpkgs/nixos-unstable";
     sops-nix.url = "github:mic92/sops-nix";
   };
