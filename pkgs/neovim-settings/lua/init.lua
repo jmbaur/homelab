@@ -43,6 +43,7 @@ vim.o.smartcase = true
 vim.o.softtabstop = 4
 vim.o.splitbelow = true
 vim.o.splitright = true
+vim.o.statusline = "%<%f %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%) %P"
 vim.o.swapfile = false
 vim.o.tabstop = 4
 vim.o.termguicolors = true
@@ -50,7 +51,7 @@ vim.o.undofile = true
 vim.o.wrap = false
 
 vim.cmd [[
-colorscheme neobones
+colorscheme gruvbox
 filetype plugin indent on
 highlight WinSeparator guifg=None
 nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . "j"

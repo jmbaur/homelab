@@ -83,14 +83,21 @@ in
         name = "Hack";
         size = 16;
       };
-      settings = {
-        include = "${pkgs.vimPlugins.zenbones-nvim.src}/extras/kitty/neobones_dark.conf";
-        term = "xterm-256color";
-        copy_on_select = true;
-        scrollback_lines = 10000;
-        enable_audio_bell = false;
-        update_check_interval = 0;
-      };
+      settings =
+        let
+          kitty-gruvbox-dark = builtins.fetchurl {
+            url = "https://raw.githubusercontent.com/wdomitrz/kitty-gruvbox-theme/master/gruvbox_dark.conf";
+            sha256 = "0n1w1ycb10fc97jjjymf2bcg591vaxmk6kxnvfbj41b35s6c734m";
+          };
+        in
+        {
+          copy_on_select = true;
+          enable_audio_bell = false;
+          include = kitty-gruvbox-dark;
+          scrollback_lines = 10000;
+          term = "xterm-256color";
+          update_check_interval = 0;
+        };
     };
 
     fonts.fontconfig.enable = true;

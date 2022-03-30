@@ -113,6 +113,7 @@ in
       defaultCacheTtl = 3600;
     };
 
+    programs.bat = { enable = true; config.theme = "gruvbox-dark"; };
     programs.git = {
       enable = true;
       aliases = {
@@ -121,6 +122,10 @@ in
         br = "branch";
         co = "checkout";
         lg = "log --graph --decorate --pretty=oneline --abbrev-commit --all";
+      };
+      delta = {
+        enable = true;
+        options.syntax-theme = config.programs.bat.config.theme;
       };
       extraConfig = {
         pull.rebase = true;
@@ -178,8 +183,8 @@ in
         (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars))
         comment-nvim
         editorconfig-vim
+        gruvbox-nvim
         jmbaur-settings
-        lush-nvim
         nvim-autopairs
         nvim-lspconfig
         nvim-treesitter-textobjects
@@ -200,7 +205,6 @@ in
         vim-rsi
         vim-surround
         vim-terraform
-        zenbones-nvim
         zig-vim
       ];
       extraPackages = with pkgs; [
