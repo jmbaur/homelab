@@ -205,7 +205,10 @@ in
     wayland.windowManager.sway = {
       enable = true;
       config = {
-        floating.criteria = [{ class = "zoom"; }];
+        floating.criteria = [
+          { title = "Zoom Cloud Meetings"; }
+          { title = "Firefox — Sharing Indicator"; }
+        ];
         fonts = { names = [ config.programs.kitty.font.name ]; size = 12.0; style = "Regular"; };
         menu = "${bemenuWithArgs}/bin/bemenu-run";
         terminal = "${pkgs.kitty}/bin/kitty";
