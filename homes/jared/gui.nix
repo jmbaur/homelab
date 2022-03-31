@@ -34,7 +34,7 @@ in
       hack-font
       imv
       mpv
-      opentaxsolver # TODO(jared): make FHS env
+      opentaxsolver
       signal-desktop
       slack
       slurp
