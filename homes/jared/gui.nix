@@ -25,6 +25,7 @@ in
 
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
+      (wrapOBS { plugins = with pkgs.obs-studio-plugins; [ wlrobs ]; })
       bitwarden
       element-desktop
       firefox-wayland
@@ -33,7 +34,7 @@ in
       hack-font
       imv
       mpv
-      obs-studio
+      opentaxsolver # TODO(jared): make FHS env
       signal-desktop
       slack
       slurp

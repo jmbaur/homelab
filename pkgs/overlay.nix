@@ -26,4 +26,5 @@ final: prev: {
   };
   p = prev.callPackage ./p.nix { };
   zf = prev.callPackage ./zf.nix { };
+  opentaxsolver = prev.callPackage ./opentaxsolver.nix { };
 }

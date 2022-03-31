@@ -212,14 +212,14 @@ in
         bat
         black
         cargo
-        clang-tools
         efm-langserver
         git
         go_1_18
-        gotools
         gopls
+        gotools
         luaformatter
         nixpkgs-fmt
+        nodePackages.prettier
         nodePackages.typescript
         nodePackages.typescript-language-server
         nodejs
