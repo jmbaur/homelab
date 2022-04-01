@@ -14,7 +14,10 @@ with lib;
       enable = true;
       containersConf.settings.engine.detach_keys = "ctrl-q,ctrl-e";
     };
-    virtualisation.podman.enable = true;
+    virtualisation.podman = {
+      enable = true;
+      defaultNetwork.dnsname.enable = true;
+    };
   };
 
 }
