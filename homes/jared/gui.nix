@@ -250,6 +250,7 @@ in
         bars = [{
           fonts = config.wayland.windowManager.sway.config.fonts;
           position = "top";
+          trayOutput = "*";
         }];
       };
       extraConfig = ''
