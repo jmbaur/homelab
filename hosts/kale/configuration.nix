@@ -25,7 +25,7 @@ in
   };
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelPackages = pkgs.linuxPackages_5_16;
+  boot.kernelPackages = pkgs.linuxPackages_5_17;
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   boot.kernelParams = [
     "ip=:::::${mgmtIface}:dhcp"
