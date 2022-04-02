@@ -20,8 +20,6 @@
   };
   systemd.tmpfiles.rules = [
     "d ${config.services.plex.dataDir} 700 ${config.services.plex.user} ${config.services.plex.group} -"
-    "d ${config.services.sonarr.dataDir} 700 ${config.services.sonarr.user} ${config.services.sonarr.group} -"
-    "d ${config.services.radarr.dataDir} 700 ${config.services.radarr.user} ${config.services.radarr.group} -"
     "d /media 770 ${config.services.plex.user} ${config.services.plex.group} -"
   ];
   sops = {
@@ -46,15 +44,5 @@
   };
   systemd.services.sabnzbd = {
     serviceConfig.SupplementaryGroups = [ config.users.groups.keys.name ];
-  };
-  services.radarr = { enable = true; openFirewall = true; };
-  services.sonarr = { enable = true; openFirewall = true; };
-  users.users.radarr = {
-    createHome = true;
-    extraGroups = [ config.services.plex.group config.services.sabnzbd.group ];
-  };
-  users.users.sonarr = {
-    createHome = true;
-    extraGroups = [ config.services.plex.group config.services.sabnzbd.group ];
   };
 }

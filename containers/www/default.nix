@@ -207,23 +207,6 @@ in
         proxyPass = "http://[fd82:f21d:118d:14::14]:32400";
       };
     };
-    virtualHosts."sonarr.jmbaur.com" = mkVhost {
-      inherit (config.services.nginx.virtualHosts."plex.jmbaur.com") listenAddresses;
-      locations."/" = {
-        proxyPass = "http://[fd82:f21d:118d:14::14]:8989";
-      };
-    };
-    virtualHosts."radarr.jmbaur.com" = mkVhost {
-      inherit (config.services.nginx.virtualHosts."plex.jmbaur.com") listenAddresses;
-      locations."/" = {
-        proxyPass = "http://[fd82:f21d:118d:14::14]:7878";
-        extraConfig = ''
-          proxy_set_header Host $host;
-          proxy_set_header X-Real-IP $remote_addr;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        '';
-      };
-    };
     virtualHosts."_" =
       mkVhost {
         default = true;

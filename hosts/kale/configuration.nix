@@ -97,9 +97,6 @@ in
     "d /fast/containers/www/ssh 700 - - -"
     "d /fast/containers/www/fail2ban 700 - - -"
     "d /fast/containers/media/plex 700 - - -"
-    "d /fast/containers/media/sonarr 700 - - -"
-    "d /fast/containers/media/lidarr 700 - - -"
-    "d /fast/containers/media/radarr 700 - - -"
     "d /fast/containers/media/sops-nix 700 - - -"
     "d /big/containers/media/content 700 - - -"
   ];
@@ -134,23 +131,6 @@ in
     };
   };
 
-  # containers.grafana = {
-  #   macvlans = [ "publan" ];
-  #   autoStart = true;
-  #   ephemeral = true;
-  #   bindMounts."/var/lib/grafana" = {
-  #     hostPath = "/fast/containers/grafana";
-  #     isReadOnly = false;
-  #   };
-  #   config = { config, ... }: {
-  #     imports = [ ../../containers/grafana ];
-  #     networking = {
-  #       useHostResolvConf = false;
-  #       interfaces.mv-publan.useDHCP = true;
-  #     };
-  #   };
-  # };
-
   containers.media = {
     autoStart = true;
     ephemeral = true;
@@ -166,32 +146,10 @@ in
       hostPath = "/fast/containers/media/plex";
       isReadOnly = false;
     };
-    bindMounts."/var/lib/sonarr" = {
-      hostPath = "/fast/containers/media/sonarr";
-      isReadOnly = false;
-    };
-    bindMounts."/var/lib/radarr" = {
-      hostPath = "/fast/containers/media/radarr";
-      isReadOnly = false;
-    };
     bindMounts."/var/lib/sops-nix" = {
       hostPath = "/fast/containers/media/sops-nix";
       isReadOnly = false;
     };
-  };
-
-  containers.minecraft = {
-    autoStart = true;
-    ephemeral = true;
-    privateNetwork = true;
-    hostBridge = "br-trusted";
-    localAddress = "192.168.30.30/24";
-    localAddress6 = "fd82:f21d:118d:1e::1e/64";
-    bindMounts."/var/lib/minecraft" = {
-      hostPath = "/fast/containers/minecraft";
-      isReadOnly = false;
-    };
-    config = import ../../containers/minecraft;
   };
 
   # This value determines the NixOS release from which the default

@@ -28,17 +28,11 @@ in
           192.168.20.10 git.jmbaur.com
           192.168.20.10 cache.jmbaur.com
           192.168.20.10 plex.jmbaur.com
-          192.168.20.10 radarr.jmbaur.com
-          192.168.20.10 sonarr.jmbaur.com
-          192.168.20.10 lidarr.jmbaur.com
           fd82:f21d:118d:14::a jmbaur.com
           fd82:f21d:118d:14::a www.jmbaur.com
           fd82:f21d:118d:14::a git.jmbaur.com
           fd82:f21d:118d:14::a cache.jmbaur.com
           fd82:f21d:118d:14::a plex.jmbaur.com
-          fd82:f21d:118d:14::a radarr.jmbaur.com
-          fd82:f21d:118d:14::a sonarr.jmbaur.com
-          fd82:f21d:118d:14::a lidarr.jmbaur.com
         }
       }
 
