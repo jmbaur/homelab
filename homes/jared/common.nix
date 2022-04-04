@@ -197,6 +197,7 @@ in
         vim-cue
         vim-dadbod
         vim-dirvish
+        vim-dispatch
         vim-easy-align
         vim-eunuch
         vim-fugitive
