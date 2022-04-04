@@ -206,11 +206,12 @@ in
       enable = true;
       config = {
         floating.criteria = [
+          { title = "Firefox — Sharing Indicator"; }
+          { title = "Picture-in-Picture"; }
           # TODO(jared): create regexp that matches all zoom windows
           { title = "Zoom Cloud Meetings"; }
           { title = "Zoom Meeting"; }
           { title = "zoom"; }
-          { title = "Firefox — Sharing Indicator"; }
         ];
         fonts = { names = [ config.programs.kitty.font.name ]; size = 12.0; style = "Regular"; };
         menu = "${bemenuWithArgs}/bin/bemenu-run";
