@@ -6,10 +6,7 @@
 
   boot.kernelPackages = pkgs.linuxPackages_5_17;
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
-  boot.loader.systemd-boot = {
-    enable = true;
-    memtest86.enable = true;
-  };
+  boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "beetroot";

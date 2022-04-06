@@ -1,0 +1,40 @@
+filetype plugin indent on
+colorscheme gruvbox
+syntax enable
+
+set background=dark
+set clipboard=unnamedplus
+set colorcolumn=80
+set hidden
+set hlsearch
+set ignorecase
+set noswapfile
+set nowrap
+set number
+set relativenumber
+set showmatch
+set smartcase
+set splitbelow
+set splitright
+set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
+set wildmenu
+set wildmode=longest,full
+
+let lspServers = [
+	\     {
+	\       'filetype': ['nix'],
+	\       'path': 'rnix-lsp',
+	\       'args': []
+	\     },
+	\     {
+	\	'filetype': ['javascript', 'typescript'],
+	\	'path': 'typescript-language-server',
+	\	'args': ['--stdio']
+	\     },
+	\     {
+	\	'filetype': ['go', 'gomod'],
+	\	'path': 'gopls',
+	\	'args': []
+	\     },
+	\   ]
+call LspAddServer(lspServers)

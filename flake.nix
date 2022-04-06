@@ -76,7 +76,7 @@
         system = "x86_64-linux";
         modules = [
           ./hosts/beetroot/configuration.nix
-          nixos-hardware.nixosModules.lenovo-thinkpad-t480
+          nixos-hardware.nixosModules.lenovo-thinkpad-t495
           self.nixosModule
         ];
       };

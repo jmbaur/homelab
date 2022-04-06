@@ -18,6 +18,7 @@ in
       ddcutil
       direnv
       dust
+      rnix-lsp
       exa
       fd
       fzf
@@ -177,8 +178,6 @@ in
     home.sessionVariables.EDITOR = "nvim";
     programs.neovim = {
       enable = true;
-      vimAlias = true;
-      vimdiffAlias = true;
       plugins = with pkgs.vimPlugins; [
         (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars))
         comment-nvim
@@ -207,6 +206,7 @@ in
         vim-rsi
         vim-surround
         vim-terraform
+        vim-unimpaired
         zig-vim
       ];
       extraPackages = with pkgs; [
@@ -235,6 +235,37 @@ in
         tree-sitter
         zig
         zls
+      ];
+    };
+
+
+
+    programs.vim = {
+      enable = true;
+      extraConfig = builtins.readFile ./vimrc;
+      plugins = with pkgs.vimPlugins; [
+        editorconfig-vim
+        fileselect
+        gruvbox
+        lsp
+        typescript-vim
+        vim-better-whitespace
+        vim-cue
+        vim-dadbod
+        vim-dirvish
+        vim-dispatch
+        vim-easy-align
+        vim-fugitive
+        vim-lastplace
+        vim-nix
+        vim-repeat
+        vim-rsi
+        vim-sensible
+        vim-sleuth
+        vim-surround
+        vim-terraform
+        vim-unimpaired
+        zig-vim
       ];
     };
 

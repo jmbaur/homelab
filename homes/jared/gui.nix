@@ -34,7 +34,6 @@ in
       hack-font
       imv
       mpv
-      opentaxsolver
       signal-desktop
       slack
       slurp
