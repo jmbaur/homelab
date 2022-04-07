@@ -12,13 +12,12 @@ in
     };
 
     home.packages = with pkgs; [
+      # yq # currently broken
       age
       awscli2
       buildah
-      ddcutil
       direnv
       dust
-      rnix-lsp
       exa
       fd
       fzf
@@ -33,12 +32,11 @@ in
       htop
       iperf3
       jq
-      keybase
       lf
-      libnotify
       librespeed-cli
       mob
       mosh
+      neovim
       nix-prefetch-docker
       nix-prefetch-git
       nix-tree
@@ -53,7 +51,6 @@ in
       podman-compose
       procs
       pstree
-      pulsemixer
       pwgen
       qemu
       ripgrep
@@ -75,15 +72,9 @@ in
       tree
       unzip
       usbutils
-      ventoy-bin
       wireguard-tools
-      xdg-utils
       xsv
       ydiff
-      yq
-      yubikey-manager
-      yubikey-personalization
-      zellij
       zf
       zip
       zoxide
@@ -174,100 +165,8 @@ in
       nix-direnv.enable = true;
     };
 
+    # TODO(jared): figure out how to do this within github:jmbaur/neovim flake
     home.sessionVariables.SUMNEKO_ROOT_PATH = pkgs.sumneko-lua-language-server;
     home.sessionVariables.EDITOR = "nvim";
-    programs.neovim = {
-      enable = true;
-      plugins = with pkgs.vimPlugins; [
-        (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars))
-        comment-nvim
-        editorconfig-vim
-        formatter-nvim
-        gruvbox-nvim
-        jmbaur-settings
-        nvim-autopairs
-        nvim-lspconfig
-        nvim-treesitter-textobjects
-        snippets-nvim
-        telescope-nvim
-        telescope-zf-native
-        typescript-vim
-        vim-better-whitespace
-        vim-cue
-        vim-dadbod
-        vim-dirvish
-        vim-dispatch
-        vim-easy-align
-        vim-eunuch
-        vim-fugitive
-        vim-lastplace
-        vim-nix
-        vim-repeat
-        vim-rsi
-        vim-surround
-        vim-terraform
-        vim-unimpaired
-        zig-vim
-      ];
-      extraPackages = with pkgs; [
-        bat
-        black
-        cargo
-        efm-langserver
-        git
-        go_1_18
-        gopls
-        gotools
-        luaformatter
-        nixpkgs-fmt
-        nodePackages.prettier
-        nodePackages.typescript
-        nodePackages.typescript-language-server
-        nodejs
-        pyright
-        python3
-        ripgrep
-        rust-analyzer
-        rustfmt
-        shfmt
-        sumneko-lua-language-server
-        texlive.combined.scheme-medium
-        tree-sitter
-        zig
-        zls
-      ];
-    };
-
-
-
-    programs.vim = {
-      enable = true;
-      extraConfig = builtins.readFile ./vimrc;
-      plugins = with pkgs.vimPlugins; [
-        editorconfig-vim
-        fileselect
-        gruvbox
-        lsp
-        typescript-vim
-        vim-better-whitespace
-        vim-cue
-        vim-dadbod
-        vim-dirvish
-        vim-dispatch
-        vim-easy-align
-        vim-fugitive
-        vim-lastplace
-        vim-nix
-        vim-repeat
-        vim-rsi
-        vim-sensible
-        vim-sleuth
-        vim-surround
-        vim-terraform
-        vim-unimpaired
-        zig-vim
-      ];
-    };
-
   };
 }

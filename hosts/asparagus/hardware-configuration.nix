@@ -5,48 +5,42 @@
 
 {
   imports =
-    [
-      (modulesPath + "/installer/scan/not-detected.nix")
+    [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usbhid" "usb_storage" ];
+  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    {
-      device = "/dev/disk/by-uuid/e11c1c25-47f4-4daf-9c62-86d425461404";
+    { device = "/dev/disk/by-uuid/66bf58ae-75d3-4181-a657-d6483f562192";
       fsType = "btrfs";
       options = [ "subvol=@" "noatime" "discard=async" "compress=zstd" ];
     };
 
-  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/b110813a-7849-4c8f-bf74-26c1cbe7739f";
+  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/84268849-2eae-4a35-8d77-8ad477603664";
 
   fileSystems."/nix" =
-    {
-      device = "/dev/disk/by-uuid/e11c1c25-47f4-4daf-9c62-86d425461404";
+    { device = "/dev/disk/by-uuid/66bf58ae-75d3-4181-a657-d6483f562192";
       fsType = "btrfs";
       options = [ "subvol=@nix" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/home" =
-    {
-      device = "/dev/disk/by-uuid/e11c1c25-47f4-4daf-9c62-86d425461404";
+    { device = "/dev/disk/by-uuid/66bf58ae-75d3-4181-a657-d6483f562192";
       fsType = "btrfs";
       options = [ "subvol=@home" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/home/.snapshots" =
-    {
-      device = "/dev/disk/by-uuid/e11c1c25-47f4-4daf-9c62-86d425461404";
+    { device = "/dev/disk/by-uuid/66bf58ae-75d3-4181-a657-d6483f562192";
       fsType = "btrfs";
       options = [ "subvol=@home/.snapshots" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/boot" =
-    {
-      device = "/dev/disk/by-uuid/07E2-FCF7";
+    { device = "/dev/disk/by-uuid/9861-40F5";
       fsType = "vfat";
     };
 
@@ -58,8 +52,9 @@
   # Per-interface useDHCP will be mandatory in the future, so this generated config
   # replicates the default behaviour.
   networking.useDHCP = lib.mkDefault false;
+  networking.interfaces.enp3s0f0.useDHCP = lib.mkDefault true;
+  networking.interfaces.wlp2s0.useDHCP = lib.mkDefault true;
 
-  powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
   # high-resolution display
   hardware.video.hidpi.enable = lib.mkDefault true;
