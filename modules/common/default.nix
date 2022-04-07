@@ -56,6 +56,14 @@ with lib;
       vim
     ];
 
+    programs.bash = {
+      interactiveShellInit = ''
+        if [ -z "$TMUX" ]; then
+          tmux attach-session -t default || tmux new-session -s default
+        fi
+      '';
+    };
+
     programs.tmux = {
       enable = true;
       terminal = "screen-256color";

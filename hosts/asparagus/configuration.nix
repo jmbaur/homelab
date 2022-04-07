@@ -15,6 +15,8 @@
   networking.hostName = "asparagus";
   networking.useDHCP = lib.mkForce false;
   networking.networkmanager.enable = true;
+  networking.interfaces.enp3s0f0.useDHCP = false;
+  networking.interfaces.wlp2s0.useDHCP = false;
 
   time.timeZone = "America/Los_Angeles";
 
