@@ -57,6 +57,9 @@ with lib;
     ];
 
     programs.bash = {
+      loginShellInit = ''
+        tmux new-session -d -s default 2>/dev/null || true
+      '';
       interactiveShellInit = ''
         if [ -z "$TMUX" ]; then
           tmux attach-session -t default || tmux new-session -s default
