@@ -140,7 +140,7 @@ in
       enable = true;
       config = {
         floating.criteria = [{ class = "^zoom$"; }];
-        fonts = { names = [ config.programs.kitty.font.name ]; size = 12.0; style = "Regular"; };
+        fonts = { names = [ config.programs.kitty.font.name ]; size = 14.0; style = "Regular"; };
         menu = "${pkgs.rofi}/bin/rofi -show drun";
         terminal = "${pkgs.kitty}/bin/kitty";
         modifier = "Mod4";
