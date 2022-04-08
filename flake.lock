@@ -228,11 +228,11 @@
         "nixpkgs": "nixpkgs_6"
       },
       "locked": {
-        "lastModified": 1649406822,
-        "narHash": "sha256-8P2jX8acA0SmkvAJHyCv6fD5ZZaer140LUWafiHp7XE=",
+        "lastModified": 1649407164,
+        "narHash": "sha256-nE2V0iacnxr/Oxp+GlVj6h6oFi7QEK5isQDgaprQ0PA=",
         "owner": "jmbaur",
         "repo": "neovim",
-        "rev": "8e263a3365b8fb2a16fab583f5530994cf111c5b",
+        "rev": "be6201a908fb45372a291de15fa716d0c70b53b9",
         "type": "github"
       },
       "original": {
