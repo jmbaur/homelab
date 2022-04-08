@@ -18,6 +18,7 @@ in
     services.pcscd.enable = false;
     services.printing.enable = true;
     services.udev.packages = [ pkgs.yubikey-personalization ];
+    services.physlock.enable = true;
     services.xserver = {
       enable = true;
       displayManager.lightdm.enable = true;
@@ -30,11 +31,6 @@ in
           naturalScrolling = true;
           tapping = true;
         };
-      };
-      xautolock = {
-        enable = true;
-        locker = "${pkgs.i3lock}/bin/i3lock --color=000000";
-        extraOptions = [ "-detectsleep" ];
       };
       deviceSection = ''
         Option "TearFree" "true"

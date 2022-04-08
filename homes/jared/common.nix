@@ -166,8 +166,6 @@ in
       nix-direnv.enable = true;
     };
 
-    # TODO(jared): figure out how to do this within github:jmbaur/neovim flake
-    home.sessionVariables.SUMNEKO_ROOT_PATH = pkgs.sumneko-lua-language-server;
     home.sessionVariables.EDITOR = "nvim";
   };
 }
