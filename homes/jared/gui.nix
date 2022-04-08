@@ -79,7 +79,7 @@ in
         "editor.minimap.enabled" = false;
         "extensions.ignoreRecommendations" = true;
         "telemetry.telemetryLevel" = "off";
-        "vscode-neovim.neovimExecutablePaths.linux" = "${pkgs.neovim-unwrapped}/bin/nvim";
+        "vscode-neovim.neovimExecutablePaths.linux" = "${pkgs.neovim-embed}/bin/nvim";
         "workbench.colorTheme" = "Solarized Dark";
       };
     };
