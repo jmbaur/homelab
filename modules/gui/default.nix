@@ -12,6 +12,7 @@ in
     programs.seahorse.enable = true;
     programs.ssh.startAgent = true;
     services.avahi.enable = true;
+    services.blueman.enable = config.hardware.bluetooth.enable;
     services.geoclue2.enable = true;
     services.gnome.gnome-keyring.enable = true;
     services.pcscd.enable = false;
