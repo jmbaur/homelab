@@ -57,5 +57,13 @@ final: prev: {
     };
   j = prev.callPackage ./j.nix { };
   zf = prev.callPackage ./zf.nix { };
-
+  clipmenu = prev.clipmenu.overrideAttrs (old: {
+    version = "b30c01dbe3c8f1a13191cafb5171708ee80ef7d5";
+    src = prev.fetchFromGitHub {
+      repo = "clipmenu";
+      owner = "cdown";
+      rev = "b30c01dbe3c8f1a13191cafb5171708ee80ef7d5";
+      sha256 = "17mpl7jbywy4k0smsw1f7z87nagkw1ssdq1y3wa5n5hmbv27mp8r";
+    };
+  });
 }
