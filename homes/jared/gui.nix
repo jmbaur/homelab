@@ -77,6 +77,7 @@ in
       enable = true;
       font = "${toString config.xsession.windowManager.i3.config.fonts.names} ${toString config.xsession.windowManager.i3.config.fonts.size}";
       plugins = with pkgs; [ rofi-emoji rofi-vpn rofi-power-menu ];
+      terminal = "${pkgs.kitty}/bin/kitty";
       theme = "gruvbox-dark-soft";
     };
 
