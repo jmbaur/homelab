@@ -63,8 +63,8 @@ final: prev: {
     src = prev.fetchFromGitHub {
       repo = "clipmenu";
       owner = "cdown";
-      rev = "b30c01dbe3c8f1a13191cafb5171708ee80ef7d5";
-      sha256 = "17mpl7jbywy4k0smsw1f7z87nagkw1ssdq1y3wa5n5hmbv27mp8r";
+      rev = "9d0da2f7d4d17c7dff616c52dc00bd5b32f61bc5";
+      sha256 = "sha256-xAN4SMrQ4pSSE8suGwqPGv9DVV6h8dgx2HYh3BOwLy0=";
     };
   });
 }
