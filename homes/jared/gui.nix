@@ -64,17 +64,6 @@ in
       };
     };
 
-    # programs.rofi = {
-    #   enable = true;
-    #   font = "${toString config.xsession.windowManager.i3.config.fonts.names} ${toString config.xsession.windowManager.i3.config.fonts.size}";
-    #   plugins = with pkgs; [ rofi-emoji rofi-vpn rofi-power-menu ];
-    #   terminal = "${pkgs.kitty}/bin/kitty";
-    #   theme = builtins.readFile (builtins.fetchurl {
-    #     url = "https://raw.githubusercontent.com/jordiorlando/base16-rofi/master/themes/base16-zenburn.config";
-    #     sha256 = "020hwsiwm6iwv5xy2pj84hyb0qykkcyknng047ib0gcp9v7gqqvq";
-    #   });
-    # };
-
     programs.vscode = {
       enable = true;
       mutableExtensionsDir = false;
@@ -82,27 +71,22 @@ in
         asvetliakov.vscode-neovim
         bbenoist.nix
         ms-vsliveshare.vsliveshare
-      ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [{
-        name = "zenburn";
-        publisher = "ryanolsonx";
-        version = "1.0.1";
-        sha256 = "sha256-P37Q3IXOg6xESdVHjBWTvSid9L2IjvVKt7qpPV0qYb0=";
-      }];
+      ];
       userSettings = {
         "breadcrumbs.enabled" = false;
-        "editor.fontFamily" = "Hack";
+        "editor.fontFamily" = config.programs.kitty.font.name;
         "editor.fontSize" = config.programs.kitty.font.size + 4;
         "editor.minimap.enabled" = false;
         "extensions.ignoreRecommendations" = true;
         "telemetry.telemetryLevel" = "off";
         "vscode-neovim.neovimExecutablePaths.linux" = "${pkgs.neovim-unwrapped}/bin/nvim";
-        "workbench.colorTheme" = "Zenburn";
+        "workbench.colorTheme" = "Solarized Dark";
       };
     };
 
     programs.kitty = {
       enable = true;
-      theme = "Zenburn";
+      theme = "Solarized Dark";
       font = {
         package = pkgs.hack-font;
         name = "Hack";
