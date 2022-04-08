@@ -34,10 +34,6 @@ final: prev: {
         url = "https://st.suckless.org/patches/anysize/st-anysize-0.8.4.diff";
         sha256 = "1w3fjj6i0f8bii5c6gszl5lji3hq8fkqrcpxgxkcd33qks8zfl9q";
       };
-      gruvbox = builtins.fetchurl {
-        url = "https://st.suckless.org/patches/gruvbox/st-gruvbox-dark-0.8.5.diff";
-        sha256 = "0jvn0i0fl0w3c8dcmwyh9w19g3hsi22cqmyqly5zjzjwjhc8qnjv";
-      };
       ringbuffer = builtins.fetchurl {
         url = "https://st.suckless.org/patches/scrollback/st-scrollback-ringbuffer-0.8.5.diff";
         sha256 = "0xxwgkgpzc7s8ad0pgcwhm5hqyh2wy56a9yrxid68xm0np2g6m5h";
@@ -55,11 +51,11 @@ final: prev: {
       patches = [
         # boxdraw
         anysize
-        gruvbox
         ringbuffer
         scrollbackMouse
       ];
     };
   j = prev.callPackage ./j.nix { };
   zf = prev.callPackage ./zf.nix { };
+
 }

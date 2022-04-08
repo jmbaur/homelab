@@ -105,7 +105,7 @@ in
       defaultCacheTtl = 3600;
     };
 
-    programs.bat = { enable = true; config.theme = "gruvbox-dark"; };
+    programs.bat = { enable = true; config.theme = "ansi"; };
     programs.git = {
       enable = true;
       aliases = {
@@ -145,7 +145,7 @@ in
       terminal = "tmux-256color";
       plugins = with pkgs.tmuxPlugins; [ logging ];
       extraConfig = ''
-        bind-key "j" display-popup -E "${pkgs.j}/bin/j"
+        bind-key "j" display-popup -E -w 90% "${pkgs.j}/bin/j"
         set -g focus-events on
         set -g renumber-windows on
         set -g set-clipboard on

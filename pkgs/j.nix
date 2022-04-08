@@ -20,7 +20,7 @@ writeShellApplication {
     if ! test -d "$directory"; then
       echo "Cannot find projects directory"
       usage
-      exit 2
+      exit 1
     fi
 
     tmux_session_path=$(fd --type=directory --max-depth=4 --hidden "^.git$" "$directory" | sed "s,/\.git,," | { grep ".*''${1:-}.*" || true; } | fzf -1)
