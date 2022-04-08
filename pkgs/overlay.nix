@@ -57,6 +57,7 @@ final: prev: {
     };
   j = prev.callPackage ./j.nix { };
   zf = prev.callPackage ./zf.nix { };
+  # https://github.com/cdown/clipmenu/issues/142
   clipmenu = prev.clipmenu.overrideAttrs (old: {
     version = "b30c01dbe3c8f1a13191cafb5171708ee80ef7d5";
     src = prev.fetchFromGitHub {
