@@ -11,6 +11,7 @@ in
 
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
+      # zathura # currently broken
       bitwarden
       ddcutil
       element-desktop
@@ -25,21 +26,16 @@ in
       signal-desktop
       slack
       spotify
+      st
       ventoy-bin
       virt-manager
       xdg-utils
       yubikey-manager
       yubikey-personalization
-      # zathura # currently broken
       zoom-us
     ];
 
-    services.gpg-agent = {
-      pinentryFlavor = "gnome3";
-      # extraConfig = ''
-      #   pinentry-program ${bemenuWithArgs}/bin/pinentry-bemenu
-      # '';
-    };
+    services.gpg-agent.pinentryFlavor = "gnome3";
 
     xdg.userDirs = {
       enable = true;
@@ -70,12 +66,18 @@ in
 
     programs.vscode = {
       enable = true;
-      # package = pkgs.vscode-fhs;
       mutableExtensionsDir = false;
       extensions = with pkgs.vscode-extensions; [
         vscodevim.vim
         ms-vsliveshare.vsliveshare
       ];
+    };
+
+    programs.rofi = {
+      enable = true;
+      font = "${toString config.xsession.windowManager.i3.config.fonts.names} ${toString config.xsession.windowManager.i3.config.fonts.size}";
+      plugins = with pkgs; [ rofi-emoji rofi-vpn rofi-power-menu ];
+      theme = "gruvbox-dark-soft";
     };
 
     programs.kitty = {
@@ -171,98 +173,111 @@ in
       enable = true;
       provider = "geoclue2";
     };
-
-    xsession.windowManager.i3 = {
+    services.dunst = {
       enable = true;
-      config = {
-        floating.criteria = [{ class = "^zoom$"; }];
-        fonts = { names = [ config.programs.kitty.font.name ]; size = 12.0; style = "Regular"; };
-        # menu = "${bemenuWithArgs}/bin/bemenu-run";
-        terminal = "${pkgs.kitty}/bin/kitty";
-        modifier = "Mod4";
-        window = {
-          hideEdgeBorders = "smart";
-          titlebar = true;
-        };
-        defaultWorkspace = "workspace number 1";
-        keybindings =
-          let
-            mod = config.xsession.windowManager.i3.config.modifier;
-          in
-          {
-            "${mod}+Return" = "exec ${config.xsession.windowManager.i3.config.terminal}";
-            "${mod}+Shift+q" = "kill";
-            "${mod}+h" = "focus left";
-            "${mod}+j" = "focus down";
-            "${mod}+k" = "focus up";
-            "${mod}+l" = "focus right";
-            "${mod}+Left" = "focus left";
-            "${mod}+Down" = "focus down";
-            "${mod}+Up" = "focus up";
-            "${mod}+Right" = "focus right";
-            "${mod}+Shift+h" = "move left";
-            "${mod}+Shift+j" = "move down";
-            "${mod}+Shift+k" = "move up";
-            "${mod}+Shift+l" = "move right";
-            "${mod}+Shift+Left" = "move left";
-            "${mod}+Shift+Down" = "move down";
-            "${mod}+Shift+Up" = "move up";
-            "${mod}+Shift+Right" = "move right";
-            "${mod}+b" = "split h";
-            "${mod}+v" = "split v";
-            "${mod}+f" = "fullscreen toggle";
-            "${mod}+s" = "layout stacking";
-            "${mod}+w" = "layout tabbed";
-            "${mod}+e" = "layout toggle split";
-            "${mod}+Shift+space" = "floating toggle";
-            "${mod}+space" = "focus mode_toggle";
-            "${mod}+a" = "focus parent";
-            "${mod}+Shift+minus" = "move scratchpad";
-            "${mod}+minus" = "scratchpad show";
-            "${mod}+1" = "workspace number 1";
-            "${mod}+2" = "workspace number 2";
-            "${mod}+3" = "workspace number 3";
-            "${mod}+4" = "workspace number 4";
-            "${mod}+5" = "workspace number 5";
-            "${mod}+6" = "workspace number 6";
-            "${mod}+7" = "workspace number 7";
-            "${mod}+8" = "workspace number 8";
-            "${mod}+9" = "workspace number 9";
-            "${mod}+0" = "workspace number 10";
-            "${mod}+Shift+1" = "move container to workspace number 1";
-            "${mod}+Shift+2" = "move container to workspace number 2";
-            "${mod}+Shift+3" = "move container to workspace number 3";
-            "${mod}+Shift+4" = "move container to workspace number 4";
-            "${mod}+Shift+5" = "move container to workspace number 5";
-            "${mod}+Shift+6" = "move container to workspace number 6";
-            "${mod}+Shift+7" = "move container to workspace number 7";
-            "${mod}+Shift+8" = "move container to workspace number 8";
-            "${mod}+Shift+9" = "move container to workspace number 9";
-            "${mod}+Shift+0" = "move container to workspace number 10";
-            "${mod}+Shift+c" = "reload";
-            "${mod}+Shift+r" = "restart";
-            "${mod}+Shift+e" = "exec i3-nagbar -t warning -m 'Do you want to exit i3?' -b 'Yes' 'i3-msg exit'";
-            "${mod}+r" = "mode resize";
-            "${mod}+Shift+s" = "sticky toggle";
-            "${mod}+Tab" = "workspace back_and_forth";
-            # "${mod}+c" = "exec ${pkgs.clipman}/bin/clipman pick --tool=CUSTOM --tool-args=${bemenuWithArgs}/bin/bemenu";
-            "${mod}+p" = "exec ${config.xsession.windowManager.i3.config.menu}";
-            "XF86AudioLowerVolume" = "exec ${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%";
-            "XF86AudioMicMute" = "exec ${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle";
-            "XF86AudioMute" = "exec ${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
-            "XF86AudioRaiseVolume" = "exec ${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%";
-            "XF86MonBrightnessDown" = "exec ${pkgs.brightnessctl}/bin/brightnessctl set 5%-";
-            "XF86MonBrightnessUp" = "exec ${pkgs.brightnessctl}/bin/brightnessctl set +5%";
-          };
-        bars = [{
-          fonts = config.xsession.windowManager.i3.config.fonts;
-          position = "top";
-          trayOutput = "primary";
-        }];
+      iconTheme = {
+        package = pkgs.gnome.gnome-themes-extra;
+        name = "Adwaita";
+        size = "32x32";
       };
-      extraConfig = ''
-        workspace_auto_back_and_forth yes
-      '';
+      settings.global.font = "${config.programs.kitty.font.name} 12";
     };
+
+    xsession.windowManager.i3 =
+      let
+        dmenuArgs = "-bw 2 -c -l 10 -fn '${toString config.xsession.windowManager.i3.config.fonts.names}:h${toString config.xsession.windowManager.i3.config.fonts.size}'";
+      in
+      {
+        enable = true;
+        config = {
+          floating.criteria = [{ class = "^zoom$"; }];
+          fonts = { names = [ config.programs.kitty.font.name ]; size = 12.0; style = "Regular"; };
+          menu = "${pkgs.dmenu}/bin/dmenu_run ${dmenuArgs}";
+          terminal = "${pkgs.kitty}/bin/kitty";
+          modifier = "Mod4";
+          window = {
+            hideEdgeBorders = "smart";
+            titlebar = true;
+          };
+          defaultWorkspace = "workspace number 1";
+          keybindings =
+            let
+              mod = config.xsession.windowManager.i3.config.modifier;
+            in
+            {
+              "${mod}+0" = "workspace number 10";
+              "${mod}+1" = "workspace number 1";
+              "${mod}+2" = "workspace number 2";
+              "${mod}+3" = "workspace number 3";
+              "${mod}+4" = "workspace number 4";
+              "${mod}+5" = "workspace number 5";
+              "${mod}+6" = "workspace number 6";
+              "${mod}+7" = "workspace number 7";
+              "${mod}+8" = "workspace number 8";
+              "${mod}+9" = "workspace number 9";
+              "${mod}+Down" = "focus down";
+              "${mod}+Left" = "focus left";
+              "${mod}+Return" = "exec ${config.xsession.windowManager.i3.config.terminal}";
+              "${mod}+Right" = "focus right";
+              "${mod}+Shift+0" = "move container to workspace number 10";
+              "${mod}+Shift+1" = "move container to workspace number 1";
+              "${mod}+Shift+2" = "move container to workspace number 2";
+              "${mod}+Shift+3" = "move container to workspace number 3";
+              "${mod}+Shift+4" = "move container to workspace number 4";
+              "${mod}+Shift+5" = "move container to workspace number 5";
+              "${mod}+Shift+6" = "move container to workspace number 6";
+              "${mod}+Shift+7" = "move container to workspace number 7";
+              "${mod}+Shift+8" = "move container to workspace number 8";
+              "${mod}+Shift+9" = "move container to workspace number 9";
+              "${mod}+Shift+Down" = "move down";
+              "${mod}+Shift+Left" = "move left";
+              "${mod}+Shift+Right" = "move right";
+              "${mod}+Shift+Up" = "move up";
+              "${mod}+Shift+c" = "reload";
+              "${mod}+Shift+e" = "exec i3-nagbar -t warning -m 'Do you want to exit i3?' -b 'Yes' 'i3-msg exit'";
+              "${mod}+Shift+h" = "move left";
+              "${mod}+Shift+j" = "move down";
+              "${mod}+Shift+k" = "move up";
+              "${mod}+Shift+l" = "move right";
+              "${mod}+Shift+minus" = "move scratchpad";
+              "${mod}+Shift+q" = "kill";
+              "${mod}+Shift+r" = "restart";
+              "${mod}+Shift+s" = "sticky toggle";
+              "${mod}+Shift+space" = "floating toggle";
+              "${mod}+Tab" = "workspace back_and_forth";
+              "${mod}+Up" = "focus up";
+              "${mod}+a" = "focus parent";
+              "${mod}+b" = "split h";
+              "${mod}+c" = "exec ${pkgs.clipmenu}/bin/clipmenu ${dmenuArgs}";
+              "${mod}+e" = "layout toggle split";
+              "${mod}+f" = "fullscreen toggle";
+              "${mod}+h" = "focus left";
+              "${mod}+j" = "focus down";
+              "${mod}+k" = "focus up";
+              "${mod}+l" = "focus right";
+              "${mod}+minus" = "scratchpad show";
+              "${mod}+p" = "exec ${config.xsession.windowManager.i3.config.menu}";
+              "${mod}+r" = "mode resize";
+              "${mod}+s" = "layout stacking";
+              "${mod}+space" = "focus mode_toggle";
+              "${mod}+v" = "split v";
+              "${mod}+w" = "layout tabbed";
+              "XF86AudioLowerVolume" = "exec ${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%";
+              "XF86AudioMicMute" = "exec ${pkgs.pulseaudio}/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle";
+              "XF86AudioMute" = "exec ${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
+              "XF86AudioRaiseVolume" = "exec ${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%";
+              "XF86MonBrightnessDown" = "exec ${pkgs.brightnessctl}/bin/brightnessctl set 5%-";
+              "XF86MonBrightnessUp" = "exec ${pkgs.brightnessctl}/bin/brightnessctl set +5%";
+            };
+          bars = [{
+            fonts = config.xsession.windowManager.i3.config.fonts;
+            position = "top";
+            trayOutput = "primary";
+          }];
+        };
+        extraConfig = ''
+          workspace_auto_back_and_forth yes
+        '';
+      };
   };
 }

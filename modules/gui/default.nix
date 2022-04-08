@@ -21,6 +21,15 @@ in
       enable = true;
       displayManager.lightdm.enable = true;
       windowManager.i3.enable = true;
+      libinput = {
+        enable = true;
+        mouse.accelProfile = "flat";
+        touchpad = {
+          disableWhileTyping = true;
+          naturalScrolling = true;
+          tapping = true;
+        };
+      };
       xautolock = {
         enable = true;
         locker = "${pkgs.i3lock}/bin/i3lock --color=000000";
