@@ -31,6 +31,7 @@ in
       htmlq
       htop
       iperf3
+      j
       jq
       lf
       librespeed-cli
@@ -45,7 +46,6 @@ in
       nmap
       nvme-cli
       openssl
-      p
       patchelf
       picocom
       podman-compose
@@ -145,11 +145,12 @@ in
       terminal = "tmux-256color";
       plugins = with pkgs.tmuxPlugins; [ logging ];
       extraConfig = ''
+        bind-key "j" display-popup -E "${pkgs.j}/bin/j"
+        set -g focus-events on
         set -g renumber-windows on
         set -g set-clipboard on
         set -g status-left-length 50
         set -g status-right "%H:%M %d-%b-%y"
-        set -g focus-events on
         set -sa terminal-overrides ',xterm-256color:RGB'
       '';
     };

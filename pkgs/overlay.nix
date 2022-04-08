@@ -60,6 +60,6 @@ final: prev: {
         scrollbackMouse
       ];
     };
-  p = prev.callPackage ./p.nix { };
+  j = prev.callPackage ./j.nix { };
   zf = prev.callPackage ./zf.nix { };
 }

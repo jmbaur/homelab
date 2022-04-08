@@ -62,7 +62,7 @@ with lib;
       '';
       interactiveShellInit = ''
         if [ -z "$TMUX" ]; then
-          tmux attach-session -t default || tmux new-session -s default
+          tmux attach-session -t default 2>/dev/null || tmux new-session -s default
         fi
       '';
     };

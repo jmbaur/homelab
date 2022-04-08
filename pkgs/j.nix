@@ -1,15 +1,15 @@
 { writeShellApplication
 , fd
+, fzf
 , tmux
-, zf
 }:
 writeShellApplication {
-  name = "p";
-  runtimeInputs = [ fd tmux zf ];
+  name = "j";
+  runtimeInputs = [ fd tmux ];
   text = ''
     function usage() {
       cat <<EOF
-    Usage: p <dir>
+    Usage: j <dir>
 
     The default projects directory is \$HOME/Projects. This can be
     overridden by setting the \$PROJ_DIR environment variable.
@@ -23,9 +23,7 @@ writeShellApplication {
       exit 2
     fi
 
-    # TODO(jared): don't hardcode depth
-    tmux_session_path=$(fd --type=directory --max-depth=4 --hidden "^.git$" "$directory" | sed "s,/\.git,," | zf)
-
+    tmux_session_path=$(fd --type=directory --max-depth=4 --hidden "^.git$" "$directory" | sed "s,/\.git,," | { grep ".*''${1:-}.*" || true; } | fzf -1)
     tmux_session_name=$(echo -n "$tmux_session_path" | sed "s,$directory/,," | sed "s,\.,_,g")
 
     if ! tmux list-sessions -F "#{session_name}" 2>/dev/null | grep --quiet "$tmux_session_name"; then
