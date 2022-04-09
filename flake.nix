@@ -12,6 +12,7 @@
     neovim.url = "github:jmbaur/neovim";
     nixos-hardware = { url = "github:NixOS/nixos-hardware"; inputs.nixpkgs.follows = "nixpkgs"; };
     nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixpkgs-jmbaur.url = "github:jmbaur/nixpkgs/mosh-378dfa6";
     sops-nix.url = "github:mic92/sops-nix";
   };
 
@@ -27,6 +28,7 @@
     , neovim
     , nixos-hardware
     , nixpkgs
+    , nixpkgs-jmbaur
     , sops-nix
     }@inputs: flake-utils.lib.eachDefaultSystem
       (system:
@@ -54,6 +56,9 @@
           gosee.overlay
           neovim.overlay
           self.overlay
+          (final: prev: {
+            inherit (nixpkgs-jmbaur.legacyPackages.${prev.system}) mosh;
+          })
         ];
       };
 

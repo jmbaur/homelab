@@ -15,7 +15,9 @@ in
         "wheel" # sudo
         (lib.optionalString config.hardware.i2c.enable "i2c")
         (lib.optionalString config.networking.networkmanager.enable "networkmanager")
+        (lib.optionalString config.virtualisation.libvirtd.enable "libvirtd")
       ];
+      openssh.authorizedKeys.keyFiles = lib.mkIf config.custom.deploy.enable [ (import ../../data/jmbaur-ssh-keys.nix) ];
     };
 
     home-manager = {
