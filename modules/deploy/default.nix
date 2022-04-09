@@ -15,6 +15,8 @@ with lib;
     users.users.root.openssh.authorizedKeys.keyFiles = singleton (import ../../data/jmbaur-ssh-keys.nix); # backup
 
 
+    # TODO(jared): Consider forcing configuration of a kernel module for
+    # network card to load during initrd phase.
     boot = mkIf (config.boot.initrd.luks.devices != { }) {
       kernelParams = [ "ip=dhcp" ];
       initrd.network = {
