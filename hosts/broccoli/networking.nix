@@ -82,7 +82,7 @@ in
     wireguard = {
       enable = true;
       interfaces.wg-trusted = {
-        listenPort = 51820;
+        listenPort = 51830;
         ips = [
           "192.168.130.1/24"
           "${ulaPrefix}:82::1/64"
@@ -92,7 +92,7 @@ in
         peers = [ ];
       };
       interfaces.wg-iot = {
-        listenPort = 51820;
+        listenPort = 51840;
         ips = [
           "192.168.140.1/24"
           "${ulaPrefix}:8C::1/64"
