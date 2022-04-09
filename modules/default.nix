@@ -7,7 +7,6 @@
     ./desktop
     ./gui
     ./jared
-    ./laptop
     ./sound
   ];
 }

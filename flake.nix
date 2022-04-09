@@ -78,7 +78,8 @@
         system = "x86_64-linux";
         modules = [
           ./hosts/beetroot/configuration.nix
-          nixos-hardware.nixosModules.lenovo-thinkpad-t495
+          nixos-hardware.nixosModules.common-cpu-amd
+          nixos-hardware.nixosModules.common-gpu-amd
           self.nixosModule
         ];
       };
@@ -88,7 +89,7 @@
         modules = [
           ./hosts/asparagus/configuration.nix
           nixos-hardware.nixosModules.common-cpu-amd
-          nixos-hardware.nixosModules.common-pc
+          nixos-hardware.nixosModules.common-gpu-amd
           self.nixosModule
         ];
       };

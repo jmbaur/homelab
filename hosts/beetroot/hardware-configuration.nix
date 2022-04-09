@@ -5,7 +5,8 @@
 
 {
   imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
+    [
+      (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
   boot.initrd.availableKernelModules = [ "nvme" "ehci_pci" "xhci_pci" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
@@ -14,7 +15,8 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/2b466b66-9b03-426b-b746-11ea2473a5f6";
+    {
+      device = "/dev/disk/by-uuid/2b466b66-9b03-426b-b746-11ea2473a5f6";
       fsType = "btrfs";
       options = [ "subvol=@" "noatime" "discard=async" "compress=zstd" ];
     };
@@ -22,25 +24,29 @@
   boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/8ffc4b7f-1e6c-476f-9a72-c2b33656895a";
 
   fileSystems."/nix" =
-    { device = "/dev/disk/by-uuid/2b466b66-9b03-426b-b746-11ea2473a5f6";
+    {
+      device = "/dev/disk/by-uuid/2b466b66-9b03-426b-b746-11ea2473a5f6";
       fsType = "btrfs";
       options = [ "subvol=@nix" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/2b466b66-9b03-426b-b746-11ea2473a5f6";
+    {
+      device = "/dev/disk/by-uuid/2b466b66-9b03-426b-b746-11ea2473a5f6";
       fsType = "btrfs";
       options = [ "subvol=@home" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/home/.snapshots" =
-    { device = "/dev/disk/by-uuid/2b466b66-9b03-426b-b746-11ea2473a5f6";
+    {
+      device = "/dev/disk/by-uuid/2b466b66-9b03-426b-b746-11ea2473a5f6";
       fsType = "btrfs";
       options = [ "subvol=@home/.snapshots" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/B01C-7F07";
+    {
+      device = "/dev/disk/by-uuid/B01C-7F07";
       fsType = "vfat";
     };
 
