@@ -29,26 +29,7 @@ in
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_5_17;
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
-  boot.kernelParams = [
-    "ip=:::::${mgmtIface}:dhcp"
-    "console=ttyS0,115200n8"
-  ];
-  boot.initrd.network = {
-    enable = true;
-    postCommands = ''
-      echo "cryptsetup-askpass; exit" > /root/.profile
-    '';
-    ssh = {
-      enable = true;
-      hostKeys = [ "/etc/ssh/ssh_host_ed25519_key" "/etc/ssh/ssh_host_rsa_key" ];
-      authorizedKeys = builtins.filter
-        (key: key != "")
-        (lib.splitString
-          "\n"
-          (builtins.readFile (import ../../data/jmbaur-ssh-keys.nix))
-        );
-    };
-  };
+  boot.kernelParams = [ "console=ttyS0,115200n8" ];
 
   time.timeZone = "America/Los_Angeles";
 
