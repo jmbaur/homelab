@@ -1,7 +1,9 @@
 { config, lib, ... }:
 let
-  wireguardIface = "wg0";
-  wireguardListenPort = config.networking.wireguard.interfaces.${wireguardIface}.listenPort;
+  wgTrusted = "wg-trusted";
+  wgIot = "wg-iot";
+  wgTrustedListenPort = config.networking.wireguard.interfaces.${wgTrusted}.listenPort;
+  wgIotListenPort = config.networking.wireguard.interfaces.${wgIot}.listenPort;
 in
 {
   networking.nftables = {
@@ -15,7 +17,8 @@ in
       define DEV_IOT = ${iot.name}
       define DEV_GUEST = ${guest.name}
       define DEV_MGMT = ${mgmt.name}
-      define DEV_VPN = ${wireguardIface}
+      define DEV_WG_TRUSTED = ${wgTrusted}
+      define DEV_WG_IOT = ${wgIot}
       define NET_ALL = 192.168.0.0/16
 
       table inet filter {
@@ -39,7 +42,7 @@ in
           chain input_wan {
               icmp type echo-request limit rate 5/second accept
               icmpv6 type echo-request limit rate 5/second accept
-              meta l4proto { udp } th dport ${toString wireguardListenPort} accept
+              meta l4proto { udp } th dport { ${toString wgTrustedListenPort}, ${toString wgIotListenPort} } accept
           }
 
           chain input_always_allowed {
@@ -78,7 +81,8 @@ in
                   $DEV_IOT : jump input_private_untrusted,
                   $DEV_GUEST : jump input_private_untrusted,
                   $DEV_MGMT : jump input_private_trusted,
-                  $DEV_VPN : jump input_private_trusted,
+                  $DEV_WG_TRUSTED : jump input_private_trusted,
+                  $DEV_WG_IOT : jump input_private_untrusted,
               }
 
               # the rest is dropped by the above policy

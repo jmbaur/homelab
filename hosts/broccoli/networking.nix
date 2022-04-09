@@ -81,20 +81,25 @@ in
     };
     wireguard = {
       enable = true;
-      interfaces.wg0 = {
+      interfaces.wg-trusted = {
         listenPort = 51820;
         ips = [
-          "192.168.111.1/24"
-          "${ulaPrefix}:6f::1/64"
-          "${guaPrefix}:6f::1/64"
+          "192.168.130.1/24"
+          "${ulaPrefix}:82::1/64"
+          "${guaPrefix}:82::1/64"
         ];
-        privateKeyFile = "/run/secrets/wg0";
-        peers = [
-          {
-            publicKey = "bsZPHPUPU2K9wMTO6dmvLCRwVJus8YPIJYl1S8f6YHg=";
-            allowedIPs = [ "192.168.111.100/32" "${ulaPrefix}:6f::64/128" "${guaPrefix}:6f::65/128" ];
-          }
+        privateKeyFile = "/run/secrets/wg-trusted";
+        peers = [ ];
+      };
+      interfaces.wg-iot = {
+        listenPort = 51820;
+        ips = [
+          "192.168.140.1/24"
+          "${ulaPrefix}:8C::1/64"
+          "${guaPrefix}:8C::1/64"
         ];
+        privateKeyFile = "/run/secrets/wg-iot";
+        peers = [ ];
       };
     };
   };

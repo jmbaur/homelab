@@ -27,7 +27,8 @@
   sops = {
     defaultSopsFile = ./secrets.yaml;
     age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-    secrets.wg0 = { };
+    secrets.wg-trusted = { };
+    secrets.wg-iot = { };
     secrets.cloudflare = {
       owner = config.users.users.dhcpcd.name;
       group = config.users.users.dhcpcd.group;
