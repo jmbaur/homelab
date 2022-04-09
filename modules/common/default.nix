@@ -67,6 +67,8 @@ with lib;
       '';
     };
 
+    services.physlock.enable = !config.custom.gui.enable;
+
     programs.tmux = {
       enable = true;
       terminal = "screen-256color";

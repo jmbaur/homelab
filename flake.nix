@@ -31,7 +31,9 @@
     }@inputs: flake-utils.lib.eachDefaultSystem
       (system:
       let pkgs = nixpkgs.legacyPackages.${system}; in
-      { devShell = pkgs.mkShell { buildInputs = [ pkgs.sops ]; }; })
+      {
+        devShell = pkgs.mkShell { buildInputs = [ pkgs.sops ]; };
+      })
     //
     {
       checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;

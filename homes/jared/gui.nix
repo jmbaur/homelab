@@ -27,6 +27,7 @@ in
       slack
       spotify
       st
+      sxiv
       ventoy-bin
       virt-manager
       xdg-utils

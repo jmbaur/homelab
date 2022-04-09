@@ -141,7 +141,7 @@ in
       disableConfirmationPrompt = true;
       escapeTime = 10;
       keyMode = "vi";
-      prefix = "C-s";
+      prefix = if config.custom.gui.enable then "C-s" else "C-a";
       terminal = "tmux-256color";
       plugins = with pkgs.tmuxPlugins; [ logging ];
       extraConfig = ''

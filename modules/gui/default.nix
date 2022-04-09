@@ -11,6 +11,10 @@ in
     programs.dconf.enable = true;
     programs.seahorse.enable = true;
     programs.ssh.startAgent = true;
+    programs.xss-lock = {
+      enable = true;
+      lockerCommand = "${pkgs.i3lock}/bin/i3lock -c 000000";
+    };
     services.avahi.enable = true;
     services.blueman.enable = config.hardware.bluetooth.enable;
     services.geoclue2.enable = true;
@@ -18,7 +22,6 @@ in
     services.pcscd.enable = false;
     services.printing.enable = true;
     services.udev.packages = [ pkgs.yubikey-personalization ];
-    services.physlock.enable = true;
     services.xserver = {
       enable = true;
       displayManager.lightdm.enable = true;
