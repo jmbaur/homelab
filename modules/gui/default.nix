@@ -17,10 +17,10 @@ in
     };
     services.avahi.enable = true;
     services.blueman.enable = config.hardware.bluetooth.enable;
-    services.geoclue2.enable = true;
     services.gnome.gnome-keyring.enable = true;
     services.pcscd.enable = false;
     services.printing.enable = true;
+    services.redshift.enable = true;
     services.udev.packages = [ pkgs.yubikey-personalization ];
     services.xserver = {
       enable = true;

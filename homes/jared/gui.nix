@@ -123,7 +123,6 @@ in
     services.pasystray.enable = true;
     services.gnome-keyring = { enable = true; components = [ "secrets" ]; };
     services.clipmenu.enable = true;
-    services.redshift = { tray = true; enable = true; provider = "geoclue2"; };
     services.dunst = {
       enable = true;
       iconTheme = {

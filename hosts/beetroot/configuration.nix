@@ -1,9 +1,9 @@
 { config, lib, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
-
   hardware.bluetooth.enable = true;
   hardware.enableRedistributableFirmware = true;
 
+  boot.kernelParams = [ "acpi_backlight=native" ];
   boot.kernelPackages = pkgs.linuxPackages_5_17;
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   boot.loader.systemd-boot.enable = true;
@@ -14,8 +14,6 @@
   networking.networkmanager.enable = true;
   networking.interfaces.enp3s0f0.useDHCP = false;
   networking.interfaces.wlp1s0.useDHCP = false;
-
-  time.timeZone = "America/Los_Angeles";
 
   custom.cache.enable = false;
   custom.common.enable = true;
