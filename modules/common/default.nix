@@ -60,11 +60,6 @@ with lib;
       loginShellInit = ''
         tmux new-session -d -s default 2>/dev/null || true
       '';
-      interactiveShellInit = ''
-        if [ -z "$TMUX" ]; then
-          tmux attach-session -t default 2>/dev/null || tmux new-session -s default
-        fi
-      '';
     };
 
     services.physlock.enable = !config.custom.gui.enable;
