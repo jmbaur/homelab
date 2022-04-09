@@ -143,7 +143,8 @@ in
                   $DEV_IOT : jump iot,
                   $DEV_GUEST : jump allow_to_internet,
                   $DEV_MGMT : accept,
-                  $DEV_VPN : accept,
+                  $DEV_WG_TRUSTED : accept,
+                  $DEV_WG_IOT : jump iot,
               }
 
               # the rest is dropped by the above policy
