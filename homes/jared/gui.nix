@@ -119,14 +119,20 @@ in
       components = [ "secrets" ];
     };
 
-    services.swayidle = {
-      enable = true;
-      events = [
-        { event = "before-sleep"; command = "swaylock -fFc 000000"; }
-        { event = "lock"; command = "swaylock -fFc 000000"; }
-      ];
-      timeouts = [{ timeout = 60; command = "swaylock -fFc 000000"; }];
-    };
+    services.swayidle =
+      let lockerCommand = "${pkgs.swaylock}/bin/swaylock -fFc 000000"; in
+      {
+        enable = true;
+        events = [
+          { event = "before-sleep"; command = lockerCommand; }
+          { event = "after-resume"; command = "${pkgs.sway}/bin/swaymsg 'output * dpms on'"; }
+          { event = "lock"; command = lockerCommand; }
+        ];
+        timeouts = [
+          { timeout = 605; command = "${pkgs.sway}/bin/swaymsg 'output * dpms off'"; }
+          { timeout = 600; command = lockerCommand; }
+        ];
+      };
 
     services.gammastep = {
       enable = true;
@@ -150,7 +156,7 @@ in
           size = 12.0;
           style = "Regular";
         };
-        menu = "${pkgs.bemenu}/bin/bemenu-run";
+        menu = "${pkgs.bemenu}/bin/bemenu-run --line-height=25 --fn='${toString config.wayland.windowManager.sway.config.fonts.names} ${toString config.wayland.windowManager.sway.config.fonts.size}'";
         terminal = "${pkgs.kitty}/bin/kitty";
         modifier = "Mod4";
         window = {
@@ -159,9 +165,7 @@ in
         };
         defaultWorkspace = "workspace number 1";
         keybindings =
-          let
-            mod = config.wayland.windowManager.sway.config.modifier;
-          in
+          let mod = config.wayland.windowManager.sway.config.modifier; in
           {
             "${mod}+0" = "workspace number 10";
             "${mod}+1" = "workspace number 1";
@@ -206,7 +210,6 @@ in
             "${mod}+Up" = "focus up";
             "${mod}+a" = "focus parent";
             "${mod}+b" = "split h";
-            # "${mod}+c" = "exec ${pkgs.clipmenu}/bin/clipmenu ${dmenuArgs}";
             "${mod}+e" = "layout toggle split";
             "${mod}+f" = "fullscreen toggle";
             "${mod}+h" = "focus left";

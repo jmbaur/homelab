@@ -8,7 +8,6 @@ in
     custom.gui.desktop = lib.mkEnableOption "Enable desktop gui config";
   };
   config = lib.mkIf cfg.enable {
-    environment.variables.NIXOS_OZONE_WL = "1";
     hardware.pulseaudio.enable = !config.custom.sound.enable;
     hardware.i2c.enable = cfg.desktop;
     location.provider = "geoclue2";
@@ -17,6 +16,7 @@ in
     programs.seahorse.enable = true;
     programs.ssh.startAgent = true;
     xdg.portal.enable = true;
+    environment.systemPackages = with pkgs; [ wl-clipboard brightnessctl ];
     programs.sway = {
       enable = true;
       wrapperFeatures.gtk = true;
