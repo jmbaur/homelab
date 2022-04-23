@@ -125,12 +125,15 @@ in
         enable = true;
         events = [
           { event = "before-sleep"; command = lockerCommand; }
-          { event = "after-resume"; command = "${pkgs.sway}/bin/swaymsg 'output * dpms on'"; }
           { event = "lock"; command = lockerCommand; }
         ];
         timeouts = [
-          { timeout = 605; command = "${pkgs.sway}/bin/swaymsg 'output * dpms off'"; }
           { timeout = 600; command = lockerCommand; }
+          {
+            timeout = 605;
+            command = "${pkgs.sway}/bin/swaymsg 'output * dpms off'";
+            resumeCommand = "${pkgs.sway}/bin/swaymsg 'output * dpms on'";
+          }
         ];
       };
 
