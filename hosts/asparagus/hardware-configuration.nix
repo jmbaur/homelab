@@ -5,70 +5,57 @@
 
 {
   imports =
-    [
-      (modulesPath + "/installer/scan/not-detected.nix")
+    [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [
-    "nvme"
-    "xhci_pci"
-    "ahci"
-    "usb_storage"
-    "usbhid"
-    "sd_mod"
-  ] ++ [
-    "r8169" # for initrd network support
-  ];
+  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" ] ++ ["igb"];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    {
-      device = "/dev/disk/by-uuid/66bf58ae-75d3-4181-a657-d6483f562192";
+    { device = "/dev/disk/by-uuid/1acd4277-8a66-4d11-a38d-8db182261874";
       fsType = "btrfs";
       options = [ "subvol=@" "noatime" "discard=async" "compress=zstd" ];
     };
 
-  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/84268849-2eae-4a35-8d77-8ad477603664";
+  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/448d3724-231b-4ba3-bfc5-a46fba7f66d9";
 
   fileSystems."/nix" =
-    {
-      device = "/dev/disk/by-uuid/66bf58ae-75d3-4181-a657-d6483f562192";
+    { device = "/dev/disk/by-uuid/1acd4277-8a66-4d11-a38d-8db182261874";
       fsType = "btrfs";
       options = [ "subvol=@nix" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/home" =
-    {
-      device = "/dev/disk/by-uuid/66bf58ae-75d3-4181-a657-d6483f562192";
+    { device = "/dev/disk/by-uuid/1acd4277-8a66-4d11-a38d-8db182261874";
       fsType = "btrfs";
       options = [ "subvol=@home" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/home/.snapshots" =
-    {
-      device = "/dev/disk/by-uuid/66bf58ae-75d3-4181-a657-d6483f562192";
+    { device = "/dev/disk/by-uuid/1acd4277-8a66-4d11-a38d-8db182261874";
       fsType = "btrfs";
       options = [ "subvol=@home/.snapshots" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/boot" =
-    {
-      device = "/dev/disk/by-uuid/9861-40F5";
+    { device = "/dev/disk/by-uuid/BD15-116C";
       fsType = "vfat";
     };
 
   swapDevices = [ ];
-  zramSwap.enable = true;
-  zramSwap.swapDevices = 1;
+  zramSwap = {
+    enable = true;
+    swapDevices = 1;
+  };
 
   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
   # Per-interface useDHCP will be mandatory in the future, so this generated config
   # replicates the default behaviour.
   networking.useDHCP = lib.mkDefault false;
-  networking.interfaces.enp3s0f0.useDHCP = lib.mkDefault true;
-  networking.interfaces.wlp2s0.useDHCP = lib.mkDefault true;
+  networking.interfaces.enp4s0.useDHCP = lib.mkDefault true;
+  networking.interfaces.enp6s0.useDHCP = lib.mkDefault true;
 
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
   # high-resolution display

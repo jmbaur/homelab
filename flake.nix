@@ -2,18 +2,31 @@
   description = "NixOS configurations for the homelab";
 
   inputs = {
+    nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixpkgs-jmbaur.url = "github:jmbaur/nixpkgs/mosh-378dfa6";
     deploy-rs.url = "github:serokell/deploy-rs";
     flake-utils.url = "github:numtide/flake-utils";
     git-get.url = "github:jmbaur/git-get";
     gobar.url = "github:jmbaur/gobar";
     gosee.url = "github:jmbaur/gosee";
-    home-manager = { url = "github:nix-community/home-manager"; inputs.nixpkgs.follows = "nixpkgs"; };
     hosts.url = "github:StevenBlack/hosts";
-    neovim.url = "github:jmbaur/neovim";
-    nixos-hardware = { url = "github:NixOS/nixos-hardware"; inputs.nixpkgs.follows = "nixpkgs"; };
-    nixpkgs.url = "nixpkgs/nixos-unstable";
-    nixpkgs-jmbaur.url = "github:jmbaur/nixpkgs/mosh-378dfa6";
     sops-nix.url = "github:mic92/sops-nix";
+    neovim = {
+      url = "github:jmbaur/neovim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixos-hardware = {
+      url = "github:NixOS/nixos-hardware";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    microvm = {
+      url = "github:astro/microvm.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -25,24 +38,26 @@
     , gosee
     , home-manager
     , hosts
+    , microvm
     , neovim
     , nixos-hardware
     , nixpkgs
     , nixpkgs-jmbaur
     , sops-nix
+    , ...
     }@inputs: flake-utils.lib.eachDefaultSystem
       (system:
       let pkgs = nixpkgs.legacyPackages.${system}; in
       {
-        devShell = pkgs.mkShell { buildInputs = [ pkgs.sops ]; };
+        devShells.default = pkgs.mkShell { buildInputs = [ pkgs.sops ]; };
       })
     //
     {
       checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
 
-      overlay = import ./pkgs/overlay.nix;
+      overlays.default = import ./pkgs/overlay.nix;
 
-      nixosModule = {
+      nixosModules.default = {
         imports = [
           ./modules
           home-manager.nixosModules.home-manager
@@ -55,7 +70,7 @@
           gobar.overlay
           gosee.overlay
           neovim.overlay
-          self.overlay
+          self.overlays.default
           (final: prev: {
             inherit (nixpkgs-jmbaur.legacyPackages.${prev.system}) mosh;
           })
@@ -64,10 +79,11 @@
 
       nixosConfigurations.broccoli = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
         modules = [
           ./hosts/broccoli/configuration.nix
           nixos-hardware.nixosModules.supermicro
-          self.nixosModule
+          self.nixosModules.default
         ];
       };
 
@@ -81,21 +97,23 @@
 
       nixosConfigurations.beetroot = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
         modules = [
           ./hosts/beetroot/configuration.nix
           nixos-hardware.nixosModules.common-cpu-amd
           nixos-hardware.nixosModules.common-gpu-amd
-          self.nixosModule
+          self.nixosModules.default
         ];
       };
 
       nixosConfigurations.asparagus = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
         modules = [
           ./hosts/asparagus/configuration.nix
           nixos-hardware.nixosModules.common-cpu-amd
           nixos-hardware.nixosModules.common-gpu-amd
-          self.nixosModule
+          self.nixosModules.default
         ];
       };
 
@@ -122,7 +140,7 @@
         modules = [
           ./hosts/kale/configuration.nix
           nixos-hardware.nixosModules.common-cpu-amd
-          self.nixosModule
+          self.nixosModules.default
           ({
             containers.www.path = self.nixosConfigurations.www.config.system.build.toplevel;
             containers.media.path = self.nixosConfigurations.media.config.system.build.toplevel;
@@ -140,10 +158,11 @@
 
       nixosConfigurations.rhubarb = nixpkgs.lib.nixosSystem {
         system = "aarch64-linux";
+        specialArgs = { inherit inputs; };
         modules = [
           ./hosts/rhubarb/configuration.nix
           nixos-hardware.nixosModules.raspberry-pi-4
-          self.nixosModule
+          self.nixosModules.default
         ];
       };
 

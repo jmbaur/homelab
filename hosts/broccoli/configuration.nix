@@ -14,6 +14,8 @@
   custom.common.enable = true;
   custom.deploy.enable = true;
 
+  documentation.enable = false;
+
   boot.kernelPackages = pkgs.linuxPackages_5_17;
   boot.loader.grub.enable = true;
   boot.loader.grub.version = 2;

@@ -13,10 +13,6 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "asparagus";
-  networking.useDHCP = lib.mkForce false;
-  networking.networkmanager.enable = true;
-  networking.interfaces.enp3s0f0.useDHCP = false;
-  networking.interfaces.wlp2s0.useDHCP = false;
 
   time.timeZone = "America/Los_Angeles";
 
@@ -24,8 +20,7 @@
   custom.common.enable = true;
   custom.containers.enable = true;
   custom.deploy.enable = true;
-  custom.desktop.enable = true;
-  custom.gui.enable = true;
+  custom.gui = { enable = true; desktop = true; };
   custom.jared.enable = true;
   custom.sound.enable = true;
   home-manager.users.jared = {
@@ -43,11 +38,14 @@
     '';
   };
 
+  environment.systemPackages = [ pkgs.radeontop ];
+
   nixpkgs.config.allowUnfree = true;
   services.power-profiles-daemon.enable = true;
   services.fwupd.enable = true;
   programs.nix-ld.enable = true;
   programs.mosh.enable = true;
+  programs.steam.enable = true;
 
   nix.extraOptions = ''
     keep-outputs = true

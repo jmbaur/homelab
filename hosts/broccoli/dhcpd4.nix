@@ -25,7 +25,7 @@
       }
       {
         hostName = "asparagus";
-        ethernetAddress = "e0:be:03:1b:5b:57";
+        ethernetAddress = "a8:a1:59:2a:04:6d";
         ipAddress = "192.168.30.17";
       }
     ];

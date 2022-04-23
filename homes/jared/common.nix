@@ -105,7 +105,7 @@ in
       defaultCacheTtl = 3600;
     };
 
-    programs.bat = { enable = true; config.theme = "Solarized (dark)"; };
+    programs.bat = { enable = true; config.theme = "ansi"; };
     programs.git = {
       enable = true;
       aliases = {
