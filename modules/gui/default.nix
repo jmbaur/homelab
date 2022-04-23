@@ -22,6 +22,15 @@ in
       wrapperFeatures.gtk = true;
     };
     programs.wshowkeys.enable = true;
+    services.greetd = {
+      enable = true;
+      vt = 7;
+      settings = {
+        default_session = {
+          command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd sway";
+        };
+      };
+    };
     services.avahi.enable = true;
     services.gnome.gnome-keyring.enable = true;
     services.pcscd.enable = false;
