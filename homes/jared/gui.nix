@@ -116,6 +116,8 @@ in
 
     programs.mako = {
       enable = true;
+      defaultTimeout = 5000;
+      font = "${toString config.wayland.windowManager.sway.config.fonts.names} ${toString config.wayland.windowManager.sway.config.fonts.size}";
     };
 
     services.gnome-keyring = {
