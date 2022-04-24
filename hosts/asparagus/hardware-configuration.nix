@@ -5,16 +5,18 @@
 
 {
   imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
+    [
+      (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" ] ++ ["igb"];
+  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" ] ++ [ "igb" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/1acd4277-8a66-4d11-a38d-8db182261874";
+    {
+      device = "/dev/disk/by-uuid/1acd4277-8a66-4d11-a38d-8db182261874";
       fsType = "btrfs";
       options = [ "subvol=@" "noatime" "discard=async" "compress=zstd" ];
     };
@@ -22,25 +24,29 @@
   boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/448d3724-231b-4ba3-bfc5-a46fba7f66d9";
 
   fileSystems."/nix" =
-    { device = "/dev/disk/by-uuid/1acd4277-8a66-4d11-a38d-8db182261874";
+    {
+      device = "/dev/disk/by-uuid/1acd4277-8a66-4d11-a38d-8db182261874";
       fsType = "btrfs";
       options = [ "subvol=@nix" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/1acd4277-8a66-4d11-a38d-8db182261874";
+    {
+      device = "/dev/disk/by-uuid/1acd4277-8a66-4d11-a38d-8db182261874";
       fsType = "btrfs";
       options = [ "subvol=@home" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/home/.snapshots" =
-    { device = "/dev/disk/by-uuid/1acd4277-8a66-4d11-a38d-8db182261874";
+    {
+      device = "/dev/disk/by-uuid/1acd4277-8a66-4d11-a38d-8db182261874";
       fsType = "btrfs";
       options = [ "subvol=@home/.snapshots" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/BD15-116C";
+    {
+      device = "/dev/disk/by-uuid/BD15-116C";
       fsType = "vfat";
     };
 

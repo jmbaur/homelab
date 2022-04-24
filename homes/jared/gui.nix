@@ -99,6 +99,10 @@ in
         scrollback_lines = 10000;
         term = "xterm-256color";
         update_check_interval = 0;
+        include = builtins.fetchurl {
+          url = "https://gist.githubusercontent.com/lunks/0d5731693084b2831c88ca23936d20e8/raw/bcec0591ac7fb414be214ecedf55bd9ad5606b69/gruvbox-dark.conf";
+          sha256 = "1hxvjy4sr0grw2p9sxycz3h6rwwxxxfmim7c6w1cjnkpahq4gapm";
+        };
       };
     };
 
