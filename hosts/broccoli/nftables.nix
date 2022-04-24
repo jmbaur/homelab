@@ -57,7 +57,7 @@ in
 
               meta l4proto tcp th dport ssh log prefix "input ssh - " accept
               meta l4proto udp th dport 69 log prefix "input tftp - " accept
-              meta l4proto tcp th dport ${toString config.services.iperf3.port} log prefix "input iperf3 - " accept
+              meta l4proto { tcp, udp } th dport ${toString config.services.iperf3.port} log prefix "input iperf3 - " accept
           }
 
           chain input_private_untrusted {

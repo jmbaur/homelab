@@ -40,9 +40,11 @@ in
         hosts {
           ${lib.concatMapStrings (machine: ''
             ${machine.ipAddress} ${machine.hostName}.${domain}
-          '') config.services.dhcpd4.machines}
+          '') (with config.services; dhcpd4.machines ++ dhcpd6.machines)}
 
-          ${(lib.last config.networking.interfaces.mgmt.ipv4.addresses).address} ${config.networking.hostName}.${domain}
+          ${lib.concatMapStrings (addr: ''
+            ${addr.address} ${config.networking.hostName}.${domain}
+          '') (with config.networking.interfaces.mgmt; ipv4.addresses ++ ipv6.addresses)}
         }
       }
     '';

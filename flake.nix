@@ -88,7 +88,7 @@
       };
 
       deploy.nodes.broccoli = {
-        hostname = "broccoli";
+        hostname = "broccoli.home.arpa";
         profiles.system = {
           sshUser = "root";
           path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.broccoli;
@@ -118,7 +118,7 @@
       };
 
       deploy.nodes.asparagus = {
-        hostname = "asparagus";
+        hostname = "asparagus.home.arpa";
         profiles.system = {
           sshUser = "root";
           path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.asparagus;
@@ -149,7 +149,7 @@
       };
 
       deploy.nodes.kale = {
-        hostname = "kale";
+        hostname = "kale.home.arpa";
         profiles.system = {
           sshUser = "root";
           path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.kale;
@@ -167,7 +167,7 @@
       };
 
       deploy.nodes.rhubarb = {
-        hostname = "localhost";
+        hostname = "rhubarb.home.arpa";
         profiles.system = {
           sshUser = "root";
           path = deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigurations.rhubarb;
