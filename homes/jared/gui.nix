@@ -16,6 +16,7 @@ in
       ddcutil
       element-desktop-wayland
       firefox-wayland
+      gimp
       google-chrome
       grim
       hack-font
