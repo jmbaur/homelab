@@ -9,56 +9,55 @@
       (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "nvme" "ehci_pci" "xhci_pci" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
+  boot.initrd.availableKernelModules = [ "nvme" "ehci_pci" "xhci_pci" "usb_storage" "sd_mod" "sdhci_pci" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
     {
-      device = "/dev/disk/by-uuid/2b466b66-9b03-426b-b746-11ea2473a5f6";
+      device = "/dev/disk/by-uuid/435c9907-9b2a-4d9e-b7cb-bcfb4d1f9c52";
       fsType = "btrfs";
       options = [ "subvol=@" "noatime" "discard=async" "compress=zstd" ];
     };
 
-  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/8ffc4b7f-1e6c-476f-9a72-c2b33656895a";
+  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/92797ae1-0c39-4a91-b2bc-cda1389b0a0e";
 
   fileSystems."/nix" =
     {
-      device = "/dev/disk/by-uuid/2b466b66-9b03-426b-b746-11ea2473a5f6";
+      device = "/dev/disk/by-uuid/435c9907-9b2a-4d9e-b7cb-bcfb4d1f9c52";
       fsType = "btrfs";
       options = [ "subvol=@nix" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/home" =
     {
-      device = "/dev/disk/by-uuid/2b466b66-9b03-426b-b746-11ea2473a5f6";
+      device = "/dev/disk/by-uuid/435c9907-9b2a-4d9e-b7cb-bcfb4d1f9c52";
       fsType = "btrfs";
       options = [ "subvol=@home" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/home/.snapshots" =
     {
-      device = "/dev/disk/by-uuid/2b466b66-9b03-426b-b746-11ea2473a5f6";
+      device = "/dev/disk/by-uuid/435c9907-9b2a-4d9e-b7cb-bcfb4d1f9c52";
       fsType = "btrfs";
       options = [ "subvol=@home/.snapshots" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/boot" =
     {
-      device = "/dev/disk/by-uuid/B01C-7F07";
+      device = "/dev/disk/by-uuid/483E-57C0";
       fsType = "vfat";
     };
 
   swapDevices = [ ];
-  zramSwap.enable = true;
-  zramSwap.swapDevices = 1;
 
   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
   # Per-interface useDHCP will be mandatory in the future, so this generated config
   # replicates the default behaviour.
   networking.useDHCP = lib.mkDefault false;
   networking.interfaces.enp3s0f0.useDHCP = lib.mkDefault true;
+  networking.interfaces.enp4s0.useDHCP = lib.mkDefault true;
   networking.interfaces.wlp1s0.useDHCP = lib.mkDefault true;
 
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;

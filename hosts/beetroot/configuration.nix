@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
-  hardware.bluetooth.enable = true;
+  # hardware.bluetooth.enable = true;
   hardware.enableRedistributableFirmware = true;
 
   boot.kernelParams = [ "acpi_backlight=native" ];
@@ -10,9 +10,9 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "beetroot";
-  networking.useDHCP = lib.mkForce false;
   networking.networkmanager.enable = true;
   networking.interfaces.enp3s0f0.useDHCP = false;
+  networking.interfaces.enp4s0.useDHCP = false;
   networking.interfaces.wlp1s0.useDHCP = false;
 
   custom.cache.enable = false;

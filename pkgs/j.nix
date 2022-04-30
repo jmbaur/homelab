@@ -1,11 +1,10 @@
 { writeShellApplication
-, fd
 , fzf
 , tmux
 }:
 writeShellApplication {
   name = "j";
-  runtimeInputs = [ fd tmux ];
+  runtimeInputs = [ fzf tmux ];
   text = ''
     function usage() {
       cat <<EOF
@@ -23,7 +22,7 @@ writeShellApplication {
       exit 1
     fi
 
-    tmux_session_path=$(fd --type=directory --max-depth=4 --hidden "^.git$" "$directory" | sed "s,/\.git,," | { grep ".*''${1:-}.*" || true; } | fzf -1)
+    tmux_session_path=$(find "$directory" -name .git -type d -prune | sed "s,/\.git,," | { grep ".*''${1:-}.*" || true; } | fzf -1)
     tmux_session_name=$(echo -n "$tmux_session_path" | sed "s,$directory/,," | sed "s,\.,_,g")
 
     if ! tmux list-sessions -F "#{session_name}" 2>/dev/null | grep --quiet "$tmux_session_name"; then

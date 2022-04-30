@@ -169,6 +169,14 @@ in
         menu = "${pkgs.bemenu}/bin/bemenu-run --line-height=25 --fn='${toString config.wayland.windowManager.sway.config.fonts.names} ${toString config.wayland.windowManager.sway.config.fonts.size}'";
         terminal = "${pkgs.kitty}/bin/kitty";
         modifier = "Mod4";
+        input = {
+          "type:keyboard".xkb_options = "ctrl:nocaps";
+          "type:touchpad" = {
+            dwt = "enabled";
+            natural_scroll = "enabled";
+            tap = "enabled";
+          };
+        };
         window = {
           hideEdgeBorders = "smart";
           titlebar = true;
