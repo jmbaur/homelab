@@ -153,6 +153,7 @@ in
       enable = cfg.laptop;
     };
 
+    xdg.configFile."sway/config".onChange = lib.mkForce "";
     wayland.windowManager.sway = {
       enable = true;
       config = {
