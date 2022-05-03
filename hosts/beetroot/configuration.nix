@@ -40,6 +40,11 @@
   nixpkgs.config.allowUnfree = true;
   services.power-profiles-daemon.enable = true;
   services.fwupd.enable = true;
+  services.fprintd.enable = true;
+  security.pam.services = {
+    login.fprintAuth = true;
+    swaylock.fprintAuth = true;
+  };
   programs.nix-ld.enable = true;
 
   environment.pathsToLink = [ "/share/nix-direnv" ];

@@ -10,6 +10,7 @@ in
   config = lib.mkIf cfg.enable {
     hardware.pulseaudio.enable = !config.custom.sound.enable;
     hardware.i2c.enable = cfg.desktop;
+    security.polkit.enable = true;
     location.provider = "geoclue2";
     programs.adb.enable = true;
     programs.dconf.enable = true;
