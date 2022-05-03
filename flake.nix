@@ -135,15 +135,25 @@
         modules = [ ./containers/media sops-nix.nixosModules.sops ];
       };
 
+      nixosConfigurations.test-vm = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./vms/test-vm.nix
+          microvm.nixosModules.microvm
+        ];
+      };
+
       nixosConfigurations.kale = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
           ./hosts/kale/configuration.nix
           nixos-hardware.nixosModules.common-cpu-amd
           self.nixosModules.default
+          microvm.nixosModules.host
           ({
             containers.www.path = self.nixosConfigurations.www.config.system.build.toplevel;
             containers.media.path = self.nixosConfigurations.media.config.system.build.toplevel;
+            microvm.vms.test-vm.flake = self;
           })
         ];
       };

@@ -13,12 +13,6 @@ in
   custom.common.enable = true;
   custom.deploy.enable = true;
   custom.jared.enable = true;
-  home-manager.users.jared.custom.common.enable = true;
-
-  virtualisation.libvirtd = {
-    enable = true;
-    allowedBridges = [ "virbr0" "br-pubwan" "br-publan" "br-trusted" ];
-  };
 
   systemd.services."serial-getty@ttyS0" = {
     enable = true;
