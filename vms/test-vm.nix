@@ -1,8 +1,12 @@
 { ... }: {
   networking.hostName = "test-vm";
+  security.sudo.wheelNeedsPassword = false;
   users.mutableUsers = false;
-  users.users.jared.isNormalUser = true;
-  users.users.jared.openssh.authorizedKeys.keyFiles = [ (import ../data/jmbaur-ssh-keys.nix) ];
+  users.users.jared = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" ];
+    openssh.authorizedKeys.keyFiles = [ (import ../data/jmbaur-ssh-keys.nix) ];
+  };
   microvm = {
     hypervisor = "qemu";
     mem = 2048;
