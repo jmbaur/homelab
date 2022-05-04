@@ -1,6 +1,7 @@
 { ... }: {
   networking.hostName = "test-vm";
   users.mutableUsers = false;
+  users.users.jared.isNormalUser = true;
   users.users.jared.openssh.authorizedKeys.keyFiles = [ (import ../data/jmbaur-ssh-keys.nix) ];
   microvm = {
     hypervisor = "qemu";
