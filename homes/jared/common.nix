@@ -70,6 +70,7 @@ in
       tree
       unzip
       usbutils
+      w3m
       wireguard-tools
       xsv
       ydiff

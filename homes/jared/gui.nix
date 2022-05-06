@@ -12,29 +12,20 @@ in
     home.packages = with pkgs; [
       (wrapOBS { plugins = with obs-studio-plugins; [ wlrobs ]; })
       bitwarden
-      cage
       ddcutil
       element-desktop-wayland
       firefox-wayland
       gimp
       google-chrome
-      grim
-      hack-font
+      iosevka-bin
       keybase
       libnotify
-      mpv
-      pulsemixer
       signal-desktop
       slack
-      slurp
       spotify
       ventoy-bin
-      wl-clipboard
-      wl-color-picker
-      xdg-utils
       yubikey-manager
       yubikey-personalization
-      zathura
       zoom-us
     ];
 
@@ -55,7 +46,7 @@ in
     gtk = {
       enable = true;
       gtk3.extraConfig = {
-        gtk-theme-name = "Adwaita-dark";
+        gtk-theme-name = "Adwaita";
         gtk-key-theme-name = "Emacs";
       };
       gtk4 = removeAttrs config.gtk.gtk3 [ "bookmarks" "extraCss" "waylandSupport" ];
@@ -87,12 +78,47 @@ in
       };
     };
 
+    programs.alacritty = {
+      enable = true;
+      settings = {
+        env.TERM = "xterm-256color";
+        mouse.hide_when_typing = true;
+        import = [
+          (builtins.fetchurl {
+            url = "https://raw.githubusercontent.com/eendroroy/alacritty-theme/master/themes/solarized_light.yaml";
+            sha256 = "0acml82gvmvsb7d9zn2lj957dqd7vxq53pyad40hf20x11rck3qw";
+          })
+        ];
+        font = {
+          normal.family = config.programs.kitty.font.name;
+          bold.family = config.programs.kitty.font.name;
+          italic.family = config.programs.kitty.font.name;
+          bold_italic.family = config.programs.kitty.font.name;
+          size = config.programs.kitty.font.size - 3;
+        };
+      };
+    };
+
+    programs.foot = {
+      enable = true;
+      settings = {
+        main = {
+          dpi-aware = "yes";
+          font = "${config.programs.kitty.font.name}:size=${toString (config.programs.kitty.font.size - 5)}";
+          term = "xterm-256color";
+          include = "${pkgs.foot.src}/themes/solarized-light";
+        };
+        mouse.hide-when-typing = "yes";
+      };
+    };
+
     programs.kitty = {
       enable = true;
+      theme = "Solarized Light";
       font = {
-        package = pkgs.hack-font;
-        name = "Hack";
-        size = 14;
+        package = pkgs.iosevka-bin;
+        name = "Iosevka";
+        size = 17;
       };
       settings = {
         copy_on_select = true;
@@ -100,10 +126,6 @@ in
         scrollback_lines = 10000;
         term = "xterm-256color";
         update_check_interval = 0;
-        include = builtins.fetchurl {
-          url = "https://raw.githubusercontent.com/kdrag0n/base16-kitty/master/colors/base16-tomorrow-night.conf";
-          sha256 = "0par93sbzjhvmk292y42fwiwr6sa3nvp1rvh9njgnh5jghhg5491";
-        };
       };
     };
 
@@ -167,7 +189,7 @@ in
           size = 12.0;
           style = "Regular";
         };
-        menu = "${pkgs.bemenu}/bin/bemenu-run --line-height=25 --fn='${toString config.wayland.windowManager.sway.config.fonts.names} ${toString config.wayland.windowManager.sway.config.fonts.size}'";
+        menu = "${pkgs.bemenu}/bin/bemenu-run --line-height=27 --fn='${toString config.wayland.windowManager.sway.config.fonts.names} ${toString config.wayland.windowManager.sway.config.fonts.size}'";
         terminal = "${pkgs.kitty}/bin/kitty";
         modifier = "Mod4";
         input = {
