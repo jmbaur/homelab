@@ -89,7 +89,6 @@ in
 
     programs.kitty = {
       enable = true;
-      theme = "modus-vivendi";
       font = {
         package = pkgs.hack-font;
         name = "Hack";
@@ -102,8 +101,8 @@ in
         term = "xterm-256color";
         update_check_interval = 0;
         include = builtins.fetchurl {
-          url = "https://gist.githubusercontent.com/lunks/0d5731693084b2831c88ca23936d20e8/raw/bcec0591ac7fb414be214ecedf55bd9ad5606b69/gruvbox-dark.conf";
-          sha256 = "1hxvjy4sr0grw2p9sxycz3h6rwwxxxfmim7c6w1cjnkpahq4gapm";
+          url = "https://raw.githubusercontent.com/kdrag0n/base16-kitty/master/colors/base16-tomorrow-night.conf";
+          sha256 = "0par93sbzjhvmk292y42fwiwr6sa3nvp1rvh9njgnh5jghhg5491";
         };
       };
     };
