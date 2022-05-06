@@ -46,6 +46,8 @@
   };
 
   nixpkgs.config.allowUnfree = true;
+
+  services.mullvad-vpn.enable = true;
   services.power-profiles-daemon.enable = true;
   services.fwupd.enable = true;
   services.fprintd.enable = true;
