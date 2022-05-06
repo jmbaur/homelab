@@ -1,7 +1,14 @@
 { config, lib, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
-  # hardware.bluetooth.enable = true;
+
   hardware.enableRedistributableFirmware = true;
+
+  # TODO(jared): https://github.com/NixOS/nixpkgs/issues/170573
+  hardware.bluetooth.enable = true;
+  systemd.tmpfiles.rules = [
+    "d /var/lib/bluetooth 700 root root - -"
+  ];
+  systemd.targets."bluetooth".after = [ "systemd-tmpfiles-setup.service" ];
 
   boot.kernelParams = [ "acpi_backlight=native" ];
   boot.kernelPackages = pkgs.linuxPackages_5_17;
@@ -43,6 +50,7 @@
   services.fwupd.enable = true;
   services.fprintd.enable = true;
   security.pam.services = {
+    sudo.fprintAuth = false;
     login.fprintAuth = true;
     swaylock.fprintAuth = true;
   };

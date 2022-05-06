@@ -58,7 +58,7 @@ with lib;
 
     programs.bash = {
       loginShellInit = ''
-        tmux new-session -d -s default 2>/dev/null || true
+        tmux new-session -d -s default -c "$HOME" 2>/dev/null || true
       '';
     };
 

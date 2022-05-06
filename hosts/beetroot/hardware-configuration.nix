@@ -24,7 +24,7 @@
   boot.initrd.luks.devices."cryptroot" = {
     allowDiscards = true;
     device = "/dev/disk/by-uuid/92797ae1-0c39-4a91-b2bc-cda1389b0a0e";
-    crypttabExtraOpts = [ /*  "tpm2-device=auto"  */ ];
+    crypttabExtraOpts = [ "fido2-device=auto" ]; # TODO(jared): not working yet
   };
 
   fileSystems."/nix" =
