@@ -45,10 +45,11 @@ in
       createDirectories = true;
     };
 
-    xsession.pointerCursor = {
+    home.pointerCursor = {
       package = pkgs.gnome.gnome-themes-extra;
       name = "Adwaita";
       size = 16;
+      x11.enable = true;
     };
 
     gtk = {

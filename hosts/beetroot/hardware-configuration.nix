@@ -21,7 +21,11 @@
       options = [ "subvol=@" "noatime" "discard=async" "compress=zstd" ];
     };
 
-  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/92797ae1-0c39-4a91-b2bc-cda1389b0a0e";
+  boot.initrd.luks.devices."cryptroot" = {
+    allowDiscards = true;
+    device = "/dev/disk/by-uuid/92797ae1-0c39-4a91-b2bc-cda1389b0a0e";
+    crypttabExtraOpts = [ /*  "tpm2-device=auto"  */ ];
+  };
 
   fileSystems."/nix" =
     {

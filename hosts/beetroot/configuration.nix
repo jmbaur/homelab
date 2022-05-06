@@ -8,6 +8,7 @@
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.initrd.systemd.enable = true;
 
   networking.hostName = "beetroot";
   networking.networkmanager.enable = true;

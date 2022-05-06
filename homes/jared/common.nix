@@ -12,12 +12,10 @@ in
     };
 
     home.packages = with pkgs; [
-      # yq # currently broken
       age
       awscli2
       buildah
       direnv
-      dust
       exa
       fd
       fzf
