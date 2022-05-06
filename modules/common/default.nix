@@ -31,7 +31,10 @@ with lib;
     };
 
     i18n.defaultLocale = "en_US.UTF-8";
-    console.useXkbConfig = true;
+    console = {
+      earlySetup = true;
+      useXkbConfig = true;
+    };
     services.xserver.xkbOptions = "ctrl:nocaps";
 
     environment.variables.EDITOR = "vim";
