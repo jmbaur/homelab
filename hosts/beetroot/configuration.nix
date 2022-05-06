@@ -51,10 +51,10 @@
   services.power-profiles-daemon.enable = true;
   services.fwupd.enable = true;
   services.fprintd.enable = true;
-  security.pam.services = {
-    sudo.fprintAuth = false;
-    login.fprintAuth = true;
-    swaylock.fprintAuth = true;
+  security.pam.services.sudo.fprintAuth = false;
+  services.openssh = {
+    enable = true;
+    listenAddresses = builtins.map (addr: { inherit addr; port = 22; }) [ "127.0.0.1" "::1" ];
   };
   programs.nix-ld.enable = true;
 

@@ -16,7 +16,7 @@
     "usbhid"
     "sd_mod"
     "rtsx_pci_sdmmc"
-  ] ++ [ "iwlwifi" "e1000e" ];
+  ] ++ [ "iwlwifi" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];

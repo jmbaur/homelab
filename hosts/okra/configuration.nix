@@ -20,6 +20,8 @@
   custom.jared.enable = true;
   custom.sound.enable = true;
 
+  services.fwupd.enable = true;
+
   environment.systemPackages = with pkgs; [ firefox google-chrome ];
 
   users.users.jared.hashedPassword = "$6$MCUX2IpSO6QN9nNc$Xpk.2K6pVL3FxOoFC/Mg5vA4BpgyNDvhQ9cWJXRA.CFTTJrh.W5RChgpZUI7pflSlCXfmdJhnsrHisezu6k6j/";

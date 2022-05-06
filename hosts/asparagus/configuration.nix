@@ -11,7 +11,6 @@
     memtest86.enable = true;
   };
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.initrd.systemd.enable = true;
 
   networking.hostName = "asparagus";
 
