@@ -28,6 +28,11 @@
         ethernetAddress = "a8:a1:59:2a:04:6d";
         ipAddress = "192.168.30.17";
       }
+      {
+        hostName = "okra";
+        ethernetAddress = "5c:80:b6:92:eb:27";
+        ipAddress = "192.168.40.12";
+      }
     ];
     extraConfig = ''
       ddns-update-style none;

@@ -43,11 +43,13 @@ with lib;
       dmidecode
       dnsutils
       file
+      gitMinimal
       htop
       iputils
       killall
       lm_sensors
       lsof
+      mullvad
       pciutils
       tcpdump
       tmux

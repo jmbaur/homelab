@@ -106,6 +106,24 @@
         ];
       };
 
+      nixosConfigurations.okra = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./hosts/okra/configuration.nix
+          nixos-hardware.nixosModules.intel-nuc-8i7beh
+          self.nixosModules.default
+        ];
+      };
+
+      deploy.nodes.okra = {
+        hostname = "okra.home.arpa";
+        profiles.system = {
+          sshUser = "root";
+          path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.okra;
+        };
+      };
+
       nixosConfigurations.asparagus = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = { inherit inputs; };
