@@ -21,9 +21,18 @@
   boot.extraModulePackages = [ ];
 
   boot.initrd.luks.reusePassphrases = true;
-  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/f21ee887-1fd6-4f5b-9a93-5cadc76dc9d0";
-  boot.initrd.luks.devices."cryptfast0".device = "/dev/disk/by-uuid/fe11928a-a8cc-432f-a26f-247ceb752133";
-  boot.initrd.luks.devices."cryptfast1".device = "/dev/disk/by-uuid/585155c2-ff8f-4102-95cf-71031b9b4ab9";
+  boot.initrd.luks.devices."cryptroot" = {
+    allowDiscards = true;
+    device = "/dev/disk/by-uuid/f21ee887-1fd6-4f5b-9a93-5cadc76dc9d0";
+  };
+  boot.initrd.luks.devices."cryptfast0" = {
+    allowDiscards = true;
+    device = "/dev/disk/by-uuid/fe11928a-a8cc-432f-a26f-247ceb752133";
+  };
+  boot.initrd.luks.devices."cryptfast1" = {
+    allowDiscards = true;
+    device = "/dev/disk/by-uuid/585155c2-ff8f-4102-95cf-71031b9b4ab9";
+  };
   boot.initrd.luks.devices."cryptbig0".device = "/dev/disk/by-uuid/5abf67a7-3020-408a-a59f-0b899a59fcbb";
   boot.initrd.luks.devices."cryptbig1".device = "/dev/disk/by-uuid/b3adb35b-b9fa-45bf-8556-6083ad1e5f37";
 
