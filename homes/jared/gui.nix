@@ -73,7 +73,9 @@ in
         "editor.minimap.enabled" = false;
         "extensions.ignoreRecommendations" = true;
         "telemetry.telemetryLevel" = "off";
+        "terminal.external.linuxExec" = config.wayland.windowManager.sway.config.terminal;
         "vscode-neovim.neovimExecutablePaths.linux" = "${pkgs.neovim-embed}/bin/nvim";
+        "workbench.colorTheme" = "Solarized Light";
       };
     };
 
