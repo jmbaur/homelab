@@ -19,7 +19,6 @@ in
       google-chrome
       iosevka-bin
       keybase
-      libnotify
       signal-desktop
       slack
       spotify
@@ -149,7 +148,7 @@ in
     };
 
     services.swayidle =
-      let lockerCommand = "${pkgs.swaylock}/bin/swaylock -fFc 000000"; in
+      let lockerCommand = "${pkgs.swaylock}/bin/swaylock -f"; in
       {
         enable = true;
         events = [

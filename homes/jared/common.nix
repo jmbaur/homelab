@@ -104,7 +104,16 @@ in
       defaultCacheTtl = 3600;
     };
 
-    programs.bat = { enable = true; config.theme = "ansi"; };
+    programs.htop = {
+      enable = true;
+      settings = {
+        color_scheme = 6;
+        cpu_count_from_one = 0;
+        highlight_base_name = 1;
+      };
+    };
+
+    programs.bat = { enable = true; config.theme = "Solarized (light)"; };
     programs.git = {
       enable = true;
       aliases = {
