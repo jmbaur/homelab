@@ -17,11 +17,29 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.initrd.systemd.enable = true;
 
-  networking.hostName = "beetroot";
-  networking.networkmanager.enable = true;
-  networking.interfaces.enp3s0f0.useDHCP = false;
-  networking.interfaces.enp4s0.useDHCP = false;
-  networking.interfaces.wlp1s0.useDHCP = false;
+  networking = {
+    hostName = "beetroot";
+    useNetworkd = true;
+    wireless.iwd.enable = true;
+  };
+
+  # don't enable this for a laptop
+  systemd.services."systemd-networkd-wait-online".enable = false;
+  systemd.network = {
+    enable = true;
+    networks = {
+      wired = {
+        matchConfig.Name = "en*";
+        networkConfig.DHCP = "yes";
+        dhcpV4Config.RouteMetric = 10;
+      };
+      wireless = {
+        matchConfig.Name = "wl*";
+        networkConfig.DHCP = "yes";
+        dhcpV4Config.RouteMetric = 20;
+      };
+    };
+  };
 
   custom.cache.enable = false;
   custom.common.enable = true;
