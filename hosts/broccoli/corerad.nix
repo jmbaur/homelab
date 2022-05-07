@@ -16,9 +16,9 @@ in
   services.corerad = {
     enable = true;
     settings = {
-      interfaces = with config.networking.interfaces;
-        (builtins.map mkUnmanagedCoreradInterface [ trusted iot guest ]) ++
-        (builtins.map mkManagedCoreradInterface [ mgmt ]);
+      # interfaces = with config.networking.interfaces;
+      #   (builtins.map mkUnmanagedCoreradInterface [ trusted iot guest ]) ++
+      #   (builtins.map mkManagedCoreradInterface [ mgmt ]);
       debug = { address = ":9430"; prometheus = true; };
     };
   };

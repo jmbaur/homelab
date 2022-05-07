@@ -30,6 +30,7 @@ in
   networking = {
     hostName = "kale";
     useDHCP = false;
+    useNetworkd = true;
     firewall = {
       enable = true;
       interfaces.${mgmtIface} = {

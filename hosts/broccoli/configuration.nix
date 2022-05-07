@@ -31,14 +31,8 @@
     age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
     secrets.wg-trusted = { };
     secrets.wg-iot = { };
-    secrets.cloudflare = {
-      owner = config.users.users.dhcpcd.name;
-      group = config.users.users.dhcpcd.group;
-    };
-    secrets.he_tunnelbroker = {
-      owner = config.users.users.dhcpcd.name;
-      group = config.users.users.dhcpcd.group;
-    };
+    secrets.cloudflare = { };
+    secrets.he_tunnelbroker = { };
   };
 
   environment.systemPackages = with pkgs; [
@@ -61,24 +55,24 @@
   services.avahi = {
     enable = true;
     reflector = true;
-    interfaces = with config.networking.interfaces; [ trusted.name iot.name ];
+    # interfaces = with config.networking.interfaces; [ trusted.name iot.name ];
     ipv4 = true;
     ipv6 = true;
   };
-  services.openssh = with config.networking.interfaces; {
+  services.openssh = {
     enable = true;
     passwordAuthentication = false;
     openFirewall = false;
     allowSFTP = false;
-    listenAddresses = (
-      (builtins.map
-        (ifi: { port = 22; addr = ifi.address; })
-        mgmt.ipv4.addresses)
-      ++
-      (builtins.map
-        (ifi: { port = 22; addr = "[" + ifi.address + "]"; })
-        mgmt.ipv6.addresses)
-    );
+    # listenAddresses = (
+    #   (builtins.map
+    #     (ifi: { port = 22; addr = ifi.address; })
+    #     mgmt.ipv4.addresses)
+    #   ++
+    #   (builtins.map
+    #     (ifi: { port = 22; addr = "[" + ifi.address + "]"; })
+    #     mgmt.ipv6.addresses)
+    # );
   };
   services.iperf3.enable = true;
 

@@ -2,9 +2,9 @@
   systemd.services.dhcpcd.serviceConfig.SupplementaryGroups = [ config.users.groups.keys.name ];
 
   networking.dhcpcd = {
-    enable = true;
+    enable = false;
     persistent = true;
-    allowInterfaces = [ config.networking.interfaces.enp0s20f0.name ];
+    allowInterfaces = [ /*  config.systemd.interfaces.enp0s20f0.name  */ ];
     extraConfig = ''
       # Disable ipv6 router solicitation
       noipv6rs

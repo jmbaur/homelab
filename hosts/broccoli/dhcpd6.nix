@@ -1,7 +1,7 @@
 { config, pkgs, ... }: {
   services.dhcpd6 = {
     enable = true;
-    interfaces = with config.networking.interfaces; [ mgmt.name ];
+    # interfaces = with config.networking.interfaces; [ mgmt.name ];
     machines = [
       # {
       #   hostName = "broccoli-ipmi";

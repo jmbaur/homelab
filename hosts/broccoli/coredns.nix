@@ -42,9 +42,9 @@ in
             ${machine.ipAddress} ${machine.hostName}.${domain}
           '') (with config.services; dhcpd4.machines ++ dhcpd6.machines)}
 
-          ${lib.concatMapStrings (addr: ''
-            ${addr.address} ${config.networking.hostName}.${domain}
-          '') (with config.networking.interfaces.mgmt; ipv4.addresses ++ ipv6.addresses)}
+          ${lib.concatMapStrings (a: ''
+            ${a.addressConfig.Address} ${config.networking.hostName}.${domain}
+          '') config.systemd.network.networks.mgmt.addresses}
         }
       }
     '';

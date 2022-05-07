@@ -1,7 +1,7 @@
 { config, pkgs, ... }: {
   services.dhcpd4 = {
     enable = true;
-    interfaces = with config.networking.interfaces; [ trusted.name iot.name guest.name mgmt.name ];
+    # interfaces = with config.networking.interfaces; [ trusted.name iot.name guest.name mgmt.name ];
     machines = [
       {
         hostName = "broccoli-ipmi";

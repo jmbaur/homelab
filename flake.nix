@@ -11,6 +11,10 @@
     gosee.url = "github:jmbaur/gosee";
     hosts.url = "github:StevenBlack/hosts";
     sops-nix.url = "github:mic92/sops-nix";
+    # homelab-private = {
+    #   url = "github:jmbaur/homelab-private";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
     neovim = {
       url = "github:jmbaur/neovim";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -39,6 +43,7 @@
     , home-manager
     , hosts
     , microvm
+      # , homelab-private
     , neovim
     , nixos-hardware
     , nixpkgs
@@ -82,6 +87,7 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/broccoli/configuration.nix
+          # homelab-private.nixosModules.broccoli
           nixos-hardware.nixosModules.supermicro
           self.nixosModules.default
         ];
@@ -100,8 +106,8 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/beetroot/configuration.nix
-          nixos-hardware.nixosModules.common-cpu-amd
-          nixos-hardware.nixosModules.common-gpu-amd
+          # homelab-private.nixosModules.beetroot
+          nixos-hardware.nixosModules.lenovo-thinkpad-t495
           self.nixosModules.default
         ];
       };
@@ -165,9 +171,10 @@
         system = "x86_64-linux";
         modules = [
           ./hosts/kale/configuration.nix
+          # homelab-private.nixosModules.kale
+          microvm.nixosModules.host
           nixos-hardware.nixosModules.common-cpu-amd
           self.nixosModules.default
-          microvm.nixosModules.host
           ({
             containers.www.path = self.nixosConfigurations.www.config.system.build.toplevel;
             containers.media.path = self.nixosConfigurations.media.config.system.build.toplevel;
