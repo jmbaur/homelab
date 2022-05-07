@@ -105,7 +105,7 @@ in
       settings = {
         main = {
           dpi-aware = "yes";
-          font = "${config.programs.kitty.font.name}:size=${toString (config.programs.kitty.font.size - 5)}";
+          font = "${config.programs.kitty.font.name}:size=${toString (config.programs.kitty.font.size - 7)}";
           term = "xterm-256color";
           include = "${pkgs.foot.src}/themes/solarized-light";
         };

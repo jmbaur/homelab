@@ -12,7 +12,31 @@
   };
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "asparagus";
+  networking = {
+    hostName = "asparagus";
+    useNetworkd = true;
+  };
+  systemd.network = {
+    enable = true;
+    networks = {
+      wired_normal = {
+        matchConfig.Name = "enp4s0";
+        networkConfig.DHCP = "yes";
+        dhcpV4Config = {
+          RouteMetric = 10;
+          UseDomains = "yes";
+        };
+      };
+      wired_mgmt = {
+        matchConfig.Name = "enp6s0";
+        networkConfig.DHCP = "yes";
+        dhcpV4Config = {
+          RouteMetric = 20;
+          UseDomains = "yes";
+        };
+      };
+    };
+  };
 
   time.timeZone = "America/Los_Angeles";
 
@@ -47,6 +71,7 @@
   programs.mosh.enable = true;
   programs.steam.enable = true;
 
+  environment.pathsToLink = [ "/share/nix-direnv" ];
   nix.extraOptions = ''
     keep-outputs = true
     keep-derivations = true

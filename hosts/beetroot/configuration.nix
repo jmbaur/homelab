@@ -31,12 +31,18 @@
       wired = {
         matchConfig.Name = "en*";
         networkConfig.DHCP = "yes";
-        dhcpV4Config.RouteMetric = 10;
+        dhcpV4Config = {
+          RouteMetric = 10;
+          UseDomains = "yes";
+        };
       };
       wireless = {
         matchConfig.Name = "wl*";
         networkConfig.DHCP = "yes";
-        dhcpV4Config.RouteMetric = 20;
+        dhcpV4Config = {
+          RouteMetric = 20;
+          UseDomains = "yes";
+        };
       };
     };
   };
