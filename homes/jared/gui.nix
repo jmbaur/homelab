@@ -95,7 +95,7 @@ in
           bold.family = config.programs.kitty.font.name;
           italic.family = config.programs.kitty.font.name;
           bold_italic.family = config.programs.kitty.font.name;
-          size = config.programs.kitty.font.size - 3;
+          size = config.programs.kitty.font.size;
         };
       };
     };
