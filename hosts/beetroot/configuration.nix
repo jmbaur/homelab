@@ -25,6 +25,7 @@
 
   # don't enable this for a laptop
   systemd.services."systemd-networkd-wait-online".enable = false;
+
   systemd.network = {
     enable = true;
     networks = {
