@@ -29,8 +29,16 @@
   sops = {
     defaultSopsFile = ./secrets.yaml;
     age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-    secrets.wg-trusted = { };
-    secrets.wg-iot = { };
+    secrets.wg-trusted = {
+      mode = "0640";
+      owner = config.users.users.root.name;
+      group = config.users.groups.systemd-network.name;
+    };
+    secrets.wg-iot = {
+      mode = "0640";
+      owner = config.users.users.root.name;
+      group = config.users.groups.systemd-network.name;
+    };
     secrets.cloudflare = { };
     secrets.he_tunnelbroker = { };
   };
@@ -55,7 +63,10 @@
   services.avahi = {
     enable = true;
     reflector = true;
-    # interfaces = with config.networking.interfaces; [ trusted.name iot.name ];
+    interfaces = with config.systemd.network.networks; [
+      trusted.matchConfig.Name
+      iot.matchConfig.Name
+    ];
     ipv4 = true;
     ipv6 = true;
   };
@@ -64,10 +75,10 @@
     passwordAuthentication = false;
     openFirewall = false;
     allowSFTP = false;
-    # listenAddresses = (
+    # listenAddresses = with config.systemd.network.networks; (
     #   (builtins.map
     #     (ifi: { port = 22; addr = ifi.address; })
-    #     mgmt.ipv4.addresses)
+    #     mgmt.networkConfig.Address)
     #   ++
     #   (builtins.map
     #     (ifi: { port = 22; addr = "[" + ifi.address + "]"; })

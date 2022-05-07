@@ -17,6 +17,16 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.initrd.systemd.enable = true;
 
+  sops = {
+    defaultSopsFile = ./secrets.yaml;
+    age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+    secrets.wg-home = {
+      mode = "0640";
+      owner = config.users.users.root.name;
+      group = config.users.groups.systemd-network.name;
+    };
+  };
+
   networking = {
     hostName = "beetroot";
     useNetworkd = true;
@@ -28,6 +38,12 @@
 
   systemd.network = {
     enable = true;
+    netdevs = {
+      wg-home = {
+        netdevConfig = { Name = "wg-home"; Kind = "wireguard"; };
+        wireguardConfig = { PrivateKeyFile = "/run/secrets/wg-home"; };
+      };
+    };
     networks = {
       wired = {
         matchConfig.Name = "en*";
@@ -44,6 +60,10 @@
           RouteMetric = 20;
           UseDomains = "yes";
         };
+      };
+      wg-home = {
+        matchConfig.Name = config.systemd.network.netdevs.wg-home.netdevConfig.Name;
+        linkConfig.ActivationPolicy = "manual"; # sudo networkctl up wg-home
       };
     };
   };
@@ -72,7 +92,6 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  services.mullvad-vpn.enable = true;
   services.power-profiles-daemon.enable = true;
   services.fwupd.enable = true;
   services.fprintd.enable = true;
