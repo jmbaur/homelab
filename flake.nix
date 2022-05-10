@@ -110,7 +110,6 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/beetroot/configuration.nix
-          ipwatch.nixosModules.default
           homelab-private.nixosModules.beetroot
           nixos-hardware.nixosModules.lenovo-thinkpad-t495
           self.nixosModules.default
