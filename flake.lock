@@ -162,11 +162,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1652216269,
-        "narHash": "sha256-0bIYTNi7dPZPHWw8iVSEdQVydulxiHjPL6sJgsTycTo=",
+        "lastModified": 1652221377,
+        "narHash": "sha256-RycOg75aTAW4qTNcL5E6HYR+SbghqYXnEV/Z6z9b6Os=",
         "owner": "jmbaur",
         "repo": "git-get",
-        "rev": "1323750bab3c0fa1efbfec1bc8337c79d907ee68",
+        "rev": "93edc40166d9154e11ad147c7d80032254fa490b",
         "type": "github"
       },
       "original": {
@@ -278,11 +278,11 @@
         "nixpkgs": "nixpkgs_6"
       },
       "locked": {
-        "lastModified": 1652220036,
-        "narHash": "sha256-kAqJ9NP9sWAuI5vHsQGfo8d1mszTpIcZBqc7FE7xQVU=",
+        "lastModified": 1652221498,
+        "narHash": "sha256-rINt9St0ldbFGWf5r6qfqucCoj7CM6NLyM6SOgJVFwI=",
         "owner": "jmbaur",
         "repo": "ipwatch",
-        "rev": "1b79d70e1906d6866494cc476a2e0fe50b488857",
+        "rev": "96b7a49c28a59e451f5ee74b5137deba9926f657",
         "type": "github"
       },
       "original": {
