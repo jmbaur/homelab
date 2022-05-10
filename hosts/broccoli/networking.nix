@@ -1,9 +1,4 @@
-{ config, lib, pkgs, ... }:
-let
-  guaPrefix = "2001:470:f001";
-  ulaPrefix = "fd82:f21d:118d";
-in
-{
+{ config, lib, pkgs, ... }: {
   networking = {
     hostName = "broccoli";
     useDHCP = false;
@@ -65,7 +60,6 @@ in
           };
           tunnelConfig = {
             Local = "dhcp4";
-            Remote = "66.220.18.42";
             TTL = 255;
           };
         };
@@ -88,84 +82,87 @@ in
       };
 
       pubwan = {
-        matchConfig.Name = config.systemd.network.netdevs.pubwan.netdevConfig.Name;
+        matchConfig.Name =
+          config.systemd.network.netdevs.pubwan.netdevConfig.Name;
         networkConfig.Address = [
           "192.168.10.1/24"
-          "${ulaPrefix}:a::1/64"
-          "${guaPrefix}:a::1/64"
+          "${config.router.ulaPrefix}:a::1/64"
+          "${config.router.guaPrefix}:a::1/64"
         ];
       };
 
       publan = {
-        matchConfig.Name = config.systemd.network.netdevs.publan.netdevConfig.Name;
+        matchConfig.Name =
+          config.systemd.network.netdevs.publan.netdevConfig.Name;
         networkConfig.Address = [
           "192.168.20.1/24"
-          "${ulaPrefix}:14::1/64"
-          "${guaPrefix}:14::1/64"
+          "${config.router.ulaPrefix}:14::1/64"
+          "${config.router.guaPrefix}:14::1/64"
         ];
       };
 
       trusted = {
-        matchConfig.Name = config.systemd.network.netdevs.trusted.netdevConfig.Name;
+        matchConfig.Name =
+          config.systemd.network.netdevs.trusted.netdevConfig.Name;
         networkConfig.Address = [
           "192.168.30.1/24"
-          "${ulaPrefix}:1e::1/64"
-          "${guaPrefix}:1e::1/64"
+          "${config.router.ulaPrefix}:1e::1/64"
+          "${config.router.guaPrefix}:1e::1/64"
         ];
       };
 
       iot = {
-        matchConfig.Name = config.systemd.network.netdevs.iot.netdevConfig.Name;
+        matchConfig.Name =
+          config.systemd.network.netdevs.iot.netdevConfig.Name;
         networkConfig.Address = [
           "192.168.40.1/24"
-          "${ulaPrefix}:28::1/64"
-          "${guaPrefix}:28::1/64"
+          "${config.router.ulaPrefix}:28::1/64"
+          "${config.router.guaPrefix}:28::1/64"
         ];
       };
 
       guest = {
-        matchConfig.Name = config.systemd.network.netdevs.guest.netdevConfig.Name;
+        matchConfig.Name =
+          config.systemd.network.netdevs.guest.netdevConfig.Name;
         networkConfig.Address = [
           "192.168.50.1/24"
-          "${ulaPrefix}:32::1/64"
-          "${guaPrefix}:32::1/64"
+          "${config.router.ulaPrefix}:32::1/64"
+          "${config.router.guaPrefix}:32::1/64"
         ];
       };
 
       mgmt = {
-        matchConfig.Name = config.systemd.network.netdevs.mgmt.netdevConfig.Name;
+        matchConfig.Name =
+          config.systemd.network.netdevs.mgmt.netdevConfig.Name;
         networkConfig.Address = [
           "192.168.88.1/24"
-          "${ulaPrefix}:58::1/64"
-          "${guaPrefix}:58::1/64"
+          "${config.router.ulaPrefix}:58::1/64"
+          "${config.router.guaPrefix}:58::1/64"
         ];
       };
 
       wg-trusted = {
-        matchConfig.Name = config.systemd.network.netdevs.wg-trusted.netdevConfig.Name;
+        matchConfig.Name =
+          config.systemd.network.netdevs.wg-trusted.netdevConfig.Name;
         networkConfig.Address = [
           "192.168.130.1/24"
-          "${ulaPrefix}:82::1/64"
-          "${guaPrefix}:82::1/64"
+          "${config.router.ulaPrefix}:82::1/64"
+          "${config.router.guaPrefix}:82::1/64"
         ];
       };
 
       wg-iot = {
-        matchConfig.Name = config.systemd.network.netdevs.wg-iot.netdevConfig.Name;
+        matchConfig.Name =
+          config.systemd.network.netdevs.wg-iot.netdevConfig.Name;
         networkConfig.Address = [
           "192.168.140.1/24"
-          "${ulaPrefix}:8C::1/64"
-          "${guaPrefix}:8C::1/64"
+          "${config.router.ulaPrefix}:8C::1/64"
+          "${config.router.guaPrefix}:8C::1/64"
         ];
       };
 
-      hurricane = {
-        matchConfig.Name = config.systemd.network.netdevs.hurricane.netdevConfig.Name;
-        networkConfig = {
-          Address = "2001:470:c:9::2/64";
-          Gateway = "2001:470:c:9::1/64";
-        };
-      };
+      hurricane.matchConfig.Name =
+        config.systemd.network.netdevs.hurricane.netdevConfig.Name;
     };
   };
 }

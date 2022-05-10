@@ -11,14 +11,15 @@ let
   };
   mkManagedCoreradInterface = mkCoreradInterface { managed = true; };
   mkUnmanagedCoreradInterface = mkCoreradInterface { managed = false; };
+  getInterfaceName = attr: config.systemd.network.networks.${attr}.matchConfig.Name;
 in
 {
   services.corerad = {
     enable = true;
     settings = {
-      # interfaces = with config.networking.interfaces;
-      #   (builtins.map mkUnmanagedCoreradInterface [ trusted iot guest ]) ++
-      #   (builtins.map mkManagedCoreradInterface [ mgmt ]);
+      interfaces =
+        (builtins.map mkUnmanagedCoreradInterface (builtins.map getInterfaceName [ "trusted" "iot" "guest" ])) ++
+        (builtins.map mkManagedCoreradInterface (builtins.map getInterfaceName [ "mgmt" ]));
       debug = { address = ":9430"; prometheus = true; };
     };
   };

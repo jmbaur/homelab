@@ -1,7 +1,14 @@
-{ config, pkgs, ... }: {
+{ config, pkgs, ... }:
+let
+  getInterfaceName = attr:
+    config.systemd.network.networks.${attr}.matchConfig.Name;
+in
+{
   services.dhcpd4 = {
     enable = true;
-    # interfaces = with config.networking.interfaces; [ trusted.name iot.name guest.name mgmt.name ];
+    interfaces = builtins.map
+      getInterfaceName
+      [ "trusted" "iot" "guest" "mgmt" ];
     machines = [
       {
         hostName = "broccoli-ipmi";

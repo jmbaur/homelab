@@ -3,12 +3,12 @@
     ./atftpd.nix
     ./coredns.nix
     ./corerad.nix
-    ./dhcpcd.nix
     ./dhcpd4.nix
     ./dhcpd6.nix
     ./hardware-configuration.nix
     ./networking.nix
     ./nftables.nix
+    ./options.nix
   ];
 
   custom.common.enable = true;
@@ -39,14 +39,8 @@
       owner = config.users.users.root.name;
       group = config.users.groups.systemd-network.name;
     };
-    secrets.cloudflare = {
-      owner = config.users.users.ipwatch.name;
-      group = config.users.groups.ipwatch.name;
-    };
-    secrets.he_tunnelbroker = {
-      owner = config.users.users.ipwatch.name;
-      group = config.users.groups.ipwatch.name;
-    };
+    secrets.cloudflare = { };
+    secrets.he_tunnelbroker = { };
   };
 
   environment.systemPackages = with pkgs; [
@@ -70,6 +64,8 @@
     "/run/secrets/he_tunnelbroker"
     "/run/secrets/cloudflare"
   ];
+  systemd.services.ipwatch.serviceConfig.SupplementaryGroups = [ config.users.groups.keys.name ];
+
   services.ipwatch = {
     enable = true;
     iface = config.systemd.network.networks.wan.matchConfig.Name;
@@ -86,7 +82,7 @@
         --header "Content-Type: application/json" \
         --header "Authorization: Bearer ''${CF_DNS_API_TOKEN}" \
         --data '{"type":"A","name":"jmbaur.com","content":"'"''${ADDR}"'","proxied":false}' \
-        "https://api.cloudflare.com/client/v4/zones/''${CF_ZONE_ID}/dns_records/''${CF_RECORD_ID}" | ${pkgs.jq}/bin/jq 
+        "https://api.cloudflare.com/client/v4/zones/''${CF_ZONE_ID}/dns_records/''${CF_RECORD_ID}" | ${pkgs.jq}/bin/jq
     ''}/bin/ipwatch-exe";
   };
 
@@ -100,22 +96,18 @@
     ipv4 = true;
     ipv6 = true;
   };
+
   services.openssh = {
     enable = true;
     passwordAuthentication = false;
     openFirewall = false;
     allowSFTP = false;
-    # listenAddresses = with config.systemd.network.networks; (
-    #   (builtins.map
-    #     (ifi: { port = 22; addr = ifi.address; })
-    #     mgmt.networkConfig.Address)
-    #   ++
-    #   (builtins.map
-    #     (ifi: { port = 22; addr = "[" + ifi.address + "]"; })
-    #     mgmt.ipv6.addresses)
-    # );
   };
-  services.iperf3.enable = true;
+
+  services.iperf3 = {
+    enable = true;
+    openFirewall = false;
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
