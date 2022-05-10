@@ -1,10 +1,10 @@
 { config, ... }:
 let
-  mkCoreradInterface = { managed ? false, other_config ? false }: ifi: {
-    inherit (ifi) name;
+  # https://github.com/mdlayher/corerad/blob/main/internal/config/reference.toml
+  mkCoreradInterface = { managed ? false, other_config ? false }: name: {
+    inherit name managed other_config;
     verbose = true;
     advertise = true;
-    inherit managed other_config;
     prefix = [{ }]; # automatically do the correct thing
     rdnss = [{ }]; # automatically do the correct thing
     dnssl = [{ domain_names = [ "home.arpa" ]; }];
