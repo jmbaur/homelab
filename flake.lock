@@ -278,11 +278,11 @@
         "nixpkgs": "nixpkgs_6"
       },
       "locked": {
-        "lastModified": 1652218330,
-        "narHash": "sha256-0ELaJPaSHWQ6EklOArY30h9MFwrIZZQQsfS+xkaUuxo=",
+        "lastModified": 1652220036,
+        "narHash": "sha256-kAqJ9NP9sWAuI5vHsQGfo8d1mszTpIcZBqc7FE7xQVU=",
         "owner": "jmbaur",
         "repo": "ipwatch",
-        "rev": "6d783d8d3844ea2dac95b26aa157c5b2f8c12d19",
+        "rev": "1b79d70e1906d6866494cc476a2e0fe50b488857",
         "type": "github"
       },
       "original": {

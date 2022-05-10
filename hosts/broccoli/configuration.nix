@@ -39,8 +39,14 @@
       owner = config.users.users.root.name;
       group = config.users.groups.systemd-network.name;
     };
-    secrets.cloudflare = { };
-    secrets.he_tunnelbroker = { };
+    secrets.cloudflare = {
+      owner = config.users.users.ipwatch.name;
+      group = config.users.groups.ipwatch.name;
+    };
+    secrets.he_tunnelbroker = {
+      owner = config.users.users.ipwatch.name;
+      group = config.users.groups.ipwatch.name;
+    };
   };
 
   environment.systemPackages = with pkgs; [
@@ -60,12 +66,30 @@
     openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
   };
 
+  systemd.services.ipwatch.serviceConfig.EnvironmentFiles = [
+    "/run/secrets/he_tunnelbroker"
+    "/run/secrets/cloudflare"
+  ];
   services.ipwatch = {
     enable = true;
+    iface = config.systemd.network.networks.wan.matchConfig.Name;
     exe = "${pkgs.writeShellScriptBin "ipwatch-exe" ''
-      echo $IFACE $ADDR
+      echo Updating hurricane electric tunnelbroker with new IP
+      ${pkgs.curl}/bin/curl \
+        --data "hostname=''${HE_TUNNEL_ID}" \
+        --user "''${HE_USERNAME}:''${HE_PASSWORD}" \
+        https://ipv4.tunnelbroker.net/nic/update
+
+      echo Updating Cloudflare DNS with new IP
+      ${pkgs.curl}/bin/curl \
+        --request PUT \
+        --header "Content-Type: application/json" \
+        --header "Authorization: Bearer ''${CF_DNS_API_TOKEN}" \
+        --data '{"type":"A","name":"jmbaur.com","content":"'"''${ADDR}"'","proxied":false}' \
+        "https://api.cloudflare.com/client/v4/zones/''${CF_ZONE_ID}/dns_records/''${CF_RECORD_ID}" | ${pkgs.jq}/bin/jq 
     ''}/bin/ipwatch-exe";
   };
+
   services.avahi = {
     enable = true;
     reflector = true;

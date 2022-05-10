@@ -76,7 +76,7 @@ in
         matchConfig.Name = "enp0s20f0";
         networkConfig = {
           Tunnel = config.systemd.network.netdevs.hurricane.netdevConfig.Name;
-          DHCP = "yes"; # TODO(jared): setup run hooks
+          DHCP = "yes";
         };
       };
 

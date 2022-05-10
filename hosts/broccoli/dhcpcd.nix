@@ -4,7 +4,7 @@
   networking.dhcpcd = {
     enable = false;
     persistent = true;
-    allowInterfaces = [ /*  config.systemd.interfaces.enp0s20f0.name  */ ];
+    allowInterfaces = [ config.systemd.network.networks.wan.matchConfig.name ];
     extraConfig = ''
       # Disable ipv6 router solicitation
       noipv6rs
