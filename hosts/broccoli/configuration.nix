@@ -60,6 +60,12 @@
     openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
   };
 
+  services.ipwatch = {
+    enable = true;
+    exe = "${pkgs.writeShellScriptBin "ipwatch-exe" ''
+      echo $IFACE $ADDR
+    ''}/bin/ipwatch-exe";
+  };
   services.avahi = {
     enable = true;
     reflector = true;

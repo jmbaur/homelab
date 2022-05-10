@@ -10,11 +10,12 @@
     gobar.url = "github:jmbaur/gobar";
     gosee.url = "github:jmbaur/gosee";
     hosts.url = "github:StevenBlack/hosts";
+    ipwatch.url = "github:jmbaur/ipwatch";
     sops-nix.url = "github:mic92/sops-nix";
-    # homelab-private = {
-    #   url = "github:jmbaur/homelab-private";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
+    homelab-private = {
+      url = "github:jmbaur/homelab-private";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     neovim = {
       url = "github:jmbaur/neovim";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -42,8 +43,9 @@
     , gosee
     , home-manager
     , hosts
+    , ipwatch
     , microvm
-      # , homelab-private
+    , homelab-private
     , neovim
     , nixos-hardware
     , nixpkgs
@@ -71,10 +73,11 @@
         ];
         nixpkgs.overlays = [
           deploy-rs.overlay
-          git-get.overlay
+          git-get.overlays.default
           gobar.overlay
-          gosee.overlay
-          neovim.overlay
+          gosee.overlays.default
+          ipwatch.overlays.default
+          neovim.overlays.default
           self.overlays.default
           (final: prev: {
             inherit (nixpkgs-jmbaur.legacyPackages.${prev.system}) mosh;
@@ -87,7 +90,8 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/broccoli/configuration.nix
-          # homelab-private.nixosModules.broccoli
+          homelab-private.nixosModules.broccoli
+          ipwatch.nixosModules.default
           nixos-hardware.nixosModules.supermicro
           self.nixosModules.default
         ];
@@ -106,7 +110,8 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/beetroot/configuration.nix
-          # homelab-private.nixosModules.beetroot
+          ipwatch.nixosModules.default
+          homelab-private.nixosModules.beetroot
           nixos-hardware.nixosModules.lenovo-thinkpad-t495
           self.nixosModules.default
         ];

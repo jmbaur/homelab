@@ -25,6 +25,11 @@
       owner = config.users.users.root.name;
       group = config.users.groups.systemd-network.name;
     };
+    secrets.wg-mv = {
+      mode = "0640";
+      owner = config.users.users.root.name;
+      group = config.users.groups.systemd-network.name;
+    };
   };
 
   networking = {
@@ -38,12 +43,18 @@
 
   systemd.network = {
     enable = true;
+
     netdevs = {
-      wg-home = {
-        netdevConfig = { Name = "wg-home"; Kind = "wireguard"; };
-        wireguardConfig = { PrivateKeyFile = "/run/secrets/wg-home"; };
+      wg-mv = {
+        netdevConfig = { Name = "wg-mv"; Kind = "wireguard"; };
+        wireguardConfig = {
+          PrivateKeyFile = "/run/secrets/wg-mv";
+          FirewallMark = 34952;
+          RouteTable = "off";
+        };
       };
     };
+
     networks = {
       wired = {
         matchConfig.Name = "en*";
@@ -53,6 +64,7 @@
           UseDomains = "yes";
         };
       };
+
       wireless = {
         matchConfig.Name = "wl*";
         networkConfig.DHCP = "yes";
@@ -61,9 +73,51 @@
           UseDomains = "yes";
         };
       };
-      wg-home = {
-        matchConfig.Name = config.systemd.network.netdevs.wg-home.netdevConfig.Name;
-        linkConfig.ActivationPolicy = "manual"; # sudo networkctl up wg-home
+
+      # https://wiki.archlinux.org/title/Mullvad#With_systemd-networkd
+      wg-mv = {
+        matchConfig.Name = config.systemd.network.netdevs.wg-mv.netdevConfig.Name;
+        # Manual activation: sudo networkctl up <iface>
+        linkConfig.ActivationPolicy = "manual";
+        networkConfig = {
+          DNSDefaultRoute = "yes";
+          Domains = "~.";
+        };
+        routes = [
+          {
+            routeConfig = {
+              Gateway = "0.0.0.0";
+              GatewayOnLink = true;
+              Table = 1000;
+            };
+          }
+          {
+            routeConfig = {
+              Gateway = "::";
+              GatewayOnLink = true;
+              Table = 1000;
+            };
+          }
+        ];
+        routingPolicyRules = [
+          {
+            routingPolicyRuleConfig = {
+              SuppressPrefixLength = 0;
+              Family = "both";
+              Priority = 999;
+              Table = "main";
+            };
+          }
+          {
+            routingPolicyRuleConfig = {
+              Family = "both";
+              FirewallMark = 34952;
+              InvertRule = true;
+              Table = 1000;
+              Priority = 10;
+            };
+          }
+        ];
       };
     };
   };
