@@ -11,7 +11,6 @@ let
     dhcpServerConfig = {
       PoolOffset = 100;
       PoolSize = 100;
-      DNS = "_server_address";
     };
     extraConfig = lib.concatMapStrings
       (machine: ''
@@ -82,7 +81,7 @@ in
             MTUBytes = "1480";
           };
           tunnelConfig = {
-            Local = "dhcp4";
+            Local = "any"; # TODO(jared): use dhcp4
             TTL = 255;
           };
         };
@@ -99,11 +98,14 @@ in
         };
       };
 
-      vlanMaster = {
+      internal = {
         matchConfig.Name = "enp4s0";
-        networkConfig.VLAN = builtins.map
-          (name: config.systemd.network.netdevs.${name}.netdevConfig.Name)
-          [ "pubwan" "publan" "trusted" "iot" "guest" "mgmt" ];
+        networkConfig = {
+          LinkLocalAddressing = "no";
+          VLAN = builtins.map
+            (name: config.systemd.network.netdevs.${name}.netdevConfig.Name)
+            [ "pubwan" "publan" "trusted" "iot" "guest" "mgmt" ];
+        };
       };
 
       pubwan = mkInternalInterface {
