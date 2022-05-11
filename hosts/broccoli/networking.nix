@@ -27,7 +27,6 @@ in
     hostName = "broccoli";
     useDHCP = false;
     useNetworkd = true;
-    nameservers = [ "127.0.0.1" "::1" ];
     search = [ "home.arpa" ];
     nat.enable = false;
     firewall.enable = false;
@@ -96,6 +95,7 @@ in
           IPv6AcceptRA = false; # TODO(jared): get a better ISP
           IPForward = true;
         };
+        dhcpV4Config.UseDNS = false;
       };
 
       internal = {
