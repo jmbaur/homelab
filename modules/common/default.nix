@@ -64,7 +64,7 @@ with lib;
       loginShellInit = ''
         tmux new-session -d -s default -c "$HOME" 2>/dev/null || true
       '';
-      interactiveShellInit = mkIf !config.custom.gui.enable ''
+      interactiveShellInit = mkIf (!config.custom.gui.enable) ''
         tmux attach-session -t default
       '';
     };
