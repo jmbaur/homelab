@@ -21,7 +21,10 @@
     networks = {
       wired_normal = {
         matchConfig.Name = "enp4s0";
-        networkConfig.DHCP = "yes";
+        networkConfig = {
+          DHCP = "yes";
+          IPv6PrivacyExtensions = true;
+        };
         dhcpV4Config = {
           RouteMetric = 10;
           UseDomains = "yes";
@@ -29,7 +32,10 @@
       };
       wired_mgmt = {
         matchConfig.Name = "enp6s0";
-        networkConfig.DHCP = "yes";
+        networkConfig = {
+          DHCP = "yes";
+          IPv6PrivacyExtensions = true;
+        };
         dhcpV4Config = {
           RouteMetric = 20;
           UseDomains = "yes";

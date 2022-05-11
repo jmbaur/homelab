@@ -58,7 +58,10 @@
     networks = {
       wired = {
         matchConfig.Name = "en*";
-        networkConfig.DHCP = "yes";
+        networkConfig = {
+          DHCP = "yes";
+          IPv6PrivacyExtensions = true;
+        };
         dhcpV4Config = {
           RouteMetric = 10;
           UseDomains = "yes";
@@ -67,7 +70,10 @@
 
       wireless = {
         matchConfig.Name = "wl*";
-        networkConfig.DHCP = "yes";
+        networkConfig = {
+          DHCP = "yes";
+          IPv6PrivacyExtensions = true;
+        };
         dhcpV4Config = {
           RouteMetric = 20;
           UseDomains = "yes";
