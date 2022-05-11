@@ -1,5 +1,8 @@
 { config, lib, pkgs, ... }: {
-  imports = [ ./hardware-configuration.nix ];
+  imports = [
+    ./networking.nix
+    ./hardware-configuration.nix
+  ];
 
   hardware.cpu.amd.updateMicrocode = true;
 
