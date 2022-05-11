@@ -9,9 +9,12 @@
     git-get.url = "github:jmbaur/git-get";
     gobar.url = "github:jmbaur/gobar";
     gosee.url = "github:jmbaur/gosee";
-    hosts.url = "github:StevenBlack/hosts";
     ipwatch.url = "github:jmbaur/ipwatch";
     sops-nix.url = "github:mic92/sops-nix";
+    hosts = {
+      url = "github:StevenBlack/hosts";
+      flake = false;
+    };
     homelab-private = {
       url = "github:jmbaur/homelab-private";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -42,7 +45,6 @@
     , gobar
     , gosee
     , home-manager
-    , hosts
     , ipwatch
     , microvm
     , homelab-private
@@ -54,13 +56,17 @@
     , ...
     }@inputs: flake-utils.lib.eachDefaultSystem
       (system:
-      let pkgs = nixpkgs.legacyPackages.${system}; in
+      let
+        pkgs = import nixpkgs { inherit system; };
+      in
       {
         devShells.default = pkgs.mkShell { buildInputs = [ pkgs.sops ]; };
       })
     //
     {
-      checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
+      checks = builtins.mapAttrs
+        (system: deployLib: deployLib.deployChecks self.deploy)
+        deploy-rs.lib;
 
       overlays.default = import ./pkgs/overlay.nix;
 
@@ -68,7 +74,6 @@
         imports = [
           ./modules
           home-manager.nixosModules.home-manager
-          hosts.nixosModule
           sops-nix.nixosModules.sops
         ];
         nixpkgs.overlays = [
@@ -101,7 +106,8 @@
         hostname = "broccoli.home.arpa";
         profiles.system = {
           sshUser = "root";
-          path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.broccoli;
+          path = deploy-rs.lib.x86_64-linux.activate.nixos
+            self.nixosConfigurations.broccoli;
         };
       };
 
@@ -131,7 +137,8 @@
         hostname = "okra.home.arpa";
         profiles.system = {
           sshUser = "root";
-          path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.okra;
+          path = deploy-rs.lib.x86_64-linux.activate.nixos
+            self.nixosConfigurations.okra;
         };
       };
 
@@ -151,7 +158,8 @@
         hostname = "asparagus.home.arpa";
         profiles.system = {
           sshUser = "root";
-          path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.asparagus;
+          path = deploy-rs.lib.x86_64-linux.activate.nixos
+            self.nixosConfigurations.asparagus;
         };
       };
 
@@ -179,7 +187,8 @@
         hostname = "kale.home.arpa";
         profiles.system = {
           sshUser = "root";
-          path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.kale;
+          path = deploy-rs.lib.x86_64-linux.activate.nixos
+            self.nixosConfigurations.kale;
         };
       };
 
@@ -198,7 +207,8 @@
         hostname = "rhubarb.home.arpa";
         profiles.system = {
           sshUser = "root";
-          path = deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigurations.rhubarb;
+          path = deploy-rs.lib.aarch64-linux.activate.nixos
+            self.nixosConfigurations.rhubarb;
         };
       };
     };
