@@ -225,11 +225,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1652241218,
-        "narHash": "sha256-xcn3Ky8qrptN+J+wZH98WSgCVj3xkxbG0YM9ebHRi88=",
+        "lastModified": 1652291339,
+        "narHash": "sha256-Ld+Eyo0+LGYI7YTFrFoP4JZ+WGHXNdX2qzASLMUPn5A=",
         "owner": "jmbaur",
         "repo": "homelab-private",
-        "rev": "cfe5c499ed03f1995b69443627af36084ac231fe",
+        "rev": "43f8f44a3fafe5abd830574bc4ab3775b1829a73",
         "type": "github"
       },
       "original": {
