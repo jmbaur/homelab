@@ -25,6 +25,7 @@ let
         DHCPServer = true;
         IPv6SendRA = true;
       };
+      ipv6SendRAConfig.DNS = "_link_local";
       ipv6Prefixes = map
         (prefix: { ipv6PrefixConfig = { Prefix = prefix; }; })
         [ guaNetwork ulaNetwork ];
