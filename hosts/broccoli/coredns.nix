@@ -21,30 +21,15 @@ in
         prometheus :9153
       }
 
-      jmbaur.com {
-        hosts {
-          192.168.20.10 jmbaur.com
-          192.168.20.10 www.jmbaur.com
-          192.168.20.10 git.jmbaur.com
-          192.168.20.10 cache.jmbaur.com
-          192.168.20.10 plex.jmbaur.com
-          fd82:f21d:118d:14::a jmbaur.com
-          fd82:f21d:118d:14::a www.jmbaur.com
-          fd82:f21d:118d:14::a git.jmbaur.com
-          fd82:f21d:118d:14::a cache.jmbaur.com
-          fd82:f21d:118d:14::a plex.jmbaur.com
-        }
-      }
-
       ${domain} {
         hosts {
           ${lib.concatMapStrings (machine: ''
             ${machine.ipAddress} ${machine.hostName}.${domain}
           '') (with config.services; dhcpd4.machines ++ dhcpd6.machines)}
 
-          ${lib.concatMapStrings (addr: ''
-            ${addr.address} ${config.networking.hostName}.${domain}
-          '') (with config.networking.interfaces.mgmt; ipv4.addresses ++ ipv6.addresses)}
+          ${lib.concatMapStrings (address: ''
+            ${address} ${config.networking.hostName}.${domain}
+          '') config.systemd.network.networks.mgmt.networkConfig.Address}
         }
       }
     '';

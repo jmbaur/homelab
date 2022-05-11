@@ -17,6 +17,21 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.initrd.systemd.enable = true;
 
+  sops = {
+    defaultSopsFile = ./secrets.yaml;
+    age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+    secrets.wg-home = {
+      mode = "0640";
+      owner = config.users.users.root.name;
+      group = config.users.groups.systemd-network.name;
+    };
+    secrets.wg-mv = {
+      mode = "0640";
+      owner = config.users.users.root.name;
+      group = config.users.groups.systemd-network.name;
+    };
+  };
+
   networking = {
     hostName = "beetroot";
     useNetworkd = true;
@@ -28,6 +43,18 @@
 
   systemd.network = {
     enable = true;
+
+    netdevs = {
+      wg-mv = {
+        netdevConfig = { Name = "wg-mv"; Kind = "wireguard"; };
+        wireguardConfig = {
+          PrivateKeyFile = "/run/secrets/wg-mv";
+          FirewallMark = 34952;
+          RouteTable = "off";
+        };
+      };
+    };
+
     networks = {
       wired = {
         matchConfig.Name = "en*";
@@ -37,6 +64,7 @@
           UseDomains = "yes";
         };
       };
+
       wireless = {
         matchConfig.Name = "wl*";
         networkConfig.DHCP = "yes";
@@ -44,6 +72,52 @@
           RouteMetric = 20;
           UseDomains = "yes";
         };
+      };
+
+      # https://wiki.archlinux.org/title/Mullvad#With_systemd-networkd
+      wg-mv = {
+        matchConfig.Name = config.systemd.network.netdevs.wg-mv.netdevConfig.Name;
+        # Manual activation: sudo networkctl up <iface>
+        linkConfig.ActivationPolicy = "manual";
+        networkConfig = {
+          DNSDefaultRoute = "yes";
+          Domains = "~.";
+        };
+        routes = [
+          {
+            routeConfig = {
+              Gateway = "0.0.0.0";
+              GatewayOnLink = true;
+              Table = 1000;
+            };
+          }
+          {
+            routeConfig = {
+              Gateway = "::";
+              GatewayOnLink = true;
+              Table = 1000;
+            };
+          }
+        ];
+        routingPolicyRules = [
+          {
+            routingPolicyRuleConfig = {
+              SuppressPrefixLength = 0;
+              Family = "both";
+              Priority = 999;
+              Table = "main";
+            };
+          }
+          {
+            routingPolicyRuleConfig = {
+              Family = "both";
+              FirewallMark = 34952;
+              InvertRule = true;
+              Table = 1000;
+              Priority = 10;
+            };
+          }
+        ];
       };
     };
   };
@@ -60,8 +134,6 @@
     custom.gui.laptop = true;
   };
 
-  users.users.jared.hashedPassword = "$6$TV/TwGGdE3/vYDn5$.Qs0EBuMnhah8DyoXLY7/F1Pjp7m27KxUGArgegfycHVx.HOUky85pNqxRpXbU2KZ58suLrEDfu7EbM.XvwtT0";
-
   services.snapper.configs.home = {
     subvolume = "/home";
     extraConfig = ''
@@ -72,7 +144,6 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  services.mullvad-vpn.enable = true;
   services.power-profiles-daemon.enable = true;
   services.fwupd.enable = true;
   services.fprintd.enable = true;

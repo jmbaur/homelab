@@ -30,6 +30,7 @@ in
   networking = {
     hostName = "kale";
     useDHCP = false;
+    useNetworkd = true;
     firewall = {
       enable = true;
       interfaces.${mgmtIface} = {
@@ -46,8 +47,6 @@ in
     bridges.br-publan.interfaces = [ "publan" ];
     bridges.br-trusted.interfaces = [ "trusted" ];
   };
-
-  users.users.jared.hashedPassword = "$6$COYoxPUJ2GXytmXc$7XkhoFMy3KIatPD73I/zeDmseXH0l8pQ.kYrFvHphdqf.jitZ/PR2lhcSn67EsF4FwHIu85itj2ASEi3kGR/b/";
 
   services.fwupd.enable = true;
   services.iperf3.enable = true;

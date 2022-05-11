@@ -141,17 +141,32 @@
         "type": "github"
       }
     },
+    "flake-utils_8": {
+      "locked": {
+        "lastModified": 1649676176,
+        "narHash": "sha256-OWKJratjt2RW151VUlJPRALb7OU2S5s+f0vLj4o1bHM=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "a4b154ebbdc88c8498a5c7b01589addc9e9cb678",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "git-get": {
       "inputs": {
         "flake-utils": "flake-utils_2",
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1652216269,
-        "narHash": "sha256-0bIYTNi7dPZPHWw8iVSEdQVydulxiHjPL6sJgsTycTo=",
+        "lastModified": 1652221377,
+        "narHash": "sha256-RycOg75aTAW4qTNcL5E6HYR+SbghqYXnEV/Z6z9b6Os=",
         "owner": "jmbaur",
         "repo": "git-get",
-        "rev": "1323750bab3c0fa1efbfec1bc8337c79d907ee68",
+        "rev": "93edc40166d9154e11ad147c7d80032254fa490b",
         "type": "github"
       },
       "original": {
@@ -218,17 +233,37 @@
         "type": "github"
       }
     },
+    "homelab-private": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1652241218,
+        "narHash": "sha256-xcn3Ky8qrptN+J+wZH98WSgCVj3xkxbG0YM9ebHRi88=",
+        "owner": "jmbaur",
+        "repo": "homelab-private",
+        "rev": "cfe5c499ed03f1995b69443627af36084ac231fe",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jmbaur",
+        "repo": "homelab-private",
+        "type": "github"
+      }
+    },
     "hosts": {
       "inputs": {
         "flake-utils": "flake-utils_5",
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1651787859,
-        "narHash": "sha256-qoRRJ1FYTLLfj4RHlByeKFgzRYTxZi34k9FcF3zZBpA=",
+        "lastModified": 1652234048,
+        "narHash": "sha256-JmszalzB1WphIKN6VrwNn7hS/swqvqGIVL+IXRltTm8=",
         "owner": "StevenBlack",
         "repo": "hosts",
-        "rev": "5f1880223b6e7f8302863ce4a4e5ae4fd0af1de3",
+        "rev": "8ded82cd4d9fc8092a774d1077dd6d580cc31057",
         "type": "github"
       },
       "original": {
@@ -237,9 +272,28 @@
         "type": "github"
       }
     },
-    "microvm": {
+    "ipwatch": {
       "inputs": {
         "flake-utils": "flake-utils_6",
+        "nixpkgs": "nixpkgs_6"
+      },
+      "locked": {
+        "lastModified": 1652224332,
+        "narHash": "sha256-NKJxOGi/EeACjcFHNCEvA62f0/1+p9mxbM5gMD+wbNw=",
+        "owner": "jmbaur",
+        "repo": "ipwatch",
+        "rev": "f373ceab48e3a43a54d6002960cdbfa50330fcaa",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jmbaur",
+        "repo": "ipwatch",
+        "type": "github"
+      }
+    },
+    "microvm": {
+      "inputs": {
+        "flake-utils": "flake-utils_7",
         "nixpkgs": [
           "nixpkgs"
         ]
@@ -260,7 +314,7 @@
     },
     "neovim": {
       "inputs": {
-        "flake-utils": "flake-utils_7",
+        "flake-utils": "flake-utils_8",
         "nixpkgs": [
           "nixpkgs"
         ]
@@ -402,6 +456,21 @@
     },
     "nixpkgs_7": {
       "locked": {
+        "lastModified": 1652172129,
+        "narHash": "sha256-8e2JMrswaKe02P8rYfvIMoc59pNuw6h/GYu8DBE1c+0=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "f419dc5763c2b3c5580e396dea065b6d8b58ee27",
+        "type": "github"
+      },
+      "original": {
+        "id": "nixpkgs",
+        "ref": "nixos-unstable",
+        "type": "indirect"
+      }
+    },
+    "nixpkgs_8": {
+      "locked": {
         "lastModified": 1638097282,
         "narHash": "sha256-EXCzj9b8X/lqDPJapxZThIOKL5ASbpsJZ+8L1LnY1ig=",
         "owner": "NixOS",
@@ -424,18 +493,20 @@
         "gobar": "gobar",
         "gosee": "gosee",
         "home-manager": "home-manager",
+        "homelab-private": "homelab-private",
         "hosts": "hosts",
+        "ipwatch": "ipwatch",
         "microvm": "microvm",
         "neovim": "neovim",
         "nixos-hardware": "nixos-hardware",
-        "nixpkgs": "nixpkgs_6",
+        "nixpkgs": "nixpkgs_7",
         "nixpkgs-jmbaur": "nixpkgs-jmbaur",
         "sops-nix": "sops-nix"
       }
     },
     "sops-nix": {
       "inputs": {
-        "nixpkgs": "nixpkgs_7"
+        "nixpkgs": "nixpkgs_8"
       },
       "locked": {
         "lastModified": 1649756291,

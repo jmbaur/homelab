@@ -10,7 +10,12 @@
     gobar.url = "github:jmbaur/gobar";
     gosee.url = "github:jmbaur/gosee";
     hosts.url = "github:StevenBlack/hosts";
+    ipwatch.url = "github:jmbaur/ipwatch";
     sops-nix.url = "github:mic92/sops-nix";
+    homelab-private = {
+      url = "github:jmbaur/homelab-private";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     neovim = {
       url = "github:jmbaur/neovim";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -38,7 +43,9 @@
     , gosee
     , home-manager
     , hosts
+    , ipwatch
     , microvm
+    , homelab-private
     , neovim
     , nixos-hardware
     , nixpkgs
@@ -66,10 +73,11 @@
         ];
         nixpkgs.overlays = [
           deploy-rs.overlay
-          git-get.overlay
+          git-get.overlays.default
           gobar.overlay
-          gosee.overlay
-          neovim.overlay
+          gosee.overlays.default
+          ipwatch.overlays.default
+          neovim.overlays.default
           self.overlays.default
           (final: prev: {
             inherit (nixpkgs-jmbaur.legacyPackages.${prev.system}) mosh;
@@ -82,6 +90,8 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/broccoli/configuration.nix
+          homelab-private.nixosModules.broccoli
+          ipwatch.nixosModules.default
           nixos-hardware.nixosModules.supermicro
           self.nixosModules.default
         ];
@@ -100,8 +110,8 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/beetroot/configuration.nix
-          nixos-hardware.nixosModules.common-cpu-amd
-          nixos-hardware.nixosModules.common-gpu-amd
+          homelab-private.nixosModules.beetroot
+          nixos-hardware.nixosModules.lenovo-thinkpad-t495
           self.nixosModules.default
         ];
       };
@@ -111,6 +121,7 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/okra/configuration.nix
+          homelab-private.nixosModules.okra
           nixos-hardware.nixosModules.intel-nuc-8i7beh
           self.nixosModules.default
         ];
@@ -129,6 +140,7 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/asparagus/configuration.nix
+          homelab-private.nixosModules.asparagus
           nixos-hardware.nixosModules.common-cpu-amd
           nixos-hardware.nixosModules.common-gpu-amd
           self.nixosModules.default
@@ -165,9 +177,10 @@
         system = "x86_64-linux";
         modules = [
           ./hosts/kale/configuration.nix
+          homelab-private.nixosModules.kale
+          microvm.nixosModules.host
           nixos-hardware.nixosModules.common-cpu-amd
           self.nixosModules.default
-          microvm.nixosModules.host
           ({
             containers.www.path = self.nixosConfigurations.www.config.system.build.toplevel;
             containers.media.path = self.nixosConfigurations.media.config.system.build.toplevel;
@@ -189,6 +202,7 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/rhubarb/configuration.nix
+          homelab-private.nixosModules.rhubarb
           nixos-hardware.nixosModules.raspberry-pi-4
           self.nixosModules.default
         ];

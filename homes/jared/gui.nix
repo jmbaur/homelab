@@ -64,7 +64,7 @@ in
       extensions = with pkgs.vscode-extensions; [
         asvetliakov.vscode-neovim
         bbenoist.nix
-        ms-vsliveshare.vsliveshare
+        # ms-vsliveshare.vsliveshare # TODO(jared): broken
       ];
       userSettings = {
         "breadcrumbs.enabled" = false;

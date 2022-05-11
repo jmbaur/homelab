@@ -8,3 +8,6 @@ creation_rules:
   - path_regex: hosts\/broccoli\/.*yaml$
     pgp: D4A0692874AA71B7F1281491BB8667EA7EB08143
     age: age10mthtjlx9fd0af374dpuqckdyfa9y6f92lnlr7vjxlyt0d8u44vswmgdgv
+  - path_regex: hosts\/beetroot\/.*yaml$
+    pgp: D4A0692874AA71B7F1281491BB8667EA7EB08143
+    age: age1sq4vukvtc06l96e9nejsnn362yfwq76ye8crnyjp2sp7nuh20easdxu9yv

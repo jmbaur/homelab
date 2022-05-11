@@ -1,24 +1,17 @@
-{ config, lib, ... }:
-let
-  wgTrusted = "wg-trusted";
-  wgIot = "wg-iot";
-  wgTrustedListenPort = config.networking.wireguard.interfaces.${wgTrusted}.listenPort;
-  wgIotListenPort = config.networking.wireguard.interfaces.${wgIot}.listenPort;
-in
-{
+{ config, lib, ... }: {
   networking.nftables = {
     enable = true;
-    ruleset = with config.networking.interfaces; ''
-      define DEV_WAN = ${enp0s20f0.name}
-      define DEV_WAN6 = ${hurricane.name}
-      define DEV_PUBWAN = ${pubwan.name}
-      define DEV_PUBLAN = ${publan.name}
-      define DEV_TRUSTED = ${trusted.name}
-      define DEV_IOT = ${iot.name}
-      define DEV_GUEST = ${guest.name}
-      define DEV_MGMT = ${mgmt.name}
-      define DEV_WG_TRUSTED = ${wgTrusted}
-      define DEV_WG_IOT = ${wgIot}
+    ruleset = with config.systemd.network; ''
+      define DEV_WAN = ${networks.wan.matchConfig.Name}
+      define DEV_WAN6 = ${networks.hurricane.matchConfig.Name}
+      define DEV_PUBWAN = ${networks.pubwan.matchConfig.Name}
+      define DEV_PUBLAN = ${networks.publan.matchConfig.Name}
+      define DEV_TRUSTED = ${networks.trusted.matchConfig.Name}
+      define DEV_IOT = ${networks.iot.matchConfig.Name}
+      define DEV_GUEST = ${networks.guest.matchConfig.Name}
+      define DEV_MGMT = ${networks.mgmt.matchConfig.Name}
+      define DEV_WG_TRUSTED = ${networks.wg-trusted.matchConfig.Name}
+      define DEV_WG_IOT = ${networks.wg-iot.matchConfig.Name}
       define NET_ALL = 192.168.0.0/16
 
       table inet filter {
@@ -42,7 +35,7 @@ in
           chain input_wan {
               icmp type echo-request limit rate 5/second accept
               icmpv6 type echo-request limit rate 5/second accept
-              meta l4proto { udp } th dport { ${toString wgTrustedListenPort}, ${toString wgIotListenPort} } accept
+              meta l4proto { udp } th dport { ${toString netdevs.wg-trusted.wireguardConfig.ListenPort}, ${toString netdevs.wg-iot.wireguardConfig.ListenPort} } accept
           }
 
           chain input_always_allowed {
