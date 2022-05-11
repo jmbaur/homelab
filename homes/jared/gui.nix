@@ -135,7 +135,10 @@ in
     programs.i3status = {
       enable = true;
       enableDefault = true;
-      general.interval = 1;
+      general = {
+        colors = true;
+        interval = 1;
+      };
     };
 
     programs.mako = {

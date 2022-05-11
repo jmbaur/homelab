@@ -64,9 +64,10 @@ with lib;
       loginShellInit = ''
         tmux new-session -d -s default -c "$HOME" 2>/dev/null || true
       '';
+      interactiveShellInit = mkIf !config.custom.gui.enable ''
+        tmux attach-session -t default
+      '';
     };
-
-    services.physlock.enable = !config.custom.gui.enable;
 
     programs.tmux = {
       enable = true;
@@ -74,6 +75,11 @@ with lib;
       clock24 = true;
       baseIndex = 1;
       keyMode = "vi";
+      extraConfig = ''
+        set-option -g lock-command ${pkgs.vlock}/bin/vlock
+        set-option -g lock-after-time 3600
+        bind-key C-l lock-session
+      '';
     };
   };
 

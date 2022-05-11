@@ -154,12 +154,13 @@ in
       plugins = with pkgs.tmuxPlugins; [ logging ];
       extraConfig = ''
         bind-key "j" display-popup -E -w 90% "${pkgs.j}/bin/j"
-        set -g focus-events on
-        set -g renumber-windows on
-        set -g set-clipboard on
-        set -g status-left-length 50
-        set -g status-right "%H:%M %d-%b-%y"
-        set -sa terminal-overrides ',xterm-256color:RGB'
+        set-option -g focus-events on
+        set-option -g renumber-windows on
+        set-option -g set-clipboard on
+        set-option -g status-left-length 50
+        set-option -g status-right '#(${pkgs.i3status}/bin/i3status -c ${./tmux-i3status.conf})'
+        set-option -g status-right-length 75
+        set-option -sa terminal-overrides ',xterm-256color:RGB'
       '';
     };
 
