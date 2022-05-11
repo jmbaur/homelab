@@ -274,8 +274,9 @@ in
           };
         bars = [{
           fonts = config.wayland.windowManager.sway.config.fonts;
-          position = "top";
+          position = "bottom";
           trayOutput = "*";
+          mode = "hide";
         }];
         workspaceAutoBackAndForth = true;
       };
