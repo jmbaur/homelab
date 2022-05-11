@@ -260,11 +260,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1652224332,
-        "narHash": "sha256-NKJxOGi/EeACjcFHNCEvA62f0/1+p9mxbM5gMD+wbNw=",
+        "lastModified": 1652293024,
+        "narHash": "sha256-95+RhJ39osGqDoG7aaOJZOmnCCpvGucaoy+coqAiqFo=",
         "owner": "jmbaur",
         "repo": "ipwatch",
-        "rev": "f373ceab48e3a43a54d6002960cdbfa50330fcaa",
+        "rev": "2ce8c207b3af237dd1a5b5b47834042df88b058c",
         "type": "github"
       },
       "original": {
