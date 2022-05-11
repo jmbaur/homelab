@@ -56,7 +56,9 @@
   services.ipwatch = {
     enable = true;
     iface = config.systemd.network.networks.wan.matchConfig.Name;
-    exe = with config.sops.secrets; "${pkgs.writeShellScriptBin "ipwatch-exe" ''
+    exe = "${pkgs.writeShellScriptBin "ipwatch-exe" ''
+      env
+
       echo Updating hurricane electric tunnelbroker with new IP
       ${pkgs.curl}/bin/curl \
         --data "hostname=''${HE_TUNNEL_ID}" \
