@@ -15,7 +15,7 @@ let
 in
 {
   services.corerad = {
-    enable = true;
+    enable = false;
     settings = {
       interfaces =
         (builtins.map mkUnmanagedCoreradInterface (builtins.map getInterfaceName [ "trusted" "iot" "guest" ])) ++

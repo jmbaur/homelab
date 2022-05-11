@@ -7,19 +7,23 @@ let
       Address = addrs;
       IPv6AcceptRA = false;
       DHCPServer = true;
+      IPv6SendRA = true;
     };
     dhcpServerConfig = {
       PoolOffset = 100;
       PoolSize = 100;
     };
-    extraConfig = lib.concatMapStrings
+    extraConfig = (lib.concatMapStrings
       (machine: ''
         [DHCPServerStaticLease]
         MACAddress=${machine.macAddr}
         Address=${machine.ipAddr}
 
       '')
-      staticLeases;
+      staticLeases);
+    # IPv6SendRAConfig = {
+    #   Managed = false;
+    # };
   };
 in
 {

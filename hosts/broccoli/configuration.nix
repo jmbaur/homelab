@@ -2,7 +2,6 @@
   imports = [
     ./atftpd.nix
     ./coredns.nix
-    ./corerad.nix
     ./hardware-configuration.nix
     ./networking.nix
     ./nftables.nix
