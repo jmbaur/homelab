@@ -151,6 +151,9 @@
   services.openssh = {
     enable = true;
     listenAddresses = builtins.map (addr: { inherit addr; port = 22; }) [ "127.0.0.1" "::1" ];
+    allowSFTP = false;
+    passwordAuthentication = false;
+    startWhenNeeded = true;
   };
   programs.nix-ld.enable = true;
 
