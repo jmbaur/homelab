@@ -183,6 +183,7 @@ in
     wayland.windowManager.sway = {
       enable = true;
       config = {
+        output."*".bg = "${pkgs.wallpapers.flow}/wallpaper.jpg fill";
         floating.criteria = [
           { title = "^(Zoom Cloud Meetings|zoom)$"; }
           { title = "Firefox — Sharing Indicator"; }

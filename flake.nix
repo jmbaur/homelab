@@ -2,15 +2,16 @@
   description = "NixOS configurations for the homelab";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-unstable";
-    nixpkgs-jmbaur.url = "github:jmbaur/nixpkgs/mosh-378dfa6";
     deploy-rs.url = "github:serokell/deploy-rs";
     flake-utils.url = "github:numtide/flake-utils";
     git-get.url = "github:jmbaur/git-get";
     gobar.url = "github:jmbaur/gobar";
     gosee.url = "github:jmbaur/gosee";
     ipwatch.url = "github:jmbaur/ipwatch";
+    nixpkgs-jmbaur.url = "github:jmbaur/nixpkgs/mosh-378dfa6";
+    nixpkgs.url = "nixpkgs/nixos-unstable";
     sops-nix.url = "github:mic92/sops-nix";
+    wallpapers.url = "github:jmbaur/procedural-wallpapers";
     hosts = {
       url = "github:StevenBlack/hosts";
       flake = false;
@@ -45,14 +46,15 @@
     , gobar
     , gosee
     , home-manager
+    , homelab-private
     , ipwatch
     , microvm
-    , homelab-private
     , neovim
     , nixos-hardware
     , nixpkgs
     , nixpkgs-jmbaur
     , sops-nix
+    , wallpapers
     , ...
     }@inputs: flake-utils.lib.eachDefaultSystem
       (system:
@@ -84,6 +86,7 @@
           gosee.overlays.default
           ipwatch.overlays.default
           neovim.overlays.default
+          wallpapers.overlays.default
           self.overlays.default
           (final: prev: {
             inherit (nixpkgs-jmbaur.legacyPackages.${prev.system}) mosh;
