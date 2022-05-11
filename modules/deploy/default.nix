@@ -1,6 +1,7 @@
 { config, lib, pkgs, ... }:
 let
   cfg = config.custom.deploy;
+  hasEncryptedDrives = config.boot.initrd.luks.devices != { };
 in
 with lib;
 {
@@ -9,15 +10,25 @@ with lib;
   };
 
   config = mkIf cfg.enable {
-    services.openssh.enable = mkForce true;
-    services.openssh.passwordAuthentication = mkForce false;
-    users.users.root.openssh.authorizedKeys.keys = (import ../../data/rhubarb-ssh-keys.nix);
-    users.users.root.openssh.authorizedKeys.keyFiles = singleton (import ../../data/jmbaur-ssh-keys.nix); # backup
+    assertions = [
+      # {
+      #   assertion = hasEncryptedDrives && TODO (jared): search for network kernel modules in boot.initrd.availableKernelModules;
+      #   message = "Must include kernel module for network card in boot.initrd.availableKernelModules option.";
+      # }
+    ];
 
+    services.openssh = {
+      enable = mkForce true;
+      passwordAuthentication = mkForce false;
+      permitRootLogin = "prohibit-password";
+    };
 
-    # TODO(jared): Consider forcing configuration of a kernel module for
-    # network card to load during initrd phase.
-    boot = mkIf (config.boot.initrd.luks.devices != { }) {
+    users.users.root.openssh.authorizedKeys = {
+      keys = (import ../../data/rhubarb-ssh-keys.nix);
+      keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
+    };
+
+    boot = mkIf hasEncryptedDrives {
       kernelParams = [ "ip=dhcp" ];
       initrd.network = {
         enable = true;

@@ -15,7 +15,6 @@
     netdevs =
       let
         mkVlanNetdev = name: id: {
-          matchConfig.Virtualization = "no";
           netdevConfig = { Name = name; Kind = "vlan"; };
           vlanConfig.Id = id;
         };
