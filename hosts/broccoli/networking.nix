@@ -1,9 +1,7 @@
 { config, lib, pkgs, ... }:
 let
   mkInternalInterface =
-    { name
-    , staticLeases ? [ ]
-    }:
+    { name, staticLeases ? [ ] }:
     let
       ipv4ThirdOctet =
         config.systemd.network.netdevs.${name}.vlanConfig.Id;
@@ -25,13 +23,17 @@ let
         DHCPServer = true;
         IPv6SendRA = true;
       };
-      ipv6SendRAConfig.DNS = "_link_local";
+      ipv6SendRAConfig = {
+        DNS = "_link_local";
+        Domains = [ "home.arpa" ];
+      };
       ipv6Prefixes = map
         (prefix: { ipv6PrefixConfig = { Prefix = prefix; }; })
         [ guaNetwork ulaNetwork ];
       dhcpServerConfig = {
         PoolOffset = 100;
         PoolSize = 100;
+        DNS = [ ipv4Addr ];
       };
       extraConfig = (lib.concatMapStrings
         (machine: ''
@@ -48,7 +50,6 @@ in
     hostName = "broccoli";
     useDHCP = false;
     useNetworkd = true;
-    search = [ "home.arpa" ];
     nat.enable = false;
     firewall.enable = false;
   };
@@ -116,7 +117,10 @@ in
           IPv6AcceptRA = false; # TODO(jared): get a better ISP
           IPForward = true;
         };
-        dhcpV4Config.UseDNS = false;
+        dhcpV4Config = {
+          UseDNS = false;
+          UseDomains = false;
+        };
       };
 
       internal = {
