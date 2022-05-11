@@ -50,9 +50,9 @@ in
       enable = true;
       wrapperFeatures.gtk = true;
       extraPackages = with pkgs; [
-        (pkgs.writeShellScriptBin "record" ''
-          device=$(${pkgs.v4l-utils}/bin/v4l2-ctl --list-devices | grep -C1 "Virtual Camera" | tail -n1 | xargs)
-          ${pkgs.wf-recorder}/bin/wf-recorder \
+        (writeShellScriptBin "record" ''
+          device=$(${v4l-utils}/bin/v4l2-ctl --list-devices | grep -C1 "Virtual Camera" | tail -n1 | xargs)
+          ${wf-recorder}/bin/wf-recorder \
             --muxer=v4l2 \
             --codec=rawvideo \
             --pixel-format=yuv420p \
@@ -64,6 +64,7 @@ in
         ffmpeg-full
         foot
         grim
+        imv
         kitty
         libnotify
         mpv
