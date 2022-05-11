@@ -121,6 +121,7 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/okra/configuration.nix
+          homelab-private.nixosModules.okra
           nixos-hardware.nixosModules.intel-nuc-8i7beh
           self.nixosModules.default
         ];
@@ -139,6 +140,7 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/asparagus/configuration.nix
+          homelab-private.nixosModules.asparagus
           nixos-hardware.nixosModules.common-cpu-amd
           nixos-hardware.nixosModules.common-gpu-amd
           self.nixosModules.default
@@ -175,7 +177,7 @@
         system = "x86_64-linux";
         modules = [
           ./hosts/kale/configuration.nix
-          # homelab-private.nixosModules.kale
+          homelab-private.nixosModules.kale
           microvm.nixosModules.host
           nixos-hardware.nixosModules.common-cpu-amd
           self.nixosModules.default
@@ -200,6 +202,7 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/rhubarb/configuration.nix
+          homelab-private.nixosModules.rhubarb
           nixos-hardware.nixosModules.raspberry-pi-4
           self.nixosModules.default
         ];

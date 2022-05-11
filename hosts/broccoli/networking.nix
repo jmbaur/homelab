@@ -72,6 +72,7 @@
           Tunnel = config.systemd.network.netdevs.hurricane.netdevConfig.Name;
           DHCP = "ipv4";
           IPv6AcceptRA = false; # TODO(jared): get a better ISP
+          IPForward = true;
         };
       };
 

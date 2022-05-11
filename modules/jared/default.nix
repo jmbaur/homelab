@@ -5,7 +5,6 @@ in
 {
   options.custom.jared.enable = lib.mkEnableOption "Enable jared user";
   config = lib.mkIf cfg.enable {
-
     users.users.jared = {
       isNormalUser = true;
       description = "Jared Baur";

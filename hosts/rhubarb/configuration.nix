@@ -44,7 +44,6 @@
     isNormalUser = true;
     openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
     extraGroups = [ "wheel" ];
-    hashedPassword = "$6$HvZQftB0alLgxWLr$0NevK6oxPmOdjX.YuPjdgoCV0d5Ca8f/3uccn/WkNownDcT9fRbSwPuaID4AO0NubE0NfBrJR4eRKT/6Zgc4L0";
   };
 
   programs.ssh = {

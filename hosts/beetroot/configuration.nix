@@ -134,8 +134,6 @@
     custom.gui.laptop = true;
   };
 
-  users.users.jared.hashedPassword = "$6$TV/TwGGdE3/vYDn5$.Qs0EBuMnhah8DyoXLY7/F1Pjp7m27KxUGArgegfycHVx.HOUky85pNqxRpXbU2KZ58suLrEDfu7EbM.XvwtT0";
-
   services.snapper.configs.home = {
     subvolume = "/home";
     extraConfig = ''

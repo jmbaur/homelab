@@ -21,10 +21,6 @@
   boot.loader.grub.version = 2;
   boot.loader.grub.device = "/dev/sda";
   boot.kernelParams = [ "console=ttyS0,115200n8" ];
-  boot.kernel.sysctl = {
-    "net.ipv4.conf.all.forwarding" = true;
-    "net.ipv6.conf.all.forwarding" = true;
-  };
 
   sops = {
     defaultSopsFile = ./secrets.yaml;
@@ -56,7 +52,6 @@
   users.users.jared = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
-    hashedPassword = "$6$P6479NO62cb9PQAw$dEKrzW6W6TdEd6Kc8h.QrzhhzUJyyLBeJ.lVXGRn68xQOjcFe8xsJMnzf3PahUz0Msn44cowN8cvkG/45RR3E/";
     openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
   };
 

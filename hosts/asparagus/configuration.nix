@@ -52,8 +52,6 @@
     custom.gui.enable = true;
   };
 
-  users.users.jared.hashedPassword = "$6$01ZXrxetiKaCW6Yx$RfI18qNyAYd9lU91wBNA9p0XREabwV4cv8DFqGH96SZnLJYmbGUTjNyqrVUgJorBn5RQzwwI4Ws3xMMU.fvYk/";
-
   services.snapper.configs.home = {
     subvolume = "/home";
     extraConfig = ''
