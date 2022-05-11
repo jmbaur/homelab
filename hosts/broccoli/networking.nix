@@ -1,30 +1,46 @@
 { config, lib, pkgs, ... }:
 let
-  mkInternalInterface = { name, addrs ? [ ], staticLeases ? [ ] }: {
-    matchConfig.Name =
-      config.systemd.network.netdevs.${name}.netdevConfig.Name;
-    networkConfig = {
-      Address = addrs;
-      IPv6AcceptRA = false;
-      DHCPServer = true;
-      IPv6SendRA = true;
-    };
-    dhcpServerConfig = {
-      PoolOffset = 100;
-      PoolSize = 100;
-    };
-    extraConfig = (lib.concatMapStrings
-      (machine: ''
-        [DHCPServerStaticLease]
-        MACAddress=${machine.macAddr}
-        Address=${machine.ipAddr}
+  mkInternalInterface =
+    { name
+    , staticLeases ? [ ]
+    }:
+    let
+      ipv4ThirdOctet =
+        config.systemd.network.netdevs.${name}.vlanConfig.Id;
+      ipv6FourthHextet = lib.toHexString ipv4ThirdOctet;
+      ipv4Addr = "192.168.${toString ipv4ThirdOctet}.1/24";
+      guaPrefix = "${config.router.guaPrefix}:${ipv6FourthHextet}";
+      ulaPrefix = "${config.router.ulaPrefix}:${ipv6FourthHextet}";
+      guaNetwork = "${guaPrefix}::/64";
+      ulaNetwork = "${ulaPrefix}::/64";
+      ipv6GuaAddr = "${guaPrefix}::1/64";
+      ipv6UlaAddr = "${ulaPrefix}::1/64";
+    in
+    {
+      matchConfig.Name =
+        config.systemd.network.netdevs.${name}.netdevConfig.Name;
+      networkConfig = {
+        Address = [ ipv4Addr ipv6GuaAddr ipv6UlaAddr ];
+        IPv6AcceptRA = false;
+        DHCPServer = true;
+        IPv6SendRA = true;
+      };
+      ipv6Prefixes = map
+        (prefix: { ipv6PrefixConfig = { Prefix = prefix; }; })
+        [ guaNetwork ulaNetwork ];
+      dhcpServerConfig = {
+        PoolOffset = 100;
+        PoolSize = 100;
+      };
+      extraConfig = (lib.concatMapStrings
+        (machine: ''
+          [DHCPServerStaticLease]
+          MACAddress=${machine.macAddr}
+          Address=${machine.ipAddr}
 
-      '')
-      staticLeases);
-    # IPv6SendRAConfig = {
-    #   Managed = false;
-    # };
-  };
+        '')
+        staticLeases);
+    };
 in
 {
   networking = {
@@ -112,31 +128,12 @@ in
         };
       };
 
-      pubwan = mkInternalInterface {
-        name = "pubwan";
-        addrs = [
-          "192.168.10.1/24"
-          "${config.router.ulaPrefix}:a::1/64"
-          "${config.router.guaPrefix}:a::1/64"
-        ];
-      };
+      pubwan = mkInternalInterface { name = "pubwan"; };
 
-      publan = mkInternalInterface {
-        name = "publan";
-        addrs = [
-          "192.168.20.1/24"
-          "${config.router.ulaPrefix}:14::1/64"
-          "${config.router.guaPrefix}:14::1/64"
-        ];
-      };
+      publan = mkInternalInterface { name = "publan"; };
 
       trusted = mkInternalInterface {
         name = "trusted";
-        addrs = [
-          "192.168.30.1/24"
-          "${config.router.ulaPrefix}:1e::1/64"
-          "${config.router.guaPrefix}:1e::1/64"
-        ];
         staticLeases = [
           # asparagus
           { macAddr = "a8:a1:59:2a:04:6d"; ipAddr = "192.168.30.17"; }
@@ -145,33 +142,16 @@ in
 
       iot = mkInternalInterface {
         name = "iot";
-        addrs = [
-          "192.168.40.1/24"
-          "${config.router.ulaPrefix}:28::1/64"
-          "${config.router.guaPrefix}:28::1/64"
-        ];
         staticLeases = [
           # okra
           { macAddr = "5c:80:b6:92:eb:27"; ipAddr = "192.168.40.12"; }
         ];
       };
 
-      guest = mkInternalInterface {
-        name = "guest";
-        addrs = [
-          "192.168.50.1/24"
-          "${config.router.ulaPrefix}:32::1/64"
-          "${config.router.guaPrefix}:32::1/64"
-        ];
-      };
+      guest = mkInternalInterface { name = "guest"; };
 
       mgmt = mkInternalInterface {
         name = "mgmt";
-        addrs = [
-          "192.168.88.1/24"
-          "${config.router.ulaPrefix}:58::1/64"
-          "${config.router.guaPrefix}:58::1/64"
-        ];
         staticLeases = [
           # "broccoli-ipmi"
           { macAddr = "00:25:90:f7:32:08"; ipAddr = "192.168.88.201"; }
