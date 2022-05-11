@@ -80,7 +80,7 @@ in
             MTUBytes = "1480";
           };
           tunnelConfig = {
-            Local = "any"; # TODO(jared): use dhcp4
+            Local = "any";
             TTL = 255;
           };
         };
