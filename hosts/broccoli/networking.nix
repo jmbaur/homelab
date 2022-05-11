@@ -70,7 +70,8 @@
         matchConfig.Name = "enp0s20f0";
         networkConfig = {
           Tunnel = config.systemd.network.netdevs.hurricane.netdevConfig.Name;
-          DHCP = "yes";
+          DHCP = "ipv4";
+          IPv6AcceptRA = false; # TODO(jared): get a better ISP
         };
       };
 
