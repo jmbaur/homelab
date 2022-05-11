@@ -41,8 +41,6 @@
     dig
     ethtool
     ipmitool
-    powertop
-    ppp
     tcpdump
   ];
 
