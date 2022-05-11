@@ -61,6 +61,7 @@
       in
       {
         devShells.default = pkgs.mkShell { buildInputs = [ pkgs.sops ]; };
+        formatter = pkgs.nixpkgs-fmt;
       })
     //
     {
