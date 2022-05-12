@@ -1,4 +1,4 @@
-{ config, pkgs, ... }: {
+{ config, lib, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
 
   boot.kernelPackages = pkgs.linuxPackages_5_17;
@@ -7,10 +7,40 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  networking.hostName = "okra";
-  networking.wireless.enable = true;
+  networking = {
+    useDHCP = false;
+    useNetworkd = true;
+    hostName = "okra";
+    wireless.iwd.enable = true;
+  };
 
-  services.mullvad-vpn.enable = true;
+  systemd.network = {
+    networks = {
+      wired = {
+        matchConfig.Name = "en*";
+        networkConfig = {
+          DHCP = "yes";
+          IPv6PrivacyExtensions = true;
+        };
+        dhcpV4Config = {
+          RouteMetric = 10;
+          UseDomains = "yes";
+        };
+      };
+
+      wireless = {
+        matchConfig.Name = "wl*";
+        networkConfig = {
+          DHCP = "yes";
+          IPv6PrivacyExtensions = true;
+        };
+        dhcpV4Config = {
+          RouteMetric = 20;
+          UseDomains = "yes";
+        };
+      };
+    };
+  };
 
   time.timeZone = "America/Los_Angeles";
 

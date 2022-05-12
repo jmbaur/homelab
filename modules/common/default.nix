@@ -51,7 +51,6 @@ with lib;
       killall
       lm_sensors
       lsof
-      mullvad
       pciutils
       tcpdump
       tmux

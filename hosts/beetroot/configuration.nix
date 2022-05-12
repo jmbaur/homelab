@@ -33,6 +33,7 @@
   };
 
   networking = {
+    useDHCP = false;
     hostName = "beetroot";
     useNetworkd = true;
     wireless.iwd.enable = true;

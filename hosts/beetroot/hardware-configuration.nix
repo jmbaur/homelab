@@ -58,7 +58,5 @@
   zramSwap.enable = true;
   zramSwap.swapDevices = 1;
 
-  networking.useDHCP = lib.mkDefault false;
-
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
