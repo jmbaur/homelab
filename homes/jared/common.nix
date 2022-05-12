@@ -113,7 +113,7 @@ in
       };
     };
 
-    programs.bat = { enable = true; config.theme = "Solarized (light)"; };
+    programs.bat = { enable = true; config.theme = "ansi"; };
     programs.git = {
       enable = true;
       aliases = {
@@ -168,6 +168,11 @@ in
       enable = true;
       historyControl = [ "ignoredups" "ignorespace" ];
       historyIgnore = [ "ls" "cd" "exit" ];
+    };
+
+    programs.zsh = {
+      enable = true;
+      defaultKeymap = "emacs";
     };
 
     programs.direnv = {

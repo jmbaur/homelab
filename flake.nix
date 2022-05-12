@@ -10,6 +10,7 @@
     ipwatch.url = "github:jmbaur/ipwatch";
     nixpkgs-jmbaur.url = "github:jmbaur/nixpkgs/mosh-378dfa6";
     nixpkgs.url = "nixpkgs/nixos-unstable";
+    pre-commit.url = "github:cachix/pre-commit-hooks.nix";
     sops-nix.url = "github:mic92/sops-nix";
     wallpapers.url = "github:jmbaur/procedural-wallpapers";
     hosts = {
@@ -53,6 +54,7 @@
     , nixos-hardware
     , nixpkgs
     , nixpkgs-jmbaur
+    , pre-commit
     , sops-nix
     , wallpapers
     , ...
@@ -62,8 +64,15 @@
         pkgs = import nixpkgs { inherit system; };
       in
       {
-        devShells.default = pkgs.mkShell { buildInputs = [ pkgs.sops ]; };
         formatter = pkgs.nixpkgs-fmt;
+        devShells.default = pkgs.mkShell {
+          buildInputs = [ pkgs.sops ];
+          inherit (pre-commit.lib.${system}.run {
+            src = builtins.path { path = ./.; };
+            hooks.nixpkgs-fmt.enable = true;
+          }) shellHook;
+
+        };
       })
     //
     {

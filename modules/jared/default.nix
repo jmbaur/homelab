@@ -17,6 +17,8 @@ in
       openssh.authorizedKeys.keyFiles = lib.mkIf config.custom.deploy.enable [ (import ../../data/jmbaur-ssh-keys.nix) ];
     };
 
+    environment.pathsToLink = [ "/share/zsh" ];
+
     home-manager = {
       useUserPackages = true;
       useGlobalPkgs = true;
