@@ -6,7 +6,8 @@ let
       ipv4ThirdOctet =
         config.systemd.network.netdevs.${name}.vlanConfig.Id;
       ipv6FourthHextet = lib.toHexString ipv4ThirdOctet;
-      ipv4Addr = "192.168.${toString ipv4ThirdOctet}.1/24";
+      ipv4Addr = "192.168.${toString ipv4ThirdOctet}.1";
+      ipv4Cidr = "${ipv4Addr}/24";
       guaPrefix = "${config.router.guaPrefix}:${ipv6FourthHextet}";
       ulaPrefix = "${config.router.ulaPrefix}:${ipv6FourthHextet}";
       guaNetwork = "${guaPrefix}::/64";
@@ -18,7 +19,7 @@ let
       matchConfig.Name =
         config.systemd.network.netdevs.${name}.netdevConfig.Name;
       networkConfig = {
-        Address = [ ipv4Addr ipv6GuaAddr ipv6UlaAddr ];
+        Address = [ ipv4Cidr ipv6GuaAddr ipv6UlaAddr ];
         IPv6AcceptRA = false;
         DHCPServer = true;
         IPv6SendRA = true;
@@ -33,7 +34,9 @@ let
       dhcpServerConfig = {
         PoolOffset = 100;
         PoolSize = 100;
-        DNS = [ ipv4Addr ];
+        # TODO(jared): When https://github.com/systemd/systemd/pull/22332 is
+        # released, switch to DNS="_server_address".
+        DNS = ipv4Addr;
       };
       extraConfig = (lib.concatMapStrings
         (machine: ''
@@ -53,6 +56,8 @@ in
     nat.enable = false;
     firewall.enable = false;
   };
+
+  services.resolved.enable = false;
 
   systemd.network = {
     enable = true;
@@ -115,6 +120,7 @@ in
           Tunnel = config.systemd.network.netdevs.hurricane.netdevConfig.Name;
           DHCP = "ipv4";
           IPv6AcceptRA = false; # TODO(jared): get a better ISP
+          LinkLocalAddressing = "no";
           IPForward = true;
         };
         dhcpV4Config = {
