@@ -89,9 +89,12 @@ with lib;
       baseIndex = 1;
       keyMode = "vi";
       extraConfig = ''
-        set-option -g lock-command ${pkgs.vlock}/bin/vlock
-        set-option -g lock-after-time 3600
         bind-key C-l lock-session
+        set-option -g focus-events on
+        set-option -g lock-after-time 3600
+        set-option -g lock-command ${pkgs.vlock}/bin/vlock
+        set-option -g set-clipboard on
+        set-option -sa terminal-overrides ',xterm-256color:RGB'
       '';
     };
   };
