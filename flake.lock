@@ -143,6 +143,21 @@
     },
     "flake-utils_8": {
       "locked": {
+        "lastModified": 1644229661,
+        "narHash": "sha256-1YdnJAsNy69bpcjuoKdOYQX0YxZBiCYZo4Twxerqv7k=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "3cecb5b042f7f209c56ffd8371b2711a290ec797",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "flake-utils_9": {
+      "locked": {
         "lastModified": 1649676176,
         "narHash": "sha256-OWKJratjt2RW151VUlJPRALb7OU2S5s+f0vLj4o1bHM=",
         "owner": "numtide",
@@ -296,11 +311,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1652105882,
-        "narHash": "sha256-nZNmQG1rjwtdhVfVEx9EOIXfEir0YIyJBzzh0E3ebZw=",
+        "lastModified": 1652316068,
+        "narHash": "sha256-9vrbO7lnjd9t4xVnrPOBJXrg0pUA7oxuIj99F+Saxsc=",
         "owner": "astro",
         "repo": "microvm.nix",
-        "rev": "2fe8768a4ea986efc9e0ccf14c5723d3b5d98ea3",
+        "rev": "95bca60048a486d71d0d63f51e66bedabaf6a4c7",
         "type": "github"
       },
       "original": {
@@ -314,14 +329,15 @@
         "flake-utils": "flake-utils_7",
         "nixpkgs": [
           "nixpkgs"
-        ]
+        ],
+        "pre-commit": "pre-commit"
       },
       "locked": {
-        "lastModified": 1652299211,
-        "narHash": "sha256-Yuj6EIuruBNqM9yc++RAjTQmDq9MwIzjyOZNEFVl+Gk=",
+        "lastModified": 1652326812,
+        "narHash": "sha256-2+bR3wAbRSRwlwbfq+EWpD3BlNTZ3DtvgwE8JYozKXI=",
         "owner": "jmbaur",
         "repo": "neovim",
-        "rev": "428870bef7538ecf0517bfeb9b469dab77a59863",
+        "rev": "13d4b3af8b2f496be8fd4adc33412f485b00144d",
         "type": "github"
       },
       "original": {
@@ -439,6 +455,20 @@
     },
     "nixpkgs_6": {
       "locked": {
+        "lastModified": 1645655918,
+        "narHash": "sha256-ZfbEFRW7o237+A1P7eTKhXje435FCAoe0blj2n20Was=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "77a7a4197740213879b9a1d2e1788c6c8ade4274",
+        "type": "github"
+      },
+      "original": {
+        "id": "nixpkgs",
+        "type": "indirect"
+      }
+    },
+    "nixpkgs_7": {
+      "locked": {
         "lastModified": 1652231724,
         "narHash": "sha256-MjalcXFZgcgchp4QqnF05JTkFBBGad5hbksA1EKoP98=",
         "owner": "NixOS",
@@ -452,7 +482,7 @@
         "type": "indirect"
       }
     },
-    "nixpkgs_7": {
+    "nixpkgs_8": {
       "locked": {
         "lastModified": 1638097282,
         "narHash": "sha256-EXCzj9b8X/lqDPJapxZThIOKL5ASbpsJZ+8L1LnY1ig=",
@@ -468,7 +498,7 @@
         "type": "github"
       }
     },
-    "nixpkgs_8": {
+    "nixpkgs_9": {
       "locked": {
         "lastModified": 1652231724,
         "narHash": "sha256-MjalcXFZgcgchp4QqnF05JTkFBBGad5hbksA1EKoP98=",
@@ -481,6 +511,25 @@
         "id": "nixpkgs",
         "ref": "nixos-unstable",
         "type": "indirect"
+      }
+    },
+    "pre-commit": {
+      "inputs": {
+        "flake-utils": "flake-utils_8",
+        "nixpkgs": "nixpkgs_6"
+      },
+      "locked": {
+        "lastModified": 1649054408,
+        "narHash": "sha256-wz8AH7orqUE4Xog29WMTqOYBs0DMj2wFM8ulrTRVgz0=",
+        "owner": "cachix",
+        "repo": "pre-commit-hooks.nix",
+        "rev": "e5e7b3b542e7f4f96967966a943d7e1c07558042",
+        "type": "github"
+      },
+      "original": {
+        "owner": "cachix",
+        "repo": "pre-commit-hooks.nix",
+        "type": "github"
       }
     },
     "root": {
@@ -497,7 +546,7 @@
         "microvm": "microvm",
         "neovim": "neovim",
         "nixos-hardware": "nixos-hardware",
-        "nixpkgs": "nixpkgs_6",
+        "nixpkgs": "nixpkgs_7",
         "nixpkgs-jmbaur": "nixpkgs-jmbaur",
         "sops-nix": "sops-nix",
         "wallpapers": "wallpapers"
@@ -505,7 +554,7 @@
     },
     "sops-nix": {
       "inputs": {
-        "nixpkgs": "nixpkgs_7"
+        "nixpkgs": "nixpkgs_8"
       },
       "locked": {
         "lastModified": 1649756291,
@@ -538,8 +587,8 @@
     },
     "wallpapers": {
       "inputs": {
-        "flake-utils": "flake-utils_8",
-        "nixpkgs": "nixpkgs_8"
+        "flake-utils": "flake-utils_9",
+        "nixpkgs": "nixpkgs_9"
       },
       "locked": {
         "lastModified": 1652311925,
