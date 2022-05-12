@@ -1,0 +1,7 @@
+colorscheme desert
+set colorcolumn=80
+set hidden
+set hlsearch
+set number
+set path=**/*
+syntax enable

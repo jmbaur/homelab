@@ -36,38 +36,50 @@ with lib;
     };
     services.xserver.xkbOptions = "ctrl:nocaps";
 
-    environment.variables.EDITOR = "vim";
-    environment.binsh = "${pkgs.dash}/bin/dash";
-    environment.systemPackages = with pkgs; [
-      bc
-      bind
-      curl
-      dmidecode
-      dnsutils
-      file
-      gitMinimal
-      htop
-      iputils
-      killall
-      lm_sensors
-      lsof
-      pciutils
-      tcpdump
-      tmux
-      traceroute
-      usbutils
-      vim
-    ];
+    environment = {
+      binsh = "${pkgs.dash}/bin/dash";
 
-    programs.bash = {
+      systemPackages = with pkgs; [
+        bc
+        bind
+        curl
+        dmidecode
+        dnsutils
+        file
+        gitMinimal
+        htop
+        iputils
+        killall
+        lm_sensors
+        lsof
+        pciutils
+        tcpdump
+        traceroute
+        usbutils
+      ];
+
       loginShellInit = ''
         tmux new-session -d -s default -c "$HOME" 2>/dev/null || true
       '';
+
       interactiveShellInit = mkIf (!config.custom.gui.enable) ''
         if [ -z "$TMUX" ]; then
           tmux attach-session -t default
         fi
       '';
+    };
+
+    programs.vim = {
+      defaultEditor = true;
+      package = pkgs.vim_configurable.customize {
+        vimrcConfig = {
+          customRC = readFile ./vimrc;
+          packages.myVimPackage = with pkgs.vimPlugins; {
+            start = [ vim-commentary vim-nix vim-rsi vim-sensible vim-surround ];
+            opt = [ ];
+          };
+        };
+      };
     };
 
     programs.tmux = {

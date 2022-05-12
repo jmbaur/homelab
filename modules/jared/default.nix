@@ -5,9 +5,12 @@ in
 {
   options.custom.jared.enable = lib.mkEnableOption "Enable jared user";
   config = lib.mkIf cfg.enable {
+    programs.zsh.enable = true;
+
     users.users.jared = {
       isNormalUser = true;
       description = "Jared Baur";
+      shell = pkgs.zsh;
       extraGroups = [
         "dialout" # picocom
         "wheel" # sudo
@@ -16,8 +19,6 @@ in
       ];
       openssh.authorizedKeys.keyFiles = lib.mkIf config.custom.deploy.enable [ (import ../../data/jmbaur-ssh-keys.nix) ];
     };
-
-    environment.pathsToLink = [ "/share/zsh" ];
 
     home-manager = {
       useUserPackages = true;

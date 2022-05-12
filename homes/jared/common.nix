@@ -141,6 +141,8 @@ in
       userName = "Jared Baur";
     };
 
+    programs.dircolors.enable = true;
+
     programs.tmux = {
       enable = true;
       aggressiveResize = true;
@@ -149,9 +151,10 @@ in
       disableConfirmationPrompt = true;
       escapeTime = 10;
       keyMode = "vi";
-      prefix = "C-s";
-      terminal = "tmux-256color";
       plugins = with pkgs.tmuxPlugins; [ logging ];
+      prefix = "C-s";
+      shell = "${pkgs.zsh}/bin/zsh";
+      terminal = "tmux-256color";
       extraConfig = ''
         bind-key "j" display-popup -E -w 90% "${pkgs.j}/bin/j"
         set-option -g focus-events on
@@ -173,6 +176,9 @@ in
     programs.zsh = {
       enable = true;
       defaultKeymap = "emacs";
+      initExtra = ''
+        bindkey \^U backward-kill-line
+      '';
     };
 
     programs.direnv = {
