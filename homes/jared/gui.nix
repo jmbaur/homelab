@@ -194,7 +194,7 @@ in
           size = 12.0;
           style = "Regular";
         };
-        menu = "${pkgs.bemenu}/bin/bemenu-run --line-height=27 --fn='${toString config.wayland.windowManager.sway.config.fonts.names} ${toString config.wayland.windowManager.sway.config.fonts.size}'";
+        menu = "${pkgs.bemenu}/bin/bemenu-run --line-height=29 --fn='${toString config.wayland.windowManager.sway.config.fonts.names} ${toString config.wayland.windowManager.sway.config.fonts.size}'";
         terminal = "${pkgs.kitty}/bin/kitty";
         modifier = "Mod4";
         input = {
