@@ -75,7 +75,6 @@ in
         "telemetry.telemetryLevel" = "off";
         "terminal.external.linuxExec" = config.wayland.windowManager.sway.config.terminal;
         "vscode-neovim.neovimExecutablePaths.linux" = "${pkgs.neovim-embed}/bin/nvim";
-        # "workbench.colorTheme" = "Solarized Light";
       };
     };
 
@@ -84,12 +83,7 @@ in
       settings = {
         env.TERM = "xterm-256color";
         mouse.hide_when_typing = true;
-        import = [
-          # (builtins.fetchurl {
-          #   url = "https://raw.githubusercontent.com/eendroroy/alacritty-theme/master/themes/solarized_light.yaml";
-          #   sha256 = "0acml82gvmvsb7d9zn2lj957dqd7vxq53pyad40hf20x11rck3qw";
-          # })
-        ];
+        import = [ ];
         font = {
           normal.family = config.programs.kitty.font.name;
           bold.family = config.programs.kitty.font.name;
@@ -107,7 +101,6 @@ in
           dpi-aware = "yes";
           font = "${config.programs.kitty.font.name}:size=${toString (config.programs.kitty.font.size - 7)}";
           term = "xterm-256color";
-          # include = "${pkgs.foot.src}/themes/solarized-light";
         };
         mouse.hide-when-typing = "yes";
       };
@@ -115,7 +108,6 @@ in
 
     programs.kitty = {
       enable = true;
-      theme = "Desert";
       font = {
         package = pkgs.iosevka-bin;
         name = "Iosevka";

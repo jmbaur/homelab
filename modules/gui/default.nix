@@ -75,6 +75,7 @@ in
         v4l-utils
         wf-recorder
         wl-clipboard
+        wl-color-picker
         wlr-randr
         xdg-utils
         zathura
