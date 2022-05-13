@@ -183,14 +183,17 @@ in
         autoload -Uz compinit bashcompinit && compinit && bashcompinit
         complete -C '${pkgs.awscli}/bin/aws_completer' aws
       '';
-      initExtra = ''
+      initExtraFirst = ''
         setopt PROMPT_SUBST
+      '';
+      initExtra = ''
         autoload -Uz vcs_info
         zstyle ':vcs_info:*' enable git
         zstyle ':vcs_info:*' actionformats '%F{magenta}%b%f|%F{red}%a%f '
         zstyle ':vcs_info:*' formats '%F{magenta}%b%f '
         precmd () { vcs_info }
         PS1='%F{green}%n@%m%f:%F{blue}%3~%f ''${vcs_info_msg_0_}%# '
+
         bindkey \^U backward-kill-line
       '';
     };
