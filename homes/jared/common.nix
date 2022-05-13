@@ -179,6 +179,10 @@ in
     programs.zsh = {
       enable = true;
       defaultKeymap = "emacs";
+      completionInit = ''
+        autoload -Uz compinit bashcompinit && compinit && bashcompinit
+        complete -C '${pkgs.awscli}/bin/aws_completer' aws
+      '';
       initExtra = ''
         setopt PROMPT_SUBST
         autoload -Uz vcs_info
