@@ -1,7 +1,6 @@
 { config, lib, pkgs, ... }:
 let
-  mkInternalInterface =
-    { name, staticLeases ? [ ] }:
+  mkInternalInterface = { name, staticLeases ? [ ] }:
     let
       ipv4ThirdOctet =
         config.systemd.network.netdevs.${name}.vlanConfig.Id;
@@ -37,15 +36,13 @@ let
         # TODO(jared): When https://github.com/systemd/systemd/pull/22332 is
         # released, switch to DNS="_server_address".
         DNS = ipv4Addr;
+        SendOption = [ "15:string:home.arpa" ];
       };
-      extraConfig = (lib.concatMapStrings
-        (machine: ''
-          [DHCPServerStaticLease]
-          MACAddress=${machine.macAddr}
-          Address=${machine.ipAddr}
-
-        '')
-        staticLeases);
+      dhcpServerStaticLeases = map
+        (lease: {
+          dhcpServerStaticLeaseConfig = lease;
+        })
+        staticLeases;
     };
 in
 {
@@ -140,38 +137,33 @@ in
       };
 
       pubwan = mkInternalInterface { name = "pubwan"; };
-
       publan = mkInternalInterface { name = "publan"; };
-
       trusted = mkInternalInterface {
         name = "trusted";
         staticLeases = [
           # asparagus
-          { macAddr = "a8:a1:59:2a:04:6d"; ipAddr = "192.168.30.17"; }
+          { MACAddress = "a8:a1:59:2a:04:6d"; Address = "192.168.30.17"; }
         ];
       };
-
       iot = mkInternalInterface {
         name = "iot";
         staticLeases = [
           # okra
-          { macAddr = "5c:80:b6:92:eb:27"; ipAddr = "192.168.40.12"; }
+          { MACAddress = "5c:80:b6:92:eb:27"; Address = "192.168.40.12"; }
         ];
       };
-
       guest = mkInternalInterface { name = "guest"; };
-
       mgmt = mkInternalInterface {
         name = "mgmt";
         staticLeases = [
-          # "broccoli-ipmi"
-          { macAddr = "00:25:90:f7:32:08"; ipAddr = "192.168.88.201"; }
-          # "kale-ipmi"
-          { macAddr = "d0:50:99:f7:c4:8d"; ipAddr = "192.168.88.202"; }
-          # "kale"
-          { macAddr = "d0:50:99:fe:1e:e2"; ipAddr = "192.168.88.7"; }
-          # "rhubarb"
-          { macAddr = "dc:a6:32:20:50:f2"; ipAddr = "192.168.88.88"; }
+          # broccoli-ipmi
+          { MACAddress = "00:25:90:f7:32:08"; Address = "192.168.88.201"; }
+          # kale-ipmi
+          { MACAddress = "d0:50:99:f7:c4:8d"; Address = "192.168.88.202"; }
+          # kale
+          { MACAddress = "d0:50:99:fe:1e:e2"; Address = "192.168.88.7"; }
+          # rhubarb
+          { MACAddress = "dc:a6:32:20:50:f2"; Address = "192.168.88.88"; }
         ];
       };
 

@@ -1,13 +1,8 @@
-{ config, lib, pkgs, ... }: {
-  options = {
-    router = {
-      guaPrefix = lib.mkOption {
-        type = lib.types.str;
-      };
-      ulaPrefix = lib.mkOption {
-        type = lib.types.str;
-      };
-    };
+{ config, lib, pkgs, ... }:
+with lib;
+{
+  options.router = {
+    guaPrefix = mkOption { type = types.str; };
+    ulaPrefix = lib.mkOption { type = types.str; };
   };
-
 }
