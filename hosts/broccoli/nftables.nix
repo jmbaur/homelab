@@ -42,6 +42,7 @@
               jump input_lan_icmp
 
               ip version 4 udp dport 67 accept # DHCP
+              meta l4proto udp th dport 5353 accept # mDNS
               meta l4proto { tcp, udp } th dport 53 accept # DNS
           }
 

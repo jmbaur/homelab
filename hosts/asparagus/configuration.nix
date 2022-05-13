@@ -16,6 +16,14 @@
     hostName = "asparagus";
     useNetworkd = true;
   };
+
+  services.resolved = {
+    enable = true;
+    extraConfig = ''
+      MulticastDNS=no
+    '';
+  };
+
   systemd.network = {
     enable = true;
     networks = {
@@ -24,6 +32,7 @@
         networkConfig = {
           DHCP = "yes";
           IPv6PrivacyExtensions = true;
+          MulticastDNS = true;
         };
         dhcpV4Config = {
           RouteMetric = 10;
@@ -35,6 +44,7 @@
         networkConfig = {
           DHCP = "yes";
           IPv6PrivacyExtensions = true;
+          MulticastDNS = true;
         };
         dhcpV4Config = {
           RouteMetric = 20;

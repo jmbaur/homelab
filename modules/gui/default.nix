@@ -92,11 +92,18 @@ in
         };
       };
     };
-    services.avahi.enable = true;
+    services.avahi = {
+      enable = true;
+      nssmdns = true;
+      publish = {
+        enable = true;
+        workstation = true;
+        addresses = true;
+      };
+    };
     services.gnome.gnome-keyring.enable = true;
     services.pcscd.enable = false;
     services.printing.enable = true;
     services.udev.packages = [ pkgs.yubikey-personalization ];
-
   };
 }

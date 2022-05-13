@@ -42,6 +42,13 @@
   # don't enable this for a laptop
   systemd.services."systemd-networkd-wait-online".enable = false;
 
+  services.resolved = {
+    enable = true;
+    extraConfig = ''
+      MulticastDNS=no
+    '';
+  };
+
   systemd.network = {
     enable = true;
 

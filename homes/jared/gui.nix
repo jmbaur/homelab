@@ -99,7 +99,7 @@ in
       settings = {
         main = {
           dpi-aware = "yes";
-          font = "${config.programs.kitty.font.name}:size=${toString (config.programs.kitty.font.size - 7)}";
+          font = "${config.programs.kitty.font.name}, Noto Color Emoji:size=${toString (config.programs.kitty.font.size - 7)}";
           term = "xterm-256color";
         };
         mouse.hide-when-typing = "yes";

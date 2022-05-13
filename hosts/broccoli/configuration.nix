@@ -40,6 +40,7 @@
     dig
     ethtool
     ipmitool
+    nmap
     tcpdump
   ];
 
@@ -73,12 +74,16 @@
   services.avahi = {
     enable = true;
     reflector = true;
-    interfaces = with config.systemd.network.networks; [
-      trusted.matchConfig.Name
-      iot.matchConfig.Name
-    ];
-    ipv4 = true;
-    ipv6 = true;
+    nssmdns = true;
+    openFirewall = false;
+    publish = {
+      enable = true;
+      addresses = true;
+    };
+    extraConfig = ''
+      [server]
+      deny-interfaces=${config.systemd.network.networks.wan.matchConfig.Name}
+    '';
   };
 
   services.openssh = {
