@@ -145,7 +145,7 @@ in
     };
 
     services.swayidle =
-      let lockerCommand = "${pkgs.swaylock}/bin/swaylock -f"; in
+      let lockerCommand = "${pkgs.swaylock}/bin/swaylock -fc 000000"; in
       {
         enable = true;
         events = [
