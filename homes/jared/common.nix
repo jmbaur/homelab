@@ -88,6 +88,8 @@ in
 
     programs.gpg = {
       enable = true;
+      mutableKeys = false;
+      mutableTrust = false;
       publicKeys = [{
         source = import ../../data/jmbaur-pgp-keys.nix;
         trust = 5;

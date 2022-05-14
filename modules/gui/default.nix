@@ -8,7 +8,6 @@ in
     custom.gui.desktop = lib.mkEnableOption "Enable desktop gui config";
   };
   config = lib.mkIf cfg.enable {
-
     hardware.pulseaudio.enable = !config.custom.sound.enable;
     hardware.i2c.enable = cfg.desktop;
 
@@ -83,6 +82,11 @@ in
     };
     programs.wshowkeys.enable = true;
 
+    console = {
+      earlySetup = true;
+      font = "${pkgs.terminus_font}/share/consolefonts/ter-v32n.psf.gz";
+    };
+
     services.greetd = {
       enable = true;
       vt = 7;
@@ -102,6 +106,7 @@ in
       };
     };
     services.gnome.gnome-keyring.enable = true;
+    services.dbus.packages = [ pkgs.gcr ];
     services.pcscd.enable = false;
     services.printing.enable = true;
     services.udev.packages = [ pkgs.yubikey-personalization ];
