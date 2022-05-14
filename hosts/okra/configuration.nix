@@ -52,7 +52,7 @@
 
   services.fwupd.enable = true;
 
-  environment.systemPackages = with pkgs; [ firefox google-chrome ];
+  environment.systemPackages = with pkgs; [ firefox chromium ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

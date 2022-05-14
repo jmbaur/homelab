@@ -12,11 +12,11 @@ in
     home.packages = with pkgs; [
       (wrapOBS { plugins = with obs-studio-plugins; [ wlrobs ]; })
       bitwarden
+      chromium
       ddcutil
       element-desktop-wayland
       firefox-wayland
       gimp
-      google-chrome
       iosevka-bin
       keybase
       signal-desktop

@@ -27,7 +27,6 @@ in
       grex
       gron
       htmlq
-      htop
       iperf3
       j
       jq
