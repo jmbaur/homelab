@@ -11,7 +11,7 @@
     useDHCP = false;
     useNetworkd = true;
     hostName = "okra";
-    wireless.iwd.enable = true;
+    wireless.enable = true;
   };
 
   systemd.network = {
