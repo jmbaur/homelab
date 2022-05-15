@@ -9,14 +9,7 @@
       (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [
-    "xhci_pci"
-    "ahci"
-    "usb_storage"
-    "usbhid"
-    "sd_mod"
-    "rtsx_pci_sdmmc"
-  ] ++ [ "iwlwifi" ];
+  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" "rtsx_pci_sdmmc" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
@@ -25,33 +18,30 @@
     {
       device = "/dev/disk/by-uuid/d8063802-74df-4bb6-9c49-31990a305378";
       fsType = "btrfs";
-      options = [ "subvol=@" "compress=zstd" "noatime" "discard=async" ];
+      options = [ "subvol=@" "noatime" "discard=async" "compress=zstd" ];
     };
 
-  boot.initrd.luks.devices."cryptroot" = {
-    allowDiscards = true;
-    device = "/dev/disk/by-uuid/982ae5ce-3090-4fad-8e3e-b0f3339387ee";
-  };
+  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/982ae5ce-3090-4fad-8e3e-b0f3339387ee";
 
   fileSystems."/nix" =
     {
       device = "/dev/disk/by-uuid/d8063802-74df-4bb6-9c49-31990a305378";
       fsType = "btrfs";
-      options = [ "subvol=@nix" "compress=zstd" "noatime" "discard=async" ];
+      options = [ "subvol=@nix" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/home" =
     {
       device = "/dev/disk/by-uuid/d8063802-74df-4bb6-9c49-31990a305378";
       fsType = "btrfs";
-      options = [ "subvol=@home" "compress=zstd" "noatime" "discard=async" ];
+      options = [ "subvol=@home" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/home/.snapshots" =
     {
       device = "/dev/disk/by-uuid/d8063802-74df-4bb6-9c49-31990a305378";
       fsType = "btrfs";
-      options = [ "subvol=@home/.snapshots" "compress=zstd" "noatime" "discard=async" ];
+      options = [ "subvol=@home/.snapshots" "noatime" "discard=async" "compress=zstd" ];
     };
 
   fileSystems."/boot" =
@@ -65,6 +55,13 @@
     enable = true;
     swapDevices = 1;
   };
+
+  # The global useDHCP flag is deprecated, therefore explicitly set to false here.
+  # Per-interface useDHCP will be mandatory in the future, so this generated config
+  # replicates the default behaviour.
+  networking.useDHCP = lib.mkDefault false;
+  networking.interfaces.eno1.useDHCP = lib.mkDefault true;
+  networking.interfaces.wlp0s20f3.useDHCP = lib.mkDefault true;
 
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;

@@ -11,3 +11,6 @@ creation_rules:
   - path_regex: hosts\/beetroot\/.*yaml$
     pgp: D4A0692874AA71B7F1281491BB8667EA7EB08143
     age: age1sq4vukvtc06l96e9nejsnn362yfwq76ye8crnyjp2sp7nuh20easdxu9yv
+  - path_regex: hosts\/okra\/.*yaml$
+    pgp: D4A0692874AA71B7F1281491BB8667EA7EB08143
+    age: age1zx96y3wyuw5dyvpgsm0n40rlnekmhfykxzkk0ec39snv2zcl0qpsuy8wjv

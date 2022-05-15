@@ -1,7 +1,6 @@
 { config, lib, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
 
-  boot.kernelPackages = pkgs.linuxPackages_5_17;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
@@ -9,37 +8,8 @@
 
   networking = {
     useDHCP = false;
-    useNetworkd = true;
     hostName = "okra";
     wireless.enable = true;
-  };
-
-  systemd.network = {
-    networks = {
-      wired = {
-        matchConfig.Name = "en*";
-        networkConfig = {
-          DHCP = "yes";
-          IPv6PrivacyExtensions = true;
-        };
-        dhcpV4Config = {
-          RouteMetric = 10;
-          UseDomains = "yes";
-        };
-      };
-
-      wireless = {
-        matchConfig.Name = "wl*";
-        networkConfig = {
-          DHCP = "yes";
-          IPv6PrivacyExtensions = true;
-        };
-        dhcpV4Config = {
-          RouteMetric = 20;
-          UseDomains = "yes";
-        };
-      };
-    };
   };
 
   time.timeZone = "America/Los_Angeles";
@@ -53,6 +23,12 @@
   services.fwupd.enable = true;
 
   environment.systemPackages = with pkgs; [ firefox chromium ];
+
+  sops = {
+    defaultSopsFile = ./secrets.yaml;
+    age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+    secrets.wg0 = { };
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
