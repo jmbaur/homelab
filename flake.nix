@@ -12,6 +12,7 @@
     nixpkgs-jmbaur.url = "github:jmbaur/nixpkgs/mosh-378dfa6";
     pre-commit.url = "github:cachix/pre-commit-hooks.nix";
     sops-nix.url = "github:mic92/sops-nix";
+    terranix.url = "github:terranix/terranix";
     wallpapers.url = "github:jmbaur/procedural-wallpapers";
     hosts = {
       url = "github:StevenBlack/hosts";
@@ -56,6 +57,7 @@
     , nixpkgs-jmbaur
     , pre-commit
     , sops-nix
+    , terranix
     , wallpapers
     , ...
     }@inputs: flake-utils.lib.eachDefaultSystem
@@ -66,7 +68,10 @@
       {
         formatter = pkgs.nixpkgs-fmt;
         devShells.default = pkgs.mkShell {
-          buildInputs = [ pkgs.sops ];
+          buildInputs = with pkgs; [
+            (terraform.withPlugins (p: with p; [ aws cloudflare ]))
+            sops
+          ];
           inherit (pre-commit.lib.${system}.run {
             src = builtins.path { path = ./.; };
             hooks.nixpkgs-fmt.enable = true;
@@ -75,6 +80,10 @@
         packages.cap_ac = pkgs.callPackage ./routeros/CapAC.nix { };
         packages.crs_305 = pkgs.writeText "crs_305" (builtins.readFile ./routeros/CRS305.rsc);
         packages.crs_326 = pkgs.writeText "crs_326" (builtins.readFile ./routeros/CRS326.rsc);
+        packages.vpc = terranix.lib.terranixConfiguration {
+          inherit system;
+          modules = [ ./config.nix ];
+        };
       })
     //
     {

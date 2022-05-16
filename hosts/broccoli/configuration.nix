@@ -55,8 +55,8 @@
   systemd.services.ipwatch.serviceConfig.EnvironmentFile = config.sops.secrets.ipwatch.path;
   services.ipwatch = {
     enable = true;
-    iface = config.systemd.network.networks.wan.matchConfig.Name;
-    exe = "${pkgs.writeShellScriptBin "ipwatch-exe" ''
+    interfaces = [ config.systemd.network.networks.wan.matchConfig.Name ];
+    hookScript = "${pkgs.writeShellScriptBin "ipwatch-exe" ''
       echo Updating hurricane electric tunnelbroker with new IP
       ${pkgs.curl}/bin/curl --silent \
         --data "hostname=''${HE_TUNNEL_ID}" \

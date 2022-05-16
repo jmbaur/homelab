@@ -2,10 +2,11 @@
   networking = {
     useDHCP = lib.mkForce false;
     hostName = "beetroot";
-    wireless.iwd.enable = true;
-    interfaces.enp3s0f0.useDHCP = true;
-    interfaces.enp4s0.useDHCP = true;
-    interfaces.wlan0.useDHCP = true;
+    # wireless.iwd.enable = true;
+    networkmanager.enable = true;
+    interfaces.enp3s0f0.useDHCP = false;
+    interfaces.enp4s0.useDHCP = false;
+    interfaces.wlan0.useDHCP = false;
     # wg-quick.interfaces.wg0 = {
     #   autostart = false;
     #   privateKeyFile = config.sops.secrets.wg0.path;
