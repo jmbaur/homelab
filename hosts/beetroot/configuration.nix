@@ -1,5 +1,5 @@
 { config, lib, pkgs, ... }: {
-  imports = [ ./hardware-configuration.nix ];
+  imports = [ ./networking.nix ./hardware-configuration.nix ];
 
   hardware.enableRedistributableFirmware = true;
 
@@ -19,120 +19,11 @@
 
   sops = {
     defaultSopsFile = ./secrets.yaml;
-    age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-    secrets.wg-home = {
+    age = { generateKey = true; keyFile = "/etc/age/key"; };
+    secrets.wg0 = {
       mode = "0640";
       owner = config.users.users.root.name;
       group = config.users.groups.systemd-network.name;
-    };
-    secrets.wg-mv = {
-      mode = "0640";
-      owner = config.users.users.root.name;
-      group = config.users.groups.systemd-network.name;
-    };
-  };
-
-  networking = {
-    useDHCP = false;
-    hostName = "beetroot";
-    useNetworkd = true;
-    wireless.iwd.enable = true;
-  };
-
-  # don't enable this for a laptop
-  systemd.services."systemd-networkd-wait-online".enable = false;
-
-  services.resolved = {
-    enable = true;
-    extraConfig = ''
-      MulticastDNS=no
-    '';
-  };
-
-  systemd.network = {
-    enable = true;
-
-    netdevs = {
-      wg-mv = {
-        netdevConfig = { Name = "wg-mv"; Kind = "wireguard"; };
-        wireguardConfig = {
-          PrivateKeyFile = "/run/secrets/wg-mv";
-          FirewallMark = 34952;
-          RouteTable = "off";
-        };
-      };
-    };
-
-    networks = {
-      wired = {
-        matchConfig.Name = "en*";
-        networkConfig = {
-          DHCP = "yes";
-          IPv6PrivacyExtensions = true;
-        };
-        dhcpV4Config = {
-          RouteMetric = 10;
-          UseDomains = "yes";
-        };
-      };
-
-      wireless = {
-        matchConfig.Name = "wl*";
-        networkConfig = {
-          DHCP = "yes";
-          IPv6PrivacyExtensions = true;
-        };
-        dhcpV4Config = {
-          RouteMetric = 20;
-          UseDomains = "yes";
-        };
-      };
-
-      # https://wiki.archlinux.org/title/Mullvad#With_systemd-networkd
-      wg-mv = {
-        matchConfig.Name = config.systemd.network.netdevs.wg-mv.netdevConfig.Name;
-        # Manual activation: sudo networkctl up <iface>
-        linkConfig.ActivationPolicy = "manual";
-        networkConfig = {
-          DNSDefaultRoute = "yes";
-          Domains = "~.";
-        };
-        routes = [
-          {
-            routeConfig = {
-              Gateway = "0.0.0.0";
-              GatewayOnLink = true;
-              Table = 1000;
-            };
-          }
-          {
-            routeConfig = {
-              Gateway = "::";
-              GatewayOnLink = true;
-              Table = 1000;
-            };
-          }
-        ];
-        routingPolicyRules = [
-          {
-            routingPolicyRuleConfig = {
-              SuppressPrefixLength = 0;
-              Family = "both";
-              Priority = 999;
-              Table = "main";
-            };
-          }
-          {
-            routingPolicyRuleConfig = {
-              Family = "both";
-              FirewallMark = 34952;
-              InvertRule = true;
-              Table = 1000;
-              Priority = 10;
-            };
-          }
-        ];
-      };
     };
   };
 
@@ -162,13 +53,6 @@
   services.fwupd.enable = true;
   services.fprintd.enable = true;
   security.pam.services.sudo.fprintAuth = false;
-  services.openssh = {
-    enable = true;
-    listenAddresses = builtins.map (addr: { inherit addr; port = 22; }) [ "127.0.0.1" "::1" ];
-    allowSFTP = false;
-    passwordAuthentication = false;
-    startWhenNeeded = true;
-  };
   programs.nix-ld.enable = true;
 
   environment.pathsToLink = [ "/share/nix-direnv" ];

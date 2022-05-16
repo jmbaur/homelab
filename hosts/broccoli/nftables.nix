@@ -14,32 +14,39 @@
       define DEV_WG_IOT = ${networks.wg-iot.matchConfig.Name}
       define NET_ALL = 192.168.0.0/16
 
-      table inet filter {
-
-          chain input_lan_icmp {
-              # accepting ping (icmp-echo-request) for diagnostic purposes.
-              # However, it also lets probes discover this host is alive.
-              # This sample accepts them within a certain rate limit:
-
-              icmp type { echo-request } accept
-              icmpv6 type {
-                  echo-request,
-                  mld-listener-query,
-                  nd-neighbor-advert,
-                  nd-neighbor-solicit,
-                  nd-router-advert,
-                  nd-router-solicit,
-              } accept
-          }
-
+      table inet firewall {
           chain input_wan {
               icmp type echo-request limit rate 5/second accept
               icmpv6 type echo-request limit rate 5/second accept
-              meta l4proto { udp } th dport { ${toString netdevs.wg-trusted.wireguardConfig.ListenPort}, ${toString netdevs.wg-iot.wireguardConfig.ListenPort} } accept
+              meta l4proto { udp } th dport {
+                  ${toString netdevs.wg-trusted.wireguardConfig.ListenPort},
+                  ${toString netdevs.wg-iot.wireguardConfig.ListenPort},
+              } log prefix "input wireguard - " accept
           }
 
           chain input_always_allowed {
-              jump input_lan_icmp
+              # accepting ping (icmp-echo-request) for diagnostic purposes.
+              # However, it also lets probes discover this host is alive. This
+              # sample accepts them within a certain rate limit:
+
+              ip protocol icmp icmp type {
+                  destination-unreachable,
+                  echo-reply,
+                  echo-request,
+                  source-quench,
+                  time-exceeded,
+              } accept
+              ip6 nexthdr icmpv6 icmpv6 type {
+                  destination-unreachable,
+                  echo-reply,
+                  echo-request,
+                  nd-neighbor-solicit,
+                  nd-router-advert,
+                  nd-neighbor-advert,
+                  packet-too-big,
+                  parameter-problem,
+                  time-exceeded,
+              } accept
 
               ip version 4 udp dport 67 accept # DHCP
               meta l4proto udp th dport 5353 accept # mDNS
@@ -51,7 +58,9 @@
 
               meta l4proto tcp th dport ssh log prefix "input ssh - " accept
               meta l4proto udp th dport 69 log prefix "input tftp - " accept
-              meta l4proto { tcp, udp } th dport ${toString config.services.iperf3.port} log prefix "input iperf3 - " accept
+              meta l4proto { tcp, udp } th dport {
+                  ${toString config.services.iperf3.port},
+              } log prefix "input iperf3 - " accept
           }
 
           chain input_private_untrusted {
@@ -61,10 +70,16 @@
           chain input {
               type filter hook input priority 0; policy drop;
 
-              # Allow traffic from established and related packets, drop invalid
-              ct state vmap { established : accept, related : accept, invalid : drop }
+              # Allow traffic from established and related packets, drop
+              # invalid
+              ct state vmap {
+                  established : accept,
+                  related : accept,
+                  invalid : drop,
+              }
 
-              # allow loopback traffic, anything else jump to chain for further evaluation
+              # allow loopback traffic, anything else jump to chain for further
+              # evaluation
               iifname vmap {
                   lo : accept,
                   $DEV_WAN : jump input_wan,
@@ -115,14 +130,20 @@
 
           chain iot {
               jump allow_to_internet
-              oifname { $DEV_IOT, $DEV_PUBLAN } accept
+              oifname { $DEV_IOT, $DEV_PUBLAN, $DEV_WG_IOT } accept
+              log prefix "did not match oifname *wireguard*"
           }
 
           chain forward {
               type filter hook forward priority 0; policy drop;
 
-              # Allow traffic from established and related packets, drop invalid
-              ct state vmap { established : accept, related : accept, invalid : drop }
+              # Allow traffic from established and related packets, drop
+              # invalid
+              ct state vmap {
+                  established : accept,
+                  related : accept,
+                  invalid : drop,
+              }
 
               oifname { $DEV_WAN } jump not_in_internet
 
@@ -144,15 +165,21 @@
               # the rest is dropped by the above policy
               log prefix "forward drop - "
           }
-
       }
 
       table ip nat {
-
           chain prerouting {
               type nat hook prerouting priority 100; policy accept;
 
-              iifname $DEV_WAN tcp dport { ssh, http, https } dnat to 192.168.10.10
+              # # TODO(jared): don't hardcode the dnat address
+              # iifname $DEV_WAN udp dport {
+              #     ${toString netdevs.wg-trusted.wireguardConfig.ListenPort},
+              # } dnat to 192.168.130.1
+              #
+              # # TODO(jared): don't hardcode the dnat address
+              # iifname $DEV_WAN udp dport {
+              #     ${toString netdevs.wg-iot.wireguardConfig.ListenPort},
+              # } dnat to 192.168.140.1
           }
 
           chain postrouting {
@@ -161,7 +188,6 @@
               # masquerade private IP addresses
               ip saddr $NET_ALL oifname $DEV_WAN masquerade
           }
-
       }
     '';
   };

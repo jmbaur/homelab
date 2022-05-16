@@ -1,51 +1,4 @@
-{ config, lib, pkgs, ... }:
-let
-  mkInternalInterface = { name, staticLeases ? [ ] }:
-    let
-      ipv4ThirdOctet =
-        config.systemd.network.netdevs.${name}.vlanConfig.Id;
-      ipv6FourthHextet = lib.toHexString ipv4ThirdOctet;
-      ipv4Addr = "192.168.${toString ipv4ThirdOctet}.1";
-      ipv4Cidr = "${ipv4Addr}/24";
-      guaPrefix = "${config.router.guaPrefix}:${ipv6FourthHextet}";
-      ulaPrefix = "${config.router.ulaPrefix}:${ipv6FourthHextet}";
-      guaNetwork = "${guaPrefix}::/64";
-      ulaNetwork = "${ulaPrefix}::/64";
-      ipv6GuaAddr = "${guaPrefix}::1/64";
-      ipv6UlaAddr = "${ulaPrefix}::1/64";
-    in
-    {
-      matchConfig.Name =
-        config.systemd.network.netdevs.${name}.netdevConfig.Name;
-      networkConfig = {
-        Address = [ ipv4Cidr ipv6GuaAddr ipv6UlaAddr ];
-        IPv6AcceptRA = false;
-        DHCPServer = true;
-        IPv6SendRA = true;
-      };
-      ipv6SendRAConfig = {
-        DNS = "_link_local";
-        Domains = [ "home.arpa" ];
-      };
-      ipv6Prefixes = map
-        (prefix: { ipv6PrefixConfig = { Prefix = prefix; }; })
-        [ guaNetwork ulaNetwork ];
-      dhcpServerConfig = {
-        PoolOffset = 100;
-        PoolSize = 100;
-        # TODO(jared): When https://github.com/systemd/systemd/pull/22332 is
-        # released, switch to DNS="_server_address".
-        DNS = ipv4Addr;
-        SendOption = [ "15:string:home.arpa" ];
-      };
-      dhcpServerStaticLeases = map
-        (lease: {
-          dhcpServerStaticLeaseConfig = lease;
-        })
-        staticLeases;
-    };
-in
-{
+{ config, lib, pkgs, ... }: {
   networking = {
     hostName = "broccoli";
     useDHCP = false;
@@ -56,61 +9,84 @@ in
 
   services.resolved.enable = false;
 
-  systemd.network = {
-    enable = true;
-    netdevs =
-      let
-        mkVlanNetdev = name: id: {
-          netdevConfig = { Name = name; Kind = "vlan"; };
-          vlanConfig.Id = id;
-        };
-      in
-      {
-        pubwan = mkVlanNetdev "pubwan" 10;
-        publan = mkVlanNetdev "publan" 20;
-        trusted = mkVlanNetdev "trusted" 30;
-        iot = mkVlanNetdev "iot" 40;
-        guest = mkVlanNetdev "guest" 50;
-        mgmt = mkVlanNetdev "mgmt" 88;
+  systemd.network.enable = true;
 
-        wg-trusted = {
-          netdevConfig = {
-            Name = "wg-trusted";
-            Kind = "wireguard";
-          };
-          wireguardConfig = {
-            ListenPort = 51830;
-            PrivateKeyFile = "/run/secrets/wg-trusted";
-          };
-          wireguardPeers = [ ];
-        };
+  systemd.network.netdevs =
+    let
+      mkVlanNetdev = name: id: {
+        netdevConfig = { Name = name; Kind = "vlan"; };
+        vlanConfig.Id = id;
+      };
+    in
+    {
+      pubwan = mkVlanNetdev "pubwan" 10;
+      publan = mkVlanNetdev "publan" 20;
+      trusted = mkVlanNetdev "trusted" 30;
+      iot = mkVlanNetdev "iot" 40;
+      guest = mkVlanNetdev "guest" 50;
+      mgmt = mkVlanNetdev "mgmt" 88;
 
-        wg-iot = {
-          netdevConfig = {
-            Name = "wg-iot";
-            Kind = "wireguard";
-          };
-          wireguardConfig = {
-            ListenPort = 51840;
-            PrivateKeyFile = "/run/secrets/wg-iot";
-          };
-          wireguardPeers = [ ];
+      hurricane = {
+        netdevConfig = {
+          Name = "hurricane";
+          Kind = "sit";
+          MTUBytes = "1480";
         };
-
-        hurricane = {
-          netdevConfig = {
-            Name = "hurricane";
-            Kind = "sit";
-            MTUBytes = "1480";
-          };
-          tunnelConfig = {
-            Local = "any";
-            TTL = 255;
-          };
+        tunnelConfig = {
+          Local = "any";
+          TTL = 255;
         };
       };
+    };
 
-    networks = {
+  systemd.network.networks =
+    let
+      mkInternalInterface = { name, staticLeases ? [ ] }:
+        let
+          ipv4ThirdOctet =
+            config.systemd.network.netdevs.${name}.vlanConfig.Id;
+          ipv6FourthHextet = lib.toHexString ipv4ThirdOctet;
+          ipv4Addr = "192.168.${toString ipv4ThirdOctet}.1";
+          ipv4Cidr = "${ipv4Addr}/24";
+          networkGuaPrefix = "${config.router.guaPrefix}:${ipv6FourthHextet}";
+          networkUlaPrefix = "${config.router.ulaPrefix}:${ipv6FourthHextet}";
+          guaNetwork = "${networkGuaPrefix}::/64";
+          ulaNetwork = "${networkUlaPrefix}::/64";
+          ipv6GuaAddr = "${networkGuaPrefix}::1/64";
+          ipv6UlaAddr = "${networkUlaPrefix}::1/64";
+        in
+        {
+          matchConfig.Name =
+            config.systemd.network.netdevs.${name}.netdevConfig.Name;
+          networkConfig = {
+            Address = [ ipv4Cidr ipv6GuaAddr ipv6UlaAddr ];
+            IPv6AcceptRA = false;
+            DHCPServer = true;
+            IPv6SendRA = true;
+          };
+          ipv6SendRAConfig = {
+            DNS = "_link_local";
+            Domains = [ "home.arpa" ];
+          };
+          ipv6Prefixes = map
+            (prefix: { ipv6PrefixConfig = { Prefix = prefix; }; })
+            [ guaNetwork ulaNetwork ];
+          dhcpServerConfig = {
+            PoolOffset = 100;
+            PoolSize = 100;
+            # TODO(jared): When https://github.com/systemd/systemd/pull/22332 is
+            # released, use DNS="_server_address".
+            DNS = ipv4Addr;
+            SendOption = [ "15:string:home.arpa" ];
+          };
+          dhcpServerStaticLeases = map
+            (lease: {
+              dhcpServerStaticLeaseConfig = lease;
+            })
+            staticLeases;
+        };
+    in
+    {
       wan = {
         matchConfig.Name = "enp0s20f0";
         networkConfig = {
@@ -167,28 +143,7 @@ in
         ];
       };
 
-      wg-trusted = {
-        matchConfig.Name =
-          config.systemd.network.netdevs.wg-trusted.netdevConfig.Name;
-        networkConfig.Address = [
-          "192.168.130.1/24"
-          "${config.router.ulaPrefix}:82::1/64"
-          "${config.router.guaPrefix}:82::1/64"
-        ];
-      };
-
-      wg-iot = {
-        matchConfig.Name =
-          config.systemd.network.netdevs.wg-iot.netdevConfig.Name;
-        networkConfig.Address = [
-          "192.168.140.1/24"
-          "${config.router.ulaPrefix}:8C::1/64"
-          "${config.router.guaPrefix}:8C::1/64"
-        ];
-      };
-
       hurricane.matchConfig.Name =
         config.systemd.network.netdevs.hurricane.netdevConfig.Name;
     };
-  };
 }

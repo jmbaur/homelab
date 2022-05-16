@@ -36,10 +36,6 @@ with lib;
     };
     services.xserver.xkbOptions = "ctrl:nocaps";
 
-    services.avahi.extraServiceFiles = mkIf config.services.openssh.enable {
-      ssh = "${pkgs.avahi}/etc/avahi/services/ssh.service";
-    };
-
     fonts.fontconfig.enable = config.custom.gui.enable;
 
     environment = {

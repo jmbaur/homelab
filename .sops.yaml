@@ -1,16 +1,12 @@
 creation_rules:
-  - path_regex: containers\/www\/.*yaml$
+  - path_regex: routeros\/.*yaml$
     pgp: D4A0692874AA71B7F1281491BB8667EA7EB08143
-    age: age1zthtkpwk7pt9prkkcfcavr6ntm34l43rsvkacu2ee4ydvv2k85fqwx4ajp
-  - path_regex: containers\/media\/.*yaml$
-    pgp: D4A0692874AA71B7F1281491BB8667EA7EB08143
-    age: age12lgr04rnzswqzfegj0wnn68kv9kr3puu3r8qqvvklqskwupluufs88uqyw
   - path_regex: hosts\/broccoli\/.*yaml$
     pgp: D4A0692874AA71B7F1281491BB8667EA7EB08143
     age: age10mthtjlx9fd0af374dpuqckdyfa9y6f92lnlr7vjxlyt0d8u44vswmgdgv
   - path_regex: hosts\/beetroot\/.*yaml$
     pgp: D4A0692874AA71B7F1281491BB8667EA7EB08143
-    age: age1sq4vukvtc06l96e9nejsnn362yfwq76ye8crnyjp2sp7nuh20easdxu9yv
+    age: age1lfalsmwuwprqa3uzswue68gdxjjd7krmr9p8sc2sdhhndguvvpss9rm8k7
   - path_regex: hosts\/okra\/.*yaml$
     pgp: D4A0692874AA71B7F1281491BB8667EA7EB08143
     age: age1zx96y3wyuw5dyvpgsm0n40rlnekmhfykxzkk0ec39snv2zcl0qpsuy8wjv

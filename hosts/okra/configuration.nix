@@ -24,11 +24,7 @@
 
   environment.systemPackages = with pkgs; [ firefox chromium ];
 
-  sops = {
-    defaultSopsFile = ./secrets.yaml;
-    age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-    secrets.wg0 = { };
-  };
+  services.mullvad-vpn.enable = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

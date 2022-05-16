@@ -2,6 +2,7 @@
   description = "NixOS configurations for the homelab";
 
   inputs = {
+    nixpkgs.url = "nixpkgs/nixos-unstable";
     deploy-rs.url = "github:serokell/deploy-rs";
     flake-utils.url = "github:numtide/flake-utils";
     git-get.url = "github:jmbaur/git-get";
@@ -9,7 +10,6 @@
     gosee.url = "github:jmbaur/gosee";
     ipwatch.url = "github:jmbaur/ipwatch";
     nixpkgs-jmbaur.url = "github:jmbaur/nixpkgs/mosh-378dfa6";
-    nixpkgs.url = "nixpkgs/nixos-unstable";
     pre-commit.url = "github:cachix/pre-commit-hooks.nix";
     sops-nix.url = "github:mic92/sops-nix";
     wallpapers.url = "github:jmbaur/procedural-wallpapers";
@@ -71,8 +71,10 @@
             src = builtins.path { path = ./.; };
             hooks.nixpkgs-fmt.enable = true;
           }) shellHook;
-
         };
+        packages.cap_ac = pkgs.callPackage ./routeros/CapAC.nix { };
+        packages.crs_305 = pkgs.writeText "crs_305" (builtins.readFile ./routeros/CRS305.rsc);
+        packages.crs_326 = pkgs.writeText "crs_326" (builtins.readFile ./routeros/CRS326.rsc);
       })
     //
     {
