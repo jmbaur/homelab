@@ -99,7 +99,8 @@ in
       settings = {
         main = {
           dpi-aware = "yes";
-          font = "${config.programs.kitty.font.name}, Noto Color Emoji:size=${toString (config.programs.kitty.font.size - 7)}";
+          font = "${config.programs.kitty.font.name}:size=${toString (config.programs.kitty.font.size - 7)}, Noto Color Emoji";
+          selection-target = "both";
           term = "xterm-256color";
         };
         mouse.hide-when-typing = "yes";
@@ -187,7 +188,7 @@ in
           style = "Regular";
         };
         menu = "${pkgs.bemenu}/bin/bemenu-run --line-height=29 --fn='${toString config.wayland.windowManager.sway.config.fonts.names} ${toString config.wayland.windowManager.sway.config.fonts.size}'";
-        terminal = "${pkgs.kitty}/bin/kitty";
+        terminal = "${pkgs.foot}/bin/foot";
         modifier = "Mod4";
         input = {
           "type:keyboard".xkb_options = "ctrl:nocaps";

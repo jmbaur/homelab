@@ -3,6 +3,7 @@
     ./atftpd.nix
     ./coredns.nix
     ./hardware-configuration.nix
+    ./monitoring.nix
     ./networking.nix
     ./nftables.nix
     ./options.nix
