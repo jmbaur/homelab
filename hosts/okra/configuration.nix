@@ -1,6 +1,7 @@
 { config, lib, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
 
+  boot.kernelPackages = pkgs.linuxPackages_5_17;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
