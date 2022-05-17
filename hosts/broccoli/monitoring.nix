@@ -1,6 +1,13 @@
 {
   services.prometheus.exporters = {
-    node.enable = true;
+    node = {
+      enable = true;
+      enabledCollectors = [
+        "ethtool"
+        "network_route"
+        "systemd"
+      ];
+    };
     wireguard.enable = true;
   };
 }
