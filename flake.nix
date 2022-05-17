@@ -158,7 +158,7 @@
       };
 
       deploy.nodes.okra = {
-        hostname = "okra.home.arpa";
+        hostname = "okra.local";
         profiles.system = {
           sshUser = "root";
           path = deploy-rs.lib.x86_64-linux.activate.nixos
