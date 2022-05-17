@@ -58,12 +58,6 @@
     enable = true;
     interfaces = [ config.systemd.network.networks.wan.matchConfig.Name ];
     hookScript = "${pkgs.writeShellScriptBin "ipwatch-exe" ''
-      echo Updating hurricane electric tunnelbroker with new IP
-      ${pkgs.curl}/bin/curl --silent \
-        --data "hostname=''${HE_TUNNEL_ID}" \
-        --user "''${HE_USERNAME}:''${HE_PASSWORD}" \
-        https://ipv4.tunnelbroker.net/nic/update
-
       echo Updating Cloudflare DNS with new IP
       ${pkgs.curl}/bin/curl --silent \
         --request PUT \
@@ -77,6 +71,12 @@
         --header "Authorization: Bearer ''${CF_DNS_API_TOKEN}" \
         --data '{"type":"A","name":"vpn1.jmbaur.com","content":"'"''${ADDR}"'","proxied":false}' \
         "https://api.cloudflare.com/client/v4/zones/''${CF_ZONE_ID}/dns_records/''${VPN1_CF_RECORD_ID}" | ${pkgs.jq}/bin/jq
+
+      echo Updating hurricane electric tunnelbroker with new IP
+      ${pkgs.curl}/bin/curl --silent \
+        --data "hostname=''${HE_TUNNEL_ID}" \
+        --user "''${HE_USERNAME}:''${HE_PASSWORD}" \
+        https://ipv4.tunnelbroker.net/nic/update
     ''}/bin/ipwatch-exe";
   };
 
