@@ -59,8 +59,6 @@
               meta l4proto tcp th dport {
                   9153, # coredns
                   ${toString config.services.prometheus.exporters.node.port},
-                  ${toString config.services.prometheus.exporters.smartctl.port},
-                  ${toString config.services.prometheus.exporters.systemd.port},
                   ${toString config.services.prometheus.exporters.wireguard.port},
               } log prefix "input prometheus - " accept
               meta l4proto tcp th dport ssh log prefix "input ssh - " accept
