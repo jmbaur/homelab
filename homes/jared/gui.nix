@@ -1,6 +1,20 @@
 { config, lib, pkgs, ... }:
 let
   cfg = config.custom.gui;
+  bemenuWithArgs = pkgs.symlinkJoin {
+    name = "bemenuWithArgs";
+    buildInputs = [ pkgs.makeWrapper ];
+    paths = [ pkgs.bemenu pkgs.pinentry-bemenu ];
+    postBuild = ''
+      for cmd in "bemenu" "bemenu-run" "pinentry-bemenu"; do
+        wrapProgram $out/bin/$cmd \
+          --add-flags "--ignorecase" \
+          --add-flags "--list 10" \
+          --add-flags "--line-height 29" \
+          --add-flags "--fn='${toString config.wayland.windowManager.sway.config.fonts.names} ${toString config.wayland.windowManager.sway.config.fonts.size}'"
+      done
+    '';
+  };
 in
 {
   options.custom.gui = {
@@ -55,6 +69,10 @@ in
         gtk-key-theme = gtk-key-theme-name;
       };
     };
+
+    home.file."${config.programs.gpg.homedir}/gpg-agent.conf".text = ''
+      pinentry-program ${bemenuWithArgs}/bin/pinentry-bemenu
+    '';
 
     programs.vscode = {
       enable = true;
@@ -165,6 +183,22 @@ in
       enable = cfg.laptop;
     };
 
+    systemd.user.services.clipman = {
+      Unit = {
+        Description = "Clipboard manager";
+        Documentation = "man:clipman(1)";
+        PartOf = [ "graphical-session.target" ];
+      };
+
+      Service = {
+        Type = "simple";
+        ExecStart = "${pkgs.wl-clipboard}/bin/wl-paste -t text --watch ${pkgs.clipman}/bin/clipman store";
+        Restart = "always";
+      };
+
+      Install.WantedBy = [ "sway-session.target" ];
+    };
+
     xdg.configFile."sway/config".onChange = lib.mkForce "";
     wayland.windowManager.sway = {
       enable = true;
@@ -180,7 +214,7 @@ in
           size = 12.0;
           style = "Regular";
         };
-        menu = "${pkgs.bemenu}/bin/bemenu-run --line-height=29 --fn='${toString config.wayland.windowManager.sway.config.fonts.names} ${toString config.wayland.windowManager.sway.config.fonts.size}'";
+        menu = "${bemenuWithArgs}/bin/bemenu-run";
         terminal = "${pkgs.foot}/bin/foot";
         modifier = "Mod4";
         input = {
@@ -220,6 +254,7 @@ in
             "${mod}+Shift+4" = "move container to workspace number 4";
             "${mod}+Shift+5" = "move container to workspace number 5";
             "${mod}+Shift+6" = "move container to workspace number 6";
+            "${mod}+c" = "exec ${pkgs.clipman}/bin/clipman pick --tool=CUSTOM --tool-args=${bemenuWithArgs}/bin/bemenu";
             "${mod}+Shift+7" = "move container to workspace number 7";
             "${mod}+Shift+8" = "move container to workspace number 8";
             "${mod}+Shift+9" = "move container to workspace number 9";

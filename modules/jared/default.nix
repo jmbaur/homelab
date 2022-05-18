@@ -5,7 +5,10 @@ in
 {
   options.custom.jared.enable = lib.mkEnableOption "Enable jared user";
   config = lib.mkIf cfg.enable {
-    programs.zsh.enable = true;
+    programs.zsh = {
+      enable = true;
+      interactiveShellInit = "bindkey -e";
+    };
 
     users.users.jared = {
       isNormalUser = true;

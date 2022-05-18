@@ -17,7 +17,6 @@ in
 
     programs.adb.enable = true;
     programs.dconf.enable = true;
-    programs.seahorse.enable = true;
     programs.ssh.startAgent = true;
 
     xdg.portal.enable = true;
@@ -58,6 +57,7 @@ in
             --file="$device"
         '')
         alacritty
+        bemenu
         brightnessctl
         cage
         ffmpeg-full
@@ -66,6 +66,7 @@ in
         imv
         kitty
         libnotify
+        mako
         mpv
         pulsemixer
         slurp
@@ -105,12 +106,8 @@ in
         addresses = true;
       };
     };
-    programs.gnupg.agent = {
-      enable = true;
-      pinentryFlavor = "gnome3";
-    };
-    services.gnome.gnome-keyring.enable = true;
-    services.dbus.packages = [ pkgs.gcr ];
+    programs.gnupg.agent.enable = true;
+    services.dbus.packages = with pkgs; [ mako ];
     services.pcscd.enable = false;
     services.printing.enable = true;
     services.udev.packages = [ pkgs.yubikey-personalization ];
