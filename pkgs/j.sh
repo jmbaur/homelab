@@ -14,10 +14,24 @@ if ! test -d "$directory"; then
 	exit 1
 fi
 
-tmux_session_path=$(fd "^\.git$" "$directory" --hidden --type directory --no-ignore --max-depth 4 | sed "s,/\.git,," | { grep ".*${1:-}.*" || true; } | fzf -1)
-tmux_session_name=$(echo -n "$tmux_session_path" | sed "s,$directory/,," | sed "s,\.,_,g")
+tmux_session_path=$(
+	fd "^\.git$" "$directory" \
+		--hidden \
+		--type directory \
+		--no-ignore \
+		--max-depth 4 |
+		sed "s,/\.git,," |
+		{ grep ".*${1:-}.*" || true; } |
+		fzf -1
+)
+tmux_session_name=$(
+	echo -n "$tmux_session_path" |
+		sed "s,$directory/,," |
+		sed "s,\.,_,g"
+)
 
-if ! tmux list-sessions -F "#{session_name}" 2>/dev/null | grep --quiet "$tmux_session_name"; then
+if ! tmux list-sessions -F "#{session_name}" 2>/dev/null |
+	grep --quiet "$tmux_session_name"; then
 	tmux new-session -d -s "$tmux_session_name" -c "$tmux_session_path"
 fi
 
