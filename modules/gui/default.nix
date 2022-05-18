@@ -105,6 +105,10 @@ in
         addresses = true;
       };
     };
+    programs.gnupg.agent = {
+      enable = true;
+      pinentryFlavor = "gnome3";
+    };
     services.gnome.gnome-keyring.enable = true;
     services.dbus.packages = [ pkgs.gcr ];
     services.pcscd.enable = false;

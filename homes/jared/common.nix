@@ -100,11 +100,6 @@ in
       "d ${config.programs.gpg.homedir} 700 - - -"
     ];
 
-    services.gpg-agent = {
-      enable = true;
-      defaultCacheTtl = 3600;
-    };
-
     programs.htop = {
       enable = true;
       settings = {

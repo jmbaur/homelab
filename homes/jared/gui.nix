@@ -28,8 +28,6 @@ in
       zoom-us
     ];
 
-    services.gpg-agent.pinentryFlavor = "gnome3";
-
     xdg.userDirs = {
       enable = true;
       createDirectories = true;
@@ -138,11 +136,6 @@ in
       enable = true;
       defaultTimeout = 5000;
       font = "${toString config.wayland.windowManager.sway.config.fonts.names} ${toString config.wayland.windowManager.sway.config.fonts.size}";
-    };
-
-    services.gnome-keyring = {
-      enable = true;
-      components = [ "secrets" ];
     };
 
     services.swayidle =
