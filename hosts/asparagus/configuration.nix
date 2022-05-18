@@ -1,5 +1,8 @@
 { config, lib, pkgs, ... }: {
-  imports = [ ./hardware-configuration.nix ];
+  imports = [
+    ./networking.nix
+    ./hardware-configuration.nix
+  ];
 
   hardware.bluetooth.enable = true;
   hardware.enableRedistributableFirmware = true;
@@ -11,48 +14,6 @@
     memtest86.enable = true;
   };
   boot.loader.efi.canTouchEfiVariables = true;
-
-  networking = {
-    hostName = "asparagus";
-    useNetworkd = true;
-  };
-
-  services.resolved = {
-    enable = true;
-    extraConfig = ''
-      MulticastDNS=no
-    '';
-  };
-
-  systemd.network = {
-    enable = true;
-    networks = {
-      wired_normal = {
-        matchConfig.Name = "enp4s0";
-        networkConfig = {
-          DHCP = "yes";
-          IPv6PrivacyExtensions = true;
-          MulticastDNS = true;
-        };
-        dhcpV4Config = {
-          RouteMetric = 10;
-          UseDomains = "yes";
-        };
-      };
-      wired_mgmt = {
-        matchConfig.Name = "enp6s0";
-        networkConfig = {
-          DHCP = "yes";
-          IPv6PrivacyExtensions = true;
-          MulticastDNS = true;
-        };
-        dhcpV4Config = {
-          RouteMetric = 20;
-          UseDomains = "yes";
-        };
-      };
-    };
-  };
 
   time.timeZone = "America/Los_Angeles";
 

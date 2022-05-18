@@ -72,8 +72,8 @@
             (prefix: { ipv6PrefixConfig = { Prefix = prefix; }; })
             [ guaNetwork ulaNetwork ];
           dhcpServerConfig = {
-            PoolOffset = 100;
-            PoolSize = 100;
+            PoolOffset = 50;
+            PoolSize = 200;
             # TODO(jared): When https://github.com/systemd/systemd/pull/22332 is
             # released, use DNS="_server_address".
             DNS = ipv4Addr;
@@ -114,18 +114,12 @@
 
       pubwan = mkInternalInterface { name = "pubwan"; };
       publan = mkInternalInterface { name = "publan"; };
-      trusted = mkInternalInterface {
-        name = "trusted";
-        staticLeases = [
-          # asparagus
-          { MACAddress = "a8:a1:59:2a:04:6d"; Address = "192.168.30.17"; }
-        ];
-      };
+      trusted = mkInternalInterface { name = "trusted"; };
       iot = mkInternalInterface {
         name = "iot";
         staticLeases = [
           # okra
-          { MACAddress = "5c:80:b6:92:eb:27"; Address = "192.168.40.12"; }
+          { MACAddress = "5c:80:b6:92:eb:27"; Address = "192.168.40.50"; }
         ];
       };
       guest = mkInternalInterface { name = "guest"; };
@@ -133,13 +127,15 @@
         name = "mgmt";
         staticLeases = [
           # broccoli-ipmi
-          { MACAddress = "00:25:90:f7:32:08"; Address = "192.168.88.201"; }
+          { MACAddress = "00:25:90:f7:32:08"; Address = "192.168.88.50"; }
           # kale-ipmi
-          { MACAddress = "d0:50:99:f7:c4:8d"; Address = "192.168.88.202"; }
+          { MACAddress = "d0:50:99:f7:c4:8d"; Address = "192.168.88.51"; }
           # kale
-          { MACAddress = "d0:50:99:fe:1e:e2"; Address = "192.168.88.7"; }
+          { MACAddress = "d0:50:99:fe:1e:e2"; Address = "192.168.88.52"; }
           # rhubarb
-          { MACAddress = "dc:a6:32:20:50:f2"; Address = "192.168.88.88"; }
+          { MACAddress = "dc:a6:32:20:50:f2"; Address = "192.168.88.53"; }
+          # asparagus
+          { MACAddress = "a8:a1:59:2a:04:6d"; Address = "192.168.88.54"; }
         ];
       };
 

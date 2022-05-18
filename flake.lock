@@ -395,11 +395,11 @@
         "pre-commit": "pre-commit"
       },
       "locked": {
-        "lastModified": 1652880327,
-        "narHash": "sha256-Y5Dn1PZefKkCM95ujfbsEhs6fQdQw6ScVjpk7XUnnSg=",
+        "lastModified": 1652881140,
+        "narHash": "sha256-T/1ALoTnW8r08tQ+qULNHLQyyzra1BjCRyKYdS5UJw4=",
         "owner": "jmbaur",
         "repo": "neovim",
-        "rev": "17ecfad393234c9b68ff12e3af697474e374c0a0",
+        "rev": "cd6b342906913f91ed874ce6f199752699b8049d",
         "type": "github"
       },
       "original": {

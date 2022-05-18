@@ -1,9 +1,15 @@
 { config, lib, ... }: {
-  systemd.services.systemd-networkd-wait-online.enable = false;
+  networking = {
+    hostName = "asparagus";
+    useDHCP = lib.mkForce false;
+    useNetworkd = true;
+  };
+
   systemd.network = {
+    enable = true;
     networks = {
-      wired = {
-        matchConfig.Name = "en*";
+      wired_normal = {
+        matchConfig.Name = "enp4s0";
         networkConfig = {
           DHCP = "yes";
           IPv6PrivacyExtensions = true;
@@ -14,9 +20,8 @@
         };
         ipv6AcceptRAConfig.RouteMetric = 10;
       };
-
-      wireless = {
-        matchConfig.Name = "wl*";
+      wired_mgmt = {
+        matchConfig.Name = "enp6s0";
         networkConfig = {
           DHCP = "yes";
           IPv6PrivacyExtensions = true;
@@ -24,16 +29,10 @@
         dhcpV4Config = {
           RouteMetric = 20;
           UseDomains = "yes";
+          ClientIdentifier = "mac";
         };
         ipv6AcceptRAConfig.RouteMetric = 20;
       };
     };
-  };
-
-  networking = {
-    useDHCP = lib.mkForce false;
-    hostName = "beetroot";
-    useNetworkd = true;
-    wireless.iwd.enable = true;
   };
 }

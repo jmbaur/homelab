@@ -45,6 +45,7 @@
       mgmt = {
         matchConfig.Name = "enp35s0";
         networkConfig.DHCP = "yes";
+        dhcpV4Config.ClientIdentifier = "mac";
       };
       br0 = {
         matchConfig.Name = config.systemd.network.netdevs.br0.netdevConfig.Name;

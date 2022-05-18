@@ -1,17 +1,12 @@
 { config, lib, pkgs, ... }: {
-  imports = [ ./hardware-configuration.nix ];
+  imports = [
+    ./networking.nix
+    ./hardware-configuration.nix
+  ];
 
   boot.kernelPackages = pkgs.linuxPackages_5_17;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-
-  nixpkgs.config.allowUnfree = true;
-
-  networking = {
-    useDHCP = false;
-    hostName = "okra";
-    wireless.enable = true;
-  };
 
   time.timeZone = "America/Los_Angeles";
 
@@ -23,9 +18,8 @@
 
   services.fwupd.enable = true;
 
-  environment.systemPackages = with pkgs; [ firefox chromium ];
-
-  services.mullvad-vpn.enable = true;
+  nixpkgs.config.allowUnfree = true;
+  environment.systemPackages = with pkgs; [ firefox google-chrome ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
