@@ -29,9 +29,9 @@
         guest = mkVlanNetdev "guest" 50;
         mgmt = mkVlanNetdev "mgmt" 88;
 
-        br0 = {
+        virbr0 = {
           netdevConfig = {
-            Name = "br0";
+            Name = "virbr0";
             Kind = "bridge";
           };
           extraConfig = ''
@@ -47,8 +47,9 @@
         networkConfig.DHCP = "yes";
         dhcpV4Config.ClientIdentifier = "mac";
       };
-      br0 = {
-        matchConfig.Name = config.systemd.network.netdevs.br0.netdevConfig.Name;
+      virbr0 = {
+        matchConfig.Name = config.systemd.network.netdevs.virbr0.netdevConfig.Name;
+        linkConfig.RequiredForOnline = false;
         networkConfig = {
           VLAN = builtins.map
             (name: config.systemd.network.netdevs.${name}.netdevConfig.Name)
@@ -61,6 +62,10 @@
           [BridgeVLAN]
           VLAN=10
         '';
+      };
+      microvm-eth0 = {
+        matchConfig.Name = "vm-*";
+        networkConfig.Bridge = "virbr0";
       };
     };
   };

@@ -17,10 +17,9 @@
       mountPoint = "/nix/.ro-store";
     }];
     interfaces = [{
-      type = "bridge";
-      id = "qemu";
-      bridge = "br-trusted";
-      mac = "BB:EC:AF:8A:B2:E7";
+      type = "tap";
+      id = "eth0";
+      mac = "bb:ec:af:8a:b2:e7";
     }];
   };
 }
