@@ -1,5 +1,8 @@
 { config, lib, pkgs, ... }: {
-  networking.hostName = "test";
+  networking = {
+    hostName = "test";
+    useDHCP = true;
+  };
   system.stateVersion = "22.05";
   security.sudo.wheelNeedsPassword = false;
   users.mutableUsers = false;
