@@ -203,7 +203,7 @@
           microvm.nixosModules.host
           nixos-hardware.nixosModules.common-cpu-amd
           self.nixosModules.default
-          # ({ microvm.vms.test-vm.flake = self; })
+          ({ microvm.vms.test-vm.flake = self; })
         ];
       };
 
