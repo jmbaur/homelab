@@ -50,24 +50,24 @@
         matchConfig.Name = "enp1s0";
         bridge = [ config.systemd.network.networks.virbr0.matchConfig.Name ];
       };
-    };
-    virbr0 = {
-      matchConfig.Name = config.systemd.network.netdevs.virbr0.netdevConfig.Name;
-      linkConfig.RequiredForOnline = false;
-      networkConfig = {
-        VLAN = map
-          (name: config.systemd.network.netdevs.${name}.netdevConfig.Name)
-          [ "pubwan" "publan" "trusted" "iot" "guest" ];
+      virbr0 = {
+        matchConfig.Name = config.systemd.network.netdevs.virbr0.netdevConfig.Name;
+        linkConfig.RequiredForOnline = false;
+        networkConfig = {
+          VLAN = map
+            (name: config.systemd.network.netdevs.${name}.netdevConfig.Name)
+            [ "pubwan" "publan" "trusted" "iot" "guest" ];
+        };
+        extraConfig = ''
+          [BridgeVLAN]
+          VLAN=10-50
+          PVID=1
+        '';
       };
-      extraConfig = ''
-        [BridgeVLAN]
-        VLAN=10-50
-        PVID=1
-      '';
-    };
-    microvm-eth0 = {
-      matchConfig.Name = "vm-*";
-      networkConfig.Bridge = "virbr0";
+      microvms = {
+        matchConfig.Name = "vm-*";
+        networkConfig.Bridge = "virbr0";
+      };
     };
   };
 }
