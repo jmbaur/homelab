@@ -187,12 +187,9 @@
         };
       };
 
-      nixosConfigurations.test-vm = nixpkgs.lib.nixosSystem {
+      nixosConfigurations.vm-test = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        modules = [
-          ./vms/test-vm.nix
-          microvm.nixosModules.microvm
-        ];
+        modules = [ ./vms/test.nix microvm.nixosModules.microvm ];
       };
 
       nixosConfigurations.kale = nixpkgs.lib.nixosSystem {
@@ -203,7 +200,7 @@
           microvm.nixosModules.host
           nixos-hardware.nixosModules.common-cpu-amd
           self.nixosModules.default
-          ({ microvm.vms.test-vm.flake = self; })
+          ({ microvm.vms.vm-test.flake = self; })
         ];
       };
 

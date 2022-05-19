@@ -1,5 +1,5 @@
 { config, lib, pkgs, ... }: {
-  networking.hostName = "test-vm";
+  networking.hostName = "test";
   system.stateVersion = "22.05";
   security.sudo.wheelNeedsPassword = false;
   users.mutableUsers = false;
@@ -19,7 +19,7 @@
     }];
     interfaces = [{
       type = "tap";
-      id = config.networking.hostName;
+      id = "vm-" + config.networking.hostName;
       mac = "bb:ec:af:8a:b2:e7";
     }];
   };
