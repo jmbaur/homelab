@@ -54,6 +54,24 @@
       options = [ "subvol=@home/.snapshots" "noatime" "discard=async" "compress=zstd" ];
     };
 
+
+  fileSystems."/big" =
+    {
+      device = "/dev/disk/by-uuid/e4521cb4-61cf-413e-ac12-47cb3a5ec4af";
+      fsType = "btrfs";
+      options = [ "device=/dev/mapper/cryptbig0" "device=/dev/mapper/cryptbig1" "subvol=@" "autodefrag" "noatime" "compress=zstd" ];
+    };
+
+  boot.initrd.luks.devices."cryptbig0".device = "/dev/disk/by-uuid/aa5cb1e1-27ff-4ab7-953f-4daa0c7280b2";
+  boot.initrd.luks.devices."cryptbig1".device = "/dev/disk/by-uuid/4d86a90e-bad8-431f-b5ee-84903add4801";
+
+  fileSystems."/big/steam" =
+    {
+      device = "/dev/disk/by-uuid/e4521cb4-61cf-413e-ac12-47cb3a5ec4af";
+      fsType = "btrfs";
+      options = [ "device=/dev/mapper/cryptbig0" "device=/dev/mapper/cryptbig1" "subvol=@steam" "autodefrag" "noatime" "compress=zstd" ];
+    };
+
   fileSystems."/boot" =
     {
       device = "/dev/disk/by-uuid/BD15-116C";
