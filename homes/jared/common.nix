@@ -198,6 +198,9 @@ in
       nix-direnv.enable = true;
     };
 
-    home.sessionVariables.EDITOR = "nvim";
+    home.sessionVariables = {
+      EDITOR = "${pkgs.neovim}/bin/nvim";
+      PAGER = "${pkgs.nvimpager}/bin/nvimpager";
+    };
   };
 }

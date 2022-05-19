@@ -49,6 +49,7 @@
         matchConfig.Name = "vm-*";
         networkConfig.Bridge =
           config.systemd.network.networks.bridge.matchConfig.Name;
+        linkConfig.RequiredForOnline = false;
         extraConfig = ''
           [BridgeVLAN]
           PVID=30
