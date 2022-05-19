@@ -6,25 +6,31 @@
   };
 
   systemd.network = {
-    config = {
-      networkConfig = {
-        DHCP = "yes";
-        IPv6PrivacyExtensions = true;
-      };
-      dhcpV4Config = {
-        ClientIdentifier = "mac";
-        UseDomains = "yes";
-      };
-    };
+    enable = true;
     networks = {
       wired_normal = {
         matchConfig.Name = "enp4s0";
-        dhcpV4Config.RouteMetric = 10;
+        networkConfig = {
+          DHCP = "yes";
+          IPv6PrivacyExtensions = true;
+        };
+        dhcpV4Config = {
+          RouteMetric = 10;
+          UseDomains = "yes";
+        };
         ipv6AcceptRAConfig.RouteMetric = 10;
       };
       wired_mgmt = {
         matchConfig.Name = "enp6s0";
-        dhcpV4Config.RouteMetric = 20;
+        networkConfig = {
+          DHCP = "yes";
+          IPv6PrivacyExtensions = true;
+        };
+        dhcpV4Config = {
+          RouteMetric = 20;
+          UseDomains = "yes";
+          ClientIdentifier = "mac";
+        };
         ipv6AcceptRAConfig.RouteMetric = 20;
       };
     };
