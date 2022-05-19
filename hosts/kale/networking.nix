@@ -22,7 +22,7 @@
         };
         extraConfig = ''
           [Bridge]
-          DefaultPVID=1
+          DefaultPVID=none
           VLANFiltering=yes
         '';
       };
@@ -42,8 +42,7 @@
         linkConfig.RequiredForOnline = false;
         extraConfig = ''
           [BridgeVLAN]
-          VLAN=10-50
-          PVID=1
+          VLAN=30
         '';
       };
       microvms = {
@@ -52,7 +51,6 @@
           config.systemd.network.networks.bridge.matchConfig.Name;
         extraConfig = ''
           [BridgeVLAN]
-          VLAN=30
           PVID=30
         '';
       };

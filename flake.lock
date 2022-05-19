@@ -100,11 +100,11 @@
     },
     "flake-utils_11": {
       "locked": {
-        "lastModified": 1649676176,
-        "narHash": "sha256-OWKJratjt2RW151VUlJPRALb7OU2S5s+f0vLj4o1bHM=",
+        "lastModified": 1652776076,
+        "narHash": "sha256-gzTw/v1vj4dOVbpBSJX4J0DwUR6LIyXo7/SuuTJp1kM=",
         "owner": "numtide",
         "repo": "flake-utils",
-        "rev": "a4b154ebbdc88c8498a5c7b01589addc9e9cb678",
+        "rev": "04c1b180862888302ddfb2e3ad9eaa63afc60cf8",
         "type": "github"
       },
       "original": {
@@ -395,11 +395,11 @@
         "pre-commit": "pre-commit"
       },
       "locked": {
-        "lastModified": 1652907562,
-        "narHash": "sha256-nEAGtmKi5PnDBeoqVQ7WnbUqMdE1nWEbGB3qqipSMlg=",
+        "lastModified": 1652930365,
+        "narHash": "sha256-3QoSFR4FGA2jsrCrqCOn+puAUt901ePGpPyOJXSYAgY=",
         "owner": "jmbaur",
         "repo": "neovim",
-        "rev": "2e21a768fabd88aa0f64187935127792c1b7483a",
+        "rev": "690a51856dfae1c8f66e550227574b7a38257c3e",
         "type": "github"
       },
       "original": {
@@ -488,11 +488,11 @@
     },
     "nixpkgs_11": {
       "locked": {
-        "lastModified": 1652231724,
-        "narHash": "sha256-MjalcXFZgcgchp4QqnF05JTkFBBGad5hbksA1EKoP98=",
+        "lastModified": 1652659998,
+        "narHash": "sha256-FqNrXC1EE6U2RACwXBlsAvg1lqQGLYpuYb6+W3DL9vA=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "41ff747f882914c1f8c233207ce280ac9d0c867f",
+        "rev": "1d7db1b9e4cf1ee075a9f52e5c36f7b9f4207502",
         "type": "github"
       },
       "original": {
@@ -577,11 +577,11 @@
     },
     "nixpkgs_7": {
       "locked": {
-        "lastModified": 1652659998,
-        "narHash": "sha256-FqNrXC1EE6U2RACwXBlsAvg1lqQGLYpuYb6+W3DL9vA=",
+        "lastModified": 1652794215,
+        "narHash": "sha256-erVj41IcCPDWdt8CwT60ygD+SY/uhqip3RXwiESOCVk=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "1d7db1b9e4cf1ee075a9f52e5c36f7b9f4207502",
+        "rev": "242efdc5a5aff8222c1152c0e4b9262bd02915b6",
         "type": "github"
       },
       "original": {
@@ -757,11 +757,11 @@
         "nixpkgs": "nixpkgs_11"
       },
       "locked": {
-        "lastModified": 1652311925,
-        "narHash": "sha256-ysPJEDqIVz6435fjdAGgoP4827T651uX/1PzbN6RpHg=",
+        "lastModified": 1652929070,
+        "narHash": "sha256-1gRMQF0b8cBGzCyy7egvRCLMExpxl9Jh+dJVqe2eN6A=",
         "owner": "jmbaur",
         "repo": "procedural-wallpapers",
-        "rev": "290c02a02d3d9beac793c185567b232f1209ec6c",
+        "rev": "4e9d7a8e3de503946fdcc39a863f01f94eece993",
         "type": "github"
       },
       "original": {
