@@ -40,6 +40,7 @@
       bridge = {
         matchConfig.Name = config.systemd.network.netdevs.bridge.netdevConfig.Name;
         linkConfig.RequiredForOnline = false;
+        networkConfig.LinkLocalAddressing = "no";
         extraConfig = ''
           [BridgeVLAN]
           VLAN=30
