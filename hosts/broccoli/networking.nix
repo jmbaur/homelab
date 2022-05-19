@@ -106,7 +106,7 @@
         matchConfig.Name = "enp4s0";
         networkConfig = {
           LinkLocalAddressing = "no";
-          VLAN = builtins.map
+          VLAN = map
             (name: config.systemd.network.netdevs.${name}.netdevConfig.Name)
             [ "pubwan" "publan" "trusted" "iot" "guest" "mgmt" ];
         };

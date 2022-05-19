@@ -27,7 +27,6 @@
         trusted = mkVlanNetdev "trusted" 30;
         iot = mkVlanNetdev "iot" 40;
         guest = mkVlanNetdev "guest" 50;
-        mgmt = mkVlanNetdev "mgmt" 88;
 
         virbr0 = {
           netdevConfig = {
@@ -47,26 +46,28 @@
         networkConfig.DHCP = "yes";
         dhcpV4Config.ClientIdentifier = "mac";
       };
-      virbr0 = {
-        matchConfig.Name = config.systemd.network.netdevs.virbr0.netdevConfig.Name;
-        linkConfig.RequiredForOnline = false;
-        networkConfig = {
-          VLAN = builtins.map
-            (name: config.systemd.network.netdevs.${name}.netdevConfig.Name)
-            [ "pubwan" "publan" "trusted" "iot" "guest" "mgmt" ];
-        };
-        extraConfig = ''
-          [BridgeVLAN]
-          VLAN=1
-
-          [BridgeVLAN]
-          VLAN=10
-        '';
+      data = {
+        matchConfig.Name = "enp1s0";
+        bridge = [ config.systemd.network.networks.virbr0.matchConfig.Name ];
       };
-      microvm-eth0 = {
-        matchConfig.Name = "vm-*";
-        networkConfig.Bridge = "virbr0";
+    };
+    virbr0 = {
+      matchConfig.Name = config.systemd.network.netdevs.virbr0.netdevConfig.Name;
+      linkConfig.RequiredForOnline = false;
+      networkConfig = {
+        VLAN = map
+          (name: config.systemd.network.netdevs.${name}.netdevConfig.Name)
+          [ "pubwan" "publan" "trusted" "iot" "guest" ];
       };
+      extraConfig = ''
+        [BridgeVLAN]
+        VLAN=10-50
+        PVID=1
+      '';
+    };
+    microvm-eth0 = {
+      matchConfig.Name = "vm-*";
+      networkConfig.Bridge = "virbr0";
     };
   };
 }
