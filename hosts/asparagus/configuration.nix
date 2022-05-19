@@ -8,6 +8,8 @@
   hardware.enableRedistributableFirmware = true;
 
   boot.kernelPackages = pkgs.linuxPackages_5_17;
+
+  boot.kernelParams = [ "console=ttyS1,115200n8" ];
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   boot.loader.systemd-boot = {
     enable = true;

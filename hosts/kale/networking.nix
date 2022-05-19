@@ -36,14 +36,18 @@
       data = {
         matchConfig.Name = "enp1s0";
         bridge = [ config.systemd.network.networks.bridge.matchConfig.Name ];
+        extraConfig = ''
+          [BridgeVLAN]
+          VLAN=30
+        '';
       };
       bridge = {
         matchConfig.Name = config.systemd.network.netdevs.bridge.netdevConfig.Name;
         linkConfig.RequiredForOnline = false;
-        networkConfig.LinkLocalAddressing = "no";
+        networkConfig.DHCP = "yes";
         extraConfig = ''
           [BridgeVLAN]
-          VLAN=30
+          PVID=30
         '';
       };
       microvms = {
