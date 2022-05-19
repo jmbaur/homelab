@@ -1,5 +1,6 @@
 { config, lib, pkgs, ... }: {
   networking.hostName = "test-vm";
+  system.stateVersion = "22.05";
   security.sudo.wheelNeedsPassword = false;
   users.mutableUsers = false;
   users.users.jared = {
