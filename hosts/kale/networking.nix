@@ -67,6 +67,11 @@
       microvms = {
         matchConfig.Name = "vm-*";
         networkConfig.Bridge = "virbr0";
+        extraConfig = ''
+          [BridgeVLAN]
+          VLAN=30
+          PVID=30
+        '';
       };
     };
   };
