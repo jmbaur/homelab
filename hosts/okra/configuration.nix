@@ -15,11 +15,15 @@
   custom.gui.enable = true;
   custom.jared.enable = true;
   custom.sound.enable = true;
+  home-manager.users.jared.custom.gui.enable = true;
 
   services.fwupd.enable = true;
 
-  nixpkgs.config.allowUnfree = true;
-  environment.systemPackages = with pkgs; [ firefox google-chrome ];
+  environment.systemPackages = with pkgs; [
+    chromium
+    firefox
+    mullvad-vpn
+  ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

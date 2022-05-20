@@ -19,5 +19,4 @@
       ClientIdentifier = "mac";
     };
   };
-
 }
