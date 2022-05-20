@@ -106,7 +106,10 @@ in
         addresses = true;
       };
     };
-    programs.gnupg.agent.enable = true;
+    programs.gnupg.agent = {
+      enable = true;
+      pinentryFlavor = null;
+    };
     services.dbus.packages = with pkgs; [ mako ];
     services.pcscd.enable = false;
     services.printing.enable = true;
