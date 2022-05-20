@@ -72,6 +72,13 @@
       options = [ "device=/dev/mapper/cryptbig0" "device=/dev/mapper/cryptbig1" "subvol=@steam" "autodefrag" "noatime" "compress=zstd" ];
     };
 
+  fileSystems."/big/steam/.snapshots" =
+    {
+      device = "/dev/disk/by-uuid/e4521cb4-61cf-413e-ac12-47cb3a5ec4af";
+      fsType = "btrfs";
+      options = [ "device=/dev/mapper/cryptbig0" "device=/dev/mapper/cryptbig1" "subvol=@steam/.snapshots" "autodefrag" "noatime" "compress=zstd" ];
+    };
+
   fileSystems."/boot" =
     {
       device = "/dev/disk/by-uuid/BD15-116C";

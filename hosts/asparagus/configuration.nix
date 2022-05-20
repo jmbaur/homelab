@@ -31,12 +31,21 @@
     custom.gui.enable = true;
   };
 
-  services.snapper.configs.home = {
-    subvolume = "/home";
-    extraConfig = ''
-      TIMELINE_CREATE=yes
-      TIMELINE_CLEANUP=yes
-    '';
+  services.snapper.configs = {
+    home = {
+      subvolume = "/home";
+      extraConfig = ''
+        TIMELINE_CREATE=yes
+        TIMELINE_CLEANUP=yes
+      '';
+    };
+    steam = {
+      subvolume = "/big/steam";
+      extraConfig = ''
+        TIMELINE_CREATE=yes
+        TIMELINE_CLEANUP=yes
+      '';
+    };
   };
 
   environment.systemPackages = [ pkgs.radeontop ];
