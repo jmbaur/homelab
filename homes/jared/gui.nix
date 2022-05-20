@@ -184,19 +184,43 @@ in
       enable = cfg.laptop;
     };
 
+    systemd.user.services.mako = {
+      Unit = {
+        Description = "Mako notification daemon";
+        PartOf = [ "graphical-session.target" ];
+      };
+      Service = {
+        Type = "simple";
+        ExecStart = "${pkgs.mako}/bin/mako";
+        Restart = "always";
+      };
+      Install.WantedBy = [ "sway-session.target" ];
+    };
+
     systemd.user.services.clipman = {
       Unit = {
         Description = "Clipboard manager";
         Documentation = "man:clipman(1)";
         PartOf = [ "graphical-session.target" ];
       };
-
       Service = {
         Type = "simple";
         ExecStart = "${pkgs.wl-clipboard}/bin/wl-paste -t text --watch ${pkgs.clipman}/bin/clipman store";
         Restart = "always";
       };
+      Install.WantedBy = [ "sway-session.target" ];
+    };
 
+    systemd.user.services.yubikey-touch-detector = {
+      Unit = {
+        Description = "Yubikey Touch Detector";
+        PartOf = [ "graphical-session.target" ];
+      };
+      Service = {
+        Type = "simple";
+        ExecStart = "${pkgs.yubikey-touch-detector}/bin/yubikey-touch-detector --libnotify";
+        Restart = "always";
+      };
       Install.WantedBy = [ "sway-session.target" ];
     };
 
@@ -244,6 +268,7 @@ in
             "${mod}+7" = "workspace number 7";
             "${mod}+8" = "workspace number 8";
             "${mod}+9" = "workspace number 9";
+            "${mod}+Control+space" = "${pkgs.mako}/bin/makoctl dismiss --all";
             "${mod}+Down" = "focus down";
             "${mod}+Left" = "focus left";
             "${mod}+Return" = "exec ${config.wayland.windowManager.sway.config.terminal}";
@@ -255,7 +280,6 @@ in
             "${mod}+Shift+4" = "move container to workspace number 4";
             "${mod}+Shift+5" = "move container to workspace number 5";
             "${mod}+Shift+6" = "move container to workspace number 6";
-            "${mod}+c" = "exec ${pkgs.clipman}/bin/clipman pick --tool=CUSTOM --tool-args=${bemenuWithArgs}/bin/bemenu";
             "${mod}+Shift+7" = "move container to workspace number 7";
             "${mod}+Shift+8" = "move container to workspace number 8";
             "${mod}+Shift+9" = "move container to workspace number 9";
@@ -278,6 +302,7 @@ in
             "${mod}+Up" = "focus up";
             "${mod}+a" = "focus parent";
             "${mod}+b" = "split h";
+            "${mod}+c" = "exec ${pkgs.clipman}/bin/clipman pick --tool=CUSTOM --tool-args=${bemenuWithArgs}/bin/bemenu";
             "${mod}+e" = "layout toggle split";
             "${mod}+f" = "fullscreen toggle";
             "${mod}+h" = "focus left";
