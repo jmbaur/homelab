@@ -125,6 +125,7 @@ in
 
     programs.kitty = {
       enable = true;
+      theme = "Ubuntu";
       font = {
         package = pkgs.iosevka-bin;
         name = "Iosevka";
@@ -215,7 +216,7 @@ in
           style = "Regular";
         };
         menu = "${bemenuWithArgs}/bin/bemenu-run";
-        terminal = "${pkgs.foot}/bin/foot";
+        terminal = "${pkgs.kitty}/bin/kitty";
         modifier = "Mod4";
         input = {
           "type:keyboard".xkb_options = "ctrl:nocaps";
