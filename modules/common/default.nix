@@ -73,15 +73,19 @@ with lib;
 
     programs.vim = {
       defaultEditor = true;
-      package = pkgs.vim_configurable.customize {
-        vimrcConfig = {
-          customRC = readFile ./vimrc;
-          packages.myVimPackage = with pkgs.vimPlugins; {
-            start = [ vim-commentary vim-nix vim-rsi vim-sensible vim-surround ];
-            opt = [ ];
+      package = (pkgs.vim_configurable.override {
+        features = "normal";
+        guiSupport = false;
+      }).customize
+        {
+          vimrcConfig = {
+            customRC = readFile ./vimrc;
+            packages.myVimPackage = with pkgs.vimPlugins; {
+              start = [ vim-commentary vim-nix vim-rsi vim-sensible vim-surround ];
+              opt = [ ];
+            };
           };
         };
-      };
     };
 
     programs.tmux = {
