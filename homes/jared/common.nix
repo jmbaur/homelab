@@ -108,7 +108,6 @@ in
       };
     };
 
-    programs.bat = { enable = true; config.theme = "ansi"; };
     programs.git = {
       enable = true;
       aliases = {
@@ -117,10 +116,6 @@ in
         br = "branch";
         co = "checkout";
         lg = "log --graph --decorate --pretty=oneline --abbrev-commit --all";
-      };
-      delta = {
-        enable = true;
-        options.syntax-theme = config.programs.bat.config.theme;
       };
       extraConfig = {
         pull.rebase = true;
