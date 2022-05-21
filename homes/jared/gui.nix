@@ -217,14 +217,6 @@ in
       Install.WantedBy = [ "sway-session.target" ];
     };
 
-    xdg.configFile."gobar/gobar.yaml".text = lib.generators.toYAML { } {
-      modules = [
-        { module = "battery"; name = "BAT0"; }
-        { module = "network"; interface = "wlan0"; }
-        { module = "datetime"; format = "2006-01-02 15:04:05"; }
-      ];
-    };
-
     xdg.configFile."sway/config".onChange = lib.mkForce "";
     wayland.windowManager.sway = {
       enable = true;

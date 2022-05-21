@@ -23,6 +23,13 @@
 
   environment.systemPackages = with pkgs; [ mullvad-vpn ];
 
+  environment.etc."xdg/gobar/gobar.yaml".text = lib.generators.toYAML { } {
+    modules = [
+      { module = "network"; interface = "wlan0"; }
+      { module = "datetime"; format = "2006-01-02 15:04:05"; }
+    ];
+  };
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
