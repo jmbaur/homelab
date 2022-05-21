@@ -102,7 +102,7 @@
         nixpkgs.overlays = [
           deploy-rs.overlay
           git-get.overlays.default
-          gobar.overlay
+          gobar.overlays.default
           gosee.overlays.default
           ipwatch.overlays.default
           neovim.overlays.default

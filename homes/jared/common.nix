@@ -154,8 +154,6 @@ in
         set-option -g renumber-windows on
         set-option -g set-clipboard on
         set-option -g status-left-length 50
-        set-option -g status-right '#(${pkgs.i3status}/bin/i3status -c ${./tmux-i3status.conf})'
-        set-option -g status-right-length 75
         set-option -sa terminal-overrides ',xterm-256color:RGB'
       '';
     };

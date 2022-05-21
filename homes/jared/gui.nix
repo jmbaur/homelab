@@ -31,11 +31,11 @@ in
       element-desktop-wayland
       firefox-wayland
       gimp
-      iosevka-bin
       keybase
       signal-desktop
       slack
       spotify
+      ubuntu_font_family
       ventoy-bin
       yubikey-manager
       yubikey-personalization
@@ -48,24 +48,22 @@ in
     };
 
     home.pointerCursor = {
-      package = pkgs.gnome.gnome-themes-extra;
-      name = "Adwaita";
+      package = pkgs.yaru-theme;
+      name = "Yaru";
       size = 16;
       x11.enable = true;
     };
 
     gtk = {
       enable = true;
-      gtk3.extraConfig = {
-        gtk-theme-name = "Adwaita-dark";
-        gtk-key-theme-name = "Emacs";
-      };
+      theme = { package = pkgs.yaru-theme; name = "Yaru-dark"; };
+      iconTheme = { package = pkgs.yaru-theme; name = "Yaru"; };
+      gtk3.extraConfig.gtk-key-theme-name = "Emacs";
       gtk4 = removeAttrs config.gtk.gtk3 [ "bookmarks" "extraCss" "waylandSupport" ];
     };
 
     dconf.settings = {
       "org/gnome/desktop/interface" = with config.gtk.gtk3.extraConfig; {
-        gtk-theme = gtk-theme-name;
         gtk-key-theme = gtk-key-theme-name;
       };
     };
@@ -80,7 +78,7 @@ in
       extensions = with pkgs.vscode-extensions; [
         asvetliakov.vscode-neovim
         bbenoist.nix
-        # ms-vsliveshare.vsliveshare # TODO(jared): broken
+        ms-vsliveshare.vsliveshare
       ];
       userSettings = {
         "breadcrumbs.enabled" = false;
@@ -127,9 +125,9 @@ in
       enable = true;
       theme = "Ubuntu";
       font = {
-        package = pkgs.iosevka-bin;
-        name = "Iosevka";
-        size = 17;
+        package = pkgs.ubuntu_font_family;
+        name = "Ubuntu Mono";
+        size = 18;
       };
       settings = {
         copy_on_select = true;
@@ -142,19 +140,14 @@ in
 
     fonts.fontconfig.enable = true;
 
-    programs.i3status = {
-      enable = true;
-      enableDefault = true;
-      general = {
-        colors = true;
-        interval = 1;
-      };
-    };
-
     programs.mako = {
       enable = true;
       defaultTimeout = 5000;
       font = "${toString config.wayland.windowManager.sway.config.fonts.names} ${toString config.wayland.windowManager.sway.config.fonts.size}";
+      extraConfig = ''
+        [mode=do-not-disturb]
+        invisible=1
+      '';
     };
 
     services.swayidle =
@@ -224,11 +217,19 @@ in
       Install.WantedBy = [ "sway-session.target" ];
     };
 
+    xdg.configFile."gobar/gobar.yaml".text = lib.generators.toYAML { } {
+      modules = [
+        { module = "battery"; name = "BAT0"; }
+        { module = "network"; interface = "wlan0"; }
+        { module = "datetime"; format = "2006-01-02 15:04:05"; }
+      ];
+    };
+
     xdg.configFile."sway/config".onChange = lib.mkForce "";
     wayland.windowManager.sway = {
       enable = true;
       config = {
-        output."*".bg = "${pkgs.wallpapers.flow}/wallpaper.jpg fill";
+        output."*".bg = "${pkgs.ubuntu-wallpaper}/jammy-jellyfish.png fill";
         floating.criteria = [
           { title = "^(Zoom Cloud Meetings|zoom)$"; }
           { title = "Firefox — Sharing Indicator"; }
@@ -325,9 +326,10 @@ in
           };
         bars = [{
           fonts = config.wayland.windowManager.sway.config.fonts;
-          position = "bottom";
-          trayOutput = "*";
           mode = "hide";
+          position = "bottom";
+          statusCommand = "${pkgs.gobar}/bin/gobar";
+          trayOutput = "*";
         }];
         workspaceAutoBackAndForth = true;
       };
