@@ -8,9 +8,9 @@
     wireless.iwd.enable = true;
   };
 
+  systemd.services.systemd-networkd-wait-online.enable = false;
   systemd.network.networks.wireless = {
     matchConfig.Name = "wl*";
-    linkConfig.RequiredForOnline = false;
     networkConfig = {
       DHCP = "yes";
       IPv6PrivacyExtensions = true;
