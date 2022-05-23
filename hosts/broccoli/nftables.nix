@@ -131,10 +131,24 @@
               oifname { $DEV_WAN, $DEV_WAN6 } accept
           }
 
-          chain iot {
+          chain forward_iot {
               jump allow_to_internet
-              oifname { $DEV_IOT, $DEV_PUBLAN, $DEV_WG_IOT } accept
-              log prefix "did not match oifname *wireguard*"
+              oifname {
+                  $DEV_IOT,
+                  $DEV_WG_IOT,
+                  $DEV_PUBLAN,
+              } accept
+          }
+
+          chain forward_trusted {
+              jump allow_to_internet
+              oifname {
+                  $DEV_IOT,
+                  $DEV_WG_IOT,
+                  $DEV_TRUSTED,
+                  $DEV_WG_TRUSTED,
+                  $DEV_PUBLAN,
+              } accept
           }
 
           chain forward {
@@ -157,12 +171,12 @@
                   $DEV_WAN6 : jump forward_from_wan,
                   $DEV_PUBWAN : jump allow_to_internet,
                   $DEV_PUBLAN : jump allow_to_internet,
-                  $DEV_TRUSTED : accept,
-                  $DEV_IOT : jump iot,
+                  $DEV_TRUSTED : jump forward_trusted,
+                  $DEV_IOT : jump forward_iot,
                   $DEV_GUEST : jump allow_to_internet,
                   $DEV_MGMT : accept,
-                  $DEV_WG_TRUSTED : accept,
-                  $DEV_WG_IOT : jump iot,
+                  $DEV_WG_TRUSTED : jump forward_trusted,
+                  $DEV_WG_IOT : jump forward_iot,
               }
 
               # the rest is dropped by the above policy
