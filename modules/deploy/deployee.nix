@@ -26,7 +26,7 @@ with lib;
     users.users.root.openssh.authorizedKeys = {
       keyFiles = [
         (import ../../data/jmbaur-ssh-keys.nix)
-        ../../data/asparagus-ssh-keys.txt
+        ../../data/deployer-ssh-keys.txt
       ];
     };
 
@@ -42,12 +42,12 @@ with lib;
           # TODO(jared): may need to create separate keys outside of what is
           # created from the openssh nixos module.
           hostKeys = [ "/etc/ssh/ssh_host_ed25519_key" "/etc/ssh/ssh_host_rsa_key" ];
-          authorizedKeys = builtins.filter
+          authorizedKeys = (builtins.filter
             (key: key != "")
             (lib.splitString
               "\n"
               (builtins.readFile (import ../../data/jmbaur-ssh-keys.nix))
-            );
+            )) ++ [ (builtins.readFile ../../data/deployer-ssh-keys.txt) ];
         };
       };
     };
