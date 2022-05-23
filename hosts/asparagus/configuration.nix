@@ -19,13 +19,17 @@
 
   time.timeZone = "America/Los_Angeles";
 
-  custom.cache.enable = false;
-  custom.common.enable = true;
-  custom.containers.enable = true;
-  custom.deploy.enable = true;
-  custom.gui = { enable = true; desktop = true; };
-  custom.jared.enable = true;
-  custom.sound.enable = true;
+  custom = {
+    cache.enable = false;
+    common.enable = true;
+    containers.enable = true;
+    deployee.enable = true;
+    deployer.enable = true;
+    gui.enable = true;
+    gui.desktop = true;
+    jared.enable = true;
+    sound.enable = true;
+  };
   home-manager.users.jared = {
     custom.common.enable = true;
     custom.dev.enable = true;

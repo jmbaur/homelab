@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }: {
   custom.common.enable = true;
-  custom.deploy.enable = true;
+  custom.deployee.enable = true;
 
   zramSwap = {
     enable = true;

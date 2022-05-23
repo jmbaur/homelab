@@ -9,7 +9,7 @@
   nixpkgs.config.allowUnfree = true;
 
   custom.common.enable = true;
-  custom.deploy.enable = true;
+  custom.deployee.enable = true;
   custom.jared.enable = true;
 
   systemd.services."serial-getty@ttyS0" = {

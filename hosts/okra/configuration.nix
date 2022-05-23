@@ -11,7 +11,7 @@
   time.timeZone = "America/Los_Angeles";
 
   custom.common.enable = true;
-  custom.deploy.enable = true;
+  custom.deployee.enable = true;
   custom.gui.enable = true;
   custom.jared.enable = true;
   custom.sound.enable = true;

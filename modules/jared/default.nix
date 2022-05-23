@@ -21,7 +21,7 @@ in
         (lib.optionalString config.networking.networkmanager.enable "networkmanager")
         (lib.optionalString config.programs.adb.enable "adbusers")
       ];
-      openssh.authorizedKeys.keyFiles = lib.mkIf config.custom.deploy.enable [ (import ../../data/jmbaur-ssh-keys.nix) ];
+      openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
     };
 
     home-manager = {

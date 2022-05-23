@@ -11,7 +11,7 @@
   ];
 
   custom.common.enable = true;
-  custom.deploy.enable = true;
+  custom.deployee.enable = true;
 
   documentation.enable = false;
 
