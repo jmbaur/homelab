@@ -16,8 +16,12 @@
 
       table inet firewall {
           chain input_wan {
+              # accepting ping (icmp-echo-request) for diagnostic purposes.
+              # However, it also lets probes discover this host is alive. This
+              # sample accepts them within a certain rate limit:
               icmp type echo-request limit rate 5/second accept
               icmpv6 type echo-request limit rate 5/second accept
+
               meta l4proto { udp } th dport {
                   ${toString netdevs.wg-trusted.wireguardConfig.ListenPort},
                   ${toString netdevs.wg-iot.wireguardConfig.ListenPort},
@@ -25,24 +29,18 @@
           }
 
           chain input_always_allowed {
-              # accepting ping (icmp-echo-request) for diagnostic purposes.
-              # However, it also lets probes discover this host is alive. This
-              # sample accepts them within a certain rate limit:
-
-              ip protocol icmp icmp type {
+              icmp type {
                   destination-unreachable,
-                  echo-reply,
                   echo-request,
-                  source-quench,
+                  parameter-problem,
                   time-exceeded,
               } accept
-              ip6 nexthdr icmpv6 icmpv6 type {
+              icmpv6 type {
                   destination-unreachable,
-                  echo-reply,
                   echo-request,
-                  nd-neighbor-solicit,
-                  nd-router-advert,
                   nd-neighbor-advert,
+                  nd-neighbor-solicit,
+                  nd-router-solicit,
                   packet-too-big,
                   parameter-problem,
                   time-exceeded,

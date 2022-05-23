@@ -72,55 +72,6 @@ in
       pinentry-program ${bemenuWithArgs}/bin/pinentry-bemenu
     '';
 
-    programs.vscode = {
-      enable = true;
-      mutableExtensionsDir = false;
-      extensions = with pkgs.vscode-extensions; [
-        asvetliakov.vscode-neovim
-        bbenoist.nix
-        ms-vsliveshare.vsliveshare
-      ];
-      userSettings = {
-        "breadcrumbs.enabled" = false;
-        "editor.fontFamily" = config.programs.kitty.font.name;
-        "editor.fontSize" = config.programs.kitty.font.size + 4;
-        "editor.minimap.enabled" = false;
-        "extensions.ignoreRecommendations" = true;
-        "telemetry.telemetryLevel" = "off";
-        "terminal.external.linuxExec" = config.wayland.windowManager.sway.config.terminal;
-        "vscode-neovim.neovimExecutablePaths.linux" = "${pkgs.neovim-embed}/bin/nvim";
-      };
-    };
-
-    programs.alacritty = {
-      enable = true;
-      settings = {
-        env.TERM = "xterm-256color";
-        mouse.hide_when_typing = true;
-        import = [ ];
-        font = {
-          normal.family = config.programs.kitty.font.name;
-          bold.family = config.programs.kitty.font.name;
-          italic.family = config.programs.kitty.font.name;
-          bold_italic.family = config.programs.kitty.font.name;
-          size = config.programs.kitty.font.size;
-        };
-      };
-    };
-
-    programs.foot = {
-      enable = true;
-      settings = {
-        main = {
-          dpi-aware = "yes";
-          font = "${config.programs.kitty.font.name}:size=${toString (config.programs.kitty.font.size - 7)}, Noto Color Emoji";
-          selection-target = "both";
-          term = "xterm-256color";
-        };
-        mouse.hide-when-typing = "yes";
-      };
-    };
-
     programs.kitty = {
       enable = true;
       theme = "Ubuntu";

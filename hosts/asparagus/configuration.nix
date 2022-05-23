@@ -28,6 +28,7 @@
   custom.sound.enable = true;
   home-manager.users.jared = {
     custom.common.enable = true;
+    custom.dev.enable = true;
     custom.gui.enable = true;
   };
 

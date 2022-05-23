@@ -35,6 +35,7 @@
   custom.sound.enable = true;
   home-manager.users.jared = {
     custom.common.enable = true;
+    custom.dev.enable = true;
     custom.gui.enable = true;
     custom.gui.laptop = true;
   };
@@ -63,7 +64,7 @@
 
   environment.etc."xdg/gobar/gobar.yaml".text = lib.generators.toYAML { } {
     modules = [
-      { module = "battery"; name = "BAT0"; }
+      { module = "battery"; index = 0; }
       { module = "network"; interface = "wlan0"; }
       { module = "datetime"; format = "2006-01-02 15:04:05"; }
     ];
