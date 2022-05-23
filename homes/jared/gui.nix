@@ -186,14 +186,20 @@ in
         menu = "${bemenuWithArgs}/bin/bemenu-run";
         terminal = "${pkgs.kitty}/bin/kitty";
         modifier = "Mod4";
-        input = {
-          "type:keyboard".xkb_options = "ctrl:nocaps";
-          "type:touchpad" = {
-            dwt = "enabled";
-            natural_scroll = "enabled";
-            tap = "enabled";
+        input =
+          let
+            keyboardSettings = { xkb_options = "ctrl:nocaps"; };
+            touchpadSettings = {
+              dwt = "enabled";
+              natural_scroll = "enabled";
+              tap = "enabled";
+            };
+          in
+          {
+            "type:keyboard" = keyboardSettings;
+            "type:touchpad" = touchpadSettings;
+            "113:16461:Logitech_K400_Plus" = keyboardSettings // touchpadSettings;
           };
-        };
         window = {
           hideEdgeBorders = "smart";
           titlebar = true;
