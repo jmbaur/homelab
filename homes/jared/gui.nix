@@ -31,11 +31,11 @@ in
       element-desktop-wayland
       firefox-wayland
       gimp
+      iosevka-bin
       keybase
       signal-desktop
       slack
       spotify
-      ubuntu_font_family
       ventoy-bin
       yubikey-manager
       yubikey-personalization
@@ -48,16 +48,19 @@ in
     };
 
     home.pointerCursor = {
-      package = pkgs.yaru-theme;
-      name = "Yaru";
+      package = pkgs.gnome-themes-extra;
+      name = "Adwaita";
       size = 16;
       x11.enable = true;
     };
 
     gtk = {
       enable = true;
-      theme = { package = pkgs.yaru-theme; name = "Yaru-dark"; };
-      iconTheme = { package = pkgs.yaru-theme; name = "Yaru"; };
+      theme = {
+        inherit (config.home.pointerCursor) package;
+        name = "${config.home.pointerCursor.name}-dark";
+      };
+      iconTheme = { inherit (config.home.pointerCursor) package name; };
       gtk3.extraConfig.gtk-key-theme-name = "Emacs";
       gtk4 = removeAttrs config.gtk.gtk3 [ "bookmarks" "extraCss" "waylandSupport" ];
     };
@@ -74,11 +77,11 @@ in
 
     programs.kitty = {
       enable = true;
-      theme = "Ubuntu";
+      theme = "Tomorrow Night";
       font = {
-        package = pkgs.ubuntu_font_family;
-        name = "Ubuntu Mono";
-        size = 18;
+        package = pkgs.iosevka-bin;
+        name = "Iosevka";
+        size = 16;
       };
       settings = {
         copy_on_select = true;
@@ -172,7 +175,7 @@ in
     wayland.windowManager.sway = {
       enable = true;
       config = {
-        output."*".bg = "${pkgs.ubuntu-wallpaper}/jammy-jellyfish.png fill";
+        output."*".bg = "${pkgs.nixos-artwork.wallpapers.nineish-dark-gray.gnomeFilePath} fill";
         floating.criteria = [
           { title = "^(Zoom Cloud Meetings|zoom)$"; }
           { title = "Firefox — Sharing Indicator"; }
