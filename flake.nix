@@ -179,7 +179,7 @@
       };
 
       deploy.nodes.asparagus = {
-        hostname = "asparagus.home.arpa";
+        hostname = "asparagus.local";
         profiles.system = {
           sshUser = "root";
           path = deploy-rs.lib.x86_64-linux.activate.nixos
