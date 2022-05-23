@@ -60,6 +60,7 @@ in
         bemenu
         brightnessctl
         cage
+        clipman
         ffmpeg-full
         foot
         grim
