@@ -1,5 +1,5 @@
 { config, lib, pkgs, ... }: {
-  imports = [ ./networking.nix ./hardware-configuration.nix ];
+  imports = [ ./hardware-configuration.nix ];
 
   hardware.enableRedistributableFirmware = true;
 
@@ -17,14 +17,16 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.initrd.systemd.enable = true;
 
+  # Don't set timezone declaratively since this is a laptop.
+  networking = {
+    useDHCP = lib.mkForce false;
+    hostName = "beetroot";
+    networkmanager.enable = true;
+  };
+
   sops = {
-    defaultSopsFile = ./secrets.yaml;
+    # defaultSopsFile = ./secrets.yaml;
     age = { generateKey = true; keyFile = "/etc/age/key"; };
-    secrets.wg0 = {
-      mode = "0640";
-      owner = config.users.users.root.name;
-      group = config.users.groups.systemd-network.name;
-    };
   };
 
   custom.cache.enable = false;

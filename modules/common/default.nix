@@ -43,8 +43,8 @@ with lib;
 
       systemPackages = with pkgs; [
         bc
-        bind
         curl
+        dig
         dmidecode
         dnsutils
         file
@@ -81,7 +81,13 @@ with lib;
           vimrcConfig = {
             customRC = readFile ./vimrc;
             packages.myVimPackage = with pkgs.vimPlugins; {
-              start = [ vim-commentary vim-nix vim-rsi vim-sensible vim-surround ];
+              start = [
+                vim-commentary
+                vim-nix
+                vim-rsi
+                vim-sensible
+                vim-surround
+              ];
               opt = [ ];
             };
           };

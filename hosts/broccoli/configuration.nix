@@ -34,18 +34,12 @@
       owner = config.users.users.root.name;
       group = config.users.groups.systemd-network.name;
     };
+    secrets.beetroot = { };
+    secrets.pixel = { };
     secrets.ipwatch.restartUnits = [ "ipwatch.service" ];
-    secrets.mobile = { };
   };
 
-  environment.systemPackages = with pkgs; [
-    conntrack-tools
-    dig
-    ethtool
-    ipmitool
-    nmap
-    tcpdump
-  ];
+  environment.systemPackages = with pkgs; [ ethtool nmap ];
 
   users.users.jared = {
     isNormalUser = true;
@@ -82,7 +76,6 @@
 
   services.avahi = {
     enable = true;
-    reflector = true;
     nssmdns = true;
     openFirewall = false;
     publish = {
