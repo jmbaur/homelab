@@ -5,15 +5,14 @@ in
 {
   options.custom.jared.enable = lib.mkEnableOption "Enable jared user";
   config = lib.mkIf cfg.enable {
-    programs.zsh = {
-      enable = true;
-      interactiveShellInit = "bindkey -e";
-    };
-
     users.users.jared = {
       isNormalUser = true;
       description = "Jared Baur";
-      shell = pkgs.zsh;
+      shell =
+        if config.programs.zsh.enable then
+          pkgs.zsh
+        else
+          pkgs.bashInteractive;
       extraGroups = [
         "dialout" # picocom
         "wheel" # sudo

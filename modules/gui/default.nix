@@ -15,10 +15,6 @@ in
 
     location.provider = "geoclue2";
 
-    programs.adb.enable = true;
-    programs.dconf.enable = true;
-    programs.ssh.startAgent = true;
-
     xdg.portal.enable = true;
 
     environment.variables.NIXOS_OZONE_WL = "1";
@@ -82,7 +78,6 @@ in
         zathura
       ];
     };
-    programs.wshowkeys.enable = true;
 
     console = {
       earlySetup = true;
@@ -92,12 +87,27 @@ in
     services.greetd = {
       enable = true;
       vt = 7;
-      settings = {
-        default_session = {
-          command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd sway";
-        };
-      };
+      # TODO(jared): use cage instead of sway for wlgreet when cage switches to
+      # wlr-layer-shell-unstable.
+      settings.default_session.command =
+        "${pkgs.cage}/bin/cage -s -- ${pkgs.greetd.gtkgreet}/bin/gtkgreet";
     };
+    environment.etc."greetd/environments".text = ''
+      sway
+      bash
+      zsh
+    '';
+
+    programs.adb.enable = true;
+    programs.dconf.enable = true;
+    programs.gnupg.agent = { enable = true; pinentryFlavor = null; };
+    programs.ssh.startAgent = true;
+    programs.wshowkeys.enable = true;
+    programs.zsh = { enable = true; interactiveShellInit = "bindkey -e"; };
+
+    services.pcscd.enable = false;
+    services.printing.enable = true;
+    services.udev.packages = [ pkgs.yubikey-personalization ];
     services.avahi = {
       enable = true;
       nssmdns = true;
@@ -107,13 +117,6 @@ in
         addresses = true;
       };
     };
-    programs.gnupg.agent = {
-      enable = true;
-      pinentryFlavor = null;
-    };
-    services.dbus.packages = with pkgs; [ mako ];
-    services.pcscd.enable = false;
-    services.printing.enable = true;
-    services.udev.packages = [ pkgs.yubikey-personalization ];
+
   };
 }
