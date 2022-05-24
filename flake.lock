@@ -332,11 +332,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1652879223,
-        "narHash": "sha256-48c1WI5P3J8eyCCUJ6bKA8etLWGgCgfbo0PSoDnfNXc=",
+        "lastModified": 1653411647,
+        "narHash": "sha256-bPDpIOawzupSIRRoK2bRhN7d2cr5kncPWWAK4ARU7U4=",
         "owner": "jmbaur",
         "repo": "homelab-private",
-        "rev": "a06f598bf0bb1f1ef9da39589f7792a98618aec5",
+        "rev": "9b04b519b758ceb21815bcc2df71c0f9e58e1628",
         "type": "github"
       },
       "original": {
@@ -388,11 +388,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1653348351,
-        "narHash": "sha256-mjx7QP62H39jbguDYbfDhnjZZEt5GmP2P73w0M0gIuQ=",
+        "lastModified": 1653399543,
+        "narHash": "sha256-qLFw8U3xop5U5KtYGykOVa0oKHmTYg3TaNB043GMIks=",
         "owner": "astro",
         "repo": "microvm.nix",
-        "rev": "8d136ee308cda26522818772a8c914b69e0609e7",
+        "rev": "309e172528cb6589210c2b19f0f8fc15a0fe2384",
         "type": "github"
       },
       "original": {
