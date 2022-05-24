@@ -17,7 +17,7 @@
     netdevs = {
       bridge = {
         netdevConfig = {
-          Name = "virbr0";
+          Name = "br0";
           Kind = "bridge";
         };
         extraConfig = ''
@@ -33,31 +33,29 @@
         networkConfig.DHCP = "yes";
         dhcpV4Config.ClientIdentifier = "mac";
       };
-      data = {
+      trunk = {
         matchConfig.Name = "enp1s0";
-        bridge = [ config.systemd.network.networks.bridge.matchConfig.Name ];
-        extraConfig = ''
-          [BridgeVLAN]
-          VLAN=30
-        '';
+        networkConfig.Bridge = config.systemd.network.netdevs.bridge.netdevConfig.Name;
+        # Support for all trunked VLANs
+        extraConfig = lib.concatMapStrings
+          (vlan: ''
+            [BridgeVLAN]
+            VLAN=${toString vlan}
+          '') [ 10 20 30 40 50 ];
       };
       bridge = {
         matchConfig.Name = config.systemd.network.netdevs.bridge.netdevConfig.Name;
-        linkConfig.RequiredForOnline = false;
-        networkConfig.DHCP = "yes";
-        extraConfig = ''
-          [BridgeVLAN]
-          PVID=30
-        '';
+        networkConfig.LinkLocalAddressing = "no";
       };
-      microvms = {
-        matchConfig.Name = "vm-*";
+      trusted-vms = {
+        matchConfig.Name = lib.concatStringsSep " " [ "vm-test" ];
         networkConfig.Bridge =
           config.systemd.network.networks.bridge.matchConfig.Name;
-        linkConfig.RequiredForOnline = false;
+        # Each VM needs PVID and EgressUntagged to function properly
         extraConfig = ''
           [BridgeVLAN]
           PVID=30
+          EgressUntagged=30
         '';
       };
     };

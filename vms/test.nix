@@ -1,10 +1,17 @@
 { config, lib, pkgs, ... }: {
+  system.stateVersion = "22.05";
   networking = {
     hostName = "test";
-    useDHCP = true;
+    useNetworkd = true;
   };
-  system.stateVersion = "22.05";
+  systemd.network.networks.en = {
+    matchConfig.Name = "en*";
+    networkConfig.DHCP = "yes";
+    dhcpV4Config.ClientIdentifier = "mac";
+  };
+  virtualisation.podman.enable = true;
   security.sudo.wheelNeedsPassword = false;
+  services.openssh.enable = true;
   users.mutableUsers = false;
   users.users.jared = {
     isNormalUser = true;
@@ -23,7 +30,7 @@
     interfaces = [{
       type = "tap";
       id = "vm-" + config.networking.hostName;
-      mac = "bb:ec:af:8a:b2:e7";
+      mac = "b4:b6:76:00:00:01";
     }];
   };
 }
