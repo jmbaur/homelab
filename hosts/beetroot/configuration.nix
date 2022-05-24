@@ -67,7 +67,7 @@
   environment.etc."xdg/gobar/gobar.yaml".text = lib.generators.toYAML { } {
     modules = [
       { module = "battery"; index = 0; }
-      { module = "network"; interface = "wlan0"; }
+      { module = "network"; interface = "wlp1s0"; }
       { module = "datetime"; format = "2006-01-02 15:04:05"; }
     ];
   };
