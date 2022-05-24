@@ -118,10 +118,7 @@ in
       nix-direnv.enable = true;
     };
 
-    home.sessionVariables = {
-      EDITOR = "${pkgs.neovim}/bin/nvim";
-      PAGER = "${pkgs.nvimpager}/bin/nvimpager";
-    };
+    home.sessionVariables.EDITOR = "${pkgs.neovim}/bin/nvim";
 
     programs.zsh = {
       enable = true;
