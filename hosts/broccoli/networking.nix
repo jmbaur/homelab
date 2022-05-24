@@ -114,14 +114,14 @@
 
       pubwan = mkInternalInterface { name = "pubwan"; };
       publan = mkInternalInterface { name = "publan"; };
-      trusted = mkInternalInterface { name = "trusted"; };
-      iot = mkInternalInterface {
-        name = "iot";
+      trusted = mkInternalInterface {
+        name = "trusted";
         staticLeases = [
           # okra
-          { MACAddress = "5c:80:b6:92:eb:27"; Address = "192.168.40.50"; }
+          { MACAddress = "5c:80:b6:92:eb:27"; Address = "192.168.30.50"; }
         ];
       };
+      iot = mkInternalInterface { name = "iot"; };
       guest = mkInternalInterface { name = "guest"; };
       mgmt = mkInternalInterface {
         name = "mgmt";
