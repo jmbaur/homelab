@@ -273,11 +273,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1653504595,
-        "narHash": "sha256-FcsB1f6yfVZ1IYmLW9yxlRg480H1u9uv1/EB7pYGCkY=",
+        "lastModified": 1653509773,
+        "narHash": "sha256-IK/TC4jYLkYNPnOQELjen2fSz3+BKPSPQsF9jlCfm1Y=",
         "owner": "jmbaur",
         "repo": "gobar",
-        "rev": "0827debd7eb5abbc4d789059046df53e0df5f545",
+        "rev": "f95573444dd5a93b89f91b771ce53abff6d2f2c1",
         "type": "github"
       },
       "original": {
@@ -312,11 +312,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1653497002,
-        "narHash": "sha256-L2kb16MAU59LIEWq7ODNsz5AHw5B5Dn9DNaKJF8pG/M=",
+        "lastModified": 1653508182,
+        "narHash": "sha256-yiy/CqoDdy9Z+FuAgftPrSJgiDDnJJEbJ5c4gXNLaW8=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "2c8489e57a04c913ba9e029cc2849a4bbac9673b",
+        "rev": "51ea4217f724c049fde3d29a6aaa77ed2707c4ba",
         "type": "github"
       },
       "original": {
@@ -332,11 +332,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1653411647,
-        "narHash": "sha256-bPDpIOawzupSIRRoK2bRhN7d2cr5kncPWWAK4ARU7U4=",
+        "lastModified": 1653512464,
+        "narHash": "sha256-qlDnhZhl5SD7s+AcnWO56r/o8k8fbGgHgrjhoXpvWCw=",
         "owner": "jmbaur",
         "repo": "homelab-private",
-        "rev": "9b04b519b758ceb21815bcc2df71c0f9e58e1628",
+        "rev": "12b79a09d6e29653d44edb1632cdabc5dfe31efa",
         "type": "github"
       },
       "original": {

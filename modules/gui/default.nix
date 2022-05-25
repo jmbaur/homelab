@@ -5,11 +5,12 @@ in
 {
   options = {
     custom.gui.enable = lib.mkEnableOption "Enable gui config";
-    custom.gui.desktop = lib.mkEnableOption "Enable desktop gui config";
   };
   config = lib.mkIf cfg.enable {
-    hardware.pulseaudio.enable = !config.custom.sound.enable;
-    hardware.i2c.enable = cfg.desktop;
+    custom.sound.enable = lib.mkDefault true;
+    hardware.pulseaudio.enable = false;
+
+    hardware.i2c.enable = true;
 
     security.polkit.enable = true;
 

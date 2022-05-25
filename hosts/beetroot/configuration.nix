@@ -33,13 +33,9 @@
   custom.common.enable = true;
   custom.containers.enable = true;
   custom.gui.enable = true;
-  custom.jared.enable = true;
-  custom.sound.enable = true;
-  home-manager.users.jared = {
-    custom.common.enable = true;
-    custom.dev.enable = true;
-    custom.gui.enable = true;
-    custom.gui.laptop = true;
+  custom.jared = {
+    enable = true;
+    includeHomeManager = true;
   };
 
   services.snapper.configs.home = {

@@ -26,14 +26,10 @@
     deployee.enable = true;
     deployer.enable = true;
     gui.enable = true;
-    gui.desktop = true;
-    jared.enable = true;
-    sound.enable = true;
-  };
-  home-manager.users.jared = {
-    custom.common.enable = true;
-    custom.dev.enable = true;
-    custom.gui.enable = true;
+    jared = {
+      enable = true;
+      includeHomeManager = true;
+    };
   };
 
   services.snapper.configs = {

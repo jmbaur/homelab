@@ -13,9 +13,10 @@
   custom.common.enable = true;
   custom.deployee.enable = true;
   custom.gui.enable = true;
-  custom.jared.enable = true;
-  custom.sound.enable = true;
-  home-manager.users.jared.custom.gui.enable = true;
+  custom.jared = {
+    enable = true;
+    includeHomeManager = true;
+  };
 
   nixpkgs.config.allowUnfree = true;
 

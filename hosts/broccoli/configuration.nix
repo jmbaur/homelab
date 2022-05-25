@@ -12,6 +12,7 @@
 
   custom.common.enable = true;
   custom.deployee.enable = true;
+  custom.jared.enable = true;
 
   documentation.enable = false;
 

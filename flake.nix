@@ -84,6 +84,14 @@
           inherit system;
           modules = [ ./config.nix ];
         };
+        packages.inventory =
+          let
+            attrSet = (pkgs.callPackage ./inventory.nix { }) {
+              inherit (homelab-private.secrets.networking) guaPrefix ulaPrefix;
+              tld = "jmbaur.com";
+            };
+          in
+          pkgs.writeText "inventory.json" (builtins.toJSON attrSet);
       })
     //
     {
@@ -119,7 +127,7 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/broccoli/configuration.nix
-          homelab-private.nixosModules.broccoli
+          homelab-private.nixosModules.common
           ipwatch.nixosModules.default
           nixos-hardware.nixosModules.supermicro
           self.nixosModules.default
@@ -140,7 +148,7 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/beetroot/configuration.nix
-          homelab-private.nixosModules.beetroot
+          homelab-private.nixosModules.common
           nixos-hardware.nixosModules.lenovo-thinkpad-t495
           self.nixosModules.default
         ];
@@ -151,7 +159,7 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/okra/configuration.nix
-          homelab-private.nixosModules.okra
+          homelab-private.nixosModules.common
           nixos-hardware.nixosModules.intel-nuc-8i7beh
           self.nixosModules.default
         ];
@@ -171,7 +179,7 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/asparagus/configuration.nix
-          homelab-private.nixosModules.asparagus
+          homelab-private.nixosModules.common
           nixos-hardware.nixosModules.common-cpu-amd
           nixos-hardware.nixosModules.common-gpu-amd
           self.nixosModules.default
@@ -189,14 +197,18 @@
 
       nixosConfigurations.vm-test = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        modules = [ ./vms/test.nix microvm.nixosModules.microvm ];
+        modules = [
+          ./vms/test.nix
+          homelab-private.nixosModules.common
+          microvm.nixosModules.microvm
+        ];
       };
 
       nixosConfigurations.kale = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
           ./hosts/kale/configuration.nix
-          homelab-private.nixosModules.kale
+          homelab-private.nixosModules.common
           microvm.nixosModules.host
           nixos-hardware.nixosModules.common-cpu-amd
           self.nixosModules.default
@@ -218,7 +230,7 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/rhubarb/configuration.nix
-          homelab-private.nixosModules.rhubarb
+          homelab-private.nixosModules.common
           nixos-hardware.nixosModules.raspberry-pi-4
           self.nixosModules.default
         ];

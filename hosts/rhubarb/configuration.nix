@@ -1,6 +1,8 @@
 { config, lib, pkgs, ... }: {
   custom.common.enable = true;
   custom.deployee.enable = true;
+  custom.deployer.enable = true;
+  custom.jared.enable = true;
 
   zramSwap = {
     enable = true;
@@ -39,12 +41,6 @@
   nix.extraOptions = ''
     builders-use-substitutes = true
   '';
-
-  users.users.jared = {
-    isNormalUser = true;
-    openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
-    extraGroups = [ "wheel" ];
-  };
 
   programs.ssh = {
     knownHostsFiles = [
