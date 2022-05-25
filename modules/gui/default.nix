@@ -89,9 +89,13 @@ in
       vt = 7;
       # TODO(jared): use cage instead of sway for wlgreet when cage switches to
       # wlr-layer-shell-unstable.
-      # XCURSOR_PATH=${pkgs.gnome-themes-extra}/share/icons XCURSOR_THEME=Adwaita 
+
       settings.default_session.command =
-        "env XDG_DATA_DIRS=${pkgs.gnome-themes-extra}/share GTK_THEME=Adwaita-dark ${pkgs.cage}/bin/cage -sd -- ${pkgs.greetd.gtkgreet}/bin/gtkgreet";
+        let
+          xdgDataDirs = "${pkgs.gnome-themes-extra}/share";
+          gtkTheme = "Adwaita-dark";
+        in
+        "env XDG_DATA_DIRS=${xdgDataDirs} GTK_THEME=${gtkTheme} ${pkgs.cage}/bin/cage -sd -- ${pkgs.greetd.gtkgreet}/bin/gtkgreet";
     };
     environment.etc."greetd/environments".text = ''
       sway
