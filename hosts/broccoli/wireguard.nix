@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }:
 let
-  mkWgInterface = name: { port, ipv4ThirdOctet, subdomain, peers ? [ ] }:
+  mkWgInterface = name: { port, ipv4ThirdOctet, peers ? [ ] }:
     let
       ipv6FourthHextet = lib.toHexString ipv4ThirdOctet;
     in
@@ -39,6 +39,7 @@ let
         ];
       };
 
+      # TODO(jared): provide full-tunnel and split-tunnel configurations.
       clientConfigs = builtins.listToAttrs (map
         (p: {
           inherit (p) name;
@@ -49,10 +50,11 @@ let
                 [Interface]
                 Address=192.168.${toString ipv4ThirdOctet}.${toString p.ipv4FourthOctet}/24,${config.router.guaPrefix}:${ipv6FourthHextet}::${lib.toHexString p.ipv4FourthOctet}/64,${config.router.ulaPrefix}:${ipv6FourthHextet}::${lib.toHexString p.ipv4FourthOctet}/64
                 PrivateKey=$(cat ${config.sops.secrets.${p.name}.path})
+                DNS=192.168.${toString ipv4ThirdOctet}.1,${config.router.guaPrefix}:${ipv6FourthHextet}::1,${config.router.ulaPrefix}:${ipv6FourthHextet}::1
 
                 [Peer]
                 PublicKey=$(cat ${config.sops.secrets.${name}.path} | ${pkgs.wireguard-tools}/bin/wg pubkey)
-                Endpoint=${subdomain}.jmbaur.com:${toString port}
+                Endpoint=vpn.jmbaur.com:${toString port}
                 AllowedIPs=0.0.0.0/0,::/0
               '';
             in
@@ -83,7 +85,6 @@ let
   wg-trusted = mkWgInterface "wg-trusted" {
     port = 51830;
     ipv4ThirdOctet = 130;
-    subdomain = "vpn0";
     peers = [{
       name = "beetroot";
       publicKey = "T+zc4lpoEgxPIKEBr9qXiAzb/ruRbqZuVrih+0rGs2M=";
@@ -94,7 +95,6 @@ let
   wg-iot = mkWgInterface "wg-iot" {
     port = 51840;
     ipv4ThirdOctet = 140;
-    subdomain = "vpn1";
     peers = [{
       name = "pixel";
       publicKey = "pCvnlCWnM46XY3+327rQyOPA91wajC1HPTmP/5YHcy8=";

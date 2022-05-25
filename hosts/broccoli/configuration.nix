@@ -57,14 +57,8 @@
         --request PUT \
         --header "Content-Type: application/json" \
         --header "Authorization: Bearer ''${CF_DNS_API_TOKEN}" \
-        --data '{"type":"A","name":"vpn0.jmbaur.com","content":"'"''${ADDR}"'","proxied":false}' \
-        "https://api.cloudflare.com/client/v4/zones/''${CF_ZONE_ID}/dns_records/''${VPN0_CF_RECORD_ID}" | ${pkgs.jq}/bin/jq
-      ${pkgs.curl}/bin/curl --silent \
-        --request PUT \
-        --header "Content-Type: application/json" \
-        --header "Authorization: Bearer ''${CF_DNS_API_TOKEN}" \
-        --data '{"type":"A","name":"vpn1.jmbaur.com","content":"'"''${ADDR}"'","proxied":false}' \
-        "https://api.cloudflare.com/client/v4/zones/''${CF_ZONE_ID}/dns_records/''${VPN1_CF_RECORD_ID}" | ${pkgs.jq}/bin/jq
+        --data '{"type":"A","name":"vpn.jmbaur.com","content":"'"''${ADDR}"'","proxied":false}' \
+        "https://api.cloudflare.com/client/v4/zones/''${CF_ZONE_ID}/dns_records/''${VPN_CF_RECORD_ID}" | ${pkgs.jq}/bin/jq
 
       echo Updating hurricane electric tunnelbroker with new IP
       ${pkgs.curl}/bin/curl --silent \
