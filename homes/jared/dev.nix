@@ -33,6 +33,7 @@ in
       nix-tree
       nixos-generators
       nload
+      oil
       openssl
       patchelf
       podman-compose
