@@ -70,7 +70,7 @@
         formatter = pkgs.nixpkgs-fmt;
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
-            (terraform.withPlugins (p: with p; [ aws cloudflare ]))
+            (terraform.withPlugins (p: with p; [ aws cloudflare github ]))
             sops
           ];
           inherit (pre-commit.lib.${system}.run {
@@ -81,7 +81,7 @@
         packages.cap_ac = pkgs.callPackage ./routeros/CapAC.nix { };
         packages.crs_305 = pkgs.writeText "crs_305" (builtins.readFile ./routeros/CRS305.rsc);
         packages.crs_326 = pkgs.writeText "crs_326" (builtins.readFile ./routeros/CRS326.rsc);
-        packages.vpc = terranix.lib.terranixConfiguration {
+        packages.cloud = terranix.lib.terranixConfiguration {
           inherit system;
           modules = [ ./config.nix ];
         };

@@ -1,9 +1,29 @@
 { config, lib, ... }: {
-  terraform.required_providers.linode.source = "hashicorp/aws";
+  # Versioning of these providers is provided by Nix.
+  terraform.required_providers = {
+    aws.source = "hashicorp/aws";
+    cloudflare.source = "cloudflare/cloudflare";
+    github.source = "integrations/github";
+  };
 
-  provider.aws.region = "us-west-2";
+  provider = {
+    aws.region = "us-west-2";
+    cloudflare = { };
+    github = { };
+  };
 
   resource = {
+    github_repository_webhook.homelab = {
+      repository = "homelab";
+      configuration = {
+        content_type = "json";
+        url = "TODO";
+        secret = "TODO";
+      };
+      active = true;
+      events = [ "push" ];
+    };
+
     aws_vpc.vpc = {
       cidr_block = "172.16.0.0/16";
       assign_generated_ipv6_cidr_block = true;
