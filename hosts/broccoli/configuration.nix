@@ -71,13 +71,8 @@
   };
 
   services.avahi = {
-    enable = true;
-    nssmdns = true;
+    enable = false;
     openFirewall = false;
-    publish = {
-      enable = true;
-      addresses = true;
-    };
     extraConfig = ''
       [server]
       deny-interfaces=${config.systemd.network.networks.wan.matchConfig.Name}
