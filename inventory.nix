@@ -7,24 +7,9 @@
 # prepend to the remaining 80 bits of an IPv6 address.
 
 let
-  # Forked from nixpkgs lib to use lowercase in hex representation, per RFC
-  # 5952's recommendation for IPv6 addresses.
-  toHexString = i:
-    let
-      toHexDigit = d:
-        if d < 10
-        then toString d
-        else
-          {
-            "10" = "a";
-            "11" = "b";
-            "12" = "c";
-            "13" = "d";
-            "14" = "e";
-            "15" = "f";
-          }.${toString d};
-    in
-    lib.concatMapStrings toHexDigit (lib.toBaseDigits 16 i);
+  # NOTE: Wrapping nixpkgs toHexString to follow RFC 5952's recommendation for
+  # IPv6 addresses to be in lower case.
+  toHexString = i: lib.toLower (lib.toHexString i);
   mkIpv4Addr = prefix: thirdOctet: fourthOctet: "${prefix}.${toString thirdOctet}.${toString fourthOctet}";
   mkIpv6Addr = prefix: fourthHextet: lastHextet: "${prefix}:${fourthHextet}::${lastHextet}";
 in
@@ -49,12 +34,19 @@ let
       ipv6Cidr = 64;
       networkGuaPrefix = "${guaPrefix}:${toHexString id}";
       networkUlaPrefix = "${ulaPrefix}:${toHexString id}";
-      guaCidr = "${networkGuaPrefix}::/${toString ipv6Cidr}";
-      ulaCidr = "${networkUlaPrefix}::/${toString ipv6Cidr}";
+      networkGuaCidr = "${networkGuaPrefix}::/${toString ipv6Cidr}";
+      networkUlaCidr = "${networkUlaPrefix}::/${toString ipv6Cidr}";
     in
     {
       inherit
-        name id ipv4Cidr ipv6Cidr networkGuaPrefix networkUlaPrefix guaCidr ulaCidr;
+        name
+        id
+        ipv4Cidr
+        ipv6Cidr
+        networkGuaPrefix
+        networkUlaPrefix
+        networkGuaCidr
+        networkUlaCidr;
       domain = "${name}.${tld}";
       hosts = lib.mapAttrs
         (_: host: mkNetworkHost host)

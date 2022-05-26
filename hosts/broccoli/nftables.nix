@@ -187,16 +187,6 @@
       table ip nat {
           chain prerouting {
               type nat hook prerouting priority 100; policy accept;
-
-              # # TODO(jared): don't hardcode the dnat address
-              # iifname $DEV_WAN udp dport {
-              #     ${toString netdevs.wg-trusted.wireguardConfig.ListenPort},
-              # } dnat to 192.168.130.1
-              #
-              # # TODO(jared): don't hardcode the dnat address
-              # iifname $DEV_WAN udp dport {
-              #     ${toString netdevs.wg-iot.wireguardConfig.ListenPort},
-              # } dnat to 192.168.140.1
           }
 
           chain postrouting {
