@@ -70,7 +70,6 @@ in
 
   programs.kitty = {
     enable = true;
-    theme = "Tomorrow Night";
     font = {
       package = pkgs.iosevka-bin;
       name = "Iosevka";

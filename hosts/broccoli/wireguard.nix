@@ -34,57 +34,54 @@ let
           );
       };
       # TODO(jared): provide full-tunnel and split-tunnel configurations.
-      clientConfigs = builtins.listToAttrs (lib.mapAttrsToList
-        (hostname: host: {
-          name = hostname;
-          value =
-            let
-              scriptName = "wg-config-${hostname}";
-              wgConfig = lib.generators.toINI { listsAsDuplicateKeys = true; } {
-                Interface = {
-                  Address = (
-                    (map (ip: "${ip}/${toString network.ipv4Cidr}") host.ipv4)
-                    ++
-                    (map (ip: "${ip}/${toString network.ipv6Cidr}") host.ipv6)
-                  );
-                  PrivateKey =
-                    "$(cat ${config.sops.secrets.${hostname}.path})";
-                  DNS =
-                    (with network.hosts.broccoli; (ipv4 ++ ipv6))
-                    ++
-                    [ network.domain ];
-                };
-                Peer = [{
-                  PublicKey =
-                    "$(cat ${config.sops.secrets.${network.name}.path} | ${pkgs.wireguard-tools}/bin/wg pubkey)";
-                  Endpoint = "vpn.jmbaur.com:${toString port}";
-                  AllowedIPs = [ "0.0.0.0/0" "::/0" ];
-                }];
+      clientConfigs = lib.mapAttrsToList
+        (hostname: host:
+          let
+            scriptName = "wg-config-${hostname}";
+            wgConfig = lib.generators.toINI { listsAsDuplicateKeys = true; } {
+              Interface = {
+                Address = (
+                  (map (ip: "${ip}/${toString network.ipv4Cidr}") host.ipv4)
+                  ++
+                  (map (ip: "${ip}/${toString network.ipv6Cidr}") host.ipv6)
+                );
+                PrivateKey =
+                  "$(cat ${config.sops.secrets.${hostname}.path})";
+                DNS =
+                  (with network.hosts.broccoli; (ipv4 ++ ipv6))
+                  ++
+                  [ network.domain ];
               };
-            in
-            pkgs.writeShellScriptBin scriptName ''
-              set -eo pipefail
-              case "$1" in
-              text)
-              cat << EOF
-              ${wgConfig}
-              EOF
-              ;;
-              qrcode)
-              ${pkgs.qrencode}/bin/qrencode -t ANSIUTF8 << EOF
-              ${wgConfig}
-              EOF
-              ;;
-              *)
-              cat <<EOF
-              Usage: ${scriptName} type-of-config
-              where type-of-config can be "text" or "qrcode"
-              EOF
-              ;;
-              esac
-            '';
-        })
-        peers);
+              Peer = {
+                PublicKey =
+                  "$(cat ${config.sops.secrets.${network.name}.path} | ${pkgs.wireguard-tools}/bin/wg pubkey)";
+                Endpoint = "vpn.jmbaur.com:${toString port}";
+                AllowedIPs = [ "0.0.0.0/0" "::/0" ];
+              };
+            };
+          in
+          pkgs.writeShellScriptBin scriptName ''
+            set -eo pipefail
+            case "$1" in
+            text)
+            cat << EOF
+            ${wgConfig}
+            EOF
+            ;;
+            qrcode)
+            ${pkgs.qrencode}/bin/qrencode -t ANSIUTF8 << EOF
+            ${wgConfig}
+            EOF
+            ;;
+            *)
+            cat <<EOF
+            Usage: ${scriptName} type-of-config
+            where type-of-config can be "text" or "qrcode"
+            EOF
+            ;;
+            esac
+          '')
+        peers;
     };
   wgTrusted = mkWgInterface inventory.wgTrusted;
   wgIot = mkWgInterface inventory.wgIot;
@@ -98,9 +95,6 @@ in
     networks.wgIot = wgIot.network;
   };
 
-  environment.systemPackages = [
-    pkgs.wireguard-tools
-    wgTrusted.clientConfigs.beetroot
-    wgIot.clientConfigs.pixel
-  ];
+  environment.systemPackages =
+    wgTrusted.clientConfigs ++ wgIot.clientConfigs ++ [ pkgs.wireguard-tools ];
 }
