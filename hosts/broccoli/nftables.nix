@@ -10,8 +10,8 @@
       define DEV_IOT = ${networks.iot.matchConfig.Name}
       define DEV_WORK = ${networks.work.matchConfig.Name}
       define DEV_MGMT = ${networks.mgmt.matchConfig.Name}
-      define DEV_WG_TRUSTED = ${networks.wg-trusted.matchConfig.Name}
-      define DEV_WG_IOT = ${networks.wg-iot.matchConfig.Name}
+      define DEV_WG_TRUSTED = ${networks.wgTrusted.matchConfig.Name}
+      define DEV_WG_IOT = ${networks.wgIot.matchConfig.Name}
       define NET_ALL = 192.168.0.0/16
 
       table inet firewall {
@@ -23,8 +23,8 @@
               icmpv6 type echo-request limit rate 5/second accept
 
               meta l4proto { udp } th dport {
-                  ${toString netdevs.wg-trusted.wireguardConfig.ListenPort},
-                  ${toString netdevs.wg-iot.wireguardConfig.ListenPort},
+                  ${toString netdevs.wgTrusted.wireguardConfig.ListenPort},
+                  ${toString netdevs.wgIot.wireguardConfig.ListenPort},
               } log prefix "input wireguard - " accept
           }
 

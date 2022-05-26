@@ -1,117 +1,104 @@
 { config, lib, pkgs, secrets, inventory, ... }:
 let
-  mkWgInterface = name: { port, ipv4ThirdOctet, peers ? [ ] }:
+  mkWgInterface = network:
     let
-      ipv6FourthHextet = lib.toHexString ipv4ThirdOctet;
+      peers = lib.filterAttrs (_: host: host.wgPeer) network.hosts;
+      port = 51800 + network.id;
     in
     {
       netdev = {
-        netdevConfig = {
-          Name = name;
-          Kind = "wireguard";
-        };
+        netdevConfig = { Name = network.name; Kind = "wireguard"; };
         wireguardConfig = {
           ListenPort = port;
-          PrivateKeyFile = "/run/secrets/${name}";
+          PrivateKeyFile = "/run/secrets/${network.name}";
         };
-        wireguardPeers = map
-          (p: {
+        wireguardPeers = lib.mapAttrsToList
+          (_: host: {
             wireguardPeerConfig = {
-              PublicKey = p.publicKey;
-              AllowedIPs = [
-                "192.168.${toString ipv4ThirdOctet}.${toString p.ipv4FourthOctet}/32"
-                "${secrets.networking.guaPrefix}:${ipv6FourthHextet}::${lib.toHexString p.ipv4FourthOctet}/128"
-                "${secrets.networking.ulaPrefix}:${ipv6FourthHextet}::${lib.toHexString p.ipv4FourthOctet}/128"
-              ];
+              PublicKey = host.publicKey;
+              AllowedIPs =
+                (map (ip: "${ip}/32") host.ipv4)
+                ++
+                (map (ip: "${ip}/128") host.ipv6);
             };
-          }
-          )
+          })
           peers;
       };
-
       network = {
-        matchConfig.Name =
-          config.systemd.network.netdevs.${name}.netdevConfig.Name;
-        networkConfig.Address = [
-          "192.168.${toString ipv4ThirdOctet}.1/24"
-          "${secrets.networking.ulaPrefix}:${ipv6FourthHextet}::1/64"
-          "${secrets.networking.guaPrefix}:${ipv6FourthHextet}::1/64"
-        ];
+        matchConfig.Name = network.name;
+        networkConfig.Address =
+          with network.hosts.broccoli; (
+            (map (ip: "${ip}/${toString network.ipv4Cidr}") ipv4)
+            ++
+            (map (ip: "${ip}/${toString network.ipv6Cidr}") ipv6)
+          );
       };
-
       # TODO(jared): provide full-tunnel and split-tunnel configurations.
-      clientConfigs = builtins.listToAttrs (map
-        (p: {
-          inherit (p) name;
+      clientConfigs = builtins.listToAttrs (lib.mapAttrsToList
+        (hostname: host: {
+          name = hostname;
           value =
             let
-              scriptName = "wg-config-${p.name}";
-              wgConfig = ''
-                [Interface]
-                Address=192.168.${toString ipv4ThirdOctet}.${toString p.ipv4FourthOctet}/24,${secrets.networking.guaPrefix}:${ipv6FourthHextet}::${lib.toHexString p.ipv4FourthOctet}/64,${secrets.networking.ulaPrefix}:${ipv6FourthHextet}::${lib.toHexString p.ipv4FourthOctet}/64
-                PrivateKey=$(cat ${config.sops.secrets.${p.name}.path})
-                DNS=192.168.${toString ipv4ThirdOctet}.1,${secrets.networking.guaPrefix}:${ipv6FourthHextet}::1,${secrets.networking.ulaPrefix}:${ipv6FourthHextet}::1
-
-                [Peer]
-                PublicKey=$(cat ${config.sops.secrets.${name}.path} | ${pkgs.wireguard-tools}/bin/wg pubkey)
-                Endpoint=vpn.jmbaur.com:${toString port}
-                AllowedIPs=0.0.0.0/0,::/0
-              '';
+              scriptName = "wg-config-${hostname}";
+              wgConfig = lib.generators.toINI { } {
+                Interface = {
+                  Address = lib.concatStringsSep "," (
+                    (map (ip: "${ip}/${toString network.ipv4Cidr}") host.ipv4)
+                    ++
+                    (map (ip: "${ip}/${toString network.ipv6Cidr}") host.ipv6)
+                  );
+                  PrivateKey =
+                    "$(cat ${config.sops.secrets.${hostname}.path})";
+                  DNS = lib.concatStringsSep "," (with network.hosts.broccoli;
+                    ipv4 ++ ipv6);
+                };
+                Peer = {
+                  PublicKey =
+                    "$(cat ${config.sops.secrets.${network.name}.path} | ${pkgs.wireguard-tools}/bin/wg pubkey)";
+                  Endpoint = "vpn.jmbaur.com:${toString port}";
+                  AllowedIPs = lib.concatStringsSep "," [ "0.0.0.0/0" "::/0" ];
+                };
+              };
             in
             pkgs.writeShellScriptBin scriptName ''
+              set -eo pipefail
               case "$1" in
-                text)
-                  cat << EOF
+              text)
+              cat << EOF
               ${wgConfig}
               EOF
-                  ;;
-                qrcode)
-                  ${pkgs.qrencode}/bin/qrencode -t ANSIUTF8 << EOF
+              ;;
+              qrcode)
+              ${pkgs.qrencode}/bin/qrencode -t ANSIUTF8 << EOF
               ${wgConfig}
               EOF
-                  ;;
-                *)
-                  cat <<EOF
+              ;;
+              *)
+              cat <<EOF
               Usage: ${scriptName} type-of-config
-                where type-of-config can be "text" or "qrcode"
+              where type-of-config can be "text" or "qrcode"
               EOF
-                  ;;
+              ;;
               esac
             '';
         })
         peers);
     };
-
-  wg-trusted = mkWgInterface "wg-trusted" {
-    port = 51830;
-    ipv4ThirdOctet = 130;
-    peers = [{
-      name = "beetroot";
-      publicKey = "T+zc4lpoEgxPIKEBr9qXiAzb/ruRbqZuVrih+0rGs2M=";
-      ipv4FourthOctet = 50;
-    }];
-  };
-
-  wg-iot = mkWgInterface "wg-iot" {
-    port = 51840;
-    ipv4ThirdOctet = 140;
-    peers = [{
-      name = "pixel";
-      publicKey = "pCvnlCWnM46XY3+327rQyOPA91wajC1HPTmP/5YHcy8=";
-      ipv4FourthOctet = 50;
-    }];
-  };
+  wgTrusted = mkWgInterface inventory.wgTrusted;
+  wgIot = mkWgInterface inventory.wgIot;
 in
 {
-  systemd.network.networks.wg-trusted = wg-trusted.network;
-  systemd.network.networks.wg-iot = wg-iot.network;
+  systemd.network = {
+    netdevs.wgTrusted = wgTrusted.netdev;
+    networks.wgTrusted = wgTrusted.network;
 
-  systemd.network.netdevs.wg-trusted = wg-trusted.netdev;
-  systemd.network.netdevs.wg-iot = wg-iot.netdev;
+    netdevs.wgIot = wgIot.netdev;
+    networks.wgIot = wgIot.network;
+  };
 
   environment.systemPackages = [
     pkgs.wireguard-tools
-    wg-trusted.clientConfigs.beetroot
-    wg-iot.clientConfigs.pixel
+    wgTrusted.clientConfigs.beetroot
+    wgIot.clientConfigs.pixel
   ];
 }

@@ -34,16 +34,16 @@ let
       dhcpServerStaticLeases = lib.flatten
         (lib.mapAttrsToList
           (_: host:
-            (if host.dhcp then
-              (map
-                (ipAddr: {
-                  dhcpServerStaticLeaseConfig = {
-                    MACAddress = host.mac;
-                    Address = ipAddr;
-                  };
-                })
-                host.ipv4) else [ ]))
-          inventory.${network.name}.hosts);
+            (map
+              (ipAddr: {
+                dhcpServerStaticLeaseConfig = {
+                  MACAddress = host.mac;
+                  Address = ipAddr;
+                };
+              })
+              host.ipv4)
+          )
+          (lib.filterAttrs (_: host: host.dhcp) network.hosts));
     };
   };
   pubwan = mkInternalInterface inventory.pubwan;

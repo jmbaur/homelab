@@ -19,8 +19,13 @@ in
 , tld
 }:
 let
-  mkHost = networkId: { dhcp ? false, mac ? null, lastBit }: {
-    inherit dhcp mac;
+  mkHost = networkId: { dhcp ? false
+                      , mac ? null
+                      , wgPeer ? false
+                      , publicKey ? null
+                      , lastBit
+                      }: {
+    inherit dhcp mac wgPeer publicKey;
     ipv4 = [ (mkIpv4Addr "192.168" networkId lastBit) ];
     ipv6 = [
       (mkIpv6Addr guaPrefix (toHexString networkId) (toHexString lastBit))
@@ -97,5 +102,21 @@ in
     name = "work";
     id = 50;
     hosts.broccoli.lastBit = 1;
+  };
+  wgTrusted = mkNetwork {
+    name = "wg-trusted";
+    id = 60;
+    hosts = {
+      broccoli.lastBit = 1;
+      beetroot = { lastBit = 50; wgPeer = true; publicKey = "T+zc4lpoEgxPIKEBr9qXiAzb/ruRbqZuVrih+0rGs2M="; };
+    };
+  };
+  wgIot = mkNetwork {
+    name = "wg-iot";
+    id = 70;
+    hosts = {
+      broccoli.lastBit = 1;
+      pixel = { lastBit = 50; wgPeer = true; publicKey = "pCvnlCWnM46XY3+327rQyOPA91wajC1HPTmP/5YHcy8="; };
+    };
   };
 }
