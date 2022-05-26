@@ -40,24 +40,26 @@ let
           value =
             let
               scriptName = "wg-config-${hostname}";
-              wgConfig = lib.generators.toINI { } {
+              wgConfig = lib.generators.toINI { listsAsDuplicateKeys = true; } {
                 Interface = {
-                  Address = lib.concatStringsSep "," (
+                  Address = (
                     (map (ip: "${ip}/${toString network.ipv4Cidr}") host.ipv4)
                     ++
                     (map (ip: "${ip}/${toString network.ipv6Cidr}") host.ipv6)
                   );
                   PrivateKey =
                     "$(cat ${config.sops.secrets.${hostname}.path})";
-                  DNS = lib.concatStringsSep "," (with network.hosts.broccoli;
-                    lib.flatten (ipv4 ++ ipv6 ++ [ network.domain ]));
+                  DNS =
+                    (with network.hosts.broccoli; (ipv4 ++ ipv6))
+                    ++
+                    [ network.domain ];
                 };
-                Peer = {
+                Peer = [{
                   PublicKey =
                     "$(cat ${config.sops.secrets.${network.name}.path} | ${pkgs.wireguard-tools}/bin/wg pubkey)";
                   Endpoint = "vpn.jmbaur.com:${toString port}";
-                  AllowedIPs = lib.concatStringsSep "," [ "0.0.0.0/0" "::/0" ];
-                };
+                  AllowedIPs = [ "0.0.0.0/0" "::/0" ];
+                }];
               };
             in
             pkgs.writeShellScriptBin scriptName ''
