@@ -48,6 +48,8 @@ in
         pubwan
         trusted
         work
+        wgTrusted
+        wgIot
       ]);
   };
 }
