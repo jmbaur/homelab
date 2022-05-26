@@ -66,10 +66,10 @@ in
     name = "mgmt";
     id = 88;
     hosts = {
-      broccoli = { lastBit = 1; dhcp = false; };
-      switch0 = { lastBit = 2; dhcp = false; };
-      switch1 = { lastBit = 3; dhcp = false; };
-      ap0 = { lastBit = 4; dhcp = false; };
+      broccoli.lastBit = 1;
+      switch0.lastBit = 2;
+      switch1.lastBit = 3;
+      ap0.lastBit = 4;
       broccoli-ipmi = { lastBit = 50; dhcp = true; mac = "00:25:90:f7:32:08"; };
       kale-ipmi = { lastBit = 51; dhcp = true; mac = "d0:50:99:f7:c4:8d"; };
       kale = { lastBit = 52; dhcp = true; mac = "d0:50:99:fe:1e:e2"; };
@@ -80,18 +80,18 @@ in
   pubwan = mkNetwork {
     name = "pubwan";
     id = 10;
-    hosts.broccoli = { lastBit = 1; dhcp = false; };
+    hosts.broccoli.lastBit = 1;
   };
   publan = mkNetwork {
     name = "publan";
     id = 20;
-    hosts.broccoli = { lastBit = 1; dhcp = false; };
+    hosts.broccoli.lastBit = 1;
   };
   trusted = mkNetwork {
     name = "trusted";
     id = 30;
     hosts = {
-      broccoli = { lastBit = 1; dhcp = false; };
+      broccoli.lastBit = 1;
       asparagus = { lastBit = 50; dhcp = true; mac = "e4:1d:2d:7f:1a:d0"; };
       okra = { lastBit = 51; dhcp = true; mac = "5c:80:b6:92:eb:27"; };
     };
@@ -99,11 +99,11 @@ in
   iot = mkNetwork {
     name = "iot";
     id = 40;
-    hosts.broccoli = { lastBit = 1; dhcp = false; };
+    hosts.broccoli.lastBit = 1;
   };
   work = mkNetwork {
     name = "work";
     id = 50;
-    hosts.broccoli = { lastBit = 1; dhcp = false; };
+    hosts.broccoli.lastBit = 1;
   };
 }

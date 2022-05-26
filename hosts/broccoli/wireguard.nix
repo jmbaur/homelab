@@ -1,4 +1,4 @@
-{ config, lib, pkgs, secrets, ... }:
+{ config, lib, pkgs, secrets, inventory, ... }:
 let
   mkWgInterface = name: { port, ipv4ThirdOctet, peers ? [ ] }:
     let
