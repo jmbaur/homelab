@@ -79,9 +79,18 @@ with lib;
       }).customize
         {
           vimrcConfig = {
-            customRC = readFile ./vimrc;
+            customRC = ''
+              colorscheme jared
+              set colorcolumn=80
+              set hidden
+              set hlsearch
+              set number
+              set path=**/*
+              syntax enable
+            '';
             packages.myVimPackage = with pkgs.vimPlugins; {
               start = [
+                jared-vim
                 vim-commentary
                 vim-nix
                 vim-rsi
@@ -110,5 +119,4 @@ with lib;
       '';
     };
   };
-
 }
