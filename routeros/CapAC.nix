@@ -16,10 +16,10 @@ let
     set [ find default=yes ] supplicant-identity=MikroTik
     add authentication-types=wpa2-psk mode=dynamic-keys name=iot supplicant-identity=MikroTik wpa2-pre-shared-key=$(${jq}/bin/jq ".iot.password" <<< $data)
     add authentication-types=wpa2-psk mode=dynamic-keys name=trusted supplicant-identity=MikroTik wpa2-pre-shared-key=$(${jq}/bin/jq '.trusted.password' <<< $data)
-    add authentication-types=wpa2-psk mode=dynamic-keys name=guest supplicant-identity=MikroTik wpa2-pre-shared-key=$(${jq}/bin/jq '.guest.password' <<< $data)
+    add authentication-types=wpa2-psk mode=dynamic-keys name=work supplicant-identity=MikroTik wpa2-pre-shared-key=$(${jq}/bin/jq '.work.password' <<< $data)
     /interface wireless
     set [ find default-name=wlan1 ] band=2ghz-b/g/n channel-width=20/40mhz-XX disabled=no distance=indoors frequency=auto installation=indoor mode=ap-bridge security-profile=\
-        guest ssid=$(${jq}/bin/jq '.guest.ssid' <<< $data) vlan-id=50 vlan-mode=use-tag wireless-protocol=802.11
+        work ssid=$(${jq}/bin/jq '.work.ssid' <<< $data) vlan-id=50 vlan-mode=use-tag wireless-protocol=802.11
     set [ find default-name=wlan2 ] band=5ghz-a/n/ac channel-width=20/40/80mhz-XXXX disabled=no distance=indoors frequency=auto installation=indoor mode=ap-bridge \
         security-profile=trusted ssid=$(${jq}/bin/jq '.trusted.ssid' <<< $data) vlan-id=30 vlan-mode=use-tag wireless-protocol=802.11
     add disabled=no mac-address=DE:2C:6E:0D:FE:71 master-interface=wlan2 name=wlan3 security-profile=iot ssid=$(${jq}/bin/jq '.iot.ssid' <<< $data) vlan-id=40 vlan-mode=use-tag \
