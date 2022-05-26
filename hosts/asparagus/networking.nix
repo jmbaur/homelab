@@ -17,6 +17,7 @@
         dhcpV4Config = {
           RouteMetric = 10;
           UseDomains = "yes";
+          ClientIdentifier = "mac";
         };
         ipv6AcceptRAConfig.RouteMetric = 10;
       };
