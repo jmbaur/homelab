@@ -50,7 +50,7 @@ let
                   PrivateKey =
                     "$(cat ${config.sops.secrets.${hostname}.path})";
                   DNS = lib.concatStringsSep "," (with network.hosts.broccoli;
-                    ipv4 ++ ipv6 ++ network.domain);
+                    lib.flatten (ipv4 ++ ipv6 ++ [ network.domain ]));
                 };
                 Peer = {
                   PublicKey =
