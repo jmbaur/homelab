@@ -131,6 +131,7 @@
         modules = [
           ./hosts/broccoli/configuration.nix
           homelab-private.nixosModules.common
+          homelab-private.nixosModules.broccoli
           ipwatch.nixosModules.default
           nixos-hardware.nixosModules.supermicro
           self.nixosModules.default
