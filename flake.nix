@@ -139,7 +139,7 @@
       };
 
       deploy.nodes.broccoli = {
-        hostname = "broccoli.local";
+        hostname = "broccoli.mgmt.jmbaur.com";
         profiles.system = {
           sshUser = "root";
           path = deploy-rs.lib.x86_64-linux.activate.nixos
@@ -170,7 +170,7 @@
       };
 
       deploy.nodes.okra = {
-        hostname = "okra.local";
+        hostname = "okra.trusted.jmbaur.com";
         profiles.system = {
           sshUser = "root";
           path = deploy-rs.lib.x86_64-linux.activate.nixos
@@ -191,7 +191,7 @@
       };
 
       deploy.nodes.asparagus = {
-        hostname = "asparagus.local";
+        hostname = "asparagus.mgmt.jmbaur.com";
         profiles.system = {
           sshUser = "root";
           path = deploy-rs.lib.x86_64-linux.activate.nixos
@@ -221,7 +221,7 @@
       };
 
       deploy.nodes.kale = {
-        hostname = "kale.home.arpa";
+        hostname = "kale.mgmt.jmbaur.com";
         profiles.system = {
           sshUser = "root";
           path = deploy-rs.lib.x86_64-linux.activate.nixos
@@ -241,7 +241,7 @@
       };
 
       deploy.nodes.rhubarb = {
-        hostname = "rhubarb.home.arpa";
+        hostname = "rhubarb.mgmt.jmbaur.com";
         profiles.system = {
           sshUser = "root";
           path = deploy-rs.lib.aarch64-linux.activate.nixos

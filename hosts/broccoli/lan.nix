@@ -18,7 +18,7 @@ let
       };
       ipv6SendRAConfig = {
         DNS = "_link_local";
-        Domains = [ "home.arpa" ];
+        Domains = [ network.domain ];
       };
       ipv6Prefixes = map
         (prefix: { ipv6PrefixConfig = { Prefix = prefix; }; })
