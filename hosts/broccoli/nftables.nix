@@ -8,7 +8,7 @@
       define DEV_PUBLAN = ${networks.publan.matchConfig.Name}
       define DEV_TRUSTED = ${networks.trusted.matchConfig.Name}
       define DEV_IOT = ${networks.iot.matchConfig.Name}
-      define DEV_GUEST = ${networks.guest.matchConfig.Name}
+      define DEV_WORK = ${networks.work.matchConfig.Name}
       define DEV_MGMT = ${networks.mgmt.matchConfig.Name}
       define DEV_WG_TRUSTED = ${networks.wg-trusted.matchConfig.Name}
       define DEV_WG_IOT = ${networks.wg-iot.matchConfig.Name}
@@ -91,7 +91,7 @@
                   $DEV_PUBLAN : jump input_private_untrusted,
                   $DEV_TRUSTED : jump input_private_trusted,
                   $DEV_IOT : jump input_private_untrusted,
-                  $DEV_GUEST : jump input_private_untrusted,
+                  $DEV_WORK : jump input_private_untrusted,
                   $DEV_MGMT : jump input_private_trusted,
                   $DEV_WG_TRUSTED : jump input_private_trusted,
                   $DEV_WG_IOT : jump input_private_untrusted,
@@ -173,7 +173,7 @@
                   $DEV_PUBLAN : jump allow_to_internet,
                   $DEV_TRUSTED : jump forward_trusted,
                   $DEV_IOT : jump forward_iot,
-                  $DEV_GUEST : jump allow_to_internet,
+                  $DEV_WORK : jump allow_to_internet,
                   $DEV_MGMT : accept,
                   $DEV_WG_TRUSTED : jump forward_trusted,
                   $DEV_WG_IOT : jump forward_iot,

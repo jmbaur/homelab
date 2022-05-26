@@ -1,4 +1,4 @@
-{ inputs, config, lib, ... }:
+{ pkgs, config, lib, inputs, inventory, ... }:
 let
   dnsServers = map
     (ip: "tls://" + ip)
@@ -18,6 +18,36 @@ in
         }
         prometheus :9153
       }
-    '';
+
+    '' + lib.concatMapStringsSep "\n"
+      (network:
+        let
+          allEntries = lib.mapAttrsToList
+            (hostname: host: map
+              (ipAddr: "${ipAddr} ${hostname}.${network.domain}")
+              (
+                host.ipv4
+                # TODO(jared): must implement dhcpd6 first
+                # ++ host.ipv6
+              )
+            )
+            network.hosts;
+          hostsFile = pkgs.writeText
+            network.domain
+            (lib.concatStringsSep "\n" (lib.flatten allEntries));
+        in
+        ''
+          ${network.domain} {
+            hosts ${hostsFile}
+          }
+        '')
+      (with inventory; [
+        iot
+        mgmt
+        publan
+        pubwan
+        trusted
+        work
+      ]);
   };
 }

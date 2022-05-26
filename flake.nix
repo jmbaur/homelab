@@ -60,7 +60,8 @@
     , terranix
     , wallpapers
     , ...
-    }@inputs: flake-utils.lib.eachDefaultSystem
+    }@inputs:
+    flake-utils.lib.eachDefaultSystem
       (system:
       let
         pkgs = import nixpkgs { inherit system; };
@@ -84,14 +85,12 @@
           inherit system;
           modules = [ ./config.nix ];
         };
-        packages.inventory =
-          let
-            attrSet = (pkgs.callPackage ./inventory.nix { }) {
-              inherit (homelab-private.secrets.networking) guaPrefix ulaPrefix;
-              tld = "jmbaur.com";
-            };
-          in
-          pkgs.writeText "inventory.json" (builtins.toJSON attrSet);
+        packages.inventory = pkgs.writeText "inventory.json"
+          (builtins.toJSON self.inventory.${system});
+        inventory = (pkgs.callPackage ./inventory.nix { }) {
+          inherit (homelab-private.secrets.networking) guaPrefix ulaPrefix;
+          tld = "jmbaur.com";
+        };
       })
     //
     {
@@ -122,9 +121,13 @@
         ];
       };
 
-      nixosConfigurations.broccoli = nixpkgs.lib.nixosSystem {
+      nixosConfigurations.broccoli = nixpkgs.lib.nixosSystem rec {
         system = "x86_64-linux";
-        specialArgs = { inherit inputs; };
+        specialArgs = {
+          inherit inputs;
+          inherit (homelab-private) secrets;
+          inventory = self.inventory.${system};
+        };
         modules = [
           ./hosts/broccoli/configuration.nix
           homelab-private.nixosModules.common

@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, secrets, ... }:
 let
   mkWgInterface = name: { port, ipv4ThirdOctet, peers ? [ ] }:
     let
@@ -20,8 +20,8 @@ let
               PublicKey = p.publicKey;
               AllowedIPs = [
                 "192.168.${toString ipv4ThirdOctet}.${toString p.ipv4FourthOctet}/32"
-                "${config.router.guaPrefix}:${ipv6FourthHextet}::${lib.toHexString p.ipv4FourthOctet}/128"
-                "${config.router.ulaPrefix}:${ipv6FourthHextet}::${lib.toHexString p.ipv4FourthOctet}/128"
+                "${secrets.networking.guaPrefix}:${ipv6FourthHextet}::${lib.toHexString p.ipv4FourthOctet}/128"
+                "${secrets.networking.ulaPrefix}:${ipv6FourthHextet}::${lib.toHexString p.ipv4FourthOctet}/128"
               ];
             };
           }
@@ -34,8 +34,8 @@ let
           config.systemd.network.netdevs.${name}.netdevConfig.Name;
         networkConfig.Address = [
           "192.168.${toString ipv4ThirdOctet}.1/24"
-          "${config.router.ulaPrefix}:${ipv6FourthHextet}::1/64"
-          "${config.router.guaPrefix}:${ipv6FourthHextet}::1/64"
+          "${secrets.networking.ulaPrefix}:${ipv6FourthHextet}::1/64"
+          "${secrets.networking.guaPrefix}:${ipv6FourthHextet}::1/64"
         ];
       };
 
@@ -48,9 +48,9 @@ let
               scriptName = "wg-config-${p.name}";
               wgConfig = ''
                 [Interface]
-                Address=192.168.${toString ipv4ThirdOctet}.${toString p.ipv4FourthOctet}/24,${config.router.guaPrefix}:${ipv6FourthHextet}::${lib.toHexString p.ipv4FourthOctet}/64,${config.router.ulaPrefix}:${ipv6FourthHextet}::${lib.toHexString p.ipv4FourthOctet}/64
+                Address=192.168.${toString ipv4ThirdOctet}.${toString p.ipv4FourthOctet}/24,${secrets.networking.guaPrefix}:${ipv6FourthHextet}::${lib.toHexString p.ipv4FourthOctet}/64,${secrets.networking.ulaPrefix}:${ipv6FourthHextet}::${lib.toHexString p.ipv4FourthOctet}/64
                 PrivateKey=$(cat ${config.sops.secrets.${p.name}.path})
-                DNS=192.168.${toString ipv4ThirdOctet}.1,${config.router.guaPrefix}:${ipv6FourthHextet}::1,${config.router.ulaPrefix}:${ipv6FourthHextet}::1
+                DNS=192.168.${toString ipv4ThirdOctet}.1,${secrets.networking.guaPrefix}:${ipv6FourthHextet}::1,${secrets.networking.ulaPrefix}:${ipv6FourthHextet}::1
 
                 [Peer]
                 PublicKey=$(cat ${config.sops.secrets.${name}.path} | ${pkgs.wireguard-tools}/bin/wg pubkey)

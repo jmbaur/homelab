@@ -34,51 +34,76 @@ in
 , tld
 }:
 let
-  mkHost = networkId: { dhcp ? false, lastBit }: {
-    inherit dhcp;
+  mkHost = networkId: { dhcp ? false, mac ? null, lastBit }: {
+    inherit dhcp mac;
     ipv4 = [ (mkIpv4Addr "192.168" networkId lastBit) ];
     ipv6 = [
       (mkIpv6Addr guaPrefix (toHexString networkId) (toHexString lastBit))
       (mkIpv6Addr ulaPrefix (toHexString networkId) (toHexString lastBit))
     ];
   };
+  mkNetwork = { name, id, hosts }:
+    let
+      mkNetworkHost = mkHost id;
+      ipv4Cidr = 24;
+      ipv6Cidr = 64;
+      networkGuaPrefix = "${guaPrefix}:${toHexString id}";
+      networkUlaPrefix = "${ulaPrefix}:${toHexString id}";
+      guaCidr = "${networkGuaPrefix}::/${toString ipv6Cidr}";
+      ulaCidr = "${networkUlaPrefix}::/${toString ipv6Cidr}";
+    in
+    {
+      inherit
+        name id ipv4Cidr ipv6Cidr networkGuaPrefix networkUlaPrefix guaCidr ulaCidr;
+      domain = "${name}.${tld}";
+      hosts = lib.mapAttrs
+        (_: host: mkNetworkHost host)
+        hosts;
+    };
 in
 {
-  mgmt = let mkMgmtHost = mkHost 88; in
-    {
-      domain = "mgmt.${tld}";
-      hosts = {
-        broccoli = mkMgmtHost { lastBit = 1; dhcp = false; };
-        switch0 = mkMgmtHost { lastBit = 2; dhcp = false; };
-        switch1 = mkMgmtHost { lastBit = 3; dhcp = false; };
-        ap0 = mkMgmtHost { lastBit = 4; dhcp = false; };
-        kale = mkMgmtHost { lastBit = 52; dhcp = true; };
-        asparagus = mkMgmtHost { lastBit = 54; dhcp = true; };
-      };
+  mgmt = mkNetwork {
+    name = "mgmt";
+    id = 88;
+    hosts = {
+      broccoli = { lastBit = 1; dhcp = false; };
+      switch0 = { lastBit = 2; dhcp = false; };
+      switch1 = { lastBit = 3; dhcp = false; };
+      ap0 = { lastBit = 4; dhcp = false; };
+      broccoli-ipmi = { lastBit = 50; dhcp = true; mac = "00:25:90:f7:32:08"; };
+      kale-ipmi = { lastBit = 51; dhcp = true; mac = "d0:50:99:f7:c4:8d"; };
+      kale = { lastBit = 52; dhcp = true; mac = "d0:50:99:fe:1e:e2"; };
+      rhubarb = { lastBit = 53; dhcp = true; mac = "dc:a6:32:20:50:f2"; };
+      asparagus = { lastBit = 54; dhcp = true; mac = "a8:a1:59:2a:04:6d"; };
     };
-  pubwan = let mkPubwanHost = mkHost 10; in
-    {
-      hosts.broccoli = mkPubwanHost { lastBit = 1; dhcp = false; };
+  };
+  pubwan = mkNetwork {
+    name = "pubwan";
+    id = 10;
+    hosts.broccoli = { lastBit = 1; dhcp = false; };
+  };
+  publan = mkNetwork {
+    name = "publan";
+    id = 20;
+    hosts.broccoli = { lastBit = 1; dhcp = false; };
+  };
+  trusted = mkNetwork {
+    name = "trusted";
+    id = 30;
+    hosts = {
+      broccoli = { lastBit = 1; dhcp = false; };
+      asparagus = { lastBit = 50; dhcp = true; mac = "e4:1d:2d:7f:1a:d0"; };
+      okra = { lastBit = 51; dhcp = true; mac = "5c:80:b6:92:eb:27"; };
     };
-  publan = let mkPublanHost = mkHost 20; in
-    {
-      hosts.broccoli = mkPublanHost { lastBit = 1; dhcp = false; };
-    };
-  trusted = let mkTrustedHost = mkHost 30; in
-    {
-      domain = "trusted.${tld}";
-      hosts = {
-        broccoli = mkTrustedHost { lastBit = 1; dhcp = false; };
-        asparagus = mkTrustedHost { lastBit = 50; dhcp = true; };
-        okra = mkTrustedHost { lastBit = 51; dhcp = true; };
-      };
-    };
-  iot = let mkIotHost = mkHost 40; in
-    {
-      hosts.broccoli = mkIotHost { lastBit = 1; dhcp = false; };
-    };
-  work = let mkWorkHost = mkHost 50; in
-    {
-      hosts.broccoli = mkWorkHost { lastBit = 1; dhcp = false; };
-    };
+  };
+  iot = mkNetwork {
+    name = "iot";
+    id = 40;
+    hosts.broccoli = { lastBit = 1; dhcp = false; };
+  };
+  work = mkNetwork {
+    name = "work";
+    id = 50;
+    hosts.broccoli = { lastBit = 1; dhcp = false; };
+  };
 }

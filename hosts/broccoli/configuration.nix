@@ -3,10 +3,11 @@
     ./atftpd.nix
     ./coredns.nix
     ./hardware-configuration.nix
+    ./lan.nix
     ./monitoring.nix
-    ./networking.nix
     ./nftables.nix
     ./options.nix
+    ./wan.nix
     ./wireguard.nix
   ];
 
