@@ -46,3 +46,11 @@ reboot
 
 To require a touch of the Yubikey when using its smart card functionality:
 `ykman openpgp keys set-touch sig cached-fixed`
+
+## RouterOS
+
+Configuration changes involve a reset of the device.
+
+```rascal
+/system reset-configuration no-defaults=yes run-after-reset=flash/restore.rsc
+```

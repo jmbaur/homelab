@@ -78,9 +78,9 @@
             hooks.nixpkgs-fmt.enable = true;
           }) shellHook;
         };
-        packages.cap_ac = pkgs.callPackage ./routeros/CapAC.nix { };
-        packages.crs_305 = pkgs.writeText "crs_305" (builtins.readFile ./routeros/CRS305.rsc);
-        packages.crs_326 = pkgs.writeText "crs_326" (builtins.readFile ./routeros/CRS326.rsc);
+        packages.cap_ac = pkgs.callPackage ./routeros/capac/configuration.nix { };
+        packages.crs_305 = pkgs.writeText "crs_305" (builtins.readFile ./routeros/crs305/configuration.rsc);
+        packages.crs_326 = pkgs.writeText "crs_326" (builtins.readFile ./routeros/crs326/configuration.rsc);
         packages.cloud = terranix.lib.terranixConfiguration {
           inherit system;
           modules = [ ./config.nix ];
