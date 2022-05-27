@@ -47,7 +47,6 @@
               } accept
 
               ip version 4 udp dport 67 accept # DHCP
-              meta l4proto udp th dport 5353 accept # mDNS
               meta l4proto { tcp, udp } th dport 53 accept # DNS
           }
 
@@ -131,15 +130,6 @@
               oifname { $DEV_WAN, $DEV_WAN6 } accept
           }
 
-          chain forward_iot {
-              jump allow_to_internet
-              oifname {
-                  $DEV_IOT,
-                  $DEV_WG_IOT,
-                  $DEV_PUBLAN,
-              } accept
-          }
-
           chain forward_trusted {
               jump allow_to_internet
               oifname {
@@ -147,6 +137,15 @@
                   $DEV_WG_IOT,
                   $DEV_TRUSTED,
                   $DEV_WG_TRUSTED,
+                  $DEV_PUBLAN,
+              } accept
+          }
+
+          chain forward_iot {
+              jump allow_to_internet
+              oifname {
+                  $DEV_IOT,
+                  $DEV_WG_IOT,
                   $DEV_PUBLAN,
               } accept
           }
