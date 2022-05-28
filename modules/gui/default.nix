@@ -115,7 +115,7 @@ in
     services.printing.enable = true;
     services.udev.packages = [ pkgs.yubikey-personalization ];
     services.avahi = {
-      enable = true;
+      enable = false;
       nssmdns = true;
       publish = {
         enable = true;
