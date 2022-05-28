@@ -22,9 +22,6 @@
     };
   };
 
-  custom.remoteBoot = {
-    enable = true;
-    interface = config.systemd.network.networks.enp4s0.matchConfig.Name;
-  };
+  custom.remoteBoot.enable = true;
   boot.initrd.availableKernelModules = [ "igb" "mlx4_core" "mlx4_en" ];
 }
