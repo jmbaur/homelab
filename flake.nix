@@ -61,7 +61,7 @@
     , wallpapers
     , ...
     }@inputs:
-    flake-utils.lib.eachDefaultSystem
+    flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-linux" ]
       (system:
       let
         pkgs = import nixpkgs { inherit system; };
@@ -78,6 +78,16 @@
             hooks.nixpkgs-fmt.enable = true;
           }) shellHook;
         };
+        packages.iso = (nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = [
+            "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
+            # Provide an initial copy of the NixOS channel so that the user
+            # doesn't need to run "nix-channel --update" first.
+            "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
+            ./iso.nix
+          ];
+        }).config.system.build.isoImage;
         packages.cap_ac = pkgs.callPackage ./routeros/capac/configuration.nix { };
         packages.crs_305 = pkgs.writeText "crs_305" (builtins.readFile ./routeros/crs305/configuration.rsc);
         packages.crs_326 = pkgs.writeText "crs_326" (builtins.readFile ./routeros/crs326/configuration.rsc);

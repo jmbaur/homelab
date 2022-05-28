@@ -22,6 +22,6 @@
     };
   };
 
-  custom.remoteBoot.enable = true;
+  custom.remoteBoot.enable = false;
   boot.initrd.availableKernelModules = [ "igb" "mlx4_core" "mlx4_en" ];
 }
