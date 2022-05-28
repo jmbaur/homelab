@@ -1,4 +1,8 @@
 { config, lib, pkgs, ... }: {
+  # NOTE: This can be true if wireless interfaces can be configured in the
+  # initrd.
+  custom.remoteBoot.enable = false;
+
   services.mullvad-vpn.enable = true;
 
   networking = {

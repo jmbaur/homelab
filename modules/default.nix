@@ -6,6 +6,7 @@
     ./deploy
     ./gui
     ./jared
+    ./remote-boot
     ./sound
   ];
 }

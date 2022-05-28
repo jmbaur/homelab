@@ -61,5 +61,6 @@
     };
   };
 
+  custom.remoteBoot.enable = true;
   boot.initrd.availableKernelModules = [ "igb" ];
 }
