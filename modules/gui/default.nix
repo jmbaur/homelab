@@ -123,6 +123,5 @@ in
         addresses = true;
       };
     };
-
   };
 }

@@ -36,20 +36,6 @@
           UseDomains = "yes";
           ClientIdentifier = "mac";
         };
-        # routes = [
-        #   {
-        #     routeConfig = {
-        #       Gateway = "_dhcp4";
-        #       Destination = "192.168.88.0/24";
-        #     };
-        #   }
-        #   {
-        #     routeConfig = {
-        #       Gateway = "_ipv6ra";
-        #       Destination = "";
-        #     };
-        #   }
-        # ];
       };
       trusted = {
         matchConfig.Name =

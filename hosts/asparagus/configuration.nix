@@ -66,8 +66,8 @@
 
   environment.etc."xdg/gobar/gobar.yaml".text = lib.generators.toYAML { } {
     modules = [
-      { module = "network"; interface = "enp4s0"; }
-      { module = "network"; interface = "enp6s0"; }
+      { module = "network"; interface = config.systemd.network.networks.trusted.matchConfig.Name; }
+      { module = "network"; interface = config.systemd.network.networks.mgmt.matchConfig.Name; }
       { module = "datetime"; format = "2006-01-02 15:04:05"; }
     ];
   };
