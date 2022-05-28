@@ -10,7 +10,7 @@
   boot.kernelPackages = pkgs.linuxPackages_5_17;
 
   boot.initrd.kernelModules = [ "amdgpu" ];
-  # boot.kernelParams = [ "console=ttyS1,115200n8" ];
+  # boot.kernelParams = [ "console=ttyS1,115200n8" ]; # TODO(jared): this prevents display from showing during stage-1
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   boot.loader.systemd-boot = {
     enable = true;
