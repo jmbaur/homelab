@@ -86,11 +86,9 @@ in
 
   systemd.network.networks.trunk = {
     matchConfig.Name = "enp4s0";
-    networkConfig = {
-      LinkLocalAddressing = "no";
-      VLAN = map
-        (name: config.systemd.network.netdevs.${name}.netdevConfig.Name)
-        ([ "pubwan" "publan" "trusted" "iot" "work" "mgmt" ]);
-    };
+    networkConfig.LinkLocalAddressing = "no";
+    vlan = map
+      (name: config.systemd.network.netdevs.${name}.netdevConfig.Name)
+      [ "pubwan" "publan" "trusted" "iot" "work" "mgmt" ];
   };
 }

@@ -60,4 +60,6 @@
       };
     };
   };
+
+  boot.initrd.availableKernelModules = [ "igb" ];
 }

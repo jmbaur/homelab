@@ -1,4 +1,4 @@
-{ config, lib, ... }: {
+{ pkgs, config, lib, ... }: {
   networking = {
     hostName = "asparagus";
     useDHCP = lib.mkForce false;
@@ -20,6 +20,7 @@
     networks = {
       trunk = {
         matchConfig.Name = "enp4s0";
+        networkConfig.LinkLocalAddressing = "no";
         vlan = map
           (name: config.systemd.network.netdevs.${name}.netdevConfig.Name)
           [ "mgmt" "trusted" ];
@@ -51,4 +52,16 @@
       };
     };
   };
+
+  # Support for tagged interface in the initrd
+  boot.initrd.availableKernelModules = [
+    "8021q"
+    "igb"
+    "mlx4_core"
+    "mlx4_en"
+  ];
+  boot.initrd.network.postCommands = ''
+    ${pkgs.iproute2}/bin/ip link add link ${config.systemd.network.networks.trunk.matchConfig.Name} name mgmt type vlan id 88
+    ${pkgs.iproute2}/bin/ip link set dev mgmt up
+  '';
 }

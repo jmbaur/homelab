@@ -16,7 +16,7 @@
     "usb_storage"
     "usbhid"
     "sd_mod"
-  ] ++ [ "igb" ];
+  ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
