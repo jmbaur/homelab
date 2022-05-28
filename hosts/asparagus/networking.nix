@@ -26,5 +26,5 @@
     enable = true;
     interface = config.systemd.network.networks.enp4s0.matchConfig.Name;
   };
-  boot.initrd.availableKernelModules = [ "mlx4_core" "mlx4_en" ];
+  boot.initrd.availableKernelModules = [ "igb" "mlx4_core" "mlx4_en" ];
 }
