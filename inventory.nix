@@ -71,7 +71,7 @@ in
       kale-ipmi = { lastBit = 51; dhcp = true; mac = "d0:50:99:f7:c4:8d"; };
       kale = { lastBit = 52; dhcp = true; mac = "d0:50:99:fe:1e:e2"; };
       rhubarb = { lastBit = 53; dhcp = true; mac = "dc:a6:32:20:50:f2"; };
-      asparagus = { lastBit = 54; dhcp = true; mac = "a8:a1:59:2a:04:6d"; };
+      asparagus = { lastBit = 54; dhcp = true; mac = "e4:1d:2d:7f:1a:d0"; };
     };
   };
   pubwan = mkNetwork {

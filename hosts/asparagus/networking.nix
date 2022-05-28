@@ -7,32 +7,61 @@
 
   systemd.network = {
     enable = true;
-    networks = {
-      wired_normal = {
-        matchConfig.Name = "enp4s0";
-        networkConfig = {
-          DHCP = "yes";
-          IPv6PrivacyExtensions = true;
-        };
-        dhcpV4Config = {
-          RouteMetric = 10;
-          UseDomains = "yes";
-          ClientIdentifier = "mac";
-        };
-        ipv6AcceptRAConfig.RouteMetric = 10;
+    netdevs = {
+      mgmt = {
+        netdevConfig = { Name = "mgmt"; Kind = "vlan"; };
+        vlanConfig.Id = 88;
       };
-      wired_mgmt = {
-        matchConfig.Name = "enp6s0";
+      trusted = {
+        netdevConfig = { Name = "trusted"; Kind = "vlan"; };
+        vlanConfig.Id = 30;
+      };
+    };
+    networks = {
+      trunk = {
+        matchConfig.Name = "enp4s0";
+        vlan = map
+          (name: config.systemd.network.netdevs.${name}.netdevConfig.Name)
+          [ "mgmt" "trusted" ];
+      };
+      mgmt = {
+        matchConfig.Name =
+          config.systemd.network.netdevs.mgmt.netdevConfig.Name;
+        networkConfig = {
+          DHCP = "yes";
+          IPv6PrivacyExtensions = true;
+          DefaultRouteOnDevice = false;
+        };
+        dhcpV4Config = {
+          UseDomains = "yes";
+          ClientIdentifier = "mac";
+        };
+        # routes = [
+        #   {
+        #     routeConfig = {
+        #       Gateway = "_dhcp4";
+        #       Destination = "192.168.88.0/24";
+        #     };
+        #   }
+        #   {
+        #     routeConfig = {
+        #       Gateway = "_ipv6ra";
+        #       Destination = "";
+        #     };
+        #   }
+        # ];
+      };
+      trusted = {
+        matchConfig.Name =
+          config.systemd.network.netdevs.trusted.netdevConfig.Name;
         networkConfig = {
           DHCP = "yes";
           IPv6PrivacyExtensions = true;
         };
         dhcpV4Config = {
-          RouteMetric = 20;
           UseDomains = "yes";
           ClientIdentifier = "mac";
         };
-        ipv6AcceptRAConfig.RouteMetric = 20;
       };
     };
   };
