@@ -151,6 +151,13 @@
               } accept
           }
 
+          chain forward_work {
+              jump allow_to_internet
+              oifname {
+                  $DEV_WORK,
+              } accept
+          }
+
           chain forward {
               type filter hook forward priority 0; policy drop;
 
@@ -173,7 +180,7 @@
                   $DEV_PUBLAN : jump allow_to_internet,
                   $DEV_TRUSTED : jump forward_trusted,
                   $DEV_IOT : jump forward_iot,
-                  $DEV_WORK : jump allow_to_internet,
+                  $DEV_WORK : jump forward_work,
                   $DEV_MGMT : accept,
                   $DEV_WG_TRUSTED : jump forward_trusted,
                   $DEV_WG_IOT : jump forward_iot,
