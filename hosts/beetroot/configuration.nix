@@ -71,7 +71,7 @@
       userName = config.users.users.jared.description;
       signing = {
         key = "7EB08143";
-        # signByDefault = true;
+        signByDefault = true;
       };
     };
     xdg.configFile."gobar/gobar.yaml".text = lib.generators.toYAML { } {
