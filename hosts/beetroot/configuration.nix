@@ -5,10 +5,10 @@
 
   # TODO(jared): https://github.com/NixOS/nixpkgs/issues/170573
   hardware.bluetooth.enable = true;
-  systemd.tmpfiles.rules = [
-    "d /var/lib/bluetooth 700 root root - -"
-  ];
-  systemd.targets."bluetooth".after = [ "systemd-tmpfiles-setup.service" ];
+  # systemd.tmpfiles.rules = [
+  #   "d /var/lib/bluetooth 700 root root - -"
+  # ];
+  # systemd.targets."bluetooth".after = [ "systemd-tmpfiles-setup.service" ];
 
   boot.kernelParams = [ "acpi_backlight=native" ];
   boot.kernelPackages = pkgs.linuxPackages_5_17;
@@ -29,13 +29,20 @@
     age = { generateKey = true; keyFile = "/etc/age/key"; };
   };
 
-  custom.cache.enable = false;
-  custom.common.enable = true;
-  custom.containers.enable = true;
-  custom.gui.enable = true;
-  custom.jared = {
-    enable = true;
-    includeHomeManager = true;
+  users.users.jared = {
+    isNormalUser = true;
+    description = "Jared Baur";
+    shell = pkgs.zsh;
+    extraGroups = [ "wheel" "dialout" "networkmanager" "i2c" "adbusers" ];
+  };
+
+  custom = {
+    common.enable = true;
+    dev.enable = true;
+    gui = {
+      enable = true;
+      backend = "wayland";
+    };
   };
 
   services.snapper.configs.home = {
@@ -54,18 +61,26 @@
   security.pam.services.sudo.fprintAuth = false;
   programs.nix-ld.enable = true;
 
-  environment.pathsToLink = [ "/share/nix-direnv" ];
-  nix.extraOptions = ''
-    keep-outputs = true
-    keep-derivations = true
-  '';
-
-  environment.etc."xdg/gobar/gobar.yaml".text = lib.generators.toYAML { } {
-    modules = [
-      { module = "battery"; index = 0; }
-      { module = "network"; interface = "wlp1s0"; }
-      { module = "datetime"; format = "2006-01-02 15:04:05"; }
-    ];
+  home-manager.users.jared = {
+    programs.gpg.publicKeys = [{
+      source = import ../../data/jmbaur-pgp-keys.nix;
+      trust = 5;
+    }];
+    programs.git = {
+      userEmail = "jaredbaur@fastmail.com";
+      userName = config.users.users.jared.description;
+      signing = {
+        key = "7EB08143";
+        # signByDefault = true;
+      };
+    };
+    xdg.configFile."gobar/gobar.yaml".text = lib.generators.toYAML { } {
+      modules = [
+        { module = "battery"; index = 0; }
+        { module = "network"; pattern = "(en|wl)+"; }
+        { module = "datetime"; format = "2006-01-02 15:04:05"; }
+      ];
+    };
   };
 
   # This value determines the NixOS release from which the default

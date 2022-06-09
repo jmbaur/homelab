@@ -5,25 +5,20 @@
     nixpkgs.url = "nixpkgs/nixos-unstable";
     deploy-rs.url = "github:serokell/deploy-rs";
     flake-utils.url = "github:numtide/flake-utils";
-    git-get.url = "github:jmbaur/git-get";
-    gobar.url = "github:jmbaur/gobar";
-    gosee.url = "github:jmbaur/gosee";
     ipwatch.url = "github:jmbaur/ipwatch";
-    nixpkgs-jmbaur.url = "github:jmbaur/nixpkgs/mosh-378dfa6";
     pre-commit.url = "github:cachix/pre-commit-hooks.nix";
     sops-nix.url = "github:mic92/sops-nix";
     terranix.url = "github:terranix/terranix";
-    wallpapers.url = "github:jmbaur/procedural-wallpapers";
     hosts = {
       url = "github:StevenBlack/hosts";
       flake = false;
     };
-    homelab-private = {
-      url = "github:jmbaur/homelab-private";
+    nixos-configs = {
+      url = "github:jmbaur/nixos-configs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    neovim = {
-      url = "github:jmbaur/neovim";
+    homelab-private = {
+      url = "github:jmbaur/homelab-private";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
@@ -44,21 +39,16 @@
     { self
     , deploy-rs
     , flake-utils
-    , git-get
-    , gobar
-    , gosee
     , home-manager
     , homelab-private
+    , nixos-configs
     , ipwatch
     , microvm
-    , neovim
     , nixos-hardware
     , nixpkgs
-    , nixpkgs-jmbaur
     , pre-commit
     , sops-nix
     , terranix
-    , wallpapers
     , ...
     }@inputs:
     flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-linux" ]
@@ -108,29 +98,6 @@
         (system: deployLib: deployLib.deployChecks self.deploy)
         deploy-rs.lib;
 
-      overlays.default = import ./pkgs/overlay.nix;
-
-      nixosModules.default = {
-        imports = [
-          ./modules
-          home-manager.nixosModules.home-manager
-          sops-nix.nixosModules.sops
-        ];
-        nixpkgs.overlays = [
-          deploy-rs.overlay
-          git-get.overlays.default
-          gobar.overlays.default
-          gosee.overlays.default
-          ipwatch.overlays.default
-          neovim.overlays.default
-          wallpapers.overlays.default
-          self.overlays.default
-          (final: prev: {
-            inherit (nixpkgs-jmbaur.legacyPackages.${prev.system}) mosh;
-          })
-        ];
-      };
-
       nixosConfigurations.broccoli = nixpkgs.lib.nixosSystem rec {
         system = "x86_64-linux";
         specialArgs = {
@@ -140,11 +107,11 @@
         };
         modules = [
           ./hosts/broccoli/configuration.nix
-          homelab-private.nixosModules.common
           homelab-private.nixosModules.broccoli
+          homelab-private.nixosModules.common
           ipwatch.nixosModules.default
           nixos-hardware.nixosModules.supermicro
-          self.nixosModules.default
+          sops-nix.nixosModules.sops
         ];
       };
 
@@ -163,8 +130,9 @@
         modules = [
           ./hosts/beetroot/configuration.nix
           homelab-private.nixosModules.common
+          nixos-configs.nixosModules.default
           nixos-hardware.nixosModules.lenovo-thinkpad-t495
-          self.nixosModules.default
+          sops-nix.nixosModules.sops
         ];
       };
 
@@ -174,8 +142,8 @@
         modules = [
           ./hosts/okra/configuration.nix
           homelab-private.nixosModules.common
+          nixos-configs.nixosModules.default
           nixos-hardware.nixosModules.intel-nuc-8i7beh
-          self.nixosModules.default
         ];
       };
 
@@ -194,9 +162,10 @@
         modules = [
           ./hosts/asparagus/configuration.nix
           homelab-private.nixosModules.common
+          nixos-configs.nixosModules.default
+          sops-nix.nixosModules.sops
           nixos-hardware.nixosModules.common-cpu-amd
           nixos-hardware.nixosModules.common-gpu-amd
-          self.nixosModules.default
         ];
       };
 
@@ -225,7 +194,6 @@
           homelab-private.nixosModules.common
           microvm.nixosModules.host
           nixos-hardware.nixosModules.common-cpu-amd
-          self.nixosModules.default
           ({ microvm.vms.vm-test.flake = self; })
         ];
       };
@@ -246,7 +214,6 @@
           ./hosts/rhubarb/configuration.nix
           homelab-private.nixosModules.common
           nixos-hardware.nixosModules.raspberry-pi-4
-          self.nixosModules.default
         ];
       };
 
