@@ -11,9 +11,16 @@
     ./wireguard.nix
   ];
 
-  custom.common.enable = true;
-  custom.deployee.enable = true;
-  custom.jared.enable = true;
+  custom = {
+    common.enable = true;
+    deployee = {
+      enable = true;
+      authorizedKeyFiles = [
+        (import ../../data/jmbaur-ssh-keys.nix)
+        ../../data/deployer-ssh-keys.txt
+      ];
+    };
+  };
 
   documentation.enable = false;
 

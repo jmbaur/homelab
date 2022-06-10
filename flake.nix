@@ -110,8 +110,10 @@
           homelab-private.nixosModules.broccoli
           homelab-private.nixosModules.common
           ipwatch.nixosModules.default
+          nixos-configs.nixosModules.default
           nixos-hardware.nixosModules.supermicro
           sops-nix.nixosModules.sops
+          { nixpkgs.overlays = [ ipwatch.overlays.default ]; }
         ];
       };
 
