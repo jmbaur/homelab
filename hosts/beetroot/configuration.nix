@@ -62,6 +62,14 @@
   programs.nix-ld.enable = true;
 
   home-manager.users.jared = {
+    home.packages = with pkgs; [
+      bitwarden
+      chromium
+      element-desktop-wayland
+      firefox-wayland
+      signal-desktop
+      spotify
+    ];
     programs.gpg.publicKeys = [{
       source = import ../../data/jmbaur-pgp-keys.nix;
       trust = 5;
