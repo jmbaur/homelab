@@ -341,11 +341,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1654990453,
-        "narHash": "sha256-UqNQA+JjeV+cP1v6/Zba/0M0NrBG+29WvDj2VGmNVrw=",
+        "lastModified": 1655021776,
+        "narHash": "sha256-s6BTIqboKMjB9AYajPedmtB8JNUa++ADhWLraXa1Fe8=",
         "owner": "jmbaur",
         "repo": "gobar",
-        "rev": "4ef48eb1fd0a483bd0bc6ba86cd7db07f9cb3859",
+        "rev": "559d334cb655d22fa731719c33d90ec7281bca6e",
         "type": "github"
       },
       "original": {
@@ -558,11 +558,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1655016927,
-        "narHash": "sha256-UPgewY3+qrgj/i5csoiibLn/HIM4SfSKKTXVue738LE=",
+        "lastModified": 1655021805,
+        "narHash": "sha256-HQJRXdyapVAyADlJQ0oxe9jTYRrv+GKWhPvUnE5uvdQ=",
         "owner": "jmbaur",
         "repo": "nixos-configs",
-        "rev": "6f11984bac52c94fe999a25ae5602297cfd7a9e5",
+        "rev": "fa6d8c875cf94af596e2aae94e828d01fae5f84d",
         "type": "github"
       },
       "original": {

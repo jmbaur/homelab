@@ -78,8 +78,9 @@
     };
     xdg.configFile."gobar/gobar.yaml".text = lib.generators.toYAML { } {
       modules = [
-        { module = "battery"; index = 0; }
+        { module = "battery"; }
         { module = "network"; pattern = "(en|wl)+"; }
+        { module = "memory"; }
         { module = "datetime"; format = "2006-01-02 15:04:05"; }
       ];
     };
