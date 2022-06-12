@@ -27,6 +27,7 @@
 /ip service set telnet disabled=yes
 /ip service set ftp disabled=yes
 /ip service set www disabled=yes
+/ip service set winbox disabled=yes
 /ip service set api-ssl disabled=yes
 /system clock set time-zone-name=America/Los_Angeles
 /system identity set name=switch0
