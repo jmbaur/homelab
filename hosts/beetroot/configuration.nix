@@ -2,13 +2,7 @@
   imports = [ ./hardware-configuration.nix ];
 
   hardware.enableRedistributableFirmware = true;
-
-  # TODO(jared): https://github.com/NixOS/nixpkgs/issues/170573
   hardware.bluetooth.enable = true;
-  # systemd.tmpfiles.rules = [
-  #   "d /var/lib/bluetooth 700 root root - -"
-  # ];
-  # systemd.targets."bluetooth".after = [ "systemd-tmpfiles-setup.service" ];
 
   boot.kernelParams = [ "acpi_backlight=native" ];
   boot.kernelPackages = pkgs.linuxPackages_5_17;
@@ -41,7 +35,7 @@
     dev.enable = true;
     gui = {
       enable = true;
-      backend = "wayland";
+      backend = "x11";
     };
   };
 
@@ -65,8 +59,8 @@
     home.packages = with pkgs; [
       bitwarden
       chromium
-      element-desktop-wayland
-      firefox-wayland
+      element-desktop
+      firefox
       signal-desktop
       spotify
     ];
