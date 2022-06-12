@@ -55,6 +55,11 @@
       (system:
       let
         pkgs = import nixpkgs { inherit system; };
+        nix2rascal = pkgs.callPackage ./routeros/nix2rascal.nix { };
+        nix2rascalWithData = nix2rascal {
+          inventoryFile = self.packages.${system}.inventory;
+          secretsFile = ./routeros/secrets.yaml;
+        };
       in
       {
         formatter = pkgs.nixpkgs-fmt;
@@ -78,9 +83,9 @@
             ./iso.nix
           ];
         }).config.system.build.isoImage;
-        packages.cap_ac = pkgs.callPackage ./routeros/capac/configuration.nix { };
-        packages.crs_305 = pkgs.writeText "crs_305" (builtins.readFile ./routeros/crs305/configuration.rsc);
-        packages.crs_326 = pkgs.writeText "crs_326" (builtins.readFile ./routeros/crs326/configuration.rsc);
+        packages.crs_305 = nix2rascalWithData ./routeros/crs305/configuration.nix;
+        packages.crs_326 = nix2rascalWithData ./routeros/crs326/configuration.nix;
+        packages.cap_ac = nix2rascalWithData ./routeros/capac/configuration.nix;
         packages.cloud = terranix.lib.terranixConfiguration {
           inherit system;
           modules = [ ./config.nix ];

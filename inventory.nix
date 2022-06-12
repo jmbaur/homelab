@@ -10,8 +10,8 @@ let
   # NOTE: Wrapping nixpkgs toHexString to follow RFC 5952's recommendation for
   # IPv6 addresses to be in lower case.
   toHexString = i: lib.toLower (lib.toHexString i);
-  mkIpv4Addr = prefix: thirdOctet: fourthOctet: "${prefix}.${toString thirdOctet}.${toString fourthOctet}";
-  mkIpv6Addr = prefix: fourthHextet: lastHextet: "${prefix}:${fourthHextet}::${lastHextet}";
+  mkIPv4Addr = prefix: thirdOctet: fourthOctet: "${prefix}.${toString thirdOctet}.${toString fourthOctet}";
+  mkIPv6Addr = prefix: fourthHextet: lastHextet: "${prefix}:${fourthHextet}::${lastHextet}";
 in
 
 { guaPrefix
@@ -19,24 +19,26 @@ in
 , tld
 }:
 let
-  mkHost = networkId: { dhcp ? false
-                      , mac ? null
-                      , wgPeer ? false
-                      , publicKey ? null
-                      , lastBit
-                      }: {
-    inherit dhcp mac wgPeer publicKey;
-    ipv4 = [ (mkIpv4Addr "192.168" networkId lastBit) ];
+  mkHost = networkId: name: { dhcp ? false
+                            , mac ? null
+                            , wgPeer ? false
+                            , publicKey ? null
+                            , lastBit
+                            }: {
+    inherit name dhcp mac wgPeer publicKey;
+    ipv4 = [ (mkIPv4Addr "192.168" networkId lastBit) ];
     ipv6 = [
-      (mkIpv6Addr guaPrefix (toHexString networkId) (toHexString lastBit))
-      (mkIpv6Addr ulaPrefix (toHexString networkId) (toHexString lastBit))
+      (mkIPv6Addr guaPrefix (toHexString networkId) (toHexString lastBit))
+      (mkIPv6Addr ulaPrefix (toHexString networkId) (toHexString lastBit))
     ];
   };
-  mkNetwork = { name, id, hosts }:
+  mkNetwork = name: { id, hosts }:
     let
       mkNetworkHost = mkHost id;
       ipv4Cidr = 24;
       ipv6Cidr = 64;
+      networkIPv4 = mkIPv4Addr "192.168" id 0;
+      networkIPv4Cidr = "${networkIPv4}/${toString ipv4Cidr}";
       networkGuaPrefix = "${guaPrefix}:${toHexString id}";
       networkUlaPrefix = "${ulaPrefix}:${toHexString id}";
       networkGuaCidr = "${networkGuaPrefix}::/${toString ipv6Cidr}";
@@ -48,19 +50,20 @@ let
         id
         ipv4Cidr
         ipv6Cidr
+        networkIPv4
+        networkIPv4Cidr
         networkGuaPrefix
         networkUlaPrefix
         networkGuaCidr
         networkUlaCidr;
       domain = "${name}.${tld}";
       hosts = lib.mapAttrs
-        (_: host: mkNetworkHost host)
+        (name: hostInfo: mkNetworkHost name hostInfo)
         hosts;
     };
 in
-{
-  mgmt = mkNetwork {
-    name = "mgmt";
+lib.mapAttrs (name: networkInfo: mkNetwork name networkInfo) {
+  mgmt = {
     id = 88;
     hosts = {
       broccoli.lastBit = 1;
@@ -74,18 +77,15 @@ in
       asparagus = { lastBit = 54; dhcp = true; mac = "e4:1d:2d:7f:1a:d0"; };
     };
   };
-  pubwan = mkNetwork {
-    name = "pubwan";
+  pubwan = {
     id = 10;
     hosts.broccoli.lastBit = 1;
   };
-  publan = mkNetwork {
-    name = "publan";
+  publan = {
     id = 20;
     hosts.broccoli.lastBit = 1;
   };
-  trusted = mkNetwork {
-    name = "trusted";
+  trusted = {
     id = 30;
     hosts = {
       broccoli.lastBit = 1;
@@ -93,26 +93,22 @@ in
       okra = { lastBit = 51; dhcp = true; mac = "5c:80:b6:92:eb:27"; };
     };
   };
-  iot = mkNetwork {
-    name = "iot";
+  iot = {
     id = 40;
     hosts.broccoli.lastBit = 1;
   };
-  work = mkNetwork {
-    name = "work";
+  work = {
     id = 50;
     hosts.broccoli.lastBit = 1;
   };
-  wgTrusted = mkNetwork {
-    name = "wg-trusted";
+  wg-trusted = {
     id = 60;
     hosts = {
       broccoli.lastBit = 1;
       beetroot = { lastBit = 50; wgPeer = true; publicKey = "T+zc4lpoEgxPIKEBr9qXiAzb/ruRbqZuVrih+0rGs2M="; };
     };
   };
-  wgIot = mkNetwork {
-    name = "wg-iot";
+  wg-iot = {
     id = 70;
     hosts = {
       broccoli.lastBit = 1;
