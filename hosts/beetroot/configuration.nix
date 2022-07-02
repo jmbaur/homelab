@@ -79,13 +79,13 @@
       profiles = {
         default = {
           outputs = [
-            { criteria = "eDP-1"; status = "enable"; }
+            { criteria = "eDP-1"; status = "enable"; position = "0,0"; }
           ];
         };
         docked = {
           outputs = [
             { criteria = "eDP-1"; status = "disable"; }
-            { criteria = "Lenovo Group Limited LEN P24q-20 V306P4GR"; status = "enable"; mode = "2560x1440@74.78Hz"; }
+            { criteria = "Lenovo Group Limited LEN P24q-20 V306P4GR"; status = "enable"; mode = "2560x1440@74.78Hz"; position = "0,0"; }
           ];
         };
       };
