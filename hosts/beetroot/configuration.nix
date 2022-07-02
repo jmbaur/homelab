@@ -67,6 +67,14 @@
   programs.nix-ld.enable = true;
 
   home-manager.users.jared = { config, globalConfig, lib, ... }: {
+    xdg.configFile."gobar/gobar.yaml".text = lib.generators.toYAML { } {
+      modules = [
+        { module = "battery"; }
+        { module = "network"; pattern = "(en|wl)+"; }
+        { module = "memory"; }
+        { module = "datetime"; interval = 1; format = "2006-01-02 15:04:05"; }
+      ];
+    };
     home.packages = with pkgs; [
       age-plugin-yubikey
       bitwarden-cli
