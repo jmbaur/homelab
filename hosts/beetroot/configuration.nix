@@ -52,10 +52,6 @@
   };
   services.resolved.enable = true;
 
-  services.xserver.deviceSection = ''
-    Option "TearFree" "true"
-  '';
-
   services.snapper.configs.home = {
     subvolume = "/home";
     extraConfig = ''
@@ -67,21 +63,19 @@
   nixpkgs.config.allowUnfree = true;
 
   services.fwupd.enable = true;
-  services.fprintd.enable = true;
-  security.pam.services.sudo.fprintAuth = false;
   programs.adb.enable = true;
   programs.nix-ld.enable = true;
 
   home-manager.users.jared = { config, globalConfig, lib, ... }: {
     home.packages = with pkgs; [
       age-plugin-yubikey
-      bitwarden
-      chromium
-      element-desktop
-      firefox
+      bitwarden-cli
+      element-desktop-wayland
+      firefox-wayland
+      google-chrome
       signal-desktop
-      spot
-      thunderbird
+      spotify-webapp
+      thunderbird-wayland
       yubikey-manager
       yubikey-personalization
     ];
