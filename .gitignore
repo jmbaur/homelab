@@ -1,0 +1,10 @@
+/.direnv
+/.pre-commit-config.yaml
+result*
+
+# Provided by nix
+/.terraform.lock.hcl
+/.terraform
+config.tf.json
+
+terraform.tfstate*
