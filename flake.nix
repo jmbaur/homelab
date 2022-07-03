@@ -68,6 +68,7 @@
       in
       {
         formatter = pkgs.nixpkgs-fmt;
+
         devShells.default = pkgs.mkShell {
           buildInputs = [
             (pkgs.terraform.withPlugins (p: [ p.cloudflare ]))
@@ -79,6 +80,7 @@
             hooks.nixpkgs-fmt.enable = true;
           }) shellHook;
         };
+
         packages.iso = (nixpkgs.lib.nixosSystem {
           inherit system;
           modules = [
@@ -87,16 +89,33 @@
             ./iso.nix
           ];
         }).config.system.build.isoImage;
+
+        packages.lx2_iso = (nixpkgs.lib.nixosSystem {
+          system = "aarch64-linux";
+          modules = [
+            "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
+            "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
+            ./iso.nix
+            {
+              # for onboard nics
+              boot.kernelParams = [ "arm-smmu.disable_bypass=0" "iommu-passthrough=1" ];
+            }
+          ];
+        }).config.system.build.isoImage;
+
         packages.crs_305 = pkgs.callPackage ./routeros/crs305/configuration.nix {
           inventoryFile = self.packages.${system}.inventory;
         };
+
         packages.crs_326 = pkgs.callPackage ./routeros/crs326/configuration.nix {
           inventoryFile = self.packages.${system}.inventory;
         };
+
         packages.cap_ac = pkgs.callPackage ./routeros/capac/secretsWrapper.nix {
           inventoryFile = self.packages.${system}.inventory;
           configurationFile = ./routeros/capac/configuration.nix;
         };
+
         packages.cloud = terranix.lib.terranixConfiguration {
           inherit pkgs system;
           extraArgs = {
@@ -105,9 +124,11 @@
           };
           modules = [ ./cloud ];
         };
+
         packages.inventory = pkgs.writeText
           "inventory.json"
           (builtins.toJSON (self.inventory.${system}.inventory));
+
         inventory = pkgs.callPackage ./inventory.nix {
           inherit (homelab-private.secrets.networking) guaPrefix;
           ulaPrefix = "fd82:f21d:118d";
@@ -120,19 +141,6 @@
       checks = builtins.mapAttrs
         (system: deployLib: deployLib.deployChecks self.deploy)
         deploy-rs.lib;
-
-      packages.aarch64-linux.lx2_iso = (nixpkgs.lib.nixosSystem {
-        system = "aarch64-linux";
-        modules = [
-          "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
-          "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
-          ./iso.nix
-          {
-            # for onboard nics
-            boot.kernelParams = [ "arm-smmu.disable_bypass=0" "iommu-passthrough=1" ];
-          }
-        ];
-      }).config.system.build.isoImage;
 
       nixosConfigurations.broccoli = nixpkgs.lib.nixosSystem rec {
         system = "x86_64-linux";
