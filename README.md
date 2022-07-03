@@ -1,10 +1,5 @@
 # Homelab
 
-## TODO
-
-Write an activation script (`system.activationScript`) to create directories
-for bind mounts that NixOS containers use that do not yet exist.
-
 ## Generic install guide
 
 ```bash
