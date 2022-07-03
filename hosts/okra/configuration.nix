@@ -13,7 +13,16 @@
   networking = {
     useDHCP = lib.mkForce false;
     hostName = "okra";
-    networkmanager.enable = true;
+    useNetworkd = true;
+    wireless.enable = true;
+  };
+  systemd.network = {
+    wait-online.anyInterface = true;
+    networks.wireless = {
+      name = "wl*";
+      DHCP = "yes";
+      networkConfig.IPv6PrivacyExtensions = true;
+    };
   };
 
   custom = {
@@ -38,16 +47,18 @@
     description = "Jared Baur";
     extraGroups = [ "wheel" ];
   };
+  home-manager.users.jared = { config, ... }: {
+    home.packages = with pkgs; [
+      firefox-wayland
+      google-chrome
+      mullvad-vpn
+      spotify-webapp
+    ];
+  };
 
   nixpkgs.config.allowUnfree = true;
 
   services.fwupd.enable = true;
-
-  environment.systemPackages = with pkgs; [
-    firefox-wayland
-    google-chrome
-    mullvad-vpn
-  ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
