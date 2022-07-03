@@ -83,8 +83,6 @@
           inherit system;
           modules = [
             "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
-            # Provide an initial copy of the NixOS channel so that the user
-            # doesn't need to run "nix-channel --update" first.
             "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
             ./iso.nix
           ];
@@ -122,6 +120,19 @@
       checks = builtins.mapAttrs
         (system: deployLib: deployLib.deployChecks self.deploy)
         deploy-rs.lib;
+
+      packages.aarch64-linux.lx2_iso = (nixpkgs.lib.nixosSystem {
+        system = "aarch64-linux";
+        modules = [
+          "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
+          "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
+          ./iso.nix
+          {
+            # for onboard nics
+            boot.kernelParams = [ "arm-smmu.disable_bypass=0" "iommu-passthrough=1" ];
+          }
+        ];
+      }).config.system.build.isoImage;
 
       nixosConfigurations.broccoli = nixpkgs.lib.nixosSystem rec {
         system = "x86_64-linux";
