@@ -253,6 +253,28 @@
         };
       };
 
+      nixosConfigurations.kale2 = nixpkgs.lib.nixosSystem rec {
+        system = "aarch64-linux";
+        specialArgs = { inherit (self.inventory.${system}) inventory; };
+        modules = [
+          # microvm.nixosModules.host
+          # { microvm.vms = { website.flake = self; }; }
+          ./hosts/kale2/configuration.nix
+          agenix.nixosModules.age
+          homelab-private.nixosModules.common
+          nixos-configs.nixosModules.default
+        ];
+      };
+
+      deploy.nodes.kale2 = {
+        hostname = "kale2.mgmt.home.arpa";
+        profiles.system = {
+          sshUser = "root";
+          path = deploy-rs.lib.x86_64-linux.activate.nixos
+            self.nixosConfigurations.kale2;
+        };
+      };
+
       nixosConfigurations.rhubarb = nixpkgs.lib.nixosSystem {
         system = "aarch64-linux";
         specialArgs = { inherit inputs; };

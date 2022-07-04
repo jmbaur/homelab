@@ -73,6 +73,7 @@ in
           broccoli-ipmi = { lastBit = 50; dhcp = true; mac = "00:25:90:f7:32:08"; };
           kale-ipmi = { lastBit = 51; dhcp = true; mac = "d0:50:99:f7:c4:8d"; };
           kale = { lastBit = 52; dhcp = true; mac = "d0:50:99:fe:1e:e2"; };
+          kale2 = { lastBit = 62; dhcp = true; mac = "d0:63:b4:03:db:66"; };
           rhubarb = { lastBit = 53; dhcp = true; mac = "dc:a6:32:20:50:f2"; };
           asparagus = { lastBit = 54; dhcp = true; mac = "e4:1d:2d:7f:1a:d0"; };
         };

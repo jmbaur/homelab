@@ -7,5 +7,16 @@ in
   config = lib.mkIf cfg.enable {
     boot.kernelParams = [ "arm-smmu.disable_bypass=0" "iommu.passthrough=1" ]; # for onboard nics
     boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
+
+    systemd.services = lib.listToAttrs (map
+      (name: nameValuePair name {
+        description = "SFP+ port enablement";
+        script = "${pkgs.restool}/bin/ls-addni dpmac.%i";
+        serviceConfig.Type = "oneshot";
+        before = [ "network-pre.target" ];
+        wants = [ "network-pre.target" ];
+      })
+      (map (i: "dpmac@${toString i}") [ 7 8 9 10 ]));
+
   };
 }

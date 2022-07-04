@@ -93,6 +93,7 @@
     home.packages = with pkgs; [
       age-plugin-yubikey
       bitwarden-cli
+      discord-webapp
       element-desktop-wayland
       firefox-wayland
       google-chrome
