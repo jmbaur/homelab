@@ -11,7 +11,7 @@ in
     systemd.services = lib.listToAttrs (map
       (name: lib.nameValuePair name {
         description = "Enable SFP port for dpmac %i";
-        path = [ pkgs.rstool ];
+        path = [ pkgs.restool ];
         serviceConfig.Type = "oneshot";
         serviceConfig.ExecStart = "ls-addni dpmac.%i";
         before = [ "network-pre.target" ];
