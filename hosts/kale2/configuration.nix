@@ -10,6 +10,7 @@
   users.users.jared = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
+    openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
   };
 
   hardware.lx2k.enable = true;
