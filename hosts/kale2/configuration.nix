@@ -7,8 +7,6 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "kale";
-
   users.mutableUsers = false;
   users.users.jared = {
     isNormalUser = true;
