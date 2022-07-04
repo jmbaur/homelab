@@ -25,7 +25,10 @@
         ../../data/deployer-ssh-keys.txt
       ];
     };
-    remoteBoot.enable = false; # TODO(jared): need to figure out kernel modules needed by nic
+    remoteBoot = {
+      enable = true;
+      authorizedKeyFiles = config.custom.deployee.authorizedKeyFiles;
+    };
   };
 
   # This value determines the NixOS release from which the default
