@@ -1,6 +1,6 @@
 { config, pkgs, ... }: {
   imports = [
-    ./network.nix
+    ./networking.nix
     ./hardware-configuration.nix
   ];
 
