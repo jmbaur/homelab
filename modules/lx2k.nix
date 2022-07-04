@@ -11,8 +11,8 @@ in
     systemd.services = lib.listToAttrs (map
       (name: lib.nameValuePair name {
         description = "SFP+ port enablement";
-        script = "${pkgs.restool}/bin/ls-addni dpmac.%i";
         serviceConfig.Type = "oneshot";
+        serviceConfig.ExecStart = "${pkgs.restool}/bin/ls-addni dpmac.%i";
         before = [ "network-pre.target" ];
         wants = [ "network-pre.target" ];
       })
