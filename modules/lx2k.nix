@@ -14,7 +14,7 @@ in
       copy_bin_and_libs ${pkgs.restool}/bin/ls-main
       copy_bin_and_libs ${pkgs.restool}/bin/ls-addni
       # Patch paths
-      # sed -i "1i #!$out/bin/sh" $out/bin/ls-main
+      sed -i "1i #!$out/bin/sh" $out/bin/ls-main
     '';
     boot.initrd.postDeviceCommands = ''
       ls-addni dpmac.7
