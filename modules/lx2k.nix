@@ -9,7 +9,7 @@ in
     boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
 
     systemd.services = lib.listToAttrs (map
-      (name: nameValuePair name {
+      (name: lib.nameValuePair name {
         description = "SFP+ port enablement";
         script = "${pkgs.restool}/bin/ls-addni dpmac.%i";
         serviceConfig.Type = "oneshot";
