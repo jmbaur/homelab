@@ -17,5 +17,8 @@
     '';
   };
 
-  environment.systemPackages = with pkgs; [ curl git tmux vim ];
+  environment = {
+    variables.EDITOR = "vim";
+    systemPackages = with pkgs; [ curl git tmux vim ];
+  };
 }
