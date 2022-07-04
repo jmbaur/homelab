@@ -90,16 +90,14 @@
           ];
         }).config.system.build.isoImage;
 
-        packages.lx2_iso = (nixpkgs.lib.nixosSystem {
+        packages.lx2k_iso = (nixpkgs.lib.nixosSystem {
           system = "aarch64-linux";
           modules = [
-            "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
             "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
+            "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
             ./iso.nix
-            {
-              # for onboard nics
-              boot.kernelParams = [ "arm-smmu.disable_bypass=0" "iommu-passthrough=1" ];
-            }
+            self.nixosModules.default
+            { hardware.lx2k.enable = true; }
           ];
         }).config.system.build.isoImage;
 
@@ -141,6 +139,8 @@
       checks = builtins.mapAttrs
         (system: deployLib: deployLib.deployChecks self.deploy)
         deploy-rs.lib;
+
+      nixosModules.default = import ./modules;
 
       nixosConfigurations.broccoli = nixpkgs.lib.nixosSystem rec {
         system = "x86_64-linux";
