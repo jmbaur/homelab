@@ -13,7 +13,7 @@ in
         description = "Enable SFP port for dpmac %i";
         path = [ pkgs.restool ];
         serviceConfig.Type = "oneshot";
-        serviceConfig.ExecStart = "ls-addni dpmac.%i";
+        serviceConfig.ExecStart = "${pkgs.restool}/bin/ls-addni dpmac.%i";
         before = [ "network-pre.target" ];
         wants = [ "network-pre.target" ];
       })
