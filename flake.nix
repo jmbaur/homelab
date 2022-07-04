@@ -263,6 +263,7 @@
           agenix.nixosModules.age
           homelab-private.nixosModules.common
           nixos-configs.nixosModules.default
+          self.nixosModules.default
         ];
       };
 
