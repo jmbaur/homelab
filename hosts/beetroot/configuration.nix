@@ -72,7 +72,7 @@
         { module = "battery"; }
         { module = "network"; pattern = "(en|wl)+"; }
         { module = "memory"; }
-        { module = "datetime"; interval = 1; format = "2006-01-02 15:04:05"; }
+        { module = "datetime"; timezones = [ "Local" "UTC" ]; }
       ];
     };
     services.kanshi = {
