@@ -440,11 +440,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1657156051,
-        "narHash": "sha256-ZqWvR9snsxHu5qghXzMrESVvEON9RSKp/zhjFoB3Qxo=",
+        "lastModified": 1657170113,
+        "narHash": "sha256-5FKpeq5VBtVhKHIBCwY5I5vkBaIOMRVg++1dxY2hdAM=",
         "owner": "jmbaur",
         "repo": "gobar",
-        "rev": "bb1e9b80c034da063eff1a92322e2d8182a84dbd",
+        "rev": "97ed7374a935d6b6ef006d59d60326fbd619d46f",
         "type": "github"
       },
       "original": {
@@ -483,11 +483,11 @@
         "utils": "utils_2"
       },
       "locked": {
-        "lastModified": 1656927578,
-        "narHash": "sha256-ZSFrM/1PlJOqCb3mN88ZUh9dkQvNLU/nkoQ2tu02/FM=",
+        "lastModified": 1657164980,
+        "narHash": "sha256-6DlmMEN8+Lewfelx11X8nLl0EzwBHLGFeK9HfTQnFps=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "f2445620d177e295e711c1b2bc6c01ed6df26c16",
+        "rev": "face4094d499c84c782873464794cb976c94f079",
         "type": "github"
       },
       "original": {
@@ -505,11 +505,11 @@
         "utils": "utils_5"
       },
       "locked": {
-        "lastModified": 1656927578,
-        "narHash": "sha256-ZSFrM/1PlJOqCb3mN88ZUh9dkQvNLU/nkoQ2tu02/FM=",
+        "lastModified": 1657164980,
+        "narHash": "sha256-6DlmMEN8+Lewfelx11X8nLl0EzwBHLGFeK9HfTQnFps=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "f2445620d177e295e711c1b2bc6c01ed6df26c16",
+        "rev": "face4094d499c84c782873464794cb976c94f079",
         "type": "github"
       },
       "original": {
@@ -668,14 +668,15 @@
         "nixpkgs": [
           "nixpkgs"
         ],
-        "nixpkgs-wayland": "nixpkgs-wayland"
+        "nixpkgs-wayland": "nixpkgs-wayland",
+        "tempus-themes": "tempus-themes"
       },
       "locked": {
-        "lastModified": 1657156083,
-        "narHash": "sha256-crD7LIP/3yp1cLK3WpjR5FooKIIr3rOd8eO54pRZFKc=",
+        "lastModified": 1657171842,
+        "narHash": "sha256-v9Ilw4LiOtImKshgqLrgnHoGkdEgwSueKR0pcxHJPWw=",
         "owner": "jmbaur",
         "repo": "nixos-configs",
-        "rev": "5d6d91bdb5138f150695230a23e7a9e510123369",
+        "rev": "dc4a621b2b03c736ffc43e19768906b5ca321373",
         "type": "github"
       },
       "original": {
@@ -1001,6 +1002,22 @@
         "ref": "nightly",
         "repo": "rust-analyzer",
         "type": "github"
+      }
+    },
+    "tempus-themes": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1644225467,
+        "narHash": "sha256-NvPSJ239qFPfMC2tsh6sp4eGFZvcYQtdggHS+PYYFOs=",
+        "owner": "protesilaos",
+        "repo": "tempus-themes",
+        "rev": "12506e4a2d988591ea0432672dbb27440dd5ffea",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "protesilaos",
+        "repo": "tempus-themes",
+        "type": "gitlab"
       }
     },
     "terranix": {
