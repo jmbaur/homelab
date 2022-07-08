@@ -10,7 +10,7 @@ in
       "arm-smmu.disable_bypass=0"
       "iommu.passthrough=1"
     ];
-    boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
+    boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_5_18;
 
     # Setup SFP+ network interfaces early so systemd can pick everything up.
     boot.initrd.extraUtilsCommands = ''

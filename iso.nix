@@ -1,4 +1,9 @@
-{ pkgs, lib, ... }: {
+{ inputs, pkgs, lib, ... }: {
+  imports = with inputs; [
+    "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
+    "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
+  ];
+
   boot.kernelPackages = pkgs.linuxPackages_5_18;
 
   systemd.services.sshd.wantedBy = lib.mkForce [ "multi-user.target" ];

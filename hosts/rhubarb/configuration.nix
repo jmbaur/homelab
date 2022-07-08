@@ -1,32 +1,34 @@
 { config, lib, pkgs, ... }: {
-  custom.common.enable = true;
-  custom.deployee.enable = true;
-  custom.deployer.enable = true;
-  custom.jared.enable = true;
-
-  zramSwap = {
-    enable = true;
-    swapDevices = 1;
+  custom = {
+    common.enable = true;
+    deployee = {
+      enable = true;
+      authorizedKeyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
+    };
+    deployer = {
+      enable = true;
+      inherit (config.custom.deployee) authorizedKeyFiles;
+    };
   };
 
-  fileSystems."/" = {
-    device = "/dev/disk/by-label/NIXOS_SD";
-    fsType = "ext4";
-    options = [ "noatime" ];
-  };
+  zramSwap.enable = true;
 
   networking = {
     hostName = "rhubarb";
-    useDHCP = false;
-    interfaces.eth0.useDHCP = true;
+    useDHCP = lib.mkForce false;
+    useNetworkd = true;
   };
 
-  environment.systemPackages = with pkgs; [
-    ansible
-    deploy-rs.deploy-rs
-    git
-    terraform
-  ];
+  systemd.network.networks.wired = {
+    name = "eth*";
+    DHCP = "yes";
+    dhcpV4Config.ClientIdentifier = "mac";
+  };
+
+  users.users.jared = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" ];
+  };
 
   nix.buildMachines = [{
     hostName = "kale";
@@ -60,4 +62,6 @@
         IdentityFile /etc/ssh/ssh_host_ed25519_key
     '';
   };
+
+  system.stateVersion = "22.11";
 }

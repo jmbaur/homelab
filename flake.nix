@@ -83,23 +83,21 @@
 
         packages.iso = (nixpkgs.lib.nixosSystem {
           inherit system;
-          modules = [
-            "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
-            "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
-            ./iso.nix
-          ];
+          specialArgs = { inherit inputs; };
+          modules = [ ./iso.nix ];
         }).config.system.build.isoImage;
 
         packages.lx2k_iso = (nixpkgs.lib.nixosSystem {
           system = "aarch64-linux";
+          specialArgs = { inherit inputs; };
           modules = [
-            "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
-            "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
             ./iso.nix
             self.nixosModules.default
             { hardware.lx2k.enable = true; }
           ];
         }).config.system.build.isoImage;
+
+        packages.rhubarb_sd_image = self.nixosConfigurations.rhubarb.config.system.build.sdImage;
 
         packages.crs_305 = pkgs.callPackage ./routeros/crs305/configuration.nix {
           inventoryFile = self.packages.${system}.inventory;
@@ -280,8 +278,10 @@
         system = "aarch64-linux";
         specialArgs = { inherit inputs; };
         modules = [
+          "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
           ./hosts/rhubarb/configuration.nix
           homelab-private.nixosModules.common
+          nixos-configs.nixosModules.default
           nixos-hardware.nixosModules.raspberry-pi-4
         ];
       };
