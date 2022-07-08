@@ -672,11 +672,11 @@
         "tempus-themes": "tempus-themes"
       },
       "locked": {
-        "lastModified": 1657307088,
-        "narHash": "sha256-x8xOfLX2N7qq33bJJVPReVS3dY/gVy5EEhFpYaK1jKw=",
+        "lastModified": 1657318112,
+        "narHash": "sha256-zTTejQyoDd/pz50KBruNPJSII6ZCNeZJBIHe4mLn9BM=",
         "owner": "jmbaur",
         "repo": "nixos-configs",
-        "rev": "90cb261c53905abc3a239a09b59655eeba568db7",
+        "rev": "17e2b79f9bee168dd91cc4203033eca3a614fee1",
         "type": "github"
       },
       "original": {

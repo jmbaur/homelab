@@ -22,6 +22,7 @@
       name = "wl*";
       DHCP = "yes";
       networkConfig.IPv6PrivacyExtensions = true;
+      dhcpV4Config.ClientIdentifier = "mac";
     };
   };
 
