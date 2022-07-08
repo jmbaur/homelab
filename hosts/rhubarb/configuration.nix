@@ -13,6 +13,8 @@
 
   zramSwap.enable = true;
 
+  boot.kernelPackages = pkgs.linuxPackages_5_18;
+
   networking = {
     hostName = "rhubarb";
     useDHCP = lib.mkForce false;
