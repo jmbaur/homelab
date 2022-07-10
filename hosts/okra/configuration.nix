@@ -49,6 +49,13 @@
     extraGroups = [ "wheel" ];
   };
   home-manager.users.jared = { config, ... }: {
+    xdg.configFile."gobar/gobar.yaml".source = (pkgs.formats.yaml { }).generate "gobar.yaml" {
+      modules = [
+        { module = "network"; pattern = "(en|wl|wg)+"; }
+        { module = "memory"; }
+        { module = "datetime"; }
+      ];
+    };
     home.packages = with pkgs; [
       firefox-wayland
       google-chrome

@@ -67,7 +67,7 @@
   programs.nix-ld.enable = true;
 
   home-manager.users.jared = { config, globalConfig, lib, ... }: {
-    xdg.configFile."gobar/gobar.yaml".text = lib.generators.toYAML { } {
+    xdg.configFile."gobar/gobar.yaml".source = (pkgs.formats.yaml { }).generate "gobar.yaml" {
       modules = [
         { module = "battery"; }
         { module = "network"; pattern = "(en|wl)+"; }
