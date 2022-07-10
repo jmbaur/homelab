@@ -600,11 +600,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1657207009,
-        "narHash": "sha256-/bdumaIAEC3ugF8lTjZJxqfvpuGtEbWV4W1Ay1aLH2Y=",
+        "lastModified": 1657568623,
+        "narHash": "sha256-C7PL5/A5mtCajTOsezhiqd00nYVcw2LiLtuEC21oEZA=",
         "owner": "astro",
         "repo": "microvm.nix",
-        "rev": "11a91e22156ed60bcef4b650b68731ad40eafcd1",
+        "rev": "b02fd15331f1cc9c7f0c1144f2742e7fe3b97f28",
         "type": "github"
       },
       "original": {
@@ -668,15 +668,14 @@
         "nixpkgs": [
           "nixpkgs"
         ],
-        "nixpkgs-wayland": "nixpkgs-wayland",
-        "tempus-themes": "tempus-themes"
+        "nixpkgs-wayland": "nixpkgs-wayland"
       },
       "locked": {
-        "lastModified": 1657486031,
-        "narHash": "sha256-11FzYuKpOVoc5rMP87rflM5Vp0OkR/6FaE4zGFPBWTQ=",
+        "lastModified": 1657581058,
+        "narHash": "sha256-6jxk/v1LRMAuU154+e5Hlpla1TwktapIkchg2nH9Zw4=",
         "owner": "jmbaur",
         "repo": "nixos-configs",
-        "rev": "25ada308fd82e434c982964717cd64b3ddf0f156",
+        "rev": "319f7f6ae35847426f89a90e4f1ec6f275cdb0d7",
         "type": "github"
       },
       "original": {
@@ -770,11 +769,11 @@
     },
     "nixpkgs_11": {
       "locked": {
-        "lastModified": 1657356697,
-        "narHash": "sha256-sT38tcx7m0Quz+Uj6jzx+yRa2+EVW2C3cE0FkROXUzQ=",
+        "lastModified": 1657447684,
+        "narHash": "sha256-FCP9AuU1q6PE3vOeM5SFf58f/UKPBAsoSGDUGamNBbo=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "87e7965bbcdbac3d103e3ed14ff04f719a4f7a58",
+        "rev": "5f43d8b088d3771274bcfb69d3c7435b1121ac88",
         "type": "github"
       },
       "original": {
@@ -1004,22 +1003,6 @@
         "type": "github"
       }
     },
-    "tempus-themes": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1644225467,
-        "narHash": "sha256-NvPSJ239qFPfMC2tsh6sp4eGFZvcYQtdggHS+PYYFOs=",
-        "owner": "protesilaos",
-        "repo": "tempus-themes",
-        "rev": "12506e4a2d988591ea0432672dbb27440dd5ffea",
-        "type": "gitlab"
-      },
-      "original": {
-        "owner": "protesilaos",
-        "repo": "tempus-themes",
-        "type": "gitlab"
-      }
-    },
     "terranix": {
       "inputs": {
         "bats-assert": "bats-assert",
@@ -1029,11 +1012,11 @@
         "terranix-examples": "terranix-examples"
       },
       "locked": {
-        "lastModified": 1641564571,
-        "narHash": "sha256-Jhq0pkyF1KWJ6HgeWLoRfIxo7QHvOwwXzsIxZQgQtK4=",
+        "lastModified": 1657512701,
+        "narHash": "sha256-zctvB0zpPY2C1HkMyEK6NFNuPVNGcU9b8gv9HafBd2A=",
         "owner": "terranix",
         "repo": "terranix",
-        "rev": "1d0b822ab53c5de696dd3ebe687e828ef05de16a",
+        "rev": "67e2c7c3ec58f3b1b6ea6434b0558f0233ca7a36",
         "type": "github"
       },
       "original": {
