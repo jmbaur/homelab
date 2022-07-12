@@ -41,12 +41,11 @@
     remoteBoot.enable = false;
   };
 
-  documentation.enable = false;
-
   users.users.jared = {
     isNormalUser = true;
     description = "Jared Baur";
     extraGroups = [ "wheel" ];
+    openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
   };
   home-manager.users.jared = { config, ... }: {
     xdg.configFile."gobar/gobar.yaml".source = (pkgs.formats.yaml { }).generate "gobar.yaml" {
