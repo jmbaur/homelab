@@ -18,10 +18,6 @@
       url = "git+ssh://git@github.com/jmbaur/homelab-private";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     nixos-hardware = {
       url = "github:NixOS/nixos-hardware";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -45,7 +41,6 @@
     { self
     , deploy-rs
     , flake-utils
-    , home-manager
     , homelab-private
     , nixos-configs
     , ipwatch
