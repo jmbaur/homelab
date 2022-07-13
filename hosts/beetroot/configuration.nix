@@ -15,7 +15,7 @@
     isNormalUser = true;
     description = "Jared Baur";
     shell = pkgs.zsh;
-    extraGroups = [ "wheel" "dialout" "adbusers" ];
+    extraGroups = [ "adbusers" "dialout" "wheel" ];
   };
 
   custom = {
