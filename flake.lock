@@ -650,11 +650,11 @@
         "nixpkgs-wayland": "nixpkgs-wayland"
       },
       "locked": {
-        "lastModified": 1657847046,
-        "narHash": "sha256-D38Yej5Pr78bgvLk0VkBpiQX6eRHtjV8baFi5l4BXPg=",
+        "lastModified": 1657854164,
+        "narHash": "sha256-oRLKI2SvU0SHC/jvHY+083lKUVa0D9tU9bVIDKjY0WQ=",
         "owner": "jmbaur",
         "repo": "nixos-configs",
-        "rev": "508a4feeb558bf28a298faa69e721439601c6351",
+        "rev": "68febd35c23fa1e0a0fc0e4444b85b2776c7422e",
         "type": "github"
       },
       "original": {
