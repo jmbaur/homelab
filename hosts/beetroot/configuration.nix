@@ -22,6 +22,7 @@
     common.enable = true;
     dev.enable = true;
     gui.enable = true;
+    laptop.enable = true;
   };
 
   networking = {
