@@ -60,6 +60,21 @@
           inherit system;
           overlays = [ deploy-rs.overlay agenix.overlay ];
         };
+        installer_iso_modules = [
+          "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
+          "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
+          ./installer.nix
+        ];
+        installer_iso_lx2k_modules = [
+          "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
+          "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
+          ./installer.nix
+          { hardware.lx2k.enable = true; }
+        ];
+        installer_img_modules = [
+          "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64-installer.nix"
+          ./installer.nix
+        ];
       in
       {
         formatter = pkgs.nixpkgs-fmt;
@@ -76,18 +91,22 @@
           }) shellHook;
         };
 
-        packages.iso = (nixpkgs.lib.nixosSystem {
-          inherit system;
-          specialArgs = { inherit inputs; };
-          modules = [ ./iso.nix ];
+        packages.installer_iso = (nixpkgs.lib.nixosSystem {
+          inherit system; modules = installer_iso_modules;
         }).config.system.build.isoImage;
+        packages.installer_iso_lx2k = (nixpkgs.lib.nixosSystem {
+          inherit system; modules = installer_iso_lx2k_modules;
+        }).config.system.build.isoImage;
+
+        packages.installer_img = (nixpkgs.lib.nixosSystem {
+          inherit system; modules = installer_img_modules;
+        }).config.system.build.sdImage;
 
         packages.lx2k_iso = (nixpkgs.lib.nixosSystem {
           system = "aarch64-linux";
           specialArgs = { inherit inputs; };
           modules = [
             ./iso.nix
-            self.nixosModules.default
             { hardware.lx2k.enable = true; }
           ];
         }).config.system.build.isoImage;
