@@ -26,287 +26,34 @@
       url = "github:astro/microvm.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixos-generators = {
+      url = "github:nix-community/nixos-generators";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    cn913x_build = {
+      url = "github:solidrun/cn913x_build";
+      flake = false;
+    };
   };
 
-  nixConfig.extra-substituters = [
-    "https://microvm.cachix.org"
-    "https://nixpkgs-wayland.cachix.org"
-  ];
-  nixConfig.extra-trusted-public-keys = [
-    "microvm.cachix.org-1:oXnBc6hRE3eX5rSYdRyMYXnfzcCxC7yKPTbZXALsqys="
-    "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
-  ];
+  nixConfig = {
+    extra-substituters = [
+      "https://microvm.cachix.org"
+      "https://nixpkgs-wayland.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "microvm.cachix.org-1:oXnBc6hRE3eX5rSYdRyMYXnfzcCxC7yKPTbZXALsqys="
+      "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
+    ];
+  };
 
-  outputs =
-    { self
-    , deploy-rs
-    , flake-utils
-    , homelab-private
-    , nixos-configs
-    , ipwatch
-    , microvm
-    , nixos-hardware
-    , nixpkgs
-    , pre-commit
-    , agenix
-    , terranix
-    , blog
-    , ...
-    }@inputs:
-    flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-linux" ]
-      (system:
-      let
-        pkgs = import nixpkgs {
-          inherit system;
-          overlays = [ deploy-rs.overlay agenix.overlay ];
-        };
-        installer_iso_modules = [
-          "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
-          "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
-          ./installer.nix
-        ];
-        installer_iso_lx2k_modules = [
-          "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
-          "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
-          ./installer.nix
-          { hardware.lx2k.enable = true; }
-        ];
-        installer_img_modules = [
-          "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64-installer.nix"
-          ./installer.nix
-        ];
-      in
-      {
-        formatter = pkgs.nixpkgs-fmt;
-
-        devShells.default = pkgs.mkShell {
-          buildInputs = [
-            (pkgs.terraform.withPlugins (p: [ p.cloudflare ]))
-            pkgs.agenix
-            pkgs.deploy-rs.deploy-rs
-          ];
-          inherit (pre-commit.lib.${system}.run {
-            src = builtins.path { path = ./.; };
-            hooks.nixpkgs-fmt.enable = true;
-          }) shellHook;
-        };
-
-        packages.installer_iso = (nixpkgs.lib.nixosSystem {
-          inherit system; modules = installer_iso_modules;
-        }).config.system.build.isoImage;
-        packages.installer_iso_lx2k = (nixpkgs.lib.nixosSystem {
-          inherit system; modules = installer_iso_lx2k_modules;
-        }).config.system.build.isoImage;
-
-        packages.installer_img = (nixpkgs.lib.nixosSystem {
-          inherit system; modules = installer_img_modules;
-        }).config.system.build.sdImage;
-
-        packages.lx2k_iso = (nixpkgs.lib.nixosSystem {
-          system = "aarch64-linux";
-          specialArgs = { inherit inputs; };
-          modules = [
-            ./iso.nix
-            { hardware.lx2k.enable = true; }
-          ];
-        }).config.system.build.isoImage;
-
-        packages.rhubarb_sd_image = self.nixosConfigurations.rhubarb.config.system.build.sdImage;
-
-        packages.crs_305 = pkgs.callPackage ./routeros/crs305/configuration.nix {
-          inventoryFile = self.packages.${system}.inventory;
-        };
-
-        packages.crs_326 = pkgs.callPackage ./routeros/crs326/configuration.nix {
-          inventoryFile = self.packages.${system}.inventory;
-        };
-
-        packages.cap_ac = pkgs.callPackage ./routeros/capac/secretsWrapper.nix {
-          inventoryFile = self.packages.${system}.inventory;
-          configurationFile = ./routeros/capac/configuration.nix;
-        };
-
-        packages.cloud = terranix.lib.terranixConfiguration {
-          inherit pkgs system;
-          extraArgs = {
-            inherit (self.inventory.${system}) inventory;
-            secrets = homelab-private.secrets;
-          };
-          modules = [ ./cloud ];
-        };
-
-        packages.inventory = pkgs.writeText
-          "inventory.json"
-          (builtins.toJSON (self.inventory.${system}.inventory));
-
-        inventory = pkgs.callPackage ./inventory.nix {
-          inherit (homelab-private.secrets.networking) guaPrefix;
-          ulaPrefix = "fd82:f21d:118d";
-          tld = "jmbaur.com";
-          inherit (pkgs) lib;
-        };
-      })
-    //
-    {
-      checks = builtins.mapAttrs
-        (system: deployLib: deployLib.deployChecks self.deploy)
-        deploy-rs.lib;
-
-      nixosModules.default = import ./modules;
-
-      nixosConfigurations.broccoli = nixpkgs.lib.nixosSystem rec {
-        system = "x86_64-linux";
-        specialArgs = {
-          inherit inputs;
-          inherit (homelab-private) secrets;
-          inherit (self.inventory.${system}) inventory;
-        };
-        modules = [
-          ./hosts/broccoli/configuration.nix
-          agenix.nixosModules.age
-          homelab-private.nixosModules.common
-          ipwatch.nixosModules.default
-          nixos-configs.nixosModules.default
-          nixos-hardware.nixosModules.supermicro
-          { nixpkgs.overlays = [ ipwatch.overlays.default ]; }
-        ];
-      };
-
-      deploy.nodes.broccoli = {
-        hostname = "broccoli.mgmt.home.arpa";
-        profiles.system = {
-          sshUser = "root";
-          path = deploy-rs.lib.x86_64-linux.activate.nixos
-            self.nixosConfigurations.broccoli;
-        };
-      };
-
-      nixosConfigurations.beetroot = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = { inherit inputs; };
-        modules = [
-          ./hosts/beetroot/configuration.nix
-          homelab-private.nixosModules.common
-          nixos-configs.nixosModules.default
-          nixos-hardware.nixosModules.lenovo-thinkpad-t495
-        ];
-      };
-
-      nixosConfigurations.okra = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = { inherit inputs; };
-        modules = [
-          ./hosts/okra/configuration.nix
-          homelab-private.nixosModules.common
-          nixos-configs.nixosModules.default
-          nixos-hardware.nixosModules.intel-nuc-8i7beh
-        ];
-      };
-
-      deploy.nodes.okra = {
-        hostname = "okra.trusted.home.arpa";
-        profiles.system = {
-          sshUser = "root";
-          path = deploy-rs.lib.x86_64-linux.activate.nixos
-            self.nixosConfigurations.okra;
-        };
-      };
-
-      nixosConfigurations.asparagus = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = { inherit inputs; };
-        modules = [
-          ./hosts/asparagus/configuration.nix
-          homelab-private.nixosModules.common
-          nixos-configs.nixosModules.default
-          nixos-hardware.nixosModules.common-cpu-amd
-          nixos-hardware.nixosModules.common-gpu-amd
-        ];
-      };
-
-      deploy.nodes.asparagus = {
-        hostname = "asparagus.mgmt.home.arpa";
-        profiles.system = {
-          sshUser = "root";
-          path = deploy-rs.lib.x86_64-linux.activate.nixos
-            self.nixosConfigurations.asparagus;
-        };
-      };
-
-      nixosConfigurations.website = nixpkgs.lib.nixosSystem rec {
-        system = "x86_64-linux";
-        specialArgs = { inherit inputs; inherit (self.inventory.${system}) inventory; };
-        modules = [
-          ./vms/website.nix
-          microvm.nixosModules.microvm
-        ];
-      };
-
-      nixosConfigurations.kale = nixpkgs.lib.nixosSystem rec {
-        system = "x86_64-linux";
-        specialArgs = { inherit (self.inventory.${system}) inventory; };
-        modules = [
-          ./hosts/kale/configuration.nix
-          agenix.nixosModules.age
-          homelab-private.nixosModules.common
-          microvm.nixosModules.host
-          nixos-configs.nixosModules.default
-          nixos-hardware.nixosModules.common-cpu-amd
-          { microvm.vms = { website.flake = self; }; }
-        ];
-      };
-
-      deploy.nodes.kale = {
-        hostname = "kale.mgmt.home.arpa";
-        profiles.system = {
-          sshUser = "root";
-          path = deploy-rs.lib.x86_64-linux.activate.nixos
-            self.nixosConfigurations.kale;
-        };
-      };
-
-      nixosConfigurations.kale2 = nixpkgs.lib.nixosSystem rec {
-        system = "aarch64-linux";
-        specialArgs = { inherit (self.inventory.${system}) inventory; };
-        modules = [
-          # microvm.nixosModules.host
-          # { microvm.vms = { website.flake = self; }; }
-          ./hosts/kale2/configuration.nix
-          agenix.nixosModules.age
-          homelab-private.nixosModules.common
-          nixos-configs.nixosModules.default
-          self.nixosModules.default
-        ];
-      };
-
-      deploy.nodes.kale2 = {
-        hostname = "kale2.mgmt.home.arpa";
-        profiles.system = {
-          sshUser = "root";
-          path = deploy-rs.lib.x86_64-linux.activate.nixos
-            self.nixosConfigurations.kale2;
-        };
-      };
-
-      nixosConfigurations.rhubarb = nixpkgs.lib.nixosSystem {
-        system = "aarch64-linux";
-        specialArgs = { inherit inputs; };
-        modules = [
-          "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
-          ./hosts/rhubarb/configuration.nix
-          homelab-private.nixosModules.common
-          nixos-configs.nixosModules.default
-          nixos-hardware.nixosModules.raspberry-pi-4
-        ];
-      };
-
-      deploy.nodes.rhubarb = {
-        hostname = "rhubarb.mgmt.home.arpa";
-        profiles.system = {
-          sshUser = "root";
-          path = deploy-rs.lib.aarch64-linux.activate.nixos
-            self.nixosConfigurations.rhubarb;
-        };
-      };
-    };
+  outputs = { self, ... }@inputs: {
+    checks = import ./checks.nix { inherit self inputs; };
+    deploy = import ./deploy.nix { inherit self inputs; };
+    devShells = import ./devShells.nix { inherit self inputs; };
+    inventory = import ./inventory.nix { inherit self inputs; };
+    nixosConfigurations = import ./nixosConfigurations.nix { inherit self inputs; };
+    nixosModules = import ./nixosModules.nix { inherit self inputs; };
+    packages = import ./packages.nix { inherit self inputs; };
+  };
 }
