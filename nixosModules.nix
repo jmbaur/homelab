@@ -35,6 +35,8 @@
               "console=ttyAMA0,115200"
               "arm-smmu.disable_bypass=0"
               "iommu.passthrough=1"
+              "amdgpu.pcie_gen_cap=0x4"
+              "usbcore.autosuspend=-1"
             ];
             boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_5_18;
 

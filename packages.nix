@@ -22,11 +22,11 @@ let
     modules = installer_img_modules;
   }).config.system.build.sdImage;
 
-  installer_img_cn9130_cf_pro = system: (nixpkgs.lib.nixosSystem {
+  artichoke_sd_image = system: (nixpkgs.lib.nixosSystem {
     inherit system;
     specialArgs = { inherit inputs; };
-    modules = installer_img_modules ++ [{ hardware.cn913x.enable = true; }];
-  }).config.system.build.sdImage;
+    modules = [ ];
+  });
 
   installer_iso = system: (nixpkgs.lib.nixosSystem {
     inherit system;
@@ -70,8 +70,8 @@ in
     {
       installer_iso = installer_iso system;
       installer_img = installer_img system;
-      installer_img_cn9130_cf_pro = installer_img_cn9130_cf_pro system;
       installer_iso_lx2k = installer_iso_lx2k system;
+      artichoke_sd_image = self.nixosConfigurations.artichoke.config.system.build.sdImage;
       rhubarb_sd_image = self.nixosConfigurations.rhubarb.config.system.build.sdImage;
 
       cap_ac = withPkgs system cap_ac;
