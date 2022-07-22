@@ -19,7 +19,12 @@
     useDHCP = false;
     useNetworkd = true;
   };
-  services.resolved.enable = true;
+  services.resolved = {
+    enable = true;
+    # The RPI does not have an RTC, so DNSSEC without an accurate time does not
+    # work, which means NTP servers cannot be queried.
+    dnssec = "false";
+  };
 
   systemd.network = {
     enable = true;
