@@ -8,7 +8,7 @@
         {
           options.custom.installer.enable = lib.mkEnableOption "installer";
           config = lib.mkIf cfg.enable {
-            # system.stateVersion = "22.11"; # TODO(jared): needed?
+            system.stateVersion = "22.11";
             boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_5_18;
             systemd.services.sshd.wantedBy = lib.mkForce [ "multi-user.target" ];
             users.users.nixos.openssh.authorizedKeys.keyFiles = [ (import ./data/jmbaur-ssh-keys.nix) ];
