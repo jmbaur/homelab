@@ -31,7 +31,10 @@ let
         PoolSize = 200;
         # TODO(jared): When https://github.com/systemd/systemd/pull/22332 is
         # released, use DNS="_server_address".
+        EmitDNS = "yes";
         DNS = [ network.hosts.broccoli.ipv4 ];
+        EmitNTP = "yes";
+        NTP = [ network.hosts.broccoli.ipv4 ];
         SendOption = [ "15:string:home.arpa" ];
       };
       dhcpServerStaticLeases = lib.flatten

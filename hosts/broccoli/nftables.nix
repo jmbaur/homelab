@@ -47,8 +47,9 @@
               } accept
 
               meta l4proto udp th dport {
-                  67, # dhcpv4
-                  547, # dhcpv6
+                  123,  # ntp
+                  547,  # dhcpv6
+                  67,   # dhcpv4
               } accept
               meta l4proto { tcp, udp } th dport 53 accept # DNS
           }

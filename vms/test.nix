@@ -2,6 +2,7 @@
   system.stateVersion = "22.05";
   networking = {
     hostName = "test";
+    useDHCP = lib.mkForce false;
     useNetworkd = true;
   };
   systemd.network.networks.en = {

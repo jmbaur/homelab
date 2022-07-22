@@ -16,14 +16,18 @@
 
   networking = {
     hostName = "rhubarb";
+    useDHCP = false;
     useNetworkd = true;
   };
   services.resolved.enable = true;
 
-  systemd.network.networks.wired = {
-    name = "eth*";
-    DHCP = "yes";
-    dhcpV4Config.ClientIdentifier = "mac";
+  systemd.network = {
+    enable = true;
+    networks.wired = {
+      name = "eth*";
+      DHCP = "yes";
+      dhcpV4Config.ClientIdentifier = "mac";
+    };
   };
 
   users.users.jared = {
