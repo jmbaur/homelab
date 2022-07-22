@@ -38,7 +38,7 @@
   users.users.jared = {
     isNormalUser = true;
     extraGroups = [ "dialout" "wheel" ];
-    packages = with pkgs; [ tmux picocom ];
+    packages = with pkgs; [ picocom tmux wol ];
     openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
   };
 
