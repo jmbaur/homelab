@@ -1,5 +1,14 @@
 { config, lib, pkgs, ... }: {
-  custom.common.enable = true;
+  custom = {
+    common.enable = true;
+    deployee = {
+      enable = true;
+      authorizedKeyFiles = [
+        (import ../../data/jmbaur-ssh-keys.nix)
+        ../../data/deployer-ssh-keys.txt
+      ];
+    };
+  };
 
   zramSwap.enable = true;
 
