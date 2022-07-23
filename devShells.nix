@@ -1,4 +1,4 @@
-{ self, inputs }: with inputs;
+inputs: with inputs;
 flake-utils.lib.eachDefaultSystemMap (system:
   let
     pkgs = import nixpkgs {

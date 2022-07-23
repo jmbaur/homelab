@@ -1,4 +1,4 @@
-{ self, inputs }: with inputs; {
+inputs: with inputs; {
   default = {
     imports = [
       ({ config, pkgs, lib, ... }:

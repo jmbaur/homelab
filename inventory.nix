@@ -6,7 +6,7 @@
 # form X:X:X where X is an IPv6 hextet. Each prefix is a /48 network prefix to
 # prepend to the remaining 80 bits of an IPv6 address.
 
-{ self, inputs }: with inputs;
+inputs: with inputs;
 flake-utils.lib.eachDefaultSystemMap
   (system:
     let

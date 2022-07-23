@@ -47,13 +47,13 @@
     ];
   };
 
-  outputs = { self, ... }@inputs: {
-    checks = import ./checks.nix { inherit self inputs; };
-    deploy = import ./deploy.nix { inherit self inputs; };
-    devShells = import ./devShells.nix { inherit self inputs; };
-    inventory = import ./inventory.nix { inherit self inputs; };
-    nixosConfigurations = import ./nixosConfigurations.nix { inherit self inputs; };
-    nixosModules = import ./nixosModules.nix { inherit self inputs; };
-    packages = import ./packages.nix { inherit self inputs; };
+  outputs = inputs: {
+    checks = import ./checks.nix inputs;
+    deploy = import ./deploy.nix inputs;
+    devShells = import ./devShells.nix inputs;
+    inventory = import ./inventory.nix inputs;
+    nixosConfigurations = import ./nixosConfigurations.nix inputs;
+    nixosModules = import ./nixosModules.nix inputs;
+    packages = import ./packages.nix inputs;
   };
 }

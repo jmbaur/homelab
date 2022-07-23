@@ -1,4 +1,4 @@
-{ self, inputs }: with inputs;
+inputs: with inputs;
 let
   withPkgs = system: f:
     let pkgs = import nixpkgs { inherit system; }; in f pkgs system;

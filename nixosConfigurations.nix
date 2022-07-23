@@ -1,4 +1,4 @@
-{ self, inputs }: with inputs; {
+inputs: with inputs; {
   broccoli = nixpkgs.lib.nixosSystem rec {
     system = "x86_64-linux";
     specialArgs = {

@@ -1,4 +1,4 @@
-{ self, inputs }: with inputs; {
+inputs: with inputs; {
   nodes = {
     broccoli = {
       hostname = "broccoli.mgmt.home.arpa";
