@@ -70,6 +70,7 @@ inputs: with inputs; {
       microvm.nixosModules.host
       nixos-configs.nixosModules.default
       nixos-hardware.nixosModules.common-cpu-amd
+      self.nixosModules.default
       { microvm.vms = { website.flake = self; }; }
     ];
   };
@@ -109,6 +110,7 @@ inputs: with inputs; {
       homelab-private.nixosModules.common
       nixos-configs.nixosModules.default
       nixos-hardware.nixosModules.raspberry-pi-4
+      self.nixosModules.default
     ];
   };
 }
