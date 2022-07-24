@@ -26,6 +26,16 @@
     dnssec = "false";
   };
 
+  services.greetd = {
+    enable = true;
+    settings = {
+      default_session = {
+        user = config.users.users.browser.name;
+        command = "${pkgs.greetd.greetd}/bin/agreety --cmd '${pkgs.cage}/bin/cage -d -- ${pkgs.firefox-wayland}/bin/firefox https://kernel.org/'";
+      };
+    };
+  };
+
   systemd.network = {
     enable = true;
     networks.wired = {
@@ -35,11 +45,14 @@
     };
   };
 
-  users.users.jared = {
-    isNormalUser = true;
-    extraGroups = [ "dialout" "wheel" ];
-    packages = with pkgs; [ picocom tmux wol ];
-    openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
+  users.users = {
+    browser.isNormalUser = true;
+    jared = {
+      isNormalUser = true;
+      extraGroups = [ "dialout" "wheel" ];
+      packages = with pkgs; [ picocom tmux wol ];
+      openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
+    };
   };
 
   system.stateVersion = "22.11";

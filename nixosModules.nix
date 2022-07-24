@@ -122,8 +122,8 @@ inputs: with inputs; {
             };
             sdImage = {
               rootPartitionUUID = "86c3eb00-1c10-4d09-9ce0-1cf5cd1e5951"; # Generated with `uuidgen`
-              populateFirmwareCommands = ''
-                dd if=${pkgs.ubootCN9130_CF_Pro} of=/dev/sdX bs=512 seek=4096 conv=sync
+              postBuildCommands = ''
+                dd if=${pkgs.ubootCN9130_CF_Pro} of=$img bs=512 seek=4096 conv=sync
               '';
             };
             nixpkgs.overlays = [
