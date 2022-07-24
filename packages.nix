@@ -22,12 +22,6 @@ let
     modules = installer_img_modules;
   }).config.system.build.sdImage;
 
-  artichoke_sd_image = system: (nixpkgs.lib.nixosSystem {
-    inherit system;
-    specialArgs = { inherit inputs; };
-    modules = [ ];
-  });
-
   installer_iso = system: (nixpkgs.lib.nixosSystem {
     inherit system;
     modules = installer_iso_modules;

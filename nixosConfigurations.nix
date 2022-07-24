@@ -98,6 +98,9 @@ inputs: with inputs; {
       homelab-private.nixosModules.common
       nixos-configs.nixosModules.default
       self.nixosModules.default
+      # This is here since the sdImage options do not exist without importing
+      # the sd-image-aarch64.nix module.
+      ({config, lib, ...}: { sdImage.postBuildCommands = lib.optionalString (config.hardware.cn913x.enable && config.hardware.cn913x.withUboot) "dd if=${pkgs.ubootCN9130_CF_Pro} of=$img bs=512 seek=4096 conv=notrunc"; })
     ];
   };
 

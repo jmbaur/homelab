@@ -1,5 +1,14 @@
 inputs: with inputs; {
   default = {
+    nixpkgs.overlays = [
+      (final: prev: {
+        ubootCN9130_CF_Pro = prev.fetchurl {
+          name = "u-boot-cn9130-cf-pro-mmc_1_0.bin";
+          url = "https://solid-run-images.sos-de-fra-1.exo.io/CN913x/cn913x_build/20220707-f33e2ae/u-boot/u-boot-cn9130-cf-pro-mmc:1:0.bin";
+          sha256 = "sha256-C23YcrMlFAvSIxVq/YKKg3nuHriXQ1WCi8dxV4WsPsE=";
+        };
+      })
+    ];
     imports = [
       ({ config, pkgs, lib, ... }:
         let
@@ -110,7 +119,10 @@ inputs: with inputs; {
           ];
         in
         {
-          options.hardware.cn913x.enable = lib.mkEnableOption "cn913x hardware";
+          options.hardware.cn913x = {
+            enable = lib.mkEnableOption "cn913x hardware";
+            withUboot = lib.mkEnableOption "write u-boot into SD image";
+          };
           config = lib.mkIf cfg.enable {
             boot = {
               kernelPackages = pkgs.linuxPackages_5_15;
@@ -120,21 +132,6 @@ inputs: with inputs; {
               enable = true;
               filter = "cn913*.dtb";
             };
-            sdImage = {
-              rootPartitionUUID = "86c3eb00-1c10-4d09-9ce0-1cf5cd1e5951"; # Generated with `uuidgen`
-              postBuildCommands = ''
-                dd if=${pkgs.ubootCN9130_CF_Pro} of=$img bs=512 seek=4096 conv=notrunc
-              '';
-            };
-            nixpkgs.overlays = [
-              (final: prev: {
-                ubootCN9130_CF_Pro = pkgs.fetchurl {
-                  name = "u-boot-cn9130-cf-pro-mmc_1_0.bin";
-                  url = "https://solid-run-images.sos-de-fra-1.exo.io/CN913x/cn913x_build/20220707-f33e2ae/u-boot/u-boot-cn9130-cf-pro-mmc:1:0.bin";
-                  sha256 = "sha256-C23YcrMlFAvSIxVq/YKKg3nuHriXQ1WCi8dxV4WsPsE=";
-                };
-              })
-            ];
           };
         })
       ({ config, lib, ... }:
