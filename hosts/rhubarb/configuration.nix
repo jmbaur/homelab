@@ -28,12 +28,12 @@
 
   services.greetd = {
     enable = true;
-    settings = {
-      initial_session = config.services.greetd.settings.default_session;
+    settings = rec {
       default_session = {
         user = config.users.users.browser.name;
         command = "${pkgs.greetd.greetd}/bin/agreety --cmd '${pkgs.cage}/bin/cage -d -- ${pkgs.firefox-wayland}/bin/firefox https://kernel.org/'";
       };
+      initial_session = default_session;
     };
   };
 
