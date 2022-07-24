@@ -59,7 +59,7 @@ inputs: with inputs; {
       ({ inputs, config, lib, pkgs, ... }:
         let
           cfg = config.hardware.cn913x;
-          patches = [
+          kernelPatches = [
             {
               name = "cn913x-based-COM-express-type";
               patch = "${inputs.cn913x_build}/patches/linux/0001-arm64-dts-cn913x-add-cn913x-based-COM-express-type-.patch";
@@ -96,13 +96,42 @@ inputs: with inputs; {
               name = "cn9131-bldn-mbv";
               patch = "${inputs.cn913x_build}/patches/linux/0012-linux-add-support-cn9131-bldn-mbv.patch";
             }
+            {
+              name = "cn913x_additions";
+              patch = null;
+              extraConfig =
+                let
+                  cn913x_additions = pkgs.runCommandNoCC "cn913x_additions_fixup" { } ''
+                    ${pkgs.gnused}/bin/sed 's/CONFIG_\(.*\)=\(.*\)/\1 \2/' ${inputs.cn913x_build}/configs/linux/cn913x_additions.config > $out
+                  '';
+                in
+                builtins.readFile "${cn913x_additions}";
+            }
           ];
         in
         {
           options.hardware.cn913x.enable = lib.mkEnableOption "cn913x hardware";
           config = lib.mkIf cfg.enable {
-            boot.kernelPackages = pkgs.linuxPackages_5_18;
-            boot.kernelPatches = patches;
+            boot = {
+              kernelPackages = pkgs.linuxPackages_5_15;
+              kernelPatches = kernelPatches;
+            };
+            hardware.deviceTree = {
+              enable = true;
+              filter = "cn913*.dtb";
+            };
+            sdImage.populateFirmwareCommands = ''
+              dd if=${pkgs.ubootCN9130_CF_Pro} of=/dev/sdX bs=512 seek=4096 conv=sync
+            '';
+            nixpkgs.overlays = [
+              (final: prev: {
+                ubootCN9130_CF_Pro = pkgs.fetchurl {
+                  name = "u-boot-cn9130-cf-pro-mmc_1_0.bin";
+                  url = "https://solid-run-images.sos-de-fra-1.exo.io/CN913x/cn913x_build/20220707-f33e2ae/u-boot/u-boot-cn9130-cf-pro-mmc:1:0.bin";
+                  sha256 = "sha256-C23YcrMlFAvSIxVq/YKKg3nuHriXQ1WCi8dxV4WsPsE=";
+                };
+              })
+            ];
           };
         })
       ({ config, lib, ... }:
