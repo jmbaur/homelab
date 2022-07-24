@@ -120,9 +120,12 @@ inputs: with inputs; {
               enable = true;
               filter = "cn913*.dtb";
             };
-            sdImage.populateFirmwareCommands = ''
-              dd if=${pkgs.ubootCN9130_CF_Pro} of=/dev/sdX bs=512 seek=4096 conv=sync
-            '';
+            sdImage = {
+              rootPartitionUUID = "86c3eb00-1c10-4d09-9ce0-1cf5cd1e5951"; # Generated with `uuidgen`
+              populateFirmwareCommands = ''
+                dd if=${pkgs.ubootCN9130_CF_Pro} of=/dev/sdX bs=512 seek=4096 conv=sync
+              '';
+            };
             nixpkgs.overlays = [
               (final: prev: {
                 ubootCN9130_CF_Pro = pkgs.fetchurl {
