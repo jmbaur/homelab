@@ -681,11 +681,11 @@
         "nixpkgs-wayland": "nixpkgs-wayland"
       },
       "locked": {
-        "lastModified": 1658695361,
-        "narHash": "sha256-Glyor/7qSGUpPHUX1WXx185ybzrA5hzBHPpZEPei0PI=",
+        "lastModified": 1658703286,
+        "narHash": "sha256-V9O27t/jHmavNbkXIfWWSinRdne+IKn4Pxrfvw/mroQ=",
         "owner": "jmbaur",
         "repo": "nixos-configs",
-        "rev": "7c6dfe8afc83370f262a41acd1f21bbe7c37b455",
+        "rev": "4a651134543b8bd56b954ee0b8acc2226aed6687",
         "type": "github"
       },
       "original": {
@@ -800,11 +800,11 @@
     },
     "nixpkgs_11": {
       "locked": {
-        "lastModified": 1658557357,
-        "narHash": "sha256-0gqNef6skYQKJSS2vLojxrXOrc72zoX5VTDKUqEo6Gk=",
+        "lastModified": 1658648081,
+        "narHash": "sha256-RL5nr4Xhp0zQeEGG/I3t3FmqaI9QrBg5PH31NF+7A/A=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "42ca9bef09e780eabe84328dd1b730cef978f098",
+        "rev": "e494a908e8895b9cba18e21d5fc83362f64b3f6a",
         "type": "github"
       },
       "original": {
