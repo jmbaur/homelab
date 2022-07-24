@@ -22,6 +22,7 @@ let
     modules = installer_img_modules;
   }).config.system.build.sdImage;
 
+
   installer_iso = system: (nixpkgs.lib.nixosSystem {
     inherit system;
     modules = installer_iso_modules;
