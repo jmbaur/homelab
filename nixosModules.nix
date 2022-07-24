@@ -33,21 +33,7 @@ inputs: with inputs; {
             "${cn913x_build}/patches/u-boot/0016-octeontx2_cn913x-enable-mmc-partconf-command.patch"
             "${cn913x_build}/patches/u-boot/0017-uboot-add-support-cn9131-cf-solidwan.patch"
             "${cn913x_build}/patches/u-boot/0018-uboot-add-support-bldn-mbv.patch"
-            (prev.writeText "octeontx2_cn913x-higher-ramdisk_addr_r.patch" ''
-              diff --git a/include/configs/octeontx2_cn913x.h b/include/configs/octeontx2_cn913x.h
-              index d01644fcb5..52d6f80aeb 100644
-              --- a/include/configs/octeontx2_cn913x.h
-              +++ b/include/configs/octeontx2_cn913x.h
-              @@ -38,7 +38,7 @@
-               #define CONFIG_EXTRA_ENV_SETTINGS \
-                  "kernel_addr_r=0x7000000\0" \
-                    "fdt_addr_r=0x6f00000\0" \
-                    - "ramdisk_addr_r=0x9000000\0" \
-                    + "ramdisk_addr_r=0xB000000\0" \
-                      "scriptaddr=0x6e00000\0" \
-                        "pxefile_addr_r=0x6000000\0" \
-                          BOOTENV
-            '')
+            ./ramdisk_addr_r.patch
           ];
         });
         armTrustedFirmwareCN9130_CF_Pro = (prev.buildArmTrustedFirmware rec {
