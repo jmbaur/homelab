@@ -44,6 +44,16 @@ inputs: with inputs; {
           self.nixosConfigurations.kale2;
       };
     };
+
+    artichoke = {
+      hostname = "artichoke.mgmt.home.arpa";
+      profiles.system = {
+        sshUser = "root";
+        path = deploy-rs.lib.aarch64-linux.activate.nixos
+          self.nixosConfigurations.artichoke;
+      };
+    };
+
     rhubarb = {
       hostname = "rhubarb.mgmt.home.arpa";
       profiles.system = {
