@@ -4,13 +4,16 @@ inputs: with inputs; {
       (final: prev: {
         ubootCN9130_CF_Pro = (prev.buildUBoot rec {
           version = "2019.10";
-          src = prev.fetchurl {
-            url = "ftp://ftp.denx.de/pub/u-boot/u-boot-${version}.tar.bz2";
-            hash = "sha256-jW1gcHOVIt0jbLpwVbhza/6StPrA6hitgJgpynlmcBQ=";
+          src = prev.fetchFromGitHub {
+            owner = "u-boot";
+            repo = "u-boot";
+            rev = "v${version}";
+            sha256 = "sha256-NhIw4oI1HPjNBWXHJUyScq5qsJ4gx0Al7LNTa95rQTo=";
           };
           extraMeta.platforms = [ "aarch64-linux" ];
-          filesToInstall = [ "u-boot.bin" ];
           defconfig = "sr_cn913x_cex7_defconfig";
+          extraMakeFlags = [ "DEVICE_TREE=cn9130-cf-pro" ];
+          filesToInstall = [ "u-boot.bin" ];
         }).overrideAttrs (_: {
           # Nixpkgs has some patches for the raspberry pi that don't apply
           # cleanly to the solidrun version of u-boot.
@@ -39,27 +42,16 @@ inputs: with inputs; {
         armTrustedFirmwareCN9130_CF_Pro = (prev.buildArmTrustedFirmware rec {
           platform = "t9130";
           extraMeta.platforms = [ "aarch64-linux" ];
-          BL33 = "${final.ubootCN9130_CF_Pro}/u-boot.bin";
-          SCP_BL2 = "${cn913x_build}/binaries/atf/mrvl_scp_bl2.img";
           filesToInstall = [ "build/${platform}/release/flash-image.bin" ];
-          extraMakeFlags =
-            let
-              marvell-embedded-processors = prev.fetchFromGitHub {
-                owner = "MarvellEmbeddedProcessors";
-                repo = "mv-ddr-marvell";
-                rev = "mv-ddr-devel";
-                sha256 = "sha256-u13IJRsPPiJyeAsTphrAYY7rlznIJEE4Zt8z4yWE/I4=";
-              };
-            in
-            [
+          extraMakeFlags = [
               "USE_COHERENT_MEM=0"
               "LOG_LEVEL=20"
-              "MV_DDR_PATH=${marvell-embedded-processors}"
+              "MV_DDR_PATH=/tmp/mv_ddr_path"
               "CP_NUM=1" # clearfog pro
               "all"
               "fip"
             ];
-        }).overrideAttrs (_: rec {
+        }).overrideAttrs (old: rec {
           version = "00ad74c7afe67b2ffaf08300710f18d3dafebb45";
           src = prev.fetchFromGitHub {
             owner = "ARM-software";
@@ -67,10 +59,31 @@ inputs: with inputs; {
             rev = version;
             sha256 = "sha256-kHI6H1yym8nWWmLMNOOLUbdtdyNPdNEvimq8EdW0nZw=";
           };
-          patches = [
+          patches = old.patches ++ [
             "${cn913x_build}/patches/arm-trusted-firmware/0001-ddr-spd-read-failover-to-defualt-config.patch"
             "${cn913x_build}/patches/arm-trusted-firmware/0002-som-sdp-failover-using-crc-verification.patch"
           ];
+          preBuild = 
+            let
+              # https://github.com/ARM-software/arm-trusted-firmware/blob/master/docs/plat/marvell/armada/build.rst#tf-a-build-instructions-for-marvell-platforms
+              # ATF's build process does some nasty things and needs the .git
+              # directory.
+              marvell-embedded-processors = prev.fetchgit {
+                leaveDotGit = true;
+                url = "https://github.com/MarvellEmbeddedProcessors/mv-ddr-marvell";
+                rev = "305d923e6bc4236cd3b902f6679b0aef9e5fa52d";
+                sha256 = "sha256-d9tS0ajHGzVEi1XJzdu0dCvfeEHSPVCrfBqV8qLqC5c=";
+              };
+            in
+          ''
+            cp -r ${marvell-embedded-processors} /tmp/mv_ddr_path
+            ls -alh /tmp/mv_ddr_path
+          '';
+          BL33 = "${prev.symlinkJoin {
+            name = "armTrustedFirmwareCN9130_CF_Pro-BL33";
+            paths = [ final.ubootCN9130_CF_Pro.src final.ubootCN9130_CF_Pro ];
+          }}/u-boot.bin";
+          SCP_BL2 = "${cn913x_build}/binaries/atf/mrvl_scp_bl2.img";
         });
       })
     ];

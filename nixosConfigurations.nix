@@ -98,7 +98,8 @@ inputs: with inputs; {
       homelab-private.nixosModules.common
       nixos-configs.nixosModules.default
       self.nixosModules.default
-      ({pkgs, ...}:{ sdImage.postBuildCommands = "dd if=${pkgs.armTrustedFirmwareCN9130_CF_Pro}/flash-image.bin of=$img bs=512 seek=4096 conv=notrunc"; })
+      # TODO(jared): Put this in when ATF build works.
+      # ({pkgs, ...}:{ sdImage.postBuildCommands = "dd if=${pkgs.armTrustedFirmwareCN9130_CF_Pro}/flash-image.bin of=$img bs=512 seek=4096 conv=notrunc"; })
     ];
   };
 
