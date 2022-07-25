@@ -1,6 +1,7 @@
 { lib, inventory, ... }:
 let
   mkInternalInterface = network: {
+    linkConfig.RequiredForOnline = "no";
     networkConfig = {
       Address = [
         "${network.hosts.artichoke.ipv4}/${toString network.ipv4Cidr}"
@@ -52,13 +53,13 @@ in
   systemd.network.networks = {
     lan-master = {
       name = "eth1";
-      networkConfig.LinkLocalAddressing = "no";
+      linkConfig.RequiredForOnline = "no";
     };
-    mgmt = { name = "lan1"; } // mgmt;
-    public = { name = "lan2"; } // public;
-    trusted = { name = "lan3"; } // trusted;
-    iot = { name = "lan4"; } // iot;
-    work = { name = "lan5"; } // work;
-    data = { name = "data"; } // data;
+    mgmt = lib.recursiveUpdate mgmt { name = "lan1"; networkConfig.BindCarrier = "eth1"; };
+    public = lib.recursiveUpdate public { name = "lan2"; networkConfig.BindCarrier = "eth1"; };
+    trusted = lib.recursiveUpdate trusted { name = "lan3"; networkConfig.BindCarrier = "eth1"; };
+    iot = lib.recursiveUpdate iot { name = "lan4"; networkConfig.BindCarrier = "eth1"; };
+    work = lib.recursiveUpdate work { name = "lan5"; networkConfig.BindCarrier = "eth1"; };
+    data = lib.recursiveUpdate data { name = "data"; };
   };
 }

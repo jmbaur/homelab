@@ -13,7 +13,7 @@ flake-utils.lib.eachDefaultSystemMap
       pkgs = import nixpkgs { inherit system; };
       inherit (homelab-private.secrets.networking) guaPrefix;
       ulaPrefix = "fd82:f21d:118d";
-      v4Prefix = "192.168";
+      v4Prefix = "172.16";
       tld = "jmbaur.com";
       inherit (pkgs) lib;
 
