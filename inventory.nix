@@ -13,6 +13,7 @@ flake-utils.lib.eachDefaultSystemMap
       pkgs = import nixpkgs { inherit system; };
       inherit (homelab-private.secrets.networking) guaPrefix;
       ulaPrefix = "fd82:f21d:118d";
+      v4Prefix = "192.168";
       tld = "jmbaur.com";
       inherit (pkgs) lib;
 
@@ -28,7 +29,7 @@ flake-utils.lib.eachDefaultSystemMap
                                 , lastBit
                                 }: {
         inherit name dhcp mac wgPeer publicKey;
-        ipv4 = mkIPv4Addr "192.168" networkId lastBit;
+        ipv4 = mkIPv4Addr v4Prefix networkId lastBit;
         ipv6 = {
           gua = (mkIPv6Addr guaPrefix (toHexString networkId) (toHexString lastBit));
           ula = (mkIPv6Addr ulaPrefix (toHexString networkId) (toHexString lastBit));
@@ -39,7 +40,7 @@ flake-utils.lib.eachDefaultSystemMap
           mkNetworkHost = mkHost id;
           ipv4Cidr = 24;
           ipv6Cidr = 64;
-          networkIPv4 = mkIPv4Addr "192.168" id 0;
+          networkIPv4 = mkIPv4Addr v4Prefix id 0;
           networkIPv4Cidr = "${networkIPv4}/${toString ipv4Cidr}";
           networkGuaPrefix = "${guaPrefix}:${toHexString id}";
           networkUlaPrefix = "${ulaPrefix}:${toHexString id}";
@@ -71,13 +72,12 @@ flake-utils.lib.eachDefaultSystemMap
         inherit tld;
         networks = lib.mapAttrs (name: networkInfo: mkNetwork name networkInfo) {
           mgmt = {
-            id = 88;
+            id = 10;
             hosts = {
-              broccoli.lastBit = 1;
+              artichoke.lastBit = 1;
               switch0.lastBit = 2;
               switch1.lastBit = 3;
               ap0.lastBit = 4;
-              broccoli-ipmi = { lastBit = 50; dhcp = true; mac = "00:25:90:f7:32:08"; };
               kale-ipmi = { lastBit = 51; dhcp = true; mac = "d0:50:99:f7:c4:8d"; };
               kale = { lastBit = 52; dhcp = true; mac = "d0:50:99:fe:1e:e2"; };
               kale2 = { lastBit = 62; dhcp = true; mac = "d0:63:b4:03:db:66"; };
@@ -85,45 +85,49 @@ flake-utils.lib.eachDefaultSystemMap
               asparagus = { lastBit = 54; dhcp = true; mac = "e4:1d:2d:7f:1a:d0"; };
             };
           };
-          pubwan = {
-            id = 10;
+          public = {
+            id = 20;
             hosts = {
-              broccoli.lastBit = 1;
+              artichoke.lastBit = 1;
               website.lastBit = 11;
             };
-          };
-          publan = {
-            id = 20;
-            hosts.broccoli.lastBit = 1;
           };
           trusted = {
             id = 30;
             hosts = {
-              broccoli.lastBit = 1;
+              artichoke.lastBit = 1;
               asparagus = { lastBit = 50; dhcp = true; mac = "e4:1d:2d:7f:1a:d0"; };
               okra = { lastBit = 51; dhcp = true; mac = "5c:80:b6:92:eb:27"; };
             };
           };
           iot = {
             id = 40;
-            hosts.broccoli.lastBit = 1;
+            hosts.artichoke.lastBit = 1;
           };
           work = {
             id = 50;
-            hosts.broccoli.lastBit = 1;
+            hosts.artichoke.lastBit = 1;
           };
           wg-trusted = {
             id = 60;
             hosts = {
-              broccoli.lastBit = 1;
+              artichoke.lastBit = 1;
               beetroot = { lastBit = 50; wgPeer = true; publicKey = "T+zc4lpoEgxPIKEBr9qXiAzb/ruRbqZuVrih+0rGs2M="; };
             };
           };
           wg-iot = {
             id = 70;
             hosts = {
-              broccoli.lastBit = 1;
+              artichoke.lastBit = 1;
               pixel = { lastBit = 50; wgPeer = true; publicKey = "pCvnlCWnM46XY3+327rQyOPA91wajC1HPTmP/5YHcy8="; };
+            };
+          };
+          data = {
+            id = 80;
+            hosts = {
+              artichoke.lastBit = 1;
+              # kale2 = { lastBit = 2; dhcp = true; mac = "TODO"; };
+              # kale = { lastBit = 3; dhcp = true; mac = "TODO"; };
             };
           };
         };
