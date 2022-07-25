@@ -20,6 +20,11 @@
     useNetworkd = true;
   };
 
+  systemd.network.networks.wan = {
+    name = "eth2";
+    DHCP = "yes";
+  };
+
   users.users.jared = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
