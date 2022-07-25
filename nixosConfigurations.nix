@@ -89,7 +89,7 @@ inputs: with inputs; {
     ];
   };
 
-  artichoke = nixpkgs.lib.nixosSystem {
+  artichoke = nixpkgs.lib.nixosSystem rec {
     system = "aarch64-linux";
     specialArgs = {
       inherit inputs;
