@@ -1,7 +1,5 @@
-{ buildGoModule
-, fetchFromGitHub
-, lib
-}: buildGoModule {
+{ buildGoModule, fetchFromGitHub }:
+buildGoModule {
   name = "coredns-utils";
   src = fetchFromGitHub {
     owner = "coredns";

@@ -1,4 +1,4 @@
-{ config, lib, pkgs, secrets, inventory, ... }:
+{ lib, inventory, ... }:
 let
   mkInternalInterface = network: {
     networkConfig = {

@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }: {
+{ config, pkgs, inventory, ... }: {
   imports = [
     ./atftpd.nix
     ./dhcpv6.nix
