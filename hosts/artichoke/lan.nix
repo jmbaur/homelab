@@ -1,7 +1,12 @@
 { lib, inventory, ... }:
 let
   mkInternalInterface = network: {
-    linkConfig.RequiredForOnline = "no";
+    name = network.hosts.artichoke.interface;
+    linkConfig = {
+      RequiredForOnline = "no";
+    } // lib.optionalAttrs (network.mtu != null) {
+      MTUBytes = toString network.mtu;
+    };
     networkConfig = {
       Address = [
         "${network.hosts.artichoke.ipv4}/${toString network.ipv4Cidr}"
@@ -30,7 +35,9 @@ let
       DNS = [ network.hosts.artichoke.ipv4 ];
       EmitNTP = "yes";
       NTP = [ network.hosts.artichoke.ipv4 ];
-      SendOption = [ "15:string:home.arpa" ];
+      SendOption = [
+        "15:string:home.arpa"
+      ] ++ lib.optional (network.mtu != null) "26:uint16:${toString network.mtu}";
     };
     dhcpServerStaticLeases = lib.flatten
       (lib.mapAttrsToList
@@ -55,11 +62,11 @@ in
       name = "eth1";
       linkConfig.RequiredForOnline = "no";
     };
-    mgmt = lib.recursiveUpdate mgmt { name = "lan1"; networkConfig.BindCarrier = "eth1"; };
-    public = lib.recursiveUpdate public { name = "lan2"; networkConfig.BindCarrier = "eth1"; };
-    trusted = lib.recursiveUpdate trusted { name = "lan3"; networkConfig.BindCarrier = "eth1"; };
-    iot = lib.recursiveUpdate iot { name = "lan4"; networkConfig.BindCarrier = "eth1"; };
-    work = lib.recursiveUpdate work { name = "lan5"; networkConfig.BindCarrier = "eth1"; };
-    data = lib.recursiveUpdate data { name = "data"; };
+    mgmt = lib.recursiveUpdate mgmt { networkConfig.BindCarrier = "eth1"; };
+    public = lib.recursiveUpdate public { networkConfig.BindCarrier = "eth1"; };
+    trusted = lib.recursiveUpdate trusted { networkConfig.BindCarrier = "eth1"; };
+    iot = lib.recursiveUpdate iot { networkConfig.BindCarrier = "eth1"; };
+    work = lib.recursiveUpdate work { networkConfig.BindCarrier = "eth1"; };
+    data = data;
   };
 }

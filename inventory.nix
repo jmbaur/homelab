@@ -23,19 +23,20 @@ flake-utils.lib.eachDefaultSystemMap
       mkIPv4Addr = prefix: thirdOctet: fourthOctet: "${prefix}.${toString thirdOctet}.${toString fourthOctet}";
       mkIPv6Addr = prefix: fourthHextet: lastHextet: "${prefix}:${fourthHextet}::${lastHextet}";
       mkHost = networkId: name: { dhcp ? false
+                                , interface ? null
                                 , mac ? null
                                 , wgPeer ? false
                                 , publicKey ? null
                                 , lastBit
                                 }: {
-        inherit name dhcp mac wgPeer publicKey;
+        inherit name interface dhcp mac wgPeer publicKey;
         ipv4 = mkIPv4Addr v4Prefix networkId lastBit;
         ipv6 = {
           gua = (mkIPv6Addr guaPrefix (toHexString networkId) (toHexString lastBit));
           ula = (mkIPv6Addr ulaPrefix (toHexString networkId) (toHexString lastBit));
         };
       };
-      mkNetwork = name: { id, hosts }:
+      mkNetwork = name: { id, mtu ? null, hosts }:
         let
           mkNetworkHost = mkHost id;
           ipv4Cidr = 24;
@@ -52,16 +53,17 @@ flake-utils.lib.eachDefaultSystemMap
         in
         {
           inherit
-            name
             id
             ipv4Cidr
             ipv6Cidr
+            mtu
+            name
+            networkGuaCidr
+            networkGuaPrefix
             networkIPv4
             networkIPv4Cidr
-            networkGuaPrefix
-            networkUlaPrefix
-            networkGuaCidr
-            networkUlaCidr;
+            networkUlaCidr
+            networkUlaPrefix;
           domain = "${name}.home.arpa";
           hosts = networkHosts;
           managed = (lib.filterAttrs (_: host: host.dhcp) networkHosts) != { };
@@ -74,7 +76,10 @@ flake-utils.lib.eachDefaultSystemMap
           mgmt = {
             id = 10;
             hosts = {
-              artichoke.lastBit = 1;
+              artichoke = {
+                lastBit = 1;
+                interface = "lan1";
+              };
               switch0.lastBit = 2;
               switch1.lastBit = 3;
               ap0.lastBit = 4;
@@ -88,25 +93,37 @@ flake-utils.lib.eachDefaultSystemMap
           public = {
             id = 20;
             hosts = {
-              artichoke.lastBit = 1;
+              artichoke = {
+                lastBit = 1;
+                interface = "lan2";
+              };
               website.lastBit = 11;
             };
           };
           trusted = {
             id = 30;
             hosts = {
-              artichoke.lastBit = 1;
+              artichoke = {
+                lastBit = 1;
+                interface = "lan3";
+              };
               asparagus = { lastBit = 50; dhcp = true; mac = "e4:1d:2d:7f:1a:d0"; };
               okra = { lastBit = 51; dhcp = true; mac = "5c:80:b6:92:eb:27"; };
             };
           };
           iot = {
             id = 40;
-            hosts.artichoke.lastBit = 1;
+            hosts.artichoke = {
+              lastBit = 1;
+              interface = "lan4";
+            };
           };
           work = {
             id = 50;
-            hosts.artichoke.lastBit = 1;
+            hosts.artichoke = {
+              lastBit = 1;
+              interface = "lan5";
+            };
           };
           wg-trusted = {
             id = 60;
@@ -124,8 +141,12 @@ flake-utils.lib.eachDefaultSystemMap
           };
           data = {
             id = 80;
+            mtu = 9000;
             hosts = {
-              artichoke.lastBit = 1;
+              artichoke = {
+                lastBit = 1;
+                interface = "data";
+              };
               # kale2 = { lastBit = 2; dhcp = true; mac = "TODO"; };
               # kale = { lastBit = 3; dhcp = true; mac = "TODO"; };
             };
