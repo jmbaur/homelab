@@ -91,15 +91,22 @@ inputs: with inputs; {
 
   artichoke = nixpkgs.lib.nixosSystem {
     system = "aarch64-linux";
-    specialArgs = { inherit inputs; };
+    specialArgs = {
+      inherit inputs;
+      inherit (homelab-private) secrets;
+      inherit (self.inventory.${system}) inventory;
+    };
     modules = [
       "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
-      ./hosts/artichoke/configuration.nix
-      homelab-private.nixosModules.common
-      nixos-configs.nixosModules.default
-      self.nixosModules.default
       # TODO(jared): Put this in when ATF build works.
       # ({pkgs, ...}:{ sdImage.postBuildCommands = "dd if=${pkgs.armTrustedFirmwareCN9130_CF_Pro}/flash-image.bin of=$img bs=512 seek=4096 conv=notrunc"; })
+      ./hosts/artichoke/configuration.nix
+      agenix.nixosModules.age
+      homelab-private.nixosModules.common
+      ipwatch.nixosModules.default
+      nixos-configs.nixosModules.default
+      self.nixosModules.default
+      { nixpkgs.overlays = [ ipwatch.overlays.default ]; }
     ];
   };
 
