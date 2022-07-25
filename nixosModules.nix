@@ -200,6 +200,7 @@ inputs: with inputs; {
           options.hardware.cn913x.enable = lib.mkEnableOption "cn913x hardware";
           config = lib.mkIf cfg.enable {
             boot = {
+              initrd.systemd.enable = true;
               kernelPackages = pkgs.linuxPackages_5_15;
               kernelPatches = kernelPatches;
             };

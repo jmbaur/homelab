@@ -1,4 +1,17 @@
 { config, lib, pkgs, ... }: {
+  # imports = [
+  #   ./atftpd.nix
+  #   ./dhcpv6.nix
+  #   ./dns.nix
+  #   ./hardware-configuration.nix
+  #   ./lan.nix
+  #   ./monitoring.nix
+  #   ./nftables.nix
+  #   ./options.nix
+  #   ./wan.nix
+  #   ./wireguard.nix
+  # ];
+
   hardware.cn913x.enable = true;
 
   custom = {
