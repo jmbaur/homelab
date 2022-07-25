@@ -149,7 +149,6 @@
                     $DEV_WG_IOT,
                     $DEV_TRUSTED,
                     $DEV_WG_TRUSTED,
-                    $DEV_PUBLAN,
                     $DEV_MGMT,
                 } accept
             }
@@ -159,7 +158,6 @@
                 oifname {
                     $DEV_IOT,
                     $DEV_WG_IOT,
-                    $DEV_PUBLAN,
                 } accept
             }
 
