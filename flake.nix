@@ -51,6 +51,7 @@
     checks = import ./checks.nix inputs;
     deploy = import ./deploy.nix inputs;
     devShells = import ./devShells.nix inputs;
+    formatter = import ./formatter.nix inputs;
     inventory = import ./inventory.nix inputs;
     nixosConfigurations = import ./nixosConfigurations.nix inputs;
     nixosModules = import ./nixosModules.nix inputs;

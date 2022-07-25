@@ -44,13 +44,13 @@ inputs: with inputs; {
           extraMeta.platforms = [ "aarch64-linux" ];
           filesToInstall = [ "build/${platform}/release/flash-image.bin" ];
           extraMakeFlags = [
-              "USE_COHERENT_MEM=0"
-              "LOG_LEVEL=20"
-              "MV_DDR_PATH=/tmp/mv_ddr_path"
-              "CP_NUM=1" # clearfog pro
-              "all"
-              "fip"
-            ];
+            "USE_COHERENT_MEM=0"
+            "LOG_LEVEL=20"
+            "MV_DDR_PATH=/tmp/mv_ddr_path"
+            "CP_NUM=1" # clearfog pro
+            "all"
+            "fip"
+          ];
         }).overrideAttrs (old: rec {
           version = "00ad74c7afe67b2ffaf08300710f18d3dafebb45";
           src = prev.fetchFromGitHub {
@@ -63,7 +63,7 @@ inputs: with inputs; {
             "${cn913x_build}/patches/arm-trusted-firmware/0001-ddr-spd-read-failover-to-defualt-config.patch"
             "${cn913x_build}/patches/arm-trusted-firmware/0002-som-sdp-failover-using-crc-verification.patch"
           ];
-          preBuild = 
+          preBuild =
             let
               # https://github.com/ARM-software/arm-trusted-firmware/blob/master/docs/plat/marvell/armada/build.rst#tf-a-build-instructions-for-marvell-platforms
               # ATF's build process does some nasty things and needs the .git
@@ -75,10 +75,10 @@ inputs: with inputs; {
                 sha256 = "sha256-d9tS0ajHGzVEi1XJzdu0dCvfeEHSPVCrfBqV8qLqC5c=";
               };
             in
-          ''
-            cp -r ${marvell-embedded-processors} /tmp/mv_ddr_path
-            ls -alh /tmp/mv_ddr_path
-          '';
+            ''
+              cp -r ${marvell-embedded-processors} /tmp/mv_ddr_path
+              ls -alh /tmp/mv_ddr_path
+            '';
           BL33 = "${prev.symlinkJoin {
             name = "armTrustedFirmwareCN9130_CF_Pro-BL33";
             paths = [ final.ubootCN9130_CF_Pro.src final.ubootCN9130_CF_Pro ];
