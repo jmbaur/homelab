@@ -20,9 +20,24 @@
     useNetworkd = true;
   };
 
-  systemd.network.networks.wan = {
-    name = "eth2";
-    DHCP = "yes";
+  systemd.network = {
+    links = {
+      "10-wan" = {
+        matchConfig.MACAddress = "1a:30:ef:95:e9:48";
+        linkConfig.Name = "wan";
+      };
+      # 10Gbps link
+      "10-data" = {
+        matchConfig.MACAddress = "c2:59:d8:63:46:da";
+        linkConfig.Name = "data";
+      };
+    };
+    networks = {
+      wan = {
+        name = config.systemd.network.links."10-wan".linkConfig.Name;
+        DHCP = "yes";
+      };
+    };
   };
 
   users.users.jared = {
