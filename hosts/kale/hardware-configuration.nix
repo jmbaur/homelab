@@ -4,84 +4,61 @@
 { config, lib, pkgs, modulesPath, ... }:
 
 {
-  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
+  imports =
+    [
+      (modulesPath + "/installer/scan/not-detected.nix")
+    ];
 
-  boot.initrd.availableKernelModules = [
-    "xhci_pci"
-    "ahci"
-    "nvme"
-    "usb_storage"
-    "usbhid"
-    "sd_mod"
-  ];
+  boot.initrd.availableKernelModules = [ "nvme" "usb_storage" ];
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-amd" ];
+  boot.kernelModules = [ ];
   boot.extraModulePackages = [ ];
-
-  boot.initrd.luks.reusePassphrases = true;
-  boot.initrd.luks.devices."cryptroot" = {
-    allowDiscards = true;
-    device = "/dev/disk/by-uuid/f21ee887-1fd6-4f5b-9a93-5cadc76dc9d0";
-  };
-  boot.initrd.luks.devices."cryptfast0" = {
-    allowDiscards = true;
-    device = "/dev/disk/by-uuid/fe11928a-a8cc-432f-a26f-247ceb752133";
-  };
-  boot.initrd.luks.devices."cryptfast1" = {
-    allowDiscards = true;
-    device = "/dev/disk/by-uuid/585155c2-ff8f-4102-95cf-71031b9b4ab9";
-  };
-  boot.initrd.luks.devices."cryptbig0".device = "/dev/disk/by-uuid/5abf67a7-3020-408a-a59f-0b899a59fcbb";
-  boot.initrd.luks.devices."cryptbig1".device = "/dev/disk/by-uuid/b3adb35b-b9fa-45bf-8556-6083ad1e5f37";
-
-  fileSystems."/boot" =
-    {
-      device = "/dev/disk/by-uuid/EB16-015F";
-      fsType = "vfat";
-    };
 
   fileSystems."/" =
     {
-      device = "/dev/disk/by-uuid/c04956b8-c80d-4c79-ab8b-ed4562df6e2f";
+      device = "/dev/disk/by-uuid/7bdaa893-23f2-43d0-b14e-676b1af96790";
       fsType = "btrfs";
       options = [ "subvol=@" "noatime" "discard=async" "compress=zstd" ];
     };
 
+  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/12ff8ac9-228d-42ab-9eb0-d8b3c21e5e2e";
+
   fileSystems."/nix" =
     {
-      device = "/dev/disk/by-uuid/c04956b8-c80d-4c79-ab8b-ed4562df6e2f";
+      device = "/dev/disk/by-uuid/7bdaa893-23f2-43d0-b14e-676b1af96790";
       fsType = "btrfs";
       options = [ "subvol=@nix" "noatime" "discard=async" "compress=zstd" ];
     };
 
+  fileSystems."/var" =
+    {
+      device = "/dev/disk/by-uuid/7bdaa893-23f2-43d0-b14e-676b1af96790";
+      fsType = "btrfs";
+      options = [ "subvol=@var" "noatime" "discard=async" "compress=zstd" ];
+    };
+
   fileSystems."/home" =
     {
-      device = "/dev/disk/by-uuid/c04956b8-c80d-4c79-ab8b-ed4562df6e2f";
+      device = "/dev/disk/by-uuid/7bdaa893-23f2-43d0-b14e-676b1af96790";
       fsType = "btrfs";
       options = [ "subvol=@home" "noatime" "discard=async" "compress=zstd" ];
     };
 
-  fileSystems."/fast" =
+  fileSystems."/boot" =
     {
-      device = "/dev/disk/by-uuid/33485395-bf33-481c-b5a1-10e39b577ba9";
-      fsType = "btrfs";
-      options = [ "device=/dev/mapper/cryptfast0" "device=/dev/mapper/cryptfast1" "subvol=@" "autodefrag" "noatime" "compress=zstd" "discard=async" ];
-    };
-
-  fileSystems."/big" =
-    {
-      device = "/dev/disk/by-uuid/e27d861d-d2b9-4831-897c-3f8ea185cde0";
-      fsType = "btrfs";
-      options = [ "device=/dev/mapper/cryptbig0" "device=/dev/mapper/cryptbig1" "subvol=@" "autodefrag" "noatime" "compress=zstd" ];
+      device = "/dev/disk/by-uuid/5A2B-677E";
+      fsType = "vfat";
     };
 
   swapDevices = [ ];
-  zramSwap = {
-    enable = true;
-    swapDevices = 1;
-  };
+  zramSwap.enable = true;
 
-  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-  # high-resolution display
-  hardware.video.hidpi.enable = lib.mkDefault true;
+  # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
+  # (the default) this is the recommended approach. When using systemd-networkd it's
+  # still possible to use this option, but it's recommended to use it in conjunction
+  # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
+  networking.useDHCP = lib.mkDefault true;
+  # networking.interfaces.eth0.useDHCP = lib.mkDefault true;
+
+  nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
 }

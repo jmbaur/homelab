@@ -137,13 +137,13 @@
                 oifname { $DEV_WAN, $DEV_WAN6 } accept
             }
 
+            chain forward_mgmt {
+                # TODO(jared): Don't allow mgmt network to the internet
+                accept
+            }
+
             chain forward_trusted {
-                jump allow_to_internet
-                oifname {
-                    $DEV_IOT,
-                    $DEV_TRUSTED,
-                    $DEV_MGMT,
-                } accept
+                accept
             }
 
             chain forward_iot {
@@ -178,7 +178,7 @@
                 iifname vmap {
                     $DEV_WAN : jump forward_from_wan,
                     $DEV_WAN6 : jump forward_from_wan,
-                    $DEV_MGMT : accept,
+                    $DEV_MGMT : jump forward_mgmt,
                     $DEV_PUBLIC : jump allow_to_internet,
                     $DEV_TRUSTED : jump forward_trusted,
                     $DEV_IOT : jump forward_iot,

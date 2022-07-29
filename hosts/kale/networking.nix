@@ -1,70 +1,35 @@
-{ config, lib, pkgs, inventory, ... }: {
+{ lib, ... }: {
   networking = {
+    useDHCP = lib.mkForce false;
     hostName = "kale";
-    useDHCP = false;
     useNetworkd = true;
-    firewall = {
-      enable = true;
-      interfaces.${config.systemd.network.networks.mgmt.name} = {
-        allowedTCPPorts = config.services.openssh.ports ++ [
-          config.services.prometheus.exporters.node.port
-        ];
-      };
-    };
   };
 
   systemd.network = {
-    netdevs = {
-      bridge = {
-        netdevConfig = {
-          Name = "br0";
-          Kind = "bridge";
-        };
-        extraConfig = ''
-          [Bridge]
-          DefaultPVID=none
-          VLANFiltering=yes
-        '';
+    links = {
+      "10-sfp-sfpplus1" = {
+        matchConfig.MACAddress = "d0:63:b4:03:db:6d";
+        linkConfig.Name = "sfp-sfpplus1";
+      };
+      "10-sfp-sfpplus2" = {
+        matchConfig.MACAddress = "d0:63:b4:03:db:6e";
+        linkConfig.Name = "sfp-sfpplus2";
+      };
+      "10-sfp-sfpplus3" = {
+        matchConfig.MACAddress = "d0:63:b4:03:db:6f";
+        linkConfig.Name = "sfp-sfpplus3";
+      };
+      "10-sfp-sfpplus4" = {
+        matchConfig.MACAddress = "d0:63:b4:03:db:70";
+        linkConfig.Name = "sfp-sfpplus4";
       };
     };
     networks = {
       mgmt = {
-        name = "enp35s0";
+        name = "eth0";
         DHCP = "yes";
         dhcpV4Config.ClientIdentifier = "mac";
       };
-      trunk = {
-        name = "enp1s0";
-        networkConfig.Bridge = config.systemd.network.netdevs.bridge.netdevConfig.Name;
-        # Support for trunked VLANs
-        extraConfig = lib.concatMapStrings
-          (vlan: ''
-            [BridgeVLAN]
-            VLAN=${toString vlan}
-          '')
-          (with inventory.networks; [ pubwan.id trusted.id ]);
-      };
-      bridge = {
-        name = config.systemd.network.netdevs.bridge.netdevConfig.Name;
-        networkConfig.LinkLocalAddressing = "no";
-      };
-      pubwan-vms = {
-        name = "vm-website";
-        networkConfig.Bridge =
-          config.systemd.network.networks.bridge.name;
-        # Each VM needs PVID and EgressUntagged to function properly
-        extraConfig = ''
-          [BridgeVLAN]
-          PVID=${toString inventory.networks.pubwan.id}
-          EgressUntagged=${toString inventory.networks.pubwan.id}
-        '';
-      };
     };
   };
-
-  custom.remoteBoot = {
-    enable = true;
-    authorizedKeyFiles = config.custom.deployee.authorizedKeyFiles;
-  };
-  boot.initrd.availableKernelModules = [ "igb" ];
 }

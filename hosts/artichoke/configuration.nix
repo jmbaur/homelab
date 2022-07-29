@@ -20,27 +20,26 @@
   documentation.enable = false;
   fonts.fontconfig.enable = false;
 
-  age = {
-    secrets = {
-      wg-trusted = {
-        mode = "0640";
-        group = config.users.groups.systemd-network.name;
-        file = ../../secrets/wg-trusted.age;
-      };
-      wg-iot = {
-        mode = "0640";
-        group = config.users.groups.systemd-network.name;
-        file = ../../secrets/wg-iot.age;
-      };
-      wg-work = {
-        mode = "0640";
-        group = config.users.groups.systemd-network.name;
-        file = ../../secrets/wg-work.age;
-      };
-      beetroot.file = ../../secrets/beetroot.age;
-      pixel.file = ../../secrets/pixel.age;
-      ipwatch.file = ../../secrets/ipwatch.age;
+  age.secrets = {
+    wg-trusted = {
+      mode = "0640";
+      group = config.users.groups.systemd-network.name;
+      file = ../../secrets/wg-trusted.age;
     };
+    wg-iot = {
+      mode = "0640";
+      group = config.users.groups.systemd-network.name;
+      file = ../../secrets/wg-iot.age;
+    };
+    wg-work = {
+      mode = "0640";
+      group = config.users.groups.systemd-network.name;
+      file = ../../secrets/wg-work.age;
+    };
+    beetroot.file = ../../secrets/beetroot.age;
+    pixel.file = ../../secrets/pixel.age;
+    okra.file = ../../secrets/okra.age;
+    ipwatch.file = ../../secrets/ipwatch.age;
   };
 
   custom = {

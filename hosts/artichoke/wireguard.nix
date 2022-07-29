@@ -11,7 +11,7 @@ let
         netdevConfig = { Name = wgHost.interface; Kind = "wireguard"; };
         wireguardConfig = {
           ListenPort = port;
-          PrivateKeyFile = "/run/secrets/${wgHost.name}";
+          PrivateKeyFile = config.age.secrets.${wgHost.name}.path;
         };
         wireguardPeers = lib.mapAttrsToList
           (_: wgHost: {
@@ -54,8 +54,7 @@ let
                   [ "home.arpa" ];
               };
               Peer = {
-                PublicKey =
-                  "$(cat /run/secrets/${wgHost.name} | ${pkgs.wireguard-tools}/bin/wg pubkey)";
+                PublicKey = "$(cat ${config.age.secrets.${wgHost.name}.path} | ${pkgs.wireguard-tools}/bin/wg pubkey)";
                 Endpoint = "vpn.${inventory.tld}:${toString port}";
                 AllowedIPs = [ "0.0.0.0/0" "::/0" ];
               };

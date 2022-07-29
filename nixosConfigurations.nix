@@ -60,11 +60,11 @@ inputs: with inputs; {
     ];
   };
 
-  kale = nixpkgs.lib.nixosSystem rec {
+  potato = nixpkgs.lib.nixosSystem rec {
     system = "x86_64-linux";
     specialArgs = { inherit (self.inventory.${system}) inventory; };
     modules = [
-      ./hosts/kale/configuration.nix
+      ./hosts/potato/configuration.nix
       agenix.nixosModules.age
       homelab-private.nixosModules.common
       microvm.nixosModules.host
@@ -75,13 +75,13 @@ inputs: with inputs; {
     ];
   };
 
-  kale2 = nixpkgs.lib.nixosSystem rec {
+  kale = nixpkgs.lib.nixosSystem rec {
     system = "aarch64-linux";
     specialArgs = { inherit (self.inventory.${system}) inventory; };
     modules = [
       # microvm.nixosModules.host
       # { microvm.vms = { website.flake = self; }; }
-      ./hosts/kale2/configuration.nix
+      ./hosts/kale/configuration.nix
       agenix.nixosModules.age
       homelab-private.nixosModules.common
       nixos-configs.nixosModules.default

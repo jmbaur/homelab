@@ -87,9 +87,9 @@ flake-utils.lib.eachDefaultSystemMap
               switch0.lastBit = 2;
               switch1.lastBit = 3;
               # ap0.lastBit = 4; # TODO
-              kale-ipmi = { lastBit = 51; dhcp = true; mac = "d0:50:99:f7:c4:8d"; };
-              kale = { lastBit = 52; dhcp = true; mac = "d0:50:99:fe:1e:e2"; };
-              kale2 = { lastBit = 62; dhcp = true; mac = "d0:63:b4:03:db:66"; };
+              potato-ipmi = { lastBit = 51; dhcp = true; mac = "d0:50:99:f7:c4:8d"; };
+              potato = { lastBit = 52; dhcp = true; mac = "d0:50:99:fe:1e:e2"; };
+              kale = { lastBit = 62; dhcp = true; mac = "d0:63:b4:03:db:66"; };
               rhubarb = { lastBit = 53; dhcp = true; mac = "dc:a6:32:20:50:f2"; };
               asparagus = { lastBit = 54; dhcp = true; mac = "e4:1d:2d:7f:1a:d0"; };
             };
@@ -125,16 +125,14 @@ flake-utils.lib.eachDefaultSystemMap
             hosts = {
               artichoke = { lastBit = 1; interface = "lan5"; };
               laptop = { lastBit = 50; dhcp = true; mac = "08:3a:88:63:1a:b4"; };
+              dev = { lastBit = 60; dhcp = true; mac = "00:0C:29:88:A7:13"; };
+              okra = { lastBit = 51; wgPeer = true; publicKey = "XG/mq6Gdghxu6iW68tdlArnjJei8VCYk9cUl/i81LDA="; };
             };
           };
           data = {
             id = 60;
             mtu = 9000;
-            hosts = {
-              artichoke = { lastBit = 1; interface = "data"; };
-              # kale2 = { lastBit = 2; dhcp = true; mac = "TODO"; };
-              # kale = { lastBit = 3; dhcp = true; mac = "TODO"; };
-            };
+            hosts = { artichoke = { lastBit = 1; interface = "data"; }; };
           };
         };
       };
