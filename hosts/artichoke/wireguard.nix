@@ -2,37 +2,37 @@
 let
   mkWgInterface = network:
     let
-      peers = lib.filterAttrs (_: host: host.wgPeer) network.hosts;
+      wgHost = network.hosts."wg-${network.name}";
+      peers = lib.filterAttrs (_: wgHost: wgHost.wgPeer) network.hosts;
       port = 51800 + network.id;
     in
-    {
+    rec {
       netdev = {
         netdevConfig = { Name = network.name; Kind = "wireguard"; };
         wireguardConfig = {
           ListenPort = port;
-          PrivateKeyFile = "/run/secrets/${network.name}";
+          PrivateKeyFile = "/run/secrets/${wgHost.name}";
         };
         wireguardPeers = lib.mapAttrsToList
-          (_: host: {
+          (_: wgHost: {
             wireguardPeerConfig = {
-              PublicKey = host.publicKey;
+              PublicKey = wgHost.publicKey;
               AllowedIPs = [
-                "${host.ipv4}/32"
-                "${host.ipv6.gua}/128"
-                "${host.ipv6.ula}/128"
+                "${wgHost.ipv4}/32"
+                "${wgHost.ipv6.gua}/128"
+                "${wgHost.ipv6.ula}/128"
               ];
             };
           })
           peers;
       };
-      network = {
-        name = network.name;
-        address =
-          with network.hosts.artichoke; [
-            "${ipv4}/${toString network.ipv4Cidr}"
-            "${ipv6.gua}/${toString network.ipv6Cidr}"
-            "${ipv6.ula}/${toString network.ipv6Cidr}"
-          ];
+      network = with wgHost; {
+        inherit name;
+        address = [
+          "${ipv4}/${toString network.ipv4Cidr}"
+          "${ipv6.gua}/${toString network.ipv6Cidr}"
+          "${ipv6.ula}/${toString network.ipv6Cidr}"
+        ];
       };
       # TODO(jared): provide full-tunnel and split-tunnel configurations.
       clientConfigs = lib.mapAttrsToList
@@ -49,13 +49,13 @@ let
                 PrivateKey =
                   "$(cat ${config.age.secrets.${hostname}.path})";
                 DNS =
-                  (with network.hosts.artichoke; ([ ipv4 ipv6.gua ipv6.ula ]))
+                  (with wgHost; ([ ipv4 ipv6.gua ipv6.ula ]))
                   ++
                   [ "home.arpa" ];
               };
               Peer = {
                 PublicKey =
-                  "$(cat ${config.age.secrets.${network.name}.path} | ${pkgs.wireguard-tools}/bin/wg pubkey)";
+                  "$(cat ${netdev.wireguardConfig.PrivateKeyFile} | ${pkgs.wireguard-tools}/bin/wg pubkey)";
                 Endpoint = "vpn.${inventory.tld}:${toString port}";
                 AllowedIPs = [ "0.0.0.0/0" "::/0" ];
               };
@@ -84,18 +84,23 @@ let
           '')
         peers;
     };
-  wg-trusted = mkWgInterface inventory.networks.wg-trusted;
-  wg-iot = mkWgInterface inventory.networks.wg-iot;
+
+  # TODO(jared): map over all networks that have wireguard set to true
+  trusted = mkWgInterface inventory.networks.trusted;
+  iot = mkWgInterface inventory.networks.iot;
+  work = mkWgInterface inventory.networks.work;
 in
 {
   systemd.network = {
-    netdevs.wg-trusted = wg-trusted.netdev;
-    networks.wg-trusted = wg-trusted.network;
+    netdevs.wg-trusted = trusted.netdev;
+    networks.wg-trusted = trusted.network;
 
-    netdevs.wg-iot = wg-iot.netdev;
-    networks.wg-iot = wg-iot.network;
+    netdevs.wg-iot = iot.netdev;
+    networks.wg-iot = iot.network;
   };
 
-  environment.systemPackages =
-    wg-trusted.clientConfigs ++ wg-iot.clientConfigs ++ [ pkgs.wireguard-tools ];
+  environment.systemPackages = [ pkgs.wireguard-tools ] ++
+    trusted.clientConfigs ++
+    iot.clientConfigs ++
+    work.clientConfigs;
 }

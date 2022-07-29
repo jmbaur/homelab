@@ -36,7 +36,7 @@ flake-utils.lib.eachDefaultSystemMap
           ula = (mkIPv6Addr ulaPrefix (toHexString networkId) (toHexString lastBit));
         };
       };
-      mkNetwork = name: { id, mtu ? null, hosts }:
+      mkNetwork = name: { id, mtu ? null, wireguard ? false, hosts }:
         let
           mkNetworkHost = mkHost id;
           ipv4Cidr = 24;
@@ -47,9 +47,15 @@ flake-utils.lib.eachDefaultSystemMap
           networkUlaPrefix = "${ulaPrefix}:${toHexString id}";
           networkGuaCidr = "${networkGuaPrefix}::/${toString ipv6Cidr}";
           networkUlaCidr = "${networkUlaPrefix}::/${toString ipv6Cidr}";
+          wireguardInterfaces = lib.optional wireguard [
+            (mkHost id "wg-${name}" {
+              interface = "wg-${name}";
+              lastBit = 2;
+            })
+          ];
           networkHosts = lib.mapAttrs
             (name: hostInfo: mkNetworkHost name hostInfo)
-            hosts;
+            (hosts ++ [ wireguardInterfaces ]);
         in
         {
           inherit
@@ -63,7 +69,8 @@ flake-utils.lib.eachDefaultSystemMap
             networkIPv4
             networkIPv4Cidr
             networkUlaCidr
-            networkUlaPrefix;
+            networkUlaPrefix
+            wireguard;
           domain = "${name}.home.arpa";
           hosts = networkHosts;
           managed = (lib.filterAttrs (_: host: host.dhcp) networkHosts) != { };
@@ -76,13 +83,10 @@ flake-utils.lib.eachDefaultSystemMap
           mgmt = {
             id = 10;
             hosts = {
-              artichoke = {
-                lastBit = 1;
-                interface = "lan1";
-              };
-              switch0.lastBit = 2;
-              switch1.lastBit = 3;
-              ap0.lastBit = 4;
+              artichoke = { lastBit = 1; interface = "lan1"; };
+              switch0 = { lastBit = 2; dhcp = true; mac = "18:FD:74:32:D7:B7"; };
+              # switch1 = { lastBit = 3; dhcp = true; mac = "TODO"; };
+              # ap0 = { lastBit = 4; dhcp = true; mac = "TODO"; };
               kale-ipmi = { lastBit = 51; dhcp = true; mac = "d0:50:99:f7:c4:8d"; };
               kale = { lastBit = 52; dhcp = true; mac = "d0:50:99:fe:1e:e2"; };
               kale2 = { lastBit = 62; dhcp = true; mac = "d0:63:b4:03:db:66"; };
@@ -93,60 +97,41 @@ flake-utils.lib.eachDefaultSystemMap
           public = {
             id = 20;
             hosts = {
-              artichoke = {
-                lastBit = 1;
-                interface = "lan2";
-              };
+              artichoke = { lastBit = 1; interface = "lan2"; };
               website.lastBit = 11;
             };
           };
           trusted = {
             id = 30;
+            wireguard = true;
             hosts = {
-              artichoke = {
-                lastBit = 1;
-                interface = "lan3";
-              };
+              artichoke = { lastBit = 1; interface = "lan3"; };
               asparagus = { lastBit = 50; dhcp = true; mac = "e4:1d:2d:7f:1a:d0"; };
               okra = { lastBit = 51; dhcp = true; mac = "5c:80:b6:92:eb:27"; };
+              beetroot = { lastBit = 52; wgPeer = true; publicKey = "T+zc4lpoEgxPIKEBr9qXiAzb/ruRbqZuVrih+0rGs2M="; };
             };
           };
           iot = {
             id = 40;
-            hosts.artichoke = {
-              lastBit = 1;
-              interface = "lan4";
+            wireguard = true;
+            hosts = {
+              artichoke = { lastBit = 1; interface = "lan4"; };
+              pixel = { lastBit = 50; wgPeer = true; publicKey = "pCvnlCWnM46XY3+327rQyOPA91wajC1HPTmP/5YHcy8="; };
             };
           };
           work = {
             id = 50;
-            hosts.artichoke = {
-              lastBit = 1;
-              interface = "lan5";
-            };
-          };
-          wg-trusted = {
-            id = 60;
+            wireguard = true;
             hosts = {
-              artichoke.lastBit = 1;
-              beetroot = { lastBit = 50; wgPeer = true; publicKey = "T+zc4lpoEgxPIKEBr9qXiAzb/ruRbqZuVrih+0rGs2M="; };
-            };
-          };
-          wg-iot = {
-            id = 70;
-            hosts = {
-              artichoke.lastBit = 1;
-              pixel = { lastBit = 50; wgPeer = true; publicKey = "pCvnlCWnM46XY3+327rQyOPA91wajC1HPTmP/5YHcy8="; };
+              artichoke = { lastBit = 1; interface = "lan5"; };
+              laptop = { lastBit = 50; dhcp = true; mac = "08:3a:88:63:1a:b4"; };
             };
           };
           data = {
-            id = 80;
+            id = 60;
             mtu = 9000;
             hosts = {
-              artichoke = {
-                lastBit = 1;
-                interface = "data";
-              };
+              artichoke = { lastBit = 1; interface = "data"; };
               # kale2 = { lastBit = 2; dhcp = true; mac = "TODO"; };
               # kale = { lastBit = 3; dhcp = true; mac = "TODO"; };
             };
