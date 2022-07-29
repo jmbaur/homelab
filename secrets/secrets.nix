@@ -9,6 +9,7 @@ in
   "ipwatch.age".publicKeys = yubikeys ++ [ artichoke ];
   "pixel.age".publicKeys = yubikeys ++ [ artichoke ];
   "beetroot.age".publicKeys = yubikeys ++ [ artichoke ];
+  "okra.age".publicKeys = yubikeys ++ [ artichoke ];
   "wg-trusted.age".publicKeys = yubikeys ++ [ artichoke ];
   "wg-iot.age".publicKeys = yubikeys ++ [ artichoke ];
   "wg-work.age".publicKeys = yubikeys ++ [ artichoke ];
