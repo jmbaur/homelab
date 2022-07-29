@@ -48,6 +48,7 @@
     };
     home.packages = with pkgs; [
       age-plugin-yubikey
+      discord-webapp
       firefox-wayland
       google-chrome
       signal-desktop
