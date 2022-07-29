@@ -3,15 +3,15 @@ flake-utils.lib.eachDefaultSystemMap (system:
   let
     pkgs = import nixpkgs {
       inherit system;
-      overlays = [ deploy-rs.overlay agenix.overlay ];
+      overlays = [ agenix.overlay ];
     };
   in
   {
     default = pkgs.mkShell {
-      buildInputs = [
-        (pkgs.terraform.withPlugins (p: [ p.cloudflare ]))
-        pkgs.agenix
-        pkgs.deploy-rs.deploy-rs
+      buildInputs = with pkgs; [
+        (terraform.withPlugins (p: [ p.cloudflare ]))
+        agenix
+        deploy-rs
       ];
       inherit (pre-commit.lib.${system}.run {
         src = builtins.path { path = ./.; };
