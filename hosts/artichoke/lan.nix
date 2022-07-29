@@ -60,18 +60,18 @@ in
   systemd.network.networks = {
     lan-master = {
       name = "eth1";
-      linkConfig.RequiredForOnline = "no"; 
-      networkConfig={
+      linkConfig.RequiredForOnline = "no";
+      networkConfig = {
         LinkLocalAddressing = "no";
-        BindCarrier = map (i: "lan${toString i}") [1 2 3 4 5 ];
+        BindCarrier = map (i: "lan${toString i}") [ 1 2 3 4 5 ];
       };
     };
     inherit mgmt
-    public
-    trusted
-    iot
-    work
-    # data
-    ;
+      public
+      trusted
+      iot
+      work
+      # data
+      ;
   };
 }
