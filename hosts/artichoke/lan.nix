@@ -58,10 +58,7 @@ let
 in
 {
   systemd.network.networks = {
-    lan-master = {
-      name = "eth1";
-      linkConfig.RequiredForOnline = "no";
-    };
+    lan-master = { name = "eth1"; linkConfig.RequiredForOnline = "no"; };
     mgmt = lib.recursiveUpdate mgmt { networkConfig.BindCarrier = "eth1"; };
     public = lib.recursiveUpdate public { networkConfig.BindCarrier = "eth1"; };
     trusted = lib.recursiveUpdate trusted { networkConfig.BindCarrier = "eth1"; };
