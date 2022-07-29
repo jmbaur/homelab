@@ -1,5 +1,6 @@
 { lib, inventory, ... }:
 let
+  domain = "home.arpa";
   mkInternalInterface = network: {
     name = network.hosts.artichoke.interface;
     linkConfig = {
@@ -21,7 +22,7 @@ let
       Managed = network.managed;
       OtherInformation = false;
       DNS = "_link_local";
-      Domains = [ "home.arpa" ];
+      Domains = [ domain ];
     };
     ipv6Prefixes = map
       (prefix: { ipv6PrefixConfig = { Prefix = prefix; }; })
@@ -29,14 +30,12 @@ let
     dhcpServerConfig = {
       PoolOffset = 50;
       PoolSize = 200;
-      # TODO(jared): When https://github.com/systemd/systemd/pull/22332 is
-      # released, use DNS="_server_address".
       EmitDNS = "yes";
-      DNS = [ network.hosts.artichoke.ipv4 ];
+      DNS = "_server_address";
       EmitNTP = "yes";
-      NTP = [ network.hosts.artichoke.ipv4 ];
+      NTP = "_server_address";
       SendOption = [
-        "15:string:home.arpa"
+        "15:string:${domain}"
       ] ++ lib.optional (network.mtu != null) "26:uint16:${toString network.mtu}";
     };
     dhcpServerStaticLeases = lib.flatten

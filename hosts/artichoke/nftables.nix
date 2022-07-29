@@ -25,12 +25,6 @@
                 # sample accepts them within a certain rate limit:
                 icmp type echo-request limit rate 5/second accept
                 icmpv6 type echo-request limit rate 5/second accept
-
-                meta l4proto { udp } th dport {
-                    ${toString netdevs.wg-trusted.wireguardConfig.ListenPort},
-                    ${toString netdevs.wg-iot.wireguardConfig.ListenPort},
-                    ${toString netdevs.wg-work.wireguardConfig.ListenPort},
-                } log prefix "input wireguard - " accept
             }
 
             chain input_always_allowed {
@@ -89,6 +83,13 @@
                     related : accept,
                     invalid : drop,
                 }
+
+                # always allow wireguard traffic
+                meta l4proto { udp } th dport {
+                    ${toString netdevs.wg-trusted.wireguardConfig.ListenPort},
+                    ${toString netdevs.wg-iot.wireguardConfig.ListenPort},
+                    ${toString netdevs.wg-work.wireguardConfig.ListenPort},
+                } log prefix "input wireguard - " accept
 
                 # allow loopback traffic, anything else jump to chain for further
                 # evaluation
