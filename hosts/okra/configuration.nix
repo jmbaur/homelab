@@ -7,19 +7,15 @@
 
   time.timeZone = "America/Los_Angeles";
 
-  services.mullvad-vpn.enable = true;
   services.resolved.enable = true;
-
   networking = {
-    useDHCP = lib.mkForce false;
+    useDHCP = false;
     hostName = "okra";
     useNetworkd = true;
-    wireless.enable = true;
   };
   systemd.network = {
-    wait-online.anyInterface = true;
-    networks.wireless = {
-      name = "wl*";
+    networks.wired = {
+      name = "en*";
       DHCP = "yes";
       networkConfig.IPv6PrivacyExtensions = true;
       dhcpV4Config.ClientIdentifier = "mac";
@@ -28,26 +24,21 @@
 
   custom = {
     common.enable = true;
+    dev.enable = true;
     gui.enable = true;
-    deployee = {
-      enable = true;
-      authorizedKeyFiles = [
-        (import ../../data/jmbaur-ssh-keys.nix)
-        ../../data/deployer-ssh-keys.txt
-      ];
-    };
-    # NOTE: This can be true if wireless interfaces can be configured in the
-    # initrd.
-    remoteBoot.enable = false;
   };
 
   users.users.jared = {
     isNormalUser = true;
     description = "Jared Baur";
     extraGroups = [ "wheel" ];
-    openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
+    shell = pkgs.zsh;
   };
-  home-manager.users.jared = { config, ... }: {
+  home-manager.users.jared = { config, globalConfig, ... }: {
+    programs.git = {
+      userEmail = "jaredbaur@fastmail.com";
+      userName = globalConfig.users.users.jared.description;
+    };
     xdg.configFile."gobar/gobar.yaml".source = (pkgs.formats.yaml { }).generate "gobar.yaml" {
       modules = [
         { module = "network"; pattern = "(en|wl|wg)+"; }
@@ -58,8 +49,9 @@
     home.packages = with pkgs; [
       firefox-wayland
       google-chrome
-      mullvad-vpn
+      signal-desktop
       spotify-webapp
+      wlfreerdp
     ];
   };
 
