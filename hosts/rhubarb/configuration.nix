@@ -26,15 +26,11 @@
     dnssec = "false";
   };
 
-  services.greetd = {
+  services.cage = {
     enable = true;
-    settings = rec {
-      default_session = {
-        user = config.users.users.browser.name;
-        command = "${pkgs.greetd.greetd}/bin/agreety --cmd '${pkgs.cage}/bin/cage -d -- ${pkgs.firefox-wayland}/bin/firefox https://kernel.org/'";
-      };
-      initial_session = default_session;
-    };
+    user = config.users.users.browser.name;
+    program = "${pkgs.firefox-wayland}/bin/firefox --kiosk --private-window https://kernel.org/";
+    extraArguments = [ "-d" ];
   };
 
   systemd.network = {

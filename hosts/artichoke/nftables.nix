@@ -138,13 +138,22 @@
                 oifname { $DEV_WAN, $DEV_WAN6 } accept
             }
 
+            chain dont_allow_to_internet {
+                oifname { $DEV_WAN, $DEV_WAN6 } log prefix "not allowed to internet - " drop
+            }
+
             chain forward_mgmt {
-                # TODO(jared): Don't allow mgmt network to the internet
+                # TODO(jared): don't allow to internet
                 accept
             }
 
             chain forward_trusted {
-                accept
+                jump allow_to_internet
+                oifname {
+                    $DEV_MGMT,
+                    $DEV_TRUSTED,
+                    $DEV_IOT,
+                } accept
             }
 
             chain forward_iot {

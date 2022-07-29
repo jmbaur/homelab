@@ -56,13 +56,22 @@ let
   data = mkInternalInterface inventory.networks.data;
 in
 {
+  systemd.services."systemd-networkd".environment.SYSTEMD_LOG_LEVEL = "debug";
   systemd.network.networks = {
-    lan-master = { name = "eth1"; linkConfig.RequiredForOnline = "no"; };
-    mgmt = lib.recursiveUpdate mgmt { networkConfig.BindCarrier = "eth1"; };
-    public = lib.recursiveUpdate public { networkConfig.BindCarrier = "eth1"; };
-    trusted = lib.recursiveUpdate trusted { networkConfig.BindCarrier = "eth1"; };
-    iot = lib.recursiveUpdate iot { networkConfig.BindCarrier = "eth1"; };
-    work = lib.recursiveUpdate work { networkConfig.BindCarrier = "eth1"; };
-    data = data;
+    lan-master = {
+      name = "eth1";
+      linkConfig.RequiredForOnline = "no"; 
+      networkConfig={
+        LinkLocalAddressing = "no";
+        BindCarrier = map (i: "lan${toString i}") [1 2 3 4 5 ];
+      };
+    };
+    inherit mgmt
+    public
+    trusted
+    iot
+    work
+    # data
+    ;
   };
 }

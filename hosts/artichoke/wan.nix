@@ -25,10 +25,7 @@
           Address = "${secrets.networking.hurricane.address}/${toString secrets.networking.hurricane.cidr}";
           Gateway = secrets.networking.hurricane.gateway;
         };
-        linkConfig = {
-          RequiredForOnline = "routable";
-          # RequiredFamilyForOnline = "ipv6"; # TODO(jared): https://github.com/NixOS/nixpkgs/pull/182876
-        };
+        linkConfig.RequiredFamilyForOnline = "ipv6";
       };
 
       wan = {
@@ -44,10 +41,7 @@
           UseDNS = false;
           UseDomains = false;
         };
-        linkConfig = {
-          RequiredForOnline = "routable";
-          # RequiredFamilyForOnline = "ipv4"; # TODO(jared): https://github.com/NixOS/nixpkgs/pull/182876
-        };
+        linkConfig.RequiredFamilyForOnline = "ipv4";
       };
     };
   };

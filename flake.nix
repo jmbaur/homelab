@@ -10,10 +10,7 @@
     agenix.url = "github:ryantm/agenix";
     terranix.url = "github:terranix/terranix";
     blog.url = "github:jmbaur/blog";
-    nixos-configs = {
-      url = "github:jmbaur/nixos-configs";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    nixos-configs.url = "github:jmbaur/nixos-configs";
     homelab-private = {
       url = "git+ssh://git@github.com/jmbaur/homelab-private";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -37,14 +34,8 @@
   };
 
   nixConfig = {
-    extra-substituters = [
-      "https://microvm.cachix.org"
-      "https://nixpkgs-wayland.cachix.org"
-    ];
-    extra-trusted-public-keys = [
-      "microvm.cachix.org-1:oXnBc6hRE3eX5rSYdRyMYXnfzcCxC7yKPTbZXALsqys="
-      "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
-    ];
+    extra-substituters = [ "https://microvm.cachix.org" ];
+    extra-trusted-public-keys = [ "microvm.cachix.org-1:oXnBc6hRE3eX5rSYdRyMYXnfzcCxC7yKPTbZXALsqys=" ];
   };
 
   outputs = inputs: {
