@@ -47,6 +47,7 @@
       ];
     };
     home.packages = with pkgs; [
+      age-plugin-yubikey
       firefox-wayland
       google-chrome
       signal-desktop

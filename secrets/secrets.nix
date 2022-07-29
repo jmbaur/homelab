@@ -11,5 +11,6 @@ in
   "beetroot.age".publicKeys = yubikeys ++ [ artichoke ];
   "wg-trusted.age".publicKeys = yubikeys ++ [ artichoke ];
   "wg-iot.age".publicKeys = yubikeys ++ [ artichoke ];
+  "wg-work.age".publicKeys = yubikeys ++ [ artichoke ];
   "capac.age".publicKeys = yubikeys;
 }
