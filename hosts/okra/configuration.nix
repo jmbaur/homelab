@@ -50,13 +50,13 @@
       age-plugin-yubikey
       discord-webapp
       firefox-wayland
+      freerdp
       google-chrome
       outlook-webapp
       signal-desktop
       slack-webapp
       spotify-webapp
       teams-webapp
-      wlfreerdp
     ];
   };
 
