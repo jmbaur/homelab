@@ -47,11 +47,12 @@ flake-utils.lib.eachDefaultSystemMap
           networkUlaPrefix = "${ulaPrefix}:${toHexString id}";
           networkGuaCidr = "${networkGuaPrefix}::/${toString ipv6Cidr}";
           networkUlaCidr = "${networkUlaPrefix}::/${toString ipv6Cidr}";
-          wgHost = lib.optionalAttrs wireguard (mkHost id "wg-${name}" {
-            interface = "wg-${name}";
-            lastBit = 2;
-          })
-          ;
+          wgHost = lib.optionalAttrs wireguard {
+            "wg-${name}" = {
+              interface = "wg-${name}";
+              lastBit = 2;
+            };
+          };
           networkHosts = lib.mapAttrs
             (name: hostInfo: mkNetworkHost name hostInfo)
             (hosts // wgHost);

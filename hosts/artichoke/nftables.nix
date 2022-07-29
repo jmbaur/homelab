@@ -17,10 +17,6 @@
         define NET_IOT = ${inventory.networks.iot.networkIPv4Cidr}
         define DEV_WORK = ${networks.work.name}
         define NET_WORK = ${inventory.networks.work.networkIPv4Cidr}
-        define DEV_WG_TRUSTED = ${networks.wg-trusted.name}
-        define NET_WG_TRUSTED = ${inventory.networks.wg-trusted.networkIPv4Cidr}
-        define DEV_WG_IOT = ${networks.wg-iot.name}
-        define NET_WG_IOT = ${inventory.networks.wg-iot.networkIPv4Cidr}
 
         table inet firewall {
             chain input_wan {
@@ -33,6 +29,7 @@
                 meta l4proto { udp } th dport {
                     ${toString netdevs.wg-trusted.wireguardConfig.ListenPort},
                     ${toString netdevs.wg-iot.wireguardConfig.ListenPort},
+                    ${toString netdevs.wg-work.wireguardConfig.ListenPort},
                 } log prefix "input wireguard - " accept
             }
 
@@ -104,8 +101,6 @@
                     $DEV_IOT : jump input_private_untrusted,
                     $DEV_WORK : jump input_private_untrusted,
                     $DEV_MGMT : jump input_private_trusted,
-                    $DEV_WG_TRUSTED : jump input_private_trusted,
-                    $DEV_WG_IOT : jump input_private_untrusted,
                 }
 
                 # the rest is dropped by the above policy
@@ -146,9 +141,7 @@
                 jump allow_to_internet
                 oifname {
                     $DEV_IOT,
-                    $DEV_WG_IOT,
                     $DEV_TRUSTED,
-                    $DEV_WG_TRUSTED,
                     $DEV_MGMT,
                 } accept
             }
@@ -157,7 +150,6 @@
                 jump allow_to_internet
                 oifname {
                     $DEV_IOT,
-                    $DEV_WG_IOT,
                 } accept
             }
 
@@ -186,13 +178,11 @@
                 iifname vmap {
                     $DEV_WAN : jump forward_from_wan,
                     $DEV_WAN6 : jump forward_from_wan,
+                    $DEV_MGMT : accept,
                     $DEV_PUBLIC : jump allow_to_internet,
                     $DEV_TRUSTED : jump forward_trusted,
                     $DEV_IOT : jump forward_iot,
                     $DEV_WORK : jump forward_work,
-                    $DEV_MGMT : accept,
-                    $DEV_WG_TRUSTED : jump forward_trusted,
-                    $DEV_WG_IOT : jump forward_iot,
                 }
 
                 # the rest is dropped by the above policy
@@ -215,8 +205,6 @@
                     $NET_TRUSTED,
                     $NET_IOT,
                     $NET_WORK,
-                    $NET_WG_TRUSTED,
-                    $NET_WG_IOT,
                 } oifname $DEV_WAN masquerade
             }
         }

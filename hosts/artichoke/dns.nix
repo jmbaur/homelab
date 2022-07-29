@@ -66,13 +66,11 @@ in
           }
         '')
       (with inventory.networks; [
-        iot
         mgmt
         public
         trusted
+        iot
         work
-        wg-trusted
-        wg-iot
       ]);
   };
 }

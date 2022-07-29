@@ -32,6 +32,11 @@
         group = config.users.groups.systemd-network.name;
         file = ../../secrets/wg-iot.age;
       };
+      wg-work = {
+        mode = "0640";
+        group = config.users.groups.systemd-network.name;
+        file = ../../secrets/wg-work.age;
+      };
       beetroot.file = ../../secrets/beetroot.age;
       pixel.file = ../../secrets/pixel.age;
       ipwatch.file = ../../secrets/ipwatch.age;

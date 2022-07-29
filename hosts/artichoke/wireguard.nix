@@ -6,9 +6,9 @@ let
       peers = lib.filterAttrs (_: wgHost: wgHost.wgPeer) network.hosts;
       port = 51800 + network.id;
     in
-    rec {
+    {
       netdev = {
-        netdevConfig = { Name = network.name; Kind = "wireguard"; };
+        netdevConfig = { Name = wgHost.interface; Kind = "wireguard"; };
         wireguardConfig = {
           ListenPort = port;
           PrivateKeyFile = "/run/secrets/${wgHost.name}";
@@ -55,7 +55,7 @@ let
               };
               Peer = {
                 PublicKey =
-                  "$(cat ${netdev.wireguardConfig.PrivateKeyFile} | ${pkgs.wireguard-tools}/bin/wg pubkey)";
+                  "$(cat /run/secrets/${wgHost.name} | ${pkgs.wireguard-tools}/bin/wg pubkey)";
                 Endpoint = "vpn.${inventory.tld}:${toString port}";
                 AllowedIPs = [ "0.0.0.0/0" "::/0" ];
               };
@@ -97,6 +97,9 @@ in
 
     netdevs.wg-iot = iot.netdev;
     networks.wg-iot = iot.network;
+
+    netdevs.wg-work = work.netdev;
+    networks.wg-work = work.network;
   };
 
   environment.systemPackages = [ pkgs.wireguard-tools ] ++
