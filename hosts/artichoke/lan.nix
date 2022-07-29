@@ -4,7 +4,7 @@ let
   mkInternalInterface = network: {
     name = network.hosts.artichoke.interface;
     linkConfig = {
-      RequiredForOnline = "no";
+      ActivationPolicy = "always-up";
     } // lib.optionalAttrs (network.mtu != null) {
       MTUBytes = toString network.mtu;
     };
@@ -56,7 +56,6 @@ let
   data = mkInternalInterface inventory.networks.data;
 in
 {
-  systemd.services."systemd-networkd".environment.SYSTEMD_LOG_LEVEL = "debug";
   systemd.network.networks = {
     lan-master = {
       name = "eth1";

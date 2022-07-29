@@ -28,10 +28,25 @@ let
       };
       network = with wgHost; {
         inherit name;
-        address = [
-          "${ipv4}/${toString network.ipv4Cidr}"
-          "${ipv6.gua}/${toString network.ipv6Cidr}"
-          "${ipv6.ula}/${toString network.ipv6Cidr}"
+        addresses = [
+          {
+            addressConfig = {
+              Address = "${ipv4}/${toString network.ipv4Cidr}";
+              AddPrefixRoute = false;
+            };
+          }
+          {
+            addressConfig = {
+              Address = "${ipv6.ula}/${toString network.ipv6Cidr}";
+              AddPrefixRoute = false;
+            };
+          }
+          {
+            addressConfig = {
+              Address = "${ipv6.gua}/${toString network.ipv6Cidr}";
+              AddPrefixRoute = false;
+            };
+          }
         ];
       };
       # TODO(jared): provide full-tunnel and split-tunnel configurations.
