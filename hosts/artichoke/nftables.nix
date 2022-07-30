@@ -12,10 +12,13 @@
         define DEV_PUBLIC = ${networks.public.name}
         define NET_PUBLIC = ${inventory.networks.public.networkIPv4Cidr}
         define DEV_TRUSTED = ${networks.trusted.name}
+        define DEV_WG_TRUSTED = ${networks.wg-trusted.name}
         define NET_TRUSTED = ${inventory.networks.trusted.networkIPv4Cidr}
         define DEV_IOT = ${networks.iot.name}
+        define DEV_WG_IOT = ${networks.wg-iot.name}
         define NET_IOT = ${inventory.networks.iot.networkIPv4Cidr}
         define DEV_WORK = ${networks.work.name}
+        define DEV_WG_WORK = ${networks.wg-work.name}
         define NET_WORK = ${inventory.networks.work.networkIPv4Cidr}
 
         table inet firewall {
@@ -152,6 +155,7 @@
                 oifname {
                     $DEV_MGMT,
                     $DEV_TRUSTED,
+                    $DEV_WG_TRUSTED,
                     $DEV_IOT,
                 } accept
             }
@@ -160,6 +164,7 @@
                 jump allow_to_internet
                 oifname {
                     $DEV_IOT,
+                    $DEV_WG_IOT,
                 } accept
             }
 
@@ -167,6 +172,7 @@
                 jump allow_to_internet
                 oifname {
                     $DEV_WORK,
+                    $DEV_WG_WORK,
                 } accept
             }
 
