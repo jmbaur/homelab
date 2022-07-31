@@ -19,7 +19,7 @@ flake-utils.lib.eachDefaultSystemMap
 
       # NOTE: Wrapping nixpkgs toHexString to follow RFC 5952's recommendation for
       # IPv6 addresses to be in lower case.
-      toHexString = i: lib.toLower (lib.toHexString i);
+      toIpHexString = i: lib.toLower (lib.toHexString i);
       mkIPv4Addr = prefix: thirdOctet: fourthOctet: "${prefix}.${toString thirdOctet}.${toString fourthOctet}";
       mkIPv6Addr = prefix: fourthHextet: lastHextet: "${prefix}:${fourthHextet}::${lastHextet}";
       mkHost = networkId: name: { dhcp ? false
@@ -28,34 +28,30 @@ flake-utils.lib.eachDefaultSystemMap
                                 , wgPeer ? false
                                 , publicKey ? null
                                 , lastBit
-                                }: {
-        inherit name interface dhcp mac wgPeer publicKey;
-        ipv4 = mkIPv4Addr v4Prefix networkId lastBit;
-        ipv6 = {
-          gua = (mkIPv6Addr guaPrefix (toHexString networkId) (toHexString lastBit));
-          ula = (mkIPv6Addr ulaPrefix (toHexString networkId) (toHexString lastBit));
+                                }:
+        let
+        in
+        {
+          inherit name interface dhcp mac wgPeer publicKey;
+          ipv4 = mkIPv4Addr v4Prefix networkId lastBit;
+          ipv6 = {
+            gua = (mkIPv6Addr guaPrefix (toIpHexString networkId) (toIpHexString lastBit));
+            ula = (mkIPv6Addr ulaPrefix (toIpHexString networkId) (toIpHexString lastBit));
+          };
         };
-      };
-      mkNetwork = name: { id, mtu ? null, wireguard ? false, hosts }:
+      mkNetwork = name: { id, mtu ? null, hosts, wireguard ? false, includeRoutesTo ? [ ] }:
         let
           mkNetworkHost = mkHost id;
           ipv4Cidr = 24;
           ipv6Cidr = 64;
+          networkIPv4SignificantBits = "${v4Prefix}.${toString id}";
           networkIPv4 = mkIPv4Addr v4Prefix id 0;
           networkIPv4Cidr = "${networkIPv4}/${toString ipv4Cidr}";
-          networkGuaPrefix = "${guaPrefix}:${toHexString id}";
-          networkUlaPrefix = "${ulaPrefix}:${toHexString id}";
+          networkGuaPrefix = "${guaPrefix}:${toIpHexString id}";
+          networkUlaPrefix = "${ulaPrefix}:${toIpHexString id}";
           networkGuaCidr = "${networkGuaPrefix}::/${toString ipv6Cidr}";
           networkUlaCidr = "${networkUlaPrefix}::/${toString ipv6Cidr}";
-          wgHost = lib.optionalAttrs wireguard {
-            "wg-${name}" = {
-              interface = "wg-${name}";
-              lastBit = 2;
-            };
-          };
-          networkHosts = lib.mapAttrs
-            (name: hostInfo: mkNetworkHost name hostInfo)
-            (hosts // wgHost);
+          networkHosts = lib.mapAttrs (name: hostInfo: mkNetworkHost name hostInfo) hosts;
         in
         {
           inherit
@@ -68,8 +64,10 @@ flake-utils.lib.eachDefaultSystemMap
             networkGuaPrefix
             networkIPv4
             networkIPv4Cidr
+            networkIPv4SignificantBits
             networkUlaCidr
             networkUlaPrefix
+            includeRoutesTo
             wireguard;
           domain = "${name}.home.arpa";
           hosts = networkHosts;
@@ -103,30 +101,51 @@ flake-utils.lib.eachDefaultSystemMap
           };
           trusted = {
             id = 30;
-            wireguard = true;
+            includeRoutesTo = [ "wg-trusted" ];
             hosts = {
               artichoke = { lastBit = 1; interface = "lan3"; };
               asparagus = { lastBit = 50; dhcp = true; mac = "e4:1d:2d:7f:1a:d0"; };
               okra = { lastBit = 51; dhcp = true; mac = "5c:80:b6:92:eb:27"; };
+            };
+          };
+          wg-trusted = {
+            id = 31;
+            wireguard = true;
+            hosts = {
+              artichoke = { lastBit = 1; interface = "wg-trusted"; };
               beetroot = { lastBit = 52; wgPeer = true; publicKey = "T+zc4lpoEgxPIKEBr9qXiAzb/ruRbqZuVrih+0rGs2M="; };
             };
           };
           iot = {
             id = 40;
-            wireguard = true;
+            includeRoutesTo = [ "wg-iot" ];
             hosts = {
               artichoke = { lastBit = 1; interface = "lan4"; };
+            };
+          };
+          wg-iot = {
+            id = 41;
+            wireguard = true;
+            hosts = {
+              artichoke = { lastBit = 1; interface = "wg-iot"; };
               pixel = { lastBit = 50; wgPeer = true; publicKey = "pCvnlCWnM46XY3+327rQyOPA91wajC1HPTmP/5YHcy8="; };
             };
           };
           work = {
             id = 50;
-            wireguard = true;
+            includeRoutesTo = [ "wg-work" ];
             hosts = {
               artichoke = { lastBit = 1; interface = "lan5"; };
               laptop = { lastBit = 50; dhcp = true; mac = "08:3a:88:63:1a:b4"; };
               dev = { lastBit = 60; dhcp = true; mac = "00:0C:29:88:A7:13"; };
-              okra = { lastBit = 51; wgPeer = true; publicKey = "XG/mq6Gdghxu6iW68tdlArnjJei8VCYk9cUl/i81LDA="; };
+            };
+          };
+          wg-work = {
+            id = 51;
+            wireguard = true;
+            hosts = {
+              artichoke = { lastBit = 1; interface = "wg-work"; };
+              okra = { lastBit = 2; wgPeer = true; publicKey = "XG/mq6Gdghxu6iW68tdlArnjJei8VCYk9cUl/i81LDA="; };
             };
           };
           data = {

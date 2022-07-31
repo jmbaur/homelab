@@ -13,7 +13,6 @@
     hostName = "okra";
     useNetworkd = true;
   };
-  systemd.services."systemd-networkd".environment.SYSTEMD_LOG_LEVEL = "debug";
   systemd.network = {
     networks.wired = {
       name = "en*";

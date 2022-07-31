@@ -1,4 +1,4 @@
-{ lib, inventory, ... }:
+{ pkgs, lib, inventory, ... }:
 let
   domain = "home.arpa";
   mkInternalInterface = network: {
@@ -36,7 +36,28 @@ let
       NTP = "_server_address";
       SendOption = [
         "15:string:${domain}"
-      ] ++ lib.optional (network.mtu != null) "26:uint16:${toString network.mtu}";
+      ] ++ lib.optional (network.includeRoutesTo != [ ]) (
+        let
+          # NOTE: This function spits out data for RFC3442's classless static routes
+          # in a format that systemd-networkd's DHCP server can consume.
+          formatRFC3442 = bits: builtins.readFile (pkgs.runCommandNoCC "format-rfc3442" { } ''
+            printf "\\\\x%.2X" ${toString bits} | tee $out
+          '');
+          gatewayRFC3442 = formatRFC3442 (lib.splitString "." network.hosts.artichoke.ipv4);
+          defaultRouteRFC3442 = "\\x00" + gatewayRFC3442;
+          otherRoutesRFC3442 = map
+            (n:
+              with inventory.networks.${n};
+              (formatRFC3442
+                ([ (toString ipv4Cidr) ] ++ (lib.splitString "." networkIPv4SignificantBits))
+              ) + gatewayRFC3442
+            )
+            network.includeRoutesTo;
+          data = defaultRouteRFC3442 + (lib.concatStrings otherRoutesRFC3442);
+        in
+        "121:string:${data}"
+      )
+      ++ lib.optional (network.mtu != null) "26:uint16:${toString network.mtu}";
     };
     dhcpServerStaticLeases = lib.flatten
       (lib.mapAttrsToList
