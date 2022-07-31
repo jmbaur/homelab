@@ -14,7 +14,7 @@ flake-utils.lib.eachDefaultSystemMap (system:
         deploy-rs
       ];
       inherit (pre-commit.lib.${system}.run {
-        src = builtins.path { path = ./.; };
+        src = ./.;
         hooks.nixpkgs-fmt.enable = true;
       }) shellHook;
     };
