@@ -4,6 +4,9 @@
       enable = true;
       extraArgs = [ "-d" ];
       settings = {
+        reservations-global= false;
+        reservations-in-subnet= true;
+        reservations-out-of-pool= true;
         interfaces-config = {
           interfaces = map
             (name: config.systemd.network.networks.${name}.name)
@@ -11,25 +14,20 @@
         };
         subnet6 = lib.flatten (map
           (name:
-            [
+            with inventory.networks.${name}; [
               {
                 interface = config.systemd.network.networks.${name}.name;
-                subnet = inventory.networks.${name}.networkUlaCidr;
-                pools = [
-                  {
-                    pool =
-                      "${inventory.networks.${name}.networkUlaPrefix}::00ff"
-                      + "-" +
-                      "${inventory.networks.${name}.networkUlaPrefix}::ff00";
-                  }
-                ];
+                subnet = networkUlaCidr;
+                pools = [{
+                  pool = "${networkUlaPrefix}:d::/80";
+                }];
                 reservations =
                   lib.mapAttrsToList
                     (_: host: {
                       hw-address = host.mac;
                       ip-addresses = [ host.ipv6.ula ];
                     })
-                    (lib.filterAttrs (_: host: host.dhcp) inventory.networks.${name}.hosts);
+                    (lib.filterAttrs (_: host: host.dhcp) hosts);
               }
             ]
           )
