@@ -27,6 +27,14 @@ let
     ipv6Prefixes = map
       (prefix: { ipv6PrefixConfig = { Prefix = prefix; }; })
       (with network; [ networkGuaCidr ]);
+    # TODO(jared): use dedicated option field when this is merged:
+    # https://github.com/NixOS/nixpkgs/pull/184340
+    extraConfig = lib.concatMapStrings
+      (n: with inventory.networks.${n}; ''
+        [IPv6RoutePrefix]
+        Route=${networkGuaCidr}
+      '')
+      network.includeRoutesTo;
     dhcpServerConfig = {
       PoolOffset = 50;
       PoolSize = 200;
