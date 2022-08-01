@@ -4,9 +4,9 @@
       enable = true;
       extraArgs = [ "-d" ];
       settings = {
-        reservations-global= false;
-        reservations-in-subnet= true;
-        reservations-out-of-pool= true;
+        reservations-global = false;
+        reservations-in-subnet = true;
+        reservations-out-of-pool = true;
         interfaces-config = {
           interfaces = map
             (name: config.systemd.network.networks.${name}.name)
