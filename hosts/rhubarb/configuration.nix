@@ -30,7 +30,7 @@
   services.cage = {
     enable = true;
     user = config.users.users.browser.name;
-    program = "${pkgs.firefox-wayland}/bin/firefox --kiosk --private-window http://localhost:9090/graph";
+    program = "${pkgs.firefox-wayland}/bin/firefox --kiosk --private-window http://localhost:9090/consoles/index.html";
     extraArguments = [ "-d" ];
   };
 
