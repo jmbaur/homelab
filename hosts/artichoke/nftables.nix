@@ -12,14 +12,17 @@
         define DEV_PUBLIC = ${networks.public.name}
         define NET_PUBLIC = ${inventory.networks.public.networkIPv4Cidr}
         define DEV_TRUSTED = ${networks.trusted.name}
-        define DEV_WG_TRUSTED = ${networks.wg-trusted.name}
         define NET_TRUSTED = ${inventory.networks.trusted.networkIPv4Cidr}
+        define DEV_WG_TRUSTED = ${networks.wg-trusted.name}
+        define NET_WG_TRUSTED = ${inventory.networks.wg-trusted.networkIPv4Cidr}
         define DEV_IOT = ${networks.iot.name}
-        define DEV_WG_IOT = ${networks.wg-iot.name}
         define NET_IOT = ${inventory.networks.iot.networkIPv4Cidr}
+        define DEV_WG_IOT = ${networks.wg-iot.name}
+        define NET_WG_IOT = ${inventory.networks.wg-iot.networkIPv4Cidr}
         define DEV_WORK = ${networks.work.name}
-        define DEV_WG_WORK = ${networks.wg-work.name}
         define NET_WORK = ${inventory.networks.work.networkIPv4Cidr}
+        define DEV_WG_WORK = ${networks.wg-work.name}
+        define NET_WG_WORK = ${inventory.networks.wg-work.networkIPv4Cidr}
 
         table inet firewall {
             chain input_wan {
@@ -226,8 +229,11 @@
                     $NET_MGMT,
                     $NET_PUBLIC,
                     $NET_TRUSTED,
+                    $NET_WG_TRUSTED,
                     $NET_IOT,
+                    $NET_WG_IOT,
                     $NET_WORK,
+                    $NET_WG_WORK,
                 } oifname $DEV_WAN masquerade
             }
         }
