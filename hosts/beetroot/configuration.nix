@@ -67,7 +67,7 @@
   programs.adb.enable = true;
   programs.nix-ld.enable = true;
 
-  home-manager.users.jared = { config, globalConfig, lib, ... }: {
+  home-manager.users.jared = { config, systemConfig, lib, ... }: {
     xdg.configFile."gobar/gobar.yaml".source = (pkgs.formats.yaml { }).generate "gobar.yaml" {
       modules = [
         { module = "battery"; }
@@ -105,7 +105,7 @@
     ];
     programs.git = {
       userEmail = "jaredbaur@fastmail.com";
-      userName = globalConfig.users.users.jared.description;
+      userName = systemConfig.users.users.jared.description;
       extraConfig = {
         user.signingKey = "key::sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIBhCHaXn5ghEJQVpVZr4hOajD6Zp/0PO4wlymwfrg/S5AAAABHNzaDo=";
         gpg.format = "ssh";

@@ -34,10 +34,21 @@
     extraGroups = [ "wheel" ];
     shell = pkgs.zsh;
   };
-  home-manager.users.jared = { config, globalConfig, ... }: {
+  home-manager.users.jared = { config, systemConfig, ... }: {
     programs.git = {
       userEmail = "jaredbaur@fastmail.com";
-      userName = globalConfig.users.users.jared.description;
+      userName = systemConfig.users.users.jared.description;
+    };
+    programs.ssh = {
+      enable = true;
+      matchBlocks = {
+        "*.mgmt.home.arpa".forwardAgent = true;
+        work = {
+          user = "jbaur";
+          hostname = "dev.work.home.arpa";
+          dynamicForwards = [{ port = 9050; }];
+        };
+      };
     };
     xdg.configFile."gobar/gobar.yaml".source = (pkgs.formats.yaml { }).generate "gobar.yaml" {
       modules = [
@@ -47,7 +58,9 @@
       ];
     };
     home.packages = with pkgs; [
+      (chromium.override { commandLineArgs = "--proxy-server=\"socks5://localhost:9050\""; })
       age-plugin-yubikey
+      bitwarden
       discord-webapp
       firefox-wayland
       freerdp
