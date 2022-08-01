@@ -19,6 +19,7 @@ let
               PublicKey = peer.publicKey;
               AllowedIPs = [
                 "${peer.ipv4}/32"
+                "${peer.ipv6.gua}/128"
                 "${peer.ipv6.ula}/128"
               ];
             };
@@ -29,8 +30,8 @@ let
         inherit (network) name;
         address = [
           "${ipv4}/${toString network.ipv4Cidr}"
-          "${ipv6.ula}/${toString network.ipv6Cidr}"
           "${ipv6.gua}/${toString network.ipv6Cidr}"
+          "${ipv6.ula}/${toString network.ipv6Cidr}"
         ];
       };
       clientConfigs = lib.mapAttrsToList
@@ -41,23 +42,23 @@ let
               Interface = {
                 Address = [
                   "${host.ipv4}/${toString network.ipv4Cidr}"
-                  "${host.ipv6.ula}/${toString network.ipv6Cidr}"
                   "${host.ipv6.gua}/${toString network.ipv6Cidr}"
+                  "${host.ipv6.ula}/${toString network.ipv6Cidr}"
                 ];
                 PrivateKey = "$(cat ${config.age.secrets.${hostname}.path})";
-                DNS = (with wgServerHost; ([ ipv4 ipv6.ula ipv6.gua ])) ++ [ "home.arpa" ];
+                DNS = (with wgServerHost; ([ ipv4 ipv6.gua ipv6.ula ])) ++ [ "home.arpa" ];
               };
               Peer = {
                 PublicKey = "$(cat ${config.age.secrets.${network.name}.path} | ${pkgs.wireguard-tools}/bin/wg pubkey)";
                 Endpoint = "vpn.${inventory.tld}:${toString port}";
                 AllowedIPs = [
                   network.networkIPv4Cidr
-                  network.networkUlaCidr
                   network.networkGuaCidr
+                  network.networkUlaCidr
                 ] ++
                 lib.flatten
                   (lib.mapAttrsToList
-                    (name: networkInfo: [ networkInfo.networkIPv4Cidr networkInfo.networkUlaCidr networkInfo.networkGuaCidr ])
+                    (name: networkInfo: [ networkInfo.networkIPv4Cidr networkInfo.networkGuaCidr networkInfo.networkUlaCidr ])
                     (lib.filterAttrs
                       (name: networkInfo: lib.any (name: network.name == name) networkInfo.includeRoutesTo)
                       inventory.networks
@@ -69,11 +70,11 @@ let
               Interface = {
                 Address = [
                   "${host.ipv4}/${toString network.ipv4Cidr}"
-                  "${host.ipv6.ula}/${toString network.ipv6Cidr}"
                   "${host.ipv6.gua}/${toString network.ipv6Cidr}"
+                  "${host.ipv6.ula}/${toString network.ipv6Cidr}"
                 ];
                 PrivateKey = "$(cat ${config.age.secrets.${hostname}.path})";
-                DNS = (with wgServerHost; ([ ipv4 ipv6.ula ipv6.gua ])) ++ [ "home.arpa" ];
+                DNS = (with wgServerHost; ([ ipv4 ipv6.gua ipv6.ula ])) ++ [ "home.arpa" ];
               };
               Peer = {
                 PublicKey = "$(cat ${config.age.secrets.${network.name}.path} | ${pkgs.wireguard-tools}/bin/wg pubkey)";
