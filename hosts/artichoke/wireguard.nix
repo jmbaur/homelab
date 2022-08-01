@@ -27,13 +27,10 @@ let
       };
       network = with wgServerHost; {
         inherit (network) name;
-        addresses = [
-          {
-            addressConfig.Address = "${ipv4}/${toString network.ipv4Cidr}";
-          }
-          {
-            addressConfig.Address = "${ipv6.ula}/${toString network.ipv6Cidr}";
-          }
+        address = [
+          "${ipv4}/${toString network.ipv4Cidr}"
+          "${ipv6.ula}/${toString network.ipv6Cidr}"
+          "${ipv6.gua}/${toString network.ipv6Cidr}"
         ];
       };
       clientConfigs = lib.mapAttrsToList
@@ -42,9 +39,13 @@ let
             scriptName = "wg-config-${hostname}";
             splitTunnelWgConfig = lib.generators.toINI { listsAsDuplicateKeys = true; } {
               Interface = {
-                Address = [ "${host.ipv4}/${toString network.ipv4Cidr}" "${host.ipv6.ula}/${toString network.ipv6Cidr}" ];
+                Address = [
+                  "${host.ipv4}/${toString network.ipv4Cidr}"
+                  "${host.ipv6.ula}/${toString network.ipv6Cidr}"
+                  "${host.ipv6.gua}/${toString network.ipv6Cidr}"
+                ];
                 PrivateKey = "$(cat ${config.age.secrets.${hostname}.path})";
-                DNS = (with wgServerHost; ([ ipv4 ipv6.ula ])) ++ [ "home.arpa" ];
+                DNS = (with wgServerHost; ([ ipv4 ipv6.ula ipv6.gua ])) ++ [ "home.arpa" ];
               };
               Peer = {
                 PublicKey = "$(cat ${config.age.secrets.${network.name}.path} | ${pkgs.wireguard-tools}/bin/wg pubkey)";
@@ -52,10 +53,11 @@ let
                 AllowedIPs = [
                   network.networkIPv4Cidr
                   network.networkUlaCidr
+                  network.networkGuaCidr
                 ] ++
                 lib.flatten
                   (lib.mapAttrsToList
-                    (name: networkInfo: [ networkInfo.networkIPv4Cidr networkInfo.networkUlaCidr ])
+                    (name: networkInfo: [ networkInfo.networkIPv4Cidr networkInfo.networkUlaCidr networkInfo.networkGuaCidr ])
                     (lib.filterAttrs
                       (name: networkInfo: lib.any (name: network.name == name) networkInfo.includeRoutesTo)
                       inventory.networks
@@ -65,9 +67,13 @@ let
             };
             fullTunnelWgConfig = lib.generators.toINI { listsAsDuplicateKeys = true; } {
               Interface = {
-                Address = [ "${host.ipv4}/${toString network.ipv4Cidr}" "${host.ipv6.ula}/${toString network.ipv6Cidr}" ];
+                Address = [
+                  "${host.ipv4}/${toString network.ipv4Cidr}"
+                  "${host.ipv6.ula}/${toString network.ipv6Cidr}"
+                  "${host.ipv6.gua}/${toString network.ipv6Cidr}"
+                ];
                 PrivateKey = "$(cat ${config.age.secrets.${hostname}.path})";
-                DNS = (with wgServerHost; ([ ipv4 ipv6.ula ])) ++ [ "home.arpa" ];
+                DNS = (with wgServerHost; ([ ipv4 ipv6.ula ipv6.gua ])) ++ [ "home.arpa" ];
               };
               Peer = {
                 PublicKey = "$(cat ${config.age.secrets.${network.name}.path} | ${pkgs.wireguard-tools}/bin/wg pubkey)";
@@ -77,33 +83,33 @@ let
             };
           in
           pkgs.writeShellScriptBin scriptName ''
-            set -eux pipefail
+            set -eou pipefail
             case "$1" in
             text)
-            echo ####################################################################
-            echo # FULL TUNNEL
+            printf "%s\n" "####################################################################"
+            printf "%s\n" "# FULL TUNNEL"
             cat << EOF
             ${fullTunnelWgConfig}
             EOF
-            echo ####################################################################
-            echo # SPLIT TUNNEL
+            printf "%s\n" "####################################################################"
+            printf "%s\n" "# SPLIT TUNNEL"
             cat << EOF
             ${splitTunnelWgConfig}
             EOF
-            echo ####################################################################
+            printf "%s\n" "####################################################################"
             ;;
             qrcode)
-            echo ####################################################################
-            echo # FULL TUNNEL
+            printf "%s\n" "####################################################################"
+            printf "%s\n" "# FULL TUNNEL"
             ${pkgs.qrencode}/bin/qrencode -t ANSIUTF8 << EOF
             ${fullTunnelWgConfig}
             EOF
-            echo ####################################################################
-            echo # SPLIT TUNNEL
+            printf "%s\n" "####################################################################"
+            printf "%s\n" "# SPLIT TUNNEL"
             ${pkgs.qrencode}/bin/qrencode -t ANSIUTF8 << EOF
             ${splitTunnelWgConfig}
             EOF
-            echo ####################################################################
+            printf "%s\n" "####################################################################"
             ;;
             *)
             echo Usage: "$0" type-of-config
