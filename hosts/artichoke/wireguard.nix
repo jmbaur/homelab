@@ -36,28 +36,43 @@ let
           }
         ];
       };
-      # TODO(jared): provide full-tunnel and split-tunnel configurations.
       clientConfigs = lib.mapAttrsToList
         (hostname: host:
           let
             scriptName = "wg-config-${hostname}";
-            wgConfig = lib.generators.toINI { listsAsDuplicateKeys = true; } {
+            splitTunnelWgConfig = lib.generators.toINI { listsAsDuplicateKeys = true; } {
               Interface = {
-                Address = [
-                  "${host.ipv4}/${toString network.ipv4Cidr}"
-                  "${host.ipv6.ula}/${toString network.ipv6Cidr}"
-                ];
-                PrivateKey =
-                  "$(cat ${config.age.secrets.${hostname}.path})";
-                DNS =
-                  (with wgServerHost; ([ ipv4 ipv6.ula ]))
-                  ++
-                  [ "home.arpa" ];
+                Address = [ "${host.ipv4}/${toString network.ipv4Cidr}" "${host.ipv6.ula}/${toString network.ipv6Cidr}" ];
+                PrivateKey = "$(cat ${config.age.secrets.${hostname}.path})";
+                DNS = (with wgServerHost; ([ ipv4 ipv6.ula ])) ++ [ "home.arpa" ];
               };
               Peer = {
                 PublicKey = "$(cat ${config.age.secrets.${network.name}.path} | ${pkgs.wireguard-tools}/bin/wg pubkey)";
                 Endpoint = "vpn.${inventory.tld}:${toString port}";
-                AllowedIPs = [ "0.0.0.0/0"  "::/0" ];
+                AllowedIPs = [
+                  network.networkIPv4Cidr
+                  network.networkUlaCidr
+                ] ++
+                lib.flatten
+                  (lib.mapAttrsToList
+                    (name: networkInfo: [ networkInfo.networkIPv4Cidr networkInfo.networkUlaCidr ])
+                    (lib.filterAttrs
+                      (name: networkInfo: networkInfo.includeRoutesTo == network.name)
+                      inventory.networks
+                    )
+                  );
+              };
+            };
+            fullTunnelWgConfig = lib.generators.toINI { listsAsDuplicateKeys = true; } {
+              Interface = {
+                Address = [ "${host.ipv4}/${toString network.ipv4Cidr}" "${host.ipv6.ula}/${toString network.ipv6Cidr}" ];
+                PrivateKey = "$(cat ${config.age.secrets.${hostname}.path})";
+                DNS = (with wgServerHost; ([ ipv4 ipv6.ula ])) ++ [ "home.arpa" ];
+              };
+              Peer = {
+                PublicKey = "$(cat ${config.age.secrets.${network.name}.path} | ${pkgs.wireguard-tools}/bin/wg pubkey)";
+                Endpoint = "vpn.${inventory.tld}:${toString port}";
+                AllowedIPs = [ "0.0.0.0/0" "::/0" ];
               };
             };
           in
@@ -66,13 +81,27 @@ let
             case "$1" in
             text)
             cat << EOF
-            ${wgConfig}
+            ####################################################################
+            # FULL TUNNEL
+            ${fullTunnelWgConfig}
+            ####################################################################
+            # SPLIT TUNNEL
+            ${splitTunnelWgConfig}
+            ####################################################################
             EOF
             ;;
             qrcode)
+            ####################################################################
+            # FULL TUNNEL
             ${pkgs.qrencode}/bin/qrencode -t ANSIUTF8 << EOF
-            ${wgConfig}
+            ${fullTunnelWgConfig}
             EOF
+            ####################################################################
+            # SPLIT TUNNEL
+            ${pkgs.qrencode}/bin/qrencode -t ANSIUTF8 << EOF
+            ${splitTunnelWgConfig}
+            EOF
+            ####################################################################
             ;;
             *)
             cat <<EOF

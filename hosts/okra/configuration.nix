@@ -58,7 +58,8 @@
       ];
     };
     home.packages = with pkgs; [
-      (chromium.override { commandLineArgs = "--proxy-server=\"socks5://localhost:9050\""; })
+      # https://www.chromium.org/developers/design-documents/network-stack/socks-proxy/
+      (chromium.override { commandLineArgs = "--proxy-server=\"socks5://localhost:9050\" --host-resolver-rules=\"MAP * ~NOTFOUND , EXCLUDE localhost\""; })
       age-plugin-yubikey
       bitwarden
       discord-webapp
