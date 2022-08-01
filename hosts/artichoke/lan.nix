@@ -34,18 +34,19 @@ let
       [IPv6RoutePrefix]
       Route=${network.networkUlaCidr}
     '') + (lib.concatMapStrings
-    (n:
-    let
-      mainNetwork = network;
-      linkedNetwork = inventory.networks.${n};
-    in ''
-      [IPv6RoutePrefix]
-      Route=${linkedNetwork.networkGuaCidr}
-    '' + (lib.optionalString mainNetwork.managed ''
-      [IPv6RoutePrefix]
-      Route=${linkedNetwork.networkUlaCidr}
-    ''))
-    network.includeRoutesTo);
+      (n:
+        let
+          mainNetwork = network;
+          linkedNetwork = inventory.networks.${n};
+        in
+        ''
+          [IPv6RoutePrefix]
+          Route=${linkedNetwork.networkGuaCidr}
+        '' + (lib.optionalString mainNetwork.managed ''
+          [IPv6RoutePrefix]
+          Route=${linkedNetwork.networkUlaCidr}
+        ''))
+      network.includeRoutesTo);
     dhcpServerConfig = {
       PoolOffset = 50;
       PoolSize = 200;

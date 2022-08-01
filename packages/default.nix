@@ -1,7 +1,13 @@
 inputs: with inputs;
 let
   withPkgs = system: f:
-    let pkgs = import nixpkgs { inherit system; }; in f pkgs system;
+    let
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [ self.overlays.default ];
+      };
+    in
+    f pkgs system;
 
   common_installer_modules = [
     self.nixosModules.default
@@ -56,6 +62,8 @@ let
   inventory = pkgs: system: pkgs.writeText
     "inventory.json"
     (builtins.toJSON (self.inventory.${system}.inventory));
+
+  homelab-console-templates = pkgs: system: pkgs.homelab-console-templates;
 in
 {
   aarch64-linux =
@@ -68,6 +76,8 @@ in
       installer_iso_lx2k = installer_iso_lx2k system;
       artichoke_sd_image = self.nixosConfigurations.artichoke.config.system.build.sdImage;
       rhubarb_sd_image = self.nixosConfigurations.rhubarb.config.system.build.sdImage;
+
+      homelab-console-templates = withPkgs system homelab-console-templates;
 
       cap_ac = withPkgs system cap_ac;
       crs_305 = withPkgs system crs_305;
@@ -83,6 +93,8 @@ in
     in
     {
       installer_iso = installer_iso system;
+
+      homelab-console-templates = withPkgs system homelab-console-templates;
 
       cap_ac = withPkgs system cap_ac;
       crs_305 = withPkgs system crs_305;

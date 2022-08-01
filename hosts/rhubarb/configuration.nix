@@ -55,19 +55,36 @@
 
   services.prometheus = {
     enable = true;
+    extraFlags = [
+      "--web.console.templates=${pkgs.homelab-console-templates}"
+      "--web.console.libraries=${pkgs.prometheus}/etc/prometheus/console_libraries"
+    ];
+    exporters = {
+      node = {
+        enable = true;
+        # openFirewall = true;
+        enabledCollectors = [ "systemd" ];
+      };
+    };
+    # TODO(jared): configure these:
+    #   - "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.wireguard.port}"
+    #   - "artichoke.mgmt.home.arpa:9153" # coredns
     scrapeConfigs = [
       {
-        job_name = "artichoke";
-        static_configs = [
-          {
-            # TODO(jared): Use DNS-SD
-            targets = [
-              "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.node.port}"
-              "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.wireguard.port}"
-              "artichoke.mgmt.home.arpa:9153" # coredns
-            ];
-          }
-        ];
+        job_name = "prometheus";
+        static_configs = [{
+          targets = [ "rhubarb.mgmt.home.arpa:${toString config.services.prometheus.port}" ];
+        }];
+      }
+      {
+        job_name = "node";
+        static_configs = [{
+          # TODO(jared): Use DNS-SD
+          targets = [
+            "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.node.port}"
+            "rhubarb.mgmt.home.arpa:${toString config.services.prometheus.exporters.node.port}"
+          ];
+        }];
       }
     ];
   };

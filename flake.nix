@@ -46,6 +46,7 @@
     inventory = import ./inventory.nix inputs;
     nixosConfigurations = import ./nixosConfigurations.nix inputs;
     nixosModules = import ./nixosModules inputs;
-    packages = import ./packages.nix inputs;
+    overlays = import ./overlays inputs;
+    packages = import ./packages inputs;
   };
 }
