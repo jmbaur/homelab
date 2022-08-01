@@ -45,7 +45,7 @@
     formatter = import ./formatter.nix inputs;
     inventory = import ./inventory.nix inputs;
     nixosConfigurations = import ./nixosConfigurations.nix inputs;
-    nixosModules = import ./nixosModules.nix inputs;
+    nixosModules = import ./nixosModules inputs;
     packages = import ./packages.nix inputs;
   };
 }
