@@ -57,7 +57,7 @@ let
                   (lib.mapAttrsToList
                     (name: networkInfo: [ networkInfo.networkIPv4Cidr networkInfo.networkUlaCidr ])
                     (lib.filterAttrs
-                      (name: networkInfo: networkInfo.includeRoutesTo == network.name)
+                      (name: networkInfo: lib.any (name: network.name == name) networkInfo.includeRoutesTo)
                       inventory.networks
                     )
                   );
@@ -77,37 +77,37 @@ let
             };
           in
           pkgs.writeShellScriptBin scriptName ''
-            set -eo pipefail
+            set -eux pipefail
             case "$1" in
             text)
+            echo ####################################################################
+            echo # FULL TUNNEL
             cat << EOF
-            ####################################################################
-            # FULL TUNNEL
             ${fullTunnelWgConfig}
-            ####################################################################
-            # SPLIT TUNNEL
-            ${splitTunnelWgConfig}
-            ####################################################################
             EOF
+            echo ####################################################################
+            echo # SPLIT TUNNEL
+            cat << EOF
+            ${splitTunnelWgConfig}
+            EOF
+            echo ####################################################################
             ;;
             qrcode)
-            ####################################################################
-            # FULL TUNNEL
+            echo ####################################################################
+            echo # FULL TUNNEL
             ${pkgs.qrencode}/bin/qrencode -t ANSIUTF8 << EOF
             ${fullTunnelWgConfig}
             EOF
-            ####################################################################
-            # SPLIT TUNNEL
+            echo ####################################################################
+            echo # SPLIT TUNNEL
             ${pkgs.qrencode}/bin/qrencode -t ANSIUTF8 << EOF
             ${splitTunnelWgConfig}
             EOF
-            ####################################################################
+            echo ####################################################################
             ;;
             *)
-            cat <<EOF
-            Usage: ${scriptName} type-of-config
-            where type-of-config can be "text" or "qrcode"
-            EOF
+            echo Usage: "$0" type-of-config
+            echo   where type-of-config can be "text" or "qrcode"
             ;;
             esac
           '')
