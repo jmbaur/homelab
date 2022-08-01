@@ -2,31 +2,30 @@
 let
   mkWgInterface = network:
     let
-      wgHost = network.hosts.${config.networking.hostName};
-      peers = lib.filterAttrs (_: wgHost: wgHost.wgPeer) network.hosts;
+      wgServerHost = network.hosts.${config.networking.hostName};
+      peers = lib.filterAttrs (_: host: host.wgPeer) network.hosts;
       port = 51800 + network.id;
     in
     {
       netdev = {
-        netdevConfig = { Name = wgHost.interface; Kind = "wireguard"; };
+        netdevConfig = { Name = wgServerHost.interface; Kind = "wireguard"; };
         wireguardConfig = {
           ListenPort = port;
           PrivateKeyFile = config.age.secrets.${network.name}.path;
         };
         wireguardPeers = lib.mapAttrsToList
-          (_: wgHost: {
+          (_: peer: {
             wireguardPeerConfig = {
-              PublicKey = wgHost.publicKey;
+              PublicKey = peer.publicKey;
               AllowedIPs = [
-                "${wgHost.ipv4}/32"
-                "${wgHost.ipv6.gua}/128"
-                "${wgHost.ipv6.ula}/128"
+                "${peer.ipv4}/32"
+                "${peer.ipv6.ula}/128"
               ];
             };
           })
           peers;
       };
-      network = with wgHost; {
+      network = with wgServerHost; {
         inherit (network) name;
         addresses = [
           {
@@ -34,9 +33,6 @@ let
           }
           {
             addressConfig.Address = "${ipv6.ula}/${toString network.ipv6Cidr}";
-          }
-          {
-            addressConfig.Address = "${ipv6.gua}/${toString network.ipv6Cidr}";
           }
         ];
       };
@@ -49,20 +45,19 @@ let
               Interface = {
                 Address = [
                   "${host.ipv4}/${toString network.ipv4Cidr}"
-                  "${host.ipv6.gua}/${toString network.ipv6Cidr}"
                   "${host.ipv6.ula}/${toString network.ipv6Cidr}"
                 ];
                 PrivateKey =
                   "$(cat ${config.age.secrets.${hostname}.path})";
                 DNS =
-                  (with wgHost; ([ ipv4 ipv6.gua ipv6.ula ]))
+                  (with wgServerHost; ([ ipv4 ipv6.ula ]))
                   ++
                   [ "home.arpa" ];
               };
               Peer = {
                 PublicKey = "$(cat ${config.age.secrets.${network.name}.path} | ${pkgs.wireguard-tools}/bin/wg pubkey)";
                 Endpoint = "vpn.${inventory.tld}:${toString port}";
-                AllowedIPs = [ "0.0.0.0/0" "::/0" ];
+                AllowedIPs = [ "0.0.0.0/0"  "::/0" ];
               };
             };
           in

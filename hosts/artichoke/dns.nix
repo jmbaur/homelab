@@ -69,8 +69,11 @@ in
         mgmt
         public
         trusted
+        wg-trusted
         iot
+        wg-iot
         work
+        wg-work
       ]);
   };
 }

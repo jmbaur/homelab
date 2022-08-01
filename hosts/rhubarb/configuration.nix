@@ -60,9 +60,11 @@
         job_name = "artichoke";
         static_configs = [
           {
+            # TODO(jared): Use DNS-SD
             targets = [
               "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.node.port}"
               "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.wireguard.port}"
+              "artichoke.mgmt.home.arpa:9153" # coredns
             ];
           }
         ];

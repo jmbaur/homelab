@@ -30,15 +30,22 @@ let
     # TODO(jared): Use dedicated option field when this is merged:
     # https://github.com/NixOS/nixpkgs/pull/184340
     # TODO(jared): Should we advertise the ULA network via RA or via DHCPv6?
-    extraConfig = lib.concatMapStrings
-      (n: with inventory.networks.${n}; ''
-        [IPv6RoutePrefix]
-        Route=${networkGuaCidr}
-
-        [IPv6RoutePrefix]
-        Route=${networkUlaCidr}
-      '')
-      network.includeRoutesTo;
+    extraConfig = (lib.optionalString network.managed ''
+      [IPv6RoutePrefix]
+      Route=${network.networkUlaCidr}
+    '') + (lib.concatMapStrings
+    (n:
+    let
+      mainNetwork = network;
+      linkedNetwork = inventory.networks.${n};
+    in ''
+      [IPv6RoutePrefix]
+      Route=${linkedNetwork.networkGuaCidr}
+    '' + (lib.optionalString mainNetwork.managed ''
+      [IPv6RoutePrefix]
+      Route=${linkedNetwork.networkUlaCidr}
+    ''))
+    network.includeRoutesTo);
     dhcpServerConfig = {
       PoolOffset = 50;
       PoolSize = 200;

@@ -100,11 +100,14 @@
                     lo : accept,
                     $DEV_WAN : jump input_wan,
                     $DEV_WAN6 : jump input_wan,
+                    $DEV_MGMT : jump input_private_trusted,
                     $DEV_PUBLIC : jump input_private_untrusted,
                     $DEV_TRUSTED : jump input_private_trusted,
+                    $DEV_WG_TRUSTED : jump input_private_trusted,
                     $DEV_IOT : jump input_private_untrusted,
+                    $DEV_WG_IOT : jump input_private_untrusted,
                     $DEV_WORK : jump input_private_untrusted,
-                    $DEV_MGMT : jump input_private_trusted,
+                    $DEV_WG_WORK : jump input_private_untrusted,
                 }
 
                 # the rest is dropped by the above policy
@@ -157,6 +160,7 @@
                     $DEV_TRUSTED,
                     $DEV_WG_TRUSTED,
                     $DEV_IOT,
+                    $DEV_WG_IOT,
                 } accept
             }
 
@@ -197,8 +201,11 @@
                     $DEV_MGMT : jump forward_mgmt,
                     $DEV_PUBLIC : jump allow_to_internet,
                     $DEV_TRUSTED : jump forward_trusted,
+                    $DEV_WG_TRUSTED : jump forward_trusted,
                     $DEV_IOT : jump forward_iot,
+                    $DEV_WG_IOT : jump forward_iot,
                     $DEV_WORK : jump forward_work,
+                    $DEV_WG_WORK : jump forward_work,
                 }
 
                 # the rest is dropped by the above policy
