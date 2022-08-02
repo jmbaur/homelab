@@ -164,8 +164,7 @@
     enable = true;
     email = "jaredbaur@fastmail.com";
     virtualHosts = {
-      "monitoring" = {
-        serverAliases = [ "rhubarb.mgmt.home.arpa" "localhost" ];
+      localhost = {
         extraConfig = ''
           reverse_proxy localhost:${toString config.services.grafana.port}
         '';
