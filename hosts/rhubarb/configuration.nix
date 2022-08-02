@@ -73,6 +73,7 @@
         static_configs = [{
           targets = [
             "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.node.port}"
+            "kale.mgmt.home.arpa:${toString config.services.prometheus.exporters.node.port}"
             "rhubarb.mgmt.home.arpa:${toString config.services.prometheus.exporters.node.port}"
           ];
         }];
@@ -142,6 +143,7 @@
       allowSignUp = false;
       allowOrgCreate = false;
     };
+    declarativePlugins = [ ];
     provision = {
       enable = true;
       datasources = [{
