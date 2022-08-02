@@ -2,35 +2,22 @@
   description = "NixOS configurations for the homelab";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-unstable";
+    agenix.url = "github:ryantm/agenix";
+    blog.url = "github:jmbaur/blog";
+    cn913x_build.flake = false;
+    cn913x_build.url = "github:solidrun/cn913x_build";
     deploy-rs.url = "github:serokell/deploy-rs";
     flake-utils.url = "github:numtide/flake-utils";
+    homelab-private.url = "git+ssh://git@github.com/jmbaur/homelab-private";
     ipwatch.url = "github:jmbaur/ipwatch";
-    pre-commit.url = "github:cachix/pre-commit-hooks.nix";
-    agenix.url = "github:ryantm/agenix";
-    terranix.url = "github:terranix/terranix";
-    blog.url = "github:jmbaur/blog";
+    microvm.inputs.nixpkgs.follows = "nixpkgs";
+    microvm.url = "github:astro/microvm.nix";
     nixos-configs.url = "github:jmbaur/nixos-configs";
-    homelab-private = {
-      url = "git+ssh://git@github.com/jmbaur/homelab-private";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nixos-hardware = {
-      url = "github:NixOS/nixos-hardware";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    microvm = {
-      url = "github:astro/microvm.nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nixos-generators = {
-      url = "github:nix-community/nixos-generators";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    cn913x_build = {
-      url = "github:solidrun/cn913x_build";
-      flake = false;
-    };
+    nixos-hardware.inputs.nixpkgs.follows = "nixpkgs";
+    nixos-hardware.url = "github:NixOS/nixos-hardware";
+    nixpkgs.url = "nixpkgs/nixos-unstable";
+    pre-commit.url = "github:cachix/pre-commit-hooks.nix";
+    terranix.url = "github:terranix/terranix";
   };
 
   nixConfig = {
