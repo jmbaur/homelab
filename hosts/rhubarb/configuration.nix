@@ -56,8 +56,8 @@
   services.prometheus = {
     enable = true;
     extraFlags = [
-      "--web.console.templates=${pkgs.homelab-console-templates}"
-      "--web.console.libraries=${pkgs.prometheus}/etc/prometheus/console_libraries"
+      "--web.console.templates=${pkgs.homelab-console-templates}/consoles"
+      "--web.console.libraries=${pkgs.homelab-console-templates}/console_libraries"
     ];
     exporters = {
       node = {
