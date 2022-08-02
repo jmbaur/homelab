@@ -82,52 +82,52 @@
         job_name = "prometheus";
         static_configs = [{ targets = [ "rhubarb.mgmt.home.arpa:${toString config.services.prometheus.port}" ]; }];
       }
+      # {
+      #   job_name = "blackbox";
+      #   static_configs = [{ targets = [ "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.blackbox.port}" ]; }];
+      # }
+      # {
+      #   job_name = "icmpv4_connectivity";
+      #   metrics_path = "/probe";
+      #   params.module = [ "icmpv4_connectivity" ];
+      #   static_configs = [{ targets = [ "he.net" "iana.org" ]; }];
+      #   relabel_configs = [
+      #     {
+      #       source_labels = [ "__address__" ];
+      #       target_label = "__param_target";
+      #     }
+      #     {
+      #       source_labels = [ "__param_target" ];
+      #       target_label = "instance";
+      #     }
+      #     {
+      #       target_label = "__address__";
+      #       replacement = "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.blackbox.port}";
+      #     }
+      #   ];
+      # }
+      # {
+      #   job_name = "icmpv6_connectivity";
+      #   metrics_path = "/probe";
+      #   params.module = [ "icmpv6_connectivity" ];
+      #   static_configs = [{ targets = [ "he.net" "iana.org" ]; }];
+      #   relabel_configs = [
+      #     {
+      #       source_labels = [ "__address__" ];
+      #       target_label = "__param_target";
+      #     }
+      #     {
+      #       source_labels = [ "__param_target" ];
+      #       target_label = "instance";
+      #     }
+      #     {
+      #       target_label = "__address__";
+      #       replacement = "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.blackbox.port}";
+      #     }
+      #   ];
+      # }
       {
-        job_name = "blackbox";
-        static_configs = [{ targets = [ "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.blackbox.port}" ]; }];
-      }
-      {
-        job_name = "icmpv4_connectivity";
-        metrics_path = "/probe";
-        params.module = [ "icmpv4_connectivity" ];
-        static_configs = [{ targets = [ "he.net" "iana.org" ]; }];
-        relabel_configs = [
-          {
-            source_labels = [ "__address__" ];
-            target_label = "__param_target";
-          }
-          {
-            source_labels = [ "__param_target" ];
-            target_label = "instance";
-          }
-          {
-            target_label = "__address__";
-            replacement = "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.blackbox.port}";
-          }
-        ];
-      }
-      {
-        job_name = "icmpv6_connectivity";
-        metrics_path = "/probe";
-        params.module = [ "icmpv6_connectivity" ];
-        static_configs = [{ targets = [ "he.net" "iana.org" ]; }];
-        relabel_configs = [
-          {
-            source_labels = [ "__address__" ];
-            target_label = "__param_target";
-          }
-          {
-            source_labels = [ "__param_target" ];
-            target_label = "instance";
-          }
-          {
-            target_label = "__address__";
-            replacement = "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.blackbox.port}";
-          }
-        ];
-      }
-      {
-        job_name = "dns";
+        job_name = "coredns";
         static_configs = [{ targets = [ "artichoke.mgmt.home.arpa:9153" ]; }];
       }
       {
