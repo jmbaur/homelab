@@ -151,7 +151,7 @@
         isDefault = true;
       }];
       dashboards = map
-        (d: {
+        (d: with d; {
           inherit name;
           options.path = pkgs.fetchurl {
             inherit url sha256;
