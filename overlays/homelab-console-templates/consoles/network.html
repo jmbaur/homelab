@@ -16,7 +16,7 @@
   <th>IPv4 Connectivity</th>
   <th>IPv6 Connectivity</th>
 </tr>
-{{ range query "up{job=~'icmpv._connectivity'}" | sortByLabel "instance" }}
+{{ range query "sum by(instance) (up{job=~'icmpv._connectivity'})" | sortByLabel "instance" }}
 <tr>
   <td>{{ .Labels.instance }}</td>
   {{ with printf "sum(probe_success{job='icmpv4_connectivity',instance='%s'})" .Labels.instance | query }}
