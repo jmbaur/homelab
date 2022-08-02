@@ -55,18 +55,14 @@
 
   services.prometheus = {
     enable = true;
-    extraFlags = [
-      "--web.console.templates=${pkgs.homelab-console-templates}/consoles"
-      "--web.console.libraries=${pkgs.homelab-console-templates}/console_libraries"
-    ];
     exporters = {
       node = {
         enable = true;
-        # openFirewall = true;
+        openFirewall = false;
         enabledCollectors = [ "systemd" ];
       };
     };
-    # TODO(jared): Use DNS-SD
+    # TODO(jared): Use DNS-SD?
     scrapeConfigs = [
       {
         job_name = "node";
