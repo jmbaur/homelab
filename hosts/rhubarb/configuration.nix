@@ -94,9 +94,7 @@
         job_name = "internet_connectivity";
         metrics_path = "/probe";
         params.module = [ "icmpv4_connectivity" "icmpv6_connectivity" ];
-        static_configs = [{
-          targets = [ "google.com" "cloudflare.com" ];
-        }];
+        static_configs = [{ targets = [ "he.net" "iana.org" ]; }];
         relabel_configs = [
           {
             source_labels = [ "__address__" ];
