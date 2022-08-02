@@ -66,12 +66,11 @@
         enabledCollectors = [ "systemd" ];
       };
     };
-    # TODO(jared): configure these:
+    # TODO(jared): Use DNS-SD
     scrapeConfigs = [
       {
         job_name = "node";
         static_configs = [{
-          # TODO(jared): Use DNS-SD
           targets = [
             "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.node.port}"
             "rhubarb.mgmt.home.arpa:${toString config.services.prometheus.exporters.node.port}"
@@ -80,15 +79,11 @@
       }
       {
         job_name = "prometheus";
-        static_configs = [{
-          targets = [ "rhubarb.mgmt.home.arpa:${toString config.services.prometheus.port}" ];
-        }];
+        static_configs = [{ targets = [ "rhubarb.mgmt.home.arpa:${toString config.services.prometheus.port}" ]; }];
       }
       {
         job_name = "blackbox";
-        static_configs = [{
-          targets = [ "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.blackbox.port}" ];
-        }];
+        static_configs = [{ targets = [ "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.blackbox.port}" ]; }];
       }
       {
         job_name = "icmpv4_connectivity";
@@ -130,9 +125,15 @@
           }
         ];
       }
+      {
+        job_name = "dns";
+        static_configs = [{ targets = [ "artichoke.mgmt.home.arpa:9153" ]; }];
+      }
+      {
+        job_name = "vpn";
+        static_configs = [{ targets = [ "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.wireguard.port}" ]; }];
+      }
     ];
-    # "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.wireguard.port}"
-    # "artichoke.mgmt.home.arpa:9153" # coredns
   };
 
   system.stateVersion = "22.11";
