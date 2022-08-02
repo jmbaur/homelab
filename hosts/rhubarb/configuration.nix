@@ -164,7 +164,7 @@
     enable = true;
     email = "jaredbaur@fastmail.com";
     virtualHosts = {
-      localhost = {
+      ":443" = {
         extraConfig = ''
           reverse_proxy localhost:${toString config.services.grafana.port}
         '';
