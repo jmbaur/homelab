@@ -7,7 +7,6 @@
     ./links.nix
     ./monitoring.nix
     ./nftables.nix
-    ./options.nix
     ./wan.nix
     ./wireguard.nix
   ];
