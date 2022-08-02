@@ -18,7 +18,7 @@
     hostName = "rhubarb";
     useDHCP = false;
     useNetworkd = true;
-    firewall.allowedTCPPorts = [ config.services.prometheus.port ];
+    firewall.allowedTCPPorts = [ 80 443 config.services.prometheus.port ];
   };
   services.resolved = {
     enable = true;
