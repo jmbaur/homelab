@@ -19,8 +19,12 @@
 {{ range query "up{job=~'icmpv._connectivity'}" | sortByLabel "instance" }}
 <tr>
   <td>{{ .Labels.instance }}</td>
-  <td>{{ template "prom_query_drilldown" (args (printf "sum(probe_success{job='icmpv4_connectivity',instance='%s'}" .Labels.instance))) }}</td>
-  <td>{{ template "prom_query_drilldown" (args (printf "sum(probe_success{job='icmpv6_connectivity',instance='%s'}" .Labels.instance))) }}</td>
+  {{ with printf "sum(probe_success{job='icmpv4_connectivity',instance='%s'})" .Labels.instance | query }}
+    <td{{ if eq (. | value) 1 }}>Up{{ else }} class="alert-danger">Down{{ end }}</td>
+  {{ end }}
+  {{ with printf "sum(probe_success{job='icmpv6_connectivity',instance='%s'})" .Labels.instance | query }}
+    <td{{ if eq (. | value) 1 }}>Up{{ else }} class="alert-danger">Down{{ end }}</td>
+  {{ end }}
 </tr>
 {{ else }}
 <tr><td colspan=4>No internet targets found.</td></tr>
