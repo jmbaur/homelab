@@ -78,6 +78,14 @@
         job_name = "prometheus";
         static_configs = [{ targets = [ "rhubarb.mgmt.home.arpa:${toString config.services.prometheus.port}" ]; }];
       }
+      {
+        job_name = "coredns";
+        static_configs = [{ targets = [ "artichoke.mgmt.home.arpa:9153" ]; }];
+      }
+      {
+        job_name = "wireguard";
+        static_configs = [{ targets = [ "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.wireguard.port}" ]; }];
+      }
       # {
       #   job_name = "blackbox";
       #   static_configs = [{ targets = [ "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.blackbox.port}" ]; }];
@@ -122,22 +130,14 @@
       #     }
       #   ];
       # }
-      {
-        job_name = "coredns";
-        static_configs = [{ targets = [ "artichoke.mgmt.home.arpa:9153" ]; }];
-      }
-      {
-        job_name = "vpn";
-        static_configs = [{ targets = [ "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.wireguard.port}" ]; }];
-      }
     ];
   };
 
   services.grafana = {
     enable = true;
-    users = {
-      allowSignUp = false;
-      allowOrgCreate = false;
+    auth = {
+      disableLoginForm = true;
+      anonymous.enable = true;
     };
     declarativePlugins = [ ];
     provision = {
