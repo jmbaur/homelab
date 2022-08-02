@@ -36,7 +36,6 @@ in
           health_check 5s
         }
         cache 30
-        any
         errors
         prometheus :9153
       }
@@ -60,7 +59,6 @@ in
               reload 0 # the file is read-only, no need to dynamically reload it
             }
             any
-            log
             errors
             prometheus :9153
           }

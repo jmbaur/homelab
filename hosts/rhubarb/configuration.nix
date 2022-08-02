@@ -161,9 +161,16 @@
   };
 
   services.caddy = {
-    enable = false;
+    enable = true;
     email = "jaredbaur@fastmail.com";
-    virtualHosts = { };
+    virtualHosts = {
+      "monitoring" = {
+        serverAliases = [ "rhubarb.mgmt.home.arpa" "localhost" ];
+        extraConfig = ''
+          reverse_proxy localhost:${toString config.services.grafana.port}
+        '';
+      };
+    };
   };
 
   system.stateVersion = "22.11";
