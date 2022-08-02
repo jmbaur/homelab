@@ -20,10 +20,10 @@
 <tr>
   <td>{{ .Labels.instance }}</td>
   {{ with printf "sum(probe_success{job='icmpv4_connectivity',instance='%s'})" .Labels.instance | query }}
-    <td{{ if eq (. | first | value) 1 }}>Up{{ else }} class="alert-danger">Down{{ end }}</td>
+    <td{{ if eq (. | first | value) 1.0 }}>Up{{ else }} class="alert-danger">Down{{ end }}</td>
   {{ end }}
   {{ with printf "sum(probe_success{job='icmpv6_connectivity',instance='%s'})" .Labels.instance | query }}
-    <td{{ if eq (. | first | value) 1 }}>Up{{ else }} class="alert-danger">Down{{ end }}</td>
+    <td{{ if eq (. | first | value) 1.0 }}>Up{{ else }} class="alert-danger">Down{{ end }}</td>
   {{ end }}
 </tr>
 {{ else }}
