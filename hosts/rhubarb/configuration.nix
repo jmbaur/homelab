@@ -136,5 +136,37 @@
     ];
   };
 
+  services.grafana = {
+    enable = true;
+    users = {
+      allowSignUp = false;
+      allowOrgCreate = false;
+    };
+    provision = {
+      enable = true;
+      datasources = [{
+        url = "http://localhost:${toString config.services.prometheus.port}";
+        type = "prometheus";
+        name = "prometheus";
+        isDefault = true;
+      }];
+      dashboards = map
+        (d: {
+          inherit name;
+          options.path = pkgs.fetchurl {
+            inherit url sha256;
+            name = "${name}-dashboard.json";
+          };
+        })
+        (lib.importJSON ./dashboards.json);
+    };
+  };
+
+  services.caddy = {
+    enable = false;
+    email = "jaredbaur@fastmail.com";
+    virtualHosts = { };
+  };
+
   system.stateVersion = "22.11";
 }

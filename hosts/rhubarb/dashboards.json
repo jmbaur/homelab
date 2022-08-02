@@ -1,0 +1,17 @@
+[
+  {
+    "name": "node_exporter_full",
+    "url": "https://grafana.com/api/dashboards/1860/revisions/27/download",
+    "sha256": "16srb69lhysqvkkwf25d427dzg4p2fxr1igph9j8aj9q4kkrw595"
+  },
+  {
+    "name": "coredns",
+    "url": "https://grafana.com/api/dashboards/14981/revisions/2/download",
+    "sha256": "0xq8ww2m5n4h54kqi38niq2h4dkk731d7axcc2kh64c8345z3hsx"
+  },
+  {
+    "name": "wireguard",
+    "url": "https://grafana.com/api/dashboards/12177/revisions/1/download",
+    "sha256": "1bw2qdlyrihf8jb79k0maa9n0ykvzmaxa0rl1m4chjqlsfsjzd6j"
+  }
+]
