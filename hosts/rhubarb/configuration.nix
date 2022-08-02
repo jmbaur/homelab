@@ -95,10 +95,7 @@
         metrics_path = "/probe";
         params.module = [ "icmpv4_connectivity" "icmpv6_connectivity" ];
         static_configs = [{
-          targets = [
-            "https://google.com"
-            "https://cloudflare.com"
-          ];
+          targets = [ "google.com" "cloudflare.com" ];
         }];
         relabel_configs = [
           {
