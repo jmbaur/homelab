@@ -67,15 +67,7 @@
       };
     };
     # TODO(jared): configure these:
-    #   - "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.wireguard.port}"
-    #   - "artichoke.mgmt.home.arpa:9153" # coredns
     scrapeConfigs = [
-      {
-        job_name = "prometheus";
-        static_configs = [{
-          targets = [ "rhubarb.mgmt.home.arpa:${toString config.services.prometheus.port}" ];
-        }];
-      }
       {
         job_name = "node";
         static_configs = [{
@@ -86,7 +78,46 @@
           ];
         }];
       }
+      {
+        job_name = "prometheus";
+        static_configs = [{
+          targets = [ "rhubarb.mgmt.home.arpa:${toString config.services.prometheus.port}" ];
+        }];
+      }
+      {
+        job_name = "blackbox";
+        static_configs = [{
+          targets = [ "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.blackbox.port}" ];
+        }];
+      }
+      {
+        job_name = "internet_connectivity";
+        metrics_path = "/probe";
+        params.module = [ "icmpv4_connectivity" "icmpv6_connectivity" ];
+        static_configs = [{
+          targets = [
+            "https://google.com"
+            "https://cloudflare.com"
+          ];
+        }];
+        relabel_configs = [
+          {
+            source_labels = [ "__address__" ];
+            target_label = "__param_target";
+          }
+          {
+            source_labels = [ "__param_target" ];
+            target_label = "instance";
+          }
+          {
+            target_label = "__address__";
+            replacement = "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.blackbox.port}";
+          }
+        ];
+      }
     ];
+    # "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.wireguard.port}"
+    # "artichoke.mgmt.home.arpa:9153" # coredns
   };
 
   system.stateVersion = "22.11";
