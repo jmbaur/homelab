@@ -91,9 +91,29 @@
         }];
       }
       {
-        job_name = "internet_connectivity";
+        job_name = "icmpv4_connectivity";
         metrics_path = "/probe";
-        params.module = [ "icmpv4_connectivity" "icmpv6_connectivity" ];
+        params.module = [ "icmpv4_connectivity" ];
+        static_configs = [{ targets = [ "he.net" "iana.org" ]; }];
+        relabel_configs = [
+          {
+            source_labels = [ "__address__" ];
+            target_label = "__param_target";
+          }
+          {
+            source_labels = [ "__param_target" ];
+            target_label = "instance";
+          }
+          {
+            target_label = "__address__";
+            replacement = "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.blackbox.port}";
+          }
+        ];
+      }
+      {
+        job_name = "icmpv6_connectivity";
+        metrics_path = "/probe";
+        params.module = [ "icmpv6_connectivity" ];
         static_configs = [{ targets = [ "he.net" "iana.org" ]; }];
         relabel_configs = [
           {
