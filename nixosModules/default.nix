@@ -219,7 +219,8 @@ inputs: with inputs; {
           options.hardware.thinkpad-x13s.enable = mkEnableOption "hardware support for ThinkPad X13s";
           config = mkIf cfg.enable
             {
-              nixpkgs.config.allowBroken = true;
+              # the base profile includes zfs support, exclude it here since it is broken
+              boot.supportedFilesystems = mkForce [ "btrfs" "reiserfs" "vfat" "f2fs" "xfs" "ntfs" "cifs" ];
               boot.kernelPackages =
                 let
                   rev = "next-20220802";
