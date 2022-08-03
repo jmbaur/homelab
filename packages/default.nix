@@ -40,6 +40,12 @@ let
     modules = installer_iso_modules ++ [{ hardware.lx2k.enable = true; }];
   }).config.system.build.isoImage;
 
+  installer_iso_thinkpad_x13s = system: (nixpkgs.lib.nixosSystem {
+    inherit system;
+    specialArgs = { inherit inputs; };
+    modules = installer_iso_modules ++ [{ hardware.thinkpad-x13s.enable = true; }];
+  }).config.system.build.isoImage;
+
   crs_305 = pkgs: system: pkgs.callPackage ./routeros/crs305/configuration.nix {
     inventoryFile = self.packages.${system}.inventory;
   };
@@ -72,6 +78,7 @@ in
       installer_iso = installer_iso system;
       installer_img = installer_img system;
       installer_iso_lx2k = installer_iso_lx2k system;
+      installer_iso_thinkpad_x13s = installer_iso_thinkpad_x13s system;
       artichoke_sd_image = self.nixosConfigurations.artichoke.config.system.build.sdImage;
       rhubarb_sd_image = self.nixosConfigurations.rhubarb.config.system.build.sdImage;
 

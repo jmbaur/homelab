@@ -3,10 +3,9 @@ inputs: with inputs; {
     system = "x86_64-linux";
     specialArgs = { inherit inputs; };
     modules = [
-      ./beetroot/configuration.nix
+      ./beetroot
       homelab-private.nixosModules.common
       nixos-configs.nixosModules.default
-      nixos-hardware.nixosModules.lenovo-thinkpad-t495
     ];
   };
 
@@ -14,7 +13,7 @@ inputs: with inputs; {
     system = "x86_64-linux";
     specialArgs = { inherit inputs; };
     modules = [
-      ./okra/configuration.nix
+      ./okra
       homelab-private.nixosModules.common
       nixos-configs.nixosModules.default
       nixos-hardware.nixosModules.intel-nuc-8i7beh

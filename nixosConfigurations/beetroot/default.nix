@@ -5,9 +5,6 @@
   hardware.enableRedistributableFirmware = true;
   hardware.thinkpad-x13s.enable = true;
 
-  boot.kernelParams = [ "acpi_backlight=native" ];
-  boot.kernelPackages = pkgs.linuxPackages_5_18;
-  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.initrd.systemd.enable = true;

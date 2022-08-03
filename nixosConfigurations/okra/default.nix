@@ -1,6 +1,8 @@
 { config, lib, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
 
+  zramSwap.enable = true;
+
   boot.kernelPackages = pkgs.linuxPackages_5_18;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
