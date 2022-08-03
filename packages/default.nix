@@ -40,7 +40,7 @@ let
     modules = installer_iso_modules ++ [{ hardware.lx2k.enable = true; }];
   }).config.system.build.isoImage;
 
-  installer_iso_thinkpad_x13s = system: (nixpkgs.lib.nixosSystem {
+  installer_iso_thinkpad_x13s = system: (nixpkgs-master.lib.nixosSystem {
     inherit system;
     specialArgs = { inherit inputs; };
     modules = installer_iso_modules ++ [{ hardware.thinkpad-x13s.enable = true; }];
