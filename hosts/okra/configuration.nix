@@ -42,7 +42,14 @@
     programs.ssh = {
       enable = true;
       matchBlocks = {
-        "*.mgmt.home.arpa".forwardAgent = true;
+        "*.mgmt.home.arpa" = {
+          forwardAgent = true;
+          remoteForwards = [{
+            bind.port = 2489;
+            host.address = "localhost";
+            host.port = 2489;
+          }];
+        };
         work = {
           user = "jbaur";
           hostname = "dev.work.home.arpa";
@@ -51,6 +58,11 @@
             { bind.port = 1025; host.address = "localhost"; host.port = 1025; }
             { bind.port = 8000; host.address = "localhost"; host.port = 8000; }
           ];
+          remoteForwards = [{
+            bind.port = 2489;
+            host.address = "localhost";
+            host.port = 2489;
+          }];
         };
       };
     };

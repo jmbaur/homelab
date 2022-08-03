@@ -18,6 +18,7 @@
 
   custom = {
     common.enable = true;
+    dev.enable = true;
     deployee = {
       enable = true;
       authorizedKeyFiles = [
