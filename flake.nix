@@ -15,7 +15,6 @@
     nixos-configs.url = "github:jmbaur/nixos-configs";
     nixos-hardware.inputs.nixpkgs.follows = "nixpkgs";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
-    nixpkgs-master.url = "nixpkgs/master";
     nixpkgs.url = "nixpkgs/nixos-unstable";
     pre-commit.url = "github:cachix/pre-commit-hooks.nix";
     terranix.url = "github:terranix/terranix";

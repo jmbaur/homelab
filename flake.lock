@@ -504,11 +504,11 @@
         "pre-commit": "pre-commit"
       },
       "locked": {
-        "lastModified": 1659554096,
-        "narHash": "sha256-LGtBTd0w52M/5bfhIwNH/LeuoCbC4Yw6OMf72KI0sjA=",
+        "lastModified": 1659555473,
+        "narHash": "sha256-EzaG24SHh3ADB7SVZ5fV9/ozSHegxgDWyqynxbvpCF4=",
         "owner": "jmbaur",
         "repo": "nixos-configs",
-        "rev": "64f321c3569407102c17982c7549418174862b15",
+        "rev": "7ac59e8d5c8cac8daac33957925de7a95ddab5a2",
         "type": "github"
       },
       "original": {
@@ -548,21 +548,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-master": {
-      "locked": {
-        "lastModified": 1659554047,
-        "narHash": "sha256-1Esoaa8Ul4VAfakgILM9OdV3u0ZlBf5EOhAZoa9JEA0=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "5b4e31a4be9838c00bd4964f2b2039a774c10f53",
-        "type": "github"
-      },
-      "original": {
-        "id": "nixpkgs",
-        "ref": "master",
-        "type": "indirect"
-      }
-    },
     "nixpkgs_10": {
       "locked": {
         "lastModified": 1645655918,
@@ -579,11 +564,11 @@
     },
     "nixpkgs_11": {
       "locked": {
-        "lastModified": 1659305579,
-        "narHash": "sha256-SFeQTmh7hc9Y2fSkooHaoS8mDfPa04sfmUCtQ8MA6Pg=",
+        "lastModified": 1659487974,
+        "narHash": "sha256-CVGOtR/Wyq3TVCjf8/kdnYD5G2JwUKUQVtd+5WIDTuY=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "5857574d45925585baffde730369414319228a84",
+        "rev": "12363fb6d89859a37cd7e27f85288599f13e49d9",
         "type": "github"
       },
       "original": {
@@ -791,7 +776,6 @@
         "nixos-configs": "nixos-configs",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_11",
-        "nixpkgs-master": "nixpkgs-master",
         "pre-commit": "pre-commit_2",
         "terranix": "terranix"
       }
