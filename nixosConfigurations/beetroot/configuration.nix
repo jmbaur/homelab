@@ -1,8 +1,9 @@
 { config, lib, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
 
-  hardware.enableRedistributableFirmware = true;
   hardware.bluetooth.enable = true;
+  hardware.enableRedistributableFirmware = true;
+  hardware.thinkpad-x13s.enable = true;
 
   boot.kernelParams = [ "acpi_backlight=native" ];
   boot.kernelPackages = pkgs.linuxPackages_5_18;
