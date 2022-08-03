@@ -218,15 +218,15 @@ inputs: with inputs; {
         {
           options.hardware.thinkpad-x13s.enable = mkEnableOption "hardware support for ThinkPad X13s";
           config = mkIf cfg.enable {
-            boot.kernelPackages = pkgs.linuxPackagesFor (pkgs.linux_5_19.override {
+            boot.kernelPackages = pkgs.linuxPackagesFor (pkgs.linux_5_18.override {
               argsOverride = let rev = "next-20220802"; in
                 rec {
                   src = pkgs.fetchurl {
                     url = "https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/snapshot/linux-next-${rev}.tar.gz";
                     sha256 = "sha256-aoykMA0Mbsx0pWp/1ppfkJsq9R3FYn7opRHm3gA7/q0=";
                   };
-                  version = "5.19.0-${rev}";
-                  modDirVersion = "5.19.0-${rev}";
+                  version = "5.18.0-${rev}";
+                  modDirVersion = "5.18.0-${rev}";
                 };
             });
           };
