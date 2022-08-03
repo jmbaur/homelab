@@ -23,14 +23,15 @@ let
 in
 {
   services.prometheus.exporters = {
-    node = {
-      enable = true;
-      enabledCollectors = [ "ethtool" "network_route" "systemd" ];
-    };
-    wireguard.enable = true;
     blackbox = {
       enable = true;
       configFile = "${blackboxConfig}";
     };
+    node = {
+      enable = true;
+      enabledCollectors = [ "ethtool" "network_route" "systemd" ];
+    };
+    smartctl.enable = true;
+    wireguard.enable = true;
   };
 }

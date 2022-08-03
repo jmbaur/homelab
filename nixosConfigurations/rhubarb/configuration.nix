@@ -56,9 +56,9 @@
   services.prometheus = {
     enable = true;
     exporters = {
+      smartctl.enable = true;
       node = {
         enable = true;
-        openFirewall = false;
         enabledCollectors = [ "systemd" ];
       };
     };

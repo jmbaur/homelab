@@ -46,6 +46,10 @@
       openFirewall = true;
       enabledCollectors = [ "ethtool" "network_route" "systemd" ];
     };
+    smartctl = {
+      enable = true;
+      openFirewall = true;
+    };
   };
 
   # This value determines the NixOS release from which the default

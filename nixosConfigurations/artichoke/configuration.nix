@@ -7,6 +7,7 @@
     ./links.nix
     ./monitoring.nix
     ./nftables.nix
+    ./ntp.nix
     ./wan.nix
     ./wireguard.nix
   ];
@@ -102,13 +103,6 @@
   services.iperf3 = {
     enable = true;
     openFirewall = false;
-  };
-
-  services.openntpd = {
-    enable = true;
-    extraConfig = ''
-      listen on *
-    '';
   };
 
   networking = {
