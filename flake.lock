@@ -548,6 +548,21 @@
         "type": "github"
       }
     },
+    "nixpkgs-master": {
+      "locked": {
+        "lastModified": 1659494082,
+        "narHash": "sha256-XRwMisQY/BcvDMDRVkd4n3/CT89HOtlPgWIQUNPvWSc=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "8c7576622aeb4707351a17e83429667f42e7d910",
+        "type": "github"
+      },
+      "original": {
+        "id": "nixpkgs",
+        "ref": "master",
+        "type": "indirect"
+      }
+    },
     "nixpkgs_10": {
       "locked": {
         "lastModified": 1645655918,
@@ -776,6 +791,7 @@
         "nixos-configs": "nixos-configs",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_11",
+        "nixpkgs-master": "nixpkgs-master",
         "pre-commit": "pre-commit_2",
         "terranix": "terranix"
       }
