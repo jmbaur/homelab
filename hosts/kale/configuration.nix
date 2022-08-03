@@ -9,9 +9,16 @@
 
   users.mutableUsers = false;
   users.users.jared = {
+    description = "Jared Baur";
     isNormalUser = true;
     extraGroups = [ "wheel" ];
     openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
+  };
+  home-manager.users.jared = { systemConfig, ... }: {
+    programs.git = {
+      userEmail = "jaredbaur@fastmail.com";
+      userName = systemConfig.users.users.jared.description;
+    };
   };
 
   hardware.lx2k.enable = true;
