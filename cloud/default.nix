@@ -1,4 +1,4 @@
-{ config, lib, inventory, secrets, ... }: {
+{ inventory, secrets, ... }: {
   # Versioning of these providers is provided by Nix.
   terraform.required_providers = {
     cloudflare.source = "cloudflare/cloudflare";

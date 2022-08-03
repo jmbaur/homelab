@@ -65,7 +65,7 @@
   programs.adb.enable = true;
   programs.nix-ld.enable = true;
 
-  home-manager.users.jared = { config, systemConfig, lib, ... }: {
+  home-manager.users.jared = { config, systemConfig, ... }: {
     xdg.configFile."gobar/gobar.yaml".source = (pkgs.formats.yaml { }).generate "gobar.yaml" {
       modules = [
         { module = "battery"; }

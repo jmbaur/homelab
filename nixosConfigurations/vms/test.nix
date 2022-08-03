@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }: {
+{ config, lib, ... }: {
   system.stateVersion = "22.05";
   networking = {
     hostName = "test";
