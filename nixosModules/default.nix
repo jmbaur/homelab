@@ -1,7 +1,6 @@
 inputs: with inputs; {
   default = {
     nixpkgs.overlays = [
-      self.overlays.default
       (final: prev: {
         ubootCN9130_CF_Pro = (prev.buildUBoot rec {
           version = "2019.10";
