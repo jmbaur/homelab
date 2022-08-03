@@ -143,7 +143,7 @@ inputs: with inputs; {
             '';
           };
         })
-      ({ config, lib, pkgs, ... }:
+      ({ inputs, config, lib, pkgs, ... }:
         let
           cfg = config.hardware.cn913x;
           kernelPatches = [

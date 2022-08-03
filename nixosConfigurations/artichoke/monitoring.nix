@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, inventory, ... }:
 let
   blackboxConfig = (pkgs.formats.yaml { }).generate "blackbox-config" {
     modules = {

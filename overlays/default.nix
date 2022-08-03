@@ -1,1 +1,3 @@
-inputs: with inputs; { }
+inputs: with inputs; {
+  default = final: prev: { };
+}

@@ -1,4 +1,4 @@
-{ config, inventory, inputs, ... }:
+{ config, lib, pkgs, inventory, inputs, ... }:
 let
   vhostSsl = {
     forceSSL = true;
