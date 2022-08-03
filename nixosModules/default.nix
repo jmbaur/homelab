@@ -217,19 +217,29 @@ inputs: with inputs; {
         with lib;
         {
           options.hardware.thinkpad-x13s.enable = mkEnableOption "hardware support for ThinkPad X13s";
-          config = mkIf cfg.enable {
-            boot.kernelPackages = pkgs.linuxPackagesFor (pkgs.linux_5_19.override {
-              argsOverride = let rev = "next-20220802"; in
-                rec {
-                  src = pkgs.fetchurl {
-                    url = "https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/snapshot/linux-next-${rev}.tar.gz";
-                    sha256 = "sha256-aoykMA0Mbsx0pWp/1ppfkJsq9R3FYn7opRHm3gA7/q0=";
-                  };
-                  version = "5.19.0-${rev}";
-                  modDirVersion = "5.19.0-${rev}";
-                };
-            });
-          };
+          config = mkIf cfg.enable
+            {
+              nixpkgs.config.allowBroken = true;
+              boot.kernelPackages =
+                let
+                  rev = "next-20220802";
+                  linux_next_20220802_pkg = { fetchurl, buildLinux, ... }@args: buildLinux (args // rec {
+                    version = "5.19-${rev}";
+                    modDirVersion = version;
+                    src = pkgs.fetchurl {
+                      url = "https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/snapshot/linux-next-${rev}.tar.gz";
+                      sha256 = "sha256-aoykMA0Mbsx0pWp/1ppfkJsq9R3FYn7opRHm3gA7/q0=";
+                    };
+                    kernelPatches = [
+                      pkgs.linuxKernel.kernelPatches.bridge_stp_helper
+                      pkgs.linuxKernel.kernelPatches.request_key_helper
+                    ];
+                    extraMeta.branch = rev;
+                  } // (args.argsOverride or { }));
+                  linux_next_20220802 = pkgs.callPackage linux_next_20220802_pkg { };
+                in
+                pkgs.recurseIntoAttrs (pkgs.linuxPackagesFor linux_next_20220802);
+            };
         })
       ({ config, lib, ... }:
         let
