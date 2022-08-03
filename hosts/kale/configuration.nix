@@ -12,6 +12,7 @@
     description = "Jared Baur";
     isNormalUser = true;
     extraGroups = [ "wheel" ];
+    shell = pkgs.zsh;
     openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
   };
   home-manager.users.jared = { systemConfig, ... }: {
