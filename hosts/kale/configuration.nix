@@ -35,7 +35,7 @@
     node = {
       enable = true;
       openFirewall = true;
-      enabledCollectors = [ "systemd" ];
+      enabledCollectors = [ "ethtool" "network_route" "systemd" ];
     };
   };
 
