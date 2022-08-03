@@ -224,7 +224,7 @@ inputs: with inputs; {
                 let
                   rev = "next-20220802";
                   linux_next_20220802_pkg = { fetchurl, buildLinux, ... }@args: buildLinux (args // rec {
-                    version = "5.19-${rev}";
+                    version = "5.19.0-${rev}";
                     modDirVersion = version;
                     src = pkgs.fetchurl {
                       url = "https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/snapshot/linux-next-${rev}.tar.gz";
