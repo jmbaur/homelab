@@ -211,7 +211,7 @@ inputs: with inputs; {
             };
           };
         })
-      ({ config, lib, ... }:
+      ({ config, lib, pkgs, ... }:
         let
           cfg = config.hardware.thinkpad-x13s;
         in
