@@ -504,11 +504,11 @@
         "pre-commit": "pre-commit"
       },
       "locked": {
-        "lastModified": 1659558170,
-        "narHash": "sha256-3bsmeIKRl9lzz6EC0WMlYEUakJMRWcyQxyfaq1xkKkY=",
+        "lastModified": 1659579306,
+        "narHash": "sha256-AyGhMoq1mv4VNlRU+7ZCxUjSf9HEPPV9RE6wO16K8MY=",
         "owner": "jmbaur",
         "repo": "nixos-configs",
-        "rev": "0182366285d12235d3ee800fb88f488b865ce86d",
+        "rev": "50b2c6ae965db9e1d21a3b48ce93623318014238",
         "type": "github"
       },
       "original": {
