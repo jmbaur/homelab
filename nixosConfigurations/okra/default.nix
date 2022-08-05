@@ -1,5 +1,6 @@
 { config, lib, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
+  hardware.bluetooth.enable = true;
 
   zramSwap.enable = true;
 
