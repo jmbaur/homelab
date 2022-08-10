@@ -1,6 +1,13 @@
-{ config, lib, pkgs, ... }: {
+{ config, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
   hardware.bluetooth.enable = true;
+
+  fileSystems = {
+    "/".options = [ "noatime" "discard=async" "compress=zstd" ];
+    "/nix".options = [ "noatime" "discard=async" "compress=zstd" ];
+    "/home".options = [ "noatime" "discard=async" "compress=zstd" ];
+    "/home/.snapshots".options = [ "noatime" "discard=async" "compress=zstd" ];
+  };
 
   zramSwap.enable = true;
 
@@ -37,7 +44,7 @@
     extraGroups = [ "wheel" ];
     shell = pkgs.zsh;
   };
-  home-manager.users.jared = { config, systemConfig, ... }: {
+  home-manager.users.jared = { systemConfig, ... }: {
     programs.git = {
       userEmail = "jaredbaur@fastmail.com";
       userName = systemConfig.users.users.jared.description;
