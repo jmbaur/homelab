@@ -223,13 +223,13 @@ inputs: with inputs; {
               boot.supportedFilesystems = mkForce [ "btrfs" "reiserfs" "vfat" "f2fs" "xfs" "ntfs" "cifs" ];
               boot.kernelPackages =
                 let
-                  rev = "next-20220810";
-                  linux_next_20220810_pkg = { fetchurl, buildLinux, ... }@args: buildLinux (args // rec {
+                  rev = "next-20220812";
+                  linux_next_pkg = { fetchurl, buildLinux, ... }@args: buildLinux (args // rec {
                     version = "5.19.0-${rev}";
                     modDirVersion = version;
                     src = pkgs.fetchurl {
                       url = "https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/snapshot/linux-next-${rev}.tar.gz";
-                      sha256 = "0gc5ny018rj8bd5xw56207rgnkij3f3m19iv5cn4v7y85jv4x4ap";
+                      sha256 = "sha256-2hcsMjuf6sfH1+WbvYTmFVLMbs5fwFQunGsx2VnZbRI=";
                     };
                     kernelPatches = [
                       pkgs.linuxKernel.kernelPatches.bridge_stp_helper
@@ -237,9 +237,9 @@ inputs: with inputs; {
                     ];
                     extraMeta.branch = rev;
                   } // (args.argsOverride or { }));
-                  linux_next_20220810 = pkgs.callPackage linux_next_20220810_pkg { };
+                  linux_next = pkgs.callPackage linux_next_pkg { };
                 in
-                pkgs.recurseIntoAttrs (pkgs.linuxPackagesFor linux_next_20220810);
+                pkgs.recurseIntoAttrs (pkgs.linuxPackagesFor linux_next);
             };
         })
       ({ config, lib, ... }:
