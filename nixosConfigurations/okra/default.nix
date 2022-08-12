@@ -87,13 +87,14 @@
       age-plugin-yubikey
       bitwarden
       discord-webapp
+      element-desktop-wayland
       firefox-wayland
       freerdp
       google-chrome
       outlook-webapp
       signal-desktop
-      slack-webapp
-      spotify-webapp
+      slack-wayland
+      spotify
       teams-webapp
     ];
   };
