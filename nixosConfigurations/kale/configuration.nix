@@ -40,6 +40,14 @@
     };
   };
 
+  services.runner = {
+    enable = true;
+    runs.hello = {
+      adapter = none;
+      command = "${pkgs.nix}/bin/nix build nixpkgs#hello --extra-experimental-feautures nix-command --extra-experimental-feautures flakes --print-build-logs --rebuild";
+    };
+  };
+
   services.prometheus.exporters = {
     node = {
       enable = true;

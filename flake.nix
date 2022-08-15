@@ -17,6 +17,7 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware";
     nixpkgs.url = "nixpkgs/nixos-unstable";
     pre-commit.url = "github:cachix/pre-commit-hooks.nix";
+    runner-nix.url = "github:jmbaur/runner-nix";
     terranix.url = "github:terranix/terranix";
   };
 
