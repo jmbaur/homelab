@@ -43,8 +43,8 @@
   services.runner = {
     enable = true;
     runs.hello = {
-      adapter = none;
-      command = "${pkgs.nix}/bin/nix build nixpkgs#hello --extra-experimental-feautures nix-command --extra-experimental-feautures flakes --print-build-logs --rebuild";
+      adapter = "none";
+      command = "${pkgs.nix}/bin/nix build nixpkgs#hello --extra-experimental-features nix-command --extra-experimental-features flakes --print-build-logs --rebuild";
     };
   };
 

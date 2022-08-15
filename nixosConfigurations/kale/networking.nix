@@ -3,6 +3,7 @@
     useDHCP = lib.mkForce false;
     hostName = "kale";
     useNetworkd = true;
+    firewall.allowedTCPPorts = [ 8080 ];
   };
 
   systemd.network = {

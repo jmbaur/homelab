@@ -46,7 +46,7 @@ inputs: with inputs; {
     system = "aarch64-linux";
     specialArgs = { inherit (self.inventory.${system}) inventory; };
     modules = [
-      ./kale/configuration.nix
+      ./kale
       agenix.nixosModules.age
       homelab-private.nixosModules.common
       nixos-configs.nixosModules.default
