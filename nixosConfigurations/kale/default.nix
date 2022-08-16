@@ -42,9 +42,17 @@
 
   services.runner = {
     enable = true;
-    runs.hello = {
-      adapter = "none";
-      command = "${pkgs.nix}/bin/nix build nixpkgs#hello --extra-experimental-features nix-command --extra-experimental-features flakes --print-build-logs --rebuild";
+    runs = {
+      runner-nix = {
+        listenAddresses = [ "8000" ];
+        adapter = "none";
+        command = "${pkgs.nix}/bin/nix build github:jmbaur/runner-nix#default --no-link --extra-experimental-features nix-command --extra-experimental-features flakes --print-build-logs --rebuild";
+      };
+      artichoke = {
+        listenAddresses = [ "8001" ];
+        adapter = "none";
+        command = "${pkgs.nix}/bin/nix build github:jmbaur/homelab#nixosConfigurations.artichoke.config.system.build.toplevel --no-link --extra-experimental-features nix-command --extra-experimental-features flakes --print-build-logs --rebuild";
+      };
     };
   };
 

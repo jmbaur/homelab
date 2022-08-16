@@ -866,11 +866,11 @@
         "pre-commit-hooks": "pre-commit-hooks"
       },
       "locked": {
-        "lastModified": 1660615410,
-        "narHash": "sha256-U8vIbqPjjPhAWaFfDSfhUBc4E6Utc9N2O3eGojpLpNk=",
+        "lastModified": 1660618100,
+        "narHash": "sha256-YG9M/6WO5SWb5jIcA64wuJLAEwPHBsVPihBLNrlsMec=",
         "owner": "jmbaur",
         "repo": "runner-nix",
-        "rev": "260481b0bc41d4f669ebdcc0c52d73d047cbea4e",
+        "rev": "7207367b9d9b46c03960b68620f90b8757a593af",
         "type": "github"
       },
       "original": {
