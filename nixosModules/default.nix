@@ -217,30 +217,14 @@ inputs: with inputs; {
         with lib;
         {
           options.hardware.thinkpad-x13s.enable = mkEnableOption "hardware support for ThinkPad X13s";
-          config = mkIf cfg.enable
-            {
-              # the base profile includes zfs support, exclude it here since it is broken
-              boot.supportedFilesystems = mkForce [ "btrfs" "reiserfs" "vfat" "f2fs" "xfs" "ntfs" "cifs" ];
-              boot.kernelPackages =
-                let
-                  rev = "next-20220812";
-                  linux_next_pkg = { fetchurl, buildLinux, ... }@args: buildLinux (args // rec {
-                    version = "5.19.0-${rev}";
-                    modDirVersion = version;
-                    src = pkgs.fetchurl {
-                      url = "https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/snapshot/linux-next-${rev}.tar.gz";
-                      sha256 = "sha256-2hcsMjuf6sfH1+WbvYTmFVLMbs5fwFQunGsx2VnZbRI=";
-                    };
-                    kernelPatches = [
-                      pkgs.linuxKernel.kernelPatches.bridge_stp_helper
-                      pkgs.linuxKernel.kernelPatches.request_key_helper
-                    ];
-                    extraMeta.branch = rev;
-                  } // (args.argsOverride or { }));
-                  linux_next = pkgs.callPackage linux_next_pkg { };
-                in
-                pkgs.recurseIntoAttrs (pkgs.linuxPackagesFor linux_next);
+          config = mkIf cfg.enable {
+            # need 6.0 release candidates
+            boot.kernelPackages = pkgs.linuxPackages_testing;
+            hardware.deviceTree = {
+              enable = true;
+              # name = "sc8280xp-lenovo-thinkpad-x13s.dts";
             };
+          };
         })
       ({ config, lib, ... }:
         let

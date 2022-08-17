@@ -90,14 +90,8 @@
     };
     home.packages = with pkgs; [
       age-plugin-yubikey
-      bitwarden-cli
-      discord-webapp
       element-desktop-wayland
       firefox-wayland
-      google-chrome
-      signal-desktop
-      spotify-webapp
-      thunderbird-wayland
       yubikey-manager
       yubikey-personalization
     ];
@@ -111,6 +105,10 @@
       };
     };
   };
+
+  warnings = [
+    "bitwarden, discord, signal-desktop, & spotify are wanted but currently unsupported on aarch64-linux"
+  ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
