@@ -28,7 +28,7 @@
   };
 
   services.cage = {
-    enable = true;
+    enable = false;
     user = config.users.users.browser.name;
     program = "${pkgs.firefox-wayland}/bin/firefox --kiosk --private-window http://localhost:3000";
     extraArguments = [ "-d" ];

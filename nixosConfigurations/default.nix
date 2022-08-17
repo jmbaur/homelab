@@ -82,7 +82,7 @@ inputs: with inputs; {
     specialArgs = { inherit inputs; };
     modules = [
       "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
-      ./rhubarb/configuration.nix
+      ./rhubarb
       homelab-private.nixosModules.common
       nixos-configs.nixosModules.default
       nixos-hardware.nixosModules.raspberry-pi-4
