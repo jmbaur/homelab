@@ -44,13 +44,15 @@
     enable = true;
     runs = {
       runner-nix = {
+        environment.RUST_LOG = "debug";
         listenAddresses = [ "8000" ];
-        adapter = "none";
+        adapter = "github";
         command = "${pkgs.nix}/bin/nix build github:jmbaur/runner-nix#default --no-link --extra-experimental-features nix-command --extra-experimental-features flakes --print-build-logs --rebuild";
       };
       artichoke = {
+        environment.RUST_LOG = "debug";
         listenAddresses = [ "8001" ];
-        adapter = "none";
+        adapter = "github";
         command = "${pkgs.nix}/bin/nix build github:jmbaur/homelab#nixosConfigurations.artichoke.config.system.build.toplevel --no-link --extra-experimental-features nix-command --extra-experimental-features flakes --print-build-logs --rebuild";
       };
     };
