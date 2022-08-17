@@ -80,7 +80,7 @@
       modules = [
         { module = "network"; pattern = "(en|wl|wg)+"; }
         { module = "memory"; }
-        { module = "datetime"; }
+        { module = "datetime"; timezones = [ "Local" "UTC" ]; }
       ];
     };
     home.packages = with pkgs; [
