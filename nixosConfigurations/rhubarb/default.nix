@@ -27,13 +27,6 @@
     dnssec = "false";
   };
 
-  services.cage = {
-    enable = false;
-    user = config.users.users.browser.name;
-    program = "${pkgs.firefox-wayland}/bin/firefox --kiosk --private-window http://localhost:3000";
-    extraArguments = [ "-d" ];
-  };
-
   systemd.network = {
     enable = true;
     networks.wired = {
@@ -43,14 +36,11 @@
     };
   };
 
-  users.users = {
-    browser.isNormalUser = true;
-    jared = {
-      isNormalUser = true;
-      extraGroups = [ "dialout" "wheel" ];
-      packages = with pkgs; [ picocom tmux wol ];
-      openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
-    };
+  users.users.jared = {
+    isNormalUser = true;
+    extraGroups = [ "dialout" ];
+    packages = with pkgs; [ picocom wol ];
+    openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
   };
 
   services.prometheus = {
