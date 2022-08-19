@@ -12,7 +12,7 @@
   users.users.jared = {
     isNormalUser = true;
     description = "Jared Baur";
-    shell = pkgs.zsh;
+    shell = pkgs.bash;
     extraGroups = [ "adbusers" "dialout" "wheel" ];
   };
 

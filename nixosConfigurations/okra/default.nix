@@ -42,7 +42,7 @@
     isNormalUser = true;
     description = "Jared Baur";
     extraGroups = [ "wheel" ];
-    shell = pkgs.zsh;
+    shell = pkgs.bash;
   };
   home-manager.users.jared = { systemConfig, ... }: {
     programs.git = {
