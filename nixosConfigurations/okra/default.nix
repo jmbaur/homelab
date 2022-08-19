@@ -83,16 +83,18 @@
         { module = "datetime"; timezones = [ "Local" "UTC" ]; }
       ];
     };
+
     home.packages = with pkgs; [
       age-plugin-yubikey
       bitwarden
-      discord
+      discord-wayland
       element-desktop-wayland
       firefox-wayland
       freerdp
-      google-chrome
+      google-chrome-wayland
       outlook-webapp
-      signal-desktop
+      qutebrowser
+      signal-desktop-wayland
       slack-wayland
       spotify
       teams-webapp
