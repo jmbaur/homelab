@@ -218,11 +218,18 @@ inputs: with inputs; {
         {
           options.hardware.thinkpad-x13s.enable = mkEnableOption "hardware support for ThinkPad X13s";
           config = mkIf cfg.enable {
-            # need 6.0 release candidates
-            boot.kernelPackages = pkgs.linuxPackages_testing;
+            boot = {
+              # need 6.0 release candidates
+              kernelPackages = pkgs.linuxPackages_testing;
+              kernelParams = [ "dtb=/boot/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb" ];
+              loader = {
+                systemd-boot.extraFiles."dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb" = "${config.boot.kernelPackages.kernel}/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb";
+                grub.extraFiles = config.boot.loader.systemd-boot.extraFiles;
+              };
+            };
             hardware.deviceTree = {
               enable = true;
-              # name = "sc8280xp-lenovo-thinkpad-x13s.dts";
+              name = "sc8280xp-lenovo-thinkpad-x13s.dtb";
             };
           };
         })

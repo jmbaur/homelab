@@ -43,11 +43,17 @@ let
   installer_iso_thinkpad_x13s = pkgs: system: (nixpkgs.lib.nixosSystem {
     inherit system;
     specialArgs = { inherit inputs; };
-    modules = installer_iso_modules ++ [{
-      hardware.thinkpad-x13s.enable = true;
-      warnings = [ "zfs excluded from supported filesystems since it is not yet supported on newer kernels" ];
-      boot.supportedFilesystems = pkgs.lib.mkForce [ "btrfs" "reiserfs" "vfat" "f2fs" "xfs" "ntfs" "cifs" ];
-    }];
+    modules = installer_iso_modules ++ [
+      ({ config, ... }: {
+        isoImage.contents = [{
+          source = "${config.boot.kernelPackages.kernel}/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb";
+          target = "/boot/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb";
+        }];
+        hardware.thinkpad-x13s.enable = true;
+        warnings = [ "zfs excluded from supported filesystems since it is not yet supported on newer kernels" ];
+        boot.supportedFilesystems = pkgs.lib.mkForce [ "btrfs" "reiserfs" "vfat" "f2fs" "xfs" "ntfs" "cifs" ];
+      })
+    ];
   }).config.system.build.isoImage;
 
   crs_305 = pkgs: system: pkgs.callPackage ./routeros/crs305/configuration.nix {
