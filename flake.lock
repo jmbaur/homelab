@@ -572,11 +572,11 @@
         "pre-commit": "pre-commit"
       },
       "locked": {
-        "lastModified": 1661050253,
-        "narHash": "sha256-dbJuJ4r4NvVNX997WEtYeOQrjRvZCI/8MQLWwFUP3Kc=",
+        "lastModified": 1661116791,
+        "narHash": "sha256-GtmE6m5pQdjBUIfjsvbT8Wj7KEVbGDNwrmddBfJxlYk=",
         "owner": "jmbaur",
         "repo": "nixos-configs",
-        "rev": "baf3ec94dbc95050f202489f3472e9905593e3ee",
+        "rev": "cf9586b214524d008b2c61723b978f1f9c61996b",
         "type": "github"
       },
       "original": {
@@ -632,11 +632,11 @@
     },
     "nixpkgs_11": {
       "locked": {
-        "lastModified": 1660908602,
-        "narHash": "sha256-SwZ85IPWvC4NxxFhWhRMTJpApSHbY1u4YK2UFWEBWvY=",
+        "lastModified": 1660998696,
+        "narHash": "sha256-N5eDv9THZz5pFn7NR1swaFrAJYByfrA5gU5L7JONItA=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "495b19d5b3e62b4ec7e846bdfb6ef3d9c3b83492",
+        "rev": "13711c9ab9f5a160a44affb7a6221be53318a873",
         "type": "github"
       },
       "original": {

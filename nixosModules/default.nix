@@ -222,6 +222,7 @@ inputs: with inputs; {
               # need 6.0 release candidates
               kernelPackages = pkgs.linuxPackages_testing;
               kernelParams = [ "dtb=/boot/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb" ];
+              kernelPatches = [{ name = "fix-firmware-location"; patch = ./fix_firmware_location.patch; }];
               loader = {
                 systemd-boot.extraFiles."dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb" = "${config.boot.kernelPackages.kernel}/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb";
                 grub.extraFiles = config.boot.loader.systemd-boot.extraFiles;

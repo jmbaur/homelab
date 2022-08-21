@@ -22,13 +22,22 @@
     useDHCP = false;
     hostName = "okra";
     useNetworkd = true;
+    wireless.enable = true;
   };
   systemd.network = {
-    networks.wired = {
-      name = "en*";
-      DHCP = "yes";
-      networkConfig.IPv6PrivacyExtensions = true;
-      dhcpV4Config.ClientIdentifier = "mac";
+    networks = {
+      wireless = {
+        name = "wl*";
+        DHCP = "yes";
+        networkConfig.IPv6PrivacyExtensions = true;
+        dhcpV4Config.ClientIdentifier = "mac";
+      };
+      wired = {
+        name = "en*";
+        DHCP = "yes";
+        networkConfig.IPv6PrivacyExtensions = true;
+        dhcpV4Config.ClientIdentifier = "mac";
+      };
     };
   };
 
