@@ -4,7 +4,7 @@ let
     let
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [ self.overlays.default ];
+        overlays = [ ];
       };
     in
     f pkgs system;
