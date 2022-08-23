@@ -211,17 +211,23 @@ inputs: with inputs; {
           };
         })
       ({ config, lib, pkgs, ... }:
-        let
-          cfg = config.hardware.thinkpad-x13s;
-        in
-        with lib;
-        {
+        let cfg = config.hardware.thinkpad-x13s; in
+        with lib; {
           options.hardware.thinkpad-x13s.enable = mkEnableOption "hardware support for ThinkPad X13s";
           config = mkIf cfg.enable {
             boot = {
-              # need 6.0 release candidates
-              kernelPackages = pkgs.linuxPackages_testing;
-              kernelParams = [ "dtb=/boot/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb" ];
+              kernelPackages = pkgs.linuxPackagesFor (pkgs.linux_testing.override {
+                argsOverride = let pin = "next-20220823"; in
+                  rec {
+                    src = pkgs.fetchurl {
+                      url = "https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/snapshot/linux-next-${pin}.tar.gz";
+                      sha256 = "sha256-Ro+60ofw4ikaaHVlER0Ec72e7YVbYz+IUlzJmKeaSO4=";
+                    };
+                    version = "6.0-rc2-${pin}";
+                    modDirVersion = "6.0.0-rc2-${pin}";
+                  };
+              });
+              kernelParams = [ "dtb=/boot/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb" "audit=0" "efi=novamap,noruntime" "pd_ignore_unused" "clk_ignore_unused" ];
               kernelPatches = [{ name = "fix-firmware-location"; patch = ./fix_firmware_location.patch; }];
               loader = {
                 systemd-boot.extraFiles."dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb" = "${config.boot.kernelPackages.kernel}/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb";
