@@ -89,4 +89,9 @@ inputs: with inputs; {
       self.nixosModules.default
     ];
   };
+
+  netboot-test = nixpkgs.lib.nixosSystem {
+    system = "x86_64-linux";
+    modules = [ "${nixpkgs}/nixos/modules/installer/netboot/netboot-minimal.nix" ];
+  };
 }
