@@ -32,7 +32,10 @@ inputs: with inputs; {
 
   potato = nixpkgs.lib.nixosSystem rec {
     system = "x86_64-linux";
-    specialArgs = { inherit (self.inventory.${system}) inventory; };
+    specialArgs = {
+      inherit inputs;
+      inherit (self.inventory.${system}) inventory;
+    };
     modules = [
       ./potato/configuration.nix
       agenix.nixosModules.age
@@ -45,7 +48,10 @@ inputs: with inputs; {
 
   kale = nixpkgs.lib.nixosSystem rec {
     system = "aarch64-linux";
-    specialArgs = { inherit (self.inventory.${system}) inventory; };
+    specialArgs = {
+      inherit inputs;
+      inherit (self.inventory.${system}) inventory;
+    };
     modules = [
       ./kale
       agenix.nixosModules.age
@@ -92,6 +98,7 @@ inputs: with inputs; {
 
   netboot-test = nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
+    specialArgs = { inherit inputs; };
     modules = [ "${nixpkgs}/nixos/modules/installer/netboot/netboot-minimal.nix" ];
   };
 }
