@@ -28,7 +28,6 @@ let
     modules = installer_img_modules;
   }).config.system.build.sdImage;
 
-
   installer_iso = system: (nixpkgs.lib.nixosSystem {
     inherit system;
     modules = installer_iso_modules;
@@ -40,7 +39,7 @@ let
     modules = installer_iso_modules ++ [{ hardware.lx2k.enable = true; }];
   }).config.system.build.isoImage;
 
-  installer_iso_thinkpad_x13s = pkgs: system: (nixpkgs.lib.nixosSystem {
+  installer_iso_thinkpad_x13s = _: system: (nixpkgs.lib.nixosSystem {
     inherit system;
     specialArgs = { inherit inputs; };
     modules = installer_iso_modules ++ [
@@ -50,8 +49,6 @@ let
           target = "/boot/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb";
         }];
         hardware.thinkpad-x13s.enable = true;
-        warnings = [ "zfs excluded from supported filesystems since it is not yet supported on newer kernels" ];
-        boot.supportedFilesystems = pkgs.lib.mkForce [ "btrfs" "reiserfs" "vfat" "f2fs" "xfs" "ntfs" "cifs" ];
       })
     ];
   }).config.system.build.isoImage;

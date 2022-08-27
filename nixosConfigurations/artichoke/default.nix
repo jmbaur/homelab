@@ -12,6 +12,7 @@
     ./wireguard.nix
   ];
 
+  custom.disableZfs = true;
   hardware.cn913x.enable = true;
   zramSwap.enable = true;
   system.stateVersion = "22.11";

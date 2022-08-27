@@ -89,6 +89,14 @@ inputs: with inputs; {
     ];
     imports = [
       ({ config, pkgs, lib, ... }:
+        let cfg = config.custom.disableZfs; in
+        {
+          options.custom.disableZfs = lib.mkEnableOption "disable zfs suppport";
+          config = lib.mkIf cfg.enable {
+            boot.supportedFilesystems = lib.mkForce [ "btrfs" "reiserfs" "vfat" "f2fs" "xfs" "ntfs" "cifs" ];
+          };
+        })
+      ({ config, pkgs, lib, ... }:
         let
           cfg = config.custom.installer;
         in
@@ -215,6 +223,7 @@ inputs: with inputs; {
         with lib; {
           options.hardware.thinkpad-x13s.enable = mkEnableOption "hardware support for ThinkPad X13s";
           config = mkIf cfg.enable {
+            custom.disableZfs = true;
             boot = {
               kernelPackages = pkgs.linuxPackagesFor (pkgs.linux_testing.override {
                 argsOverride = let pin = "next-20220823"; in

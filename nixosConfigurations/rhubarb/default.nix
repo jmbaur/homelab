@@ -1,5 +1,6 @@
 { config, lib, pkgs, ... }: {
   custom = {
+    disableZfs = true;
     common.enable = true;
     deployee = {
       enable = true;

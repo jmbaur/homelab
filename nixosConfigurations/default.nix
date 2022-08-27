@@ -73,13 +73,12 @@ inputs: with inputs; {
       "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
       # TODO(jared): Put this in when ATF build works.
       # ({pkgs, ...}:{ sdImage.postBuildCommands = "dd if=${pkgs.armTrustedFirmwareCN9130_CF_Pro}/flash-image.bin of=$img bs=512 seek=4096 conv=notrunc"; })
-      ./artichoke/configuration.nix
+      ./artichoke
       agenix.nixosModules.age
       homelab-private.nixosModules.common
       ipwatch.nixosModules.default
       nixos-configs.nixosModules.default
       self.nixosModules.default
-      { nixpkgs.overlays = [ ipwatch.overlays.default ]; }
     ];
   };
 
