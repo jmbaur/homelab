@@ -12,7 +12,7 @@
 
   zramSwap.enable = true;
 
-  boot.kernelPackages = pkgs.linuxPackages_5_18;
+  boot.kernelPackages = pkgs.linuxPackages_5_19;
 
   networking = {
     hostName = "rhubarb";

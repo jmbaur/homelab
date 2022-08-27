@@ -96,7 +96,7 @@ inputs: with inputs; {
           options.custom.installer.enable = lib.mkEnableOption "installer";
           config = lib.mkIf cfg.enable {
             system.stateVersion = "22.11";
-            boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_5_18;
+            boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_5_19;
             systemd.services.sshd.wantedBy = lib.mkForce [ "multi-user.target" ];
             users.users.nixos.openssh.authorizedKeys.keyFiles = [ (import ../data/jmbaur-ssh-keys.nix) ];
             console.useXkbConfig = true;
@@ -125,7 +125,7 @@ inputs: with inputs; {
               "amdgpu.pcie_gen_cap=0x4"
               "usbcore.autosuspend=-1"
             ];
-            boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_5_18;
+            boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_5_19;
 
             # Setup SFP+ network interfaces early so systemd can pick everything up.
             boot.initrd.extraUtilsCommands = ''

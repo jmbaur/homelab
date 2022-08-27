@@ -32,7 +32,7 @@
   };
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelPackages = pkgs.linuxPackages_5_18;
+  boot.kernelPackages = pkgs.linuxPackages_5_19;
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   boot.kernelParams = [ "console=ttyS0,115200n8" ];
 
