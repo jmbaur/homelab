@@ -27,26 +27,26 @@ let
     ipv6Prefixes = map
       (prefix: { ipv6PrefixConfig = { Prefix = prefix; }; })
       (with network; [ networkGuaCidr ]);
-    # TODO(jared): Use dedicated option field when this is merged:
-    # https://github.com/NixOS/nixpkgs/pull/184340
     # TODO(jared): Should we advertise the ULA network via RA or via DHCPv6?
-    extraConfig = (lib.optionalString network.managed ''
-      [IPv6RoutePrefix]
-      Route=${network.networkUlaCidr}
-    '') + (lib.concatMapStrings
-      (n:
-        let
-          mainNetwork = network;
-          linkedNetwork = inventory.networks.${n};
-        in
-        ''
-          [IPv6RoutePrefix]
-          Route=${linkedNetwork.networkGuaCidr}
-        '' + (lib.optionalString mainNetwork.managed ''
-          [IPv6RoutePrefix]
-          Route=${linkedNetwork.networkUlaCidr}
-        ''))
-      network.includeRoutesTo);
+    ipv6RoutePrefixes = (lib.optional network.managed {
+      ipv6RoutePrefixConfig = {
+        Route = network.networkUlaCidr;
+      };
+    }) ++ (lib.flatten (map
+      (n: [
+        ({
+          ipv6RoutePrefixConfig = {
+            Route = inventory.networks.${n}.networkGuaCidr;
+          };
+        })
+      ] ++ (lib.optional n.managed {
+        ipv6RoutePrefixConfig = {
+          Route = inventory.networks.${n}.networkUlaCidr;
+        };
+      })
+      )
+      network.includeRoutesTo));
+
     dhcpServerConfig = {
       PoolOffset = 50;
       PoolSize = 200;
