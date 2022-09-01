@@ -13,7 +13,6 @@
     microvm.inputs.nixpkgs.follows = "nixpkgs";
     microvm.url = "github:astro/microvm.nix";
     nixos-configs.url = "github:jmbaur/nixos-configs";
-    nixos-hardware.inputs.nixpkgs.follows = "nixpkgs";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
     nixpkgs.url = "nixpkgs/nixos-unstable";
     pre-commit.url = "github:cachix/pre-commit-hooks.nix";
