@@ -71,7 +71,7 @@ flake-utils.lib.eachDefaultSystemMap
             wireguard;
           domain = "${name}.home.arpa";
           hosts = networkHosts;
-          managed = (lib.filterAttrs (_: host: host.dhcp) networkHosts) != { };
+          managed = wireguard || ((lib.filterAttrs (_: host: host.dhcp) networkHosts) != { });
         };
     in
     {

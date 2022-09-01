@@ -33,18 +33,22 @@ let
         Route = network.networkUlaCidr;
       };
     }) ++ (lib.flatten (map
-      (n: [
-        ({
+      (n:
+        let
+          remoteNetwork = inventory.networks.${n};
+        in
+        ([
+          ({
+            ipv6RoutePrefixConfig = {
+              Route = remoteNetwork.networkGuaCidr;
+            };
+          })
+        ] ++ (lib.optional remoteNetwork.managed {
           ipv6RoutePrefixConfig = {
-            Route = inventory.networks.${n}.networkGuaCidr;
+            Route = remoteNetwork.networkUlaCidr;
           };
         })
-      ] ++ (lib.optional n.managed {
-        ipv6RoutePrefixConfig = {
-          Route = inventory.networks.${n}.networkUlaCidr;
-        };
-      })
-      )
+        ))
       network.includeRoutesTo));
 
     dhcpServerConfig = {
