@@ -88,7 +88,7 @@ inputs: with inputs; {
       })
     ];
     imports = [
-      ({ config, pkgs, lib, ... }:
+      ({ config, lib, ... }:
         let zfsDisabled = config.custom.disableZfs; in
         {
           options.custom.disableZfs = lib.mkEnableOption "disable zfs suppport";
@@ -226,18 +226,21 @@ inputs: with inputs; {
             custom.disableZfs = true;
             boot = {
               kernelPackages = pkgs.linuxPackagesFor (pkgs.linux_testing.override {
-                argsOverride = let pin = "next-20220823"; in
-                  rec {
+                argsOverride =
+                  let
+                    pin = "next-20220831";
+                  in
+                  {
                     src = pkgs.fetchurl {
                       url = "https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/snapshot/linux-next-${pin}.tar.gz";
-                      sha256 = "sha256-Ro+60ofw4ikaaHVlER0Ec72e7YVbYz+IUlzJmKeaSO4=";
+                      sha256 = "1mmdvky9p0vi7h8i31wd0q0lkkiln56z9v79grraxrspz7hdc96d";
                     };
-                    version = "6.0-rc2-${pin}";
-                    modDirVersion = "6.0.0-rc2-${pin}";
+                    version = "6.0-rc3-${pin}";
+                    modDirVersion = "6.0.0-rc3-${pin}";
                   };
               });
               kernelParams = [ "dtb=/boot/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb" "audit=0" "efi=novamap,noruntime" "pd_ignore_unused" "clk_ignore_unused" ];
-              kernelPatches = [{ name = "fix-firmware-location"; patch = ./fix_firmware_location.patch; }];
+              kernelPatches = [ ];
               loader = {
                 systemd-boot.extraFiles."dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb" = "${config.boot.kernelPackages.kernel}/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb";
                 grub.extraFiles = config.boot.loader.systemd-boot.extraFiles;
