@@ -1,6 +1,6 @@
 { pkgs, config, lib, inventory, ... }:
 let
-  coredns-utils = pkgs.callPackage ./coredns-utils.nix { };
+  # coredns-utils = pkgs.callPackage ./coredns-utils.nix { };
   mkDotDns = map (ip: "tls://${ip}");
   googleDns = {
     servers = mkDotDns [ "8.8.8.8" "8.8.4.4" "2001:4860:4860::8888" "2001:4860:4860::8844" ];
@@ -31,12 +31,18 @@ in
         hosts ${pkgs.stevenblack-blocklist}/hosts {
           fallthrough
         }
+        # unused: ${googleDns.serverName} ${toString googleDns.servers}
+        # unused: ${cloudflareDns.serverName} ${toString cloudflareDns.servers}
         forward . ${toString quad9Dns.servers} {
           tls_servername ${quad9Dns.serverName}
+          policy sequential
           health_check 5s
         }
         cache 30
-        errors
+        errors {
+          consolidate 5m ".* i/o timeout$" warning
+          consolidate 30s "^Failed to .+"
+        }
         prometheus :9153
       }
 
