@@ -17,6 +17,8 @@
     nixpkgs.url = "nixpkgs/nixos-unstable";
     pre-commit.url = "github:cachix/pre-commit-hooks.nix";
     runner-nix.url = "github:jmbaur/runner-nix";
+    sc8280xp-linux.flake = false;
+    sc8280xp-linux.url = "github:jhovold/linux/wip/sc8280xp-v6.0-rc3";
     terranix.url = "github:terranix/terranix";
   };
 

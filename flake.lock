@@ -894,6 +894,7 @@
         "nixpkgs": "nixpkgs_11",
         "pre-commit": "pre-commit_2",
         "runner-nix": "runner-nix",
+        "sc8280xp-linux": "sc8280xp-linux",
         "terranix": "terranix"
       }
     },
@@ -931,6 +932,23 @@
         "owner": "rust-lang",
         "ref": "nightly",
         "repo": "rust-analyzer",
+        "type": "github"
+      }
+    },
+    "sc8280xp-linux": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1661868134,
+        "narHash": "sha256-YnZOqj/izPCPiSmWj0UB2Ek4D3kA+7oHhDwoxwa9qv0=",
+        "owner": "jhovold",
+        "repo": "linux",
+        "rev": "df82104b6199063efd6c674177eac2442f49ba59",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jhovold",
+        "ref": "wip/sc8280xp-v6.0-rc3",
+        "repo": "linux",
         "type": "github"
       }
     },

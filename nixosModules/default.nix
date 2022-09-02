@@ -226,18 +226,11 @@ inputs: with inputs; {
             custom.disableZfs = true;
             boot = {
               kernelPackages = pkgs.linuxPackagesFor (pkgs.linux_testing.override {
-                argsOverride =
-                  let
-                    pin = "next-20220831";
-                  in
-                  {
-                    src = pkgs.fetchurl {
-                      url = "https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/snapshot/linux-next-${pin}.tar.gz";
-                      sha256 = "1mmdvky9p0vi7h8i31wd0q0lkkiln56z9v79grraxrspz7hdc96d";
-                    };
-                    version = "6.0-rc3-${pin}";
-                    modDirVersion = "6.0.0-rc3-${pin}";
-                  };
+                argsOverride = {
+                  src = sc8280xp-linux;
+                  version = "6.0-rc3";
+                  modDirVersion = "6.0.0-rc3";
+                };
               });
               kernelParams = [ "dtb=/boot/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb" "audit=0" "efi=novamap,noruntime" "pd_ignore_unused" "clk_ignore_unused" ];
               kernelPatches = [ ];
