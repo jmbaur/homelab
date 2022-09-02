@@ -44,10 +44,15 @@ let
     specialArgs = { inherit inputs; };
     modules = installer_iso_modules ++ [
       ({ config, ... }: {
-        isoImage.contents = [{
-          source = "${config.boot.kernelPackages.kernel}/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb";
-          target = "/boot/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb";
-        }];
+        disabledModules = [ "installer/cd-dvd/iso-image.nix" ];
+        imports = [ ../nixosModules/thinkpad_installer_iso_grub.nix ];
+        isoImage = {
+          makeEfiBootable = true;
+          contents = [{
+            source = "${config.boot.kernelPackages.kernel}/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb";
+            target = "/boot/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb";
+          }];
+        };
         hardware.thinkpad-x13s.enable = true;
       })
     ];

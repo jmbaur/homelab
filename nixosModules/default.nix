@@ -232,11 +232,19 @@ inputs: with inputs; {
                   modDirVersion = "6.0.0-rc3";
                 };
               });
-              kernelParams = [ "dtb=/boot/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb" "audit=0" "efi=novamap,noruntime" "pd_ignore_unused" "clk_ignore_unused" ];
-              kernelPatches = [ ];
-              loader = {
-                systemd-boot.extraFiles."dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb" = "${config.boot.kernelPackages.kernel}/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb";
-                grub.extraFiles = config.boot.loader.systemd-boot.extraFiles;
+              kernelParams = [
+                # "dtb=/boot/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb"
+                "audit=0"
+                "efi=novamap,noruntime"
+                "pd_ignore_unused"
+                "clk_ignore_unused"
+              ];
+              loader.grub = {
+                efiSupport = true;
+                extraFiles = config.boot.loader.systemd-boot.extraFiles;
+                extraPerEntryConfig = ''
+                  DEVICETREE /boot/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb
+                '';
               };
             };
             hardware.deviceTree = {
