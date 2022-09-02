@@ -11,6 +11,10 @@ let
     serverName = "cloudflare-dns.com";
   };
   quad9Dns = {
+    servers = mkDotDns [ "9.9.9.9" "149.112.112.112" "2620:fe::fe" "2620:fe::9" ];
+    serverName = "dns.quad9.net";
+  };
+  quad9DnsWithECS = {
     servers = mkDotDns [ "9.9.9.11" "149.112.112.11" "2620:fe::11" "2620:fe::fe:11" ];
     serverName = "dns11.quad9.net";
   };
@@ -33,9 +37,10 @@ in
         }
         # unused: ${googleDns.serverName} ${toString googleDns.servers}
         # unused: ${cloudflareDns.serverName} ${toString cloudflareDns.servers}
+        # unused: ${quad9DnsWithECS.serverName} ${toString quad9DnsWithECS.servers}
         forward . ${toString quad9Dns.servers} {
           tls_servername ${quad9Dns.serverName}
-          policy sequential
+          policy random
           health_check 5s
         }
         cache 30
