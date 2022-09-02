@@ -194,6 +194,21 @@
     },
     "flake-utils_11": {
       "locked": {
+        "lastModified": 1644229661,
+        "narHash": "sha256-1YdnJAsNy69bpcjuoKdOYQX0YxZBiCYZo4Twxerqv7k=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "3cecb5b042f7f209c56ffd8371b2711a290ec797",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "flake-utils_12": {
+      "locked": {
         "lastModified": 1659877975,
         "narHash": "sha256-zllb8aq3YO3h8B/U0/J1WBgAL8EX5yWf5pMj3G0NAmc=",
         "owner": "numtide",
@@ -207,7 +222,7 @@
         "type": "github"
       }
     },
-    "flake-utils_12": {
+    "flake-utils_13": {
       "locked": {
         "lastModified": 1644229661,
         "narHash": "sha256-1YdnJAsNy69bpcjuoKdOYQX0YxZBiCYZo4Twxerqv7k=",
@@ -222,7 +237,7 @@
         "type": "github"
       }
     },
-    "flake-utils_13": {
+    "flake-utils_14": {
       "locked": {
         "lastModified": 1634851050,
         "narHash": "sha256-N83GlSGPJJdcqhUxSCS/WwW5pksYf3VP1M13cDRTSVA=",
@@ -344,11 +359,11 @@
     },
     "flake-utils_9": {
       "locked": {
-        "lastModified": 1644229661,
-        "narHash": "sha256-1YdnJAsNy69bpcjuoKdOYQX0YxZBiCYZo4Twxerqv7k=",
+        "lastModified": 1659877975,
+        "narHash": "sha256-zllb8aq3YO3h8B/U0/J1WBgAL8EX5yWf5pMj3G0NAmc=",
         "owner": "numtide",
         "repo": "flake-utils",
-        "rev": "3cecb5b042f7f209c56ffd8371b2711a290ec797",
+        "rev": "c0e246b9b83f637f4681389ecabcb2681b4f3af0",
         "type": "github"
       },
       "original": {
@@ -531,14 +546,15 @@
         "gosee": "gosee",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs_9",
+        "pd-notify": "pd-notify",
         "pre-commit": "pre-commit"
       },
       "locked": {
-        "lastModified": 1662076489,
-        "narHash": "sha256-yyJapBQdKQ9B+Brx+PsDDmXOkPt3I5gLv1wAh5kqZ30=",
+        "lastModified": 1662141158,
+        "narHash": "sha256-xoyG7rFTmSAHQy/FMC8tMcBkxMa3HDJ8KxvJYHCeCi0=",
         "owner": "jmbaur",
         "repo": "nixos-configs",
-        "rev": "029f153ef97ae6eeb0ba382903c6cb1ce715b2a7",
+        "rev": "8db1ce4a63dac32f707d38e469a369f589b237d2",
         "type": "github"
       },
       "original": {
@@ -784,9 +800,31 @@
         "type": "indirect"
       }
     },
-    "pre-commit": {
+    "pd-notify": {
       "inputs": {
         "flake-utils": "flake-utils_9",
+        "nixpkgs": [
+          "nixos-configs",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1662141083,
+        "narHash": "sha256-Dr0xY3g36w4dXEALwKKmk9g8yqTiidUgfIQRlfRPPd4=",
+        "owner": "jmbaur",
+        "repo": "pd-notify",
+        "rev": "79799aa584c1f7e089afc9bac15a7199157f4650",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jmbaur",
+        "repo": "pd-notify",
+        "type": "github"
+      }
+    },
+    "pre-commit": {
+      "inputs": {
+        "flake-utils": "flake-utils_10",
         "nixpkgs": "nixpkgs_10"
       },
       "locked": {
@@ -805,7 +843,7 @@
     },
     "pre-commit-hooks": {
       "inputs": {
-        "flake-utils": "flake-utils_12",
+        "flake-utils": "flake-utils_13",
         "nixpkgs": "nixpkgs_14"
       },
       "locked": {
@@ -824,7 +862,7 @@
     },
     "pre-commit_2": {
       "inputs": {
-        "flake-utils": "flake-utils_10",
+        "flake-utils": "flake-utils_11",
         "nixpkgs": "nixpkgs_12"
       },
       "locked": {
@@ -861,7 +899,7 @@
     },
     "runner-nix": {
       "inputs": {
-        "flake-utils": "flake-utils_11",
+        "flake-utils": "flake-utils_12",
         "nixpkgs": "nixpkgs_13",
         "pre-commit-hooks": "pre-commit-hooks"
       },
@@ -900,7 +938,7 @@
       "inputs": {
         "bats-assert": "bats-assert",
         "bats-support": "bats-support",
-        "flake-utils": "flake-utils_13",
+        "flake-utils": "flake-utils_14",
         "nixpkgs": "nixpkgs_15",
         "terranix-examples": "terranix-examples"
       },
