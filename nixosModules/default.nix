@@ -227,14 +227,17 @@ inputs: with inputs; {
             custom.disableZfs = true;
             boot = {
               kernelPackages = pkgs.linuxPackagesFor (pkgs.linux_testing.override {
-                argsOverride = {
-                  src = sc8280xp-linux;
-                  version = "6.0-rc3";
-                  modDirVersion = "6.0.0-rc3";
-                };
+                argsOverride = let date = "20220831"; in
+                  {
+                    version = "6.0-rc3-next-${date}";
+                    modDirVersion = "6.0.0-rc3-next-${date}";
+                    src = pkgs.fetchurl {
+                      url = "https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/snapshot/linux-next-next-${date}.tar.gz";
+                      sha256 = "sha256-zSTW4PlX565yfuns9E2xNM5JAQaNhxERPHGDm/zcrdY=";
+                    };
+                  };
               });
               kernelParams = [
-                # "dtb=/boot/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb"
                 "audit=0"
                 "efi=novamap,noruntime"
                 "pd_ignore_unused"
@@ -242,7 +245,7 @@ inputs: with inputs; {
               ];
               loader.grub = {
                 efiSupport = true;
-                extraFiles = config.boot.loader.systemd-boot.extraFiles;
+                extraFiles."dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb" = "${config.boot.kernelPackages.kernel}/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb";
                 extraPerEntryConfig = ''
                   DEVICETREE /boot/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb
                 '';
