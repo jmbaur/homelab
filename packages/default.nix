@@ -4,7 +4,7 @@ let
     let
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [ ];
+        overlays = [ self.overlays.default ];
       };
     in
     f pkgs system;
@@ -100,6 +100,8 @@ in
 
       cloud = withPkgs system cloud;
       inventory = withPkgs system inventory;
+
+      grafana-dashboards = withPkgs system (p: _: p.grafana-dashboards);
     };
 
   x86_64-linux =
@@ -115,5 +117,7 @@ in
 
       cloud = withPkgs system cloud;
       inventory = withPkgs system inventory;
+
+      grafana-dashboards = withPkgs system (p: _: p.grafana-dashboards);
     };
 }

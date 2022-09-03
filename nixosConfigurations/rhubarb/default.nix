@@ -139,15 +139,7 @@
         name = "prometheus";
         isDefault = true;
       }];
-      dashboards = map
-        (d: with d; {
-          inherit name;
-          options.path = pkgs.fetchurl {
-            inherit url sha256;
-            name = "${name}-dashboard.json";
-          };
-        })
-        (lib.importJSON ./dashboards.json);
+      dashboards = pkgs.grafana-dashboards.dashboards;
     };
   };
 
