@@ -37,9 +37,9 @@ in
         }
         # unused: ${googleDns.serverName} ${toString googleDns.servers}
         # unused: ${cloudflareDns.serverName} ${toString cloudflareDns.servers}
-        # unused: ${quad9DnsWithECS.serverName} ${toString quad9DnsWithECS.servers}
-        forward . ${toString quad9Dns.servers} {
-          tls_servername ${quad9Dns.serverName}
+        # unused: ${quad9Dns.serverName} ${toString quad9DnsWithECS.servers}
+        forward . ${toString quad9DnsWithECS.servers} {
+          tls_servername ${quad9DnsWithECS.serverName}
           policy random
           health_check 5s
         }
