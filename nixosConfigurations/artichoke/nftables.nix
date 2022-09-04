@@ -115,7 +115,6 @@
                 }
 
                 # the rest is dropped by the above policy
-                # log prefix "input drop - "
             }
 
             chain not_in_internet {
@@ -213,7 +212,6 @@
                 }
 
                 # the rest is dropped by the above policy
-                # log prefix "forward drop - "
             }
         }
 
