@@ -425,11 +425,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1662221176,
-        "narHash": "sha256-2M2EYThP6iaBuzsaWV0QuW0hFdF0EN1hY5SbpgbET48=",
+        "lastModified": 1662322506,
+        "narHash": "sha256-v3dsiRt1znR4ul7RWBIUyZBZ2L57Q0COEIChW3DK60M=",
         "owner": "jmbaur",
         "repo": "gosee",
-        "rev": "2b51bdc3b1630bdd8e00abb8669b9a948a52a6ee",
+        "rev": "94ab9eb3ec8979cf6990dba3132c759bbf096b28",
         "type": "github"
       },
       "original": {
@@ -550,11 +550,11 @@
         "pre-commit": "pre-commit"
       },
       "locked": {
-        "lastModified": 1662222437,
-        "narHash": "sha256-z2HU+1OkxF1rNMcA2v9uB7Y0WfMZE633mALHlnhYFqg=",
+        "lastModified": 1662322533,
+        "narHash": "sha256-8fwt0vmaD7uKZ/u7ZfoA9X+8wSMNNkVuV7PrbcWKO84=",
         "owner": "jmbaur",
         "repo": "nixos-configs",
-        "rev": "b15969f7a0110e84b637c17a30b3c5d4bbbf2143",
+        "rev": "69de1efd9d7b2599a447a7c1bd5093659d1e0e0c",
         "type": "github"
       },
       "original": {
@@ -809,11 +809,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1662150999,
-        "narHash": "sha256-VdAIzT6lDeFXapgWMWTiZrwr3d9tDJmB5Qh4wh4+D0A=",
+        "lastModified": 1662322389,
+        "narHash": "sha256-jymOAST+3zI5xJfvZxkECFqqHTYJmsTqk0b87DzC6bM=",
         "owner": "jmbaur",
         "repo": "pd-notify",
-        "rev": "f81570e3ddc041b6e042126d071bbc25c36e27b9",
+        "rev": "b3305e1ade2868a4c138b8d47cb8af6d5b66c945",
         "type": "github"
       },
       "original": {
