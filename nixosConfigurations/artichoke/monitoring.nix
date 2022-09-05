@@ -35,5 +35,5 @@ in
     wireguard.enable = true;
   };
 
-  services.promtail.enable = true;
+  services.promtail.enable = false;
 }

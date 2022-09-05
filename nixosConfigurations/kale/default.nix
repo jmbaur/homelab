@@ -70,7 +70,24 @@
     };
   };
 
-  services.promtail.enable = true;
+  services.promtail = {
+    enable = false;
+    configuration = {
+      server.disable = true;
+      scrape_configs = [
+        {
+          job_name = "journal";
+          journal = { max_age = "12h"; labels = { job = "systemd-journal"; }; };
+          relabel_configs = [
+            { source_labels = [ "__journal__systemd_unit" ]; target_label = "unit"; }
+          ];
+        }
+      ];
+      clients = [{
+        url = "http://rhubarb.mgmt.home.arpa:3100/loki/api/v1/push";
+      }];
+    };
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

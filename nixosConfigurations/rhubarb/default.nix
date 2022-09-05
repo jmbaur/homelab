@@ -44,8 +44,6 @@
     openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
   };
 
-  services.promtail.enable = true;
-
   services.prometheus = {
     enable = true;
     exporters = {
@@ -126,6 +124,15 @@
     ];
   };
 
+  services.promtail.enable = false;
+  services.loki = {
+    enable = false;
+    configuration = {
+      auth_enabled = false;
+      server.http_listen_port = 3100;
+    };
+  };
+
   services.grafana = {
     enable = true;
     auth = {
@@ -135,12 +142,20 @@
     declarativePlugins = [ ];
     provision = {
       enable = true;
-      datasources = [{
-        url = "http://localhost:${toString config.services.prometheus.port}";
-        type = "prometheus";
-        name = "prometheus";
-        isDefault = true;
-      }];
+      datasources = [
+        {
+          url = "http://localhost:${toString config.services.prometheus.port}";
+          type = "prometheus";
+          name = "prometheus";
+          isDefault = true;
+        }
+        {
+          url = "http://localhost:3100";
+          type = "loki";
+          name = "loki";
+          isDefault = false;
+        }
+      ];
       dashboards = pkgs.grafana-dashboards.dashboards;
     };
   };
