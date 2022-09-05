@@ -34,4 +34,6 @@ in
     smartctl.enable = true;
     wireguard.enable = true;
   };
+
+  services.promtail.enable = true;
 }

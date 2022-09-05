@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }: {
+{ config, pkgs, ... }: {
   custom = {
     disableZfs = true;
     common.enable = true;
@@ -43,6 +43,8 @@
     packages = with pkgs; [ picocom wol ];
     openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
   };
+
+  services.promtail.enable = true;
 
   services.prometheus = {
     enable = true;
