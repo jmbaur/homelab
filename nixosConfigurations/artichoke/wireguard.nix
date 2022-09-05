@@ -58,9 +58,9 @@ let
                 ] ++
                 lib.flatten
                   (lib.mapAttrsToList
-                    (name: networkInfo: [ networkInfo.networkIPv4Cidr networkInfo.networkGuaCidr networkInfo.networkUlaCidr ])
+                    (_: networkInfo: [ networkInfo.networkIPv4Cidr networkInfo.networkGuaCidr networkInfo.networkUlaCidr ])
                     (lib.filterAttrs
-                      (name: networkInfo: lib.any (name: network.name == name) networkInfo.includeRoutesTo)
+                      (_: networkInfo: lib.any (name: network.name == name) networkInfo.includeRoutesTo)
                       inventory.networks
                     )
                   );
