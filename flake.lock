@@ -506,11 +506,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1662328593,
-        "narHash": "sha256-0q8XKKes02K93Zfa6x37RVn5eyKjuGErcXkW1Z3tHPc=",
+        "lastModified": 1662425977,
+        "narHash": "sha256-Tqa9bRUNV2IFgx5DxvEmPxetbwGa+NKLhFDx8IqQuGY=",
         "owner": "astro",
         "repo": "microvm.nix",
-        "rev": "3c65dd2c45bc14f3fcf9ac3b075304f9b70bd6b2",
+        "rev": "3dabf2a04db57ede7f2e91ee0f33787f70b60638",
         "type": "github"
       },
       "original": {
@@ -565,11 +565,11 @@
     },
     "nixos-hardware": {
       "locked": {
-        "lastModified": 1662092548,
-        "narHash": "sha256-nmAbyJ5+DBXcNJ2Rcy/Gx84maqtLdr6xEe82+AXCaY8=",
+        "lastModified": 1662458987,
+        "narHash": "sha256-hcDwRlsXZMp2Er3vQk1JEUZWhBPLVC9vTT4xHvhpcE0=",
         "owner": "NixOS",
         "repo": "nixos-hardware",
-        "rev": "786633331724f36967853b98d9100b5cfaa4d798",
+        "rev": "504b32caf83986b7e6b9c79c1c13008f83290f19",
         "type": "github"
       },
       "original": {
@@ -961,11 +961,11 @@
         "terranix-examples": "terranix-examples"
       },
       "locked": {
-        "lastModified": 1657512701,
-        "narHash": "sha256-zctvB0zpPY2C1HkMyEK6NFNuPVNGcU9b8gv9HafBd2A=",
+        "lastModified": 1662478785,
+        "narHash": "sha256-5s9YFvbYMp8x0uoXM/jOCPPdjau6+4zeK/rGRkXBdx0=",
         "owner": "terranix",
         "repo": "terranix",
-        "rev": "67e2c7c3ec58f3b1b6ea6434b0558f0233ca7a36",
+        "rev": "fa51201238fd2a739d2e3dacefd985ff348107f9",
         "type": "github"
       },
       "original": {

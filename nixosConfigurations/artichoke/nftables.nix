@@ -135,7 +135,7 @@
                     203.0.113.0/24,
                     224.0.0.0/4,
                     240.0.0.0/4,
-                } log prefix "not in internet - " drop
+                } drop
             }
 
             chain forward_from_wan {
