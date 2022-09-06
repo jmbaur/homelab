@@ -227,15 +227,14 @@ inputs: with inputs; {
             custom.disableZfs = true;
             boot = {
               kernelPackages = pkgs.linuxPackagesFor (pkgs.linux_testing.override {
-                argsOverride = let date = "20220831"; in
-                  {
-                    version = "6.0-rc3-next-${date}";
-                    modDirVersion = "6.0.0-rc3-next-${date}";
-                    src = pkgs.fetchurl {
-                      url = "https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/snapshot/linux-next-next-${date}.tar.gz";
-                      sha256 = "sha256-zSTW4PlX565yfuns9E2xNM5JAQaNhxERPHGDm/zcrdY=";
-                    };
+                argsOverride = {
+                  version = "6.0-rc4";
+                  modDirVersion = "6.0.0-rc4";
+                  src = pkgs.fetchurl {
+                    url = "https://git.kernel.org/torvalds/t/linux-6.0-rc4.tar.gz";
+                    sha256 = "0j6a2772nmy0nvf8mpfc9gf78k70ni94d63sq5pcq1s3ghni8kab";
                   };
+                };
               });
               kernelParams = [
                 "audit=0"
