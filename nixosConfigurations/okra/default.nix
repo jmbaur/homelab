@@ -53,10 +53,19 @@
     extraGroups = [ "wheel" ];
     shell = pkgs.bash;
   };
-  home-manager.users.jared = { systemConfig, ... }: {
+  home-manager.users.jared = { systemConfig, config, pkgs, ... }: {
     programs.git = {
       userEmail = "jaredbaur@fastmail.com";
       userName = systemConfig.users.users.jared.description;
+      extraConfig = {
+        commit.gpgSign = true;
+        gpg.format = "ssh";
+        gpg.ssh.defaultKeyCommand = "ssh-add -L";
+        gpg.ssh.allowedSignersFile = toString (pkgs.writeText "allowedSignersFile" ''
+          ${config.programs.git.userEmail} sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIBhCHaXn5ghEJQVpVZr4hOajD6Zp/0PO4wlymwfrg/S5AAAABHNzaDo=
+        '');
+        user.signingKey = "key::sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIBhCHaXn5ghEJQVpVZr4hOajD6Zp/0PO4wlymwfrg/S5AAAABHNzaDo=";
+      };
     };
     programs.ssh = {
       enable = true;
