@@ -96,7 +96,7 @@
                     ${toString netdevs.wg-trusted.wireguardConfig.ListenPort},
                     ${toString netdevs.wg-iot.wireguardConfig.ListenPort},
                     ${toString netdevs.wg-work.wireguardConfig.ListenPort},
-                } log prefix "input wireguard - " accept
+                } accept
 
                 # allow loopback traffic, anything else jump to chain for further
                 # evaluation
