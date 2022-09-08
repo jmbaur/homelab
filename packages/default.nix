@@ -44,8 +44,6 @@ let
     specialArgs = { inherit inputs; };
     modules = installer_iso_modules ++ [
       ({ config, ... }: {
-        disabledModules = [ "installer/cd-dvd/iso-image.nix" ];
-        imports = [ ../nixosModules/thinkpad_installer_iso_grub.nix ];
         isoImage = {
           makeEfiBootable = true;
           contents = [{

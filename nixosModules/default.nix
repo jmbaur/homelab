@@ -241,6 +241,8 @@ inputs: with inputs; {
                 };
               });
               kernelParams = [
+                "dtb=/boot/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb"
+                "video=efifb:auto"
                 "audit=0"
                 "efi=novamap,noruntime"
                 "pd_ignore_unused"
@@ -249,9 +251,6 @@ inputs: with inputs; {
               loader.grub = {
                 efiSupport = true;
                 extraFiles."dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb" = "${config.boot.kernelPackages.kernel}/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb";
-                extraPerEntryConfig = ''
-                  DEVICETREE /boot/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb
-                '';
               };
             };
             hardware.deviceTree = {
