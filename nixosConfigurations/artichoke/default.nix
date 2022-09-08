@@ -94,6 +94,8 @@
     '';
   };
 
+  services.journald.rateLimitBurst = 5000;
+
   services.openssh = {
     enable = true;
     passwordAuthentication = false;
@@ -111,10 +113,4 @@
     useNetworkd = true;
   };
   systemd.network.enable = true;
-
-  users.users.jared = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" ];
-    openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
-  };
 }

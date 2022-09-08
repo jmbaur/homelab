@@ -35,5 +35,5 @@ in
     wireguard.enable = true;
   };
 
-  services.promtail.enable = false;
+  services.journald.enableHttpGateway = true;
 }

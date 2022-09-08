@@ -124,14 +124,7 @@
     ];
   };
 
-  services.promtail.enable = false;
-  services.loki = {
-    enable = false;
-    configuration = {
-      auth_enabled = false;
-      server.http_listen_port = 3100;
-    };
-  };
+  services.journald.enableHttpGateway = true;
 
   services.grafana = {
     enable = true;

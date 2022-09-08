@@ -58,6 +58,7 @@
     };
   };
 
+  services.journald.enableHttpGateway = true;
   services.prometheus.exporters = {
     node = {
       enable = true;
@@ -67,25 +68,6 @@
     smartctl = {
       enable = true;
       openFirewall = true;
-    };
-  };
-
-  services.promtail = {
-    enable = false;
-    configuration = {
-      server.disable = true;
-      scrape_configs = [
-        {
-          job_name = "journal";
-          journal = { max_age = "12h"; labels = { job = "systemd-journal"; }; };
-          relabel_configs = [
-            { source_labels = [ "__journal__systemd_unit" ]; target_label = "unit"; }
-          ];
-        }
-      ];
-      clients = [{
-        url = "http://rhubarb.mgmt.home.arpa:3100/loki/api/v1/push";
-      }];
     };
   };
 
