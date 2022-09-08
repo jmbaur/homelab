@@ -73,11 +73,11 @@
     "cn913x_build": {
       "flake": false,
       "locked": {
-        "lastModified": 1657220826,
-        "narHash": "sha256-aUu7gc0W0952A92fJV99nlNA5c5raf5BwVP7gV8GxjQ=",
+        "lastModified": 1662646321,
+        "narHash": "sha256-t9QCRoa5sLstoDi1YlkrW8fKN4d5eM9LrtJfDhRDR8o=",
         "owner": "solidrun",
         "repo": "cn913x_build",
-        "rev": "f33e2aeb01c7ee061be7b053035ae87ce30fce4a",
+        "rev": "a8ee93496b29297615a7d94c207ea9ec95ddd525",
         "type": "github"
       },
       "original": {

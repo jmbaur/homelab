@@ -157,40 +157,44 @@ inputs: with inputs; {
           cfg = config.hardware.cn913x;
           kernelPatches = [
             {
-              name = "cn913x-based-COM-express-type";
+              name = "0001-arm64-dts-cn913x-add-cn913x-based-COM-express-type-";
               patch = "${cn913x_build}/patches/linux/0001-arm64-dts-cn913x-add-cn913x-based-COM-express-type-.patch";
             }
             {
-              name = "cn913x-COM-device-trees";
+              name = "0002-arm64-dts-cn913x-add-cn913x-COM-device-trees-to-the";
               patch = "${cn913x_build}/patches/linux/0002-arm64-dts-cn913x-add-cn913x-COM-device-trees-to-the.patch";
             }
             {
-              name = "device-trees-cn913x-rev-1_1";
+              name = "0004-dts-update-device-trees-to-cn913x-rev-1";
               patch = "${cn913x_build}/patches/linux/0004-dts-update-device-trees-to-cn913x-rev-1.1.patch";
             }
             {
-              name = "DTS-cn9130-device-tree";
+              name = "0005-DTS-update-cn9130-device-tree";
               patch = "${cn913x_build}/patches/linux/0005-DTS-update-cn9130-device-tree.patch";
             }
             {
-              name = "spi-clock-frequency-10MHz";
+              name = "0007-update-spi-clock-frequency-to-10MHz";
               patch = "${cn913x_build}/patches/linux/0007-update-spi-clock-frequency-to-10MHz.patch";
             }
             {
-              name = "som-clearfog-base-and-pro";
+              name = "0009-dts-cn9130-som-for-clearfog-base-and-pro";
               patch = "${cn913x_build}/patches/linux/0009-dts-cn9130-som-for-clearfog-base-and-pro.patch";
             }
             {
-              name = "usb2-interrupt-btn";
+              name = "0010-dts-add-usb2-support-and-interrupt-btn";
               patch = "${cn913x_build}/patches/linux/0010-dts-add-usb2-support-and-interrupt-btn.patch";
             }
             {
-              name = "cn9131-cf-solidwan";
+              name = "0011-linux-add-support-cn9131-cf-solidwan";
               patch = "${cn913x_build}/patches/linux/0011-linux-add-support-cn9131-cf-solidwan.patch";
             }
             {
-              name = "cn9131-bldn-mbv";
+              name = "0012-linux-add-support-cn9131-bldn-mbv";
               patch = "${cn913x_build}/patches/linux/0012-linux-add-support-cn9131-bldn-mbv.patch";
+            }
+            {
+              name = "0013-cpufreq-armada-enable-ap807-cpu-clk";
+              patch = "${cn913x_build}/patches/linux/0013-cpufreq-armada-enable-ap807-cpu-clk.patch";
             }
             {
               name = "cn913x_additions";
