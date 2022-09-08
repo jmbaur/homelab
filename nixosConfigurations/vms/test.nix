@@ -17,7 +17,7 @@
   users.users.jared = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
-    openssh.authorizedKeys.keyFiles = [ (import ../data/jmbaur-ssh-keys.nix) ];
+    openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
   };
   microvm = {
     hypervisor = "qemu";

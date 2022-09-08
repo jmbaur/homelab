@@ -13,7 +13,7 @@
     deployee = {
       enable = true;
       authorizedKeyFiles = [
-        (import ../../data/jmbaur-ssh-keys.nix)
+        pkgs.jmbaur-github-ssh-keys
         ../../data/deployer-ssh-keys.txt
       ];
     };
@@ -22,7 +22,7 @@
   users.users.jared = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
-    openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
+    openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
   };
 
   systemd.services."serial-getty@ttyS0" = {

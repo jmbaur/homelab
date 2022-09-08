@@ -48,7 +48,7 @@
     deployee = {
       enable = true;
       authorizedKeyFiles = [
-        (import ../../data/jmbaur-ssh-keys.nix)
+        pkgs.jmbaur-github-ssh-keys
         ../../data/deployer-ssh-keys.txt
       ];
     };

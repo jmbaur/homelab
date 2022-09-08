@@ -231,7 +231,7 @@ in
     isSystemUser = true;
     home = config.services.gitDaemon.basePath;
     shell = "${pkgs.git}/bin/git-shell";
-    openssh.authorizedKeys.keyFiles = lib.singleton (import ../../data/jmbaur-ssh-keys.nix);
+    openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
   };
   services.openssh = {
     enable = true;

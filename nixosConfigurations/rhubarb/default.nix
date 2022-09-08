@@ -5,8 +5,8 @@
     deployee = {
       enable = true;
       authorizedKeyFiles = [
-        (import ../../data/jmbaur-ssh-keys.nix)
         ../../data/deployer-ssh-keys.txt
+        pkgs.jmbaur-github-ssh-keys
       ];
     };
   };
@@ -41,7 +41,7 @@
     isNormalUser = true;
     extraGroups = [ "dialout" ];
     packages = with pkgs; [ picocom wol ];
-    openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
+    openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
   };
 
   services.prometheus = {

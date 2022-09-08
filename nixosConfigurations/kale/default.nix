@@ -13,7 +13,7 @@
     isNormalUser = true;
     extraGroups = [ "wheel" ];
     shell = pkgs.bash;
-    openssh.authorizedKeys.keyFiles = [ (import ../../data/jmbaur-ssh-keys.nix) ];
+    openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
   };
   home-manager.users.jared = { systemConfig, ... }: {
     programs.git = {
@@ -30,7 +30,7 @@
     deployee = {
       enable = true;
       authorizedKeyFiles = [
-        (import ../../data/jmbaur-ssh-keys.nix)
+        pkgs.jmbaur-github-ssh-keys
         ../../data/deployer-ssh-keys.txt
       ];
     };
