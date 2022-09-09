@@ -99,6 +99,7 @@ inputs: with inputs; {
     specialArgs = { inherit inputs; };
     modules = [
       ./www
+      agenix.nixosModules.age
       self.nixosModules.default
     ];
   };

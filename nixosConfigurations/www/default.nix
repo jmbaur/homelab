@@ -1,4 +1,4 @@
-{ pkgs, modulesPath, ... }: {
+{ config, pkgs, modulesPath, ... }: {
   imports = [
     "${modulesPath}/virtualisation/amazon-image.nix"
   ];
@@ -8,6 +8,15 @@
   custom.deployee = {
     enable = true;
     authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
+  };
+
+  age.secrets = {
+    htpasswd = {
+      mode = "440";
+      owner = config.services.nginx.user;
+      group = config.services.nginx.group;
+      file = ../../secrets/htpasswd.age;
+    };
   };
 
   networking.firewall.allowedTCPPorts = [ 22 80 443 ];
@@ -20,6 +29,7 @@
         enableACME = true;
         forceSSL = true;
         serverAliases = [ "www.jmbaur.com" ];
+        basicAuthFile = config.age.secrets.htpasswd.path;
         locations."/" = {
           root = pkgs.linkFarm "root" [{
             name = "index.html";
