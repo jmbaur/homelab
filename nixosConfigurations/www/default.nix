@@ -16,9 +16,19 @@
     enable = true;
     virtualHosts = {
       "www.jmbaur.com" = {
-        enableACME = false;
-        forceSSL = false;
-        locations."/" = { };
+        enableACME = true;
+        forceSSL = true;
+        serverAliases = [ "jmbaur.com" ];
+        locations."/" = {
+          root = pkgs.linkFarm "root" [{
+            name = "index.html";
+            path = pkgs.writeText "index.html" ''
+              <!DOCTYPE html>
+              These aren't the droids you're looking for.
+            '';
+          }];
+          index = "index.html";
+        };
       };
     };
   };
