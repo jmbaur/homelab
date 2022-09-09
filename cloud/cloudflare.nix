@@ -1,4 +1,4 @@
-{ inventory, secrets, ... }: {
+{ secrets, ... }: {
   data.http.publicip = {
     url = "https://ipv4.icanhazip.com";
   };
