@@ -4,6 +4,27 @@
       zone = "jmbaur.com";
     };
     cloudflare_record = {
+      rootCNAME = {
+        zone_id = "\${cloudflare_zone.jmbaur_com.id}";
+        name = "jmbaur.com";
+        value = "www.jmbaur.com";
+        type = "CNAME";
+        proxied = false;
+      };
+      wwwAAAA = {
+        zone_id = "\${cloudflare_zone.jmbaur_com.id}";
+        name = "www.jmbaur.com";
+        value = "\${aws_instance.homelab-web.ipv6_addresses[0]}";
+        type = "AAAA";
+        proxied = false;
+      };
+      wwwA = {
+        zone_id = "\${cloudflare_zone.jmbaur_com.id}";
+        name = "www.jmbaur.com";
+        value = "\${aws_instance.homelab-web.public_ip}";
+        type = "A";
+        proxied = false;
+      };
       vpnA = {
         zone_id = "\${cloudflare_zone.jmbaur_com.id}";
         name = "vpn.jmbaur.com";
