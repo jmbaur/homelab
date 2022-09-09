@@ -123,6 +123,10 @@
     subnet_id = "\${aws_subnet.homelab-main.id}";
     ipv6_address_count = 1;
     vpc_security_group_ids = [ "\${aws_security_group.homelab.id}" ];
+    root_block_device = {
+      delete_on_termination = true;
+      volume_size = "10"; # GiB
+    };
     tags = {
       Name = "homelab-web";
     };
