@@ -1,6 +1,7 @@
 inputs: with inputs;
 {
   default = _: prev: {
+    flarectl = prev.callPackage ./flarectl.nix { };
     grafana-dashboards = prev.callPackage ./grafana-dashboards { };
     jmbaur-keybase-pgp-keys = builtins.fetchurl {
       url = "https://keybase.io/jaredbaur/pgp_keys.asc";

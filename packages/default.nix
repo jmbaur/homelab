@@ -73,8 +73,9 @@ let
       inherit (self.inventory.${system}) inventory;
       secrets = homelab-private.secrets;
     };
-    modules = [ ./cloud ];
+    modules = [ ../cloud ];
   };
+
   inventory = pkgs: system: pkgs.writeText
     "inventory.json"
     (builtins.toJSON (self.inventory.${system}.inventory));
