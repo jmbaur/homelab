@@ -6,7 +6,7 @@
     cloudflare_record = {
       rootCNAME = {
         zone_id = "\${cloudflare_zone.jmbaur_com.id}";
-        name = "jmbaur.com";
+        name = "@";
         value = "www.jmbaur.com";
         type = "CNAME";
         proxied = false;
