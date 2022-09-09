@@ -9,7 +9,7 @@ flake-utils.lib.eachDefaultSystemMap (system:
   {
     default = pkgs.mkShell {
       buildInputs = with pkgs; [
-        (terraform.withPlugins (p: with p; [ aws cloudflare ]))
+        (terraform.withPlugins (p: with p; [ aws cloudflare http ]))
         agenix
         deploy-rs
         flarectl

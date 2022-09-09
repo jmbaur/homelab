@@ -1,6 +1,11 @@
 { inventory, secrets, ... }: {
+  data.http.publicip = {
+    url = "http://ipv4.icanhazip.com";
+  };
+
   resource = {
     cloudflare_zone.jmbaur_com = {
+      inherit (secrets.cloud.cloudflare) account_id;
       zone = "jmbaur.com";
     };
     cloudflare_record = {
@@ -28,9 +33,7 @@
       vpnA = {
         zone_id = "\${cloudflare_zone.jmbaur_com.id}";
         name = "vpn.jmbaur.com";
-        # This is a placeholder value, as this is obtained via DHCP from the
-        # ISP.
-        value = "10.10.10.10";
+        value = "\${chomp(data.http.publicip.response_body)}";
         type = "A";
         proxied = false;
       };
@@ -44,3 +47,4 @@
     };
   };
 }
+

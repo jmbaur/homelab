@@ -478,11 +478,11 @@
     },
     "homelab-private": {
       "locked": {
-        "lastModified": 1662602400,
-        "narHash": "sha256-3uB0QbNC4DyYRKVU0uDQYk0UxE7w0Ic08fG7G/hyY20=",
+        "lastModified": 1662735285,
+        "narHash": "sha256-fHZ847notNv713me9PNN66YHPnYadwgLxT/2nd9GOjc=",
         "ref": "refs/heads/main",
-        "rev": "a657861847985e03a27c1e281ee13f540eca73eb",
-        "revCount": 21,
+        "rev": "884750c0295bbb838fcec0c89834c595cafab25f",
+        "revCount": 22,
         "type": "git",
         "url": "ssh://git@github.com/jmbaur/homelab-private"
       },
@@ -518,11 +518,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1662662053,
-        "narHash": "sha256-SQ5vna5IwY8ifQIiDMG12EBXgeJvMVlTnxSELsoZGWE=",
+        "lastModified": 1662681039,
+        "narHash": "sha256-I/8mLhVbnCLLYR8a7mMtTxQZfeTNBTK/yDFpNXFtH90=",
         "owner": "astro",
         "repo": "microvm.nix",
-        "rev": "427052410ffb3841ca730bc42959a00010e31b2b",
+        "rev": "ae72a6f38247f1c226acae43568612c8b0bf7c03",
         "type": "github"
       },
       "original": {
@@ -602,11 +602,11 @@
     },
     "nixos-hardware": {
       "locked": {
-        "lastModified": 1662458987,
-        "narHash": "sha256-hcDwRlsXZMp2Er3vQk1JEUZWhBPLVC9vTT4xHvhpcE0=",
+        "lastModified": 1662714967,
+        "narHash": "sha256-IOTq5tAGGmBFj7tQbkcyLE261JUeTUucEE3p0WLZ4qM=",
         "owner": "NixOS",
         "repo": "nixos-hardware",
-        "rev": "504b32caf83986b7e6b9c79c1c13008f83290f19",
+        "rev": "1fec8fda86dac5701146c77d5f8a414b14ed1ff6",
         "type": "github"
       },
       "original": {
