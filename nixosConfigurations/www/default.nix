@@ -12,7 +12,7 @@
 
   age.secrets = {
     htpasswd = {
-      mode = "440";
+      mode = "0440";
       owner = config.services.nginx.user;
       group = config.services.nginx.group;
       file = ../../secrets/htpasswd.age;
