@@ -94,6 +94,12 @@ inputs: with inputs; {
     ];
   };
 
+  www = nixpkgs.lib.nixosSystem {
+    system = "aarch64-linux";
+    specialArgs = { inherit inputs; };
+    modules = [ ./www ];
+  };
+
   netboot-test = nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
     specialArgs = { inherit inputs; };

@@ -14,6 +14,7 @@ let
     { name = "okra"; value = mkSystemNode { name = "okra"; hostname = "okra.mgmt.home.arpa"; system = "x86_64-linux"; }; }
     { name = "potato"; value = mkSystemNode { name = "potato"; hostname = "potato.mgmt.home.arpa"; system = "x86_64-linux"; }; }
     { name = "rhubarb"; value = mkSystemNode { name = "rhubarb"; hostname = "rhubarb.mgmt.home.arpa"; system = "aarch64-linux"; magicRollback = false; }; }
+    { name = "www"; value = mkSystemNode { name = "www"; hostname = "www.jmbaur.com"; system = "aarch64-linux"; }; }
   ];
 in
 {
