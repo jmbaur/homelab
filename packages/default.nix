@@ -74,6 +74,7 @@ let
       secrets = homelab-private.secrets;
     };
     modules = [ ../cloud ];
+    strip_nulls = false;
   };
 
   inventory = pkgs: system: pkgs.writeText
