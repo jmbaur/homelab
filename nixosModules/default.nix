@@ -232,12 +232,9 @@ inputs: with inputs; {
             boot = {
               kernelPackages = pkgs.linuxPackagesFor (pkgs.linux_testing.override {
                 argsOverride = {
-                  version = "6.0-rc4";
-                  modDirVersion = "6.0.0-rc4";
-                  src = pkgs.fetchurl {
-                    url = "https://git.kernel.org/torvalds/t/linux-6.0-rc4.tar.gz";
-                    sha256 = "0j6a2772nmy0nvf8mpfc9gf78k70ni94d63sq5pcq1s3ghni8kab";
-                  };
+                  version = "6.0-rc3";
+                  modDirVersion = "6.0.0-rc3";
+                  src = sc8280xp-linux;
                 };
               });
               kernelParams = [
