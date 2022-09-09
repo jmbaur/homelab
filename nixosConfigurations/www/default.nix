@@ -15,10 +15,11 @@
   services.nginx = {
     enable = true;
     virtualHosts = {
-      "www.jmbaur.com" = {
+      "jmbaur.com" = {
+        default = true;
         enableACME = true;
         forceSSL = true;
-        serverAliases = [ "jmbaur.com" ];
+        serverAliases = [ "www.jmbaur.com" ];
         locations."/" = {
           root = pkgs.linkFarm "root" [{
             name = "index.html";
