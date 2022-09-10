@@ -19,6 +19,7 @@
     };
   };
 
+  services.fail2ban.enable = true;
   networking.firewall.allowedTCPPorts = [ 22 80 443 ];
 
   services.nginx = {

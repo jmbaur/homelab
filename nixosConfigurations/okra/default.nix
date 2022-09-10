@@ -112,6 +112,15 @@
 
   services.fwupd.enable = true;
 
+  security.pam.u2f = {
+    enable = true;
+    cue = true;
+    origin = "pam://homelab";
+    authFile = config.age.secrets.pam_u2f_authfile.path;
+  };
+
+  age.secrets.pam_u2f_authfile.file = ../../secrets/pam_u2f_authfile.age;
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave

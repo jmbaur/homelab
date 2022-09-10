@@ -40,12 +40,11 @@ reboot
 ## Yubikey
 
 To require a touch of the Yubikey when using its smart card functionality:
-`ykman openpgp keys set-touch sig cached-fixed`
+```bash
+ykman openpgp keys set-touch sig cached-fixed
+```
 
-## RouterOS
-
-Configuration changes involve a reset of the device.
-
-```rascal
-/system reset-configuration no-defaults=yes run-after-reset=flash/restore.rsc
+To setup PAM U2F, run the following then add it to secrets/pam_u2f_authfile.age
+```bash
+nix shell nixpkgs#pam_u2f -c pamu2fcfg -opam://homelab
 ```

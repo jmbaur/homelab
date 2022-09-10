@@ -15,6 +15,7 @@ inputs: with inputs; {
     specialArgs = { inherit inputs; };
     modules = [
       ./okra
+      agenix.nixosModules.age
       homelab-private.nixosModules.common
       nixos-configs.nixosModules.default
       nixos-hardware.nixosModules.intel-nuc-8i7beh
@@ -71,8 +72,6 @@ inputs: with inputs; {
     };
     modules = [
       "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
-      # TODO(jared): Put this in when ATF build works.
-      # ({pkgs, ...}:{ sdImage.postBuildCommands = "dd if=${pkgs.armTrustedFirmwareCN9130_CF_Pro}/flash-image.bin of=$img bs=512 seek=4096 conv=notrunc"; })
       ./artichoke
       agenix.nixosModules.age
       ipwatch.nixosModules.default
