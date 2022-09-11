@@ -128,6 +128,7 @@ flake-utils.lib.eachDefaultSystemMap
           wg-iot = {
             id = 41;
             wireguard = true;
+            includeRoutesTo = [ "iot" ];
             hosts = {
               artichoke = { lastBit = 1; interface = "wg-iot"; };
               phone = { lastBit = 50; wgPeer = true; publicKey = "pCvnlCWnM46XY3+327rQyOPA91wajC1HPTmP/5YHcy8="; };
