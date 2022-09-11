@@ -105,6 +105,8 @@
       slack-wayland
       spotify
       teams-webapp
+      yubikey-manager
+      yubikey-personalization
     ];
   };
 
