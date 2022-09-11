@@ -22,6 +22,18 @@ inputs: with inputs; {
     ];
   };
 
+  carrot = nixpkgs.lib.nixosSystem {
+    system = "x86_64-linux";
+    specialArgs = { inherit inputs; };
+    modules = [
+      ./carrot
+      agenix.nixosModules.age
+      homelab-private.nixosModules.common
+      nixos-configs.nixosModules.default
+      nixos-hardware.nixosModules.lenovo-thinkpad-t495
+    ];
+  };
+
   website = nixpkgs.lib.nixosSystem rec {
     system = "x86_64-linux";
     specialArgs = { inherit inputs; inherit (self.inventory.${system}) inventory; };

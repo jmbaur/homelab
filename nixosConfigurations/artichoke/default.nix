@@ -38,7 +38,8 @@
       file = ../../secrets/wg-work.age;
     };
     beetroot.file = ../../secrets/beetroot.age;
-    pixel.file = ../../secrets/pixel.age;
+    phone.file = ../../secrets/phone.age;
+    carrot.file = ../../secrets/carrot.age;
     okra.file = ../../secrets/okra.age;
     ipwatch.file = ../../secrets/ipwatch.age;
   };

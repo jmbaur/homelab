@@ -114,6 +114,7 @@ flake-utils.lib.eachDefaultSystemMap
             hosts = {
               artichoke = { lastBit = 1; interface = "wg-trusted"; };
               beetroot = { lastBit = 52; wgPeer = true; publicKey = "T+zc4lpoEgxPIKEBr9qXiAzb/ruRbqZuVrih+0rGs2M="; };
+              carrot = { lastBit = 51; wgPeer = true; publicKey = "XcKlp41XBEtrplIcXkxwQQUyT2kyJ/X4QcmckCnNU3w="; };
             };
           };
           iot = {
@@ -128,7 +129,7 @@ flake-utils.lib.eachDefaultSystemMap
             wireguard = true;
             hosts = {
               artichoke = { lastBit = 1; interface = "wg-iot"; };
-              pixel = { lastBit = 50; wgPeer = true; publicKey = "pCvnlCWnM46XY3+327rQyOPA91wajC1HPTmP/5YHcy8="; };
+              phone = { lastBit = 50; wgPeer = true; publicKey = "pCvnlCWnM46XY3+327rQyOPA91wajC1HPTmP/5YHcy8="; };
             };
           };
           work = {

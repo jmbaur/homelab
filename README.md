@@ -40,11 +40,13 @@ reboot
 ## Yubikey
 
 To require a touch of the Yubikey when using its smart card functionality:
+
 ```bash
 ykman openpgp keys set-touch sig cached-fixed
 ```
 
 To setup PAM U2F, run the following then add it to secrets/pam_u2f_authfile.age
+
 ```bash
 nix shell nixpkgs#pam_u2f -c pamu2fcfg -opam://homelab
 ```
