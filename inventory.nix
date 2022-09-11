@@ -111,6 +111,7 @@ flake-utils.lib.eachDefaultSystemMap
           wg-trusted = {
             id = 31;
             wireguard = true;
+            includeRoutesTo = [ "mgmt" "trusted" ];
             hosts = {
               artichoke = { lastBit = 1; interface = "wg-trusted"; };
               beetroot = { lastBit = 52; wgPeer = true; publicKey = "T+zc4lpoEgxPIKEBr9qXiAzb/ruRbqZuVrih+0rGs2M="; };

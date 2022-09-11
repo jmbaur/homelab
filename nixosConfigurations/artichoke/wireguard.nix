@@ -56,14 +56,11 @@ let
                   network.networkGuaCidr
                   network.networkUlaCidr
                 ] ++
-                lib.flatten
-                  (lib.mapAttrsToList
-                    (_: networkInfo: [ networkInfo.networkIPv4Cidr networkInfo.networkGuaCidr networkInfo.networkUlaCidr ])
-                    (lib.filterAttrs
-                      (_: networkInfo: lib.any (name: network.name == name) networkInfo.includeRoutesTo)
-                      inventory.networks
-                    )
-                  );
+                lib.flatten (
+                  map
+                    (name: with inventory.networks.${name}; [ networkIPv4Cidr networkGuaCidr networkUlaCidr ])
+                    network.includeRoutesTo
+                );
               };
             };
             fullTunnelWgConfig = lib.generators.toINI { listsAsDuplicateKeys = true; } {
