@@ -1,8 +1,14 @@
-inputs: with inputs;
-{
-  default = _: prev: {
+inputs: with inputs; {
+  default = final: prev: {
     flarectl = prev.callPackage ./flarectl.nix { };
     grafana-dashboards = prev.callPackage ./grafana-dashboards { };
+    ubootCN9130_CF_Pro = prev.callPackage ./ubootCN9130_CF_Pro.nix {
+      inherit cn913x_build;
+    };
+    armTrustedFirmwareCN9130_CF_Pro = prev.callPackage ./armTrustedFirmwareCN9130_CF_Pro {
+      inherit (final) ubootCN9130_CF_Pro;
+      inherit cn913x_build;
+    };
     jmbaur-keybase-pgp-keys = builtins.fetchurl {
       url = "https://keybase.io/jaredbaur/pgp_keys.asc";
       sha256 = "0rw02akfvdrpdrznhaxsy8105ng5r8xb5mlmjwh9msf4brnbwrj7";
