@@ -3,7 +3,7 @@ with import path { };
 let
   secrets = lib.importJSON secretFile;
   inventory = lib.importJSON inventoryFile;
-  gateway = inventory.networks.mgmt.hosts.broccoli.ipv4;
+  gateway = inventory.networks.mgmt.hosts.artichoke.ipv4;
   configuration = {
     name = "RBcAPGi-5acD2nD";
     commands = [

@@ -18,7 +18,8 @@ inputs: with inputs; {
           options.custom.installer.enable = lib.mkEnableOption "installer";
           config = lib.mkIf cfg.enable {
             system.stateVersion = "22.11";
-            boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_5_19;
+            boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
+            custom.disableZfs = true;
             systemd.services.sshd.wantedBy = lib.mkForce [ "multi-user.target" ];
             users.users.nixos.openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
             console.useXkbConfig = true;

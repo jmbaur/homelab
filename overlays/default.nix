@@ -5,7 +5,7 @@ inputs: with inputs; {
     ubootCN9130_CF_Pro = prev.callPackage ./ubootCN9130_CF_Pro.nix {
       inherit cn913x_build;
     };
-    armTrustedFirmwareCN9130_CF_Pro = prev.callPackage ./armTrustedFirmwareCN9130_CF_Pro {
+    armTrustedFirmwareCN9130_CF_Pro = prev.callPackage ./armTrustedFirmwareCN9130_CF_Pro.nix {
       inherit (final) ubootCN9130_CF_Pro;
       inherit cn913x_build;
     };

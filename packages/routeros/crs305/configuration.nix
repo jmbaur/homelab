@@ -1,7 +1,7 @@
 { lib, writeText, inventoryFile, ... }:
 let
   inventory = lib.importJSON inventoryFile;
-  gateway = inventory.networks.mgmt.hosts.broccoli.ipv4;
+  gateway = inventory.networks.mgmt.hosts.artichoke.ipv4;
   configuration = {
     name = "CRS305-1G-4S+";
     commands = [
