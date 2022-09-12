@@ -121,7 +121,6 @@ let
   # TODO(jared): map over all networks that have wireguard set to true
   trusted = mkWgInterface inventory.networks.wg-trusted;
   iot = mkWgInterface inventory.networks.wg-iot;
-  work = mkWgInterface inventory.networks.wg-work;
 in
 {
   systemd.network = {
@@ -130,13 +129,10 @@ in
 
     netdevs.wg-iot = iot.netdev;
     networks.wg-iot = iot.network;
-
-    netdevs.wg-work = work.netdev;
-    networks.wg-work = work.network;
   };
 
   environment.systemPackages = [ pkgs.wireguard-tools ] ++
     trusted.clientConfigs ++
-    iot.clientConfigs ++
-    work.clientConfigs;
+    iot.clientConfigs
+  ;
 }

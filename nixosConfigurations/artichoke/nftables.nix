@@ -21,8 +21,6 @@
         define NET_WG_IOT = ${inventory.networks.wg-iot.networkIPv4Cidr}
         define DEV_WORK = ${networks.work.name}
         define NET_WORK = ${inventory.networks.work.networkIPv4Cidr}
-        define DEV_WG_WORK = ${networks.wg-work.name}
-        define NET_WG_WORK = ${inventory.networks.wg-work.networkIPv4Cidr}
 
         table inet firewall {
             chain input_wan {
@@ -96,7 +94,6 @@
                 meta l4proto { udp } th dport {
                     ${toString netdevs.wg-trusted.wireguardConfig.ListenPort},
                     ${toString netdevs.wg-iot.wireguardConfig.ListenPort},
-                    ${toString netdevs.wg-work.wireguardConfig.ListenPort},
                 } accept
 
                 # allow loopback traffic, anything else jump to chain for further
@@ -112,7 +109,6 @@
                     $DEV_IOT : jump input_private_untrusted,
                     $DEV_WG_IOT : jump input_private_untrusted,
                     $DEV_WORK : jump input_private_untrusted,
-                    $DEV_WG_WORK : jump input_private_untrusted,
                 }
 
                 # the rest is dropped by the above policy
@@ -165,6 +161,7 @@
                     $DEV_WG_TRUSTED,
                     $DEV_IOT,
                     $DEV_WG_IOT,
+                    $DEV_WORK,
                 } accept
             }
 
@@ -180,7 +177,6 @@
                 jump allow_to_internet
                 oifname {
                     $DEV_WORK,
-                    $DEV_WG_WORK,
                 } accept
             }
 
@@ -209,7 +205,6 @@
                     $DEV_IOT : jump forward_iot,
                     $DEV_WG_IOT : jump forward_iot,
                     $DEV_WORK : jump forward_work,
-                    $DEV_WG_WORK : jump forward_work,
                 }
 
                 # the rest is dropped by the above policy
@@ -233,7 +228,6 @@
                     $NET_IOT,
                     $NET_WG_IOT,
                     $NET_WORK,
-                    $NET_WG_WORK,
                 } oifname $DEV_WAN masquerade
             }
         }

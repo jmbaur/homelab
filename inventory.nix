@@ -101,7 +101,7 @@ flake-utils.lib.eachDefaultSystemMap
           };
           trusted = {
             id = 30;
-            includeRoutesTo = [ "wg-trusted" ];
+            includeRoutesTo = [ "mgmt" "wg-trusted" "iot" "wg-iot" "work" ];
             hosts = {
               artichoke = { lastBit = 1; interface = "lan3"; };
               asparagus = { lastBit = 50; dhcp = true; mac = "e4:1d:2d:7f:1a:d0"; };
@@ -111,7 +111,7 @@ flake-utils.lib.eachDefaultSystemMap
           wg-trusted = {
             id = 31;
             wireguard = true;
-            includeRoutesTo = [ "mgmt" "trusted" ];
+            includeRoutesTo = [ "mgmt" "trusted" "iot" "wg-iot" "work" ];
             hosts = {
               artichoke = { lastBit = 1; interface = "wg-trusted"; };
               beetroot = { lastBit = 52; wgPeer = true; publicKey = "T+zc4lpoEgxPIKEBr9qXiAzb/ruRbqZuVrih+0rGs2M="; };
@@ -136,19 +136,10 @@ flake-utils.lib.eachDefaultSystemMap
           };
           work = {
             id = 50;
-            includeRoutesTo = [ "wg-work" ];
             hosts = {
               artichoke = { lastBit = 1; interface = "lan5"; };
               laptop = { lastBit = 50; dhcp = true; mac = "08:3a:88:63:1a:b4"; };
               dev = { lastBit = 60; dhcp = true; mac = "00:0C:29:88:A7:13"; };
-            };
-          };
-          wg-work = {
-            id = 51;
-            wireguard = true;
-            hosts = {
-              artichoke = { lastBit = 1; interface = "wg-work"; };
-              okra = { lastBit = 2; wgPeer = true; publicKey = "XG/mq6Gdghxu6iW68tdlArnjJei8VCYk9cUl/i81LDA="; };
             };
           };
           data = {

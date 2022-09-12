@@ -14,10 +14,8 @@ in
   "carrot.age".publicKeys = withYubikeys [ artichoke ];
   "htpasswd.age".publicKeys = withYubikeys [ www ];
   "ipwatch.age".publicKeys = withYubikeys [ artichoke ];
-  "okra.age".publicKeys = withYubikeys [ artichoke ];
   "pam_u2f_authfile.age".publicKeys = withYubikeys [ carrot okra ];
   "phone.age".publicKeys = withYubikeys [ artichoke ];
   "wg-iot.age".publicKeys = withYubikeys [ artichoke ];
   "wg-trusted.age".publicKeys = withYubikeys [ artichoke ];
-  "wg-work.age".publicKeys = withYubikeys [ artichoke ];
 }

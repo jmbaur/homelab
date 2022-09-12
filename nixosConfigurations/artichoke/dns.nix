@@ -82,7 +82,6 @@ in
         iot
         wg-iot
         work
-        wg-work
       ]);
   };
 }
