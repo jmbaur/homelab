@@ -22,18 +22,16 @@
       wireless = {
         name = "wl*";
         DHCP = "yes";
-        networkConfig.IPv6PrivacyExtensions = true;
-        dhcpV4Config.ClientIdentifier = "mac";
-        dhcpV4Config.RouteMetric = 600;
-        ipv6AcceptRAConfig.RouteMetric = 600;
+        dhcpV4Config.RouteMetric = config.systemd.network.wired.dhcpV4Config.RouteMetric * 2;
+        ipv6AcceptRAConfig.RouteMetric = config.systemd.network.wired.ipv6AcceptRAConfig.RouteMetric * 2;
+        networkConfig.IPv6PrivacyExtensions = "kernel";
       };
       wired = {
         name = "en*";
         DHCP = "yes";
-        networkConfig.IPv6PrivacyExtensions = true;
-        dhcpV4Config.ClientIdentifier = "mac";
-        dhcpV4Config.RouteMetric = 100;
-        ipv6AcceptRAConfig.RouteMetric = 100;
+        dhcpV4Config.RouteMetric = 1024;
+        ipv6AcceptRAConfig.RouteMetric = 1024;
+        networkConfig.IPv6PrivacyExtensions = "kernel";
       };
     };
   };
