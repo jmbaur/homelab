@@ -39,7 +39,7 @@
   };
 
   custom = {
-    common.enable = true;
+    minimal.enable = true;
     deployee = {
       enable = true;
       authorizedKeyFiles = [
