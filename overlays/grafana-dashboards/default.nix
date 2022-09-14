@@ -22,7 +22,7 @@ let
     {
       "name" = "node_exporter_full.json";
       "url" = "https://grafana.com/api/dashboards/1860/revisions/27/download";
-      "sha256" = "16srb69lhysqvkkwf25d427dzg4p2fxr1igph9j8aj9q4kkrw595";
+      "sha256" = "sha256-PMnH8MfDxlPsSFp5ZYv+C58Qyowdrq4Bog59H3POR84=";
     }
   ]);
 in
