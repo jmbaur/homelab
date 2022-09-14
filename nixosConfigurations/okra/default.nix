@@ -31,12 +31,16 @@
         DHCP = "yes";
         networkConfig.IPv6PrivacyExtensions = true;
         dhcpV4Config.ClientIdentifier = "mac";
+        dhcpV4Config.RouteMetric = config.systemd.network.networks.wired.dhcpV4Config.RouteMetric * 2;
+        ipv6AcceptRAConfig.RouteMetric = config.systemd.network.networks.wired.ipv6AcceptRAConfig.RouteMetric * 2;
       };
       wired = {
         name = "en*";
         DHCP = "yes";
         networkConfig.IPv6PrivacyExtensions = true;
         dhcpV4Config.ClientIdentifier = "mac";
+        dhcpV4Config.RouteMetric = 1024;
+        ipv6AcceptRAConfig.RouteMetric = 1024;
       };
     };
   };

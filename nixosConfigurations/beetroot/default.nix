@@ -43,8 +43,8 @@
       wireless = {
         name = "wl*";
         DHCP = "yes";
-        dhcpV4Config.RouteMetric = config.systemd.network.wired.dhcpV4Config.RouteMetric * 2;
-        ipv6AcceptRAConfig.RouteMetric = config.systemd.network.wired.ipv6AcceptRAConfig.RouteMetric * 2;
+        dhcpV4Config.RouteMetric = config.systemd.network.networks.wired.dhcpV4Config.RouteMetric * 2;
+        ipv6AcceptRAConfig.RouteMetric = config.systemd.network.networks.wired.ipv6AcceptRAConfig.RouteMetric * 2;
         networkConfig.IPv6PrivacyExtensions = "kernel";
       };
     };
