@@ -31,6 +31,11 @@
       wan = {
         name = config.systemd.network.links."10-wan".linkConfig.Name;
         DHCP = "ipv4";
+        routes = [
+          { routeConfig = { Destination = "172.16.0.0/12"; Type = "unreachable"; }; }
+          { routeConfig = { Destination = "192.168.0.0/16"; Type = "unreachable"; }; }
+          { routeConfig = { Destination = "10.0.0.0/8"; Type = "unreachable"; }; }
+        ];
         networkConfig = {
           Tunnel = config.systemd.network.netdevs.hurricane.netdevConfig.Name;
           IPv6AcceptRA = false; # TODO(jared): get a better ISP
