@@ -136,7 +136,7 @@
               }
 
               chain dont_allow_to_internet {
-                  oifname { $DEV_WAN, $DEV_WAN6 } log prefix "bogon - " drop
+                  oifname { $DEV_WAN, $DEV_WAN6 } log prefix "not allowed to internet - " drop
               }
 
               chain forward_mgmt {
