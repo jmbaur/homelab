@@ -97,6 +97,8 @@
                       invalid : drop,
                   }
 
+                  jump not_in_internet
+
                   # always allow wireguard traffic
                   meta l4proto { udp } th dport {
                       ${toString netdevs.wg-trusted.wireguardConfig.ListenPort},
@@ -123,7 +125,8 @@
 
               chain not_in_internet {
                   # Drop addresses that do not exist in the internet (RFC6890)
-                  ip daddr { ${bogonNetworks} } drop
+                  iifname { $DEV_WAN, $DEV_WAN6 } ip saddr { ${bogonNetworks} } drop
+                  oifname { $DEV_WAN, $DEV_WAN6 } ip daddr { ${bogonNetworks} } drop
               }
 
               chain forward_from_wan {
@@ -182,7 +185,7 @@
                       invalid : drop,
                   }
 
-                  oifname { $DEV_WAN, $DEV_WAN6 } jump not_in_internet
+                  jump not_in_internet
 
                   # connections from the internal net to the internet or to other
                   # internal nets are allowed
@@ -199,6 +202,12 @@
                   }
 
                   # the rest is dropped by the above policy
+              }
+
+              chain output {
+                  type filter hook output priority 0; policy accept;
+
+                  jump not_in_internet
               }
           }
 
