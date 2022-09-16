@@ -6,10 +6,14 @@
       enable = true;
       ruleset = with config.systemd.network;
         let
-          bogonNetworks = lib.concatMapStringsSep
-            ","
+          v4BogonNetworks = lib.concatMapStringsSep
+            ", "
             (route: route.routeConfig.Destination)
-            (networks.wan.routes ++ networks.hurricane.routes);
+            (networks.wan.routes);
+          v6BogonNetworks = lib.concatMapStringsSep
+            ", "
+            (route: route.routeConfig.Destination)
+            (networks.hurricane.routes);
         in
         ''
           define DEV_WAN = ${networks.wan.name}
@@ -125,8 +129,11 @@
 
               chain not_in_internet {
                   # Drop addresses that do not exist in the internet (RFC6890)
-                  iifname { $DEV_WAN, $DEV_WAN6 } ip saddr { ${bogonNetworks} } drop
-                  oifname { $DEV_WAN, $DEV_WAN6 } ip daddr { ${bogonNetworks} } drop
+                  iifname { $DEV_WAN } ip saddr { ${v4BogonNetworks} } drop
+                  iifname { $DEV_WAN6 } ip6 saddr { ${v6BogonNetworks} } drop
+
+                  oifname { $DEV_WAN } ip daddr { ${v4BogonNetworks} } drop
+                  oifname { $DEV_WAN6 } ip6 daddr { ${v6BogonNetworks} } drop
               }
 
               chain forward_from_wan {
