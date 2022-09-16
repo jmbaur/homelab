@@ -1,6 +1,7 @@
 { config, secrets, ... }: {
   networking.useDHCP = false;
 
+  # NOTE: bogon networks obtained from https://ipgeolocation.io/resources/bogon.html
   systemd.network = {
     netdevs = {
       hurricane = {
