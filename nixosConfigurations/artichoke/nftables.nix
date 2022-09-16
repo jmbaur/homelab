@@ -1,4 +1,4 @@
-{ config, inventory, ... }: {
+{ config, lib, inventory, ... }: {
   networking = {
     nat.enable = false;
     firewall.enable = false;
@@ -6,7 +6,7 @@
       enable = true;
       ruleset = with config.systemd.network;
         let
-          bogonNetworks = concatMapStringsSep
+          bogonNetworks = lib.concatMapStringsSep
             ","
             (route: route.routeConfig.Destination)
             (networks.wan.routes ++ networks.hurricane.routes);
