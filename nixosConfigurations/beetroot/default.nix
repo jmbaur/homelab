@@ -66,14 +66,6 @@
   programs.nix-ld.enable = true;
 
   home-manager.users.jared = { config, systemConfig, ... }: {
-    xdg.configFile."gobar/gobar.yaml".source = (pkgs.formats.yaml { }).generate "gobar.yaml" {
-      modules = [
-        { module = "battery"; }
-        { module = "network"; pattern = "(en|wl)+"; }
-        { module = "memory"; }
-        { module = "datetime"; timezones = [ "Local" "UTC" ]; }
-      ];
-    };
     services.kanshi = {
       profiles = {
         default = {

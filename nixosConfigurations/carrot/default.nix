@@ -79,14 +79,6 @@
         };
       };
     };
-    xdg.configFile."gobar/gobar.yaml".source = (pkgs.formats.yaml { }).generate "gobar.yaml" {
-      modules = [
-        { module = "battery"; }
-        { module = "network"; pattern = "(en|wl|wg)+"; }
-        { module = "memory"; }
-        { module = "datetime"; timezones = [ "Local" "UTC" ]; }
-      ];
-    };
 
     home.packages = with pkgs; [
       age-plugin-yubikey
