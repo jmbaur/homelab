@@ -41,6 +41,7 @@
     common.enable = true;
     dev.enable = true;
     gui.enable = true;
+    laptop.enable = true;
   };
 
   users.users.jared = {
