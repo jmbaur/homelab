@@ -7,6 +7,7 @@ inputs: with inputs; {
     };
     modules = [
       ./beetroot
+      self.nixosModules.default
       nixos-configs.nixosModules.default
       self.nixosModules.default
     ];
@@ -21,6 +22,7 @@ inputs: with inputs; {
     modules = [
       ./okra
       agenix.nixosModules.age
+      self.nixosModules.default
       nixos-configs.nixosModules.default
       nixos-hardware.nixosModules.intel-nuc-8i7beh
     ];
