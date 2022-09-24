@@ -48,7 +48,7 @@
     isNormalUser = true;
     description = "Jared Baur";
     extraGroups = [ "wheel" ];
-    shell = pkgs.bash;
+    shell = pkgs.fish;
   };
   home-manager.users.jared = { systemConfig, config, pkgs, ... }: {
     programs.git = {

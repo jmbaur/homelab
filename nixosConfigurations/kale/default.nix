@@ -12,7 +12,7 @@
     description = "Jared Baur";
     isNormalUser = true;
     extraGroups = [ "wheel" ];
-    shell = pkgs.bash;
+    shell = pkgs.fish;
     openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
   };
   home-manager.users.jared = { systemConfig, ... }: {
