@@ -494,11 +494,11 @@
     },
     "homelab-private": {
       "locked": {
-        "lastModified": 1662735285,
-        "narHash": "sha256-fHZ847notNv713me9PNN66YHPnYadwgLxT/2nd9GOjc=",
+        "lastModified": 1664009531,
+        "narHash": "sha256-BOt24Ro4/tvX3Y4BRv9N2yLhuvjPnJO6QFPAi3kfJQY=",
         "ref": "refs/heads/main",
-        "rev": "884750c0295bbb838fcec0c89834c595cafab25f",
-        "revCount": 22,
+        "rev": "c020c3f30ac7d5f3f02bca842a4e5d70031dfe8f",
+        "revCount": 23,
         "type": "git",
         "url": "ssh://git@github.com/jmbaur/homelab-private"
       },

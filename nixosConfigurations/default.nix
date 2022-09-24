@@ -1,10 +1,12 @@
 inputs: with inputs; {
   beetroot = nixpkgs.lib.nixosSystem {
     system = "aarch64-linux";
-    specialArgs = { inherit inputs; };
+    specialArgs = {
+      inherit inputs;
+      inherit (homelab-private) secrets;
+    };
     modules = [
       ./beetroot
-      homelab-private.nixosModules.common
       nixos-configs.nixosModules.default
       self.nixosModules.default
     ];
@@ -12,11 +14,13 @@ inputs: with inputs; {
 
   okra = nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
-    specialArgs = { inherit inputs; };
+    specialArgs = {
+      inherit inputs;
+      inherit (homelab-private) secrets;
+    };
     modules = [
       ./okra
       agenix.nixosModules.age
-      homelab-private.nixosModules.common
       nixos-configs.nixosModules.default
       nixos-hardware.nixosModules.intel-nuc-8i7beh
     ];
@@ -24,11 +28,14 @@ inputs: with inputs; {
 
   carrot = nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
-    specialArgs = { inherit inputs; };
+    specialArgs = {
+      inherit inputs;
+      inherit (homelab-private) secrets;
+    };
     modules = [
       ./carrot
       agenix.nixosModules.age
-      homelab-private.nixosModules.common
+      self.nixosModules.default
       nixos-configs.nixosModules.default
       nixos-hardware.nixosModules.lenovo-thinkpad-t495
     ];
@@ -52,7 +59,6 @@ inputs: with inputs; {
     modules = [
       ./potato/configuration.nix
       agenix.nixosModules.age
-      homelab-private.nixosModules.common
       nixos-configs.nixosModules.default
       nixos-hardware.nixosModules.common-cpu-amd
       self.nixosModules.default
@@ -64,11 +70,11 @@ inputs: with inputs; {
     specialArgs = {
       inherit inputs;
       inherit (self.inventory.${system}) inventory;
+      inherit (homelab-private) secrets;
     };
     modules = [
       ./kale
       agenix.nixosModules.age
-      homelab-private.nixosModules.common
       nixos-configs.nixosModules.default
       runner-nix.nixosModules.default
       self.nixosModules.default
@@ -98,7 +104,6 @@ inputs: with inputs; {
     modules = [
       "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
       ./rhubarb
-      homelab-private.nixosModules.common
       nixos-configs.nixosModules.default
       nixos-hardware.nixosModules.raspberry-pi-4
       self.nixosModules.default

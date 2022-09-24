@@ -49,14 +49,9 @@
     common.enable = true;
     dev.enable = true;
     gui.enable = true;
+    users.jared.enable = true;
   };
 
-  users.users.jared = {
-    isNormalUser = true;
-    description = "Jared Baur";
-    extraGroups = [ "wheel" ];
-    shell = pkgs.fish;
-  };
   home-manager.users.jared = { systemConfig, config, pkgs, ... }: {
     programs.git = {
       userEmail = "jaredbaur@fastmail.com";

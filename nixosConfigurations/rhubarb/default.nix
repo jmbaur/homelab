@@ -2,6 +2,7 @@
   custom = {
     disableZfs = true;
     common.enable = true;
+    users.jared.enable = true;
     deployee = {
       enable = true;
       authorizedKeyFiles = [
@@ -37,12 +38,7 @@
     };
   };
 
-  users.users.jared = {
-    isNormalUser = true;
-    extraGroups = [ "dialout" ];
-    packages = with pkgs; [ picocom wol ];
-    openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
-  };
+  environment.systemPackages = with pkgs; [ picocom wol ];
 
   services.prometheus = {
     enable = true;

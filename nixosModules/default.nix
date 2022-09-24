@@ -305,6 +305,21 @@ inputs: with inputs; {
             '';
           };
         })
+      ({ secrets, lib, config, pkgs, ... }:
+        let cfg = config.custom.users.jared; in
+        {
+          options.custom.users.jared.enable = lib.mkEnableOption "jared";
+          config = lib.mkIf cfg.enable {
+            users.users.jared = {
+              isNormalUser = true;
+              description = "Jared Baur";
+              extraGroups = [ "dialout" "wheel" ];
+              shell = pkgs.fish;
+              openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
+              inherit (secrets.users.jared) hashedPassword;
+            };
+          };
+        })
     ];
   };
 }

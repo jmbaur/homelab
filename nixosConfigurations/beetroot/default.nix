@@ -9,18 +9,12 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.initrd.systemd.enable = true;
 
-  users.users.jared = {
-    isNormalUser = true;
-    description = "Jared Baur";
-    shell = pkgs.bash;
-    extraGroups = [ "adbusers" "dialout" "wheel" ];
-  };
-
   custom = {
     common.enable = true;
     dev.enable = true;
     gui.enable = true;
     laptop.enable = true;
+    users.jared.enable = true;
   };
 
   networking = {
@@ -62,7 +56,6 @@
   nixpkgs.config.allowUnfree = true;
 
   services.fwupd.enable = true;
-  programs.adb.enable = true;
   programs.nix-ld.enable = true;
 
   home-manager.users.jared = { config, systemConfig, ... }: {

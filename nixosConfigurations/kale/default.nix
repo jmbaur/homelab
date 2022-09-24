@@ -7,14 +7,6 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  users.mutableUsers = false;
-  users.users.jared = {
-    description = "Jared Baur";
-    isNormalUser = true;
-    extraGroups = [ "wheel" ];
-    shell = pkgs.fish;
-    openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
-  };
   home-manager.users.jared = { systemConfig, ... }: {
     programs.git = {
       userEmail = "jaredbaur@fastmail.com";
@@ -25,6 +17,7 @@
   hardware.lx2k.enable = true;
 
   custom = {
+    users.jared.enable = true;
     common.enable = true;
     dev.enable = true;
     deployee = {
