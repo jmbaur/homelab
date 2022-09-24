@@ -94,11 +94,11 @@
         "utils": "utils_2"
       },
       "locked": {
-        "lastModified": 1663105635,
-        "narHash": "sha256-4IK+vv3R3UzF5anH1swypPIzXXZmTCJ2kS2eGUcYvLk=",
+        "lastModified": 1663980600,
+        "narHash": "sha256-riwzeDIcllXkDaJjt6AAJ5SfkSduR2UDjjXAthzy0gA=",
         "owner": "astro",
         "repo": "deadnix",
-        "rev": "d8cd3d34e26edbdde2cd075deab8abb53f8dd66f",
+        "rev": "7efddae8ce6066b46f7f3c6953f53b5d296c5fd8",
         "type": "github"
       },
       "original": {
@@ -575,11 +575,11 @@
       },
       "locked": {
         "dir": "contrib",
-        "lastModified": 1663948936,
-        "narHash": "sha256-zhZKdxzJoXYUoefMLIYWUjdNRsr27HFOU6ecLj6QQt0=",
+        "lastModified": 1663982456,
+        "narHash": "sha256-0RwLIRucZXq/eGDbFhLvLn1jshKjitDBuso4sQzS8b0=",
         "owner": "neovim",
         "repo": "neovim",
-        "rev": "ede66a0b85fcff44890cb34d71e22995eb621006",
+        "rev": "14610332b2e851f9464a2d32a0ef3869dcff9834",
         "type": "github"
       },
       "original": {
@@ -603,11 +603,11 @@
         "pre-commit": "pre-commit"
       },
       "locked": {
-        "lastModified": 1663972027,
-        "narHash": "sha256-QH2Luao7h9PQtK3nXViTqkYHxVUaB2Jv0N6i2XyH9Kw=",
+        "lastModified": 1663987438,
+        "narHash": "sha256-LeYf5Z2jlpnky+M3Tq7Wzf4GxIw4gC2BHvAgMukxJCA=",
         "owner": "jmbaur",
         "repo": "nixos-configs",
-        "rev": "58a789f9234ac25587e0a7002a056d024f02c1eb",
+        "rev": "2ab17a4b9ab9e8424dbf6d268d7ca231f3d92049",
         "type": "github"
       },
       "original": {
