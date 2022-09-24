@@ -310,6 +310,7 @@ inputs: with inputs; {
         {
           options.custom.users.jared.enable = lib.mkEnableOption "jared";
           config = lib.mkIf cfg.enable {
+            programs.fish.enable = true;
             users.users.jared = {
               isNormalUser = true;
               description = "Jared Baur";
