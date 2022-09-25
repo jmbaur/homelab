@@ -16,6 +16,13 @@
         type = "CNAME";
         proxied = false;
       };
+      authCNAME = {
+        zone_id = "\${cloudflare_zone.jmbaur_com.id}";
+        name = "auth.jmbaur.com";
+        value = "jmbaur.com";
+        type = "CNAME";
+        proxied = false;
+      };
       rootAAAA = {
         zone_id = "\${cloudflare_zone.jmbaur_com.id}";
         name = "jmbaur.com";
