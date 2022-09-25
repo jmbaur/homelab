@@ -20,6 +20,8 @@
     sc8280xp-linux.flake = false;
     sc8280xp-linux.url = "github:jhovold/linux/wip/sc8280xp-v6.0-rc3";
     terranix.url = "github:terranix/terranix";
+    webauthn-tiny.inputs.nixpkgs.follows = "nixpkgs";
+    webauthn-tiny.url = "github:jmbaur/webauthn-tiny";
   };
 
   nixConfig = {

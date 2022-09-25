@@ -282,6 +282,36 @@
         "type": "github"
       }
     },
+    "flake-utils_17": {
+      "locked": {
+        "lastModified": 1659877975,
+        "narHash": "sha256-zllb8aq3YO3h8B/U0/J1WBgAL8EX5yWf5pMj3G0NAmc=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "c0e246b9b83f637f4681389ecabcb2681b4f3af0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "flake-utils_18": {
+      "locked": {
+        "lastModified": 1644229661,
+        "narHash": "sha256-1YdnJAsNy69bpcjuoKdOYQX0YxZBiCYZo4Twxerqv7k=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "3cecb5b042f7f209c56ffd8371b2711a290ec797",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "flake-utils_2": {
       "locked": {
         "lastModified": 1659877975,
@@ -930,6 +960,28 @@
         "type": "github"
       }
     },
+    "pre-commit_3": {
+      "inputs": {
+        "flake-utils": "flake-utils_18",
+        "nixpkgs": [
+          "webauthn-tiny",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1663082609,
+        "narHash": "sha256-lmCCIu4dj59qbzkGKHQtolhpIEQMeAd2XUbXVPqgPYo=",
+        "owner": "cachix",
+        "repo": "pre-commit-hooks.nix",
+        "rev": "60cad1a326df17a8c6cf2bb23436609fdd83024e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "cachix",
+        "repo": "pre-commit-hooks.nix",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "agenix": "agenix",
@@ -946,7 +998,8 @@
         "pre-commit": "pre-commit_2",
         "runner-nix": "runner-nix",
         "sc8280xp-linux": "sc8280xp-linux",
-        "terranix": "terranix"
+        "terranix": "terranix",
+        "webauthn-tiny": "webauthn-tiny"
       }
     },
     "runner-nix": {
@@ -1082,6 +1135,28 @@
       "original": {
         "owner": "numtide",
         "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "webauthn-tiny": {
+      "inputs": {
+        "flake-utils": "flake-utils_17",
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "pre-commit": "pre-commit_3"
+      },
+      "locked": {
+        "lastModified": 1664068809,
+        "narHash": "sha256-XMoKu/yujJVpBZwN4fpsUTPutVWCKpv+ec5dlpSyP0k=",
+        "owner": "jmbaur",
+        "repo": "webauthn-tiny",
+        "rev": "cb52bb19170e5f9868e9626c5cf079edfcfc65dd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jmbaur",
+        "repo": "webauthn-tiny",
         "type": "github"
       }
     },

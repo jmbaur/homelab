@@ -22,6 +22,16 @@
   services.fail2ban.enable = true;
   networking.firewall.allowedTCPPorts = [ 22 80 443 ];
 
+  services.webauthn-tiny = {
+    enable = true;
+    domain = "auth.jmbaur.com";
+    basicAuthFile = config.age.secrets.htpasswd.path;
+    relyingParty = {
+      id = "jmbaur.com";
+      origin = "https://jmbaur.com";
+    };
+  };
+
   services.nginx = {
     enable = true;
     virtualHosts = {
@@ -30,7 +40,6 @@
         enableACME = true;
         forceSSL = true;
         serverAliases = [ "www.jmbaur.com" ];
-        basicAuthFile = config.age.secrets.htpasswd.path;
         locations."/" = {
           root = pkgs.linkFarm "root" [{
             name = "index.html";

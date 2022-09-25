@@ -119,6 +119,7 @@ inputs: with inputs; {
       ./www
       agenix.nixosModules.age
       self.nixosModules.default
+      webauthn-tiny.nixosModules.default
     ];
   };
 
