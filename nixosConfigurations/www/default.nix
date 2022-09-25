@@ -20,7 +20,7 @@
   };
 
   services.fail2ban.enable = true;
-  networking.firewall.al.owedTCPPorts = [ 22 80 443 ];
+  networking.firewall.allowedTCPPorts = [ 22 80 443 ];
 
   services.webauthn-tiny = {
     enable = true;
