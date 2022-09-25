@@ -38,7 +38,7 @@
   services.nginx = {
     enable = true;
     virtualHosts = {
-      "auth.jmbaur.com".useAcmeHost = "jmbaur.com";
+      "auth.jmbaur.com".useACMEHost = "jmbaur.com";
       "jmbaur.com" = {
         default = true;
         enableACME = true;
