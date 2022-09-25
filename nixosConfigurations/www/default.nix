@@ -20,17 +20,17 @@
   };
 
   services.fail2ban.enable = true;
-  networking.firewall.allowedTCPPorts = [ 22 80 443 ];
+  networking.firewall.al.owedTCPPorts = [ 22 80 443 ];
 
   services.webauthn-tiny = {
     enable = true;
     relyingParty = {
       id = "jmbaur.com";
-      origin = "https://jmbaur.com";
+      origin = "https://auth.jmbaur.com";
     };
     nginx = {
       enable = true;
-      virtualHost = "jmbaur.com";
+      virtualHost = "auth.jmbaur.com";
       basicAuthFile = config.age.secrets.htpasswd.path;
     };
   };
@@ -38,6 +38,7 @@
   services.nginx = {
     enable = true;
     virtualHosts = {
+      "auth.jmbaur.com".useAcmeHost = "jmbaur.com";
       "jmbaur.com" = {
         default = true;
         enableACME = true;
