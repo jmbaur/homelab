@@ -102,7 +102,10 @@ inputs: with inputs; {
 
   rhubarb = nixpkgs.lib.nixosSystem {
     system = "aarch64-linux";
-    specialArgs = { inherit inputs; };
+    specialArgs = {
+      inherit inputs;
+      inherit (homelab-private) secrets;
+    };
     modules = [
       "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
       ./rhubarb
