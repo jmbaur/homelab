@@ -33,13 +33,13 @@
       virtualHost = "auth.jmbaur.com";
       basicAuthFile = config.age.secrets.htpasswd.path;
       protectedVirtualHosts = [ "jmbaur.com" ];
+      useACMEHost = "jmbaur.com";
     };
   };
 
   services.nginx = {
     enable = true;
     virtualHosts = {
-      "auth.jmbaur.com".useACMEHost = "jmbaur.com";
       "jmbaur.com" = {
         default = true;
         enableACME = true;
