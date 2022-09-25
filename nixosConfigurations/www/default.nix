@@ -32,6 +32,7 @@
       enable = true;
       virtualHost = "auth.jmbaur.com";
       basicAuthFile = config.age.secrets.htpasswd.path;
+      protectedVirtualHosts = [ "jmbaur.com" ];
     };
   };
 
@@ -53,20 +54,7 @@
             '';
           }];
           index = "index.html";
-          extraConfig = ''
-            auth_request /auth;
-            error_page 401 = @error401;
-          '';
         };
-        locations."= /auth" = {
-          proxyPass = "http://localhost:8080/api/validate";
-          extraConfig = ''
-            proxy_pass_request_body off;
-            proxy_set_header Content-Length "";
-            proxy_set_header X-Original-URI $request_uri;
-          '';
-        };
-        locations."@error401".return = "302 https://auth.jmbaur.com/?url=https://$http_host&request_uri";
       };
     };
   };
