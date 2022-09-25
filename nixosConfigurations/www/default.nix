@@ -38,10 +38,10 @@
   services.nginx = {
     enable = true;
     virtualHosts = {
-      "auth.jmbaur.com".useACMEHost = "*.jmbaur.com";
+      "auth.jmbaur.com".useACMEHost = "jmbaur.com";
       "jmbaur.com" = {
         default = true;
-        useACMEHost = "*.jmbaur.com";
+        enableACME = true;
         forceSSL = true;
         serverAliases = [ "www.jmbaur.com" ];
         locations."/" = {
@@ -61,6 +61,6 @@
   security.acme = {
     acceptTerms = true;
     defaults.email = "jaredbaur@fastmail.com";
-    certs."*.jmbaur.com" = { };
+    certs."jmbaur.com".extraDomainNames = [ "auth.jmbaur.com" ];
   };
 }
