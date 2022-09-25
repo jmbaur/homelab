@@ -9,23 +9,23 @@
       zone = "jmbaur.com";
     };
     cloudflare_record = {
-      rootCNAME = {
+      wwwCNAME = {
         zone_id = "\${cloudflare_zone.jmbaur_com.id}";
-        name = "@";
-        value = "www.jmbaur.com";
+        name = "www.jmbaur.com";
+        value = "jmbaur.com";
         type = "CNAME";
         proxied = false;
       };
-      wwwAAAA = {
+      rootAAAA = {
         zone_id = "\${cloudflare_zone.jmbaur_com.id}";
-        name = "www.jmbaur.com";
+        name = "jmbaur.com";
         value = "\${aws_instance.homelab-web.ipv6_addresses[0]}";
         type = "AAAA";
         proxied = false;
       };
-      wwwA = {
+      rootA = {
         zone_id = "\${cloudflare_zone.jmbaur_com.id}";
-        name = "www.jmbaur.com";
+        name = "jmbaur.com";
         value = "\${aws_instance.homelab-web.public_ip}";
         type = "A";
         proxied = false;

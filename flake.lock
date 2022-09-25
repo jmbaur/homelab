@@ -1147,11 +1147,11 @@
         "pre-commit": "pre-commit_3"
       },
       "locked": {
-        "lastModified": 1664076060,
-        "narHash": "sha256-/5/EHrhrX7Yx/q7j/mMk53ihe6jMslJoyie9+vvROHU=",
+        "lastModified": 1664088999,
+        "narHash": "sha256-ZstIL/7SHtXOAktr3m1FjNS4WKr4FtXN/r37ph/CXi4=",
         "owner": "jmbaur",
         "repo": "webauthn-tiny",
-        "rev": "bd5b81bd5db665c5f4980eb914c4fb097e45e405",
+        "rev": "3520c1cb98b1242f6371dd5aba9628e574f0a05e",
         "type": "github"
       },
       "original": {

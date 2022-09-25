@@ -24,11 +24,14 @@
 
   services.webauthn-tiny = {
     enable = true;
-    domain = "auth.jmbaur.com";
-    basicAuthFile = config.age.secrets.htpasswd.path;
     relyingParty = {
       id = "jmbaur.com";
       origin = "https://jmbaur.com";
+    };
+    nginx = {
+      enable = true;
+      virtualHost = "jmbaur.com";
+      basicAuthFile = config.age.secrets.htpasswd.path;
     };
   };
 
