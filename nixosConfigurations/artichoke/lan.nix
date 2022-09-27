@@ -64,7 +64,7 @@ let
         let
           # NOTE: This function spits out data for RFC3442's classless static routes
           # in a format that systemd-networkd's DHCP server can consume.
-          formatRFC3442 = bits: builtins.readFile (pkgs.runCommandNoCC "format-rfc3442" { } ''
+          formatRFC3442 = bits: builtins.readFile (pkgs.runCommand "format-rfc3442" { } ''
             printf "\\\\x%.2X" ${toString bits} | tee $out
           '');
           gatewayRFC3442 = formatRFC3442 (lib.splitString "." network.hosts.artichoke.ipv4);

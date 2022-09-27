@@ -115,7 +115,7 @@ inputs: with inputs; {
               patch = null;
               extraConfig =
                 let
-                  cn913x_additions = pkgs.runCommandNoCC "cn913x_additions_fixup" { } ''
+                  cn913x_additions = pkgs.runCommand "cn913x_additions_fixup" { } ''
                     ${pkgs.gnused}/bin/sed 's/CONFIG_\(.*\)=\(.*\)/\1 \2/' ${cn913x_build}/configs/linux/cn913x_additions.config > $out
                   '';
                 in
