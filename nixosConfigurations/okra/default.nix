@@ -115,6 +115,38 @@
 
   age.secrets.pam_u2f_authfile.file = ../../secrets/pam_u2f_authfile.age;
 
+  nix.buildMachines = [{
+    hostName = "aarch64builder";
+    system = "aarch64-linux";
+    # if the builder supports building for multiple architectures,
+    # replace the previous line by, e.g.,
+    # systems = ["x86_64-linux" "aarch64-linux"];
+    maxJobs = 1;
+    speedFactor = 2;
+    supportedFeatures = [ "nixos-test" "benchmark" "big-parallel" "kvm" ];
+    mandatoryFeatures = [ ];
+  }];
+  nix.distributedBuilds = true;
+  # optional, useful when the builder has a faster internet connection than yours
+  nix.extraOptions = ''
+    builders-use-substitutes = true
+  '';
+
+  programs.ssh = {
+    knownHostsFiles = [
+      (pkgs.writeText "known_hosts" ''
+        kale.mgmt.home.arpa ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN6q44hTsu6FVYG5izJxymw33SZJRDMttHxrwNBqdSJl
+      '')
+    ];
+    extraConfig = ''
+      Host aarch64builder
+        User root
+        HostName kale.mgmt.home.arpa
+        IdentitiesOnly yes
+        IdentityFile /root/.ssh/id_ed25519
+    '';
+  };
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave

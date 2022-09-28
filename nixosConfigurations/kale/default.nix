@@ -19,7 +19,6 @@
   custom = {
     users.jared.enable = true;
     common.enable = true;
-    dev.enable = true;
     deployee = {
       enable = true;
       authorizedKeys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMF97KbhWOOJzIS/pbf0FHgtx4jVQI8BGFUssKr8itTa root@okra" ];
