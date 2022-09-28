@@ -49,9 +49,9 @@
     };
   };
 
-  systemd.services.ipwatch.serviceConfig.EnvironmentFile = config.age.secrets.ipwatch.path;
   services.ipwatch = {
     enable = true;
+    environmentFile = config.age.secrets.ipwatch.path;
     interfaces = [ config.systemd.network.networks.wan.name ];
     scripts =
       let

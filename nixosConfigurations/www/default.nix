@@ -5,12 +5,16 @@
 
   system.stateVersion = "22.11";
 
-  custom.deployee = {
-    enable = true;
-    authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
+  custom = {
+    minimal.enable = true;
+    deployee = {
+      enable = true;
+      authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
+    };
   };
 
   age.secrets = {
+    sessionSecret.file = ../../secrets/webauthn-tiny-session-secret.age;
     htpasswd = {
       mode = "0440";
       owner = config.services.nginx.user;
@@ -24,6 +28,7 @@
 
   services.webauthn-tiny = {
     enable = true;
+    sessionSecretFile = config.age.secrets.sessionSecret.path;
     relyingParty = {
       id = "jmbaur.com";
       origin = "https://auth.jmbaur.com";

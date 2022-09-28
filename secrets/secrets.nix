@@ -16,6 +16,7 @@ in
   "ipwatch.age".publicKeys = withYubikeys [ artichoke ];
   "pam_u2f_authfile.age".publicKeys = withYubikeys [ carrot okra ];
   "phone.age".publicKeys = withYubikeys [ artichoke ];
+  "webauthn-tiny-session-secret.age".publicKeys = withYubikeys [ www ];
   "wg-iot.age".publicKeys = withYubikeys [ artichoke ];
   "wg-trusted.age".publicKeys = withYubikeys [ artichoke ];
 }
