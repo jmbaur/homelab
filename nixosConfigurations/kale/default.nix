@@ -22,10 +22,8 @@
     dev.enable = true;
     deployee = {
       enable = true;
-      authorizedKeyFiles = [
-        pkgs.jmbaur-github-ssh-keys
-        ../../data/deployer-ssh-keys.txt
-      ];
+      authorizedKeys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMF97KbhWOOJzIS/pbf0FHgtx4jVQI8BGFUssKr8itTa root@okra" ];
+      authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
     };
     remoteBoot = {
       enable = true;

@@ -228,7 +228,7 @@ inputs: with inputs; {
             };
           };
         })
-      ({ config, lib, ... }:
+      ({ config, lib, pkgs, ... }:
         let
           cfg = config.custom.deployee;
         in
@@ -236,6 +236,10 @@ inputs: with inputs; {
         {
           options.custom.deployee = {
             enable = mkEnableOption "deploy target";
+            authorizedKeys = mkOption {
+              type = types.listOf types.str;
+              default = [ ];
+            };
             authorizedKeyFiles = mkOption {
               type = types.listOf types.path;
               default = [ ];
@@ -250,10 +254,13 @@ inputs: with inputs; {
 
             services.openssh = {
               enable = true;
-              listenAddresses = [ ];
+              listenAddresses = [ ]; # this defaults to all addresses
             };
 
-            users.users.root.openssh.authorizedKeys.keyFiles = cfg.authorizedKeyFiles;
+            users.users.root.openssh.authorizedKeys = {
+              keys = cfg.authorizedKeys;
+              keyFiles = cfg.authorizedKeyFiles;
+            };
           };
         })
       ({ config, lib, pkgs, ... }:
