@@ -43,6 +43,7 @@
     gui.enable = true;
     laptop.enable = true;
     users.jared.enable = true;
+    remoteBuilders.aarch64builder.enable = true;
   };
 
   home-manager.users.jared = { systemConfig, config, pkgs, ... }: {
