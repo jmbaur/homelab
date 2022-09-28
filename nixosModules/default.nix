@@ -144,13 +144,7 @@ inputs: with inputs; {
           config = mkIf cfg.enable {
             custom.disableZfs = true;
             boot = {
-              kernelPackages = pkgs.linuxPackagesFor (pkgs.linux_testing.override {
-                argsOverride = {
-                  version = "6.0-rc3";
-                  modDirVersion = "6.0.0-rc3";
-                  src = sc8280xp-linux;
-                };
-              });
+              kernelPackages = pkgs.linuxPackages_testing;
               kernelParams = [
                 "dtb=/boot/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb"
                 "video=efifb:auto"
@@ -228,7 +222,7 @@ inputs: with inputs; {
             };
           };
         })
-      ({ config, lib, pkgs, ... }:
+      ({ config, lib, ... }:
         let
           cfg = config.custom.deployee;
         in
