@@ -14,7 +14,7 @@
   };
 
   age.secrets = {
-    sessionSecret.file = ../../secrets/webauthn-tiny-session-secret.age;
+    webauthn-tiny-env.file = ../../secrets/webauthn-tiny-env.age;
     htpasswd = {
       mode = "0440";
       owner = config.services.nginx.user;
@@ -28,7 +28,7 @@
 
   services.webauthn-tiny = {
     enable = true;
-    sessionSecretFile = config.age.secrets.sessionSecret.path;
+    environmentFile = config.age.secrets.webauthn-tiny-env.path;
     relyingParty = {
       id = "jmbaur.com";
       origin = "https://auth.jmbaur.com";
