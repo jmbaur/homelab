@@ -242,7 +242,7 @@ inputs: with inputs; {
 
           config = mkIf cfg.enable {
             assertions = [{
-              assertion = (cfg.authorizedKeyFiles != [ ]);
+              assertion = (cfg.authorizedKeyFiles != [ ] || cfg.authorizedKeys != [ ]);
               message = "No authorized keys configured for deployee";
             }];
 

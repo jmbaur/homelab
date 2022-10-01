@@ -51,6 +51,14 @@
     gui.enable = true;
     users.jared.enable = true;
     remoteBuilders.aarch64builder.enable = true;
+    deployee = {
+      enable = true;
+      authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
+    };
+    remoteBoot = {
+      enable = true;
+      authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
+    };
   };
 
   home-manager.users.jared = { systemConfig, config, pkgs, ... }: {
