@@ -89,7 +89,6 @@ flake-utils.lib.eachDefaultSystemMap
               potato = { lastBit = 52; dhcp = true; mac = "d0:50:99:fe:1e:e2"; };
               kale = { lastBit = 62; dhcp = true; mac = "d0:63:b4:03:db:66"; };
               rhubarb = { lastBit = 53; dhcp = true; mac = "dc:a6:32:20:50:f2"; };
-              asparagus = { lastBit = 54; dhcp = true; mac = "e4:1d:2d:7f:1a:d0"; };
             };
           };
           public = {
@@ -104,8 +103,7 @@ flake-utils.lib.eachDefaultSystemMap
             includeRoutesTo = [ "mgmt" "wg-trusted" "iot" "wg-iot" "work" ];
             hosts = {
               artichoke = { lastBit = 1; interface = "lan3"; };
-              asparagus = { lastBit = 50; dhcp = true; mac = "e4:1d:2d:7f:1a:d0"; };
-              okra = { lastBit = 51; dhcp = true; mac = "5c:80:b6:92:eb:27"; };
+              okra = { lastBit = 51; dhcp = true; mac = "1c:69:7a:64:45:b2"; };
             };
           };
           wg-trusted = {
