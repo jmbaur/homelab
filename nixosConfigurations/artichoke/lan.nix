@@ -93,7 +93,6 @@ let
         })
         (lib.filterAttrs (_: host: host.dhcp) network.hosts));
   };
-  public = mkInternalInterface inventory.networks.public;
   trusted = mkInternalInterface inventory.networks.trusted;
   iot = mkInternalInterface inventory.networks.iot;
   work = mkInternalInterface inventory.networks.work;
@@ -111,7 +110,6 @@ in
       };
     };
     inherit mgmt
-      public
       trusted
       iot
       work

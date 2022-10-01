@@ -21,22 +21,22 @@
   documentation.enable = false;
   fonts.fontconfig.enable = false;
 
-  age.secrets = {
-    wg-trusted = {
-      mode = "0640";
-      group = config.users.groups.systemd-network.name;
-      file = ../../secrets/wg-trusted.age;
+  age.secrets =
+    let
+      mkWgSecret = file: {
+        mode = "0640";
+        group = config.users.groups.systemd-network.name; inherit file;
+      };
+    in
+    {
+      ipwatch.file = ../../secrets/ipwatch.age;
+      wg-iot-artichoke = mkWgSecret ../../secrets/wg-iot-artichoke.age;
+      wg-iot-phone.file = ../../secrets/wg-iot-phone.age;
+      wg-public-artichoke = mkWgSecret ../../secrets/wg-public-artichoke.age;
+      wg-trusted-artichoke = mkWgSecret ../../secrets/wg-trusted-artichoke.age;
+      wg-trusted-beetroot.file = ../../secrets/wg-trusted-beetroot.age;
+      wg-trusted-carrot.file = ../../secrets/wg-trusted-carrot.age;
     };
-    wg-iot = {
-      mode = "0640";
-      group = config.users.groups.systemd-network.name;
-      file = ../../secrets/wg-iot.age;
-    };
-    beetroot.file = ../../secrets/beetroot.age;
-    phone.file = ../../secrets/phone.age;
-    carrot.file = ../../secrets/carrot.age;
-    ipwatch.file = ../../secrets/ipwatch.age;
-  };
 
   custom = {
     minimal.enable = true;

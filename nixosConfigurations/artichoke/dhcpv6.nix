@@ -10,7 +10,7 @@
         interfaces-config = {
           interfaces = map
             (name: config.systemd.network.networks.${name}.name)
-            [ "public" "trusted" "iot" "work" "mgmt" ];
+            [ "trusted" "iot" "work" "mgmt" ];
         };
         subnet6 = lib.flatten (map
           (name:
@@ -31,7 +31,7 @@
               }
             ]
           )
-          [ "public" "trusted" "iot" "work" "mgmt" ]);
+          [ "trusted" "iot" "work" "mgmt" ]);
       };
     };
   };

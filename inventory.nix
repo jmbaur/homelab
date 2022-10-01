@@ -91,11 +91,23 @@ flake-utils.lib.eachDefaultSystemMap
               rhubarb = { lastBit = 53; dhcp = true; mac = "dc:a6:32:20:50:f2"; };
             };
           };
-          public = {
+          wg-public = {
             id = 20;
+            wireguard = true;
             hosts = {
-              artichoke = { lastBit = 1; interface = "lan2"; };
-              website.lastBit = 11;
+              artichoke = {
+                lastBit = 1;
+                interface = "wg-public";
+                publicKey = "4KfTnyv3YSe0WNR/4fi0OApNgNM3/WVWxdIlcpA75Hg=";
+              };
+              rhubarb = {
+                lastBit = 2;
+                publicKey = "qhdprN3mkf62ckYpgrZlg7recf9GN83kY/OYPmO/u3M=";
+              };
+              kale = {
+                lastBit = 3;
+                publicKey = "rRL/sG/EBIp6f7upCFLq+tTpuL7ksCWABsCLVFVbwEc=";
+              };
             };
           };
           trusted = {
@@ -111,7 +123,7 @@ flake-utils.lib.eachDefaultSystemMap
             wireguard = true;
             includeRoutesTo = [ "mgmt" "trusted" "iot" "wg-iot" "work" ];
             hosts = {
-              artichoke = { lastBit = 1; interface = "wg-trusted"; };
+              artichoke = { lastBit = 1; interface = "wg-trusted"; publicKey = "68sZOobFSYwyt7ZVsQ6steLqHH/CEQQHluUr+X6y5AQ="; };
               beetroot = { lastBit = 52; wgPeer = true; publicKey = "T+zc4lpoEgxPIKEBr9qXiAzb/ruRbqZuVrih+0rGs2M="; };
               carrot = { lastBit = 51; wgPeer = true; publicKey = "XcKlp41XBEtrplIcXkxwQQUyT2kyJ/X4QcmckCnNU3w="; };
             };
@@ -128,7 +140,7 @@ flake-utils.lib.eachDefaultSystemMap
             wireguard = true;
             includeRoutesTo = [ "iot" ];
             hosts = {
-              artichoke = { lastBit = 1; interface = "wg-iot"; };
+              artichoke = { lastBit = 1; interface = "wg-iot"; publicKey = "Nd1KNBcDSrgus5VpprbQbdyah2W3UVxCAS1J2IrtMF8="; };
               phone = { lastBit = 50; wgPeer = true; publicKey = "pCvnlCWnM46XY3+327rQyOPA91wajC1HPTmP/5YHcy8="; };
             };
           };

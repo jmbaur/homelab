@@ -20,8 +20,8 @@
           define DEV_WAN6 = ${networks.hurricane.name}
           define DEV_MGMT = ${networks.mgmt.name}
           define NET_MGMT = ${inventory.networks.mgmt.networkIPv4Cidr}
-          define DEV_PUBLIC = ${networks.public.name}
-          define NET_PUBLIC = ${inventory.networks.public.networkIPv4Cidr}
+          define DEV_WG_PUBLIC = ${networks.wg-public.name}
+          define NET_WG_PUBLIC = ${inventory.networks.wg-public.networkIPv4Cidr}
           define DEV_TRUSTED = ${networks.trusted.name}
           define NET_TRUSTED = ${inventory.networks.trusted.networkIPv4Cidr}
           define DEV_WG_TRUSTED = ${networks.wg-trusted.name}
@@ -68,7 +68,7 @@
                   meta l4proto { tcp, udp } th dport 53 accept # DNS
               }
 
-              chain input_private_trusted {
+              chain input_trusted {
                   jump input_always_allowed
 
                   meta l4proto tcp th dport {
@@ -86,8 +86,11 @@
                   } log prefix "input iperf3 - " accept
               }
 
-              chain input_private_untrusted {
+              chain input_public {
                   jump input_always_allowed
+                  meta l4proto tcp th dport {
+                      19531, # systemd-journal-gatewayd
+                  } accept
               }
 
               chain input {
@@ -105,8 +108,9 @@
 
                   # always allow wireguard traffic
                   meta l4proto { udp } th dport {
-                      ${toString netdevs.wg-trusted.wireguardConfig.ListenPort},
                       ${toString netdevs.wg-iot.wireguardConfig.ListenPort},
+                      ${toString netdevs.wg-public.wireguardConfig.ListenPort},
+                      ${toString netdevs.wg-trusted.wireguardConfig.ListenPort},
                   } accept
 
                   # allow loopback traffic, anything else jump to chain for further
@@ -115,13 +119,13 @@
                       lo : accept,
                       $DEV_WAN : jump input_wan,
                       $DEV_WAN6 : jump input_wan,
-                      $DEV_MGMT : jump input_private_trusted,
-                      $DEV_PUBLIC : jump input_private_untrusted,
-                      $DEV_TRUSTED : jump input_private_trusted,
-                      $DEV_WG_TRUSTED : jump input_private_trusted,
-                      $DEV_IOT : jump input_private_untrusted,
-                      $DEV_WG_IOT : jump input_private_untrusted,
-                      $DEV_WORK : jump input_private_untrusted,
+                      $DEV_MGMT : jump input_trusted,
+                      $DEV_WG_PUBLIC : jump input_public,
+                      $DEV_TRUSTED : jump input_trusted,
+                      $DEV_WG_TRUSTED : jump input_trusted,
+                      $DEV_IOT : jump input_always_allowed,
+                      $DEV_WG_IOT : jump input_always_allowed,
+                      $DEV_WORK : jump input_always_allowed,
                   }
 
                   # the rest is dropped by the above policy
@@ -138,7 +142,7 @@
 
               chain forward_from_wan {
                   icmpv6 type { echo-request } accept
-                  oifname $DEV_PUBLIC log prefix "forward public - " accept
+                  oifname $DEV_WG_PUBLIC log prefix "forward wg-public - " accept
               }
 
               chain allow_to_internet {
@@ -149,12 +153,12 @@
                   oifname { $DEV_WAN, $DEV_WAN6 } log prefix "not allowed to internet - " drop
               }
 
-              chain forward_mgmt {
+              chain forward_from_mgmt {
                   # TODO(jared): don't allow to internet
                   accept
               }
 
-              chain forward_trusted {
+              chain forward_from_trusted {
                   jump allow_to_internet
                   oifname {
                       $DEV_MGMT,
@@ -166,7 +170,7 @@
                   } accept
               }
 
-              chain forward_iot {
+              chain forward_from_iot {
                   jump allow_to_internet
                   oifname {
                       $DEV_IOT,
@@ -174,7 +178,7 @@
                   } accept
               }
 
-              chain forward_work {
+              chain forward_from_work {
                   jump allow_to_internet
                   oifname {
                       $DEV_WORK,
@@ -199,13 +203,13 @@
                   iifname vmap {
                       $DEV_WAN : jump forward_from_wan,
                       $DEV_WAN6 : jump forward_from_wan,
-                      $DEV_MGMT : jump forward_mgmt,
-                      $DEV_PUBLIC : jump allow_to_internet,
-                      $DEV_TRUSTED : jump forward_trusted,
-                      $DEV_WG_TRUSTED : jump forward_trusted,
-                      $DEV_IOT : jump forward_iot,
-                      $DEV_WG_IOT : jump forward_iot,
-                      $DEV_WORK : jump forward_work,
+                      $DEV_MGMT : jump forward_from_mgmt,
+                      $DEV_WG_PUBLIC : jump allow_to_internet,
+                      $DEV_TRUSTED : jump forward_from_trusted,
+                      $DEV_WG_TRUSTED : jump forward_from_trusted,
+                      $DEV_IOT : jump forward_from_iot,
+                      $DEV_WG_IOT : jump forward_from_iot,
+                      $DEV_WORK : jump forward_from_work,
                   }
 
                   # the rest is dropped by the above policy
@@ -229,7 +233,7 @@
                   # masquerade private IP addresses
                   ip saddr {
                       $NET_MGMT,
-                      $NET_PUBLIC,
+                      $NET_WG_PUBLIC,
                       $NET_TRUSTED,
                       $NET_WG_TRUSTED,
                       $NET_IOT,

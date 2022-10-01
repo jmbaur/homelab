@@ -11,7 +11,7 @@ let
         netdevConfig = { Name = wgServerHost.interface; Kind = "wireguard"; };
         wireguardConfig = {
           ListenPort = port;
-          PrivateKeyFile = config.age.secrets.${network.name}.path;
+          PrivateKeyFile = config.age.secrets."${network.name}-${config.networking.hostName}".path;
         };
         wireguardPeers = lib.mapAttrsToList
           (_: peer: {
@@ -45,11 +45,11 @@ let
                   "${host.ipv6.gua}/${toString network.ipv6Cidr}"
                   "${host.ipv6.ula}/${toString network.ipv6Cidr}"
                 ];
-                PrivateKey = "$(cat ${config.age.secrets.${hostname}.path})";
+                PrivateKey = "$(cat ${config.age.secrets."${network.name}-${hostname}".path})";
                 DNS = (with wgServerHost; ([ ipv4 ipv6.gua ipv6.ula ])) ++ [ "home.arpa" ];
               };
               Peer = {
-                PublicKey = "$(cat ${config.age.secrets.${network.name}.path} | ${pkgs.wireguard-tools}/bin/wg pubkey)";
+                PublicKey = wgServerHost.publicKey;
                 Endpoint = "vpn.${inventory.tld}:${toString port}";
                 AllowedIPs = [
                   network.networkIPv4Cidr
@@ -70,11 +70,11 @@ let
                   "${host.ipv6.gua}/${toString network.ipv6Cidr}"
                   "${host.ipv6.ula}/${toString network.ipv6Cidr}"
                 ];
-                PrivateKey = "$(cat ${config.age.secrets.${hostname}.path})";
+                PrivateKey = "$(cat ${config.age.secrets."${network.name}-${hostname}".path})";
                 DNS = (with wgServerHost; ([ ipv4 ipv6.gua ipv6.ula ])) ++ [ "home.arpa" ];
               };
               Peer = {
-                PublicKey = "$(cat ${config.age.secrets.${network.name}.path} | ${pkgs.wireguard-tools}/bin/wg pubkey)";
+                PublicKey = wgServerHost.publicKey;
                 Endpoint = "vpn.${inventory.tld}:${toString port}";
                 AllowedIPs = [ "0.0.0.0/0" "::/0" ];
               };
@@ -119,16 +119,20 @@ let
     };
 
   # TODO(jared): map over all networks that have wireguard set to true
-  trusted = mkWgInterface inventory.networks.wg-trusted;
   iot = mkWgInterface inventory.networks.wg-iot;
+  public = mkWgInterface inventory.networks.wg-public;
+  trusted = mkWgInterface inventory.networks.wg-trusted;
 in
 {
   systemd.network = {
-    netdevs.wg-trusted = trusted.netdev;
-    networks.wg-trusted = trusted.network;
-
     netdevs.wg-iot = iot.netdev;
     networks.wg-iot = iot.network;
+
+    netdevs.wg-public = public.netdev;
+    networks.wg-public = public.network;
+
+    netdevs.wg-trusted = trusted.netdev;
+    networks.wg-trusted = trusted.network;
   };
 
   environment.systemPackages = [ pkgs.wireguard-tools ] ++
