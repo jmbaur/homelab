@@ -103,15 +103,17 @@ inputs: with inputs; {
     ];
   };
 
-  rhubarb = nixpkgs.lib.nixosSystem {
+  rhubarb = nixpkgs.lib.nixosSystem rec {
     system = "aarch64-linux";
     specialArgs = {
       inherit inputs;
       inherit (homelab-private) secrets;
+      inherit (self.inventory.${system}) inventory;
     };
     modules = [
       "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
       ./rhubarb
+      agenix.nixosModules.age
       nixos-configs.nixosModules.default
       nixos-hardware.nixosModules.raspberry-pi-4
       self.nixosModules.default

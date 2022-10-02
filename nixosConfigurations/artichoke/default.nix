@@ -9,11 +9,9 @@
     ./nftables.nix
     ./ntp.nix
     ./wan.nix
-    ./wg-public.nix
     ./wireguard.nix
   ];
 
-  custom.disableZfs = true;
   hardware.cn913x.enable = true;
   zramSwap.enable = true;
   system.stateVersion = "22.11";
@@ -49,6 +47,8 @@
         ../../data/deployer-ssh-keys.txt
       ];
     };
+    disableZfs = true;
+    wgWwwPeer.enable = true;
   };
 
   services.ipwatch = {

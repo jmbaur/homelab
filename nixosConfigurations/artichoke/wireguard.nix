@@ -1,4 +1,4 @@
-{ config, lib, pkgs, secrets, inventory, ... }:
+{ config, lib, pkgs, inventory, ... }:
 let
   mkWgInterface = network:
     let

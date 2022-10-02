@@ -3,6 +3,10 @@
     "${modulesPath}/virtualisation/amazon-image.nix"
   ];
 
+  # Minimize total build size
+  documentation.enable = false;
+  fonts.fontconfig.enable = false;
+
   system.stateVersion = "22.11";
 
   custom = {
@@ -12,7 +16,6 @@
       authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
     };
   };
-
 
   age.secrets = {
     webauthn-tiny-env.file = ../../secrets/webauthn-tiny-env.age;
@@ -47,10 +50,16 @@
           "${ipv6.ula}/${toString wgPublic.ipv6Cidr}"
           "${ipv6.gua}/${toString wgPublic.ipv6Cidr}"
         ];
-        peers = [{
-          allowedIPs = with wgPublic.hosts.artichoke; [ "${ipv4}/32" "${ipv6.ula}/128" ];
-          publicKey = wgPublic.hosts.artichoke.publicKey;
-        }];
+        peers = [
+          (with wgPublic.hosts.rhubarb; {
+            allowedIPs = [ "${ipv4}/32" "${ipv6.ula}/128" ];
+            publicKey = publicKey;
+          })
+          (with wgPublic.hosts.artichoke; {
+            allowedIPs = [ "${ipv4}/32" "${ipv6.ula}/128" ];
+            publicKey = publicKey;
+          })
+        ];
       };
     };
 
@@ -65,7 +74,7 @@
       enable = true;
       virtualHost = "auth.jmbaur.com";
       basicAuthFile = config.age.secrets.htpasswd.path;
-      protectedVirtualHosts = [ "jmbaur.com" "monitoring.jmbaur.com" ];
+      protectedVirtualHosts = [ "mon.jmbaur.com" ];
       useACMEHost = "jmbaur.com";
     };
   };
@@ -73,24 +82,47 @@
   services.nginx = {
     enable = true;
     virtualHosts = {
-      "monitoring.jmbaur.com" = {
+      "mon.jmbaur.com" = {
         forceSSL = true;
         useACMEHost = "jmbaur.com";
-        locations."/".proxyPass = "http://172.16.20.1:19531";
+        locations."/".proxyPass = "http://172.16.20.2:3000";
       };
+      # "logs.jmbaur.com" = {
+      #   forceSSL = true;
+      #   useACMEHost = "jmbaur.com";
+      #   locations."/artichoke/".proxyPass = "http://172.16.20.1:19531/";
+      #   locations."/" = {
+      #     root = pkgs.linkFarm "root" [{
+      #       name = "index.html";
+      #       path = pkgs.writeText "index.html" ''
+      #         <!DOCTYPE html>
+      #         <a href="/artichoke/">artichoke</a>
+      #       '';
+      #     }];
+      #     index = "index.html";
+      #   };
+      # };
       "jmbaur.com" = {
         default = true;
         enableACME = true;
         forceSSL = true;
         serverAliases = [ "www.jmbaur.com" ];
         locations."/" = {
-          root = pkgs.linkFarm "root" [{
-            name = "index.html";
-            path = pkgs.writeText "index.html" ''
-              <!DOCTYPE html>
-              These aren't the droids you're looking for.
-            '';
-          }];
+          root = pkgs.linkFarm "root" [
+            {
+              name = "index.html";
+              path = pkgs.writeText "index.html" ''
+                <!DOCTYPE html>
+                These aren't the droids you're looking for.
+              '';
+            }
+            {
+              name = "robots.txt";
+              path = pkgs.writeText "robots.txt" ''
+                User-agent: * Disallow: /
+              '';
+            }
+          ];
           index = "index.html";
         };
       };
@@ -100,6 +132,9 @@
   security.acme = {
     acceptTerms = true;
     defaults.email = "jaredbaur@fastmail.com";
-    certs."jmbaur.com".extraDomainNames = [ "auth.jmbaur.com" ];
+    certs."jmbaur.com".extraDomainNames = map (subdomain: "${subdomain}.jmbaur.com") [
+      "auth"
+      "mon"
+    ];
   };
 }

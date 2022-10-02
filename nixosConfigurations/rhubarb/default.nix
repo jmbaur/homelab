@@ -1,5 +1,6 @@
-{ config, pkgs, ... }: {
+{ config, lib, pkgs, inventory, ... }: {
   custom = {
+    wgWwwPeer.enable = true;
     disableZfs = true;
     common.enable = true;
     users.jared.enable = true;
@@ -20,13 +21,25 @@
     hostName = "rhubarb";
     useDHCP = false;
     useNetworkd = true;
-    firewall.allowedTCPPorts = [ 80 443 ];
+    firewall = {
+      allowedTCPPorts = lib.mkForce [ ];
+      interfaces = {
+        wg-public.allowedTCPPorts = lib.mkForce [ 3000 ];
+        eth0.allowedTCPPorts = lib.mkForce [ 22 ];
+      };
+    };
   };
   services.resolved = {
     enable = true;
     # The RPI does not have an RTC, so DNSSEC without an accurate time does not
     # work, which means NTP servers cannot be queried.
     dnssec = "false";
+  };
+
+  age.secrets.wg-public-rhubarb = {
+    mode = "0640";
+    group = config.users.groups.systemd-network.name;
+    file = ../../secrets/wg-public-rhubarb.age;
   };
 
   systemd.network = {
@@ -38,7 +51,7 @@
     };
   };
 
-  environment.systemPackages = with pkgs; [ picocom wol ];
+  environment.systemPackages = with pkgs; [ picocom wol wireguard-tools ];
 
   services.prometheus = {
     enable = true;
@@ -124,6 +137,8 @@
 
   services.grafana = {
     enable = true;
+    addr = "0.0.0.0";
+    port = 3000;
     auth = {
       disableLoginForm = true;
       anonymous.enable = true;
@@ -131,33 +146,13 @@
     declarativePlugins = [ ];
     provision = {
       enable = true;
-      datasources = [
-        {
-          url = "http://localhost:${toString config.services.prometheus.port}";
-          type = "prometheus";
-          name = "prometheus";
-          isDefault = true;
-        }
-        {
-          url = "http://localhost:3100";
-          type = "loki";
-          name = "loki";
-          isDefault = false;
-        }
-      ];
+      datasources = [{
+        url = "http://localhost:${toString config.services.prometheus.port}";
+        type = "prometheus";
+        name = "prometheus";
+        isDefault = true;
+      }];
       dashboards = pkgs.grafana-dashboards.dashboards;
-    };
-  };
-
-  services.caddy = {
-    enable = true;
-    email = "jaredbaur@fastmail.com";
-    virtualHosts = {
-      localhost = {
-        extraConfig = ''
-          reverse_proxy localhost:${toString config.services.grafana.port}
-        '';
-      };
     };
   };
 
