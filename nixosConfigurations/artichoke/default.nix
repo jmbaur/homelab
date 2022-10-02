@@ -9,6 +9,7 @@
     ./nftables.nix
     ./ntp.nix
     ./wan.nix
+    ./wg-public.nix
     ./wireguard.nix
   ];
 
@@ -25,7 +26,8 @@
     let
       mkWgSecret = file: {
         mode = "0640";
-        group = config.users.groups.systemd-network.name; inherit file;
+        group = config.users.groups.systemd-network.name;
+        inherit file;
       };
     in
     {

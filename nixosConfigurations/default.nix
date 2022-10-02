@@ -45,7 +45,10 @@ inputs: with inputs; {
 
   website = nixpkgs.lib.nixosSystem rec {
     system = "x86_64-linux";
-    specialArgs = { inherit inputs; inherit (self.inventory.${system}) inventory; };
+    specialArgs = {
+      inherit inputs;
+      inherit (self.inventory.${system}) inventory;
+    };
     modules = [
       ./vms/website.nix
       microvm.nixosModules.microvm
@@ -115,9 +118,12 @@ inputs: with inputs; {
     ];
   };
 
-  www = nixpkgs.lib.nixosSystem {
+  www = nixpkgs.lib.nixosSystem rec {
     system = "aarch64-linux";
-    specialArgs = { inherit inputs; };
+    specialArgs = {
+      inherit inputs;
+      inherit (self.inventory.${system}) inventory;
+    };
     modules = [
       ./www
       agenix.nixosModules.age

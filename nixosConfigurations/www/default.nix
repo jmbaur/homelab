@@ -1,4 +1,4 @@
-{ config, pkgs, modulesPath, ... }: {
+{ config, pkgs, modulesPath, inventory, ... }: {
   imports = [
     "${modulesPath}/virtualisation/amazon-image.nix"
   ];
@@ -13,6 +13,7 @@
     };
   };
 
+
   age.secrets = {
     webauthn-tiny-env.file = ../../secrets/webauthn-tiny-env.age;
     htpasswd = {
@@ -21,10 +22,37 @@
       group = config.services.nginx.group;
       file = ../../secrets/htpasswd.age;
     };
+    wg-public-www = {
+      mode = "0640";
+      group = config.users.groups.systemd-network.name;
+      file = ../../secrets/wg-public-www.age;
+    };
   };
 
   services.fail2ban.enable = true;
-  networking.firewall.allowedTCPPorts = [ 22 80 443 ];
+  networking =
+    let
+      wgPublic = inventory.networks.wg-public;
+    in
+    {
+      firewall = {
+        allowedTCPPorts = [ 22 80 443 ];
+        allowedUDPPorts = [ (wgPublic.id + 51800) ];
+      };
+      wireguard.interfaces.wg-public = {
+        privateKeyFile = config.age.secrets.wg-public-www.path;
+        listenPort = wgPublic.id + 51800;
+        ips = with wgPublic.hosts.www; [
+          "${ipv4}/${toString wgPublic.ipv4Cidr}"
+          "${ipv6.ula}/${toString wgPublic.ipv6Cidr}"
+          "${ipv6.gua}/${toString wgPublic.ipv6Cidr}"
+        ];
+        peers = [{
+          allowedIPs = with wgPublic.hosts.artichoke; [ "${ipv4}/32" "${ipv6.ula}/128" ];
+          publicKey = wgPublic.hosts.artichoke.publicKey;
+        }];
+      };
+    };
 
   services.webauthn-tiny = {
     enable = true;
@@ -37,7 +65,7 @@
       enable = true;
       virtualHost = "auth.jmbaur.com";
       basicAuthFile = config.age.secrets.htpasswd.path;
-      protectedVirtualHosts = [ "jmbaur.com" ];
+      protectedVirtualHosts = [ "jmbaur.com" "monitoring.jmbaur.com" ];
       useACMEHost = "jmbaur.com";
     };
   };
@@ -45,6 +73,11 @@
   services.nginx = {
     enable = true;
     virtualHosts = {
+      "monitoring.jmbaur.com" = {
+        forceSSL = true;
+        useACMEHost = "jmbaur.com";
+        locations."/".proxyPass = "http://172.16.20.1:19531";
+      };
       "jmbaur.com" = {
         default = true;
         enableACME = true;

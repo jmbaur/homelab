@@ -109,7 +109,6 @@
                   # always allow wireguard traffic
                   meta l4proto { udp } th dport {
                       ${toString netdevs.wg-iot.wireguardConfig.ListenPort},
-                      ${toString netdevs.wg-public.wireguardConfig.ListenPort},
                       ${toString netdevs.wg-trusted.wireguardConfig.ListenPort},
                   } accept
 

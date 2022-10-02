@@ -95,19 +95,10 @@ flake-utils.lib.eachDefaultSystemMap
             id = 20;
             wireguard = true;
             hosts = {
-              artichoke = {
-                lastBit = 1;
-                interface = "wg-public";
-                publicKey = "4KfTnyv3YSe0WNR/4fi0OApNgNM3/WVWxdIlcpA75Hg=";
-              };
-              rhubarb = {
-                lastBit = 2;
-                publicKey = "qhdprN3mkf62ckYpgrZlg7recf9GN83kY/OYPmO/u3M=";
-              };
-              kale = {
-                lastBit = 3;
-                publicKey = "rRL/sG/EBIp6f7upCFLq+tTpuL7ksCWABsCLVFVbwEc=";
-              };
+              artichoke = { lastBit = 1; publicKey = "4KfTnyv3YSe0WNR/4fi0OApNgNM3/WVWxdIlcpA75Hg="; };
+              rhubarb = { lastBit = 2; publicKey = "qhdprN3mkf62ckYpgrZlg7recf9GN83kY/OYPmO/u3M="; };
+              kale = { lastBit = 3; publicKey = "rRL/sG/EBIp6f7upCFLq+tTpuL7ksCWABsCLVFVbwEc="; };
+              www = { lastBit = 4; publicKey = "csMlRz8b+t1o83MZldExeOxiu7HgtW8GkbxUhZlHYXk="; };
             };
           };
           trusted = {

@@ -20,8 +20,9 @@ in
   "wg-iot-artichoke.age".publicKeys = withYubikeys [ artichoke ];
   "wg-iot-phone.age".publicKeys = withYubikeys [ artichoke ];
   "wg-public-artichoke.age".publicKeys = withYubikeys [ artichoke ];
-  "wg-public-rhubarb.age".publicKeys = withYubikeys [ rhubarb ];
   "wg-public-kale.age".publicKeys = withYubikeys [ kale ];
+  "wg-public-rhubarb.age".publicKeys = withYubikeys [ rhubarb ];
+  "wg-public-www.age".publicKeys = withYubikeys [ www ];
   "wg-trusted-artichoke.age".publicKeys = withYubikeys [ artichoke ];
   "wg-trusted-beetroot.age".publicKeys = withYubikeys [ artichoke ];
   "wg-trusted-carrot.age".publicKeys = withYubikeys [ artichoke ];

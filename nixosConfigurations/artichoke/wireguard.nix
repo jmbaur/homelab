@@ -120,16 +120,12 @@ let
 
   # TODO(jared): map over all networks that have wireguard set to true
   iot = mkWgInterface inventory.networks.wg-iot;
-  public = mkWgInterface inventory.networks.wg-public;
   trusted = mkWgInterface inventory.networks.wg-trusted;
 in
 {
   systemd.network = {
     netdevs.wg-iot = iot.netdev;
     networks.wg-iot = iot.network;
-
-    netdevs.wg-public = public.netdev;
-    networks.wg-public = public.network;
 
     netdevs.wg-trusted = trusted.netdev;
     networks.wg-trusted = trusted.network;
