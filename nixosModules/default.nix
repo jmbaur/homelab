@@ -48,7 +48,7 @@ inputs: with inputs; {
               "amdgpu.pcie_gen_cap=0x4"
               "usbcore.autosuspend=-1"
             ];
-            boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_5_19;
+            boot.kernelPackages = pkgs.linuxPackages_5_19;
 
             # Setup SFP+ network interfaces early so systemd can pick everything up.
             boot.initrd.extraUtilsCommands = ''

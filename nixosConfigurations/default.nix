@@ -1,17 +1,23 @@
 inputs: with inputs; {
-  beetroot = nixpkgs.lib.nixosSystem {
-    system = "aarch64-linux";
-    specialArgs = {
-      inherit inputs;
-      inherit (homelab-private) secrets;
-    };
-    modules = [
-      ./beetroot
-      self.nixosModules.default
-      nixos-configs.nixosModules.default
-      self.nixosModules.default
-    ];
-  };
+  # netboot-test = nixpkgs.lib.nixosSystem {
+  #   system = "x86_64-linux";
+  #   specialArgs = { inherit inputs; };
+  #   modules = [ "${nixpkgs}/nixos/modules/installer/netboot/netboot-minimal.nix" ];
+  # };
+
+  # beetroot = nixpkgs.lib.nixosSystem {
+  #   system = "aarch64-linux";
+  #   specialArgs = {
+  #     inherit inputs;
+  #     inherit (homelab-private) secrets;
+  #   };
+  #   modules = [
+  #     ./beetroot
+  #     self.nixosModules.default
+  #     nixos-configs.nixosModules.default
+  #     self.nixosModules.default
+  #   ];
+  # };
 
   okra = nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
@@ -133,11 +139,5 @@ inputs: with inputs; {
       webauthn-tiny.nixosModules.default
       nixos-configs.nixosModules.default
     ];
-  };
-
-  netboot-test = nixpkgs.lib.nixosSystem {
-    system = "x86_64-linux";
-    specialArgs = { inherit inputs; };
-    modules = [ "${nixpkgs}/nixos/modules/installer/netboot/netboot-minimal.nix" ];
   };
 }

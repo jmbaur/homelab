@@ -22,11 +22,6 @@ let
       jmbaur-keybase-pgp-keys
       ;
 
-    installer_img = (nixpkgs.lib.nixosSystem {
-      inherit (pkgs) system;
-      modules = installer_img_modules;
-    }).config.system.build.sdImage;
-
     installer_iso = (nixpkgs.lib.nixosSystem {
       inherit (pkgs) system;
       modules = installer_iso_modules;
@@ -72,6 +67,11 @@ in
         ubootCN9130_CF_Pro
         armTrustedFirmwareCN9130_CF_Pro
         ;
+
+      installer_img = (nixpkgs.lib.nixosSystem {
+        inherit (pkgs) system;
+        modules = installer_img_modules;
+      }).config.system.build.sdImage;
 
       installer_iso_lx2k = (nixpkgs.lib.nixosSystem {
         inherit (pkgs) system;
