@@ -92,7 +92,7 @@
       };
       "logs.jmbaur.com" =
         let
-          logHosts = [ "artichoke" "rhubarb" ];
+          logHosts = [ "artichoke" "rhubarb" "www" ];
           locationBlocks = {
             locations = lib.listToAttrs (map
               (host: lib.nameValuePair "/${host}/" {
@@ -110,17 +110,10 @@
               path = pkgs.writeText "index.html"
                 ("<!DOCTYPE html>" + (
                   lib.concatMapStringsSep "\n"
-                    (host: ''<a href="/${host}/">${host}</a>'')
+                    (host: ''<a href="/${host}/browse">${host}</a>'')
                     logHosts)
                 );
             }];
-            extraConfig = lib.concatMapStringsSep "\n"
-              (host: ''
-                if ($http_referer ~ "^https://logs\.jmbaur\.com/${host}/") {
-                  rewrite ^/(.*) https://logs.jmbaur.com/${host}/$1 redirect;
-                }
-              '')
-              logHosts;
           };
         };
       "jmbaur.com" = {
