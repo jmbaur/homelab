@@ -84,13 +84,6 @@
   services.journald.enableHttpGateway = true;
   services.nginx = {
     enable = true;
-    # for grafana
-    appendHttpConfig = ''
-      map $http_upgrade $connection_upgrade {
-        default upgrade;
-        \'\' close;
-      }
-    '';
     virtualHosts = {
       # https://grafana.com/tutorials/run-grafana-behind-a-proxy/
       "mon.jmbaur.com" = {
