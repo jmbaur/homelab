@@ -31,7 +31,6 @@ in
       enable = true;
       enabledCollectors = [ "ethtool" "network_route" "systemd" ];
     };
-    smartctl.enable = true;
     wireguard.enable = true;
   };
 

@@ -59,7 +59,6 @@
   services.prometheus = {
     enable = true;
     exporters = {
-      smartctl.enable = true;
       node = {
         enable = true;
         enabledCollectors = [ "systemd" ];

@@ -53,6 +53,10 @@
           printf "nameserver ${wgPublic.hosts.artichoke.ipv4}\nnameserver ${wgPublic.hosts.artichoke.ipv6.ula}" | ${pkgs.openresolv}/bin/resolvconf -a ${wgPublic.name} -m 0
         '';
         peers = [
+          (with wgPublic.hosts.kale; {
+            allowedIPs = [ "${ipv4}/32" "${ipv6.ula}/128" ];
+            publicKey = publicKey;
+          })
           (with wgPublic.hosts.rhubarb; {
             allowedIPs = [ "${ipv4}/32" "${ipv6.ula}/128" ];
             publicKey = publicKey;
@@ -107,7 +111,7 @@
       };
       "logs.jmbaur.com" =
         let
-          logHosts = [ "artichoke" "rhubarb" "www" ];
+          logHosts = [ "artichoke" "rhubarb" "www" "kale" ];
           locationBlocks = {
             locations = lib.listToAttrs (map
               (host: lib.nameValuePair "/${host}/" {
@@ -120,15 +124,18 @@
           forceSSL = true;
           useACMEHost = "jmbaur.com";
           locations."/" = {
-            root = pkgs.linkFarm "root" [{
-              name = "index.html";
-              path = pkgs.writeText "index.html"
-                ("<!DOCTYPE html>" + (
-                  lib.concatMapStringsSep "\n"
-                    (host: ''<a href="/${host}/browse">${host}</a><br />'')
-                    logHosts)
-                );
-            }];
+            root = pkgs.linkFarm "root" [
+              {
+                name = "index.html";
+                path = pkgs.writeText "index.html"
+                  ("<!DOCTYPE html>" + (
+                    lib.concatMapStringsSep "\n"
+                      (host: ''<a href="/${host}/browse">${host}</a><br />'')
+                      logHosts)
+                  );
+              }
+              { name = "favicon.ico"; path = "${./logs_favicon.ico}"; }
+            ];
           };
         };
       "jmbaur.com" = {

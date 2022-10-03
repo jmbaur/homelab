@@ -1,9 +1,13 @@
-{ lib, ... }: {
+{ config, lib, ... }: {
   networking = {
     useDHCP = lib.mkForce false;
     hostName = "kale";
     useNetworkd = true;
-    firewall.allowedTCPPorts = [ 8080 ];
+    firewall = {
+      allowedTCPPorts = lib.mkForce [ ];
+      interfaces.eth0.allowedTCPPorts = lib.mkForce [ 22 config.services.prometheus.exporters.node.port ];
+      interfaces.wg-public.allowedTCPPorts = lib.mkForce [ 19531 ];
+    };
   };
 
   systemd.network = {

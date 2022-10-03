@@ -16,6 +16,12 @@
 
   hardware.lx2k.enable = true;
 
+  age.secrets.wg-public-kale = {
+    mode = "0640";
+    group = config.users.groups.systemd-network.name;
+    file = ../../secrets/wg-public-kale.age;
+  };
+
   custom = {
     users.jared.enable = true;
     common.enable = true;
@@ -31,6 +37,7 @@
       enable = true;
       authorizedKeyFiles = config.custom.deployee.authorizedKeyFiles;
     };
+    wgWwwPeer.enable = true;
   };
 
   services.runner = {
@@ -55,12 +62,8 @@
   services.prometheus.exporters = {
     node = {
       enable = true;
-      openFirewall = true;
+      openFirewall = false;
       enabledCollectors = [ "ethtool" "network_route" "systemd" ];
-    };
-    smartctl = {
-      enable = true;
-      openFirewall = true;
     };
   };
 
