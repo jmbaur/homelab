@@ -84,11 +84,33 @@
   services.journald.enableHttpGateway = true;
   services.nginx = {
     enable = true;
+    # for grafana
+    appendHttpConfig = ''
+      map $http_upgrade $connection_upgrade {
+        default upgrade;
+        \'\' close;
+      }
+    '';
     virtualHosts = {
+      # https://grafana.com/tutorials/run-grafana-behind-a-proxy/
       "mon.jmbaur.com" = {
         forceSSL = true;
         useACMEHost = "jmbaur.com";
-        locations."/".proxyPass = "http://rhubarb.wg-public.home.arpa:3000";
+        locations."/" = {
+          proxyPass = "http://rhubarb.wg-public.home.arpa:3000";
+          extraConfig = ''
+            proxy_set_header Host $host;
+          '';
+        };
+        locations."/api/live" = {
+          proxyPass = "http://rhubarb.wg-public.home.arpa:3000";
+          extraConfig = ''
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection $connection_upgrade;
+            proxy_set_header Host $host;
+          '';
+        };
       };
       "logs.jmbaur.com" =
         let
@@ -110,7 +132,7 @@
               path = pkgs.writeText "index.html"
                 ("<!DOCTYPE html>" + (
                   lib.concatMapStringsSep "\n"
-                    (host: ''<a href="/${host}/browse">${host}</a>'')
+                    (host: ''<a href="/${host}/browse">${host}</a><br />'')
                     logHosts)
                 );
             }];
