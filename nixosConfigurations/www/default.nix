@@ -1,4 +1,4 @@
-{ config, pkgs, modulesPath, inventory, ... }: {
+{ config, lib, pkgs, modulesPath, inventory, ... }: {
   imports = [
     "${modulesPath}/virtualisation/amazon-image.nix"
   ];
@@ -42,14 +42,16 @@
         allowedTCPPorts = [ 22 80 443 ];
         allowedUDPPorts = [ (wgPublic.id + 51800) ];
       };
-      wireguard.interfaces.wg-public = {
+      wireguard.interfaces.${wgPublic.name} = {
         privateKeyFile = config.age.secrets.wg-public-www.path;
         listenPort = wgPublic.id + 51800;
         ips = with wgPublic.hosts.www; [
           "${ipv4}/${toString wgPublic.ipv4Cidr}"
           "${ipv6.ula}/${toString wgPublic.ipv6Cidr}"
-          "${ipv6.gua}/${toString wgPublic.ipv6Cidr}"
         ];
+        postSetup = ''
+          printf "nameserver ${wgPublic.hosts.artichoke.ipv4}\nnameserver ${wgPublic.hosts.artichoke.ipv6.ula}" | ${pkgs.openresolv}/bin/resolvconf -a ${wgPublic.name} -m 0
+        '';
         peers = [
           (with wgPublic.hosts.rhubarb; {
             allowedIPs = [ "${ipv4}/32" "${ipv6.ula}/128" ];
@@ -73,35 +75,54 @@
     nginx = {
       enable = true;
       virtualHost = "auth.jmbaur.com";
-      basicAuthFile = config.age.secrets.htpasswd.path;
-      protectedVirtualHosts = [ "mon.jmbaur.com" ];
       useACMEHost = "jmbaur.com";
+      basicAuthFile = config.age.secrets.htpasswd.path;
+      protectedVirtualHosts = [ "logs.jmbaur.com" "mon.jmbaur.com" ];
     };
   };
 
+  services.journald.enableHttpGateway = true;
   services.nginx = {
     enable = true;
     virtualHosts = {
       "mon.jmbaur.com" = {
         forceSSL = true;
         useACMEHost = "jmbaur.com";
-        locations."/".proxyPass = "http://172.16.20.2:3000";
+        locations."/".proxyPass = "http://rhubarb.wg-public.home.arpa:3000";
       };
-      # "logs.jmbaur.com" = {
-      #   forceSSL = true;
-      #   useACMEHost = "jmbaur.com";
-      #   locations."/artichoke/".proxyPass = "http://172.16.20.1:19531/";
-      #   locations."/" = {
-      #     root = pkgs.linkFarm "root" [{
-      #       name = "index.html";
-      #       path = pkgs.writeText "index.html" ''
-      #         <!DOCTYPE html>
-      #         <a href="/artichoke/">artichoke</a>
-      #       '';
-      #     }];
-      #     index = "index.html";
-      #   };
-      # };
+      "logs.jmbaur.com" =
+        let
+          logHosts = [ "artichoke" "rhubarb" ];
+          locationBlocks = {
+            locations = lib.listToAttrs (map
+              (host: lib.nameValuePair "/${host}/" {
+                proxyPass = "http://${host}.wg-public.home.arpa:19531/";
+              })
+              logHosts);
+          };
+        in
+        lib.recursiveUpdate locationBlocks {
+          forceSSL = true;
+          useACMEHost = "jmbaur.com";
+          locations."/" = {
+            root = pkgs.linkFarm "root" [{
+              name = "index.html";
+              path = pkgs.writeText "index.html"
+                ("<!DOCTYPE html>" + (
+                  lib.concatMapStringsSep "\n"
+                    (host: ''<a href="/${host}/">${host}</a>'')
+                    logHosts)
+                );
+            }];
+            extraConfig = lib.concatMapStringsSep "\n"
+              (host: ''
+                if ($http_referer ~ "^https://logs\.jmbaur\.com/${host}/") {
+                  rewrite ^/(.*) https://logs.jmbaur.com/${host}/$1 redirect;
+                }
+              '')
+              logHosts;
+          };
+        };
       "jmbaur.com" = {
         default = true;
         enableACME = true;
@@ -113,7 +134,7 @@
               name = "index.html";
               path = pkgs.writeText "index.html" ''
                 <!DOCTYPE html>
-                These aren't the droids you're looking for.
+                <p>These aren't the droids you're looking for.</p>
               '';
             }
             {
@@ -123,7 +144,6 @@
               '';
             }
           ];
-          index = "index.html";
         };
       };
     };
@@ -134,6 +154,7 @@
     defaults.email = "jaredbaur@fastmail.com";
     certs."jmbaur.com".extraDomainNames = map (subdomain: "${subdomain}.jmbaur.com") [
       "auth"
+      "logs"
       "mon"
     ];
   };

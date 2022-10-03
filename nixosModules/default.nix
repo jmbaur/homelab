@@ -401,7 +401,6 @@ inputs: with inputs; {
                   name = "wg-public";
                   address = with wgPublic.hosts.${config.networking.hostName}; [
                     "${ipv4}/${toString wgPublic.ipv4Cidr}"
-                    "${ipv6.gua}/${toString wgPublic.ipv6Cidr}"
                     "${ipv6.ula}/${toString wgPublic.ipv6Cidr}"
                   ];
                 };

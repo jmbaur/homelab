@@ -1,4 +1,4 @@
-{ config, lib, pkgs, inventory, ... }: {
+{ config, lib, pkgs, ... }: {
   custom = {
     wgWwwPeer.enable = true;
     disableZfs = true;
@@ -24,7 +24,10 @@
     firewall = {
       allowedTCPPorts = lib.mkForce [ ];
       interfaces = {
-        wg-public.allowedTCPPorts = lib.mkForce [ 3000 ];
+        wg-public.allowedTCPPorts = lib.mkForce [
+          3000 # grafana
+          19531 # systemd-journal-gatewayd
+        ];
         eth0.allowedTCPPorts = lib.mkForce [ 22 ];
       };
     };
