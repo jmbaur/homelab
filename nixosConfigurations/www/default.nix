@@ -75,6 +75,7 @@
     relyingParty = {
       id = "jmbaur.com";
       origin = "https://auth.jmbaur.com";
+      extraAllowedOrigins = map (vhost: "https://${vhost}") config.services.webauthn-tiny.nginx.protectedVirtualHosts;
     };
     nginx = {
       enable = true;

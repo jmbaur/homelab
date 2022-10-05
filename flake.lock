@@ -170,21 +170,6 @@
         "type": "github"
       }
     },
-    "esbuild-nixpkgs-pin": {
-      "locked": {
-        "lastModified": 1659091710,
-        "narHash": "sha256-BdJpCQsvlr2R6YW0XW+1hV7nRwZ6ZP1Y7ssjsXlaLFs=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "a2b3b7593440cbd1726bb0ec4616347652b2adb5",
-        "type": "github"
-      },
-      "original": {
-        "id": "nixpkgs",
-        "rev": "a2b3b7593440cbd1726bb0ec4616347652b2adb5",
-        "type": "indirect"
-      }
-    },
     "fenix": {
       "inputs": {
         "nixpkgs": "nixpkgs_5",
@@ -726,11 +711,11 @@
       },
       "locked": {
         "dir": "contrib",
-        "lastModified": 1664752840,
-        "narHash": "sha256-dxecs+FwU8MWvTOjUiDM1VZh/z8SdDTwVXXMVYI0JVY=",
+        "lastModified": 1664901479,
+        "narHash": "sha256-SM6bnO7Bt4Y8C2kYpNaubpjVpgGLMSq7b9e3ZxKe6WA=",
         "owner": "neovim",
         "repo": "neovim",
-        "rev": "56998feebd6f7ec0ab68e44cba3425bf39d448b4",
+        "rev": "c651152a9db56d9fb4681789e38d9b52d996e960",
         "type": "github"
       },
       "original": {
@@ -754,11 +739,11 @@
         "pre-commit": "pre-commit"
       },
       "locked": {
-        "lastModified": 1664820230,
-        "narHash": "sha256-SaM35uZRt3qH4XYQagR4+czDobTQEYFi06oAPygLd5o=",
+        "lastModified": 1664902960,
+        "narHash": "sha256-9Kiw9JPJHmATveOatU/7z6IulydNsgUmfEAUxYeG1cE=",
         "owner": "jmbaur",
         "repo": "nixos-configs",
-        "rev": "76be73dae3a3c5d6bb7d814de9c4b612dfe6beac",
+        "rev": "23308069420147a4183e1215121297dbe836183b",
         "type": "github"
       },
       "original": {
@@ -965,11 +950,11 @@
     },
     "nixpkgs_8": {
       "locked": {
-        "lastModified": 1664687381,
-        "narHash": "sha256-9czSuDzS+OGGwq2kC4KXBLXWfYaup+oLB+AA1Md25U4=",
+        "lastModified": 1664780719,
+        "narHash": "sha256-Oxe6la5dSqRfJogjtY4sRzJjDDqvroJIVkcGEOT87MA=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "59d2991d4256cdca1c0cda45d876c80a0fe45c31",
+        "rev": "fd54651f5ffb4a36e8463e0c327a78442b26cbe7",
         "type": "github"
       },
       "original": {
@@ -1260,7 +1245,6 @@
     "webauthn-tiny": {
       "inputs": {
         "deno2nix": "deno2nix",
-        "esbuild-nixpkgs-pin": "esbuild-nixpkgs-pin",
         "flake-utils": "flake-utils_19",
         "nixpkgs": [
           "nixpkgs"
@@ -1268,11 +1252,11 @@
         "pre-commit": "pre-commit_3"
       },
       "locked": {
-        "lastModified": 1664900841,
-        "narHash": "sha256-bbArIktiny9fhp2RJSwU5vu0k0vRw19/f9HkIysRysI=",
+        "lastModified": 1664929512,
+        "narHash": "sha256-ToSF3R5dPlgzf4llNc2W0VhbukaUVyX3cAo3p1/44Jo=",
         "owner": "jmbaur",
         "repo": "webauthn-tiny",
-        "rev": "2319fb08034405861206c10f24dfd564f3257ba9",
+        "rev": "aee3bb228a4e62ba86ec058527a7fa9bc3efc222",
         "type": "github"
       },
       "original": {
