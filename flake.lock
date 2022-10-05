@@ -754,11 +754,11 @@
     },
     "nixos-hardware": {
       "locked": {
-        "lastModified": 1664628729,
-        "narHash": "sha256-A1J0ZPhBfZZiWI6ipjKJ8+RpMllzOMu/An/8Tk3t4oo=",
+        "lastModified": 1664985631,
+        "narHash": "sha256-jUEvSieNzI0h/9ZZkeFIdx3ch7+7geRdiBZ6guxjSvA=",
         "owner": "NixOS",
         "repo": "nixos-hardware",
-        "rev": "3024c67a2e9a35450558426c42e7419ab37efd95",
+        "rev": "2b61d6502a38c00d72dc427ccac6c3df2ba28cb0",
         "type": "github"
       },
       "original": {
@@ -1252,11 +1252,11 @@
         "pre-commit": "pre-commit_3"
       },
       "locked": {
-        "lastModified": 1664929512,
-        "narHash": "sha256-ToSF3R5dPlgzf4llNc2W0VhbukaUVyX3cAo3p1/44Jo=",
+        "lastModified": 1664991459,
+        "narHash": "sha256-i4UdXssACRu6jpVjr6KO6VoOAJbtsIhbuQV0LmJCgWs=",
         "owner": "jmbaur",
         "repo": "webauthn-tiny",
-        "rev": "aee3bb228a4e62ba86ec058527a7fa9bc3efc222",
+        "rev": "38b55a437acc7607a0899f3e43144b835a14d6ad",
         "type": "github"
       },
       "original": {
