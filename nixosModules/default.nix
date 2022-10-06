@@ -144,18 +144,13 @@ inputs: with inputs; {
           config = mkIf cfg.enable {
             custom.disableZfs = true;
             boot = {
-              kernelPackages = pkgs.linuxPackages_testing;
-              kernelParams = [
-                "dtb=/boot/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb"
-                "video=efifb:auto"
-                "audit=0"
-                "efi=novamap,noruntime"
-                "pd_ignore_unused"
-                "clk_ignore_unused"
-              ];
+              kernelPackages = pkgs.linuxPackages_latest;
               loader.grub = {
-                efiSupport = true;
+                memtest86.enable = lib.mkForce false; # unsupported on aarch64-linux?
                 extraFiles."dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb" = "${config.boot.kernelPackages.kernel}/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb";
+                extraPerEntryConfig = ''
+                  devicetree /boot/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb
+                '';
               };
             };
             hardware.deviceTree = {

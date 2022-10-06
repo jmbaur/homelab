@@ -86,11 +86,17 @@ in
           ({ config, ... }: {
             hardware.thinkpad-x13s.enable = true;
             isoImage = {
-              makeEfiBootable = true;
-              contents = [{
-                source = "${config.boot.kernelPackages.kernel}/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb";
-                target = "/boot/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb";
-              }];
+              contents = [
+                (
+                  let
+                    dtbPath = "dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb";
+                  in
+                  {
+                    source = config.boot.loader.grub.extraFiles.${dtbPath};
+                    target = "/boot/${dtbPath}";
+                  }
+                )
+              ];
             };
           })
         ];
