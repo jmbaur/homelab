@@ -32,7 +32,7 @@ in
     enable = true;
     config = ''
       . {
-        hosts ${pkgs.stevenblack-blocklist}/hosts {
+        hosts ${pkgs.stevenblack-blocklist}/alternates/fakenews-gambling-porn-social/hosts {
           fallthrough
         }
         # unused: ${googleDns.serverName} ${toString googleDns.servers}
