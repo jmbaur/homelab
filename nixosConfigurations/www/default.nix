@@ -69,6 +69,7 @@
       };
     };
 
+  systemd.services.webauthn-tiny.environment.WEBAUTHN_TINY_LOG = lib.mkForce "debug";
   services.webauthn-tiny = {
     enable = true;
     environmentFile = config.age.secrets.webauthn-tiny-env.path;
@@ -89,8 +90,16 @@
   services.journald.enableHttpGateway = true;
   services.nginx = {
     enable = true;
+    statusPage = true;
+    logError = "stderr debug";
     proxyResolveWhileRunning = true;
-    resolver = { valid = "30s"; addresses = with inventory.networks.wg-public.hosts.artichoke; [ "[${ipv6.ula}]" ipv4 ]; };
+    resolver = {
+      valid = "30s";
+      addresses = with inventory.networks.wg-public.hosts.artichoke; [
+        ipv4
+        "[${ipv6.ula}]"
+      ];
+    };
     virtualHosts = {
       # https://grafana.com/tutorials/run-grafana-behind-a-proxy/
       "mon.jmbaur.com" = {
