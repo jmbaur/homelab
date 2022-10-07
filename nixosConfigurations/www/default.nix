@@ -89,6 +89,8 @@
   services.journald.enableHttpGateway = true;
   services.nginx = {
     enable = true;
+    proxyResolveWhileRunning = true;
+    resolver = { valid = "30s"; addresses = with inventory.networks.wg-public.hosts.artichoke; [ "[${ipv6.ula}]" ipv4 ]; };
     virtualHosts = {
       # https://grafana.com/tutorials/run-grafana-behind-a-proxy/
       "mon.jmbaur.com" = {
