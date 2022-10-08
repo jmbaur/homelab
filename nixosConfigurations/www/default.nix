@@ -39,10 +39,14 @@ in
   services.fail2ban = {
     enable = true;
     jails.nginx-botsearch = ''
-      enabled = true
+      enabled      = true
+      backend      = systemd
+      journalmatch = _SYSTEMD_UNIT=nginx.service + _COMM=nginx
     '';
     jails.nginx-http-auth = ''
-      enabled  = true
+      enabled      = true
+      backend      = systemd
+      journalmatch = _SYSTEMD_UNIT=nginx.service + _COMM=nginx
     '';
   };
 
@@ -99,6 +103,10 @@ in
   services.nginx = {
     enable = true;
     statusPage = true;
+    commonHttpConfig = ''
+      error_log syslog:server=unix:/dev/log;
+      access_log syslog:server=unix:/dev/log;
+    '';
     virtualHosts = {
       # https://grafana.com/tutorials/run-grafana-behind-a-proxy/
       "mon.jmbaur.com" = {
