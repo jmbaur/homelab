@@ -1,4 +1,8 @@
-{ config, lib, pkgs, modulesPath, inventory, ... }: {
+{ config, lib, pkgs, modulesPath, inventory, ... }:
+let
+  wgPublic = inventory.networks.wg-public;
+in
+{
   imports = [
     "${modulesPath}/virtualisation/amazon-image.nix"
   ];
@@ -32,44 +36,48 @@
     };
   };
 
-  services.fail2ban.enable = true;
-  networking =
-    let
-      wgPublic = inventory.networks.wg-public;
-    in
-    {
-      firewall = {
-        allowedTCPPorts = [ 22 80 443 ];
-        allowedUDPPorts = [ (wgPublic.id + 51800) ];
-      };
-      wireguard.interfaces.${wgPublic.name} = {
-        privateKeyFile = config.age.secrets.wg-public-www.path;
-        listenPort = wgPublic.id + 51800;
-        ips = with wgPublic.hosts.www; [
-          "${ipv4}/${toString wgPublic.ipv4Cidr}"
-          "${ipv6.ula}/${toString wgPublic.ipv6Cidr}"
-        ];
-        postSetup = ''
-          printf "nameserver ${wgPublic.hosts.artichoke.ipv4}\nnameserver ${wgPublic.hosts.artichoke.ipv6.ula}" | ${pkgs.openresolv}/bin/resolvconf -a ${wgPublic.name} -m 0
-        '';
-        peers = [
-          (with wgPublic.hosts.kale; {
-            allowedIPs = [ "${ipv4}/32" "${ipv6.ula}/128" ];
-            publicKey = publicKey;
-          })
-          (with wgPublic.hosts.rhubarb; {
-            allowedIPs = [ "${ipv4}/32" "${ipv6.ula}/128" ];
-            publicKey = publicKey;
-          })
-          (with wgPublic.hosts.artichoke; {
-            allowedIPs = [ "${ipv4}/32" "${ipv6.ula}/128" ];
-            publicKey = publicKey;
-          })
-        ];
-      };
-    };
+  services.fail2ban = {
+    enable = true;
+    jails.nginx-botsearch = ''
+      enabled = true
+    '';
+    jails.nginx-http-auth = ''
+      enabled  = true
+    '';
+  };
 
-  systemd.services.webauthn-tiny.environment.WEBAUTHN_TINY_LOG = lib.mkForce "debug";
+  networking = {
+    firewall = {
+      allowedTCPPorts = [ 22 80 443 ];
+      allowedUDPPorts = [ (wgPublic.id + 51800) ];
+    };
+    wireguard.interfaces.${wgPublic.name} = {
+      privateKeyFile = config.age.secrets.wg-public-www.path;
+      listenPort = wgPublic.id + 51800;
+      ips = with wgPublic.hosts.www; [
+        "${ipv4}/${toString wgPublic.ipv4Cidr}"
+        "${ipv6.ula}/${toString wgPublic.ipv6Cidr}"
+      ];
+      postSetup = ''
+        printf "nameserver ${wgPublic.hosts.artichoke.ipv4}\nnameserver ${wgPublic.hosts.artichoke.ipv6.ula}" | ${pkgs.openresolv}/bin/resolvconf -a ${wgPublic.name} -m 0
+      '';
+      peers = [
+        (with wgPublic.hosts.kale; {
+          allowedIPs = [ "${ipv4}/32" "${ipv6.ula}/128" ];
+          publicKey = publicKey;
+        })
+        (with wgPublic.hosts.rhubarb; {
+          allowedIPs = [ "${ipv4}/32" "${ipv6.ula}/128" ];
+          publicKey = publicKey;
+        })
+        (with wgPublic.hosts.artichoke; {
+          allowedIPs = [ "${ipv4}/32" "${ipv6.ula}/128" ];
+          publicKey = publicKey;
+        })
+      ];
+    };
+  };
+
   services.webauthn-tiny = {
     enable = true;
     environmentFile = config.age.secrets.webauthn-tiny-env.path;
@@ -91,28 +99,19 @@
   services.nginx = {
     enable = true;
     statusPage = true;
-    logError = "stderr debug";
-    proxyResolveWhileRunning = true;
-    resolver = {
-      valid = "30s";
-      addresses = with inventory.networks.wg-public.hosts.artichoke; [
-        ipv4
-        "[${ipv6.ula}]"
-      ];
-    };
     virtualHosts = {
       # https://grafana.com/tutorials/run-grafana-behind-a-proxy/
       "mon.jmbaur.com" = {
         forceSSL = true;
         useACMEHost = "jmbaur.com";
         locations."/" = {
-          proxyPass = "http://rhubarb.wg-public.home.arpa:3000";
+          proxyPass = "http://[${wgPublic.hosts.rhubarb.ipv6.ula}]:3000";
           extraConfig = ''
             proxy_set_header Host $host;
           '';
         };
         locations."/api/live" = {
-          proxyPass = "http://rhubarb.wg-public.home.arpa:3000";
+          proxyPass = "http://[${wgPublic.hosts.rhubarb.ipv6.ula}]:3000";
           extraConfig = ''
             proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
@@ -127,7 +126,7 @@
           locationBlocks = {
             locations = lib.listToAttrs (map
               (host: lib.nameValuePair "/${host}/" {
-                proxyPass = "http://${host}.wg-public.home.arpa:19531/";
+                proxyPass = "http://[${wgPublic.hosts.${host}.ipv6.ula}]:19531/";
               })
               logHosts);
           };
