@@ -16,7 +16,6 @@ let
 
   commonDerivations = pkgs: {
     inherit (pkgs)
-      flarectl
       grafana-dashboards
       jmbaur-github-ssh-keys
       jmbaur-keybase-pgp-keys

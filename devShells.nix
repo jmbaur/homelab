@@ -3,7 +3,11 @@ flake-utils.lib.eachDefaultSystemMap (system:
   let
     pkgs = import nixpkgs {
       inherit system;
-      overlays = [ agenix.overlay self.overlays.default ];
+      overlays = [
+        agenix.overlay
+        nixos-configs.overlays.default
+        self.overlays.default
+      ];
     };
   in
   {

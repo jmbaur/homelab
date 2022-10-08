@@ -1,6 +1,5 @@
 inputs: with inputs; {
   default = final: prev: {
-    flarectl = prev.callPackage ./flarectl.nix { };
     grafana-dashboards = prev.callPackage ./grafana-dashboards { };
     ubootCN9130_CF_Pro = prev.callPackage ./ubootCN9130_CF_Pro.nix {
       inherit cn913x_build;
