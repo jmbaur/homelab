@@ -699,11 +699,11 @@
         "pre-commit": "pre-commit"
       },
       "locked": {
-        "lastModified": 1665289670,
-        "narHash": "sha256-ywEAND7/N/qVrywfoe/2DNUTZ8IMypsjyNauGgE8iro=",
+        "lastModified": 1665340412,
+        "narHash": "sha256-GqgX7JWghPhgszsucjHQNn682fKjHVrOihN+NQOGz38=",
         "owner": "jmbaur",
         "repo": "nixos-configs",
-        "rev": "d8420fc6024cb09b02f75dcfacb43463e5afede7",
+        "rev": "4c1907b336dc87312b903ef3c9b406dbd560fd58",
         "type": "github"
       },
       "original": {
