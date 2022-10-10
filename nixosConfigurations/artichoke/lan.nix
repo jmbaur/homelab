@@ -97,7 +97,6 @@ let
   iot = mkInternalInterface inventory.networks.iot;
   work = mkInternalInterface inventory.networks.work;
   mgmt = mkInternalInterface inventory.networks.mgmt;
-  data = mkInternalInterface inventory.networks.data;
 in
 {
   systemd.network.networks = {

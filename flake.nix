@@ -3,7 +3,6 @@
 
   inputs = {
     agenix.url = "github:ryantm/agenix";
-    blog.url = "github:jmbaur/blog";
     cn913x_build.flake = false;
     cn913x_build.url = "github:solidrun/cn913x_build";
     deploy-rs.url = "github:serokell/deploy-rs";
@@ -18,7 +17,6 @@
     pre-commit.url = "github:cachix/pre-commit-hooks.nix";
     runner-nix.url = "github:jmbaur/runner-nix";
     terranix.url = "github:terranix/terranix";
-    webauthn-tiny.inputs.nixpkgs.follows = "nixpkgs";
     webauthn-tiny.url = "github:jmbaur/webauthn-tiny";
   };
 

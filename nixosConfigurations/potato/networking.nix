@@ -1,4 +1,4 @@
-{ config, lib, pkgs, inventory, ... }: {
+{ config, lib, inventory, ... }: {
   networking = {
     hostName = "kale";
     useDHCP = false;

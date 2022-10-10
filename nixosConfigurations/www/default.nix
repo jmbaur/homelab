@@ -105,7 +105,7 @@ in
     statusPage = true;
     commonHttpConfig = ''
       error_log syslog:server=unix:/dev/log;
-      access_log syslog:server=unix:/dev/log;
+      access_log syslog:server=unix:/dev/log combined;
     '';
     virtualHosts = {
       # https://grafana.com/tutorials/run-grafana-behind-a-proxy/
