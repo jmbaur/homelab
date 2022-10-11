@@ -49,18 +49,6 @@ inputs: with inputs; {
     ];
   };
 
-  website = nixpkgs.lib.nixosSystem rec {
-    system = "x86_64-linux";
-    specialArgs = {
-      inherit inputs;
-      inherit (self.inventory.${system}) inventory;
-    };
-    modules = [
-      ./vms/website.nix
-      microvm.nixosModules.microvm
-    ];
-  };
-
   potato = nixpkgs.lib.nixosSystem rec {
     system = "x86_64-linux";
     specialArgs = {
