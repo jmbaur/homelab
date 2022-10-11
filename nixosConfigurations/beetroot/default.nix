@@ -56,7 +56,6 @@
   nixpkgs.config.allowUnfree = true;
 
   services.fwupd.enable = true;
-  programs.nix-ld.enable = true;
 
   home-manager.users.jared = { config, systemConfig, ... }: {
     services.kanshi = {
