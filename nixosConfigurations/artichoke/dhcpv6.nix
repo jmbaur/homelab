@@ -2,8 +2,11 @@
   services.kea = {
     dhcp6 = {
       enable = true;
-      extraArgs = [ "-d" ];
       settings = {
+        control-socket = {
+          socket-type = "unix";
+          socket-name = "/run/kea/kea-dhcp6.socket";
+        };
         reservations-global = false;
         reservations-in-subnet = true;
         reservations-out-of-pool = true;

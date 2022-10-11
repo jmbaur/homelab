@@ -74,6 +74,7 @@
                   meta l4proto tcp th dport {
                       9153, # coredns
                       ${toString config.services.prometheus.exporters.blackbox.port},
+                      ${toString config.services.prometheus.exporters.kea.port},
                       ${toString config.services.prometheus.exporters.node.port},
                       ${toString config.services.prometheus.exporters.wireguard.port},
                   } accept

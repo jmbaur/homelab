@@ -3,10 +3,10 @@
     ./atftpd.nix
     ./dhcpv6.nix
     ./dns.nix
+    ./firewall.nix
     ./lan.nix
     ./links.nix
     ./monitoring.nix
-    ./nftables.nix
     ./ntp.nix
     ./wan.nix
     ./wireguard.nix
