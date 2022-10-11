@@ -42,7 +42,7 @@ in
   };
   nixpkgs.overlays = [
     (_: prev: {
-      prometheus-kea-exporter = prev.prometheus-kea-exporter.overrideAttrs (old: {
+      prometheus-kea-exporter = prev.prometheus-kea-exporter.overrideAttrs (_: {
         patches = [
           (prev.fetchpatch {
             url = "https://patch-diff.githubusercontent.com/raw/mweinelt/kea-exporter/pull/26.patch";
