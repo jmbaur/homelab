@@ -14,6 +14,7 @@
   boot.kernelPackages = pkgs.linuxPackages_5_19;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.initrd.availableKernelModules = [ "igb" ];
 
   time.timeZone = "America/Los_Angeles";
 
