@@ -15,7 +15,6 @@ let
         "${network.hosts.artichoke.ipv6.ula}/${toString network.ipv6Cidr}"
       ];
       IPv6AcceptRA = false;
-      DHCPServer = true;
       IPv6SendRA = true;
     };
     ipv6SendRAConfig = {
@@ -83,15 +82,6 @@ let
       )
       ++ lib.optional (network.mtu != null) "26:uint16:${toString network.mtu}";
     };
-    dhcpServerStaticLeases = lib.flatten
-      (lib.mapAttrsToList
-        (_: host: {
-          dhcpServerStaticLeaseConfig = {
-            MACAddress = host.mac;
-            Address = host.ipv4;
-          };
-        })
-        (lib.filterAttrs (_: host: host.dhcp) network.hosts));
   };
   trusted = mkInternalInterface inventory.networks.trusted;
   iot = mkInternalInterface inventory.networks.iot;
