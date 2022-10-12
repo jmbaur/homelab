@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, inventory, ... }:
 let
   blackboxConfig = (pkgs.formats.yaml { }).generate "blackbox-config" {
     modules = {
@@ -32,7 +32,30 @@ in
       enable = true;
       enabledCollectors = [ "ethtool" "network_route" "systemd" ];
     };
-    wireguard.enable = true;
+    wireguard =
+      let
+        # NOTE: this derivation does not do any actual configuration for
+        # wireguard. It just contains peer information so that friendly names
+        # can be picked up by the exporter
+        stubWireguardConfig = pkgs.writeText "stub-wireguard-config" (lib.concatMapStringsSep "\n"
+          (peer: ''
+            [Peer]
+            # friendly_name = ${peer.name}
+            PublicKey = ${peer.publicKey}
+            AllowedIPs = ${peer.ipv4},${peer.ipv6.ula}
+          '')
+          (lib.flatten
+            (map
+              (name: lib.attrValues inventory.networks.${name}.hosts)
+              [ "wg-iot" "wg-trusted" ]
+            )
+          )
+        );
+      in
+      {
+        enable = true;
+        wireguardConfig = stubWireguardConfig;
+      };
     kea = {
       enable = true;
       controlSocketPaths = [
