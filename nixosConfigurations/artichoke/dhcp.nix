@@ -3,6 +3,10 @@
     dhcp4 = {
       enable = true;
       settings = {
+        control-socket = {
+          socket-type = "unix";
+          socket-name = "/run/kea/kea-dhcp4.socket";
+        };
         reservations-global = false;
         reservations-in-subnet = true;
         reservations-out-of-pool = true;
