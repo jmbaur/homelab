@@ -23,7 +23,7 @@
     useDHCP = false;
     hostName = "okra";
     useNetworkd = true;
-    wireless.enable = true;
+    wireless.enable = false;
   };
   systemd.network = {
     networks = {
@@ -103,7 +103,6 @@
       freerdp
       google-chrome-wayland
       outlook-webapp
-      qutebrowser
       signal-desktop-wayland
       slack-wayland
       spotify

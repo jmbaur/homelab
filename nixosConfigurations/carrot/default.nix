@@ -87,7 +87,6 @@
       freerdp
       google-chrome-wayland
       outlook-webapp
-      qutebrowser
       signal-desktop-wayland
       slack-wayland
       spotify
