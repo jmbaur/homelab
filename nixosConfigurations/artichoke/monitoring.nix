@@ -45,8 +45,8 @@ in
       prometheus-kea-exporter = prev.prometheus-kea-exporter.overrideAttrs (_: {
         patches = [
           (prev.fetchpatch {
-            url = "https://patch-diff.githubusercontent.com/raw/mweinelt/kea-exporter/pull/26.patch";
-            sha256 = "1knlixmralsh46mxp56kp4rd719mbsdv3vphms0il6cmpriba0wd";
+            url = "https://patch-diff.githubusercontent.com/raw/mweinelt/kea-exporter/pull/28.patch";
+            sha256 = "0v8giggcgfdhggwg938km010ixf49qh4afamchh0ri0yg16gsc7l";
           })
         ];
       });
