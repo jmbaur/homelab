@@ -3,13 +3,13 @@
   terraform.required_providers = {
     aws.source = "registry.terraform.io/hashicorp/aws";
     cloudflare.source = "registry.terraform.io/cloudflare/cloudflare";
+    sops.source = "registry.terraform.io/carlpett/sops";
   };
 
   provider = {
-    aws = {
-      region = "us-west-1";
-    };
+    aws = { };
     cloudflare = { };
+    sops = { };
   };
 
   imports = [
