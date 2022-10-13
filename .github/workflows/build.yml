@@ -23,6 +23,6 @@ jobs:
       - run: |
           DEBIAN_FRONTEND=noninteractive
           sudo apt-get update -q -y && sudo apt-get install -q -y qemu-system-aarch64 qemu-efi binfmt-support qemu-user-static
-          sudo bash -c "echo system-features = aarch64-linux arm-linux >> /etc/nix/nix.conf"
+          echo "system-features = aarch64-linux arm-linux" | sudo tee -a /etc/nix/nix.conf
       - run: |
-          nix build .\#packages.aarch64-linux.linux_cn913x
+          nix build --option system aarch64-linux --extra-platforms aarch64-linux .\#linux_cn913x
