@@ -19,7 +19,7 @@ jobs:
         uses: cachix/cachix-action@v11
         with:
           name: jmbaur
-          signingKey: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
       - run: |
           DEBIAN_FRONTEND=noninteractive
           sudo apt-get update -q -y && sudo apt-get install -q -y qemu-system-aarch64 qemu-efi binfmt-support qemu-user-static
