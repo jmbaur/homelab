@@ -20,5 +20,10 @@ jobs:
         with:
           name: jmbaur
           signingKey: ${{ secrets.CACHIX_AUTH_TOKEN }}
-      - name: Build linux_cn913x
-        run: "nix build .#packages.aarch64-linux.linux_cn913x"
+      - uses: uraimo/run-on-arch-action@v2
+        name: Run aarch64 builds
+        id: build
+        with:
+          arch: aarch64
+          distro: ubuntu_latest
+          run: "nix build .#packages.aarch64-linux.linux_cn913x"
