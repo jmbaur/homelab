@@ -1,4 +1,8 @@
-{ config, lib, inventory, ... }: {
+{ config, lib, inventory, ... }:
+let
+  toKeaArray = data: lib.concatStringsSep "," data;
+in
+{
   services.kea = {
     dhcp4 = {
       enable = true;
@@ -35,11 +39,11 @@
                 option-data = [
                   {
                     name = "domain-name-servers";
-                    data = [ hosts.${config.networking.hostName}.ipv4 ];
+                    data = toKeaArray [ hosts.${config.networking.hostName}.ipv4 ];
                   }
                   {
                     name = "ntp-servers";
-                    data = [ hosts.${config.networking.hostName}.ipv4 ];
+                    data = toKeaArray [ hosts.${config.networking.hostName}.ipv4 ];
                   }
                   {
                     name = "domain-name";
@@ -47,7 +51,7 @@
                   }
                 ] ++ lib.optional (includeRoutesTo != [ ]) {
                   name = "classless-static-routes";
-                  data = map
+                  data = toKeaArray (map
                     (networkName:
                       let
                         dotToComma = data: lib.replaceStrings [ "." ] [ "," ] data;
@@ -57,7 +61,7 @@
                       in
                       "${toString otherNetworkCidr},${otherNetwork},${router}"
                     )
-                    includeRoutesTo;
+                    includeRoutesTo);
                 } ++ lib.optional (mtu != null) {
                   name = "interface-mtu";
                   data = network.mtu;
@@ -66,7 +70,7 @@
                   lib.mapAttrsToList
                     (_: host: {
                       hw-address = host.mac;
-                      ip-addresses = [ host.ipv4 ];
+                      ip-address = host.ipv4;
                     })
                     (lib.filterAttrs (_: host: host.dhcp) hosts);
               }
