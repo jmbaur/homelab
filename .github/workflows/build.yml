@@ -1,10 +1,11 @@
-name: update-flake-lock
+name: build-overlay-derivations
 on:
   workflow_dispatch: # allows manual triggering
-  schedule:
-    - cron: '0 0 * * 0' # runs weekly on Sunday at 00:00
+  push:
+    branches:
+      - main
 jobs:
-  lockfile:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -14,10 +15,10 @@ jobs:
         with:
           extra_nix_config: |
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
-      - name: Update flake.lock
-        uses: DeterminateSystems/update-flake-lock@v14
+      - name: Use binary cache
+        uses: cachix/cachix-action@v11
         with:
-          pr-title: "Update flake.lock" # Title of PR to be created
-          pr-labels: | # Labels to be set on the PR
-            dependencies
-            automated
+          name: jmbaur
+          signingKey: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      - name: Build linux_cn913x
+        run: "nix build .#packages.aarch64-linux.linux_cn913x"
