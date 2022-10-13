@@ -9,7 +9,7 @@ in
       settings = {
         control-socket = {
           socket-type = "unix";
-          socket-name = "/run/kea/kea-dhcp4.socket";
+          socket-name = "/var/run/kea/kea-dhcp4.sock";
         };
         option-def = [{
           name = "classless-static-routes";
@@ -38,12 +38,20 @@ in
                 }];
                 option-data = [
                   {
+                    name = "routers";
+                    data = toKeaArray [ hosts.${config.networking.hostName}.ipv4 ];
+                  }
+                  {
                     name = "domain-name-servers";
                     data = toKeaArray [ hosts.${config.networking.hostName}.ipv4 ];
                   }
                   {
                     name = "ntp-servers";
                     data = toKeaArray [ hosts.${config.networking.hostName}.ipv4 ];
+                  }
+                  {
+                    name = "domain-search";
+                    data = "home.arpa";
                   }
                   {
                     name = "domain-name";
@@ -89,7 +97,7 @@ in
       settings = {
         control-socket = {
           socket-type = "unix";
-          socket-name = "/run/kea/kea-dhcp6.socket";
+          socket-name = "/var/run/kea/kea-dhcp6.sock";
         };
         reservations-global = false;
         reservations-in-subnet = true;
