@@ -1,7 +1,7 @@
 { config, pkgs, inventory, ... }: {
   imports = [
     ./atftpd.nix
-    ./dhcpv6.nix
+    ./dhcp.nix
     ./dns.nix
     ./firewall.nix
     ./lan.nix
