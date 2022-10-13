@@ -49,20 +49,25 @@ in
                     name = "domain-name";
                     data = "home.arpa";
                   }
-                ] ++ lib.optional (includeRoutesTo != [ ]) {
-                  name = "classless-static-routes";
-                  data = toKeaArray (map
-                    (networkName:
-                      let
-                        dotToComma = data: lib.replaceStrings [ "." ] [ "," ] data;
-                        router = dotToComma hosts.${config.networking.hostName}.ipv4;
-                        otherNetworkCidr = inventory.networks.${networkName}.ipv4Cidr;
-                        otherNetwork = dotToComma inventory.networks.${networkName}.networkIPv4SignificantBits;
-                      in
-                      "${toString otherNetworkCidr},${otherNetwork},${router}"
-                    )
-                    includeRoutesTo);
-                } ++ lib.optional (mtu != null) {
+                ] ++ lib.optional (includeRoutesTo != [ ])
+                  (
+                    let
+                      dotToComma = data: lib.replaceStrings [ "." ] [ "," ] data;
+                      router = dotToComma hosts.${config.networking.hostName}.ipv4;
+                    in
+                    {
+                      name = "classless-static-routes";
+                      data = toKeaArray ([ "0,${router}" /* default route */ ] ++ (map
+                        (networkName:
+                          let
+                            otherNetworkCidr = inventory.networks.${networkName}.ipv4Cidr;
+                            otherNetwork = dotToComma inventory.networks.${networkName}.networkIPv4SignificantBits;
+                          in
+                          "${toString otherNetworkCidr},${otherNetwork},${router}"
+                        )
+                        includeRoutesTo));
+                    }
+                  ) ++ lib.optional (mtu != null) {
                   name = "interface-mtu";
                   data = network.mtu;
                 };
