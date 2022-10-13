@@ -7,6 +7,14 @@
           socket-type = "unix";
           socket-name = "/run/kea/kea-dhcp4.socket";
         };
+        option-def = [{
+          name = "classless-static-routes";
+          code = 121;
+          space = "dhcp4";
+          type = "record";
+          array = true;
+          record-types = "uint8,uint8,uint8,uint8,uint8,uint8,uint8,uint8";
+        }];
         reservations-global = false;
         reservations-in-subnet = true;
         reservations-out-of-pool = true;
@@ -24,6 +32,36 @@
                 pools = [{
                   pool = "${networkIPv4SignificantBits}.100 - ${networkIPv4SignificantBits}.200";
                 }];
+                option-data = [
+                  {
+                    name = "domain-name-servers";
+                    data = [ hosts.${config.networking.hostName}.ipv4 ];
+                  }
+                  {
+                    name = "ntp-servers";
+                    data = [ hosts.${config.networking.hostName}.ipv4 ];
+                  }
+                  {
+                    name = "domain-name";
+                    data = "home.arpa";
+                  }
+                ] ++ lib.optional (includeRoutesTo != [ ]) {
+                  name = "classless-static-routes";
+                  data = map
+                    (networkName:
+                      let
+                        dotToComma = data: lib.replaceStrings [ "." ] [ "," ] data;
+                        router = dotToComma hosts.${config.networking.hostName}.ipv4;
+                        otherNetworkCidr = inventory.networks.${networkName}.ipv4Cidr;
+                        otherNetwork = dotToComma inventory.networks.${networkName}.networkIPv4SignificantBits;
+                      in
+                      "${toString otherNetworkCidr},${otherNetwork},${router}"
+                    )
+                    includeRoutesTo;
+                } ++ lib.optional (mtu != null) {
+                  name = "interface-mtu";
+                  data = network.mtu;
+                };
                 reservations =
                   lib.mapAttrsToList
                     (_: host: {
