@@ -11,7 +11,7 @@
 
   zramSwap.enable = true;
 
-  boot.kernelPackages = pkgs.linuxPackages_5_19;
+  boot.kernelPackages = pkgs.linuxPackages_6_0;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.initrd.availableKernelModules = [ "igb" ];
