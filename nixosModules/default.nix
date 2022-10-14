@@ -48,7 +48,7 @@ inputs: with inputs; {
               "amdgpu.pcie_gen_cap=0x4"
               "usbcore.autosuspend=-1"
             ];
-            boot.kernelPackages = pkgs.linuxPackages_5_19;
+            boot.kernelPackages = pkgs.linuxPackages_6_0;
 
             # Setup SFP+ network interfaces early so systemd can pick everything up.
             boot.initrd.extraUtilsCommands = ''
@@ -75,7 +75,7 @@ inputs: with inputs; {
           config = lib.mkIf cfg.enable {
             boot = {
               initrd.systemd.enable = true;
-              kernelPackages = pkgs.linuxPackagesFor pkgs.pkgsCross.aarch64-multiplatform.linux_cn913x;
+              kernelPackages = pkgs.pkgsCross.aarch64-multiplatform.linuxPackages_cn913x;
             };
             hardware.deviceTree = {
               enable = true;

@@ -8,7 +8,7 @@ inputs: with inputs; {
       inherit (final) ubootCN9130_CF_Pro;
       inherit cn913x_build;
     };
-    linux_cn913x = prev.callPackage ./linux_cn913x.nix {
+    linuxPackages_cn913x = prev.callPackage ./linuxPackages_cn913x.nix {
       inherit cn913x_build;
     };
     jmbaur-keybase-pgp-keys = prev.fetchurl {

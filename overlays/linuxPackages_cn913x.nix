@@ -1,9 +1,10 @@
 { cn913x_build
+, linuxPackagesFor
 , linux_5_15
 , lib
 , ...
 }:
-linux_5_15.override (originalArgs: {
+linuxPackagesFor (linux_5_15.override (originalArgs: {
   kernelPatches = (originalArgs.kernelPatches or [ ]) ++ [
     {
       name = "0001-arm64-dts-cn913x-add-cn913x-based-COM-express-type-";
@@ -69,4 +70,4 @@ linux_5_15.override (originalArgs: {
         (builtins.readFile "${cn913x_build}/configs/linux/cn913x_additions.config");
     }
   ];
-})
+}))
