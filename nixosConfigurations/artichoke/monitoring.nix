@@ -71,4 +71,17 @@ in
       --port ${toString config.services.prometheus.exporters.kea.port} \
       ${lib.concatStringsSep " " config.services.prometheus.exporters.kea.controlSocketPaths}
   '';
+  nixpkgs.overlays = [
+    (_: prev: {
+      prometheus-kea-exporter = prev.prometheus-kea-exporter.overrideAttrs
+        (_: {
+          src = prev.fetchFromGitHub {
+            owner = "jmbaur";
+            repo = "kea-exporter";
+            rev = "16a436969d6e84d57d47130666a064de44c9e159";
+            sha256 = "15120dydr4wc99y89jy3k8zk5h7600ax8fhhdp40wd28piwpsmsz";
+          };
+        });
+    })
+  ];
 }
