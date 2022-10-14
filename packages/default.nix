@@ -62,10 +62,10 @@ in
       };
     in
     pkgs.lib.recursiveUpdate (commonDerivations pkgs) {
+      linux_cn913x = pkgs.pkgsCross.aarch64-multiplatform.linuxPackages_cn913x.kernel;
       inherit (pkgs)
         ubootCN9130_CF_Pro
         armTrustedFirmwareCN9130_CF_Pro
-        linux_cn913x
         ;
 
       installer_img = (nixpkgs.lib.nixosSystem {
