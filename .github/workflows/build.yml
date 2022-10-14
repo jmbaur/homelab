@@ -20,4 +20,4 @@ jobs:
         with:
           name: jmbaur
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
-      - run: nix build -L .\#linux_cn913x
+      - run: nix build -L .\#linux_cn913x .\#webauthn-tiny

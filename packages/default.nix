@@ -109,10 +109,17 @@ in
     let
       pkgs = import nixpkgs {
         system = "x86_64-linux";
-        overlays = [ self.overlays.default ];
+        overlays = [
+          self.overlays.default
+          webauthn-tiny.overlays.default
+        ];
       };
     in
     pkgs.lib.recursiveUpdate (commonDerivations pkgs) {
-      linux_cn913x = pkgs.pkgsCross.aarch64-multiplatform.linux_cn913x;
+      inherit (pkgs.pkgsCross.aarch64-multiplatform)
+        linux_cn913x
+        ubootCN9130_CF_Pro
+        webauthn-tiny
+        ;
     };
 }
