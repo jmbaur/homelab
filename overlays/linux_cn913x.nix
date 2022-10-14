@@ -1,7 +1,6 @@
 { cn913x_build
 , linux_5_15
-, runCommand
-, gnused
+, lib
 , ...
 }:
 linux_5_15.override (originalArgs: {
@@ -65,13 +64,9 @@ linux_5_15.override (originalArgs: {
     {
       name = "cn913x_additions";
       patch = null;
-      extraConfig =
-        let
-          cn913x_additions = runCommand "cn913x_additions_fixup" { } ''
-            ${gnused}/bin/sed 's/CONFIG_\(.*\)=\(.*\)/\1 \2/' ${cn913x_build}/configs/linux/cn913x_additions.config > $out
-          '';
-        in
-        builtins.readFile "${cn913x_additions}";
+      extraConfig = lib.replaceStrings
+        [ "CONFIG_" "=" ] [ "" " " ]
+        (builtins.readFile "${cn913x_build}/configs/linux/cn913x_additions.config");
     }
   ];
 })
