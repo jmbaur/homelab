@@ -23,18 +23,9 @@
     useDHCP = false;
     hostName = "okra";
     useNetworkd = true;
-    wireless.enable = false;
   };
   systemd.network = {
     networks = {
-      wireless = {
-        name = "wl*";
-        DHCP = "yes";
-        networkConfig.IPv6PrivacyExtensions = true;
-        dhcpV4Config.ClientIdentifier = "mac";
-        dhcpV4Config.RouteMetric = config.systemd.network.networks.wired.dhcpV4Config.RouteMetric * 2;
-        ipv6AcceptRAConfig.RouteMetric = config.systemd.network.networks.wired.ipv6AcceptRAConfig.RouteMetric * 2;
-      };
       wired = {
         name = "en*";
         DHCP = "yes";
