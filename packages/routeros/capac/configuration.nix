@@ -3,7 +3,6 @@ with import path { };
 let
   secrets = lib.importJSON secretFile;
   inventory = lib.importJSON inventoryFile;
-  gateway = inventory.networks.mgmt.hosts.artichoke.ipv4;
   configuration = {
     name = "RBcAPGi-5acD2nD";
     commands = [
@@ -28,20 +27,22 @@ let
       "/interface bridge port add bridge=bridge frame-types=admit-only-vlan-tagged interface=wlan4 pvid=${toString inventory.networks.work.id}"
       "/ip neighbor discovery-settings set discover-interface-list=none"
       "/ip settings set max-neighbor-entries=8192"
-      "/ipv6 settings set disable-ipv6=yes max-neighbor-entries=8192"
-      "/interface bridge vlan add bridge=bridge tagged=bridge,ether1 vlan-ids=${toString inventory.networks.mgmt.id}"
+      "/ipv6 settings set max-neighbor-entries=8192"
       "/interface bridge vlan add bridge=bridge tagged=ether1,wlan2 vlan-ids=${toString inventory.networks.trusted.id}"
       "/interface bridge vlan add bridge=bridge tagged=wlan3,ether1 vlan-ids=${toString inventory.networks.iot.id}"
       "/interface bridge vlan add bridge=bridge tagged=ether1,wlan4 vlan-ids=${toString inventory.networks.work.id}"
+      "/interface bridge vlan add bridge=bridge tagged=bridge,ether1 vlan-ids=${toString inventory.networks.mgmt.id}"
       "/interface ovpn-server server set auth=sha1,md5"
       "/ip address add address=${inventory.networks.mgmt.hosts.ap0.ipv4}/${toString inventory.networks.mgmt.ipv4Cidr} interface=${inventory.networks.mgmt.name} network=${inventory.networks.mgmt.networkIPv4}"
-      "/ip dns set servers=${gateway}"
-      "/ip route add disabled=no dst-address=0.0.0.0/0 gateway=${gateway} pref-src=${inventory.networks.mgmt.hosts.ap0.ipv4}"
+      "/ip dns set servers=${inventory.networks.mgmt.hosts.artichoke.ipv4}"
+      "/ip route add dst-address=0.0.0.0/0 gateway=${inventory.networks.mgmt.hosts.artichoke.ipv4}"
+      "/ipv6 route add dst-address=::/0 gateway=${inventory.networks.mgmt.hosts.artichoke.ipv6.ula}%${inventory.networks.mgmt.name}"
       "/ip service set telnet disabled=yes"
       "/ip service set ftp disabled=yes"
       "/ip service set www disabled=yes"
       "/ip service set winbox disabled=yes"
       "/ip service set api-ssl disabled=yes"
+      "/ipv6 address add address=${inventory.networks.mgmt.hosts.ap0.ipv6.ula} advertise=no interface=${inventory.networks.mgmt.name}"
       "/system clock set time-zone-name=America/Los_Angeles"
       "/system identity set name=${inventory.networks.mgmt.hosts.ap0.name}"
       "/system leds settings set all-leds-off=immediate"
