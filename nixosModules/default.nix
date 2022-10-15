@@ -75,7 +75,7 @@ inputs: with inputs; {
           config = lib.mkIf cfg.enable {
             boot = {
               initrd.systemd.enable = true;
-              kernelPackages = pkgs.pkgsCross.aarch64-multiplatform.linuxPackages_cn913x;
+              kernelPackages = pkgs.linuxPackages_cn913x;
             };
             hardware.deviceTree = {
               enable = true;

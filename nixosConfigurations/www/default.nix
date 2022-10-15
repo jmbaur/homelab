@@ -86,7 +86,6 @@ in
 
   services.webauthn-tiny = {
     enable = true;
-    package = pkgs.pkgsCross.aarch64-multiplatform.webauthn-tiny;
     environmentFile = config.age.secrets.webauthn-tiny-env.path;
     relyingParty = {
       id = "jmbaur.com";
