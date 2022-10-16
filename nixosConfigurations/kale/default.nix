@@ -23,8 +23,9 @@
   };
 
   custom = {
-    users.jared.enable = true;
     common.enable = true;
+    users.jared.enable = true;
+    cross-compiled.enable = true;
     deployee = {
       enable = true;
       authorizedKeys = [

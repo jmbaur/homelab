@@ -20,9 +20,9 @@ jobs:
         with:
           name: jmbaur
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
-      - run: |
-          nix build -L \
-            .\#ipwatch \
-            .\#linux_cn913x \
-            .\#runner-nix \
+      - run: >
+          nix build -L
+            .\#ipwatch
+            .\#linux_cn913x
+            .\#runner-nix
             .\#webauthn-tiny
