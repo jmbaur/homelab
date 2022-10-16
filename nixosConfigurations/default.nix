@@ -87,10 +87,10 @@ inputs: with inputs; {
     modules = [
       "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
       ./rhubarb
-      agenix.nixosModules.age
       nixos-configs.nixosModules.default
       nixos-hardware.nixosModules.raspberry-pi-4
       self.nixosModules.default
+      agenix.nixosModules.age
     ];
   };
 
@@ -106,17 +106,6 @@ inputs: with inputs; {
       nixos-configs.nixosModules.default
       self.nixosModules.default
       webauthn-tiny.nixosModules.default
-      ({ lib, ... }: {
-        nixpkgs.overlays = lib.mkAfter [
-          (_: prev: {
-            inherit (import prev.path {
-              localSystem = "x86_64-linux";
-              crossSystem = "aarch64-linux";
-              overlays = [ webauthn-tiny.overlays.default ];
-            }) webauthn-tiny;
-          })
-        ];
-      })
     ];
   };
 }

@@ -9,11 +9,9 @@ inputs: with inputs; {
       inherit cn913x_build;
     };
 
-    linuxPackages_cn913x = (import prev.path {
-      localSystem = "x86_64-linux";
-      crossSystem = "aarch64-linux";
-    }).callPackage ./linuxPackages_cn913x.nix
-      { inherit cn913x_build; };
+    linuxPackages_cn913x = prev.callPackage ./linuxPackages_cn913x.nix {
+      inherit cn913x_build;
+    };
 
     jmbaur-keybase-pgp-keys = prev.fetchurl {
       url = "https://keybase.io/jaredbaur/pgp_keys.asc";

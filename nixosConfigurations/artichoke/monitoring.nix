@@ -25,7 +25,7 @@ in
   services.journald.enableHttpGateway = true;
   services.prometheus.exporters = {
     blackbox = {
-      enable = true;
+      enable = false;
       configFile = "${blackboxConfig}";
     };
     node = {
