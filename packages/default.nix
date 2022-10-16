@@ -111,6 +111,7 @@ in
         system = "x86_64-linux";
         overlays = [
           ipwatch.overlays.default
+          runner-nix.overlays.default
           self.overlays.default
           webauthn-tiny.overlays.default
         ];
@@ -120,6 +121,7 @@ in
       inherit (pkgs.pkgsCross.aarch64-multiplatform)
         ipwatch
         linux_cn913x
+        runner-nix
         ubootCN9130_CF_Pro
         webauthn-tiny
         ;
