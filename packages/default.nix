@@ -114,6 +114,7 @@ in
     in
     pkgs.lib.recursiveUpdate (commonDerivations pkgs) {
       inherit (pkgs.pkgsCross.aarch64-multiplatform)
+        ipwatch
         linux_cn913x
         ubootCN9130_CF_Pro
         webauthn-tiny
