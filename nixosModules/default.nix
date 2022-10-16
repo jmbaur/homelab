@@ -73,10 +73,8 @@ inputs: with inputs; {
         {
           options.hardware.cn913x.enable = lib.mkEnableOption "cn913x hardware";
           config = lib.mkIf cfg.enable {
-            boot = {
-              initrd.systemd.enable = true;
-              kernelPackages = pkgs.linuxPackages_cn913x;
-            };
+            boot.initrd.systemd.enable = true;
+            boot.kernelPackages = pkgs.linuxPackagesFor pkgs.linux_cn913x;
             hardware.deviceTree = {
               enable = true;
               filter = "cn913*.dtb";
@@ -350,6 +348,29 @@ inputs: with inputs; {
               };
           };
         })
+      ({ lib, config, pkgs, ... }: {
+        options.custom.cross-compiled.enable = lib.mkEnableOption "x86_64-linux build to aarch64-linux host";
+        config = lib.mkIf config.custom.cross-compiled.enable {
+          nixpkgs.overlays = lib.mkAfter [
+            (_: _:
+              let
+                p = import pkgs.path {
+                  localSystem = "x86_64-linux";
+                  overlays = [
+                    self.overlays.default
+                    webauthn-tiny.overlays.default
+                  ];
+                };
+              in
+              {
+                inherit (p.pkgsCross.aarch64-multiplatform)
+                  linux_cn913x
+                  webauthn-tiny
+                  ;
+              })
+          ];
+        };
+      })
     ];
   };
 }

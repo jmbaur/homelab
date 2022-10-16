@@ -16,6 +16,7 @@ in
   system.stateVersion = "22.11";
 
   custom = {
+    cross-compiled.enable = true;
     minimal.enable = true;
     deployee = {
       enable = true;

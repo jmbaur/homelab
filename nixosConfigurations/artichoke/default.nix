@@ -40,6 +40,7 @@
 
   custom = {
     minimal.enable = true;
+    cross-compiled.enable = true;
     deployee = {
       enable = true;
       authorizedKeyFiles = [

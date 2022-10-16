@@ -62,8 +62,8 @@ in
       };
     in
     pkgs.lib.recursiveUpdate (commonDerivations pkgs) {
-      linux_cn913x = pkgs.pkgsCross.aarch64-multiplatform.linuxPackages_cn913x.kernel;
       inherit (pkgs)
+        linux_cn913x
         ubootCN9130_CF_Pro
         armTrustedFirmwareCN9130_CF_Pro
         ;
@@ -113,8 +113,8 @@ in
       };
     in
     pkgs.lib.recursiveUpdate (commonDerivations pkgs) {
-      linux_cn913x = pkgs.pkgsCross.aarch64-multiplatform.linuxPackages_cn913x.kernel;
       inherit (pkgs.pkgsCross.aarch64-multiplatform)
+        linux_cn913x
         ubootCN9130_CF_Pro
         webauthn-tiny
         ;

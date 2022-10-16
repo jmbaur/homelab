@@ -4,9 +4,10 @@
 
   zramSwap.enable = true;
 
+  boot.initrd.systemd.enable = true;
   boot.kernelPackages = pkgs.linuxPackages_6_0;
-  boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.systemd-boot.enable = true;
 
   time.timeZone = "America/Los_Angeles";
 
