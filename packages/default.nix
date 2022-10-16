@@ -109,7 +109,11 @@ in
     let
       pkgs = import nixpkgs {
         system = "x86_64-linux";
-        overlays = [ self.overlays.default webauthn-tiny.overlays.default ];
+        overlays = [
+          ipwatch.overlays.default
+          self.overlays.default
+          webauthn-tiny.overlays.default
+        ];
       };
     in
     pkgs.lib.recursiveUpdate (commonDerivations pkgs) {
