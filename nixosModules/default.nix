@@ -350,6 +350,7 @@ inputs: with inputs; {
                 p = import pkgs.path {
                   localSystem = "x86_64-linux";
                   overlays = [
+                    ipwatch.overlays.default
                     self.overlays.default
                     webauthn-tiny.overlays.default
                   ];
@@ -357,6 +358,7 @@ inputs: with inputs; {
               in
               {
                 inherit (p.pkgsCross.aarch64-multiplatform)
+                  ipwatch
                   linux_cn913x
                   webauthn-tiny
                   ;
