@@ -351,6 +351,7 @@ inputs: with inputs; {
                   localSystem = "x86_64-linux";
                   overlays = [
                     ipwatch.overlays.default
+                    runner-nix.overlays.default
                     self.overlays.default
                     webauthn-tiny.overlays.default
                   ];
@@ -360,6 +361,7 @@ inputs: with inputs; {
                 inherit (p.pkgsCross.aarch64-multiplatform)
                   ipwatch
                   linux_cn913x
+                  runner-nix
                   webauthn-tiny
                   ;
               })
