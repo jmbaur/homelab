@@ -20,7 +20,8 @@ jobs:
         with:
           name: jmbaur
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
-      - run: |
+      - name: Build all the things
+        run: |
           nix build -L \
             .\#ipwatch \
             .\#linux_cn913x \
