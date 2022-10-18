@@ -7,7 +7,7 @@ in
     "${modulesPath}/virtualisation/amazon-image.nix"
   ];
 
-  boot.loader.grub.configurationLimit = 2;
+  boot.loader.grub.configurationLimit = 3;
 
   # Minimize total build size
   documentation.enable = false;
