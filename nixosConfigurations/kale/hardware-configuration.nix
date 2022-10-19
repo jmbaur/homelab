@@ -9,7 +9,7 @@
       (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "nvme" "usb_storage" ];
+  boot.initrd.availableKernelModules = [ "nvme" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ ];
   boot.extraModulePackages = [ ];
@@ -18,7 +18,7 @@
     {
       device = "/dev/disk/by-uuid/7bdaa893-23f2-43d0-b14e-676b1af96790";
       fsType = "btrfs";
-      options = [ "subvol=@" "noatime" "discard=async" "compress=zstd" ];
+      options = [ "subvol=@" ];
     };
 
   boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/12ff8ac9-228d-42ab-9eb0-d8b3c21e5e2e";
@@ -27,21 +27,21 @@
     {
       device = "/dev/disk/by-uuid/7bdaa893-23f2-43d0-b14e-676b1af96790";
       fsType = "btrfs";
-      options = [ "subvol=@nix" "noatime" "discard=async" "compress=zstd" ];
+      options = [ "subvol=@nix" ];
     };
 
   fileSystems."/var" =
     {
       device = "/dev/disk/by-uuid/7bdaa893-23f2-43d0-b14e-676b1af96790";
       fsType = "btrfs";
-      options = [ "subvol=@var" "noatime" "discard=async" "compress=zstd" ];
+      options = [ "subvol=@var" ];
     };
 
   fileSystems."/home" =
     {
       device = "/dev/disk/by-uuid/7bdaa893-23f2-43d0-b14e-676b1af96790";
       fsType = "btrfs";
-      options = [ "subvol=@home" "noatime" "discard=async" "compress=zstd" ];
+      options = [ "subvol=@home" ];
     };
 
   fileSystems."/boot" =
@@ -51,7 +51,6 @@
     };
 
   swapDevices = [ ];
-  zramSwap.enable = true;
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
@@ -59,6 +58,7 @@
   # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
   networking.useDHCP = lib.mkDefault true;
   # networking.interfaces.eth0.useDHCP = lib.mkDefault true;
+  # networking.interfaces.wg-public.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
 }
