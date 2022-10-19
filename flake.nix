@@ -13,7 +13,7 @@
     microvm.url = "github:astro/microvm.nix";
     nixos-configs.url = "github:jmbaur/nixos-configs";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
-    nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs?rev=46e516e4434ca65e31ecb1e3df4f03c7e2fe953d";
     pre-commit.url = "github:cachix/pre-commit-hooks.nix";
     runner-nix.url = "github:jmbaur/runner-nix";
     terranix.url = "github:terranix/terranix";
