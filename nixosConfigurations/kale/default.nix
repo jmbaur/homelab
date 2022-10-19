@@ -7,6 +7,9 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  documentation.man.enable = false;
+  fonts.fontconfig.enable = false;
+
   home-manager.users.jared = { systemConfig, ... }: {
     programs.git = {
       userEmail = "jaredbaur@fastmail.com";

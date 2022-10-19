@@ -17,6 +17,9 @@
 
   boot.kernelPackages = pkgs.linuxPackages_6_0;
 
+  documentation.man.enable = false;
+  fonts.fontconfig.enable = false;
+
   networking = {
     hostName = "rhubarb";
     useDHCP = false;
