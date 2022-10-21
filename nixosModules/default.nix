@@ -325,7 +325,6 @@ inputs: with inputs; {
                       AllowedIPs = with wgPublic.hosts.www; [
                         "${ipv4}/32"
                         "${ipv6.ula}/128"
-                        "${ipv6.gua}/128"
                       ];
                     };
                   }];
