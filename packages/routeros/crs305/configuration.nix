@@ -1,5 +1,6 @@
 { lib, writeText, inventoryFile, ... }:
 let
+  unusedVlanId = 99;
   inventory = lib.importJSON inventoryFile;
   configuration = {
     name = "CRS305-1G-4S+";
@@ -9,14 +10,13 @@ let
       "interface wireless security-profiles set [ find default=yes ] supplicant-identity=MikroTik"
       "/ip hotspot profile set [ find default=yes ] html-directory=hotspot"
       "/port set 0 name=serial0"
-      "/interface bridge port add bridge=bridge frame-types=admit-only-untagged-and-priority-tagged interface=ether1 pvid=${toString inventory.networks.mgmt.id}"
-      "/interface bridge port add bridge=bridge frame-types=admit-only-untagged-and-priority-tagged interface=sfp-sfpplus1 pvid=${toString inventory.networks.trusted.id}"
-      "/interface bridge port add bridge=bridge frame-types=admit-only-untagged-and-priority-tagged interface=sfp-sfpplus2 pvid=${toString inventory.networks.work.id}"
-      "/interface bridge port add bridge=bridge disabled=yes interface=sfp-sfpplus3"
-      "/interface bridge port add bridge=bridge frame-types=admit-only-vlan-tagged interface=sfp-sfpplus4"
-      "/interface bridge vlan add bridge=bridge tagged=bridge,sfp-sfpplus4 untagged=ether1 vlan-ids=${toString inventory.networks.mgmt.id}"
-      "/interface bridge vlan add bridge=bridge tagged=sfp-sfpplus4 untagged=sfp-sfpplus1 vlan-ids=${toString inventory.networks.trusted.id}"
-      "/interface bridge vlan add bridge=bridge tagged=sfp-sfpplus4 untagged=sfp-sfpplus2 vlan-ids=${toString inventory.networks.work.id}"
+      "/interface bridge port add bridge=bridge frame-types=admit-only-untagged-and-priority-tagged interface=ether1 pvid=${toString inventory.networks.trusted.id}"
+      "/interface bridge port add bridge=bridge disabled=yes ingress-filtering=no interface=sfp-sfpplus1"
+      "/interface bridge port add bridge=bridge disabled=yes ingress-filtering=no interface=sfp-sfpplus2"
+      "/interface bridge port add bridge=bridge disabled=yes ingress-filtering=no interface=sfp-sfpplus3"
+      "/interface bridge port add bridge=bridge frame-types=admit-only-vlan-tagged interface=sfp-sfpplus4 pvid=${toString unusedVlanId}"
+      "/interface bridge vlan add bridge=bridge tagged=bridge,sfp-sfpplus4 vlan-ids=${toString inventory.networks.mgmt.id}"
+      "/interface bridge vlan add bridge=bridge tagged=sfp-sfpplus4 untagged=ether1 vlan-ids=${toString inventory.networks.trusted.id}"
       "/ip address add address=${inventory.networks.mgmt.hosts.switch1.ipv4}/${toString inventory.networks.mgmt.ipv4Cidr} interface=${inventory.networks.mgmt.name} network=${inventory.networks.mgmt.networkIPv4}"
       "/ip dns set servers=${inventory.networks.mgmt.hosts.artichoke.ipv4}"
       "/ip route add dst-address=0.0.0.0/0 gateway=${inventory.networks.mgmt.hosts.artichoke.ipv4}"
