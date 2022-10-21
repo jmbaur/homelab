@@ -43,10 +43,7 @@
     cross-compiled.enable = true;
     deployee = {
       enable = true;
-      authorizedKeyFiles = [
-        pkgs.jmbaur-github-ssh-keys
-        ../../data/deployer-ssh-keys.txt
-      ];
+      authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
     };
     disableZfs = true;
     wgWwwPeer.enable = true;

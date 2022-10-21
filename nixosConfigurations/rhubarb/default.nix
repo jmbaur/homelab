@@ -3,13 +3,9 @@
     wgWwwPeer.enable = true;
     disableZfs = true;
     common.enable = true;
-    users.jared.enable = true;
     deployee = {
       enable = true;
-      authorizedKeyFiles = [
-        ../../data/deployer-ssh-keys.txt
-        pkgs.jmbaur-github-ssh-keys
-      ];
+      authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
     };
   };
 
@@ -58,6 +54,21 @@
   };
 
   environment.systemPackages = with pkgs; [ picocom wol wireguard-tools ];
+
+  users.users.cage = {
+    isNormalUser = true;
+    extraGroups = [ "dialout" ];
+  };
+
+  services.cage = {
+    enable = true;
+    user = config.users.users.cage.name;
+    program = toString (pkgs.writeShellScript "cage-entrypoint" (lib.escapeShellArgs [
+      "${pkgs.kitty}/bin/kitty"
+      "--hold"
+      "${pkgs.tmux}/bin/tmux"
+    ]));
+  };
 
   services.prometheus = {
     enable = true;
