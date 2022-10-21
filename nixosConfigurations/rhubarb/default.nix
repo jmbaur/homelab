@@ -14,7 +14,6 @@
   boot.kernelPackages = pkgs.linuxPackages_6_0;
 
   documentation.man.enable = false;
-  fonts.fontconfig.enable = false;
 
   networking = {
     hostName = "rhubarb";
@@ -60,14 +59,11 @@
     extraGroups = [ "dialout" ];
   };
 
+  fonts.fontconfig.enable = lib.mkForce true;
   services.cage = {
     enable = true;
     user = config.users.users.cage.name;
-    program = toString (pkgs.writeShellScript "cage-entrypoint" (lib.escapeShellArgs [
-      "${pkgs.kitty}/bin/kitty"
-      "--hold"
-      "${pkgs.tmux}/bin/tmux"
-    ]));
+    program = "${pkgs.alacritty}/bin/alacritty --hold --command ${pkgs.tmux}/bin/tmux new-session -s serial";
   };
 
   services.prometheus = {
