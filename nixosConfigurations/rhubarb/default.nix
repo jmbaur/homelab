@@ -57,9 +57,10 @@
   users.users.cage = {
     isNormalUser = true;
     extraGroups = [ "dialout" ];
+    openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
   };
 
-  fonts.fontconfig.enable = lib.mkForce true;
+  fonts.fontconfig.enable = true;
   services.cage = {
     enable = true;
     user = config.users.users.cage.name;

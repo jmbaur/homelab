@@ -15,16 +15,6 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  documentation.man.enable = false;
-  fonts.fontconfig.enable = false;
-
-  home-manager.users.jared = { systemConfig, ... }: {
-    programs.git = {
-      userEmail = "jaredbaur@fastmail.com";
-      userName = systemConfig.users.users.jared.description;
-    };
-  };
-
   hardware.lx2k.enable = true;
 
   age.secrets.wg-public-kale = {
@@ -34,8 +24,7 @@
   };
 
   custom = {
-    common.enable = true;
-    users.jared.enable = true;
+    minimal.enable = true;
     cross-compiled.enable = true;
     deployee = {
       enable = true;

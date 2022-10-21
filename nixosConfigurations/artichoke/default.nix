@@ -16,10 +16,6 @@
   zramSwap.enable = true;
   system.stateVersion = "22.11";
 
-  # Minimize total build size
-  documentation.enable = false;
-  fonts.fontconfig.enable = false;
-
   age.secrets =
     let
       mkWgSecret = file: {
