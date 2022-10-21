@@ -47,6 +47,7 @@
 
   services.ipwatch = {
     enable = true;
+    extraArgs = [ "-4" ];
     environmentFile = config.age.secrets.ipwatch.path;
     interfaces = [ config.systemd.network.networks.wan.name ];
     scripts =

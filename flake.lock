@@ -510,11 +510,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1666049902,
-        "narHash": "sha256-AfMMtbrt/Gr6iNt+NxwocOPZBO5rnjHkkh9cv6vS4Ds=",
+        "lastModified": 1666382121,
+        "narHash": "sha256-d1EFXCNMxL1J37KIq2ihnJnX+7fHYFpM9EAQK2F3ub8=",
         "owner": "jmbaur",
         "repo": "ipwatch",
-        "rev": "c3f5f1a4fa7c02a9d76b781207451526025c8b2c",
+        "rev": "e8ea70e43114b23ba30c65050ec79e184f4b6bac",
         "type": "github"
       },
       "original": {
