@@ -50,6 +50,8 @@
     extraArgs = [ "-4" ];
     filters = [
       "!IsLoopback"
+      "!IsPrivate"
+      "IsGlobalUnicast"
       "IsValid"
     ];
     environmentFile = config.age.secrets.ipwatch.path;
