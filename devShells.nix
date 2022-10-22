@@ -21,9 +21,9 @@ flake-utils.lib.eachDefaultSystemMap (system:
       ];
       inherit (pre-commit.lib.${system}.run {
         src = ./.;
-        hooks.nixpkgs-fmt = {
-          enable = true;
-          excludes = [ "hardware-configuration\\.nix" ];
+        hooks = {
+          nixpkgs-fmt = { enable = true; excludes = [ "hardware-configuration\\.nix" ]; };
+          deadnix = { enable = true; excludes = [ "hardware-configuration\\.nix" ]; };
         };
       }) shellHook;
     };
