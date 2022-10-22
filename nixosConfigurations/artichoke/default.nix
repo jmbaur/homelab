@@ -7,6 +7,7 @@
     ./lan.nix
     ./links.nix
     ./monitoring.nix
+    ./mullvad.nix
     ./ntp.nix
     ./wan.nix
     ./wireguard.nix
@@ -18,6 +19,9 @@
 
   age.secrets =
     let
+      # mkWgSecret creates an age secret that has file permissions that can be
+      # consumed by systemd-networkd.
+      # Reference: https://www.freedesktop.org/software/systemd/man/systemd.netdev.html#PrivateKeyFile=
       mkWgSecret = file: {
         mode = "0640";
         group = config.users.groups.systemd-network.name;
@@ -26,6 +30,7 @@
     in
     {
       ipwatch.file = ../../secrets/ipwatch.age;
+      mullvad = mkWgSecret ../../secrets/mullvad.age;
       wg-iot-artichoke = mkWgSecret ../../secrets/wg-iot-artichoke.age;
       wg-iot-phone.file = ../../secrets/wg-iot-phone.age;
       wg-public-artichoke = mkWgSecret ../../secrets/wg-public-artichoke.age;

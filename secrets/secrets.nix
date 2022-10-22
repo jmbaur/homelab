@@ -15,6 +15,7 @@ in
   "capac.age".publicKeys = yubikeys;
   "htpasswd.age".publicKeys = withYubikeys [ www ];
   "ipwatch.age".publicKeys = withYubikeys [ artichoke ];
+  "mullvad.age".publicKeys = withYubikeys [ artichoke ];
   "pam_u2f_authfile.age".publicKeys = withYubikeys [ carrot okra ];
   "webauthn-tiny-env.age".publicKeys = withYubikeys [ www ];
   "wg-iot-artichoke.age".publicKeys = withYubikeys [ artichoke ];
