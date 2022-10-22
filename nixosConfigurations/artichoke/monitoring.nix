@@ -64,13 +64,7 @@ in
       ];
     };
   };
-  # TODO(jared): remove this when PR https://github.com/NixOS/nixpkgs/pull/195760 is merged
-  systemd.services.prometheus-kea-exporter.serviceConfig.ExecStart = lib.mkForce ''
-    ${pkgs.prometheus-kea-exporter}/bin/kea-exporter \
-      --address ${config.services.prometheus.exporters.kea.listenAddress} \
-      --port ${toString config.services.prometheus.exporters.kea.port} \
-      ${lib.concatStringsSep " " config.services.prometheus.exporters.kea.controlSocketPaths}
-  '';
+
   nixpkgs.overlays = [
     (_: prev: {
       prometheus-kea-exporter = prev.prometheus-kea-exporter.overrideAttrs
