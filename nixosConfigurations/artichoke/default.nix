@@ -48,15 +48,10 @@
   services.ipwatch = {
     enable = true;
     extraArgs = [ "-4" ];
-    filters = [
-      "!IsLoopback"
-      "!IsPrivate"
-      "IsGlobalUnicast"
-      "IsValid"
-    ];
+    filters = [ "!IsLoopback" "!IsPrivate" "IsGlobalUnicast" "IsValid" ];
     environmentFile = config.age.secrets.ipwatch.path;
     interfaces = [ config.systemd.network.networks.wan.name ];
-    scripts =
+    hooks =
       let
         updateCloudflare = pkgs.writeShellScriptBin "update-cloudflare" ''
           ${pkgs.curl}/bin/curl \
@@ -78,8 +73,9 @@
         '';
       in
       [
-        "${updateCloudflare}/bin/update-cloudflare"
-        "${updateHE}/bin/update-he"
+        "internal:echo"
+        "executable:${updateCloudflare}/bin/update-cloudflare"
+        "executable:${updateHE}/bin/update-he"
       ];
   };
 
