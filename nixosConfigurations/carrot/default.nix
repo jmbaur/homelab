@@ -4,10 +4,17 @@
 
   zramSwap.enable = true;
 
-  boot.initrd.systemd.enable = true;
-  boot.kernelPackages = pkgs.linuxPackages_6_0;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.systemd-boot.enable = true;
+  boot = {
+    initrd = {
+      systemd.enable = true;
+      luks.devices."cryptroot".crypttabExtraOpts = [ "fido2-device=auto" ];
+    };
+    kernelPackages = pkgs.linuxPackages_6_0;
+    loader = {
+      systemd-boot.enable = true;
+      efi.canTouchEfiVariables = true;
+    };
+  };
 
   time.timeZone = "America/Los_Angeles";
 

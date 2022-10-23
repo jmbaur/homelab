@@ -3,29 +3,32 @@
 ## Generic install guide
 
 ```bash
-parted /dev/sda -- mklabel gpt
-parted /dev/sda -- mkpart ESP fat32 1MiB 512MiB # boot partition
-parted /dev/sda -- mkpart primary 512MiB 100% # soon-to-be luks device
-parted /dev/sda -- set 1 esp on
+export DISK="/dev/sda"
+export BOOT_PART="${DISK}1"
+export CRYPT_PART="${DISK}2"
 
-cryptsetup luksFormat /dev/sda2
-cryptsetup luksOpen /dev/sda2 cryptroot
+parted $DISK -- mklabel gpt
+parted $DISK -- mkpart ESP fat32 1MiB 512MiB # boot partition
+parted $DISK -- mkpart primary 512MiB 100% # encrypted partition
+parted $DISK -- set 1 esp on
+
+cryptsetup luksFormat $CRYPT_PART
+cryptsetup luksOpen $CRYPT_PART cryptroot
+systemd-cryptenroll --fido2-device=auto $CRYPT_PART
 
 # Format & mount partitions
 mkfs.btrfs -L root /dev/mapper/cryptroot
-mkfs.vfat -F 32 -n boot /dev/sda1
+mkfs.vfat -F 32 -n boot $BOOT_PART
 mount /dev/mapper/cryptroot /mnt
 mkdir -p /mnt/{boot,nix,home,home/.snapshots}
-mount /dev/sda1 /mnt/boot
+mount $BOOT_PART /mnt/boot
 btrfs subvolume create /mnt/@
 btrfs subvolume create /mnt/@nix
 btrfs subvolume create /mnt/@home
-btrfs subvolume create /mnt/@home/.snapshots
 umount /dev/mapper/cryptroot
 mount -o subvol=@ /dev/mapper/cryptroot /mnt
 mount -o subvol=@nix /dev/mapper/cryptroot /mnt/nix
 mount -o subvol=@home /dev/mapper/cryptroot /mnt/home
-mount -o subvol=@home/.snapshots /dev/mapper/cryptroot /mnt/home/.snapshots
 
 # Generate base NixOS config
 nixos-generate-config --root /mnt
