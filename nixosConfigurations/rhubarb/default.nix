@@ -62,7 +62,7 @@
   services.cage = {
     enable = true;
     user = config.users.users.cage.name;
-    program = "${pkgs.alacritty}/bin/alacritty --hold --command ${pkgs.tmux}/bin/tmux new-session -s serial";
+    program = "${pkgs.alacritty}/bin/alacritty --hold --command ${pkgs.tmux}/bin/tmux new-session -A -s serial";
   };
 
   services.prometheus = {
