@@ -2,7 +2,7 @@
   custom = {
     wgWwwPeer.enable = true;
     disableZfs = true;
-    common.enable = true;
+    minimal.enable = true;
     deployee = {
       enable = true;
       authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
@@ -12,8 +12,6 @@
   zramSwap.enable = true;
 
   boot.kernelPackages = pkgs.linuxPackages_6_0;
-
-  documentation.man.enable = false;
 
   networking = {
     hostName = "rhubarb";
@@ -46,7 +44,7 @@
   systemd.network = {
     enable = true;
     networks.wired = {
-      name = "eth*";
+      name = "eth0";
       DHCP = "yes";
       dhcpV4Config.ClientIdentifier = "mac";
     };
@@ -154,22 +152,20 @@
 
   services.grafana = {
     enable = true;
-    addr = "0.0.0.0";
-    port = 3000;
-    auth = {
-      disableLoginForm = true;
-      anonymous.enable = true;
+    settings = {
+      auth.disable_login_form = true;
+      "auth.anonymous".enabled = true;
     };
     declarativePlugins = [ ];
     provision = {
       enable = true;
-      datasources = [{
+      datasources.settings.datasources = [{
         url = "http://localhost:${toString config.services.prometheus.port}";
         type = "prometheus";
         name = "prometheus";
         isDefault = true;
       }];
-      dashboards = pkgs.grafana-dashboards.dashboards;
+      dashboards.settings.providers = pkgs.grafana-dashboards.dashboards;
     };
   };
 

@@ -18,6 +18,7 @@ let
   ] ++ (map
     (d: with d; {
       inherit name;
+      type = "file";
       options.path = fetchurl {
         inherit url sha256;
         name = "${name}-dashboard.json";
