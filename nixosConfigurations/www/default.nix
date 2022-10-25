@@ -33,7 +33,7 @@ in
         owner = config.services.nginx.user;
         group = config.services.nginx.group;
       };
-      wg_public_www = {
+      "wg/public/www" = {
         mode = "0640";
         group = config.users.groups.systemd-network.name;
       };
@@ -60,7 +60,7 @@ in
       allowedUDPPorts = [ (wgPublic.id + 51800) ];
     };
     wireguard.interfaces.${wgPublic.name} = {
-      privateKeyFile = config.sops.secrets.wg_public_www.path;
+      privateKeyFile = config.sops.secrets."wg/public/www".path;
       listenPort = wgPublic.id + 51800;
       ips = with wgPublic.hosts.www; [
         "${ipv4}/${toString wgPublic.ipv4Cidr}"
