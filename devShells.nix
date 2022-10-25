@@ -4,7 +4,6 @@ flake-utils.lib.eachDefaultSystemMap (system:
     pkgs = import nixpkgs {
       inherit system;
       overlays = [
-        agenix.overlay
         nixos-configs.overlays.default
         self.overlays.default
       ];
@@ -13,11 +12,11 @@ flake-utils.lib.eachDefaultSystemMap (system:
   {
     default = pkgs.mkShell {
       buildInputs = with pkgs; [
-        (terraform.withPlugins (p: with p; [ aws cloudflare http ]))
-        agenix
+        (terraform.withPlugins (p: with p; [ aws cloudflare http sops ]))
         awscli2
         deploy-rs
         flarectl
+        sops
       ];
       inherit (pre-commit.lib.${system}.run {
         src = ./.;

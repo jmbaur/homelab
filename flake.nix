@@ -2,7 +2,6 @@
   description = "NixOS configurations for the homelab";
 
   inputs = {
-    agenix.url = "github:ryantm/agenix";
     cn913x_build.flake = false;
     cn913x_build.url = "github:solidrun/cn913x_build";
     deploy-rs.url = "github:serokell/deploy-rs";
@@ -16,6 +15,7 @@
     nixpkgs.url = "nixpkgs/nixos-unstable";
     pre-commit.url = "github:cachix/pre-commit-hooks.nix";
     runner-nix.url = "github:jmbaur/runner-nix";
+    sops-nix.url = "github:Mic92/sops-nix";
     terranix.url = "github:terranix/terranix";
     webauthn-tiny.url = "github:jmbaur/webauthn-tiny";
   };

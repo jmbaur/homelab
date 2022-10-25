@@ -111,10 +111,13 @@
     enable = true;
     cue = true;
     origin = "pam://homelab";
-    authFile = config.age.secrets.pam_u2f_authfile.path;
+    authFile = config.sops.secrets.pam_u2f_authfile.path;
   };
 
-  age.secrets.pam_u2f_authfile.file = ../../secrets/pam_u2f_authfile.age;
+  sops = {
+    defaultSopsFile = ./secrets.yaml;
+    secrets.pam_u2f_authfile = { };
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

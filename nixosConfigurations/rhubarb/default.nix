@@ -35,10 +35,12 @@
     dnssec = "false";
   };
 
-  age.secrets.wg-public-rhubarb = {
-    mode = "0640";
-    group = config.users.groups.systemd-network.name;
-    file = ../../secrets/wg-public-rhubarb.age;
+  sops = {
+    defaultSopsFile = ./secrets.yaml;
+    secrets."wg/public/rhubarb" = {
+      mode = "0640";
+      group = config.users.groups.systemd-network.name;
+    };
   };
 
   systemd.network = {

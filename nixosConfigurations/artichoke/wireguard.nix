@@ -11,7 +11,7 @@ let
         netdevConfig = { Name = wgServerHost.interface; Kind = "wireguard"; };
         wireguardConfig = {
           ListenPort = port;
-          PrivateKeyFile = config.age.secrets."${network.name}-${config.networking.hostName}".path;
+          PrivateKeyFile = config.sops.secrets."wg/${lib.replaceStrings ["wg-"] [""] network.name}/${config.networking.hostName}".path;
         };
         wireguardPeers = lib.mapAttrsToList
           (_: peer: {
@@ -45,7 +45,7 @@ let
                   "${host.ipv6.gua}/${toString network.ipv6Cidr}"
                   "${host.ipv6.ula}/${toString network.ipv6Cidr}"
                 ];
-                PrivateKey = "$(cat ${config.age.secrets."${network.name}-${hostname}".path})";
+                PrivateKey = "$(cat ${config.sops.secrets."wg/${lib.replaceStrings ["wg-"] [""] network.name}/${hostname}".path})";
                 DNS = (with wgServerHost; ([ ipv4 ipv6.gua ipv6.ula ])) ++ [ "home.arpa" ];
               };
               Peer = {
@@ -70,7 +70,7 @@ let
                   "${host.ipv6.gua}/${toString network.ipv6Cidr}"
                   "${host.ipv6.ula}/${toString network.ipv6Cidr}"
                 ];
-                PrivateKey = "$(cat ${config.age.secrets."${network.name}-${hostname}".path})";
+                PrivateKey = "$(cat ${config.sops.secrets."wg/${lib.replaceStrings ["wg-"] [""] network.name}/${hostname}".path})";
                 DNS = (with wgServerHost; ([ ipv4 ipv6.gua ipv6.ula ])) ++ [ "home.arpa" ];
               };
               Peer = {
@@ -136,3 +136,4 @@ in
     iot.clientConfigs
   ;
 }
+

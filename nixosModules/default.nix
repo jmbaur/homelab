@@ -328,7 +328,7 @@ inputs: with inputs; {
                       ];
                     };
                   }];
-                  wireguardConfig.PrivateKeyFile = config.age.secrets."wg-public-${config.networking.hostName}".path;
+                  wireguardConfig.PrivateKeyFile = config.sops.secrets."wg/public/${config.networking.hostName}".path;
                 };
                 networks.wg-public = {
                   name = "wg-public";

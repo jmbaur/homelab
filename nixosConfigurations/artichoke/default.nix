@@ -17,27 +17,26 @@
   zramSwap.enable = true;
   system.stateVersion = "22.11";
 
-  age.secrets =
-    let
-      # mkWgSecret creates an age secret that has file permissions that can be
-      # consumed by systemd-networkd.
-      # Reference: https://www.freedesktop.org/software/systemd/man/systemd.netdev.html#PrivateKeyFile=
-      mkWgSecret = file: {
-        mode = "0640";
-        group = config.users.groups.systemd-network.name;
-        inherit file;
+  sops = {
+    defaultSopsFile = ./secrets.yaml;
+    secrets =
+      let
+        # wgSecret is a sops secret that has file permissions that can be
+        # consumed by systemd-networkd. Reference:
+        # https://www.freedesktop.org/software/systemd/man/systemd.netdev.html#PrivateKeyFile=
+        wgSecret = { mode = "0640"; group = config.users.groups.systemd-network.name; };
+      in
+      {
+        ipwatch_env = { };
+        "wg/mullvad" = wgSecret;
+        "wg/iot/artichoke" = wgSecret;
+        "wg/iot/phone" = { };
+        "wg/public/artichoke" = wgSecret;
+        "wg/trusted/artichoke" = wgSecret;
+        "wg/trusted/beetroot" = { };
+        "wg/trusted/carrot" = { };
       };
-    in
-    {
-      ipwatch.file = ../../secrets/ipwatch.age;
-      mullvad = mkWgSecret ../../secrets/mullvad.age;
-      wg-iot-artichoke = mkWgSecret ../../secrets/wg-iot-artichoke.age;
-      wg-iot-phone.file = ../../secrets/wg-iot-phone.age;
-      wg-public-artichoke = mkWgSecret ../../secrets/wg-public-artichoke.age;
-      wg-trusted-artichoke = mkWgSecret ../../secrets/wg-trusted-artichoke.age;
-      wg-trusted-beetroot.file = ../../secrets/wg-trusted-beetroot.age;
-      wg-trusted-carrot.file = ../../secrets/wg-trusted-carrot.age;
-    };
+  };
 
   custom = {
     minimal.enable = true;
@@ -54,7 +53,7 @@
     enable = true;
     extraArgs = [ "-4" ];
     filters = [ "!IsLoopback" "!IsPrivate" "IsGlobalUnicast" "IsValid" ];
-    environmentFile = config.age.secrets.ipwatch.path;
+    environmentFile = config.sops.secrets.ipwatch_env.path;
     interfaces = [ config.systemd.network.networks.wan.name ];
     hooks =
       let

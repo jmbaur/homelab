@@ -5,7 +5,7 @@
       Name = "wg-mullvad";
     };
     wireguardConfig = {
-      PrivateKeyFile = config.age.secrets.mullvad.path;
+      PrivateKeyFile = config.sops.secrets."wg/mullvad".path;
       RouteTable = "off"; # don't setup routes for allowed IPs
     };
     wireguardPeers = [{

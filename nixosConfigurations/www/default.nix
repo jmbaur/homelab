@@ -24,18 +24,19 @@ in
     };
   };
 
-  age.secrets = {
-    webauthn-tiny-env.file = ../../secrets/webauthn-tiny-env.age;
-    htpasswd = {
-      mode = "0440";
-      owner = config.services.nginx.user;
-      group = config.services.nginx.group;
-      file = ../../secrets/htpasswd.age;
-    };
-    wg-public-www = {
-      mode = "0640";
-      group = config.users.groups.systemd-network.name;
-      file = ../../secrets/wg-public-www.age;
+  sops = {
+    defaultSopsFile = ./secrets.yaml;
+    secrets = {
+      webauthn_tiny_env = { };
+      htpasswd = {
+        mode = "0440";
+        owner = config.services.nginx.user;
+        group = config.services.nginx.group;
+      };
+      wg_public_www = {
+        mode = "0640";
+        group = config.users.groups.systemd-network.name;
+      };
     };
   };
 
@@ -59,7 +60,7 @@ in
       allowedUDPPorts = [ (wgPublic.id + 51800) ];
     };
     wireguard.interfaces.${wgPublic.name} = {
-      privateKeyFile = config.age.secrets.wg-public-www.path;
+      privateKeyFile = config.sops.secrets.wg_public_www.path;
       listenPort = wgPublic.id + 51800;
       ips = with wgPublic.hosts.www; [
         "${ipv4}/${toString wgPublic.ipv4Cidr}"
@@ -87,7 +88,7 @@ in
 
   services.webauthn-tiny = {
     enable = true;
-    environmentFile = config.age.secrets.webauthn-tiny-env.path;
+    environmentFile = config.sops.secrets.webauthn_tiny_env.path;
     relyingParty = {
       id = "jmbaur.com";
       origin = "https://auth.jmbaur.com";
@@ -97,7 +98,7 @@ in
       enable = true;
       virtualHost = "auth.jmbaur.com";
       useACMEHost = "jmbaur.com";
-      basicAuthFile = config.age.secrets.htpasswd.path;
+      basicAuthFile = config.sops.secrets.htpasswd.path;
       protectedVirtualHosts = [ "logs.jmbaur.com" "mon.jmbaur.com" ];
     };
   };

@@ -7,10 +7,10 @@ inputs: with inputs; {
     };
     modules = [
       ./okra
-      agenix.nixosModules.age
-      self.nixosModules.default
       nixos-configs.nixosModules.default
       nixos-hardware.nixosModules.intel-nuc-8i7beh
+      self.nixosModules.default
+      sops-nix.nixosModules.sops
     ];
   };
 
@@ -22,10 +22,10 @@ inputs: with inputs; {
     };
     modules = [
       ./carrot
-      agenix.nixosModules.age
-      self.nixosModules.default
       nixos-configs.nixosModules.default
       nixos-hardware.nixosModules.lenovo-thinkpad-t495
+      self.nixosModules.default
+      sops-nix.nixosModules.sops
     ];
   };
 
@@ -37,10 +37,10 @@ inputs: with inputs; {
     };
     modules = [
       ./potato/configuration.nix
-      agenix.nixosModules.age
       nixos-configs.nixosModules.default
       nixos-hardware.nixosModules.common-cpu-amd
       self.nixosModules.default
+      sops-nix.nixosModules.sops
     ];
   };
 
@@ -53,10 +53,10 @@ inputs: with inputs; {
     };
     modules = [
       ./kale
-      agenix.nixosModules.age
       nixos-configs.nixosModules.default
       runner-nix.nixosModules.default
       self.nixosModules.default
+      sops-nix.nixosModules.sops
     ];
   };
 
@@ -70,10 +70,10 @@ inputs: with inputs; {
     modules = [
       "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
       ./artichoke
-      agenix.nixosModules.age
       ipwatch.nixosModules.default
       nixos-configs.nixosModules.default
       self.nixosModules.default
+      sops-nix.nixosModules.sops
     ];
   };
 
@@ -90,7 +90,7 @@ inputs: with inputs; {
       nixos-configs.nixosModules.default
       nixos-hardware.nixosModules.raspberry-pi-4
       self.nixosModules.default
-      agenix.nixosModules.age
+      sops-nix.nixosModules.sops
     ];
   };
 
@@ -102,9 +102,9 @@ inputs: with inputs; {
     };
     modules = [
       ./www
-      agenix.nixosModules.age
       nixos-configs.nixosModules.default
       self.nixosModules.default
+      sops-nix.nixosModules.sops
       webauthn-tiny.nixosModules.default
     ];
   };

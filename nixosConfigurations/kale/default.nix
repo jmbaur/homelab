@@ -17,10 +17,12 @@
 
   hardware.lx2k.enable = true;
 
-  age.secrets.wg-public-kale = {
-    mode = "0640";
-    group = config.users.groups.systemd-network.name;
-    file = ../../secrets/wg-public-kale.age;
+  sops = {
+    defaultSopsFile = ./secrets.yaml;
+    secrets."wg/public/kale" = {
+      mode = "0640";
+      group = config.users.groups.systemd-network.name;
+    };
   };
 
   custom = {
