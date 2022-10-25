@@ -151,7 +151,7 @@ in
                 name = "index.html";
                 path = pkgs.writeText "index.html"
                   ("<!DOCTYPE html>" + (
-                    lib.concatMapStringsSep "\n"
+                    lib.concatMapStrings
                       (host: ''<a href="/${host}/browse">${host}</a><br />'')
                       logHosts)
                   );
