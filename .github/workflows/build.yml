@@ -21,4 +21,4 @@ jobs:
           name: jmbaur
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
       - name: Build all the things
-        run: nix develop --command just build
+        run: nix develop --command sh -c "just build"
