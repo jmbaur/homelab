@@ -21,27 +21,6 @@
   networking = {
     useDHCP = false;
     hostName = "carrot";
-    useNetworkd = true;
-    wireless.enable = true;
-  };
-  systemd.network = {
-    wait-online.anyInterface = true;
-    networks = {
-      wireless = {
-        name = "wl*";
-        DHCP = "yes";
-        dhcpV4Config.RouteMetric = config.systemd.network.networks.wired.dhcpV4Config.RouteMetric * 2;
-        ipv6AcceptRAConfig.RouteMetric = config.systemd.network.networks.wired.ipv6AcceptRAConfig.RouteMetric * 2;
-        networkConfig.IPv6PrivacyExtensions = "kernel";
-      };
-      wired = {
-        name = "en*";
-        DHCP = "yes";
-        dhcpV4Config.RouteMetric = 1024;
-        ipv6AcceptRAConfig.RouteMetric = 1024;
-        networkConfig.IPv6PrivacyExtensions = "kernel";
-      };
-    };
   };
   services.resolved.enable = true;
 
@@ -107,16 +86,16 @@
   services.fwupd.enable = true;
 
   security.pam.u2f = {
-    enable = true;
+    enable = false;
     cue = true;
     origin = "pam://homelab";
     authFile = config.sops.secrets.pam_u2f_authfile.path;
   };
 
-  sops = {
-    defaultSopsFile = ./secrets.yaml;
-    secrets.pam_u2f_authfile = { };
-  };
+  # sops = {
+  #   defaultSopsFile = ./secrets.yaml;
+  #   secrets.pam_u2f_authfile = { };
+  # };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

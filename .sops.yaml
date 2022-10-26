@@ -25,6 +25,9 @@ creation_rules:
   - path_regex: nixosConfigurations/okra/secrets.yaml
     pgp: *jmbaur_pgp
     age: *okra
+  - path_regex: nixosConfigurations/carrot/secrets.yaml
+    pgp: *jmbaur_pgp
+    age: *carrot
   # catch-all
   - pgp: *jmbaur_pgp
 # TODO(jared): for when sops is compatible with age plugins
