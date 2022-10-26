@@ -16,6 +16,7 @@ flake-utils.lib.eachDefaultSystemMap (system:
         awscli2
         deploy-rs
         flarectl
+        just
         sops
       ];
       inherit (pre-commit.lib.${system}.run {

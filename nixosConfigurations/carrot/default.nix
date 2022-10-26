@@ -28,6 +28,7 @@
     common.enable = true;
     dev.enable = true;
     gui.enable = true;
+    gui.variant = "sway";
     laptop.enable = true;
     users.jared.enable = true;
     remoteBuilders.aarch64builder.enable = true;

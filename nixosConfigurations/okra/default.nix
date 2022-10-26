@@ -12,9 +12,9 @@
   zramSwap.enable = true;
 
   boot.kernelPackages = pkgs.linuxPackages_6_0;
+  boot.initrd.availableKernelModules = [ "e1000e" ];
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.initrd.availableKernelModules = [ "igb" ];
 
   time.timeZone = "America/Los_Angeles";
 
@@ -41,6 +41,7 @@
     common.enable = true;
     dev.enable = true;
     gui.enable = true;
+    gui.variant = "sway";
     users.jared.enable = true;
     remoteBuilders.aarch64builder.enable = true;
     deployee = {

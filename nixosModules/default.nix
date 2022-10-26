@@ -42,25 +42,7 @@ inputs: with inputs; {
       ./remote_boot.nix
       ./deployee.nix
       ./deployer.nix
-      ({ secrets, lib, config, pkgs, ... }:
-        let cfg = config.custom.users.jared; in
-        {
-          options.custom.users.jared.enable = lib.mkEnableOption "jared";
-          config = lib.mkIf cfg.enable {
-            programs.zsh.enable = true;
-            users.users.jared = {
-              isNormalUser = true;
-              description = "Jared Baur";
-              extraGroups = [
-                "dialout"
-                "wheel"
-              ] ++ (lib.optional config.networking.networkmanager.enable "networkmanager");
-              shell = pkgs.zsh;
-              openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
-              inherit (secrets.users.jared) hashedPassword;
-            };
-          };
-        })
+      ./jared.nix
       ({ config, lib, pkgs, ... }: {
         options.custom.remoteBuilders = {
           aarch64builder.enable = lib.mkEnableOption "aarch64 builder";
