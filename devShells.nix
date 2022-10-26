@@ -10,13 +10,15 @@ flake-utils.lib.eachDefaultSystemMap (system:
     };
   in
   {
+    ci = pkgs.mkShell {
+      buildInputs = with pkgs; [ just jq ];
+    };
     default = pkgs.mkShell {
       buildInputs = with pkgs; [
         (terraform.withPlugins (p: with p; [ aws cloudflare http sops ]))
         awscli2
         deploy-rs
         flarectl
-        jq
         just
         sops
       ];
