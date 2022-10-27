@@ -3,6 +3,10 @@
     wgWwwPeer.enable = true;
     disableZfs = true;
     minimal.enable = true;
+    users.jared = {
+      enable = true;
+      passwordFile = config.sops.secrets.jared_password.path;
+    };
     deployee = {
       enable = true;
       authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
@@ -37,9 +41,12 @@
 
   sops = {
     defaultSopsFile = ./secrets.yaml;
-    secrets."wg/public/rhubarb" = {
-      mode = "0640";
-      group = config.users.groups.systemd-network.name;
+    secrets = {
+      "wg/public/rhubarb" = {
+        mode = "0640";
+        group = config.users.groups.systemd-network.name;
+      };
+      jared_password.neededForUsers = true;
     };
   };
 
@@ -53,19 +60,6 @@
   };
 
   environment.systemPackages = with pkgs; [ picocom wol wireguard-tools ];
-
-  users.users.cage = {
-    isNormalUser = true;
-    extraGroups = [ "dialout" ];
-    openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
-  };
-
-  fonts.fontconfig.enable = true;
-  services.cage = {
-    enable = true;
-    user = config.users.users.cage.name;
-    program = "${pkgs.alacritty}/bin/alacritty --hold --command ${pkgs.tmux}/bin/tmux new-session -A -s serial";
-  };
 
   services.prometheus = {
     enable = true;

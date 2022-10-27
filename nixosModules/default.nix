@@ -31,8 +31,8 @@ inputs: with inputs; {
               '';
             };
             environment = {
-              variables.EDITOR = "vim";
-              systemPackages = with pkgs; [ curl git tmux vim ];
+              variables.EDITOR = "nvim";
+              systemPackages = with pkgs; [ curl git tmux neovim ];
             };
           };
         })

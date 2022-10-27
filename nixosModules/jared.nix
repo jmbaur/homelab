@@ -1,10 +1,13 @@
-{ secrets, lib, config, pkgs, ... }:
+{ lib, config, pkgs, ... }:
 let cfg = config.custom.users.jared; in
 {
-  options.custom.users.jared.enable = lib.mkEnableOption "jared";
+  options.custom.users.jared = {
+    enable = lib.mkEnableOption "jared";
+    passwordFile = lib.mkOption { type = lib.types.path; };
+  };
   config = lib.mkIf cfg.enable {
     users.users.jared = {
-      inherit (secrets.users.jared) hashedPassword;
+      inherit (cfg) passwordFile;
       isNormalUser = true;
       description = "Jared Baur";
       shell = pkgs.zsh;

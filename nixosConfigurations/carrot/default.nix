@@ -51,7 +51,10 @@
     gui.enable = true;
     gui.variant = "sway";
     laptop.enable = true;
-    users.jared.enable = true;
+    users.jared = {
+      enable = true;
+      passwordFile = config.sops.secrets.jared_password.path;
+    };
     remoteBuilders.aarch64builder.enable = true;
   };
 
@@ -69,7 +72,10 @@
 
   sops = {
     defaultSopsFile = ./secrets.yaml;
-    secrets.pam_u2f_authfile = { };
+    secrets = {
+      pam_u2f_authfile = { };
+      jared_password.neededForUsers = true;
+    };
   };
 
   home-manager.users.jared = { systemConfig, config, pkgs, ... }: {
