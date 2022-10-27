@@ -43,6 +43,7 @@ inputs: with inputs; {
       ./deployee.nix
       ./deployer.nix
       ./jared.nix
+      ./jared-dev.nix
       ({ config, lib, pkgs, ... }: {
         options.custom.remoteBuilders = {
           aarch64builder.enable = lib.mkEnableOption "aarch64 builder";
