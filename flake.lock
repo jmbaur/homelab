@@ -472,11 +472,11 @@
         "utils": "utils_3"
       },
       "locked": {
-        "lastModified": 1666649150,
-        "narHash": "sha256-kINnLxC0KFalUk4tVO/H5hUU7FVAOYYcUSWrsBpnl+I=",
+        "lastModified": 1666875108,
+        "narHash": "sha256-sf0uvlDIatV/eYUJ8N5+Si21og3B6G+AKXive3RUH4E=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "7dc4e4ebd71280842b4d30975439980baaac9db8",
+        "rev": "32fe7d2ebb7e338ad95a3ea9393fc6ad681368ce",
         "type": "github"
       },
       "original": {
@@ -573,11 +573,11 @@
         "pre-commit": "pre-commit"
       },
       "locked": {
-        "lastModified": 1666847863,
-        "narHash": "sha256-ebbBnaEOBOotd0d1Yk5rhVkUM+vo3MkfD5x1hMJ4VLc=",
+        "lastModified": 1666884023,
+        "narHash": "sha256-HgHC2EgrxRnCi+zJ9XzWb90VenuMjaIz4YxIDaudocI=",
         "owner": "jmbaur",
         "repo": "nixos-configs",
-        "rev": "5f65d306bb1af3ed0899ed3b94cfbbdbf8dcfcff",
+        "rev": "6dbefbb7e10e14be7190707e671d26ec0201cee5",
         "type": "github"
       },
       "original": {
