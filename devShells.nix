@@ -20,7 +20,9 @@ flake-utils.lib.eachDefaultSystemMap (system:
         deploy-rs
         flarectl
         just
+        pam_u2f
         sops
+        yubikey-manager
       ];
       inherit (pre-commit.lib.${system}.run {
         src = ./.;

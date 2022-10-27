@@ -70,6 +70,15 @@
         user.signingKey = "key::sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIBhCHaXn5ghEJQVpVZr4hOajD6Zp/0PO4wlymwfrg/S5AAAABHNzaDo=";
       };
     };
+    programs.gpg.publicKeys = [
+      {
+        trust = 5;
+        source = pkgs.fetchurl {
+          url = "https://keybase.io/jaredbaur/pgp_keys.asc";
+          sha256 = "0rw02akfvdrpdrznhaxsy8105ng5r8xb5mlmjwh9msf4brnbwrj7";
+        };
+      }
+    ];
     programs.ssh = {
       enable = true;
       matchBlocks = {
@@ -108,16 +117,16 @@
   services.fwupd.enable = true;
 
   security.pam.u2f = {
-    enable = false;
+    enable = true;
     cue = true;
     origin = "pam://homelab";
     authFile = config.sops.secrets.pam_u2f_authfile.path;
   };
 
-  # sops = {
-  #   defaultSopsFile = ./secrets.yaml;
-  #   secrets.pam_u2f_authfile = { };
-  # };
+  sops = {
+    defaultSopsFile = ./secrets.yaml;
+    secrets.pam_u2f_authfile = { };
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

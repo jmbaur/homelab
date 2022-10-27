@@ -13,3 +13,9 @@ update:
 			nix flake lock --update-input $input
 		fi
 	done
+
+setup_pam_u2f:
+	pamu2fcfg -opam://homelab
+
+setup_yubikey:
+	ykman openpgp keys set-touch sig cached-fixed
