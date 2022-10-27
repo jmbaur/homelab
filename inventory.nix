@@ -112,7 +112,6 @@ flake-utils.lib.eachDefaultSystemMap
             includeRoutesTo = [ "mgmt" "trusted" "iot" "wg-iot" "work" ];
             hosts = {
               artichoke = { lastBit = 1; interface = "wg-trusted"; publicKey = "68sZOobFSYwyt7ZVsQ6steLqHH/CEQQHluUr+X6y5AQ="; };
-              beetroot = { lastBit = 52; wgPeer = true; publicKey = "T+zc4lpoEgxPIKEBr9qXiAzb/ruRbqZuVrih+0rGs2M="; };
               carrot = { lastBit = 51; wgPeer = true; publicKey = "XcKlp41XBEtrplIcXkxwQQUyT2kyJ/X4QcmckCnNU3w="; };
             };
           };

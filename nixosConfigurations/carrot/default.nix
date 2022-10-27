@@ -112,6 +112,21 @@
       };
     };
 
+    services.kanshi = {
+      profiles = {
+        default = {
+          outputs = [
+            { criteria = "eDP-1"; }
+          ];
+        };
+        docked = {
+          outputs = config.services.kanshi.profiles.default.outputs ++ [
+            { criteria = "Lenovo Group Limited LEN P24q-20 V306P4GR"; mode = "2560x1440@74.78Hz"; }
+          ];
+        };
+      };
+    };
+
     home.packages = with pkgs; [
       age-plugin-yubikey
       bitwarden
