@@ -1,6 +1,5 @@
 { pkgs, config, lib, inventory, ... }:
 let
-  # coredns-utils = pkgs.callPackage ./coredns-utils.nix { };
   mkDotDns = map (ip: "tls://${ip}");
   googleDns = {
     servers = mkDotDns [ "8.8.8.8" "8.8.4.4" "2001:4860:4860::8888" "2001:4860:4860::8844" ];

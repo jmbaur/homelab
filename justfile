@@ -1,3 +1,6 @@
+help:
+	@just --list
+
 build:
 	#!/usr/bin/env bash
 	nix build -L \
