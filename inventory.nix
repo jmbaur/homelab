@@ -104,10 +104,7 @@ flake-utils.lib.eachDefaultSystemMap
           trusted = {
             id = 30;
             includeRoutesTo = [ "mgmt" "wg-trusted" "iot" "wg-iot" "work" ];
-            hosts = {
-              artichoke = { lastBit = 1; interface = "lan3"; };
-              okra = { lastBit = 51; dhcp = true; mac = "1c:69:7a:64:45:b2"; };
-            };
+            hosts.artichoke = { lastBit = 1; interface = "lan3"; };
           };
           wg-trusted = {
             id = 31;

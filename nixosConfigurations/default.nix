@@ -1,19 +1,4 @@
 inputs: with inputs; {
-  okra = nixpkgs.lib.nixosSystem {
-    system = "x86_64-linux";
-    specialArgs = {
-      inherit inputs;
-      inherit (homelab-private) secrets;
-    };
-    modules = [
-      ./okra
-      nixos-configs.nixosModules.default
-      nixos-hardware.nixosModules.intel-nuc-8i7beh
-      self.nixosModules.default
-      sops-nix.nixosModules.sops
-    ];
-  };
-
   carrot = nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
     specialArgs = {
