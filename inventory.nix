@@ -133,6 +133,7 @@ flake-utils.lib.eachDefaultSystemMap
           };
           work = {
             id = 50;
+            includeRoutesTo = [ "trusted" ];
             hosts = {
               artichoke = { lastBit = 1; interface = "lan5"; };
               laptop = { lastBit = 50; dhcp = true; mac = "08:3a:88:63:1a:b4"; };
