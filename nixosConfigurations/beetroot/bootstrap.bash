@@ -1,10 +1,5 @@
 # shellcheck shell=bash
 
-# dependencies:
-#   - sops
-#   - ssh-to-age
-#   - yq-go
-
 export DISK="/dev/nvme0n1"
 
 wipefs $DISK

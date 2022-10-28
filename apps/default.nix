@@ -10,7 +10,7 @@ inputs: with inputs; nixpkgs.lib.genAttrs [ "aarch64-linux" "x86_64-linux" ] (sy
           program = pkgs.writeShellApplication {
             name = "bootstrap-beetroot";
             runtimeInputs = with pkgs; [ yq-go ];
-            text = builtins.readFile ./nixosConfigurations/beetroot/bootstrap.bash;
+            text = builtins.readFile ../nixosConfigurations/beetroot/bootstrap.bash;
           };
         in
         "${program}/bin/bootstrap-beetroot";
