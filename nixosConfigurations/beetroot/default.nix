@@ -2,6 +2,11 @@
   imports = [ ./hardware-configuration.nix ];
   hardware.bluetooth.enable = true;
 
+  fileSystems = {
+    "/".options = [ "noatime" "discard=async" "compress=zstd" ];
+    "/nix".options = [ "noatime" "discard=async" "compress=zstd" ];
+    "/home".options = [ "noatime" "discard=async" "compress=zstd" ];
+  };
   zramSwap.enable = true;
 
   boot = {
@@ -18,9 +23,10 @@
 
   time.timeZone = "America/Los_Angeles";
 
+  systemd.tmpfiles.rules = [ "f /etc/wpa_supplicant.conf 600 root root - -" ];
   networking = {
     useDHCP = false;
-    hostName = "carrot";
+    hostName = "beetroot";
     useNetworkd = true;
     wireless.enable = true;
   };
@@ -75,6 +81,9 @@
     secrets = {
       pam_u2f_authfile = { };
       jared_password.neededForUsers = true;
+      "rdp/domain".owner = config.users.users.jared.name;
+      "rdp/user".owner = config.users.users.jared.name;
+      "rdp/password".owner = config.users.users.jared.name;
     };
   };
 
@@ -147,6 +156,14 @@
       slack-wayland
       spotify
       teams-webapp
+      (writeShellScriptBin "rdp" ''
+        ${freerdp}/bin/wlfreerdp \
+          /sec:tls /cert:tofu -grab-keyboard \
+          /d:$(cat ${systemConfig.sops.secrets."rdp/domain".path}) \
+          /u:$(cat ${systemConfig.sops.secrets."rdp/user".path}) \
+          /p:$(cat ${systemConfig.sops.secrets."rdp/password".path}) \
+          /v:laptop.work.home.arpa
+      '')
     ];
   };
 

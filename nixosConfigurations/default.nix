@@ -1,12 +1,12 @@
 inputs: with inputs; {
-  carrot = nixpkgs.lib.nixosSystem {
+  beetroot = nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
     specialArgs = {
       inherit inputs;
       inherit (homelab-private) secrets;
     };
     modules = [
-      ./carrot
+      ./beetroot
       nixos-configs.nixosModules.default
       nixos-hardware.nixosModules.lenovo-thinkpad-t495
       self.nixosModules.default

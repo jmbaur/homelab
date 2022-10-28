@@ -30,10 +30,6 @@
     cross-compiled.enable = true;
     deployee = {
       enable = true;
-      authorizedKeys = [
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMF97KbhWOOJzIS/pbf0FHgtx4jVQI8BGFUssKr8itTa root@okra"
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPcY6NWQGE4zHXOmWTW5kT/S2vQsi79ILzhbtR1GPxho root@carrot"
-      ];
       authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
     };
     remoteBoot = {

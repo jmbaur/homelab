@@ -1,7 +1,7 @@
 keys:
   - &jmbaur_pgp D4A0692874AA71B7F1281491BB8667EA7EB08143
   - &artichoke age1cl8ec0m5xath3mwfzaye2zvcsjz2mvy5vhdh949jhquulta70qlsr37q92
-  - &carrot age1dq07lhu55y3rd2ssvjkjymuqtrhvmuczs2vfp5pdtark7ynqnglsr0qldf
+  - &beetroot age1mglgcdm0dl9dhw2qa6cg2nznjfj20pgy57v6ry280v9a5tu8r4xsyztyk9
   - &kale age1smqw9zensjnzrsqdlc7avf2d5qcxrp3755030e5uvtvv4c3phfcq8dzr5e
   - &rhubarb age1jha7xr8mruxy4mlrrda8qpvets5cltddvpwt3wk90g6r8c87gg5slwgec6
   - &www age1y8n3ppl6pp9xy0pkuwjku7jc5xzje4nufy70hw526fs6re0czg9sapa3uq
@@ -21,9 +21,9 @@ creation_rules:
   - path_regex: nixosConfigurations/rhubarb/secrets.yaml
     pgp: *jmbaur_pgp
     age: *rhubarb
-  - path_regex: nixosConfigurations/carrot/secrets.yaml
+  - path_regex: nixosConfigurations/beetroot/secrets.yaml
     pgp: *jmbaur_pgp
-    age: *carrot
+    age: *beetroot
   # catch-all
   - pgp: *jmbaur_pgp
 # TODO(jared): for when sops is compatible with age plugins

@@ -33,7 +33,7 @@
         "wg/iot/phone" = { };
         "wg/public/artichoke" = wgSecret;
         "wg/trusted/artichoke" = wgSecret;
-        "wg/trusted/carrot" = { };
+        "wg/trusted/beetroot" = { };
       };
   };
 
