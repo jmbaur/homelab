@@ -31,8 +31,7 @@ mount -o subvol=@nix,discard=async,compress=zstd,noatime /dev/mapper/cryptroot /
 mount -o subvol=@home,discard=async,compress=zstd,noatime /dev/mapper/cryptroot /mnt/home
 mount $BOOT_PART /mnt/boot
 
-nixos-generate-config --root /mnt
-cat /mnt/etc/nixos/hardware-configuration.nix >nixosConfigurations/beetroot/hardware-configuration.nix
+nixos-generate-config --root /mnt --show-hardware-config >nixosConfigurations/beetroot/hardware-configuration.nix
 
 ssh-keygen -t ed25519 -N "" -f /mnt/etc/ssh/ssh_host_ed25519_key
 ssh-keygen -t rsa -b 4096 -N "" -f /mnt/etc/ssh/ssh_host_rsa_key
