@@ -29,7 +29,7 @@
         User root
         HostName kale.mgmt.home.arpa
         IdentitiesOnly yes
-        IdentityFile /root/.ssh/id_ed25519
+        IdentityFile /etc/ssh/ssh_host_ed25519_key
       '';
     };
   };
