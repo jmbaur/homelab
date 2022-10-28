@@ -1,6 +1,7 @@
 { config, lib, inventory, ... }:
 let
   toKeaArray = data: lib.concatStringsSep "," data;
+  dhcpInterfaces = [ "mgmt" "trusted" "iot" "work" ];
 in
 {
   services.kea = {
@@ -25,7 +26,7 @@ in
         interfaces-config = {
           interfaces = map
             (name: config.systemd.network.networks.${name}.name)
-            [ "trusted" "iot" "work" "mgmt" ];
+            dhcpInterfaces;
         };
         subnet4 = lib.flatten (map
           (name:
@@ -89,7 +90,7 @@ in
               }
             ]
           )
-          [ "trusted" "iot" "work" "mgmt" ]);
+          dhcpInterfaces);
       };
     };
     dhcp6 = {
@@ -105,7 +106,7 @@ in
         interfaces-config = {
           interfaces = map
             (name: config.systemd.network.networks.${name}.name)
-            [ "trusted" "iot" "work" "mgmt" ];
+            dhcpInterfaces;
         };
         subnet6 = lib.flatten (map
           (name:
@@ -126,7 +127,7 @@ in
               }
             ]
           )
-          [ "trusted" "iot" "work" "mgmt" ]);
+          dhcpInterfaces);
       };
     };
   };
