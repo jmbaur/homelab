@@ -1,5 +1,10 @@
 # shellcheck shell=bash
 
+# dependencies:
+#   - sops
+#   - ssh-to-age
+#   - yq-go
+
 export DISK="/dev/nvme0n1"
 
 wipefs $DISK
@@ -32,10 +37,13 @@ mount -o subvol=@home,discard=async,compress=zstd,noatime /dev/mapper/cryptroot 
 mount $BOOT_PART /mnt/boot
 
 nixos-generate-config --root /mnt
+cat /mnt/etc/nixos/hardware-configuration.nix >nixosConfigurations/beetroot/hardware-configuration.nix
 
 ssh-keygen -t ed25519 -N "" -f /mnt/etc/ssh/ssh_host_ed25519_key
+ssh-keygen -t rsa -b 4096 -N "" -f /mnt/etc/ssh/ssh_host_rsa_key
 
-# TODO(jared): ssh-to-age < /etc/ssh/ssh_host_ed25519_key.pub
+new_age_public_key=$(ssh-to-age </etc/ssh/ssh_host_ed25519_key.pub) \
+	yq -i '(.keys[] | select(anchor=="beetroot")) = strenv(new_age_public_key)' .sops.yaml
 
 sops updatekeys nixosConfigurations/beetroot/secrets.yaml
 
