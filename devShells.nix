@@ -1,5 +1,4 @@
-inputs: with inputs;
-flake-utils.lib.eachDefaultSystemMap (system:
+inputs: with inputs; nixpkgs.lib.genAttrs [ "aarch64-linux" "x86_64-linux" ] (system:
   let
     pkgs = import nixpkgs {
       inherit system;

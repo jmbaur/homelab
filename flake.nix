@@ -5,7 +5,6 @@
     cn913x_build.flake = false;
     cn913x_build.url = "github:solidrun/cn913x_build";
     deploy-rs.url = "github:serokell/deploy-rs";
-    flake-utils.url = "github:numtide/flake-utils";
     homelab-private.url = "git+ssh://git@github.com/jmbaur/homelab-private";
     ipwatch.url = "github:jmbaur/ipwatch";
     microvm.inputs.nixpkgs.follows = "nixpkgs";
@@ -43,5 +42,6 @@
     nixosModules = import ./nixosModules inputs;
     overlays = import ./overlays inputs;
     packages = import ./packages inputs;
+    apps = import ./apps inputs;
   };
 }
