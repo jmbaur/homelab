@@ -39,7 +39,7 @@ nixpkgs.lib.genAttrs [ "aarch64-linux" "x86_64-linux" ]
             ula = (mkIPv6Addr ulaPrefix (toIpHexString networkId) (toIpHexString lastBit));
           };
         };
-      mkNetwork = name: { id, mtu ? null, hosts, wireguard ? false, includeRoutesTo ? [ ] }:
+      mkNetwork = name: { id, mtu ? null, hosts, wireguard ? false, managed ? false, includeRoutesTo ? [ ] }:
         let
           mkNetworkHost = mkHost id;
           ipv4Cidr = 24;
@@ -71,7 +71,7 @@ nixpkgs.lib.genAttrs [ "aarch64-linux" "x86_64-linux" ]
             wireguard;
           domain = "${name}.home.arpa";
           hosts = networkHosts;
-          managed = wireguard || ((lib.filterAttrs (_: host: host.dhcp) networkHosts) != { });
+          managed = managed || wireguard || ((lib.filterAttrs (_: host: host.dhcp) networkHosts) != { });
         };
     in
     {
@@ -104,7 +104,10 @@ nixpkgs.lib.genAttrs [ "aarch64-linux" "x86_64-linux" ]
           trusted = {
             id = 30;
             includeRoutesTo = [ "mgmt" "wg-trusted" "iot" "wg-iot" "work" ];
-            hosts.artichoke = { lastBit = 1; interface = "lan3"; };
+            managed = true;
+            hosts = {
+              artichoke = { lastBit = 1; interface = "lan3"; };
+            };
           };
           wg-trusted = {
             id = 31;
