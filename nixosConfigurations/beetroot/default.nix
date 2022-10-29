@@ -64,7 +64,6 @@
     remoteBuilders.aarch64builder.enable = true;
   };
 
-
   nixpkgs.config.allowUnfree = true;
 
   services.fwupd.enable = true;
@@ -151,6 +150,7 @@
       element-desktop-wayland
       firefox-wayland
       freerdp
+      librewolf-wayland
       outlook-webapp
       signal-desktop-wayland
       slack-wayland
