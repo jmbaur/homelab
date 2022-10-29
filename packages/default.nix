@@ -118,6 +118,10 @@ in
       };
     in
     pkgs.lib.recursiveUpdate (commonDerivations pkgs) {
+      disko-beetroot = pkgs.writeShellScriptBin "disko-beetroot"
+        (disko.lib.create
+          (import ../nixosConfigurations/beetroot/disko.nix));
+
       inherit (pkgs.pkgsCross.aarch64-multiplatform)
         ipwatch
         linux_cn913x

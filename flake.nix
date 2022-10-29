@@ -5,6 +5,7 @@
     cn913x_build.flake = false;
     cn913x_build.url = "github:solidrun/cn913x_build";
     deploy-rs.url = "github:serokell/deploy-rs";
+    disko.url = "github:nix-community/disko";
     homelab-private.url = "git+ssh://git@github.com/jmbaur/homelab-private";
     ipwatch.url = "github:jmbaur/ipwatch";
     microvm.inputs.nixpkgs.follows = "nixpkgs";
