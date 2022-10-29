@@ -2,8 +2,7 @@
 
 export DISK="/dev/nvme0n1"
 
-wipefs $DISK
-sync
+blkdiscard $DISK
 
 export BOOT_PART="${DISK}p1"
 export CRYPT_PART="${DISK}p2"
