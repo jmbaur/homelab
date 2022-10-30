@@ -128,11 +128,7 @@
 
     services.kanshi = {
       profiles = {
-        default = {
-          outputs = [
-            { criteria = "eDP-1"; }
-          ];
-        };
+        default = { outputs = [{ criteria = "eDP-1"; }]; };
         docked = {
           outputs = config.services.kanshi.profiles.default.outputs ++ [
             { criteria = "Lenovo Group Limited LEN P24q-20 V306P4GR"; mode = "2560x1440@74.78Hz"; }
@@ -163,6 +159,11 @@
           /u:$(cat ${systemConfig.sops.secrets."rdp/user".path}) \
           /p:$(cat ${systemConfig.sops.secrets."rdp/password".path}) \
           /v:laptop.work.home.arpa
+      '')
+      (writeShellScriptBin "chromium-work" ''
+        ${chromium-wayland}/bin/chromium \
+          --profile-directory=Work \
+          --proxy-server="socks5://localhost:9050"
       '')
     ];
   };
