@@ -67,15 +67,14 @@ in
 
   nixpkgs.overlays = [
     (_: prev: {
-      prometheus-kea-exporter = prev.prometheus-kea-exporter.overrideAttrs
-        (_: {
-          src = prev.fetchFromGitHub {
-            owner = "jmbaur";
-            repo = "kea-exporter";
-            rev = "16a436969d6e84d57d47130666a064de44c9e159";
-            sha256 = "15120dydr4wc99y89jy3k8zk5h7600ax8fhhdp40wd28piwpsmsz";
-          };
-        });
+      prometheus-kea-exporter = prev.prometheus-kea-exporter.overrideAttrs (old: {
+        patches = (old.patches or [ ]) ++ [
+          (prev.fetchpatch {
+            url = "https://patch-diff.githubusercontent.com/raw/mweinelt/kea-exporter/pull/30.patch";
+            sha256 = "0876kc191lw1cq5v4bd6wh139iw51k70cqkwdmjyz40pd61xp16q";
+          })
+        ];
+      });
     })
   ];
 }
