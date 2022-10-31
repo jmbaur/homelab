@@ -56,7 +56,7 @@
     interfaces = [ config.systemd.network.networks.wan.name ];
     hooks =
       let
-        updateCloudflare = pkgs.writeShellScriptBin "update-cloudflare" ''
+        updateCloudflare = pkgs.writeShellScript "update-cloudflare" ''
           ${pkgs.curl}/bin/curl \
             --silent \
             --show-error \
@@ -66,7 +66,7 @@
             --data '{"type":"A","name":"vpn.${inventory.tld}","content":"'"''${ADDR}"'","proxied":false}' \
             "https://api.cloudflare.com/client/v4/zones/''${CF_ZONE_ID}/dns_records/''${VPN_CF_RECORD_ID}" | ${pkgs.jq}/bin/jq
         '';
-        updateHE = pkgs.writeShellScriptBin "update-he" ''
+        updateHE = pkgs.writeShellScript "update-he" ''
           ${pkgs.curl}/bin/curl \
             --silent \
             --show-error \
@@ -75,11 +75,7 @@
             https://ipv4.tunnelbroker.net/nic/update
         '';
       in
-      [
-        "internal:echo"
-        "executable:${updateCloudflare}/bin/update-cloudflare"
-        "executable:${updateHE}/bin/update-he"
-      ];
+      [ "internal:echo" "executable:${updateCloudflare}" "executable:${updateHE}" ];
   };
 
   services.avahi = {
