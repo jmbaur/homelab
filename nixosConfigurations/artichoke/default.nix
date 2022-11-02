@@ -50,7 +50,7 @@
 
   services.ipwatch = {
     enable = true;
-    extraArgs = [ "-4" ];
+    extraArgs = [ "-debug" "-4" ];
     filters = [ "!IsLoopback" "!IsPrivate" "IsGlobalUnicast" "IsValid" ];
     environmentFile = config.sops.secrets.ipwatch_env.path;
     interfaces = [ config.systemd.network.networks.wan.name ];
