@@ -5,7 +5,7 @@ with lib; {
   config = mkIf cfg.enable {
     custom.disableZfs = true;
     boot = {
-      kernelPackages = pkgs.linuxPackages_latest;
+      kernelPackages = pkgs.linuxPackages_testing;
       kernelParams = [ "dtb=/boot/dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb" ];
       initrd.kernelModules = [ "phy-qcom-qmp-pcie" "phy-qcom-edp" "i2c_qcom_geni" "i2c_hid_of" ];
       loader.grub = {
