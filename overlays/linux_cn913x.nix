@@ -62,6 +62,10 @@ linux_5_15.override (originalArgs: {
       patch = "${cn913x_build}/patches/linux/0017-dts-armada-ap807-updated-thermal-compatibility.patch";
     }
     {
+      name = "0018-DPDK-support-for-MVPP2";
+      patch = "${cn913x_build}/patches/linux/0018-DPDK-support-for-MVPP2.patch";
+    }
+    {
       name = "cn913x_additions";
       patch = null;
       extraConfig = lib.replaceStrings
