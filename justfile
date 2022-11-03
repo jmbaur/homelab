@@ -2,7 +2,7 @@ help:
 	@just --list
 
 switch:
-	nixos-rebuild switch --flake .# --use-remote-sudo
+	nixos-rebuild switch -L --flake .# --use-remote-sudo
 
 build:
 	#!/usr/bin/env bash
