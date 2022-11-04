@@ -59,7 +59,7 @@
     };
   };
 
-  environment.systemPackages = with pkgs; [ picocom wol wireguard-tools ];
+  environment.systemPackages = with pkgs; [ tmux picocom wol wireguard-tools ];
 
   services.prometheus = {
     enable = true;
