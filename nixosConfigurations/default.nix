@@ -47,7 +47,7 @@ inputs: with inputs; {
   };
 
   artichoke-test = nixpkgs.lib.nixosSystem {
-    system = "x86_64-linux";
+    system = "aarch64-linux";
     modules = [
       ../modules/hardware/a38x.nix
       self.nixosModules.default

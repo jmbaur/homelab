@@ -93,6 +93,7 @@ in
         ];
       }).config.system.build.isoImage;
       artichoke_image = self.nixosConfigurations.artichoke.config.system.build.sdImage;
+      artichoke-test_image = self.nixosConfigurations.artichoke-test.config.system.build.sdImage;
       rhubarb_image = self.nixosConfigurations.rhubarb.config.system.build.sdImage;
     };
 
@@ -109,7 +110,6 @@ in
       };
     in
     pkgs.lib.recursiveUpdate (commonDerivations pkgs) {
-      artichoke-test_image = self.nixosConfigurations.artichoke-test.config.system.build.sdImage;
       inherit (pkgs.pkgsCross.aarch64-multiplatform)
         ipwatch
         linux_cn913x
