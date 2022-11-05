@@ -16,7 +16,7 @@ in
   system.stateVersion = "22.11";
 
   custom = {
-    cross-compiled.enable = true;
+    cross-compiled.${config.nixpkgs.system}.enable = true;
     minimal.enable = true;
     deployee = {
       enable = true;

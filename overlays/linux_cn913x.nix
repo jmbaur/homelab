@@ -1,8 +1,4 @@
-{ cn913x_build
-, linux_5_15
-, lib
-, ...
-}:
+{ cn913x_build, linux_5_15, lib, ... }:
 linux_5_15.override (originalArgs: {
   kernelPatches = (originalArgs.kernelPatches or [ ]) ++ [
     {

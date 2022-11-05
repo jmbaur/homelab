@@ -5,10 +5,6 @@ let
     { custom.installer.enable = true; }
   ];
 
-  installer_img_modules = common_installer_modules ++ [
-    "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64-installer.nix"
-  ];
-
   installer_iso_modules = common_installer_modules ++ [
     "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
     "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
@@ -68,15 +64,10 @@ in
         armTrustedFirmwareCN9130_CF_Pro
         ;
 
-      installer_img = (nixpkgs.lib.nixosSystem {
-        inherit (pkgs) system;
-        modules = installer_img_modules;
-      }).config.system.build.sdImage;
-
       installer_iso_lx2k = (nixpkgs.lib.nixosSystem {
         inherit (pkgs) system;
         specialArgs = { inherit inputs; };
-        modules = installer_iso_modules ++ [{ hardware.lx2k.enable = true; }];
+        modules = installer_iso_modules ++ [{ imports = [ ../modules/hardware/lx2k.nix ]; }];
       }).config.system.build.isoImage;
 
       installer_iso_thinkpad_x13s = (nixpkgs.lib.nixosSystem {
@@ -101,8 +92,8 @@ in
           })
         ];
       }).config.system.build.isoImage;
-      artichoke_sd_image = self.nixosConfigurations.artichoke.config.system.build.sdImage;
-      rhubarb_sd_image = self.nixosConfigurations.rhubarb.config.system.build.sdImage;
+      artichoke_image = self.nixosConfigurations.artichoke.config.system.build.sdImage;
+      rhubarb_image = self.nixosConfigurations.rhubarb.config.system.build.sdImage;
     };
 
   x86_64-linux =
@@ -118,6 +109,7 @@ in
       };
     in
     pkgs.lib.recursiveUpdate (commonDerivations pkgs) {
+      artichoke-test_image = self.nixosConfigurations.artichoke-test.config.system.build.sdImage;
       inherit (pkgs.pkgsCross.aarch64-multiplatform)
         ipwatch
         linux_cn913x

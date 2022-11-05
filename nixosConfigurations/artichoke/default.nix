@@ -13,7 +13,6 @@
     ./wireguard.nix
   ];
 
-  hardware.cn913x.enable = true;
   zramSwap.enable = true;
   system.stateVersion = "22.11";
 
@@ -39,7 +38,7 @@
 
   custom = {
     minimal.enable = true;
-    cross-compiled.enable = true;
+    cross-compiled.${config.nixpkgs.system}.enable = true;
     deployee = {
       enable = true;
       authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];

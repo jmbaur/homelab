@@ -39,7 +39,7 @@
     formatter = import ./formatter.nix inputs;
     inventory = import ./inventory.nix inputs;
     nixosConfigurations = import ./nixosConfigurations inputs;
-    nixosModules = import ./nixosModules inputs;
+    nixosModules = import ./modules/nixos inputs;
     overlays = import ./overlays inputs;
     packages = import ./packages inputs;
     apps = import ./apps inputs;

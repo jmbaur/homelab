@@ -15,8 +15,6 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  hardware.lx2k.enable = true;
-
   sops = {
     defaultSopsFile = ./secrets.yaml;
     secrets."wg/public/kale" = {
@@ -31,7 +29,7 @@
 
   custom = {
     minimal.enable = true;
-    cross-compiled.enable = true;
+    cross-compiled.${config.nixpkgs.system}.enable = true;
     deployee = {
       enable = true;
       authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
@@ -77,5 +75,4 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "22.11"; # Did you read the comment?
-
 }

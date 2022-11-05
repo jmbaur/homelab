@@ -38,10 +38,24 @@ inputs: with inputs; {
     };
     modules = [
       ./kale
+      ../modules/hardware/lx2k.nix
       nixos-configs.nixosModules.default
       runner-nix.nixosModules.default
       self.nixosModules.default
       sops-nix.nixosModules.sops
+    ];
+  };
+
+  artichoke-test = nixpkgs.lib.nixosSystem {
+    system = "x86_64-linux";
+    modules = [
+      ../modules/hardware/a38x.nix
+      self.nixosModules.default
+      ({ lib, ... }: {
+        system.stateVersion = "22.11";
+        nixpkgs.crossSystem = lib.systems.examples.armv7l-hf-multiplatform;
+        custom.disableZfs = true;
+      })
     ];
   };
 
@@ -53,8 +67,8 @@ inputs: with inputs; {
       inherit (self.inventory.${system}) inventory;
     };
     modules = [
-      "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
       ./artichoke
+      ../modules/hardware/cn913x.nix
       ipwatch.nixosModules.default
       nixos-configs.nixosModules.default
       self.nixosModules.default
@@ -70,8 +84,8 @@ inputs: with inputs; {
       inherit (self.inventory.${system}) inventory;
     };
     modules = [
-      "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
       ./rhubarb
+      ../modules/hardware/rpi4.nix
       nixos-configs.nixosModules.default
       nixos-hardware.nixosModules.raspberry-pi-4
       self.nixosModules.default
