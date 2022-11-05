@@ -74,8 +74,8 @@ in
         inherit (pkgs) system;
         specialArgs = { inherit inputs; };
         modules = installer_iso_modules ++ [
+          ../modules/hardware/thinkpad_x13s.nix
           ({ config, ... }: {
-            hardware.thinkpad-x13s.enable = true;
             isoImage = {
               contents = [
                 (
