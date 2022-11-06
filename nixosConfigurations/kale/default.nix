@@ -12,6 +12,7 @@
   };
   zramSwap.enable = true;
 
+  boot.binfmt.emulatedSystems = [ "armv7l-linux" ];
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
@@ -23,9 +24,13 @@
     };
   };
 
-  users.users.root.openssh.authorizedKeys.keys = [
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJawyN2+eugTUPbfxqpqKAPOh8qJ9/bT3Lq1Dq2YAzFt root@beetroot"
-  ];
+  nix.settings.trusted-users = [ config.users.users.builder.name ];
+  users.users.builder = {
+    isNormalUser = true;
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJawyN2+eugTUPbfxqpqKAPOh8qJ9/bT3Lq1Dq2YAzFt root@beetroot"
+    ];
+  };
 
   custom = {
     minimal.enable = true;

@@ -5,13 +5,15 @@
   config = {
     nix.buildMachines =
       (lib.optional config.custom.remoteBuilders.aarch64builder.enable {
+        protocol = "ssh-ng";
         hostName = "aarch64builder";
-        system = "aarch64-linux";
+        systems = [ "aarch64-linux" "armv7l-linux" ];
         maxJobs = 8;
         speedFactor = 2;
         supportedFeatures = [ "nixos-test" "benchmark" "big-parallel" "kvm" ];
         mandatoryFeatures = [ ];
-      });
+      })
+    ;
     nix.distributedBuilds = true;
     # optional, useful when the builder has a faster internet connection than yours
     nix.extraOptions = ''
@@ -26,7 +28,7 @@
       ];
       extraConfig = ''
         Host aarch64builder
-        User root
+        User builder
         HostName kale.mgmt.home.arpa
         IdentitiesOnly yes
         IdentityFile /etc/ssh/ssh_host_ed25519_key
@@ -34,4 +36,3 @@
     };
   };
 }
-

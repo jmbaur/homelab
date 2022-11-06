@@ -47,13 +47,12 @@ inputs: with inputs; {
   };
 
   artichoke-test = nixpkgs.lib.nixosSystem {
-    system = "aarch64-linux";
+    system = "armv7l-linux";
     modules = [
       ../modules/hardware/a38x.nix
       self.nixosModules.default
-      ({ lib, ... }: {
+      ({ ... }: {
         system.stateVersion = "22.11";
-        nixpkgs.crossSystem = lib.systems.examples.armv7l-hf-multiplatform;
         custom.disableZfs = true;
       })
     ];
