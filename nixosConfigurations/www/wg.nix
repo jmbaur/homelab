@@ -1,5 +1,5 @@
 let
-  mkIP = last: "fdc9:ef0a:6a3c:0::${last}/64";
+  mkIP = last: "fdc9:ef0a:6a3c:0::${last}";
 in
 {
   "www" = { ip = mkIP "1"; publicKey = "csMlRz8b+t1o83MZldExeOxiu7HgtW8GkbxUhZlHYXk="; };

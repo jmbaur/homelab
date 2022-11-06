@@ -7,8 +7,8 @@ in
   options.custom.wgWwwPeer.enable = lib.mkEnableOption "wireguard peer to www";
   config = lib.mkIf cfg.enable {
     assertions = [{
-      assertion = config.networking.useNetworkd;
       message = "systemd-networkd not used";
+      assertion = config.networking.useNetworkd;
     }];
     systemd.network = {
       netdevs.www = {
@@ -21,14 +21,14 @@ in
             PublicKey = wg.www.publicKey;
             Endpoint = "www.jmbaur.com:51820";
             PersistentKeepalive = 25;
-            AllowedIPs = [ wg.www.ip ];
+            AllowedIPs = [ (wg.www.ip + "/128") ];
           };
         }];
         wireguardConfig.PrivateKeyFile = config.sops.secrets."wg/www/${config.networking.hostName}".path;
       };
       networks.www = {
         name = "www";
-        address = [ wg.${config.networking.hostName}.ip ];
+        address = [ (wg.${config.networking.hostName}.ip + "/64") ];
       };
     };
   };

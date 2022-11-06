@@ -56,11 +56,11 @@ in
     wireguard.interfaces.www = {
       privateKeyFile = config.sops.secrets."wg/www/www".path;
       listenPort = 51820;
-      ips = [ wg.www.ip ];
+      ips = [ (wg.www.ip + "/64") ];
       peers = [
-        { allowedIPs = [ wg.kale.ip ]; publicKey = wg.kale.publicKey; }
-        { allowedIPs = [ wg.rhubarb.ip ]; publicKey = wg.rhubarb.publicKey; }
-        { allowedIPs = [ wg.artichoke.ip ]; publicKey = wg.artichoke.publicKey; }
+        { allowedIPs = [ (wg.kale.ip + "/128") ]; publicKey = wg.kale.publicKey; }
+        { allowedIPs = [ (wg.rhubarb.ip + "/128") ]; publicKey = wg.rhubarb.publicKey; }
+        { allowedIPs = [ (wg.artichoke.ip + "/128") ]; publicKey = wg.artichoke.publicKey; }
       ];
     };
   };
