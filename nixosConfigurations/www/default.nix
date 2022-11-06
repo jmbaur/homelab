@@ -1,17 +1,11 @@
-{ config, lib, pkgs, modulesPath, inventory, ... }:
+{ config, lib, pkgs, modulesPath, ... }:
 let
-  wgPublic = inventory.networks.wg-public;
+  wg = import ./wg.nix;
 in
 {
-  imports = [
-    "${modulesPath}/virtualisation/amazon-image.nix"
-  ];
+  imports = [ "${modulesPath}/virtualisation/amazon-image.nix" ];
 
   boot.loader.grub.configurationLimit = 2;
-
-  # Minimize total build size
-  documentation.enable = false;
-  fonts.fontconfig.enable = false;
 
   system.stateVersion = "22.11";
 
@@ -33,7 +27,7 @@ in
         owner = config.services.nginx.user;
         group = config.services.nginx.group;
       };
-      "wg/public/www" = {
+      "wg/www/www" = {
         mode = "0640";
         group = config.users.groups.systemd-network.name;
       };
@@ -57,31 +51,16 @@ in
   networking = {
     firewall = {
       allowedTCPPorts = [ 22 80 443 ];
-      allowedUDPPorts = [ (wgPublic.id + 51800) ];
+      allowedUDPPorts = [ config.networking.wireguard.interfaces.www.listenPort ];
     };
-    wireguard.interfaces.${wgPublic.name} = {
-      privateKeyFile = config.sops.secrets."wg/public/www".path;
-      listenPort = wgPublic.id + 51800;
-      ips = with wgPublic.hosts.www; [
-        "${ipv4}/${toString wgPublic.ipv4Cidr}"
-        "${ipv6.ula}/${toString wgPublic.ipv6Cidr}"
-      ];
-      postSetup = ''
-        printf "nameserver ${wgPublic.hosts.artichoke.ipv4}\nnameserver ${wgPublic.hosts.artichoke.ipv6.ula}" | ${pkgs.openresolv}/bin/resolvconf -a ${wgPublic.name} -m 0
-      '';
+    wireguard.interfaces.www = {
+      privateKeyFile = config.sops.secrets."wg/www/www".path;
+      listenPort = 51820;
+      ips = [ wg.www.ip ];
       peers = [
-        (with wgPublic.hosts.kale; {
-          allowedIPs = [ "${ipv4}/32" "${ipv6.ula}/128" ];
-          publicKey = publicKey;
-        })
-        (with wgPublic.hosts.rhubarb; {
-          allowedIPs = [ "${ipv4}/32" "${ipv6.ula}/128" ];
-          publicKey = publicKey;
-        })
-        (with wgPublic.hosts.artichoke; {
-          allowedIPs = [ "${ipv4}/32" "${ipv6.ula}/128" ];
-          publicKey = publicKey;
-        })
+        { allowedIPs = [ wg.kale.ip ]; publicKey = wg.kale.publicKey; }
+        { allowedIPs = [ wg.rhubarb.ip ]; publicKey = wg.rhubarb.publicKey; }
+        { allowedIPs = [ wg.artichoke.ip ]; publicKey = wg.artichoke.publicKey; }
       ];
     };
   };
@@ -117,13 +96,13 @@ in
         forceSSL = true;
         useACMEHost = "jmbaur.com";
         locations."/" = {
-          proxyPass = "http://[${wgPublic.hosts.rhubarb.ipv6.ula}]:3000";
+          proxyPass = "http://[${wg.rhubarb.ip}]:3000";
           extraConfig = ''
             proxy_set_header Host $host;
           '';
         };
         locations."/api/live" = {
-          proxyPass = "http://[${wgPublic.hosts.rhubarb.ipv6.ula}]:3000";
+          proxyPass = "http://[${wg.rhubarb.ip}]:3000";
           extraConfig = ''
             proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
@@ -138,7 +117,7 @@ in
           locationBlocks = {
             locations = lib.listToAttrs (map
               (host: lib.nameValuePair "/${host}/" {
-                proxyPass = "http://[${wgPublic.hosts.${host}.ipv6.ula}]:19531/";
+                proxyPass = "http://[${wg.${host}.ip}]:19531/";
               })
               logHosts);
           };
@@ -151,11 +130,8 @@ in
               {
                 name = "index.html";
                 path = pkgs.writeText "index.html"
-                  ("<!DOCTYPE html>" + (
-                    lib.concatMapStrings
-                      (host: ''<a href="/${host}/browse">${host}</a><br />'')
-                      logHosts)
-                  );
+                  ("<!DOCTYPE html>"
+                    + (lib.concatMapStrings (host: ''<a href="/${host}/browse">${host}</a><br />'') logHosts));
               }
               { name = "favicon.ico"; path = "${./logs_favicon.ico}"; }
             ];

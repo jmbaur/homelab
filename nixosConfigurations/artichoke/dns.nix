@@ -78,7 +78,6 @@ in
         mgmt
         trusted
         wg-iot
-        wg-public
         wg-trusted
         work
       ]);

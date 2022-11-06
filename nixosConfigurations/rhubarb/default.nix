@@ -24,7 +24,7 @@
     firewall = {
       allowedTCPPorts = lib.mkForce [ ];
       interfaces = {
-        wg-public.allowedTCPPorts = lib.mkForce [
+        www.allowedTCPPorts = lib.mkForce [
           3000 # grafana
           19531 # systemd-journal-gatewayd
         ];
@@ -42,7 +42,7 @@
   sops = {
     defaultSopsFile = ./secrets.yaml;
     secrets = {
-      "wg/public/rhubarb" = {
+      "wg/www/rhubarb" = {
         mode = "0640";
         group = config.users.groups.systemd-network.name;
       };

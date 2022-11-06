@@ -18,7 +18,7 @@
 
   sops = {
     defaultSopsFile = ./secrets.yaml;
-    secrets."wg/public/kale" = {
+    secrets."wg/www/kale" = {
       mode = "0640";
       group = config.users.groups.systemd-network.name;
     };
@@ -27,9 +27,10 @@
   nix.settings.trusted-users = [ config.users.users.builder.name ];
   users.users.builder = {
     isNormalUser = true;
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJawyN2+eugTUPbfxqpqKAPOh8qJ9/bT3Lq1Dq2YAzFt root@beetroot"
-    ];
+    openssh.authorizedKeys = {
+      keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
+      keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJawyN2+eugTUPbfxqpqKAPOh8qJ9/bT3Lq1Dq2YAzFt root@beetroot" ];
+    };
   };
 
   custom = {

@@ -20,8 +20,7 @@
           define DEV_WAN6 = ${networks.hurricane.name}
           define DEV_MGMT = ${networks.mgmt.name}
           define NET_MGMT = ${inventory.networks.mgmt.networkIPv4Cidr}
-          define DEV_WG_PUBLIC = ${networks.wg-public.name}
-          define NET_WG_PUBLIC = ${inventory.networks.wg-public.networkIPv4Cidr}
+          define DEV_WG_WWW = ${networks.www.name}
           define DEV_TRUSTED = ${networks.trusted.name}
           define NET_TRUSTED = ${inventory.networks.trusted.networkIPv4Cidr}
           define DEV_WG_TRUSTED = ${networks.wg-trusted.name}
@@ -59,6 +58,10 @@
                       parameter-problem,
                       time-exceeded,
                   } accept
+              }
+
+              chain input_always_allowed_lan {
+                  jump input_always_allowed
 
                   meta l4proto udp th dport {
                       123,  # ntp
@@ -69,7 +72,7 @@
               }
 
               chain input_trusted {
-                  jump input_always_allowed
+                  jump input_always_allowed_lan
 
                   meta l4proto tcp th dport {
                       9153, # coredns
@@ -85,7 +88,7 @@
                   } log prefix "input iperf3 - " accept
               }
 
-              chain input_public {
+              chain input_wg_www {
                   jump input_always_allowed
                   meta l4proto tcp th dport {
                       19531, # systemd-journal-gatewayd
@@ -118,12 +121,12 @@
                       $DEV_WAN : jump input_wan,
                       $DEV_WAN6 : jump input_wan,
                       $DEV_MGMT : jump input_trusted,
-                      $DEV_WG_PUBLIC : jump input_public,
+                      $DEV_WG_WWW : jump input_wg_www,
                       $DEV_TRUSTED : jump input_trusted,
                       $DEV_WG_TRUSTED : jump input_trusted,
-                      $DEV_IOT : jump input_always_allowed,
-                      $DEV_WG_IOT : jump input_always_allowed,
-                      $DEV_WORK : jump input_always_allowed,
+                      $DEV_IOT : jump input_always_allowed_lan,
+                      $DEV_WG_IOT : jump input_always_allowed_lan,
+                      $DEV_WORK : jump input_always_allowed_lan,
                   }
 
                   # the rest is dropped by the above policy
@@ -140,7 +143,6 @@
 
               chain forward_from_wan {
                   icmpv6 type { echo-request } accept
-                  oifname $DEV_WG_PUBLIC log prefix "forward wg-public - " accept
               }
 
               chain allow_to_internet {
@@ -202,7 +204,6 @@
                       $DEV_WAN : jump forward_from_wan,
                       $DEV_WAN6 : jump forward_from_wan,
                       $DEV_MGMT : jump forward_from_mgmt,
-                      $DEV_WG_PUBLIC : jump allow_to_internet,
                       $DEV_TRUSTED : jump forward_from_trusted,
                       $DEV_WG_TRUSTED : jump forward_from_trusted,
                       $DEV_IOT : jump forward_from_iot,
@@ -231,7 +232,6 @@
                   # masquerade private IP addresses
                   ip saddr {
                       $NET_MGMT,
-                      $NET_WG_PUBLIC,
                       $NET_TRUSTED,
                       $NET_WG_TRUSTED,
                       $NET_IOT,

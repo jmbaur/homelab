@@ -30,7 +30,7 @@
         "wg/mullvad" = wgSecret;
         "wg/iot/artichoke" = wgSecret;
         "wg/iot/phone" = { };
-        "wg/public/artichoke" = wgSecret;
+        "wg/www/artichoke" = wgSecret;
         "wg/trusted/artichoke" = wgSecret;
         "wg/trusted/beetroot" = { };
       };

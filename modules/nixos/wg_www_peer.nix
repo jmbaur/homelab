@@ -1,6 +1,7 @@
-{ config, lib, inventory, ... }:
+{ config, lib, ... }:
 let
   cfg = config.custom.wgWwwPeer;
+  wg = import ../../nixosConfigurations/www/wg.nix;
 in
 {
   options.custom.wgWwwPeer.enable = lib.mkEnableOption "wireguard peer to www";
@@ -9,34 +10,26 @@ in
       assertion = config.networking.useNetworkd;
       message = "systemd-networkd not used";
     }];
-    systemd.network = let wgPublic = inventory.networks.wg-public; in
-      {
-        netdevs.wg-public = {
-          netdevConfig = {
-            Name = "wg-public";
-            Kind = "wireguard";
+    systemd.network = {
+      netdevs.www = {
+        netdevConfig = {
+          Name = "www";
+          Kind = "wireguard";
+        };
+        wireguardPeers = [{
+          wireguardPeerConfig = {
+            PublicKey = wg.www.publicKey;
+            Endpoint = "www.jmbaur.com:51820";
+            PersistentKeepalive = 25;
+            AllowedIPs = [ wg.www.ip ];
           };
-          wireguardPeers = [{
-            wireguardPeerConfig = {
-              PublicKey = wgPublic.hosts.www.publicKey;
-              Endpoint = "www.jmbaur.com:${toString (51800 + wgPublic.id)}";
-              PersistentKeepalive = 25;
-              AllowedIPs = with wgPublic.hosts.www; [
-                "${ipv4}/32"
-                "${ipv6.ula}/128"
-              ];
-            };
-          }];
-          wireguardConfig.PrivateKeyFile = config.sops.secrets."wg/public/${config.networking.hostName}".path;
-        };
-        networks.wg-public = {
-          name = "wg-public";
-          address = with wgPublic.hosts.${config.networking.hostName}; [
-            "${ipv4}/${toString wgPublic.ipv4Cidr}"
-            "${ipv6.ula}/${toString wgPublic.ipv6Cidr}"
-          ];
-        };
+        }];
+        wireguardConfig.PrivateKeyFile = config.sops.secrets."wg/www/${config.networking.hostName}".path;
       };
+      networks.www = {
+        name = "www";
+        address = [ wg.${config.networking.hostName}.ip ];
+      };
+    };
   };
 }
-

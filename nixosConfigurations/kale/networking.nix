@@ -6,7 +6,7 @@
     firewall = {
       allowedTCPPorts = lib.mkForce [ ];
       interfaces.eth0.allowedTCPPorts = lib.mkForce [ 22 config.services.prometheus.exporters.node.port ];
-      interfaces.wg-public.allowedTCPPorts = lib.mkForce [ 19531 ];
+      interfaces.www.allowedTCPPorts = lib.mkForce [ 19531 ];
     };
   };
 
