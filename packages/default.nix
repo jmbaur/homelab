@@ -33,6 +33,7 @@ let
       pd-notify
       slack-webapp
       spotify-webapp
+      stevenblack-hosts
       teams-webapp
       v4l-show
       wip

@@ -1,0 +1,11 @@
+{
+  "url": "https://github.com/stevenblack/hosts",
+  "rev": "7552198b1894fd52f87b9ee6e3a3c32026c3c048",
+  "date": "2022-11-04T13:03:49-04:00",
+  "path": "/nix/store/pyn5qd88zgkckk7vwiy67gq7hsj98jvv-hosts",
+  "sha256": "0gxacpwblglaw1i9r0gx6dg9jx9h5c7bmv814halzrplbwyi92gp",
+  "fetchLFS": false,
+  "fetchSubmodules": false,
+  "deepClone": false,
+  "leaveDotGit": false
+}

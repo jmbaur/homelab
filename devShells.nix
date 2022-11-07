@@ -9,17 +9,16 @@ in
   ci = pkgs.mkShell {
     buildInputs = with pkgs; [ just jq nix-prefetch-scripts nix-update ];
   };
-  default = pkgs.mkShell {
-    buildInputs = with pkgs; [
+  default = self.devShells.${system}.ci.overrideAttrs (old: {
+    buildInputs = (with pkgs; [
       (terraform.withPlugins (p: with p; [ aws cloudflare http sops ]))
       awscli2
       deploy-rs
       flarectl
-      just
       pam_u2f
       sops
       yubikey-manager
-    ];
+    ] ++ old.buildInputs);
     inherit (pre-commit.lib.${system}.run {
       src = ./.;
       hooks = {
@@ -30,5 +29,5 @@ in
         stylua.enable = true;
       };
     }) shellHook;
-  };
+  });
 })

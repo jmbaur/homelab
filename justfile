@@ -30,6 +30,7 @@ update:
 	export NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"
 	cd overlays
 	nix-prefetch-git https://github.com/ibhagwan/smartyank.nvim >ibhagwan_smartyank-nvim.json
+	nix-prefetch-git https://github.com/stevenblack/hosts >stevenblack_hosts.json
 	for pkg in "cicada" "coredns-utils" "flarectl" "xremap" "yamlfmt" "zf"; do
 		nix-update --file ./out-of-tree.nix $pkg
 	done
