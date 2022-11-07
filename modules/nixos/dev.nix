@@ -36,6 +36,7 @@ with lib;
 
     programs.mosh.enable = true;
 
+    environment.variables.EDITOR = lib.mkForce "nvim";
     environment.pathsToLink = [ "/share/zsh" ];
 
     nix.extraOptions = ''

@@ -162,10 +162,11 @@ with lib; {
       nix-direnv.enable = true;
     };
 
-    home.sessionVariables = {
-      EDITOR = "nvim";
-      PROJ_DIR = if config.custom.gui.enable then "\${HOME}/Projects" else "\${HOME}/projects";
-    };
+    home.sessionVariables.PROJ_DIR =
+      if config.custom.gui.enable then
+        "\${HOME}/Projects"
+      else
+        "\${HOME}/projects";
 
     xdg.configFile."fd/ignore".text = ''
       .git
