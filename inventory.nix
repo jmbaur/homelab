@@ -83,8 +83,6 @@ nixpkgs.lib.genAttrs [ "aarch64-linux" "x86_64-linux" ]
             switch0.lastBit = 2;
             switch1.lastBit = 3;
             ap0.lastBit = 4;
-            potato-ipmi = { lastBit = 51; dhcp = true; mac = "d0:50:99:f7:c4:8d"; };
-            potato = { lastBit = 52; dhcp = true; mac = "d0:50:99:fe:1e:e2"; };
             kale = { lastBit = 62; dhcp = true; mac = "d0:63:b4:03:db:66"; };
             rhubarb = { lastBit = 53; dhcp = true; mac = "dc:a6:32:20:50:f2"; };
           };

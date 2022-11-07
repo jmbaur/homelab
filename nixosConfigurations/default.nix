@@ -11,21 +11,6 @@ inputs: with inputs; {
     ];
   };
 
-  potato = nixpkgs.lib.nixosSystem rec {
-    system = "x86_64-linux";
-    specialArgs = {
-      inherit inputs;
-      inherit (self.inventory.${system}) inventory;
-    };
-    modules = [
-      ./potato/configuration.nix
-      nixos-configs.nixosModules.default
-      nixos-hardware.nixosModules.common-cpu-amd
-      self.nixosModules.default
-      sops-nix.nixosModules.sops
-    ];
-  };
-
   kale = nixpkgs.lib.nixosSystem {
     system = "aarch64-linux";
     specialArgs = { inherit inputs; };
