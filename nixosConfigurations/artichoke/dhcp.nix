@@ -69,8 +69,8 @@ in
                       data = toKeaArray ([ "0,${router}" /* default route */ ] ++ (map
                         (networkName:
                           let
-                            otherNetworkCidr = inventory.networks.${networkName}.ipv4Cidr;
-                            otherNetwork = dotToComma inventory.networks.${networkName}.networkIPv4SignificantBits;
+                            otherNetworkCidr = config.custom.inventory.networks.${networkName}.ipv4Cidr;
+                            otherNetwork = dotToComma config.custom.inventory.networks.${networkName}.networkIPv4SignificantBits;
                           in
                           "${toString otherNetworkCidr},${otherNetwork},${router}"
                         )
