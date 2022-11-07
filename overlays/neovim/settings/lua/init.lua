@@ -16,10 +16,11 @@ if #vim.api.nvim_list_uis() > 0 then
 	end
 
 	vim.cmd.colorscheme("jared")
-	-- vim.g.markdown_fenced_languages = { "sh=bash", "ts=typescript" }
 	vim.opt.belloff = "all"
 	vim.opt.clipboard = "unnamedplus"
+	vim.opt.winbar = "%f %m"
 	vim.opt.colorcolumn = "80"
+	vim.opt.laststatus = 3
 	vim.opt.number = true
 	vim.opt.relativenumber = true
 end
