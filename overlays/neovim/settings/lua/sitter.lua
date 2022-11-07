@@ -30,7 +30,7 @@ configs.setup({
 			},
 		},
 	},
-	indent = { enable = true },
+	indent = { enable = false },
 	textobjects = {
 		select = {
 			enable = true,
