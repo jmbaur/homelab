@@ -70,7 +70,8 @@ hi("PmenuThumb", { bg = xterm[15] })
 hi("Search", { fg = xterm[237], bg = xterm[185] })
 hi("ShowMarksHL", { attr = "bold", fg = xterm[14], bg = xterm[81] })
 hi("SignColumn", { fg = xterm[1], bg = "NONE" })
-hi("SpellBad", { attr = "underlineitalic", fg = xterm[204] })
+hi("SpellBad", { attr = "underlineitalic", fg = xterm[204] }) -- TODO(jared): use undercurl
+hi("SpellCap", { attr = "underlineitalic" }) -- TODO(jared): use undercurl
 hi("StatusLine", { fg = xterm[251], bg = xterm[232] })
 hi("StatusLineNC", { attr = "NONE", fg = xterm[255], bg = xterm[235] })
 hi("TabLine", { attr = "NONE", fg = xterm[250], bg = xterm[235] })
