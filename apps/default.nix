@@ -1,6 +1,13 @@
-inputs: with inputs; nixpkgs.lib.genAttrs [ "aarch64-linux" "x86_64-linux" ] (system:
+inputs: with inputs;
+nixpkgs.lib.genAttrs
+  [ "aarch64-linux" "x86_64-linux" ]
+  (system:
   let
-    pkgs = import nixpkgs { inherit system; };
+    pkgs = import nixpkgs {
+      inherit system;
+      overlays = [ self.overlays.default ];
+    };
+    mkApp = program: { type = "app"; inherit program; };
   in
   {
     bootstrap-beetroot = {
@@ -15,4 +22,22 @@ inputs: with inputs; nixpkgs.lib.genAttrs [ "aarch64-linux" "x86_64-linux" ] (sy
         in
         "${program}/bin/bootstrap-beetroot";
     };
+    bitwarden-bemenu = mkApp "${pkgs.bitwarden-bemenu}/bin/bitwarden-bemenu";
+    cicada = mkApp "${pkgs.cicada}/bin/cicada";
+    coredns-keygen = mkApp "${pkgs.coredns-utils}/bin/coredns-keygen";
+    discord-webapp = mkApp "${pkgs.discord-webapp}/bin/discord-webapp";
+    flarectl = mkApp "${pkgs.flarectl}/bin/flarectl";
+    ixio = mkApp "${pkgs.ixio}/bin/ixio";
+    j = mkApp "${pkgs.j}/bin/j";
+    macgen = mkApp "${pkgs.macgen}/bin/macgen";
+    mirror-to-x = mkApp "${pkgs.mirror-to-x}/bin/mirror-to-x";
+    neovim = mkApp "${pkgs.neovim}/bin/nvim";
+    outlook-webapp = mkApp "${pkgs.outlook-webapp}/bin/outlook-webapp";
+    slack-webapp = mkApp "${pkgs.slack-webapp}/bin/slack-webapp";
+    spotify-webapp = mkApp "${pkgs.spotify-webapp}/bin/spotify-webapp";
+    teams-webapp = mkApp "${pkgs.teams-webapp}/bin/teams-webapp";
+    v4l-show = mkApp "${pkgs.v4l-show}/bin/v4l-show";
+    wip = mkApp "${pkgs.wip}/bin/wip";
+    yamlfmt = mkApp "${pkgs.yamlfmt}/bin/yamlfmt";
+    zf = mkApp "${pkgs.zf}/bin/zf";
   })

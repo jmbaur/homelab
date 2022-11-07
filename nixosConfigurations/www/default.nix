@@ -9,12 +9,9 @@ in
 
   system.stateVersion = "22.11";
 
-  custom = {
-    minimal.enable = true;
-    deployee = {
-      enable = true;
-      authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
-    };
+  custom.deployee = {
+    enable = true;
+    authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
   };
 
   sops = {

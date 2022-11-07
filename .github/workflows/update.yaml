@@ -1,0 +1,37 @@
+name: update
+on:
+  workflow_dispatch: # allows manual triggering
+  schedule:
+    - cron: '0 3 * * 0' # runs weekly on Sunday at 03:00
+jobs:
+  out-of-tree-packages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install Nix
+        uses: cachix/install-nix-action@v17
+        with:
+          extra_nix_config: |
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+      - name: Update out of tree packages
+        run: nix develop .\#ci --command sh -c "just update"
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v4
+  lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install Nix
+        uses: cachix/install-nix-action@v17
+        with:
+          extra_nix_config: |
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+      - name: Update flake.lock
+        uses: DeterminateSystems/update-flake-lock@v14
+        with:
+          pr-title: "Update flake.lock" # Title of PR to be created
+          pr-labels: | # Labels to be set on the PR
+            dependencies
+            automated

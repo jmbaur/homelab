@@ -3,7 +3,6 @@ inputs: with inputs; {
     system = "x86_64-linux";
     modules = [
       ./beetroot
-      nixos-configs.nixosModules.default
       nixos-hardware.nixosModules.lenovo-thinkpad-t495
       self.nixosModules.default
       sops-nix.nixosModules.sops
@@ -15,7 +14,6 @@ inputs: with inputs; {
     modules = [
       ./kale
       ../modules/hardware/lx2k.nix
-      nixos-configs.nixosModules.default
       runner-nix.nixosModules.default
       self.nixosModules.default
       sops-nix.nixosModules.sops
@@ -39,7 +37,6 @@ inputs: with inputs; {
     modules = [
       ./rhubarb
       ../modules/hardware/rpi4.nix
-      nixos-configs.nixosModules.default
       nixos-hardware.nixosModules.raspberry-pi-4
       self.nixosModules.default
       sops-nix.nixosModules.sops
@@ -50,7 +47,6 @@ inputs: with inputs; {
     system = "aarch64-linux";
     modules = [
       ./www
-      nixos-configs.nixosModules.default
       self.nixosModules.default
       sops-nix.nixosModules.sops
       webauthn-tiny.nixosModules.default

@@ -2,7 +2,6 @@
   custom = {
     wgWwwPeer.enable = true;
     disableZfs = true;
-    minimal.enable = true;
     users.jared = {
       enable = true;
       passwordFile = config.sops.secrets.jared_password.path;

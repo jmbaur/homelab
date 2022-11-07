@@ -1,0 +1,11 @@
+{
+  "url": "https://github.com/ibhagwan/smartyank.nvim",
+  "rev": "66dcb608380e1db1a94293bd198a44b84ebc9d09",
+  "date": "2022-10-13T09:18:15-07:00",
+  "path": "/nix/store/79xyc18sl5191951fklxm21q0d831k3b-smartyank.nvim",
+  "sha256": "1d2gkl0jpmy4kkhzapvfhqrw7qlxqpnmbikvky3g31ajv9vziwbb",
+  "fetchLFS": false,
+  "fetchSubmodules": false,
+  "deepClone": false,
+  "leaveDotGit": false
+}

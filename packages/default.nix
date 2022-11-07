@@ -12,9 +12,33 @@ let
 
   commonDerivations = pkgs: {
     inherit (pkgs)
+      bitwarden-bemenu
+      chromium-wayland
+      cicada
+      coredns-utils
+      discord-webapp
+      flarectl
+      git-get
+      gobar
+      gosee
       grafana-dashboards
+      ixio
+      j
       jmbaur-github-ssh-keys
       jmbaur-keybase-pgp-keys
+      macgen
+      mirror-to-x
+      neovim
+      outlook-webapp
+      pd-notify
+      slack-webapp
+      spotify-webapp
+      teams-webapp
+      v4l-show
+      wip
+      xremap
+      yamlfmt
+      zf
       ;
 
     installer_iso = (nixpkgs.lib.nixosSystem {
@@ -28,7 +52,16 @@ in
     let
       pkgs = import nixpkgs {
         system = "aarch64-linux";
-        overlays = [ self.overlays.default ];
+        overlays = [
+          git-get.overlays.default
+          gobar.overlays.default
+          gosee.overlays.default
+          ipwatch.overlays.default
+          pd-notify.overlays.default
+          runner-nix.overlays.default
+          webauthn-tiny.overlays.default
+          self.overlays.default
+        ];
       };
     in
     pkgs.lib.recursiveUpdate (commonDerivations pkgs) {
@@ -72,7 +105,11 @@ in
       pkgs = import nixpkgs {
         system = "x86_64-linux";
         overlays = [
+          git-get.overlays.default
+          gobar.overlays.default
+          gosee.overlays.default
           ipwatch.overlays.default
+          pd-notify.overlays.default
           runner-nix.overlays.default
           self.overlays.default
           webauthn-tiny.overlays.default
