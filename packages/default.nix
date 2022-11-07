@@ -93,7 +93,6 @@ in
         ];
       }).config.system.build.isoImage;
       artichoke_image = self.nixosConfigurations.artichoke.config.system.build.sdImage;
-      artichoke-test_image = self.nixosConfigurations.artichoke-test.config.system.build.sdImage;
       rhubarb_image = self.nixosConfigurations.rhubarb.config.system.build.sdImage;
     };
 

@@ -1,4 +1,4 @@
-{ config, lib, inventory, ... }: {
+{ config, lib, ... }: {
   networking = {
     hostName = "kale";
     useDHCP = false;
@@ -42,22 +42,11 @@
             [BridgeVLAN]
             VLAN=${toString vlan}
           '')
-          (with inventory.networks; [ pubwan.id trusted.id ]);
+          ([ /* TODO(jared): fill in VLAN IDs here */ ]);
       };
       bridge = {
         name = config.systemd.network.netdevs.bridge.netdevConfig.Name;
         networkConfig.LinkLocalAddressing = "no";
-      };
-      pubwan-vms = {
-        name = "vm-website";
-        networkConfig.Bridge =
-          config.systemd.network.networks.bridge.name;
-        # Each VM needs PVID and EgressUntagged to function properly
-        extraConfig = ''
-          [BridgeVLAN]
-          PVID=${toString inventory.networks.pubwan.id}
-          EgressUntagged=${toString inventory.networks.pubwan.id}
-        '';
       };
     };
   };
