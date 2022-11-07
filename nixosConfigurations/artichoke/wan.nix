@@ -1,12 +1,7 @@
-{ config, secrets, ... }: {
+{ config, lib, ... }: {
   networking.useDHCP = false;
 
-  networking.heTunnelBroker = {
-    enable = true;
-    serverIPv4Address = secrets.networking.hurricane.remote;
-    serverIPv6Address = secrets.networking.hurricane.gateway;
-    clientIPv6Address = secrets.networking.hurricane.address + "/64";
-  };
+  networking.heTunnelBroker.enable = lib.mkForce true;
 
   # NOTE: bogon networks obtained from https://ipgeolocation.io/resources/bogon.html
   systemd.network.networks = {

@@ -1,4 +1,4 @@
-{ config, lib, pkgs, inventory, ... }:
+{ config, lib, pkgs, ... }:
 let
   mkWgInterface = network:
     let
@@ -50,7 +50,7 @@ let
               };
               Peer = {
                 PublicKey = wgServerHost.publicKey;
-                Endpoint = "vpn.${inventory.tld}:${toString port}";
+                Endpoint = "vpn.jmbaur.com:${toString port}";
                 AllowedIPs = [
                   network.networkIPv4Cidr
                   network.networkGuaCidr
@@ -58,7 +58,7 @@ let
                 ] ++
                 lib.flatten (
                   map
-                    (name: with inventory.networks.${name}; [ networkIPv4Cidr networkGuaCidr networkUlaCidr ])
+                    (name: with config.custom.inventory.networks.${name}; [ networkIPv4Cidr networkGuaCidr networkUlaCidr ])
                     network.includeRoutesTo
                 );
               };
@@ -75,7 +75,7 @@ let
               };
               Peer = {
                 PublicKey = wgServerHost.publicKey;
-                Endpoint = "vpn.${inventory.tld}:${toString port}";
+                Endpoint = "vpn.jmbaur.com:${toString port}";
                 AllowedIPs = [ "0.0.0.0/0" "::/0" ];
               };
             };
@@ -119,8 +119,8 @@ let
     };
 
   # TODO(jared): map over all networks that have wireguard set to true
-  iot = mkWgInterface inventory.networks.wg-iot;
-  trusted = mkWgInterface inventory.networks.wg-trusted;
+  iot = mkWgInterface config.custom.inventory.networks.wg-iot;
+  trusted = mkWgInterface config.custom.inventory.networks.wg-trusted;
 in
 {
   systemd.network = {
@@ -136,4 +136,3 @@ in
     iot.clientConfigs
   ;
 }
-

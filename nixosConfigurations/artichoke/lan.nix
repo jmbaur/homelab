@@ -1,4 +1,4 @@
-{ lib, inventory, ... }:
+{ config, lib, ... }:
 let
   mkInternalInterface = network: {
     name = network.hosts.artichoke.interface;
@@ -32,7 +32,7 @@ let
     }) ++ (lib.flatten (map
       (n:
         let
-          otherNetwork = inventory.networks.${n};
+          otherNetwork = config.custom.inventory.networks.${n};
         in
         ([
           ({
@@ -48,10 +48,10 @@ let
         ))
       network.includeRoutesTo));
   };
-  mgmt = mkInternalInterface inventory.networks.mgmt;
-  trusted = mkInternalInterface inventory.networks.trusted;
-  iot = mkInternalInterface inventory.networks.iot;
-  work = mkInternalInterface inventory.networks.work;
+  mgmt = mkInternalInterface config.custom.inventory.networks.mgmt;
+  trusted = mkInternalInterface config.custom.inventory.networks.trusted;
+  iot = mkInternalInterface config.custom.inventory.networks.iot;
+  work = mkInternalInterface config.custom.inventory.networks.work;
 in
 {
   systemd.network.networks = {

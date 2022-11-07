@@ -1,4 +1,4 @@
-{ config, lib, inventory, ... }: {
+{ config, lib, ... }: {
   networking = {
     nat.enable = false;
     firewall.enable = false;
@@ -19,18 +19,18 @@
           define DEV_WAN = ${networks.wan.name}
           define DEV_WAN6 = ${networks.hurricane.name}
           define DEV_MGMT = ${networks.mgmt.name}
-          define NET_MGMT = ${inventory.networks.mgmt.networkIPv4Cidr}
+          define NET_MGMT = ${config.custom.inventory.networks.mgmt.networkIPv4Cidr}
           define DEV_WG_WWW = ${networks.www.name}
           define DEV_TRUSTED = ${networks.trusted.name}
-          define NET_TRUSTED = ${inventory.networks.trusted.networkIPv4Cidr}
+          define NET_TRUSTED = ${config.custom.inventory.networks.trusted.networkIPv4Cidr}
           define DEV_WG_TRUSTED = ${networks.wg-trusted.name}
-          define NET_WG_TRUSTED = ${inventory.networks.wg-trusted.networkIPv4Cidr}
+          define NET_WG_TRUSTED = ${config.custom.inventory.networks.wg-trusted.networkIPv4Cidr}
           define DEV_IOT = ${networks.iot.name}
-          define NET_IOT = ${inventory.networks.iot.networkIPv4Cidr}
+          define NET_IOT = ${config.custom.inventory.networks.iot.networkIPv4Cidr}
           define DEV_WG_IOT = ${networks.wg-iot.name}
-          define NET_WG_IOT = ${inventory.networks.wg-iot.networkIPv4Cidr}
+          define NET_WG_IOT = ${config.custom.inventory.networks.wg-iot.networkIPv4Cidr}
           define DEV_WORK = ${networks.work.name}
-          define NET_WORK = ${inventory.networks.work.networkIPv4Cidr}
+          define NET_WORK = ${config.custom.inventory.networks.work.networkIPv4Cidr}
 
           table inet firewall {
               chain input_wan {

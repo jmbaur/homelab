@@ -21,32 +21,6 @@ let
       inherit (pkgs) system;
       modules = installer_iso_modules;
     }).config.system.build.isoImage;
-
-    crs_305 = pkgs.callPackage ./routeros/crs305/configuration.nix {
-      inventoryFile = self.packages.${pkgs.system}.inventory;
-    };
-
-    crs_326 = pkgs.callPackage ./routeros/crs326/configuration.nix {
-      inventoryFile = self.packages.${pkgs.system}.inventory;
-    };
-
-    cap_ac = pkgs.callPackage ./routeros/capac/secretsWrapper.nix {
-      inventoryFile = self.packages.${pkgs.system}.inventory;
-      configurationFile = ./routeros/capac/configuration.nix;
-    };
-
-    inventory = pkgs.writeText "inventory.json" (builtins.toJSON (self.inventory.${pkgs.system}.inventory));
-
-    tf-config = terranix.lib.terranixConfiguration rec {
-      inherit pkgs;
-      inherit (pkgs) system;
-      extraArgs = {
-        inherit (self.inventory.${system}) inventory;
-        secrets = homelab-private.secrets;
-      };
-      modules = [ ../cloud ];
-      strip_nulls = false;
-    };
   };
 in
 {

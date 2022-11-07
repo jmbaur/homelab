@@ -353,21 +353,6 @@
         "type": "github"
       }
     },
-    "homelab-private": {
-      "locked": {
-        "lastModified": 1666469030,
-        "narHash": "sha256-8UFUAKvPQimaw82B4WVcr/Txj7pPUR5DtTuqEt3kC1c=",
-        "ref": "refs/heads/main",
-        "rev": "91a428c87086e8e5825cd555826d636d61cc417c",
-        "revCount": 25,
-        "type": "git",
-        "url": "ssh://git@github.com/jmbaur/homelab-private"
-      },
-      "original": {
-        "type": "git",
-        "url": "ssh://git@github.com/jmbaur/homelab-private"
-      }
-    },
     "ipwatch": {
       "inputs": {
         "nixpkgs": "nixpkgs_2",
@@ -434,11 +419,11 @@
     },
     "nixos-hardware": {
       "locked": {
-        "lastModified": 1667585378,
-        "narHash": "sha256-cvOwucrjBaAkaGk3FunG+MQiwiSBeIVTtO5n/YavpC0=",
+        "lastModified": 1667768008,
+        "narHash": "sha256-PGbX0s2hhXGnZDFVE6UIhPSOf5YegpWs5dUXpT/14F0=",
         "owner": "NixOS",
         "repo": "nixos-hardware",
-        "rev": "6b35a59c19ddbbeb229fcd1d3dcd422dcc0fa927",
+        "rev": "f6483e0def85efb9c1e884efbaff45a5e7aabb34",
         "type": "github"
       },
       "original": {
@@ -716,11 +701,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1667682049,
-        "narHash": "sha256-SJu+8wV5A9ap6otFi9ZNTSLXQJbvFiA1q2XItrt9gJ8=",
+        "lastModified": 1667760143,
+        "narHash": "sha256-+X5CyeNEKp41bY/I1AJgW/fn69q5cLJ1bgiaMMCKB3M=",
         "owner": "cachix",
         "repo": "pre-commit-hooks.nix",
-        "rev": "cc21c7981d2ab9aa2f00e211ef8c6a0af1d31905",
+        "rev": "06f48d63d473516ce5b8abe70d15be96a0147fcd",
         "type": "github"
       },
       "original": {
@@ -755,7 +740,6 @@
       "inputs": {
         "cn913x_build": "cn913x_build",
         "deploy-rs": "deploy-rs",
-        "homelab-private": "homelab-private",
         "ipwatch": "ipwatch",
         "microvm": "microvm",
         "nixos-configs": "nixos-configs",
@@ -794,11 +778,11 @@
         "nixpkgs-22_05": "nixpkgs-22_05"
       },
       "locked": {
-        "lastModified": 1667427533,
-        "narHash": "sha256-MsgTnQEi1g7f8anlW5klHW2pJgam4CLbJaYyBw2ed58=",
+        "lastModified": 1667767301,
+        "narHash": "sha256-+UDtEkw6pZ+sqkC0Um5ocJ9kjvuu0qffSCbl+jAA8K8=",
         "owner": "Mic92",
         "repo": "sops-nix",
-        "rev": "486b4455da16272c1ed31bc82adcdbe7af829465",
+        "rev": "4407353739ad74a3d9744cf2988ab10f3b83e288",
         "type": "github"
       },
       "original": {

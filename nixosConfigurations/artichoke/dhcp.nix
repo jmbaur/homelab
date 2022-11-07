@@ -1,4 +1,4 @@
-{ config, lib, inventory, ... }:
+{ config, lib, ... }:
 let
   toKeaArray = data: lib.concatStringsSep "," data;
   dhcpInterfaces = [ "mgmt" "trusted" "iot" "work" ];
@@ -30,7 +30,7 @@ in
         };
         subnet4 = lib.flatten (map
           (name:
-            with inventory.networks.${name}; [
+            with config.custom.inventory.networks.${name}; [
               {
                 interface = config.systemd.network.networks.${name}.name;
                 subnet = networkIPv4Cidr;
@@ -110,7 +110,7 @@ in
         };
         subnet6 = lib.flatten (map
           (name:
-            with inventory.networks.${name}; [
+            with config.custom.inventory.networks.${name}; [
               {
                 interface = config.systemd.network.networks.${name}.name;
                 subnet = networkUlaCidr;

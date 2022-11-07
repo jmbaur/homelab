@@ -1,7 +1,6 @@
 inputs: with inputs; {
   beetroot = nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
-    specialArgs = { inherit inputs; };
     modules = [
       ./beetroot
       nixos-configs.nixosModules.default
@@ -13,7 +12,6 @@ inputs: with inputs; {
 
   kale = nixpkgs.lib.nixosSystem {
     system = "aarch64-linux";
-    specialArgs = { inherit inputs; };
     modules = [
       ./kale
       ../modules/hardware/lx2k.nix
@@ -36,26 +34,8 @@ inputs: with inputs; {
     ];
   };
 
-  artichoke = nixpkgs.lib.nixosSystem rec {
-    system = "aarch64-linux";
-    specialArgs = {
-      inherit inputs;
-      inherit (homelab-private) secrets;
-      inherit (self.inventory.${system}) inventory;
-    };
-    modules = [
-      ./artichoke
-      ../modules/hardware/cn913x.nix
-      ipwatch.nixosModules.default
-      nixos-configs.nixosModules.default
-      self.nixosModules.default
-      sops-nix.nixosModules.sops
-    ];
-  };
-
   rhubarb = nixpkgs.lib.nixosSystem {
     system = "aarch64-linux";
-    specialArgs = { inherit inputs; };
     modules = [
       ./rhubarb
       ../modules/hardware/rpi4.nix
@@ -66,12 +46,8 @@ inputs: with inputs; {
     ];
   };
 
-  www = nixpkgs.lib.nixosSystem rec {
+  www = nixpkgs.lib.nixosSystem {
     system = "aarch64-linux";
-    specialArgs = {
-      inherit inputs;
-      inherit (self.inventory.${system}) inventory;
-    };
     modules = [
       ./www
       nixos-configs.nixosModules.default

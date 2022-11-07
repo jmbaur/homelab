@@ -1,4 +1,4 @@
-{ pkgs, config, lib, inventory, ... }:
+{ config, lib, pkgs, ... }:
 let
   mkDotDns = map (ip: "tls://${ip}");
   googleDns = {
@@ -73,7 +73,7 @@ in
             prometheus :9153
           }
         '')
-      (with inventory.networks; [
+      (with config.custom.inventory.networks; [
         iot
         mgmt
         trusted

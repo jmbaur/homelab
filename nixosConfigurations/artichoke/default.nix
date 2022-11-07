@@ -1,13 +1,12 @@
-{ config, pkgs, inventory, ... }: {
+{ config, pkgs, ... }: {
   imports = [
-    ./atftpd.nix
+    ../../modules/hardware/cn913x.nix
     ./dhcp.nix
     ./dns.nix
     ./firewall.nix
+    ./hardware.nix
     ./lan.nix
-    ./links.nix
     ./monitoring.nix
-    ./mullvad.nix
     ./ntp.nix
     ./wan.nix
     ./wireguard.nix
@@ -27,7 +26,6 @@
       in
       {
         ipwatch_env = { };
-        "wg/mullvad" = wgSecret;
         "wg/iot/artichoke" = wgSecret;
         "wg/iot/phone" = { };
         "wg/www/artichoke" = wgSecret;
@@ -62,7 +60,7 @@
             --request PUT \
             --header "Content-Type: application/json" \
             --header "Authorization: Bearer ''${CF_DNS_API_TOKEN}" \
-            --data '{"type":"A","name":"vpn.${inventory.tld}","content":"'"''${ADDR}"'","proxied":false}' \
+            --data '{"type":"A","name":"vpn.jmbaur.com","content":"'"''${ADDR}"'","proxied":false}' \
             "https://api.cloudflare.com/client/v4/zones/''${CF_ZONE_ID}/dns_records/''${VPN_CF_RECORD_ID}" | ${pkgs.jq}/bin/jq
         '';
         updateHE = pkgs.writeShellScript "update-he" ''
@@ -99,6 +97,11 @@
     enable = true;
     openFirewall = false;
   };
+
+  services.atftpd.enable = true;
+  systemd.tmpfiles.rules = [
+    "L+ ${config.services.atftpd.root}/netboot.xyz.efi 644 root root - ${pkgs.netbootxyz-efi}"
+  ];
 
   networking = {
     hostName = "artichoke";

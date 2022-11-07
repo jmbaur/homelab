@@ -1,4 +1,4 @@
-{ config, lib, pkgs, inventory, ... }:
+{ config, lib, pkgs, ... }:
 let
   blackboxConfig = (pkgs.formats.yaml { }).generate "blackbox-config" {
     modules = {
@@ -46,7 +46,7 @@ in
           '')
           (lib.flatten
             (map
-              (name: lib.attrValues inventory.networks.${name}.hosts)
+              (name: lib.attrValues config.custom.inventory.networks.${name}.hosts)
               [ "wg-iot" "wg-trusted" ]
             )
           )
