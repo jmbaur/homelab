@@ -5,16 +5,21 @@
     cn913x_build.flake = false;
     cn913x_build.url = "github:solidrun/cn913x_build";
     deploy-rs.url = "github:serokell/deploy-rs";
+    ipwatch.inputs.nixpkgs.follows = "nixpkgs";
     ipwatch.url = "github:jmbaur/ipwatch";
     microvm.inputs.nixpkgs.follows = "nixpkgs";
     microvm.url = "github:astro/microvm.nix";
     nixos-configs.url = "github:jmbaur/nixos-configs";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
     nixpkgs.url = "nixpkgs/nixos-unstable";
+    pre-commit.inputs.nixpkgs.follows = "nixpkgs";
     pre-commit.url = "github:cachix/pre-commit-hooks.nix";
+    runner-nix.inputs.nixpkgs.follows = "nixpkgs";
     runner-nix.url = "github:jmbaur/runner-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";
     terranix.url = "github:terranix/terranix";
+    webauthn-tiny.inputs.nixpkgs.follows = "nixpkgs";
     webauthn-tiny.url = "github:jmbaur/webauthn-tiny";
   };
 
