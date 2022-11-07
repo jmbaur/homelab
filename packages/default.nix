@@ -40,13 +40,11 @@ in
 
       installer_iso_lx2k = (nixpkgs.lib.nixosSystem {
         inherit (pkgs) system;
-        specialArgs = { inherit inputs; };
         modules = installer_iso_modules ++ [{ imports = [ ../modules/hardware/lx2k.nix ]; }];
       }).config.system.build.isoImage;
 
       installer_iso_thinkpad_x13s = (nixpkgs.lib.nixosSystem {
         inherit (pkgs) system;
-        specialArgs = { inherit inputs; };
         modules = installer_iso_modules ++ [
           ../modules/hardware/thinkpad_x13s.nix
           ({ config, ... }: {
@@ -66,7 +64,6 @@ in
           })
         ];
       }).config.system.build.isoImage;
-      artichoke_image = self.nixosConfigurations.artichoke.config.system.build.sdImage;
       rhubarb_image = self.nixosConfigurations.rhubarb.config.system.build.sdImage;
     };
 

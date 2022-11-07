@@ -8,7 +8,6 @@ let
     };
   };
   nodes = builtins.listToAttrs [
-    { name = "artichoke"; value = mkSystemNode { name = "artichoke"; hostname = "artichoke.mgmt.home.arpa"; system = "aarch64-linux"; }; }
     { name = "kale"; value = mkSystemNode { name = "kale"; hostname = "kale.mgmt.home.arpa"; system = "aarch64-linux"; }; }
     { name = "rhubarb"; value = mkSystemNode { name = "rhubarb"; hostname = "rhubarb.mgmt.home.arpa"; system = "aarch64-linux"; magicRollback = false; }; }
     { name = "www"; value = mkSystemNode { name = "www"; hostname = "www.jmbaur.com"; system = "aarch64-linux"; }; }
