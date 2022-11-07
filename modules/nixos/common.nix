@@ -80,6 +80,7 @@ with lib;
       terminal = "tmux-256color";
       extraConfig = ''
         bind-key J command-prompt -p "join pane from:"  "join-pane -h -s '%%'"
+        set-option -g allow-passthrough on
         set-option -g automatic-rename on
         set-option -g focus-events on
         set-option -g renumber-windows on
