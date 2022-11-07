@@ -48,7 +48,6 @@
 
   services.runner = {
     enable = true;
-    package = pkgs.pkgsCross.aarch64-multiplatform.runner-nix;
     runs = {
       runner-nix = {
         environment.RUST_LOG = "debug";

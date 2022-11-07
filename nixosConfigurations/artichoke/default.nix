@@ -46,7 +46,6 @@
 
   services.ipwatch = {
     enable = true;
-    package = pkgs.pkgsCross.aarch64-multiplatform.ipwatch;
     extraArgs = [ "-4" ];
     filters = [ "!IsLoopback" "!IsPrivate" "IsGlobalUnicast" "IsValid" ];
     environmentFile = config.sops.secrets.ipwatch_env.path;
