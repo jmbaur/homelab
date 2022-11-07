@@ -9,20 +9,18 @@ switch:
 build:
 	#!/usr/bin/env bash
 	nix build -L \
-		.\#ipwatch \
-		.\#linux_cn913x \
-		.\#runner-nix \
-		.\#webauthn-tiny
-
-	nix build -L \
 		.\#cicada \
 		.\#coredns-utils \
 		.\#flarectl \
 		.\#git-get \
 		.\#gobar \
 		.\#gosee \
+		.\#ipwatch \
+		.\#linux_cn913x \
 		.\#neovim \
 		.\#pd-notify \
+		.\#runner-nix \
+		.\#webauthn-tiny \
 		.\#xremap \
 		.\#yamlfmt \
 		.\#zf
