@@ -10,7 +10,6 @@ in
   system.stateVersion = "22.11";
 
   custom = {
-    cross-compiled.${config.nixpkgs.system}.enable = true;
     minimal.enable = true;
     deployee = {
       enable = true;
@@ -67,6 +66,7 @@ in
 
   services.webauthn-tiny = {
     enable = true;
+    package = pkgs.pkgsCross.aarch64-multiplatform.webauthn-tiny;
     environmentFile = config.sops.secrets.webauthn_tiny_env.path;
     relyingParty = {
       id = "jmbaur.com";

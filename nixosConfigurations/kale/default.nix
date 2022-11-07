@@ -35,7 +35,6 @@
 
   custom = {
     minimal.enable = true;
-    cross-compiled.${config.nixpkgs.system}.enable = true;
     deployee = {
       enable = true;
       authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
@@ -49,6 +48,7 @@
 
   services.runner = {
     enable = true;
+    package = pkgs.pkgsCross.aarch64-multiplatform.runner-nix;
     runs = {
       runner-nix = {
         environment.RUST_LOG = "debug";

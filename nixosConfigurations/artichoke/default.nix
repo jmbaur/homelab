@@ -36,7 +36,6 @@
 
   custom = {
     minimal.enable = true;
-    cross-compiled.${config.nixpkgs.system}.enable = true;
     deployee = {
       enable = true;
       authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
@@ -47,6 +46,7 @@
 
   services.ipwatch = {
     enable = true;
+    package = pkgs.pkgsCross.aarch64-multiplatform.ipwatch;
     extraArgs = [ "-4" ];
     filters = [ "!IsLoopback" "!IsPrivate" "IsGlobalUnicast" "IsValid" ];
     environmentFile = config.sops.secrets.ipwatch_env.path;
