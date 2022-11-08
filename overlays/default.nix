@@ -117,16 +117,14 @@ inputs: with inputs; {
             inherit cn913x_build;
           };
 
-        jmbaur-keybase-pgp-keys = prev.fetchurl
-          {
-            url = "https://keybase.io/jaredbaur/pgp_keys.asc";
-            sha256 = "0rw02akfvdrpdrznhaxsy8105ng5r8xb5mlmjwh9msf4brnbwrj7";
-          };
-        jmbaur-github-ssh-keys = prev.fetchurl
-          {
-            url = "https://github.com/jmbaur.keys";
-            sha256 = "0s6j9k9akwzncbz6fqhblj22h96bv31kj90d5019m0p82i3dgl3s";
-          };
+        jmbaur-keybase-pgp-keys = prev.fetchurl {
+          url = "https://keybase.io/jaredbaur/pgp_keys.asc";
+          sha256 = "0rw02akfvdrpdrznhaxsy8105ng5r8xb5mlmjwh9msf4brnbwrj7";
+        };
+        jmbaur-github-ssh-keys = prev.fetchurl {
+          url = "https://github.com/jmbaur.keys";
+          sha256 = "sha256-ELheNx0xVA+i/jyubapOeR8pXKp4+vFJFZPA2i4LSbk=";
+        };
       })
   ];
 }
