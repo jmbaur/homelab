@@ -102,7 +102,6 @@ with lib; {
       (lib.optionals (languages.all || languages.typescript) [
         pkgs.deno
         pkgs.nodePackages.typescript-language-server
-        pkgs.nodePackages.vscode-langservers-extracted
       ])
     ]);
 
