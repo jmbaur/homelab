@@ -5,7 +5,14 @@ inputs: with inputs; {
       nixos-wsl.nixosModules.wsl
       self.nixosModules.default
       ({
-        custom.dev.enable = true;
+        networking.hostName = "dev";
+        custom = {
+          users.jared = {
+            enable = true;
+            passwordFile = null;
+          };
+          dev.enable = true;
+        };
         users.mutableUsers = true;
         system.stateVersion = "22.11";
         wsl = {
@@ -13,6 +20,7 @@ inputs: with inputs; {
           wslConf.automount.root = "/mnt";
           defaultUser = "jared";
           startMenuLaunchers = true;
+          nativeSystemd = true;
         };
       })
     ];
