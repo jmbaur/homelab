@@ -28,6 +28,7 @@ inputs: with inputs; {
       ({ ... }: {
         system.stateVersion = "22.11";
         custom.disableZfs = true;
+        users.users.root.password = "dontpwnme";
       })
     ];
   };
