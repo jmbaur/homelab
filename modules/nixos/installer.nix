@@ -18,11 +18,11 @@ in
     nix = {
       package = pkgs.nixUnstable;
       extraOptions = ''
-        	experimental-features = nix-command flakes
+        experimental-features = nix-command flakes
       '';
     };
     environment = {
-      variables.EDITOR = "nvim";
+      variables.EDITOR = lib.mkForce "nvim";
       systemPackages = with pkgs; [ curl git tmux neovim ];
     };
   };
