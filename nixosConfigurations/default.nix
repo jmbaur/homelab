@@ -1,4 +1,23 @@
 inputs: with inputs; {
+  dev = nixpkgs.lib.nixosSystem {
+    system = "aarch64-linux";
+    modules = [
+      nixos-wsl.nixosModules.wsl
+      self.nixosModules.default
+      ({
+        custom.dev.enable = true;
+        users.mutableUsers = true;
+        system.stateVersion = "22.11";
+        wsl = {
+          enable = true;
+          wslConf.automount.root = "/mnt";
+          defaultUser = "jared";
+          startMenuLaunchers = true;
+        };
+      })
+    ];
+  };
+
   beetroot = nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
     modules = [

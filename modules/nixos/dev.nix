@@ -4,27 +4,7 @@ let
 in
 with lib;
 {
-  options.custom.dev = {
-    enable = mkEnableOption "dev setup";
-    languages = {
-      all = mkOption {
-        type = types.bool;
-        default = true;
-        description = ''
-          Enable support for all languages
-        '';
-      };
-    } // lib.listToAttrs (map (lang: lib.nameValuePair lang (mkEnableOption lang)) [
-      "go"
-      "lua"
-      "nix"
-      "python"
-      "rust"
-      "typescript"
-      "zig"
-    ]);
-  };
-
+  imports = [ ../shared/dev-options.nix ];
   config = mkIf cfg.enable {
     documentation = {
       enable = true;
@@ -36,7 +16,10 @@ with lib;
 
     programs.mosh.enable = true;
 
-    environment.variables.EDITOR = lib.mkForce "nvim";
+    environment.variables = {
+      EDITOR = lib.mkForce "nvim";
+      VISUAL = lib.mkForce "nvim";
+    };
     environment.pathsToLink = [ "/share/zsh" ];
 
     nix.extraOptions = ''

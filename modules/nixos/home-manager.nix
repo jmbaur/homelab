@@ -3,6 +3,11 @@
     useUserPackages = true;
     useGlobalPkgs = true;
     extraSpecialArgs = { systemConfig = config; };
-    sharedModules = [ ./common.nix ./dev.nix ./gui.nix ./laptop.nix ];
+    sharedModules = [
+      ../home-manager
+      ({
+        custom = { inherit (config.custom) common dev gui laptop; };
+      })
+    ];
   };
 }

@@ -18,6 +18,7 @@
     microvm.inputs.nixpkgs.follows = "nixpkgs";
     microvm.url = "github:astro/microvm.nix";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
+    nixos-wsl.url = "github:nix-community/nixos-wsl";
     nixpkgs.url = "nixpkgs/nixos-unstable";
     pd-notify.inputs.nixpkgs.follows = "nixpkgs";
     pd-notify.url = "github:jmbaur/pd-notify";
@@ -51,7 +52,6 @@
     deploy = import ./deploy.nix inputs;
     devShells = import ./devShells.nix inputs;
     formatter = import ./formatter.nix inputs;
-    homeConfigurations = import ./homeConfigurations inputs;
     nixosConfigurations = import ./nixosConfigurations inputs;
     nixosModules = import ./modules/nixos inputs;
     overlays = import ./overlays inputs;

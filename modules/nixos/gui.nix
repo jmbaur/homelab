@@ -46,11 +46,9 @@ with lib;
       settings.default_session.command = "${pkgs.greetd.greetd}/bin/agreety --cmd 'systemd-cat --identifier=sway sway'";
     };
     programs.wshowkeys.enable = true;
-    environment.variables.BEMENU_OPTS = escapeShellArgs [
-      "--ignorecase"
-      "--fn=JetBrains Mono"
-      "--line-height=30"
-    ];
+    environment.variables = {
+      inherit (pkgs.callPackage ../shared/bemenu.nix { }) BEMENU_OPTS;
+    };
 
     xdg.portal.wlr.enable = true;
 
@@ -64,10 +62,6 @@ with lib;
 
     programs.sway = {
       enable = true;
-      wrapperFeatures = {
-        base = true;
-        gtk = true;
-      };
       extraPackages = with pkgs; [
         bemenu
         brightnessctl
@@ -84,18 +78,7 @@ with lib;
         wf-recorder
         wlr-randr
       ];
-      extraSessionCommands = ''
-        # vulkan renderer support
-        # export WLR_RENDERER=vulkan
-        # export VK_LAYER_PATH=${pkgs.vulkan-validation-layers}/result/share/vulkan/explicit_layer.d
-        # SDL:
-        export SDL_VIDEODRIVER=wayland
-        # QT (needs qt5.qtwayland in systemPackages):
-        export QT_QPA_PLATFORM=wayland-egl
-        # Fix for some Java AWT applications (e.g. Android Studio), use this if
-        # they aren't displayed properly:
-        export _JAVA_AWT_WM_NONREPARENTING=1
-      '';
+      inherit (import ../shared/sway.nix) extraSessionCommands wrapperFeatures;
     };
   };
 }

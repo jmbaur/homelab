@@ -20,10 +20,10 @@ let cfg = config.custom.users.jared; in
       ;
     };
 
-    home-manager.users.jared = { systemConfig, config, pkgs, ... }: {
+    home-manager.users.jared = { config, pkgs, ... }: {
       programs.git = {
         userEmail = "jaredbaur@fastmail.com";
-        userName = systemConfig.users.users.jared.description;
+        userName = "Jared Baur";
         extraConfig = {
           commit.gpgSign = true;
           gpg.format = "ssh";

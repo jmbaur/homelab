@@ -1,12 +1,9 @@
-{ config, lib, pkgs, systemConfig, ... }:
-let cfg = config.custom.dev; in
+{ config, lib, pkgs, ... }:
+let
+  cfg = config.custom.dev;
+in
 with lib; {
-  options.custom.dev = {
-    enable = mkOption {
-      type = types.bool;
-      default = systemConfig.custom.dev.enable;
-    };
-  };
+  imports = [ ../shared/dev-options.nix ];
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
       as-tree
@@ -62,7 +59,7 @@ with lib; {
       ydiff
       yj
       zf
-    ] ++ lib.flatten (with systemConfig.custom.dev; [
+    ] ++ lib.flatten (with config.custom.dev; [
       (with pkgs; [
         # editor tools
         bat
@@ -136,25 +133,28 @@ with lib; {
       enableGitCredentialHelper = true;
     };
 
-    programs.tmux = {
-      enable = true;
-      inherit (systemConfig.programs.tmux)
-        aggressiveResize
-        baseIndex
-        clock24
-        escapeTime
-        keyMode
-        plugins
-        terminal
-        ;
-      disableConfirmationPrompt = true;
-      prefix = "C-s";
-      extraConfig = systemConfig.programs.tmux.extraConfig + ''
-        bind-key J command-prompt -p "join pane from:"  "join-pane -h -s '%%'"
-        bind-key j display-popup -E -w 90% "${pkgs.j}/bin/j"
-        set-option -g status-left-length 75
-      '';
-    };
+    programs.tmux =
+      let
+        tmuxCfg = import ../shared/tmux.nix;
+      in
+      {
+        enable = true;
+        inherit (tmuxCfg)
+          aggressiveResize
+          baseIndex
+          clock24
+          escapeTime
+          keyMode
+          terminal
+          ;
+        disableConfirmationPrompt = true;
+        prefix = "C-s";
+        extraConfig = tmuxCfg.extraConfig + ''
+          bind-key J command-prompt -p "join pane from:"  "join-pane -h -s '%%'"
+          bind-key j display-popup -E -w 90% "${pkgs.j}/bin/j"
+          set-option -g status-left-length 75
+        '';
+      };
 
     programs.direnv = {
       enable = true;

@@ -11,6 +11,14 @@ let
   ];
 
   commonDerivations = pkgs: {
+    installer_iso = (nixpkgs.lib.nixosSystem {
+      inherit (pkgs) system;
+      modules = installer_iso_modules;
+    }).config.system.build.isoImage;
+
+    # jared_home = homeConfigurations.jared.activationPackage;
+    # jared_home = homeConfigurations.jared.activationPackage;
+
     inherit (pkgs)
       bitwarden-bemenu
       chromium-wayland
@@ -41,11 +49,6 @@ let
       yamlfmt
       zf
       ;
-
-    installer_iso = (nixpkgs.lib.nixosSystem {
-      inherit (pkgs) system;
-      modules = installer_iso_modules;
-    }).config.system.build.isoImage;
   };
 in
 {
