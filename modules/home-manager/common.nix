@@ -5,7 +5,7 @@ in
 with lib; {
   options.custom.common.enable = mkEnableOption "common configurations";
   config = mkIf cfg.enable {
-    home.stateVersion = "21.11";
+    home.stateVersion = "22.11";
 
     nixpkgs.config.allowUnfree = true;
 

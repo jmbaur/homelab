@@ -1,41 +1,4 @@
 inputs: with inputs; {
-  dev = nixpkgs.lib.nixosSystem {
-    system = "aarch64-linux";
-    modules = [
-      nixos-wsl.nixosModules.wsl
-      self.nixosModules.default
-      ({
-        networking.hostName = "dev";
-        custom = {
-          users.jared = {
-            enable = true;
-            passwordFile = null;
-          };
-          dev.enable = true;
-        };
-        users.mutableUsers = true;
-        system.stateVersion = "22.11";
-        wsl = {
-          enable = true;
-          wslConf.automount.root = "/mnt";
-          defaultUser = "jared";
-          startMenuLaunchers = true;
-          nativeSystemd = true;
-        };
-      })
-    ];
-  };
-
-  beetroot = nixpkgs.lib.nixosSystem {
-    system = "x86_64-linux";
-    modules = [
-      ./beetroot
-      nixos-hardware.nixosModules.lenovo-thinkpad-t495
-      self.nixosModules.default
-      sops-nix.nixosModules.sops
-    ];
-  };
-
   kale = nixpkgs.lib.nixosSystem {
     system = "aarch64-linux";
     modules = [

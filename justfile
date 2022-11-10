@@ -4,7 +4,7 @@ help:
 	@just --list
 
 switch:
-	nixos-rebuild switch -L --flake .# --use-remote-sudo
+	home-manager switch --flake .#jared
 
 build:
 	#!/usr/bin/env bash

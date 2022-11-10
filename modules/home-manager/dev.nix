@@ -177,13 +177,6 @@ with lib; {
       controlPersist = "30m";
     };
 
-    programs.bash = {
-      enable = true;
-      initExtra = ''
-        PS1="[\u@\h:\w]$ "
-      '';
-    };
-
     programs.zsh = {
       enable = true;
       defaultKeymap = "emacs";

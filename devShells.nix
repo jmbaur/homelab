@@ -15,6 +15,7 @@ in
       awscli2
       deploy-rs
       flarectl
+      home-manager
       pam_u2f
       sops
       yubikey-manager
