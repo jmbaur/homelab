@@ -1,4 +1,14 @@
 inputs: with inputs; {
+  beetroot = nixpkgs.lib.nixosSystem {
+    system = "x86_64-linux";
+    modules = [
+      ./beetroot
+      nixos-hardware.nixosModules.lenovo-thinkpad-t495
+      self.nixosModules.default
+      sops-nix.nixosModules.sops
+    ];
+  };
+
   kale = nixpkgs.lib.nixosSystem {
     system = "aarch64-linux";
     modules = [

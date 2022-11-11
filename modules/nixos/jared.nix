@@ -1,33 +1,29 @@
 { lib, config, pkgs, ... }:
 let cfg = config.custom.users.jared; in
-with lib;
 {
   options.custom.users.jared = {
-    enable = mkEnableOption "jared";
-    passwordFile = mkOption {
-      type = types.nullOr types.path;
-    };
+    enable = lib.mkEnableOption "jared";
+    passwordFile = lib.mkOption { type = lib.types.path; };
   };
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     users.users.jared = {
+      inherit (cfg) passwordFile;
       isNormalUser = true;
       description = "Jared Baur";
       shell = pkgs.zsh;
       openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
       extraGroups = [ "dialout" "wheel" ]
-        ++ (optional config.networking.networkmanager.enable "networkmanager")
-        ++ (optional config.programs.wireshark.enable "wireshark")
-        ++ (optional config.programs.adb.enable "adbusers")
-        ++ (optional config.virtualisation.docker.enable "docker")
+        ++ (lib.optional config.networking.networkmanager.enable "networkmanager")
+        ++ (lib.optional config.programs.wireshark.enable "wireshark")
+        ++ (lib.optional config.programs.adb.enable "adbusers")
+        ++ (lib.optional config.virtualisation.docker.enable "docker")
       ;
-    } // mkIf (cfg.passwordFile != null) {
-      inherit (cfg) passwordFile;
     };
 
-    home-manager.users.jared = { config, pkgs, ... }: {
+    home-manager.users.jared = { systemConfig, config, pkgs, ... }: {
       programs.git = {
         userEmail = "jaredbaur@fastmail.com";
-        userName = "Jared Baur";
+        userName = systemConfig.users.users.jared.description;
         extraConfig = {
           commit.gpgSign = true;
           gpg.format = "ssh";
@@ -39,7 +35,15 @@ with lib;
           user.signingKey = "key::sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIBhCHaXn5ghEJQVpVZr4hOajD6Zp/0PO4wlymwfrg/S5AAAABHNzaDo=";
         };
       };
-      programs.gpg.publicKeys = [{ trust = 5; source = pkgs.jmbaur-keybase-pgp-keys; }];
+      programs.gpg.publicKeys = [
+        {
+          trust = 5;
+          source = pkgs.fetchurl {
+            url = "https://keybase.io/jaredbaur/pgp_keys.asc";
+            sha256 = "0rw02akfvdrpdrznhaxsy8105ng5r8xb5mlmjwh9msf4brnbwrj7";
+          };
+        }
+      ];
       programs.ssh = {
         enable = true;
         matchBlocks = {

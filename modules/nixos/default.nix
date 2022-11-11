@@ -21,7 +21,7 @@ inputs: with inputs; {
       ./dev.nix
       ./gui.nix
       ./he_tunnelbroker.nix
-      ./home-manager.nix
+      ./home-manager
       ./installer.nix
       ./inventory.nix
       ./jared.nix

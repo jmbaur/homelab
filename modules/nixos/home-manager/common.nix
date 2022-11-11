@@ -1,11 +1,16 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, systemConfig, ... }:
 let
   cfg = config.custom.common;
 in
 with lib; {
-  options.custom.common.enable = mkEnableOption "common configurations";
+  options.custom.common = {
+    enable = mkOption {
+      type = types.bool;
+      default = systemConfig.custom.common.enable;
+    };
+  };
   config = mkIf cfg.enable {
-    home.stateVersion = "22.11";
+    home.stateVersion = systemConfig.system.stateVersion;
 
     nixpkgs.config.allowUnfree = true;
 

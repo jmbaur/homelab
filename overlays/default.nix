@@ -45,23 +45,18 @@ inputs: with inputs; {
               smartyank-nvim-src = prev.lib.importJSON
                 ./ibhagwan_smartyank-nvim.json;
             in
-            prev.vimUtils.buildVimPlugin
-              {
-                pname = "smartyank-nvim";
-                version = smartyank-nvim-src.rev;
-                src = prev.fetchgit { inherit (smartyank-nvim-src) url sha256 rev; };
-              };
+            prev.vimUtils.buildVimPlugin {
+              pname = "smartyank-nvim";
+              version = smartyank-nvim-src.rev;
+              src = prev.fetchgit { inherit (smartyank-nvim-src) url sha256 rev; };
+            };
         };
-        neovim = prev.callPackage
-          ./neovim
-          { inherit (final) vimPlugins; };
+        neovim = prev.callPackage ./neovim { inherit (final) vimPlugins; };
         neovim-boring = prev.writeShellScriptBin
           "nvimb"
           ''exec -a "$0" ${final.neovim.override { boring = true; }}/bin/nvim "$@"'';
 
-        mkWaylandVariant = prev.callPackage
-          ./mkWaylandVariant.nix
-          { };
+        mkWaylandVariant = prev.callPackage ./mkWaylandVariant.nix { };
         brave-wayland = final.mkWaylandVariant
           prev.brave;
         chromium-wayland = final.mkWaylandVariant
@@ -96,26 +91,18 @@ inputs: with inputs; {
           "teams"
           "https://teams.microsoft.com";
 
-        grafana-dashboards = prev.callPackage
-          ./grafana-dashboards
-          { };
+        grafana-dashboards = prev.callPackage ./grafana-dashboards { };
 
-        ubootCN9130_CF_Pro = prev.callPackage
-          ./ubootCN9130_CF_Pro.nix
-          {
-            inherit cn913x_build;
-          };
-        armTrustedFirmwareCN9130_CF_Pro = prev.callPackage
-          ./armTrustedFirmwareCN9130_CF_Pro.nix
-          {
-            inherit (final) ubootCN9130_CF_Pro;
-            inherit cn913x_build;
-          };
-        linux_cn913x = prev.callPackage
-          ./linux_cn913x.nix
-          {
-            inherit cn913x_build;
-          };
+        ubootCN9130_CF_Pro = prev.callPackage ./ubootCN9130_CF_Pro.nix {
+          inherit cn913x_build;
+        };
+        armTrustedFirmwareCN9130_CF_Pro = prev.callPackage ./armTrustedFirmwareCN9130_CF_Pro.nix {
+          inherit (final) ubootCN9130_CF_Pro;
+          inherit cn913x_build;
+        };
+        linux_cn913x = prev.callPackage ./linux_cn913x.nix {
+          inherit cn913x_build;
+        };
 
         jmbaur-keybase-pgp-keys = prev.fetchurl {
           url = "https://keybase.io/jaredbaur/pgp_keys.asc";
@@ -123,7 +110,7 @@ inputs: with inputs; {
         };
         jmbaur-github-ssh-keys = prev.fetchurl {
           url = "https://github.com/jmbaur.keys";
-          sha256 = "sha256-ELheNx0xVA+i/jyubapOeR8pXKp4+vFJFZPA2i4LSbk=";
+          sha256 = "sha256-etDXRhTogpoCKA0kOcPYyyQohKQLYmf+YvbzqdJM0mg=";
         };
       })
   ];

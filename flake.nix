@@ -46,15 +46,14 @@
   };
 
   outputs = inputs: {
-    apps = import ./apps inputs;
     checks = import ./checks.nix inputs;
     deploy = import ./deploy.nix inputs;
     devShells = import ./devShells.nix inputs;
     formatter = import ./formatter.nix inputs;
-    homeConfigurations = import ./homeConfigurations inputs;
     nixosConfigurations = import ./nixosConfigurations inputs;
     nixosModules = import ./modules/nixos inputs;
     overlays = import ./overlays inputs;
     packages = import ./packages inputs;
+    apps = import ./apps inputs;
   };
 }

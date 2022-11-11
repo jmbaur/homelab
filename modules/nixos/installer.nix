@@ -22,10 +22,7 @@ in
       '';
     };
     environment = {
-      variables = {
-        EDITOR = lib.mkForce "nvim";
-        VISUAL = lib.mkForce "nvim";
-      };
+      variables.EDITOR = lib.mkForce "nvim";
       systemPackages = with pkgs; [ curl git tmux neovim ];
     };
   };

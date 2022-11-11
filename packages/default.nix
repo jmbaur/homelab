@@ -16,9 +16,6 @@ let
       modules = installer_iso_modules;
     }).config.system.build.isoImage;
 
-    # jared_home = homeConfigurations.jared.activationPackage;
-    # jared_home = homeConfigurations.jared.activationPackage;
-
     inherit (pkgs)
       bitwarden-bemenu
       chromium-wayland

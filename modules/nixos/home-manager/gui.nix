@@ -1,10 +1,14 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, systemConfig, ... }:
 let
   cfg = config.custom.gui;
   lockerCommand = "${pkgs.swaylock}/bin/swaylock --daemonize --indicator-caps-lock --show-keyboard-layout --color '#222222'";
 in
 with lib; {
-  options.custom.gui.enable = mkEnableOption "gui configurations";
+  options.custom.gui.enable = mkOption {
+    type = types.bool;
+    default = systemConfig.custom.gui.enable;
+  };
+
   config = mkIf cfg.enable {
     xdg = {
       userDirs = { enable = true; createDirectories = true; };
@@ -101,7 +105,7 @@ with lib; {
             buildInputs = [ pkgs.makeWrapper ];
             paths = [ pkgs.pinentry-bemenu ];
             postBuild = ''
-              wrapProgram $out/bin/pinentry-bemenu --set BEMENU_OPTS "${(pkgs.callPackage ../shared/bemenu.nix {}).BEMENU_OPTS}"
+              wrapProgram $out/bin/pinentry-bemenu --set BEMENU_OPTS "${systemConfig.environment.variables.BEMENU_OPTS}"
             '';
           };
         in
@@ -186,8 +190,8 @@ with lib; {
 
     wayland.windowManager.sway = {
       enable = true;
-      inherit (import ../shared/sway.nix)
-        extraSessionCommands wrapperFeatures;
+      inherit (systemConfig.programs.sway)
+        extraSessionCommands extraOptions wrapperFeatures;
       config =
         let
           mod = config.wayland.windowManager.sway.config.modifier;
