@@ -9,7 +9,7 @@
     "/nix".options = [ "noatime" "discard=async" "compress=zstd" ];
     "/var".options = [ "noatime" "discard=async" "compress=zstd" ];
     "/home".options = [ "noatime" "discard=async" "compress=zstd" ];
-    "/raid".options = [ "noatime" "discard=async" "compress=zstd" ];
+    "/var/lib".options = [ "noatime" "discard=async" "compress=zstd" ];
   };
   zramSwap.enable = true;
 

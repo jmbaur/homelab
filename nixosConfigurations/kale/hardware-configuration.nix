@@ -34,6 +34,12 @@
       options = [ "subvol=@var" ];
     };
 
+  fileSystems."/var/lib" =
+    { device = "/dev/disk/by-uuid/09302e9e-9246-416f-ad2f-fce5c8d4b384";
+      fsType = "btrfs";
+      options = ["subvol=@"];
+    };
+
   fileSystems."/home" =
     { device = "/dev/disk/by-uuid/7bdaa893-23f2-43d0-b14e-676b1af96790";
       fsType = "btrfs";
@@ -43,12 +49,6 @@
   fileSystems."/boot" =
     { device = "/dev/disk/by-uuid/5A2B-677E";
       fsType = "vfat";
-    };
-
-  fileSystems."/raid" =
-    { device = "/dev/disk/by-uuid/09302e9e-9246-416f-ad2f-fce5c8d4b384";
-      fsType = "btrfs";
-      options = [ "subvol=@" ];
     };
 
   boot.initrd.luks.devices."cryptfast0".device = "/dev/disk/by-uuid/1dc19675-c7af-4a80-8f30-eab40bcf0df7";
