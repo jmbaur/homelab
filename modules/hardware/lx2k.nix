@@ -5,7 +5,9 @@
     "iommu.passthrough=1"
     "amdgpu.pcie_gen_cap=0x4"
     "usbcore.autosuspend=-1"
+    "compat_uts_machine=armv7l"
   ];
+
   boot.kernelPackages = pkgs.linuxPackages_6_0;
 
   # Setup SFP+ network interfaces early so systemd can pick everything up.
@@ -22,4 +24,16 @@
     ls-addni dpmac.9
     ls-addni dpmac.10
   '';
+
+  boot.kernelPatches = [
+    rec {
+      name = "compat_uts_machine";
+      patch = pkgs.fetchpatch {
+        inherit name;
+        url = "https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/jammy/patch/?id=c1da50fa6eddad313360249cadcd4905ac9f82ea";
+        sha256 = "sha256-mpq4YLhobWGs+TRKjIjoe5uDiYLVlimqWUCBGFH/zzU=";
+      };
+    }
+  ];
+  nix.extraOptions = "extra-platforms = armv7l-linux";
 }

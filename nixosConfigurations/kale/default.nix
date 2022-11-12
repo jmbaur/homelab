@@ -13,7 +13,6 @@
   };
   zramSwap.enable = true;
 
-  boot.binfmt.emulatedSystems = [ "armv7l-linux" ];
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
