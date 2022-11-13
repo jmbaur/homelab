@@ -1,13 +1,13 @@
 { buildGoModule, fetchFromGitHub, ... }:
 buildGoModule rec {
   pname = "flarectl";
-  version = "0.53.0";
+  version = "0.54.0";
   src = fetchFromGitHub {
     owner = "cloudflare";
     repo = "cloudflare-go";
     rev = "v${version}";
-    sha256 = "sha256-FdKxYaX4SGUIdU55xRswRr9C2cFkK9LI6J8i1WoRORE=";
+    sha256 = "sha256-tf6jTW6/ZXiHxHYq6wW2u+eycqdVOb6Y0GzW6JZuQIE=";
   };
-  vendorSha256 = "sha256-LxxSSvh3RPGD2oc+op/68kflGs9pU7RHWyiNz870Fmk=";
+  vendorSha256 = "sha256-JNYrDVV2aHzvGSF7d7u75lrjD++fBtlY9VUmpCheCNU=";
   subPackages = [ "cmd/flarectl" ];
 }
