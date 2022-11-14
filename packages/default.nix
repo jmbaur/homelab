@@ -16,6 +16,16 @@ let
       modules = installer_iso_modules;
     }).config.system.build.isoImage;
 
+    netboot-test = pkgs.symlinkJoin {
+      name = "netboot-test";
+      paths = with self.nixosConfigurations.netboot-test.config.system.build; [
+        netbootRamdisk
+        kernel
+        netbootIpxeScript
+      ];
+      preferLocalBuild = true;
+    };
+
     inherit (pkgs)
       bitwarden-bemenu
       chromium-wayland

@@ -20,6 +20,27 @@ inputs: with inputs; {
     ];
   };
 
+  lxc-test = nixpkgs.lib.nixosSystem {
+    system = "aarch64-linux";
+    modules = [
+      "${nixpkgs}/nixos/modules/virtualisation/lxc-container.nix"
+      ({
+        system.stateVersion = "22.11";
+      })
+    ];
+  };
+
+  netboot-test = nixpkgs.lib.nixosSystem {
+    system = "aarch64-linux";
+    modules = [
+      "${nixpkgs}/nixos/modules/installer/netboot/netboot-minimal.nix"
+      ({
+        system.stateVersion = "22.11";
+        users.users.root.password = "dontpwnme";
+      })
+    ];
+  };
+
   artichoke-test = nixpkgs.lib.nixosSystem {
     system = "armv7l-linux";
     modules = [

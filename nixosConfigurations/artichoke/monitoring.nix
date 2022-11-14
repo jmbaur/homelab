@@ -71,7 +71,7 @@ in
         patches = (old.patches or [ ]) ++ [
           (prev.fetchpatch {
             url = "https://patch-diff.githubusercontent.com/raw/mweinelt/kea-exporter/pull/30.patch";
-            sha256 = "0876kc191lw1cq5v4bd6wh139iw51k70cqkwdmjyz40pd61xp16q";
+            sha256 = "sha256-2ITbg2kXkO9lbXxiBs4Mhcc0AuSmLbILZoHTkAKb5iA=";
           })
         ];
       });
