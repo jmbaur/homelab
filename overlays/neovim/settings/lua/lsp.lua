@@ -171,3 +171,10 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagn
 })
 
 vim.diagnostic.config({ virtual_text = false })
+
+-- don't use `vim.lsp.formatexpr` for lsp attached buffers
+vim.api.nvim_create_autocmd("LspAttach", {
+	callback = function(args)
+		vim.bo[args.buf].formatexpr = nil
+	end,
+})

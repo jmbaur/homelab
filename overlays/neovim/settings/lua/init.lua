@@ -4,7 +4,6 @@ if #vim.api.nvim_list_uis() > 0 then
 	require("gitsigns").setup({ signcolumn = false })
 	require("gosee").setup()
 	require("launcher")
-	require("mini.statusline").setup()
 	require("mini.trailspace").setup()
 	require("repl").setup()
 	require("sitter")
