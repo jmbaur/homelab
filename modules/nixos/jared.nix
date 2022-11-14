@@ -1,11 +1,15 @@
 { lib, config, pkgs, ... }:
 let cfg = config.custom.users.jared; in
+with lib;
 {
   options.custom.users.jared = {
-    enable = lib.mkEnableOption "jared";
-    passwordFile = lib.mkOption { type = lib.types.path; };
+    enable = mkEnableOption "jared";
+    passwordFile = mkOption {
+      type = types.nullOr types.path;
+      default = null;
+    };
   };
-  config = lib.mkIf cfg.enable {
+  config = mkIf cfg.enable {
     users.users.jared = {
       inherit (cfg) passwordFile;
       isNormalUser = true;

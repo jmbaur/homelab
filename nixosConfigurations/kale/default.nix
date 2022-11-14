@@ -34,6 +34,8 @@
   };
 
   custom = {
+    dev.enable = true;
+    users.jared.enable = true;
     deployee = {
       enable = true;
       authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
