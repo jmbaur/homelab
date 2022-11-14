@@ -106,11 +106,11 @@ inputs: with inputs; {
 
         jmbaur-keybase-pgp-keys = prev.fetchurl {
           url = "https://keybase.io/jaredbaur/pgp_keys.asc";
-          sha256 = "0rw02akfvdrpdrznhaxsy8105ng5r8xb5mlmjwh9msf4brnbwrj7";
+          sha256 = "sha256-R2a+bF7E6Zogl5XWsjrK5dkCAvK6K2h/bje37aYSgGc=";
         };
         jmbaur-github-ssh-keys = prev.fetchurl {
           url = "https://github.com/jmbaur.keys";
-          sha256 = "sha256-etDXRhTogpoCKA0kOcPYyyQohKQLYmf+YvbzqdJM0mg=";
+          sha256 = "sha256-AWOgwTfJ7a2t+8VOViNQCXMDGe+zx29jHOqgFPnlzCo=";
         };
       })
   ];
