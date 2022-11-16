@@ -40,4 +40,4 @@ RUN git config --global user.email builder
 RUN git config --global user.name builder
 RUN git clone --depth=1 https://github.com/solidrun/cn913x_build /build
 
-CMD bash
+CMD bash runme.sh
