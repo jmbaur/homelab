@@ -1,4 +1,4 @@
-FROM docker.io/library/ubuntu:20.04
+FROM docker.io/library/ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
@@ -19,7 +19,7 @@ RUN apt update && apt install -y \
 	p7zip \
 	p7zip-full \
 	parted \
-	python \
+	python3 \
 	qemu-system-arm \
 	rsync \
 	sudo \

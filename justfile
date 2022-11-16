@@ -62,9 +62,6 @@ asurada_spherion_coreboot:
 		--file misc/asurada-spherion/Containerfile
 	mkdir -p $out
 	podman run \
-		-it \
 		--rm \
 		--volume $out:/out:rw \
 		asurada_spherion_coreboot
-
-# --volume $PWD/misc/asurada-spherion/.config:/build/.config:rw \

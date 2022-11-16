@@ -37,22 +37,13 @@ WORKDIR /build
 
 RUN make crossgcc-$crossgcc_arch CPUS=$(nproc)
 
-# tianocore dependencies
-RUN apt install -y \
-	uuid-dev \
-	nasm \
-	iasl
-
-# grub dependencies
-RUN apt install -y \
-	autoconf \
-	automake \
-	autopoint \
-	gettext
-
 # depthcharge dependencies
 RUN apt install -y \
 	libflashrom-dev \
 	libssl-dev
+RUN pip install kconfiglib
 
-CMD bash
+COPY build.bash build.bash
+COPY .config .config
+
+CMD bash build.bash

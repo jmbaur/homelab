@@ -1,8 +1,4 @@
-{ cn913x_build
-, fetchFromGitHub
-, buildUBoot
-, ...
-}:
+{ cn913x_build, fetchFromGitHub, buildUBoot, ... }:
 (buildUBoot rec {
   version = "2019.10";
   src = fetchFromGitHub {
