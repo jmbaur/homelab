@@ -47,18 +47,14 @@ setup_pam_u2f:
 setup_yubikey:
 	ykman openpgp keys set-touch sig cached-fixed
 
-uboot_cn9130-cf-pro:
+uboot_cn9130-cf-pro: clean
 	podman build \
 		--tag cn913x_build \
 		--file misc/cn913x/Containerfile
 	mkdir -p $out
 	podman run \
 		--rm \
-		--env CP_NUM=1 \
-		--env BOARD_CONFIG=2 \
-		--env UBOOT_ENVIRONMENT=spi \
-		--env BUILD_ROOTFS=no \
-		--volume $out:/build/images:rw \
+		--volume $out:/out:rw \
 		cn913x_build
 
 coreboot target: clean
