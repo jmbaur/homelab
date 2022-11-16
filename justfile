@@ -3,6 +3,10 @@
 help:
 	@just --list
 
+clean:
+	rm -rf result*
+	rm -rf $out
+
 switch:
 	nixos-rebuild switch -L --flake .# --use-remote-sudo
 
@@ -56,12 +60,13 @@ cn9130_cf_pro_uboot:
 		--volume $out:/build/images:rw \
 		cn913x_build
 
-asurada_spherion_coreboot:
+coreboot target: clean
 	podman build \
-		--tag asurada_spherion_coreboot \
-		--file misc/asurada-spherion/Containerfile
+		--tag coreboot_{{target}} \
+		--file misc/coreboot/Containerfile \
+		misc/coreboot/{{target}}
 	mkdir -p $out
 	podman run \
 		--rm \
 		--volume $out:/out:rw \
-		asurada_spherion_coreboot
+		coreboot_{{target}}
