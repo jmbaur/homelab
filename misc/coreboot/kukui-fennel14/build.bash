@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 
-# https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay/+/master/sys-boot/libpayload/files/configs/config.asurada
+# https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay/+/master/sys-boot/libpayload/files/configs/config.kukui
 cat >payloads/libpayload/configs/config.kukui <<EOF
 CONFIG_LP_CHROMEOS=y
 CONFIG_LP_ARCH_ARM64=y
