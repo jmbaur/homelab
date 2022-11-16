@@ -46,8 +46,10 @@ inputs: with inputs; {
     modules = [
       ../modules/hardware/a38x.nix
       self.nixosModules.default
-      ({ ... }: {
+      ({ lib, pkgs, ... }: {
+        boot.kernelPackages = lib.mkForce pkgs.linuxPackages;
         system.stateVersion = "22.11";
+        custom.common.enable = lib.mkForce false;
         custom.disableZfs = true;
         users.users.root.password = "dontpwnme";
       })

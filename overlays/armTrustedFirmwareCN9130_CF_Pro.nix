@@ -1,9 +1,10 @@
-{ cn913x_build
-, ubootCN9130_CF_Pro
-, symlinkJoin
-, fetchgit
+{ buildArmTrustedFirmware
+, cn913x_build
 , fetchFromGitHub
-, buildArmTrustedFirmware
+, fetchgit
+, git
+, symlinkJoin
+, ubootCN9130_CF_Pro
 , ...
 }:
 (buildArmTrustedFirmware rec {
@@ -13,7 +14,7 @@
   extraMakeFlags = [
     "USE_COHERENT_MEM=0"
     "LOG_LEVEL=20"
-    "MV_DDR_PATH=/tmp/mv_ddr_path"
+    "MV_DDR_PATH=/tmp/mv_ddr_marvell"
     "CP_NUM=1" # clearfog pro
     "all"
     "fip"
@@ -26,16 +27,13 @@
     rev = version;
     sha256 = "sha256-kHI6H1yym8nWWmLMNOOLUbdtdyNPdNEvimq8EdW0nZw=";
   };
+  nativeBuildInputs = old.nativeBuildInputs ++ [ git ];
   patches = old.patches ++ [
     "${cn913x_build}/patches/arm-trusted-firmware/0001-ddr-spd-read-failover-to-defualt-config.patch"
     "${cn913x_build}/patches/arm-trusted-firmware/0002-som-sdp-failover-using-crc-verification.patch"
   ];
   preBuild =
     let
-      # TODO(jared): put this in flake inputs
-      # https://github.com/ARM-software/arm-trusted-firmware/blob/master/docs/plat/marvell/armada/build.rst#tf-a-build-instructions-for-marvell-platforms
-      # ATF's build process does some nasty things and needs the .git
-      # directory.
       marvell-embedded-processors = fetchgit {
         leaveDotGit = true;
         url = "https://github.com/MarvellEmbeddedProcessors/mv-ddr-marvell";
@@ -44,8 +42,9 @@
       };
     in
     ''
-      cp -r ${marvell-embedded-processors} /tmp/mv_ddr_path
-      ls -alh /tmp/mv_ddr_path
+      mkdir tmp
+      cp -r ${marvell-embedded-processors} /tmp/mv_ddr_marvell
+      chmod -R +w /tmp/mv_ddr_marvell
     '';
   BL33 = "${symlinkJoin {
             name = "armTrustedFirmwareCN9130_CF_Pro-BL33";
@@ -53,3 +52,22 @@
           }}/u-boot.bin";
   SCP_BL2 = "${cn913x_build}/binaries/atf/mrvl_scp_bl2.img";
 })
+
+# make olddefconfig
+# make -j${PARALLEL} DEVICE_TREE=$DTB_UBOOT
+# cp $ROOTDIR/build/u-boot/u-boot.bin $ROOTDIR/binaries/u-boot/u-boot.bin
+# export BL33=$ROOTDIR/binaries/u-boot/u-boot.bin
+#
+# echo "Building arm-trusted-firmware"
+# cd $ROOTDIR/build/arm-trusted-firmware
+# export SCP_BL2=$ROOTDIR/binaries/atf/mrvl_scp_bl2.img
+#
+# echo "Compiling U-BOOT and ATF"
+# echo "CP_NUM=$CP_NUM"
+# echo "DTB=$DTB_UBOOT"
+#
+# make PLAT=t9130 clean
+# make -j${PARALLEL} USE_COHERENT_MEM=0 LOG_LEVEL=20 PLAT=t9130 MV_DDR_PATH=$ROOTDIR/build/mv-ddr-marvell CP_NUM=$CP_NUM all fip
+#
+# echo "Copying flash-image.bin to /Images folder"
+# cp $ROOTDIR/build/arm-trusted-firmware/build/t9130/release/flash-image.bin $ROOTDIR/images/u-boot-${DTB_UBOOT}-${UBOOT_ENVIRONMENT}.bin

@@ -42,3 +42,27 @@ setup_pam_u2f:
 
 setup_yubikey:
 	ykman openpgp keys set-touch sig cached-fixed
+
+cn9130_cf_pro_uboot:
+	podman build \
+		--tag cn913x_build \
+		--file misc/cn913x/Containerfile
+	mkdir -p $out
+	podman run -it --rm \
+		--env CP_NUM=1 \
+		--env BOARD_CONFIG=2 \
+		--env UBOOT_ENVIRONMENT=spi \
+		--env BUILD_ROOTFS=no \
+		--volume $out:/build/images:rw \
+		cn913x_build
+
+asurada_spherion_coreboot:
+	podman build \
+		--tag asurada_spherion_coreboot \
+		--file misc/asurada-spherion/Containerfile
+	mkdir -p $out
+	podman run --rm \
+		--volume $PWD/misc/asurada-spherion/.config:/build/.config:rw \
+		--volume $out:/out:rw \
+		asurada_spherion_coreboot \
+		bash -c "make && cp build/coreboot.rom /out/"

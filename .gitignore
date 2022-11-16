@@ -1,6 +1,7 @@
 /.direnv
 /.pre-commit-config.yaml
 result*
+outputs
 
 # Provided by nix
 /.terraform.lock.hcl
