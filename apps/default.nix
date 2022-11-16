@@ -25,6 +25,7 @@ nixpkgs.lib.genAttrs
     bitwarden-bemenu = mkApp "${pkgs.bitwarden-bemenu}/bin/bitwarden-bemenu";
     cicada = mkApp "${pkgs.cicada}/bin/cicada";
     coredns-keygen = mkApp "${pkgs.coredns-utils}/bin/coredns-keygen";
+    mkdepthcharge = mkApp "${pkgs.depthcharge-tools}/bin/mkdepthcharge";
     discord-webapp = mkApp "${pkgs.discord-webapp}/bin/discord-webapp";
     flarectl = mkApp "${pkgs.flarectl}/bin/flarectl";
     ixio = mkApp "${pkgs.ixio}/bin/ixio";

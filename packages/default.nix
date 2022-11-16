@@ -31,6 +31,7 @@ let
       chromium-wayland
       cicada
       coredns-utils
+      depthcharge-tools
       discord-webapp
       flarectl
       git-get

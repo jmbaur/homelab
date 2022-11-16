@@ -9,6 +9,7 @@ inputs: with inputs; {
         inherit (out-of-tree)
           cicada
           coredns-utils
+          depthcharge-tools
           flarectl
           xremap
           yamlfmt
