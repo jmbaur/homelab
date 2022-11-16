@@ -12,11 +12,9 @@ RUN apt update && apt install -y \
 	bzip2 \
 	coreutils \
 	curl \
-	curl \
 	flex \
 	g++ \
 	gcc \
-	git \
 	git \
 	gnat \
 	libc6-dev \
@@ -38,5 +36,23 @@ RUN git clone --branch=4.18 --depth=1 https://review.coreboot.org/coreboot /buil
 WORKDIR /build
 
 RUN make crossgcc-$crossgcc_arch CPUS=$(nproc)
+
+# tianocore dependencies
+RUN apt install -y \
+	uuid-dev \
+	nasm \
+	iasl
+
+# grub dependencies
+RUN apt install -y \
+	autoconf \
+	automake \
+	autopoint \
+	gettext
+
+# depthcharge dependencies
+RUN apt install -y \
+	libflashrom-dev \
+	libssl-dev
 
 CMD bash
