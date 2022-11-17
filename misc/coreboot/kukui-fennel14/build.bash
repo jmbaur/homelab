@@ -12,9 +12,5 @@ CONFIG_LP_USB_XHCI_MTK_QUIRK=y
 EOF
 
 make
-make -C payloads/external/depthcharge BOARD=kukui
-
-./build/cbfstool build/coreboot.rom add -f payloads/external/depthcharge/depthcharge/build/depthcharge.elf -t "simple elf" -n depthcharge
-./build/cbfstool build/coreboot.rom print
 
 cp build/coreboot.rom /out/coreboot.rom
