@@ -29,6 +29,7 @@ let
     inherit (pkgs)
       bitwarden-bemenu
       chromium-wayland
+      uboot_cn9130-cf-pro_spi
       cicada
       coredns-utils
       depthcharge-tools
@@ -79,8 +80,8 @@ in
     pkgs.lib.recursiveUpdate (commonDerivations pkgs) {
       inherit (pkgs)
         linux_cn913x
-        ubootCN9130_CF_Pro
-        armTrustedFirmwareCN9130_CF_Pro
+        # ubootCN9130_CF_Pro
+        # armTrustedFirmwareCN9130_CF_Pro
         ;
 
       installer_iso_lx2k = (nixpkgs.lib.nixosSystem {
@@ -133,7 +134,6 @@ in
         ipwatch
         linux_cn913x
         runner-nix
-        ubootCN9130_CF_Pro
         webauthn-tiny
         ;
     };
