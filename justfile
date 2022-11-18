@@ -27,6 +27,7 @@ build:
 		.\#neovim \
 		.\#pd-notify \
 		.\#runner-nix \
+		.\#ubootCN9130_CF_Pro \
 		.\#webauthn-tiny \
 		.\#xremap \
 		.\#yamlfmt \
@@ -48,16 +49,6 @@ setup_pam_u2f:
 
 setup_yubikey:
 	nix shell nixpkgs#yubikey-manager -c ykman openpgp keys set-touch sig cached-fixed
-
-uboot_cn9130-cf-pro: clean
-	podman build \
-		--tag cn913x_build \
-		--file misc/cn913x/Containerfile
-	mkdir -p $out
-	podman run \
-		--rm \
-		--volume $out:/out:rw \
-		cn913x_build
 
 # TODO(jared): parametrize ARCH for crossgcc
 coreboot_deps:

@@ -94,7 +94,6 @@ inputs: with inputs; {
 
         grafana-dashboards = prev.callPackage ./grafana-dashboards { };
 
-        # uboot_cn9130-cf-pro_spi = prev.callPackage ./uboot_cn9130-cf-pro_spi.nix { };
         ubootCN9130_CF_Pro = prev.callPackage ./ubootCN9130_CF_Pro.nix {
           inherit cn913x_build;
         };

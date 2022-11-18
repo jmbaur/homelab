@@ -51,7 +51,6 @@ let
       spotify-webapp
       stevenblack-hosts
       teams-webapp
-      # uboot_cn9130-cf-pro_spi
       v4l-show
       wip
       xremap
@@ -134,6 +133,7 @@ in
         ipwatch
         linux_cn913x
         runner-nix
+        ubootCN9130_CF_Pro
         webauthn-tiny
         ;
     };
