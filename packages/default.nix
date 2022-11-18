@@ -133,7 +133,6 @@ in
         ipwatch
         linux_cn913x
         runner-nix
-        ubootCN9130_CF_Pro
         webauthn-tiny
         ;
     };

@@ -27,7 +27,6 @@ build:
 		.\#neovim \
 		.\#pd-notify \
 		.\#runner-nix \
-		.\#ubootCN9130_CF_Pro \
 		.\#webauthn-tiny \
 		.\#xremap \
 		.\#yamlfmt \
