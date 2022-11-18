@@ -68,12 +68,7 @@ in
   nixpkgs.overlays = [
     (_: prev: {
       prometheus-kea-exporter = prev.prometheus-kea-exporter.overrideAttrs (old: {
-        patches = (old.patches or [ ]) ++ [
-          (prev.fetchpatch {
-            url = "https://patch-diff.githubusercontent.com/raw/mweinelt/kea-exporter/pull/30.patch";
-            sha256 = "sha256-2ITbg2kXkO9lbXxiBs4Mhcc0AuSmLbILZoHTkAKb5iA=";
-          })
-        ];
+        patches = (old.patches or [ ]) ++ [ ./pull-30.patch ];
       });
     })
   ];

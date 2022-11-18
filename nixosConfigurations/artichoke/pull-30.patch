@@ -1,0 +1,216 @@
+From d903a9c9944e71af184aa6e4fce7bce1eaf9fae7 Mon Sep 17 00:00:00 2001
+From: Glen de Koning <glen.dekoning@vodafone.com>
+Date: Wed, 26 Oct 2022 22:43:34 +1300
+Subject: [PATCH] Fails to start with `ValueError: Incorrect label names` Fixes
+ #29
+
+---
+ kea_exporter/kea.py | 91 +++++++++++++++++++++++----------------------
+ 1 file changed, 47 insertions(+), 44 deletions(-)
+
+diff --git a/kea_exporter/kea.py b/kea_exporter/kea.py
+index 206a63b..accfe40 100644
+--- a/kea_exporter/kea.py
++++ b/kea_exporter/kea.py
+@@ -110,13 +110,11 @@ def setup_dhcp4_metrics(self):
+                 'Packets received',
+                 ['operation']),
+ 
+-            # Allocation
+-            'allocation_fail': Gauge(
++            # per Subnet
++            'addresses_allocation_fail': Gauge(
+                 f'{self.prefix_dhcp4}_allocations_failed_total',
+                 'Allocation fail count',
+-                ['context']),
+-
+-            # per Subnet
++                ['subnet', 'subnet_id', 'context',]),
+             'addresses_assigned_total': Gauge(
+                 f'{self.prefix_dhcp4}_addresses_assigned_total',
+                 'Assigned addresses',
+@@ -232,36 +230,34 @@ def setup_dhcp4_metrics(self):
+                 }
+             },
+ 
+-            # Allocation Failed
++            # per Subnet
+             'v4-allocation-fail-subnet' :{
+-                'metric' : 'allocation_fail',
++                'metric' : 'addresses_allocation_fail',
+                 'labels': {
+                     'context': 'subnet'
+                 },
+             },
+ 
+             'v4-allocation-fail-shared-network' :{
+-                'metric' : 'allocation_fail',
++                'metric' : 'addresses_allocation_fail',
+                 'labels': {
+                     'context': 'shared-network'
+                 },
+             },
+ 
+             'v4-allocation-fail-no-pools' :{
+-                'metric' : 'allocation_fail',
++                'metric' : 'addresses_allocation_fail',
+                 'labels': {
+                     'context': 'no-pools'
+                 },
+             },
+ 
+             'v4-allocation-fail-classes' :{
+-                'metric' : 'allocation_fail',
++                'metric' : 'addresses_allocation_fail',
+                 'labels': {
+                     'context': 'classes'
+                 },
+             },
+-   
+-            # per Subnet
+             'assigned-addresses': {
+                 'metric': 'addresses_assigned_total',
+             },
+@@ -291,6 +287,10 @@ def setup_dhcp4_metrics(self):
+             'reclaimed-leases',
+             'v4-reservation-conflicts',
+             'v4-allocation-fail',
++            'v4-allocation-fail-subnet',
++            'v4-allocation-fail-shared-network',
++            'v4-allocation-fail-no-pools',
++            'v4-allocation-fail-classes',
+             'pkt4-sent',
+             'pkt4-received',
+ 
+@@ -298,6 +298,7 @@ def setup_dhcp4_metrics(self):
+         # Ignore list for subnet level metrics
+         self.metric_dhcp4_subnet_ignore = [
+             'cumulative-assigned-addresses',
++            'v4-allocation-fail',
+         ]
+ 
+     def setup_dhcp6_metrics(self):
+@@ -312,11 +313,6 @@ def setup_dhcp6_metrics(self):
+                 'Packets received',
+                 ['operation']),
+ 
+-            # Allocation Fail
+-            'allocation_fail': Gauge(
+-                f'{self.prefix_dhcp6}_allocations_failed_total',
+-                'Allocation fail count',
+-                ['context']),
+ 
+             # DHCPv4-over-DHCPv6
+             'sent_dhcp4_packets': Gauge(
+@@ -331,6 +327,10 @@ def setup_dhcp6_metrics(self):
+             ),
+ 
+             # per Subnet
++            'addresses_allocation_fail': Gauge(
++                f'{self.prefix_dhcp6}_allocations_failed_total',
++                'Allocation fail count',
++                ['subnet', 'subnet_id', 'context',]),
+             'addresses_declined_total': Gauge(
+                 f'{self.prefix_dhcp6}_addresses_declined_total',
+                 'Declined addresses',
+@@ -461,56 +461,54 @@ def setup_dhcp6_metrics(self):
+                 }
+             },
+ 
+-            # Allocation Fail 
++            # DHCPv4-over-DHCPv6
++            'pkt6-dhcpv4-response-sent': {
++                'metric': 'sent_dhcp4_packets',
++                'labels': {
++                    'operation': 'response'
++                }
++            },
++            'pkt6-dhcpv4-query-received': {
++                'metric': 'received_dhcp4_packets',
++                'labels': {
++                    'operation': 'query'
++                }
++            },
++            'pkt6-dhcpv4-response-received': {
++                'metric': 'received_dhcp4_packets',
++                'labels': {
++                    'operation': 'response'
++                }
++            },
++
++            # per Subnet
+             'v6-allocation-fail-shared-network' :{
+-                'metric' : 'allocation_fail',
++                'metric' : 'addresses_allocation_fail',
+                 'labels': {
+                     'context': 'shared-network'
+                 },
+             },
+ 
+             'v6-allocation-fail-subnet' :{
+-                'metric' : 'allocation_fail',
++                'metric' : 'addresses_allocation_fail',
+                 'labels': {
+                     'context': 'subnet'
+                 },
+             },
+ 
+             'v6-allocation-fail-no-pools' :{
+-                'metric' : 'allocation_fail',
++                'metric' : 'addresses_allocation_fail',
+                 'labels': {
+                     'context': 'no-pools'
+                 },
+             },
+ 
+             'v6-allocation-fail-classes' :{
+-                'metric' : 'allocation_fail',
++                'metric' : 'addresses_allocation_fail',
+                 'labels': {
+                     'context': 'classes'
+                 },
+             },
+-
+-            # DHCPv4-over-DHCPv6
+-            'pkt6-dhcpv4-response-sent': {
+-                'metric': 'sent_dhcp4_packets',
+-                'labels': {
+-                    'operation': 'response'
+-                }
+-            },
+-            'pkt6-dhcpv4-query-received': {
+-                'metric': 'received_dhcp4_packets',
+-                'labels': {
+-                    'operation': 'query'
+-                }
+-            },
+-            'pkt6-dhcpv4-response-received': {
+-                'metric': 'received_dhcp4_packets',
+-                'labels': {
+-                    'operation': 'response'
+-                }
+-            },
+-
+-            # per Subnet
+             'assigned-nas': {
+                 'metric': 'na_assigned_total',
+             },
+@@ -552,6 +550,10 @@ def setup_dhcp6_metrics(self):
+             'reclaimed-leases',
+             'v6-reservation-conflicts',
+             'v6-allocation-fail',
++            'v6-allocation-fail-subnet',
++            'v6-allocation-fail-shared-network',
++            'v6-allocation-fail-no-pools',
++            'v6-allocation-fail-classes',
+             'pkt6-sent',
+             'pkt6-received',
+ 
+@@ -561,6 +563,7 @@ def setup_dhcp6_metrics(self):
+             'cumulative-assigned-addresses',
+             'cumulative-assigned-nas',
+             'cumulative-assigned-pds',
++            'v6-allocation-fail',
+         ]
+ 
+     def update(self):
