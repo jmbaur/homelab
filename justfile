@@ -67,5 +67,5 @@ coreboot target: clean
 	podman run \
 		--rm \
 		--volume $out:/out:rw \
-		--volume misc/coreboot/{{target}}:/config:ro \
+		--volume $PWD/misc/coreboot/{{target}}:/config:ro \
 		coreboot_{{target}}
