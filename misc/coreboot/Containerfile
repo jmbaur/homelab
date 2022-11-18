@@ -33,7 +33,7 @@ RUN apt update && apt install -y \
 WORKDIR /build
 
 RUN git clone --branch=4.18 --depth=1 https://review.coreboot.org/coreboot /build
-RUn git submodule update --init --checkout --depth 1
+RUN git submodule update --init
 
 ARG crossgcc_arch=aarch64
 RUN make crossgcc-$crossgcc_arch CPUS=$(nproc)
