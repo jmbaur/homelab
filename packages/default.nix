@@ -51,7 +51,7 @@ let
       spotify-webapp
       stevenblack-hosts
       teams-webapp
-      uboot_cn9130-cf-pro_spi
+      # uboot_cn9130-cf-pro_spi
       v4l-show
       wip
       xremap
@@ -81,8 +81,7 @@ in
     pkgs.lib.recursiveUpdate (commonDerivations pkgs) {
       inherit (pkgs)
         linux_cn913x
-        # ubootCN9130_CF_Pro
-        # armTrustedFirmwareCN9130_CF_Pro
+        ubootCN9130_CF_Pro
         ;
 
       installer_iso_lx2k = (nixpkgs.lib.nixosSystem {
