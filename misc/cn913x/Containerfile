@@ -20,25 +20,24 @@ RUN apt update && apt install -y \
 	p7zip-full \
 	parted \
 	python3 \
-	qemu-system-arm \
+	gcc-7 \
 	rsync \
 	squashfs-tools \
-	sudo \
 	u-boot-tools \
 	unzip \
-	vim \
+	vim-nox \
 	wget
 
 WORKDIR /build
 
-RUN useradd -m builder
-RUN chown -R builder:builder /build
-
-USER builder
-
 RUN git config --global user.email builder
 RUN git config --global user.name builder
-RUN git clone --depth=1 https://github.com/solidrun/cn913x_build /build
+
+RUN git clone --depth=1 --branch=master https://github.com/solidrun/cn913x_build /build
+RUN git clone --branch=master https://github.com/ARM-software/arm-trusted-firmware.git /build/build/arm-trusted-firmware && cd /build/build/arm-trusted-firmware && git checkout 00ad74c7afe67b2ffaf08300710f18d3dafebb45 && cd -
+RUN git clone --depth=1 --branch=mv-ddr-devel https://github.com/MarvellEmbeddedProcessors/mv-ddr-marvell.git /build/build/mv-ddr-marvell
+RUN git clone --depth=1 --branch=v2019.10 git://git.denx.de/u-boot.git /build/build/u-boot
+
 COPY build.bash build.bash
 
 CMD bash build.bash

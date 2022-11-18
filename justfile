@@ -3,9 +3,12 @@
 help:
 	@just --list
 
-clean:
+init:
+	mkdir -p $out
+
+clean: init
 	rm -rf result*
-	rm -rf $out
+	rm -rf $out/*
 
 switch:
 	nixos-rebuild switch -L --flake .# --use-remote-sudo
@@ -60,10 +63,9 @@ uboot_cn9130-cf-pro: clean
 coreboot target: clean
 	podman build \
 		--tag coreboot_{{target}} \
-		--file misc/coreboot/Containerfile \
-		misc/coreboot/{{target}}
-	mkdir -p $out
+		--file misc/coreboot/Containerfile
 	podman run \
 		--rm \
 		--volume $out:/out:rw \
+		--volume misc/coreboot/{{target}}:/config:ro \
 		coreboot_{{target}}

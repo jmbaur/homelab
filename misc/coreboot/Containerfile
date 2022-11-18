@@ -1,9 +1,8 @@
 FROM docker.io/library/ubuntu:20.04
 
-ARG crossgcc_arch=aarch64
-
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
+
 RUN apt update && apt install -y \
 	acpica-tools \
 	binutils \
@@ -28,13 +27,14 @@ RUN apt update && apt install -y \
 	python3-distutils \
 	python3-pip \
 	python3.8-venv \
-	sudo \
+	rsync \
 	zlib1g-dev
 
 RUN git clone --branch=4.18 --depth=1 https://review.coreboot.org/coreboot /build
 
 WORKDIR /build
 
+ARG crossgcc_arch=aarch64
 RUN make crossgcc-$crossgcc_arch CPUS=$(nproc)
 
 # depthcharge dependencies
@@ -44,6 +44,5 @@ RUN apt install -y \
 RUN pip install kconfiglib
 
 COPY build.bash build.bash
-COPY .config .config
 
 CMD bash build.bash

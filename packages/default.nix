@@ -29,7 +29,6 @@ let
     inherit (pkgs)
       bitwarden-bemenu
       chromium-wayland
-      uboot_cn9130-cf-pro_spi
       cicada
       coredns-utils
       depthcharge-tools
@@ -52,12 +51,14 @@ let
       spotify-webapp
       stevenblack-hosts
       teams-webapp
+      uboot_cn9130-cf-pro_spi
       v4l-show
       wip
       xremap
       yamlfmt
       zf
       ;
+
   };
 in
 {
