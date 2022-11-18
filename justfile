@@ -43,12 +43,11 @@ update:
 	done
 	cd ..
 
-
 setup_pam_u2f:
-	pamu2fcfg -opam://homelab
+	nix shell nixpkgs#pam_u2f -c pamu2fcfg -opam://homelab
 
 setup_yubikey:
-	ykman openpgp keys set-touch sig cached-fixed
+	nix shell nixpkgs#yubikey-manager -c ykman openpgp keys set-touch sig cached-fixed
 
 uboot_cn9130-cf-pro: clean
 	podman build \

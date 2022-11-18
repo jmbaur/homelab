@@ -15,9 +15,7 @@ in
       awscli2
       deploy-rs
       flarectl
-      pam_u2f
       sops
-      yubikey-manager
     ] ++ old.buildInputs);
     inherit (pre-commit.lib.${system}.run {
       src = ./.;
