@@ -60,12 +60,15 @@ uboot_cn9130-cf-pro: clean
 		--volume $out:/out:rw \
 		cn913x_build
 
-coreboot target: clean
+# TODO(jared): parametrize ARCH for crossgcc
+coreboot_deps:
 	podman build \
-		--tag coreboot_{{target}} \
+		--tag coreboot \
 		--file misc/coreboot/Containerfile
+
+coreboot target: coreboot_deps clean
 	podman run \
 		--rm \
 		--volume $out:/out:rw \
 		--volume $PWD/misc/coreboot/{{target}}:/config:ro \
-		coreboot_{{target}}
+		coreboot
