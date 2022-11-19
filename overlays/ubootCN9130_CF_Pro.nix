@@ -21,6 +21,10 @@ let
     };
     extraMeta.platforms = [ "aarch64-linux" ];
     defconfig = "sr_cn913x_cex7_defconfig";
+    # prevent non-volatile memory environment from being used
+    extraConfig = ''
+      CONFIG_ENV_IS_NOWHERE=y
+    '';
     extraMakeFlags = [ "DEVICE_TREE=cn9130-cf-pro" ];
     filesToInstall = [ "u-boot.bin" ];
   }).overrideAttrs
@@ -56,57 +60,56 @@ let
   }}/u-boot.bin";
   SCP_BL2 = "${cn913x_build}/binaries/atf/mrvl_scp_bl2.img";
   PLAT = "t9130";
-  final = gcc7Stdenv.mkDerivation {
-    inherit BL33 SCP_BL2;
-    name = "ubootCN9130_CF_Pro";
-    src = fetchFromGitHub {
-      owner = "ARM-software";
-      repo = "arm-trusted-firmware";
-      rev = "00ad74c7afe67b2ffaf08300710f18d3dafebb45";
-      sha256 = "sha256-kHI6H1yym8nWWmLMNOOLUbdtdyNPdNEvimq8EdW0nZw=";
-    };
-    patches = [
-      "${cn913x_build}/patches/arm-trusted-firmware/0001-ddr-spd-read-failover-to-defualt-config.patch"
-      "${cn913x_build}/patches/arm-trusted-firmware/0002-som-sdp-failover-using-crc-verification.patch"
-    ];
-    nativeBuildInputs = [ dtc git ];
-    buildInputs = [ openssl ];
-    hardeningDisable = [ "all" ];
-    dontStrip = true;
-    depsBuildBuild = [ buildPackages.gcc7Stdenv.cc ];
-    makeFlags = [
-      "CROSS_COMPILE=${gcc7Stdenv.cc.targetPrefix}"
-      # binutils 2.39 regression
-      # `warning: /build/source/build/rk3399/release/bl31/bl31.elf has a LOAD segment with RWX permissions`
-      # See also: https://developer.trustedfirmware.org/T996
-      "LDFLAGS=-no-warn-rwx-segments"
-      "PLAT=${PLAT}"
-      "USE_COHERENT_MEM=0"
-      "LOG_LEVEL=20"
-      "MV_DDR_PATH=/tmp/mv_ddr_marvell"
-      "CP_NUM=1" # cn9130-cf-pro
-      "all"
-      "fip" # TODO(jared): not needed?
-    ];
-    preBuild =
-      let
-        marvell-embedded-processors = fetchgit {
-          leaveDotGit = true;
-          url = "https://github.com/MarvellEmbeddedProcessors/mv-ddr-marvell";
-          rev = "305d923e6bc4236cd3b902f6679b0aef9e5fa52d";
-          sha256 = "sha256-d9tS0ajHGzVEi1XJzdu0dCvfeEHSPVCrfBqV8qLqC5c=";
-        };
-      in
-      ''
-        cp -r ${marvell-embedded-processors} /tmp/mv_ddr_marvell
-        chmod -R +w /tmp/mv_ddr_marvell
-      '';
-    installPhase = ''
-      mkdir -p $out
-      dd bs=8M count=1 if=/dev/zero of=spi.img
-      dd conv=notrunc if=build/${PLAT}/release/flash-image.bin of=spi.img
-      cp spi.img $out/
-    '';
-  };
 in
-final
+gcc7Stdenv.mkDerivation {
+  inherit BL33 SCP_BL2;
+  name = "ubootCN9130_CF_Pro";
+  src = fetchFromGitHub {
+    owner = "ARM-software";
+    repo = "arm-trusted-firmware";
+    rev = "00ad74c7afe67b2ffaf08300710f18d3dafebb45";
+    sha256 = "sha256-kHI6H1yym8nWWmLMNOOLUbdtdyNPdNEvimq8EdW0nZw=";
+  };
+  patches = [
+    "${cn913x_build}/patches/arm-trusted-firmware/0001-ddr-spd-read-failover-to-defualt-config.patch"
+    "${cn913x_build}/patches/arm-trusted-firmware/0002-som-sdp-failover-using-crc-verification.patch"
+  ];
+  nativeBuildInputs = [ dtc git ];
+  buildInputs = [ openssl ];
+  hardeningDisable = [ "all" ];
+  dontStrip = true;
+  depsBuildBuild = [ buildPackages.gcc7Stdenv.cc ];
+  makeFlags = [
+    "CROSS_COMPILE=${gcc7Stdenv.cc.targetPrefix}"
+    # binutils 2.39 regression
+    # `warning: /build/source/build/rk3399/release/bl31/bl31.elf has a LOAD segment with RWX permissions`
+    # See also: https://developer.trustedfirmware.org/T996
+    "LDFLAGS=-no-warn-rwx-segments"
+    "PLAT=${PLAT}"
+    "USE_COHERENT_MEM=0"
+    "LOG_LEVEL=20"
+    "MV_DDR_PATH=/tmp/mv_ddr_marvell"
+    "CP_NUM=1" # cn9130-cf-pro
+    "all"
+    "fip" # TODO(jared): not needed?
+  ];
+  preBuild =
+    let
+      marvell-embedded-processors = fetchgit {
+        leaveDotGit = true;
+        url = "https://github.com/MarvellEmbeddedProcessors/mv-ddr-marvell";
+        rev = "305d923e6bc4236cd3b902f6679b0aef9e5fa52d";
+        sha256 = "sha256-d9tS0ajHGzVEi1XJzdu0dCvfeEHSPVCrfBqV8qLqC5c=";
+      };
+    in
+    ''
+      cp -r ${marvell-embedded-processors} /tmp/mv_ddr_marvell
+      chmod -R +w /tmp/mv_ddr_marvell
+    '';
+  installPhase = ''
+    mkdir -p $out
+    dd bs=8M count=1 if=/dev/zero of=spi.img
+    dd conv=notrunc if=build/${PLAT}/release/flash-image.bin of=spi.img
+    cp spi.img $out/
+  '';
+}
