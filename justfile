@@ -11,7 +11,7 @@ clean: init
 	rm -rf $out/*
 
 switch:
-	nixos-rebuild switch -L --flake .# --use-remote-sudo
+	nixos-rebuild switch -L --use-remote-sudo --flake .#
 
 build:
 	#!/usr/bin/env bash

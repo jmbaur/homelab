@@ -76,4 +76,9 @@ inputs: with inputs; {
       webauthn-tiny.nixosModules.default
     ];
   };
+
+  okra = nixpkgs.lib.nixosSystem {
+    system = "x86_64-linux";
+    modules = [ ./okra self.nixosModules.default ];
+  };
 }
