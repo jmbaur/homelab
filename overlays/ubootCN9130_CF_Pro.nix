@@ -8,7 +8,6 @@
 , gcc7Stdenv
 , git
 , openssl
-, symlinkJoin
 , ...
 }:
 let
@@ -53,10 +52,7 @@ let
         ./ramdisk_addr_r.patch
       ];
     });
-  BL33 = "${symlinkJoin {
-    name = "ubootCN9130_CF_Pro-with-src";
-    paths = [ uboot.src uboot ];
-  }}/u-boot.bin";
+  BL33 = "${uboot}/u-boot.bin";
   SCP_BL2 = "${cn913x_build}/binaries/atf/mrvl_scp_bl2.img";
   PLAT = "t9130";
 in

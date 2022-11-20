@@ -29,7 +29,7 @@
     isNormalUser = true;
     openssh.authorizedKeys = {
       keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
-      keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJawyN2+eugTUPbfxqpqKAPOh8qJ9/bT3Lq1Dq2YAzFt root@beetroot" ];
+      keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDxKuwF8sjO3Wh/s/G/nBiaPIHaHZAG+Hk6HGsUkBk38 root@okra" ];
     };
   };
 
