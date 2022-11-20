@@ -34,6 +34,7 @@ let
       depthcharge-tools
       discord-webapp
       flarectl
+      flashrom-cros
       git-get
       gobar
       gosee

@@ -19,6 +19,7 @@ build:
 		.\#cicada \
 		.\#coredns-utils \
 		.\#flarectl \
+		.\#flashrom-cros \
 		.\#git-get \
 		.\#gobar \
 		.\#gosee \
@@ -38,7 +39,8 @@ update:
 	cd overlays
 	nix-prefetch-git https://github.com/ibhagwan/smartyank.nvim >ibhagwan_smartyank-nvim.json
 	nix-prefetch-git https://github.com/stevenblack/hosts >stevenblack_hosts.json
-	for pkg in "cicada" "coredns-utils" "flarectl" "xremap" "yamlfmt" "zf"; do
+	# TODO(jared): use `nix eval` overlays/out-of-tree.nix when it doesn't show <LAMBDA> (see https://github.com/NixOS/nix/issues/2678).
+	for pkg in "cicada" "coredns-utils" "flarectl" "flashrom-cros" "xremap" "yamlfmt" "zf"; do
 		nix-update --file ./out-of-tree.nix $pkg
 	done
 	cd ..

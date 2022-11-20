@@ -11,6 +11,7 @@ inputs: with inputs; {
           coredns-utils
           depthcharge-tools
           flarectl
+          flashrom-cros
           xremap
           yamlfmt
           zf
