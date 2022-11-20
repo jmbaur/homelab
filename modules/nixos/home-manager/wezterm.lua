@@ -32,6 +32,7 @@ for streak in ipairs({ 1, 2, 3 }) do
 end
 
 return {
+	audible_bell = "Disabled",
 	automatically_reload_config = false,
 	color_scheme = "Builtin Dark",
 	font = wezterm.font("JetBrains Mono"),
