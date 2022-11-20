@@ -4,6 +4,7 @@
 , dtc
 , fetchFromGitHub
 , fetchgit
+, fetchurl
 , gcc7Stdenv
 , git
 , openssl
@@ -13,11 +14,9 @@
 let
   uboot = (buildUBoot rec {
     version = "2019.10";
-    src = fetchFromGitHub {
-      owner = "u-boot";
-      repo = "u-boot";
-      rev = "v${version}";
-      sha256 = "sha256-NhIw4oI1HPjNBWXHJUyScq5qsJ4gx0Al7LNTa95rQTo=";
+    src = fetchurl {
+      url = "ftp://ftp.denx.de/pub/u-boot/u-boot-${version}.tar.bz2";
+      hash = "sha256-jW1gcHOVIt0jbLpwVbhza/6StPrA6hitgJgpynlmcBQ=";
     };
     extraMeta.platforms = [ "aarch64-linux" ];
     defconfig = "sr_cn913x_cex7_defconfig";
