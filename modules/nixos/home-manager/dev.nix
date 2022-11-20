@@ -27,6 +27,7 @@ with lib; {
       grex
       gron
       htmlq
+      ixio
       j
       jo
       jq
