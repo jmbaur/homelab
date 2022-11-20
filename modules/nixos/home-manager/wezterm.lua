@@ -32,7 +32,7 @@ for streak in ipairs({ 1, 2, 3 }) do
 end
 
 return {
-	color_scheme = "PaulMillr",
+	color_scheme = "Builtin Dark",
 	font = wezterm.font("JetBrains Mono"),
 	font_size = 16.0,
 	hide_tab_bar_if_only_one_tab = true,
