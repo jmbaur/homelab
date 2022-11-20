@@ -18,6 +18,8 @@ jobs:
         run: nix develop .\#ci --command sh -c "just update"
       - name: Create pull request
         uses: peter-evans/create-pull-request@v4
+        with:
+          commit-message: Update dependencies
   lockfile:
     runs-on: ubuntu-latest
     steps:
