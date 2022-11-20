@@ -11,7 +11,11 @@ with lib; {
 
   config = mkIf cfg.enable {
     xdg = {
-      userDirs = { enable = true; createDirectories = true; };
+      userDirs = {
+        enable = true;
+        createDirectories = true;
+        extraConfig.XDG_PROJECTS_DIR = "${config.home.homeDirectory}/Projects";
+      };
       mimeApps = {
         enable = true;
         defaultApplications = {

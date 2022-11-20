@@ -161,11 +161,9 @@ with lib; {
       nix-direnv.enable = true;
     };
 
-    home.sessionVariables.PROJ_DIR =
-      if config.custom.gui.enable then
-        "\${HOME}/Projects"
-      else
-        "\${HOME}/projects";
+    home.sessionVariables = lib.mkIf (!config.custom.gui.enable) {
+      XDG_PROJECTS_DIR = "\${HOME}/projects";
+    };
 
     xdg.configFile."fd/ignore".text = ''
       .git

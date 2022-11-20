@@ -8,10 +8,10 @@ function usage() {
 	echo "Usage: $(basename "$0") [PROJECT NAME]"
 	echo
 	echo "The default projects directory is $HOME/Projects. This can be"
-	echo "overridden by setting the $PROJ_DIR environment variable."
+	echo "overridden by setting the $XDG_PROJECTS_DIR environment variable."
 }
 
-directory=${PROJ_DIR:-${HOME}/Projects}
+directory=${XDG_PROJECTS_DIR:-${HOME}/Projects}
 if ! test -d "$directory"; then
 	usage "Cannot find projects directory"
 	exit 1
