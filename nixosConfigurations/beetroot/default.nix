@@ -113,7 +113,7 @@
       teams-webapp
       (writeShellScriptBin "rdp" ''
         ${freerdp}/bin/wlfreerdp \
-          /sec:tls /cert:tofu -grab-keyboard \
+          /sec:tls /cert:tofu -grab-keyboard +auto-reconnect \
           /d:$(cat ${systemConfig.sops.secrets."rdp/domain".path}) \
           /u:$(cat ${systemConfig.sops.secrets."rdp/user".path}) \
           /p:$(cat ${systemConfig.sops.secrets."rdp/password".path}) \

@@ -81,7 +81,7 @@ inputs: with inputs; {
           "https://discord.com/app";
         outlook-webapp = final.mkWebApp
           "outlook"
-          "https://outlook.com";
+          "https://outlook.office365.com/mail";
         slack-webapp = final.mkWebApp
           "slack"
           "https://app.slack.com/client";
