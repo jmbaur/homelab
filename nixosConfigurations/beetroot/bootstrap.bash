@@ -22,13 +22,12 @@ mount /dev/mapper/cryptroot /mnt
 btrfs subvolume create /mnt/@
 btrfs subvolume create /mnt/@nix
 btrfs subvolume create /mnt/@home
-umount /dev/mapper/cryptroot
+umount /mnt
 
-mount -o subvol=@,discard=async,compress=zstd,noatime /dev/mapper/cryptroot /mnt
-mkdir -p /mnt/{nix,home,boot}
-mount -o subvol=@nix,discard=async,compress=zstd,noatime /dev/mapper/cryptroot /mnt/nix
-mount -o subvol=@home,discard=async,compress=zstd,noatime /dev/mapper/cryptroot /mnt/home
-mount $BOOT_PART /mnt/boot
+mount -o X-mount.mkdir,subvol=@,discard=async,compress=zstd,noatime /dev/mapper/cryptroot /mnt
+mount -o X-mount.mkdir,subvol=@nix,discard=async,compress=zstd,noatime /dev/mapper/cryptroot /mnt/nix
+mount -o X-mount.mkdir,subvol=@home,discard=async,compress=zstd,noatime /dev/mapper/cryptroot /mnt/home
+mount -o X-mount.mkdir $BOOT_PART /mnt/boot
 
 nixos-generate-config --root /mnt --show-hardware-config >nixosConfigurations/beetroot/hardware-configuration.nix
 
