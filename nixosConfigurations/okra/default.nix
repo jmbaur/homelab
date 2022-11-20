@@ -24,13 +24,14 @@
 
   nixpkgs.config.allowUnfree = true;
   environment.systemPackages = with pkgs; [
-    (writeShellScriptBin "rdp" ''${pkgs.freerdp}/bin/wlfreerdp /sec:tls /cert:tofu -grab-keyboard /v:laptop.work.home.arpa'')
+    (writeShellScriptBin "rdp" "${pkgs.freerdp}/bin/wlfreerdp /sec:tls /cert:tofu -grab-keyboard /v:laptop.work.home.arpa")
     bitwarden
     chromium-wayland
-    firefox-wayland
-    librewolf-wayland
+    firefox
+    librewolf
     outlook-webapp
     slack-wayland
+    spotify
     teams-webapp
   ];
 

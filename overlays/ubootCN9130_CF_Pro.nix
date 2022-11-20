@@ -86,7 +86,7 @@ gcc7Stdenv.mkDerivation {
     "MV_DDR_PATH=/tmp/mv_ddr_marvell"
     "CP_NUM=1" # cn9130-cf-pro
     "all"
-    "fip" # TODO(jared): not needed?
+    "fip"
   ];
   preBuild =
     let
