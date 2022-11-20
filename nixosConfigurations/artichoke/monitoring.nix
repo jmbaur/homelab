@@ -64,12 +64,4 @@ in
       ];
     };
   };
-
-  nixpkgs.overlays = [
-    (_: prev: {
-      prometheus-kea-exporter = prev.prometheus-kea-exporter.overrideAttrs (old: {
-        patches = (old.patches or [ ]) ++ [ ./pull-30.patch ];
-      });
-    })
-  ];
 }
