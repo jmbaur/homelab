@@ -15,6 +15,8 @@
   zramSwap.enable = true;
   system.stateVersion = "22.11";
 
+  programs.flashrom.enable = true;
+
   sops = {
     defaultSopsFile = ./secrets.yaml;
     secrets =
