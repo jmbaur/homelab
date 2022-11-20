@@ -200,7 +200,7 @@ with lib; {
         set_window_title() { print -Pn "\e]0;[%m] %~\a" }
         precmd_functions+=(vcs_info set_window_title)
         zstyle ':vcs_info:*' actionformats '%F{magenta}(%b|%a)%f'
-        zstyle ':vcs_info:git:*' formats '%F{blue}(%b)%f'
+        zstyle ':vcs_info:git:*' formats '%F{cyan}(%b)%f'
         zstyle ':vcs_info:*' enable git
         PROMPT='%F{%(0V.yellow.green)}[%m]%f%F{white}%2~%f$vcs_info_msg_0_%(?..%F{red}[%?]%f)%(!.#.%#) '
 
