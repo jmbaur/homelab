@@ -1,16 +1,16 @@
 { rustPlatform, fetchFromGitHub, ... }:
 rustPlatform.buildRustPackage rec {
   pname = "cicada";
-  version = "0.9.32";
+  version = "0.9.33";
 
   src = fetchFromGitHub {
     owner = "mitnk";
     repo = "cicada";
     rev = "v${version}";
-    sha256 = "1hp9g3zr6xl9hy4hyixbd96hj08pbn7zcsaw8vngxsmp84s7w0dj";
+    sha256 = "sha256-eqEOVJuP2NzZiKMfq9eoNzyztd2exV9orGm1eKg7tFc=";
   };
 
-  cargoSha256 = "sha256-TynSTa7l37liw9wPl8NJ7KaX3DntLYgOSW6DjuFjd7U=";
+  cargoSha256 = "sha256-9ld07oKQIVE4WIcLuJjJnnmkR6mtIPz7hacpp1OMvfI=";
 
   doCheck = false;
 }
