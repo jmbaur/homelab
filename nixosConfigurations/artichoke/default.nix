@@ -5,6 +5,7 @@
     ./dns.nix
     ./firewall.nix
     ./hardware.nix
+    ./inventory.nix
     ./lan.nix
     ./monitoring.nix
     ./ntp.nix

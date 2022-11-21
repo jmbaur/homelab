@@ -23,7 +23,6 @@ inputs: with inputs; {
       ./he_tunnelbroker.nix
       ./home-manager
       ./installer.nix
-      ./inventory.nix
       ./jared.nix
       ./laptop.nix
       ./remote_boot.nix

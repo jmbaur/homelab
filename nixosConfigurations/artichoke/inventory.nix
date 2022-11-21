@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ config, lib, pkgs, ... }:
 with lib;
 let
   networkType = { name, config, ... }: {
@@ -72,5 +72,11 @@ in
       type = types.attrsOf (types.submodule networkType);
       default = { };
     };
+  };
+
+  config = mkIf (config.custom.inventory != { }) {
+    environment.etc."inventory.json".source = (pkgs.formats.json { }).generate
+      "inventory.json"
+      config.custom.inventory;
   };
 }
