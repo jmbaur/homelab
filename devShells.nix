@@ -9,6 +9,9 @@ in
   ci = pkgs.mkShell {
     buildInputs = with pkgs; [ just jq nix-prefetch-scripts nix-update ];
   };
+  setup = pkgs.mkShell {
+    buildInputs = with pkgs; [ just pam_u2f yubikey-manager ];
+  };
   default = self.devShells.${system}.ci.overrideAttrs (old: {
     buildInputs = (with pkgs; [
       (terraform.withPlugins (p: with p; [ aws cloudflare http sops ]))

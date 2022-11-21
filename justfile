@@ -7,14 +7,13 @@ init:
 	mkdir -p $out
 
 clean: init
-	rm -rf result*
+	rm -rf {{justfile_directory()}}/result*
 	rm -rf $out/*
 
 switch:
 	nixos-rebuild switch -L --use-remote-sudo --flake .#
 
 build:
-	#!/usr/bin/env bash
 	nix build -L \
 		.\#cicada \
 		.\#coredns-utils \
@@ -36,31 +35,30 @@ build:
 
 update:
 	#!/usr/bin/env bash
+	cd {{justfile_directory()}}/overlays
 	export NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"
-	cd overlays
 	nix-prefetch-git https://github.com/ibhagwan/smartyank.nvim >ibhagwan_smartyank-nvim.json
 	nix-prefetch-git https://github.com/stevenblack/hosts >stevenblack_hosts.json
 	# TODO(jared): use `nix eval` overlays/out-of-tree.nix when it doesn't show <LAMBDA> (see https://github.com/NixOS/nix/issues/2678).
 	for pkg in "cicada" "coredns-utils" "flarectl" "flashrom-cros" "xremap" "yamlfmt" "zf"; do
 		nix-update --file ./out-of-tree.nix $pkg
 	done
-	cd ..
 
 setup_pam_u2f:
-	nix shell nixpkgs#pam_u2f -c pamu2fcfg -opam://homelab
+	pamu2fcfg -opam://homelab
 
 setup_yubikey:
-	nix shell nixpkgs#yubikey-manager -c ykman openpgp keys set-touch sig cached-fixed
+	ykman openpgp keys set-touch sig cached-fixed
 
-# TODO(jared): parametrize ARCH for crossgcc
-coreboot_deps:
+coreboot_deps arch:
 	podman build \
-		--tag coreboot \
-		--file misc/coreboot/Containerfile
+		--build-arg crossgcc_arch={{arch}} \
+		--tag coreboot_{{arch}} \
+		--file {{justfile_directory()}}/misc/coreboot/Containerfile
 
-coreboot target: coreboot_deps clean
+coreboot target arch: (coreboot_deps arch) clean
 	podman run \
 		--rm \
 		--volume $out:/out:rw \
-		--volume $PWD/misc/coreboot/{{target}}:/config:ro \
-		coreboot
+		--volume {{justfile_directory()}}/misc/coreboot/{{target}}:/config:ro \
+		coreboot_{{arch}}

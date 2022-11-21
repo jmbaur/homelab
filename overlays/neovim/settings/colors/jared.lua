@@ -45,16 +45,19 @@ local link = function(from, to)
 	vim.cmd.highlight({ args = { "link", from, to } })
 end
 
+-- https://github.com/neovim/neovim/issues/9800
+vim.cmd.highlight({ "CursorLine", "ctermfg=white" })
+
 -- editor highlight groups
 hi("ColorColumn", { bg = xterm[235] })
 hi("Cursor", { fg = xterm[0], bg = xterm[15] })
 hi("CursorLine", { attr = "NONE", bg = "NONE" })
 hi("CursorLineNr", { attr = "NONE", fg = xterm[15] })
 hi("CursorLineSign", { attr = "italic" })
-hi("DiffAdd", { bg = "#406452" })
-hi("DiffChange", { gui = "NONE", bg = xterm[235] })
-hi("DiffDelete", { fg = "#9C455B", bg = "#9C455B" })
-hi("DiffText", { gui = "NONE", bg = xterm[58] })
+hi("DiffAdd", { bg = "#0A290A" })
+hi("DiffChange", { gui = "NONE", bg = "#222222" })
+hi("DiffDelete", { fg = "#462022", bg = "#462022" })
+hi("DiffText", { gui = "NONE", bg = "#343C19" })
 hi("Error", { fg = xterm[15], bg = xterm[204] })
 hi("FoldColumn", { fg = xterm[251], bg = xterm[235] })
 hi("Folded", { fg = xterm[251], bg = xterm[235] })
