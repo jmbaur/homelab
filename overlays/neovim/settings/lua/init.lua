@@ -1,10 +1,9 @@
 vim.g.mapleader = " "
 
 if #vim.api.nvim_list_uis() > 0 then
-	require("gitsigns").setup({ signcolumn = false })
 	require("gosee").setup()
 	require("launcher")
-	require("mini.trailspace").setup()
+	require("mini.trailspace").setup({})
 	require("repl").setup()
 	require("sitter")
 	require("smartyank").setup({ highlight = { enabled = false } })
@@ -24,8 +23,8 @@ if #vim.api.nvim_list_uis() > 0 then
 	vim.opt.relativenumber = true
 end
 
-require("mini.comment").setup()
-require("mini.pairs").setup()
+require("mini.comment").setup({})
+require("mini.pairs").setup({})
 require("nvim-surround").setup()
 
 vim.opt.hidden = true

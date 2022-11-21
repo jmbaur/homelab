@@ -95,16 +95,11 @@ local servers = {
 		required_exe = { "lua-language-server" },
 		lsp_config = {
 			on_attach = on_attach_format,
-			cmd = {
-				"lua-language-server",
-				"--logpath=" .. vim.fn.expand("~/.cache/sumneko_lua/log"),
-				"--metapath=" .. vim.fn.expand("~/.cache/sumneko_lua/meta"),
-			},
 			settings = {
 				Lua = {
 					runtime = { version = "LuaJIT" },
 					diagnostics = { globals = { "vim" } },
-					workspace = { library = vim.api.nvim_get_runtime_file("", true) },
+					workspace = { library = vim.api.nvim_get_runtime_file("", true), checkThirdParty = false },
 					telemetry = { enable = false },
 				},
 			},

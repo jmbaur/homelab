@@ -1,10 +1,4 @@
-{ boring ? false
-
-, neovim-unwrapped
-, vimPlugins
-, wrapNeovim
-, ...
-}:
+{ boring ? false, neovim-unwrapped, vimPlugins, wrapNeovim, ... }:
 let
   configure = {
     customRC = ''
@@ -13,7 +7,6 @@ let
     packages.plugins = with vimPlugins; {
       start = [
         editorconfig-nvim
-        gitsigns-nvim
         gosee-nvim
         jmbaur-settings
         mini-nvim
