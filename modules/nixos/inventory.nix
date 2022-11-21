@@ -35,8 +35,8 @@ let
         default = false; # TODO(jared): calculate based on hosts that have DHCP set to true.
       };
       mtu = mkOption {
-        type = types.int;
-        default = 1500;
+        type = types.nullOr types.int;
+        default = null;
       };
       wireguard = mkOption {
         type = types.bool;
