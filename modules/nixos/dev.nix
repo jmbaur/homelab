@@ -34,7 +34,15 @@ with lib;
       man.enable = true;
     };
 
-    programs.mosh.enable = true;
+    programs = {
+      adb.enable = true;
+      flashrom.enable = true;
+      mosh.enable = true;
+      wireshark = {
+        enable = true;
+        program = pkgs.wireshark-cli;
+      };
+    };
 
     environment.variables.EDITOR = lib.mkForce "nvim";
     environment.pathsToLink = [ "/share/zsh" ];

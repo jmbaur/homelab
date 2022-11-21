@@ -18,8 +18,9 @@ with lib;
       openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
       extraGroups = [ "dialout" "wheel" ]
         ++ (lib.optional config.networking.networkmanager.enable "networkmanager")
-        ++ (lib.optional config.programs.wireshark.enable "wireshark")
         ++ (lib.optional config.programs.adb.enable "adbusers")
+        ++ (lib.optional config.programs.flashrom.enable "flashrom")
+        ++ (lib.optional config.programs.wireshark.enable "wireshark")
         ++ (lib.optional config.virtualisation.docker.enable "docker")
       ;
     };
