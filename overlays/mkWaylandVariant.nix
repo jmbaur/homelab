@@ -6,7 +6,7 @@
 , ...
 }:
 let
-  enableFeatures = lib.concatStringsSep "," ([ "UseOzonePlatform" "WaylandWindowDecorations" ]
+  enableFeatures = lib.concatStringsSep "," ([ "UseOzonePlatform" "WaylandWindowDecorations" "WebUIDarkMode" ]
     ++ (lib.optional WebRTCPipeWireCapturer "WebRTCPipeWireCapturer")
     ++ (lib.optional SystemNotifications "SystemNotifications")
   );
@@ -19,7 +19,6 @@ then
       "--enable-features=${enableFeatures}"
       "--ozone-platform-hint=auto"
       "--force-dark-mode"
-      "--enable-features=WebUIDarkMode"
     ];
   })
 else
@@ -37,7 +36,6 @@ else
       wrapProgram $out/bin/${mainProgram} \
       --add-flags "--enable-features=${enableFeatures}" \
       --add-flags "--ozone-platform-hint=auto" \
-      --add-flags "--force-dark-mode" \
-      --add-flags "--enable-features=WebUIDarkMode"
+      --add-flags "--force-dark-mode"
     '';
   }

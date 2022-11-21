@@ -42,31 +42,35 @@ let
         type = types.bool;
         default = false; # TODO(jared): calculate based on hosts that have wireguard set to true.
       };
+      networkGuaCidr = mkOption { type = types.str; };
+      networkGuaPrefix = mkOption { type = types.str; };
+      networkIPv4 = mkOption { type = types.str; };
+      networkIPv4Cidr = mkOption { type = types.str; };
+      networkIPv4SignificantBits = mkOption { type = types.str; };
+      networkUlaCidr = mkOption { type = types.str; };
+      networkUlaPrefix = mkOption { type = types.str; };
     };
   };
 in
 {
-  options.custom.inventory = mkOption {
-    type = {
-      guaPrefix = mkOption {
-        type = types.str;
-        description = ''
-          The IPv6 Globally Unique Address prefix. This is in the form of the
-          first 48 bytes of an IPv6 address (ffff:ffff:ffff).
-        '';
-      };
-      ulaPrefix = mkOption {
-        type = types.str;
-        description = ''
-          The IPv6 Unique Local Address prefix. This is in the form of the
-          first 48 bytes of an IPv6 address (ffff:ffff:ffff).
-        '';
-      };
-      networks = mkOption {
-        type = types.attrsOf (types.submodule networkType);
-        default = { };
-      };
+  options.custom.inventory = {
+    guaPrefix = mkOption {
+      type = types.str;
+      description = ''
+        The IPv6 Global Unicast Address prefix. This is in the form of the
+        first 48 bytes of an IPv6 address (ffff:ffff:ffff).
+      '';
     };
-    default = { };
+    ulaPrefix = mkOption {
+      type = types.str;
+      description = ''
+        The IPv6 Unique Local Address prefix. This is in the form of the first
+        48 bytes of an IPv6 address (ffff:ffff:ffff).
+      '';
+    };
+    networks = mkOption {
+      type = types.attrsOf (types.submodule networkType);
+      default = { };
+    };
   };
 }
