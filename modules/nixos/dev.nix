@@ -38,10 +38,7 @@ with lib;
       adb.enable = true;
       flashrom.enable = true;
       mosh.enable = true;
-      wireshark = {
-        enable = true;
-        program = pkgs.wireshark-cli;
-      };
+      wireshark.enable = true;
     };
 
     environment.variables.EDITOR = lib.mkForce "nvim";
