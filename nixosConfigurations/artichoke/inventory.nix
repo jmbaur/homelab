@@ -1,47 +1,45 @@
 { config, lib, pkgs, ... }:
 with lib;
 let
+  hostType = { name, ... }: {
+    options = {
+      name = mkOption { type = types.str; default = name; };
+      dhcp = mkOption { type = types.bool; default = false; };
+      wgPeer = mkOption { type = types.bool; default = false; };
+      interface = mkOption { type = types.nullOr types.str; default = null; };
+      mac = mkOption { type = types.nullOr types.str; default = null; };
+      publicKey = mkOption { type = types.nullOr types.str; default = null; };
+      ipv4 = mkOption { type = types.str; };
+      ipv6 = {
+        gua = mkOption { type = types.str; };
+        ula = mkOption { type = types.str; };
+      };
+    };
+  };
   networkType = { name, config, ... }: {
     options = {
-      name = mkOption {
-        type = types.str;
-        default = name;
-      };
-      domain = mkOption {
-        type = types.str;
-        default = "${config.name}.home.arpa";
-      };
+      name = mkOption { type = types.str; default = name; };
+      domain = mkOption { type = types.str; default = "${config.name}.home.arpa"; };
       hosts = mkOption {
-        type = types.attrs; # TODO(jared): expand on this
+        type = types.attrsOf (types.submodule hostType);
         default = { };
-      };
-      id = mkOption {
-        type = types.int;
       };
       includeRoutesTo = mkOption {
         type = types.listOf types.str;
         default = [ ];
       };
-      ipv4Cidr = mkOption {
-        type = types.int;
-        default = 24;
-      };
-      ipv6Cidr = mkOption {
-        type = types.int;
-        default = 64;
-      };
       managed = mkOption {
         type = types.bool;
         default = false; # TODO(jared): calculate based on hosts that have DHCP set to true.
-      };
-      mtu = mkOption {
-        type = types.nullOr types.int;
-        default = null;
       };
       wireguard = mkOption {
         type = types.bool;
         default = false; # TODO(jared): calculate based on hosts that have wireguard set to true.
       };
+      id = mkOption { type = types.int; };
+      mtu = mkOption { type = types.nullOr types.int; default = null; };
+      ipv4Cidr = mkOption { type = types.int; default = 24; };
+      ipv6Cidr = mkOption { type = types.int; default = 64; };
       networkGuaCidr = mkOption { type = types.str; };
       networkGuaPrefix = mkOption { type = types.str; };
       networkIPv4 = mkOption { type = types.str; };
