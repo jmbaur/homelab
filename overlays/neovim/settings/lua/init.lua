@@ -1,8 +1,10 @@
 vim.g.mapleader = " "
 
 if #vim.api.nvim_list_uis() > 0 then
+	require("gitsigns").setup({ signcolumn = false })
 	require("gosee").setup()
 	require("launcher")
+	require("mini.statusline").setup({ use_icons = false })
 	require("mini.trailspace").setup({})
 	require("repl").setup()
 	require("sitter")
