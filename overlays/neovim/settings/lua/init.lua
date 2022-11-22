@@ -27,6 +27,9 @@ require("mini.comment").setup({})
 require("mini.pairs").setup({})
 require("nvim-surround").setup()
 
+-- Make <C-h> map to MiniPairs backspace
+vim.api.nvim_set_keymap("i", "<C-h>", "v:lua.MiniPairs.bs()", { expr = true, desc = "MiniPairs <BS>", noremap = true })
+
 vim.opt.hidden = true
 vim.opt.ignorecase = true
 vim.opt.showmatch = true
