@@ -24,8 +24,15 @@ if #vim.api.nvim_list_uis() > 0 then
 end
 
 require("mini.comment").setup({})
-require("mini.pairs").setup({})
 require("nvim-surround").setup()
+
+require("mini.pairs").setup({
+	mappings = {
+		["("] = { action = "open", pair = "()", neigh_pattern = "[^\\][^%)]" },
+		["["] = { action = "open", pair = "[]", neigh_pattern = "[^\\][^%]]" },
+		["{"] = { action = "open", pair = "{}", neigh_pattern = "[^\\][^%}]" },
+	},
+})
 
 -- Make <C-h> map to MiniPairs backspace
 vim.api.nvim_set_keymap("i", "<C-h>", "v:lua.MiniPairs.bs()", { expr = true, desc = "MiniPairs <BS>", noremap = true })
