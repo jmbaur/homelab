@@ -62,7 +62,7 @@ in
               type=B921B045-1DF0-41C3-AF44-4C6F280D3FAE, uuid=$rootUUID, name=NIXOS_SD
           EOF
 
-          cgpt add -i 1 -S 1 -T 5 -P 10 $img
+          cgpt add -t kernel -i 1 -S 1 -T 5 -P 10 $img
 
           # Copy the kernel to the SD image
           eval $(partx $img -o START,SECTORS --nr 1 --pairs)

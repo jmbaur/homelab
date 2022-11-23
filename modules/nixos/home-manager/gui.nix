@@ -94,7 +94,7 @@ with lib; {
         optional config.custom.laptop.enable
           { module = "battery"; }
       ) ++ [
-        { module = "network"; pattern = "(en|wl|wg)+"; }
+        { module = "network"; pattern = "(enp|eth|wlp|wlan|wg)+"; }
         { module = "memory"; }
         { module = "datetime"; timezones = [ "Local" "UTC" ]; }
       ];

@@ -27,6 +27,11 @@ inputs: with inputs; {
     ];
   };
 
+  fennel = nixpkgs.lib.nixosSystem {
+    system = "aarch64-linux";
+    modules = [ self.nixosModules.default ./fennel ];
+  };
+
   lxc-test = nixpkgs.lib.nixosSystem {
     system = "aarch64-linux";
     modules = [
