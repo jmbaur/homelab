@@ -94,7 +94,7 @@ in
                 file=$1
                 futility show --strict "$file" | grep -v "Kernel partition"
               }
-              if ! diff <(summary ${cfg.partition}) <(summary "$system/kpart"); then
+              if ! diff --brief <(summary ${cfg.partition}) <(summary "$system/kpart"); then
               ${fallbackDeviceSetup}
               ${lib.optionalString (cfg.fallbackPartition != null) ''
                 if [ -e /run/booted-system/kpart ]; then

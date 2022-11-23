@@ -1,19 +1,23 @@
-{ config, lib, pkgs, ... }: {
+{ pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
+  hardware.kukui-fennel14.enable = true;
+  zramSwap.enable = true;
+
   boot.loader.depthcharge = {
     enable = true;
     partition = "/dev/disk/by-partuuid/09957051-883d-5542-8fa8-47d3d5c953de";
   };
-  hardware.kukui-fennel14.enable = true;
-  zramSwap.enable = true;
+  boot.initrd.systemd.enable = true;
 
   networking.hostName = "fennel";
-  system.stateVersion = "22.11";
+  networking.useNetworkd = true;
 
   custom.gui.enable = true;
   custom.dev.enable = true;
   custom.users.jared.enable = true;
   users.users.jared.password = "dontpwnme";
 
-  environment.systemPackages = with pkgs; [ firefox ];
+  environment.systemPackages = with pkgs; [ chromium-wayland firefox ];
+
+  system.stateVersion = "22.11";
 }
