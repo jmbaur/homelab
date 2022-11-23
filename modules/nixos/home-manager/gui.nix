@@ -216,7 +216,7 @@ with lib; {
               };
             in
             {
-              "113:16461:Logitech_K400_Plus" = keyboardSettings // touchpadSettings;
+              "113:16461:Logitech_K400_Plus" = keyboardSettings // touchpadSettings // { xkb_options = "ctrl:nocaps"; };
               "type:keyboard" = keyboardSettings;
               "type:pointer" = mouseSettings;
               "type:touchpad" = touchpadSettings;
