@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, ... }:
 let
   cfg = config.custom.laptop;
 in
@@ -6,8 +6,6 @@ in
 {
   options.custom.laptop.enable = lib.mkEnableOption "laptop config";
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = [ pkgs.acpi ];
-
     services.openssh.openFirewall = false;
 
     # Set a random MAC address for physical network interfaces.

@@ -18,7 +18,6 @@ with lib;
 
     i18n.defaultLocale = "en_US.UTF-8";
     console.useXkbConfig = true;
-    services.xserver.xkbOptions = "ctrl:nocaps";
 
     fonts.fontconfig.enable = mkDefault false;
     documentation.enable = mkDefault false;

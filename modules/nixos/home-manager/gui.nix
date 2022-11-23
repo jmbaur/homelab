@@ -207,7 +207,7 @@ with lib; {
           input =
             let
               mouseSettings = { accel_profile = "flat"; };
-              keyboardSettings = { xkb_options = "ctrl:nocaps"; };
+              keyboardSettings = { xkb_options = systemConfig.services.xserver.xkbOptions; };
               touchpadSettings = {
                 dwt = "enabled";
                 middle_emulation = "enabled";
