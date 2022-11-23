@@ -68,6 +68,7 @@ in
   };
 
   config = mkIf config.boot.loader.depthcharge.enable {
+    environment.systemPackages = [ pkgs.vboot_reference ];
     console.earlySetup = true;
     boot.loader.grub.enable = false;
     system.boot.loader.id = "depthcharge";
@@ -81,34 +82,40 @@ in
           name = "install-depthcharge";
           runtimeInputs = [ pkgs.vboot_reference ];
           text = ''
-            		system=$1
-            		kpart=$system/kpart
-            		if [ ! -f "$kpart" ]; then
-            		  echo "Missing kpart file in system"
-            		  echo "Expected: $kpart"
-            		  exit 1
-            		fi
-            		${if cfg.partition != "nodev" then ''
-            		  ${fallbackDeviceSetup}
-            		  ${lib.optionalString (cfg.fallbackPartition != null) ''
-            		    if [ -e /run/booted-system/kpart ]; then
-            		      echo "Copying booted kernel to fallback partition"
-            		      dd if=/run/booted-system/kpart of="${cfg.fallbackPartition}"
-            		      echo "Setting known good configuration as known good"
-            		      cgpt add -i "$fallback_index" -T 0 -S 1 "$fallback_disk"
-            		    fi
-            		  ''}
-            		  echo "Installing kpart at $kpart to ${cfg.partition}"
-            		  dd if="$kpart" of="${cfg.partition}"
-            		  ${lib.optionalString (cfg.fallbackPartition != null) ''
-            		    echo "Setting new kpart state"
-            		    cgpt add -i "$primary_index" -T 1 -S 0 "$primary_disk"
-            		    cgpt prioritize -i "$primary_index" "$primary_disk"
-            		  ''}
-            		'' else ''
-            		  echo "Kpart produced at $kpart, but automatic installation is disabled."
-            		''}
-            	      '';
+            system=$1
+            kpart=$system/kpart
+            if [ ! -f "$kpart" ]; then
+              echo "Missing kpart file in system"
+              echo "Expected: $kpart"
+              exit 1
+            fi
+            ${if cfg.partition != "nodev" then ''
+              summary() {
+                file=$1
+                futility show --strict "$file" | grep -v "Kernel partition"
+              }
+              if ! diff <(summary ${cfg.partition}) <(summary "$system/kpart"); then
+              ${fallbackDeviceSetup}
+              ${lib.optionalString (cfg.fallbackPartition != null) ''
+                if [ -e /run/booted-system/kpart ]; then
+                  echo "Copying booted kernel to fallback partition"
+                  dd if=/run/booted-system/kpart of="${cfg.fallbackPartition}"
+                  echo "Setting known good configuration as known good"
+                  cgpt add -i "$fallback_index" -T 0 -S 1 "$fallback_disk"
+                fi
+              ''}
+                echo "Installing kpart at $kpart to ${cfg.partition}"
+                dd if="$kpart" of="${cfg.partition}"
+              ${lib.optionalString (cfg.fallbackPartition != null) ''
+                echo "Setting new kpart state"
+                cgpt add -i "$primary_index" -T 1 -S 0 "$primary_disk"
+                cgpt prioritize -i "$primary_index" "$primary_disk"
+              ''}
+              fi
+            '' else ''
+              echo "Kpart produced at $kpart, but automatic installation is disabled."
+            ''}
+          '';
         };
       in
       "${program}/bin/install-depthcharge";
