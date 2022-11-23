@@ -31,7 +31,6 @@
     wireless.enable = true;
   };
   systemd.network = {
-    wait-online.anyInterface = true;
     networks = {
       wireless = {
         name = "wl*";

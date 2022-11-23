@@ -17,5 +17,7 @@ in
         MACAddressPolicy = "random";
       };
     };
+
+    systemd.network.wait-online.anyInterface = true;
   };
 }
