@@ -89,27 +89,6 @@ in
         modules = installer_iso_modules ++ [{ imports = [ ../modules/hardware/lx2k.nix ]; }];
       }).config.system.build.isoImage;
 
-      installer_iso_thinkpad_x13s = (nixpkgs.lib.nixosSystem {
-        inherit (pkgs) system;
-        modules = installer_iso_modules ++ [
-          ../modules/hardware/thinkpad_x13s.nix
-          ({ config, ... }: {
-            isoImage = {
-              contents = [
-                (
-                  let
-                    dtbPath = "dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb";
-                  in
-                  {
-                    source = config.boot.loader.grub.extraFiles.${dtbPath};
-                    target = "/boot/${dtbPath}";
-                  }
-                )
-              ];
-            };
-          })
-        ];
-      }).config.system.build.isoImage;
       rhubarb_image = self.nixosConfigurations.rhubarb.config.system.build.sdImage;
     };
 

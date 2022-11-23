@@ -4,6 +4,8 @@
     ./hardware-configuration.nix
   ];
 
+  hardware.lx2k.enable = true;
+
   fileSystems = {
     "/".options = [ "noatime" "discard=async" "compress=zstd" ];
     "/nix".options = [ "noatime" "discard=async" "compress=zstd" ];

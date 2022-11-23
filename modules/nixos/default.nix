@@ -18,8 +18,10 @@ inputs: with inputs; {
       ./common.nix
       ./deployee.nix
       ./deployer.nix
+      ./depthcharge
       ./dev.nix
       ./gui.nix
+      ./hardware
       ./he_tunnelbroker.nix
       ./home-manager
       ./installer.nix

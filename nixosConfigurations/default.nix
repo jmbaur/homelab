@@ -13,10 +13,17 @@ inputs: with inputs; {
     system = "aarch64-linux";
     modules = [
       ./kale
-      ../modules/hardware/lx2k.nix
       runner-nix.nixosModules.default
       self.nixosModules.default
       sops-nix.nixosModules.sops
+    ];
+  };
+
+  depthcharge-test = nixpkgs.lib.nixosSystem {
+    system = "aarch64-linux";
+    modules = [
+      self.nixosModules.default
+      ./depthcharge-test
     ];
   };
 
@@ -44,9 +51,13 @@ inputs: with inputs; {
   artichoke-test = nixpkgs.lib.nixosSystem {
     system = "armv7l-linux";
     modules = [
-      ../modules/hardware/a38x.nix
       self.nixosModules.default
-      ({ lib, pkgs, ... }: {
+      ({ lib, pkgs, modulesPath, ... }: {
+        imports = [ "${modulesPath}/installer/sd-card/sd-image-armv7l-multiplatform.nix" ];
+        hardware.a38x.enable = true;
+        sdImage.postBuildCommands = ''
+          dd if=${pkgs.ubootClearfog}/u-boot-spl.kwb of=$img bs=512 seek=1 conv=sync
+        '';
         boot.kernelPackages = lib.mkForce pkgs.linuxPackages;
         system.stateVersion = "22.11";
         custom.common.enable = lib.mkForce false;
@@ -60,7 +71,6 @@ inputs: with inputs; {
     system = "aarch64-linux";
     modules = [
       ./rhubarb
-      ../modules/hardware/rpi4.nix
       nixos-hardware.nixosModules.raspberry-pi-4
       self.nixosModules.default
       sops-nix.nixosModules.sops

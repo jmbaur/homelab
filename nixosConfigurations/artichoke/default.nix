@@ -1,10 +1,10 @@
-{ config, pkgs, ... }: {
+{ config, pkgs, modulesPath, ... }: {
   imports = [
-    ../../modules/hardware/cn913x.nix
+    "${modulesPath}/installer/sd-card/sd-image-aarch64.nix"
     ./dhcp.nix
     ./dns.nix
     ./firewall.nix
-    ./hardware.nix
+    ./links.nix
     ./inventory.nix
     ./lan.nix
     ./monitoring.nix
@@ -15,6 +15,8 @@
 
   zramSwap.enable = true;
   system.stateVersion = "22.11";
+
+  hardware.cn913x.enable = true;
 
   programs.flashrom.enable = true;
 
