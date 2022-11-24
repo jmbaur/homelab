@@ -14,6 +14,7 @@
 
   custom.gui.enable = true;
   custom.dev.enable = true;
+  custom.remoteBuilders.aarch64builder.enable = true;
   custom.users.jared.enable = true;
   users.users.jared.password = "dontpwnme";
 
