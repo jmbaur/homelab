@@ -18,6 +18,7 @@ with lib; {
       diffsitter
       direnv
       entr
+      fsrx
       git
       git-extras
       git-get
