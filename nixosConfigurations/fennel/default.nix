@@ -11,6 +11,8 @@
 
   networking.hostName = "fennel";
   networking.useNetworkd = true;
+  networking.wireless.enable = true;
+  hardware.bluetooth.enable = true;
 
   custom.gui.enable = true;
   custom.dev.enable = true;
