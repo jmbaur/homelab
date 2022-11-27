@@ -14,22 +14,21 @@ with lib;
       filter = "mt8183-kukui-jacuzzi-fennel14.dtb";
     };
 
-    # boot.initrd.availableKernelModules = [
-    #   "ath10k_pci"
-    #   "cros_ec"
-    #   "cros_ec_keyb"
-    #   "cros_ec_lid_angle"
-    #   "cros_ec_rpmsg"
-    #   "cros_ec_sensorhub"
-    #   "cros_ec_sensors_core"
-    #   "cros_ec_typec"
-    #   "cros_usbpd_charger"
-    #   "drm"
-    #   "mediatek_drm"
-    #   "mtk_rpmsg"
-    #   "mtk_scp"
-    #   "mtk_scp_ipi"
-    # ];
+    boot.initrd.availableKernelModules = [
+      "cros_ec"
+      "cros_ec_keyb"
+      "cros_ec_lid_angle"
+      "cros_ec_rpmsg"
+      "cros_ec_sensorhub"
+      "cros_ec_sensors_core"
+      "cros_ec_typec"
+      "cros_usbpd_charger"
+      "drm"
+      "mediatek_drm"
+      "mtk_rpmsg"
+      "mtk_scp"
+      "mtk_scp_ipi"
+    ];
 
     boot.kernelPackages = pkgs.recurseIntoAttrs
       (pkgs.linuxKernel.packagesFor (pkgs.linux_chromiumos_mediatek));
