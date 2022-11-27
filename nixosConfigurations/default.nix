@@ -59,7 +59,7 @@ inputs: with inputs; {
       self.nixosModules.default
       ({ lib, pkgs, modulesPath, ... }: {
         imports = [ "${modulesPath}/installer/sd-card/sd-image-armv7l-multiplatform.nix" ];
-        hardware.a38x.enable = true;
+        hardware.clearfog-a38x.enable = true;
         sdImage.postBuildCommands = ''
           dd if=${pkgs.ubootClearfog}/u-boot-spl.kwb of=$img bs=512 seek=1 conv=sync
         '';

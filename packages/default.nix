@@ -87,7 +87,7 @@ in
 
       installer_iso_lx2k = (nixpkgs.lib.nixosSystem {
         inherit (pkgs) system;
-        modules = installer_iso_modules ++ [{ imports = [ ../modules/hardware/lx2k.nix ]; }];
+        modules = installer_iso_modules ++ [{ imports = [ ../modules/nixos/hardware/lx2k.nix ]; }];
       }).config.system.build.isoImage;
 
       rhubarb_image = self.nixosConfigurations.rhubarb.config.system.build.sdImage;
