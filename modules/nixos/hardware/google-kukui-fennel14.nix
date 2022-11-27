@@ -31,10 +31,12 @@ with lib;
       "mtk_scp_ipi"
     ];
 
-    boot.kernelPackages = pkgs.linuxKernel.customPackage {
-      inherit (pkgs.linuxKernel.kernels.linux_6_0) src version;
-      configfile = ./chromiumos-mediatek.config;
-      allowImportFromDerivation = true;
-    };
+    boot.kernelPackages = pkgs.recurseIntoAttrs
+      (pkgs.linuxKernel.packagesFor (pkgs.linuxKernel.manualConfig {
+        inherit (pkgs) lib stdenv;
+        inherit (pkgs.linuxKernel.kernels.linux_6_0) version src;
+        configfile = ./chromiumos-mediatek.config;
+        allowImportFromDerivation = true;
+      }));
   };
 }
