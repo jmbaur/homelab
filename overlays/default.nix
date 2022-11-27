@@ -101,6 +101,7 @@ inputs: with inputs; {
         linux_cn913x = prev.callPackage ./linux_cn913x.nix {
           inherit cn913x_build;
         };
+        linux_chromiumos_mediatek = prev.callPackage ./linux_chromiumos_mediatek.nix { };
 
         jmbaur-keybase-pgp-keys = prev.fetchurl {
           url = "https://keybase.io/jaredbaur/pgp_keys.asc";

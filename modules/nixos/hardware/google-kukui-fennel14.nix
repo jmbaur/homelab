@@ -32,11 +32,6 @@ with lib;
     ];
 
     boot.kernelPackages = pkgs.recurseIntoAttrs
-      (pkgs.linuxKernel.packagesFor (pkgs.linuxKernel.manualConfig {
-        inherit (pkgs) lib stdenv;
-        inherit (pkgs.linuxKernel.kernels.linux_6_0) version src;
-        configfile = ./chromiumos-mediatek.config;
-        allowImportFromDerivation = true;
-      }));
+      (pkgs.linuxKernel.packagesFor (pkgs.linux_chromiumos_mediatek));
   };
 }

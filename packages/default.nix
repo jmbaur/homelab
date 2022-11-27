@@ -80,6 +80,7 @@ in
     in
     pkgs.lib.recursiveUpdate (commonDerivations pkgs) {
       inherit (pkgs)
+        linux_chromiumos_mediatek
         linux_cn913x
         ubootCN9130_CF_Pro
         ;
@@ -111,6 +112,7 @@ in
     pkgs.lib.recursiveUpdate (commonDerivations pkgs) {
       inherit (pkgs.pkgsCross.aarch64-multiplatform)
         ipwatch
+        linux_chromiumos_mediatek
         linux_cn913x
         runner-nix
         ubootCN9130_CF_Pro
