@@ -189,6 +189,7 @@ with lib; {
       defaultKeymap = "emacs";
       initExtraFirst = ''
         setopt interactivecomments
+        setopt nonomatch
         setopt prompt_subst
       '';
       initExtra = ''
