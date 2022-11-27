@@ -149,5 +149,10 @@ in
       '';
       path = with pkgs; [ diffutils vboot_reference ];
     };
+
+    boot.initrd.extraFiles."/sbin/init".source = "${config.system.build.toplevel}/init";
+    system.activationScripts.installInitScript = mkForce ''
+      ln -fs $systemConfig/init /sbin/init
+    '';
   };
 }

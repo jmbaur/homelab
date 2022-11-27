@@ -1,10 +1,22 @@
-{ linuxKernel, lib, stdenv, concatText, ... }:
-linuxKernel.manualConfig {
-  inherit lib stdenv;
-  inherit (linuxKernel.kernels.linux_6_0) version src;
-  configfile = concatText "chromiumos_mediatek-config" [
-    "${./nixos_required.config}"
-    "${./chromiumos-mediatek.config}"
-  ];
-  allowImportFromDerivation = true;
+{ linuxKernel, lib, ... }:
+linuxKernel.kernels.linux_6_0.override {
+  structuredExtraConfig = with lib.kernel; {
+    SND_SOC = yes;
+    SND_SOC_MT8173 = yes;
+    SND_SOC_MT8173_RT5650 = yes;
+    SND_SOC_MT8173_RT5650_RT5514 = yes;
+    SND_SOC_MT8173_RT5650_RT5676 = yes;
+    SND_SOC_MT8183 = yes;
+    SND_SOC_MT8183_DA7219_MAX98357A = yes;
+    SND_SOC_MT8183_MT6358_TS3A227E_MAX98357A = yes;
+    SND_SOC_MT8186 = yes;
+    SND_SOC_MT8186_MT6366_DA7219_MAX98357 = yes;
+    SND_SOC_MT8186_MT6366_RT1019_RT5682S = yes;
+    SND_SOC_MT8192 = yes;
+    SND_SOC_MT8192_MT6359_RT1015_RT5682 = yes;
+    SND_SOC_SOF_MT8186 = module;
+    SND_SOC_SOF_MTK_TOPLEVEL = yes;
+    SND_SOC_SOF_OF = yes;
+    SND_SOC_SOF_TOPLEVEL = yes;
+  };
 }
