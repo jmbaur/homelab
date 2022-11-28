@@ -149,7 +149,5 @@ in
       '';
       path = with pkgs; [ diffutils vboot_reference ];
     };
-
-    boot.initrd.extraFiles."/sbin/init".source = "${config.system.build.toplevel}/init";
   };
 }
