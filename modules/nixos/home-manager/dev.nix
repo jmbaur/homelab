@@ -107,6 +107,14 @@ with lib; {
       ])
     ]);
 
+    programs.gpg = {
+      enable = true;
+      mutableKeys = false;
+      mutableTrust = false;
+      scdaemonSettings.disable-ccid = true;
+    };
+    services.gpg-agent.enable = true;
+
     programs.git = {
       enable = true;
       aliases = {

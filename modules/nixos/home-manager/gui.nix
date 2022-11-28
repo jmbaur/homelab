@@ -33,14 +33,23 @@ with lib; {
     xdg.configFile."wezterm/wezterm.lua".source = ./wezterm.lua;
     home.packages = [ pkgs.wezterm ];
 
-    programs.gpg = {
+    programs.foot = {
       enable = true;
-      mutableKeys = false;
-      mutableTrust = false;
-      scdaemonSettings.disable-ccid = true;
+      settings = {
+        main = {
+          term = "xterm-256color";
+          font = "JetBrains Mono:size=10";
+          selection-target = "clipboard";
+        };
+        colors = {
+          foreground = "ffffff";
+          background = "000000";
+        };
+        mouse = {
+          hide-when-typing = "yes";
+        };
+      };
     };
-
-    services.gpg-agent.enable = true;
 
     systemd.user.services.yubikey-touch-detector = {
       Unit = {
@@ -246,7 +255,7 @@ with lib; {
             names = [ "JetBrains Mono" ];
             size = 12.0;
           };
-          terminal = "${pkgs.wezterm}/bin/wezterm";
+          terminal = "${pkgs.foot}/bin/foot";
           menu = "${pkgs.bemenu}/bin/bemenu-run";
           modifier = "Mod4";
           workspaceLayout = "stacking";
