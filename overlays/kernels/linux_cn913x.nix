@@ -1,6 +1,6 @@
-{ cn913x_build, linuxKernel, kernelPatches, lib, ... }:
-linuxKernel.kernels.linux_5_15.override {
-  kernelPatches = [
+{ cn913x_build, linux_5_15, lib, ... }:
+linux_5_15.override (old: {
+  kernelPatches = (old.kernelPatches or [ ]) ++ [
     {
       name = "0001-arm64-dts-cn913x-add-cn913x-based-COM-express-type-";
       patch = "${cn913x_build}/patches/linux/0001-arm64-dts-cn913x-add-cn913x-based-COM-express-type-.patch";
@@ -61,28 +61,30 @@ linuxKernel.kernels.linux_5_15.override {
       name = "0018-DPDK-support-for-MVPP2";
       patch = "${cn913x_build}/patches/linux/0018-DPDK-support-for-MVPP2.patch";
     }
-    kernelPatches.bridge_stp_helper
-    kernelPatches.request_key_helper
+    {
+      name = "cn913x_additions";
+      patch = null;
+      extraStructuredConfig = with lib.kernel; {
+        ACPI_CPPC_CPUFREQ = yes;
+        ARM_ARMADA_8K_CPUFREQ = yes;
+        CPU_FREQ_DEFAULT_GOV_ONDEMAND = yes;
+        CPU_FREQ_GOV_CONSERVATIVE = yes;
+        CPU_FREQ_GOV_POWERSAVE = yes;
+        EEPROM_AT24 = yes;
+        GPIO_SYSFS = yes;
+        MARVELL_10G_PHY = yes;
+        MARVELL_PHY = yes;
+        NET_DSA = module;
+        NET_DSA_MV88E6XXX = module;
+        SENSORS_MCP3021 = yes;
+        SENSORS_PWM_FAN = yes;
+        SFP = yes;
+        UIO = yes;
+        USB_SERIAL = yes;
+        USB_SERIAL_FTDI_SIO = yes;
+        USB_SERIAL_OPTION = yes;
+        USB_SERIAL_WWAN = yes;
+      };
+    }
   ];
-  structuredExtraConfig = with lib.kernel; {
-    ACPI_CPPC_CPUFREQ = yes;
-    ARM_ARMADA_8K_CPUFREQ = yes;
-    CPU_FREQ_DEFAULT_GOV_ONDEMAND = yes;
-    CPU_FREQ_GOV_CONSERVATIVE = yes;
-    CPU_FREQ_GOV_POWERSAVE = yes;
-    EEPROM_AT24 = yes;
-    GPIO_SYSFS = yes;
-    MARVELL_10G_PHY = yes;
-    MARVELL_PHY = yes;
-    NET_DSA = module;
-    NET_DSA_MV88E6XXX = module;
-    SENSORS_MCP3021 = yes;
-    SENSORS_PWM_FAN = yes;
-    SFP = yes;
-    UIO = yes;
-    USB_SERIAL = yes;
-    USB_SERIAL_FTDI_SIO = yes;
-    USB_SERIAL_OPTION = yes;
-    USB_SERIAL_WWAN = yes;
-  };
-}
+})

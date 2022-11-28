@@ -1,9 +1,9 @@
 {
   "url": "https://github.com/stevenblack/hosts",
-  "rev": "147b6d4e55148a897c2cb6cc138c232cf4fcd730",
-  "date": "2022-11-26T12:08:59-05:00",
-  "path": "/nix/store/wq0nqqdfm89zkdzf67q22xnjihj78faz-hosts",
-  "sha256": "0cks500842116c67cgpgvipbmd1g6jlcylazcnksnjrvkk15l88z",
+  "rev": "92be34d60800598e59c6c23fef9be42e049672b6",
+  "date": "2022-11-28T10:54:13-05:00",
+  "path": "/nix/store/bzqmgizz5kspwq00jc47ad3mz0gyb8x7-hosts",
+  "sha256": "1y0qw9yws4ic5s0kswccym6llpb34i3n97mjnhzdzyga889m3zld",
   "fetchLFS": false,
   "fetchSubmodules": false,
   "deepClone": false,
