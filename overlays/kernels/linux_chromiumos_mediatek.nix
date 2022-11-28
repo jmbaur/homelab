@@ -6,6 +6,13 @@ linuxKernel.kernels.linux_6_0.override {
     ATH10K_DEBUGFS = yes;
     ATH10K_SDIO = module;
     ATH10K_TRACING = yes;
+    SND = yes;
+    SND_ALOOP = module;
+    SND_DUMMY = module;
+    SND_HRTIMER = module;
+    SND_SEQUENCER = module;
+    SND_SEQ_DUMMY = module;
+    SND_SIMPLE_CARD = yes;
     SND_SOC = yes;
     SND_SOC_MT8173 = yes;
     SND_SOC_MT8173_RT5650 = yes;
@@ -23,5 +30,6 @@ linuxKernel.kernels.linux_6_0.override {
     SND_SOC_SOF_MTK_TOPLEVEL = yes;
     SND_SOC_SOF_OF = yes;
     SND_SOC_SOF_TOPLEVEL = yes;
+    SND_USB_AUDIO = module;
   };
 }
