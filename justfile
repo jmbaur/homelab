@@ -1,5 +1,7 @@
 # vim: ft=make
 
+docker := env_var_or_default("DOCKER", "docker")
+
 help:
 	@just --list
 
@@ -51,13 +53,13 @@ setup_yubikey:
 	ykman openpgp keys set-touch sig cached-fixed
 
 coreboot_deps arch:
-	podman build \
+	{{docker}} build \
 		--build-arg crossgcc_arch={{arch}} \
 		--tag coreboot_{{arch}} \
 		--file {{justfile_directory()}}/misc/coreboot/Containerfile
 
-coreboot target arch: (coreboot_deps arch) clean
-	podman run \
+coreboot target arch: clean (coreboot_deps arch)
+	{{docker}} run \
 		--rm \
 		--volume $out:/out:rw \
 		--volume {{justfile_directory()}}/misc/coreboot/{{target}}:/config:ro \

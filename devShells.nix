@@ -13,6 +13,7 @@ in
     buildInputs = with pkgs; [ just pam_u2f yubikey-manager ];
   };
   default = self.devShells.${system}.ci.overrideAttrs (old: {
+    DOCKER = "podman";
     buildInputs = (with pkgs; [
       (terraform.withPlugins (p: with p; [ aws cloudflare http sops ]))
       awscli2
