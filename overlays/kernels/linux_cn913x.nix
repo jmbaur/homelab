@@ -64,7 +64,25 @@ linuxKernel.kernels.linux_5_15.override {
     kernelPatches.bridge_stp_helper
     kernelPatches.request_key_helper
   ];
-  extraConfig = lib.replaceStrings
-    [ "CONFIG_" "=" ] [ "" " " ]
-    (builtins.readFile "${cn913x_build}/configs/linux/cn913x_additions.config");
+  structuredExtraConfig = with lib.kernel; {
+    ACPI_CPPC_CPUFREQ = yes;
+    ARM_ARMADA_8K_CPUFREQ = yes;
+    CPU_FREQ_DEFAULT_GOV_ONDEMAND = yes;
+    CPU_FREQ_GOV_CONSERVATIVE = yes;
+    CPU_FREQ_GOV_POWERSAVE = yes;
+    EEPROM_AT24 = yes;
+    GPIO_SYSFS = yes;
+    MARVELL_10G_PHY = yes;
+    MARVELL_PHY = yes;
+    NET_DSA = module;
+    NET_DSA_MV88E6XXX = module;
+    SENSORS_MCP3021 = yes;
+    SENSORS_PWM_FAN = yes;
+    SFP = yes;
+    UIO = yes;
+    USB_SERIAL = yes;
+    USB_SERIAL_FTDI_SIO = yes;
+    USB_SERIAL_OPTION = yes;
+    USB_SERIAL_WWAN = yes;
+  };
 }

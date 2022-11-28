@@ -16,7 +16,7 @@
   zramSwap.enable = true;
   system.stateVersion = "22.11";
 
-  hardware.cn913x.enable = true;
+  hardware.clearfog-cn913x.enable = true;
 
   programs.flashrom.enable = true;
 
