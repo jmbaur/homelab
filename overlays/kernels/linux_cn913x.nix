@@ -1,6 +1,6 @@
-{ cn913x_build, linux_5_15, lib, ... }:
-linux_5_15.override (originalArgs: {
-  kernelPatches = (originalArgs.kernelPatches or [ ]) ++ [
+{ cn913x_build, linuxKernel, kernelPatches, lib, ... }:
+linuxKernel.kernels.linux_5_15.override {
+  kernelPatches = [
     {
       name = "0001-arm64-dts-cn913x-add-cn913x-based-COM-express-type-";
       patch = "${cn913x_build}/patches/linux/0001-arm64-dts-cn913x-add-cn913x-based-COM-express-type-.patch";
@@ -61,12 +61,10 @@ linux_5_15.override (originalArgs: {
       name = "0018-DPDK-support-for-MVPP2";
       patch = "${cn913x_build}/patches/linux/0018-DPDK-support-for-MVPP2.patch";
     }
-    {
-      name = "cn913x_additions";
-      patch = null;
-      extraConfig = lib.replaceStrings
-        [ "CONFIG_" "=" ] [ "" " " ]
-        (builtins.readFile "${cn913x_build}/configs/linux/cn913x_additions.config");
-    }
+    kernelPatches.bridge_stp_helper
+    kernelPatches.request_key_helper
   ];
-})
+  extraConfig = lib.replaceStrings
+    [ "CONFIG_" "=" ] [ "" " " ]
+    (builtins.readFile "${cn913x_build}/configs/linux/cn913x_additions.config");
+}
