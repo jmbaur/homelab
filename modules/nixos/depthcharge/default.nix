@@ -19,7 +19,7 @@ let
   '';
 
   fallbackDeviceSetup = optionalString (cfg.fallbackPartition != null) ''
-    export PATH=${lib.makeBinPath [ pkgs.vboot_reference pkgs.util-linux ]}:$PATH
+    export PATH=${makeBinPath [ pkgs.vboot_reference pkgs.util-linux ]}:$PATH
     deviceToDisk() {
       local device=$1
       local name
@@ -100,7 +100,7 @@ in
               }
               if ! diff --brief <(summary ${cfg.partition}) <(summary "$system/kpart"); then
               ${fallbackDeviceSetup}
-              ${lib.optionalString (cfg.fallbackPartition != null) ''
+              ${optionalString (cfg.fallbackPartition != null) ''
                 if [ -e /run/booted-system/kpart ]; then
                   echo "Copying booted kernel to fallback partition"
                   dd if=/run/booted-system/kpart of="${cfg.fallbackPartition}"
@@ -110,7 +110,7 @@ in
               ''}
                 echo "Installing kpart at $kpart to ${cfg.partition}"
                 dd if="$kpart" of="${cfg.partition}"
-              ${lib.optionalString (cfg.fallbackPartition != null) ''
+              ${optionalString (cfg.fallbackPartition != null) ''
                 echo "Setting new kpart state"
                 cgpt add -i "$primary_index" -T 1 -S 0 "$primary_disk"
                 cgpt prioritize -i "$primary_index" "$primary_disk"
@@ -151,8 +151,5 @@ in
     };
 
     boot.initrd.extraFiles."/sbin/init".source = "${config.system.build.toplevel}/init";
-    system.activationScripts.installInitScript = mkForce ''
-      ln -fs $systemConfig/init /sbin/init
-    '';
   };
 }

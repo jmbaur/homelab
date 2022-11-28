@@ -1,6 +1,11 @@
 { linuxKernel, lib, ... }:
 linuxKernel.kernels.linux_6_0.override {
   structuredExtraConfig = with lib.kernel; {
+    ATH10K = module;
+    ATH10K_DEBUG = yes;
+    ATH10K_DEBUGFS = yes;
+    ATH10K_SDIO = module;
+    ATH10K_TRACING = yes;
     SND_SOC = yes;
     SND_SOC_MT8173 = yes;
     SND_SOC_MT8173_RT5650 = yes;
