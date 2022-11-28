@@ -43,49 +43,6 @@ linuxKernel.kernels.linux_6_0.override {
     TCG_TIS_SPI_CR50 = yes;
     TCG_TPM = yes;
 
-    # Mediatek settings
-    MTK_ADSP_IPC = yes;
-    MTK_ADSP_MBOX = yes;
-    MTK_CMDQ = yes;
-    MTK_EFUSE = yes;
-    MTK_IOMMU = yes;
-    MTK_PMIC_WRAP = yes;
-    # MTK_SOC_THERMAL_LVTS = yes; # TODO(jared): does not exist in mainline
-    MTK_SVS = yes;
-    MTK_THERMAL = yes;
-
-    # Video
-    DRM = yes;
-    DRM_ANALOGIX_ANX7625 = yes;
-    DRM_ANALOGIX_ANX78XX = yes;
-    DRM_DP_AUX_CHARDEV = yes;
-    # DRM_EVDI=module; # TODO(jared): does not exist in mainline
-    DRM_ITE_IT6505 = yes;
-    DRM_MEDIATEK = yes;
-    DRM_MEDIATEK_HDMI = yes;
-    DRM_PANEL_BOE_TV101WUM_NL6 = yes;
-    DRM_PANEL_EDP = yes;
-    DRM_PANEL_INNOLUX_HIMAX8279D = yes;
-    DRM_PANEL_INNOLUX_P079ZCA = yes;
-    DRM_PANEL_SIMPLE = yes;
-    DRM_PANFROST = yes;
-    DRM_PARADE_PS8640 = yes;
-    # DRM_POWERVR_ROGUE_1_17=yes; # TODO(jared): does not exist in mainline
-    DRM_UDL = yes;
-    DRM_VGEM = yes;
-    # MALI_BIFROST=yes; # TODO(jared): does not exist in mainline
-    # MALI_BIFROST_EXPERT=yes; # TODO(jared): does not exist in mainline
-    # MALI_BIFROST_PLATFORM_NAME=freeform "mediatek" # TODO(jared): does not exist in mainline
-    VIDEO_DW9768 = module;
-    VIDEO_MEDIATEK_JPEG = module;
-    VIDEO_MEDIATEK_MDP3 = module;
-    VIDEO_MEDIATEK_MDP = module;
-    VIDEO_MEDIATEK_VCODEC = module;
-    VIDEO_MEDIATEK_VPU = yes;
-    VIDEO_OV02A10 = module;
-    VIDEO_OV5695 = module;
-    VIDEO_OV8856 = module;
-
     # Embedded controller
     CROS_EC = lib.mkForce yes;
     CROS_EC_PD_UPDATE = yes;
@@ -109,6 +66,49 @@ linuxKernel.kernels.linux_6_0.override {
     PWM = yes;
     PWM_CROS_EC = yes;
     RTC_DRV_CROS_EC = yes;
+
+    # # Mediatek settings
+    # MTK_ADSP_IPC = yes;
+    # MTK_ADSP_MBOX = yes;
+    # MTK_CMDQ = yes;
+    # MTK_EFUSE = yes;
+    # MTK_IOMMU = yes;
+    # MTK_PMIC_WRAP = yes;
+    # # MTK_SOC_THERMAL_LVTS = yes; # TODO(jared): does not exist in mainline
+    # MTK_SVS = yes;
+    # MTK_THERMAL = yes;
+
+    # # Video
+    # DRM = yes;
+    # DRM_ANALOGIX_ANX7625 = yes;
+    # DRM_ANALOGIX_ANX78XX = yes;
+    # DRM_DP_AUX_CHARDEV = yes;
+    # # DRM_EVDI=module; # TODO(jared): does not exist in mainline
+    # DRM_ITE_IT6505 = yes;
+    # DRM_MEDIATEK = yes;
+    # DRM_MEDIATEK_HDMI = yes;
+    # DRM_PANEL_BOE_TV101WUM_NL6 = yes;
+    # DRM_PANEL_EDP = yes;
+    # DRM_PANEL_INNOLUX_HIMAX8279D = yes;
+    # DRM_PANEL_INNOLUX_P079ZCA = yes;
+    # DRM_PANEL_SIMPLE = yes;
+    # DRM_PANFROST = yes;
+    # DRM_PARADE_PS8640 = yes;
+    # # DRM_POWERVR_ROGUE_1_17=yes; # TODO(jared): does not exist in mainline
+    # DRM_UDL = yes;
+    # DRM_VGEM = yes;
+    # # MALI_BIFROST=yes; # TODO(jared): does not exist in mainline
+    # # MALI_BIFROST_EXPERT=yes; # TODO(jared): does not exist in mainline
+    # # MALI_BIFROST_PLATFORM_NAME=freeform "mediatek" # TODO(jared): does not exist in mainline
+    # VIDEO_DW9768 = module;
+    # VIDEO_MEDIATEK_JPEG = module;
+    # VIDEO_MEDIATEK_MDP3 = module;
+    # VIDEO_MEDIATEK_MDP = module;
+    # VIDEO_MEDIATEK_VCODEC = module;
+    # VIDEO_MEDIATEK_VPU = yes;
+    # VIDEO_OV02A10 = module;
+    # VIDEO_OV5695 = module;
+    # VIDEO_OV8856 = module;
 
   };
 }
