@@ -9,6 +9,7 @@ with lib; {
   };
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
+      ansifilter
       as-tree
       bintools
       buildah
@@ -161,7 +162,7 @@ with lib; {
       prefix = "C-s";
       extraConfig = systemConfig.programs.tmux.extraConfig + ''
         bind-key J command-prompt -p "join pane from:"  "join-pane -h -s '%%'"
-        bind-key j display-popup -E -w 90% "${pkgs.j}/bin/j"
+        bind-key j display-popup -E -h 75% -w 75% -T "Jump to:" "${pkgs.j}/bin/j"
         set-option -g status-left-length 75
       '';
     };
