@@ -22,7 +22,6 @@ with lib;
       "mediatek_drm"
     ];
 
-    boot.kernelPackages = pkgs.recurseIntoAttrs
-      (pkgs.linuxKernel.packagesFor pkgs.linux_chromiumos_mediatek);
+    boot.kernelPackages = pkgs.linuxKernel.packagesFor pkgs.linux_chromiumos_mediatek;
   };
 }
