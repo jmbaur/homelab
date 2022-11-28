@@ -37,11 +37,11 @@ linuxKernel.kernels.linux_6_0.override {
     SND_USB_AUDIO = module;
 
     # TPM
-    # TCG_TIS_I2C_CR50 = yes;
-    # TCG_TIS_I2C_INFINEON = yes;
-    # TCG_TIS_SPI = yes;
-    # TCG_TIS_SPI_CR50 = yes;
-    # TCG_TPM = yes;
+    TCG_TIS_I2C_CR50 = yes;
+    TCG_TIS_I2C_INFINEON = yes;
+    TCG_TIS_SPI = yes;
+    TCG_TIS_SPI_CR50 = yes;
+    TCG_TPM = yes;
 
     # Mediatek settings
     # MTK_ADSP_IPC=yes;
