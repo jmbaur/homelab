@@ -87,28 +87,28 @@ linuxKernel.kernels.linux_6_0.override {
     # VIDEO_OV8856=module;
 
     # Embedded controller
-    # CROS_EC=yes;
-    # CROS_EC_PD_UPDATE=yes;
-    # CROS_EC_RPMSG=module;
-    # CROS_EC_SENSORHUB=module;
-    # CROS_EC_SPI=yes;
-    # EXTCON_USBC_CROS_EC=yes;
-    # I2C_CROS_EC_TUNNEL=yes;
-    # IIO=yes;
-    # IIO_CROS_EC_ACTIVITY=module;
-    # IIO_CROS_EC_BARO=module;
-    # IIO_CROS_EC_LIGHT_PROX=module;
-    # IIO_CROS_EC_SENSORS=module;
-    # IIO_CROS_EC_SENSORS_CORE=module;
-    # IIO_CROS_EC_SENSORS_LID_ANGLE=module;
-    # IIO_CROS_EC_SENSORS_SYNC=module;
-    # IIO_HRTIMER_TRIGGER=module;
-    # IIO_SW_TRIGGER=module;
-    # IIO_SYSFS_TRIGGER=module;
-    # KEYBOARD_CROS_EC=yes;
-    # PWM=yes;
-    # PWM_CROS_EC=yes;
-    # RTC_DRV_CROS_EC=yes;
+    CROS_EC = yes;
+    CROS_EC_PD_UPDATE = yes;
+    CROS_EC_RPMSG = module;
+    CROS_EC_SENSORHUB = module;
+    CROS_EC_SPI = yes;
+    EXTCON_USBC_CROS_EC = yes;
+    I2C_CROS_EC_TUNNEL = yes;
+    IIO = yes;
+    IIO_CROS_EC_ACTIVITY = module;
+    IIO_CROS_EC_BARO = module;
+    IIO_CROS_EC_LIGHT_PROX = module;
+    IIO_CROS_EC_SENSORS = module;
+    IIO_CROS_EC_SENSORS_CORE = module;
+    IIO_CROS_EC_SENSORS_LID_ANGLE = module;
+    IIO_CROS_EC_SENSORS_SYNC = module;
+    IIO_HRTIMER_TRIGGER = module;
+    IIO_SW_TRIGGER = module;
+    IIO_SYSFS_TRIGGER = module;
+    KEYBOARD_CROS_EC = yes;
+    PWM = yes;
+    PWM_CROS_EC = yes;
+    RTC_DRV_CROS_EC = yes;
 
   };
 }
