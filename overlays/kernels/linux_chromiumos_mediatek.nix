@@ -67,16 +67,16 @@ linuxKernel.kernels.linux_6_0.override {
     PWM_CROS_EC = yes;
     RTC_DRV_CROS_EC = yes;
 
-    # # Mediatek settings
-    # MTK_ADSP_IPC = yes;
-    # MTK_ADSP_MBOX = yes;
-    # MTK_CMDQ = yes;
-    # MTK_EFUSE = yes;
-    # MTK_IOMMU = yes;
-    # MTK_PMIC_WRAP = yes;
-    # # MTK_SOC_THERMAL_LVTS = yes; # TODO(jared): does not exist in mainline
-    # MTK_SVS = yes;
-    # MTK_THERMAL = yes;
+    # Mediatek settings
+    MTK_ADSP_IPC = yes;
+    MTK_ADSP_MBOX = yes;
+    MTK_CMDQ = yes;
+    MTK_EFUSE = yes;
+    MTK_IOMMU = yes;
+    MTK_PMIC_WRAP = yes;
+    # MTK_SOC_THERMAL_LVTS = yes; # TODO(jared): does not exist in mainline
+    MTK_SVS = yes;
+    MTK_THERMAL = yes;
 
     # # Video
     # DRM = yes;
