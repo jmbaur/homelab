@@ -65,11 +65,15 @@ linux_5_15.override (old: {
       name = "cn913x_config";
       patch = null;
       extraStructuredConfig = with lib.kernel; {
+
         # custom settings
+        CHROME_PLATFORMS = lib.mkForce no;
         DRM = no;
+        INPUT_JOYSTICK = no;
+        INPUT_TABLET = no;
+        INPUT_TOUCHSCREEN = no;
         SND = no;
         SOUND = no;
-        CHROME_PLATFORMS = lib.mkForce no;
 
         # from cn913x_build
         ACPI_CPPC_CPUFREQ = yes;
@@ -91,6 +95,7 @@ linux_5_15.override (old: {
         USB_SERIAL_FTDI_SIO = yes;
         USB_SERIAL_OPTION = yes;
         USB_SERIAL_WWAN = yes;
+
       };
     }
   ];
