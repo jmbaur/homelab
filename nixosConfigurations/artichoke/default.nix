@@ -13,6 +13,10 @@
     ./wireguard.nix
   ];
 
+
+  boot.loader.grub.enable = false;
+  boot.loader.generic-extlinux-compatible.enable = true;
+
   hardware.clearfog-cn913x.enable = true;
 
   programs.flashrom.enable = true;
