@@ -62,20 +62,9 @@ linux_5_15.override (old: {
       patch = "${cn913x_build}/patches/linux/0018-DPDK-support-for-MVPP2.patch";
     }
     {
-      name = "cn913x_config";
+      name = "cn913x-additions";
       patch = null;
       extraStructuredConfig = with lib.kernel; {
-
-        # custom settings
-        CHROME_PLATFORMS = lib.mkForce no;
-        DRM = no;
-        INPUT_JOYSTICK = no;
-        INPUT_TABLET = no;
-        INPUT_TOUCHSCREEN = no;
-        SND = no;
-        SOUND = no;
-
-        # from cn913x_build
         ACPI_CPPC_CPUFREQ = yes;
         ARM_ARMADA_8K_CPUFREQ = yes;
         CPU_FREQ_DEFAULT_GOV_ONDEMAND = yes;
@@ -96,6 +85,19 @@ linux_5_15.override (old: {
         USB_SERIAL_OPTION = yes;
         USB_SERIAL_WWAN = yes;
 
+      };
+    }
+    {
+      name = "minimize-config";
+      patch = null;
+      extraStructuredConfig = with lib.kernel; {
+        CHROME_PLATFORMS = lib.mkForce no;
+        DRM = no;
+        INPUT_JOYSTICK = no;
+        INPUT_TABLET = no;
+        INPUT_TOUCHSCREEN = no;
+        SND = no;
+        SOUND = no;
       };
     }
   ];
