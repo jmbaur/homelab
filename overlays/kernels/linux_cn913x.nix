@@ -66,14 +66,14 @@ linux_5_15.override (old: {
       patch = null;
       extraStructuredConfig = with lib.kernel; {
 
-        # custom settings
-        CHROME_PLATFORMS = lib.mkForce no;
-        DRM = no;
-        INPUT_JOYSTICK = no;
-        INPUT_TABLET = no;
-        INPUT_TOUCHSCREEN = no;
-        SND = no;
-        SOUND = no;
+        # # custom settings
+        # CHROME_PLATFORMS = lib.mkForce no;
+        # DRM = no;
+        # INPUT_JOYSTICK = no;
+        # INPUT_TABLET = no;
+        # INPUT_TOUCHSCREEN = no;
+        # SND = no;
+        # SOUND = no;
 
         # from cn913x_build
         ACPI_CPPC_CPUFREQ = yes;
