@@ -284,26 +284,6 @@
         "type": "github"
       }
     },
-    "git-get": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1667943796,
-        "narHash": "sha256-02nWokmH5Ss6qZ9V2wc+3dNlfL2n93OKT1jH8C0KAak=",
-        "owner": "jmbaur",
-        "repo": "git-get",
-        "rev": "a347aa52115164785bf9c68658ce465b69f128ff",
-        "type": "github"
-      },
-      "original": {
-        "owner": "jmbaur",
-        "repo": "git-get",
-        "type": "github"
-      }
-    },
     "gitignore": {
       "inputs": {
         "nixpkgs": [
@@ -822,7 +802,6 @@
       "inputs": {
         "cn913x_build": "cn913x_build",
         "deploy-rs": "deploy-rs",
-        "git-get": "git-get",
         "gobar": "gobar",
         "gosee": "gosee",
         "home-manager": "home-manager",

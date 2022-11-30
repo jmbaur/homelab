@@ -55,7 +55,6 @@ in
       pkgs = import nixpkgs {
         system = "aarch64-linux";
         overlays = [
-          git-get.overlays.default
           gobar.overlays.default
           gosee.overlays.default
           ipwatch.overlays.default
@@ -86,7 +85,6 @@ in
       pkgs = import nixpkgs {
         system = "x86_64-linux";
         overlays = [
-          git-get.overlays.default
           gobar.overlays.default
           gosee.overlays.default
           ipwatch.overlays.default

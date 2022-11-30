@@ -8,7 +8,6 @@ inputs: with inputs; {
   default = {
     nixpkgs.overlays = [
       self.overlays.default
-      git-get.overlays.default
       gobar.overlays.default
       gosee.overlays.default
       pd-notify.overlays.default

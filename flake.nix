@@ -5,8 +5,6 @@
     cn913x_build.flake = false;
     cn913x_build.url = "github:solidrun/cn913x_build";
     deploy-rs.url = "github:serokell/deploy-rs";
-    git-get.inputs.nixpkgs.follows = "nixpkgs";
-    git-get.url = "github:jmbaur/git-get";
     gobar.inputs.nixpkgs.follows = "nixpkgs";
     gobar.url = "github:jmbaur/gobar";
     gosee.inputs.nixpkgs.follows = "nixpkgs";
