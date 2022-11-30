@@ -78,6 +78,12 @@ linuxKernel.kernels.linux_6_0.override {
     MTK_SVS = yes;
     MTK_THERMAL = yes;
 
+    # Google firmware
+    GOOGLE_COREBOOT_TABLE = yes;
+    GOOGLE_FIRMWARE = yes;
+    GOOGLE_MEMCONSOLE_COREBOOT = yes;
+    GOOGLE_VPD = yes;
+
     # # Video
     # DRM = yes;
     # DRM_ANALOGIX_ANX7625 = yes;

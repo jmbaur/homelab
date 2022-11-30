@@ -12,13 +12,12 @@
   networking.hostName = "fennel";
   networking.useNetworkd = true;
   networking.wireless.enable = true;
-  hardware.bluetooth.enable = true;
 
   custom.gui.enable = true;
   custom.dev.enable = true;
   custom.remoteBuilders.aarch64builder.enable = true;
   custom.users.jared.enable = true;
-  users.users.jared.password = "dontpwnme";
+  users.mutableUsers = true;
 
   environment.systemPackages = with pkgs; [ chromium-wayland firefox ];
 
