@@ -1,4 +1,31 @@
-inputs: with inputs; {
+inputs: with inputs;
+let
+  installer_iso = { system, extraModules ? [ ] }: nixpkgs.lib.nixosSystem {
+    inherit system;
+    modules = [
+      self.nixosModules.default
+      ({ modulesPath, ... }: {
+        imports = [
+          "${modulesPath}/installer/cd-dvd/channel.nix"
+          "${modulesPath}/installer/cd-dvd/installation-cd-minimal.nix"
+        ];
+        custom.installer.enable = true;
+      })
+    ] ++ extraModules;
+  };
+
+  installer_sd_image = { system, extraModules ? [ ] }: nixpkgs.lib.nixosSystem {
+    inherit system;
+    modules = [
+      self.nixosModules.default
+      ({ modulesPath, ... }: {
+        imports = [ "${modulesPath}/installer/sd-card/sd-image-aarch64-installer.nix" ];
+        custom.installer.enable = true;
+      })
+    ] ++ extraModules;
+  };
+in
+{
   beetroot = nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
     modules = [
@@ -16,14 +43,6 @@ inputs: with inputs; {
       runner-nix.nixosModules.default
       self.nixosModules.default
       sops-nix.nixosModules.sops
-    ];
-  };
-
-  depthcharge-test = nixpkgs.lib.nixosSystem {
-    system = "aarch64-linux";
-    modules = [
-      self.nixosModules.default
-      ./depthcharge-test
     ];
   };
 
@@ -53,7 +72,7 @@ inputs: with inputs; {
     ];
   };
 
-  artichoke-test = nixpkgs.lib.nixosSystem {
+  clearfog-a38x-test = nixpkgs.lib.nixosSystem {
     system = "armv7l-linux";
     modules = [
       self.nixosModules.default
@@ -95,5 +114,35 @@ inputs: with inputs; {
   okra = nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
     modules = [ ./okra self.nixosModules.default ];
+  };
+
+  installer_iso_x86_64-linux = installer_iso { system = "x86_64-linux"; };
+  installer_iso_aarch64-linux = installer_iso { system = "aarch64-linux"; };
+
+  installer_iso_lx2k = installer_iso {
+    system = "aarch64-linux";
+    extraModules = [ ({ hardware.lx2k.enable = true; }) ];
+  };
+
+  installer_sd_image = installer_sd_image {
+    system = "aarch64-linux";
+  };
+
+  installer_sd_image_kukui_fennel14 = nixpkgs.lib.nixosSystem {
+    system = "aarch64-linux";
+    modules = [
+      self.nixosModules.default
+      ({ modulesPath, ... }: {
+        boot.loader.depthcharge.enable = true;
+        hardware.kukui-fennel14.enable = true;
+        custom.installer.enable = true;
+        imports = [
+          ../modules/nixos/depthcharge/sd-image.nix
+          "${modulesPath}/profiles/all-hardware.nix"
+          "${modulesPath}/profiles/base.nix"
+          "${modulesPath}/profiles/installation-device.nix"
+        ];
+      })
+    ];
   };
 }

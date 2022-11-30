@@ -1,6 +1,5 @@
-{ config, pkgs, modulesPath, ... }: {
+{ config, pkgs, ... }: {
   imports = [
-    "${modulesPath}/installer/sd-card/sd-image-aarch64.nix"
     ./dhcp.nix
     ./dns.nix
     ./firewall.nix

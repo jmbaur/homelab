@@ -48,6 +48,7 @@ with lib; {
       patchelf
       pd-notify
       podman-compose
+      pomo
       procs
       pstree
       qemu

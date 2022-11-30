@@ -21,9 +21,10 @@ with lib;
 
     environment.systemPackages = with pkgs; [
       ffmpeg-full
+      libnotify
       mpv
-      pulsemixer
       obs-studio
+      pulsemixer
       wl-clipboard
       xdg-utils
     ];

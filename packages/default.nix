@@ -1,20 +1,7 @@
 inputs: with inputs;
 let
-  common_installer_modules = [
-    self.nixosModules.default
-    { custom.installer.enable = true; }
-  ];
-
-  installer_iso_modules = common_installer_modules ++ [
-    "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
-    "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
-  ];
-
   commonDerivations = pkgs: {
-    installer_iso = (nixpkgs.lib.nixosSystem {
-      inherit (pkgs) system;
-      modules = installer_iso_modules;
-    }).config.system.build.isoImage;
+    installer_iso = self.nixosConfigurations."installer_iso_${pkgs.system}".config.system.build.isoImage;
 
     netboot-test = pkgs.symlinkJoin {
       name = "netboot-test";
@@ -48,6 +35,7 @@ let
       neovim
       outlook-webapp
       pd-notify
+      pomo
       slack-webapp
       spotify-webapp
       stevenblack-hosts
@@ -85,12 +73,12 @@ in
         ubootCN9130_CF_Pro
         ;
 
-      installer_iso_lx2k = (nixpkgs.lib.nixosSystem {
-        inherit (pkgs) system;
-        modules = installer_iso_modules ++ [{ imports = [ ../modules/nixos/hardware/lx2k.nix ]; }];
-      }).config.system.build.isoImage;
+      installer_iso_lx2k = self.nixosConfigurations.installer_iso_lx2k.config.system.build.isoImage;
 
-      rhubarb_image = self.nixosConfigurations.rhubarb.config.system.build.sdImage;
+      installer_sd_image = self.nixosConfigurations.installer_sd_image.config.system.build.sdImage;
+      installer_sd_image_kukui_fennel14 = self.nixosConfigurations.installer_sd_image_kukui_fennel14.config.system.build.sdImage;
+
+      rhubarb_sd_image = self.nixosConfigurations.rhubarb.config.system.build.sdImage;
     };
 
   x86_64-linux =
