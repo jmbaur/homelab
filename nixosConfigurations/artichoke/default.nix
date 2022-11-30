@@ -3,17 +3,15 @@
     ./dhcp.nix
     ./dns.nix
     ./firewall.nix
-    ./links.nix
+    ./hardware-configuration.nix
     ./inventory.nix
     ./lan.nix
+    ./links.nix
     ./monitoring.nix
     ./ntp.nix
     ./wan.nix
     ./wireguard.nix
   ];
-
-  zramSwap.enable = true;
-  system.stateVersion = "22.11";
 
   hardware.clearfog-cn913x.enable = true;
 
@@ -105,7 +103,11 @@
 
   networking = {
     hostName = "artichoke";
+    useDHCP = false;
     useNetworkd = true;
   };
   systemd.network.enable = true;
+
+  zramSwap.enable = true;
+  system.stateVersion = "23.05";
 }
