@@ -83,10 +83,10 @@ func main() {
 main:
 	for {
 		for i := 0; i < 4; i++ {
-			pomo("work!", 25*time.Second)
-			pomo("break!", 5*time.Second)
+			pomo("work!", 25*time.Minute)
+			pomo("break!", 5*time.Minute)
 		}
-		pomo("long break!", 30*time.Second)
+		pomo("long break!", 30*time.Minute)
 
 		status := make(chan int)
 
