@@ -40,6 +40,11 @@ with lib; {
           term = "xterm-256color";
           font = "JetBrains Mono:size=10";
           selection-target = "clipboard";
+          notify-focus-inhibit = "no";
+        };
+        bell = {
+          urgent = "yes";
+          command-focused = "yes";
         };
         mouse.hide-when-typing = "yes";
         colors = {
