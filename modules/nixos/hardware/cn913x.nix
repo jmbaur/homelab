@@ -6,7 +6,7 @@ with lib;
   };
   config = mkIf config.hardware.clearfog-cn913x.enable {
     boot.initrd.systemd.enable = true;
-    boot.kernelParams = [ "cma=256M" ];
+    boot.kernelParams = [ "console=ttyS0,115200" "cma=256M" ];
     boot.kernelPackages = pkgs.linuxKernel.packagesFor pkgs.linux_cn913x;
 
     hardware.deviceTree = {
