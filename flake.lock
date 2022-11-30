@@ -421,11 +421,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1669513013,
-        "narHash": "sha256-b0D+6MBAftfhD33vw2buWCY6y9aPKer4WKvGC+bJ7Cw=",
+        "lastModified": 1669846524,
+        "narHash": "sha256-OjMMtQAo9sykXAjCpgt/zyzkKsk7GU2dQ+8Knu5bLHU=",
         "owner": "jmbaur",
         "repo": "gosee",
-        "rev": "24d288ee3e331634d60bab2f52f2a41a24b42121",
+        "rev": "ba8ec88b29bdb7043e686ee28a88540398d96a82",
         "type": "github"
       },
       "original": {
@@ -661,11 +661,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1669760098,
-        "narHash": "sha256-6YH2ZTjEFXfJHQgrdRbx7eTak6dg7w9O9WyXpY/MAf8=",
+        "lastModified": 1669846572,
+        "narHash": "sha256-Oi/G3WN3zzKOAf2b5gjLFthkkxBAH3Me0Z3a1lMZbBQ=",
         "owner": "jmbaur",
         "repo": "pd-notify",
-        "rev": "4028d63bcadf1be3234683578cf2343969f8f90e",
+        "rev": "fdb15f631c553667c8031eb5c2bce264e98f85ec",
         "type": "github"
       },
       "original": {

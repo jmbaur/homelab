@@ -1,4 +1,4 @@
-{ buildGoModule, fetchFromGitHub, CGO_ENABLED ? 0 }:
+{ buildGoModule, fetchFromGitHub, ... }:
 buildGoModule {
   name = "coredns-utils";
   src = fetchFromGitHub {
@@ -8,5 +8,4 @@ buildGoModule {
     sha256 = "03mq6cjr9pmdm7j02vivrpxj4m6v9hkkrz1ik0kf6sxfk8rvmlb3";
   };
   vendorSha256 = "sha256-Q+eJk4Tmv0zxOrfpnh2GiSDiCX0qFSZmczekigBheHo=";
-  inherit CGO_ENABLED;
 }
