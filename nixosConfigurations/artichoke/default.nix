@@ -90,9 +90,7 @@
 
   services.openssh = {
     enable = true;
-    passwordAuthentication = false;
     openFirewall = false;
-    allowSFTP = false;
   };
 
   services.iperf3 = {
