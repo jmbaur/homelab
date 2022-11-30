@@ -33,6 +33,7 @@ func notifyf(format string, a ...any) {
 		}
 	}
 	fmt.Printf(wrap, "pomo", fmt.Sprintf(format, a...))
+	fmt.Printf("\a")
 }
 
 func printf(format string, a ...any) {
@@ -54,7 +55,7 @@ func pomo(status string, d time.Duration) {
 			case t := <-ticker.C:
 				diff := t.Sub(start)
 				left := (d - diff).Round(1 * time.Second)
-				if left == 5*time.Second {
+				if left == 30*time.Second {
 					notifyf("5 seconds left!")
 				}
 				printf("%s", left)
