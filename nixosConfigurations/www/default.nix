@@ -17,12 +17,8 @@ in
   sops = {
     defaultSopsFile = ./secrets.yaml;
     secrets = {
-      webauthn_tiny_env = { };
-      htpasswd = {
-        mode = "0440";
-        owner = config.services.nginx.user;
-        group = config.services.nginx.group;
-      };
+      session_secret = { };
+      passwords = { };
       "wg/www/www" = {
         mode = "0640";
         group = config.users.groups.systemd-network.name;
@@ -63,7 +59,8 @@ in
 
   services.webauthn-tiny = {
     enable = true;
-    environmentFile = config.sops.secrets.webauthn_tiny_env.path;
+    basicAuthFile = config.sops.secrets.passwords.path;
+    sessionSecretFile = config.sops.secrets.session_secret.path;
     relyingParty = {
       id = "jmbaur.com";
       origin = "https://auth.jmbaur.com";
@@ -73,7 +70,6 @@ in
       enable = true;
       virtualHost = "auth.jmbaur.com";
       useACMEHost = "jmbaur.com";
-      basicAuthFile = config.sops.secrets.htpasswd.path;
       protectedVirtualHosts = [ "logs.jmbaur.com" "mon.jmbaur.com" ];
     };
   };

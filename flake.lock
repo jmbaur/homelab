@@ -484,11 +484,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1669306943,
-        "narHash": "sha256-F6xVWFJkcCXp5IcnpRlECT10H2ps8RO1yM4W0OXiXPs=",
+        "lastModified": 1669921518,
+        "narHash": "sha256-OWSXXmVzceV6Ild0nVEJjMsP9doCK+F4og30Mareaog=",
         "owner": "astro",
         "repo": "microvm.nix",
-        "rev": "c21a70fe1ac05ccdfceff6506625e9d44cd91da5",
+        "rev": "e2a1bf59987544faec4d27ce5700e5ef96201a5f",
         "type": "github"
       },
       "original": {
@@ -626,11 +626,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1669542132,
-        "narHash": "sha256-DRlg++NJAwPh8io3ExBJdNW7Djs3plVI5jgYQ+iXAZQ=",
+        "lastModified": 1669791787,
+        "narHash": "sha256-KBfoA2fOI5+wCrm7PR+j7jHqXeTkVRPQ0m5fcKchyuU=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "a115bb9bd56831941be3776c8a94005867f316a7",
+        "rev": "e76c78d20685a043d23f5f9e0ccd2203997f1fb1",
         "type": "github"
       },
       "original": {
@@ -935,11 +935,11 @@
         "pre-commit": "pre-commit_3"
       },
       "locked": {
-        "lastModified": 1669841379,
-        "narHash": "sha256-+cxEHmzZcMcu0j9MVUqFQZLLBDw7h6o/792Mkbq6rrc=",
+        "lastModified": 1669939602,
+        "narHash": "sha256-OGNyX7z5mdb4YeOqhzWgxPt41eSbldxX/tsEByQitQs=",
         "owner": "jmbaur",
         "repo": "webauthn-tiny",
-        "rev": "2767b3f342867d0c879afb3db03ef882791a9ca1",
+        "rev": "fd4335fb3fb6cd80e77335002b0c86182daad4d1",
         "type": "github"
       },
       "original": {
