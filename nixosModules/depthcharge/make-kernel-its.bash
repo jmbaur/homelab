@@ -4,14 +4,14 @@ toplevel=$1
 
 cd "$toplevel" || exit 1
 
-dtb_files="$(find -L dtbs -type f -name '*.dtb')"
+mapfile -t dtb_files < <(find -L dtbs -type f -name '*.dtb')
 
 fdt_definition() {
 	local idx=$1
 	local filepath=$2
 	cat <<EOF
-        fdt-${idx}{
-	description = "$(basename "$filepath")";
+        fdt-${idx} {
+            description = "$(basename "$filepath")";
             data = /incbin/("${filepath}");
             type = "flat_dt";
             arch = "arm64";
@@ -26,7 +26,7 @@ EOF
 fdt_reference() {
 	local idx=$1
 	cat <<EOF
-        conf-${idx}{
+        conf-${idx} {
             kernel = "kernel-1";
             fdt = "fdt-${idx}";
             ramdisk = "ramdisk-1";
@@ -39,7 +39,7 @@ cat <<EOF
 / {
     description = "Chrome OS kernel image with one or more FDT blobs";
     images {
-        kernel-1{
+        kernel-1 {
             description = "kernel";
             data = /incbin/("kernel.lzma");
             type = "kernel_noload";

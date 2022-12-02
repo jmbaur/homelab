@@ -3,11 +3,7 @@ with lib;
 let
   cfg = config.boot.loader.depthcharge;
 
-  makeKernelITS = pkgs.runCommand "make-kernel-its.bash" { } ''
-    cp ${./make-kernel-its.bash} $out
-    chmod a+x $out
-    patchShebangs $out
-  '';
+  makeKernelITS = pkgs.writeShellScript "make-kernel-its.bash" (builtins.readFile ./make-kernel-its.bash);
   makeKpart = pkgs.runCommand "make-kpart.bash"
     {
       inherit (pkgs) vboot_reference ubootTools dtc xz;
