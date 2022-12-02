@@ -137,7 +137,7 @@ in
         hardware.kukui-fennel14.enable = true;
         custom.installer.enable = true;
         imports = [
-          ../modules/nixos/depthcharge/sd-image.nix
+          ../nixosModules/depthcharge/sd-image.nix
           "${modulesPath}/profiles/all-hardware.nix"
           "${modulesPath}/profiles/base.nix"
           "${modulesPath}/profiles/installation-device.nix"

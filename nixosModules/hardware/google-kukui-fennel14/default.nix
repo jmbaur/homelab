@@ -32,7 +32,6 @@ with lib;
       "cros_ec_typec"
       "drm"
       "mediatek_drm"
-      "panfrost"
     ];
 
     boot.kernelPackages = pkgs.linuxKernel.packagesFor pkgs.linux_chromiumos_mediatek;
