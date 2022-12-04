@@ -114,7 +114,7 @@ in
       message = "Cannot have physical.enable and wireguard.enable set for the same network";
       assertion = (lib.filterAttrs
         (_: network: network.physical.enable && network.wireguard.enable)
-        config.custom.inventory.networks) != { };
+        config.custom.inventory.networks) == { };
     }];
 
     environment.etc."inventory.json".source = (pkgs.formats.json { }).generate
