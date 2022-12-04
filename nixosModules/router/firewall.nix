@@ -1,4 +1,4 @@
-# TODO(jared): Factor out interface names and make firewall policys a
+# TODO(jared): Factor out interface names and make firewall policies a
 # configuration option.
 
 { config, lib, ... }: {
