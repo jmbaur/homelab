@@ -108,14 +108,12 @@
                   jump not_in_internet
 
                   # always allow wireguard traffic
-                  meta l4proto { udp } th dport {
-                    ${lib.concatMapStringsSep "," (netdev: toString netdev.wireguardConfig.ListenPort)
+                  meta l4proto { udp } th dport { ${lib.concatMapStringsSep ", " (netdev: toString netdev.wireguardConfig.ListenPort)
                        (builtins.attrValues
                          (lib.filterAttrs
                          (_: netdev: netdev.netdevConfig.Kind == "wireguard" && netdev.wireguardConfig ? ListenPort)
                          config.systemd.network.netdevs))
-                     }
-                  } accept
+                     } } accept
 
                   # allow loopback traffic, anything else jump to chain for further
                   # evaluation
@@ -233,12 +231,10 @@
                   type nat hook postrouting priority 100; policy accept;
 
                   # masquerade private IP addresses
-                  ip saddr {
-                    ${lib.concatMapStringsSep ","
+                  ip saddr { ${lib.concatMapStringsSep ", "
                       (network: "$NET_${toNfVar network.name}")
                       (builtins.attrValues config.custom.inventory.networks)
-                     }
-                  } oifname $DEV_WAN masquerade
+                     } } oifname $DEV_WAN masquerade
               }
           }
         '';
