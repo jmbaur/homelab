@@ -235,7 +235,7 @@
                   ip saddr {
                     ${lib.concatMapStringsSep ",\n"
                       (network: "$NET_${lib.toUpper network.name}")
-                      builtins.attrValues config.custom.inventory.networks
+                      (builtins.attrValues config.custom.inventory.networks)
                      }
                   } oifname $DEV_WAN masquerade
               }
