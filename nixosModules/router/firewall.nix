@@ -43,12 +43,12 @@
           # static configuration
 
           add table inet firewall
-          add chain inet firewall input type filter hook input priority 0; policy drop;
+          add chain inet firewall input { type filter hook input priority 0; policy drop; }
           add rule inet firewall input ct state vmap { established : accept, related : accept, invalid : drop }
           add rule inet firewall input iifname lo accept
-          add chain inet firewall forward type filter hook forward priority 0; policy drop;
+          add chain inet firewall forward { type filter hook forward priority 0; policy drop; }
           add rule inet firewall forward ct state vmap { established : accept, related : accept, invalid : drop }
-          add chain inet firewall output type filter hook output priority 0; policy accept;
+          add chain inet firewall output { type filter hook output priority 0; policy accept; }
           add chain inet firewall input_always_allowed
           add rule inet firewall input_always_allowed icmp type { destination-unreachable, echo-request, parameter-problem, time-exceeded } accept
           add rule inet firewall input_always_allowed icmpv6 type { destination-unreachable, echo-request, nd-neighbor-advert, nd-neighbor-solicit, nd-router-solicit, packet-too-big, parameter-problem, time-exceeded } accept
@@ -58,8 +58,8 @@
           add rule inet firewall input_always_allowed_lan meta l4proto { tcp, udp } th dport "domain" accept
 
           add table ip nat
-          add chain ip nat prerouting type nat hook prerouting priority 0; policy accept;
-          add chain ip nat postrouting type nat hook postrouting priority 0; policy accept;
+          add chain ip nat prerouting { type nat hook prerouting priority 0; policy accept; }
+          add chain ip nat postrouting { type nat hook postrouting priority 0; policy accept; }
 
           # standard configuration
           # NAT masquerading
@@ -92,7 +92,7 @@
 
           # forward_from_wan
           add chain inet firewall forward_from_wan
-          add rule inet firewall forward_from_wan icmpv6 type { echo-request } accept
+          add rule inet firewall forward_from_wan icmpv6 type echo-request accept
           add rule inet firewall forward { $DEV_WAN, $DEV_WAN6 } jump forward_from_wan
 
           # custom policy configuration
