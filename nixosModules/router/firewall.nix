@@ -18,9 +18,11 @@
             ", "
             (route: route.routeConfig.Destination)
             (networks.hurricane.routes);
+          # TODO(jared): don't hardcode these
           nfVars = ''
             define DEV_WAN = ${networks.wan.name}
             define DEV_WAN6 = ${networks.hurricane.name}
+            define DEV_WG_WWW = ${networks.www.name}
           '' + lib.concatMapStrings
             (network: ''
               define DEV_${toNfVar network.name} = ${config.systemd.network.networks.${network.name}.name}
