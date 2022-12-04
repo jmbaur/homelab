@@ -128,7 +128,7 @@ let
       config.custom.inventory.networks);
 in
 {
-  systemd.network.netdevs = lib.mapAttrsToList (_: x: x.netdev) wireguardNetworks;
-  systemd.network.networks = lib.mapAttrsToList (_: x: x.network) wireguardNetworks;
+  systemd.network.netdevs = lib.mapAttrs (_: x: x.netdev) wireguardNetworks;
+  systemd.network.networks = lib.mapAttrs (_: x: x.network) wireguardNetworks;
   environment.systemPackages = [ pkgs.wireguard-tools ] ++ (lib.mapAttrsToList (_: x: x.clientConfigs) wireguardNetworks);
 }

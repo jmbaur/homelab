@@ -3,7 +3,6 @@
     ./dhcp.nix
     ./dns.nix
     ./firewall.nix
-    ./hardware-configuration.nix
     ./inventory.nix
     ./lan.nix
     ./links.nix
