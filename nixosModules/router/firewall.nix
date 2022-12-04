@@ -18,6 +18,14 @@
             ", "
             (route: route.routeConfig.Destination)
             (networks.hurricane.routes);
+          lanIPv4Networks = lib.concatMapStringsSep ", "
+            (network: network.networkIPv4Cidr)
+            (builtins.attrValues config.custom.inventory.networks);
+          wireguardPorts = lib.concatMapStringsSep ", " (netdev: toString netdev.wireguardConfig.ListenPort)
+            (builtins.attrValues
+              (lib.filterAttrs
+                (_: netdev: netdev.netdevConfig.Kind == "wireguard" && netdev.wireguardConfig ? ListenPort)
+                config.systemd.network.netdevs));
           # TODO(jared): don't hardcode these
           nfVars = ''
             define DEV_WAN = ${networks.wan.name}
@@ -62,13 +70,8 @@
 
               chain input_always_allowed_lan {
                   jump input_always_allowed
-
-                  meta l4proto udp th dport {
-                      123,  # ntp
-                      547,  # dhcpv6
-                      67,   # dhcpv4
-                  } accept
-                  meta l4proto { tcp, udp } th dport 53 accept # DNS
+                  meta l4proto udp th dport { "ntp", "dhcpv6-server", "bootps" } accept
+                  meta l4proto { tcp, udp } th dport "dns" accept
               }
 
               chain input_trusted {
@@ -81,8 +84,8 @@
                       ${toString config.services.prometheus.exporters.node.port},
                       ${toString config.services.prometheus.exporters.wireguard.port},
                   } accept
-                  meta l4proto tcp th dport ssh log prefix "input ssh - " accept
-                  meta l4proto udp th dport 69 log prefix "input tftp - " accept
+                  meta l4proto tcp th dport "ssh" log prefix "input ssh - " accept
+                  meta l4proto udp th dport "tftp" log prefix "input tftp - " accept
                   meta l4proto { tcp, udp } th dport {
                       ${toString config.services.iperf3.port},
                   } log prefix "input iperf3 - " accept
@@ -93,6 +96,19 @@
                   meta l4proto tcp th dport {
                       19531, # systemd-journal-gatewayd
                   } accept
+              }
+
+              chain not_in_internet {
+                  # Drop addresses that do not exist in the internet (RFC6890)
+                  iifname { $DEV_WAN } ip saddr { ${v4BogonNetworks} } drop
+                  iifname { $DEV_WAN6 } ip6 saddr { ${v6BogonNetworks} } drop
+
+                  oifname { $DEV_WAN } ip daddr { ${v4BogonNetworks} } drop
+                  oifname { $DEV_WAN6 } ip6 daddr { ${v6BogonNetworks} } drop
+              }
+
+              chain input_wireguard {
+                  meta l4proto { udp } th dport { ${wireguardPorts} } accept
               }
 
               chain input {
@@ -107,14 +123,7 @@
                   }
 
                   jump not_in_internet
-
-                  # always allow wireguard traffic
-                  meta l4proto { udp } th dport { ${lib.concatMapStringsSep ", " (netdev: toString netdev.wireguardConfig.ListenPort)
-                       (builtins.attrValues
-                         (lib.filterAttrs
-                         (_: netdev: netdev.netdevConfig.Kind == "wireguard" && netdev.wireguardConfig ? ListenPort)
-                         config.systemd.network.netdevs))
-                     } } accept
+                  jump input_wireguard
 
                   # allow loopback traffic, anything else jump to chain for further
                   # evaluation
@@ -132,15 +141,6 @@
                   }
 
                   # the rest is dropped by the above policy
-              }
-
-              chain not_in_internet {
-                  # Drop addresses that do not exist in the internet (RFC6890)
-                  iifname { $DEV_WAN } ip saddr { ${v4BogonNetworks} } drop
-                  iifname { $DEV_WAN6 } ip6 saddr { ${v6BogonNetworks} } drop
-
-                  oifname { $DEV_WAN } ip daddr { ${v4BogonNetworks} } drop
-                  oifname { $DEV_WAN6 } ip6 daddr { ${v6BogonNetworks} } drop
               }
 
               chain forward_from_wan {
@@ -182,9 +182,7 @@
 
               chain forward_from_work {
                   jump allow_to_internet
-                  oifname {
-                      $DEV_WORK,
-                  } accept
+                  oifname { $DEV_WORK } accept
               }
 
               chain forward {
@@ -232,10 +230,7 @@
                   type nat hook postrouting priority 100; policy accept;
 
                   # masquerade private IP addresses
-                  ip saddr { ${lib.concatMapStringsSep ", "
-                      (network: network.networkIPv4Cidr)
-                      (builtins.attrValues config.custom.inventory.networks)
-                     } } oifname $DEV_WAN masquerade
+                  ip saddr { ${lanIPv4Networks} } oifname $DEV_WAN masquerade
               }
           }
         '';
