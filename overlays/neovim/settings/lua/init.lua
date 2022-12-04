@@ -26,7 +26,6 @@ if #vim.api.nvim_list_uis() > 0 then
 end
 
 require("mini.comment").setup({})
-require("mini.pairs").setup({})
 require("nvim-surround").setup()
 
 vim.opt.hidden = true
