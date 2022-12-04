@@ -22,7 +22,7 @@
             define DEV_WAN6 = ${networks.hurricane.name}
           '' + lib.concatMapStrings
             (network: ''
-              define DEV_${lib.toUpper network.name} = ${config.systemd.network.networks.${name}.name}
+              define DEV_${lib.toUpper network.name} = ${config.systemd.network.networks.${network.name}.name}
               define NET_${lib.toUpper network.name} = ${network.networkIPv4Cidr}
             '')
             (builtins.attrValues config.custom.inventory.networks);
