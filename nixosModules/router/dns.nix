@@ -73,13 +73,6 @@ in
             prometheus :9153
           }
         '')
-      (with config.custom.inventory.networks; [
-        iot
-        mgmt
-        trusted
-        wg-iot
-        wg-trusted
-        work
-      ]);
+      (builtins.attrValues config.custom.inventory.networks);
   };
 }

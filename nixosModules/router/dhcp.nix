@@ -1,7 +1,7 @@
 { config, lib, ... }:
 let
   toKeaArray = data: lib.concatStringsSep "," data;
-  dhcpInterfaces = [ "mgmt" "trusted" "iot" "work" ];
+  dhcpNetworks = lib.filterAttrs (_: network: network.physical.enable) config.custom.inventory.networks;
 in
 {
   services.kea = {
@@ -24,13 +24,13 @@ in
         reservations-in-subnet = true;
         reservations-out-of-pool = true;
         interfaces-config = {
-          interfaces = map
-            (name: config.systemd.network.networks.${name}.name)
-            dhcpInterfaces;
+          interfaces = lib.mapAttrsToList
+            (name: _: config.systemd.network.networks.${name}.name)
+            dhcpNetworks;
         };
-        subnet4 = lib.flatten (map
-          (name:
-            with config.custom.inventory.networks.${name}; [
+        subnet4 = lib.flatten (lib.mapAttrsToList
+          (_: network:
+            with network; [
               {
                 interface = config.systemd.network.networks.${name}.name;
                 subnet = networkIPv4Cidr;
@@ -66,15 +66,19 @@ in
                     in
                     {
                       name = "classless-static-routes";
-                      data = toKeaArray ([ "0,${router}" /* default route */ ] ++ (map
-                        (networkName:
-                          let
-                            otherNetworkCidr = config.custom.inventory.networks.${networkName}.ipv4Cidr;
-                            otherNetwork = dotToComma config.custom.inventory.networks.${networkName}.networkIPv4SignificantBits;
-                          in
-                          "${toString otherNetworkCidr},${otherNetwork},${router}"
-                        )
-                        includeRoutesTo));
+                      data = toKeaArray (
+                        # default route
+                        [ "0,${router}" ] ++
+                          (map
+                            (networkName:
+                              let
+                                otherNetworkCidr = config.custom.inventory.networks.${networkName}.ipv4Cidr;
+                                otherNetwork = dotToComma config.custom.inventory.networks.${networkName}.networkIPv4SignificantBits;
+                              in
+                              "${toString otherNetworkCidr},${otherNetwork},${router}"
+                            )
+                            includeRoutesTo)
+                      );
                     }
                   ) ++ lib.optional (mtu != null) {
                   name = "interface-mtu";
@@ -90,7 +94,7 @@ in
               }
             ]
           )
-          dhcpInterfaces);
+          dhcpNetworks);
       };
     };
     dhcp6 = {
@@ -104,13 +108,13 @@ in
         reservations-in-subnet = true;
         reservations-out-of-pool = true;
         interfaces-config = {
-          interfaces = map
-            (name: config.systemd.network.networks.${name}.name)
-            dhcpInterfaces;
+          interfaces = lib.mapAttrsToList
+            (name: _: config.systemd.network.networks.${name}.name)
+            dhcpNetworks;
         };
-        subnet6 = lib.flatten (map
-          (name:
-            with config.custom.inventory.networks.${name}; [
+        subnet6 = lib.flatten (lib.mapAttrsToList
+          (_: network:
+            with network; [
               {
                 interface = config.systemd.network.networks.${name}.name;
                 subnet = networkUlaCidr;
@@ -127,7 +131,7 @@ in
               }
             ]
           )
-          dhcpInterfaces);
+          dhcpNetworks);
       };
     };
   };

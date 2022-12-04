@@ -134,11 +134,11 @@ in
       self.nixosModules.default
       ({ modulesPath, ... }: {
         boot.loader.depthcharge.enable = true;
+        boot.initrd.systemd.enable = true;
         hardware.kukui-fennel14.enable = true;
         custom.installer.enable = true;
         imports = [
           ../nixosModules/depthcharge/sd-image.nix
-          "${modulesPath}/profiles/all-hardware.nix"
           "${modulesPath}/profiles/base.nix"
           "${modulesPath}/profiles/installation-device.nix"
         ];

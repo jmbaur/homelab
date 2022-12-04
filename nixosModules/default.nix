@@ -1,6 +1,6 @@
 inputs: with inputs; {
-  artichoke.imports = [
-    ../../nixosConfigurations/artichoke
+  router.imports = [
+    ./router
     ipwatch.nixosModules.default
     self.nixosModules.default
     sops-nix.nixosModules.sops

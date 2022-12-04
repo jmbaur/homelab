@@ -26,14 +26,7 @@ with lib;
       filter = "mt8183-kukui-jacuzzi-fennel14*.dtb";
     };
 
-    boot.initrd.kernelModules = [
-      "cros_ec"
-      "cros_ec_keyb"
-      "cros_ec_typec"
-      "drm"
-      "mediatek_drm"
-    ];
-
+    boot.initrd.includeDefaultModules = false;
     boot.kernelPackages = pkgs.linuxKernel.packagesFor pkgs.linux_chromiumos_mediatek;
   };
 }

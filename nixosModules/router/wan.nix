@@ -3,7 +3,8 @@
 
   networking.heTunnelBroker.enable = lib.mkForce true;
 
-  # NOTE: bogon networks obtained from https://ipgeolocation.io/resources/bogon.html
+  # NOTE: bogon networks obtained from
+  # https://ipgeolocation.io/resources/bogon.html
   systemd.network.networks = {
     hurricane.routes = map
       (destination: {

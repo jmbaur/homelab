@@ -118,21 +118,14 @@ let
         peers;
     };
 
-  # TODO(jared): map over all networks that have wireguard set to true
-  iot = mkWgInterface config.custom.inventory.networks.wg-iot;
-  trusted = mkWgInterface config.custom.inventory.networks.wg-trusted;
+  wireguardNetworks = lib.mapAttrs
+    (_: mkWgInterface)
+    (lib.filterAttrs
+      (_: network: network.wireguard.enable)
+      config.custom.inventory.networks);
 in
 {
-  systemd.network = {
-    netdevs.wg-iot = iot.netdev;
-    networks.wg-iot = iot.network;
-
-    netdevs.wg-trusted = trusted.netdev;
-    networks.wg-trusted = trusted.network;
-  };
-
-  environment.systemPackages = [ pkgs.wireguard-tools ] ++
-    trusted.clientConfigs ++
-    iot.clientConfigs
-  ;
+  systemd.network.netdevs = lib.mapAttrsToList (_: x: x.netdev) wireguardNetworks;
+  systemd.network.networks = lib.mapAttrsToList (_: x: x.network) wireguardNetworks;
+  environment.systemPackages = [ pkgs.wireguard-tools ] ++ (lib.mapAttrsToList (_: x: x.clientConfigs) wireguardNetworks);
 }
