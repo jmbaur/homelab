@@ -17,23 +17,18 @@
             ", "
             (route: route.routeConfig.Destination)
             (networks.hurricane.routes);
+          nfVars = ''
+            define DEV_WAN = ${networks.wan.name}
+            define DEV_WAN6 = ${networks.hurricane.name}
+          '' + lib.concatMapStrings
+            (network: ''
+              define DEV_${lib.toUpper network.name} = ${config.systemd.network.networks.${name}.name}
+              define NET_${lib.toUpper network.name} = ${network.networkIPv4Cidr}
+            '')
+            (builtins.attrValues config.custom.inventory.networks);
         in
         ''
-          define DEV_WAN = ${networks.wan.name}
-          define DEV_WAN6 = ${networks.hurricane.name}
-          define DEV_MGMT = ${networks.mgmt.name}
-          define NET_MGMT = ${config.custom.inventory.networks.mgmt.networkIPv4Cidr}
-          define DEV_WG_WWW = ${networks.www.name}
-          define DEV_TRUSTED = ${networks.trusted.name}
-          define NET_TRUSTED = ${config.custom.inventory.networks.trusted.networkIPv4Cidr}
-          define DEV_WG_TRUSTED = ${networks.wg-trusted.name}
-          define NET_WG_TRUSTED = ${config.custom.inventory.networks.wg-trusted.networkIPv4Cidr}
-          define DEV_IOT = ${networks.iot.name}
-          define NET_IOT = ${config.custom.inventory.networks.iot.networkIPv4Cidr}
-          define DEV_WG_IOT = ${networks.wg-iot.name}
-          define NET_WG_IOT = ${config.custom.inventory.networks.wg-iot.networkIPv4Cidr}
-          define DEV_WORK = ${networks.work.name}
-          define NET_WORK = ${config.custom.inventory.networks.work.networkIPv4Cidr}
+          ${nfVars}
 
           table inet firewall {
               chain input_wan {
@@ -113,8 +108,12 @@
 
                   # always allow wireguard traffic
                   meta l4proto { udp } th dport {
-                      ${toString netdevs.wg-iot.wireguardConfig.ListenPort},
-                      ${toString netdevs.wg-trusted.wireguardConfig.ListenPort},
+                    ${lib.concatMapStringsSep ",\n" (netdev: netdev.wireguardConfig.ListenPort)
+                       (builtins.attrValues
+                         (lib.filterAttrs
+                         (_: netdev: netdev.netdevConfig.Kind == "wireguard")
+                         config.systemd.network.netdevs))
+                     }
                   } accept
 
                   # allow loopback traffic, anything else jump to chain for further
@@ -234,12 +233,10 @@
 
                   # masquerade private IP addresses
                   ip saddr {
-                      $NET_MGMT,
-                      $NET_TRUSTED,
-                      $NET_WG_TRUSTED,
-                      $NET_IOT,
-                      $NET_WG_IOT,
-                      $NET_WORK,
+                    ${lib.concatMapStringsSep ",\n"
+                      (network: "$NET_${lib.toUpper network.name}")
+                      builtins.attrValues config.custom.inventory.networks
+                     }
                   } oifname $DEV_WAN masquerade
               }
           }

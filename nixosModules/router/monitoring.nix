@@ -1,32 +1,28 @@
-{ config, lib, pkgs, ... }:
-let
-  blackboxConfig = (pkgs.formats.yaml { }).generate "blackbox-config" {
-    modules = {
-      icmpv6_connectivity = {
-        prober = "icmp";
-        timeout = "5s";
-        icmp = {
-          preferred_ip_protocol = "ip6";
-          ip_protocol_fallback = false;
-        };
-      };
-      icmpv4_connectivity = {
-        prober = "icmp";
-        timeout = "5s";
-        icmp = {
-          preferred_ip_protocol = "ip4";
-          ip_protocol_fallback = false;
-        };
-      };
-    };
-  };
-in
-{
+{ config, lib, pkgs, ... }: {
   services.journald.enableHttpGateway = true;
   services.prometheus.exporters = {
     blackbox = {
       enable = false;
-      configFile = "${blackboxConfig}";
+      configFile = toString ((pkgs.formats.yaml { }).generate "blackbox-config" {
+        modules = {
+          icmpv6_connectivity = {
+            prober = "icmp";
+            timeout = "5s";
+            icmp = {
+              preferred_ip_protocol = "ip6";
+              ip_protocol_fallback = false;
+            };
+          };
+          icmpv4_connectivity = {
+            prober = "icmp";
+            timeout = "5s";
+            icmp = {
+              preferred_ip_protocol = "ip4";
+              ip_protocol_fallback = false;
+            };
+          };
+        };
+      });
     };
     node = {
       enable = true;
