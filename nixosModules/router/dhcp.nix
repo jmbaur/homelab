@@ -30,7 +30,11 @@ in
         };
         subnet4 = lib.flatten (lib.mapAttrsToList
           (_: network:
-            with network; [
+            let
+              routerIPv4Address = "${network.networkIPv4SignificantBits}.1";
+            in
+            with network;
+            [
               {
                 interface = config.systemd.network.networks.${name}.name;
                 subnet = networkIPv4Cidr;
@@ -40,15 +44,15 @@ in
                 option-data = [
                   {
                     name = "routers";
-                    data = toKeaArray [ hosts.${config.networking.hostName}.ipv4 ];
+                    data = toKeaArray [ routerIPv4Address ];
                   }
                   {
                     name = "domain-name-servers";
-                    data = toKeaArray [ hosts.${config.networking.hostName}.ipv4 ];
+                    data = toKeaArray [ routerIPv4Address ];
                   }
                   {
                     name = "ntp-servers";
-                    data = toKeaArray [ hosts.${config.networking.hostName}.ipv4 ];
+                    data = toKeaArray [ routerIPv4Address ];
                   }
                   {
                     name = "domain-search";
@@ -62,7 +66,7 @@ in
                   (
                     let
                       dotToComma = data: lib.replaceStrings [ "." ] [ "," ] data;
-                      router = dotToComma hosts.${config.networking.hostName}.ipv4;
+                      router = dotToComma routerIPv4Address;
                     in
                     {
                       name = "classless-static-routes";
