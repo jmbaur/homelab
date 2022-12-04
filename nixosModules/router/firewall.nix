@@ -58,8 +58,8 @@
           add rule inet firewall input_always_allowed_lan meta l4proto { tcp, udp } th dport "domain" accept
 
           add table ip nat
-          add chain ip nat prerouting { type nat hook prerouting priority 0; policy accept; }
-          add chain ip nat postrouting { type nat hook postrouting priority 0; policy accept; }
+          add chain ip nat prerouting { type nat hook prerouting priority 100; policy accept; }
+          add chain ip nat postrouting { type nat hook postrouting priority 100; policy accept; }
 
           # standard configuration
           # NAT masquerading
