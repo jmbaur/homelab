@@ -25,14 +25,12 @@ let
     ipv6Prefixes = map
       (prefix: { ipv6PrefixConfig = { Prefix = prefix; }; })
       (with network; [ networkGuaCidr ]);
-    ipv6RoutePrefixes = [
-      { ipv6RoutePrefixConfig.Route = network.networkGuaCidr; }
-      { ipv6RoutePrefixConfig.Route = network.networkUlaCidr; }
-    ] ++
-    (lib.flatten (map
-      (n: [
-        { ipv6RoutePrefixConfig.Route = config.custom.inventory.networks.${n}.networkUlaCidr; }
-      ])
+    ipv6RoutePrefixes = [{
+      ipv6RoutePrefixConfig.Route = network.networkUlaCidr;
+    }] ++ (lib.flatten (map
+      (n: [{
+        ipv6RoutePrefixConfig.Route = config.custom.inventory.networks.${n}.networkUlaCidr;
+      }])
       network.includeRoutesTo));
   };
 in
