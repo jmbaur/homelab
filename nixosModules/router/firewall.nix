@@ -9,6 +9,7 @@
       enable = true;
       ruleset = with config.systemd.network;
         let
+          toNfVar = str: lib.replaceStrings [ "-" ] [ "_" ] (lib.toUpper str);
           v4BogonNetworks = lib.concatMapStringsSep
             ", "
             (route: route.routeConfig.Destination)
@@ -22,8 +23,8 @@
             define DEV_WAN6 = ${networks.hurricane.name}
           '' + lib.concatMapStrings
             (network: ''
-              define DEV_${lib.toUpper network.name} = ${config.systemd.network.networks.${network.name}.name}
-              define NET_${lib.toUpper network.name} = ${network.networkIPv4Cidr}
+              define DEV_${toNfVar network.name} = ${config.systemd.network.networks.${network.name}.name}
+              define NET_${toNfVar network.name} = ${network.networkIPv4Cidr}
             '')
             (builtins.attrValues config.custom.inventory.networks);
         in
@@ -108,7 +109,7 @@
 
                   # always allow wireguard traffic
                   meta l4proto { udp } th dport {
-                    ${lib.concatMapStringsSep ",\n" (netdev: toString netdev.wireguardConfig.ListenPort)
+                    ${lib.concatMapStringsSep "," (netdev: toString netdev.wireguardConfig.ListenPort)
                        (builtins.attrValues
                          (lib.filterAttrs
                          (_: netdev: netdev.netdevConfig.Kind == "wireguard" && netdev.wireguardConfig ? ListenPort)
@@ -233,8 +234,8 @@
 
                   # masquerade private IP addresses
                   ip saddr {
-                    ${lib.concatMapStringsSep ",\n"
-                      (network: "$NET_${lib.toUpper network.name}")
+                    ${lib.concatMapStringsSep ","
+                      (network: "$NET_${toNfVar network.name}")
                       (builtins.attrValues config.custom.inventory.networks)
                      }
                   } oifname $DEV_WAN masquerade
