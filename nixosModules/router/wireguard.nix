@@ -129,5 +129,5 @@ in
 {
   systemd.network.netdevs = lib.mapAttrs (_: x: x.netdev) wireguardNetworks;
   systemd.network.networks = lib.mapAttrs (_: x: x.network) wireguardNetworks;
-  environment.systemPackages = [ pkgs.wireguard-tools ] ++ (lib.mapAttrsToList (_: x: x.clientConfigs) wireguardNetworks);
+  environment.systemPackages = [ pkgs.wireguard-tools ] ++ (lib.flatten (lib.mapAttrsToList (_: x: x.clientConfigs) wireguardNetworks));
 }
