@@ -111,7 +111,7 @@
                     ${lib.concatMapStringsSep ",\n" (netdev: toString netdev.wireguardConfig.ListenPort)
                        (builtins.attrValues
                          (lib.filterAttrs
-                         (_: netdev: netdev.netdevConfig.Kind == "wireguard")
+                         (_: netdev: netdev.netdevConfig.Kind == "wireguard" && netdev.wireguardConfig ? ListenPort)
                          config.systemd.network.netdevs))
                      }
                   } accept
