@@ -40,199 +40,89 @@
         ''
           ${nfVars}
 
-          table inet firewall {
-              chain input_wan {
-                  # accepting ping (icmp-echo-request) for diagnostic purposes.
-                  # However, it also lets probes discover this host is alive. This
-                  # sample accepts them within a certain rate limit:
-                  icmp type echo-request limit rate 5/second accept
-                  icmpv6 type echo-request limit rate 5/second accept
-              }
+          # static configuration
 
-              chain input_always_allowed {
-                  icmp type {
-                      destination-unreachable,
-                      echo-request,
-                      parameter-problem,
-                      time-exceeded,
-                  } accept
-                  icmpv6 type {
-                      destination-unreachable,
-                      echo-request,
-                      nd-neighbor-advert,
-                      nd-neighbor-solicit,
-                      nd-router-solicit,
-                      packet-too-big,
-                      parameter-problem,
-                      time-exceeded,
-                  } accept
-              }
+          add table inet firewall
+          add chain inet firewall input type filter hook input priority 0; policy drop;
+          add rule inet firewall input ct state vmap { established : accept, related : accept, invalid : drop }
+          add rule inet firewall input iifname lo accept
+          add chain inet firewall forward type filter hook forward priority 0; policy drop;
+          add rule inet firewall forward ct state vmap { established : accept, related : accept, invalid : drop }
+          add chain inet firewall output type filter hook output priority 0; policy accept;
+          add chain inet firewall input_always_allowed
+          add rule inet firewall input_always_allowed icmp type { destination-unreachable, echo-request, parameter-problem, time-exceeded } accept
+          add rule inet firewall input_always_allowed icmpv6 type { destination-unreachable, echo-request, nd-neighbor-advert, nd-neighbor-solicit, nd-router-solicit, packet-too-big, parameter-problem, time-exceeded } accept
+          add chain inet firewall input_always_allowed_lan
+          add rule inet firewall input_always_allowed_lan jump input_always_allowed
+          add rule inet firewall input_always_allowed_lan meta l4proto udp th dport { "bootps", "ntp", "dhcpv6-server" } accept
+          add rule inet firewall input_always_allowed_lan meta l4proto { tcp, udp } th dport "domain" accept
 
-              chain input_always_allowed_lan {
-                  jump input_always_allowed
-                  meta l4proto udp th dport { "ntp", "dhcpv6-server", "bootps" } accept
-                  meta l4proto { tcp, udp } th dport "domain" accept
-              }
+          add table ip nat
+          add chain ip nat prerouting type nat hook prerouting priority 0; policy accept;
+          add chain ip nat postrouting type nat hook postrouting priority 0; policy accept;
 
-              chain input_trusted {
-                  jump input_always_allowed_lan
+          # standard configuration
+          # NAT masquerading
+          add rule ip nat postrouting ip saddr { ${lanIPv4Networks} } oifname $DEV_WAN masquerade
 
-                  meta l4proto tcp th dport {
-                      9153, # coredns
-                      ${toString config.services.prometheus.exporters.blackbox.port},
-                      ${toString config.services.prometheus.exporters.kea.port},
-                      ${toString config.services.prometheus.exporters.node.port},
-                      ${toString config.services.prometheus.exporters.wireguard.port},
-                  } accept
-                  meta l4proto tcp th dport "ssh" log prefix "input ssh - " accept
-                  meta l4proto udp th dport "tftp" log prefix "input tftp - " accept
-                  meta l4proto { tcp, udp } th dport {
-                      ${toString config.services.iperf3.port},
-                  } log prefix "input iperf3 - " accept
-              }
+          # not_in_internet
+          add chain inet firewall not_in_internet
+          add rule inet firewall not_in_internet iifname { $DEV_WAN } ip saddr { ${v4BogonNetworks} } drop
+          add rule inet firewall not_in_internet iifname { $DEV_WAN6 } ip6 saddr { ${v6BogonNetworks} } drop
+          add rule inet firewall not_in_internet oifname { $DEV_WAN } ip daddr { ${v4BogonNetworks} } drop
+          add rule inet firewall not_in_internet oifname { $DEV_WAN6 } ip6 daddr { ${v6BogonNetworks} } drop
+          add rule inet firewall input jump not_in_internet
+          add rule inet firewall forward jump not_in_internet
+          add rule inet firewall output jump not_in_internet
 
-              chain input_wg_www {
-                  jump input_always_allowed
-                  meta l4proto tcp th dport {
-                      19531, # systemd-journal-gatewayd
-                  } accept
-              }
+          # wireguard
+          add chain inet firewall input_wireguard
+          add rule inet firewall input_wireguard meta l4proto { udp } th dport { ${wireguardPorts} } accept
+          add rule inet firewall input jump input_wireguard
 
-              chain not_in_internet {
-                  # Drop addresses that do not exist in the internet (RFC6890)
-                  iifname { $DEV_WAN } ip saddr { ${v4BogonNetworks} } drop
-                  iifname { $DEV_WAN6 } ip6 saddr { ${v6BogonNetworks} } drop
+          # allow_to_internet
+          add chain inet firewall allow_to_internet
+          add rule inet firewall allow_to_internet oifname { $DEV_WAN, $DEV_WAN6 } accept
 
-                  oifname { $DEV_WAN } ip daddr { ${v4BogonNetworks} } drop
-                  oifname { $DEV_WAN6 } ip6 daddr { ${v6BogonNetworks} } drop
-              }
+          # input_wan
+          add chain inet firewall input_wan
+          add rule inet firewall input_wan icmp type echo-request limit rate 5/second accept
+          add rule inet firewall input_wan icmpv6 type echo-request limit rate 5/second accept
+          add rule inet firewall input iifname { $DEV_WAN, $DEV_WAN6 } jump input_wan
 
-              chain input_wireguard {
-                  meta l4proto { udp } th dport { ${wireguardPorts} } accept
-              }
+          # forward_from_wan
+          add chain inet firewall forward_from_wan
+          add rule inet firewall forward_from_wan icmpv6 type { echo-request } accept
+          add rule inet firewall forward { $DEV_WAN, $DEV_WAN6 } jump forward_from_wan
 
-              chain input {
-                  type filter hook input priority 0; policy drop;
+          # custom policy configuration
+          # DEV_MGMT, DEV_TRUSTED, DEV_WG_TRUSTED policies
+          add chain inet firewall input_trusted
+          add rule inet firewall input_trusted jump input_always_allowed_lan
+          add rule inet firewall input_trusted meta l4proto tcp th dport { 9153, ${toString config.services.prometheus.exporters.blackbox.port}, ${toString config.services.prometheus.exporters.kea.port}, ${toString config.services.prometheus.exporters.node.port}, ${toString config.services.prometheus.exporters.wireguard.port} } accept
+          add rule inet firewall input_trusted meta l4proto tcp th dport "ssh" log prefix "input ssh - " accept
+          add rule inet firewall input_trusted meta l4proto udp th dport "tftp" log prefix "input tftp - " accept
+          add rule inet firewall input_trusted meta l4proto { tcp, udp } th dport { ${toString config.services.iperf3.port} } log prefix "input iperf3 - " accept
+          add rule inet firewall input iifname { $DEV_MGMT, $DEV_TRUSTED, $DEV_WG_TRUSTED } jump input_trusted
+          add chain inet firewall forward_from_trusted
+          add rule inet firewall forward_from_trusted jump allow_to_internet
+          add rule inet firewall forward_from_trusted accept
+          add rule inet firewall forward iifname { $DEV_MGMT, $DEV_TRUSTED, $DEV_WG_TRUSTED } jump forward_from_trusted
 
-                  # Allow traffic from established and related packets, drop
-                  # invalid
-                  ct state vmap {
-                      established : accept,
-                      related : accept,
-                      invalid : drop,
-                  }
+          # DEV_WG_WWW policies
+          add chain inet firewall input_wg_www
+          add rule inet firewall input_wg_www jump input_always_allowed
+          add rule inet firewall input_wg_www meta l4proto tcp th dport 19531 accept # systemd-journal-gatewayd
+          add rule inet firewall input iifname $DEV_WG_WWW jump input_wg_www
 
-                  jump not_in_internet
-                  jump input_wireguard
-
-                  # allow loopback traffic, anything else jump to chain for further
-                  # evaluation
-                  iifname vmap {
-                      lo : accept,
-                      $DEV_WAN : jump input_wan,
-                      $DEV_WAN6 : jump input_wan,
-                      $DEV_MGMT : jump input_trusted,
-                      $DEV_WG_WWW : jump input_wg_www,
-                      $DEV_TRUSTED : jump input_trusted,
-                      $DEV_WG_TRUSTED : jump input_trusted,
-                      $DEV_IOT : jump input_always_allowed_lan,
-                      $DEV_WG_IOT : jump input_always_allowed_lan,
-                      $DEV_WORK : jump input_always_allowed_lan,
-                  }
-
-                  # the rest is dropped by the above policy
-              }
-
-              chain forward_from_wan {
-                  icmpv6 type { echo-request } accept
-              }
-
-              chain allow_to_internet {
-                  oifname { $DEV_WAN, $DEV_WAN6 } accept
-              }
-
-              chain dont_allow_to_internet {
-                  oifname { $DEV_WAN, $DEV_WAN6 } log prefix "not allowed to internet - " drop
-              }
-
-              chain forward_from_mgmt {
-                  # TODO(jared): don't allow to internet
-                  accept
-              }
-
-              chain forward_from_trusted {
-                  jump allow_to_internet
-                  oifname {
-                      $DEV_MGMT,
-                      $DEV_TRUSTED,
-                      $DEV_WG_TRUSTED,
-                      $DEV_IOT,
-                      $DEV_WG_IOT,
-                      $DEV_WORK,
-                  } accept
-              }
-
-              chain forward_from_iot {
-                  jump allow_to_internet
-                  oifname {
-                      $DEV_IOT,
-                      $DEV_WG_IOT,
-                  } accept
-              }
-
-              chain forward_from_work {
-                  jump allow_to_internet
-                  oifname { $DEV_WORK } accept
-              }
-
-              chain forward {
-                  type filter hook forward priority 0; policy drop;
-
-                  # Allow traffic from established and related packets, drop
-                  # invalid
-                  ct state vmap {
-                      established : accept,
-                      related : accept,
-                      invalid : drop,
-                  }
-
-                  jump not_in_internet
-
-                  # connections from the internal net to the internet or to other
-                  # internal nets are allowed
-                  iifname vmap {
-                      $DEV_WAN : jump forward_from_wan,
-                      $DEV_WAN6 : jump forward_from_wan,
-                      $DEV_MGMT : jump forward_from_mgmt,
-                      $DEV_TRUSTED : jump forward_from_trusted,
-                      $DEV_WG_TRUSTED : jump forward_from_trusted,
-                      $DEV_IOT : jump forward_from_iot,
-                      $DEV_WG_IOT : jump forward_from_iot,
-                      $DEV_WORK : jump forward_from_work,
-                  }
-
-                  # the rest is dropped by the above policy
-              }
-
-              chain output {
-                  type filter hook output priority 0; policy accept;
-
-                  jump not_in_internet
-              }
-          }
-
-          table ip nat {
-              chain prerouting {
-                  type nat hook prerouting priority 100; policy accept;
-              }
-
-              chain postrouting {
-                  type nat hook postrouting priority 100; policy accept;
-
-                  # masquerade private IP addresses
-                  ip saddr { ${lanIPv4Networks} } oifname $DEV_WAN masquerade
-              }
-          }
+          # DEV_IOT, DEV_WG_IOT, DEV_WORK policies
+          add rule inet firewall input iifname { $DEV_IOT, $DEV_WG_IOT, $DEV_WORK } jump input_always_allowed_lan
+          add chain inet firewall forward_from_iot
+          add rule inet firewall forward_from_iot jump allow_to_internet
+          add rule inet firewall forward_from_iot oifname { $DEV_IOT, $DEV_WG_IOT } accept
+          add chain inet firewall forward_from_work
+          add rule inet firewall forward_from_work jump allow_to_internet
+          add rule inet firewall forward_from_work oifname { $DEV_WORK } accept
         '';
     };
   };
