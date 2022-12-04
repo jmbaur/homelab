@@ -71,7 +71,7 @@
               chain input_always_allowed_lan {
                   jump input_always_allowed
                   meta l4proto udp th dport { "ntp", "dhcpv6-server", "bootps" } accept
-                  meta l4proto { tcp, udp } th dport "dns" accept
+                  meta l4proto { tcp, udp } th dport "domain" accept
               }
 
               chain input_trusted {
