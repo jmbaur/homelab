@@ -40,6 +40,7 @@ with lib; {
       mosh
       neovim
       neovim-boring
+      nix-diff
       nix-prefetch-scripts
       nix-tree
       nixos-generators
