@@ -4,7 +4,6 @@
     ./dns.nix
     ./firewall.nix
     ./lan.nix
-    ./links.nix
     ./monitoring.nix
     ./ntp.nix
     ./options.nix
