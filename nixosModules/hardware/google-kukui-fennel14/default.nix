@@ -19,7 +19,7 @@ with lib;
         }) [ ./HiFi.conf ./mt8183_da7219_rt1015p.conf ]))
     ];
 
-    hardware. bluetooth. enable = mkDefault true;
+    hardware.bluetooth.enable = mkDefault true;
     hardware.enableRedistributableFirmware = true;
     hardware.deviceTree = {
       enable = true;

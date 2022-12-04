@@ -1,7 +1,7 @@
 { config, lib, ... }:
 let
   cfg = config.custom.wgWwwPeer;
-  wg = import ../../nixosConfigurations/www/wg.nix;
+  wg = import ../nixosConfigurations/www/wg.nix;
 in
 {
   options.custom.wgWwwPeer.enable = lib.mkEnableOption "wireguard peer to www";
