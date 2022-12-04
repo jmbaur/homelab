@@ -4,7 +4,7 @@ let
   hostType = { name, ... }: {
     options = {
       name = mkOption { type = types.str; default = name; };
-      dhcp = mkOption { type = types.bool; default = false; };
+      dhcp = mkEnableOption "dhcp-enabled host";
       interface = mkOption { type = types.nullOr types.str; default = null; };
       mac = mkOption { type = types.nullOr types.str; default = null; };
       publicKey = mkOption { type = types.nullOr types.str; default = null; };
