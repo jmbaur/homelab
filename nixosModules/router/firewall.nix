@@ -26,7 +26,6 @@
           '' + lib.concatMapStrings
             (network: ''
               define DEV_${toNfVar network.name} = ${config.systemd.network.networks.${network.name}.name}
-              define NET_${toNfVar network.name} = ${network.networkIPv4Cidr}
             '')
             (builtins.attrValues config.custom.inventory.networks);
         in
@@ -234,7 +233,7 @@
 
                   # masquerade private IP addresses
                   ip saddr { ${lib.concatMapStringsSep ", "
-                      (network: "$NET_${toNfVar network.name}")
+                      (network: network.networkIPv4Cidr)
                       (builtins.attrValues config.custom.inventory.networks)
                      } } oifname $DEV_WAN masquerade
               }
