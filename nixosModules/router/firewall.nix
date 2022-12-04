@@ -93,7 +93,7 @@
           # forward_from_wan
           add chain inet firewall forward_from_wan
           add rule inet firewall forward_from_wan icmpv6 type echo-request accept
-          add rule inet firewall forward { $DEV_WAN, $DEV_WAN6 } jump forward_from_wan
+          add rule inet firewall forward iifname { $DEV_WAN, $DEV_WAN6 } jump forward_from_wan
 
           # custom policy configuration
           # DEV_MGMT, DEV_TRUSTED, DEV_WG_TRUSTED policies
@@ -120,9 +120,11 @@
           add chain inet firewall forward_from_iot
           add rule inet firewall forward_from_iot jump allow_to_internet
           add rule inet firewall forward_from_iot oifname { $DEV_IOT, $DEV_WG_IOT } accept
+          add rule inet firewall forward iifname { $DEV_IOT, $DEV_WG_IOT } jump forward_from_iot
           add chain inet firewall forward_from_work
           add rule inet firewall forward_from_work jump allow_to_internet
           add rule inet firewall forward_from_work oifname { $DEV_WORK } accept
+          add rule inet firewall forward iifname { $DEV_WORK } jump forward_from_iot
         '';
     };
   };
