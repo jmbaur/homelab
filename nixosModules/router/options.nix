@@ -26,15 +26,19 @@ let
       };
       physical = {
         enable = mkEnableOption "physical network";
-        interface = mkOption { type = types.str; };
-        description = ''
-          The name of the physical interface that will be used for this network.
-        '';
+        interface = mkOption {
+          type = types.nullOr types.str;
+          default = null;
+          description = ''
+            The name of the physical interface that will be used for this network.
+          '';
+        };
       };
       wireguard = {
         enable = mkEnableOption "wireguard network";
         publicKey = mkOption {
-          type = types.str;
+          type = types.nullOr types.str;
+          default = null;
           description = ''
             The wireguard public key of the router for this network.
           '';

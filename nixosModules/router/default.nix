@@ -3,11 +3,11 @@
     ./dhcp.nix
     ./dns.nix
     ./firewall.nix
-    ./inventory.nix
     ./lan.nix
     ./links.nix
     ./monitoring.nix
     ./ntp.nix
+    ./options.nix
     ./wan.nix
     ./wireguard.nix
   ];
