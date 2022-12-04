@@ -9,9 +9,9 @@ let
     };
     networkConfig = {
       Address = [
-        "${network.networkIPv4SignificantBits}.1"
-        "${network.networkGuaPrefix}::1"
-        "${network.networkUlaPrefix}::1"
+        "${network.networkIPv4SignificantBits}.1/${toString network.ipv4Cidr}"
+        "${network.networkGuaPrefix}::1/${toString network.ipv6Cidr}"
+        "${network.networkUlaPrefix}::1/${toString network.ipv6Cidr}"
       ];
       IPv6AcceptRA = false;
       IPv6SendRA = true;
