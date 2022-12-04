@@ -6,7 +6,6 @@ let
       routerIPv4 = "${network.networkIPv4SignificantBits}.1";
       routerIPv6Gua = "${network.networkGuaPrefix}::1";
       routerIPv6Ula = "${network.networkUlaPrefix}::1";
-      peers = lib.filterAttrs (_: host: host.wgPeer) network.hosts;
       port = 51800 + network.id;
     in
     {
@@ -27,7 +26,7 @@ let
               ];
             };
           })
-          peers;
+          network.hosts;
       };
       network = {
         inherit (network) name;
@@ -118,7 +117,7 @@ let
             ;;
             esac
           '')
-        peers;
+        network.hosts;
     };
 
   wireguardNetworks = lib.mapAttrs
