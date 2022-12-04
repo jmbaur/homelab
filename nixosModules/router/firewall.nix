@@ -1,3 +1,6 @@
+# TODO(jared): Factor out interface names and make firewall policys a
+# configuration option.
+
 { config, lib, ... }: {
   networking = {
     nat.enable = false;

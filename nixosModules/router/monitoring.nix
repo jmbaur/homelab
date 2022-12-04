@@ -44,12 +44,13 @@ in
             PublicKey = ${peer.publicKey}
             AllowedIPs = ${peer.ipv4},${peer.ipv6.ula}
           '')
-          (lib.flatten
-            (map
-              (name: lib.attrValues config.custom.inventory.networks.${name}.hosts)
-              [ "wg-iot" "wg-trusted" ]
-            )
-          )
+          (lib.flatten (
+            lib.mapAttrsToList
+              (_: network: builtins.attrValues network.hosts)
+              (lib.filterAttrs
+                (_: network: network.wireguard.enable)
+                config.custom.inventory.networks)
+          ))
         );
       in
       {
