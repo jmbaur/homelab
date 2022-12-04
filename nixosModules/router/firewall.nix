@@ -108,7 +108,7 @@
 
                   # always allow wireguard traffic
                   meta l4proto { udp } th dport {
-                    ${lib.concatMapStringsSep ",\n" (netdev: netdev.wireguardConfig.ListenPort)
+                    ${lib.concatMapStringsSep ",\n" (netdev: toString netdev.wireguardConfig.ListenPort)
                        (builtins.attrValues
                          (lib.filterAttrs
                          (_: netdev: netdev.netdevConfig.Kind == "wireguard")
