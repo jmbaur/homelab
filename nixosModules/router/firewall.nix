@@ -93,7 +93,7 @@
               config.networking.nftables.firewall.interfaces)))
         +
         # forwarding rules
-        (lib.concatStringsSep "\n" (map
+        (lib.concatStringsSep "\n" (lib.flatten (map
           (
             network:
             let
@@ -126,7 +126,7 @@
                 )
                 (network.policy))))
           )
-          (builtins.attrValues config.custom.inventory.networks))));
+          (builtins.attrValues config.custom.inventory.networks)))));
     };
   };
 }
