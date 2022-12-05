@@ -26,6 +26,11 @@ let
   };
 in
 {
+  artichoke = nixpkgs.lib.nixosSystem {
+    system = "aarch64-linux";
+    modules = [ ./artichoke self.nixosModules.router ];
+  };
+
   beetroot = nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
     modules = [

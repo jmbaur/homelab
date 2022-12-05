@@ -1,6 +1,8 @@
-{ config, lib, pkgs, ... }:
+{ options, config, lib, pkgs, ... }:
 with lib;
 let
+  cfg = config.custom.inventory;
+
   hostType = { name, ... }: {
     options = {
       name = mkOption { type = types.str; default = name; };
@@ -12,6 +14,42 @@ let
       ipv6 = {
         gua = mkOption { type = types.str; };
         ula = mkOption { type = types.str; };
+      };
+    };
+  };
+  policyType = { name, config, ... }: {
+    options = {
+      name = mkOption {
+        type = types.str;
+        default = name;
+        description = ''
+          The name of the network this policy will apply to. If the name of the
+          network is "default", the policy will apply globally.
+        '';
+      };
+      allowAll = mkEnableOption "allow all traffic";
+      includeRouteTo = mkOption {
+        type = types.bool;
+        default = config.allowAll;
+        description = ''
+          Whether to advertise a route for the network owning this policy to
+          the network described in this policy.
+        '';
+      };
+      allowedTCPPorts = mkOption {
+        type = types.listOf types.int;
+        default = [ ];
+        description = ''
+          Allowed TCP ports. This is overridden by `allowAll`.
+        '';
+      };
+      allowedUDPPorts = mkOption {
+        type = types.listOf types.int;
+        default = [ ];
+        description = ''
+          Allowed UDP ports. This is overridden by `allowAll`.
+        '';
+
       };
     };
   };
@@ -58,7 +96,15 @@ let
           The hosts that belong in this network.
         '';
       };
+      policy = mkOption {
+        type = types.attrsOf (types.submodule policyType);
+        default = { };
+        description = ''
+          The firewall policy of this network.
+        '';
+      };
       includeRoutesTo = mkOption {
+        internal = true;
         type = types.listOf types.str;
         default = [ ];
         description = ''
@@ -69,21 +115,35 @@ let
       };
       id = mkOption { type = types.int; };
       mtu = mkOption { type = types.nullOr types.int; default = null; };
-      # TODO(jared): Have all of this be calculated so it does not need to be
-      # in the configuration.
-      ipv4Cidr = mkOption { type = types.int; default = 24; };
-      ipv6Cidr = mkOption { type = types.int; default = 64; };
-      networkIPv4 = mkOption { type = types.str; };
-      networkIPv4Cidr = mkOption { type = types.str; };
-      networkIPv4SignificantBits = mkOption { type = types.str; };
-      networkGuaCidr = mkOption { type = types.str; };
-      networkGuaPrefix = mkOption { type = types.str; };
-      networkUlaCidr = mkOption { type = types.str; };
-      networkUlaPrefix = mkOption { type = types.str; };
+      # TODO(jared): Calculate these in this submodule's config.
+      ipv4Cidr = mkOption { internal = true; type = types.int; default = 24; };
+      ipv6Cidr = mkOption { internal = true; type = types.int; default = 64; };
+      networkIPv4 = mkOption { internal = true; type = types.str; };
+      networkIPv4Cidr = mkOption { internal = true; type = types.str; };
+      networkIPv4SignificantBits = mkOption { internal = true; type = types.str; };
+      networkGuaCidr = mkOption { internal = true; type = types.str; };
+      networkGuaPrefix = mkOption { internal = true; type = types.str; };
+      networkUlaCidr = mkOption { internal = true; type = types.str; };
+      networkUlaPrefix = mkOption { internal = true; type = types.str; };
+    };
+
+    config = {
+      includeRoutesTo = map
+        (network: network.name)
+        (lib.filter
+          (network: (
+            (config.name != network.name)
+            && (lib.attrByPath [ config.name "includeRouteTo" ] false network.policy)
+          ))
+          (builtins.attrValues cfg.networks));
     };
   };
 in
 {
+  # duplicate `networking.firewall` options to be under nftables and
+  # implemented in this module.
+  options.networking.nftables.firewall = lib.filterAttrs (k: _: (filter (e: k == e) [ "interfaces" ]) != [ ]) options.networking.firewall;
+
   options.custom.inventory = {
     networks = mkOption {
       type = types.attrsOf (types.submodule networkType);
