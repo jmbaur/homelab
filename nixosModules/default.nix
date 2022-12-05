@@ -1,11 +1,13 @@
 inputs: with inputs; {
-  router.imports = [
-    ./router
-    ipwatch.nixosModules.default
-    self.nixosModules.default
-    sops-nix.nixosModules.sops
-  ];
-  default = {
+  router = { ... }: {
+    imports = [
+      ./router
+      ipwatch.nixosModules.default
+      self.nixosModules.default
+      sops-nix.nixosModules.sops
+    ];
+  };
+  default = { ... }: {
     nixpkgs.overlays = [
       self.overlays.default
       gobar.overlays.default

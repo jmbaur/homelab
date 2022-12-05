@@ -5,46 +5,10 @@
     ./firewall.nix
     ./lan.nix
     ./monitoring.nix
-    ./ntp.nix
     ./options.nix
     ./wan.nix
     ./wireguard.nix
   ];
-
-  boot.loader.grub.enable = false;
-  boot.loader.generic-extlinux-compatible.enable = true;
-
-  hardware.clearfog-cn913x.enable = true;
-
-  programs.flashrom.enable = true;
-
-  sops = {
-    defaultSopsFile = ./secrets.yaml;
-    secrets =
-      let
-        # wgSecret is a sops secret that has file permissions that can be
-        # consumed by systemd-networkd. Reference:
-        # https://www.freedesktop.org/software/systemd/man/systemd.netdev.html#PrivateKeyFile=
-        wgSecret = { mode = "0640"; group = config.users.groups.systemd-network.name; };
-      in
-      {
-        ipwatch_env = { };
-        "wg/iot/artichoke" = wgSecret;
-        "wg/iot/phone" = { };
-        "wg/www/artichoke" = wgSecret;
-        "wg/trusted/artichoke" = wgSecret;
-        "wg/trusted/beetroot" = { };
-      };
-  };
-
-  custom = {
-    deployee = {
-      enable = true;
-      authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
-    };
-    disableZfs = true;
-    wgWwwPeer.enable = true;
-  };
 
   services.ipwatch = {
     enable = true;
@@ -102,13 +66,17 @@
     "L+ ${config.services.atftpd.root}/netboot.xyz.efi 644 root root - ${pkgs.netbootxyz-efi}"
   ];
 
+  services.ntp = {
+    enable = true;
+    # continue to serve time to the network in case internet access is lost
+    extraConfig = ''
+      tos orphan 15
+    '';
+  };
+
   networking = {
-    hostName = "artichoke";
     useDHCP = false;
     useNetworkd = true;
   };
   systemd.network.enable = true;
-
-  zramSwap.enable = true;
-  system.stateVersion = "23.05";
 }

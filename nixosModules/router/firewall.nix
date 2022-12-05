@@ -9,7 +9,8 @@
       enable = true;
       ruleset = with config.systemd.network;
         let
-          toNfVar = str: lib.replaceStrings [ "-" ] [ "_" ] (lib.toUpper str);
+          devWAN = networks.wan.name;
+          devWAN6 = networks.hurricane.name;
           v4BogonNetworks = lib.concatMapStringsSep
             ", "
             (route: route.routeConfig.Destination)
@@ -26,106 +27,105 @@
               (lib.filterAttrs
                 (_: netdev: netdev.netdevConfig.Kind == "wireguard" && netdev.wireguardConfig ? ListenPort)
                 config.systemd.network.netdevs));
-          # TODO(jared): don't hardcode these
-          nfVars = ''
-            define DEV_WAN = ${networks.wan.name}
-            define DEV_WAN6 = ${networks.hurricane.name}
-            define DEV_WG_WWW = ${networks.www.name}
-          '' + lib.concatMapStrings
-            (network: ''
-              define DEV_${toNfVar network.name} = ${config.systemd.network.networks.${network.name}.name}
-            '')
-            (builtins.attrValues config.custom.inventory.networks);
         in
-        ''
-          ${nfVars}
-
-          # static configuration
-
+        lib.mkBefore (''
           add table inet firewall
+
           add chain inet firewall input { type filter hook input priority 0; policy drop; }
           add rule inet firewall input ct state vmap { established : accept, related : accept, invalid : drop }
           add rule inet firewall input iifname lo accept
+
           add chain inet firewall forward { type filter hook forward priority 0; policy drop; }
           add rule inet firewall forward ct state vmap { established : accept, related : accept, invalid : drop }
+
           add chain inet firewall output { type filter hook output priority 0; policy accept; }
-          add chain inet firewall input_always_allowed
-          add rule inet firewall input_always_allowed icmp type { destination-unreachable, echo-request, parameter-problem, time-exceeded } accept
-          add rule inet firewall input_always_allowed icmpv6 type { destination-unreachable, echo-request, nd-neighbor-advert, nd-neighbor-solicit, nd-router-solicit, packet-too-big, parameter-problem, time-exceeded } accept
-          add chain inet firewall input_always_allowed_lan
-          add rule inet firewall input_always_allowed_lan jump input_always_allowed
-          add rule inet firewall input_always_allowed_lan meta l4proto udp th dport { "bootps", "ntp", "dhcpv6-server" } accept
-          add rule inet firewall input_always_allowed_lan meta l4proto { tcp, udp } th dport "domain" accept
+          add rule inet firewall input icmp type { destination-unreachable, echo-request, parameter-problem, time-exceeded } accept
+          add rule inet firewall input icmpv6 type { destination-unreachable, echo-request, nd-neighbor-advert, nd-neighbor-solicit, nd-router-solicit, packet-too-big, parameter-problem, time-exceeded } accept
 
           add table ip nat
           add chain ip nat prerouting { type nat hook prerouting priority 100; policy accept; }
           add chain ip nat postrouting { type nat hook postrouting priority 100; policy accept; }
+          add rule ip nat postrouting ip saddr { ${lanIPv4Networks} } oifname ${devWAN} masquerade
 
-          # standard configuration
-          # NAT masquerading
-          add rule ip nat postrouting ip saddr { ${lanIPv4Networks} } oifname $DEV_WAN masquerade
+          # Always allow input from LAN interfaces to access crucial router IP services
+          add rule inet firewall input iifname ne { ${devWAN}, ${devWAN6} } meta l4proto udp th dport { "bootps", "ntp", "dhcpv6-server" } accept
+          add rule inet firewall input iifname ne { ${devWAN}, ${devWAN6} } meta l4proto { tcp, udp } th dport "domain" accept
 
-          # not_in_internet
+          # Reject traffic from addresses not found on the internet
           add chain inet firewall not_in_internet
-          add rule inet firewall not_in_internet iifname { $DEV_WAN } ip saddr { ${v4BogonNetworks} } drop
-          add rule inet firewall not_in_internet iifname { $DEV_WAN6 } ip6 saddr { ${v6BogonNetworks} } drop
-          add rule inet firewall not_in_internet oifname { $DEV_WAN } ip daddr { ${v4BogonNetworks} } drop
-          add rule inet firewall not_in_internet oifname { $DEV_WAN6 } ip6 daddr { ${v6BogonNetworks} } drop
+          add rule inet firewall not_in_internet iifname { ${devWAN} } ip saddr { ${v4BogonNetworks} } drop
+          add rule inet firewall not_in_internet iifname { ${devWAN6} } ip6 saddr { ${v6BogonNetworks} } drop
+          add rule inet firewall not_in_internet oifname { ${devWAN} } ip daddr { ${v4BogonNetworks} } drop
+          add rule inet firewall not_in_internet oifname { ${devWAN6} } ip6 daddr { ${v6BogonNetworks} } drop
           add rule inet firewall input jump not_in_internet
           add rule inet firewall forward jump not_in_internet
           add rule inet firewall output jump not_in_internet
 
-          # wireguard
-          add chain inet firewall input_wireguard
-          add rule inet firewall input_wireguard meta l4proto { udp } th dport { ${wireguardPorts} } accept
-          add rule inet firewall input jump input_wireguard
+          # Allow all wireguard traffic
+          add rule inet firewall input meta l4proto { udp } th dport { ${wireguardPorts} } accept
 
-          # allow_to_internet
-          add chain inet firewall allow_to_internet
-          add rule inet firewall allow_to_internet oifname { $DEV_WAN, $DEV_WAN6 } accept
+          # Allow limited icmp echo requests to wan interfaces
+          add rule inet firewall input iifname . icmp type { ${devWAN} . echo-request } limit rate 5/second accept
+          add rule inet firewall input iifname . icmpv6 type { ${devWAN6} . echo-request } limit rate 5/second accept
 
-          # input_wan
-          add chain inet firewall input_wan
-          add rule inet firewall input_wan icmp type echo-request limit rate 5/second accept
-          add rule inet firewall input_wan icmpv6 type echo-request limit rate 5/second accept
-          add rule inet firewall input iifname { $DEV_WAN, $DEV_WAN6 } jump input_wan
-
-          # forward_from_wan
-          add chain inet firewall forward_from_wan
-          add rule inet firewall forward_from_wan icmpv6 type echo-request accept
-          add rule inet firewall forward iifname { $DEV_WAN, $DEV_WAN6 } jump forward_from_wan
-
-          # custom policy configuration
-          # DEV_MGMT, DEV_TRUSTED, DEV_WG_TRUSTED policies
-          add chain inet firewall input_trusted
-          add rule inet firewall input_trusted jump input_always_allowed_lan
-          add rule inet firewall input_trusted meta l4proto tcp th dport { 9153, ${toString config.services.prometheus.exporters.blackbox.port}, ${toString config.services.prometheus.exporters.kea.port}, ${toString config.services.prometheus.exporters.node.port}, ${toString config.services.prometheus.exporters.wireguard.port} } accept
-          add rule inet firewall input_trusted meta l4proto tcp th dport "ssh" log prefix "input ssh - " accept
-          add rule inet firewall input_trusted meta l4proto udp th dport "tftp" log prefix "input tftp - " accept
-          add rule inet firewall input_trusted meta l4proto { tcp, udp } th dport { ${toString config.services.iperf3.port} } log prefix "input iperf3 - " accept
-          add rule inet firewall input iifname { $DEV_MGMT, $DEV_TRUSTED, $DEV_WG_TRUSTED } jump input_trusted
-          add chain inet firewall forward_from_trusted
-          add rule inet firewall forward_from_trusted jump allow_to_internet
-          add rule inet firewall forward_from_trusted accept
-          add rule inet firewall forward iifname { $DEV_MGMT, $DEV_TRUSTED, $DEV_WG_TRUSTED } jump forward_from_trusted
-
-          # DEV_WG_WWW policies
-          add chain inet firewall input_wg_www
-          add rule inet firewall input_wg_www jump input_always_allowed
-          add rule inet firewall input_wg_www meta l4proto tcp th dport 19531 accept # systemd-journal-gatewayd
-          add rule inet firewall input iifname $DEV_WG_WWW jump input_wg_www
-
-          # DEV_IOT, DEV_WG_IOT, DEV_WORK policies
-          add rule inet firewall input iifname { $DEV_IOT, $DEV_WG_IOT, $DEV_WORK } jump input_always_allowed_lan
-          add chain inet firewall forward_from_iot
-          add rule inet firewall forward_from_iot jump allow_to_internet
-          add rule inet firewall forward_from_iot oifname { $DEV_IOT, $DEV_WG_IOT } accept
-          add rule inet firewall forward iifname { $DEV_IOT, $DEV_WG_IOT } jump forward_from_iot
-          add chain inet firewall forward_from_work
-          add rule inet firewall forward_from_work jump allow_to_internet
-          add rule inet firewall forward_from_work oifname { $DEV_WORK } accept
-          add rule inet firewall forward iifname { $DEV_WORK } jump forward_from_iot
-        '';
+          # Allow icmpv6 echo requests to internal network hosts (needed for
+          # proper IPv6 functionality)
+          add rule inet firewall forward iifname . icmpv6 type { ${devWAN6} . echo-request } accept
+        ''
+        +
+        # input rules
+        (lib.concatStringsSep "\n"
+          (lib.flatten
+            (lib.mapAttrsToList
+              (iface: fw:
+                let
+                  chain = "input_to_${iface}";
+                  rangeToString = range: "${toString range.from}-${toString range.to}";
+                  allowedTCPPorts = (map toString fw.allowedTCPPorts) ++ (map rangeToString fw.allowedTCPPortRanges);
+                  allowedUDPPorts = (map toString fw.allowedUDPPorts) ++ (map rangeToString fw.allowedUDPPortRanges);
+                in
+                [
+                  "add chain inet firewall ${chain}"
+                  "add rule inet firewall ${chain} meta l4proto tcp th dport { ${lib.concatStringsSep ", " allowedTCPPorts} } accept"
+                  "add rule inet firewall ${chain} meta l4proto udp th dport { ${lib.concatStringsSep ", " allowedUDPPorts} } accept"
+                  "add rule inet firewall input iifname ${iface} jump ${chain}"
+                ] config.networking.nftables.firewall.interfaces))))
+        +
+        # forwarding rules
+        (lib.concatStringsSep "\n" (map
+          (
+            network:
+            let
+              interface = "${config.systemd.network.networks.${network.name}.name}";
+              chainTo = "forward_to_${network.name}";
+            in
+            ([
+              "add rule inet firewall forward iifname . oifname { ${interface} . ${devWAN}, ${interface} . ${devWAN6} } accept" # allow the network to access the internet
+              "add chain inet firewall ${chainTo}" # chain that filters traffic forwarding TO the target network
+              "add rule inet firewall forward oifname ${interface} jump ${chainTo}" # add the prior chain to the forward chain
+            ] ++
+            (lib.flatten
+              (lib.mapAttrsToList
+                (policyName: policy:
+                  let
+                    nftPrefix = "add rule inet firewall ${chainTo}";
+                    policyNetwork = config.custom.inventory.networks.${policyName};
+                    iifname = "${config.systemd.network.networks.${policyNetwork.name}.name}";
+                  in
+                  (
+                    (lib.optional
+                      (policy.allowedTCPPorts != [ ]) "${nftPrefix} meta l4proto tcp th dport { ${lib.concatMapStringsSep ", " toString policy.allowedTCPPorts} } accept")
+                    ++
+                    (lib.optional
+                      (policy.allowedUDPPorts != [ ]) "${nftPrefix} meta l4proto udp th dport { ${lib.concatMapStringsSep ", " toString policy.allowedUDPPorts} } accept")
+                    ++
+                    (lib.optional
+                      (policy.allowAll) "${nftPrefix} iifname ${iifname} oifname ${interface} accept")
+                  )
+                )
+                (network.policy))))
+          )
+          (builtins.attrValues config.custom.inventory.networks))));
     };
   };
 }
