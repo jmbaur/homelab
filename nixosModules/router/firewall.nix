@@ -39,8 +39,6 @@
           add rule inet firewall forward ct state vmap { established : accept, related : accept, invalid : drop }
 
           add chain inet firewall output { type filter hook output priority 0; policy accept; }
-          add rule inet firewall input icmp type { destination-unreachable, echo-request, parameter-problem, time-exceeded } accept
-          add rule inet firewall input icmpv6 type { destination-unreachable, echo-request, nd-neighbor-advert, nd-neighbor-solicit, nd-router-solicit, packet-too-big, parameter-problem, time-exceeded } accept
 
           add table ip nat
           add chain ip nat prerouting { type nat hook prerouting priority 100; policy accept; }
@@ -48,6 +46,8 @@
           add rule ip nat postrouting ip saddr { ${lanIPv4Networks} } oifname ${devWAN} masquerade
 
           # Always allow input from LAN interfaces to access crucial router IP services
+          add rule inet firewall input iifname ne { ${devWAN}, ${devWAN6} } icmp type { destination-unreachable, echo-request, parameter-problem, time-exceeded } accept
+          add rule inet firewall input iifname ne { ${devWAN}, ${devWAN6} } icmpv6 type { destination-unreachable, echo-request, nd-neighbor-advert, nd-neighbor-solicit, nd-router-solicit, packet-too-big, parameter-problem, time-exceeded } accept
           add rule inet firewall input iifname ne { ${devWAN}, ${devWAN6} } meta l4proto udp th dport { "bootps", "ntp", "dhcpv6-server" } accept
           add rule inet firewall input iifname ne { ${devWAN}, ${devWAN6} } meta l4proto { tcp, udp } th dport "domain" accept
 
