@@ -89,7 +89,8 @@
                   "add rule inet firewall ${chain} meta l4proto tcp th dport { ${lib.concatStringsSep ", " allowedTCPPorts} } accept"
                   "add rule inet firewall ${chain} meta l4proto udp th dport { ${lib.concatStringsSep ", " allowedUDPPorts} } accept"
                   "add rule inet firewall input iifname ${iface} jump ${chain}"
-                ] config.networking.nftables.firewall.interfaces))))
+                ])
+              config.networking.nftables.firewall.interfaces)))
         +
         # forwarding rules
         (lib.concatStringsSep "\n" (map
