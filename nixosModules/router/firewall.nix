@@ -79,7 +79,7 @@
             (lib.mapAttrsToList
               (iface: fw:
                 let
-                  chain = "input_to_${iface}";
+                  chain = "input_from_${iface}";
                   rangeToString = range: "${toString range.from}-${toString range.to}";
                   allowedTCPPorts = (map toString fw.allowedTCPPorts) ++ (map rangeToString fw.allowedTCPPortRanges);
                   allowedUDPPorts = (map toString fw.allowedUDPPorts) ++ (map rangeToString fw.allowedUDPPortRanges);
