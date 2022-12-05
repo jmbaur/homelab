@@ -156,6 +156,7 @@ with lib; {
       ];
       timeouts = [
         { timeout = 300; command = lockerCommand; }
+        { timeout = 570; command = "${pkgs.libnotify}/bin/notify-send 'swayidle' 'screen will turn off in 30 seconds...'"; }
         {
           timeout = 600;
           command = "${pkgs.sway}/bin/swaymsg 'output * dpms off'";

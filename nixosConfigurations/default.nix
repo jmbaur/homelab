@@ -124,9 +124,7 @@ in
     extraModules = [ ({ hardware.lx2k.enable = true; }) ];
   };
 
-  installer_sd_image = installer_sd_image {
-    system = "aarch64-linux";
-  };
+  installer_sd_image = installer_sd_image { system = "aarch64-linux"; };
 
   installer_sd_image_kukui_fennel14 = nixpkgs.lib.nixosSystem {
     system = "aarch64-linux";
@@ -137,6 +135,7 @@ in
         boot.initrd.systemd.enable = true;
         hardware.kukui-fennel14.enable = true;
         custom.installer.enable = true;
+        custom.remoteBuilders.aarch64builder.enable = true;
         imports = [
           ../nixosModules/depthcharge/sd-image.nix
           "${modulesPath}/profiles/base.nix"
