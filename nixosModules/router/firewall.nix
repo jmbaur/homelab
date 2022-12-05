@@ -28,7 +28,7 @@
                 (_: netdev: netdev.netdevConfig.Kind == "wireguard" && netdev.wireguardConfig ? ListenPort)
                 config.systemd.network.netdevs));
         in
-        (''
+        lib.mkBefore (''
           add table inet firewall
 
           add chain inet firewall input { type filter hook input priority 0; policy drop; }
