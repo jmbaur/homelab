@@ -84,14 +84,13 @@
                   allowedTCPPorts = (map toString fw.allowedTCPPorts) ++ (map rangeToString fw.allowedTCPPortRanges);
                   allowedUDPPorts = (map toString fw.allowedUDPPorts) ++ (map rangeToString fw.allowedUDPPortRanges);
                 in
-                [
-                  "add chain inet firewall ${chain}"
-                  "add rule inet firewall ${chain} meta l4proto tcp th dport { ${lib.concatStringsSep ", " allowedTCPPorts} } accept"
-                  "add rule inet firewall ${chain} meta l4proto udp th dport { ${lib.concatStringsSep ", " allowedUDPPorts} } accept"
-                  "add rule inet firewall input iifname ${iface} jump ${chain}"
-                ])
+                [ "add chain inet firewall ${chain}" ] ++
+                  (lib.optional (allowedTCPPorts != [ ]) "add rule inet firewall ${chain} meta l4proto tcp th dport { ${lib.concatStringsSep ", " allowedTCPPorts} } accept") ++
+                  (lib.optional (allowedUDPPorts != [ ]) "add rule inet firewall ${chain} meta l4proto udp th dport { ${lib.concatStringsSep ", " allowedUDPPorts} } accept") ++
+                  [ "add rule inet firewall input iifname ${iface} jump ${chain}" ]
+              )
               config.networking.nftables.firewall.interfaces)))
-        +
+        + "\n" +
         # forwarding rules
         (lib.concatStringsSep "\n" (lib.flatten (map
           (
