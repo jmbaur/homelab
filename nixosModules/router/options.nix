@@ -84,8 +84,8 @@ let
       };
       id = mkOption { type = types.int; };
       v4Prefix = mkOption { type = types.str; };
-      guaPrefix = mkOption { type = types.str; };
-      ulaPrefix = mkOption { type = types.str; };
+      v6GuaPrefix = mkOption { type = types.str; };
+      v6UlaPrefix = mkOption { type = types.str; };
       physical = {
         enable = mkEnableOption "physical network";
         interface = mkOption {
