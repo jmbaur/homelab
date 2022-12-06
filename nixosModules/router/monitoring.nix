@@ -34,6 +34,8 @@
         # wireguard. It just contains peer information so that friendly names
         # can be picked up by the exporter
         stubWireguardConfig = pkgs.writeText "stub-wireguard-config" (lib.concatMapStringsSep "\n"
+          # TODO(jared): this is a hack since the `_router` host doesn't have
+          # `publicKey` set
           (peer: lib.optionalString (peer.publicKey != null) ''
             [Peer]
             # friendly_name = ${peer.name}
