@@ -17,7 +17,7 @@ let
       "/interface bridge port add bridge=bridge frame-types=admit-only-vlan-tagged interface=sfp-sfpplus4 pvid=${toString unusedVlanId}"
       "/interface bridge vlan add bridge=bridge tagged=bridge,sfp-sfpplus4 vlan-ids=${toString inventory.networks.mgmt.id}"
       "/interface bridge vlan add bridge=bridge tagged=sfp-sfpplus4 untagged=ether1 vlan-ids=${toString inventory.networks.trusted.id}"
-      "/ip address add address=${inventory.networks.mgmt.hosts.switch1.ipv4}/${toString inventory.networks.mgmt.ipv4Cidr} interface=${inventory.networks.mgmt.name} network=${inventory.networks.mgmt.networkIPv4}"
+      "/ip address add address=${inventory.networks.mgmt.hosts.switch1.ipv4}/${toString inventory.networks.mgmt._ipv4Cidr} interface=${inventory.networks.mgmt.name} network=${inventory.networks.mgmt._networkIPv4}"
       "/ip dns set servers=${inventory.networks.mgmt.hosts.artichoke.ipv4}"
       "/ip route add dst-address=0.0.0.0/0 gateway=${inventory.networks.mgmt.hosts.artichoke.ipv4}"
       "/ipv6 route add dst-address=::/0 gateway=${inventory.networks.mgmt.hosts.artichoke.ipv6.ula}%${inventory.networks.mgmt.name}"

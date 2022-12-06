@@ -54,8 +54,8 @@ in
       (network:
         let
           allEntries = [
-            "${network.networkIPv4SignificantBits}.1 ${config.networking.hostName}.${network.domain}"
-            "${network.networkUlaPrefix}::1 ${config.networking.hostName}.${network.domain}"
+            "${network._networkIPv4SignificantBits}.1 ${config.networking.hostName}.${network.domain}"
+            "${network._networkUlaPrefix}::1 ${config.networking.hostName}.${network.domain}"
           ] ++ (lib.flatten (lib.mapAttrsToList
             (hostname: host: [
               "${host.ipv4} ${hostname}.${network.domain}"

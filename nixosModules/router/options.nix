@@ -115,16 +115,15 @@ let
       };
       id = mkOption { type = types.int; };
       mtu = mkOption { type = types.nullOr types.int; default = null; };
-      # TODO(jared): Calculate these in this submodule's config.
-      ipv4Cidr = mkOption { internal = true; type = types.int; default = 24; };
-      ipv6Cidr = mkOption { internal = true; type = types.int; default = 64; };
-      networkIPv4 = mkOption { internal = true; type = types.str; };
-      networkIPv4Cidr = mkOption { internal = true; type = types.str; };
-      networkIPv4SignificantBits = mkOption { internal = true; type = types.str; };
-      networkGuaCidr = mkOption { internal = true; type = types.str; };
-      networkGuaPrefix = mkOption { internal = true; type = types.str; };
-      networkUlaCidr = mkOption { internal = true; type = types.str; };
-      networkUlaPrefix = mkOption { internal = true; type = types.str; };
+      _ipv4Cidr = mkOption { internal = true; type = types.int; default = 24; };
+      _ipv6Cidr = mkOption { internal = true; type = types.int; default = 64; };
+      _networkIPv4 = mkOption { internal = true; type = types.str; };
+      _networkIPv4Cidr = mkOption { internal = true; type = types.str; };
+      _networkIPv4SignificantBits = mkOption { internal = true; type = types.str; };
+      _networkGuaCidr = mkOption { internal = true; type = types.str; };
+      _networkGuaPrefix = mkOption { internal = true; type = types.str; };
+      _networkUlaCidr = mkOption { internal = true; type = types.str; };
+      _networkUlaPrefix = mkOption { internal = true; type = types.str; };
     };
 
     config = {

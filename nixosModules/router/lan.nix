@@ -9,9 +9,9 @@ let
     };
     networkConfig = {
       Address = [
-        "${network.networkIPv4SignificantBits}.1/${toString network.ipv4Cidr}"
-        "${network.networkGuaPrefix}::1/${toString network.ipv6Cidr}"
-        "${network.networkUlaPrefix}::1/${toString network.ipv6Cidr}"
+        "${network._networkIPv4SignificantBits}.1/${toString network._ipv4Cidr}"
+        "${network._networkGuaPrefix}::1/${toString network._ipv6Cidr}"
+        "${network._networkUlaPrefix}::1/${toString network._ipv6Cidr}"
       ];
       IPv6AcceptRA = false;
       IPv6SendRA = true;
@@ -24,12 +24,12 @@ let
     };
     ipv6Prefixes = map
       (prefix: { ipv6PrefixConfig = { Prefix = prefix; }; })
-      (with network; [ networkGuaCidr ]);
+      (with network; [ _networkGuaCidr ]);
     ipv6RoutePrefixes = [{
-      ipv6RoutePrefixConfig.Route = network.networkUlaCidr;
+      ipv6RoutePrefixConfig.Route = network._networkUlaCidr;
     }] ++ (lib.flatten (map
       (n: [{
-        ipv6RoutePrefixConfig.Route = config.custom.inventory.networks.${n}.networkUlaCidr;
+        ipv6RoutePrefixConfig.Route = config.custom.inventory.networks.${n}._networkUlaCidr;
       }])
       network.includeRoutesTo));
   };

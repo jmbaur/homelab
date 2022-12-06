@@ -3,9 +3,9 @@ let
   mkWgInterface = network:
     let
       routerPublicKey = network.wireguard.publicKey;
-      routerIPv4 = "${network.networkIPv4SignificantBits}.1";
-      routerIPv6Gua = "${network.networkGuaPrefix}::1";
-      routerIPv6Ula = "${network.networkUlaPrefix}::1";
+      routerIPv4 = "${network._networkIPv4SignificantBits}.1";
+      routerIPv6Gua = "${network._networkGuaPrefix}::1";
+      routerIPv6Ula = "${network._networkUlaPrefix}::1";
       port = 51800 + network.id;
     in
     {
@@ -31,9 +31,9 @@ let
       network = {
         inherit (network) name;
         address = [
-          "${routerIPv4}/${toString network.ipv4Cidr}"
-          "${routerIPv6Gua}/${toString network.ipv6Cidr}"
-          "${routerIPv6Ula}/${toString network.ipv6Cidr}"
+          "${routerIPv4}/${toString network._ipv4Cidr}"
+          "${routerIPv6Gua}/${toString network._ipv6Cidr}"
+          "${routerIPv6Ula}/${toString network._ipv6Cidr}"
         ];
       };
       clientConfigs = lib.mapAttrsToList
@@ -43,9 +43,9 @@ let
             splitTunnelWgConfig = lib.generators.toINI { listsAsDuplicateKeys = true; } {
               Interface = {
                 Address = [
-                  "${host.ipv4}/${toString network.ipv4Cidr}"
-                  "${host.ipv6.gua}/${toString network.ipv6Cidr}"
-                  "${host.ipv6.ula}/${toString network.ipv6Cidr}"
+                  "${host.ipv4}/${toString network._ipv4Cidr}"
+                  "${host.ipv6.gua}/${toString network._ipv6Cidr}"
+                  "${host.ipv6.ula}/${toString network._ipv6Cidr}"
                 ];
                 PrivateKey = "$(cat ${config.sops.secrets."wg/${lib.replaceStrings ["wg-"] [""] network.name}/${hostname}".path})";
                 DNS = (([ routerIPv4 routerIPv6Ula ])) ++ [ "home.arpa" ];
@@ -54,13 +54,13 @@ let
                 PublicKey = routerPublicKey;
                 Endpoint = "vpn.jmbaur.com:${toString port}";
                 AllowedIPs = [
-                  network.networkIPv4Cidr
-                  network.networkGuaCidr
-                  network.networkUlaCidr
+                  network._networkIPv4Cidr
+                  network._networkGuaCidr
+                  network._networkUlaCidr
                 ] ++
                 lib.flatten (
                   map
-                    (name: with config.custom.inventory.networks.${name}; [ networkIPv4Cidr networkGuaCidr networkUlaCidr ])
+                    (name: with config.custom.inventory.networks.${name}; [ _networkIPv4Cidr _networkGuaCidr _networkUlaCidr ])
                     network.includeRoutesTo
                 );
               };
@@ -68,9 +68,9 @@ let
             fullTunnelWgConfig = lib.generators.toINI { listsAsDuplicateKeys = true; } {
               Interface = {
                 Address = [
-                  "${host.ipv4}/${toString network.ipv4Cidr}"
-                  "${host.ipv6.gua}/${toString network.ipv6Cidr}"
-                  "${host.ipv6.ula}/${toString network.ipv6Cidr}"
+                  "${host.ipv4}/${toString network._ipv4Cidr}"
+                  "${host.ipv6.gua}/${toString network._ipv6Cidr}"
+                  "${host.ipv6.ula}/${toString network._ipv6Cidr}"
                 ];
                 PrivateKey = "$(cat ${config.sops.secrets."wg/${lib.replaceStrings ["wg-"] [""] network.name}/${hostname}".path})";
                 DNS = (([ routerIPv4 routerIPv6Ula ])) ++ [ "home.arpa" ];

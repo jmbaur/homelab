@@ -31,15 +31,15 @@ in
         subnet4 = lib.flatten (lib.mapAttrsToList
           (_: network:
             let
-              routerIPv4Address = "${network.networkIPv4SignificantBits}.1";
+              routerIPv4Address = "${network._networkIPv4SignificantBits}.1";
             in
             with network;
             [
               {
                 interface = config.systemd.network.networks.${name}.name;
-                subnet = networkIPv4Cidr;
+                subnet = _networkIPv4Cidr;
                 pools = [{
-                  pool = "${networkIPv4SignificantBits}.100 - ${networkIPv4SignificantBits}.200";
+                  pool = "${_networkIPv4SignificantBits}.100 - ${_networkIPv4SignificantBits}.200";
                 }];
                 option-data = [
                   {
@@ -76,8 +76,8 @@ in
                           (map
                             (networkName:
                               let
-                                otherNetworkCidr = config.custom.inventory.networks.${networkName}.ipv4Cidr;
-                                otherNetwork = dotToComma config.custom.inventory.networks.${networkName}.networkIPv4SignificantBits;
+                                otherNetworkCidr = config.custom.inventory.networks.${networkName}._ipv4Cidr;
+                                otherNetwork = dotToComma config.custom.inventory.networks.${networkName}._networkIPv4SignificantBits;
                               in
                               "${toString otherNetworkCidr},${otherNetwork},${router}"
                             )
@@ -121,9 +121,9 @@ in
             with network; [
               {
                 interface = config.systemd.network.networks.${name}.name;
-                subnet = networkUlaCidr;
+                subnet = _networkUlaCidr;
                 pools = [{
-                  pool = "${networkUlaPrefix}:d::/80";
+                  pool = "${_networkUlaPrefix}:d::/80";
                 }];
                 reservations =
                   lib.mapAttrsToList

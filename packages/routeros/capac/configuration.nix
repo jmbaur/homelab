@@ -33,7 +33,7 @@ let
       "/interface bridge vlan add bridge=bridge tagged=ether1,wlan4 vlan-ids=${toString inventory.networks.work.id}"
       "/interface bridge vlan add bridge=bridge tagged=bridge,ether1 vlan-ids=${toString inventory.networks.mgmt.id}"
       "/interface ovpn-server server set auth=sha1,md5"
-      "/ip address add address=${inventory.networks.mgmt.hosts.ap0.ipv4}/${toString inventory.networks.mgmt.ipv4Cidr} interface=${inventory.networks.mgmt.name} network=${inventory.networks.mgmt.networkIPv4}"
+      "/ip address add address=${inventory.networks.mgmt.hosts.ap0.ipv4}/${toString inventory.networks.mgmt._ipv4Cidr} interface=${inventory.networks.mgmt.name} network=${inventory.networks.mgmt._networkIPv4}"
       "/ip dns set servers=${inventory.networks.mgmt.hosts.artichoke.ipv4}"
       "/ip route add dst-address=0.0.0.0/0 gateway=${inventory.networks.mgmt.hosts.artichoke.ipv4}"
       "/ipv6 route add dst-address=::/0 gateway=${inventory.networks.mgmt.hosts.artichoke.ipv6.ula}%${inventory.networks.mgmt.name}"
