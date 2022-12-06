@@ -186,6 +186,8 @@ with lib; {
       enable = true;
       controlMaster = "auto";
       controlPersist = "30m";
+      # ensure that local terminal terminfo's don't have to exist on any remote machine
+      extraOptionOverrides.SetEnv = "TERM=xterm-256color";
     };
 
     programs.zsh = {
