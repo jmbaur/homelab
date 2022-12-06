@@ -17,9 +17,9 @@ type Netdump struct {
 	NetworkIPv4Cidr            string `json:"_networkIPv4Cidr"`
 	NetworkIPv4SignificantBits string `json:"_networkIPv4SignificantBits"`
 	NetworkGuaCidr             string `json:"_networkGuaCidr"`
-	NetworkGuaPrefix           string `json:"_networkGuaPrefix"`
+	NetworkGuaSignificantBits  string `json:"_networkGuaSignificantBits"`
 	NetworkUlaCidr             string `json:"_networkUlaCidr"`
-	NetworkUlaPrefix           string `json:"_networkUlaPrefix"`
+	NetworkUlaSignificantBits  string `json:"_networkUlaSignificantBits"`
 }
 
 func getDump(guaPrefixStr, ulaPrefixStr, v4PrefixStr string) (*Netdump, error) {
@@ -79,8 +79,8 @@ func getDump(guaPrefixStr, ulaPrefixStr, v4PrefixStr string) (*Netdump, error) {
 		NetworkGuaCidr:             guaPrefix.String(),
 		NetworkUlaCidr:             ulaPrefix.String(),
 		NetworkIPv4SignificantBits: strings.Join(networkIPv4SignificantBits, "."),
-		NetworkGuaPrefix:           strings.Join(networkGuaPrefix, ":"),
-		NetworkUlaPrefix:           strings.Join(networkUlaPrefix, ":"),
+		NetworkGuaSignificantBits:  strings.Join(networkGuaPrefix, ":"),
+		NetworkUlaSignificantBits:  strings.Join(networkUlaPrefix, ":"),
 	}, nil
 }
 

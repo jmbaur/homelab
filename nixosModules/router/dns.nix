@@ -54,12 +54,12 @@ in
       (network:
         let
           allEntries = [
-            "${network._networkIPv4SignificantBits}.1 ${config.networking.hostName}.${network.domain}"
-            "${network._networkUlaPrefix}::1 ${config.networking.hostName}.${network.domain}"
+            "${network._computed._networkIPv4SignificantBits}.1 ${config.networking.hostName}.${network.domain}"
+            "${network._computed._networkUlaSignificantBits}::1 ${config.networking.hostName}.${network.domain}"
           ] ++ (lib.flatten (lib.mapAttrsToList
             (hostname: host: [
-              "${host.ipv4} ${hostname}.${network.domain}"
-              "${host.ipv6.ula} ${hostname}.${network.domain}"
+              "${host._computed._ipv4} ${hostname}.${network.domain}"
+              "${host._computed._ipv6.ula} ${hostname}.${network.domain}"
             ])
             network.hosts));
           hostsFile = pkgs.writeText "${network.domain}.hosts" ''

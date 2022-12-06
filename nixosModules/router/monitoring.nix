@@ -38,7 +38,7 @@
             [Peer]
             # friendly_name = ${peer.name}
             PublicKey = ${peer.publicKey}
-            AllowedIPs = ${peer.ipv4},${peer.ipv6.ula}
+            AllowedIPs = ${peer._computed._ipv4},${peer._computed._ipv6.ula}
           '')
           (lib.flatten (
             lib.mapAttrsToList

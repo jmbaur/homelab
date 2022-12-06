@@ -31,15 +31,15 @@ in
         subnet4 = lib.flatten (lib.mapAttrsToList
           (_: network:
             let
-              routerIPv4Address = "${network._networkIPv4SignificantBits}.1";
+              routerIPv4Address = "${network._computed._networkIPv4SignificantBits}.1";
             in
             with network;
             [
               {
                 interface = config.systemd.network.networks.${name}.name;
-                subnet = _networkIPv4Cidr;
+                subnet = _computed._networkIPv4Cidr;
                 pools = [{
-                  pool = "${_networkIPv4SignificantBits}.100 - ${_networkIPv4SignificantBits}.200";
+                  pool = "${_computed._networkIPv4SignificantBits}.100 - ${_computed._networkIPv4SignificantBits}.200";
                 }];
                 option-data = [
                   {
@@ -76,8 +76,8 @@ in
                           (map
                             (networkName:
                               let
-                                otherNetworkCidr = config.custom.inventory.networks.${networkName}._ipv4Cidr;
-                                otherNetwork = dotToComma config.custom.inventory.networks.${networkName}._networkIPv4SignificantBits;
+                                otherNetworkCidr = config.custom.inventory.networks.${networkName}._computed._ipv4Cidr;
+                                otherNetwork = dotToComma config.custom.inventory.networks.${networkName}._computed._networkIPv4SignificantBits;
                               in
                               "${toString otherNetworkCidr},${otherNetwork},${router}"
                             )
@@ -92,7 +92,7 @@ in
                   lib.mapAttrsToList
                     (_: host: {
                       hw-address = host.mac;
-                      ip-address = host.ipv4;
+                      ip-address = host._computed._ipv4;
                     })
                     (lib.filterAttrs (_: host: host.dhcp) hosts);
               }
@@ -121,15 +121,15 @@ in
             with network; [
               {
                 interface = config.systemd.network.networks.${name}.name;
-                subnet = _networkUlaCidr;
+                subnet = _computed._networkUlaCidr;
                 pools = [{
-                  pool = "${_networkUlaPrefix}:d::/80";
+                  pool = "${_computed._networkUlaSignificantBits}:d::/80";
                 }];
                 reservations =
                   lib.mapAttrsToList
                     (_: host: {
                       hw-address = host.mac;
-                      ip-addresses = [ host.ipv6.ula ];
+                      ip-addresses = [ host._computed._ipv6.ula ];
                     })
                     (lib.filterAttrs (_: host: host.dhcp) hosts);
               }

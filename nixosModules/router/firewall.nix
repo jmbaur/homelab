@@ -17,7 +17,7 @@
             (route: route.routeConfig.Destination)
             (networks.hurricane.routes);
           lanIPv4Networks = lib.concatMapStringsSep ", "
-            (network: network._networkIPv4Cidr)
+            (network: network._computed._networkIPv4Cidr)
             (builtins.attrValues config.custom.inventory.networks);
           wireguardPorts = lib.concatMapStringsSep ", " (netdev: toString netdev.wireguardConfig.ListenPort)
             (builtins.attrValues

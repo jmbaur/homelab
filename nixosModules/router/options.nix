@@ -3,18 +3,24 @@ with lib;
 let
   cfg = config.custom.inventory;
 
-  hostType = { name, ... }: {
+  hostType = { name, config, networkConfig, ... }: {
     options = {
+      id = mkOption { type = types.int; };
       name = mkOption { type = types.str; default = name; };
       dhcp = mkEnableOption "dhcp-enabled host";
-      interface = mkOption { type = types.nullOr types.str; default = null; };
       mac = mkOption { type = types.nullOr types.str; default = null; };
       publicKey = mkOption { type = types.nullOr types.str; default = null; };
-      ipv4 = mkOption { type = types.str; };
-      ipv6 = {
-        gua = mkOption { type = types.str; };
-        ula = mkOption { type = types.str; };
+      _computed = {
+        _ipv4 = mkOption { internal = true; type = types.str; };
+        _ipv6.gua = mkOption { internal = true; type = types.str; };
+        _ipv6.ula = mkOption { internal = true; type = types.str; };
       };
+    };
+    # TODO(jared): these calculations make assumptions of the network size
+    config._computed = {
+      _ipv4 = "${networkConfig._computed._networkIPv4SignificantBits}.${toString config.id}";
+      _ipv6.gua = "${networkConfig._computed._networkGuaSignificantBits}::${lib.toLower (lib.toHexString config.id)}";
+      _ipv6.ula = "${networkConfig._computed._networkUlaSignificantBits}::${lib.toLower (lib.toHexString config.id)}";
     };
   };
   policyType = { name, config, ... }: {
@@ -93,7 +99,10 @@ let
         '';
       };
       hosts = mkOption {
-        type = types.attrsOf (types.submodule hostType);
+        type = types.attrsOf (types.submoduleWith {
+          modules = [ hostType ];
+          specialArgs.networkConfig = config;
+        });
         default = { };
         description = ''
           The hosts that belong in this network.
@@ -116,18 +125,19 @@ let
           DHCPv4 and IPv6 RA.
         '';
       };
-      id = mkOption { type = types.int; };
       mtu = mkOption { type = types.nullOr types.int; default = null; };
-      _ipv4Cidr = mkOption { internal = true; type = types.int; };
-      _ipv6GuaCidr = mkOption { internal = true; type = types.int; };
-      _ipv6UlaCidr = mkOption { internal = true; type = types.int; };
-      _networkIPv4 = mkOption { internal = true; type = types.str; };
-      _networkIPv4Cidr = mkOption { internal = true; type = types.str; };
-      _networkIPv4SignificantBits = mkOption { internal = true; type = types.str; };
-      _networkGuaCidr = mkOption { internal = true; type = types.str; };
-      _networkGuaPrefix = mkOption { internal = true; type = types.str; };
-      _networkUlaCidr = mkOption { internal = true; type = types.str; };
-      _networkUlaPrefix = mkOption { internal = true; type = types.str; };
+      _computed = {
+        _ipv4Cidr = mkOption { internal = true; type = types.int; };
+        _ipv6GuaCidr = mkOption { internal = true; type = types.int; };
+        _ipv6UlaCidr = mkOption { internal = true; type = types.int; };
+        _networkIPv4 = mkOption { internal = true; type = types.str; };
+        _networkIPv4Cidr = mkOption { internal = true; type = types.str; };
+        _networkIPv4SignificantBits = mkOption { internal = true; type = types.str; };
+        _networkGuaCidr = mkOption { internal = true; type = types.str; };
+        _networkGuaSignificantBits = mkOption { internal = true; type = types.str; };
+        _networkUlaCidr = mkOption { internal = true; type = types.str; };
+        _networkUlaSignificantBits = mkOption { internal = true; type = types.str; };
+      };
     };
 
     config =
@@ -135,7 +145,7 @@ let
         netdump = pkgs.buildGoModule {
           name = "netdump";
           src = ./netdump;
-          vendorSha256 = "";
+          vendorSha256 = "sha256-pQpattmS9VmO3ZIQUFn66az8GSmB4IvYhTTCFn6SUmo=";
         };
         netdumpResult = pkgs.runCommand "netdump-${name}.json" { } ''
           ${netdump}/bin/netdump \
@@ -144,7 +154,8 @@ let
             -ula-prefix=${config.ulaPrefix} > $out
         '';
       in
-      (lib.importJSON "${netdumpResult}") // {
+      {
+        _computed = lib.importJSON netdumpResult;
         includeRoutesTo = map
           (network: network.name)
           (lib.filter

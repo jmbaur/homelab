@@ -3,9 +3,9 @@ let
   mkWgInterface = network:
     let
       routerPublicKey = network.wireguard.publicKey;
-      routerIPv4 = "${network._networkIPv4SignificantBits}.1";
-      routerIPv6Gua = "${network._networkGuaPrefix}::1";
-      routerIPv6Ula = "${network._networkUlaPrefix}::1";
+      routerIPv4 = "${network._computed._networkIPv4SignificantBits}.1";
+      routerIPv6Gua = "${network._computed._networkGuaSignificantBits}::1";
+      routerIPv6Ula = "${network._computed._networkUlaSignificantBits}::1";
       port = 51800 + network.id;
     in
     {
@@ -20,9 +20,9 @@ let
             wireguardPeerConfig = {
               PublicKey = peer.publicKey;
               AllowedIPs = [
-                "${peer.ipv4}/32"
-                "${peer.ipv6.gua}/128"
-                "${peer.ipv6.ula}/128"
+                "${peer._computed._ipv4}/32"
+                "${peer._computed._ipv6.gua}/128"
+                "${peer._computed._ipv6.ula}/128"
               ];
             };
           })
@@ -31,9 +31,9 @@ let
       network = {
         inherit (network) name;
         address = [
-          "${routerIPv4}/${toString network._ipv4Cidr}"
-          "${routerIPv6Gua}/${toString network._ipv6GuaCidr}"
-          "${routerIPv6Ula}/${toString network._ipv6UlaCidr}"
+          "${routerIPv4}/${toString network._computed._ipv4Cidr}"
+          "${routerIPv6Gua}/${toString network._computed._ipv6GuaCidr}"
+          "${routerIPv6Ula}/${toString network._computed._ipv6UlaCidr}"
         ];
       };
       clientConfigs = lib.mapAttrsToList
@@ -43,9 +43,9 @@ let
             splitTunnelWgConfig = lib.generators.toINI { listsAsDuplicateKeys = true; } {
               Interface = {
                 Address = [
-                  "${host.ipv4}/${toString network._ipv4Cidr}"
-                  "${host.ipv6.gua}/${toString network._ipv6GuaCidr}"
-                  "${host.ipv6.ula}/${toString network._ipv6UlaCidr}"
+                  "${host._computed._ipv4}/${toString network._computed._ipv4Cidr}"
+                  "${host._computed._ipv6.gua}/${toString network._computed._ipv6GuaCidr}"
+                  "${host._computed._ipv6.ula}/${toString network._computed._ipv6UlaCidr}"
                 ];
                 PrivateKey = "$(cat ${config.sops.secrets."wg/${lib.replaceStrings ["wg-"] [""] network.name}/${hostname}".path})";
                 DNS = (([ routerIPv4 routerIPv6Ula ])) ++ [ "home.arpa" ];
@@ -54,13 +54,13 @@ let
                 PublicKey = routerPublicKey;
                 Endpoint = "vpn.jmbaur.com:${toString port}";
                 AllowedIPs = [
-                  network._networkIPv4Cidr
-                  network._networkGuaCidr
-                  network._networkUlaCidr
+                  network._computed._networkIPv4Cidr
+                  network._computed._networkGuaCidr
+                  network._computed._networkUlaCidr
                 ] ++
                 lib.flatten (
                   map
-                    (name: with config.custom.inventory.networks.${name}; [ _networkIPv4Cidr _networkGuaCidr _networkUlaCidr ])
+                    (name: with config.custom.inventory.networks.${name}; [ _computed._networkIPv4Cidr _computed._networkGuaCidr _computed._networkUlaCidr ])
                     network.includeRoutesTo
                 );
               };
@@ -68,9 +68,9 @@ let
             fullTunnelWgConfig = lib.generators.toINI { listsAsDuplicateKeys = true; } {
               Interface = {
                 Address = [
-                  "${host.ipv4}/${toString network._ipv4Cidr}"
-                  "${host.ipv6.gua}/${toString network._ipv6GuaCidr}"
-                  "${host.ipv6.ula}/${toString network._ipv6UlaCidr}"
+                  "${host._computed._ipv4}/${toString network._computed._ipv4Cidr}"
+                  "${host._computed._ipv6.gua}/${toString network._computed._ipv6GuaCidr}"
+                  "${host._computed._ipv6.ula}/${toString network._computed._ipv6UlaCidr}"
                 ];
                 PrivateKey = "$(cat ${config.sops.secrets."wg/${lib.replaceStrings ["wg-"] [""] network.name}/${hostname}".path})";
                 DNS = (([ routerIPv4 routerIPv6Ula ])) ++ [ "home.arpa" ];
