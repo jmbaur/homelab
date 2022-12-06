@@ -55,11 +55,11 @@
     ];
 
     wan = {
-      name = config.systemd.network.links."10-wan".linkConfig.Name;
+      name = config.custom.inventory.wan;
       DHCP = "ipv4";
       networkConfig = {
         Tunnel = config.systemd.network.netdevs.hurricane.netdevConfig.Name;
-        IPv6AcceptRA = false; # TODO(jared): get a better ISP
+        IPv6AcceptRA = false;
         LinkLocalAddressing = "no";
         IPForward = true;
       };

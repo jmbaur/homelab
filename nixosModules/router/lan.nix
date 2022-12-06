@@ -35,21 +35,9 @@ let
   };
 in
 {
-  systemd.network.networks = (
-    lib.mapAttrs
-      (_: mkInternalInterface)
-      (lib.filterAttrs
-        (_: network: network.physical.enable)
-        config.custom.inventory.networks)
-  ) // {
-    # TODO(jared): refactor: this is DSA-interface specific configuration.
-    lan-master = {
-      name = "eth1";
-      linkConfig.RequiredForOnline = "no";
-      networkConfig = {
-        LinkLocalAddressing = "no";
-        BindCarrier = map (i: "lan${toString i}") [ 1 2 3 4 5 ];
-      };
-    };
-  };
+  systemd.network.networks = lib.mapAttrs
+    (_: mkInternalInterface)
+    (lib.filterAttrs
+      (_: network: network.physical.enable)
+      config.custom.inventory.networks);
 }

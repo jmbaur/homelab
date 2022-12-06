@@ -28,7 +28,11 @@ in
 {
   artichoke = nixpkgs.lib.nixosSystem {
     system = "aarch64-linux";
-    modules = [ ./artichoke self.nixosModules.router ];
+    modules = [
+      ./artichoke
+      ipwatch.nixosModules.default
+      self.nixosModules.router
+    ];
   };
 
   beetroot = nixpkgs.lib.nixosSystem {

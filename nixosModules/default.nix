@@ -2,7 +2,6 @@ inputs: with inputs; {
   router = { ... }: {
     imports = [
       ./router
-      ipwatch.nixosModules.default
       self.nixosModules.default
       sops-nix.nixosModules.sops
     ];

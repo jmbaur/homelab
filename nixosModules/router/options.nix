@@ -183,6 +183,12 @@ in
   options.networking.nftables.firewall = lib.filterAttrs (k: _: (filter (e: k == e) [ "interfaces" ]) != [ ]) options.networking.firewall;
 
   options.custom.inventory = {
+    wan = mkOption {
+      type = types.str;
+      description = ''
+        The name of the WAN interface.
+      '';
+    };
     v4Prefix = mkOption { type = types.str; };
     v6GuaPrefix = mkOption { type = types.str; };
     v6UlaPrefix = mkOption { type = types.str; };
