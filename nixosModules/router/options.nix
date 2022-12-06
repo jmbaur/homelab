@@ -83,9 +83,6 @@ let
         '';
       };
       id = mkOption { type = types.int; };
-      v4Prefix = mkOption { type = types.str; };
-      v6GuaPrefix = mkOption { type = types.str; };
-      v6UlaPrefix = mkOption { type = types.str; };
       physical = {
         enable = mkEnableOption "physical network";
         interface = mkOption {
