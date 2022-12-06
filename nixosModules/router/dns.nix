@@ -53,15 +53,12 @@ in
     '' + lib.concatMapStringsSep "\n"
       (network:
         let
-          allEntries = [
-            "${network.hosts._router._computed._ipv4} ${config.networking.hostName}.${network.domain}"
-            "${network.hosts._router._computed._ipv6.ula} ${config.networking.hostName}.${network.domain}"
-          ] ++ (lib.flatten (lib.mapAttrsToList
-            (hostname: host: [
-              "${host._computed._ipv4} ${hostname}.${network.domain}"
-              "${host._computed._ipv6.ula} ${hostname}.${network.domain}"
+          allEntries = (lib.flatten (map
+            (host: [
+              "${host._computed._ipv4} ${host.name}.${network.domain}"
+              "${host._computed._ipv6.ula} ${host.name}.${network.domain}"
             ])
-            network.hosts));
+            (builtins.attrValues network.hosts)));
           hostsFile = pkgs.writeText "${network.domain}.hosts" ''
             ${lib.concatStringsSep "\n" allEntries}
           '';

@@ -34,9 +34,9 @@ let
         ];
       };
       clientConfigs = lib.mapAttrsToList
-        (hostname: host:
+        (_: host:
           let
-            scriptName = "wg-config-${hostname}";
+            scriptName = "wg-config-${host.name}";
             splitTunnelWgConfig = lib.generators.toINI { listsAsDuplicateKeys = true; } {
               Interface = {
                 Address = [
@@ -44,7 +44,7 @@ let
                   "${host._computed._ipv6.gua}/${toString network._computed._ipv6GuaCidr}"
                   "${host._computed._ipv6.ula}/${toString network._computed._ipv6UlaCidr}"
                 ];
-                PrivateKey = "$(cat ${config.sops.secrets."wg/${lib.replaceStrings ["wg-"] [""] network.name}/${hostname}".path})";
+                PrivateKey = "$(cat ${config.sops.secrets."wg/${lib.replaceStrings ["wg-"] [""] network.name}/${host.name}".path})";
                 DNS = (([ network.hosts._router._computed._ipv4 network.hosts._router._computed._ipv6.ula ])) ++ [ "home.arpa" ];
               };
               Peer = {
@@ -69,7 +69,7 @@ let
                   "${host._computed._ipv6.gua}/${toString network._computed._ipv6GuaCidr}"
                   "${host._computed._ipv6.ula}/${toString network._computed._ipv6UlaCidr}"
                 ];
-                PrivateKey = "$(cat ${config.sops.secrets."wg/${lib.replaceStrings ["wg-"] [""] network.name}/${hostname}".path})";
+                PrivateKey = "$(cat ${config.sops.secrets."wg/${lib.replaceStrings ["wg-"] [""] network.name}/${host.name}".path})";
                 DNS = (([ network.hosts._router._computed._ipv4 network.hosts._router._computed._ipv6.ula ])) ++ [ "home.arpa" ];
               };
               Peer = {
@@ -114,7 +114,7 @@ let
             ;;
             esac
           '')
-        network.hosts;
+        (lib.filterAttrs (name: _: name != "_router") network.hosts);
     };
 
   wireguardNetworks = lib.mapAttrs
