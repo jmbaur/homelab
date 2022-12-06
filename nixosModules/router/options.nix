@@ -1,7 +1,16 @@
 { options, config, lib, pkgs, ... }:
 with lib;
 let
+
   cfg = config.custom.inventory;
+
+  routerHostName = config.networking.hostName;
+
+  netdump = pkgs.buildGoModule {
+    name = "netdump";
+    src = ./netdump;
+    vendorSha256 = "sha256-pQpattmS9VmO3ZIQUFn66az8GSmB4IvYhTTCFn6SUmo=";
+  };
 
   hostType = { name, config, networkConfig, ... }: {
     options = {
@@ -16,13 +25,18 @@ let
         _ipv6.ula = mkOption { internal = true; type = types.str; };
       };
     };
-    # TODO(jared): these calculations make assumptions of the network size
-    config._computed = {
-      _ipv4 = "${networkConfig._computed._networkIPv4SignificantBits}.${toString config.id}";
-      _ipv6.gua = "${networkConfig._computed._networkGuaSignificantBits}::${lib.toLower (lib.toHexString config.id)}";
-      _ipv6.ula = "${networkConfig._computed._networkUlaSignificantBits}::${lib.toLower (lib.toHexString config.id)}";
+    config = {
+      _computed = lib.importJSON (pkgs.runCommand "hostdump-${name}.json" { } ''
+        ${netdump}/bin/netdump \
+          -host \
+          -id=${toString config.id} \
+          -v4-prefix=${networkConfig._computed._v4Prefix} \
+          -gua-prefix=${networkConfig._computed._v6GuaPrefix} \
+          -ula-prefix=${networkConfig._computed._v6UlaPrefix} > $out
+      '');
     };
   };
+
   policyType = { name, config, ... }: {
     options = {
       name = mkOption {
@@ -55,10 +69,10 @@ let
         description = ''
           Allowed UDP ports. This is overridden by `allowAll`.
         '';
-
       };
     };
   };
+
   networkType = { name, config, ... }: {
     options = {
       name = mkOption {
@@ -138,47 +152,50 @@ let
         _networkGuaSignificantBits = mkOption { internal = true; type = types.str; };
         _networkUlaCidr = mkOption { internal = true; type = types.str; };
         _networkUlaSignificantBits = mkOption { internal = true; type = types.str; };
+        _v4Prefix = mkOption { internal = true; type = types.str; default = config._computed._networkIPv4Cidr; };
+        _v6GuaPrefix = mkOption { internal = true; type = types.str; default = config._computed._networkGuaCidr; };
+        _v6UlaPrefix = mkOption { internal = true; type = types.str; default = config._computed._networkUlaCidr; };
       };
     };
 
-    config =
-      let
-        netdump = pkgs.buildGoModule {
-          name = "netdump";
-          src = ./netdump;
-          vendorSha256 = "sha256-pQpattmS9VmO3ZIQUFn66az8GSmB4IvYhTTCFn6SUmo=";
-        };
-        netdumpResult = pkgs.runCommand "netdump-${name}.json" { } ''
-          ${netdump}/bin/netdump \
-            -v4-prefix=${config.v4Prefix} \
-            -gua-prefix=${config.guaPrefix} \
-            -ula-prefix=${config.ulaPrefix} > $out
-        '';
-      in
-      {
-        _computed = lib.importJSON netdumpResult;
-        includeRoutesTo = map
-          (network: network.name)
-          (lib.filter
-            (network: (
-              (config.name != network.name)
-              && (lib.attrByPath [ config.name "includeRouteTo" ] false network.policy)
-            ))
-            (builtins.attrValues cfg.networks));
-      };
+    config = {
+      _computed = lib.importJSON (pkgs.runCommand "netdump-${name}.json" { } ''
+        ${netdump}/bin/netdump \
+          -network \
+          -id=${toString config.id} \
+          -v4-prefix=${cfg.v4Prefix} \
+          -gua-prefix=${cfg.v6GuaPrefix} \
+          -ula-prefix=${cfg.v6UlaPrefix} > $out
+      '');
+      hosts._router = { id = 1; name = routerHostName; };
+      includeRoutesTo = map
+        (network: network.name)
+        (lib.filter
+          (network: (
+            (config.name != network.name)
+            && (lib.attrByPath [ config.name "includeRouteTo" ] false network.policy)
+          ))
+          (builtins.attrValues cfg.networks));
+    };
   };
+
 in
 {
   # duplicate `networking.firewall` options to be under nftables and
   # implemented in this module.
   options.networking.nftables.firewall = lib.filterAttrs (k: _: (filter (e: k == e) [ "interfaces" ]) != [ ]) options.networking.firewall;
 
-  options.custom.inventory.networks = mkOption {
-    type = types.attrsOf (types.submodule networkType);
-    default = { };
-    description = ''
-      The networks to be configured by the router.
-    '';
+  options.custom.inventory = {
+    v4Prefix = mkOption { type = types.str; };
+    v6GuaPrefix = mkOption { type = types.str; };
+    v6UlaPrefix = mkOption { type = types.str; };
+    networks = mkOption {
+      type = types.attrsOf (types.submodule networkType);
+      default = { };
+      description = ''
+        The networks to be configured by the router.
+      '';
+    };
   };
 
   config = mkIf (config.custom.inventory != { }) {
@@ -204,9 +221,6 @@ in
           message = "Duplicate IP addresses found";
         }
       )
-
-
-
     ];
 
     environment.etc."inventory.json".source = (pkgs.formats.json { }).generate

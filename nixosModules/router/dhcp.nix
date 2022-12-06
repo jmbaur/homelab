@@ -31,10 +31,9 @@ in
         subnet4 = lib.flatten (lib.mapAttrsToList
           (_: network:
             let
-              routerIPv4Address = "${network._computed._networkIPv4SignificantBits}.1";
+              routerIPv4Address = network.hosts._router._computed._ipv4;
             in
-            with network;
-            [
+            with network; [
               {
                 interface = config.systemd.network.networks.${name}.name;
                 subnet = _computed._networkIPv4Cidr;

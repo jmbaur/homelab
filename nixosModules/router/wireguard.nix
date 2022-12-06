@@ -3,9 +3,6 @@ let
   mkWgInterface = network:
     let
       routerPublicKey = network.wireguard.publicKey;
-      routerIPv4 = "${network._computed._networkIPv4SignificantBits}.1";
-      routerIPv6Gua = "${network._computed._networkGuaSignificantBits}::1";
-      routerIPv6Ula = "${network._computed._networkUlaSignificantBits}::1";
       port = 51800 + network.id;
     in
     {
@@ -31,9 +28,9 @@ let
       network = {
         inherit (network) name;
         address = [
-          "${routerIPv4}/${toString network._computed._ipv4Cidr}"
-          "${routerIPv6Gua}/${toString network._computed._ipv6GuaCidr}"
-          "${routerIPv6Ula}/${toString network._computed._ipv6UlaCidr}"
+          "${network.hosts._router._computed._ipv4}/${toString network._computed._ipv4Cidr}"
+          "${network.hosts._router._computed._ipv6.gua}/${toString network._computed._ipv6GuaCidr}"
+          "${network.hosts._router._computed._ipv6.ula}/${toString network._computed._ipv6UlaCidr}"
         ];
       };
       clientConfigs = lib.mapAttrsToList
@@ -48,7 +45,7 @@ let
                   "${host._computed._ipv6.ula}/${toString network._computed._ipv6UlaCidr}"
                 ];
                 PrivateKey = "$(cat ${config.sops.secrets."wg/${lib.replaceStrings ["wg-"] [""] network.name}/${hostname}".path})";
-                DNS = (([ routerIPv4 routerIPv6Ula ])) ++ [ "home.arpa" ];
+                DNS = (([ network.hosts._router._computed._ipv4 network.hosts._router._computed._ipv6.ula ])) ++ [ "home.arpa" ];
               };
               Peer = {
                 PublicKey = routerPublicKey;
@@ -73,7 +70,7 @@ let
                   "${host._computed._ipv6.ula}/${toString network._computed._ipv6UlaCidr}"
                 ];
                 PrivateKey = "$(cat ${config.sops.secrets."wg/${lib.replaceStrings ["wg-"] [""] network.name}/${hostname}".path})";
-                DNS = (([ routerIPv4 routerIPv6Ula ])) ++ [ "home.arpa" ];
+                DNS = (([ network.hosts._router._computed._ipv4 network.hosts._router._computed._ipv6.ula ])) ++ [ "home.arpa" ];
               };
               Peer = {
                 PublicKey = routerPublicKey;
