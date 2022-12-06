@@ -68,6 +68,7 @@ let
           The name of the network.
         '';
       };
+      id = mkOption { type = types.int; };
       v4Prefix = mkOption { type = types.str; };
       guaPrefix = mkOption { type = types.str; };
       ulaPrefix = mkOption { type = types.str; };
