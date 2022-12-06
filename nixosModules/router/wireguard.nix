@@ -32,8 +32,8 @@ let
         inherit (network) name;
         address = [
           "${routerIPv4}/${toString network._ipv4Cidr}"
-          "${routerIPv6Gua}/${toString network._ipv6Cidr}"
-          "${routerIPv6Ula}/${toString network._ipv6Cidr}"
+          "${routerIPv6Gua}/${toString network._ipv6GuaCidr}"
+          "${routerIPv6Ula}/${toString network._ipv6UlaCidr}"
         ];
       };
       clientConfigs = lib.mapAttrsToList
@@ -44,8 +44,8 @@ let
               Interface = {
                 Address = [
                   "${host.ipv4}/${toString network._ipv4Cidr}"
-                  "${host.ipv6.gua}/${toString network._ipv6Cidr}"
-                  "${host.ipv6.ula}/${toString network._ipv6Cidr}"
+                  "${host.ipv6.gua}/${toString network._ipv6GuaCidr}"
+                  "${host.ipv6.ula}/${toString network._ipv6UlaCidr}"
                 ];
                 PrivateKey = "$(cat ${config.sops.secrets."wg/${lib.replaceStrings ["wg-"] [""] network.name}/${hostname}".path})";
                 DNS = (([ routerIPv4 routerIPv6Ula ])) ++ [ "home.arpa" ];
@@ -69,8 +69,8 @@ let
               Interface = {
                 Address = [
                   "${host.ipv4}/${toString network._ipv4Cidr}"
-                  "${host.ipv6.gua}/${toString network._ipv6Cidr}"
-                  "${host.ipv6.ula}/${toString network._ipv6Cidr}"
+                  "${host.ipv6.gua}/${toString network._ipv6GuaCidr}"
+                  "${host.ipv6.ula}/${toString network._ipv6UlaCidr}"
                 ];
                 PrivateKey = "$(cat ${config.sops.secrets."wg/${lib.replaceStrings ["wg-"] [""] network.name}/${hostname}".path})";
                 DNS = (([ routerIPv4 routerIPv6Ula ])) ++ [ "home.arpa" ];

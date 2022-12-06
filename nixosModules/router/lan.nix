@@ -10,8 +10,8 @@ let
     networkConfig = {
       Address = [
         "${network._networkIPv4SignificantBits}.1/${toString network._ipv4Cidr}"
-        "${network._networkGuaPrefix}::1/${toString network._ipv6Cidr}"
-        "${network._networkUlaPrefix}::1/${toString network._ipv6Cidr}"
+        "${network._networkGuaPrefix}::1/${toString network._ipv6GuaCidr}"
+        "${network._networkUlaPrefix}::1/${toString network._ipv6UlaCidr}"
       ];
       IPv6AcceptRA = false;
       IPv6SendRA = true;
