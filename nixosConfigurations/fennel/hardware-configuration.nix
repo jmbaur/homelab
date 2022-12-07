@@ -5,19 +5,32 @@
 
 {
   imports =
-    [
-      (modulesPath + "/installer/scan/not-detected.nix")
+    [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "usb_storage" ];
+  boot.initrd.availableKernelModules = [ "usbhid" "usb_storage" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    {
-      device = "/dev/disk/by-uuid/555391fc-92ef-42e1-b756-bd23899d637e";
-      fsType = "ext4";
+    { device = "/dev/disk/by-uuid/f14b46a1-c282-4e48-8a03-6ef450a0e044";
+      fsType = "btrfs";
+      options = [ "subvol=@" ];
+    };
+
+  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/a3247bbb-a174-4c44-a632-b36657a44542";
+
+  fileSystems."/nix" =
+    { device = "/dev/disk/by-uuid/f14b46a1-c282-4e48-8a03-6ef450a0e044";
+      fsType = "btrfs";
+      options = [ "subvol=@nix" ];
+    };
+
+  fileSystems."/home" =
+    { device = "/dev/disk/by-uuid/f14b46a1-c282-4e48-8a03-6ef450a0e044";
+      fsType = "btrfs";
+      options = [ "subvol=@home" ];
     };
 
   swapDevices = [ ];
@@ -27,7 +40,7 @@
   # still possible to use this option, but it's recommended to use it in conjunction
   # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
   networking.useDHCP = lib.mkDefault true;
-  # networking.interfaces.eth0.useDHCP = lib.mkDefault true;
+  # networking.interfaces.wlan0.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
   powerManagement.cpuFreqGovernor = lib.mkDefault "ondemand";

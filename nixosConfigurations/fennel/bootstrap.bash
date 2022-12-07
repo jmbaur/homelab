@@ -23,7 +23,9 @@ systemd-cryptenroll --fido2-device=auto "$root"
 
 mkfs.btrfs "$cryptroot"
 mount "$cryptroot" /mnt
-btrfs subvolume create /mnt/{@,@nix,@home}
+btrfs subvolume create /mnt/@
+btrfs subvolume create /mnt/@nix
+btrfs subvolume create /mnt/@home
 umount /mnt
 
 # TODO(jared): verify if mmc devices can do trimming
