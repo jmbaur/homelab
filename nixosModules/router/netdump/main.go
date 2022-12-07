@@ -21,13 +21,16 @@ var (
 )
 
 type ipv6 struct {
-	Ula string `json:"ula"`
-	Gua string `json:"gua"`
+	Gua     string `json:"gua"`
+	GuaCidr string `json:"guaCidr"`
+	Ula     string `json:"ula"`
+	UlaCidr string `json:"ulaCidr"`
 }
 
 type hostDump struct {
-	Ipv4 string `json:"_ipv4"`
-	Ipv6 ipv6   `json:"_ipv6"`
+	Ipv4     string `json:"_ipv4"`
+	Ipv4Cidr string `json:"_ipv4Cidr"`
+	Ipv6     ipv6   `json:"_ipv6"`
 }
 
 type netDump struct {
@@ -90,11 +93,17 @@ func getHostDump(hostID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr string) (*h
 	v4Array[2] += bs[2]
 	v4Array[3] += bs[3]
 
+	ipv4 := netip.AddrFrom4(v4Array)
+	gua := netip.AddrFrom16(guaArray)
+	ula := netip.AddrFrom16(ulaArray)
 	return &hostDump{
-		Ipv4: netip.AddrFrom4(v4Array).String(),
+		Ipv4:     ipv4.String(),
+		Ipv4Cidr: netip.PrefixFrom(ipv4, v4Prefix.Bits()).String(),
 		Ipv6: ipv6{
-			Gua: netip.AddrFrom16(guaArray).String(),
-			Ula: netip.AddrFrom16(ulaArray).String(),
+			Gua:     gua.String(),
+			GuaCidr: netip.PrefixFrom(gua, guaPrefix.Bits()).String(),
+			Ula:     ula.String(),
+			UlaCidr: netip.PrefixFrom(ula, ulaPrefix.Bits()).String(),
 		},
 	}, nil
 }

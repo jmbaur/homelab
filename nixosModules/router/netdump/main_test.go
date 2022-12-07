@@ -21,10 +21,13 @@ func TestGetHostDump(t *testing.T) {
 			ulaPrefix: "fc00::/64",
 			v4Prefix:  "192.168.0.0/24",
 			want: &hostDump{
-				Ipv4: "192.168.0.1",
+				Ipv4:     "192.168.0.1",
+				Ipv4Cidr: "192.168.0.1/24",
 				Ipv6: ipv6{
-					Gua: "2000::1",
-					Ula: "fc00::1",
+					Gua:     "2000::1",
+					GuaCidr: "2000::1/64",
+					Ula:     "fc00::1",
+					UlaCidr: "fc00::1/64",
 				},
 			},
 		},
@@ -35,10 +38,13 @@ func TestGetHostDump(t *testing.T) {
 			ulaPrefix: "fc00::/64",
 			v4Prefix:  "192.168.0.0/24",
 			want: &hostDump{
-				Ipv4: "192.168.0.254",
+				Ipv4:     "192.168.0.254",
+				Ipv4Cidr: "192.168.0.254/24",
 				Ipv6: ipv6{
-					Gua: "2000::fe",
-					Ula: "fc00::fe",
+					Gua:     "2000::fe",
+					GuaCidr: "2000::fe/64",
+					Ula:     "fc00::fe",
+					UlaCidr: "fc00::fe/64",
 				},
 			},
 		},

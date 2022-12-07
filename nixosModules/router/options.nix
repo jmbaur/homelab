@@ -21,8 +21,11 @@ let
       publicKey = mkOption { type = types.nullOr types.str; default = null; };
       _computed = {
         _ipv4 = mkOption { internal = true; type = types.str; };
+        _ipv4Cidr = mkOption { internal = true; type = types.str; };
         _ipv6.gua = mkOption { internal = true; type = types.str; };
+        _ipv6.guaCidr = mkOption { internal = true; type = types.str; };
         _ipv6.ula = mkOption { internal = true; type = types.str; };
+        _ipv6.ulaCidr = mkOption { internal = true; type = types.str; };
       };
     };
     config = {

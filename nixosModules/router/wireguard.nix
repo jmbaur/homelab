@@ -28,9 +28,9 @@ let
       network = {
         inherit (network) name;
         address = [
-          "${network.hosts._router._computed._ipv4}/${toString network._computed._ipv4Cidr}"
-          "${network.hosts._router._computed._ipv6.gua}/${toString network._computed._ipv6GuaCidr}"
-          "${network.hosts._router._computed._ipv6.ula}/${toString network._computed._ipv6UlaCidr}"
+          "${network.hosts._router._computed._ipv4Cidr}"
+          "${network.hosts._router._computed._ipv6.guaCidr}"
+          "${network.hosts._router._computed._ipv6.ulaCidr}"
         ];
       };
       clientConfigs = lib.mapAttrsToList
@@ -40,9 +40,9 @@ let
             splitTunnelWgConfig = lib.generators.toINI { listsAsDuplicateKeys = true; } {
               Interface = {
                 Address = [
-                  "${host._computed._ipv4}/${toString network._computed._ipv4Cidr}"
-                  "${host._computed._ipv6.gua}/${toString network._computed._ipv6GuaCidr}"
-                  "${host._computed._ipv6.ula}/${toString network._computed._ipv6UlaCidr}"
+                  "${host._computed._ipv4Cidr}"
+                  "${host._computed._ipv6.guaCidr}"
+                  "${host._computed._ipv6.ulaCidr}"
                 ];
                 PrivateKey = "$(cat ${config.sops.secrets."wg/${lib.replaceStrings ["wg-"] [""] network.name}/${host.name}".path})";
                 DNS = (([ network.hosts._router._computed._ipv4 network.hosts._router._computed._ipv6.ula ])) ++ [ "home.arpa" ];
@@ -65,9 +65,9 @@ let
             fullTunnelWgConfig = lib.generators.toINI { listsAsDuplicateKeys = true; } {
               Interface = {
                 Address = [
-                  "${host._computed._ipv4}/${toString network._computed._ipv4Cidr}"
-                  "${host._computed._ipv6.gua}/${toString network._computed._ipv6GuaCidr}"
-                  "${host._computed._ipv6.ula}/${toString network._computed._ipv6UlaCidr}"
+                  "${host._computed._ipv4Cidr}"
+                  "${host._computed._ipv6.guaCidr}"
+                  "${host._computed._ipv6.ulaCidr}"
                 ];
                 PrivateKey = "$(cat ${config.sops.secrets."wg/${lib.replaceStrings ["wg-"] [""] network.name}/${host.name}".path})";
                 DNS = (([ network.hosts._router._computed._ipv4 network.hosts._router._computed._ipv6.ula ])) ++ [ "home.arpa" ];
