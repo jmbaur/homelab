@@ -15,15 +15,17 @@ in
   netdump = pkgs.mkShell {
     buildInputs = [ pkgs.revive pkgs.go ];
   };
-  default = self.devShells.${system}.ci.overrideAttrs (old: {
-    DOCKER = "podman";
+  deploy = pkgs.mkShell {
     buildInputs = (with pkgs; [
       (terraform.withPlugins (p: with p; [ aws cloudflare http sops ]))
       awscli2
       deploy-rs
       flarectl
-      sops
-    ] ++ old.buildInputs);
+    ]);
+  };
+  default = self.devShells.${system}.ci.overrideAttrs (old: {
+    DOCKER = "podman";
+    buildInputs = (with pkgs; [ sops ] ++ old.buildInputs);
     inherit (pre-commit.lib.${system}.run {
       src = ./.;
       hooks = {
