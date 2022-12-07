@@ -401,11 +401,11 @@
         "pre-commit": "pre-commit"
       },
       "locked": {
-        "lastModified": 1670114091,
-        "narHash": "sha256-siGeAqooGgjtXTeOOmls89yGVbppU+Q3Aa4XXQJzxQU=",
+        "lastModified": 1670379160,
+        "narHash": "sha256-Hf/sQRARQIOJGX7mAsjLtEc+lQxpvaSVsdZ0LBJBMrs=",
         "owner": "jmbaur",
         "repo": "gobar",
-        "rev": "bc9558a2db5f6dd3d57df2cedfcb6e3ebe31b7ea",
+        "rev": "0dbdd3abb59afa0fb8afe90da036065c62507384",
         "type": "github"
       },
       "original": {
@@ -463,11 +463,11 @@
         "pre-commit-hooks": "pre-commit-hooks"
       },
       "locked": {
-        "lastModified": 1670378629,
-        "narHash": "sha256-6p0aEtfedUZFYYhC9N6QW0wexWXSBPBEMuedyAcuN88=",
+        "lastModified": 1670379178,
+        "narHash": "sha256-8neVh6WJMl+/cu078UMb8jdFcw77vHCcRVGE5/p6qLg=",
         "owner": "jmbaur",
         "repo": "ipwatch",
-        "rev": "e75c6ca45ccc7802d55d3cb890668680f543488e",
+        "rev": "00bdf559e8115e107abe93520376028917128f7b",
         "type": "github"
       },
       "original": {
@@ -935,11 +935,11 @@
         "pre-commit": "pre-commit_3"
       },
       "locked": {
-        "lastModified": 1670366732,
-        "narHash": "sha256-Do5yA6P3+aMsMQTBaF9N2pUn4SnBo4NbIz/iYxRN0QQ=",
+        "lastModified": 1670379247,
+        "narHash": "sha256-kagXPkkEtR9ZBFzuPvV3a6sjGAgniEhhOWbyZW6zD+s=",
         "owner": "jmbaur",
         "repo": "webauthn-tiny",
-        "rev": "0cd918beef58ec31f50838466abd3b8c9512888c",
+        "rev": "4450def2fef82dd3628cc508d16b014d8e6416dc",
         "type": "github"
       },
       "original": {
