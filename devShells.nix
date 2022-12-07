@@ -13,19 +13,20 @@ in
     buildInputs = with pkgs; [ just pam_u2f yubikey-manager ];
   };
   netdump = pkgs.mkShell {
-    buildInputs = [ pkgs.revive pkgs.go ];
+    buildInputs = with pkgs; [ revive go ];
   };
   deploy = pkgs.mkShell {
     buildInputs = (with pkgs; [
+      just
       (terraform.withPlugins (p: with p; [ aws cloudflare http sops ]))
       awscli2
       deploy-rs
       flarectl
     ]);
   };
-  default = self.devShells.${system}.ci.overrideAttrs (old: {
+  default = pkgs.mkShell {
     DOCKER = "podman";
-    buildInputs = (with pkgs; [ sops ] ++ old.buildInputs);
+    buildInputs = (with pkgs; [ just sops ]);
     inherit (pre-commit.lib.${system}.run {
       src = ./.;
       hooks = {
@@ -37,5 +38,5 @@ in
         stylua.enable = true;
       };
     }) shellHook;
-  });
+  };
 })
