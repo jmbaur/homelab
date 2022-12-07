@@ -1,35 +1,28 @@
 inputs: with inputs;
 let
-  mkInstallerISO = { system, extraModules ? [ ] }: nixpkgs.lib.nixosSystem {
+  mkInstaller = { system, modules ? [ ] }: nixpkgs.lib.nixosSystem {
     inherit system;
     modules = [
       self.nixosModules.default
+      ({ config, ... }: {
+        custom.installer.enable = true;
+        custom.remoteBuilders.aarch64builder.enable = config.nixpkgs.system == "aarch64-linux";
+      })
+    ] ++ modules;
+  };
+
+  mkInstallerISO = { system, modules ? [ ] }: mkInstaller {
+    inherit system;
+    modules = [
       ({ modulesPath, ... }: {
         imports = [
           "${modulesPath}/installer/cd-dvd/channel.nix"
           "${modulesPath}/installer/cd-dvd/installation-cd-minimal.nix"
         ];
-        custom.installer.enable = true;
-        custom.remoteBuilders.aarch64builder.enable = true;
       })
-    ] ++ extraModules;
+    ] ++ modules;
   };
 
-  mkInstallerSdImage = { system, extraModules ? [ ] }: nixpkgs.lib.nixosSystem {
-    inherit system;
-    modules = [
-      self.nixosModules.default
-      ({ config, modulesPath, ... }: {
-        imports =
-          if config.boot.loader.depthcharge.enable then [
-            "${modulesPath}/profiles/base.nix"
-            "${modulesPath}/profiles/installation-device.nix"
-            ../nixosModules/depthcharge/sd-image.nix
-          ] else [ "${modulesPath}/installer/sd-card/sd-image-aarch64-installer.nix" ];
-        custom.installer.enable = true;
-      })
-    ] ++ extraModules;
-  };
 in
 {
   artichoke = nixpkgs.lib.nixosSystem {
@@ -136,29 +129,38 @@ in
 
   installer_iso_lx2k = mkInstallerISO {
     system = "aarch64-linux";
-    extraModules = [ ({ hardware.lx2k.enable = true; }) ];
+    modules = [ ({ hardware.lx2k.enable = true; }) ];
   };
 
-  installer_sd_image = mkInstallerSdImage { system = "aarch64-linux"; };
-
-  installer_sd_image_kukui_fennel14 = self.nixosConfigurations.installer_sd_image.extendModules {
+  installer_sd_image = mkInstaller {
+    system = "aarch64-linux";
     modules = [
-      ({ ... }: {
-        boot.loader.depthcharge.enable = true;
-        boot.initrd.systemd.enable = true;
-        hardware.kukui-fennel14.enable = true;
-        imports = [ ../nixosModules/depthcharge/sd-image.nix ];
+      ({ modulesPath, ... }: {
+        imports = [ "${modulesPath}/installer/sd-card/sd-image-aarch64-installer.nix" ];
       })
     ];
   };
 
-  installer_sd_image_asurada_spherion = self.nixosConfigurations.installer_sd_image.extendModules {
+  installer_sd_image_kukui_fennel14 = mkInstaller {
+    system = "aarch64-linux";
     modules = [
+      ../nixosModules/depthcharge/sd-image.nix
+      ({ ... }: {
+        boot.loader.depthcharge.enable = true;
+        boot.initrd.systemd.enable = true;
+        hardware.kukui-fennel14.enable = true;
+      })
+    ];
+  };
+
+  installer_sd_image_asurada_spherion = mkInstaller {
+    system = "aarch64-linux";
+    modules = [
+      ../nixosModules/depthcharge/sd-image.nix
       ({ ... }: {
         boot.loader.depthcharge.enable = true;
         boot.initrd.systemd.enable = true;
         hardware.asurada-spherion.enable = true;
-        imports = [ ../nixosModules/depthcharge/sd-image.nix ];
       })
     ];
   };

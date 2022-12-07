@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, modulesPath, ... }:
 let
   rootfsImage = pkgs.callPackage "${pkgs.path}/nixos/lib/make-ext4-fs.nix" ({
     storePaths = [ config.system.build.toplevel ];
@@ -7,14 +7,21 @@ let
   });
 in
 {
+  imports = [
+    "${modulesPath}/profiles/base.nix"
+    "${modulesPath}/profiles/installation-device.nix"
+  ];
+
   boot.loader.depthcharge = {
     enable = true;
     partition = "nodev";
   };
+
   fileSystems."/" = {
     device = "/dev/disk/by-label/NIXOS_SD";
     fsType = "ext4";
   };
+
   system.build.sdImage = pkgs.callPackage
     ({ stdenv
      , dosfstools
@@ -76,6 +83,7 @@ in
         '';
       })
     { };
+
   boot.postBootCommands = ''
     # On the first boot do some maintenance tasks
     if [ -f /nix-path-registration ]; then
