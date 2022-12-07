@@ -12,6 +12,9 @@ in
   setup = pkgs.mkShell {
     buildInputs = with pkgs; [ just pam_u2f yubikey-manager ];
   };
+  netdump = pkgs.mkShell {
+    buildInputs = [ pkgs.revive pkgs.go ];
+  };
   default = self.devShells.${system}.ci.overrideAttrs (old: {
     DOCKER = "podman";
     buildInputs = (with pkgs; [
@@ -26,6 +29,7 @@ in
       hooks = {
         deadnix = { enable = true; excludes = [ "hardware-configuration\\.nix" ]; };
         nixpkgs-fmt = { enable = true; excludes = [ "hardware-configuration\\.nix" ]; };
+        revive.enable = true;
         shellcheck.enable = true;
         shfmt.enable = true;
         stylua.enable = true;

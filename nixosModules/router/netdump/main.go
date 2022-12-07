@@ -1,3 +1,6 @@
+// netdump will dump generated IP addresses for hosts or networks. For hosts,
+// it chooses IPs within a subnet. For networks, it chooses subnets within
+// larger subnets.
 package main
 
 import (
@@ -15,20 +18,20 @@ import (
 var (
 	errNetworkTooSmall  = errors.New("ipv6 network too small")
 	errInvalidNetworkID = errors.New("invalid network ID")
-	errIdTooLarge       = errors.New("ID too large")
+	errIDTooLarge       = errors.New("ID too large")
 )
 
-type Ipv6 struct {
+type ipv6 struct {
 	Ula string `json:"ula"`
 	Gua string `json:"gua"`
 }
 
-type HostDump struct {
+type hostDump struct {
 	Ipv4 string `json:"_ipv4"`
-	Ipv6 Ipv6   `json:"_ipv6"`
+	Ipv6 ipv6   `json:"_ipv6"`
 }
 
-type NetDump struct {
+type netDump struct {
 	IPv4Cidr                   int    `json:"_ipv4Cidr"`
 	IPv6GuaCidr                int    `json:"_ipv6GuaCidr"`
 	IPv6UlaCidr                int    `json:"_ipv6UlaCidr"`
@@ -41,7 +44,7 @@ type NetDump struct {
 	NetworkUlaSignificantBits  string `json:"_networkUlaSignificantBits"`
 }
 
-func getHostDump(hostID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr string) (*HostDump, error) {
+func getHostDump(hostID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr string) (*hostDump, error) {
 	if hostID <= 0 {
 		return nil, errors.New("invalid host ID")
 	}
@@ -59,9 +62,12 @@ func getHostDump(hostID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr string) (*H
 		return nil, err
 	}
 
+	// 2 reserved IPs per network:
+	// - network address
+	// - broadcast multicast address
 	availableIPv4Addresses := 1<<(32-v4Prefix.Bits()) - 2
 	if hostID > availableIPv4Addresses {
-		return nil, errIdTooLarge
+		return nil, errIDTooLarge
 	}
 
 	bs := make([]byte, 4)
@@ -85,16 +91,16 @@ func getHostDump(hostID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr string) (*H
 	v4Array[2] += bs[2]
 	v4Array[3] += bs[3]
 
-	return &HostDump{
+	return &hostDump{
 		Ipv4: netip.AddrFrom4(v4Array).String(),
-		Ipv6: Ipv6{
+		Ipv6: ipv6{
 			Gua: netip.AddrFrom16(guaArray).String(),
 			Ula: netip.AddrFrom16(ulaArray).String(),
 		},
 	}, nil
 }
 
-func getNetworkDump(networkID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr string) (*NetDump, error) {
+func getNetworkDump(networkID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr string) (*netDump, error) {
 	if networkID <= 0 {
 		return nil, errInvalidNetworkID
 	}
@@ -108,7 +114,7 @@ func getNetworkDump(networkID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr strin
 		return nil, errNetworkTooSmall
 	}
 	if networkID >= 1<<(128-64-guaPrefix.Bits()) {
-		return nil, errIdTooLarge
+		return nil, errIDTooLarge
 	}
 	ulaPrefix, err := netip.ParsePrefix(ulaPrefixStr)
 	if err != nil {
@@ -119,7 +125,7 @@ func getNetworkDump(networkID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr strin
 		return nil, errNetworkTooSmall
 	}
 	if networkID >= 1<<(128-64-ulaPrefix.Bits()) {
-		return nil, errIdTooLarge
+		return nil, errIDTooLarge
 	}
 	v4Prefix, err := netip.ParsePrefix(v4PrefixStr)
 	if err != nil {
@@ -130,7 +136,7 @@ func getNetworkDump(networkID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr strin
 		return nil, errNetworkTooSmall
 	}
 	if networkID >= 1<<(32-8-v4Prefix.Bits()) {
-		return nil, errIdTooLarge
+		return nil, errIDTooLarge
 	}
 
 	arrSize := int(math.Ceil(float64((32 - 8 - v4Prefix.Bits()) / 8)))
@@ -196,7 +202,7 @@ func getNetworkDump(networkID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr strin
 		}
 	}
 
-	return &NetDump{
+	return &netDump{
 		IPv4Cidr:                   networkV4Prefix.Bits(),
 		IPv6GuaCidr:                networkGuaPrefix.Bits(),
 		IPv6UlaCidr:                networkUlaPrefix.Bits(),
