@@ -5,7 +5,8 @@
 
 {
   imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
+    [
+      (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
   boot.initrd.availableKernelModules = [ "usbhid" "usb_storage" ];
@@ -14,7 +15,8 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/f14b46a1-c282-4e48-8a03-6ef450a0e044";
+    {
+      device = "/dev/disk/by-uuid/f14b46a1-c282-4e48-8a03-6ef450a0e044";
       fsType = "btrfs";
       options = [ "subvol=@" ];
     };
@@ -22,13 +24,15 @@
   boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/a3247bbb-a174-4c44-a632-b36657a44542";
 
   fileSystems."/nix" =
-    { device = "/dev/disk/by-uuid/f14b46a1-c282-4e48-8a03-6ef450a0e044";
+    {
+      device = "/dev/disk/by-uuid/f14b46a1-c282-4e48-8a03-6ef450a0e044";
       fsType = "btrfs";
       options = [ "subvol=@nix" ];
     };
 
   fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/f14b46a1-c282-4e48-8a03-6ef450a0e044";
+    {
+      device = "/dev/disk/by-uuid/f14b46a1-c282-4e48-8a03-6ef450a0e044";
       fsType = "btrfs";
       options = [ "subvol=@home" ];
     };

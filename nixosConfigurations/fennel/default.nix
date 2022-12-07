@@ -9,9 +9,9 @@
   };
   boot.initrd.systemd.enable = true;
   boot.initrd.luks.devices."cryptroot".crypttabExtraOpts = [ "fido2-device=auto" ];
-  fileSystems."/".options = ["noatime" "discard=async" "compress=zstd"];
-  fileSystems."/nix".options = ["noatime" "discard=async" "compress=zstd"];
-  fileSystems."/home".options = ["noatime" "discard=async" "compress=zstd"];
+  fileSystems."/".options = [ "noatime" "discard=async" "compress=zstd" ];
+  fileSystems."/nix".options = [ "noatime" "discard=async" "compress=zstd" ];
+  fileSystems."/home".options = [ "noatime" "discard=async" "compress=zstd" ];
 
   networking.hostName = "fennel";
   networking.useNetworkd = true;
