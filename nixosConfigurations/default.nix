@@ -1,6 +1,6 @@
 inputs: with inputs;
 let
-  installer_iso = { system, extraModules ? [ ] }: nixpkgs.lib.nixosSystem {
+  mkInstallerISO = { system, extraModules ? [ ] }: nixpkgs.lib.nixosSystem {
     inherit system;
     modules = [
       self.nixosModules.default
@@ -14,7 +14,7 @@ let
     ] ++ extraModules;
   };
 
-  installer_sd_image = { system, extraModules ? [ ] }: nixpkgs.lib.nixosSystem {
+  mkInstallerSdImage = { system, extraModules ? [ ] }: nixpkgs.lib.nixosSystem {
     inherit system;
     modules = [
       self.nixosModules.default
@@ -125,31 +125,36 @@ in
     modules = [ ./okra self.nixosModules.default ];
   };
 
-  installer_iso_x86_64-linux = installer_iso { system = "x86_64-linux"; };
-  installer_iso_aarch64-linux = installer_iso { system = "aarch64-linux"; };
+  installer_iso_x86_64-linux = mkInstallerISO { system = "x86_64-linux"; };
+  installer_iso_aarch64-linux = mkInstallerISO { system = "aarch64-linux"; };
 
-  installer_iso_lx2k = installer_iso {
+  installer_iso_lx2k = mkInstallerISO {
     system = "aarch64-linux";
     extraModules = [ ({ hardware.lx2k.enable = true; }) ];
   };
 
-  installer_sd_image = installer_sd_image { system = "aarch64-linux"; };
+  installer_sd_image = mkInstallerSdImage { system = "aarch64-linux"; };
 
-  installer_sd_image_kukui_fennel14 = nixpkgs.lib.nixosSystem {
-    system = "aarch64-linux";
+  installer_sd_image_kukui_fennel14 = self.nixosConfigurations.installer_sd_image.extendModules {
     modules = [
-      self.nixosModules.default
-      ({ modulesPath, ... }: {
+      ({ ... }: {
         boot.loader.depthcharge.enable = true;
         boot.initrd.systemd.enable = true;
         hardware.kukui-fennel14.enable = true;
-        custom.installer.enable = true;
         custom.remoteBuilders.aarch64builder.enable = true;
-        imports = [
-          ../nixosModules/depthcharge/sd-image.nix
-          "${modulesPath}/profiles/base.nix"
-          "${modulesPath}/profiles/installation-device.nix"
-        ];
+        imports = [ ../nixosModules/depthcharge/sd-image.nix ];
+      })
+    ];
+  };
+
+  installer_sd_image_asurada_spherion = self.nixosConfigurations.installer_sd_image.extendModules {
+    modules = [
+      ({ ... }: {
+        boot.loader.depthcharge.enable = true;
+        boot.initrd.systemd.enable = true;
+        hardware.asurada-spherion.enable = true;
+        custom.remoteBuilders.aarch64builder.enable = true;
+        imports = [ ../nixosModules/depthcharge/sd-image.nix ];
       })
     ];
   };

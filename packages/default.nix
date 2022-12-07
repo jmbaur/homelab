@@ -80,6 +80,7 @@ in
 
       installer_sd_image = self.nixosConfigurations.installer_sd_image.config.system.build.sdImage;
       installer_sd_image_kukui_fennel14 = self.nixosConfigurations.installer_sd_image_kukui_fennel14.config.system.build.sdImage;
+      installer_sd_image_asurada_spherion = self.nixosConfigurations.installer_sd_image_asurada_spherion.config.system.build.sdImage;
 
       rhubarb_sd_image = self.nixosConfigurations.rhubarb.config.system.build.sdImage;
     };
