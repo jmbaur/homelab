@@ -1,3 +1,4 @@
+// pomo is a pomodoro timer that works over remote terminal sessions
 package main
 
 import (
@@ -56,7 +57,7 @@ func pomo(status string, d time.Duration) {
 				diff := t.Sub(start)
 				left := (d - diff).Round(1 * time.Second)
 				if left == 30*time.Second {
-					notifyf("5 seconds left!")
+					notifyf("30 seconds left!")
 				}
 				printf("%s", left)
 			case <-done:
