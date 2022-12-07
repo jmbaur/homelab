@@ -35,11 +35,11 @@
     "cn913x_build": {
       "flake": false,
       "locked": {
-        "lastModified": 1667746704,
-        "narHash": "sha256-vWYcSoYDOwdpaar7XhI6I3yg4DlmXlGGAYlZlk32Zio=",
+        "lastModified": 1670429007,
+        "narHash": "sha256-dO+sMgyptVtmehsT0pXtuA9KHpS26RJV3eoogeBirWk=",
         "owner": "solidrun",
         "repo": "cn913x_build",
-        "rev": "cead42e3251da7d89321157725163b7690294a1d",
+        "rev": "7ab9cc4cc493e30a84d56a7c914c47d788e51904",
         "type": "github"
       },
       "original": {
@@ -401,11 +401,11 @@
         "pre-commit": "pre-commit"
       },
       "locked": {
-        "lastModified": 1670379160,
-        "narHash": "sha256-Hf/sQRARQIOJGX7mAsjLtEc+lQxpvaSVsdZ0LBJBMrs=",
+        "lastModified": 1670444588,
+        "narHash": "sha256-Qd2EzKF6fm/dSNAx5+WV32EE9P9l2j1+D2v7GDM5n2o=",
         "owner": "jmbaur",
         "repo": "gobar",
-        "rev": "0dbdd3abb59afa0fb8afe90da036065c62507384",
+        "rev": "1342ea218e84d46257f18bf41f93b46603514755",
         "type": "github"
       },
       "original": {
@@ -760,11 +760,11 @@
         "nixpkgs-stable": "nixpkgs-stable_3"
       },
       "locked": {
-        "lastModified": 1670285270,
-        "narHash": "sha256-xNWM2Qcqc4NwoR1bubjOBUNh85hYkY26QouGBSfOAss=",
+        "lastModified": 1670413394,
+        "narHash": "sha256-M7sWqrKtOqUv9euX1t3HCxis8cPy9MNiZxQmUf0KF1o=",
         "owner": "cachix",
         "repo": "pre-commit-hooks.nix",
-        "rev": "32dcd71912ca8f925f8f0715a554e8490d556883",
+        "rev": "1303a1a76e9eb074075bfe566518c413f6fc104e",
         "type": "github"
       },
       "original": {

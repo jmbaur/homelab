@@ -62,6 +62,10 @@ linux_5_15.override (old: {
       patch = "${cn913x_build}/patches/linux/0018-DPDK-support-for-MVPP2.patch";
     }
     {
+      name = "0019-arm64-dts-cn9130-clearfog-base-add-m.2-gpios";
+      patch = "${cn913x_build}/patches/linux/0019-arm64-dts-cn9130-clearfog-base-add-m.2-gpios.patch";
+    }
+    {
       name = "cn913x-additions";
       patch = null;
       extraStructuredConfig = with lib.kernel; {
@@ -84,7 +88,6 @@ linux_5_15.override (old: {
         USB_SERIAL_FTDI_SIO = yes;
         USB_SERIAL_OPTION = yes;
         USB_SERIAL_WWAN = yes;
-
       };
     }
     {
