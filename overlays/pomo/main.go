@@ -93,7 +93,8 @@ main:
 		status := make(chan int)
 
 		go func(status chan int) {
-			printf("do you want to keep going? [y/N] ")
+			printf("pomo ended")
+			fmt.Printf("do you want to keep going? [y/N] ")
 			var answer string
 			if _, err := fmt.Scanln(&answer); err != nil {
 				log.Fatal(err)
