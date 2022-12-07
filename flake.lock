@@ -401,11 +401,11 @@
         "pre-commit": "pre-commit"
       },
       "locked": {
-        "lastModified": 1670447176,
-        "narHash": "sha256-yGSbCARSLRK0cbTuSobuArd0soLI5tYLnOnXd0JTiUY=",
+        "lastModified": 1670447570,
+        "narHash": "sha256-+hd90/p3RHsLn8BPa4YnOSU5PeDHBTeB2VAgvEiXIIo=",
         "owner": "jmbaur",
         "repo": "gobar",
-        "rev": "748bcbb584172c6e7a13e80f8d7d65413e3c80e6",
+        "rev": "bf975222cd131a26fe414bbb035182a810c1e077",
         "type": "github"
       },
       "original": {
