@@ -10,7 +10,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"math"
 	"net/netip"
 	"strings"
 )
@@ -139,7 +138,7 @@ func getNetworkDump(networkID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr strin
 		return nil, errIDTooLarge
 	}
 
-	arrSize := int(math.Ceil(float64((32 - 8 - v4Prefix.Bits()) / 8)))
+	arrSize := int(float64((32 - 8 - v4Prefix.Bits()) / 8))
 	bs := make([]byte, arrSize)
 	switch arrSize {
 	case 1:
