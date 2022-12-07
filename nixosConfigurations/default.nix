@@ -10,6 +10,7 @@ let
           "${modulesPath}/installer/cd-dvd/installation-cd-minimal.nix"
         ];
         custom.installer.enable = true;
+        custom.remoteBuilders.aarch64builder.enable = true;
       })
     ] ++ extraModules;
   };
@@ -18,8 +19,13 @@ let
     inherit system;
     modules = [
       self.nixosModules.default
-      ({ modulesPath, ... }: {
-        imports = [ "${modulesPath}/installer/sd-card/sd-image-aarch64-installer.nix" ];
+      ({ config, modulesPath, ... }: {
+        imports =
+          if config.boot.loader.depthcharge.enable then [
+            "${modulesPath}/profiles/base.nix"
+            "${modulesPath}/profiles/installation-device.nix"
+            ../nixosModules/depthcharge/sd-image.nix
+          ] else [ "${modulesPath}/installer/sd-card/sd-image-aarch64-installer.nix" ];
         custom.installer.enable = true;
       })
     ] ++ extraModules;
@@ -137,34 +143,22 @@ in
 
   installer_sd_image_kukui_fennel14 = self.nixosConfigurations.installer_sd_image.extendModules {
     modules = [
-      ({ modulesPath, ... }: {
+      ({ ... }: {
         boot.loader.depthcharge.enable = true;
         boot.initrd.systemd.enable = true;
         hardware.kukui-fennel14.enable = true;
-        custom.remoteBuilders.aarch64builder.enable = true;
-        disabledModules = [ "${modulesPath}/installer/sd-card/sd-image-aarch64-installer.nix" ];
-        imports = [
-          "${modulesPath}/profiles/base.nix"
-          "${modulesPath}/profiles/installation-device.nix"
-          ../nixosModules/depthcharge/sd-image.nix
-        ];
+        imports = [ ../nixosModules/depthcharge/sd-image.nix ];
       })
     ];
   };
 
   installer_sd_image_asurada_spherion = self.nixosConfigurations.installer_sd_image.extendModules {
     modules = [
-      ({ modulesPath, ... }: {
+      ({ ... }: {
         boot.loader.depthcharge.enable = true;
         boot.initrd.systemd.enable = true;
         hardware.asurada-spherion.enable = true;
-        custom.remoteBuilders.aarch64builder.enable = true;
-        disabledModules = [ "${modulesPath}/installer/sd-card/sd-image-aarch64-installer.nix" ];
-        imports = [
-          "${modulesPath}/profiles/base.nix"
-          "${modulesPath}/profiles/installation-device.nix"
-          ../nixosModules/depthcharge/sd-image.nix
-        ];
+        imports = [ ../nixosModules/depthcharge/sd-image.nix ];
       })
     ];
   };
