@@ -62,5 +62,42 @@ func TestGetHostDump(t *testing.T) {
 }
 
 func TestGetNetworkDump(t *testing.T) {
-	t.Skip("TODO")
+	tt := []struct {
+		name      string
+		networkID int
+		guaPrefix string
+		ulaPrefix string
+		v4Prefix  string
+		want      *netDump
+	}{
+		{
+			name:      "TODO",
+			networkID: 1,
+			guaPrefix: "2000::/48",
+			ulaPrefix: "fc00::/48",
+			v4Prefix:  "192.168.0.0/16",
+			want: &netDump{
+				IPv4Cidr:                     24,
+				IPv6GuaCidr:                  64,
+				IPv6UlaCidr:                  64,
+				NetworkIPv4:                  "192.168.1.0",
+				NetworkIPv4Cidr:              "192.168.1.0/24",
+				NetworkIPv4SignificantOctets: "192.168.1",
+				NetworkGuaCidr:               "2000:0:0:1::/64",
+				NetworkGuaSignificantBits:    "2000:0:0:1",
+				NetworkUlaCidr:               "fc00:0:0:1::/64",
+				NetworkUlaSignificantBits:    "fc00:0:0:1",
+			},
+		},
+	}
+
+	for _, tc := range tt {
+		got, err := getNetworkDump(tc.networkID, tc.guaPrefix, tc.ulaPrefix, tc.v4Prefix)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !reflect.DeepEqual(*got, *tc.want) {
+			t.Fatalf("test '%s': got %+v, want %+v", tc.name, got, tc.want)
+		}
+	}
 }

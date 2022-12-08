@@ -38,7 +38,7 @@ in
                 interface = config.systemd.network.networks.${name}.name;
                 subnet = _computed._networkIPv4Cidr;
                 pools = [{
-                  pool = "${_computed._networkIPv4SignificantBits}.100 - ${_computed._networkIPv4SignificantBits}.200";
+                  pool = "${_computed._networkIPv4SignificantOctets}.100 - ${_computed._networkIPv4SignificantOctets}.200";
                 }];
                 option-data = [
                   {
@@ -76,7 +76,7 @@ in
                             (networkName:
                               let
                                 otherNetworkCidr = config.custom.inventory.networks.${networkName}._computed._ipv4Cidr;
-                                otherNetwork = dotToComma config.custom.inventory.networks.${networkName}._computed._networkIPv4SignificantBits;
+                                otherNetwork = dotToComma config.custom.inventory.networks.${networkName}._computed._networkIPv4SignificantOctets;
                               in
                               "${toString otherNetworkCidr},${otherNetwork},${router}"
                             )

@@ -147,7 +147,7 @@ let
         _ipv6UlaCidr = mkOption { internal = true; type = types.int; };
         _networkIPv4 = mkOption { internal = true; type = types.str; };
         _networkIPv4Cidr = mkOption { internal = true; type = types.str; };
-        _networkIPv4SignificantBits = mkOption { internal = true; type = types.str; };
+        _networkIPv4SignificantOctets = mkOption { internal = true; type = types.str; };
         _networkGuaCidr = mkOption { internal = true; type = types.str; };
         _networkGuaSignificantBits = mkOption { internal = true; type = types.str; };
         _networkUlaCidr = mkOption { internal = true; type = types.str; };

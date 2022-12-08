@@ -10,6 +10,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"math"
 	"net/netip"
 	"strings"
 )
@@ -34,16 +35,16 @@ type hostDump struct {
 }
 
 type netDump struct {
-	IPv4Cidr                   int    `json:"_ipv4Cidr"`
-	IPv6GuaCidr                int    `json:"_ipv6GuaCidr"`
-	IPv6UlaCidr                int    `json:"_ipv6UlaCidr"`
-	NetworkIPv4                string `json:"_networkIPv4"`
-	NetworkIPv4Cidr            string `json:"_networkIPv4Cidr"`
-	NetworkIPv4SignificantBits string `json:"_networkIPv4SignificantBits"`
-	NetworkGuaCidr             string `json:"_networkGuaCidr"`
-	NetworkGuaSignificantBits  string `json:"_networkGuaSignificantBits"`
-	NetworkUlaCidr             string `json:"_networkUlaCidr"`
-	NetworkUlaSignificantBits  string `json:"_networkUlaSignificantBits"`
+	IPv4Cidr                     int    `json:"_ipv4Cidr"`
+	IPv6GuaCidr                  int    `json:"_ipv6GuaCidr"`
+	IPv6UlaCidr                  int    `json:"_ipv6UlaCidr"`
+	NetworkIPv4                  string `json:"_networkIPv4"`
+	NetworkIPv4Cidr              string `json:"_networkIPv4Cidr"`
+	NetworkIPv4SignificantOctets string `json:"_networkIPv4SignificantOctets"`
+	NetworkGuaCidr               string `json:"_networkGuaCidr"`
+	NetworkGuaSignificantBits    string `json:"_networkGuaSignificantBits"`
+	NetworkUlaCidr               string `json:"_networkUlaCidr"`
+	NetworkUlaSignificantBits    string `json:"_networkUlaSignificantBits"`
 }
 
 func getHostDump(hostID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr string) (*hostDump, error) {
@@ -147,7 +148,8 @@ func getNetworkDump(networkID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr strin
 		return nil, errIDTooLarge
 	}
 
-	arrSize := int(float64((32 - 8 - v4Prefix.Bits()) / 8))
+	// Find the next smallest octet
+	arrSize := int(math.Ceil((32 - 8 - float64(v4Prefix.Bits())) / 8))
 	bs := make([]byte, arrSize)
 	switch arrSize {
 	case 1:
@@ -179,48 +181,59 @@ func getNetworkDump(networkID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr strin
 	networkUlaPrefix := netip.PrefixFrom(netip.AddrFrom16(ulaArray), 64)
 	networkV4Prefix := netip.PrefixFrom(netip.AddrFrom4(v4Array), 24)
 
-	networkIPv4SignificantBits := []string{}
+	var networkIPv4SignificantOctets string
 	{
-		for _, b := range networkV4Prefix.Addr().AsSlice()[0:(networkV4Prefix.Bits() / 8)] {
-			networkIPv4SignificantBits = append(networkIPv4SignificantBits, fmt.Sprintf("%d", b))
+		octets := []string{}
+		for _, b := range networkV4Prefix.Addr().AsSlice()[0:(int(math.Ceil(float64(networkV4Prefix.Bits()) / 8)))] {
+			octets = append(octets, fmt.Sprintf("%d", b))
 		}
+		networkIPv4SignificantOctets = strings.Join(octets, ".")
 	}
 
-	networkGuaSignificantBits := []string{}
+	var networkGuaSignificantBits string
 	{
-		var tmp string
-		for i, b := range networkGuaPrefix.Addr().AsSlice()[0:(networkGuaPrefix.Bits() / 8)] {
-			tmp += fmt.Sprintf("%02x", b)
-			if i%2 != 0 {
-				networkGuaSignificantBits = append(networkGuaSignificantBits, tmp)
-				tmp = ""
+		hextets := []string{}
+		var tmp int
+		for i, b := range networkGuaPrefix.Addr().AsSlice()[0:(int(math.Ceil(float64(networkGuaPrefix.Bits()) / 8)))] {
+			if i%2 == 0 {
+				tmp += int(b) << 8
+			} else {
+				tmp += int(b)
+				hextets = append(hextets, fmt.Sprintf("%x", tmp))
+				tmp = 0
 			}
 		}
+		networkGuaSignificantBits = strings.Join(hextets, ":")
 	}
 
-	networkUlaSignificantBits := []string{}
+	var networkUlaSignificantBits string
 	{
-		var tmp string
-		for i, b := range networkUlaPrefix.Addr().AsSlice()[0:(networkUlaPrefix.Bits() / 8)] {
-			tmp += fmt.Sprintf("%02x", b)
-			if i%2 != 0 {
-				networkUlaSignificantBits = append(networkUlaSignificantBits, tmp)
-				tmp = ""
+		hextets := []string{}
+		var tmp int
+		for i, b := range networkUlaPrefix.Addr().AsSlice()[0:int(math.Ceil(float64(networkUlaPrefix.Bits())/8))] {
+			if i%2 == 0 {
+				tmp += int(b) << 8
+			} else {
+				tmp += int(b)
+				hextets = append(hextets, fmt.Sprintf("%x", tmp))
+				tmp = 0
 			}
 		}
+
+		networkUlaSignificantBits = strings.Join(hextets, ":")
 	}
 
 	return &netDump{
-		IPv4Cidr:                   networkV4Prefix.Bits(),
-		IPv6GuaCidr:                networkGuaPrefix.Bits(),
-		IPv6UlaCidr:                networkUlaPrefix.Bits(),
-		NetworkIPv4:                networkV4Prefix.Addr().String(),
-		NetworkIPv4Cidr:            networkV4Prefix.String(),
-		NetworkGuaCidr:             networkGuaPrefix.String(),
-		NetworkUlaCidr:             networkUlaPrefix.String(),
-		NetworkIPv4SignificantBits: strings.Join(networkIPv4SignificantBits, "."),
-		NetworkGuaSignificantBits:  strings.Join(networkGuaSignificantBits, ":"),
-		NetworkUlaSignificantBits:  strings.Join(networkUlaSignificantBits, ":"),
+		IPv4Cidr:                     networkV4Prefix.Bits(),
+		IPv6GuaCidr:                  networkGuaPrefix.Bits(),
+		IPv6UlaCidr:                  networkUlaPrefix.Bits(),
+		NetworkIPv4:                  networkV4Prefix.Addr().String(),
+		NetworkIPv4Cidr:              networkV4Prefix.String(),
+		NetworkGuaCidr:               networkGuaPrefix.String(),
+		NetworkUlaCidr:               networkUlaPrefix.String(),
+		NetworkIPv4SignificantOctets: networkIPv4SignificantOctets,
+		NetworkGuaSignificantBits:    networkGuaSignificantBits,
+		NetworkUlaSignificantBits:    networkUlaSignificantBits,
 	}, nil
 }
 
