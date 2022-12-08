@@ -1,10 +1,8 @@
 vim.g.mapleader = " "
 
 if #vim.api.nvim_list_uis() > 0 then
-	require("gitsigns").setup({ signcolumn = false })
 	require("gosee").setup()
 	require("launcher")
-	require("mini.statusline").setup({ use_icons = false, set_vim_settings = false })
 	require("mini.trailspace").setup({})
 	require("repl").setup()
 	require("sitter")
@@ -18,7 +16,6 @@ if #vim.api.nvim_list_uis() > 0 then
 	vim.cmd.colorscheme("jared")
 	vim.opt.belloff = "all"
 	vim.opt.clipboard = "unnamedplus"
-	vim.opt.winbar = "%f %m"
 	vim.opt.colorcolumn = "80"
 	vim.opt.laststatus = 3
 	vim.opt.number = true

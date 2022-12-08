@@ -7,7 +7,6 @@ let
     packages.plugins = with vimPlugins; {
       start = [
         editorconfig-nvim
-        gitsigns-nvim
         gosee-nvim
         jmbaur-settings
         mini-nvim
