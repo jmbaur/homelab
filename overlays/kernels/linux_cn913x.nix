@@ -90,18 +90,5 @@ linux_5_15.override (old: {
         USB_SERIAL_WWAN = yes;
       };
     }
-    {
-      name = "minimize-config";
-      patch = null;
-      extraStructuredConfig = with lib.kernel; {
-        CHROME_PLATFORMS = lib.mkForce no;
-        DRM = no;
-        INPUT_JOYSTICK = no;
-        INPUT_TABLET = no;
-        INPUT_TOUCHSCREEN = no;
-        SND = no;
-        SOUND = no;
-      };
-    }
   ];
 })
