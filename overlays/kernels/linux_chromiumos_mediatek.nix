@@ -220,7 +220,7 @@ linuxKernel.kernels.linux_6_0.override {
     MALI_VALHALL_DEVFREQ = yes;
     MALI_VALHALL_EXPERT = yes;
     MALI_VALHALL_GATOR_SUPPORT = yes;
-    MALI_VALHALL_PLATFORM_NAME = "mediatek";
+    MALI_VALHALL_PLATFORM_NAME = freeform "mediatek";
     MALI_VALHALL_PRFCNT_SET_PRIMARY = yes;
     MALI_VALHALL_REAL_HW = yes;
     MEDIATEK_MT6577_AUXADC = yes;
