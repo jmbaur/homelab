@@ -148,10 +148,10 @@ let
         _networkIPv4 = mkOption { internal = true; type = types.str; };
         _networkIPv4Cidr = mkOption { internal = true; type = types.str; };
         _networkIPv4SignificantOctets = mkOption { internal = true; type = types.str; };
+        _dhcpv4Pool = mkOption { internal = true; type = types.str; };
         _networkGuaCidr = mkOption { internal = true; type = types.str; };
-        _networkGuaSignificantBits = mkOption { internal = true; type = types.str; };
         _networkUlaCidr = mkOption { internal = true; type = types.str; };
-        _networkUlaSignificantBits = mkOption { internal = true; type = types.str; };
+        _dhcpv6Pool = mkOption { internal = true; type = types.str; };
         _v4Prefix = mkOption { internal = true; type = types.str; default = config._computed._networkIPv4Cidr; };
         _v6GuaPrefix = mkOption { internal = true; type = types.str; default = config._computed._networkGuaCidr; };
         _v6UlaPrefix = mkOption { internal = true; type = types.str; default = config._computed._networkUlaCidr; };

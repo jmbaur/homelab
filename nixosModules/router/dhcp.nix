@@ -33,69 +33,65 @@ in
             let
               routerIPv4Address = network.hosts._router._computed._ipv4;
             in
-            with network; [
-              {
-                interface = config.systemd.network.networks.${name}.name;
-                subnet = _computed._networkIPv4Cidr;
-                pools = [{
-                  pool = "${_computed._networkIPv4SignificantOctets}.100 - ${_computed._networkIPv4SignificantOctets}.200";
-                }];
-                option-data = [
+            with network; [{
+              interface = config.systemd.network.networks.${name}.name;
+              subnet = _computed._networkIPv4Cidr;
+              pools = [{ pool = "${_computed._dhcpv4Pool}"; }];
+              option-data = [
+                {
+                  name = "routers";
+                  data = toKeaArray [ routerIPv4Address ];
+                }
+                {
+                  name = "domain-name-servers";
+                  data = toKeaArray [ routerIPv4Address ];
+                }
+                {
+                  name = "ntp-servers";
+                  data = toKeaArray [ routerIPv4Address ];
+                }
+                {
+                  name = "domain-search";
+                  data = "home.arpa";
+                }
+                {
+                  name = "domain-name";
+                  data = "home.arpa";
+                }
+              ] ++ lib.optional (includeRoutesTo != [ ])
+                (
+                  let
+                    dotToComma = data: lib.replaceStrings [ "." ] [ "," ] data;
+                    router = dotToComma routerIPv4Address;
+                  in
                   {
-                    name = "routers";
-                    data = toKeaArray [ routerIPv4Address ];
+                    name = "classless-static-routes";
+                    data = toKeaArray (
+                      # default route
+                      [ "0,${router}" ] ++
+                        (map
+                          (networkName:
+                            let
+                              otherNetworkCidr = config.custom.inventory.networks.${networkName}._computed._ipv4Cidr;
+                              otherNetwork = dotToComma config.custom.inventory.networks.${networkName}._computed._networkIPv4SignificantOctets;
+                            in
+                            "${toString otherNetworkCidr},${otherNetwork},${router}"
+                          )
+                          includeRoutesTo)
+                    );
                   }
-                  {
-                    name = "domain-name-servers";
-                    data = toKeaArray [ routerIPv4Address ];
-                  }
-                  {
-                    name = "ntp-servers";
-                    data = toKeaArray [ routerIPv4Address ];
-                  }
-                  {
-                    name = "domain-search";
-                    data = "home.arpa";
-                  }
-                  {
-                    name = "domain-name";
-                    data = "home.arpa";
-                  }
-                ] ++ lib.optional (includeRoutesTo != [ ])
-                  (
-                    let
-                      dotToComma = data: lib.replaceStrings [ "." ] [ "," ] data;
-                      router = dotToComma routerIPv4Address;
-                    in
-                    {
-                      name = "classless-static-routes";
-                      data = toKeaArray (
-                        # default route
-                        [ "0,${router}" ] ++
-                          (map
-                            (networkName:
-                              let
-                                otherNetworkCidr = config.custom.inventory.networks.${networkName}._computed._ipv4Cidr;
-                                otherNetwork = dotToComma config.custom.inventory.networks.${networkName}._computed._networkIPv4SignificantOctets;
-                              in
-                              "${toString otherNetworkCidr},${otherNetwork},${router}"
-                            )
-                            includeRoutesTo)
-                      );
-                    }
-                  ) ++ lib.optional (mtu != null) {
-                  name = "interface-mtu";
-                  data = network.mtu;
-                };
-                reservations =
-                  lib.mapAttrsToList
-                    (_: host: {
-                      hw-address = host.mac;
-                      ip-address = host._computed._ipv4;
-                    })
-                    (lib.filterAttrs (_: host: host.dhcp) hosts);
-              }
-            ]
+                ) ++ lib.optional (mtu != null) {
+                name = "interface-mtu";
+                data = network.mtu;
+              };
+              reservations =
+                lib.mapAttrsToList
+                  (_: host: {
+                    hw-address = host.mac;
+                    ip-address = host._computed._ipv4;
+                  })
+                  (lib.filterAttrs (_: host: host.dhcp) hosts);
+            }]
           )
           dhcpNetworks);
       };
@@ -121,9 +117,7 @@ in
               {
                 interface = config.systemd.network.networks.${name}.name;
                 subnet = _computed._networkUlaCidr;
-                pools = [{
-                  pool = "${_computed._networkUlaSignificantBits}:d::/80";
-                }];
+                pools = [{ pool = "${_computed._dhcpv6Pool}"; }];
                 reservations =
                   lib.mapAttrsToList
                     (_: host: {
