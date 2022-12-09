@@ -207,8 +207,8 @@ func getNetworkDump(networkID, maxStaticHostID int, guaPrefixStr, ulaPrefixStr, 
 		return nil, errIDTooLarge
 	}
 
-	nextPowerOf8 := int(math.Floor(float64(v4Prefix.Bits())/8))*8 + 8
-	networkV4Overlay, err := makeIPv4AddressOverlay(uint64(networkID), nextPowerOf8)
+	nextMultipleOf8 := int(math.Floor(float64(v4Prefix.Bits())/8))*8 + 8
+	networkV4Overlay, err := makeIPv4AddressOverlay(uint64(networkID), nextMultipleOf8)
 	if err != nil {
 		return nil, err
 	}
@@ -239,7 +239,7 @@ func getNetworkDump(networkID, maxStaticHostID int, guaPrefixStr, ulaPrefixStr, 
 
 	networkGuaPrefix := netip.PrefixFrom(netip.AddrFrom16(guaArray), ipv6NetworkSize)
 	networkUlaPrefix := netip.PrefixFrom(netip.AddrFrom16(ulaArray), ipv6NetworkSize)
-	networkV4Prefix := netip.PrefixFrom(netip.AddrFrom4(v4Array), nextPowerOf8)
+	networkV4Prefix := netip.PrefixFrom(netip.AddrFrom4(v4Array), nextMultipleOf8)
 
 	var networkIPv4SignificantOctets string
 	{
