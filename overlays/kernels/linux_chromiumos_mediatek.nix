@@ -130,7 +130,9 @@ linuxKernel.kernels.linux_6_0.override {
     ENERGY_MODEL = yes;
     ESD_FS = yes;
     EXTCON_USBC_CROS_EC = yes;
+    FIXED_PHY = yes;
     GENERIC_ADC_THERMAL = yes;
+    GENERIC_PHY = yes;
     GOOGLE_COREBOOT_TABLE = yes;
     GOOGLE_FIRMWARE = yes;
     GOOGLE_MEMCONSOLE_COREBOOT = yes;
@@ -260,7 +262,10 @@ linuxKernel.kernels.linux_6_0.override {
     PCIEPORTBUS = yes;
     PCIE_MEDIATEK = yes;
     PHYLIB = yes;
+    PHY_MTK_HDMI = yes;
+    PHY_MTK_MIPI_DSI = yes;
     PHY_MTK_TPHY = yes;
+    PHY_MTK_UFS = yes;
     PL330_DMA = yes;
     PSTORE = yes;
     PWM = yes;
@@ -307,6 +312,7 @@ linuxKernel.kernels.linux_6_0.override {
     SERIAL_OF_PLATFORM = yes;
     SERIO = module;
     SETEND_EMULATION = yes;
+    SMSC_PHY = module;
     SND = yes;
     SND_ALOOP = module;
     SND_DRIVERS = yes;
