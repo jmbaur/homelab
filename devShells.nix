@@ -26,7 +26,7 @@ in
   };
   default = pkgs.mkShell {
     DOCKER = "podman";
-    buildInputs = (with pkgs; [ just sops ]);
+    buildInputs = (with pkgs; [ just sops nix-update ]);
     inherit (pre-commit.lib.${system}.run {
       src = ./.;
       hooks = {
