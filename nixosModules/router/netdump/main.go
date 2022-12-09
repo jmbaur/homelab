@@ -15,10 +15,18 @@ import (
 	"strings"
 )
 
+const (
+	ipv6NetworkSize = 64
+)
+
 var (
-	errNetworkTooSmall  = errors.New("ipv6 network too small")
-	errInvalidNetworkID = errors.New("invalid network ID")
-	errIDTooLarge       = errors.New("ID too large")
+	errIDTooLarge              = errors.New("network/host ID too large")
+	errInvalidNetworkID        = errors.New("invalid network ID")
+	errMaxStaticHostIDTooLarge = errors.New("max static host ID too large")
+	errNetworkTooSmall         = errors.New("ipv6 network too small")
+
+	makeIPv4AddressOverlay = mustMakeIPAddressOverlay(4)
+	makeIPv6AddressOverlay = mustMakeIPAddressOverlay(16)
 )
 
 type ipv6 struct {
@@ -41,14 +49,63 @@ type netDump struct {
 	NetworkIPv4                  string `json:"_networkIPv4"`
 	NetworkIPv4Cidr              string `json:"_networkIPv4Cidr"`
 	NetworkIPv4SignificantOctets string `json:"_networkIPv4SignificantOctets"`
+	Dhcpv4Pool                   string `json:"_dhcpv4Pool"`
 	NetworkGuaCidr               string `json:"_networkGuaCidr"`
-	NetworkGuaSignificantBits    string `json:"_networkGuaSignificantBits"`
 	NetworkUlaCidr               string `json:"_networkUlaCidr"`
-	NetworkUlaSignificantBits    string `json:"_networkUlaSignificantBits"`
+	UlaDhcpv6Pool                string `json:"_dhcpv6Pool"`
 }
 
-func getHostDump(hostID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr string) (*hostDump, error) {
-	if hostID <= 0 {
+func mustMakeIPAddressOverlay(size int) func(num uint64, prefix int) ([]byte, error) {
+	if size != 4 && size != 16 {
+		log.Panicf("invalid byte slice size %d", size)
+	}
+
+	return func(num uint64, prefix int) ([]byte, error) {
+		bs := make([]byte, size)
+
+		if num >= (1<<prefix)-1 {
+			return bs, errIDTooLarge
+		}
+
+		var start int
+		if size == 16 {
+			// IPv6 byte layout requires `start` to be the closest multiple
+			// of 2.
+			start = int(math.Ceil(float64(prefix)/16)-1) * 2
+		} else {
+			start = int(math.Ceil(float64(prefix)/8)) - 1
+		}
+
+		tmp := []byte{} // len(tmp) is either 2 or 4
+		switch {
+		case num > (1<<32)-1:
+			tmp = binary.BigEndian.AppendUint64(tmp, num)
+		case num > (1<<16)-1:
+			// pad with 0 so length is multiple of two
+			if size == 16 {
+				tmp = append(tmp, 0)
+			}
+			tmp = binary.BigEndian.AppendUint32(tmp, uint32(num))
+		case num > (1<<8)-1:
+			tmp = binary.BigEndian.AppendUint16(tmp, uint16(num))
+		default:
+			// pad with 0 so length is multiple of two
+			if size == 16 {
+				tmp = append(tmp, 0)
+			}
+			tmp = append(tmp, byte(num))
+		}
+
+		for i := 0; i < len(tmp); i++ {
+			bs[start+i] = tmp[i]
+		}
+
+		return bs, nil
+	}
+}
+
+func getHostDump(hostID, maxStaticHostID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr string) (*hostDump, error) {
+	if hostID <= 0 || hostID > maxStaticHostID {
 		return nil, errors.New("invalid host ID")
 	}
 
@@ -73,6 +130,8 @@ func getHostDump(hostID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr string) (*h
 		return nil, errIDTooLarge
 	}
 
+	// For dual-stack, the host ID needs to fit within the 32 bits of IPv4, so
+	// we hardcode the byte indexes for the IPv6 address slice.
 	bs := make([]byte, 4)
 	binary.BigEndian.PutUint32(bs, uint32(hostID))
 
@@ -109,7 +168,7 @@ func getHostDump(hostID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr string) (*h
 	}, nil
 }
 
-func getNetworkDump(networkID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr string) (*netDump, error) {
+func getNetworkDump(networkID, maxStaticHostID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr string) (*netDump, error) {
 	if networkID <= 0 {
 		return nil, errInvalidNetworkID
 	}
@@ -119,10 +178,10 @@ func getNetworkDump(networkID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr strin
 		return nil, err
 	}
 	guaPrefix = guaPrefix.Masked()
-	if guaPrefix.Bits() >= 64 {
+	if guaPrefix.Bits() >= ipv6NetworkSize {
 		return nil, errNetworkTooSmall
 	}
-	if networkID >= 1<<(128-64-guaPrefix.Bits()) {
+	if networkID >= 1<<(128-ipv6NetworkSize-guaPrefix.Bits()) {
 		return nil, errIDTooLarge
 	}
 	ulaPrefix, err := netip.ParsePrefix(ulaPrefixStr)
@@ -130,10 +189,10 @@ func getNetworkDump(networkID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr strin
 		return nil, err
 	}
 	ulaPrefix = ulaPrefix.Masked()
-	if ulaPrefix.Bits() >= 64 {
+	if ulaPrefix.Bits() >= ipv6NetworkSize {
 		return nil, errNetworkTooSmall
 	}
-	if networkID >= 1<<(128-64-ulaPrefix.Bits()) {
+	if networkID >= 1<<(128-ipv6NetworkSize-ulaPrefix.Bits()) {
 		return nil, errIDTooLarge
 	}
 	v4Prefix, err := netip.ParsePrefix(v4PrefixStr)
@@ -148,38 +207,39 @@ func getNetworkDump(networkID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr strin
 		return nil, errIDTooLarge
 	}
 
-	// Find the next smallest octet
-	arrSize := int(math.Ceil((32 - 8 - float64(v4Prefix.Bits())) / 8))
-	bs := make([]byte, arrSize)
-	switch arrSize {
-	case 1:
-		bs = []byte{uint8(networkID)}
-	case 2:
-		binary.BigEndian.PutUint16(bs, uint16(networkID))
-	case 3:
-		binary.BigEndian.PutUint32(bs, uint32(networkID))
-	case 4:
-		binary.BigEndian.PutUint64(bs, uint64(networkID))
-	}
-
-	guaArray := guaPrefix.Addr().As16()
-	for i := 0; i < arrSize; i++ {
-		guaArray[7-i] += bs[i]
-	}
-
-	ulaArray := ulaPrefix.Addr().As16()
-	for i := 0; i < arrSize; i++ {
-		ulaArray[7-i] += bs[i]
+	nextPowerOf8 := int(math.Floor(float64(v4Prefix.Bits())/8))*8 + 8
+	networkV4Overlay, err := makeIPv4AddressOverlay(uint64(networkID), nextPowerOf8)
+	if err != nil {
+		return nil, err
 	}
 
 	v4Array := v4Prefix.Addr().As4()
-	for i := 0; i < arrSize; i++ {
-		v4Array[2-i] += bs[i]
+	for i := 0; i < len(networkV4Overlay); i++ {
+		v4Array[i] += networkV4Overlay[i]
 	}
 
-	networkGuaPrefix := netip.PrefixFrom(netip.AddrFrom16(guaArray), 64)
-	networkUlaPrefix := netip.PrefixFrom(netip.AddrFrom16(ulaArray), 64)
-	networkV4Prefix := netip.PrefixFrom(netip.AddrFrom4(v4Array), 24)
+	networkV6Overlay, err := makeIPv6AddressOverlay(uint64(networkID), ipv6NetworkSize)
+	if err != nil {
+		return nil, err
+	}
+
+	guaArray := guaPrefix.Addr().As16()
+	{
+		for i := 0; i < len(networkV6Overlay); i++ {
+			guaArray[i] += networkV6Overlay[i]
+		}
+	}
+
+	ulaArray := ulaPrefix.Addr().As16()
+	{
+		for i := 0; i < len(networkV6Overlay); i++ {
+			ulaArray[i] += networkV6Overlay[i]
+		}
+	}
+
+	networkGuaPrefix := netip.PrefixFrom(netip.AddrFrom16(guaArray), ipv6NetworkSize)
+	networkUlaPrefix := netip.PrefixFrom(netip.AddrFrom16(ulaArray), ipv6NetworkSize)
+	networkV4Prefix := netip.PrefixFrom(netip.AddrFrom4(v4Array), nextPowerOf8)
 
 	var networkIPv4SignificantOctets string
 	{
@@ -190,37 +250,58 @@ func getNetworkDump(networkID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr strin
 		networkIPv4SignificantOctets = strings.Join(octets, ".")
 	}
 
-	var networkGuaSignificantBits string
+	var dhcpv4Pool string
+	var cidrBitDifference int
+	var firstDhcpHostID int
 	{
-		hextets := []string{}
-		var tmp int
-		for i, b := range networkGuaPrefix.Addr().AsSlice()[0:(int(math.Ceil(float64(networkGuaPrefix.Bits()) / 8)))] {
-			if i%2 == 0 {
-				tmp += int(b) << 8
-			} else {
-				tmp += int(b)
-				hextets = append(hextets, fmt.Sprintf("%x", tmp))
-				tmp = 0
+		var dhcpCidr int
+		halfHostID := 1 << (32 - networkV4Prefix.Bits()) / 2
+		for i := 32 - networkV4Prefix.Bits() - 1; i >= 0; i-- {
+			maybeStartHostID := int(math.Pow(2, float64(i)))
+			if maxStaticHostID < maybeStartHostID {
+				if halfHostID < maybeStartHostID {
+					firstDhcpHostID = halfHostID
+					dhcpCidr = networkV4Prefix.Bits() + 1
+				} else {
+					firstDhcpHostID = maybeStartHostID
+					dhcpCidr = 32 - i
+				}
+				break
 			}
 		}
-		networkGuaSignificantBits = strings.Join(hextets, ":")
+
+		dhcpv4AddressOverlay, err := makeIPv4AddressOverlay(uint64(firstDhcpHostID), dhcpCidr)
+		if err != nil {
+			return nil, err
+		}
+
+		if dhcpCidr < networkV4Prefix.Bits() {
+			return nil, errMaxStaticHostIDTooLarge
+		}
+
+		cidrBitDifference = dhcpCidr - networkV4Prefix.Bits()
+		v4Array := networkV4Prefix.Addr().As4()
+		for i := 0; i < len(dhcpv4AddressOverlay); i++ {
+			v4Array[i] += dhcpv4AddressOverlay[i]
+		}
+
+		dhcpv4Pool = netip.PrefixFrom(netip.AddrFrom4(v4Array), dhcpCidr).String()
 	}
 
-	var networkUlaSignificantBits string
+	var ulaDhcpv6Pool string
 	{
-		hextets := []string{}
-		var tmp int
-		for i, b := range networkUlaPrefix.Addr().AsSlice()[0:int(math.Ceil(float64(networkUlaPrefix.Bits())/8))] {
-			if i%2 == 0 {
-				tmp += int(b) << 8
-			} else {
-				tmp += int(b)
-				hextets = append(hextets, fmt.Sprintf("%x", tmp))
-				tmp = 0
-			}
+		dhcpCidr := networkUlaPrefix.Bits() + cidrBitDifference
+		dhcpv6AddressOverlay, err := makeIPv6AddressOverlay(uint64(firstDhcpHostID), dhcpCidr)
+		if err != nil {
+			return nil, err
 		}
 
-		networkUlaSignificantBits = strings.Join(hextets, ":")
+		v6Array := networkUlaPrefix.Addr().As16()
+		for i := 0; i < len(dhcpv6AddressOverlay); i++ {
+			v6Array[i] += dhcpv6AddressOverlay[i]
+		}
+
+		ulaDhcpv6Pool = netip.PrefixFrom(netip.AddrFrom16(v6Array), dhcpCidr).String()
 	}
 
 	return &netDump{
@@ -229,11 +310,11 @@ func getNetworkDump(networkID int, guaPrefixStr, ulaPrefixStr, v4PrefixStr strin
 		IPv6UlaCidr:                  networkUlaPrefix.Bits(),
 		NetworkIPv4:                  networkV4Prefix.Addr().String(),
 		NetworkIPv4Cidr:              networkV4Prefix.String(),
+		NetworkIPv4SignificantOctets: networkIPv4SignificantOctets,
+		Dhcpv4Pool:                   dhcpv4Pool,
 		NetworkGuaCidr:               networkGuaPrefix.String(),
 		NetworkUlaCidr:               networkUlaPrefix.String(),
-		NetworkIPv4SignificantOctets: networkIPv4SignificantOctets,
-		NetworkGuaSignificantBits:    networkGuaSignificantBits,
-		NetworkUlaSignificantBits:    networkUlaSignificantBits,
+		UlaDhcpv6Pool:                ulaDhcpv6Pool,
 	}, nil
 }
 
@@ -241,6 +322,7 @@ func main() {
 	doHostDump := flag.Bool("host", false, "Do host dump")
 	doNetworkDump := flag.Bool("network", false, "Do host dump")
 	id := flag.Int("id", -1, "The ID of the network")
+	maxStaticHostID := flag.Int("max-static-host-id", (1<<7)-1, "Maximum ID of static hosts in the network") // half of a /24 ipv4 network
 	guaPrefix := flag.String("gua-prefix", "", "IPv6 GUA network prefix")
 	ulaPrefix := flag.String("ula-prefix", "", "IPv6 ULA network prefix")
 	v4Prefix := flag.String("v4-prefix", "", "IPv4 network prefix")
@@ -255,9 +337,9 @@ func main() {
 		dump any
 	)
 	if *doHostDump {
-		dump, err = getHostDump(*id, *guaPrefix, *ulaPrefix, *v4Prefix)
+		dump, err = getHostDump(*id, *maxStaticHostID, *guaPrefix, *ulaPrefix, *v4Prefix)
 	} else {
-		dump, err = getNetworkDump(*id, *guaPrefix, *ulaPrefix, *v4Prefix)
+		dump, err = getNetworkDump(*id, *maxStaticHostID, *guaPrefix, *ulaPrefix, *v4Prefix)
 	}
 	if err != nil {
 		log.Fatal(err)
