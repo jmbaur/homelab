@@ -1,12 +1,12 @@
 { stdenvNoCC, fetchFromGitHub, zig }:
 stdenvNoCC.mkDerivation rec {
   pname = "zf";
-  version = "0.5";
+  version = "0.6.0";
   src = fetchFromGitHub {
     owner = "natecraddock";
     repo = "zf";
     rev = version;
-    sha256 = "0xsfafll70q0f93bzw359fbwf6pp3g3b3mj5qzwc784qfqmxzzkm";
+    sha256 = "sha256-zmlNvChcRXYCo6BtjSG+G1Re9hPZVFW1EKyj4/CIdmg=";
   };
   preBuild = ''
     export HOME=$TMPDIR
