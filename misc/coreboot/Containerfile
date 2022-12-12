@@ -38,13 +38,17 @@ RUN git clone --branch=4.18 --depth=1 https://review.coreboot.org/coreboot /buil
 RUN git submodule update --init
 
 ARG crossgcc_arch
-RUN make crossgcc-$crossgcc_arch CPUS=$(nproc)
+RUN make $crossgcc_arch CPUS=$(nproc)
 
 # depthcharge dependencies
 RUN apt install -y \
 	libflashrom-dev \
 	libssl-dev
 RUN pip install kconfiglib
+
+# tianocore edk2 dependencies
+RUN apt install -y \
+	uuid-dev
 
 COPY build.bash build.bash
 
