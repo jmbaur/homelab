@@ -48,6 +48,8 @@ RUN pip install kconfiglib
 
 # tianocore edk2 dependencies
 RUN apt install -y \
+	imagemagick \
+	nasm \
 	uuid-dev
 
 COPY build.bash build.bash
