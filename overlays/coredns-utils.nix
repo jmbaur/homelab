@@ -1,6 +1,7 @@
 { buildGoModule, fetchFromGitHub, ... }:
 buildGoModule {
-  name = "coredns-utils";
+  pname = "coredns-utils";
+  version = "2020-10-20";
   src = fetchFromGitHub {
     owner = "coredns";
     repo = "coredns-utils";

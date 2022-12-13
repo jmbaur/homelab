@@ -42,8 +42,8 @@ update:
 	export NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"
 	nix-prefetch-git https://github.com/ibhagwan/smartyank.nvim >ibhagwan_smartyank-nvim.json
 	nix-prefetch-git https://github.com/stevenblack/hosts >stevenblack_hosts.json
-	# TODO(jared): use `nix eval` overlays/out-of-tree.nix when it doesn't show <LAMBDA> (see https://github.com/NixOS/nix/issues/2678).
-	for pkg in "cicada" "coredns-utils" "flarectl" "flashrom-cros" "xremap" "yamlfmt" "zf"; do
+	drvs=$(nix-instantiate --arg pkgs 'import <nixpkgs> {}' out-of-tree.nix)
+	for pkg in $(nix show-derivation $drvs | jq -r '..|objects|.pname//empty' | sort); do
 		nix-update --file ./out-of-tree.nix $pkg
 	done
 

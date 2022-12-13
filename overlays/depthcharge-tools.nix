@@ -32,12 +32,12 @@ let
 in
 python3.pkgs.buildPythonApplication rec {
   pname = "depthcharge-tools";
-  version = "0.6.0";
+  version = "0.6.1";
   src = fetchFromGitHub {
     owner = "alpernebbi";
     repo = "depthcharge-tools";
     rev = "v${version}";
-    sha256 = "15jrnpyyxn4by97zbj5aj3zilzidb5ay63m7d99zrgrn82gw1ry1";
+    sha256 = "sha256-kHf3R1sKTqb3KDf3qA65bIKJcF7QbjOo7Lduv2VEZq4=";
   };
   prePatch = ''
     substituteInPlace depthcharge_tools/config.ini \
