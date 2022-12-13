@@ -17,6 +17,7 @@
     hostName = "okra";
     useDHCP = false;
     useNetworkd = true;
+    wireless.enable = true;
   };
   systemd.network.networks = {
     wired = {
@@ -24,6 +25,13 @@
       DHCP = "yes";
       dhcpV4Config.RouteMetric = 1024;
       ipv6AcceptRAConfig.RouteMetric = 1024;
+      networkConfig.IPv6PrivacyExtensions = "kernel";
+    };
+    wireless = {
+      name = "wl*";
+      DHCP = "yes";
+      dhcpV4Config.RouteMetric = 2048;
+      ipv6AcceptRAConfig.RouteMetric = 2048;
       networkConfig.IPv6PrivacyExtensions = "kernel";
     };
   };
