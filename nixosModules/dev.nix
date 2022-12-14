@@ -15,6 +15,7 @@ with lib;
         '';
       };
     } // lib.listToAttrs (map (lang: lib.nameValuePair lang (mkEnableOption lang)) [
+      "c"
       "go"
       "lua"
       "nix"

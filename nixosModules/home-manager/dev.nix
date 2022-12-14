@@ -80,6 +80,9 @@ with lib; {
         taplo
         tree-sitter
       ])
+      (lib.optionals (languages.all || languages.c) [
+        pkgs.clang-tools
+      ])
       (lib.optionals (languages.all || languages.zig) [
         pkgs.zls
       ])

@@ -69,7 +69,7 @@ local on_attach_orgimports = get_on_attach({ format = false, org_imports = true 
 local on_attach = get_on_attach({ format = false, org_imports = false })
 
 local servers = {
-	eslint = { required_exe = { "eslint", "vscode-eslint-language-server" }, lsp_config = { on_attach = on_attach } },
+	clangd = { required_exe = { "clangd" }, lsp_config = { on_attach = on_attach } },
 	gopls = {
 		required_exe = { "go", "gopls", "gofumpt", "staticcheck" },
 		lsp_config = {
