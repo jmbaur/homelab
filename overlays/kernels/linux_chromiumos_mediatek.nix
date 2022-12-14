@@ -1,5 +1,11 @@
 { linuxKernel, lib, ... }:
 linuxKernel.kernels.linux_6_0.override {
+  kernelPatches = with linuxKernel.kernelPatches; [
+    request_key_helper
+    bridge_stp_helper
+    { name = "mt8192-gpu"; patch = ./mt8192-gpu.patch; }
+  ];
+
   structuredExtraConfig = with lib.kernel; (lib.mapAttrs (_: lib.mkForce) {
 
     ALT_SYSCALL = yes;
