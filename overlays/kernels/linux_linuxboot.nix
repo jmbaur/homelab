@@ -33,7 +33,9 @@ let
       else
         throw "unsupported architecture for linuxboot";
   }).overrideAttrs (old: {
-    preConfigure = "cp ${initramfs}/initramfs.cpio /tmp/initramfs.cpio";
+    preConfigure = lib.optionalString
+      (stdenv.hostPlatform.system == "x86_64-linux")
+      "cp ${initramfs}/initramfs.cpio /tmp/initramfs.cpio";
     passthru = old.passthru // { inherit initramfs; };
   });
   fitimageITS = writeText "linuxboot-fitimage.its" ''
