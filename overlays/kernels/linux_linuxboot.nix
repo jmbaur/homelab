@@ -21,8 +21,7 @@ in
       stdenv.hostPlatform.system == "x86_64-linux" then ./linuxboot-x86_64.config
     else
       throw "unsupported architecture for linuxboot";
-}).overrideAttrs (_: {
-  preConfigure = ''
-    cp ${initramfs}/initramfs.cpio /tmp/initramfs.cpio
-  '';
+}).overrideAttrs (old: {
+  preConfigure = "cp ${initramfs}/initramfs.cpio /tmp/initramfs.cpio";
+  passthru = old.passthru // { inherit initramfs; };
 })
