@@ -64,9 +64,11 @@ coreboot target crossgcc_arch: clean (coreboot_deps crossgcc_arch)
 	{{docker}} run \
 		--rm \
 		--volume $out:/out:rw \
-		--volume {{justfile_directory()}}/misc/coreboot/{{target}}:/config:ro \
+		--volume {{justfile_directory()}}/misc/coreboot/{{target}}/.config:/build/.config:ro \
 		coreboot_{{crossgcc_arch}}
 
+coreboot_qemu-aarch64: (coreboot "qemu-aarch64" "crossgcc-aarch64")
 coreboot_asurada-spherion: (coreboot "asurada-spherion" "crossgcc-aarch64")
 coreboot_kukui-fennel14: (coreboot "kukui-fennel14" "crossgcc-aarch64")
+coreboot_qemu-x86: (coreboot "qemu-x86" "crossgcc-i386")
 coreboot_volteer-elemi: (coreboot "volteer-elemi" "crossgcc-i386")

@@ -47,14 +47,6 @@ RUN git submodule update --init
 ARG crossgcc_arch
 RUN make $crossgcc_arch CPUS=$(nproc)
 
-# depthcharge dependencies
-RUN apt install -y \
-	libflashrom-dev \
-	libssl-dev
-RUN pip install kconfiglib
-
-COPY misc/coreboot/build.bash build.bash
-
 COPY --from=linuxboot /out/*Image .
 
-CMD bash build.bash
+CMD bash -c "make CPUS=$(nproc) && cp build/coreboot.rom /out/coreboot.rom"
