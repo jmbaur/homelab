@@ -55,6 +55,6 @@ RUN pip install kconfiglib
 
 COPY misc/coreboot/build.bash build.bash
 
-COPY --from=linuxboot /out/bzImage bzImage
+COPY --from=linuxboot /out/*Image .
 
 CMD bash build.bash

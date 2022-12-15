@@ -6,7 +6,7 @@
 , runCommand
 , ubootTools
 , xz
-, dtbFile
+, dtbFile ? null
 , ...
 }:
 let
