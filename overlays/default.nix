@@ -98,13 +98,11 @@ inputs: with inputs; {
 
         grafana-dashboards = prev.callPackage ./grafana-dashboards { };
 
-        ubootCN9130_CF_Pro = prev.callPackage ./ubootCN9130_CF_Pro.nix {
-          inherit cn913x_build;
-        };
-        linux_cn913x = prev.callPackage ./kernels/linux_cn913x.nix {
-          inherit cn913x_build;
-        };
+        ubootCN9130_CF_Pro = prev.callPackage ./ubootCN9130_CF_Pro.nix { inherit cn913x_build; };
+
+        linux_cn913x = prev.callPackage ./kernels/linux_cn913x.nix { inherit cn913x_build; };
         linux_chromiumos_mediatek = prev.callPackage ./kernels/linux_chromiumos_mediatek.nix { };
+        linux_linuxboot = prev.callPackage ./kernels/linux_linuxboot.nix { inherit (final) u-root; };
 
         jmbaur-keybase-pgp-keys = prev.fetchurl {
           url = "https://keybase.io/jaredbaur/pgp_keys.asc";

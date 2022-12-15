@@ -34,6 +34,7 @@ let
       j
       jmbaur-github-ssh-keys
       jmbaur-keybase-pgp-keys
+      linux_linuxboot
       macgen
       mirror-to-x
       neovim

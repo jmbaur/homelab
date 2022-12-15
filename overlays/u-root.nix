@@ -1,13 +1,13 @@
-{ buildGoModule, fetchFromGitHub, ... }:
-buildGoModule rec {
+{ buildGoPackage, fetchFromGitHub, ... }:
+buildGoPackage {
   pname = "u-root";
-  version = "0.10.0";
+  version = "2022-12-15";
   src = fetchFromGitHub {
     owner = "u-root";
     repo = "u-root";
-    rev = "v${version}";
-    sha256 = "sha256-EUpBHiJ13ubxYU9p9PXrv2Rqz09W16gCOMEXylhPayo=";
+    rev = "904692535c70f103396524ae535a2e7bc89cb75a";
+    sha256 = "sha256-6BA3AVPFNm2TCvB3hzeqJIrUdVCrj0JWOzRUosy8Ilc=";
   };
-  vendorSha256 = null;
+  goPackagePath = "github.com/u-root/u-root";
   subPackages = ".";
 }
