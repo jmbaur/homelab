@@ -53,15 +53,19 @@ setup_pam_u2f:
 setup_yubikey:
 	ykman openpgp keys set-touch sig cached-fixed
 
-coreboot_deps arch:
+coreboot_deps crossgcc_arch:
 	{{docker}} build \
-		--build-arg crossgcc_arch={{arch}} \
-		--tag coreboot_{{arch}} \
+		--build-arg crossgcc_arch={{crossgcc_arch}} \
+		--tag coreboot_{{crossgcc_arch}} \
 		--file {{justfile_directory()}}/misc/coreboot/Containerfile
 
-coreboot target arch: clean (coreboot_deps arch)
+coreboot target crossgcc_arch: clean (coreboot_deps crossgcc_arch)
 	{{docker}} run \
 		--rm \
 		--volume $out:/out:rw \
 		--volume {{justfile_directory()}}/misc/coreboot/{{target}}:/config:ro \
-		coreboot_{{arch}}
+		coreboot_{{crossgcc_arch}}
+
+coreboot_asurada-spherion: (coreboot "asurada-spherion" "crossgcc-aarch64")
+coreboot_kukui-fennel14: (coreboot "kukui-fennel14" "crossgcc-aarch64")
+coreboot_volteer-elemi: (coreboot "volteer-elemi" "crossgcc-i386")
