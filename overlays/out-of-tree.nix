@@ -4,6 +4,7 @@
   depthcharge-tools = pkgs.callPackage ./depthcharge-tools.nix { };
   flarectl = pkgs.callPackage ./flarectl.nix { };
   flashrom-cros = pkgs.callPackage ./flashrom-cros.nix { };
+  u-root = pkgs.callPackage ./u-root.nix { };
   xremap = pkgs.callPackage ./xremap.nix { features = [ "sway" ]; };
   yamlfmt = pkgs.callPackage ./yamlfmt.nix { };
   zf = pkgs.callPackage ./zf.nix { };

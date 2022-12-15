@@ -38,6 +38,7 @@ nixpkgs.lib.genAttrs
     slack-webapp = mkApp "${pkgs.slack-webapp}/bin/slack-webapp";
     spotify-webapp = mkApp "${pkgs.spotify-webapp}/bin/spotify-webapp";
     teams-webapp = mkApp "${pkgs.teams-webapp}/bin/teams-webapp";
+    u-root = mkApp "${pkgs.u-root}/bin/u-root";
     v4l-show = mkApp "${pkgs.v4l-show}/bin/v4l-show";
     wip = mkApp "${pkgs.wip}/bin/wip";
     yamlfmt = mkApp "${pkgs.yamlfmt}/bin/yamlfmt";

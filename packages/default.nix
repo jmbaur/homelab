@@ -44,6 +44,7 @@ let
       spotify-webapp
       stevenblack-hosts
       teams-webapp
+      u-root
       v4l-show
       wip
       xremap

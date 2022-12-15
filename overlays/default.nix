@@ -12,6 +12,7 @@ inputs: with inputs; {
           depthcharge-tools
           flarectl
           flashrom-cros
+          u-root
           xremap
           yamlfmt
           zf
