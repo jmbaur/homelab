@@ -1,4 +1,11 @@
 # vim: ft=dockerfile
+FROM docker.io/nixos/nix:2.12.0 as linuxboot
+
+WORKDIR /build
+COPY . .
+RUN nix build \
+	--extra-experimental-features "nix-command flakes" \
+	-L --out-link /out .#linux_linuxboot
 
 FROM docker.io/library/ubuntu:20.04
 
@@ -46,12 +53,8 @@ RUN apt install -y \
 	libssl-dev
 RUN pip install kconfiglib
 
-# tianocore edk2 dependencies
-RUN apt install -y \
-	imagemagick \
-	nasm \
-	uuid-dev
+COPY misc/coreboot/build.bash build.bash
 
-COPY build.bash build.bash
+COPY --from=linuxboot /out/bzImage bzImage
 
 CMD bash build.bash

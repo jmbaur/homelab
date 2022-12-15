@@ -57,7 +57,8 @@ coreboot_deps crossgcc_arch:
 	{{docker}} build \
 		--build-arg crossgcc_arch={{crossgcc_arch}} \
 		--tag coreboot_{{crossgcc_arch}} \
-		--file {{justfile_directory()}}/misc/coreboot/Containerfile
+		--file {{justfile_directory()}}/misc/coreboot/Containerfile \
+		.
 
 coreboot target crossgcc_arch: clean (coreboot_deps crossgcc_arch)
 	{{docker}} run \
