@@ -12,6 +12,8 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.systemd-boot.enable = true;
 
+  services.fwupd.enable = true;
+
   time.timeZone = "America/Los_Angeles";
   networking = {
     hostName = "okra";
