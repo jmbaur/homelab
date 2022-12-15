@@ -1,3 +1,20 @@
+diff --git a/arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi b/arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi
+index 4b314435f..4c4019584 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi
+@@ -943,6 +943,12 @@ mt6315_7_vbuck1: vbuck1 {
+ 	};
+ };
+ 
++&gpu {
++	supply-names = "mali","sram";
++	mali-supply = <&mt6315_7_vbuck1>;
++	sram-supply = <&mt6359_vsram_others_ldo_reg>;
++};
++
+ &uart0 {
+ 	status = "okay";
+ };
 diff --git a/arch/arm64/boot/dts/mediatek/mt8192.dtsi b/arch/arm64/boot/dts/mediatek/mt8192.dtsi
 index 424fc89cc..5f56e37ed 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8192.dtsi
