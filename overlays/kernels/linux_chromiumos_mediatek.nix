@@ -1,5 +1,5 @@
 { linuxKernel, lib, ... }:
-linuxKernel.kernels.linux_6_0.override {
+linuxKernel.kernels.linux_6_1.override {
   kernelPatches = with linuxKernel.kernelPatches; [
     request_key_helper
     bridge_stp_helper
