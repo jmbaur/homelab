@@ -1,36 +1,24 @@
 { lib
 , stdenv
 , linuxKernel
-, u-root
+, u-rootInitramfs
 , writeText
 , runCommand
-, ubootTools
-, xz
+, buildPackages
 , dtbFile ? null
 , ...
 }:
 let
-  initramfs = u-root.overrideAttrs (_: {
-    postBuild = ''
-      GOROOT="$(go env GOROOT)" ./go/bin/u-root \
-        -uroot-source go/src/$goPackagePath \
-        -uinitcmd=systemboot \
-        core ./cmds/boot/{systemboot,localboot,fbnetboot}
-    '';
-    installPhase = ''
-      mkdir -p $out
-      cp /tmp/initramfs.*.cpio $out/initramfs.cpio
-    '';
-  });
   kernel = (linuxKernel.manualConfig {
     inherit lib stdenv;
     inherit (linuxKernel.kernels.linux_6_0) src version modDirVersion kernelPatches extraMakeFlags;
     configfile = ./linuxboot-${stdenv.hostPlatform.linuxArch}.config;
+    config.DTB = true;
   }).overrideAttrs (old: {
     preConfigure = lib.optionalString
       (stdenv.hostPlatform.system == "x86_64-linux")
-      "cp ${initramfs}/initramfs.cpio /tmp/initramfs.cpio";
-    passthru = old.passthru // { inherit initramfs; };
+      "cp ${u-rootInitramfs}/initramfs.cpio /tmp/initramfs.cpio";
+    passthru = old.passthru // { initramfs = u-rootInitramfs; };
   });
   fitimageITS = writeText "linuxboot-fitimage.its" ''
     /*
@@ -95,15 +83,15 @@ let
   '';
   fitimage = runCommand "linuxboot-fitimage" { } ''
     mkdir -p $out
-    ${xz}/bin/lzma --threads 0 <${kernel}/Image >Image.lzma
+    ${buildPackages.xz}/bin/lzma --threads 0 <${kernel}/Image >Image.lzma
     cp $(find ${kernel}/dtbs -type f -name ${dtbFile}) target.dtb
-    xz --check=crc32 --lzma2=dict=512KiB <${initramfs} >initramfs.cpio.xz
-    ${ubootTools}/bin/mkimage -f ${fitimageITS} $out/uImage
+    ${buildPackages.xz}/bin/xz --check=crc32 --lzma2=dict=512KiB <${u-rootInitramfs} >initramfs.cpio.xz
+    ${buildPackages.ubootTools}/bin/mkimage -f ${fitimageITS} $out/uImage
   '';
 in
 if
   stdenv.hostPlatform.system == "x86_64-linux" then kernel
 else if
-  stdenv.hostPlatform.system == "aarch64-linux" then fitimage
+  stdenv.hostPlatform.system == "aarch64-linux" then fitimage.overrideAttrs (_: { passthru = { inherit kernel; }; })
 else
   throw "unsupported architecture for linuxboot"

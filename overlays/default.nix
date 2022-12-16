@@ -12,7 +12,7 @@ inputs: with inputs; {
           depthcharge-tools
           flarectl
           flashrom-cros
-          u-root
+          u-rootInitramfs
           xremap
           yamlfmt
           zf
@@ -102,7 +102,7 @@ inputs: with inputs; {
 
         linux_cn913x = prev.callPackage ./kernels/linux_cn913x.nix { inherit cn913x_build; };
         linux_chromiumos_mediatek = prev.callPackage ./kernels/linux_chromiumos_mediatek.nix { };
-        linux_linuxboot = prev.callPackage ./kernels/linux_linuxboot.nix { inherit (final) u-root; };
+        linux_linuxboot = prev.callPackage ./kernels/linux_linuxboot.nix { inherit (final) u-rootInitramfs; };
 
         coreboot-toolchain = prev.callPackage ./coreboot-toolchain { };
         buildCoreboot = prev.callPackage ./coreboot { inherit (final) coreboot-toolchain; };
@@ -110,6 +110,11 @@ inputs: with inputs; {
           boardName = "qemu-x86";
           configfile = ../misc/coreboot/qemu-x86/.config;
           prebuildPayloads = [ "${final.linux_linuxboot}/bzImage" ];
+        };
+        coreboot-qemu-aarch64 = final.buildCoreboot {
+          boardName = "qemu-aarch64";
+          configfile = ../misc/coreboot/qemu-aarch64/.config;
+          prebuildPayloads = [ "${final.linux_linuxboot.override { dtbFile = "zynqmp-zcu102-rev1.0.dtb"; }}/bzImage" ];
         };
 
         jmbaur-keybase-pgp-keys = prev.fetchurl {

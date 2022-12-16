@@ -46,7 +46,7 @@ let
       spotify-webapp
       stevenblack-hosts
       teams-webapp
-      u-root
+      u-rootInitramfs
       v4l-show
       wip
       xremap
@@ -105,6 +105,7 @@ in
     in
     pkgs.lib.recursiveUpdate (commonDerivations pkgs) {
       inherit (pkgs.pkgsCross.aarch64-multiplatform)
+        coreboot-qemu-aarch64
         ipwatch
         linux_chromiumos_mediatek
         linux_cn913x
