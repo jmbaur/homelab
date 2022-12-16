@@ -25,13 +25,7 @@ let
   kernel = (linuxKernel.manualConfig {
     inherit lib stdenv;
     inherit (linuxKernel.kernels.linux_6_0) src version modDirVersion kernelPatches extraMakeFlags;
-    configfile =
-      if
-        stdenv.hostPlatform.system == "x86_64-linux" then ./linuxboot-x86_64.config
-      else if
-        stdenv.hostPlatform.system == "aarch64-linux" then ./linuxboot-aarch64.config
-      else
-        throw "unsupported architecture for linuxboot";
+    configfile = ./linuxboot-${stdenv.hostPlatform.linuxArch}.config;
   }).overrideAttrs (old: {
     preConfigure = lib.optionalString
       (stdenv.hostPlatform.system == "x86_64-linux")
