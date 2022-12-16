@@ -26,7 +26,7 @@ end
 hi("Normal", { fg = xterm[15], bg = xterm[0] }) -- Normal must be first
 hi("ColorColumn", { bg = xterm[235] })
 hi("Cursor", { fg = xterm[0], bg = "fg" })
-hi("CursorLine", { bg = "NONE", ctermfg = "white" }) -- https://github.com/neovim/neovim/issues/9800
+hi("CursorLine", { ctermfg = "white" }) -- https://github.com/neovim/neovim/issues/9800
 hi("CursorLineNr", { fg = "fg" })
 hi("CursorLineSign", { italic = true })
 hi("DiffAdd", { bg = "#0A290A" })

@@ -104,6 +104,14 @@ inputs: with inputs; {
         linux_chromiumos_mediatek = prev.callPackage ./kernels/linux_chromiumos_mediatek.nix { };
         linux_linuxboot = prev.callPackage ./kernels/linux_linuxboot.nix { inherit (final) u-root; };
 
+        coreboot-toolchain = prev.callPackage ./coreboot-toolchain { };
+        buildCoreboot = prev.callPackage ./coreboot { inherit (final) coreboot-toolchain; };
+        coreboot-qemu-x86 = final.buildCoreboot {
+          boardName = "qemu-x86";
+          configfile = ../misc/coreboot/qemu-x86/.config;
+          prebuildPayloads = [ "${final.linux_linuxboot}/bzImage" ];
+        };
+
         jmbaur-keybase-pgp-keys = prev.fetchurl {
           url = "https://keybase.io/jaredbaur/pgp_keys.asc";
           sha256 = "sha256-R2a+bF7E6Zogl5XWsjrK5dkCAvK6K2h/bje37aYSgGc=";
