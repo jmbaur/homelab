@@ -114,6 +114,7 @@ inputs: with inputs; {
         coreboot-qemu-aarch64 = final.buildCoreboot {
           boardName = "qemu-aarch64";
           configfile = ../misc/coreboot/qemu-aarch64/.config;
+          # Run with qemu-system-aarch64 -M xlnx-zcu102 ...
           prebuildPayloads = [ "${final.linux_linuxboot.override { dtbFile = "zynqmp-zcu102-rev1.0.dtb"; }}/bzImage" ];
         };
 

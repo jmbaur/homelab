@@ -1,4 +1,4 @@
-{ lib, stdenv, coreboot-toolchain, git, fetchgit, ... }:
+{ lib, stdenv, buildPackages, coreboot-toolchain, fetchgit, ... }:
 let
   toolchain-system =
     if
@@ -9,7 +9,6 @@ let
 
   toolchain = coreboot-toolchain.${toolchain-system}.override { withAda = false; };
 in
-
 { boardName, configfile, prebuildPayloads ? [ ], ... }:
 stdenv.mkDerivation {
   pname = "coreboot-${boardName}";
@@ -19,7 +18,7 @@ stdenv.mkDerivation {
     sha256 = "sha256-k4tTtvBOHZoXqNhQwOyCRsYxlPvSdE4xwd9NnMfvUzM=";
     fetchSubmodules = true;
   };
-  nativeBuildInputs = [ git ];
+  nativeBuildInputs = [ buildPackages.git ];
   configurePhase = ''
     ln -sv ${toolchain} util/crossgcc/xgcc
     cp ${configfile} .config
