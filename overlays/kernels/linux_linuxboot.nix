@@ -1,4 +1,14 @@
-{ lib, stdenv, linuxKernel, u-rootInitramfs, runCommand, buildPackages, dtbFile ? null, ... }:
+{ lib
+, stdenv
+, linuxKernel
+, u-rootInitramfs
+, runCommand
+, ubootTools
+, dtc
+, xz
+, dtb ? null
+, ...
+}:
 let
   kernel = (linuxKernel.manualConfig {
     inherit lib stdenv;
@@ -11,14 +21,21 @@ let
       "cp ${u-rootInitramfs}/initramfs.cpio /tmp/initramfs.cpio";
     passthru = old.passthru // { initramfs = u-rootInitramfs; };
   });
-  fitimage = runCommand "linuxboot-fitimage" { } ''
+
+  fitimage = runCommand "linuxboot-fitimage"
+    {
+      nativeBuildInputs = [ ubootTools dtc xz ];
+    } ''
     mkdir -p $out
-    export PATH=${buildPackages.dtc}/bin:$PATH
-    ${buildPackages.xz}/bin/lzma --threads 0 <${kernel}/Image >Image.lzma
-    cp $(find ${kernel}/dtbs -type f -name ${dtbFile}) target.dtb
-    ${buildPackages.xz}/bin/xz --check=crc32 --lzma2=dict=512KiB <${u-rootInitramfs}/initramfs.cpio >initramfs.cpio.xz
-    cp ${./linuxboot.its} image.its
-    ${buildPackages.ubootTools}/bin/mkimage -f image.its $out/uImage
+    lzma --threads 0 <${kernel}/Image >Image.lzma
+    xz --check=crc32 --lzma2=dict=512KiB <${u-rootInitramfs}/initramfs.cpio >initramfs.cpio.xz
+    ${if (builtins.isString dtb) then ''
+    cp $(find ${kernel}/dtbs -type f -name ${dtb}) target.dtb
+    '' else if (builtins.isPath dtb) then ''
+    cp ${dtb} target.dtb
+    '' else throw "unsupported dtb"}
+    cp ${./linuxboot.its} image.its # the ITS file needs to be in the same directory as the files it will use
+    mkimage -f image.its $out/uImage
   '';
 in
 if
@@ -26,4 +43,4 @@ if
 else if
   stdenv.hostPlatform.system == "aarch64-linux" then fitimage.overrideAttrs (_: { passthru = { inherit kernel; }; })
 else
-  throw "unsupported architecture for linuxboot"
+  throw "unsupported system"
