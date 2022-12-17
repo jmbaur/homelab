@@ -2,6 +2,7 @@
 let
   common = arch: callPackage (
     { bison
+    , buildPackages
     , callPackage
     , curl
     , fetchgit
@@ -9,7 +10,6 @@ let
     , getopt
     , git
     , gnat11
-    , gcc
     , lib
     , perl
     , stdenvNoCC
@@ -34,8 +34,9 @@ let
         allowedRequisites = [ ];
       };
 
+      depsBuildBuild = [ (if withAda then buildPackages.gnat11 else buildPackages.stdenv.cc) ];
       nativeBuildInputs = [ bison curl git perl ];
-      buildInputs = [ flex zlib (if withAda then gnat11 else gcc) ];
+      buildInputs = [ flex zlib ];
 
       enableParallelBuilding = true;
       dontConfigure = true;

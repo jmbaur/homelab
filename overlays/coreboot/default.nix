@@ -7,7 +7,7 @@ let
       stdenv.hostPlatform.system == "aarch64-linux" then "aarch64"
     else throw "unsupported system";
 
-  toolchain = coreboot-toolchain.${toolchain-system}.override { withAda = false; };
+  toolchain = buildPackages.coreboot-toolchain.${toolchain-system}.override { withAda = false; };
 in
 { boardName, configfile, prebuildPayloads ? [ ], ... }:
 stdenv.mkDerivation {
@@ -18,16 +18,15 @@ stdenv.mkDerivation {
     sha256 = "sha256-k4tTtvBOHZoXqNhQwOyCRsYxlPvSdE4xwd9NnMfvUzM=";
     fetchSubmodules = true;
   };
+  depsBuildBuild = [ buildPackages.stdenv.cc ];
   nativeBuildInputs = [ buildPackages.git ];
   configurePhase = ''
-    ln -sv ${toolchain} util/crossgcc/xgcc
-    cp ${configfile} .config
-    chmod +w .config # TODO(jared): don't make .config writeable
+    cp ${configfile} .config && chmod +w .config # TODO(jared): don't make .config writeable
     ${lib.concatMapStringsSep ";" (p: "ln -sv ${p} .") prebuildPayloads}
   '';
   buildPhase = ''
     patchShebangs util
-    make -j $NIX_BUILD_CORES
+    make -j $NIX_BUILD_CORES XGCCPATH=${toolchain}/bin/
   '';
   installPhase = ''
     mkdir -p  $out
