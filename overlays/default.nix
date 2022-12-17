@@ -114,6 +114,7 @@ inputs: with inputs; {
         coreboot-qemu-aarch64 = final.buildCoreboot {
           boardName = "qemu-aarch64";
           configfile = ../misc/coreboot/qemu-aarch64/.config;
+          # qemu-system-aarch64 -bios ./result/coreboot.rom -M virt,secure=on,virtualization=on -cpu cortex-a53 -m 8192M -nographic
           prebuildPayloads = [ "${final.linux_linuxboot.override { dtb = ./kernels/qemu-aarch64.dtb; }}/uImage" ];
         };
 
