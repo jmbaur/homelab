@@ -108,14 +108,19 @@ inputs: with inputs; {
         buildCoreboot = prev.callPackage ./coreboot { inherit (final) coreboot-toolchain; };
         coreboot-qemu-x86 = final.buildCoreboot {
           boardName = "qemu-x86";
-          configfile = ../misc/coreboot/qemu-x86/.config;
+          configfile = ./coreboot/qemu-x86.config;
           prebuildPayloads = [ "${final.linux_linuxboot}/bzImage" ];
         };
         coreboot-qemu-aarch64 = final.buildCoreboot {
           boardName = "qemu-aarch64";
-          configfile = ../misc/coreboot/qemu-aarch64/.config;
+          configfile = ./coreboot/qemu-aarch64.config;
           # qemu-system-aarch64 -bios ./result/coreboot.rom -M virt,secure=on,virtualization=on -cpu cortex-a53 -m 8192M -nographic
           prebuildPayloads = [ "${final.linux_linuxboot.override { dtb = ./kernels/qemu-aarch64.dtb; }}/uImage" ];
+        };
+        coreboot-volteer-elemi = final.buildCoreboot {
+          boardName = "volteer-elemi";
+          configfile = ./coreboot/volteer-elemi.config;
+          prebuildPayloads = [ "${final.linux_linuxboot}/bzImage" ];
         };
 
         jmbaur-keybase-pgp-keys = prev.fetchurl {

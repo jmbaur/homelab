@@ -24,7 +24,6 @@ let
       bitwarden-bemenu
       chromium-wayland
       cicada
-      coreboot-qemu-x86
       coredns-utils
       depthcharge-tools
       discord-webapp
@@ -77,6 +76,7 @@ in
     in
     pkgs.lib.recursiveUpdate (commonDerivations pkgs) {
       inherit (pkgs)
+        coreboot-qemu-aarch64
         linux_chromiumos_mediatek
         linux_cn913x
         ubootCN9130_CF_Pro
@@ -107,6 +107,11 @@ in
       };
     in
     pkgs.lib.recursiveUpdate (commonDerivations pkgs) {
+      inherit (pkgs)
+        coreboot-qemu-x86
+        coreboot-volteer-elemi
+        ;
+
       inherit (pkgs.pkgsCross.aarch64-multiplatform)
         coreboot-qemu-aarch64
         ipwatch
