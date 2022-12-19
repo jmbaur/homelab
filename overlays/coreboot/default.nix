@@ -1,4 +1,4 @@
-{ lib, stdenv, buildPackages, coreboot-toolchain, fetchgit, ... }:
+{ lib, stdenv, buildPackages, python3, git, coreboot-toolchain, fetchgit, ... }:
 let
   toolchain-system =
     if
@@ -19,7 +19,7 @@ stdenv.mkDerivation {
     fetchSubmodules = true;
   };
   depsBuildBuild = [ buildPackages.stdenv.cc ];
-  nativeBuildInputs = [ buildPackages.git ];
+  nativeBuildInputs = [ python3 git ];
   configurePhase = ''
     cp ${configfile} .config && chmod +w .config # TODO(jared): don't make .config writeable
     ${lib.concatMapStringsSep ";" (p: "ln -sv ${p} .") prebuildPayloads}
