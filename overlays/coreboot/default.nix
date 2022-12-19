@@ -20,14 +20,14 @@ stdenv.mkDerivation {
   };
   depsBuildBuild = [ buildPackages.stdenv.cc ];
   nativeBuildInputs = [ python3 git ];
+  postPatch = ''
+    patchShebangs util
+  '';
   configurePhase = ''
     cp ${configfile} .config && chmod +w .config # TODO(jared): don't make .config writeable
     ${lib.concatMapStringsSep ";" (p: "ln -sv ${p} .") prebuildPayloads}
   '';
-  buildPhase = ''
-    patchShebangs util
-    make -j $NIX_BUILD_CORES XGCCPATH=${toolchain}/bin/
-  '';
+  makeFlags = [ "XGCCPATH=${toolchain}/bin/" ];
   installPhase = ''
     mkdir -p  $out
     cp build/coreboot.rom $out/coreboot.rom
