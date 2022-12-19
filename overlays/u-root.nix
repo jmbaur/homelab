@@ -1,12 +1,12 @@
 { buildPackages, buildGoPackage, fetchFromGitHub, ... }:
 let
   pname = "u-root";
-  version = "2022-12-15";
+  version = "2022-12-18";
   src = fetchFromGitHub {
     owner = "u-root";
     repo = "u-root";
-    rev = "904692535c70f103396524ae535a2e7bc89cb75a";
-    sha256 = "sha256-6BA3AVPFNm2TCvB3hzeqJIrUdVCrj0JWOzRUosy8Ilc=";
+    rev = "bac9c581f8d94a2b0df97e84001287f18fd12370";
+    sha256 = "sha256-Yhd6jxO7DmBKJww41xCQ5f9H11geSwnrfWaSfRP117E=";
   };
   goPackagePath = "github.com/u-root/u-root";
   # u-root builder does not need to be cross-compiled
