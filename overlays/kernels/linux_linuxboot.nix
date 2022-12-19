@@ -6,7 +6,7 @@
 , ubootTools
 , dtc
 , xz
-, dtb ? null
+, dtb ? ""
 , ...
 }:
 let
