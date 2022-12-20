@@ -132,8 +132,8 @@ inputs: with inputs; {
               };
             in
             ''
-              CONFIG_PAYLOAD_FILE="${final.linux_linuxboot}/bzImage"
               CONFIG_INTEL_GMA_VBT_FILE="${vbt}"
+              CONFIG_PAYLOAD_FILE="${final.linux_linuxboot}/bzImage"
             '';
         };
 
