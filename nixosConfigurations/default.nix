@@ -132,11 +132,24 @@ in
     modules = [ ({ hardware.lx2k.enable = true; }) ];
   };
 
-  installer_sd_image = mkInstaller {
+  installer_sd_image_x86_64-linux = mkInstaller {
+    system = "x86_64-linux";
+    modules = [
+      ({ modulesPath, ... }: {
+        imports = [
+          "${modulesPath}/profiles/installation-device.nix"
+          "${modulesPath}/installer/sd-card/sd-image-x86_64.nix"
+        ];
+      })
+    ];
+  };
+  installer_sd_image_aarch64-linux = mkInstaller {
     system = "aarch64-linux";
     modules = [
       ({ modulesPath, ... }: {
-        imports = [ "${modulesPath}/installer/sd-card/sd-image-aarch64-installer.nix" ];
+        imports = [
+          "${modulesPath}/installer/sd-card/sd-image-aarch64-installer.nix"
+        ];
       })
     ];
   };

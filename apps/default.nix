@@ -25,7 +25,6 @@ nixpkgs.lib.genAttrs
     bitwarden-bemenu = mkApp "${pkgs.bitwarden-bemenu}/bin/bitwarden-bemenu";
     cicada = mkApp "${pkgs.cicada}/bin/cicada";
     coredns-keygen = mkApp "${pkgs.coredns-utils}/bin/coredns-keygen";
-    mkdepthcharge = mkApp "${pkgs.depthcharge-tools}/bin/mkdepthcharge";
     discord-webapp = mkApp "${pkgs.discord-webapp}/bin/discord-webapp";
     flarectl = mkApp "${pkgs.flarectl}/bin/flarectl";
     flashrom-cros = mkApp "${pkgs.flashrom-cros}/bin/flashrom";
@@ -33,6 +32,7 @@ nixpkgs.lib.genAttrs
     j = mkApp "${pkgs.j}/bin/j";
     macgen = mkApp "${pkgs.macgen}/bin/macgen";
     mirror-to-x = mkApp "${pkgs.mirror-to-x}/bin/mirror-to-x";
+    mkdepthcharge = mkApp "${pkgs.depthcharge-tools}/bin/mkdepthcharge";
     neovim = mkApp "${pkgs.neovim}/bin/nvim";
     outlook-webapp = mkApp "${pkgs.outlook-webapp}/bin/outlook-webapp";
     slack-webapp = mkApp "${pkgs.slack-webapp}/bin/slack-webapp";

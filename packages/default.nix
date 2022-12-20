@@ -84,7 +84,7 @@ in
 
       installer_iso_lx2k = self.nixosConfigurations.installer_iso_lx2k.config.system.build.isoImage;
 
-      installer_sd_image = self.nixosConfigurations.installer_sd_image.config.system.build.sdImage;
+      installer_sd_image_aarch64-linux = self.nixosConfigurations.installer_sd_image_aarch64-linux.config.system.build.sdImage;
       installer_sd_image_kukui_fennel14 = self.nixosConfigurations.installer_sd_image_kukui_fennel14.config.system.build.sdImage;
       installer_sd_image_asurada_spherion = self.nixosConfigurations.installer_sd_image_asurada_spherion.config.system.build.sdImage;
 
@@ -107,6 +107,8 @@ in
       };
     in
     pkgs.lib.recursiveUpdate (commonDerivations pkgs) {
+      installer_sd_image_x86_64-linux = self.nixosConfigurations.installer_sd_image_x86_64-linux.config.system.build.sdImage;
+
       inherit (pkgs)
         coreboot-qemu-x86
         coreboot-volteer-elemi
