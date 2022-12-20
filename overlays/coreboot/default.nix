@@ -1,4 +1,4 @@
-{ lib, stdenv, buildPackages, python3, git, coreboot-toolchain, fetchgit, ... }:
+{ stdenv, buildPackages, python3, git, coreboot-toolchain, fetchgit, ... }:
 let
   toolchain-system =
     if
@@ -9,7 +9,7 @@ let
 
   toolchain = buildPackages.coreboot-toolchain.${toolchain-system}.override { withAda = false; };
 in
-{ boardName, configfile, prebuildPayloads ? [ ], ... }:
+{ boardName, configfile, extraConfig ? "", ... }:
 stdenv.mkDerivation {
   pname = "coreboot-${boardName}";
   inherit (toolchain) version;
@@ -24,8 +24,11 @@ stdenv.mkDerivation {
     patchShebangs util
   '';
   configurePhase = ''
-    cp ${configfile} .config && chmod +w .config # TODO(jared): don't make .config writeable
-    ${lib.concatMapStringsSep ";" (p: "ln -sv ${p} .") prebuildPayloads}
+    cp --no-preserve=mode ${configfile} .config
+    cat >>.config <<EOF
+    ${extraConfig}
+    EOF
+    make oldconfig
   '';
   makeFlags = [ "XGCCPATH=${toolchain}/bin/" ];
   installPhase = ''

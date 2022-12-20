@@ -109,18 +109,32 @@ inputs: with inputs; {
         coreboot-qemu-x86 = final.buildCoreboot {
           boardName = "qemu-x86";
           configfile = ./coreboot/qemu-x86.config;
-          prebuildPayloads = [ "${final.linux_linuxboot}/bzImage" ];
+          extraConfig = ''
+            CONFIG_PAYLOAD_FILE="${final.linux_linuxboot}/bzImage"
+          '';
         };
         coreboot-qemu-aarch64 = final.buildCoreboot {
           boardName = "qemu-aarch64";
           configfile = ./coreboot/qemu-aarch64.config;
           # qemu-system-aarch64 -bios ./result/coreboot.rom -M virt,secure=on,virtualization=on -cpu cortex-a53 -m 8192M -nographic
-          prebuildPayloads = [ "${final.linux_linuxboot.override { dtb = ./kernels/qemu-aarch64.dtb; }}/uImage" ];
+          extraConfig = ''
+            CONFIG_PAYLOAD_FILE="${final.linux_linuxboot.override { dtb = ./kernels/qemu-aarch64.dtb; }}/uImage"
+          '';
         };
         coreboot-volteer-elemi = final.buildCoreboot {
           boardName = "volteer-elemi";
           configfile = ./coreboot/volteer-elemi.config;
-          prebuildPayloads = [ "${final.linux_linuxboot}/bzImage" ];
+          extraConfig =
+            let
+              vbt = prev.fetchurl {
+                url = "https://github.com/intel/FSP/raw/6f2f17f3d3397cc2f00a644e218980bb33e06f66/TigerLakeFspBinPkg/Client/SampleCode/Vbt/Vbt.bin";
+                sha256 = "sha256-IDp05CcwaTOucvXF8MmsTg1qyYKXU3E5xw2ZUisUXt4=";
+              };
+            in
+            ''
+              CONFIG_PAYLOAD_FILE="${final.linux_linuxboot}/bzImage"
+              CONFIG_INTEL_GMA_VBT_FILE="${vbt}"
+            '';
         };
 
         jmbaur-keybase-pgp-keys = prev.fetchurl {
