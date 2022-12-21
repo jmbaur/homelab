@@ -31,7 +31,7 @@ buildGoPackage {
       -uroot-source go/src/$goPackagePath \
       -files "${elvishrc}:etc/rc.elv" \
       -o $out/initramfs.cpio \
-      -uinitcmd=boot \
+      -uinitcmd=systemboot \
       core ./cmds/boot/{boot,systemboot,localboot,fbnetboot}
   '';
   dontInstall = true;
