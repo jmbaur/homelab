@@ -27,6 +27,7 @@ let
       coredns-utils
       depthcharge-tools
       discord-webapp
+      edk2-uefi-coreboot-payload
       flarectl
       flashrom-cros
       git-get
