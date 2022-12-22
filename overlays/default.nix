@@ -60,6 +60,7 @@ inputs: with inputs; {
         neovim-boring = prev.writeShellScriptBin
           "nvimb"
           ''exec -a "$0" ${final.neovim.override { boring = true; }}/bin/nvim "$@"'';
+        neovim-image = prev.callPackage ./neovim-image.nix { inherit (final) neovim; };
 
         mkWaylandVariant = prev.callPackage ./mkWaylandVariant.nix { };
         brave-wayland = final.mkWaylandVariant

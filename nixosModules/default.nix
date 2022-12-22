@@ -15,8 +15,8 @@ inputs: with inputs; {
       self.overlays.default
     ];
     imports = [
-      ./common.nix
       ./chromebook.nix
+      ./common.nix
       ./deployee.nix
       ./deployer.nix
       ./depthcharge
