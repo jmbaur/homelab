@@ -34,6 +34,7 @@
       keys = [
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDxKuwF8sjO3Wh/s/G/nBiaPIHaHZAG+Hk6HGsUkBk38 root@okra"
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE+958vaKzIYXQiiSl7wERlKIjKO0LvtmRZtIgDd+3XI root@fennel"
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIoieAaXJVzbv+TByDZk07Zhu+8i497WbnIp7mUmZmx5 root@beetroot"
       ];
     };
   };
