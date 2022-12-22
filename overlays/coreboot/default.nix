@@ -15,7 +15,7 @@ stdenv.mkDerivation {
   inherit (toolchain) version;
   src = fetchgit {
     inherit (toolchain.src) url rev leaveDotGit;
-    sha256 = "sha256-k4tTtvBOHZoXqNhQwOyCRsYxlPvSdE4xwd9NnMfvUzM=";
+    sha256 = "sha256-cYfCtGicB6340/T61QKcMJEXXC/etD4BxTsoLdz29mw=";
     fetchSubmodules = true;
   };
   depsBuildBuild = [ buildPackages.stdenv.cc ];

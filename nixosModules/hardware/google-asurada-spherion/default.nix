@@ -6,8 +6,7 @@ with lib;
   };
   config = mkIf config.hardware.asurada-spherion.enable {
     custom.laptop.enable = true;
-    services.xserver.xkbOptions = "ctrl:swap_lwin_lctl";
-
+    hardware.chromebook.enable = true;
     hardware.bluetooth.enable = mkDefault true;
     hardware.enableRedistributableFirmware = true;
     hardware.deviceTree = {

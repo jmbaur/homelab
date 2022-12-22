@@ -6,7 +6,6 @@ with lib;
   };
   config = mkIf config.hardware.kukui-fennel14.enable {
     custom.laptop.enable = true;
-    services.xserver.xkbOptions = "ctrl:swap_lwin_lctl";
 
     environment.pathsToLink = [ "/share/alsa" ];
     environment.systemPackages = [
@@ -19,6 +18,7 @@ with lib;
         }) [ ./HiFi.conf ./mt8183_da7219_rt1015p.conf ]))
     ];
 
+    hardware.chromebook.enable = true;
     hardware.bluetooth.enable = mkDefault true;
     hardware.enableRedistributableFirmware = true;
     hardware.deviceTree = {

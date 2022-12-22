@@ -16,6 +16,7 @@ inputs: with inputs; {
     ];
     imports = [
       ./common.nix
+      ./chromebook.nix
       ./deployee.nix
       ./deployer.nix
       ./depthcharge
@@ -30,6 +31,7 @@ inputs: with inputs; {
       ./remote_boot.nix
       ./remote_builder.nix
       ./wg_www_peer.nix
+      ./wireless.nix
       ./zfs.nix
       home-manager.nixosModules.home-manager
     ];

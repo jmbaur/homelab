@@ -1,7 +1,5 @@
 # vim: ft=make
 
-docker := env_var_or_default("DOCKER", "docker")
-
 help:
 	@just --list
 
@@ -52,23 +50,3 @@ setup_pam_u2f:
 
 setup_yubikey:
 	ykman openpgp keys set-touch sig cached-fixed
-
-coreboot_deps crossgcc_arch:
-	{{docker}} build \
-		--build-arg crossgcc_arch={{crossgcc_arch}} \
-		--tag coreboot_{{crossgcc_arch}} \
-		--file {{justfile_directory()}}/misc/coreboot/Containerfile \
-		.
-
-coreboot target crossgcc_arch: clean (coreboot_deps crossgcc_arch)
-	{{docker}} run \
-		--rm \
-		--volume $out:/out:rw \
-		--volume {{justfile_directory()}}/misc/coreboot/{{target}}/.config:/build/.config:ro \
-		coreboot_{{crossgcc_arch}}
-
-coreboot_qemu-aarch64: (coreboot "qemu-aarch64" "crossgcc-aarch64")
-coreboot_asurada-spherion: (coreboot "asurada-spherion" "crossgcc-aarch64")
-coreboot_kukui-fennel14: (coreboot "kukui-fennel14" "crossgcc-aarch64")
-coreboot_qemu-x86: (coreboot "qemu-x86" "crossgcc-i386")
-coreboot_volteer-elemi: (coreboot "volteer-elemi" "crossgcc-i386")

@@ -2,28 +2,19 @@
   imports = [ ./hardware-configuration.nix ];
   hardware.bluetooth.enable = true;
 
-  fileSystems = {
-    "/".options = [ "noatime" "discard=async" "compress=zstd" ];
-    "/nix".options = [ "noatime" "discard=async" "compress=zstd" ];
-    "/home".options = [ "noatime" "discard=async" "compress=zstd" ];
-  };
   zramSwap.enable = true;
 
-  boot = {
-    initrd = {
-      systemd.enable = true;
-      luks.devices."cryptroot".crypttabExtraOpts = [ "fido2-device=auto" ];
-    };
-    kernelPackages = pkgs.linuxPackages_6_0;
-    loader = {
-      systemd-boot.enable = true;
-      efi.canTouchEfiVariables = true;
-    };
-  };
+  boot.kernelPackages = pkgs.linuxPackages_6_0;
+  boot.loader.grub.enable = false;
+  boot.loader.grub.device = "/dev/disk/by-uuid/dc1c8937-2b8a-485a-bb03-f6983b1584ce";
+  boot.loader.generic-extlinux-compatible.enable = true;
+  boot.initrd.systemd.enable = true;
+  boot.initrd.availableKernelModules = [ "i915" ];
 
   time.timeZone = "America/Los_Angeles";
 
-  systemd.tmpfiles.rules = [ "f /etc/wpa_supplicant.conf 600 root root - -" ];
+  hardware.chromebook.enable = true;
+
   networking = {
     useDHCP = false;
     hostName = "beetroot";
@@ -50,40 +41,39 @@
   };
   services.resolved.enable = true;
 
+  users.mutableUsers = true;
   custom = {
     dev.enable = true;
     gui.enable = true;
     laptop.enable = true;
     users.jared = {
       enable = true;
-      passwordFile = config.sops.secrets.jared_password.path;
+      # passwordFile = config.sops.secrets.jared_password.path;
     };
     remoteBuilders.aarch64builder.enable = true;
   };
 
   nixpkgs.config.allowUnfree = true;
 
-  services.fwupd.enable = true;
+  # security.pam.u2f = {
+  # enable = true;
+  # cue = true;
+  # origin = "pam://homelab";
+  # authFile = config.sops.secrets.pam_u2f_authfile.path;
+  # };
 
-  security.pam.u2f = {
-    enable = true;
-    cue = true;
-    origin = "pam://homelab";
-    authFile = config.sops.secrets.pam_u2f_authfile.path;
-  };
+  # sops = {
+  # defaultSopsFile = ./secrets.yaml;
+  # secrets = {
+  # pam_u2f_authfile = { };
+  # jared_password.neededForUsers = true;
+  # "rdp/domain".owner = config.users.users.jared.name;
+  # "rdp/user".owner = config.users.users.jared.name;
+  # "rdp/password".owner = config.users.users.jared.name;
+  # };
+  # };
 
-  sops = {
-    defaultSopsFile = ./secrets.yaml;
-    secrets = {
-      pam_u2f_authfile = { };
-      jared_password.neededForUsers = true;
-      "rdp/domain".owner = config.users.users.jared.name;
-      "rdp/user".owner = config.users.users.jared.name;
-      "rdp/password".owner = config.users.users.jared.name;
-    };
-  };
-
-  home-manager.users.jared = { systemConfig, config, pkgs, ... }: {
+  home-manager.users.jared = { config, pkgs, ... }: {
     services.kanshi = {
       profiles = {
         default = { outputs = [{ criteria = "eDP-1"; }]; };
@@ -110,19 +100,8 @@
       slack-wayland
       spotify
       teams-webapp
-      (writeShellScriptBin "rdp" ''
-        ${freerdp}/bin/wlfreerdp \
-          /sec:tls /cert:tofu -grab-keyboard +auto-reconnect \
-          /d:$(cat ${systemConfig.sops.secrets."rdp/domain".path}) \
-          /u:$(cat ${systemConfig.sops.secrets."rdp/user".path}) \
-          /p:$(cat ${systemConfig.sops.secrets."rdp/password".path}) \
-          /v:laptop.work.home.arpa
-      '')
-      (writeShellScriptBin "chromium-work" ''
-        ${chromium-wayland}/bin/chromium \
-          --profile-directory=Work \
-          --proxy-server="socks5://localhost:9050"
-      '')
+      (writeShellScriptBin "work-browser" "${chromium-wayland}/bin/chromium --user-data-dir=$HOME/.config/chromium-work --proxy-server=socks5://localhost:9050")
+      (writeShellScriptBin "rdp" "${pkgs.freerdp}/bin/wlfreerdp /sec:tls /cert:tofu /v:laptop.work.home.arpa -grab-keyboard +auto-reconnect")
     ];
   };
 
@@ -132,6 +111,6 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "22.05"; # Did you read the comment?
+  system.stateVersion = "23.05"; # Did you read the comment?
 
 }
