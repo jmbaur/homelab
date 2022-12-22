@@ -2,22 +2,21 @@
 
 export DISK="/dev/nvme0n1"
 
-blkdiscard $DISK
+blkdiscard -f $DISK
 
 export BOOT_PART="${DISK}p1"
 export CRYPT_PART="${DISK}p2"
 
 parted $DISK -- mklabel gpt
-parted $DISK -- mkpart ESP fat32 1MiB 512MiB
+parted $DISK -- mkpart primary 1MiB 512MiB
 parted $DISK -- mkpart primary 512MiB 100%
-parted $DISK -- set 1 esp on
 
 cryptsetup luksFormat $CRYPT_PART
 cryptsetup luksOpen $CRYPT_PART cryptroot
 systemd-cryptenroll --fido2-device=auto $CRYPT_PART
 
 mkfs.btrfs /dev/mapper/cryptroot
-mkfs.vfat -F32 $BOOT_PART
+mkfs.ext4 $BOOT_PART
 mount /dev/mapper/cryptroot /mnt
 btrfs subvolume create /mnt/@
 btrfs subvolume create /mnt/@nix

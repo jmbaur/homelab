@@ -8,6 +8,8 @@ in
     system.stateVersion = "22.11";
     boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
     custom.disableZfs = true;
+    documentation.enable = true;
+    documentation.man.enable = true;
     systemd.services.sshd.wantedBy = lib.mkForce [ "multi-user.target" ];
     users.users.nixos.openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
     services.openssh.openFirewall = lib.mkForce true;
