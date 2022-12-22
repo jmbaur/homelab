@@ -67,7 +67,6 @@ in
     environment.systemPackages = [ pkgs.vboot_reference ];
     console.earlySetup = true;
     boot.loader.grub.enable = false;
-    boot.loader.initScript.enable = true;
     system.boot.loader.id = "depthcharge";
     system.extraSystemBuilderCmds = ''
       ${makeKpart} $out
@@ -112,6 +111,21 @@ in
             '' else ''
               echo "Kpart produced at $kpart, but automatic installation is disabled."
             ''}
+
+            # install simple init to /sbin/init
+            target="/sbin/init"
+            tmp="$target.tmp"
+
+            content="$(
+              echo "#!/bin/sh"
+              echo "# Nixos - Default"
+              echo "exec ''${system}/init"
+            )"
+
+            echo "$content" > $tmp
+            chmod +x $tmp
+            mkdir -p /boot /sbin
+            mv $tmp $target
           '';
         };
       in
