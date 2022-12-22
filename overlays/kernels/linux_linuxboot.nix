@@ -14,7 +14,7 @@ let
     inherit lib stdenv;
     inherit (linuxKernel.kernels.linux_6_0) src version modDirVersion kernelPatches extraMakeFlags;
     configfile = ./linuxboot-${stdenv.hostPlatform.linuxArch}.config;
-    config.DTB = true;
+    config.DTB = stdenv.hostPlatform.system != "x86_64-linux";
   }).overrideAttrs (old: {
     preConfigure = lib.optionalString
       (stdenv.hostPlatform.system == "x86_64-linux")

@@ -102,7 +102,7 @@ inputs: with inputs; {
         ubootCN9130_CF_Pro = prev.callPackage ./ubootCN9130_CF_Pro.nix { inherit cn913x_build; };
 
         linux_cn913x = prev.callPackage ./kernels/linux_cn913x.nix { inherit cn913x_build; };
-        linux_chromiumos_mediatek = prev.callPackage ./kernels/linux_chromiumos_mediatek.nix { };
+        linux_mediatek = prev.callPackage ./kernels/linux_mediatek.nix { };
         linux_linuxboot = prev.callPackage ./kernels/linux_linuxboot.nix { inherit (final) u-rootInitramfs; };
 
         edk2-uefi-coreboot-payload = prev.callPackage ./edk2-coreboot.nix { };

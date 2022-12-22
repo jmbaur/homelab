@@ -14,6 +14,6 @@ with lib;
       filter = "mt8192-asurada-spherion*.dtb";
     };
 
-    boot.kernelPackages = pkgs.linuxKernel.packagesFor pkgs.linux_chromiumos_mediatek;
+    boot.kernelPackages = pkgs.linuxKernel.packagesFor pkgs.linux_mediatek;
   };
 }

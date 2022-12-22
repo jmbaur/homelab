@@ -26,6 +26,6 @@ with lib;
       filter = "mt8183-kukui-jacuzzi-fennel14*.dtb";
     };
 
-    boot.kernelPackages = pkgs.linuxKernel.packagesFor pkgs.linux_chromiumos_mediatek;
+    boot.kernelPackages = pkgs.linuxKernel.packagesFor pkgs.linux_mediatek;
   };
 }
