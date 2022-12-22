@@ -64,10 +64,6 @@ in
   };
 
   config = mkIf config.boot.loader.depthcharge.enable {
-    programs.flashrom = {
-      enable = true;
-      package = pkgs.flashrom-cros;
-    };
     environment.systemPackages = [ pkgs.vboot_reference ];
     console.earlySetup = true;
     boot.loader.grub.enable = false;
