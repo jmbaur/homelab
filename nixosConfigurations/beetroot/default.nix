@@ -4,12 +4,16 @@
 
   zramSwap.enable = true;
 
-  boot.kernelPackages = pkgs.linuxPackages_6_0;
-  boot.loader.grub.enable = false;
-  boot.loader.grub.device = "/dev/disk/by-uuid/dc1c8937-2b8a-485a-bb03-f6983b1584ce";
-  boot.loader.generic-extlinux-compatible.enable = true;
-  boot.initrd.systemd.enable = true;
+  boot.initrd.luks.devices."cryptroot".crypttabExtraOpts = [ "fido2-device=auto" ];
+  fileSystems."/".options = [ "noatime" "discard=async" "compress=zstd" ];
+  fileSystems."/nix".options = [ "noatime" "discard=async" "compress=zstd" ];
+  fileSystems."/home".options = [ "noatime" "discard=async" "compress=zstd" ];
+
   boot.initrd.availableKernelModules = [ "i915" ];
+  boot.initrd.systemd.enable = true;
+  boot.kernelPackages = pkgs.linuxPackages_6_0;
+  boot.loader.generic-extlinux-compatible.enable = true;
+  boot.loader.grub.enable = false;
 
   time.timeZone = "America/Los_Angeles";
 

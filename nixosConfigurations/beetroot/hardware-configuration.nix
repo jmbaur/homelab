@@ -8,13 +8,33 @@
     [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "sdhci_pci" ];
+  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usbhid" "sdhci_pci" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/dc1c8937-2b8a-485a-bb03-f6983b1584ce";
+    { device = "/dev/disk/by-uuid/8bdb444c-6c50-4cf0-a740-6eba15be8711";
+      fsType = "btrfs";
+      options = [ "subvol=@" ];
+    };
+
+  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/ca83363a-9316-4499-8c4b-ef753a56bfb8";
+
+  fileSystems."/nix" =
+    { device = "/dev/disk/by-uuid/8bdb444c-6c50-4cf0-a740-6eba15be8711";
+      fsType = "btrfs";
+      options = [ "subvol=@nix" ];
+    };
+
+  fileSystems."/home" =
+    { device = "/dev/disk/by-uuid/8bdb444c-6c50-4cf0-a740-6eba15be8711";
+      fsType = "btrfs";
+      options = [ "subvol=@home" ];
+    };
+
+  fileSystems."/boot" =
+    { device = "/dev/disk/by-uuid/f8c52b63-b150-42f2-9f9a-ca3c06b35d68";
       fsType = "ext4";
     };
 
