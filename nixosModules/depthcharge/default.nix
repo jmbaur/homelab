@@ -67,6 +67,7 @@ in
     environment.systemPackages = [ pkgs.vboot_reference ];
     console.earlySetup = true;
     boot.loader.grub.enable = false;
+    boot.loader.initScript.enable = true;
     system.boot.loader.id = "depthcharge";
     system.extraSystemBuilderCmds = ''
       ${makeKpart} $out
