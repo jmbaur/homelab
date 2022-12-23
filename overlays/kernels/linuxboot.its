@@ -16,8 +16,6 @@
 			arch = "arm64";
 			os = "linux";
 			compression = "lzma";
-			load = <0x80000>;
-			entry = <0x80000>;
 			hash-1 {
 				algo = "crc32";
 			};
@@ -39,8 +37,6 @@
 			arch = "arm64";
 			os = "linux";
 			compression = "none";
-			load = <00000000>;
-			entry = <00000000>;
 			hash-1 {
 				algo = "sha1";
 			};
