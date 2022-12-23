@@ -7,5 +7,7 @@
       enable = true;
       package = pkgs.flashrom-cros;
     };
+    # TODO(jared): extlinux-compatible bootloader generation does not include this
+    specialisation.flashfriendly.configuration.boot.kernelParams = [ "iomem=relaxed" ];
   };
 }
