@@ -1,4 +1,4 @@
-{ stdenv, buildPackages, python3, git, coreboot-toolchain, fetchgit, ... }:
+{ stdenv, buildPackages, python3, coreboot-toolchain, fetchgit, ... }:
 let
   toolchain-system =
     if
@@ -14,12 +14,13 @@ stdenv.mkDerivation {
   pname = "coreboot-${boardName}";
   inherit (toolchain) version;
   src = fetchgit {
-    inherit (toolchain.src) url rev leaveDotGit;
+    inherit (toolchain.src) url rev;
+    leaveDotGit = false;
     sha256 = "sha256-cYfCtGicB6340/T61QKcMJEXXC/etD4BxTsoLdz29mw=";
     fetchSubmodules = true;
   };
   depsBuildBuild = [ buildPackages.stdenv.cc ];
-  nativeBuildInputs = [ python3 git ];
+  nativeBuildInputs = [ python3 ];
   postPatch = ''
     patchShebangs util
   '';
