@@ -1,4 +1,4 @@
-{ buildGoPackage, fetchFromGitHub, buildPackages, writeText, ... }:
+{ buildGoPackage, fetchFromGitHub, buildPackages, defaultInit ? "boot", ... }:
 let
   pname = "u-root";
   version = "2022-12-21";
@@ -14,26 +14,21 @@ let
     inherit pname version src goPackagePath;
     subPackages = ".";
   };
-  elvishrc = writeText "rc.elv" ''
-    use readline-binding
-  '';
 in
 buildGoPackage {
   pname = "${pname}-initramfs";
   inherit version src goPackagePath;
   patches = [
-    ./u-root-extlinux-path.patch # allows for booting extlinux on nixos /boot/extlinux/extlinux.conf
-    ./u-root-elvish-etc-rc.patch # read elvish rc.elv from /etc/rc.elv
-    ./u-root-more-stdin.patch # allow stdin to be used for more
+    # allows for booting extlinux on nixos /boot/extlinux/extlinux.conf
+    ./u-root-extlinux-path.patch
   ];
   buildPhase = ''
     mkdir -p $out
     GOROOT="$(go env GOROOT)" ${builder}/bin/u-root \
       -uroot-source go/src/$goPackagePath \
-      -files "${elvishrc}:etc/rc.elv" \
       -o $out/initramfs.cpio \
-      -uinitcmd=boot \
-      core ./cmds/boot/boot
+      -uinitcmd=${defaultInit} \
+      coreboot-app boot
   '';
   dontInstall = true;
 }
