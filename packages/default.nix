@@ -17,13 +17,11 @@ let
       preferLocalBuild = true;
     };
 
-    coreboot-toolchain-i386 = pkgs.coreboot-toolchain.i386.override { withAda = false; };
-    coreboot-toolchain-aarch64 = pkgs.coreboot-toolchain.aarch64.override { withAda = false; };
-
     inherit (pkgs)
       bitwarden-bemenu
       chromium-wayland
       cicada
+      coreboot-toolchain
       coredns-utils
       depthcharge-tools
       discord-webapp

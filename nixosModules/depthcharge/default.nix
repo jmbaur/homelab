@@ -113,18 +113,17 @@ in
             ''}
 
             # install simple init to /sbin/init
+            mkdir -p /boot /sbin
             target="/sbin/init"
             tmp="$target.tmp"
 
             content="$(
               echo "#!/bin/sh"
-              echo "# Nixos - Default"
               echo "exec ''${system}/init"
             )"
 
             echo "$content" > $tmp
             chmod +x $tmp
-            mkdir -p /boot /sbin
             mv $tmp $target
           '';
         };
