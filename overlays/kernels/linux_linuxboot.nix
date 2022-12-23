@@ -6,7 +6,7 @@
 , ubootTools
 , dtc
 , xz
-, dtb ? ""
+, dtb ? ./qemu-aarch64.dtb
 , ...
 }:
 let
@@ -23,9 +23,7 @@ let
   });
 
   fitimage = runCommand "linuxboot-fitimage"
-    {
-      nativeBuildInputs = [ ubootTools dtc xz ];
-    } ''
+    { nativeBuildInputs = [ ubootTools dtc xz ]; } ''
     mkdir -p $out
     lzma --threads 0 <${kernel}/Image >Image.lzma
     xz --check=crc32 --lzma2=dict=512KiB <${u-rootInitramfs}/initramfs.cpio >initramfs.cpio.xz

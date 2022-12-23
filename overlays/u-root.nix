@@ -1,12 +1,12 @@
 { buildGoPackage, fetchFromGitHub, buildPackages, writeText, ... }:
 let
   pname = "u-root";
-  version = "2022-12-18";
+  version = "2022-12-21";
   src = fetchFromGitHub {
     owner = "u-root";
     repo = "u-root";
-    rev = "bac9c581f8d94a2b0df97e84001287f18fd12370";
-    sha256 = "sha256-Yhd6jxO7DmBKJww41xCQ5f9H11geSwnrfWaSfRP117E=";
+    rev = "b02caf19d3072bfecd00012bf586b6a729d75639";
+    sha256 = "sha256-v5lX6jCmFs1TURv3F5gbfTSSG4Mp2roRRx3FBJLazLk=";
   };
   goPackagePath = "github.com/u-root/u-root";
   # u-root builder does not need to be cross-compiled
@@ -24,6 +24,7 @@ buildGoPackage {
   patches = [
     ./u-root-extlinux-path.patch # allows for booting extlinux on nixos /boot/extlinux/extlinux.conf
     ./u-root-elvish-etc-rc.patch # read elvish rc.elv from /etc/rc.elv
+    ./u-root-more-stdin.patch # allow stdin to be used for more
   ];
   buildPhase = ''
     mkdir -p $out

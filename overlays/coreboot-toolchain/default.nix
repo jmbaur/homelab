@@ -1,75 +1,82 @@
-{ stdenv
-, bison
-, buildPackages
-, callPackage
-, curl
-, fetchgit
-, flex
-, getopt
-, git
-, gnat11
-, lib
-, perl
-, stdenvNoCC
-, zlib
-, withAda ? false
-}:
+{ stdenv, lib, callPackage }:
 let
-  arch =
-    if
-      stdenv.hostPlatform.system == "x86_64-linux" then "i386"
-    else if
-      stdenv.hostPlatform.system == "aarch64-linux" then "aarch64"
-    else throw "unsupported architecture";
-in
-stdenvNoCC.mkDerivation rec {
-  pname = "coreboot-toolchain";
-  version = "4.18";
+  common = arch: callPackage (
+    { bison
+    , buildPackages
+    , callPackage
+    , curl
+    , fetchgit
+    , flex
+    , getopt
+    , git
+    , gnat11
+    , lib
+    , perl
+    , stdenvNoCC
+    , zlib
+    , withAda ? true
+    }:
 
-  src = fetchgit {
-    url = "https://review.coreboot.org/coreboot";
-    rev = version;
-    sha256 = "sha256-vilaYPNW1Ni8z8k1Bxu4ZvbSla/q3xGwS0fEEWxmux4=";
-    fetchSubmodules = false;
-    leaveDotGit = true;
-    postFetch = ''
-      PATH=${lib.makeBinPath [ getopt ]}:$PATH ${stdenv.shell} $out/util/crossgcc/buildgcc -W > $out/.crossgcc_version
-      rm -rf $out/.git
-    '';
-    allowedRequisites = [ ];
-  };
+    stdenvNoCC.mkDerivation rec {
+      pname = "coreboot-toolchain-${arch}";
+      version = "4.18";
 
-  depsBuildBuild = [ (if withAda then buildPackages.gnat11 else buildPackages.stdenv.cc) ];
-  nativeBuildInputs = [ bison curl git perl ];
-  buildInputs = [ flex zlib ];
+      src = fetchgit {
+        url = "https://review.coreboot.org/coreboot";
+        rev = version;
+        sha256 = "sha256-vilaYPNW1Ni8z8k1Bxu4ZvbSla/q3xGwS0fEEWxmux4=";
+        fetchSubmodules = false;
+        leaveDotGit = true;
+        postFetch = ''
+          PATH=${lib.makeBinPath [ getopt ]}:$PATH ${stdenv.shell} $out/util/crossgcc/buildgcc -W > $out/.crossgcc_version
+          rm -rf $out/.git
+        '';
+        allowedRequisites = [ ];
+      };
 
-  enableParallelBuilding = true;
-  dontConfigure = true;
-  dontInstall = true;
+      depsBuildBuild = [ (if withAda then buildPackages.gnat11 else buildPackages.stdenv.cc) ];
+      nativeBuildInputs = [ bison curl git perl ];
+      buildInputs = [ flex zlib ];
 
-  postPatch = ''
-    patchShebangs util/crossgcc/buildgcc
+      enableParallelBuilding = true;
+      dontConfigure = true;
+      dontInstall = true;
 
-    mkdir -p util/crossgcc/tarballs
+      postPatch = ''
+        patchShebangs util/crossgcc/buildgcc
 
-    ${lib.concatMapStringsSep "\n" (
-      file: "ln -s ${file.archive} util/crossgcc/tarballs/${file.name}"
-      ) (callPackage ./sources.nix { })
+        mkdir -p util/crossgcc/tarballs
+
+        ${lib.concatMapStringsSep "\n" (
+          file: "ln -s ${file.archive} util/crossgcc/tarballs/${file.name}"
+          ) (callPackage ./sources.nix { })
+        }
+
+        patchShebangs util/genbuild_h/genbuild_h.sh
+      '';
+
+      buildPhase = ''
+        export CROSSGCC_VERSION=$(cat .crossgcc_version)
+        make crossgcc-${arch} CPUS=$NIX_BUILD_CORES DEST=$out
+      '';
+
+      meta = with lib; {
+        homepage = "https://www.coreboot.org";
+        description = "coreboot toolchain for ${arch} targets";
+        license = with licenses; [ bsd2 bsd3 gpl2 lgpl2Plus gpl3Plus ];
+        maintainers = with maintainers; [ felixsinger ];
+        platforms = platforms.linux;
+      };
     }
+  );
+in
 
-    patchShebangs util/genbuild_h/genbuild_h.sh
-  '';
-
-  buildPhase = ''
-    export CROSSGCC_VERSION=$(cat .crossgcc_version)
-    make crossgcc-${arch} CPUS=$NIX_BUILD_CORES DEST=$out
-  '';
-
-  meta = with lib; {
-    homepage = "https://www.coreboot.org";
-    description = "coreboot toolchain";
-    license = with licenses; [ bsd2 bsd3 gpl2 lgpl2Plus gpl3Plus ];
-    maintainers = with maintainers; [ felixsinger ];
-    platforms = platforms.linux;
-  };
-}
+lib.listToAttrs (map (arch: lib.nameValuePair arch (common arch { })) [
+  "i386"
+  "x64"
+  "arm"
+  "aarch64"
+  "riscv"
+  "ppc64"
+  "nds32le"
+])

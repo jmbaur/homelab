@@ -1,11 +1,18 @@
 { stdenv, buildPackages, python3, git, coreboot-toolchain, fetchgit, ... }:
 let
-  toolchain = buildPackages.coreboot-toolchain;
+  toolchain-system =
+    if
+      stdenv.hostPlatform.system == "x86_64-linux" then "i386"
+    else if
+      stdenv.hostPlatform.system == "aarch64-linux" then "aarch64"
+    else throw "unsupported system";
+
+  toolchain = buildPackages.coreboot-toolchain.${toolchain-system}.override { withAda = false; };
 in
 { boardName, configfile, extraConfig ? "", ... }:
 stdenv.mkDerivation {
   pname = "coreboot-${boardName}";
-  inherit (coreboot-toolchain) version;
+  inherit (toolchain) version;
   src = fetchgit {
     inherit (toolchain.src) url rev leaveDotGit;
     sha256 = "sha256-cYfCtGicB6340/T61QKcMJEXXC/etD4BxTsoLdz29mw=";
