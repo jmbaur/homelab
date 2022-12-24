@@ -107,6 +107,7 @@ inputs: with inputs; {
 
         edk2-uefi-coreboot-payload = prev.callPackage ./edk2-coreboot.nix { };
 
+        mkFitImage = prev.callPackage ./fitimage { };
         coreboot-toolchain = prev.callPackage ./coreboot-toolchain { };
         buildCoreboot = prev.callPackage ./coreboot { inherit (final) coreboot-toolchain; };
         coreboot-qemu-x86 = final.buildCoreboot {
@@ -114,15 +115,24 @@ inputs: with inputs; {
           configfile = ./coreboot/qemu-x86.config;
           extraConfig = ''
             CONFIG_PAYLOAD_FILE="${final.linux_linuxboot}/bzImage"
+            CONFIG_LINUX_INITRD="${final.u-rootInitramfs}"
           '';
         };
-        coreboot-qemu-aarch64 = final.buildCoreboot {
+        coreboot-qemu-aarch64 = final.buildCoreboot rec {
           boardName = "qemu-aarch64";
           configfile = ./coreboot/qemu-aarch64.config;
-          # qemu-system-aarch64 -bios ./result/coreboot.rom -M virt,secure=on,virtualization=on -cpu cortex-a53 -m 2048M -nographic
-          extraConfig = ''
-            CONFIG_PAYLOAD_FILE="${final.linux_linuxboot.override { dtb = ./kernels/qemu-aarch64.dtb; }}/uImage"
-          '';
+          # qemu-system-aarch64 -M virt,secure=on,virtualization=on -cpu cortex-a53 -m 2048M -nographic -bios ./result/coreboot.rom
+          extraConfig =
+            let
+              fitimage = final.mkFitImage {
+                inherit boardName;
+                kernel = final.linux_linuxboot;
+                initramfs = final.u-rootInitramfs;
+              };
+            in
+            ''
+              CONFIG_PAYLOAD_FILE="${fitimage}/uImage"
+            '';
         };
         coreboot-volteer-elemi = final.buildCoreboot {
           boardName = "volteer-elemi";
@@ -137,21 +147,40 @@ inputs: with inputs; {
             ''
               CONFIG_INTEL_GMA_VBT_FILE="${vbt}"
               CONFIG_PAYLOAD_FILE="${final.linux_linuxboot}/bzImage"
+              CONFIG_LINUX_INITRD="${final.u-rootInitramfs}"
             '';
         };
-        coreboot-kukui-fennel14 = final.buildCoreboot {
+        coreboot-kukui-fennel14 = final.buildCoreboot rec {
           boardName = "kukui-fennel14";
           configfile = ./coreboot/kukui-fennel.config;
-          extraConfig = ''
-            CONFIG_PAYLOAD_FILE="${final.linux_linuxboot.override { dtb = "mt8183-kukui-jacuzzi-fennel14.dtb"; }}/uImage"
-          '';
+          extraConfig =
+            let
+              fitimage = final.mkFitImage {
+                inherit boardName;
+                kernel = final.linux_linuxboot;
+                initramfs = final.u-rootInitramfs;
+                dtb = "${final.linux_linuxboot}/dtbs/mediatek/mt8183-kukui-jacuzzi-fennel14.dtb";
+              };
+            in
+            ''
+              CONFIG_PAYLOAD_FILE="${fitimage}/uImage"
+            '';
         };
-        coreboot-asurada-spherion = final.buildCoreboot {
+        coreboot-asurada-spherion = final.buildCoreboot rec {
           boardName = "asurada-spherion";
           configfile = ./coreboot/asurada-spherion.config;
-          extraConfig = ''
-            CONFIG_PAYLOAD_FILE="${final.linux_linuxboot.override { dtb = "mt8192-asurada-spherion-r0.dtb"; }}/uImage"
-          '';
+          extraConfig =
+            let
+              fitimage = final.mkFitImage {
+                inherit boardName;
+                kernel = final.linux_linuxboot;
+                initramfs = final.u-rootInitramfs;
+                dtb = "${final.linux_linuxboot}/dtbs/mediatek/mt8192-asurada-spherion-r0.dtb";
+              };
+            in
+            ''
+              CONFIG_PAYLOAD_FILE="${fitimage}/uImage"
+            '';
         };
 
         jmbaur-keybase-pgp-keys = prev.fetchurl {

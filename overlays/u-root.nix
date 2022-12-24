@@ -1,4 +1,4 @@
-{ buildGoPackage, fetchFromGitHub, buildPackages, defaultInit ? "boot", ... }:
+{ buildGoPackage, fetchFromGitHub, buildPackages, xz, defaultInit ? "boot", ... }:
 let
   pname = "u-root";
   version = "2022-12-21";
@@ -18,17 +18,19 @@ in
 buildGoPackage {
   pname = "${pname}-initramfs";
   inherit version src goPackagePath;
+  nativeBuildInputs = [ xz ];
   patches = [
     # allows for booting extlinux on nixos /boot/extlinux/extlinux.conf
     ./u-root-extlinux-path.patch
   ];
   buildPhase = ''
-    mkdir -p $out
     GOROOT="$(go env GOROOT)" ${builder}/bin/u-root \
       -uroot-source go/src/$goPackagePath \
-      -o $out/initramfs.cpio \
+      -o initramfs.cpio \
       -uinitcmd=${defaultInit} \
       coreboot-app boot
   '';
-  dontInstall = true;
+  installPhase = ''
+    xz --check=crc32 --lzma2=dict=512KiB <initramfs.cpio >$out
+  '';
 }

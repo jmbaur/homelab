@@ -12,12 +12,12 @@
 }:
 stdenv.mkDerivation {
   pname = "flashrom-cros";
-  version = "2022-12-17";
+  version = "2022-12-22";
 
   src = fetchFromGitiles {
     url = "https://chromium.googlesource.com/chromiumos/third_party/flashrom";
-    rev = "71ede00efd482f497822841375211fcd5cf00d6b";
-    sha256 = "sha256-98na7SaKX4/ZjUhE56AvAN0WQtcEHtYrDBGMiLOBFwo=";
+    rev = "310b87378ec5af3c5f6def8fcced2fdcd020ba1e";
+    sha256 = "sha256-ckKxjOOcxa70uzvTuv7/NubDntcYLjX+VuE0BOImSqQ=";
   };
 
   dontUseCmakeConfigure = true;
