@@ -139,6 +139,20 @@ inputs: with inputs; {
               CONFIG_PAYLOAD_FILE="${final.linux_linuxboot}/bzImage"
             '';
         };
+        coreboot-kukui-fennel14 = final.buildCoreboot {
+          boardName = "kukui-fennel14";
+          configfile = ./coreboot/kukui-fennel.config;
+          extraConfig = ''
+            CONFIG_PAYLOAD_FILE="${final.linux_linuxboot.override { dtb = "mt8183-kukui-jacuzzi-fennel14.dtb"; }}/uImage"
+          '';
+        };
+        coreboot-asurada-spherion = final.buildCoreboot {
+          boardName = "asurada-spherion";
+          configfile = ./coreboot/asurada-spherion.config;
+          extraConfig = ''
+            CONFIG_PAYLOAD_FILE="${final.linux_linuxboot.override { dtb = "mt8192-asurada-spherion-r0.dtb"; }}/uImage"
+          '';
+        };
 
         jmbaur-keybase-pgp-keys = prev.fetchurl {
           url = "https://keybase.io/jaredbaur/pgp_keys.asc";

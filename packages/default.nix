@@ -78,6 +78,8 @@ in
     in
     pkgs.lib.recursiveUpdate (commonDerivations pkgs) {
       inherit (pkgs)
+        coreboot-asurada-spherion
+        coreboot-kukui-fennel14
         coreboot-qemu-aarch64
         linux_mediatek
         linux_cn913x
@@ -117,10 +119,12 @@ in
         ;
 
       inherit (pkgs.pkgsCross.aarch64-multiplatform)
+        coreboot-asurada-spherion
+        coreboot-kukui-fennel14
         coreboot-qemu-aarch64
         ipwatch
-        linux_mediatek
         linux_cn913x
+        linux_mediatek
         runner-nix
         ubootCN9130_CF_Pro
         webauthn-tiny
