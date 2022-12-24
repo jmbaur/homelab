@@ -1,4 +1,4 @@
-{ buildGoPackage, fetchFromGitHub, buildPackages, xz, defaultInit ? "boot", ... }:
+{ buildGoPackage, fetchFromGitHub, buildPackages, pkgsStatic, xz, runCommand, cpio, ... }:
 let
   pname = "u-root";
   version = "2022-12-21";
@@ -14,6 +14,13 @@ let
     inherit pname version src goPackagePath;
     subPackages = ".";
   };
+
+  base = runCommand "busybox-initramfs" { nativeBuildInputs = [ cpio ]; } ''
+    mkdir root; cd root
+    cp -r ${pkgsStatic.busybox}/. .
+    find . -print0 |
+      cpio --null --create --verbose --format=newc >$out
+  '';
 in
 buildGoPackage {
   pname = "${pname}-initramfs";
@@ -26,9 +33,11 @@ buildGoPackage {
   buildPhase = ''
     GOROOT="$(go env GOROOT)" ${builder}/bin/u-root \
       -uroot-source go/src/$goPackagePath \
+      -defaultsh "" \
+      -uinitcmd=boot \
+      -base ${base} \
       -o initramfs.cpio \
-      -uinitcmd=${defaultInit} \
-      coreboot-app boot
+      ./cmds/{core/init,boot/boot}
   '';
   installPhase = ''
     xz --check=crc32 --lzma2=dict=512KiB <initramfs.cpio >$out
