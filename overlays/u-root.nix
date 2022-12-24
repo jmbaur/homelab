@@ -1,4 +1,4 @@
-{ buildGoPackage, fetchFromGitHub, buildPackages, pkgsStatic, xz, runCommand, cpio, ... }:
+{ buildGoPackage, fetchFromGitHub, buildPackages, pkgsStatic, xz, cpio, runCommand, ... }:
 let
   pname = "u-root";
   version = "2022-12-21";
@@ -27,14 +27,14 @@ buildGoPackage {
   inherit version src goPackagePath;
   nativeBuildInputs = [ xz ];
   patches = [
-    # allows for booting extlinux on nixos /boot/extlinux/extlinux.conf
-    ./u-root-extlinux-path.patch
+    ./u-root-extlinux-path.patch # allows for booting extlinux on nixos /boot/extlinux/extlinux.conf
+    ./u-root-no-defaultsh.patch # just use /bin/sh
   ];
   buildPhase = ''
     GOROOT="$(go env GOROOT)" ${builder}/bin/u-root \
       -uroot-source go/src/$goPackagePath \
       -defaultsh "" \
-      -uinitcmd=boot \
+      -uinitcmd boot \
       -base ${base} \
       -o initramfs.cpio \
       ./cmds/{core/init,boot/boot}

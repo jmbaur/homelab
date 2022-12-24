@@ -1,0 +1,55 @@
+diff --git a/cmds/core/init/init.go b/cmds/core/init/init.go
+index a98bf2ee..4e28a127 100644
+--- a/cmds/core/init/init.go
++++ b/cmds/core/init/init.go
+@@ -7,7 +7,7 @@
+ // init is intended to be the first process run by the kernel when it boots up.
+ // init does some basic initialization (mount file systems, turn on loopback)
+ // and then tries to execute, in order, /inito, a uinit (either in /bin, /bbin,
+-// or /ubin), and then a shell (/bin/defaultsh and /bin/sh).
++// or /ubin), and then a shell (/bin/sh).
+ package main
+ 
+ import (
+diff --git a/cmds/core/init/init_linux.go b/cmds/core/init/init_linux.go
+index c85b14ac..3c9ed8a8 100644
+--- a/cmds/core/init/init_linux.go
++++ b/cmds/core/init/init_linux.go
+@@ -82,7 +82,6 @@ func osInitGo() *initCmds {
+ 			libinit.Command("/bin/uinit", ctty, uinitArgs),
+ 			libinit.Command("/buildbin/uinit", ctty, uinitArgs),
+ 
+-			libinit.Command("/bin/defaultsh", ctty),
+ 			libinit.Command("/bin/sh", ctty),
+ 		},
+ 	}
+diff --git a/cmds/exp/getty/getty.go b/cmds/exp/getty/getty.go
+index 28fd6aee..e5847727 100644
+--- a/cmds/exp/getty/getty.go
++++ b/cmds/exp/getty/getty.go
+@@ -34,7 +34,6 @@ var (
+ func init() {
+ 	r := upath.UrootPath
+ 	cmdList = []string{
+-		r("/bin/defaultsh"),
+ 		r("/bin/sh"),
+ 	}
+ }
+diff --git a/pkg/boot/menu/menu.go b/pkg/boot/menu/menu.go
+index 7877a3ce..36a5424b 100644
+--- a/pkg/boot/menu/menu.go
++++ b/pkg/boot/menu/menu.go
+@@ -304,11 +304,11 @@ func (StartShell) Load() error {
+ 	return nil
+ }
+ 
+-// Exec implements Entry.Exec by running /bin/defaultsh.
++// Exec implements Entry.Exec by running /bin/sh.
+ func (StartShell) Exec() error {
+ 	// Reset signal handler for SIGINT to enable user interrupts again
+ 	signal.Reset(syscall.SIGINT)
+-	return sh.RunWithLogs("/bin/defaultsh")
++	return sh.RunWithLogs("/bin/sh")
+ }
+ 
+ // IsDefault indicates that this should not be run as a default action.
