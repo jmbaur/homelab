@@ -1,7 +1,7 @@
 { stdenvNoCC, fetchFromGitHub, zig }:
 stdenvNoCC.mkDerivation rec {
   pname = "zf";
-  version = "0.5";
+  version = "0.5"; # 0.6.0 and up require zig 0.10.0
   src = fetchFromGitHub {
     owner = "natecraddock";
     repo = "zf";
