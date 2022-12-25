@@ -16,6 +16,7 @@ switch:
 build:
 	nix build -L \
 		.\#cicada \
+		.\#coreboot-volteer-elemi \
 		.\#coredns-utils \
 		.\#flarectl \
 		.\#flashrom-cros \
