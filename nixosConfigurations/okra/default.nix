@@ -30,6 +30,7 @@
       networkConfig.IPv6PrivacyExtensions = "kernel";
     };
     wireless = {
+      enable = false;
       name = "wl*";
       DHCP = "yes";
       dhcpV4Config.RouteMetric = 2048;
