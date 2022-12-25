@@ -19,7 +19,7 @@ stdenv.mkDerivation {
   };
   depsBuildBuild = [ buildPackages.stdenv.cc ];
   nativeBuildInputs = [ python3 ];
-  patches = [ ./increase-ramstage-size.patch ];
+  patches = [ ./memory-layout.patch ];
   postPatch = ''
     patchShebangs util
   '';
