@@ -34,7 +34,7 @@ in
         nixpkgs-fmt = { enable = true; excludes = [ "hardware-configuration\\.nix" ]; };
         revive.enable = true;
         shellcheck.enable = true;
-        shfmt.enable = true;
+        shfmt = { enable = true; excludes = [ "nixosModules/extlinux-delete-when-merged/*" ]; };
         stylua.enable = true;
       };
     }) shellHook;

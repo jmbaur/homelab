@@ -1,11 +1,6 @@
-{ lib, stdenv, cn913x_build, linuxKernel, ... }:
-let
-  base = linuxKernel.kernels.linux_5_15;
-in
-(linuxKernel.manualConfig {
-  inherit lib stdenv;
-  inherit (base) src version modDirVersion extraMakeFlags;
-  kernelPatches = base.kernelPatches ++ [
+{ cn913x_build, linux_5_15, lib, ... }:
+linux_5_15.override (old: {
+  kernelPatches = (old.kernelPatches or [ ]) ++ [
     {
       name = "0001-arm64-dts-cn913x-add-cn913x-based-COM-express-type-";
       patch = "${cn913x_build}/patches/linux/0001-arm64-dts-cn913x-add-cn913x-based-COM-express-type-.patch";
@@ -70,9 +65,30 @@ in
       name = "0019-arm64-dts-cn9130-clearfog-base-add-m.2-gpios";
       patch = "${cn913x_build}/patches/linux/0019-arm64-dts-cn9130-clearfog-base-add-m.2-gpios.patch";
     }
+    {
+      name = "cn913x-additions";
+      patch = null;
+      extraStructuredConfig = with lib.kernel; {
+        ACPI_CPPC_CPUFREQ = yes;
+        ARM_ARMADA_8K_CPUFREQ = yes;
+        CPU_FREQ_DEFAULT_GOV_ONDEMAND = yes;
+        CPU_FREQ_GOV_CONSERVATIVE = yes;
+        CPU_FREQ_GOV_POWERSAVE = yes;
+        EEPROM_AT24 = yes;
+        GPIO_SYSFS = yes;
+        MARVELL_10G_PHY = yes;
+        MARVELL_PHY = yes;
+        NET_DSA = module;
+        NET_DSA_MV88E6XXX = module;
+        SENSORS_MCP3021 = yes;
+        SENSORS_PWM_FAN = yes;
+        SFP = yes;
+        UIO = yes;
+        USB_SERIAL = yes;
+        USB_SERIAL_FTDI_SIO = yes;
+        USB_SERIAL_OPTION = yes;
+        USB_SERIAL_WWAN = yes;
+      };
+    }
   ];
-  configfile = ./cn913x.config;
-  allowImportFromDerivation = true;
-}).overrideAttrs (old: {
-  passthru = old.passthru // { config = old.passthru.config // { DTB = true; }; };
 })

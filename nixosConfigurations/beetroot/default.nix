@@ -1,7 +1,7 @@
 { config, pkgs, modulesPath, ... }: {
   disabledModules = [ "${modulesPath}/system/boot/loader/generic-extlinux-compatible" ];
   imports = [
-    ../../nixosModules/extlinux-tmp
+    ../../nixosModules/extlinux-delete-when-merged
     ./hardware-configuration.nix
   ];
   hardware.bluetooth.enable = true;
