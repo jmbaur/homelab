@@ -1,5 +1,9 @@
-{ config, pkgs, ... }: {
-  imports = [ ./hardware-configuration.nix ];
+{ config, pkgs, modulesPath, ... }: {
+  disabledModules = [ "${modulesPath}/system/boot/loader/generic-extlinux-compatible" ];
+  imports = [
+    ../../nixosModules/extlinux-tmp
+    ./hardware-configuration.nix
+  ];
   hardware.bluetooth.enable = true;
 
   zramSwap.enable = true;
@@ -12,8 +16,8 @@
   boot.initrd.availableKernelModules = [ "i915" ];
   boot.initrd.systemd.enable = true;
   boot.kernelPackages = pkgs.linuxPackages_6_0;
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "nodev"; # install menus, not actual bootloader
+  boot.loader.grub.enable = false;
+  boot.loader.generic-extlinux-compatible.enable = true;
 
   time.timeZone = "America/Los_Angeles";
 
