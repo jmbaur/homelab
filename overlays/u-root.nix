@@ -37,7 +37,7 @@ buildGoPackage {
       -uinitcmd boot \
       -base ${base} \
       -o initramfs.cpio \
-      ./cmds/{core/init,boot/boot}
+      ./cmds/{core/init,boot/boot,boot/localboot}
   '';
   installPhase = ''
     xz --check=crc32 --lzma2=dict=512KiB <initramfs.cpio >$out
