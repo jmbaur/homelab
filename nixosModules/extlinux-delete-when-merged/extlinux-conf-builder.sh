@@ -99,22 +99,26 @@ addEntry() {
     echo "  INITRD ../nixos/$(basename $initrd)"
     echo "  APPEND init=$path/init $extraParams"
 
-    if [ -n "$noDeviceTree" ]; then
-        return
+    if [ -z "$noDeviceTree" ] ; then
+        if [ -d "$dtbDir" ]; then
+            # if a dtbName was specified explicitly, use that, else use FDTDIR
+            if [ -n "$dtbName" ]; then
+                echo "  FDT ../nixos/$(basename $dtbs)/${dtbName}"
+            else
+                echo "  FDTDIR ../nixos/$(basename $dtbs)"
+            fi
+        else
+            if [ -n "$dtbName" ]; then
+                echo "Explicitly requested dtbName $dtbName, but there's no FDTDIR - bailing out." >&2
+                exit 1
+            fi
+        fi
     fi
 
-    if [ -d "$dtbDir" ]; then
-        # if a dtbName was specified explicitly, use that, else use FDTDIR
-        if [ -n "$dtbName" ]; then
-            echo "  FDT ../nixos/$(basename $dtbs)/${dtbName}"
-        else
-            echo "  FDTDIR ../nixos/$(basename $dtbs)"
-        fi
-    else
-        if [ -n "$dtbName" ]; then
-            echo "Explicitly requested dtbName $dtbName, but there's no FDTDIR - bailing out." >&2
-            exit 1
-        fi
+    if [ -d $path/specialisation ]; then
+        for link in $((ls -d $path/specialisation/* ) | sort -n); do
+            addEntry $link "$tag-$(basename $link)"
+        done
     fi
 }
 
@@ -132,11 +136,6 @@ EOF
 
 addEntry $default default >> $tmpFile
 
-for link in $((ls -d $default/specialisation/* ) | sort -n); do
-    date=$(stat --printf="%y\n" $link | sed 's/\..*//')
-    addEntry $link "default-variation ($(basename $link))" >> $tmpFile
-done
-
 if [ "$numGenerations" -gt 0 ]; then
     # Add up to $numGenerations generations of the system profile to the menu,
     # in reverse (most recent to least recent) order.
@@ -147,11 +146,6 @@ if [ "$numGenerations" -gt 0 ]; then
             | head -n $numGenerations); do
         link=/nix/var/nix/profiles/system-$generation-link
         addEntry $link $generation
-
-	for link in $((ls -d $link/specialisation/* ) | sort -n); do
-	    date=$(stat --printf="%y\n" $link | sed 's/\..*//')
-	    addEntry $link "$generation-variation ($(basename $link))"
-	done
     done >> $tmpFile
 fi
 
