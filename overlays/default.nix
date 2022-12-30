@@ -1,6 +1,7 @@
 inputs: with inputs; {
   default = nixpkgs.lib.composeManyExtensions [
     gosee.overlays.default
+    tinyboot.overlays.default
     (final: prev:
       let
         out-of-tree = prev.callPackage ./out-of-tree.nix { };
@@ -115,7 +116,7 @@ inputs: with inputs; {
           configfile = ./coreboot/qemu-x86.config;
           extraConfig = ''
             CONFIG_PAYLOAD_FILE="${final.linux_linuxboot}/bzImage"
-            CONFIG_LINUX_INITRD="${final.u-rootInitramfs}"
+            CONFIG_LINUX_INITRD="${final.tinyboot-initramfs}"
           '';
         };
         coreboot-qemu-aarch64 = final.buildCoreboot rec {
@@ -127,7 +128,7 @@ inputs: with inputs; {
               fitimage = final.mkFitImage {
                 inherit boardName;
                 kernel = final.linux_linuxboot;
-                initramfs = final.u-rootInitramfs;
+                initramfs = final.tinyboot-initramfs;
               };
             in
             ''
