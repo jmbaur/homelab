@@ -90,5 +90,19 @@ linux_5_15.override (old: {
         USB_SERIAL_WWAN = yes;
       };
     }
+    {
+      name = "minification";
+      patch = null;
+      extraStructuredConfig = with lib.kernel; {
+        DRM = no;
+        MEDIA_SUPPORT = no;
+        SND = no;
+        PANEL = no;
+        SPEAKUP = no;
+        FB = lib.mkForce no;
+        INPUT_TOUCHSCREEN = no;
+        INPUT_MISC = no;
+      };
+    }
   ];
 })
