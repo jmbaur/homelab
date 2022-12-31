@@ -156,7 +156,12 @@ with lib; {
       ];
       timeouts = [
         { timeout = 300; command = lockerCommand; }
-        { timeout = 570; command = "${pkgs.libnotify}/bin/notify-send 'swayidle' 'screen will turn off in 30 seconds...'"; }
+        {
+          timeout = 570;
+          command = toString (pkgs.writeShellScript "swayidle-notify" ''
+            ${pkgs.libnotify}/bin/notify-send 'swayidle' 'screen will turn off in 30 seconds...'
+          '');
+        }
         {
           timeout = 600;
           command = "${pkgs.sway}/bin/swaymsg 'output * dpms off'";
@@ -167,7 +172,7 @@ with lib; {
       optional config.custom.laptop.enable {
         timeout = 900;
         command = toString (pkgs.writeShellScript "laptop-conditional-suspend" ''
-          if [[ "$(cat /sys/class/power_supply/AC/online)" -ne 1 ]]; then
+          if [[ "$(${pkgs.coreutils}/bin/cat /sys/class/power_supply/AC/online)" -ne 1 ]]; then
             echo "laptop is not on AC, suspending"
             ${pkgs.systemd}/bin/systemctl suspend
           else
