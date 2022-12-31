@@ -148,7 +148,7 @@ inputs: with inputs; {
             ''
               CONFIG_INTEL_GMA_VBT_FILE="${vbt}"
               CONFIG_PAYLOAD_FILE="${final.linux_linuxboot}/bzImage"
-              CONFIG_LINUX_INITRD="${final.u-rootInitramfs}"
+              CONFIG_LINUX_INITRD="${final.tinyboot-initramfs}"
             '';
         };
         coreboot-kukui-fennel14 = final.buildCoreboot rec {
