@@ -1026,11 +1026,11 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1672528718,
-        "narHash": "sha256-bQg7N2ltLYkrmKiPJfWukGTb328itH36VtjHUDrvmUs=",
+        "lastModified": 1672535274,
+        "narHash": "sha256-YXbadu8O3rF0c2NS37F1oLj3tMvgqI5oBe6erUB3VsY=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "81f70ec8656bd321af789a83791ed19b25484c04",
+        "rev": "f76a53d316230b19b9648b82d0f571dea9508f28",
         "type": "github"
       },
       "original": {
