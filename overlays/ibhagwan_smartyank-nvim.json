@@ -1,9 +1,9 @@
 {
   "url": "https://github.com/ibhagwan/smartyank.nvim",
-  "rev": "78de01a3814d6b9fc4fda74c3f1dfb70caf47dc7",
-  "date": "2022-11-10T11:20:04-05:00",
-  "path": "/nix/store/ga1ci3rbjxsfzmb6sr3yirhsiid5r4m4-smartyank.nvim",
-  "sha256": "03r99g26zl9z79yx8w19l3x38k4m515xzn63fgnb01vcnbjpifi6",
+  "rev": "a47951f39625ea52aedcc768742957a7890f8c29",
+  "date": "2022-12-31T00:34:15+00:00",
+  "path": "/nix/store/z8jc8sk93ardhd0m90dkdmrdvv2l2884-smartyank.nvim",
+  "sha256": "0672asb86f99cgwd2002qm228yybmhn92c5w8wksmvqdfpfx1b6y",
   "fetchLFS": false,
   "fetchSubmodules": false,
   "deepClone": false,
