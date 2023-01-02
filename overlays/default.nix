@@ -127,7 +127,7 @@ inputs: with inputs; {
               fitimage = final.mkFitImage {
                 inherit boardName;
                 kernel = final.linux_linuxboot;
-                initramfs = final.u-rootInitramfs;
+                initramfs = final.tinyboot-initramfs;
                 # NOTE: See here as to why qemu needs to be in depsBuildBuild
                 # and not nativeBuildInputs:
                 # https://github.com/NixOS/nixpkgs/pull/146583
