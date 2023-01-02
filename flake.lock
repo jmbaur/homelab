@@ -533,11 +533,11 @@
         "pre-commit-hooks": "pre-commit-hooks"
       },
       "locked": {
-        "lastModified": 1672541416,
-        "narHash": "sha256-msckX9BkrzZ0l28FZT8wxeqD+ACg3dlrgQSLIYpxy7g=",
+        "lastModified": 1672691930,
+        "narHash": "sha256-LxrXey9PYmN2/GV1VSfSFTuW2zqmPVPHEa22KgCdQfo=",
         "owner": "jmbaur",
         "repo": "ipwatch",
-        "rev": "e92bc1bf62878a538a0a7558c002d89e97bf9d5e",
+        "rev": "4e963b7dc2e2403ef62706911fa18413386d87f0",
         "type": "github"
       },
       "original": {
@@ -1026,11 +1026,11 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1672690959,
-        "narHash": "sha256-ex2WMMAPFMfB8rjIaMjwHtfImpflaht4Tm1VyR1dyLU=",
+        "lastModified": 1672695582,
+        "narHash": "sha256-MRbxaLSMO7hHQbUXze/CpKiUSuELb87UxWRsFn5xxrI=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "0531dbe27b3d2be5b187820ead63b6d37a20e4c5",
+        "rev": "5fb3d3ab5044e81ccc01017e37ee789e197f2301",
         "type": "github"
       },
       "original": {
