@@ -1,5 +1,6 @@
 { runCommand, ubootTools, dtc, xz, ... }:
-{ boardName, kernel, dtb ? ./qemu-aarch64.dtb, initramfs }:
+# TODO(jared): handle multiple DTBs
+{ boardName, kernel, dtb, initramfs }:
 runCommand "fitimage-${boardName}" { nativeBuildInputs = [ ubootTools dtc xz ]; } ''
   mkdir -p $out
   lzma --threads 0 <${kernel}/Image >Image.lzma

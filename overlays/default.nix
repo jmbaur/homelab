@@ -122,13 +122,24 @@ inputs: with inputs; {
         coreboot-qemu-aarch64 = final.buildCoreboot rec {
           boardName = "qemu-aarch64";
           configfile = ./coreboot/qemu-aarch64.config;
-          # qemu-system-aarch64 -M virt,secure=on,virtualization=on -cpu cortex-a53 -m 2048M -nographic -bios ./result/coreboot.rom
           extraConfig =
             let
               fitimage = final.mkFitImage {
                 inherit boardName;
                 kernel = final.linux_linuxboot;
-                initramfs = final.tinyboot-initramfs;
+                initramfs = final.u-rootInitramfs;
+                # NOTE: See here as to why qemu needs to be in depsBuildBuild
+                # and not nativeBuildInputs:
+                # https://github.com/NixOS/nixpkgs/pull/146583
+                dtb = prev.callPackage
+                  ({ runCommand, qemu }: runCommand "qemu-aarch64.dtb" { depsBuildBuild = [ qemu ]; } ''
+                    qemu-system-aarch64 \
+                      -M virt,secure=on,virtualization=on,dumpdtb=$out \
+                      -cpu cortex-a53 \
+                      -m 2G \
+                      -nographic
+                  '')
+                  { };
               };
             in
             ''
