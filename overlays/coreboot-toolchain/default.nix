@@ -12,7 +12,7 @@
 , gnat11
 , perl
 , zlib
-, withAda ? true
+, withAda ? false
 }:
 let
   crossgcc_arch = builtins.getAttr stdenv.hostPlatform.system {

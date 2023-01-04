@@ -1,18 +1,10 @@
 { stdenv, buildPackages, python3, coreboot-toolchain, fetchgit, ... }:
-let
-  toolchain = coreboot-toolchain.override { withAda = false; };
-in
-{ boardName
-, configfile
-, extraConfig ? ""
-, extraCbfsCommands ? ""
-, ...
-}:
+{ boardName, configfile, extraConfig ? "", extraCbfsCommands ? "", ... }:
 stdenv.mkDerivation {
   pname = "coreboot-${boardName}";
-  inherit (toolchain) version;
+  inherit (coreboot-toolchain) version;
   src = fetchgit {
-    inherit (toolchain.src) url rev;
+    inherit (coreboot-toolchain.src) url rev;
     leaveDotGit = false;
     fetchSubmodules = true;
     sha256 = "sha256-hJ3Cp1OfMp8ZgRCzENUPPnoPTovKG4NiYabEpk3T2R0=";
@@ -32,7 +24,7 @@ stdenv.mkDerivation {
     make oldconfig
     runHook postConfigure
   '';
-  makeFlags = [ "XGCCPATH=${toolchain}/bin/" ];
+  makeFlags = [ "XGCCPATH=${coreboot-toolchain}/bin/" ];
   preInstall = extraCbfsCommands;
   installPhase = ''
     runHook preInstall
