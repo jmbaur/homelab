@@ -59,11 +59,35 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1672095661,
-        "narHash": "sha256-7NTsdCn3qsvU7A+1/7tY8pxbq0DYy1pFYNpzN6he9lI=",
+        "lastModified": 1672804365,
+        "narHash": "sha256-1Bh6//eesTHQRDWlzA+PjVPfwsFoftGHTYgZekIzZLg=",
         "owner": "ipetkov",
         "repo": "crane",
-        "rev": "98894bb39b03bfb379c5e10523cd61160e1ac782",
+        "rev": "cc20f29b4ae0d4c6e13e01f08b2d9072b09b04e7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ipetkov",
+        "repo": "crane",
+        "type": "github"
+      }
+    },
+    "crane_2": {
+      "inputs": {
+        "flake-compat": "flake-compat_7",
+        "flake-utils": "flake-utils_10",
+        "nixpkgs": [
+          "webauthn-tiny",
+          "nixpkgs"
+        ],
+        "rust-overlay": "rust-overlay_3"
+      },
+      "locked": {
+        "lastModified": 1672804365,
+        "narHash": "sha256-1Bh6//eesTHQRDWlzA+PjVPfwsFoftGHTYgZekIzZLg=",
+        "owner": "ipetkov",
+        "repo": "crane",
+        "rev": "cc20f29b4ae0d4c6e13e01f08b2d9072b09b04e7",
         "type": "github"
       },
       "original": {
@@ -204,6 +228,22 @@
         "type": "github"
       }
     },
+    "flake-compat_8": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1668681692,
+        "narHash": "sha256-Ht91NGdewz8IQLtWZ9LCeNXMSXHUss+9COoqu6JLmXU=",
+        "owner": "edolstra",
+        "repo": "flake-compat",
+        "rev": "009399224d5e398d03b22badca40a37ac85412a1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "edolstra",
+        "repo": "flake-compat",
+        "type": "github"
+      }
+    },
     "flake-utils": {
       "locked": {
         "lastModified": 1667395993,
@@ -226,6 +266,36 @@
         "owner": "numtide",
         "repo": "flake-utils",
         "rev": "5aed5285a952e0b949eb3ba02c12fa4fcfef535f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "flake-utils_11": {
+      "locked": {
+        "lastModified": 1667395993,
+        "narHash": "sha256-nuEHfE/LcWyuSWnS8t12N1wc105Qtau+/OdUAjtQ0rA=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "5aed5285a952e0b949eb3ba02c12fa4fcfef535f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "flake-utils_12": {
+      "locked": {
+        "lastModified": 1659877975,
+        "narHash": "sha256-zllb8aq3YO3h8B/U0/J1WBgAL8EX5yWf5pMj3G0NAmc=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "c0e246b9b83f637f4681389ecabcb2681b4f3af0",
         "type": "github"
       },
       "original": {
@@ -845,8 +915,8 @@
     },
     "pre-commit_3": {
       "inputs": {
-        "flake-compat": "flake-compat_7",
-        "flake-utils": "flake-utils_10",
+        "flake-compat": "flake-compat_8",
+        "flake-utils": "flake-utils_11",
         "gitignore": "gitignore_5",
         "nixpkgs": [
           "webauthn-tiny",
@@ -946,11 +1016,60 @@
         ]
       },
       "locked": {
-        "lastModified": 1672626196,
-        "narHash": "sha256-BfdLrMqxqa4YA1I1wgPBQyu4FPzL0Tp4WI2C5S6BuYo=",
+        "lastModified": 1672712534,
+        "narHash": "sha256-8S0DdMPcbITnlOu0uA81mTo3hgX84wK8S9wS34HEFY4=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "c8bf9c162bb3f734cf357846e995eb70b94e2bcd",
+        "rev": "69fb7bf0a8c40e6c4c197fa1816773774c8ac59f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
+      }
+    },
+    "rust-overlay_3": {
+      "inputs": {
+        "flake-utils": [
+          "webauthn-tiny",
+          "crane",
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "webauthn-tiny",
+          "crane",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1670034122,
+        "narHash": "sha256-EqmuOKucPWtMvCZtHraHr3Q3bgVszq1x2PoZtQkUuEk=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "a0d5773275ecd4f141d792d3a0376277c0fc0b65",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
+      }
+    },
+    "rust-overlay_4": {
+      "inputs": {
+        "flake-utils": "flake-utils_12",
+        "nixpkgs": [
+          "webauthn-tiny",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1672712534,
+        "narHash": "sha256-8S0DdMPcbITnlOu0uA81mTo3hgX84wK8S9wS34HEFY4=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "69fb7bf0a8c40e6c4c197fa1816773774c8ac59f",
         "type": "github"
       },
       "original": {
@@ -1026,11 +1145,11 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1672695889,
-        "narHash": "sha256-A3cG+OsjgC0upeUR5TrYoOHyZB4uwGXNGrT7Y2y1KuA=",
+        "lastModified": 1672809518,
+        "narHash": "sha256-ZmesTY+lHmI2aZQaK+liul3pC63vMuOS9sJLTwfr8Dw=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "7e93f06c478a5f11b2216c526507e360591d30de",
+        "rev": "00335b2a2402585406a2c97cdd64ce3c8aef35be",
         "type": "github"
       },
       "original": {
@@ -1071,17 +1190,19 @@
     },
     "webauthn-tiny": {
       "inputs": {
+        "crane": "crane_2",
         "nixpkgs": [
           "nixpkgs"
         ],
-        "pre-commit": "pre-commit_3"
+        "pre-commit": "pre-commit_3",
+        "rust-overlay": "rust-overlay_4"
       },
       "locked": {
-        "lastModified": 1672596363,
-        "narHash": "sha256-B3whRt8uXU4xVwRz/IYJjUbzski4r3K/CycAUqNGoNA=",
+        "lastModified": 1672811478,
+        "narHash": "sha256-nn5qyDhmEaPrcvbC2pl3vzs2Gg8czL9qP/AUB1cB32A=",
         "owner": "jmbaur",
         "repo": "webauthn-tiny",
-        "rev": "3e0097ae8b4971299c6de97d542dbce7596ccebe",
+        "rev": "c15abf308cf569b5984bf80639c8c94d4bd43907",
         "type": "github"
       },
       "original": {

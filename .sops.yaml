@@ -3,7 +3,7 @@ keys:
   - &artichoke age1skqt8558fwzvqdckyf2dzyseqhhzfr3rlht6uru2zmqf55k05s8q3zdx0f
   - &beetroot age1pqlhd0c6eze47wl7s7zm5sqrpln4g50l592crz4sr35x5f7shg6sx49wtz
   - &kale age1smqw9zensjnzrsqdlc7avf2d5qcxrp3755030e5uvtvv4c3phfcq8dzr5e
-  - &rhubarb age1jha7xr8mruxy4mlrrda8qpvets5cltddvpwt3wk90g6r8c87gg5slwgec6
+  - &rhubarb age1gr6ezp2sytvwh4arpw8xwmezx59x9evdfr86sfr9kcayp500hskse7cksq
   - &www age1y8n3ppl6pp9xy0pkuwjku7jc5xzje4nufy70hw526fs6re0czg9sapa3uq
   # TODO(jared): for when sops is compatible with age plugins
   # - &yubikey5cnfc age1yubikey1q20xxhpyk00m3ezajg3769jpmgwkvasq4dzutg75jq96fytnlcmxs9ltmga
