@@ -106,6 +106,31 @@ inputs: with inputs; {
         linux_mediatek = prev.callPackage ./kernels/linux_mediatek.nix { };
         linux_linuxboot = prev.callPackage ./kernels/linux_linuxboot.nix { inherit (final) u-rootInitramfs; };
 
+        linuxboot-qemu-aarch64-fitimage = final.mkFitImage {
+          boardName = "qemu-aarch64";
+          kernel = final.linux_linuxboot;
+          initramfs = final.tinyboot-initramfs;
+          dtbs = [{
+            path = prev.callPackage
+              # NOTE: See here as to why qemu needs to be in depsBuildBuild
+              # and not nativeBuildInputs:
+              # https://github.com/NixOS/nixpkgs/pull/146583
+              ({ runCommand, qemu }: runCommand "qemu-aarch64.dtb" { depsBuildBuild = [ qemu ]; } ''
+                qemu-system-aarch64 \
+                  -M virt,secure=on,virtualization=on,dumpdtb=$out \
+                  -cpu cortex-a53 -m 2G -nographic \
+                  -drive format=raw,if=virtio,file=$(mktemp)
+              '')
+              { };
+          }];
+        };
+        linuxboot-mediatek-fitimage = final.mkFitImage {
+          boardName = "mediatek";
+          kernel = final.linux_linuxboot;
+          initramfs = final.tinyboot-initramfs;
+          dtbs = [{ pattern = "mt8192*"; } { pattern = "mt8183*"; }];
+        };
+
         edk2-uefi-coreboot-payload = prev.callPackage ./edk2-coreboot.nix { };
 
         mkFitImage = prev.callPackage ./fitimage { };
@@ -119,31 +144,12 @@ inputs: with inputs; {
             CONFIG_LINUX_INITRD="${final.tinyboot-initramfs}"
           '';
         };
-        coreboot-qemu-aarch64 = final.buildCoreboot rec {
-          boardName = "qemu-aarch64";
+        coreboot-qemu-aarch64 = final.buildCoreboot {
+          inherit (final.linuxboot-qemu-aarch64-fitimage) boardName;
           configfile = ./coreboot/qemu-aarch64.config;
-          extraConfig =
-            let
-              fitimage = final.mkFitImage {
-                inherit boardName;
-                kernel = final.linux_linuxboot;
-                initramfs = final.tinyboot-initramfs;
-                dtb = prev.callPackage
-                  # NOTE: See here as to why qemu needs to be in depsBuildBuild
-                  # and not nativeBuildInputs:
-                  # https://github.com/NixOS/nixpkgs/pull/146583
-                  ({ runCommand, qemu }: runCommand "qemu-aarch64.dtb" { depsBuildBuild = [ qemu ]; } ''
-                    qemu-system-aarch64 \
-                      -M virt,secure=on,virtualization=on,dumpdtb=$out \
-                      -cpu cortex-a53 -m 2G -nographic \
-                      -drive format=raw,if=virtio,file=$(mktemp)
-                  '')
-                  { };
-              };
-            in
-            ''
-              CONFIG_PAYLOAD_FILE="${fitimage}/uImage"
-            '';
+          extraConfig = ''
+            CONFIG_PAYLOAD_FILE="${final.linuxboot-qemu-aarch64-fitimage}/uImage"
+          '';
         };
         coreboot-volteer-elemi = final.buildCoreboot {
           boardName = "volteer-elemi";
@@ -161,37 +167,19 @@ inputs: with inputs; {
               CONFIG_LINUX_INITRD="${final.tinyboot-initramfs}"
             '';
         };
-        coreboot-kukui-fennel14 = final.buildCoreboot rec {
+        coreboot-kukui-fennel14 = final.buildCoreboot {
           boardName = "kukui-fennel14";
           configfile = ./coreboot/kukui-fennel.config;
-          extraConfig =
-            let
-              fitimage = final.mkFitImage {
-                inherit boardName;
-                kernel = final.linux_linuxboot;
-                initramfs = final.u-rootInitramfs;
-                dtb = "${final.linux_linuxboot}/dtbs/mediatek/mt8183-kukui-jacuzzi-fennel14.dtb";
-              };
-            in
-            ''
-              CONFIG_PAYLOAD_FILE="${fitimage}/uImage"
-            '';
+          extraConfig = ''
+            CONFIG_PAYLOAD_FILE="${final.linuxboot-mediatek-fitimage}/uImage"
+          '';
         };
-        coreboot-asurada-spherion = final.buildCoreboot rec {
+        coreboot-asurada-spherion = final.buildCoreboot {
           boardName = "asurada-spherion";
           configfile = ./coreboot/asurada-spherion.config;
-          extraConfig =
-            let
-              fitimage = final.mkFitImage {
-                inherit boardName;
-                kernel = final.linux_linuxboot;
-                initramfs = final.u-rootInitramfs;
-                dtb = "${final.linux_linuxboot}/dtbs/mediatek/mt8192-asurada-spherion-r0.dtb";
-              };
-            in
-            ''
-              CONFIG_PAYLOAD_FILE="${fitimage}/uImage"
-            '';
+          extraConfig = ''
+            CONFIG_PAYLOAD_FILE="${final.linuxboot-mediatek-fitimage}/uImage"
+          '';
         };
 
         jmbaur-keybase-pgp-keys = prev.fetchurl {

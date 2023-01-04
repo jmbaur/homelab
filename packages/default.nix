@@ -117,6 +117,7 @@ in
         ;
 
       inherit (pkgs.pkgsCross.aarch64-multiplatform)
+        linuxboot-mediatek-fitimage
         coreboot-asurada-spherion
         coreboot-kukui-fennel14
         coreboot-qemu-aarch64
