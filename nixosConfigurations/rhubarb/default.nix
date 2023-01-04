@@ -29,7 +29,7 @@
           3000 # grafana
           19531 # systemd-journal-gatewayd
         ];
-        eth0.allowedTCPPorts = lib.mkForce [ 22 ];
+        end0.allowedTCPPorts = lib.mkForce [ 22 ];
       };
     };
   };
@@ -54,7 +54,7 @@
   systemd.network = {
     enable = true;
     networks.wired = {
-      name = "eth0";
+      name = "end0";
       DHCP = "yes";
       dhcpV4Config.ClientIdentifier = "mac";
     };
