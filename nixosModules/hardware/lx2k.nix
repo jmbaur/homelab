@@ -14,7 +14,7 @@ with lib;
       "compat_uts_machine=armv7l"
     ];
 
-    boot.kernelPackages = pkgs.linuxPackages_6_0;
+    boot.kernelPackages = pkgs.linuxPackages_6_1;
 
     # Setup SFP+ network interfaces early so systemd can pick everything up.
     boot.initrd.extraUtilsCommands = ''

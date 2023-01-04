@@ -15,9 +15,9 @@
 
   boot.initrd.availableKernelModules = [ "i915" ];
   boot.initrd.systemd.enable = true;
-  boot.kernelPackages = pkgs.linuxPackages_6_0;
-  boot.loader.grub.enable = false;
-  boot.loader.generic-extlinux-compatible.enable = true;
+  boot.kernelPackages = pkgs.linuxPackages_6_1;
+  boot.loader.grub.enable = true;
+  boot.loader.grub.device = "nodev";
 
   time.timeZone = "America/Los_Angeles";
 
