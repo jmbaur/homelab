@@ -1,18 +1,14 @@
-{ lib, runCommand, ubootTools, dtc, xz, rsync, ... }:
-
-# NOTE: dtbs expected to be of the form:
-# [ { pattern = "foo*"; } { path = "path/to/board.dtb"; } ]
-{ boardName, kernel, dtbs ? [ ], initramfs }:
+{ runCommand, ubootTools, dtc, xz, rsync, ... }:
+{ boardName, kernel, initramfs, dtb ? null, dtbPattern ? null, }:
 let
   nativeBuildInputs = [ rsync ubootTools dtc xz ];
-  copyDtbs = lib.concatStringsSep "\n" (map
-    (dtb:
-      let pattern = lib.attrByPath [ "pattern" ] null dtb; in
-      if pattern != null then ''
-        find -L ${kernel}/dtbs -type f -name '${pattern}' -print0 |
-          xargs -0 -I {} rsync -a {} dtbs
-      '' else "ln -s ${dtb.path} dtbs")
-    dtbs);
+  copyDtbs =
+    if dtbPattern != null then ''
+      find -L ${kernel}/dtbs -type f -name "*.dtb" |
+        grep -E "${dtbPattern}" |
+        xargs -n1 basename |
+        rsync -a --include="*/" --include-from=- --exclude="*" ${kernel}/dtbs/ dtbs/
+    '' else "cp ${dtb} dtbs";
   fitimage = runCommand "fitimage-${boardName}" { inherit nativeBuildInputs; } ''
     mkdir -p dtbs $out
     lzma --threads 0 <${kernel}/Image >Image.lzma

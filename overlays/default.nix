@@ -110,25 +110,23 @@ inputs: with inputs; {
           boardName = "qemu-aarch64";
           kernel = final.linux_linuxboot;
           initramfs = final.tinyboot-initramfs;
-          dtbs = [{
-            path = prev.callPackage
-              # NOTE: See here as to why qemu needs to be in depsBuildBuild
-              # and not nativeBuildInputs:
-              # https://github.com/NixOS/nixpkgs/pull/146583
-              ({ runCommand, qemu }: runCommand "qemu-aarch64.dtb" { depsBuildBuild = [ qemu ]; } ''
-                qemu-system-aarch64 \
-                  -M virt,secure=on,virtualization=on,dumpdtb=$out \
-                  -cpu cortex-a53 -m 2G -nographic \
-                  -drive format=raw,if=virtio,file=$(mktemp)
-              '')
-              { };
-          }];
+          # NOTE: See here as to why qemu needs to be in depsBuildBuild and
+          # not nativeBuildInputs:
+          # https://github.com/NixOS/nixpkgs/pull/146583
+          dtb = prev.callPackage
+            ({ runCommand, qemu }: runCommand "qemu-aarch64.dtb" { depsBuildBuild = [ qemu ]; } ''
+              qemu-system-aarch64 \
+                -M virt,secure=on,virtualization=on,dumpdtb=$out \
+                -cpu cortex-a53 -m 2G -nographic \
+                -drive format=raw,if=virtio,file=$(mktemp)
+            '')
+            { };
         };
         linuxboot-mediatek-fitimage = final.mkFitImage {
           boardName = "mediatek";
           kernel = final.linux_linuxboot;
           initramfs = final.tinyboot-initramfs;
-          dtbs = [{ pattern = "mt8192*"; } { pattern = "mt8183*"; }];
+          dtbPattern = "(mt8183|mt8192)";
         };
 
         edk2-uefi-coreboot-payload = prev.callPackage ./edk2-coreboot.nix { };
