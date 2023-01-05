@@ -1145,11 +1145,11 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1672897499,
-        "narHash": "sha256-boa9+WVireDbfCmwii8W1vJ3+7NA0RoQMxJS6EneBcQ=",
+        "lastModified": 1672911849,
+        "narHash": "sha256-vPHY5iXlF/iXzHWDdHsQUNHQrFT8MlWLjsPlk/hP0F8=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "d673951946374f98895c9b474bf5ffa14a523f68",
+        "rev": "f879d17f0816874dcec72a38fa07e88f41a45a0b",
         "type": "github"
       },
       "original": {
@@ -1198,11 +1198,11 @@
         "rust-overlay": "rust-overlay_4"
       },
       "locked": {
-        "lastModified": 1672811478,
-        "narHash": "sha256-nn5qyDhmEaPrcvbC2pl3vzs2Gg8czL9qP/AUB1cB32A=",
+        "lastModified": 1672911312,
+        "narHash": "sha256-vieCxZeZE8bRbulgvHhYdF0yaQW6m3H24mXHkdzDqtQ=",
         "owner": "jmbaur",
         "repo": "webauthn-tiny",
-        "rev": "c15abf308cf569b5984bf80639c8c94d4bd43907",
+        "rev": "90026033aecc564ac8e603905921c3c72f50a746",
         "type": "github"
       },
       "original": {
