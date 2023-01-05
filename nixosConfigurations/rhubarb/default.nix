@@ -26,7 +26,7 @@
       allowedTCPPorts = lib.mkForce [ ];
       interfaces = {
         www.allowedTCPPorts = lib.mkForce [
-          3000 # grafana
+          config.services.grafana.settings.server.http_port
           19531 # systemd-journal-gatewayd
         ];
         end0.allowedTCPPorts = lib.mkForce [ 22 ];
@@ -152,6 +152,10 @@
     settings = {
       auth.disable_login_form = true;
       "auth.anonymous".enabled = true;
+      server = {
+        domain = "mon.jmbaur.com";
+        http_addr = "[::]";
+      };
     };
     declarativePlugins = [ ];
     provision = {
