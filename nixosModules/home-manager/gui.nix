@@ -114,6 +114,7 @@ with lib; {
       font = "${toString config.wayland.windowManager.sway.config.fonts.names} ${toString config.wayland.windowManager.sway.config.fonts.size}";
       height = 1000;
       icons = true;
+      layer = "overlay";
       width = 500;
     };
 
