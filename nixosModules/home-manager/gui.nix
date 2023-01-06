@@ -2,6 +2,27 @@
 let
   cfg = config.custom.gui;
   lockerCommand = "${pkgs.swaylock}/bin/swaylock --daemonize --indicator-caps-lock --show-keyboard-layout --color '#222222'";
+
+  colors = {
+    background = "000000";
+    foreground = "ffffff";
+    regular0 = "000000";
+    regular1 = "ff8059";
+    regular2 = "44bc44";
+    regular3 = "d0bc00";
+    regular4 = "2fafff";
+    regular5 = "feacd0";
+    regular6 = "00d3d0";
+    regular7 = "bfbfbf";
+    bright0 = "595959";
+    bright1 = "ef8b50";
+    bright2 = "70b900";
+    bright3 = "c0c530";
+    bright4 = "79a8ff";
+    bright5 = "b6a0ff";
+    bright6 = "6ae4b9";
+    bright7 = "ffffff";
+  };
 in
 with lib; {
   options.custom.gui.enable = mkOption {
@@ -33,12 +54,51 @@ with lib; {
     xdg.configFile."wezterm/wezterm.lua".source = ./wezterm.lua;
     home.packages = [ pkgs.wezterm ];
 
+    programs.alacritty = {
+      enable = true;
+      settings = {
+        env.TERM = "xterm-256color";
+        font = {
+          normal.family = "JetBrains Mono";
+          size = 14;
+        };
+        colors = lib.mapAttrsRecursive (_: color: "#${color}") {
+          primary = {
+            foreground = colors.foreground;
+            background = colors.background;
+          };
+          normal = {
+            black = colors.regular0;
+            red = colors.regular1;
+            green = colors.regular2;
+            yellow = colors.regular3;
+            blue = colors.regular4;
+            magenta = colors.regular5;
+            cyan = colors.regular6;
+            white = colors.regular7;
+          };
+          bright = {
+            black = colors.bright0;
+            red = colors.bright1;
+            green = colors.bright2;
+            yellow = colors.bright3;
+            blue = colors.bright4;
+            magenta = colors.bright5;
+            cyan = colors.bright6;
+            white = colors.bright7;
+          };
+        };
+        selection.save_to_clipboard = true;
+        mouse.hide_when_typing = true;
+      };
+    };
+
     programs.foot = {
       enable = true;
       settings = {
         main = {
-          term = "xterm-256color";
-          font = "JetBrains Mono:size=10";
+          term = config.programs.alacritty.settings.env.TERM;
+          font = "${config.programs.alacritty.settings.font.normal.family}:size=${toString (config.programs.alacritty.settings.font.size - 4)}";
           selection-target = "clipboard";
           notify-focus-inhibit = "no";
         };
@@ -47,27 +107,7 @@ with lib; {
           command-focused = "yes";
         };
         mouse.hide-when-typing = "yes";
-        colors = {
-          alpha = 1.0;
-          background = "000000";
-          foreground = "ffffff";
-          regular0 = "000000";
-          regular1 = "ff8059";
-          regular2 = "44bc44";
-          regular3 = "d0bc00";
-          regular4 = "2fafff";
-          regular5 = "feacd0";
-          regular6 = "00d3d0";
-          regular7 = "bfbfbf";
-          bright0 = "595959";
-          bright1 = "ef8b50";
-          bright2 = "70b900";
-          bright3 = "c0c530";
-          bright4 = "79a8ff";
-          bright5 = "b6a0ff";
-          bright6 = "6ae4b9";
-          bright7 = "ffffff";
-        };
+        colors = { alpha = 1.0; } // colors;
       };
     };
 
@@ -282,7 +322,7 @@ with lib; {
             names = [ "JetBrains Mono" ];
             size = 12.0;
           };
-          terminal = "${pkgs.foot}/bin/foot";
+          terminal = "${pkgs.alacritty}/bin/alacritty";
           menu = "${pkgs.bemenu}/bin/bemenu-run";
           modifier = "Mod4";
           workspaceLayout = "stacking";
