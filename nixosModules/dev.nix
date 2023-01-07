@@ -45,10 +45,10 @@ with lib;
     environment.variables.EDITOR = lib.mkForce "nvim";
     environment.pathsToLink = [ "/share/zsh" ];
 
-    nix.extraOptions = ''
-      keep-outputs = true
-      keep-derivations = true
-    '';
+    nix.settings = {
+      keep-outputs = true;
+      keep-derivations = true;
+    };
 
     programs.ssh.startAgent = true;
 
@@ -58,7 +58,7 @@ with lib;
     };
     virtualisation.podman = {
       enable = !config.boot.isContainer;
-      defaultNetwork.dnsname.enable = true;
+      defaultNetwork.settings.dns_enabled = true;
     };
   };
 }

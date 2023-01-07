@@ -49,6 +49,7 @@ with lib; {
       patchelf
       pd-notify
       podman-compose
+      podman-tui
       pomo
       procs
       pstree

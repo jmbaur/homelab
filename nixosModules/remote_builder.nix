@@ -15,9 +15,7 @@
       }];
       nix.distributedBuilds = true;
       # optional, useful when the builder has a faster internet connection than yours
-      nix.extraOptions = ''
-        builders-use-substitutes = true
-      '';
+      nix.settings.builders-use-substitutes = true;
 
       programs.ssh = {
         knownHostsFiles = [

@@ -46,6 +46,6 @@ with lib;
         };
       }
     ];
-    nix.extraOptions = "extra-platforms = armv7l-linux";
+    nix.settings.extra-platforms = "armv7l-linux";
   };
 }

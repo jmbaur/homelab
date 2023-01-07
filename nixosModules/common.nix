@@ -26,14 +26,14 @@ with lib;
 
     nix = {
       nixPath = mkForce [ "nixpkgs=${pkgs.path}" ];
-      settings.trusted-users = [ "@wheel" ];
+      settings = {
+        experimental-features = [ "nix-command" "flakes" "repl-flake" ];
+        trusted-users = [ "@wheel" ];
+      };
       gc = mkIf isNotContainer {
         automatic = mkDefault true;
         dates = mkDefault "weekly";
       };
-      extraOptions = ''
-        experimental-features = nix-command flakes repl-flake
-      '';
     };
 
     services.openssh = mkIf isNotContainer {
