@@ -60,7 +60,7 @@ with lib; {
         env.TERM = "xterm-256color";
         font = {
           normal.family = "JetBrains Mono";
-          size = 14;
+          size = 16;
         };
         colors = lib.mapAttrsRecursive (_: color: "#${color}") {
           primary = {
@@ -98,7 +98,7 @@ with lib; {
       settings = {
         main = {
           term = config.programs.alacritty.settings.env.TERM;
-          font = "${config.programs.alacritty.settings.font.normal.family}:size=${toString (config.programs.alacritty.settings.font.size - 4)}";
+          font = "${config.programs.alacritty.settings.font.normal.family}:size=${toString (config.programs.alacritty.settings.font.size - 6)}";
           selection-target = "clipboard";
           notify-focus-inhibit = "no";
         };
