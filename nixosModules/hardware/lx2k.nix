@@ -6,6 +6,8 @@ with lib;
   };
   config = mkIf config.hardware.lx2k.enable {
     boot.kernelParams = [
+      "radeon.si_support=0"
+      "amdgpu.si_support=1"
       "console=ttyAMA0,115200"
       "arm-smmu.disable_bypass=0"
       "iommu.passthrough=1"
@@ -13,6 +15,8 @@ with lib;
       "usbcore.autosuspend=-1"
       "compat_uts_machine=armv7l"
     ];
+
+    boot.kernelModules = [ "amc6821" ];
 
     boot.kernelPackages = pkgs.linuxPackages_6_1;
 
