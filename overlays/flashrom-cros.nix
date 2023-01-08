@@ -1,4 +1,6 @@
-{ cmake
+{ lib
+, stdenv
+, cmake
 , cmocka
 , fetchFromGitiles
 , libftdi1
@@ -8,17 +10,16 @@
 , ninja
 , pciutils
 , pkg-config
-, stdenv
+, ...
 }:
+let
+  src = lib.importJSON ./flashrom-cros.json;
+in
 stdenv.mkDerivation {
   pname = "flashrom-cros";
-  version = "2022-12-29";
+  version = builtins.substring 0 7 src.rev;
 
-  src = fetchFromGitiles {
-    url = "https://chromium.googlesource.com/chromiumos/third_party/flashrom";
-    rev = "87d712d4f1b26a83db75e97485baa430b919f784";
-    sha256 = "sha256-xOv3rEHfeEvAAi2NLgoQGuJAXtn47aMR6Nmg7+vQpDs=";
-  };
+  src = fetchFromGitiles { inherit (src) url rev sha256; };
 
   dontUseCmakeConfigure = true;
   nativeBuildInputs = [ cmake cmocka meson ninja pkg-config ];

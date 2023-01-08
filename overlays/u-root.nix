@@ -1,12 +1,12 @@
-{ buildGoPackage, fetchFromGitHub, buildPackages, pkgsStatic, xz, cpio, runCommand, ... }:
+{ lib, buildGoPackage, fetchFromGitHub, buildPackages, pkgsStatic, xz, cpio, runCommand, ... }:
 let
   pname = "u-root";
-  version = "2023-01-01";
+  srcJson = lib.importJSON ./u-root.json;
+  version = builtins.substring 0 7 srcJson.rev;
   src = fetchFromGitHub {
     owner = "u-root";
     repo = "u-root";
-    rev = "ff9c8884b4a616233eeea068697dfc672c22e2ca";
-    sha256 = "sha256-1qmp9vWisY+H/5aEtSgrIpfPgb0BKkM5zZ8oOWpONVA=";
+    inherit (srcJson) rev sha256;
   };
   goPackagePath = "github.com/u-root/u-root";
   # u-root builder does not need to be cross-compiled

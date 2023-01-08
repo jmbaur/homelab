@@ -1,0 +1,11 @@
+{
+  "url": "https://github.com/u-root/u-root",
+  "rev": "4dbe380adcd410d9a5ab7ebf3544dc421254d45b",
+  "date": "2023-01-07T14:18:43-08:00",
+  "path": "/nix/store/844fjikdas0rcy0f1xv9fifccjypjxsx-u-root",
+  "sha256": "10yf68ayaldy9hd1jkd5pfkfbs74iwr48wz453dpv2fkplakz244",
+  "fetchLFS": false,
+  "fetchSubmodules": false,
+  "deepClone": false,
+  "leaveDotGit": false
+}

@@ -1,0 +1,11 @@
+{
+  "url": "https://chromium.googlesource.com/chromiumos/third_party/flashrom",
+  "rev": "17242b5c98ae3c68d002df15c54b825a136f68ee",
+  "date": "2023-01-06T11:37:43+00:00",
+  "path": "/nix/store/s21pvvl2p3rxyx4c50v9r53lgz3x4z6q-flashrom",
+  "sha256": "0v5qzj2w8xs95rksbihxnk8r22cjwkygip3ssr3rqbbcqbxgyl7j",
+  "fetchLFS": false,
+  "fetchSubmodules": false,
+  "deepClone": false,
+  "leaveDotGit": false
+}
