@@ -109,7 +109,7 @@ inputs: with inputs; {
         linuxboot-qemu-aarch64-fitimage = final.mkFitImage {
           boardName = "qemu-aarch64";
           kernel = final.linux_linuxboot;
-          initramfs = final.tinyboot-initramfs;
+          initramfs = "${final.tinyboot-initramfs}/initrd";
           # NOTE: See here as to why qemu needs to be in depsBuildBuild and
           # not nativeBuildInputs:
           # https://github.com/NixOS/nixpkgs/pull/146583
@@ -125,7 +125,7 @@ inputs: with inputs; {
         linuxboot-mediatek-fitimage = final.mkFitImage {
           boardName = "mediatek";
           kernel = final.linux_linuxboot;
-          initramfs = final.tinyboot-initramfs;
+          initramfs = "${final.tinyboot-initramfs}/initrd";
           dtbPattern = "(mt8183|mt8192)";
         };
 
@@ -139,7 +139,7 @@ inputs: with inputs; {
           configfile = ./coreboot/qemu-x86.config;
           extraConfig = ''
             CONFIG_PAYLOAD_FILE="${final.linux_linuxboot}/bzImage"
-            CONFIG_LINUX_INITRD="${final.tinyboot-initramfs}"
+            CONFIG_LINUX_INITRD="${final.tinyboot-initramfs}/initrd"
           '';
         };
         coreboot-qemu-aarch64 = final.buildCoreboot {
@@ -162,7 +162,7 @@ inputs: with inputs; {
             ''
               CONFIG_INTEL_GMA_VBT_FILE="${vbt}"
               CONFIG_PAYLOAD_FILE="${final.linux_linuxboot}/bzImage"
-              CONFIG_LINUX_INITRD="${final.tinyboot-initramfs}"
+              CONFIG_LINUX_INITRD="${final.tinyboot-initramfs}/initrd"
             '';
         };
         coreboot-kukui-fennel14 = final.buildCoreboot {
