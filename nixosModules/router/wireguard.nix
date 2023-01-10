@@ -23,7 +23,7 @@ let
               ];
             };
           })
-          network.hosts;
+          (lib.filterAttrs (name: _: name != "_router") network.hosts);
       };
       network = {
         inherit (network) name;
