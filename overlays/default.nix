@@ -109,7 +109,7 @@ inputs: with inputs; {
         linuxboot-qemu-aarch64-fitimage = final.mkFitImage {
           boardName = "qemu-aarch64";
           kernel = final.linux_linuxboot;
-          initramfs = "${final.tinyboot-initramfs}/initrd";
+          initramfs = "${final.tinyboot-initramfs.override { tty = "ttyAMA0"; }}/initrd";
           # NOTE: See here as to why qemu needs to be in depsBuildBuild and
           # not nativeBuildInputs:
           # https://github.com/NixOS/nixpkgs/pull/146583
@@ -139,7 +139,7 @@ inputs: with inputs; {
           configfile = ./coreboot/qemu-x86.config;
           extraConfig = ''
             CONFIG_PAYLOAD_FILE="${final.linux_linuxboot}/bzImage"
-            CONFIG_LINUX_INITRD="${final.tinyboot-initramfs}/initrd"
+            CONFIG_LINUX_INITRD="${final.tinyboot-initramfs.override { tty = "ttyS0"; }}/initrd"
           '';
         };
         coreboot-qemu-aarch64 = final.buildCoreboot {
