@@ -104,11 +104,10 @@ inputs: with inputs; {
 
         linux_cn913x = prev.callPackage ./kernels/linux_cn913x.nix { inherit cn913x_build; };
         linux_mediatek = prev.callPackage ./kernels/linux_mediatek.nix { };
-        linux_linuxboot = prev.callPackage ./kernels/linux_linuxboot.nix { inherit (final) u-rootInitramfs; };
 
         linuxboot-qemu-aarch64-fitimage = final.mkFitImage {
           boardName = "qemu-aarch64";
-          kernel = final.linux_linuxboot;
+          kernel = final.tinyboot-kernel;
           initramfs = "${final.tinyboot-initramfs.override { tty = "ttyAMA0"; }}/initrd";
           # NOTE: See here as to why qemu needs to be in depsBuildBuild and
           # not nativeBuildInputs:
@@ -124,7 +123,7 @@ inputs: with inputs; {
         };
         linuxboot-mediatek-fitimage = final.mkFitImage {
           boardName = "mediatek";
-          kernel = final.linux_linuxboot;
+          kernel = final.tinyboot-kernel;
           initramfs = "${final.tinyboot-initramfs}/initrd";
           dtbPattern = "(mt8183|mt8192)";
         };
@@ -138,7 +137,7 @@ inputs: with inputs; {
           boardName = "qemu-x86";
           configfile = ./coreboot/qemu-x86.config;
           extraConfig = ''
-            CONFIG_PAYLOAD_FILE="${final.linux_linuxboot}/bzImage"
+            CONFIG_PAYLOAD_FILE="${final.tinyboot-kernel}/bzImage"
             CONFIG_LINUX_INITRD="${final.tinyboot-initramfs.override { tty = "ttyS0"; }}/initrd"
           '';
         };
@@ -161,7 +160,7 @@ inputs: with inputs; {
             in
             ''
               CONFIG_INTEL_GMA_VBT_FILE="${vbt}"
-              CONFIG_PAYLOAD_FILE="${final.linux_linuxboot}/bzImage"
+              CONFIG_PAYLOAD_FILE="${final.tinyboot-kernel}/bzImage"
               CONFIG_LINUX_INITRD="${final.tinyboot-initramfs}/initrd"
             '';
         };
