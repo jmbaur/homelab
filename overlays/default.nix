@@ -26,7 +26,7 @@ inputs: with inputs; {
         mirror-to-x = prev.callPackage ./mirror-to-x.nix { };
         pomo = prev.callPackage ./pomo { };
         v4l-show = prev.callPackage ./v4l-show.nix { };
-        wip = prev.writeShellScriptBin "wip" ''git commit --no-verify --no-gpg-sign --all --message "WIP" && git push'';
+        wip = prev.writeShellScriptBin "wip" ''git commit --no-verify --no-gpg-sign --all --message "WIP"; git push'';
         ixio = prev.writeShellScriptBin "ixio" "${prev.curl}/bin/curl -F 'f:1=<-' ix.io";
         stevenblack-hosts = prev.linkFarm "hosts" (
           let
