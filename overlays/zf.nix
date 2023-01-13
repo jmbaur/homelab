@@ -8,9 +8,7 @@ stdenvNoCC.mkDerivation rec {
     rev = version;
     sha256 = "sha256-df7fK3aYoMP4x0XWscYb9xrHl0tl8L9GcgCDQ6lTTnc=";
   };
-  preBuild = ''
-    export HOME=$TMPDIR
-  '';
+  HOME = "/tmp";
   installPhase = ''
     ${zig}/bin/zig build -Drelease-fast=true --prefix $out install
   '';
