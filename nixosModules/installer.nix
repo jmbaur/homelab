@@ -6,7 +6,7 @@ in
   options.custom.installer.enable = lib.mkEnableOption "installer";
   config = lib.mkIf cfg.enable {
     system.stateVersion = "22.11";
-    boot.kernelParams = [ "console=ttyS0" "console=ttyAMA0" "console=tty0" ];
+    boot.kernelParams = [ (if pkgs.hostPlatform.system == "aarch64-linux" then "console=ttyS0" else "console=ttyAMA0") ];
     boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
     custom.disableZfs = true;
     documentation.enable = true;
