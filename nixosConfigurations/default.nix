@@ -71,12 +71,17 @@ in
   netboot-test = nixpkgs.lib.nixosSystem {
     system = "aarch64-linux";
     modules = [
-      "${nixpkgs}/nixos/modules/installer/netboot/netboot-minimal.nix"
-      ({
-        system.stateVersion = "22.11";
+      ({ modulesPath, ... }: {
+        imports = [ "${modulesPath}/installer/netboot/netboot-minimal.nix" ];
+        system.stateVersion = "23.05";
         users.users.root.password = "dontpwnme";
       })
     ];
+  };
+
+  potato = nixpkgs.lib.nixosSystem {
+    system = "x86_64-linux";
+    modules = [ ./potato ];
   };
 
   clearfog-a38x-test = nixpkgs.lib.nixosSystem {
