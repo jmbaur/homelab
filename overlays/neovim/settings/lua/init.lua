@@ -1,6 +1,10 @@
 vim.g.mapleader = " "
 
 if #vim.api.nvim_list_uis() > 0 then
+	local oil = require("oil")
+	oil.setup()
+	vim.keymap.set("n", "-", oil.open, { desc = "Open parent directory" })
+
 	require("gosee").setup()
 	require("launcher")
 	require("mini.trailspace").setup({})
@@ -16,6 +20,7 @@ if #vim.api.nvim_list_uis() > 0 then
 	vim.cmd.colorscheme("jared")
 	vim.opt.belloff = "all"
 	vim.opt.colorcolumn = "80"
+	vim.opt.cursorline = true
 	vim.opt.laststatus = 3
 	vim.opt.number = true
 	vim.opt.relativenumber = true

@@ -35,11 +35,11 @@
     "cn913x_build": {
       "flake": false,
       "locked": {
-        "lastModified": 1671033896,
-        "narHash": "sha256-AVMT3LpPB7u283i6YmNN1MOjEAfQ7vUWrrCI6NdI/lo=",
+        "lastModified": 1673626052,
+        "narHash": "sha256-MC2lFmlUzGD2iQ4eXhZtxAzDPBAWFWEINzmovdBILxA=",
         "owner": "solidrun",
         "repo": "cn913x_build",
-        "rev": "807ae3ebd8ae9431d018c21259f2401cf9df0595",
+        "rev": "0eb8302b483f1d0afc5ff0ec3fc3b1d9cfae5a93",
         "type": "github"
       },
       "original": {
@@ -900,11 +900,11 @@
         "nixpkgs-stable": "nixpkgs-stable_3"
       },
       "locked": {
-        "lastModified": 1673281605,
-        "narHash": "sha256-v6U0G3pJe0YaIuD1Ijhz86EhTgbXZ4f/2By8sLqFk4c=",
+        "lastModified": 1673627351,
+        "narHash": "sha256-oppRxEg/7ICcG67ErBvu1UlXt3su6zMcNoQmKaHPs5I=",
         "owner": "cachix",
         "repo": "pre-commit-hooks.nix",
-        "rev": "f8992fb404c7e79638192a10905b7ea985818050",
+        "rev": "496e4505c2ddf5f205242eae8064d7d89cd976c0",
         "type": "github"
       },
       "original": {
@@ -1145,11 +1145,11 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1673571857,
-        "narHash": "sha256-VG5emtXt39jndVgbE99SCz4ZbTJgmYbtklhxGZlvxcw=",
+        "lastModified": 1673596098,
+        "narHash": "sha256-b03PB0RI/ulUvybN+JP390iw1yEVvZQv3MJynrhwOcg=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "4c77a8d5cf63e7f4510394104b59c5d21cb50fd1",
+        "rev": "9383ba219ca68cb7735ab83a310150ed03ec5433",
         "type": "github"
       },
       "original": {

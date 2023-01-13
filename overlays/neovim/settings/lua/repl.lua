@@ -74,7 +74,7 @@ M.launch = function()
 end
 
 M.setup = function()
-	vim.keymap.set("n", "<leader>$", M.launch)
+	vim.keymap.set("n", "<leader>$", M.launch, { desc = "Launch REPL chooser" })
 	vim.api.nvim_create_user_command("Repl", function(args)
 		local arg
 		if args["args"] == "" then

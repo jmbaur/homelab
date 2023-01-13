@@ -48,18 +48,20 @@ local get_on_attach = function(settings)
 		-- Prevent LSP preview window from opening on omnifunc
 		vim.opt.completeopt:remove({ "preview" })
 
-		local opts = { buffer = bufnr }
-		vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
-		vim.keymap.set("n", "<leader>D", vim.lsp.buf.type_definition, opts)
-		vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, opts)
-		vim.keymap.set("n", "<leader>i", telescope_builtins.lsp_implementations, opts)
-		vim.keymap.set("n", "<leader>n", vim.lsp.buf.rename, opts)
-		vim.keymap.set("n", "<leader>r", telescope_builtins.lsp_references, opts)
-		vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-		vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
-		vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
-		vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
-		vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+		local opts = function(desc)
+			return { buffer = bufnr, desc = desc }
+		end
+		vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts("Signature help"))
+		vim.keymap.set("n", "<leader>D", vim.lsp.buf.type_definition, opts("Type definition"))
+		vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, opts("Code action"))
+		vim.keymap.set("n", "<leader>i", telescope_builtins.lsp_implementations, opts("LSP implementations"))
+		vim.keymap.set("n", "<leader>n", vim.lsp.buf.rename, opts("Rename"))
+		vim.keymap.set("n", "<leader>r", telescope_builtins.lsp_references, opts("LSP references"))
+		vim.keymap.set("n", "K", vim.lsp.buf.hover, opts("Hover"))
+		vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts("Go to previous diagnostic"))
+		vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts("Go to next diagnostic"))
+		vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts("Go to declaration"))
+		vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts("Go to definition"))
 	end
 end
 

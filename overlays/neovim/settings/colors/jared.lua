@@ -10,7 +10,6 @@ if vim.g.colors_name then
 end
 
 vim.opt.background = "dark"
-vim.opt.cursorline = true
 vim.opt.termguicolors = true
 
 vim.g.colors_name = "jared"

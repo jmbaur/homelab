@@ -31,8 +31,7 @@ inputs: with inputs; {
         stevenblack-hosts = prev.linkFarm "hosts" (
           let
             repo = (prev.fetchgit {
-              inherit (prev.lib.importJSON ./stevenblack_hosts.json)
-                url rev sha256;
+              inherit (prev.lib.importJSON ./stevenblack_hosts.json) url rev sha256 fetchSubmodules;
             });
           in
           [
@@ -46,15 +45,23 @@ inputs: with inputs; {
             version = "0.0.0";
             src = ./neovim/settings;
           };
+          oil-nvim =
+            let
+              oil-nvim-src = prev.lib.importJSON ./stevearc_oil-nvim.json;
+            in
+            prev.vimUtils.buildVimPlugin {
+              pname = "oil-nvim";
+              version = oil-nvim-src.rev;
+              src = prev.fetchgit { inherit (oil-nvim-src) url sha256 rev fetchSubmodules; };
+            };
           smartyank-nvim =
             let
-              smartyank-nvim-src = prev.lib.importJSON
-                ./ibhagwan_smartyank-nvim.json;
+              smartyank-nvim-src = prev.lib.importJSON ./ibhagwan_smartyank-nvim.json;
             in
             prev.vimUtils.buildVimPlugin {
               pname = "smartyank-nvim";
               version = smartyank-nvim-src.rev;
-              src = prev.fetchgit { inherit (smartyank-nvim-src) url sha256 rev; };
+              src = prev.fetchgit { inherit (smartyank-nvim-src) url sha256 rev fetchSubmodules; };
             };
         };
         neovim = prev.callPackage ./neovim { inherit (final) vimPlugins; };

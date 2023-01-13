@@ -1,0 +1,11 @@
+{
+  "url": "https://github.com/stevearc/oil.nvim",
+  "rev": "abfc455f62dac385b0fc816f37c64dffead0bcf3",
+  "date": "2023-01-13T08:34:21-08:00",
+  "path": "/nix/store/dmdvixcqmaqpkxacf9fjxwmlszs8383b-oil.nvim",
+  "sha256": "0cryis4lqr700rj5x6jnbdbxfv91kf3dwdjb4xkm21nsgk9bc3d0",
+  "fetchLFS": false,
+  "fetchSubmodules": false,
+  "deepClone": false,
+  "leaveDotGit": false
+}

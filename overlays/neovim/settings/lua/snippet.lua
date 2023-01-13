@@ -19,7 +19,7 @@ require("snippets").snippets = {
 
 vim.keymap.set("i", "<c-j> ", function()
 	require("snippets").advance_snippet(-1)
-end)
+end, { desc = "Advance snippet" })
 vim.keymap.set("i", "<c-k>", function()
 	require("snippets").expand_or_advance(1)
-end)
+end, { desc = "Expand or advance snippet" })

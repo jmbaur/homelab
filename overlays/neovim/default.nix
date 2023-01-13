@@ -17,12 +17,12 @@ let
         nvim-treesitter-refactor
         nvim-treesitter-textobjects
         nvim-treesitter.withAllGrammars
+        oil-nvim
         playground
         smartyank-nvim
         snippets-nvim
         telescope-nvim
         telescope-ui-select-nvim
-        vim-dirvish
         vim-dispatch
         vim-eunuch
         vim-fugitive
