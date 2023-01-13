@@ -294,7 +294,10 @@ with lib; {
           input =
             let
               mouseSettings = { accel_profile = "flat"; };
-              keyboardSettings = { xkb_options = systemConfig.services.xserver.xkbOptions; };
+              keyboardSettings = {
+                xkb_model = systemConfig.services.xserver.xkbModel;
+                xkb_options = systemConfig.services.xserver.xkbOptions;
+              };
               touchpadSettings = {
                 dwt = "enabled";
                 middle_emulation = "enabled";
@@ -303,7 +306,10 @@ with lib; {
               };
             in
             {
-              "113:16461:Logitech_K400_Plus" = keyboardSettings // touchpadSettings // { xkb_options = "ctrl:nocaps"; };
+              "113:16461:Logitech_K400_Plus" = touchpadSettings // {
+                xkb_options = "ctrl:nocaps";
+                xkb_model = "pc104";
+              };
               "type:keyboard" = keyboardSettings;
               "type:pointer" = mouseSettings;
               "type:touchpad" = touchpadSettings;
