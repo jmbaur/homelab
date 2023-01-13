@@ -45,6 +45,7 @@ with lib; {
       nix-tree
       nixos-generators
       nload
+      nurl
       openssl
       patchelf
       pd-notify
