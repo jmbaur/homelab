@@ -1,43 +1,32 @@
-{ lib, buildGoPackage, fetchFromGitHub, buildPackages, pkgsStatic, xz, cpio, runCommand, ... }:
+{ buildGoPackage, fetchFromGitHub, buildPackages, xz, ... }:
 let
-  pname = "u-root";
-  srcJson = lib.importJSON ./u-root.json;
-  version = builtins.substring 0 7 srcJson.rev;
-  src = fetchFromGitHub {
-    owner = "u-root";
-    repo = "u-root";
-    inherit (srcJson) rev sha256;
-  };
-  goPackagePath = "github.com/u-root/u-root";
   # u-root builder does not need to be cross-compiled
-  builder = buildPackages.buildGoPackage {
-    inherit pname version src goPackagePath;
+  builder = buildPackages.buildGoPackage rec {
+    pname = src.repo;
+    version = builtins.substring 0 7 src.rev;
+    src = fetchFromGitHub {
+      owner = "u-root";
+      repo = "u-root";
+      rev = "e4b0aefee0d1ec00c61f781f8ad3533fe3781bbe";
+      hash = "sha256-FMnJsGFY7fjdNni0jpG/m+dH5z+3NiCkIgayxL1Zjq0=";
+    };
+    goPackagePath = "github.com/u-root/u-root";
     subPackages = ".";
   };
-
-  base = runCommand "busybox-initramfs" { nativeBuildInputs = [ cpio ]; } ''
-    mkdir root; cd root
-    cp -r ${pkgsStatic.busybox}/. .
-    find . -print0 |
-      cpio --null --create --verbose --format=newc >$out
-  '';
 in
 buildGoPackage {
-  pname = "${pname}-initramfs";
-  inherit version src goPackagePath;
+  pname = "${builder.pname}-initramfs";
+  inherit (builder) src version goPackagePath;
   nativeBuildInputs = [ xz ];
   patches = [
     ./u-root-extlinux-path.patch # allows for booting extlinux on nixos /boot/extlinux/extlinux.conf
-    ./u-root-no-defaultsh.patch # just use /bin/sh
   ];
   buildPhase = ''
     GOROOT="$(go env GOROOT)" ${builder}/bin/u-root \
       -uroot-source go/src/$goPackagePath \
-      -defaultsh "" \
       -uinitcmd boot \
-      -base ${base} \
       -o initramfs.cpio \
-      ./cmds/{core/init,boot/boot,boot/localboot}
+      core ./cmds/{core/init,boot/boot,boot/localboot}
   '';
   installPhase = ''
     xz --check=crc32 --lzma2=dict=512KiB <initramfs.cpio >$out

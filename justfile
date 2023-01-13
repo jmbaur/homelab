@@ -40,10 +40,6 @@ update:
 	cd {{justfile_directory()}}/overlays
 	export NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"
 	nix-prefetch-git https://chromium.googlesource.com/chromiumos/third_party/flashrom >flashrom-cros.json
-	nix-prefetch-git https://github.com/ibhagwan/smartyank.nvim >ibhagwan_smartyank-nvim.json
-	nix-prefetch-git https://github.com/stevearc/oil.nvim >stevearc_oil-nvim.json
-	nix-prefetch-git https://github.com/stevenblack/hosts >stevenblack_hosts.json
-	nix-prefetch-git https://github.com/u-root/u-root >u-root.json
 	drvs=$(nix-instantiate --arg pkgs 'import <nixpkgs> {}' out-of-tree.nix)
 	for pkg in $(nix show-derivation $drvs | jq -r '..|objects|.pname//empty' | sort); do
 		nix-update --file ./out-of-tree.nix $pkg

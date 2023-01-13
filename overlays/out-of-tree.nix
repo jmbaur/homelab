@@ -4,6 +4,9 @@
   depthcharge-tools = pkgs.callPackage ./depthcharge-tools.nix { };
   flarectl = pkgs.callPackage ./flarectl.nix { };
   flashrom-cros = pkgs.callPackage ./flashrom-cros.nix { };
+  oil-nvim = pkgs.callPackage ./oil-nvim.nix { };
+  smartyank-nvim = pkgs.callPackage ./smartyank-nvim.nix { };
+  stevenblack-hosts = pkgs.callPackage ./stevenblack-hosts.nix { };
   u-rootInitramfs = pkgs.callPackage ./u-root.nix { };
   xremap = pkgs.callPackage ./xremap.nix { features = [ "sway" ]; };
   yamlfmt = pkgs.callPackage ./yamlfmt.nix { };
