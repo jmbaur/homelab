@@ -1,9 +1,5 @@
-{ config, pkgs, modulesPath, ... }: {
-  disabledModules = [ "${modulesPath}/system/boot/loader/generic-extlinux-compatible" ];
-  imports = [
-    ../../nixosModules/extlinux-delete-when-merged
-    ./hardware-configuration.nix
-  ];
+{ config, pkgs, ... }: {
+  imports = [ ./hardware-configuration.nix ];
   hardware.bluetooth.enable = true;
 
   zramSwap.enable = true;

@@ -30,6 +30,9 @@
     tinyboot.url = "github:jmbaur/tinyboot";
     webauthn-tiny.inputs.nixpkgs.follows = "nixpkgs";
     webauthn-tiny.url = "github:jmbaur/webauthn-tiny";
+
+    # TODO(jared): delete if/when merged
+    nixpkgs-extlinux-specialisation.url = "github:jmbaur/nixpkgs/extlinux-specialisation";
   };
 
   nixConfig = {

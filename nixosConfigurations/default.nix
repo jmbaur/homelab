@@ -40,6 +40,10 @@ in
       ./beetroot
       self.nixosModules.default
       sops-nix.nixosModules.sops
+      ({ modulesPath, ... }: {
+        disabledModules = [ "${modulesPath}/system/boot/loader/generic-extlinux-compatible" ];
+        imports = [ "${nixpkgs-extlinux-specialisation}/nixos/modules/system/boot/loader/generic-extlinux-compatible" ];
+      })
     ];
   };
 
