@@ -25,6 +25,7 @@ with lib; {
       git-get
       git-gone
       gitui
+      gnumake
       gosee
       grex
       gron
