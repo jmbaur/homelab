@@ -6,7 +6,7 @@ stdenvNoCC.mkDerivation rec {
     owner = "natecraddock";
     repo = "zf";
     rev = version;
-    sha256 = "sha256-zmlNvChcRXYCo6BtjSG+G1Re9hPZVFW1EKyj4/CIdmg=";
+    sha256 = "sha256-df7fK3aYoMP4x0XWscYb9xrHl0tl8L9GcgCDQ6lTTnc=";
   };
   HOME = "/tmp";
   installPhase = ''
