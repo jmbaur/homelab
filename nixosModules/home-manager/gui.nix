@@ -345,7 +345,7 @@ with lib; {
           workspaceLayout = "stacking";
           workspaceAutoBackAndForth = true;
           defaultWorkspace = "workspace number 1";
-          focus.forceWrapping = true;
+          focus.wrapping = "yes";
           window = { hideEdgeBorders = "smart"; titlebar = true; };
           keybindings = {
             "${mod}+0" = "workspace number 10";
