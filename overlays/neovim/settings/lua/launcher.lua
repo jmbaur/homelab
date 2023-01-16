@@ -12,6 +12,7 @@ telescope.setup({
 		},
 	},
 	pickers = {
+		live_grep = { previewer = false },
 		find_files = {
 			find_command = { "fd", "--type", "f", "--strip-cwd-prefix", "--hidden" },
 		},
