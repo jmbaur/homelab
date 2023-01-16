@@ -24,7 +24,6 @@ with lib; {
       git-extras
       git-get
       git-gone
-      gitui
       gnumake
       gosee
       grex
@@ -63,6 +62,7 @@ with lib; {
       skopeo
       tea
       tealdeer
+      tig
       tokei
       wip
       xsv
