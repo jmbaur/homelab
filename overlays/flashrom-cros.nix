@@ -1,17 +1,4 @@
-{ lib
-, stdenv
-, cmake
-, cmocka
-, fetchFromGitiles
-, libftdi1
-, libjaylink
-, libusb1
-, meson
-, ninja
-, pciutils
-, pkg-config
-, ...
-}:
+{ lib, stdenv, cmake, cmocka, fetchFromGitiles, libftdi1, libjaylink, libusb1, meson, ninja, pciutils, pkg-config, ... }:
 let
   src = lib.importJSON ./flashrom-cros.json;
 in

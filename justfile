@@ -44,6 +44,7 @@ update:
 	for pkg in $(nix show-derivation $drvs | jq -r '..|objects|.pname//empty' | sort); do
 		nix-update --file ./out-of-tree.nix $pkg
 	done
+	git checkout HEAD -- ./zf.nix
 
 setup_pam_u2f:
 	pamu2fcfg -opam://homelab
