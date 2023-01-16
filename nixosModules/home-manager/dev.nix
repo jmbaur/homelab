@@ -196,6 +196,8 @@ with lib; {
       extraOptionOverrides.SetEnv = "TERM=xterm-256color";
     };
 
+    programs.fish.enable = true;
+
     programs.zsh = {
       enable = true;
       defaultKeymap = "emacs";
