@@ -43,7 +43,6 @@ with lib;
     };
 
     environment.variables.EDITOR = lib.mkForce "nvim";
-    environment.pathsToLink = [ "/share/zsh" ];
 
     nix.settings = {
       keep-outputs = true;

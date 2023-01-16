@@ -10,11 +10,12 @@ with lib;
     };
   };
   config = mkIf cfg.enable {
+    programs.fish.enable = true;
     users.users.jared = {
       inherit (cfg) passwordFile;
       isNormalUser = true;
       description = "Jared Baur";
-      shell = pkgs.zsh;
+      shell = pkgs.fish;
       openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
       extraGroups = [ "dialout" "wheel" ]
         ++ (lib.optional config.networking.networkmanager.enable "networkmanager")
