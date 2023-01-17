@@ -53,10 +53,10 @@ with lib; {
 
     xdg.configFile."wezterm/wezterm.lua".source = ./wezterm.lua;
     xdg.configFile."wezterm/colors/modus-operandi.toml".source = (pkgs.formats.toml { }).generate "modus-operandi.toml" {
-      colors = rec {
+      colors = {
         background = "#${colors.background}";
         foreground = "#${colors.foreground}";
-        selection_bg = foreground;
+        selection_bg = "rgba(40% 40% 40% 40%)";
         selection_fg = "none";
         ansi = map (color: "#${color}") [ colors.regular0 colors.regular1 colors.regular2 colors.regular3 colors.regular4 colors.regular5 colors.regular6 colors.regular7 ];
         brights = map (color: "#${color}") [ colors.bright0 colors.bright1 colors.bright2 colors.bright3 colors.bright4 colors.bright5 colors.bright6 colors.bright7 ];
