@@ -196,7 +196,12 @@ with lib; {
       extraOptionOverrides.SetEnv = "TERM=xterm-256color";
     };
 
-    programs.fish.enable = true;
+    programs.fish = {
+      enable = true;
+      loginShellInit = ''
+        set -U fish_greeting ""
+      '';
+    };
 
     programs.zsh = {
       enable = true;
