@@ -38,7 +38,6 @@ return {
 	color_scheme = "modus-operandi",
 	font = wezterm.font("JetBrains Mono"),
 	font_size = 16.0,
-	force_reverse_video_cursor = true,
 	hide_tab_bar_if_only_one_tab = true,
 	mouse_bindings = mouse_bindings,
 	use_fancy_tab_bar = false,

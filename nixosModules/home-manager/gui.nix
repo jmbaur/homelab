@@ -57,7 +57,7 @@ with lib; {
         background = "#${colors.background}";
         foreground = "#${colors.foreground}";
         selection_bg = foreground;
-        selection_fg = background;
+        selection_fg = "none";
         ansi = map (color: "#${color}") [ colors.regular0 colors.regular1 colors.regular2 colors.regular3 colors.regular4 colors.regular5 colors.regular6 colors.regular7 ];
         brights = map (color: "#${color}") [ colors.bright0 colors.bright1 colors.bright2 colors.bright3 colors.bright4 colors.bright5 colors.bright6 colors.bright7 ];
       };
