@@ -339,7 +339,7 @@ with lib; {
             names = [ "JetBrains Mono" ];
             size = 12.0;
           };
-          terminal = "${pkgs.alacritty}/bin/alacritty";
+          terminal = "${pkgs.wezterm}/bin/wezterm-gui";
           menu = "${pkgs.bemenu}/bin/bemenu-run";
           modifier = "Mod4";
           workspaceLayout = "stacking";
