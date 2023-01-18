@@ -20,6 +20,16 @@ inputs: with inputs; {
           zf
           ;
 
+        wezterm = prev.wezterm.overrideAttrs (_: {
+          patches = [
+            (prev.fetchpatch {
+              name = "wezterm-wayland-hide-cursor.patch";
+              url = "https://patch-diff.githubusercontent.com/raw/wez/wezterm/pull/2977.patch";
+              sha256 = "sha256-X1nGOFPJRx1YjYgAeKTFDfViXn/LExiMhbqWvjEDUM4=";
+            })
+          ];
+        });
+
         bitwarden-bemenu = prev.callPackage ./bitwarden-bemenu.nix { };
         git-get = prev.callPackage ./git-get { };
         j = prev.callPackage ./j.nix { };
