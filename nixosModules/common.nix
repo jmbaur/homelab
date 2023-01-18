@@ -55,7 +55,7 @@ with lib;
         dnsutils
         file
         git
-        htop
+        htop-vim
         iputils
         killall
         lm_sensors

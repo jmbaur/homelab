@@ -34,6 +34,14 @@ in
     ];
   };
 
+  carrot = nixpkgs.lib.nixosSystem {
+    system = "x86_64-linux";
+    modules = [
+      ./carrot
+      self.nixosModules.default
+    ];
+  };
+
   beetroot = nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
     modules = [
