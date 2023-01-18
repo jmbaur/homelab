@@ -10,7 +10,7 @@ if #vim.api.nvim_list_uis() > 0 then
 	require("mini.trailspace").setup({})
 	require("repl").setup()
 	require("sitter")
-	require("smartyank").setup({ highlight = { enabled = false } })
+	require("smartyank").setup({ highlight = { enabled = false }, osc52 = { silent = true } })
 	require("snippet")
 
 	if vim.g.boring == 0 then
