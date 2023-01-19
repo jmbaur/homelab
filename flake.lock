@@ -1202,16 +1202,15 @@
       "locked": {
         "lastModified": 1674092043,
         "narHash": "sha256-iyAcLZ2eW4bj9wAm+tnvg9aoOJ5Uxj5+o8Ez0by0Ep8=",
-        "ref": "main",
+        "owner": "jmbaur",
+        "repo": "tinyboot",
         "rev": "10a1819aa25df8b4480b2070ef586ce8e2e3580b",
-        "revCount": 134,
-        "type": "git",
-        "url": "https://github.com/jmbaur/tinyboot"
+        "type": "github"
       },
       "original": {
-        "ref": "main",
-        "type": "git",
-        "url": "https://github.com/jmbaur/tinyboot"
+        "owner": "jmbaur",
+        "repo": "tinyboot",
+        "type": "github"
       }
     },
     "utils": {
