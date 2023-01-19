@@ -6,7 +6,7 @@
   fileSystems."/home".options = [ "noatime" "discard=async" "compress=zstd" ];
   zramSwap.enable = true;
 
-  boot.initrd.luks.devices."cryptroot".crypttabExtraOpts = [ "tpm2-device=auto" ];
+  boot.initrd.luks.devices."cryptroot".crypttabExtraOpts = [ "fido2-device=auto" ];
   boot.initrd.systemd.enable = true;
   boot.kernelPackages = pkgs.linuxPackages_6_1;
   boot.loader.efi.canTouchEfiVariables = true;
