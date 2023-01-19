@@ -29,7 +29,7 @@
     sops-nix.url = "github:Mic92/sops-nix";
     terranix.url = "github:terranix/terranix";
     tinyboot.inputs.nixpkgs.follows = "nixpkgs";
-    tinyboot.url = "github:jmbaur/tinyboot";
+    tinyboot.url = "git+https://github.com/jmbaur/tinyboot?ref=main"; # TODO(jared): not working with github flake input syntax for some reason?
     webauthn-tiny.inputs.nixpkgs.follows = "nixpkgs";
     webauthn-tiny.url = "github:jmbaur/webauthn-tiny";
 
