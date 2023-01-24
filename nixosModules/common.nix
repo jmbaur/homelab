@@ -38,8 +38,10 @@ with lib;
 
     services.openssh = mkIf isNotContainer {
       enable = true;
-      passwordAuthentication = mkDefault false;
-      permitRootLogin = mkDefault "prohibit-password";
+      settings = {
+        PermitRootLogin = mkDefault "prohibit-password";
+        PasswordAuthentication = mkDefault false;
+      };
     };
 
     environment = {
