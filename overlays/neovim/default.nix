@@ -25,6 +25,7 @@ let
         telescope-ui-select-nvim
         vim-dispatch
         vim-eunuch
+        vim-flog
         vim-fugitive
         vim-nix
         vim-repeat
