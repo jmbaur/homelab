@@ -66,6 +66,14 @@ linux_5_15.override (old: {
       patch = "${cn913x_build}/patches/linux/0019-arm64-dts-cn9130-clearfog-base-add-m.2-gpios.patch";
     }
     {
+      name = "0020-Switch-back-to-kernel-when-MUSDK-stops";
+      patch = "${cn913x_build}/patches/linux/0020-Switch-back-to-kernel-when-MUSDK-stops.patch";
+    }
+    {
+      name = "0021-linux-cn9130-cf-solidwan-add-carrier-eeprom";
+      patch = "${cn913x_build}/patches/linux/0021-linux-cn9130-cf-solidwan-add-carrier-eeprom.patch";
+    }
+    {
       name = "cn913x-additions";
       patch = null;
       extraStructuredConfig = with lib.kernel; {
