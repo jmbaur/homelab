@@ -5,6 +5,7 @@ if #vim.api.nvim_list_uis() > 0 then
 	oil.setup()
 	vim.keymap.set("n", "-", oil.open, { desc = "Open parent directory" })
 
+	require("compile")
 	require("gosee").setup()
 	require("launcher")
 	require("mini.trailspace").setup({})

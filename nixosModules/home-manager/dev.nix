@@ -12,6 +12,7 @@ with lib; {
       ansifilter
       as-tree
       bintools
+      bottom
       buildah
       cachix
       cntr

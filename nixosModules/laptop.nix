@@ -18,6 +18,6 @@ in
       };
     };
 
-    systemd.network.wait-online.anyInterface = true;
+    systemd.network.wait-online.enable = false;
   };
 }
