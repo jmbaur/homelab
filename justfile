@@ -24,13 +24,12 @@ build:
 		.\#gobar \
 		.\#gosee \
 		.\#ipwatch \
-		.\#linux_cn913x \
 		.\#neovim \
 		.\#pd-notify \
 		.\#pomo \
 		.\#runner-nix \
-		.\#ubootCN9130_CF_Pro \
 		.\#webauthn-tiny \
+		.\#wezterm \
 		.\#xremap \
 		.\#yamlfmt \
 		.\#zf
