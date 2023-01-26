@@ -21,7 +21,8 @@ func must(err error) {
 }
 
 func main() {
-	projDir, ok := os.LookupEnv("PROJ_DIR")
+	// Not actually a standard xdg directory, but why not.
+	projDir, ok := os.LookupEnv("XDG_PROJECTS_DIR")
 	if !ok {
 		projDir = "~/Projects"
 	}
