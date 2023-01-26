@@ -43,10 +43,10 @@ inputs: with inputs; {
         vimPlugins = prev.vimPlugins // {
           jmbaur-settings = prev.vimUtils.buildVimPlugin {
             pname = "jmbaur-settings";
-            version = "0.0.0";
+            version = "0"; # unversioned
             src = ./neovim/settings;
           };
-          inherit (out-of-tree) oil-nvim smartyank-nvim;
+          inherit (out-of-tree) smartyank-nvim;
         };
         neovim = prev.callPackage ./neovim { inherit (final) vimPlugins; };
         neovim-boring = prev.writeShellScriptBin
