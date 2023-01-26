@@ -7,10 +7,10 @@
     };
   }
   {
-    name = "mpfr-4.1.0.tar.xz";
+    name = "mpfr-4.1.1.tar.xz";
     archive = fetchurl {
-      sha256 = "0zwaanakrqjf84lfr5hfsdr7hncwv9wj0mchlr7cmxigfgqs760c";
-      url = "mirror://gnu/mpfr/mpfr-4.1.0.tar.xz";
+      sha256 = "0gf3ibi7kzz39zj72qc9r607clyhm80gs8wbp71zzfkxasyrblgz";
+      url = "mirror://gnu/mpfr/mpfr-4.1.1.tar.xz";
     };
   }
   {
@@ -35,52 +35,52 @@
     };
   }
   {
-    name = "acpica-unix2-20220331.tar.gz";
+    name = "R10_20_22.tar.gz";
     archive = fetchurl {
-      sha256 = "0yjcl00nnnlw01sz6a1i5d3v75gr17mkbxkxfx2v344al33abk8w";
-      url = "https://acpica.org/sites/acpica/files/acpica-unix2-20220331.tar.gz";
+      sha256 = "11iv3jrz27g7bv7ffyxsrgm4cq60cld2gkkl008p3lcwfyqpx88s";
+      url = "https://github.com/acpica/acpica/archive/refs/tags//R10_20_22.tar.gz";
     };
   }
   {
-    name = "llvm-15.0.0.src.tar.xz";
+    name = "llvm-15.0.6.src.tar.xz";
     archive = fetchurl {
-      sha256 = "1l0h7kr96biwaxyxsg6i2fm7z313jzc471cp5cw75gpkcnv3bl2c";
-      url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.0/llvm-15.0.0.src.tar.xz";
+      sha256 = "1qv7d7rbgjbsxywlyrbh4p5bwxyxp9gqqsl4ac1jwzpj06a1jchb";
+      url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.6/llvm-15.0.6.src.tar.xz";
     };
   }
   {
-    name = "clang-15.0.0.src.tar.xz";
+    name = "clang-15.0.6.src.tar.xz";
     archive = fetchurl {
-      sha256 = "0rgzf2gjra32m4gr46633jxis4wgkb44zis2hihq5y62lsp8k5nj";
-      url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.0/clang-15.0.0.src.tar.xz";
+      sha256 = "0csjjbyafjjcyjidcbwq9q6hqnqp3rw7prj2zrwzkd7ijphrl48h";
+      url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.6/clang-15.0.6.src.tar.xz";
     };
   }
   {
-    name = "cmake-15.0.0.src.tar.xz";
+    name = "cmake-15.0.6.src.tar.xz";
     archive = fetchurl {
-      sha256 = "13wfz362g6js8d67wbx050ga70y2m2vb2g94i32jz38gs339cc1a";
-      url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.0/cmake-15.0.0.src.tar.xz";
+      sha256 = "11jcrcnqip2lz9bm0qhrb594bymm971ln114aari52wvpbmaw4vn";
+      url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.6/cmake-15.0.6.src.tar.xz";
     };
   }
   {
-    name = "compiler-rt-15.0.0.src.tar.xz";
+    name = "compiler-rt-15.0.6.src.tar.xz";
     archive = fetchurl {
-      sha256 = "0ggalalb0jafvfv7mfk4mdwh23ihxvcqakzz9b7jxqyr0w2cl4ci";
-      url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.0/compiler-rt-15.0.0.src.tar.xz";
+      sha256 = "1g0zm390mp3j0j06dklzs672l2qyalnxyyifv6ng6bj009dmnvxl";
+      url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.6/compiler-rt-15.0.6.src.tar.xz";
     };
   }
   {
-    name = "clang-tools-extra-15.0.0.src.tar.xz";
+    name = "clang-tools-extra-15.0.6.src.tar.xz";
     archive = fetchurl {
-      sha256 = "0i097y9wwsccqmkhvhha1qhr6wffhqxmxrhy11v77l4kvqnmp450";
-      url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.0/clang-tools-extra-15.0.0.src.tar.xz";
+      sha256 = "099v2yqg11h0h8qqddzkny6b77pafcr7vy5ksc33kqggji173ccj";
+      url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.6/clang-tools-extra-15.0.6.src.tar.xz";
     };
   }
   {
-    name = "cmake-3.24.2.tar.gz";
+    name = "cmake-3.25.0.tar.gz";
     archive = fetchurl {
-      sha256 = "1ny8y2dzc6fww9gzb1ml0vjpx4kclphjihkxagxigprxdzq2140d";
-      url = "https://cmake.org/files/v3.24/cmake-3.24.2.tar.gz";
+      sha256 = "0j6xii9x0d3zmsjr97cb2y3w8w0gaqv0fnkg5saa0pam87sn6r1h";
+      url = "https://cmake.org/files/v3.25/cmake-3.25.0.tar.gz";
     };
   }
   {

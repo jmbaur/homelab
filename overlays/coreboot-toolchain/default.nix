@@ -25,12 +25,12 @@ let
 in
 stdenvNoCC.mkDerivation rec {
   pname = "coreboot-toolchain-${crossgcc_arch}";
-  version = "4.18";
+  version = "4.19";
 
   src = fetchgit {
     url = "https://review.coreboot.org/coreboot";
     rev = version;
-    sha256 = "sha256-vilaYPNW1Ni8z8k1Bxu4ZvbSla/q3xGwS0fEEWxmux4=";
+    sha256 = "sha256-pGS+bfX2k/ot7sHL9aiaQpA0wtbHHZEObJ/h2JGF5/4=";
     fetchSubmodules = false;
     leaveDotGit = true;
     postFetch = ''

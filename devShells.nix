@@ -17,15 +17,14 @@ in
   };
   deploy = pkgs.mkShell {
     buildInputs = (with pkgs; [
-      just
       (terraform.withPlugins (p: with p; [ aws cloudflare http sops ]))
       awscli2
       deploy-rs
       flarectl
+      just
     ]);
   };
   default = pkgs.mkShell {
-    DOCKER = "podman";
     buildInputs = (with pkgs; [ just sops nix-update ]);
     inherit (pre-commit.lib.${system}.run {
       src = ./.;
