@@ -451,14 +451,12 @@ with lib; {
       extraConfig = optionalString
         (
           config.custom.laptop.enable &&
-            config.services.kanshi.enable &&
-            config.services.kanshi.profiles != { }
+          config.services.kanshi.enable &&
+          config.services.kanshi.profiles != { }
         ) ''
         set $laptop eDP-1
         bindswitch --reload --locked lid:on output $laptop disable
         bindswitch --reload --locked lid:off output $laptop enable
-      '' + ''
-        include /etc/sway/config.d/*
       '';
     };
   };
