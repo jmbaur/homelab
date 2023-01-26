@@ -91,7 +91,7 @@ with lib; {
         pkgs.zls
       ])
       (lib.optionals (languages.all || languages.python) [
-        pkgs.black
+        pkgs.ruff
         pkgs.pyright
       ])
       (lib.optionals (languages.all || languages.nix) [
