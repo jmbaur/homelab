@@ -23,10 +23,12 @@ with lib;
       ffmpeg-full
       libnotify
       mpv
-      obs-studio
       pulsemixer
       wl-clipboard
       xdg-utils
+      (pkgs.writeShellScriptBin "sway-launcher" ''
+        exec -a "$0" systemd-cat --identifier=sway sway
+      '')
     ];
 
     services.dbus.enable = true;
@@ -44,7 +46,8 @@ with lib;
 
     services.greetd = {
       enable = true;
-      settings.default_session.command = "${pkgs.greetd.greetd}/bin/agreety --cmd 'systemd-cat --identifier=sway sway'";
+      vt = 7;
+      settings.default_session.command = "${pkgs.greetd.tuigreet}/bin/tuigreet --asterisks --time --cmd sway-launcher";
     };
     programs.wshowkeys.enable = true;
     environment.variables.BEMENU_OPTS = escapeShellArgs [
