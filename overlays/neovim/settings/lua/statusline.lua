@@ -4,6 +4,7 @@ function diagnostics_status()
 		for _, severity in ipairs({
 			{ display = "E", severity = vim.diagnostic.severity.ERROR },
 			{ display = "W", severity = vim.diagnostic.severity.WARN },
+			{ display = "H", severity = vim.diagnostic.severity.HINT },
 			{ display = "I", severity = vim.diagnostic.severity.INFO },
 		}) do
 			table.insert(
