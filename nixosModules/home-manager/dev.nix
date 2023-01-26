@@ -189,6 +189,9 @@ with lib; {
       .git
     '';
 
+    # commonly-used nix shells
+    xdg.configFile.shells = { recursive = true; source = ./shells; };
+
     programs.ssh = {
       enable = true;
       controlMaster = "auto";
