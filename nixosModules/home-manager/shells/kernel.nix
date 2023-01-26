@@ -1,5 +1,9 @@
-{ pkgs ? import <nixpkgs> { } }:
-pkgs.mkShell {
-  inputsFrom = [ pkgs.linuxPackages_latest.kernel ];
-  nativeBuildInputs = with pkgs; [ pkgconfig ncurses ];
+{ pkgs ? import <nixpkgs> { }, version ? "latest" }:
+with pkgs;
+let
+  linux = "linuxPackages_${lib.replaceStrings ["."] ["_"] version}".kernel;
+in
+mkShell {
+  inputsFrom = [ linux ];
+  nativeBuildInputs = [ pkgconfig ncurses ];
 }
