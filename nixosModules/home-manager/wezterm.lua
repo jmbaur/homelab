@@ -23,7 +23,7 @@ local mouse_bindings = {
 	},
 }
 
-for streak in ipairs({ 1, 2, 3 }) do
+for _, streak in ipairs({ 1, 2, 3 }) do
 	table.insert(mouse_bindings, {
 		event = { Up = { streak = streak, button = "Left" } },
 		mods = "NONE",

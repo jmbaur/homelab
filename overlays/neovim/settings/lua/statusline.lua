@@ -1,21 +1,22 @@
-function diagnostics_status()
-	local status = { "[lsp]" }
-	if #vim.lsp.buf_get_clients() > 0 then
-		for _, severity in ipairs({
-			{ display = "E", severity = vim.diagnostic.severity.ERROR },
-			{ display = "W", severity = vim.diagnostic.severity.WARN },
-			{ display = "H", severity = vim.diagnostic.severity.HINT },
-			{ display = "I", severity = vim.diagnostic.severity.INFO },
-		}) do
-			table.insert(
-				status,
-				severity["display"] .. ":" .. #vim.diagnostic.get(0, { severity = severity["severity"] })
-			)
-		end
-	else
-		table.insert(status, "_")
+function diagnostic_status()
+	if #vim.lsp.buf_get_clients() == 0 then
+		return "--"
 	end
-	return table.concat(status, " ")
+
+	local t = {}
+	for _, diag in ipairs({
+		{ display = "E", severity = vim.diagnostic.severity.ERROR },
+		{ display = "W", severity = vim.diagnostic.severity.WARN },
+		{ display = "H", severity = vim.diagnostic.severity.HINT },
+	}) do
+		table.insert(t, diag["display"] .. ":" .. #vim.diagnostic.get(0, { severity = diag["severity"] }))
+	end
+
+	return "[lsp] " .. table.concat(t, " ")
 end
 
-vim.opt.statusline = "%{luaeval('diagnostics_status()')}%=%f %{FugitiveStatusline()}%=%y%m%r %l,%c %P"
+vim.opt.statusline = "%{luaeval('diagnostic_status()')}"
+	.. "%="
+	.. "%f %{FugitiveStatusline()}"
+	.. "%="
+	.. "%y%m%r %l,%c %P"
