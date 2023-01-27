@@ -24,9 +24,9 @@ let-env PROMPT_COMMAND_RIGHT = { create_right_prompt }
 
 # The prompt indicators are environmental variables that represent
 # the state of the prompt
-let-env PROMPT_INDICATOR = { "〉" }
+let-env PROMPT_INDICATOR = { "-> " }
 let-env PROMPT_INDICATOR_VI_INSERT = { ": " }
-let-env PROMPT_INDICATOR_VI_NORMAL = { "〉" }
+let-env PROMPT_INDICATOR_VI_NORMAL = { "-> " }
 let-env PROMPT_MULTILINE_INDICATOR = { "::: " }
 
 # Specifies how environment variables are:
@@ -34,14 +34,14 @@ let-env PROMPT_MULTILINE_INDICATOR = { "::: " }
 # - converted from a value back to a string when running external commands (to_string)
 # Note: The conversions happen *after* config.nu is loaded
 let-env ENV_CONVERSIONS = {
-    "PATH": {
-        from_string: { |s| $s | split row (char esep) | path expand -n }
-        to_string: { |v| $v | path expand -n | str join (char esep) }
-    }
-    "Path": {
-        from_string: { |s| $s | split row (char esep) | path expand -n }
-        to_string: { |v| $v | path expand -n | str join (char esep) }
-    }
+  "PATH": {
+    from_string: { |s| $s | split row (char esep) | path expand -n }
+    to_string: { |v| $v | path expand -n | str join (char esep) }
+  }
+  "Path": {
+    from_string: { |s| $s | split row (char esep) | path expand -n }
+    to_string: { |v| $v | path expand -n | str join (char esep) }
+  }
 }
 
 # Directories to search for scripts when calling source or use
