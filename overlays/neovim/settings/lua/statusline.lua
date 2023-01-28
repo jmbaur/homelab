@@ -1,6 +1,6 @@
 function diagnostic_status()
 	if #vim.lsp.buf_get_clients() == 0 then
-		return "--"
+		return ""
 	end
 
 	local t = {}
@@ -15,8 +15,9 @@ function diagnostic_status()
 	return "[lsp] " .. table.concat(t, " ")
 end
 
-vim.opt.statusline = "%{luaeval('diagnostic_status()')}"
+vim.opt.statusline = "%y"
+	.. "%{luaeval('diagnostic_status()')}"
 	.. "%="
 	.. "%f %{FugitiveStatusline()}"
 	.. "%="
-	.. "%y%m%r %l,%c %P"
+	.. "%m%r %l,%c %P"
