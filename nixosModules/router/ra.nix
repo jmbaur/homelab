@@ -4,8 +4,8 @@
     settings = {
       debug = { address = ":9430"; prometheus = true; };
       interfaces = lib.mapAttrsToList
-        (_: network: {
-          name = network.name;
+        (name: network: {
+          name = config.systemd.network.networks.${name}.name;
           advertise = true;
           managed = true;
           other_config = false;
