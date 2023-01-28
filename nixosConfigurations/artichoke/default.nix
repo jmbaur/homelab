@@ -55,6 +55,7 @@
           22 # ssh
           69 # tftp
           9153 # coredns
+          9430 # corerad
           config.services.iperf3.port
           config.services.prometheus.exporters.blackbox.port
           config.services.prometheus.exporters.kea.port

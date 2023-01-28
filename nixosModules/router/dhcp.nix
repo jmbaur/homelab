@@ -52,11 +52,7 @@ in
                 }
                 {
                   name = "domain-search";
-                  data = "home.arpa";
-                }
-                {
-                  name = "domain-name";
-                  data = "home.arpa";
+                  data = toKeaArray [ domain "home.arpa" ];
                 }
               ] ++ lib.optional (includeRoutesTo != [ ])
                 (
@@ -112,22 +108,18 @@ in
             dhcpNetworks;
         };
         subnet6 = lib.flatten (lib.mapAttrsToList
-          (_: network:
-            with network; [
-              {
-                interface = config.systemd.network.networks.${name}.name;
-                subnet = _computed._networkUlaCidr;
-                pools = [{ pool = "${_computed._dhcpv6Pool}"; }];
-                reservations =
-                  lib.mapAttrsToList
-                    (_: host: {
-                      hw-address = host.mac;
-                      ip-addresses = [ host._computed._ipv6.ula ];
-                    })
-                    (lib.filterAttrs (_: host: host.dhcp) hosts);
-              }
-            ]
-          )
+          (_: network: with network; [{
+            interface = config.systemd.network.networks.${name}.name;
+            subnet = _computed._networkUlaCidr;
+            pools = [{ pool = "${_computed._dhcpv6Pool}"; }];
+            reservations =
+              lib.mapAttrsToList
+                (_: host: {
+                  hw-address = host.mac;
+                  ip-addresses = [ host._computed._ipv6.ula ];
+                })
+                (lib.filterAttrs (_: host: host.dhcp) hosts);
+          }])
           dhcpNetworks);
       };
     };

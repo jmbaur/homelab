@@ -6,6 +6,7 @@
     ./lan.nix
     ./monitoring.nix
     ./options.nix
+    ./ra.nix
     ./wan.nix
     ./wireguard.nix
   ];
