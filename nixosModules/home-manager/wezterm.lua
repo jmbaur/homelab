@@ -31,6 +31,11 @@ for _, streak in ipairs({ 1, 2, 3 }) do
 	})
 end
 
+local ssh_domains = {
+	{ name = "kale", remote_address = "kale.mgmt.home.arpa" },
+	{ name = "okra", remote_address = "okra.trusted.home.arpa" },
+}
+
 return {
 	adjust_window_size_when_changing_font_size = false,
 	audible_bell = "Disabled",
@@ -41,6 +46,7 @@ return {
 	force_reverse_video_cursor = true,
 	hide_tab_bar_if_only_one_tab = true,
 	mouse_bindings = mouse_bindings,
+	ssh_domains = ssh_domains,
 	use_fancy_tab_bar = false,
 	window_padding = { left = 0, right = 0, top = 0, bottom = 0 },
 }

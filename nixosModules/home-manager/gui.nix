@@ -63,7 +63,6 @@ with lib; {
       };
       metadata.name = "modus-operandi";
     };
-    home.packages = [ pkgs.wezterm ];
 
     programs.alacritty = {
       enable = true;

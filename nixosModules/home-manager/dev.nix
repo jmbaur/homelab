@@ -7,6 +7,7 @@ with lib; {
       default = systemConfig.custom.dev.enable;
     };
   };
+
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
       ansifilter
@@ -65,6 +66,7 @@ with lib; {
       tealdeer
       tig
       tokei
+      wezterm
       wip
       xsv
       yamlfmt
