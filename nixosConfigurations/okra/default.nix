@@ -25,17 +25,35 @@
     wired = {
       name = "en*";
       DHCP = "yes";
-      dhcpV4Config.RouteMetric = 1024;
-      ipv6AcceptRAConfig.RouteMetric = 1024;
-      networkConfig.IPv6PrivacyExtensions = "kernel";
+      dhcpV4Config = {
+        UseDomains = "route";
+        RouteMetric = 1024;
+      };
+      ipv6AcceptRAConfig = {
+        UseDomains = "route";
+        RouteMetric = 1024;
+      };
+      networkConfig = {
+        IPv6PrivacyExtensions = "kernel";
+        Domains = "~.";
+      };
     };
     wireless = {
       enable = false;
       name = "wl*";
       DHCP = "yes";
-      dhcpV4Config.RouteMetric = 2048;
-      ipv6AcceptRAConfig.RouteMetric = 2048;
-      networkConfig.IPv6PrivacyExtensions = "kernel";
+      dhcpV4Config = {
+        UseDomains = "route";
+        RouteMetric = 2048;
+      };
+      ipv6AcceptRAConfig = {
+        UseDomains = "route";
+        RouteMetric = 2048;
+      };
+      networkConfig = {
+        IPv6PrivacyExtensions = "kernel";
+        Domains = "~.";
+      };
     };
   };
 

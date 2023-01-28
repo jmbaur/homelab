@@ -26,16 +26,34 @@
       wireless = {
         name = "wl*";
         DHCP = "yes";
-        dhcpV4Config.RouteMetric = config.systemd.network.networks.wired.dhcpV4Config.RouteMetric * 2;
-        ipv6AcceptRAConfig.RouteMetric = config.systemd.network.networks.wired.ipv6AcceptRAConfig.RouteMetric * 2;
-        networkConfig.IPv6PrivacyExtensions = "kernel";
+        dhcpV4Config = {
+          UseDomains = "route";
+          RouteMetric = 2048;
+        };
+        ipv6AcceptRAConfig = {
+          UseDomains = "route";
+          RouteMetric = 2048;
+        };
+        networkConfig = {
+          IPv6PrivacyExtensions = "kernel";
+          Domains = "~.";
+        };
       };
       wired = {
         name = "en*";
         DHCP = "yes";
-        dhcpV4Config.RouteMetric = 1024;
-        ipv6AcceptRAConfig.RouteMetric = 1024;
-        networkConfig.IPv6PrivacyExtensions = "kernel";
+        dhcpV4Config = {
+          UseDomains = "route";
+          RouteMetric = 1024;
+        };
+        ipv6AcceptRAConfig = {
+          UseDomains = "route";
+          RouteMetric = 1024;
+        };
+        networkConfig = {
+          IPv6PrivacyExtensions = "kernel";
+          Domains = "~.";
+        };
       };
     };
   };
