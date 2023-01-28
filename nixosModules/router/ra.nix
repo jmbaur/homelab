@@ -9,27 +9,23 @@
           advertise = true;
           managed = true;
           other_config = false;
+          dnssl = [{ domain_names = [ network.domain "home.arpa" ]; }];
 
           # Advertise all /64 prefixes on the interface.
           prefix = [{ }];
 
-          route =
-            let
-              routes = (lib.flatten (map
-                (n: {
-                  prefix = config.custom.inventory.networks.${n}._computed._networkUlaCidr;
-                })
-                network.includeRoutesTo));
-            in
-            if routes != [ ] then routes else
-              # Automatically propagate routes owned by loopback.
-            [{ }];
-
           # Automatically use the appropriate interface address as a DNS server.
           rdnss = [{ }];
-
-          dnssl = [{ domain_names = [ network.domain "home.arpa" ]; }];
-        })
+        } // (
+          let
+            route = (lib.flatten (map
+              (n: {
+                prefix = config.custom.inventory.networks.${n}._computed._networkUlaCidr;
+              })
+              network.includeRoutesTo));
+          in
+          lib.optionalAttrs (route != [ ]) { inherit route; }
+        ))
         (lib.filterAttrs
           (_: network: network.physical.enable)
           config.custom.inventory.networks);
