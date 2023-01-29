@@ -29,8 +29,9 @@ in
     system = "aarch64-linux";
     modules = [
       ./artichoke
-      ipwatch.nixosModules.default
       self.nixosModules.router
+      self.nixosModules.default
+      ipwatch.nixosModules.default
     ];
   };
 
