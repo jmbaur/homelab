@@ -1,28 +1,8 @@
 { config, lib, pkgs, systemConfig, ... }:
 let
   cfg = config.custom.gui;
+  colors = import ./colors.nix;
   lockerCommand = "${pkgs.swaylock}/bin/swaylock --daemonize --indicator-caps-lock --show-keyboard-layout --color '#222222'";
-
-  colors = {
-    background = "000000";
-    foreground = "ffffff";
-    regular0 = "000000";
-    regular1 = "ff8059";
-    regular2 = "44bc44";
-    regular3 = "d0bc00";
-    regular4 = "2fafff";
-    regular5 = "feacd0";
-    regular6 = "00d3d0";
-    regular7 = "bfbfbf";
-    bright0 = "595959";
-    bright1 = "ef8b50";
-    bright2 = "70b900";
-    bright3 = "c0c530";
-    bright4 = "79a8ff";
-    bright5 = "b6a0ff";
-    bright6 = "6ae4b9";
-    bright7 = "ffffff";
-  };
 in
 with lib; {
   options.custom.gui.enable = mkOption {
@@ -49,19 +29,6 @@ with lib; {
           "x-scheme-handler/https" = [ "firefox.desktop" ];
         };
       };
-    };
-
-    xdg.configFile."wezterm/wezterm.lua".source = ./wezterm.lua;
-    xdg.configFile."wezterm/colors/modus-operandi.toml".source = (pkgs.formats.toml { }).generate "modus-operandi.toml" {
-      colors = {
-        background = "#${colors.background}";
-        foreground = "#${colors.foreground}";
-        selection_bg = "rgba(40% 40% 40% 40%)";
-        selection_fg = "none";
-        ansi = map (color: "#${color}") [ colors.regular0 colors.regular1 colors.regular2 colors.regular3 colors.regular4 colors.regular5 colors.regular6 colors.regular7 ];
-        brights = map (color: "#${color}") [ colors.bright0 colors.bright1 colors.bright2 colors.bright3 colors.bright4 colors.bright5 colors.bright6 colors.bright7 ];
-      };
-      metadata.name = "modus-operandi";
     };
 
     programs.alacritty = {
