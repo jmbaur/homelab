@@ -18,7 +18,7 @@
             (networks.hurricane.routes);
           lanIPv4Networks = lib.concatMapStringsSep ", "
             (network: network._computed._networkIPv4Cidr)
-            (builtins.attrValues config.custom.inventory.networks);
+            (builtins.attrValues config.router.inventory.networks);
           wireguardPorts = lib.concatMapStringsSep ", " (netdev: toString netdev.wireguardConfig.ListenPort)
             (builtins.attrValues
               (lib.filterAttrs
@@ -106,7 +106,7 @@
                 (policyName: policy:
                   let
                     nftPrefix = "add rule inet firewall ${chainTo}";
-                    policyNetwork = config.custom.inventory.networks.${policyName};
+                    policyNetwork = config.router.inventory.networks.${policyName};
                     iifname = "${config.systemd.network.networks.${policyNetwork.name}.name}";
                   in
                   (
@@ -122,7 +122,7 @@
                 )
                 (network.policy))))
           )
-          (builtins.attrValues config.custom.inventory.networks)))));
+          (builtins.attrValues config.router.inventory.networks)))));
     };
   };
 }

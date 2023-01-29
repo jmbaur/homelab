@@ -48,7 +48,7 @@
                   network.hosts))
               (lib.filterAttrs
                 (_: network: network.wireguard.enable)
-                config.custom.inventory.networks)
+                config.router.inventory.networks)
           ))
         );
       in

@@ -12,15 +12,20 @@ with lib; {
     home.packages = with pkgs; [
       ansifilter
       as-tree
+      bc
       bintools
       bottom
       buildah
       cachix
       cntr
+      curl
       deadnix
       diffsitter
+      dig
       direnv
+      dnsutils
       entr
+      file
       fsrx
       git
       git-extras
@@ -31,11 +36,16 @@ with lib; {
       grex
       gron
       htmlq
+      htop-vim
+      iputils
       ixio
       j
       jo
       jq
       just
+      killall
+      lm_sensors
+      lsof
       macgen
       mdcat
       mob
@@ -50,6 +60,7 @@ with lib; {
       nurl
       openssl
       patchelf
+      pciutils
       pd-notify
       podman-compose
       podman-tui
@@ -62,10 +73,13 @@ with lib; {
       rlwrap
       sd
       skopeo
+      tcpdump
       tea
       tealdeer
       tig
       tokei
+      traceroute
+      usbutils
       wezterm
       wip
       xsv

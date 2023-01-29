@@ -2,7 +2,7 @@
 with lib;
 let
 
-  cfg = config.custom.inventory;
+  cfg = config.router.inventory;
 
   routerHostName = config.networking.hostName;
 
@@ -185,7 +185,7 @@ in
   # implemented in this module.
   options.networking.nftables.firewall = lib.filterAttrs (k: _: (filter (e: k == e) [ "interfaces" ]) != [ ]) options.networking.firewall;
 
-  options.custom.inventory = {
+  options.router.inventory = {
     wan = mkOption {
       type = types.str;
       description = ''
@@ -204,13 +204,13 @@ in
     };
   };
 
-  config = mkIf (config.custom.inventory != { }) {
+  config = mkIf (config.router.inventory != { }) {
     assertions = [
       {
         message = "Cannot have physical.enable and wireguard.enable set for the same network";
         assertion = (lib.filterAttrs
           (_: network: network.physical.enable && network.wireguard.enable)
-          config.custom.inventory.networks) == { };
+          config.router.inventory.networks) == { };
       }
       (
         let
@@ -220,7 +220,7 @@ in
                 (host:
                   with host._computed; [ _ipv4 _ipv6.gua _ipv6.ula ])
                 (builtins.attrValues network.hosts))
-                (builtins.attrValues config.custom.inventory.networks)));
+                (builtins.attrValues config.router.inventory.networks)));
         in
         {
           assertion = lib.length ips == lib.length (lib.unique ips);
@@ -231,6 +231,6 @@ in
 
     environment.etc."inventory.json".source = (pkgs.formats.json { }).generate
       "inventory.json"
-      config.custom.inventory;
+      config.router.inventory;
   };
 }

@@ -1,7 +1,7 @@
 { config, lib, ... }:
 let
   toKeaArray = data: lib.concatStringsSep "," data;
-  dhcpNetworks = lib.filterAttrs (_: network: network.physical.enable) config.custom.inventory.networks;
+  dhcpNetworks = lib.filterAttrs (_: network: network.physical.enable) config.router.inventory.networks;
 in
 {
   services.kea = {
@@ -68,8 +68,8 @@ in
                         (map
                           (networkName:
                             let
-                              otherNetworkCidr = config.custom.inventory.networks.${networkName}._computed._ipv4Cidr;
-                              otherNetwork = dotToComma config.custom.inventory.networks.${networkName}._computed._networkIPv4SignificantOctets;
+                              otherNetworkCidr = config.router.inventory.networks.${networkName}._computed._ipv4Cidr;
+                              otherNetwork = dotToComma config.router.inventory.networks.${networkName}._computed._networkIPv4SignificantOctets;
                             in
                             "${toString otherNetworkCidr},${otherNetwork},${router}"
                           )

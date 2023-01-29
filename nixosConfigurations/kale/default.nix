@@ -41,6 +41,7 @@
   };
 
   custom = {
+    server.enable = true;
     dev.enable = true;
     users.jared.enable = true;
     deployee = {

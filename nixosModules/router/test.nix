@@ -9,7 +9,7 @@ nixosTest {
       serverIPv6Address = "::1";
       clientIPv6Address = "::2";
     };
-    custom.inventory = {
+    router.inventory = {
       v4Prefix = "192.168.0.0/16";
       v6UlaPrefix = "fc00::/48";
       v6GuaPrefix = "2000::/48";

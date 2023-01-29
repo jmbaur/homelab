@@ -1,12 +1,6 @@
 inputs: with inputs; {
-  router = { ... }: {
-    imports = [
-      ./router
-      self.nixosModules.default
-      sops-nix.nixosModules.sops
-    ];
-  };
-  default = { ... }: {
+  router = { imports = [ ./router sops-nix.nixosModules.sops ]; };
+  default = {
     nixpkgs.overlays = [
       self.overlays.default
       gobar.overlays.default
@@ -23,18 +17,17 @@ inputs: with inputs; {
       ./dev.nix
       ./gui.nix
       ./hardware
-      ./he_tunnelbroker.nix
       ./home-manager
       ./installer.nix
       ./jared.nix
       ./laptop.nix
       ./remote_boot.nix
       ./remote_builder.nix
+      ./server.nix
       ./wg_www_peer.nix
       ./wireless.nix
       ./zfs.nix
       home-manager.nixosModules.home-manager
     ];
-    custom.common.enable = true;
   };
 }

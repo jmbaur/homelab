@@ -57,7 +57,7 @@ let
                 ] ++
                 lib.flatten (
                   map
-                    (name: with config.custom.inventory.networks.${name}; [ _computed._networkIPv4Cidr _computed._networkGuaCidr _computed._networkUlaCidr ])
+                    (name: with config.router.inventory.networks.${name}; [ _computed._networkIPv4Cidr _computed._networkGuaCidr _computed._networkUlaCidr ])
                     network.includeRoutesTo
                 );
               };
@@ -121,7 +121,7 @@ let
     (_: mkWgInterface)
     (lib.filterAttrs
       (_: network: network.wireguard.enable)
-      config.custom.inventory.networks);
+      config.router.inventory.networks);
 in
 {
   systemd.network.netdevs = lib.mapAttrs (_: x: x.netdev) wireguardNetworks;

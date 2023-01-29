@@ -3,23 +3,25 @@ let
   cfg = config.custom.common;
   isNotContainer = !config.boot.isContainer;
 in
-with lib;
-{
-  options.custom.common.enable = mkEnableOption "common options";
+with lib; {
+  options.custom.common.enable = mkOption {
+    type = types.bool;
+    default = true;
+    description = ''
+      Options that are generic to all nixos machines.
+    '';
+  };
 
   config = mkIf cfg.enable {
     users.mutableUsers = mkDefault false;
 
-    boot = mkIf isNotContainer {
-      cleanTmpDir = mkDefault true;
-      loader.grub.configurationLimit = mkDefault 50;
-      loader.systemd-boot.configurationLimit = mkDefault 50;
-    };
+    boot.cleanTmpDir = mkDefault isNotContainer;
+    boot.loader.grub.configurationLimit = mkDefault 50;
+    boot.loader.systemd-boot.configurationLimit = mkDefault 50;
 
     i18n.defaultLocale = "en_US.UTF-8";
     console.useXkbConfig = true;
 
-    fonts.fontconfig.enable = mkDefault false;
     documentation.enable = mkDefault false;
     documentation.man.enable = mkDefault false;
     documentation.info.enable = mkDefault false;
@@ -44,31 +46,7 @@ with lib;
       };
     };
 
-    environment = {
-      variables = {
-        EDITOR = "vi";
-        XKB_DEFAULT_OPTIONS = config.services.xserver.xkbOptions;
-      };
-      systemPackages = with pkgs; [
-        bc
-        curl
-        dig
-        dmidecode
-        dnsutils
-        file
-        git
-        htop-vim
-        iputils
-        killall
-        lm_sensors
-        lsof
-        nvi
-        pciutils
-        tcpdump
-        traceroute
-        usbutils
-      ];
-    };
+    environment.variables.XKB_DEFAULT_OPTIONS = config.services.xserver.xkbOptions;
 
     programs.tmux = {
       enable = true;

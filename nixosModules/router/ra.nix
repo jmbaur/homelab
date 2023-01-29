@@ -20,7 +20,7 @@
           let
             route = (lib.flatten (map
               (n: {
-                prefix = config.custom.inventory.networks.${n}._computed._networkUlaCidr;
+                prefix = config.router.inventory.networks.${n}._computed._networkUlaCidr;
               })
               network.includeRoutesTo));
           in
@@ -28,7 +28,7 @@
         ))
         (lib.filterAttrs
           (_: network: network.physical.enable)
-          config.custom.inventory.networks);
+          config.router.inventory.networks);
     };
   };
 }

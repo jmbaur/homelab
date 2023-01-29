@@ -3,6 +3,7 @@
     ./dhcp.nix
     ./dns.nix
     ./firewall.nix
+    ./he_tunnelbroker.nix
     ./lan.nix
     ./monitoring.nix
     ./options.nix

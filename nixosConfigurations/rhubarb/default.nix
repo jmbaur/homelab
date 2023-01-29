@@ -2,6 +2,7 @@
   imports = [ "${modulesPath}/installer/sd-card/sd-image-aarch64.nix" ];
 
   custom = {
+    server.enable = true;
     wgWwwPeer.enable = true;
     disableZfs = true;
     users.jared = {
@@ -17,6 +18,7 @@
   zramSwap.enable = true;
 
   boot.kernelPackages = pkgs.linuxPackages_6_1;
+  boot.initrd.systemd.enable = true;
 
   networking = {
     hostName = "rhubarb";

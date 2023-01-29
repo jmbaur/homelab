@@ -73,6 +73,6 @@ in
             prometheus :9153
           }
         '')
-      (builtins.attrValues config.custom.inventory.networks);
+      (builtins.attrValues config.router.inventory.networks);
   };
 }

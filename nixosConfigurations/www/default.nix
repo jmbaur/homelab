@@ -6,9 +6,11 @@ in
   imports = [ "${modulesPath}/virtualisation/amazon-image.nix" ];
 
   boot.loader.grub.configurationLimit = 2;
+  boot.initrd.systemd.enable = true;
 
   system.stateVersion = "22.11";
 
+  custom.server.enable = true;
   custom.deployee = {
     enable = true;
     authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];

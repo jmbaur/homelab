@@ -3,6 +3,7 @@
 
   boot.loader.grub.enable = false;
   boot.loader.generic-extlinux-compatible.enable = true;
+  boot.initrd.systemd.enable = true;
 
   hardware.clearfog-cn913x.enable = true;
 
@@ -37,8 +38,10 @@
       };
   };
 
+  router.inventory.wan = config.systemd.network.links."10-wan".linkConfig.Name;
+
   custom = {
-    inventory.wan = config.systemd.network.links."10-wan".linkConfig.Name;
+    server.enable = true;
     deployee = {
       enable = true;
       authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
@@ -66,9 +69,9 @@
       };
     in
     {
-      ${config.custom.inventory.networks.mgmt.physical.interface} = trusted;
-      ${config.custom.inventory.networks.trusted.physical.interface} = trusted;
-      ${config.custom.inventory.networks.wg-trusted.physical.interface} = trusted;
+      ${config.router.inventory.networks.mgmt.physical.interface} = trusted;
+      ${config.router.inventory.networks.trusted.physical.interface} = trusted;
+      ${config.router.inventory.networks.wg-trusted.physical.interface} = trusted;
       ${config.systemd.network.networks.www.name}.allowedTCPPorts = [
         19531 # systemd-journal-gatewayd
       ];

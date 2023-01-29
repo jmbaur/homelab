@@ -55,7 +55,7 @@
     ];
 
     wan = {
-      name = config.custom.inventory.wan;
+      name = config.router.inventory.wan;
       DHCP = "ipv4";
       networkConfig = {
         Tunnel = config.systemd.network.netdevs.hurricane.netdevConfig.Name;

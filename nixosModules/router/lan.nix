@@ -18,5 +18,5 @@
     })
     (lib.filterAttrs
       (_: network: network.physical.enable)
-      config.custom.inventory.networks);
+      config.router.inventory.networks);
 }

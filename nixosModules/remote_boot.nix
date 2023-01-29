@@ -2,12 +2,11 @@
 let
   cfg = config.custom.remoteBoot;
 in
-with lib;
-{
+with lib; {
   options.custom.remoteBoot = {
     enable = mkOption {
       type = types.bool;
-      default = (config.custom.deployee.enable) && (config.boot.initrd.luks.devices != { });
+      default = config.custom.deployee.enable && (config.boot.initrd.luks.devices != { });
       description = ''
         Enable remote boot
       '';
