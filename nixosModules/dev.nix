@@ -51,14 +51,11 @@ with lib;
 
     programs.ssh.startAgent = true;
 
-    networking.firewall.allowedTCPPorts =
-      # wezterm-mux-server
-      lib.optional (!config.custom.gui.enable) 8080;
-
     virtualisation.containers = {
       enable = !config.boot.isContainer;
       containersConf.settings.engine.detach_keys = "ctrl-q,ctrl-e";
     };
+
     virtualisation.podman = {
       enable = !config.boot.isContainer;
       defaultNetwork.settings.dns_enabled = true;

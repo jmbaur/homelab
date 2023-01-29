@@ -25,13 +25,11 @@
     useDHCP = false;
     useNetworkd = true;
     firewall = {
-      allowedTCPPorts = lib.mkForce [ ];
       interfaces = {
         www.allowedTCPPorts = lib.mkForce [
           config.services.grafana.settings.server.http_port
           19531 # systemd-journal-gatewayd
         ];
-        end0.allowedTCPPorts = lib.mkForce [ 22 ];
       };
     };
   };

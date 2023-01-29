@@ -45,7 +45,7 @@ in
   networking = {
     hostName = "www";
     firewall = {
-      allowedTCPPorts = [ 22 80 443 ];
+      allowedTCPPorts = [ 80 443 ];
       allowedUDPPorts = [ config.networking.wireguard.interfaces.www.listenPort ];
     };
     wireguard.interfaces.www = {
