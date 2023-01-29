@@ -183,6 +183,8 @@ with lib; {
       nix-direnv.enable = true;
     };
 
+    programs.zoxide.enable = true;
+
     home.sessionVariables = lib.mkIf (!config.custom.gui.enable) {
       XDG_PROJECTS_DIR = "\${HOME}/projects";
     };
