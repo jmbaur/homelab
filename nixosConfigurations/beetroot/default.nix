@@ -12,6 +12,16 @@
   boot.initrd.availableKernelModules = [ "i915" ];
   boot.initrd.systemd.enable = true;
   boot.kernelPackages = pkgs.linuxPackages_6_1;
+  boot.kernelPatches = [
+    # fix null pointer dereference in kernel
+    {
+      name = "skip_preparing_sof_widgets_when_null.patch";
+      patch = pkgs.fetchpatch {
+        url = "https://github.com/thesofproject/linux/commit/922646d533100044d95a050b222533d59f06020c.patch";
+        sha256 = "";
+      };
+    }
+  ];
   boot.loader = {
     grub = {
       enable = true;
