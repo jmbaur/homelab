@@ -18,7 +18,7 @@
       name = "skip_preparing_sof_widgets_when_null.patch";
       patch = pkgs.fetchpatch {
         url = "https://github.com/thesofproject/linux/commit/922646d533100044d95a050b222533d59f06020c.patch";
-        sha256 = "";
+        sha256 = "sha256-XglC6p76mbWG834L4cHsC+YpJAGAhxZ1p6EwFrlBV+Q=";
       };
     }
   ];
