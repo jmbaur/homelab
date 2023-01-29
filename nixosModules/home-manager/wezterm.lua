@@ -35,10 +35,10 @@ local keys = {
 	{ key = "l", mods = "SHIFT|CTRL", action = wezterm.action.ShowLauncher },
 }
 
-local ssh_domains = {
-	{ name = "kale", remote_address = "kale.mgmt.home.arpa" },
-	{ name = "okra", remote_address = "okra.trusted.home.arpa" },
-	{ name = "work", remote_address = "work" },
+local tls_clients = {
+	{ name = "kale", remote_address = "kale.mgmt.home.arpa", bootstrap_via_ssh = "kale.mgmt.home.arpa" },
+	{ name = "okra", remote_address = "okra.trusted.home.arpa", bootstrap_via_ssh = "okra.trusted.home.arpa" },
+	{ name = "work", remote_address = "dev.work.home.arpa", bootstrap_via_ssh = "work" },
 }
 
 return {
@@ -52,7 +52,9 @@ return {
 	hide_tab_bar_if_only_one_tab = true,
 	keys = keys,
 	mouse_bindings = mouse_bindings,
-	ssh_domains = ssh_domains,
+	tab_bar_at_bottom = true,
+	tls_clients = tls_clients,
+	tls_servers = { { bind_address = "[::]:8080" } },
 	use_fancy_tab_bar = false,
 	window_padding = { left = 0, right = 0, top = 0, bottom = 0 },
 }
