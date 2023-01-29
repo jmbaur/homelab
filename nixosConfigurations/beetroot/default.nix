@@ -13,12 +13,12 @@
   boot.initrd.systemd.enable = true;
   boot.kernelPackages = pkgs.linuxPackages_6_1;
   boot.kernelPatches = [
-    # fix null pointer dereference in kernel
     {
       name = "skip_preparing_sof_widgets_when_null.patch";
       patch = pkgs.fetchpatch {
-        url = "https://github.com/thesofproject/linux/commit/922646d533100044d95a050b222533d59f06020c.patch";
-        sha256 = "sha256-XglC6p76mbWG834L4cHsC+YpJAGAhxZ1p6EwFrlBV+Q=";
+        name = "skip_preparing_sof_widgets_when_null.patch";
+        url = "https://marc.info/?l=linux-kernel&m=167352092609752&q=raw";
+        sha256 = "sha256-3MN3QzwPoKLpYnvR8qmq5FcYIYzlq6EiJ74uodQ1vtE=";
       };
     }
   ];
