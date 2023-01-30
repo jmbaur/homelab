@@ -79,8 +79,9 @@ in
         coreboot-asurada-spherion
         coreboot-kukui-fennel14
         coreboot-qemu-aarch64
-        linux_mediatek
         linux_cn913x
+        linux_mediatek
+        linux_orangepi-5
         ubootCN9130_CF_Pro
         ;
 
@@ -123,6 +124,7 @@ in
         ipwatch
         linux_cn913x
         linux_mediatek
+        linux_orangepi-5
         runner-nix
         ubootCN9130_CF_Pro
         webauthn-tiny
