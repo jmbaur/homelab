@@ -18,6 +18,7 @@
   networking.hostName = "okra";
 
   custom.basicNetwork.enable = true;
+  custom.basicNetwork.hasWireless = false; # it actually does, but we don't use it
   custom.dev.enable = true;
   custom.gui.enable = true;
   custom.remoteBuilders.aarch64builder.enable = true;
