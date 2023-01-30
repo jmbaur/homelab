@@ -37,6 +37,7 @@ in
     systemd.network = {
       networks = {
         wireless = {
+          enable = cfg.hasWireless;
           name = cfg.wirelessMatch;
           DHCP = "yes";
           dhcpV4Config = {
