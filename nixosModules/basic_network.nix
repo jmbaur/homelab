@@ -1,22 +1,21 @@
 { lib, config, ... }:
-with lib;
 let
   cfg = config.custom.basicNetwork;
 in
 {
   options.custom.basicNetwork = {
-    enable = mkEnableOption "basic network setup";
-    hasWireless = mkEnableOption "wireless";
-    wiredMatch = mkOption {
-      type = types.str;
+    enable = lib.mkEnableOption "basic network setup";
+    hasWireless = lib.mkEnableOption "wireless";
+    wiredMatch = lib.mkOption {
+      type = lib.types.str;
       default = "en*";
       description = ''
         The networkd-compatible regex (see systemd.networkd(5)) to use
         for matching a wired network interface.
       '';
     };
-    wirelessMatch = mkOption {
-      type = types.str;
+    wirelessMatch = lib.mkOption {
+      type = lib.types.str;
       default = "wl*";
       description = ''
         The networkd-compatible regex (see systemd.networkd(5)) to use
@@ -25,12 +24,13 @@ in
     };
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     services.resolved.enable = true;
 
     networking = {
       useDHCP = false;
       useNetworkd = true;
+      wireless.enable = lib.mkForce false;
       wireless.iwd.enable = true;
     };
 
