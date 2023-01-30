@@ -15,52 +15,13 @@
   services.fwupd.enable = true;
 
   time.timeZone = "America/Los_Angeles";
-  networking = {
-    hostName = "okra";
-    useDHCP = false;
-    useNetworkd = true;
-    wireless.enable = true;
-  };
-  systemd.network.networks = {
-    wired = {
-      name = "en*";
-      DHCP = "yes";
-      dhcpV4Config = {
-        UseDomains = "route";
-        RouteMetric = 1024;
-      };
-      ipv6AcceptRAConfig = {
-        UseDomains = "route";
-        RouteMetric = 1024;
-      };
-      networkConfig = {
-        IPv6PrivacyExtensions = "kernel";
-        Domains = "~.";
-      };
-    };
-    wireless = {
-      enable = false;
-      name = "wl*";
-      DHCP = "yes";
-      dhcpV4Config = {
-        UseDomains = "route";
-        RouteMetric = 2048;
-      };
-      ipv6AcceptRAConfig = {
-        UseDomains = "route";
-        RouteMetric = 2048;
-      };
-      networkConfig = {
-        IPv6PrivacyExtensions = "kernel";
-        Domains = "~.";
-      };
-    };
-  };
+  networking.hostName = "okra";
 
+  custom.basicNetwork.enable = true;
   custom.dev.enable = true;
   custom.gui.enable = true;
-  custom.users.jared.enable = true;
   custom.remoteBuilders.aarch64builder.enable = true;
+  custom.users.jared.enable = true;
 
   users.mutableUsers = true;
 

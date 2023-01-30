@@ -15,49 +15,7 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  networking = {
-    useDHCP = false;
-    hostName = "carrot";
-    useNetworkd = true;
-    wireless.enable = true;
-  };
-  systemd.network = {
-    networks = {
-      wireless = {
-        name = "wl*";
-        DHCP = "yes";
-        dhcpV4Config = {
-          UseDomains = "route";
-          RouteMetric = 2048;
-        };
-        ipv6AcceptRAConfig = {
-          UseDomains = "route";
-          RouteMetric = 2048;
-        };
-        networkConfig = {
-          IPv6PrivacyExtensions = "kernel";
-          Domains = "~.";
-        };
-      };
-      wired = {
-        name = "en*";
-        DHCP = "yes";
-        dhcpV4Config = {
-          UseDomains = "route";
-          RouteMetric = 1024;
-        };
-        ipv6AcceptRAConfig = {
-          UseDomains = "route";
-          RouteMetric = 1024;
-        };
-        networkConfig = {
-          IPv6PrivacyExtensions = "kernel";
-          Domains = "~.";
-        };
-      };
-    };
-  };
-  services.resolved.enable = true;
+  networking.hostName = "carrot";
 
   services.fwupd.enable = true;
 
@@ -66,10 +24,7 @@
     dev.enable = true;
     gui.enable = true;
     laptop.enable = true;
-    users.jared = {
-      enable = true;
-      # passwordFile = config.sops.secrets.jared_password.path;
-    };
+    users.jared.enable = true;
     remoteBuilders.aarch64builder.enable = true;
   };
 

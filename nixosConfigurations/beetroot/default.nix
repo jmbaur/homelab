@@ -36,50 +36,7 @@
   time.timeZone = "America/Los_Angeles";
 
   hardware.chromebook.enable = true;
-
-  networking = {
-    useDHCP = false;
-    hostName = "beetroot";
-    useNetworkd = true;
-    wireless.enable = true;
-  };
-  systemd.network = {
-    networks = {
-      wireless = {
-        name = "wl*";
-        DHCP = "yes";
-        dhcpV4Config = {
-          UseDomains = "route";
-          RouteMetric = 2048;
-        };
-        ipv6AcceptRAConfig = {
-          UseDomains = "route";
-          RouteMetric = 2048;
-        };
-        networkConfig = {
-          IPv6PrivacyExtensions = "kernel";
-          Domains = "~.";
-        };
-      };
-      wired = {
-        name = "en*";
-        DHCP = "yes";
-        dhcpV4Config = {
-          UseDomains = "route";
-          RouteMetric = 1024;
-        };
-        ipv6AcceptRAConfig = {
-          UseDomains = "route";
-          RouteMetric = 1024;
-        };
-        networkConfig = {
-          IPv6PrivacyExtensions = "kernel";
-          Domains = "~.";
-        };
-      };
-    };
-  };
-  services.resolved.enable = true;
+  networking.hostName = "beetroot";
 
   users.mutableUsers = true;
   custom = {

@@ -9,6 +9,9 @@ in
     services.openssh.openFirewall = false;
     services.xserver.xkbOptions = lib.mkDefault "ctrl:nocaps";
 
+    custom.basicNetwork.enable = true;
+    custom.basicNetwork.hasWireless = true;
+
     # Set a random MAC address for physical network interfaces.
     systemd.network.links."00-default" = {
       matchConfig.Type = "ether wlan wwan";

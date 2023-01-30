@@ -9,6 +9,7 @@ inputs: with inputs; {
       self.overlays.default
     ];
     imports = [
+      ./basic_network.nix
       ./chromebook.nix
       ./common.nix
       ./deployee.nix
