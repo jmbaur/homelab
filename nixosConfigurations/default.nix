@@ -101,17 +101,16 @@ in
     system = "armv7l-linux";
     modules = [
       self.nixosModules.default
-      ({ lib, pkgs, modulesPath, ... }: {
+      ({ pkgs, modulesPath, ... }: {
         imports = [ "${modulesPath}/installer/sd-card/sd-image-armv7l-multiplatform.nix" ];
-        hardware.clearfog-a38x.enable = true;
         sdImage.postBuildCommands = ''
           dd if=${pkgs.ubootClearfog}/u-boot-spl.kwb of=$img bs=512 seek=1 conv=sync
         '';
-        boot.kernelPackages = lib.mkForce pkgs.linuxPackages;
-        system.stateVersion = "22.11";
-        custom.common.enable = lib.mkForce false;
+        hardware.clearfog-a38x.enable = true;
+        custom.server.enable = true;
         custom.disableZfs = true;
-        users.users.root.password = "dontpwnme";
+        users.users.root.password = "";
+        system.stateVersion = "22.11";
       })
     ];
   };
