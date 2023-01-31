@@ -21,7 +21,6 @@ let
       bitwarden-bemenu
       chromium-wayland
       cicada
-      coreboot-toolchain
       coredns-utils
       depthcharge-tools
       discord-webapp

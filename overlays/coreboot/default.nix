@@ -1,15 +1,25 @@
-{ stdenv, buildPackages, python3, coreboot-toolchain, fetchgit, ... }:
+{ stdenv, pkgsHostHost, python3, fetchgit, ... }:
 { boardName, configfile, extraConfig ? "", extraCbfsCommands ? "", ... }:
+let
+  toolchain-system = builtins.getAttr stdenv.hostPlatform.linuxArch {
+    "x86_64" = "i386";
+    "arm64" = "aarch64";
+    "arm" = "arm";
+    "riscv" = "riscv";
+    "powerpc" = "ppc64";
+  };
+  toolchain = pkgsHostHost.coreboot-toolchain.${toolchain-system}.override { withAda = false; };
+in
 stdenv.mkDerivation {
   pname = "coreboot-${boardName}";
-  inherit (coreboot-toolchain) version;
+  inherit (toolchain) version;
   src = fetchgit {
-    inherit (coreboot-toolchain.src) url rev;
+    inherit (toolchain.src) url rev;
     leaveDotGit = false;
     fetchSubmodules = true;
-    sha256 = "sha256-hJ3Cp1OfMp8ZgRCzENUPPnoPTovKG4NiYabEpk3T2R0=";
+    sha256 = "sha256-QvQ87mPnETNZL3GbMHHBAOxJFvRDUzIlXSiuLG7wxEw=";
   };
-  depsBuildBuild = [ buildPackages.stdenv.cc ];
+  depsBuildBuild = [ pkgsHostHost.stdenv.cc ];
   nativeBuildInputs = [ python3 ];
   patches = [ ./memory-layout.patch ];
   postPatch = ''
@@ -24,7 +34,7 @@ stdenv.mkDerivation {
     make oldconfig
     runHook postConfigure
   '';
-  makeFlags = [ "XGCCPATH=${coreboot-toolchain}/bin/" ];
+  makeFlags = [ "XGCCPATH=${toolchain}/bin/" ];
   preInstall = extraCbfsCommands;
   installPhase = ''
     runHook preInstall
