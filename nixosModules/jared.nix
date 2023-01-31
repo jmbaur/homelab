@@ -53,7 +53,7 @@ with lib;
       programs.ssh = {
         enable = true;
         matchBlocks = {
-          "*.mgmt.home.arpa".forwardAgent = true;
+          "*.home.arpa".forwardAgent = true;
           work = {
             user = "jbaur";
             hostname = "dev.work.home.arpa";
