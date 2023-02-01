@@ -12,9 +12,6 @@ in
   setup = pkgs.mkShell {
     buildInputs = with pkgs; [ just pam_u2f yubikey-manager ];
   };
-  netdump = pkgs.mkShell {
-    buildInputs = with pkgs; [ revive go ];
-  };
   deploy = pkgs.mkShell {
     buildInputs = (with pkgs; [
       (terraform.withPlugins (p: with p; [ aws cloudflare http sops ]))
