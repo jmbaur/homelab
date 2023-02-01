@@ -1,5 +1,4 @@
 { options, config, lib, pkgs, ... }:
-with lib;
 let
 
   cfg = config.router.inventory;
@@ -13,12 +12,13 @@ let
   };
 
   hostType = { name, config, networkConfig, ... }: {
-    options = {
+    options = with lib; {
       id = mkOption { type = types.int; };
       name = mkOption { type = types.str; default = name; };
       dhcp = mkEnableOption "dhcp-enabled host";
       mac = mkOption { type = types.nullOr types.str; default = null; };
       publicKey = mkOption { type = types.nullOr types.str; default = null; };
+      privateKeyPath = mkOption { type = types.nullOr types.path; default = null; };
       _computed = {
         _ipv4 = mkOption { internal = true; type = types.str; };
         _ipv4Cidr = mkOption { internal = true; type = types.str; };
@@ -41,7 +41,7 @@ let
   };
 
   policyType = { name, config, ... }: {
-    options = {
+    options = with lib; {
       name = mkOption {
         type = types.str;
         default = name;
@@ -77,7 +77,7 @@ let
   };
 
   networkType = { name, config, ... }: {
-    options = {
+    options = with lib; {
       name = mkOption {
         type = types.str;
         default = name;
@@ -98,6 +98,13 @@ let
       };
       wireguard = {
         enable = mkEnableOption "wireguard network";
+        privateKeyPath = mkOption {
+          type = types.nullOr types.path;
+          default = null;
+          description = ''
+            The path to the private key of the router for this network.
+          '';
+        };
         publicKey = mkOption {
           type = types.nullOr types.str;
           default = null;
@@ -183,9 +190,9 @@ in
 {
   # duplicate `networking.firewall` options to be under nftables and
   # implemented in this module.
-  options.networking.nftables.firewall = lib.filterAttrs (k: _: (filter (e: k == e) [ "interfaces" ]) != [ ]) options.networking.firewall;
+  options.networking.nftables.firewall = lib.filterAttrs (k: _: (lib.filter (e: k == e) [ "interfaces" ]) != [ ]) options.networking.firewall;
 
-  options.router.inventory = {
+  options.router.inventory = with lib; {
     wan = mkOption {
       type = types.str;
       description = ''
@@ -204,7 +211,7 @@ in
     };
   };
 
-  config = mkIf (config.router.inventory != { }) {
+  config = lib.mkIf (config.router.inventory != { }) {
     assertions = [
       {
         message = "Cannot have physical.enable and wireguard.enable set for the same network";

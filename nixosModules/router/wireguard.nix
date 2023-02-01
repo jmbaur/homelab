@@ -2,6 +2,7 @@
 let
   mkWgInterface = network:
     let
+      routerPrivateKeyPath = network.wireguard.privateKeyPath;
       routerPublicKey = network.wireguard.publicKey;
       port = 51800 + network.id;
     in
@@ -10,7 +11,7 @@ let
         netdevConfig = { Name = network.name; Kind = "wireguard"; };
         wireguardConfig = {
           ListenPort = port;
-          PrivateKeyFile = config.sops.secrets."wg/${lib.replaceStrings ["wg-"] [""] network.name}/${config.networking.hostName}".path;
+          PrivateKeyFile = routerPrivateKeyPath;
         };
         wireguardPeers = lib.mapAttrsToList
           (_: peer: {
@@ -44,8 +45,8 @@ let
                   "${host._computed._ipv6.guaCidr}"
                   "${host._computed._ipv6.ulaCidr}"
                 ];
-                PrivateKey = "$(cat ${config.sops.secrets."wg/${lib.replaceStrings ["wg-"] [""] network.name}/${host.name}".path})";
-                DNS = (([ network.hosts._router._computed._ipv4 network.hosts._router._computed._ipv6.ula ])) ++ [ "home.arpa" ];
+                PrivateKey = "$(cat ${host.privateKeyPath})";
+                DNS = (([ network.hosts._router._computed._ipv4 network.hosts._router._computed._ipv6.ula ])) ++ [ network.domain "home.arpa" ];
               };
               Peer = {
                 PublicKey = routerPublicKey;
@@ -69,8 +70,8 @@ let
                   "${host._computed._ipv6.guaCidr}"
                   "${host._computed._ipv6.ulaCidr}"
                 ];
-                PrivateKey = "$(cat ${config.sops.secrets."wg/${lib.replaceStrings ["wg-"] [""] network.name}/${host.name}".path})";
-                DNS = (([ network.hosts._router._computed._ipv4 network.hosts._router._computed._ipv6.ula ])) ++ [ "home.arpa" ];
+                PrivateKey = "$(cat ${host.privateKeyPath})";
+                DNS = (([ network.hosts._router._computed._ipv4 network.hosts._router._computed._ipv6.ula ])) ++ [ network.domain "home.arpa" ];
               };
               Peer = {
                 PublicKey = routerPublicKey;

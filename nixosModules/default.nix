@@ -1,7 +1,7 @@
-inputs: with inputs; {
-  router = { imports = [ ./router sops-nix.nixosModules.sops ]; };
+inputs: {
+  router.imports = [ ./router ];
   default = {
-    nixpkgs.overlays = [
+    nixpkgs.overlays = with inputs; [
       self.overlays.default
       gobar.overlays.default
       gosee.overlays.default
@@ -28,7 +28,7 @@ inputs: with inputs; {
       ./wg_www_peer.nix
       ./wireless.nix
       ./zfs.nix
-      home-manager.nixosModules.home-manager
+      inputs.home-manager.nixosModules.home-manager
     ];
   };
 }

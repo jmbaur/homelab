@@ -1,8 +1,8 @@
-inputs: with inputs; nixpkgs.lib.genAttrs [ "aarch64-linux" "x86_64-linux" ] (system:
+inputs: inputs.nixpkgs.lib.genAttrs [ "aarch64-linux" "x86_64-linux" ] (system:
 let
-  pkgs = import nixpkgs {
+  pkgs = import inputs.nixpkgs {
     inherit system;
-    overlays = [ self.overlays.default ];
+    overlays = [ inputs.self.overlays.default ];
   };
 in
 {
@@ -26,7 +26,7 @@ in
   };
   default = pkgs.mkShell {
     buildInputs = (with pkgs; [ just sops nix-update ]);
-    inherit (pre-commit.lib.${system}.run {
+    inherit (inputs.pre-commit.lib.${system}.run {
       src = ./.;
       hooks = {
         deadnix = { enable = true; excludes = [ "hardware-configuration\\.nix" ]; };
