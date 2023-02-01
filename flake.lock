@@ -672,6 +672,26 @@
         "type": "github"
       }
     },
+    "nixos-router": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1675237656,
+        "narHash": "sha256-vkH6wbZxjwti+ZBjQHcs+JJs952sok28H/FHhv36iC4=",
+        "owner": "jmbaur",
+        "repo": "nixos-router",
+        "rev": "75f03b2e7b01e939a0d18e00874b0199691660ff",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jmbaur",
+        "repo": "nixos-router",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1671417167,
@@ -1001,6 +1021,7 @@
         "ipwatch": "ipwatch",
         "microvm": "microvm",
         "nixos-hardware": "nixos-hardware",
+        "nixos-router": "nixos-router",
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-extlinux-specialisation": "nixpkgs-extlinux-specialisation",
         "pd-notify": "pd-notify",

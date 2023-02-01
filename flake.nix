@@ -18,6 +18,8 @@
     microvm.inputs.nixpkgs.follows = "nixpkgs";
     microvm.url = "github:astro/microvm.nix";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
+    nixos-router.inputs.nixpkgs.follows = "nixpkgs";
+    nixos-router.url = "github:jmbaur/nixos-router";
     nixpkgs.url = "nixpkgs/nixos-unstable";
     pd-notify.inputs.nixpkgs.follows = "nixpkgs";
     pd-notify.url = "github:jmbaur/pd-notify";

@@ -1,9 +1,9 @@
-inputs: with inputs;
+inputs:
 let
-  mkInstaller = { system, modules ? [ ] }: nixpkgs.lib.nixosSystem {
+  mkInstaller = { system, modules ? [ ] }: inputs.nixpkgs.lib.nixosSystem {
     inherit system;
     modules = [
-      self.nixosModules.default
+      inputs.self.nixosModules.default
       ({ config, ... }: {
         custom.installer.enable = true;
         custom.remoteBuilders.aarch64builder.enable = config.nixpkgs.system == "aarch64-linux";
@@ -22,31 +22,30 @@ let
       })
     ] ++ modules;
   };
-
 in
 {
-  artichoke = nixpkgs.lib.nixosSystem {
+  artichoke = inputs.nixpkgs.lib.nixosSystem {
     system = "aarch64-linux";
-    modules = [
+    modules = with inputs;[
       ./artichoke
       ipwatch.nixosModules.default
       self.nixosModules.default
-      self.nixosModules.router
+      nixos-router.nixosModules.default
       sops-nix.nixosModules.sops
     ];
   };
 
-  carrot = nixpkgs.lib.nixosSystem {
+  carrot = inputs.nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
-    modules = [
+    modules = with inputs; [
       ./carrot
       self.nixosModules.default
     ];
   };
 
-  beetroot = nixpkgs.lib.nixosSystem {
+  beetroot = inputs.nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
-    modules = [
+    modules = with inputs; [
       ./beetroot
       self.nixosModules.default
       sops-nix.nixosModules.sops
@@ -57,9 +56,9 @@ in
     ];
   };
 
-  kale = nixpkgs.lib.nixosSystem {
+  kale = inputs.nixpkgs.lib.nixosSystem {
     system = "aarch64-linux";
-    modules = [
+    modules = with inputs; [
       ./kale
       runner-nix.nixosModules.default
       self.nixosModules.default
@@ -67,22 +66,22 @@ in
     ];
   };
 
-  fennel = nixpkgs.lib.nixosSystem {
+  fennel = inputs.nixpkgs.lib.nixosSystem {
     system = "aarch64-linux";
-    modules = [ self.nixosModules.default ./fennel ];
+    modules = with inputs; [ self.nixosModules.default ./fennel ];
   };
 
-  lxc-test = nixpkgs.lib.nixosSystem {
+  lxc-test = inputs.nixpkgs.lib.nixosSystem {
     system = "aarch64-linux";
     modules = [
-      "${nixpkgs}/nixos/modules/virtualisation/lxc-container.nix"
+      "${inputs.nixpkgs}/nixos/modules/virtualisation/lxc-container.nix"
       ({
         system.stateVersion = "22.11";
       })
     ];
   };
 
-  netboot-test = nixpkgs.lib.nixosSystem {
+  netboot-test = inputs.nixpkgs.lib.nixosSystem {
     system = "aarch64-linux";
     modules = [
       ({ modulesPath, ... }: {
@@ -93,16 +92,16 @@ in
     ];
   };
 
-  potato = nixpkgs.lib.nixosSystem {
+  potato = inputs.nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
     modules = [ ./potato ];
   };
 
-  clearfog-a38x-test = nixpkgs.lib.nixosSystem {
+  clearfog-a38x-test = inputs.nixpkgs.lib.nixosSystem {
     system = "armv7l-linux";
     modules = [
-      self.nixosModules.default
-      ({ lib, pkgs, modulesPath, ... }: {
+      inputs.self.nixosModules.default
+      ({ config, lib, pkgs, modulesPath, ... }: {
         imports = [
           "${modulesPath}/profiles/minimal.nix"
           "${modulesPath}/installer/sd-card/sd-image.nix"
@@ -128,9 +127,9 @@ in
     ];
   };
 
-  rhubarb = nixpkgs.lib.nixosSystem {
+  rhubarb = inputs.nixpkgs.lib.nixosSystem {
     system = "aarch64-linux";
-    modules = [
+    modules = with inputs; [
       ./rhubarb
       nixos-hardware.nixosModules.raspberry-pi-4
       self.nixosModules.default
@@ -138,9 +137,9 @@ in
     ];
   };
 
-  www = nixpkgs.lib.nixosSystem {
+  www = inputs.nixpkgs.lib.nixosSystem {
     system = "aarch64-linux";
-    modules = [
+    modules = with inputs; [
       ./www
       self.nixosModules.default
       sops-nix.nixosModules.sops
@@ -148,9 +147,9 @@ in
     ];
   };
 
-  okra = nixpkgs.lib.nixosSystem {
+  okra = inputs.nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
-    modules = [ ./okra self.nixosModules.default ];
+    modules = with inputs; [ ./okra self.nixosModules.default ];
   };
 
   installer_iso_x86_64-linux = mkInstallerISO { system = "x86_64-linux"; };

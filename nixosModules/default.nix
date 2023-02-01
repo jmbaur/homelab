@@ -1,5 +1,4 @@
 inputs: {
-  router.imports = [ ./router ];
   default = {
     nixpkgs.overlays = with inputs; [
       self.overlays.default
