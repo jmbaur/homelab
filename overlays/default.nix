@@ -17,7 +17,6 @@ inputs: with inputs; {
           u-rootInitramfs
           xremap
           yamlfmt
-          zf
           ;
 
         wezterm = prev.wezterm.overrideAttrs (_: {

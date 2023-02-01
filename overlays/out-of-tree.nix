@@ -9,5 +9,4 @@
   u-rootInitramfs = pkgs.callPackage ./u-root.nix { };
   xremap = pkgs.callPackage ./xremap.nix { features = [ "sway" ]; };
   yamlfmt = pkgs.callPackage ./yamlfmt.nix { };
-  zf = pkgs.callPackage ./zf.nix { };
 }

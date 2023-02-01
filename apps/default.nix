@@ -42,5 +42,4 @@ nixpkgs.lib.genAttrs
     v4l-show = mkApp "${pkgs.v4l-show}/bin/v4l-show";
     wip = mkApp "${pkgs.wip}/bin/wip";
     yamlfmt = mkApp "${pkgs.yamlfmt}/bin/yamlfmt";
-    zf = mkApp "${pkgs.zf}/bin/zf";
   })

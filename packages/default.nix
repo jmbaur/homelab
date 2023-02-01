@@ -52,7 +52,6 @@ let
       wip
       xremap
       yamlfmt
-      zf
       ;
 
   };

@@ -89,7 +89,6 @@ with lib; {
       yamlfmt
       ydiff
       yj
-      zf
     ] ++ lib.flatten (with systemConfig.custom.dev; [
       (with pkgs; [
         # editor tools
