@@ -6,6 +6,7 @@ in
 {
   options.custom.laptop.enable = lib.mkEnableOption "laptop config";
   config = lib.mkIf cfg.enable {
+    services.automatic-timezoned.enable = true;
     services.openssh.openFirewall = false;
     services.xserver.xkbOptions = lib.mkDefault "ctrl:nocaps";
 

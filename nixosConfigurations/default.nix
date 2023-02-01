@@ -101,16 +101,28 @@ in
     system = "armv7l-linux";
     modules = [
       self.nixosModules.default
-      ({ pkgs, modulesPath, ... }: {
-        imports = [ "${modulesPath}/installer/sd-card/sd-image-armv7l-multiplatform.nix" ];
-        sdImage.postBuildCommands = ''
-          dd if=${pkgs.ubootClearfog}/u-boot-spl.kwb of=$img bs=512 seek=1 conv=sync
-        '';
+      ({ lib, pkgs, modulesPath, ... }: {
+        imports = [
+          "${modulesPath}/profiles/minimal.nix"
+          "${modulesPath}/installer/sd-card/sd-image.nix"
+        ];
+        boot.loader.grub.enable = false;
+        boot.loader.generic-extlinux-compatible.enable = true;
+        boot.consoleLogLevel = lib.mkDefault 7;
+        boot.kernelPackages = pkgs.linuxPackages_latest;
+        boot.kernelParams = [ "console=ttyS0,115200" ];
         hardware.clearfog-a38x.enable = true;
         custom.server.enable = true;
         custom.disableZfs = true;
         users.users.root.password = "";
         system.stateVersion = "22.11";
+        sdImage.populateRootCommands = ''
+          mkdir -p ./files/boot
+          ${config.boot.loader.generic-extlinux-compatible.populateCmd} -c ${config.system.build.toplevel} -d ./files/boot
+        '';
+        sdImage.postBuildCommands = ''
+          dd if=${pkgs.ubootClearfog}/u-boot-spl.kwb of=$img bs=512 seek=1 conv=sync
+        '';
       })
     ];
   };

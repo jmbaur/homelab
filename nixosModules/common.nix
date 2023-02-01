@@ -23,8 +23,6 @@ with lib; {
     console.useXkbConfig = true;
 
     documentation.enable = mkDefault false;
-    documentation.man.enable = mkDefault false;
-    documentation.info.enable = mkDefault false;
 
     nix = {
       nixPath = mkForce [ "nixpkgs=${pkgs.path}" ];

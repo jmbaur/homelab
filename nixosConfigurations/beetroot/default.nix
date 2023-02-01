@@ -33,8 +33,6 @@
     efi.canTouchEfiVariables = false;
   };
 
-  time.timeZone = "America/Los_Angeles";
-
   hardware.chromebook.enable = true;
   networking.hostName = "beetroot";
 
