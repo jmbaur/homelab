@@ -44,7 +44,6 @@ let
       pomo
       slack-webapp
       spotify-webapp
-      stevenblack-hosts
       teams-webapp
       u-rootInitramfs
       v4l-show

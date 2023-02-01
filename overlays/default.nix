@@ -13,7 +13,7 @@ inputs: with inputs; {
           depthcharge-tools
           flarectl
           flashrom-cros
-          stevenblack-hosts
+          stevenblack-blocklist
           u-rootInitramfs
           xremap
           yamlfmt

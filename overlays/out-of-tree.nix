@@ -5,7 +5,7 @@
   flarectl = pkgs.callPackage ./flarectl.nix { };
   flashrom-cros = pkgs.callPackage ./flashrom-cros.nix { };
   smartyank-nvim = pkgs.callPackage ./smartyank-nvim.nix { };
-  stevenblack-hosts = pkgs.callPackage ./stevenblack-hosts.nix { };
+  stevenblack-blocklist = pkgs.callPackage ./stevenblack-blocklist.nix { };
   u-rootInitramfs = pkgs.callPackage ./u-root.nix { };
   xremap = pkgs.callPackage ./xremap.nix { features = [ "sway" ]; };
   yamlfmt = pkgs.callPackage ./yamlfmt.nix { };
