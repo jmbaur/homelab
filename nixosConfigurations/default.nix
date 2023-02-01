@@ -116,6 +116,7 @@ in
         custom.disableZfs = true;
         users.users.root.password = "";
         system.stateVersion = "22.11";
+        sdImage.populateFirmwareCommands = "";
         sdImage.populateRootCommands = ''
           mkdir -p ./files/boot
           ${config.boot.loader.generic-extlinux-compatible.populateCmd} -c ${config.system.build.toplevel} -d ./files/boot
