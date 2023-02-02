@@ -101,16 +101,13 @@ in
     system = "armv7l-linux";
     modules = [
       inputs.self.nixosModules.default
-      ({ config, lib, pkgs, modulesPath, ... }: {
+      ({ config, pkgs, modulesPath, ... }: {
         imports = [
           "${modulesPath}/profiles/minimal.nix"
           "${modulesPath}/installer/sd-card/sd-image.nix"
         ];
-        boot.loader.grub.enable = false;
-        boot.loader.generic-extlinux-compatible.enable = true;
-        boot.consoleLogLevel = lib.mkDefault 7;
+        boot.consoleLogLevel = 7;
         boot.kernelPackages = pkgs.linuxPackages_latest;
-        boot.kernelParams = [ "console=ttyS0,115200" ];
         hardware.clearfog-a38x.enable = true;
         custom.server.enable = true;
         custom.disableZfs = true;

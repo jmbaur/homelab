@@ -1,8 +1,6 @@
 { config, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
 
-  boot.loader.grub.enable = false;
-  boot.loader.generic-extlinux-compatible.enable = true;
   boot.initrd.systemd.enable = true;
 
   hardware.clearfog-cn913x.enable = true;
@@ -76,29 +74,6 @@
         19531 # systemd-journal-gatewayd
       ];
     };
-
-  systemd.network.links = {
-    "10-wan" = {
-      matchConfig.OriginalName = "eth2";
-      linkConfig.Name = "wan";
-    };
-    # 10Gbps link
-    "10-data" = {
-      matchConfig.OriginalName = "eth0";
-      linkConfig.Name = "data";
-    };
-  };
-
-  # Ensure the DSA master interface is bound to being up by it's slave
-  # interfaces.
-  systemd.network.networks.lan-master = {
-    name = "eth1";
-    linkConfig.RequiredForOnline = "no";
-    networkConfig = {
-      LinkLocalAddressing = "no";
-      BindCarrier = map (i: "lan${toString i}") [ 1 2 3 4 5 ];
-    };
-  };
 
   services.ipwatch = {
     enable = true;
