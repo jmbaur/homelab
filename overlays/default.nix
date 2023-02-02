@@ -90,6 +90,27 @@ inputs: with inputs; {
 
         grafana-dashboards = prev.callPackage ./grafana-dashboards { };
 
+        ubootClearfog = prev.ubootClearfog.override {
+          extraConfig = ''
+            CONFIG_CLEARFOG_CON2_SATA=y
+            CONFIG_CLEARFOG_CON3_SATA=y
+            CONFIG_CLEARFOG_SFP_25GB=y
+          '';
+        };
+        ubootClearfogSpi = prev.ubootClearfog.override {
+          # clearfog_defconfig is boot from mmc by default
+          extraConfig = ''
+            CONFIG_CLEARFOG_CON2_SATA=y
+            CONFIG_CLEARFOG_CON3_SATA=y
+            CONFIG_CLEARFOG_SFP_25GB=y
+            CONFIG_MVEBU_SPL_BOOT_DEVICE_MMC=n
+            CONFIG_MVEBU_SPL_BOOT_DEVICE_SPI=y
+          '';
+          postInstall = ''
+            dd bs=1M count=4 if=/dev/zero of=$out/spi.img
+            dd conv=notrunc if=$out/u-boot-spl.kwb of=$out/spi.img
+          '';
+        };
         ubootCN9130_CF_Pro = prev.callPackage ./ubootCN9130_CF_Pro.nix { inherit cn913x_build; };
 
         linux_cn913x = prev.callPackage ./kernels/linux_cn913x.nix { inherit cn913x_build; };

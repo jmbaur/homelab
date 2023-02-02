@@ -5,15 +5,6 @@
 
   hardware.clearfog-cn913x.enable = true;
 
-  programs.flashrom.enable = true;
-  environment.systemPackages = [
-    (pkgs.writeShellScriptBin "update-bios" ''
-      ${config.programs.flashrom.package}/bin/flashrom \
-        --programmer linux_mtd:dev=0 \
-        --write ${pkgs.ubootCN9130_CF_Pro}/spi.img
-    '')
-  ];
-
   zramSwap.enable = true;
   system.stateVersion = "23.05";
 

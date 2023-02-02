@@ -167,8 +167,7 @@ gcc7Stdenv.mkDerivation {
     '';
   installPhase = ''
     mkdir -p $out
-    dd bs=1M count=8 if=/dev/zero of=spi.img
-    dd conv=notrunc if=build/${PLAT}/release/flash-image.bin of=spi.img
-    cp spi.img $out/
+    dd bs=1M count=8 if=/dev/zero of=$out/spi.img
+    dd conv=notrunc if=build/${PLAT}/release/flash-image.bin of=$out/spi.img
   '';
 }

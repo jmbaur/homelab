@@ -82,6 +82,10 @@ in
         ubootCN9130_CF_Pro
         ;
 
+      inherit (pkgs.pkgsCross.armv7l-hf-multiplatform)
+        ubootClearfogSpi
+        ;
+
       installer_iso_lx2k = self.nixosConfigurations.installer_iso_lx2k.config.system.build.isoImage;
 
       installer_sd_image = self.nixosConfigurations.installer_sd_image_aarch64-linux.config.system.build.sdImage;
@@ -112,6 +116,10 @@ in
       inherit (pkgs)
         coreboot-qemu-x86
         coreboot-volteer-elemi
+        ;
+
+      inherit (pkgs.pkgsCross.armv7l-hf-multiplatform)
+        ubootClearfogSpi
         ;
 
       inherit (pkgs.pkgsCross.aarch64-multiplatform)

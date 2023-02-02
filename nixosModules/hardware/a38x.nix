@@ -1,13 +1,21 @@
-{ config, lib, ... }:
-with lib;
-{
+{ config, lib, pkgs, ... }: {
   options.hardware.clearfog-a38x = {
-    enable = mkEnableOption "clearfog-a38x";
+    enable = lib.mkEnableOption "clearfog-a38x";
   };
-  config = mkIf config.hardware.clearfog-a38x.enable {
+
+  config = lib.mkIf config.hardware.clearfog-a38x.enable {
     boot.loader.grub.enable = false;
     boot.loader.generic-extlinux-compatible.enable = true;
     boot.kernelParams = [ "console=ttyS0,115200" ];
+
+    programs.flashrom.enable = true;
+    environment.systemPackages = [
+      (pkgs.writeShellScriptBin "update-bios" ''
+        ${config.programs.flashrom.package}/bin/flashrom \
+          --programmer linux_mtd:dev=0 \
+          --write ${pkgs.ubootClearfogSpi}/spi.img
+      '')
+    ];
 
     hardware.deviceTree = {
       enable = true;
