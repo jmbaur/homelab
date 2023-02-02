@@ -25,12 +25,12 @@ stdenv.mkDerivation {
   postPatch = ''
     patchShebangs util
   '';
+  inherit extraConfig;
+  passAsFile = [ "extraConfig" ];
   configurePhase = ''
     runHook preConfigure
-    cp --no-preserve=mode ${configfile} .config
-    cat >>.config <<EOF
-    ${extraConfig}
-    EOF
+    cat ${configfile} > .config
+    cat $extraConfigPath >> .config
     make oldconfig
     runHook postConfigure
   '';
