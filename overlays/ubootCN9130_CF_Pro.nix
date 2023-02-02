@@ -153,7 +153,6 @@ gcc7Stdenv.mkDerivation {
     # binutils 2.39 regression
     # `warning: /build/source/build/rk3399/release/bl31/bl31.elf has a LOAD segment with RWX permissions`
     # See also: https://developer.trustedfirmware.org/T996
-    # "TF_LDFLAGS=\"--no-warn-rwx-segment\""
     "LDFLAGS=-no-warn-rwx-segments"
     "PLAT=${PLAT}"
     "USE_COHERENT_MEM=0"
