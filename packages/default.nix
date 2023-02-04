@@ -79,6 +79,7 @@ in
         ;
 
       inherit (pkgs.pkgsCross.armv7l-hf-multiplatform)
+        linux_mvebu_v7
         ubootClearfogSpi
         ;
 
@@ -115,6 +116,7 @@ in
         ;
 
       inherit (pkgs.pkgsCross.armv7l-hf-multiplatform)
+        linux_mvebu_v7
         ubootClearfogSpi
         ;
 

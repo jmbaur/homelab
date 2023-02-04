@@ -1,25 +1,17 @@
 { config, lib, pkgs, ... }: {
-  options.hardware.clearfog-a38x = {
-    enable = lib.mkEnableOption "clearfog-a38x";
+  options.hardware.armada-a38x = {
+    enable = lib.mkEnableOption "armada-38x devices";
   };
 
-  config = lib.mkIf config.hardware.clearfog-a38x.enable {
+  config = lib.mkIf config.hardware.armada-a38x.enable {
     boot.loader.grub.enable = false;
     boot.loader.generic-extlinux-compatible.enable = true;
     boot.kernelParams = [ "console=ttyS0,115200" ];
-
-    programs.flashrom.enable = true;
-    environment.systemPackages = [
-      (pkgs.writeShellScriptBin "update-bios" ''
-        ${config.programs.flashrom.package}/bin/flashrom \
-          --programmer linux_mtd:dev=0 \
-          --write ${pkgs.ubootClearfogSpi}/spi.img
-      '')
-    ];
+    boot.kernelPackages = pkgs.linuxKernel.packagesFor pkgs.linux_mvebu_v7;
 
     hardware.deviceTree = {
       enable = true;
-      filter = "armada-388-clearfog-*.dtb";
+      filter = "armada-38*.dtb";
     };
 
     systemd.network.links = {

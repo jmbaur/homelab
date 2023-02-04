@@ -115,6 +115,7 @@ inputs: with inputs; {
 
         linux_cn913x = prev.callPackage ./kernels/linux_cn913x.nix { inherit cn913x_build; };
         linux_mediatek = prev.callPackage ./kernels/linux_mediatek.nix { };
+        linux_mvebu_v7 = prev.callPackage ./kernels/linux_mvebu_v7.nix { };
         linux_orangepi-5 = prev.callPackage ./kernels/linux_orangepi-5.nix { };
 
         linuxboot-qemu-aarch64-fitimage = final.mkFitImage {

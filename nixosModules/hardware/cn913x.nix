@@ -15,15 +15,6 @@ with lib;
       filter = "cn913*.dtb";
     };
 
-    programs.flashrom.enable = true;
-    environment.systemPackages = [
-      (pkgs.writeShellScriptBin "update-bios" ''
-        ${config.programs.flashrom.package}/bin/flashrom \
-          --programmer linux_mtd:dev=0 \
-          --write ${pkgs.ubootCN9130_CF_Pro}/spi.img
-      '')
-    ];
-
     systemd.network.links = {
       "10-wan" = {
         matchConfig.OriginalName = "eth2";
