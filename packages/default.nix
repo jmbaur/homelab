@@ -3,10 +3,6 @@ let
   commonDerivations = pkgs: {
     installer_iso = self.nixosConfigurations."installer_iso_${pkgs.system}".config.system.build.isoImage;
 
-    router-test = pkgs.callPackage ../nixosModules/router/test.nix {
-      module = self.nixosModules.router;
-    };
-
     netboot-test = pkgs.symlinkJoin {
       name = "netboot-test";
       paths = with self.nixosConfigurations.netboot-test.config.system.build; [

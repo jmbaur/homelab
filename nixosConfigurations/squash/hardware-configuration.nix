@@ -30,6 +30,12 @@
   # networking.interfaces.end2.useDHCP = lib.mkDefault true;
   # networking.interfaces.end3.useDHCP = lib.mkDefault true;
   # networking.interfaces.ip6tnl0.useDHCP = lib.mkDefault true;
+  # networking.interfaces.lan1.useDHCP = lib.mkDefault true;
+  # networking.interfaces.lan2.useDHCP = lib.mkDefault true;
+  # networking.interfaces.lan3.useDHCP = lib.mkDefault true;
+  # networking.interfaces.lan4.useDHCP = lib.mkDefault true;
+  # networking.interfaces.lan5.useDHCP = lib.mkDefault true;
+  # networking.interfaces.lan6.useDHCP = lib.mkDefault true;
   # networking.interfaces.sit0.useDHCP = lib.mkDefault true;
   # networking.interfaces.wan.useDHCP = lib.mkDefault true;
 
