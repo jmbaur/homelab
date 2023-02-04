@@ -1,6 +1,5 @@
 { config, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
-  boot.initrd.systemd.enable = true;
   networking.hostName = "squash";
   networking.useNetworkd = true;
   hardware.armada-a38x.enable = true;
