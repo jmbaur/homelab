@@ -26,12 +26,20 @@ in
 {
   artichoke = inputs.nixpkgs.lib.nixosSystem {
     system = "aarch64-linux";
-    modules = with inputs;[
+    modules = with inputs; [
       ./artichoke
       ipwatch.nixosModules.default
       self.nixosModules.default
       nixos-router.nixosModules.default
       sops-nix.nixosModules.sops
+    ];
+  };
+
+  squash = inputs.nixpkgs.lib.nixosSystem {
+    system = "armv7l-linux";
+    modules = with inputs; [
+      ./squash
+      self.nixosModules.default
     ];
   };
 
@@ -95,34 +103,6 @@ in
   potato = inputs.nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
     modules = [ ./potato ];
-  };
-
-  clearfog-a38x-test = inputs.nixpkgs.lib.nixosSystem {
-    system = "armv7l-linux";
-    modules = [
-      inputs.self.nixosModules.default
-      ({ config, pkgs, modulesPath, ... }: {
-        imports = [
-          "${modulesPath}/profiles/minimal.nix"
-          "${modulesPath}/installer/sd-card/sd-image.nix"
-        ];
-        boot.consoleLogLevel = 7;
-        boot.kernelPackages = pkgs.linuxPackages_latest;
-        hardware.clearfog-a38x.enable = true;
-        custom.server.enable = true;
-        custom.disableZfs = true;
-        users.users.root.password = "";
-        system.stateVersion = "22.11";
-        sdImage.populateFirmwareCommands = "";
-        sdImage.populateRootCommands = ''
-          mkdir -p ./files/boot
-          ${config.boot.loader.generic-extlinux-compatible.populateCmd} -c ${config.system.build.toplevel} -d ./files/boot
-        '';
-        sdImage.postBuildCommands = ''
-          dd if=${pkgs.ubootClearfog}/u-boot-spl.kwb of=$img bs=512 seek=1 conv=notrunc
-        '';
-      })
-    ];
   };
 
   rhubarb = inputs.nixpkgs.lib.nixosSystem {
@@ -200,6 +180,30 @@ in
         boot.loader.depthcharge.enable = true;
         boot.initrd.systemd.enable = true;
         hardware.asurada-spherion.enable = true;
+      })
+    ];
+  };
+
+  armada-388-clearfog-installer = mkInstaller {
+    system = "armv7l-linux";
+    modules = [
+      ({ config, pkgs, modulesPath, ... }: {
+        imports = [
+          "${modulesPath}/profiles/installation-device.nix"
+          "${modulesPath}/installer/sd-card/sd-image.nix"
+        ];
+        hardware.clearfog-a38x.enable = true;
+        networking.useNetworkd = true;
+        custom.server.enable = true;
+        custom.disableZfs = true;
+        sdImage.populateFirmwareCommands = "";
+        sdImage.populateRootCommands = ''
+          mkdir -p ./files/boot
+          ${config.boot.loader.generic-extlinux-compatible.populateCmd} -c ${config.system.build.toplevel} -d ./files/boot
+        '';
+        sdImage.postBuildCommands = ''
+          dd if=${pkgs.ubootClearfog}/u-boot-spl.kwb of=$img bs=512 seek=1 conv=notrunc
+        '';
       })
     ];
   };

@@ -5,8 +5,7 @@ in
 {
   options.custom.installer.enable = lib.mkEnableOption "installer";
   config = lib.mkIf cfg.enable {
-    system.stateVersion = "22.11";
-    boot.kernelParams = [ (if pkgs.hostPlatform.system == "aarch64-linux" then "console=ttyS0" else "console=ttyAMA0") ];
+    system.stateVersion = "23.05";
     boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
     custom.disableZfs = true;
     systemd.services.sshd.wantedBy = lib.mkForce [ "multi-user.target" ];
