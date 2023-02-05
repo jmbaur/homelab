@@ -2,13 +2,13 @@
 let
   # u-root builder does not need to be cross-compiled
   builder = buildPackages.buildGoPackage rec {
-    pname = src.repo;
-    version = builtins.substring 0 7 src.rev;
+    pname = "u-root";
+    version = "0.11.0";
     src = fetchFromGitHub {
-      owner = "u-root";
-      repo = "u-root";
-      rev = "2d7528666f509beb8f3e658adf51615fe2e3b742";
-      hash = "sha256-wUEqfzxocbvPGniAP4VnIpKprVOJMpnyvmO7KIe0v7s=";
+      owner = pname;
+      repo = pname;
+      rev = "v${version}";
+      sha256 = "sha256-IhQtIgvaoBLAPDUbgv6+G64K9KMXKQ7UOR4OKr0tp5U=";
     };
     goPackagePath = "github.com/u-root/u-root";
     subPackages = ".";
