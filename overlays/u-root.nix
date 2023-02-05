@@ -7,8 +7,8 @@ let
     src = fetchFromGitHub {
       owner = "u-root";
       repo = "u-root";
-      rev = "2d7528666f509beb8f3e658adf51615fe2e3b742";
-      hash = "sha256-wUEqfzxocbvPGniAP4VnIpKprVOJMpnyvmO7KIe0v7s=";
+      rev = "0.11.066f509beb8f3e658adf51615fe2e3b742";
+      hash = "";
     };
     goPackagePath = "github.com/u-root/u-root";
     subPackages = ".";
