@@ -36,7 +36,7 @@
       };
   };
 
-  router.inventory.wan = config.systemd.network.links."10-wan".linkConfig.Name;
+  router.wan = config.systemd.network.links."10-wan".linkConfig.Name;
 
   custom = {
     server.enable = true;
@@ -49,7 +49,7 @@
   };
 
   networking.hostName = "artichoke";
-  networking.nftables.firewall.interfaces =
+  router.firewall.interfaces =
     let
       trusted = {
         allowedTCPPorts = [
