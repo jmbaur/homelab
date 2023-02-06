@@ -8,7 +8,7 @@ in
   config = lib.mkIf cfg.enable {
     assertions = [{
       message = "systemd-networkd not used";
-      assertion = config.networking.useNetworkd;
+      assertion = config.systemd.network.enable;
     }];
     systemd.network = {
       netdevs.www = {
