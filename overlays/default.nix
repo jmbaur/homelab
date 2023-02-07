@@ -131,6 +131,7 @@ inputs: with inputs; {
               qemu-system-aarch64 \
                 -M virt,secure=on,virtualization=on,dumpdtb=$out \
                 -cpu cortex-a53 -m 2G -nographic \
+                -device virtio-gpu-pci \
                 -drive format=raw,if=virtio,file=$(mktemp)
             '')
             { };
