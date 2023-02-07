@@ -1,4 +1,4 @@
-{ stdenv, pkgsHostHost, python3, fetchgit, ... }:
+{ stdenv, pkgsBuildBuild, python3, fetchgit, ... }:
 { boardName, configfile, extraConfig ? "", extraCbfsCommands ? "", ... }:
 let
   toolchain-system = builtins.getAttr stdenv.hostPlatform.linuxArch {
@@ -8,7 +8,7 @@ let
     "riscv" = "riscv";
     "powerpc" = "ppc64";
   };
-  toolchain = pkgsHostHost.coreboot-toolchain.${toolchain-system}.override { withAda = false; };
+  toolchain = pkgsBuildBuild.coreboot-toolchain.${toolchain-system}.override { withAda = false; };
 in
 stdenv.mkDerivation {
   pname = "coreboot-${boardName}";
@@ -19,7 +19,7 @@ stdenv.mkDerivation {
     fetchSubmodules = true;
     sha256 = "sha256-QvQ87mPnETNZL3GbMHHBAOxJFvRDUzIlXSiuLG7wxEw=";
   };
-  depsBuildBuild = [ pkgsHostHost.stdenv.cc ];
+  depsBuildBuild = [ pkgsBuildBuild.stdenv.cc ];
   nativeBuildInputs = [ python3 ];
   patches = [ ./memory-layout.patch ];
   postPatch = ''
