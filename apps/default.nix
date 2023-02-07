@@ -28,6 +28,7 @@ nixpkgs.lib.genAttrs
     discord-webapp = mkApp "${pkgs.discord-webapp}/bin/discord-webapp";
     flarectl = mkApp "${pkgs.flarectl}/bin/flarectl";
     flashrom-cros = mkApp "${pkgs.flashrom-cros}/bin/flashrom";
+    flashrom-dasharo = mkApp "${pkgs.flashrom-dasharo}/bin/flashrom";
     ixio = mkApp "${pkgs.ixio}/bin/ixio";
     j = mkApp "${pkgs.j}/bin/j";
     macgen = mkApp "${pkgs.macgen}/bin/macgen";

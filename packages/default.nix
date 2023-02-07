@@ -23,6 +23,7 @@ let
       edk2-uefi-coreboot-payload
       flarectl
       flashrom-cros
+      flashrom-dasharo
       git-get
       gobar
       gosee
