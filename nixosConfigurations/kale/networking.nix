@@ -9,22 +9,23 @@
   };
 
   systemd.network = {
+    enable = true;
     links = {
-      "10-sfp-sfpplus1" = {
+      "10-sfpplus1" = {
         matchConfig.MACAddress = "d0:63:b4:03:db:6d";
-        linkConfig.Name = "sfp-sfpplus1";
+        linkConfig.Name = "sfpplus1";
       };
-      "10-sfp-sfpplus2" = {
+      "10-sfpplus2" = {
         matchConfig.MACAddress = "d0:63:b4:03:db:6e";
-        linkConfig.Name = "sfp-sfpplus2";
+        linkConfig.Name = "sfpplus2";
       };
-      "10-sfp-sfpplus3" = {
+      "10-sfpplus3" = {
         matchConfig.MACAddress = "d0:63:b4:03:db:6f";
-        linkConfig.Name = "sfp-sfpplus3";
+        linkConfig.Name = "sfpplus3";
       };
-      "10-sfp-sfpplus4" = {
+      "10-sfpplus4" = {
         matchConfig.MACAddress = "d0:63:b4:03:db:70";
-        linkConfig.Name = "sfp-sfpplus4";
+        linkConfig.Name = "sfpplus4";
       };
     };
     networks = {

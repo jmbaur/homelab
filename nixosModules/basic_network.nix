@@ -34,6 +34,7 @@ in
     };
 
     systemd.network = {
+      enable = true;
       networks = {
         wireless = {
           enable = cfg.hasWireless;
