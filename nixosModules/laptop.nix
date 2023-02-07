@@ -13,15 +13,18 @@ in
     custom.basicNetwork.enable = true;
     custom.basicNetwork.hasWireless = true;
 
-    # Set a random MAC address for physical network interfaces.
-    systemd.network.links."00-default" = {
+    systemd.network.wait-online.enable = false;
+
+    # Set a random MAC address for physical network interfaces. Also make sure
+    # that if iwd is used, the `80-iwd.link` file contains this random mac
+    # address policy as well.
+    systemd.network.links."90-random-mac-address" = {
       matchConfig.Type = "ether wlan wwan";
       linkConfig = {
         NamePolicy = "path kernel";
         MACAddressPolicy = "random";
       };
     };
-
-    systemd.network.wait-online.enable = false;
+    systemd.network.links."80-iwd".linkConfig.MACAddressPolicy = "random";
   };
 }
