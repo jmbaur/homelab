@@ -23,7 +23,6 @@
   networking = {
     hostName = "rhubarb";
     useDHCP = false;
-    useNetworkd = true;
     firewall = {
       interfaces = {
         www.allowedTCPPorts = lib.mkForce [

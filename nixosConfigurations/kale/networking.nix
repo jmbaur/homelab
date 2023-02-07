@@ -2,7 +2,6 @@
   networking = {
     useDHCP = lib.mkForce false;
     hostName = "kale";
-    useNetworkd = true;
     firewall = {
       interfaces.eth0.allowedTCPPorts = lib.mkForce [ config.services.prometheus.exporters.node.port ];
       interfaces.www.allowedTCPPorts = lib.mkForce [ 19531 ];

@@ -29,7 +29,6 @@ in
 
     networking = {
       useDHCP = false;
-      useNetworkd = true;
       wireless.enable = lib.mkForce false;
       wireless.iwd.enable = true;
     };
