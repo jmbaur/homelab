@@ -131,7 +131,14 @@ in
   };
 
   installer_iso_x86_64-linux = mkInstallerISO { system = "x86_64-linux"; };
-  installer_iso_aarch64-linux = mkInstallerISO { system = "aarch64-linux"; };
+  installer_iso_aarch64-linux = mkInstallerISO {
+    system = "aarch64-linux";
+    modules = [
+      ({ config, ... }: {
+        boot.loader.grub.extraFiles.dtbs = "${config.boot.kernelPackages.kernel}/dtbs";
+      })
+    ];
+  };
 
   installer_iso_lx2k = mkInstallerISO {
     system = "aarch64-linux";
