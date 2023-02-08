@@ -9,7 +9,7 @@
       (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "nvme" ];
+  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ ];
   boot.extraModulePackages = [ ];
@@ -44,6 +44,9 @@
       options = [ "subvol=@" ];
     };
 
+  boot.initrd.luks.devices."cryptfast0".device = "/dev/disk/by-uuid/1dc19675-c7af-4a80-8f30-eab40bcf0df7";
+  boot.initrd.luks.devices."cryptfast1".device = "/dev/disk/by-uuid/41e7644e-56e2-4773-b67a-5e3cc7c31f79";
+
   fileSystems."/home" =
     {
       device = "/dev/disk/by-uuid/7bdaa893-23f2-43d0-b14e-676b1af96790";
@@ -57,8 +60,15 @@
       fsType = "vfat";
     };
 
-  boot.initrd.luks.devices."cryptfast0".device = "/dev/disk/by-uuid/1dc19675-c7af-4a80-8f30-eab40bcf0df7";
-  boot.initrd.luks.devices."cryptfast1".device = "/dev/disk/by-uuid/41e7644e-56e2-4773-b67a-5e3cc7c31f79";
+  fileSystems."/var/storage" =
+    {
+      device = "/dev/disk/by-uuid/e27d861d-d2b9-4831-897c-3f8ea185cde0";
+      fsType = "btrfs";
+      options = [ "subvol=@" ];
+    };
+
+  boot.initrd.luks.devices."cryptbig0".device = "/dev/disk/by-uuid/5abf67a7-3020-408a-a59f-0b899a59fcbb";
+  boot.initrd.luks.devices."cryptbig1".device = "/dev/disk/by-uuid/b3adb35b-b9fa-45bf-8556-6083ad1e5f37";
 
   swapDevices = [ ];
 

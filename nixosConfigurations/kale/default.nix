@@ -12,6 +12,7 @@
     "/var".options = [ "noatime" "discard=async" "compress=zstd" ];
     "/home".options = [ "noatime" "discard=async" "compress=zstd" ];
     "/var/lib".options = [ "noatime" "discard=async" "compress=zstd" ];
+    "/var/storage".options = [ "noatime" "autodefrag" "compress=zstd" ];
   };
   zramSwap.enable = true;
 

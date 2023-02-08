@@ -602,11 +602,11 @@
         "utils": "utils_2"
       },
       "locked": {
-        "lastModified": 1675808901,
-        "narHash": "sha256-oi9py+VMJgW+tDmL9vhtltwg7PrLqN5awP5Z2Wp+684=",
+        "lastModified": 1675811720,
+        "narHash": "sha256-WXWChFo1DAUK+/YkeLwzZQDsH43y7c1JWozRuVNQYg8=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "02ac66755701f65bfebf7f3feb73030ae66a4f49",
+        "rev": "6d95d98b6b4876c9ab589327331196b2893581c5",
         "type": "github"
       },
       "original": {
@@ -679,11 +679,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1675723529,
-        "narHash": "sha256-+MKG8b9ZRFWSLrO/sViPkLrgngcVD4DGM5uopK9J940=",
+        "lastModified": 1675813037,
+        "narHash": "sha256-C6zb7oSdXSilPGQl8zwI/PvRvo6KqHIj5rz1QHbQmL8=",
         "owner": "jmbaur",
         "repo": "nixos-router",
-        "rev": "2a4ca472d556b480e6b0e23d4296a40ccdf051c2",
+        "rev": "1fd7b6091c66e1e33ac59025b504728568b9fc92",
         "type": "github"
       },
       "original": {
