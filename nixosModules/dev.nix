@@ -60,5 +60,13 @@ with lib;
       enable = !config.boot.isContainer;
       defaultNetwork.settings.dns_enabled = true;
     };
+
+    # create a subvolume (or directory if the underlying filesystem doesn't
+    # support subvolumes) for dev projects
+    systemd.tmpfiles.rules = lib.mapAttrsToList
+      (_: user: "v ${user.home}/projects 0755 ${user.name} ${user.group} -")
+      (lib.filterAttrs
+        (_: user: user.isNormalUser)
+        config.users.users);
   };
 }

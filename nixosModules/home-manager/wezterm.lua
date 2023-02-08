@@ -45,7 +45,7 @@ return {
 	adjust_window_size_when_changing_font_size = false,
 	audible_bell = "Disabled",
 	automatically_reload_config = false,
-	color_scheme = "modus-operandi",
+	color_scheme = "modus-vivendi",
 	font = wezterm.font("JetBrains Mono"),
 	font_size = 16.0,
 	force_reverse_video_cursor = true,

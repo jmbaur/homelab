@@ -1,17 +1,17 @@
 # shellcheck shell=bash
 
 function usage() {
-	if [[ -n ${1:-} ]]; then
+	if [[ -n ${1-} ]]; then
 		echo "$1"
 		echo
 	fi
 	echo "Usage: $(basename "$0") [PROJECT NAME]"
 	echo
-	echo "The default projects directory is $HOME/Projects. This can be"
-	echo "overridden by setting the $XDG_PROJECTS_DIR environment variable."
+	echo "The default projects directory is $HOME/projects. This can be"
+	echo "overridden by setting the $PROJECTS_DIR environment variable."
 }
 
-directory=${XDG_PROJECTS_DIR:-${HOME}/Projects}
+directory=${PROJECTS_DIR:-${HOME}/projects}
 if ! test -d "$directory"; then
 	usage "Cannot find projects directory"
 	exit 1
@@ -25,7 +25,7 @@ if ! tmux_session_path=$(
 		--max-depth 5 \
 		--no-ignore |
 		sed "s,/\.git/,," |
-		{ [[ -n ${1:-} ]] && grep ".*$1.*" || cat; } |
+		{ [[ -n ${1-} ]] && grep ".*$1.*" || cat; } |
 		sk -01
 ); then
 	echo "No matches"
@@ -45,7 +45,7 @@ elif [[ $clients_attached -gt 0 ]]; then
 	exit 0
 fi
 
-if [[ -n ${TMUX:-} ]]; then
+if [[ -n ${TMUX-} ]]; then
 	# current attached to a tmux session
 	tmux switch-client -t "$tmux_session_name"
 else

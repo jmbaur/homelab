@@ -22,9 +22,9 @@ func must(err error) {
 
 func main() {
 	// Not actually a standard xdg directory, but why not.
-	projDir, ok := os.LookupEnv("XDG_PROJECTS_DIR")
+	projDir, ok := os.LookupEnv("PROJECTS_DIR")
 	if !ok {
-		projDir = "~/Projects"
+		projDir = "~/projects"
 	}
 
 	projDir, err := homedir.Expand(projDir)

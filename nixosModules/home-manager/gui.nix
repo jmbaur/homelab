@@ -15,7 +15,6 @@ with lib; {
       userDirs = {
         enable = true;
         createDirectories = true;
-        extraConfig.XDG_PROJECTS_DIR = "${config.home.homeDirectory}/Projects";
       };
       mimeApps = {
         enable = true;
@@ -34,7 +33,6 @@ with lib; {
     programs.alacritty = {
       enable = true;
       settings = {
-        env.TERM = "xterm-256color";
         font = {
           normal.family = "JetBrains Mono";
           size = 16;
@@ -74,7 +72,6 @@ with lib; {
       enable = true;
       settings = {
         main = {
-          term = config.programs.alacritty.settings.env.TERM;
           font = "${config.programs.alacritty.settings.font.normal.family}:size=${toString (config.programs.alacritty.settings.font.size - 6)}";
           selection-target = "clipboard";
           notify-focus-inhibit = "no";
@@ -85,6 +82,21 @@ with lib; {
         };
         mouse.hide-when-typing = "yes";
         colors = { alpha = 1.0; } // colors;
+      };
+    };
+
+    programs.kitty = {
+      enable = true;
+      theme = "Modus Vivendi";
+      font = {
+        name = "JetBrains Mono";
+        size = config.programs.alacritty.settings.font.size;
+      };
+      settings = {
+        enable_audio_bell = false;
+        copy_on_select = true;
+        tab_bar_style = "powerline";
+        update_check_interval = 0;
       };
     };
 
