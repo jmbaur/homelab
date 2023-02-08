@@ -85,6 +85,17 @@
 
   programs.flashrom.enable = true;
 
+  services.nginx = {
+    enable = true;
+    commonHttpConfig = ''
+      error_log syslog:server=unix:/dev/log;
+      access_log syslog:server=unix:/dev/log combined;
+    '';
+    virtualHosts."_".root = "/var/lib/nix-cache";
+  };
+
+  systemd.tmpfiles.rules = [ "v /var/lib/nix-cache - nginx nginx ~60d -" ];
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
