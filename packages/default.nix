@@ -82,6 +82,7 @@ in
       inherit (pkgs.pkgsCross.armv7l-hf-multiplatform)
         linux_mvebu_v7
         ubootClearfogSpi
+        ubootClearfogUart
         ;
 
       installer_iso_lx2k = self.nixosConfigurations.installer_iso_lx2k.config.system.build.isoImage;
@@ -119,6 +120,7 @@ in
       inherit (pkgs.pkgsCross.armv7l-hf-multiplatform)
         linux_mvebu_v7
         ubootClearfogSpi
+        ubootClearfogUart
         ;
 
       inherit (pkgs.pkgsCross.aarch64-multiplatform)

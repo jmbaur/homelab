@@ -91,19 +91,32 @@ inputs: with inputs; {
 
         grafana-dashboards = prev.callPackage ./grafana-dashboards { };
 
+        # Enable fit images (w/signatures) and modify some hardware.
+        # - CON2 (configured for PCI) is located nearest the CPU
+        # - CON3 (configured for SATA) is located nearest the edge of the device
         ubootClearfog = prev.ubootClearfog.override {
           extraConfig = ''
-            CONFIG_CLEARFOG_CON2_SATA=y
+            CONFIG_CLEARFOG_CON2_PCI=y
+            CONFIG_CLEARFOG_CON3_PCI=n
+            CONFIG_CLEARFOG_CON2_SATA=n
             CONFIG_CLEARFOG_CON3_SATA=y
             CONFIG_CLEARFOG_SFP_25GB=y
+            CONFIG_FIT=y
+            CONFIG_FIT_SIGNATURE=y
+            CONFIG_RSA=y
           '';
+          # default boot device is mmc
+          extraMeta.bootDevice = "mmc";
+        };
+        ubootClearfogUart = prev.ubootClearfog.override {
+          extraConfig = final.ubootClearfog.extraConfig + ''
+            CONFIG_MVEBU_SPL_BOOT_DEVICE_MMC=n
+            CONFIG_MVEBU_SPL_BOOT_DEVICE_UART=y
+          '';
+          extraMeta.bootDevice = "uart";
         };
         ubootClearfogSpi = prev.ubootClearfog.override {
-          # clearfog_defconfig is boot from mmc by default
-          extraConfig = ''
-            CONFIG_CLEARFOG_CON2_SATA=y
-            CONFIG_CLEARFOG_CON3_SATA=y
-            CONFIG_CLEARFOG_SFP_25GB=y
+          extraConfig = final.ubootClearfog.extraConfig + ''
             CONFIG_MVEBU_SPL_BOOT_DEVICE_MMC=n
             CONFIG_MVEBU_SPL_BOOT_DEVICE_SPI=y
           '';
@@ -111,6 +124,7 @@ inputs: with inputs; {
             dd bs=1M count=4 if=/dev/zero of=$out/spi.img
             dd conv=notrunc if=$out/u-boot-spl.kwb of=$out/spi.img
           '';
+          extraMeta.bootDevice = "spi";
         };
         ubootCN9130_CF_Pro = prev.callPackage ./ubootCN9130_CF_Pro.nix { inherit cn913x_build; };
 
