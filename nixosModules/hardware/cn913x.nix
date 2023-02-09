@@ -1,10 +1,9 @@
-{ config, lib, pkgs, ... }:
-with lib;
-{
+{ config, lib, pkgs, ... }: {
   options.hardware.clearfog-cn913x = {
-    enable = mkEnableOption "clearfog-cn913x";
+    enable = lib.mkEnableOption "clearfog-cn913x";
   };
-  config = mkIf config.hardware.clearfog-cn913x.enable {
+
+  config = lib.mkIf config.hardware.clearfog-cn913x.enable {
     boot.loader.grub.enable = false;
     boot.loader.generic-extlinux-compatible.enable = true;
     boot.kernelParams = [ "console=ttyS0,115200" "cma=256M" ];
