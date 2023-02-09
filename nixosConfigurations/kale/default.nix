@@ -97,7 +97,7 @@
     virtualHosts."_".root = "/var/lib/nix-cache";
   };
 
-  systemd.tmpfiles.rules = [ "v /var/lib/nix-cache - nginx nginx ~60d -" ];
+  systemd.tmpfiles.rules = [ "v ${config.services.nginx.virtualHosts."_".root} - ${config.users.users.builder.name} ${config.users.users.builder.group} ~60d -" ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
