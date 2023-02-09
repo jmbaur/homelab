@@ -17,6 +17,8 @@
   zramSwap.enable = true;
   system.stateVersion = "23.05";
 
+  systemd.network.enable = true;
+
   sops = {
     defaultSopsFile = ./secrets.yaml;
     secrets =
