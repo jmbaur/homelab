@@ -195,6 +195,11 @@ in
     system = "armv7l-linux";
     modules = [
       ({ config, pkgs, modulesPath, ... }: {
+        disabledModules = [
+          # prevent initrd from requiring a bunch of kernel modules we don't
+          # have with the armada 388's kernel defconfig
+          "${modulesPath}/profiles/all-hardware.nix"
+        ];
         imports = [
           "${modulesPath}/profiles/installation-device.nix"
           "${modulesPath}/installer/sd-card/sd-image.nix"
