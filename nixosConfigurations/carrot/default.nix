@@ -43,16 +43,15 @@
     home.packages = with pkgs; [
       age-plugin-yubikey
       bitwarden
-      brave-wayland
       chromium-wayland
-      discord-wayland
-      element-desktop-wayland
+      discord
+      element-desktop
       firefox-wayland
       freerdp
       librewolf-wayland
       outlook-webapp
-      signal-desktop-wayland
-      slack-wayland
+      signal-desktop
+      slack
       spotify
       teams-webapp
       (writeShellScriptBin "work-browser" "${chromium-wayland}/bin/chromium --user-data-dir=$HOME/.config/chromium-work --proxy-server=socks5://localhost:9050")
