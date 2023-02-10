@@ -186,7 +186,7 @@ inputs: with inputs; {
             let
               vbt = prev.fetchurl {
                 url = "https://github.com/intel/FSP/blob/d85493d0605921f46afab3445be01da90f0a8062/TigerLakeFspBinPkg/Client/SampleCode/Vbt/Vbt.bin";
-                sha256 = "sha256-lWalh1GkRPgG0DPlrXWVm7ZIT9ZUPYAp7fL6SmHFOXM=";
+                sha256 = "sha256-djpusMMtCY748NSJB0wMPwJUgziAyY9C+ZPRgu+YXY0=";
               };
             in
             ''
@@ -202,7 +202,7 @@ inputs: with inputs; {
             let
               vbt = prev.fetchurl {
                 url = "https://github.com/intel/FSP/blob/d85493d0605921f46afab3445be01da90f0a8062/AlderLakeFspBinPkg/Client/AlderLakeP/SampleCode/Vbt/Vbt.bin";
-                sha256 = "sha256-FBPGeU+B83sjRe3kO62/Yg1N80T8IbdPVbkLurECjzI=";
+                sha256 = "sha256-kaGCJAxN+8nmmRRd9s/lO5bKyY3RRoFrurk/bLMwN3o=";
               };
             in
             ''
