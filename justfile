@@ -14,7 +14,7 @@ switch:
 	nixos-rebuild switch -L --use-remote-sudo --flake .#
 
 build:
-	nix build -L \
+	nix build -L --accept-flake-config \
 		.\#cicada \
 		.\#coreboot-volteer-elemi \
 		.\#coredns-utils \
