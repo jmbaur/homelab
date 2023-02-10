@@ -160,7 +160,10 @@ inputs: with inputs; {
         edk2-uefi-coreboot-payload = prev.callPackage ./edk2-coreboot.nix { };
 
         mkFitImage = prev.callPackage ./fitimage { };
-        buildCoreboot = prev.callPackage ./coreboot { };
+        buildCoreboot = prev.callPackage ./coreboot {
+          # built with meson, includes pkgconfig support
+          flashrom = final.flashrom-cros;
+        };
         coreboot-qemu-x86 = final.buildCoreboot {
           boardName = "qemu-x86";
           configfile = ./coreboot/qemu-x86.config;

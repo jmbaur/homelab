@@ -1,13 +1,13 @@
-{ stdenv, pkgsBuildBuild, python3, pkgconfig, fetchgit, ... }:
+{ stdenv, fetchgit, pkgsBuildBuild, python3, pkgconfig, flashrom, openssl, ... }:
 { boardName, configfile, extraConfig ? "", extraCbfsCommands ? "", ... }:
 let
-  toolchain-system = builtins.getAttr stdenv.hostPlatform.linuxArch {
-    "x86_64" = "i386";
-    "arm64" = "aarch64";
-    "arm" = "arm";
-    "riscv" = "riscv";
-    "powerpc" = "ppc64";
-  };
+  toolchain-system = {
+    x86_64 = "i386";
+    arm64 = "aarch64";
+    arm = "arm";
+    riscv = "riscv";
+    powerpc = "ppc64";
+  }.${stdenv.hostPlatform.linuxArch};
   toolchain = pkgsBuildBuild.coreboot-toolchain.${toolchain-system}.override { withAda = false; };
 in
 stdenv.mkDerivation {
@@ -21,6 +21,7 @@ stdenv.mkDerivation {
   };
   depsBuildBuild = [ pkgsBuildBuild.stdenv.cc ];
   nativeBuildInputs = [ python3 pkgconfig ];
+  buildInputs = [ flashrom openssl ];
   patches = [ ./memory-layout.patch ];
   postPatch = ''
     patchShebangs util
