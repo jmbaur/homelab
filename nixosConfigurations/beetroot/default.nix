@@ -11,7 +11,7 @@
 
   boot.initrd.availableKernelModules = [ "i915" ];
   boot.initrd.systemd.enable = true;
-  boot.kernelPackages = pkgs.linuxPackages_testing;
+  boot.kernelPackages = pkgs.linuxPackages_6_1;
   # TODO(jared): remove when kernel is >= 6.2 rc7
   boot.kernelPatches = [{
     name = "skip_preparing_sof_widgets_when_null.patch";
