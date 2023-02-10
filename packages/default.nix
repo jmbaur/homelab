@@ -115,6 +115,7 @@ in
       inherit (pkgs)
         coreboot-qemu-x86
         coreboot-volteer-elemi
+        coreboot-msi-ms-7d25
         ;
 
       inherit (pkgs.pkgsCross.armv7l-hf-multiplatform)

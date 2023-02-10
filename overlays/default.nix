@@ -182,8 +182,24 @@ inputs: with inputs; {
           extraConfig =
             let
               vbt = prev.fetchurl {
-                url = "https://github.com/intel/FSP/raw/6f2f17f3d3397cc2f00a644e218980bb33e06f66/TigerLakeFspBinPkg/Client/SampleCode/Vbt/Vbt.bin";
-                sha256 = "sha256-IDp05CcwaTOucvXF8MmsTg1qyYKXU3E5xw2ZUisUXt4=";
+                url = "https://github.com/intel/FSP/blob/d85493d0605921f46afab3445be01da90f0a8062/TigerLakeFspBinPkg/Client/SampleCode/Vbt/Vbt.bin";
+                sha256 = "sha256-lWalh1GkRPgG0DPlrXWVm7ZIT9ZUPYAp7fL6SmHFOXM=";
+              };
+            in
+            ''
+              CONFIG_INTEL_GMA_VBT_FILE="${vbt}"
+              CONFIG_PAYLOAD_FILE="${final.tinyboot-kernel}/bzImage"
+              CONFIG_LINUX_INITRD="${final.tinyboot-initramfs}/initrd"
+            '';
+        };
+        coreboot-msi-ms-7d25 = final.buildCoreboot {
+          boardName = "msi-ms-7d25";
+          configfile = ./coreboot/msi-ms-7d25.config;
+          extraConfig =
+            let
+              vbt = prev.fetchurl {
+                url = "https://github.com/intel/FSP/blob/d85493d0605921f46afab3445be01da90f0a8062/AlderLakeFspBinPkg/Client/AlderLakeP/SampleCode/Vbt/Vbt.bin";
+                sha256 = "sha256-FBPGeU+B83sjRe3kO62/Yg1N80T8IbdPVbkLurECjzI=";
               };
             in
             ''

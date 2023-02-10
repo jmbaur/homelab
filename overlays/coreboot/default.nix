@@ -1,4 +1,4 @@
-{ stdenv, pkgsBuildBuild, python3, fetchgit, ... }:
+{ stdenv, pkgsBuildBuild, python3, pkgconfig, fetchgit, ... }:
 { boardName, configfile, extraConfig ? "", extraCbfsCommands ? "", ... }:
 let
   toolchain-system = builtins.getAttr stdenv.hostPlatform.linuxArch {
@@ -20,7 +20,7 @@ stdenv.mkDerivation {
     sha256 = "sha256-QvQ87mPnETNZL3GbMHHBAOxJFvRDUzIlXSiuLG7wxEw=";
   };
   depsBuildBuild = [ pkgsBuildBuild.stdenv.cc ];
-  nativeBuildInputs = [ python3 ];
+  nativeBuildInputs = [ python3 pkgconfig ];
   patches = [ ./memory-layout.patch ];
   postPatch = ''
     patchShebangs util
