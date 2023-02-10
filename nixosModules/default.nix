@@ -9,6 +9,7 @@ inputs: {
     ];
     imports = [
       ./basic_network.nix
+      ./btrfs.nix
       ./chromebook.nix
       ./common.nix
       ./deployee.nix
