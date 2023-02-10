@@ -110,14 +110,19 @@ with lib; {
       ])
       (lib.optionals (languages.all || languages.python) [
         pkgs.ruff
-        pkgs.pyright
+        (pkgs.python3.withPackages (p: with p; ([
+          pylsp-mypy
+          python-lsp-black
+          python-lsp-server
+        ] ++ python-lsp-server.optional-dependencies.all)
+        ))
       ])
       (lib.optionals (languages.all || languages.nix) [
         pkgs.nil
         pkgs.nixpkgs-fmt
       ])
       (lib.optionals (languages.all || languages.lua) [
-        pkgs.sumneko-lua-language-server
+        pkgs.lua-language-server
       ])
       (lib.optionals (languages.all || languages.rust) [
         pkgs.clippy

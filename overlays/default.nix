@@ -43,7 +43,7 @@ inputs: with inputs; {
         vimPlugins = prev.vimPlugins // {
           jmbaur-settings = prev.vimUtils.buildVimPlugin {
             pname = "jmbaur-settings";
-            version = "0"; # unversioned
+            version = "unversioned";
             src = ./neovim/settings;
           };
           inherit (out-of-tree) smartyank-nvim;
@@ -52,7 +52,6 @@ inputs: with inputs; {
         neovim-boring = prev.writeShellScriptBin
           "nvimb"
           ''exec -a "$0" ${final.neovim.override { boring = true; }}/bin/nvim "$@"'';
-        neovim-image = prev.callPackage ./neovim-image.nix { inherit (final) neovim; };
 
         mkWaylandVariant = prev.callPackage ./mkWaylandVariant.nix { };
         brave-wayland = final.mkWaylandVariant

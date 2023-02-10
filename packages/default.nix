@@ -35,7 +35,6 @@ let
       macgen
       mirror-to-x
       neovim
-      neovim-image
       outlook-webapp
       pd-notify
       pomo

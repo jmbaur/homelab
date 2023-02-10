@@ -1,10 +1,11 @@
 inputs: {
   default = {
     nixpkgs.overlays = with inputs; [
-      self.overlays.default
       gobar.overlays.default
       gosee.overlays.default
+      nil.overlays.default
       pd-notify.overlays.default
+      self.overlays.default
       self.overlays.default
     ];
     imports = [

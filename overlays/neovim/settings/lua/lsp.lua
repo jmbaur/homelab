@@ -79,7 +79,13 @@ local servers = {
 			settings = { gopls = { gofumpt = true, staticcheck = true } },
 		},
 	},
-	pyright = { required_exe = { "pyright-langserver" }, lsp_config = { on_attach = on_attach } },
+	pylsp = {
+		required_exe = { "pylsp" },
+		lsp_config = {
+			on_attach = on_attach_format,
+			settings = { pylsp = { plugins = { black = { enabled = true } } } },
+		},
+	},
 	nil_ls = { required_exe = { "nil" }, lsp_config = { on_attach = on_attach } },
 	rust_analyzer = {
 		required_exe = { "cargo", "rustc", "rust-analyzer" },
@@ -137,12 +143,12 @@ for lsp, settings in pairs(servers) do
 end
 
 local conditional_null_ls_sources = {
+	-- { required_exe = "ruff",        source = null_ls.builtins.diagnostics.ruff },
+	-- { required_exe = "ruff",        source = null_ls.builtins.formatting.ruff },
 	{ required_exe = "cue", source = null_ls.builtins.diagnostics.cue_fmt },
 	{ required_exe = "cue", source = null_ls.builtins.formatting.cue_fmt },
 	{ required_exe = "deno", source = null_ls.builtins.formatting.deno_fmt },
 	{ required_exe = "nixpkgs-fmt", source = null_ls.builtins.formatting.nixpkgs_fmt },
-	{ required_exe = "ruff", source = null_ls.builtins.diagnostics.ruff },
-	{ required_exe = "ruff", source = null_ls.builtins.formatting.ruff },
 	{ required_exe = "shellcheck", source = null_ls.builtins.diagnostics.shellcheck },
 	{ required_exe = "shfmt", source = null_ls.builtins.formatting.shfmt },
 	{ required_exe = "taplo", source = null_ls.builtins.formatting.taplo },
