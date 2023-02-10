@@ -10,6 +10,7 @@ in
       enable = hasHomeSubvolume;
       description = "snapshot home subvolume";
       timerConfig.OnCalendar = "weekly";
+      wantedBy = [ "multi-user.target" ];
     };
     systemd.services.snapshot-home = {
       enable = hasHomeSubvolume;
