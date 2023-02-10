@@ -20,7 +20,7 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware";
     nixos-router.inputs.nixpkgs.follows = "nixpkgs";
     nixos-router.url = "github:jmbaur/nixos-router";
-    nixpkgs.url = "github:nixos/nixpkgs/0683f22a370c1534be4ef8f4b2d55ad253f43aa6";
+    nixpkgs.url = "nixpkgs/nixos-unstable";
     pd-notify.inputs.nixpkgs.follows = "nixpkgs";
     pd-notify.url = "github:jmbaur/pd-notify";
     pre-commit.inputs.nixpkgs.follows = "nixpkgs";
