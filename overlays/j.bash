@@ -32,11 +32,12 @@ if ! tmux_session_path=$(
 	exit 2
 fi
 
-tmux_session_name=$(
-	echo -n "$tmux_session_path" |
-		cut -d'/' -f2- |
-		sed "s,\.,_,g"
-)
+# decimals are not allowed in tmux's statusline
+function escape_basename() {
+	basename "$1" | sed "s,\.,_,g"
+}
+
+tmux_session_name="$(escape_basename "$(dirname "$tmux_session_path")")/$(escape_basename "$tmux_session_path")"
 
 clients_attached=$(tmux start \; list-sessions -f "#{==:#{session_name},$tmux_session_name}" -F "#{session_attached}" 2>/dev/null)
 if [[ -z $clients_attached ]]; then
