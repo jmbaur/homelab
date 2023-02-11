@@ -1,4 +1,4 @@
-function diagnostic_status()
+function DiagnosticStatus()
 	if #vim.lsp.buf_get_clients() == 0 then
 		return ""
 	end
@@ -12,12 +12,11 @@ function diagnostic_status()
 		table.insert(t, diag["display"] .. ":" .. #vim.diagnostic.get(0, { severity = diag["severity"] }))
 	end
 
-	return "[lsp] " .. table.concat(t, " ")
+	return "[" .. table.concat(t, " ") .. "]"
 end
 
-vim.opt.statusline = "%y"
-	.. "%{luaeval('diagnostic_status()')}"
+vim.opt.statusline = "%{FugitiveStatusline()}"
+	.. "%f"
 	.. "%="
-	.. "%f %{FugitiveStatusline()}"
-	.. "%="
-	.. "%m%r %l,%c %P"
+	.. "%{luaeval('DiagnosticStatus()')}"
+	.. "%y%m%r %l,%c %P"

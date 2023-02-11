@@ -1,9 +1,7 @@
 { boring ? false, neovim-unwrapped, vimPlugins, wrapNeovim, ... }:
 let
   configure = {
-    customRC = ''
-      lua vim.g.boring = ${if boring then "1" else "0"}
-    '';
+    customRC = "let g:boring=${toString (if boring then 1 else 0)}";
     packages.plugins = with vimPlugins; {
       start = [
         editorconfig-nvim

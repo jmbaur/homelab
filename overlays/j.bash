@@ -34,7 +34,7 @@ fi
 
 tmux_session_name=$(
 	echo -n "$tmux_session_path" |
-		sed "s,$directory/,," |
+		cut -d'/' -f2- |
 		sed "s,\.,_,g"
 )
 
