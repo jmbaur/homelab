@@ -53,7 +53,7 @@ M.builtins = {
 	["zsh"] = make_nix_run_builtin("zsh"),
 }
 
-M.start_repl = function(cmd)
+M.run = function(cmd)
 	local cmd_fn = M.builtins[cmd]
 	if cmd_fn ~= nil then
 		cmd = cmd_fn()
@@ -67,25 +67,23 @@ for display_name in pairs(M.builtins) do
 end
 
 M.launch = function()
-	vim.ui.select(M.select_results, {
-		prompt = "Repl:",
-	}, M.start_repl)
+	vim.ui.select(M.select_results, { prompt = "Run:" }, M.run)
 end
 
 M.setup = function()
-	vim.keymap.set("n", "<leader>$", M.launch, { desc = "Launch REPL chooser" })
-	vim.api.nvim_create_user_command("Repl", function(args)
+	vim.keymap.set("n", "<leader>$", M.launch, { desc = "Launch Run chooser" })
+	vim.api.nvim_create_user_command("Run", function(args)
 		local arg
 		if args["args"] == "" then
 			arg = "shell"
 		else
 			arg = args["args"]
 		end
-		M.start_repl(arg)
+		M.run(arg)
 	end, {
 		nargs = "*",
-		desc = "nvim-repl",
-		complete = function(arg_lead, cmd_line, cursor_pos)
+		desc = "nvim-run",
+		complete = function(arg_lead, _cmd_line, _cursor_pos)
 			local completions = {}
 			for k in pairs(M.builtins) do
 				local i, _ = string.find(k, arg_lead)
