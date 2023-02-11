@@ -58,7 +58,7 @@ M.run = function(cmd)
 	if cmd_fn ~= nil then
 		cmd = cmd_fn()
 	end
-	vim.cmd.vsplit(string.format("term://%s", cmd))
+	vim.cmd.split(string.format("term://%s", cmd))
 end
 
 M.select_results = {}
