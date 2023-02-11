@@ -53,13 +53,12 @@ M.builtins = {
 	["zsh"] = make_nix_run_builtin("zsh"),
 }
 
-M.start_repl = function(cmd_fn)
-	cmd_fn = M.builtins[cmd_fn]
+M.start_repl = function(cmd)
+	local cmd_fn = M.builtins[cmd]
 	if cmd_fn ~= nil then
-		vim.cmd.vsplit(string.format("term://%s", cmd_fn()))
-	else
-		vim.notify("no repl command provided")
+		cmd = cmd_fn()
 	end
+	vim.cmd.vsplit(string.format("term://%s", cmd))
 end
 
 M.select_results = {}
