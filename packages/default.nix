@@ -87,8 +87,9 @@ in
       installer_iso_lx2k = self.nixosConfigurations.installer_iso_lx2k.config.system.build.isoImage;
 
       installer_sd_image = self.nixosConfigurations.installer_sd_image_aarch64-linux.config.system.build.sdImage;
-      installer_sd_image_kukui_fennel14 = self.nixosConfigurations.installer_sd_image_kukui_fennel14.config.system.build.sdImage;
       installer_sd_image_asurada_spherion = self.nixosConfigurations.installer_sd_image_asurada_spherion.config.system.build.sdImage;
+      installer_sd_image_cn9130_clearfog = self.nixosConfigurations.installer_sd_image_cn9130_clearfog.config.system.build.sdImage;
+      installer_sd_image_kukui_fennel14 = self.nixosConfigurations.installer_sd_image_kukui_fennel14.config.system.build.sdImage;
 
       rhubarb_sd_image = self.nixosConfigurations.rhubarb.config.system.build.sdImage;
     };

@@ -9,6 +9,7 @@
   fileSystems."/nix".options = [ "noatime" "discard=async" "compress=zstd" ];
   fileSystems."/home".options = [ "noatime" "discard=async" "compress=zstd" ];
 
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   boot.initrd.availableKernelModules = [ "i915" ];
   boot.initrd.systemd.enable = true;
   boot.kernelPackages = pkgs.linuxPackages_6_1;

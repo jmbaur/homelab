@@ -179,6 +179,17 @@ in
     ];
   };
 
+  installer_sd_image_cn9130_clearfog = mkInstaller {
+    system = "aarch64-linux";
+    modules = [
+      ({ modulesPath, ... }: {
+        imports = [ "${modulesPath}/installer/sd-card/sd-image-aarch64-installer.nix" ];
+        boot.initrd.systemd.enable = true;
+        hardware.clearfog-cn913x.enable = true;
+      })
+    ];
+  };
+
   installer_sd_image_asurada_spherion = mkInstaller {
     system = "aarch64-linux";
     modules = [
