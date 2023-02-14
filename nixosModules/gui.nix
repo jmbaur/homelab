@@ -19,16 +19,22 @@ with lib;
 
     location.provider = "geoclue2";
 
+    nixpkgs.overlays = [
+      (_: prev: {
+        sway-launcher = prev.writeShellScriptBin "sway-launcher" ''
+          exec -a "$0" systemd-cat --identifier=sway sway
+        '';
+      })
+    ];
     environment.systemPackages = with pkgs; [
       ffmpeg-full
       libnotify
       mpv
       pulsemixer
+      sway-launcher
       wl-clipboard
       xdg-utils
-      (pkgs.writeShellScriptBin "sway-launcher" ''
-        exec -a "$0" systemd-cat --identifier=sway sway
-      '')
+      zathura
     ];
 
     services.dbus.enable = true;
