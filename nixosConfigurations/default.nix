@@ -183,6 +183,11 @@ in
     system = "aarch64-linux";
     modules = [
       ({ modulesPath, ... }: {
+        disabledModules = [
+          # prevent initrd from requiring a bunch of kernel modules we don't
+          # need
+          "${modulesPath}/profiles/all-hardware.nix"
+        ];
         imports = [ "${modulesPath}/installer/sd-card/sd-image-aarch64-installer.nix" ];
         boot.initrd.systemd.enable = true;
         hardware.clearfog-cn913x.enable = true;

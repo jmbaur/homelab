@@ -16,7 +16,7 @@
 
   fileSystems."/" =
     {
-      device = "/dev/disk/by-uuid/fe70e9c3-7c1d-4031-a503-d8de55335c76";
+      device = "/dev/disk/by-uuid/7fdd5669-3ede-4a72-8ebe-6efc06c36f63";
       fsType = "ext4";
     };
 
@@ -27,17 +27,16 @@
   # still possible to use this option, but it's recommended to use it in conjunction
   # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
   networking.useDHCP = lib.mkDefault true;
-  # networking.interfaces.data.useDHCP = lib.mkDefault true;
-  # networking.interfaces.eth1.useDHCP = lib.mkDefault true;
-  # networking.interfaces.hurricane.useDHCP = lib.mkDefault true;
+  # networking.interfaces.lan.useDHCP = lib.mkDefault true;
   # networking.interfaces.lan1.useDHCP = lib.mkDefault true;
   # networking.interfaces.lan2.useDHCP = lib.mkDefault true;
   # networking.interfaces.lan3.useDHCP = lib.mkDefault true;
   # networking.interfaces.lan4.useDHCP = lib.mkDefault true;
   # networking.interfaces.lan5.useDHCP = lib.mkDefault true;
   # networking.interfaces.lan6.useDHCP = lib.mkDefault true;
-  # networking.interfaces.sit0.useDHCP = lib.mkDefault true;
+  # networking.interfaces.sfpplus.useDHCP = lib.mkDefault true;
   # networking.interfaces.wan.useDHCP = lib.mkDefault true;
+  # networking.interfaces.wlP1p1s0.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
   powerManagement.cpuFreqGovernor = lib.mkDefault "ondemand";
