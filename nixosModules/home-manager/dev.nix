@@ -92,13 +92,14 @@ with lib; {
     ] ++ lib.flatten (with systemConfig.custom.dev; [
       (with pkgs; [
         # editor tools
+        (texlive.combine { inherit (texlive) scheme-minimal latexindent; })
         bat
         deno
         fd
-        skim
         html-tidy
         shellcheck
         shfmt
+        skim
         taplo
         tree-sitter
       ])

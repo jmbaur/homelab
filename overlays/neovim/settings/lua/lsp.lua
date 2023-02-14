@@ -143,11 +143,10 @@ for lsp, settings in pairs(servers) do
 end
 
 local conditional_null_ls_sources = {
-	-- { required_exe = "ruff",        source = null_ls.builtins.diagnostics.ruff },
-	-- { required_exe = "ruff",        source = null_ls.builtins.formatting.ruff },
 	{ required_exe = "cue", source = null_ls.builtins.diagnostics.cue_fmt },
 	{ required_exe = "cue", source = null_ls.builtins.formatting.cue_fmt },
 	{ required_exe = "deno", source = null_ls.builtins.formatting.deno_fmt },
+	{ required_exe = "latexindent", source = null_ls.builtins.formatting.latexindent },
 	{ required_exe = "nixpkgs-fmt", source = null_ls.builtins.formatting.nixpkgs_fmt },
 	{ required_exe = "shellcheck", source = null_ls.builtins.diagnostics.shellcheck },
 	{ required_exe = "shfmt", source = null_ls.builtins.formatting.shfmt },
