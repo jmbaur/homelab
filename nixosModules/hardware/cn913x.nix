@@ -7,7 +7,13 @@
     boot.loader.grub.enable = false;
     boot.loader.generic-extlinux-compatible.enable = true;
     boot.kernelParams = [ "console=ttyS0,115200" "cma=256M" ];
-    boot.kernelPackages = pkgs.linuxKernel.packagesFor pkgs.linux_cn913x;
+    boot.kernelPackages = pkgs.linuxKernel.packagesFor (
+      import pkgs.path {
+        localSystem = "x86_64-linux";
+        crossSystem = "aarch64-linux";
+        inherit (config.nixpkgs) overlays;
+      }
+    ).linux_cn913x;
 
     hardware.deviceTree = {
       enable = true;
