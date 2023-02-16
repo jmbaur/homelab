@@ -35,6 +35,7 @@ nixpkgs.lib.genAttrs
     mirror-to-x = mkApp "${pkgs.mirror-to-x}/bin/mirror-to-x";
     mkdepthcharge = mkApp "${pkgs.depthcharge-tools}/bin/mkdepthcharge";
     neovim = mkApp "${pkgs.neovim}/bin/nvim";
+    neovim-all-languages = mkApp "${pkgs.neovim-all-languages}/bin/nvim";
     outlook-webapp = mkApp "${pkgs.outlook-webapp}/bin/outlook-webapp";
     slack-webapp = mkApp "${pkgs.slack-webapp}/bin/slack-webapp";
     spotify-webapp = mkApp "${pkgs.spotify-webapp}/bin/spotify-webapp";

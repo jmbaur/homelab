@@ -39,10 +39,9 @@ inputs: with inputs; {
           };
           inherit (out-of-tree) smartyank-nvim;
         };
-        neovim = prev.callPackage ./neovim { inherit (final) vimPlugins; };
-        neovim-boring = prev.writeShellScriptBin
-          "nvimb"
-          ''exec -a "$0" ${final.neovim.override { boring = true; }}/bin/nvim "$@"'';
+
+        neovim = prev.callPackage ./neovim { };
+        neovim-all-languages = prev.callPackage ./neovim { supportAllLanguages = true; };
 
         mkWaylandVariant = prev.callPackage ./mkWaylandVariant.nix { };
         brave-wayland = final.mkWaylandVariant

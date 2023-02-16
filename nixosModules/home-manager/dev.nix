@@ -13,6 +13,7 @@ with lib; {
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
+      (writeShellScriptBin "nvim-boring" ''exec -a "$0" ${neovim}/bin/nvim "$@"'')
       ansifilter
       as-tree
       bc
@@ -28,6 +29,7 @@ with lib; {
       direnv
       dnsutils
       entr
+      fd
       file
       fsrx
       git
@@ -53,8 +55,7 @@ with lib; {
       mdcat
       mob
       mosh
-      neovim
-      neovim-boring
+      neovim-all-languages
       nix-diff
       nix-prefetch-scripts
       nix-tree
@@ -86,60 +87,9 @@ with lib; {
       wezterm
       wip
       xsv
-      yamlfmt
       ydiff
       yj
-    ] ++ lib.flatten (with systemConfig.custom.dev; [
-      (with pkgs; [
-        # editor tools
-        (texlive.combine { inherit (texlive) scheme-minimal latexindent; })
-        bat
-        deno
-        fd
-        html-tidy
-        shellcheck
-        shfmt
-        skim
-        taplo
-        tree-sitter
-      ])
-      (lib.optionals (languages.all || languages.c) [
-        pkgs.clang-tools
-      ])
-      (lib.optionals (languages.all || languages.zig) [
-        pkgs.zls
-      ])
-      (lib.optionals (languages.all || languages.python) [
-        pkgs.ruff
-        (pkgs.python3.withPackages (p: with p; ([
-          pylsp-mypy
-          python-lsp-black
-          python-lsp-server
-        ] ++ python-lsp-server.optional-dependencies.all)
-        ))
-      ])
-      (lib.optionals (languages.all || languages.nix) [
-        pkgs.nil
-        pkgs.nixpkgs-fmt
-      ])
-      (lib.optionals (languages.all || languages.lua) [
-        pkgs.lua-language-server
-      ])
-      (lib.optionals (languages.all || languages.rust) [
-        pkgs.clippy
-        pkgs.rust-analyzer
-        pkgs.rustfmt
-      ])
-      (lib.optionals (languages.all || languages.go) [
-        pkgs.go-tools
-        pkgs.gofumpt
-        pkgs.gopls
-      ])
-      (lib.optionals (languages.all || languages.typescript) [
-        pkgs.deno
-        pkgs.nodePackages.typescript-language-server
-      ])
-    ]);
+    ];
 
     programs.gpg = {
       enable = true;

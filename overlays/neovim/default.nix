@@ -1,10 +1,45 @@
-{ boring ? false, neovim-unwrapped, vimPlugins, wrapNeovim, ... }:
+{ supportAllLanguages ? false
+, languageSupport ? lib.genAttrs [ "c" "go" "html" "latex" "lua" "markdown" "nix" "python" "rust" "shell" "toml" "typescript" "yaml" "zig" ] (_: supportAllLanguages)
+, clang-tools
+, clippy
+, deno
+, fd
+, git
+, go-tools
+, gofumpt
+, gopls
+, html-tidy
+, lib
+, lua-language-server
+, neovim-unwrapped
+, neovimUtils
+, nil
+, nixpkgs-fmt
+, nodePackages
+, python3
+, ripgrep
+, ruff
+, rust-analyzer
+, rustfmt
+, shellcheck
+, shfmt
+, skim
+, taplo
+, texlive
+, tree-sitter
+, vimPlugins
+, wrapNeovimUnstable
+, yamlfmt
+, zls
+, ...
+}:
 let
-  configure = {
-    customRC = "let g:boring=${toString (if boring then 1 else 0)}";
-    packages.plugins = with vimPlugins; {
-      start = [
+  config = neovimUtils.makeNeovimConfig {
+    plugins = with vimPlugins;
+      # start
+      [
         editorconfig-nvim
+        fzf-lua
         gosee-nvim
         jmbaur-settings
         mini-nvim
@@ -19,8 +54,6 @@ let
         playground
         smartyank-nvim
         snippets-nvim
-        telescope-nvim
-        telescope-ui-select-nvim
         vim-dispatch
         vim-eunuch
         vim-flog
@@ -29,11 +62,39 @@ let
         vim-repeat
         vim-rsi
         vim-unimpaired
-      ];
-    };
+      ]
+      # opt
+      ++ (map (plugin: { inherit plugin; optional = true; }) [ ]);
   };
 in
-wrapNeovim neovim-unwrapped {
-  inherit configure;
+wrapNeovimUnstable neovim-unwrapped (config // {
   vimAlias = true;
-}
+  wrapperArgs = config.wrapperArgs ++ (
+    let
+      binPath = lib.makeBinPath ([ fd git ripgrep skim tree-sitter ]
+        ++ (lib.optionals languageSupport.c [ clang-tools ])
+        ++ (lib.optionals languageSupport.go [ go-tools gofumpt gopls ])
+        ++ (lib.optionals languageSupport.html [ html-tidy ])
+        ++ (lib.optionals languageSupport.latex [ (texlive.combine { inherit (texlive) scheme-minimal latexindent; }) ])
+        ++ (lib.optionals languageSupport.lua [ lua-language-server ])
+        ++ (lib.optionals languageSupport.markdown [ deno ])
+        ++ (lib.optionals languageSupport.nix [ nil nixpkgs-fmt ])
+        ++ (lib.optionals languageSupport.rust [ clippy rust-analyzer rustfmt ])
+        ++ (lib.optionals languageSupport.shell [ shellcheck shfmt ])
+        ++ (lib.optionals languageSupport.toml [ taplo ])
+        ++ (lib.optionals languageSupport.typescript [ deno nodePackages.typescript-language-server ])
+        ++ (lib.optionals languageSupport.yaml [ yamlfmt ])
+        ++ (lib.optionals languageSupport.zig [ zls ])
+        ++ (lib.optionals languageSupport.python [
+        ruff
+        (python3.withPackages (p: with p; [
+          pylsp-mypy
+          python-lsp-black
+          python-lsp-server
+        ]))
+      ])
+      );
+    in
+    [ "--prefix" "PATH" ":" binPath ]
+  );
+})
