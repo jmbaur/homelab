@@ -99,7 +99,7 @@ local servers = {
 			},
 		},
 	},
-	sumneko_lua = {
+	lua_ls = {
 		required_exe = { "lua-language-server" },
 		lsp_config = {
 			on_attach = on_attach_format,
