@@ -30,7 +30,6 @@ with lib; {
       rtorrent
       sl
       smartmontools
-      sshfs
       stow
       tailscale
       tcpdump
