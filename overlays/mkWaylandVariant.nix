@@ -3,12 +3,14 @@
 , makeWrapper
 , WebRTCPipeWireCapturer ? true
 , SystemNotifications ? true
+, TouchpadOverscrollHistoryNavigation ? true
 , ...
 }:
 let
   enableFeatures = lib.concatStringsSep "," ([ "UseOzonePlatform" "WaylandWindowDecorations" "WebUIDarkMode" ]
-    ++ (lib.optional WebRTCPipeWireCapturer "WebRTCPipeWireCapturer")
     ++ (lib.optional SystemNotifications "SystemNotifications")
+    ++ (lib.optional TouchpadOverscrollHistoryNavigation "TouchpadOverscrollHistoryNavigation")
+    ++ (lib.optional WebRTCPipeWireCapturer "WebRTCPipeWireCapturer")
   );
 in
 drv:
