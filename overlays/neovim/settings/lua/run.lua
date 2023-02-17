@@ -54,10 +54,15 @@ M.builtins = {
 }
 
 M.run = function(cmd)
+	if cmd == nil then
+		return
+	end
+
 	local cmd_fn = M.builtins[cmd]
 	if cmd_fn ~= nil then
 		cmd = cmd_fn()
 	end
+
 	vim.cmd.split(string.format("term://%s", cmd))
 end
 
@@ -82,7 +87,7 @@ M.setup = function()
 		M.run(arg)
 	end, {
 		nargs = "*",
-		desc = "nvim-run",
+		desc = "Run a REPL",
 		complete = function(arg_lead, _cmd_line, _cursor_pos)
 			local completions = {}
 			for k in pairs(M.builtins) do

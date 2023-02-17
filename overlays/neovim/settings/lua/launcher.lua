@@ -4,10 +4,24 @@ local actions = require("fzf-lua.actions")
 fzf.setup({
 	fzf_bin = "sk",
 	files = {
+		file_icons = false,
+		git_icons = false,
 		actions = {
 			-- override the default action for horizontal split
 			["ctrl-b"] = actions.file_split,
 		},
+	},
+	grep = {
+		file_icons = false,
+		git_icons = false,
+	},
+	lsp = {
+		file_icons = false,
+		git_icons = false,
+	},
+	diagnostics = {
+		file_icons = false,
+		git_icons = false,
 	},
 })
 
