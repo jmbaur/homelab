@@ -1,4 +1,4 @@
-{ stdenv, cmake, cmocka, fetchgit, libftdi1, libjaylink, libusb1, meson, ninja, pciutils, pkg-config, ... }:
+{ stdenv, cmake, cmocka, fetchgit, libftdi1, libjaylink, libusb1, meson, ninja, pciutils, pkgconfig, ... }:
 stdenv.mkDerivation rec {
   pname = "flashrom-cros";
   version = builtins.substring 0 7 src.rev;
@@ -10,6 +10,6 @@ stdenv.mkDerivation rec {
   };
 
   dontUseCmakeConfigure = true;
-  nativeBuildInputs = [ cmake cmocka meson ninja pkg-config ];
-  buildInputs = [ libftdi1 libusb1 pciutils libjaylink ];
+  nativeBuildInputs = [ cmake meson ninja pkgconfig ];
+  buildInputs = [ cmocka libftdi1 libusb1 pciutils libjaylink ];
 }
