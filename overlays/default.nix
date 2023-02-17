@@ -125,7 +125,7 @@ inputs: with inputs; {
         linuxboot-qemu-aarch64-fitimage = final.mkFitImage {
           boardName = "qemu-aarch64";
           kernel = final.tinyboot-kernel;
-          initramfs = "${final.tinyboot-initramfs.override { shellTTY = "ttyAMA0"; }}/initrd";
+          initramfs = "${final.tinyboot-initramfs.override { tinybootTTY = "ttyAMA0"; }}/initrd";
           # NOTE: See here as to why qemu needs to be in depsBuildBuild and
           # not nativeBuildInputs:
           # https://github.com/NixOS/nixpkgs/pull/146583
@@ -134,7 +134,6 @@ inputs: with inputs; {
               qemu-system-aarch64 \
                 -M virt,secure=on,virtualization=on,dumpdtb=$out \
                 -cpu cortex-a53 -m 2G -nographic \
-                -device virtio-gpu-pci \
                 -drive format=raw,if=virtio,file=$(mktemp)
             '')
             { };
@@ -158,7 +157,7 @@ inputs: with inputs; {
           configfile = ./coreboot/qemu-x86.config;
           extraConfig = ''
             CONFIG_PAYLOAD_FILE="${final.tinyboot-kernel}/bzImage"
-            CONFIG_LINUX_INITRD="${final.tinyboot-initramfs.override { shellTTY = "ttyS0"; }}/initrd"
+            CONFIG_LINUX_INITRD="${final.tinyboot-initramfs.override { tinybootTTY = "ttyS0"; }}/initrd"
           '';
         };
         coreboot-qemu-aarch64 = final.buildCoreboot {
