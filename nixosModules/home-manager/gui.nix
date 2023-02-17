@@ -284,6 +284,7 @@ with lib; {
               };
             in
             {
+              # TODO(jared): make specific settings for kinesis keyboard
               "113:16461:Logitech_K400_Plus" = touchpadSettings // {
                 xkb_options = "ctrl:nocaps";
                 xkb_model = "pc104";

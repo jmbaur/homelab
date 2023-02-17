@@ -8,7 +8,6 @@ in
   config = lib.mkIf cfg.enable {
     services.automatic-timezoned.enable = true;
     services.openssh.openFirewall = false;
-    services.xserver.xkbOptions = lib.mkDefault "ctrl:nocaps";
 
     custom.basicNetwork.enable = true;
     custom.basicNetwork.hasWireless = true;
