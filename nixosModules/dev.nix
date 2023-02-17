@@ -7,14 +7,6 @@ with lib;
   options.custom.dev.enable = mkEnableOption "dev setup";
 
   config = mkIf cfg.enable {
-    documentation = {
-      enable = true;
-      dev.enable = true;
-      doc.enable = true;
-      info.enable = true;
-      man.enable = true;
-    };
-
     programs = {
       adb.enable = true;
       flashrom.enable = true;

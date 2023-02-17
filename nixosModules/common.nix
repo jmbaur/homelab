@@ -22,8 +22,6 @@ with lib; {
     i18n.defaultLocale = "en_US.UTF-8";
     console.useXkbConfig = true;
 
-    documentation.enable = mkDefault false;
-
     nix = {
       nixPath = mkForce [ "nixpkgs=${pkgs.path}" ];
       settings = {
