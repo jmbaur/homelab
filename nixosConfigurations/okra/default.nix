@@ -27,6 +27,8 @@
     enable = true;
     authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
   };
+  custom.remoteBoot.enable = false;
+
 
   users.mutableUsers = true;
 
