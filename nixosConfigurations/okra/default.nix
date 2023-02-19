@@ -23,6 +23,10 @@
   custom.gui.enable = true;
   custom.remoteBuilders.aarch64builder.enable = true;
   custom.users.jared.enable = true;
+  custom.deployee = {
+    enable = true;
+    authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
+  };
 
   users.mutableUsers = true;
 
