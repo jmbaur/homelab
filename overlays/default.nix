@@ -16,10 +16,23 @@ inputs: with inputs; {
           flashrom-dasharo
           stevenblack-blocklist
           u-rootInitramfs
-          wezterm
           xremap
           yamlfmt
           ;
+
+        wezterm = prev.wezterm.overrideAttrs (old: {
+          checkFlags = [ ];
+          patches = old.patches ++ [
+            (prev.fetchpatch {
+              url = "https://github.com/wez/wezterm/commit/36519f0d90e1875fb4b3f11f6cbf94c7d716ef78.patch";
+              sha256 = "sha256-sOGFmDan1uO1xOBCpvlGrSotjfw01MjRg0KVqa5omig=";
+            })
+            (prev.fetchpatch {
+              url = "https://github.com/wez/wezterm/commit/c3790d6ff74e8d7823da7be98be67a885eb8cc5c.patch";
+              sha256 = "sha256-X1nGOFPJRx1YjYgAeKTFDfViXn/LExiMhbqWvjEDUM4=";
+            })
+          ];
+        });
 
         bitwarden-bemenu = prev.callPackage ./bitwarden-bemenu.nix { };
         git-get = prev.callPackage ./git-get { };

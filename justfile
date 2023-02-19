@@ -16,7 +16,6 @@ switch:
 build:
 	nix build -L --accept-flake-config \
 		.\#cicada \
-		.\#coreboot-volteer-elemi \
 		.\#coredns-utils \
 		.\#flarectl \
 		.\#flashrom-cros \
