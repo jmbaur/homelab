@@ -9,7 +9,10 @@ in
     systemd.timers.snapshot-home = {
       enable = hasHomeSubvolume;
       description = "snapshot home subvolume";
-      timerConfig.OnCalendar = "weekly";
+      timerConfig = {
+        OnCalendar = "weekly";
+        Persistent = true;
+      };
       wantedBy = [ "multi-user.target" ];
     };
     systemd.services.snapshot-home = {
