@@ -195,6 +195,9 @@ with lib; {
       loginShellInit = ''
         set -U fish_greeting ""
       '';
+      interactiveShellInit = ''
+        fish_config theme choose "Just A Touch"
+      '';
     };
 
     programs.zsh = {
