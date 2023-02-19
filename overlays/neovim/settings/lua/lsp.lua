@@ -94,7 +94,7 @@ local servers = {
 			settings = {
 				["rust-analyzer"] = {
 					-- use cargo-clippy on save instead of cargo-check
-					checkOnSave = { command = "clippy" },
+					check = { command = vim.fn.executable("cargo-clippy") == 1 and "clippy" or "check" },
 				},
 			},
 		},
@@ -129,7 +129,7 @@ for lsp, settings in pairs(servers) do
 		for _, exe in ipairs(settings.required_exe) do
 			-- If any required executables for a given language
 			-- server are not found, don't setup the LSP.
-			if vim.fn.executable(exe) ~= 1 then
+			if vim.fn.executable(exe) == 0 then
 				do_setup = false
 				break
 			end

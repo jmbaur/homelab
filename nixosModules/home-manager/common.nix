@@ -17,6 +17,7 @@ with lib; {
     home.shellAliases = {
       ls = "ls --color=auto";
       grep = "grep --color=auto";
+      r = "stty sane && reset";
     };
 
     home.packages = with pkgs; [

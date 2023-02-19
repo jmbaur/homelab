@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 let
   cfg = config.custom.dev;
 in
@@ -13,6 +13,9 @@ with lib;
       mosh.enable = true;
       wireshark.enable = true;
     };
+
+    environment.systemPackages = [ pkgs.man-pages pkgs.man-pages-posix ];
+    documentation.dev.enable = true;
 
     environment.variables.EDITOR = lib.mkForce "nvim";
 
