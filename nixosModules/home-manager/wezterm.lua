@@ -45,6 +45,7 @@ return {
 	adjust_window_size_when_changing_font_size = false,
 	audible_bell = "Disabled",
 	automatically_reload_config = false,
+	check_for_updates = false,
 	color_scheme = "modus-vivendi",
 	font = wezterm.font("JetBrains Mono"),
 	font_size = 16.0,
@@ -52,8 +53,8 @@ return {
 	hide_tab_bar_if_only_one_tab = true,
 	keys = keys,
 	mouse_bindings = mouse_bindings,
-	tab_bar_at_bottom = true,
 	ssh_domains = ssh_domains,
+	tab_bar_at_bottom = true,
 	use_fancy_tab_bar = false,
 	window_padding = { left = 0, right = 0, top = 0, bottom = 0 },
 }
