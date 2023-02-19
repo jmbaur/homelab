@@ -35,9 +35,9 @@ rustPlatform.buildRustPackage rec {
   src = fetchFromGitHub {
     owner = "wez";
     repo = pname;
-    rev = "a5c2b1f3adb06054bf522cb3d350697938d6f8e9";
+    rev = "portable-pty-0.8.03adb06054bf522cb3d350697938d6f8e9";
     fetchSubmodules = true;
-    sha256 = "sha256-jQK8mSQGBztzSFYNGeL5TP2xUY6Xd4FaLkVvBahpzRY=";
+    sha256 = "";
   };
 
   # Rust 1.65 does better at enum packing (according to
@@ -55,7 +55,7 @@ rustPlatform.buildRustPackage rec {
     rm -r wezterm-ssh/tests
   '';
 
-  cargoSha256 = "sha256-4W9vbp0Boq7jjZXtCN+GETYGys4Pxl07r7btr8o4r7M=";
+  cargoSha256 = "";
 
   nativeBuildInputs = [
     installShellFiles
