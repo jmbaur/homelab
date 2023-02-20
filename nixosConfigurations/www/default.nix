@@ -4,6 +4,7 @@ let
 in
 {
   imports = [ "${modulesPath}/virtualisation/amazon-image.nix" ];
+  virtualisation.amazon-init.enable = false;
 
   boot.loader.grub.configurationLimit = 2;
   boot.initrd.systemd.enable = true;
@@ -59,6 +60,21 @@ in
       ];
     };
   };
+
+  fileSystems."/var/lib/git" = {
+    device = "[${wg.kale.ip}]:/srv/nfs/git";
+    fsType = "nfs";
+  };
+
+  users.users.git = {
+    home = "/var/lib/git";
+    uid = config.ids.uids.git;
+    group = "git";
+    useDefaultShell = true;
+    openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
+    packages = [ pkgs.git ];
+  };
+  users.groups.git.gid = config.ids.gids.git;
 
   services.webauthn-tiny = {
     enable = true;

@@ -6,6 +6,8 @@ with lib;
 {
   options.custom.gui.enable = mkEnableOption "GUI config";
   config = mkIf cfg.enable {
+    environment.enableAllTerminfo = true;
+
     hardware.pulseaudio.enable = mkForce false;
     security.rtkit.enable = true;
     services.pipewire = {

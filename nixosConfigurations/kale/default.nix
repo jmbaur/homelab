@@ -1,7 +1,9 @@
 { config, pkgs, ... }: {
   imports = [
-    ./networking.nix
+    ./cache.nix
     ./hardware-configuration.nix
+    ./networking.nix
+    ./nfs.nix
   ];
 
   hardware.lx2k.enable = true;
@@ -46,8 +48,6 @@
 
   custom = {
     server.enable = true;
-    dev.enable = true;
-    users.jared.enable = true;
     deployee = {
       enable = true;
       authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
@@ -60,7 +60,7 @@
   };
 
   services.runner = {
-    enable = true;
+    enable = false;
     runs = {
       runner-nix = {
         environment.RUST_LOG = "debug";
@@ -87,17 +87,6 @@
   };
 
   programs.flashrom.enable = true;
-
-  services.nginx = {
-    enable = true;
-    commonHttpConfig = ''
-      error_log syslog:server=unix:/dev/log;
-      access_log syslog:server=unix:/dev/log combined;
-    '';
-    virtualHosts."_".root = "/var/lib/nix-cache";
-  };
-
-  systemd.tmpfiles.rules = [ "v ${config.services.nginx.virtualHosts."_".root} - ${config.users.users.builder.name} ${config.users.users.builder.group} ~60d -" ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

@@ -23,6 +23,13 @@
         type = "CNAME";
         proxied = false;
       };
+      gitCNAME = {
+        zone_id = "\${cloudflare_zone.jmbaur_com.id}";
+        name = "git.${config.resource.cloudflare_zone.jmbaur_com.zone}";
+        value = config.resource.cloudflare_zone.jmbaur_com.zone;
+        type = "CNAME";
+        proxied = false;
+      };
       wwwCNAME = {
         zone_id = "\${cloudflare_zone.jmbaur_com.id}";
         name = "www.${config.resource.cloudflare_zone.jmbaur_com.zone}";
