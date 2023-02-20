@@ -6,8 +6,9 @@ in
   imports = [ "${modulesPath}/virtualisation/amazon-image.nix" ];
   virtualisation.amazon-init.enable = false;
 
-  boot.loader.grub.configurationLimit = 2;
   boot.initrd.systemd.enable = true;
+  boot.kernelPackages = pkgs.linuxPackages_6_1;
+  boot.loader.grub.configurationLimit = 2;
 
   system.stateVersion = "22.11";
 
@@ -62,8 +63,9 @@ in
   };
 
   fileSystems."/var/lib/git" = {
-    device = "[${wg.kale.ip}]:/srv/nfs/git";
+    device = "[${wg.kale.ip}]:/";
     fsType = "nfs";
+    options = [ "vers=4" ];
   };
 
   users.users.git = {

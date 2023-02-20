@@ -1,12 +1,14 @@
-{ config, lib, ... }:
+{ config, ... }:
 let
   wg = import ../www/wg.nix;
-  nfsDir = "/srv/nfs";
   nfsGitDir = "/srv/nfs/git";
   gitDir = "/var/lib/git";
 in
 {
-  networking.firewall.allowedTCPPorts = [ 111 2049 20048 ];
+  networking.firewall = {
+    allowedTCPPorts = [ 111 2049 ];
+    allowedUDPPorts = [ 111 2049 ];
+  };
 
   fileSystems.${nfsGitDir} = {
     device = gitDir;
@@ -27,14 +29,8 @@ in
 
   services.nfs.server = {
     enable = true;
-    exports =
-      let
-        nfsGitClient = wg.www.ip;
-        allClients = [ nfsGitClient ];
-      in
-      ''
-        ${nfsDir}     ${lib.concatMapStringsSep " " (client: "${client}(rw,fsid=0,no_subtree_check)") allClients}
-        ${nfsGitDir}  ${nfsGitClient}(rw,nohide,insecure,no_subtree_check)
-      '';
+    exports = ''
+      ${nfsGitDir}  ${wg.www.ip}(rw,no_root_squash,no_subtree_check,fsid=0)
+    '';
   };
 }
