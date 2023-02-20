@@ -72,28 +72,62 @@ in
     home = "/var/lib/git";
     uid = config.ids.uids.git;
     group = "git";
-    useDefaultShell = true;
+    shell = pkgs.git;
     openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
-    packages = [ pkgs.git ];
   };
   users.groups.git.gid = config.ids.gids.git;
 
-  services.webauthn-tiny = {
-    enable = true;
-    basicAuthFile = config.sops.secrets.passwords.path;
-    sessionSecretFile = config.sops.secrets.session_secret.path;
-    relyingParty = {
-      id = "jmbaur.com";
-      origin = "https://auth.jmbaur.com";
-      extraAllowedOrigins = map (vhost: "https://${vhost}") config.services.webauthn-tiny.nginx.protectedVirtualHosts;
-    };
-    nginx = {
-      enable = true;
-      virtualHost = "auth.jmbaur.com";
-      useACMEHost = "jmbaur.com";
-      protectedVirtualHosts = [ "logs.jmbaur.com" "mon.jmbaur.com" ];
-    };
+  home-manager.users.git = { pkgs, ... }: {
+    home.file = builtins.listToAttrs
+      (map
+        (script: {
+          name = "git-shell-commands/${script.name}";
+          value = { source = script; };
+        }) [
+        (pkgs.writeShellScript "list" ''
+          for dir in $(find "$PWD" -maxdepth 1 -type d); do
+          	cd "$dir" || return
+          	if [ "$(${pkgs.git}/bin/git rev-parse --is-bare-repository 2>/dev/null)" == "true" ]; then
+          		basename "$PWD"
+          	fi
+          done
+        '')
+        (pkgs.writeShellScript "create" ''
+          if test -z "$1"; then
+                  echo "Usage: $0 <name>"
+                  exit 1
+          fi
+          ${pkgs.git}/bin/git init --initial-branch=main "''${HOME}/''${1}.git"
+        '')
+        (pkgs.writeShellScript "delete" ''
+          if test -z "$1"; then
+                  echo "Usage: $0 <name>"
+                  exit 1
+          fi
+          path="''${HOME}/''${1}.git"
+          echo "Deleting $path"
+          rm -r "$path"
+        '')
+      ]);
   };
+
+  services.webauthn-tiny =
+    {
+      enable = true;
+      basicAuthFile = config.sops.secrets.passwords.path;
+      sessionSecretFile = config.sops.secrets.session_secret.path;
+      relyingParty = {
+        id = "jmbaur.com";
+        origin = "https://auth.jmbaur.com";
+        extraAllowedOrigins = map (vhost: "https://${vhost}") config.services.webauthn-tiny.nginx.protectedVirtualHosts;
+      };
+      nginx = {
+        enable = true;
+        virtualHost = "auth.jmbaur.com";
+        useACMEHost = "jmbaur.com";
+        protectedVirtualHosts = [ "logs.jmbaur.com" "mon.jmbaur.com" ];
+      };
+    };
 
   services.journald.enableHttpGateway = true;
   services.nginx = {
