@@ -84,7 +84,7 @@ with lib; {
       tokei
       traceroute
       usbutils
-      wezterm
+      wezterm-wayland
       wip
       xsv
       ydiff

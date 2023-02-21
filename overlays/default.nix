@@ -20,7 +20,7 @@ inputs: with inputs; {
           yamlfmt
           ;
 
-        wezterm = prev.wezterm.overrideAttrs (old: {
+        wezterm-wayland = prev.wezterm.overrideAttrs (old: {
           patches = old.patches ++ [
             (prev.fetchpatch {
               url = "https://github.com/wez/wezterm/commit/88b49c9da0b993b832cd57fda3392c3876f97421.patch";

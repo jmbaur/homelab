@@ -318,7 +318,7 @@ with lib; {
             names = [ "JetBrains Mono" ];
             size = 12.0;
           };
-          terminal = "${pkgs.wezterm}/bin/wezterm-gui";
+          terminal = "${pkgs.wezterm-wayland}/bin/wezterm-gui";
           menu = "${pkgs.bemenu}/bin/bemenu-run";
           modifier = "Mod4";
           workspaceLayout = "stacking";
