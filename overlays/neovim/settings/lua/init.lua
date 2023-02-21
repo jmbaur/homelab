@@ -29,6 +29,7 @@ if vim.g.neovide then
 	require("neovide")
 end
 
+require("mini.bracketed").setup({})
 require("mini.comment").setup({
 	ignore_blank_line = true,
 	start_of_line = true,

@@ -59,7 +59,6 @@ let
         vim-nix
         vim-repeat
         vim-rsi
-        vim-unimpaired
       ]
       # opt
       ++ (map (plugin: { inherit plugin; optional = true; }) [ ]);
