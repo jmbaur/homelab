@@ -21,15 +21,10 @@ inputs: with inputs; {
           ;
 
         wezterm = prev.wezterm.overrideAttrs (_: {
-          checkFlags = [ ];
           patches = [
             (prev.fetchpatch {
               url = "https://github.com/wez/wezterm/commit/88b49c9da0b993b832cd57fda3392c3876f97421.patch";
               sha256 = "sha256-X1nGOFPJRx1YjYgAeKTFDfViXn/LExiMhbqWvjEDUM4=";
-            })
-            (prev.fetchpatch {
-              url = "https://github.com/wez/wezterm/commit/36519f0d90e1875fb4b3f11f6cbf94c7d716ef78.patch";
-              sha256 = "sha256-sOGFmDan1uO1xOBCpvlGrSotjfw01MjRg0KVqa5omig=";
             })
           ];
         });
