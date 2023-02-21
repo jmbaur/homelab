@@ -144,7 +144,7 @@ with lib; {
 
     programs.bottom = {
       enable = true;
-      settings.color = "default-light";
+      settings.flags.color = "default-light";
     };
 
     programs.tmux = {
