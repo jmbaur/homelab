@@ -18,7 +18,6 @@ with lib; {
       as-tree
       bc
       bintools
-      bottom
       buildah
       cachix
       cntr
@@ -143,6 +142,11 @@ with lib; {
       enableGitCredentialHelper = true;
     };
 
+    programs.bottom = {
+      enable = true;
+      settings.color = "default-light";
+    };
+
     programs.tmux = {
       enable = true;
       inherit (systemConfig.programs.tmux)
@@ -159,7 +163,8 @@ with lib; {
       extraConfig = systemConfig.programs.tmux.extraConfig + ''
         bind-key J command-prompt -p "join pane from:"  "join-pane -h -s '%%'"
         bind-key j display-popup -E -h 75% -w 75% -b double -T "Jump to:" "${pkgs.j}/bin/j"
-        set-option -g status-left-length 75
+        set-option -g status-left-length 50
+        set-option -g status-right '#(${pkgs.gitmux}/bin/gitmux "#{pane_current_path}")'
       '';
     };
 

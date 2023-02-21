@@ -15,8 +15,4 @@ function DiagnosticStatus()
 	return "[" .. table.concat(t, " ") .. "]"
 end
 
-vim.opt.statusline = "%{FugitiveStatusline()}"
-	.. "%f"
-	.. "%="
-	.. "%{luaeval('DiagnosticStatus()')}"
-	.. "%y%m%r %l,%c %P"
+vim.opt.statusline = "%f" .. "%=" .. "%{luaeval('DiagnosticStatus()')}" .. "%y%m%r %l,%c %P"
