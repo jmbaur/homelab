@@ -20,8 +20,8 @@ inputs: with inputs; {
           yamlfmt
           ;
 
-        wezterm = prev.wezterm.overrideAttrs (_: {
-          patches = [
+        wezterm = prev.wezterm.overrideAttrs (old: {
+          patches = old.patches ++ [
             (prev.fetchpatch {
               url = "https://github.com/wez/wezterm/commit/88b49c9da0b993b832cd57fda3392c3876f97421.patch";
               sha256 = "sha256-X1nGOFPJRx1YjYgAeKTFDfViXn/LExiMhbqWvjEDUM4=";
