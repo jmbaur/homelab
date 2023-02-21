@@ -115,6 +115,7 @@ with lib; {
       delta = {
         enable = false;
         options = {
+          syntax-theme = config.programs.bat.config.theme;
           light = true;
           line-numbers = true;
           navigate = true;
@@ -240,7 +241,7 @@ with lib; {
 
     programs.bat = {
       enable = true;
-      config.theme = "ansi";
+      config.theme = "GitHub";
     };
 
     home.file.".sqliterc".text = ''
