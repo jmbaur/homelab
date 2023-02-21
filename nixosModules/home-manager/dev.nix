@@ -112,8 +112,17 @@ with lib; {
         lg = "log --graph --decorate --pretty=oneline --abbrev-commit --all";
         st = "status --short --branch";
       };
+      delta = {
+        enable = false;
+        options = {
+          light = true;
+          line-numbers = true;
+          navigate = true;
+          side-by-side = true;
+        };
+      };
       extraConfig = {
-        "difftool \"difftastic\"".cmd = "${pkgs.difftastic}/bin/difft \"$LOCAL\" \"$REMOTE\"";
+        "difftool \"difftastic\"".cmd = "${pkgs.difftastic}/bin/difft --background=light \"$LOCAL\" \"$REMOTE\"";
         blame.ignoreRevsFile = ".git-blame-ignore-revs";
         blame.markIgnoredLines = true;
         blame.markUnblamableLines = true;
