@@ -1,7 +1,7 @@
 { systemConfig, config, lib, pkgs, ... }:
 let
   cfg = config.custom.dev;
-  colors = import ./colors.nix;
+  colors = (import ./colors.nix).modus-operandi;
 in
 with lib; {
   options.custom.dev = {
@@ -170,7 +170,7 @@ with lib; {
     xdg.configFile.shells = { recursive = true; source = ./shells; };
 
     xdg.configFile."wezterm/wezterm.lua".source = ./wezterm.lua;
-    xdg.configFile."wezterm/colors/modus-vivendi.toml".source = (pkgs.formats.toml { }).generate "modus-operandi.toml" {
+    xdg.configFile."wezterm/colors/modus-operandi.toml".source = (pkgs.formats.toml { }).generate "modus-operandi.toml" {
       colors = {
         background = "#${colors.background}";
         foreground = "#${colors.foreground}";
@@ -179,7 +179,7 @@ with lib; {
         ansi = map (color: "#${color}") [ colors.regular0 colors.regular1 colors.regular2 colors.regular3 colors.regular4 colors.regular5 colors.regular6 colors.regular7 ];
         brights = map (color: "#${color}") [ colors.bright0 colors.bright1 colors.bright2 colors.bright3 colors.bright4 colors.bright5 colors.bright6 colors.bright7 ];
       };
-      metadata.name = "modus-vivendi";
+      metadata.name = "modus-operandi";
     };
 
     programs.ssh = {

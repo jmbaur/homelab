@@ -64,6 +64,7 @@ with lib; {
         set-option -g set-clipboard on
         set-option -g set-titles on
         set-option -g set-titles-string "#T"
+        set-option -g status-style bg=default
         set-option -sa terminal-overrides ',xterm-256color:RGB'
       '';
     };

@@ -16,11 +16,11 @@ if #vim.api.nvim_list_uis() > 0 then
 	require("snippet")
 	require("statusline")
 
-	vim.cmd.colorscheme("jared")
+	vim.cmd.colorscheme("lunaperche")
+	vim.opt.background = "light"
 	vim.opt.belloff = "all"
 	vim.opt.colorcolumn = "80"
-	vim.opt.cursorline = true
-	vim.opt.laststatus = 3
+	vim.opt.laststatus = 2
 	vim.opt.number = true
 	vim.opt.relativenumber = true
 end

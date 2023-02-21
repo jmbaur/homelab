@@ -1,8 +1,8 @@
 { config, lib, pkgs, systemConfig, ... }:
 let
   cfg = config.custom.gui;
-  colors = import ./colors.nix;
-  lockerCommand = "${pkgs.swaylock}/bin/swaylock --daemonize --indicator-caps-lock --show-keyboard-layout --color '#222222'";
+  colors = (import ./colors.nix).modus-operandi;
+  lockerCommand = "${pkgs.swaylock}/bin/swaylock --daemonize --indicator-caps-lock --show-keyboard-layout --color '#cccccc'";
 in
 with lib; {
   options.custom.gui.enable = mkOption {
@@ -87,7 +87,7 @@ with lib; {
 
     programs.kitty = {
       enable = true;
-      theme = "Modus Vivendi";
+      theme = "Modus Operandi";
       font = {
         name = "JetBrains Mono";
         size = config.programs.alacritty.settings.font.size;
@@ -122,7 +122,7 @@ with lib; {
 
     gtk = {
       enable = true;
-      theme = { package = pkgs.gnome-themes-extra; name = "Adwaita-dark"; };
+      theme = { package = pkgs.gnome-themes-extra; name = "Adwaita"; };
       iconTheme = { package = pkgs.gnome-themes-extra; name = "Adwaita"; };
       gtk4 = removeAttrs config.gtk.gtk3 [ "bookmarks" "extraCss" "waylandSupport" ];
     };
@@ -132,7 +132,7 @@ with lib; {
       platformTheme = "gtk";
       style = {
         package = pkgs.adwaita-qt;
-        name = "adwaita-dark";
+        name = "adwaita";
       };
     };
 
@@ -268,7 +268,7 @@ with lib; {
         {
           seat."*".xcursor_theme = "${config.home.pointerCursor.name} ${toString config.home.pointerCursor.size}";
           startup = [ ];
-          output."*".background = "#222222 solid_color";
+          output."*".background = "#cccccc solid_color";
           input =
             let
               mouseSettings = { accel_profile = "flat"; };

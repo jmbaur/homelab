@@ -1,6 +1,7 @@
 { lib
 , symlinkJoin
 , makeWrapper
+, forceDarkMode ? false
 , WebRTCPipeWireCapturer ? true
 , SystemNotifications ? true
 , TouchpadOverscrollHistoryNavigation ? true
@@ -20,8 +21,7 @@ then
     commandLineArgs = [
       "--enable-features=${enableFeatures}"
       "--ozone-platform-hint=auto"
-      "--force-dark-mode"
-    ];
+    ] ++ (lib.optional forceDarkMode "--force-dark-mode");
   })
 else
   let
