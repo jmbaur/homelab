@@ -6,4 +6,9 @@ buildGoModule rec {
   nativeBuildInputs = [ pkgconfig ];
   buildInputs = [ libgit2 ];
   ldflags = [ "-X main.progname=${name}" "-s" "-w" ];
+  postInstall = ''
+    for cmd in "help" "list" "create" "delete"; do
+      ln -s $out/bin/git-shell-commands $out/$cmd
+    done
+  '';
 }

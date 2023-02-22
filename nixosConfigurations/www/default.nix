@@ -1,6 +1,8 @@
 { config, lib, pkgs, modulesPath, ... }:
 let
   wg = import ./wg.nix;
+  gitHome = "/var/lib/git";
+  gitShellCommands = "${gitHome}/git-shell-commands";
 in
 {
   imports = [ "${modulesPath}/virtualisation/amazon-image.nix" ];
@@ -63,7 +65,7 @@ in
   };
 
   fileSystems.git = {
-    mountPoint = "/var/lib/git";
+    mountPoint = gitHome;
     device = "[${wg.kale.ip}]:/";
     fsType = "nfs";
     options = [ "vers=4" ];
@@ -279,9 +281,10 @@ in
     "d /var/cache/cgit - ${config.services.nginx.user} ${config.services.nginx.group} -"
   ];
 
-  systemd.user.tmpfiles.users.git.rules = (map
-    (cmd:
-      "L+ ${config.users.users.git.home}/git-shell-commands/${cmd} - - - - ${pkgs.git-shell-commands}/bin/git-shell-commands"
-    )
-    [ "list" "create" "delete" "help" ]);
+  fileSystems.gitShellCommands = {
+    mountPoint = gitShellCommands;
+    device = toString pkgs.git-shell-commands;
+    options = [ "bind" ];
+  };
+
 }
