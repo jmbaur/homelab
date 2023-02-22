@@ -80,11 +80,7 @@ in
 
   home-manager.users.git = { pkgs, ... }: {
     home.file = builtins.listToAttrs
-      (map
-        (script: {
-          name = "git-shell-commands/${script.name}";
-          value = { source = script; };
-        }) [
+      (map (script: lib.nameValuePair "git-shell-commands/${script.name}" { source = script; }) [
         (pkgs.writeShellScript "list" ''
           for dir in $(find "$PWD" -maxdepth 1 -type d); do
           	cd "$dir" || return
@@ -96,13 +92,23 @@ in
         (pkgs.writeShellScript "create" ''
           if test -z "$1"; then
                   echo "Usage: $0 <name>"
+                  echo "create a repository"
                   exit 1
           fi
-          ${pkgs.git}/bin/git init --initial-branch=main "''${HOME}/''${1}.git"
+          new_repo="''${HOME}/''${1}.git"
+          ${pkgs.git}/bin/git init --initial-branch=main "$new_repo" >/dev/null
+          touch "''${new_repo}/export"
+          echo "$new_repo"
+        '')
+        (pkgs.writeShellScript "create-private" ''
+          new_repo=$($HOME/git-shell-commands/create "$@")
+          rm "''${new_repo}/export"
+          echo "$new_repo"
         '')
         (pkgs.writeShellScript "delete" ''
           if test -z "$1"; then
                   echo "Usage: $0 <name>"
+                  echo "delete a repository"
                   exit 1
           fi
           path="''${HOME}/''${1}.git"
@@ -173,6 +179,7 @@ in
               paths = [ pkgs.cgit-pink ];
               postBuild = ''
                 ln -s ${./custom.css} $out/cgit/custom.css
+                ln -s ${./favicon.ico} $out/cgit/favicon.ico
               '';
             };
           in
@@ -266,15 +273,21 @@ in
     in
     ''
       # these need to be before `scan-path`
+      strict-export=export
       scan-hidden-path=0
       snapshots=tar.gz tar.bz2 zip
-      #
+
       scan-path=${config.users.users.git.home}
       source-filter=${pkgs.cgit-pink}/lib/cgit/filters/syntax-highlighting.py
+      remove-suffix=1
+      root-title=git.jmbaur.com
+      root-desc=These aren't the droids you're looking for.
+      side-by-side-diffs=1
       head-include=${headInclude}
       css=/cgit.css
+      favicon=/favicon.ico
       logo=/cgit.png
-      enable-http-clone=1
+      enable-http-clone=0
       robots=noindex, nofollow
       virtual-root=/
     '';
