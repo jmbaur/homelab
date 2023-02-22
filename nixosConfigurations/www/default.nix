@@ -270,6 +270,7 @@ in
       css=/cgit.css
       favicon=/favicon.ico
       logo=
+      clone-url=https://git.jmbaur.com/$CGIT_REPO_URL
       enable-http-clone=1
       cache-root=/var/cache/cgit
       cache-size=1000
