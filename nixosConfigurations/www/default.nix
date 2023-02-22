@@ -290,6 +290,7 @@ in
       root-title=git.jmbaur.com
       root-desc=These aren't the droids you're looking for.
       side-by-side-diffs=1
+      enable-index-owner=0
       head-include=${headInclude}
       css=/cgit.css
       favicon=/favicon.ico
