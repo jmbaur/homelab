@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"io/fs"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -45,17 +44,23 @@ func list() error {
 		if err != nil {
 			return err
 		}
+
 		if !d.IsDir() {
 			return nil
 		}
-		repo, err := git.OpenRepository(path)
+
+		repo, err := git.OpenRepository(filepath.Join(cwd, path))
 		if err != nil {
-			return fs.SkipDir
+			// we are not at a repo yet, continue recursing
+			return nil
 		}
+
 		if repo.IsBare() {
-			fmt.Println(repo.Path())
+			fmt.Println(d.Name())
 		}
-		return nil
+
+		// we just saw a repo, don't recurse into it
+		return fs.SkipDir
 	})
 }
 
@@ -64,7 +69,6 @@ func create() error {
 	flag.Parse()
 
 	repoName := flag.Arg(0)
-	log.Println(repoName)
 	if repoName == "" {
 		return errors.New("no repository name provided")
 	}
@@ -85,12 +89,6 @@ func create() error {
 		return err
 	}
 
-	head, err := repo.Head()
-	if err != nil {
-		return err
-	}
-	head.Rename("main", true, "master to main")
-
 	repoPath = repo.Path()
 
 	if !*isPrivate {
@@ -106,7 +104,7 @@ func create() error {
 		}
 	}
 
-	descFile, err := os.Create(filepath.Join(repoPath, "description"))
+	descFile, err := os.OpenFile(filepath.Join(repoPath, "description"), os.O_RDWR|os.O_TRUNC|os.O_CREATE, 0o644)
 	if err != nil {
 		return err
 	}
@@ -162,11 +160,13 @@ func main() {
 	}
 	commands["help"] = help(commandList)
 
+	// Allow the program to be a multi-call binary
 	var command string
-	if os.Args[0] == progname {
+	base := filepath.Base(os.Args[0])
+	if base == progname {
 		command = os.Args[1]
 	} else {
-		command = filepath.Base(os.Args[0])
+		command = base
 	}
 
 	cmdFn, ok := commands[command]
