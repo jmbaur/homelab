@@ -91,23 +91,30 @@ in
         '')
         (pkgs.writeShellScript "create" ''
           if test -z "$1"; then
-                  echo "Usage: $0 <name>"
+                  echo "Usage: $(basename $0) <name>"
                   echo "create a repository"
                   exit 1
           fi
           new_repo="''${HOME}/''${1}.git"
-          ${pkgs.git}/bin/git init --initial-branch=main "$new_repo" >/dev/null
-          touch "''${new_repo}/export"
+          ${pkgs.git}/bin/git init --bare --initial-branch=main "$new_repo" >/dev/null
+          touch "''${new_repo}/git-daemon-export-ok"
+          read -p "Description: " description
+          echo "$description" > "''${new_repo}/description"
           echo "$new_repo"
         '')
         (pkgs.writeShellScript "create-private" ''
+          if test -z "$1"; then
+                  echo "Usage: $(basename $0) <name>"
+                  echo "create a private repository"
+                  exit 1
+          fi
           new_repo=$($HOME/git-shell-commands/create "$@")
-          rm "''${new_repo}/export"
+          rm "''${new_repo}/git-daemon-export-ok"
           echo "$new_repo"
         '')
         (pkgs.writeShellScript "delete" ''
           if test -z "$1"; then
-                  echo "Usage: $0 <name>"
+                  echo "Usage: $(basename $0) <name>"
                   echo "delete a repository"
                   exit 1
           fi
@@ -188,7 +195,7 @@ in
           include             ${pkgs.nginx}/conf/fastcgi_params;
           fastcgi_param       SCRIPT_FILENAME     ${pkgs.git}/libexec/git-core/git-http-backend;
           fastcgi_param       PATH_INFO           $uri;
-          fastcgi_param       GIT_HTTP_EXPORT_ALL 1;
+          # fastcgi_param       GIT_HTTP_EXPORT_ALL 1; # don't export all repos
           fastcgi_param       GIT_PROJECT_ROOT    ${config.users.users.git.home};
           fastcgi_param       HOME                ${config.users.users.git.home};
           fastcgi_pass        ${config.services.fcgiwrap.socketType}:${config.services.fcgiwrap.socketAddress};
@@ -273,7 +280,7 @@ in
     in
     ''
       # these need to be before `scan-path`
-      strict-export=export
+      strict-export=git-daemon-export-ok
       scan-hidden-path=0
       snapshots=tar.gz tar.bz2 zip
 
@@ -287,7 +294,7 @@ in
       css=/cgit.css
       favicon=/favicon.ico
       logo=/cgit.png
-      enable-http-clone=0
+      enable-http-clone=1
       robots=noindex, nofollow
       virtual-root=/
     '';
