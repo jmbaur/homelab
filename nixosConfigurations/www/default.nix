@@ -280,22 +280,38 @@ in
     in
     ''
       # these need to be before `scan-path`
+      readme=:README.md
+      readme=:readme.md
+      readme=:README.mkd
+      readme=:readme.mkd
+      readme=:README.rst
+      readme=:readme.rst
+      readme=:README.html
+      readme=:readme.html
+      readme=:README.htm
+      readme=:readme.htm
+      readme=:README.txt
+      readme=:readme.txt
+      readme=:README
+      readme=:readme
       strict-export=git-daemon-export-ok
+      remove-suffix=1
       scan-hidden-path=0
       snapshots=tar.gz tar.bz2 zip
+      about-filter=${pkgs.cgit-pink}/lib/cgit/filters/about-formatting.sh
+      source-filter=${pkgs.cgit-pink}/lib/cgit/filters/syntax-highlighting.py
 
       scan-path=${config.users.users.git.home}
-      source-filter=${pkgs.cgit-pink}/lib/cgit/filters/syntax-highlighting.py
-      remove-suffix=1
       root-title=git.jmbaur.com
       root-desc=These aren't the droids you're looking for.
-      side-by-side-diffs=1
+      side-by-side-diffs=0
       enable-index-owner=0
       head-include=${headInclude}
       css=/cgit.css
       favicon=/favicon.ico
       logo=/cgit.png
       enable-http-clone=1
+      cache-root=/var/cache/cgit
       robots=noindex, nofollow
       virtual-root=/
     '';
