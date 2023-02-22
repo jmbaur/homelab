@@ -78,7 +78,9 @@ in
   };
   users.groups.git.gid = config.ids.gids.git;
 
-  home-manager.users.git = { pkgs, ... }: {
+  home-manager.users.git = { systemConfig, pkgs, ... }: {
+    custom.common.enable = false;
+    home.stateVersion = systemConfig.system.stateVersion;
     home.file = builtins.listToAttrs
       (map (script: lib.nameValuePair "git-shell-commands/${script.name}" { source = script; }) [
         (pkgs.writeShellScript "list" ''
