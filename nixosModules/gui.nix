@@ -31,7 +31,6 @@ with lib;
     environment.systemPackages = with pkgs; [
       ffmpeg-full
       libnotify
-      mpv
       pulsemixer
       sway-launcher
       wl-clipboard
@@ -43,6 +42,28 @@ with lib;
     xdg.portal.enable = true;
 
     programs.ssh.startAgent = true;
+
+    programs.firejail = {
+      enable = true;
+      wrappedBinaries = {
+        chromium = {
+          executable = "${lib.getBin pkgs.chromium-wayland}/bin/chromium";
+          profile = "${pkgs.firejail}/etc/firejail/chromium.profile";
+        };
+        firefox = {
+          executable = "${lib.getBin pkgs.firefox}/bin/firefox";
+          profile = "${pkgs.firejail}/etc/firejail/firefox.profile";
+        };
+        mpv = {
+          executable = "${lib.getBin pkgs.mpv}/bin/mpv";
+          profile = "${pkgs.firejail}/etc/firejail/mpv.profile";
+        };
+        spotify = {
+          executable = "${lib.getBin pkgs.spotify}/bin/spotify";
+          profile = "${pkgs.firejail}/etc/firejail/spotify.profile";
+        };
+      };
+    };
 
     services.avahi.enable = true;
     services.pcscd.enable = true;

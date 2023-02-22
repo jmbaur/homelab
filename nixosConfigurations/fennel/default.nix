@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ ... }: {
   imports = [ ./hardware-configuration.nix ];
   hardware.kukui-fennel14.enable = true;
   zramSwap.enable = true;
@@ -22,8 +22,6 @@
   custom.users.jared.enable = true;
 
   users.mutableUsers = true;
-
-  environment.systemPackages = with pkgs; [ chromium-wayland firefox ];
 
   system.stateVersion = "22.11";
 }

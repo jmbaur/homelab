@@ -39,16 +39,12 @@
     (writeShellScriptBin "work-browser" "${chromium-wayland}/bin/chromium --user-data-dir=$HOME/.config/chromium-work --proxy-server=socks5://localhost:9050")
     age-plugin-yubikey
     bitwarden
-    chromium-wayland
     discord
     element-desktop
-    firefox-wayland
     freerdp
-    librewolf-wayland
     outlook-webapp
     signal-desktop
     slack
-    spotify
     teams-webapp
   ];
 
