@@ -144,7 +144,12 @@ in
     };
 
   services.journald.enableHttpGateway = true;
-  services.fcgiwrap.enable = true;
+
+  services.fcgiwrap = {
+    enable = true;
+    inherit (config.services.nginx) user group;
+  };
+
   services.nginx = {
     enable = true;
     statusPage = true;
@@ -312,7 +317,10 @@ in
       logo=/cgit.png
       enable-http-clone=1
       cache-root=/var/cache/cgit
+      cache-size=1000
       robots=noindex, nofollow
       virtual-root=/
     '';
+
+  systemd.tmpfiles.rules = [ "d /var/cache/cgit - ${config.services.nginx.user} ${config.services.nginx.group} -" ];
 }
