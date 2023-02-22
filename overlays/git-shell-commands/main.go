@@ -49,15 +49,14 @@ func list() error {
 			return nil
 		}
 
-		fullPath := filepath.Join(cwd, path)
-		repo, err := git.OpenRepository(fullPath)
+		repo, err := git.OpenRepository(filepath.Join(cwd, path))
 		if err != nil {
 			// we are not at a repo yet, continue recursing
 			return nil
 		}
 
 		if repo.IsBare() {
-			fmt.Println(fullPath)
+			fmt.Println(path)
 		}
 
 		// we just saw a repo, don't recurse into it
