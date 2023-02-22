@@ -49,18 +49,25 @@ with lib;
         chromium = {
           executable = "${lib.getBin pkgs.chromium-wayland}/bin/chromium";
           profile = "${pkgs.firejail}/etc/firejail/chromium.profile";
+          desktop = "${pkgs.chromium-wayland}/share/applications/chromium-browser.desktop";
+          extraArgs = [
+            "--ignore=private-dev"
+            "--dbus-user.talk=org.freedesktop.Notifications"
+          ];
         };
         firefox = {
           executable = "${lib.getBin pkgs.firefox}/bin/firefox";
           profile = "${pkgs.firejail}/etc/firejail/firefox.profile";
-        };
-        mpv = {
-          executable = "${lib.getBin pkgs.mpv}/bin/mpv";
-          profile = "${pkgs.firejail}/etc/firejail/mpv.profile";
+          desktop = "${pkgs.firefox}/share/applications/firefox.desktop";
+          extraArgs = [
+            "--ignore=private-dev"
+            "--dbus-user.talk=org.freedesktop.Notifications"
+          ];
         };
         spotify = {
           executable = "${lib.getBin pkgs.spotify}/bin/spotify";
           profile = "${pkgs.firejail}/etc/firejail/spotify.profile";
+          desktop = "${pkgs.spotify}/share/applications/spotify.desktop";
         };
       };
     };
@@ -109,6 +116,7 @@ with lib;
         grim
         imv
         mirror-to-x
+        mpv
         qt5.qtwayland
         slurp
         v4l-show
