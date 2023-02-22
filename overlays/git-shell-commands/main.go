@@ -17,6 +17,7 @@ var progname string
 
 var commands = map[string]func() error{
 	"list":   list,
+	"edit":   edit,
 	"create": create,
 	"delete": remove,
 }
@@ -62,6 +63,69 @@ func list() error {
 		// we just saw a repo, don't recurse into it
 		return fs.SkipDir
 	})
+}
+
+func edit() error {
+	makePrivate := flag.Bool("private", false, "Modify a repository to make it unexported")
+	makePublic := flag.Bool("public", false, "Modify a repository to make it exported")
+	editDescription := flag.Bool("description", false, "Modify a repository's description")
+	flag.Parse()
+
+	// Make `edit` default to do something
+	if !*makePrivate && !*makePublic {
+		*editDescription = true
+	}
+
+	// Cannot make a repo private and public at the same time
+	if *makePrivate && *makePublic {
+		return errors.New("cannot make repository public and private")
+	}
+
+	repoName := flag.Arg(0)
+	if repoName == "" {
+		return errors.New("no repository name provided")
+	}
+
+	repoPath, err := normalizeRepoPath(repoName)
+	if err != nil {
+		return err
+	}
+
+	if *editDescription {
+		fmt.Printf("repository description: ")
+		var description string
+		if _, err := fmt.Scanln(&description); err != nil {
+			return err
+		}
+		descFile, err := os.OpenFile(filepath.Join(repoPath, "description"), os.O_RDWR|os.O_TRUNC|os.O_CREATE, 0o644)
+		if err != nil {
+			return err
+		}
+		if _, err := descFile.WriteString(description); err != nil {
+			return err
+		}
+		if err := descFile.Close(); err != nil {
+			return err
+		}
+		fmt.Println("new description saved")
+	}
+
+	if *makePrivate {
+		err := os.Remove(filepath.Join(repoPath, "git-daemon-export-ok"))
+		fmt.Println("repository unexported")
+		return err
+	} else if *makePublic {
+		f, err := os.Create(filepath.Join(repoPath, "git-daemon-export-ok"))
+		if err != nil {
+			return err
+		}
+		if err := f.Close(); err != nil {
+			return err
+		}
+		fmt.Println("repository exported")
+	}
+
+	return nil
 }
 
 func create() error {

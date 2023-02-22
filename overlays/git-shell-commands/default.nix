@@ -7,7 +7,7 @@ buildGoModule rec {
   buildInputs = [ libgit2 ];
   ldflags = [ "-X main.progname=${name}" "-s" "-w" ];
   postInstall = ''
-    for cmd in "help" "list" "create" "delete"; do
+    for cmd in "help" "list" "create" "delete" "edit"; do
       ln -s $out/bin/git-shell-commands $out/$cmd
     done
   '';
