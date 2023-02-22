@@ -2,6 +2,7 @@
 package main
 
 import (
+	"bufio"
 	"errors"
 	"flag"
 	"fmt"
@@ -92,11 +93,9 @@ func edit() error {
 	}
 
 	if *editDescription {
-		fmt.Printf("repository description: ")
-		var description string
-		if _, err := fmt.Scanln(&description); err != nil {
-			return err
-		}
+		fmt.Printf("new repository description: ")
+		inputReader := bufio.NewReader(os.Stdin)
+		description, _ := inputReader.ReadString('\n')
 		descFile, err := os.OpenFile(filepath.Join(repoPath, "description"), os.O_RDWR|os.O_TRUNC|os.O_CREATE, 0o644)
 		if err != nil {
 			return err
@@ -143,10 +142,8 @@ func create() error {
 	}
 
 	fmt.Printf("repository description: ")
-	var description string
-	if _, err := fmt.Scanln(&description); err != nil {
-		return err
-	}
+	inputReader := bufio.NewReader(os.Stdin)
+	description, _ := inputReader.ReadString('\n')
 
 	repo, err := git.InitRepository(repoPath, true)
 	if err != nil {
