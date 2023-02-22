@@ -62,14 +62,15 @@ in
     };
   };
 
-  fileSystems."/var/lib/git" = {
+  fileSystems.git = {
+    mountPoint = "/var/lib/git";
     device = "[${wg.kale.ip}]:/";
     fsType = "nfs";
     options = [ "vers=4" ];
   };
 
   users.users.git = {
-    home = "/var/lib/git";
+    home = config.fileSystems.git.mountPoint;
     uid = config.ids.uids.git;
     group = "git";
     shell = pkgs.git;
@@ -130,6 +131,7 @@ in
     };
 
   services.journald.enableHttpGateway = true;
+  services.fcgiwrap.enable = true;
   services.nginx = {
     enable = true;
     statusPage = true;
@@ -157,6 +159,31 @@ in
             proxy_set_header Host $host;
           '';
         };
+      };
+      "git.jmbaur.com" = {
+        enableACME = true;
+        forceSSL = true;
+        extraConfig = ''
+          try_files $uri @cgit;
+        '';
+        root = "${pkgs.cgit-pink}/cgit";
+        locations."~ /.+/(info/refs|git-upload-pack)".extraConfig = ''
+          include             ${pkgs.nginx}/conf/fastcgi_params;
+          fastcgi_param       SCRIPT_FILENAME     ${pkgs.git}/libexec/git-core/git-http-backend;
+          fastcgi_param       PATH_INFO           $uri;
+          fastcgi_param       GIT_HTTP_EXPORT_ALL 1;
+          fastcgi_param       GIT_PROJECT_ROOT    ${config.users.users.git.home};
+          fastcgi_param       HOME                ${config.users.users.git.home};
+          fastcgi_pass        ${config.services.fcgiwrap.socketType}:${config.services.fcgiwrap.socketAddress};
+        '';
+        locations."@cgit".extraConfig = ''
+          include             ${pkgs.nginx}/conf/fastcgi_params;
+          fastcgi_param       SCRIPT_FILENAME $document_root/cgit.cgi;
+          fastcgi_param       PATH_INFO       $uri;
+          fastcgi_param       QUERY_STRING    $args;
+          fastcgi_param       HTTP_HOST       $server_name;
+          fastcgi_pass        ${config.services.fcgiwrap.socketType}:${config.services.fcgiwrap.socketAddress};
+        '';
       };
       "logs.jmbaur.com" =
         let
@@ -219,4 +246,18 @@ in
       "mon"
     ];
   };
+
+  environment.etc."cgitrc".text = ''
+    # these need to be before `scan-path`
+    scan-hidden-path=0
+    snapshots=tar.gz tar.bz2 zip
+    #
+    scan-path=${config.users.users.git.home}
+    source-filter=${pkgs.cgit-pink}/lib/cgit/filters/syntax-highlighting.py
+    css=/cgit.css
+    logo=/cgit.png
+    enable-http-clone=1
+    robots=noindex, nofollow
+    virtual-root=/
+  '';
 }
