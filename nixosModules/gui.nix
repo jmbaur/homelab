@@ -8,6 +8,8 @@ with lib;
   config = mkIf cfg.enable {
     environment.enableAllTerminfo = true;
 
+    services.flatpak.enable = true;
+
     hardware.pulseaudio.enable = mkForce false;
     security.rtkit.enable = true;
     services.pipewire = {
@@ -42,35 +44,6 @@ with lib;
     xdg.portal.enable = true;
 
     programs.ssh.startAgent = true;
-
-    programs.firejail = {
-      enable = true;
-      wrappedBinaries = {
-        chromium = {
-          executable = "${lib.getBin pkgs.chromium-wayland}/bin/chromium";
-          profile = "${pkgs.firejail}/etc/firejail/chromium.profile";
-          desktop = "${pkgs.chromium-wayland}/share/applications/chromium-browser.desktop";
-          extraArgs = [
-            "--ignore=private-dev"
-            "--dbus-user.talk=org.freedesktop.Notifications"
-          ];
-        };
-        firefox = {
-          executable = "${lib.getBin pkgs.firefox}/bin/firefox";
-          profile = "${pkgs.firejail}/etc/firejail/firefox.profile";
-          desktop = "${pkgs.firefox}/share/applications/firefox.desktop";
-          extraArgs = [
-            "--ignore=private-dev"
-            "--dbus-user.talk=org.freedesktop.Notifications"
-          ];
-        };
-        spotify = {
-          executable = "${lib.getBin pkgs.spotify}/bin/spotify";
-          profile = "${pkgs.firejail}/etc/firejail/spotify.profile";
-          desktop = "${pkgs.spotify}/share/applications/spotify.desktop";
-        };
-      };
-    };
 
     services.avahi.enable = true;
     services.pcscd.enable = true;

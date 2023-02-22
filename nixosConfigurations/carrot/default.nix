@@ -45,13 +45,8 @@
       (writeShellScriptBin "rdp" "${pkgs.freerdp}/bin/wlfreerdp /sec:tls /cert:tofu /v:laptop.work.home.arpa -grab-keyboard +auto-reconnect")
       (writeShellScriptBin "work-browser" "${chromium-wayland}/bin/chromium --user-data-dir=$HOME/.config/chromium-work --proxy-server=socks5://localhost:9050")
       age-plugin-yubikey
-      bitwarden
-      discord
-      element-desktop
       freerdp
       outlook-webapp
-      signal-desktop
-      slack
       teams-webapp
     ];
   };
