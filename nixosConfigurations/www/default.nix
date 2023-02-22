@@ -166,7 +166,17 @@ in
         extraConfig = ''
           try_files $uri @cgit;
         '';
-        root = "${pkgs.cgit-pink}/cgit";
+        root =
+          let
+            cgit = pkgs.symlinkJoin {
+              name = "cgit-custom";
+              paths = [ pkgs.cgit-pink ];
+              postBuild = ''
+                ln -s ${./custom.css} $out/cgit/custom.css
+              '';
+            };
+          in
+          "${cgit}/cgit";
         locations."~ /.+/(info/refs|git-upload-pack)".extraConfig = ''
           include             ${pkgs.nginx}/conf/fastcgi_params;
           fastcgi_param       SCRIPT_FILENAME     ${pkgs.git}/libexec/git-core/git-http-backend;
@@ -242,22 +252,30 @@ in
     defaults.email = "jaredbaur@fastmail.com";
     certs."jmbaur.com".extraDomainNames = map (subdomain: "${subdomain}.jmbaur.com") [
       "auth"
+      "git"
       "logs"
       "mon"
     ];
   };
 
-  environment.etc."cgitrc".text = ''
-    # these need to be before `scan-path`
-    scan-hidden-path=0
-    snapshots=tar.gz tar.bz2 zip
-    #
-    scan-path=${config.users.users.git.home}
-    source-filter=${pkgs.cgit-pink}/lib/cgit/filters/syntax-highlighting.py
-    css=/cgit.css
-    logo=/cgit.png
-    enable-http-clone=1
-    robots=noindex, nofollow
-    virtual-root=/
-  '';
+  environment.etc."cgitrc".text =
+    let
+      headInclude = pkgs.writeText "cgit-head-include" ''
+        <link rel="stylesheet" type="text/css" href="/custom.css">
+      '';
+    in
+    ''
+      # these need to be before `scan-path`
+      scan-hidden-path=0
+      snapshots=tar.gz tar.bz2 zip
+      #
+      scan-path=${config.users.users.git.home}
+      source-filter=${pkgs.cgit-pink}/lib/cgit/filters/syntax-highlighting.py
+      head-include=${headInclude}
+      css=/cgit.css
+      logo=/cgit.png
+      enable-http-clone=1
+      robots=noindex, nofollow
+      virtual-root=/
+    '';
 }
