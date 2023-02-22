@@ -20,6 +20,15 @@ inputs: with inputs; {
           yamlfmt
           ;
 
+        neovide-wayland = prev.symlinkJoin {
+          name = "neovide-wayland";
+          nativeBuildInputs = [ prev.buildPackages.makeWrapper ];
+          paths = [ prev.neovide ];
+          postBuild = ''
+            wrapProgram $out/bin/neovide --set WINIT_UNIX_BACKEND x11
+          '';
+        };
+
         wezterm-wayland = prev.wezterm.overrideAttrs (old: {
           patches = old.patches ++ [
             (prev.fetchpatch {

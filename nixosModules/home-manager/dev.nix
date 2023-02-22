@@ -54,6 +54,7 @@ with lib; {
       mdcat
       mob
       mosh
+      neovide-wayland
       neovim-all-languages
       nix-diff
       nix-prefetch-scripts

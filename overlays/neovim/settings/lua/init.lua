@@ -25,6 +25,10 @@ if #vim.api.nvim_list_uis() > 0 then
 	vim.opt.relativenumber = true
 end
 
+if vim.g.neovide then
+	require("neovide")
+end
+
 require("mini.comment").setup({})
 require("nvim-surround").setup()
 
