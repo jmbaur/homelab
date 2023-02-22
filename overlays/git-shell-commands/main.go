@@ -49,14 +49,15 @@ func list() error {
 			return nil
 		}
 
-		repo, err := git.OpenRepository(filepath.Join(cwd, path))
+		fullPath := filepath.Join(cwd, path)
+		repo, err := git.OpenRepository(fullPath)
 		if err != nil {
 			// we are not at a repo yet, continue recursing
 			return nil
 		}
 
 		if repo.IsBare() {
-			fmt.Println(d.Name())
+			fmt.Println(fullPath)
 		}
 
 		// we just saw a repo, don't recurse into it
@@ -163,8 +164,12 @@ func main() {
 	// Allow the program to be a multi-call binary
 	var command string
 	base := filepath.Base(os.Args[0])
-	if base == progname {
-		command = os.Args[1]
+	if base == progname || progname == "" {
+		if len(os.Args) > 1 {
+			command = os.Args[1]
+		} else {
+			command = "help"
+		}
 	} else {
 		command = base
 	}
