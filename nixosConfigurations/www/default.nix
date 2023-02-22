@@ -78,72 +78,22 @@ in
   };
   users.groups.git.gid = config.ids.gids.git;
 
-  home-manager.users.git = { systemConfig, pkgs, ... }: {
-    custom.common.enable = false;
-    home.stateVersion = systemConfig.system.stateVersion;
-    home.file = builtins.listToAttrs
-      (map (script: lib.nameValuePair "git-shell-commands/${script.name}" { source = script; }) [
-        (pkgs.writeShellScript "list" ''
-          for dir in $(find "$PWD" -maxdepth 1 -type d); do
-          	cd "$dir" || return
-          	if [ "$(${pkgs.git}/bin/git rev-parse --is-bare-repository 2>/dev/null)" == "true" ]; then
-          		basename "$PWD"
-          	fi
-          done
-        '')
-        (pkgs.writeShellScript "create" ''
-          if test -z "$1"; then
-                  echo "Usage: $(basename $0) <name>"
-                  echo "create a repository"
-                  exit 1
-          fi
-          new_repo="''${HOME}/''${1}.git"
-          ${pkgs.git}/bin/git init --bare --initial-branch=main "$new_repo" >/dev/null
-          touch "''${new_repo}/git-daemon-export-ok"
-          read -p "Description: " description
-          echo "$description" > "''${new_repo}/description"
-          echo "$new_repo"
-        '')
-        (pkgs.writeShellScript "create-private" ''
-          if test -z "$1"; then
-                  echo "Usage: $(basename $0) <name>"
-                  echo "create a private repository"
-                  exit 1
-          fi
-          new_repo=$($HOME/git-shell-commands/create "$@")
-          rm "''${new_repo}/git-daemon-export-ok"
-          echo "$new_repo"
-        '')
-        (pkgs.writeShellScript "delete" ''
-          if test -z "$1"; then
-                  echo "Usage: $(basename $0) <name>"
-                  echo "delete a repository"
-                  exit 1
-          fi
-          path="''${HOME}/''${1}.git"
-          echo "Deleting $path"
-          rm -r "$path"
-        '')
-      ]);
-  };
-
-  services.webauthn-tiny =
-    {
-      enable = true;
-      basicAuthFile = config.sops.secrets.passwords.path;
-      sessionSecretFile = config.sops.secrets.session_secret.path;
-      relyingParty = {
-        id = "jmbaur.com";
-        origin = "https://auth.jmbaur.com";
-        extraAllowedOrigins = map (vhost: "https://${vhost}") config.services.webauthn-tiny.nginx.protectedVirtualHosts;
-      };
-      nginx = {
-        enable = true;
-        virtualHost = "auth.jmbaur.com";
-        useACMEHost = "jmbaur.com";
-        protectedVirtualHosts = [ "logs.jmbaur.com" "mon.jmbaur.com" ];
-      };
+  services.webauthn-tiny = {
+    enable = true;
+    basicAuthFile = config.sops.secrets.passwords.path;
+    sessionSecretFile = config.sops.secrets.session_secret.path;
+    relyingParty = {
+      id = "jmbaur.com";
+      origin = "https://auth.jmbaur.com";
+      extraAllowedOrigins = map (vhost: "https://${vhost}") config.services.webauthn-tiny.nginx.protectedVirtualHosts;
     };
+    nginx = {
+      enable = true;
+      virtualHost = "auth.jmbaur.com";
+      useACMEHost = "jmbaur.com";
+      protectedVirtualHosts = [ "logs.jmbaur.com" "mon.jmbaur.com" ];
+    };
+  };
 
   services.journald.enableHttpGateway = true;
 
@@ -180,6 +130,7 @@ in
           '';
         };
       };
+      # https://wiki.archlinux.org/title/Cgit#Using_fcgiwrap
       "git.jmbaur.com" = {
         enableACME = true;
         forceSSL = true;
@@ -324,5 +275,13 @@ in
       virtual-root=/
     '';
 
-  systemd.tmpfiles.rules = [ "d /var/cache/cgit - ${config.services.nginx.user} ${config.services.nginx.group} -" ];
+  systemd.tmpfiles.rules = [
+    "d /var/cache/cgit - ${config.services.nginx.user} ${config.services.nginx.group} -"
+  ];
+
+  systemd.user.tmpfiles.users.git.rules = (map
+    (cmd:
+      "L+ ${config.users.users.git.home}/git-shell-commands/${cmd} - - - - ${pkgs.git-shell-commands}/bin/git-shell-commands"
+    )
+    [ "list" "create" "delete" "help" ]);
 }

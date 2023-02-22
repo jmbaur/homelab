@@ -31,6 +31,7 @@ inputs: with inputs; {
 
         bitwarden-bemenu = prev.callPackage ./bitwarden-bemenu.nix { };
         git-get = prev.callPackage ./git-get { };
+        git-shell-commands = prev.callPackage ./git-shell-commands { };
         j = prev.callPackage ./j.nix { };
         macgen = prev.callPackage ./macgen.nix { };
         mirror-to-x = prev.callPackage ./mirror-to-x.nix { };

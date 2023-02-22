@@ -25,6 +25,7 @@ let
       flashrom-cros
       flashrom-dasharo
       git-get
+      git-shell-commands
       gobar
       gosee
       grafana-dashboards
