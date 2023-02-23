@@ -1,6 +1,98 @@
 { lib, config, pkgs, ... }:
 let
   cfg = config.custom.users.jared;
+  data = import ./gui/data.nix;
+  colors = data.colors.modus-vivendi;
+  configFiles = pkgs.linkFarm "jared-config-files" [
+    {
+      name = "etc/xdg/gtk-4.0/settings.ini";
+      path = (pkgs.formats.ini { }).generate "settings.ini" {
+        Settings = {
+          gtk-icon-theme-name = data.gtkIconTheme;
+          gtk-theme-name = data.gtkTheme;
+        };
+      };
+    }
+    {
+      name = "etc/xdg/gtk-3.0/settings.ini";
+      path = (pkgs.formats.ini { }).generate "settings.ini" {
+        Settings = {
+          gtk-icon-theme-name = data.gtkIconTheme;
+          gtk-theme-name = data.gtkTheme;
+        };
+      };
+    }
+    {
+      name = "etc/xdg/alacritty/alacritty.yml";
+      path = (pkgs.formats.yaml { }).generate "alacritty.yml" {
+        live_config_reload = false;
+        mouse.hide_when_typing = true;
+        selection.save_to_clipboard = true;
+        font = { normal.family = data.font; size = 16; };
+        colors = lib.mapAttrsRecursive (_: color: "#${color}") {
+          primary = {
+            foreground = colors.foreground;
+            background = colors.background;
+          };
+          normal = {
+            black = colors.regular0;
+            red = colors.regular1;
+            green = colors.regular2;
+            yellow = colors.regular3;
+            blue = colors.regular4;
+            magenta = colors.regular5;
+            cyan = colors.regular6;
+            white = colors.regular7;
+          };
+          bright = {
+            black = colors.bright0;
+            red = colors.bright1;
+            green = colors.bright2;
+            yellow = colors.bright3;
+            blue = colors.bright4;
+            magenta = colors.bright5;
+            cyan = colors.bright6;
+            white = colors.bright7;
+          };
+        };
+      };
+    }
+    {
+      name = "etc/xdg/foot/foot.ini";
+      path = (pkgs.formats.ini { }).generate "foot.ini" {
+        main = {
+          font = "${data.font}:size=10";
+          selection-target = "clipboard";
+          notify-focus-inhibit = "no";
+        };
+        bell = {
+          urgent = "yes";
+          command-focused = "yes";
+        };
+        mouse.hide-when-typing = "yes";
+        colors = { alpha = 1.0; } // colors;
+      };
+    }
+    {
+      name = "etc/xdg/wezterm/wezterm.lua";
+      path = ./home-manager/wezterm.lua;
+    }
+    {
+      name = "etc/xdg/wezterm/colors/modus-vivendi.toml";
+      path = (pkgs.formats.toml { }).generate "modus-vivendi.toml" {
+        colors = {
+          background = "#${colors.background}";
+          foreground = "#${colors.foreground}";
+          cursor_border = "#${colors.foreground}";
+          selection_bg = "rgba(40% 40% 40% 40%)";
+          selection_fg = "none";
+          ansi = map (color: "#${color}") [ colors.regular0 colors.regular1 colors.regular2 colors.regular3 colors.regular4 colors.regular5 colors.regular6 colors.regular7 ];
+          brights = map (color: "#${color}") [ colors.bright0 colors.bright1 colors.bright2 colors.bright3 colors.bright4 colors.bright5 colors.bright6 colors.bright7 ];
+        };
+        metadata.name = "modus-vivendi";
+      };
+    }
+  ];
 in
 {
   options.custom.users.jared = {
@@ -20,6 +112,7 @@ in
       openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
       packages = with pkgs; [
         age-plugin-yubikey
+        configFiles
         gmni
         iperf3
         librespeed-cli
@@ -44,7 +137,7 @@ in
       extraGroups = [ "dialout" "wheel" ]
         ++ (lib.optional config.networking.networkmanager.enable "networkmanager")
         ++ (lib.optional config.programs.adb.enable "adbusers")
-        ++ (lib.optional config.programs.flashrom.enable "flashrom")
+        ++ (lib.optional config.programs.flashrom.enable "plugdev")
         ++ (lib.optional config.programs.wireshark.enable "wireshark")
         ++ (lib.optional config.virtualisation.docker.enable "docker")
       ;

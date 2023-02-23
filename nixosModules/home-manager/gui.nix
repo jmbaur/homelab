@@ -2,7 +2,6 @@
 let
   cfg = config.custom.gui;
   data = import ../gui/data.nix;
-  colors = data.colors.modus-vivendi;
   lockerCommand = "${pkgs.swaylock}/bin/swaylock --daemonize --indicator-caps-lock --show-keyboard-layout --color '#222222'";
 in
 with lib; {
@@ -31,67 +30,12 @@ with lib; {
       };
     };
 
-    programs.alacritty = {
-      enable = true;
-      settings = {
-        font = {
-          normal.family = data.font;
-          size = 16;
-        };
-        colors = lib.mapAttrsRecursive (_: color: "#${color}") {
-          primary = {
-            foreground = colors.foreground;
-            background = colors.background;
-          };
-          normal = {
-            black = colors.regular0;
-            red = colors.regular1;
-            green = colors.regular2;
-            yellow = colors.regular3;
-            blue = colors.regular4;
-            magenta = colors.regular5;
-            cyan = colors.regular6;
-            white = colors.regular7;
-          };
-          bright = {
-            black = colors.bright0;
-            red = colors.bright1;
-            green = colors.bright2;
-            yellow = colors.bright3;
-            blue = colors.bright4;
-            magenta = colors.bright5;
-            cyan = colors.bright6;
-            white = colors.bright7;
-          };
-        };
-        selection.save_to_clipboard = true;
-        mouse.hide_when_typing = true;
-      };
-    };
-
-    programs.foot = {
-      enable = true;
-      settings = {
-        main = {
-          font = "${config.programs.alacritty.settings.font.normal.family}:size=${toString (config.programs.alacritty.settings.font.size - 6)}";
-          selection-target = "clipboard";
-          notify-focus-inhibit = "no";
-        };
-        bell = {
-          urgent = "yes";
-          command-focused = "yes";
-        };
-        mouse.hide-when-typing = "yes";
-        colors = { alpha = 1.0; } // colors;
-      };
-    };
-
     programs.kitty = {
       enable = true;
       theme = "Modus Vivendi";
       font = {
         name = data.font;
-        size = config.programs.alacritty.settings.font.size;
+        size = 16;
       };
       settings = {
         enable_audio_bell = false;
@@ -106,13 +50,6 @@ with lib; {
       name = data.cursorTheme;
       size = mkDefault 24;
       x11.enable = true;
-    };
-
-    gtk = {
-      enable = true;
-      theme = { package = pkgs.gnome-themes-extra; name = data.gtkTheme; };
-      iconTheme = { package = pkgs.gnome-themes-extra; name = data.gtkIconTheme; };
-      gtk4 = removeAttrs config.gtk.gtk3 [ "bookmarks" "extraCss" "waylandSupport" ];
     };
 
     qt = {
