@@ -1,15 +1,16 @@
 { lib, config, pkgs, ... }:
-let cfg = config.custom.users.jared; in
-with lib;
+let
+  cfg = config.custom.users.jared;
+in
 {
   options.custom.users.jared = {
-    enable = mkEnableOption "jared";
-    passwordFile = mkOption {
-      type = types.nullOr types.path;
+    enable = lib.mkEnableOption "jared";
+    passwordFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
       default = null;
     };
   };
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     programs.fish.enable = true;
     users.users.jared = {
       inherit (cfg) passwordFile;
@@ -17,6 +18,29 @@ with lib;
       description = "Jared Baur";
       shell = pkgs.fish;
       openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
+      packages = with pkgs; [
+        age-plugin-yubikey
+        gmni
+        iperf3
+        librespeed-cli
+        nmap
+        nvme-cli
+        picocom
+        pwgen
+        rage
+        rtorrent
+        sl
+        smartmontools
+        stow
+        tailscale
+        tcpdump
+        tree
+        unzip
+        usbutils
+        w3m
+        wireguard-tools
+        zip
+      ];
       extraGroups = [ "dialout" "wheel" ]
         ++ (lib.optional config.networking.networkmanager.enable "networkmanager")
         ++ (lib.optional config.programs.adb.enable "adbusers")

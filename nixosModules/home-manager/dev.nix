@@ -72,7 +72,6 @@ with lib; {
       procs
       pstree
       qemu
-      rage
       ripgrep
       rlwrap
       sd

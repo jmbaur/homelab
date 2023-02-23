@@ -1,4 +1,4 @@
-{ config, lib, pkgs, systemConfig, ... }:
+{ config, lib, systemConfig, ... }:
 let
   cfg = config.custom.common;
 in
@@ -19,28 +19,6 @@ with lib; {
       grep = "grep --color=auto";
       r = "stty sane && reset";
     };
-
-    home.packages = with pkgs; [
-      gmni
-      iperf3
-      librespeed-cli
-      nmap
-      nvme-cli
-      picocom
-      pwgen
-      rtorrent
-      sl
-      smartmontools
-      stow
-      tailscale
-      tcpdump
-      tree
-      unzip
-      usbutils
-      w3m
-      wireguard-tools
-      zip
-    ];
 
     programs.dircolors.enable = true;
   };
