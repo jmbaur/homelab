@@ -3,7 +3,6 @@ local actions = require("fzf-lua.actions")
 
 fzf.setup({
 	fzf_bin = "sk",
-	fzf_opts = { ["--color"] = "light" },
 	files = {
 		file_icons = false,
 		git_icons = false,

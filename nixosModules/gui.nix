@@ -8,8 +8,6 @@ with lib;
   config = mkIf cfg.enable {
     environment.enableAllTerminfo = true;
 
-    services.flatpak.enable = true;
-
     hardware.pulseaudio.enable = mkForce false;
     security.rtkit.enable = true;
     services.pipewire = {
@@ -30,8 +28,11 @@ with lib;
         '';
       })
     ];
+
     environment.systemPackages = with pkgs; [
+      chromium
       ffmpeg-full
+      firefox
       libnotify
       pulsemixer
       sway-launcher
@@ -56,7 +57,7 @@ with lib;
     services.greetd = {
       enable = true;
       vt = 7;
-      settings.default_session.command = "${pkgs.greetd.tuigreet}/bin/tuigreet --asterisks --time --cmd sway-launcher";
+      settings.default_session.command = "${pkgs.greetd.greetd}/bin/agreety --cmd sway-launcher";
     };
     programs.wshowkeys.enable = true;
     environment.variables.BEMENU_OPTS = escapeShellArgs [

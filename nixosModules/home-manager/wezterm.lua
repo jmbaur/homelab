@@ -46,7 +46,7 @@ return {
 	audible_bell = "Disabled",
 	automatically_reload_config = false,
 	check_for_updates = false,
-	color_scheme = "modus-operandi",
+	color_scheme = "modus-vivendi",
 	font = wezterm.font("JetBrains Mono"),
 	font_size = 16.0,
 	force_reverse_video_cursor = true,

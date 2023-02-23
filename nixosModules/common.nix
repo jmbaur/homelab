@@ -59,16 +59,12 @@ with lib; {
         bind-key J command-prompt -p "join pane from:"  "join-pane -h -s '%%'"
         set-option -g allow-passthrough on
         set-option -g automatic-rename on
-        set-option -g copy-mode-current-match-style bg=lightcyan
-        set-option -g copy-mode-match-style bg=orange
         set-option -g focus-events on
-        set-option -g message-style bg=lightgray
-        set-option -g mode-style bg=lightgray
         set-option -g renumber-windows on
         set-option -g set-clipboard on
         set-option -g set-titles on
         set-option -g set-titles-string "#T"
-        set-option -g status-style bg=lightgray
+        set-option -g status-style bg=#222222
         set-option -sa terminal-overrides ',xterm-256color:RGB'
       '';
     };
