@@ -5,6 +5,18 @@ let
   colors = data.colors.modus-vivendi;
   configFiles = pkgs.linkFarm "jared-config-files" [
     {
+      name = "etc/xdg/gobar/gobar.yaml";
+      path = (pkgs.formats.yaml { }).generate "gobar.yaml" {
+        colorVariant = "dark";
+        modules = (lib.optional config.custom.laptop.enable { module = "battery"; })
+          ++ [
+          { module = "network"; pattern = "(en|eth|wlp|wlan|wg)+"; }
+          { module = "memory"; }
+          { module = "datetime"; timezones = [ "Local" "UTC" ]; }
+        ];
+      };
+    }
+    {
       name = "etc/xdg/gtk-4.0/settings.ini";
       path = (pkgs.formats.ini { }).generate "settings.ini" {
         Settings = {

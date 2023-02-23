@@ -72,18 +72,6 @@ with lib; {
       width = 500;
     };
 
-    xdg.configFile."gobar/gobar.yaml".source = (pkgs.formats.yaml { }).generate "gobar.yaml" {
-      colorVariant = "dark";
-      modules = (
-        optional config.custom.laptop.enable
-          { module = "battery"; }
-      ) ++ [
-        { module = "network"; pattern = "(en|eth|wlp|wlan|wg)+"; }
-        { module = "memory"; }
-        { module = "datetime"; timezones = [ "Local" "UTC" ]; }
-      ];
-    };
-
     services.gpg-agent = {
       pinentryFlavor = null;
       extraConfig =
