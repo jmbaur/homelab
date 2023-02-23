@@ -15,4 +15,12 @@ function DiagnosticStatus()
 	return "[" .. table.concat(t, " ") .. "]"
 end
 
-vim.opt.statusline = "%f" .. "%=" .. "%{luaeval('DiagnosticStatus()')}" .. "%y%m%r %l,%c %P"
+function StatusLine()
+	if vim.g.statusline_winid == vim.fn.win_getid() then
+		return "%<%f %h%m%r%=%24.(%y%{luaeval('DiagnosticStatus()')}%) %8.(%l,%c%) %P"
+	else
+		return "%<%f%=%m"
+	end
+end
+
+vim.opt.statusline = "%!v:lua.StatusLine()"
