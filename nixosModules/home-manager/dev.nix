@@ -1,7 +1,7 @@
 { systemConfig, config, lib, pkgs, ... }:
 let
   cfg = config.custom.dev;
-  colors = (import ./colors.nix).modus-vivendi;
+  colors = (import ../gui/data.nix).colors.modus-vivendi;
 in
 with lib; {
   options.custom.dev = {
@@ -186,6 +186,7 @@ with lib; {
       colors = {
         background = "#${colors.background}";
         foreground = "#${colors.foreground}";
+        cursor_border = "#${colors.foreground}";
         selection_bg = "rgba(40% 40% 40% 40%)";
         selection_fg = "none";
         ansi = map (color: "#${color}") [ colors.regular0 colors.regular1 colors.regular2 colors.regular3 colors.regular4 colors.regular5 colors.regular6 colors.regular7 ];

@@ -1,7 +1,8 @@
 { config, lib, pkgs, systemConfig, ... }:
 let
   cfg = config.custom.gui;
-  colors = (import ./colors.nix).modus-vivendi;
+  data = import ../gui/data.nix;
+  colors = data.colors.modus-vivendi;
   lockerCommand = "${pkgs.swaylock}/bin/swaylock --daemonize --indicator-caps-lock --show-keyboard-layout --color '#222222'";
 in
 with lib; {
@@ -34,7 +35,7 @@ with lib; {
       enable = true;
       settings = {
         font = {
-          normal.family = "JetBrains Mono";
+          normal.family = data.font;
           size = 16;
         };
         colors = lib.mapAttrsRecursive (_: color: "#${color}") {
@@ -89,7 +90,7 @@ with lib; {
       enable = true;
       theme = "Modus Vivendi";
       font = {
-        name = "JetBrains Mono";
+        name = data.font;
         size = config.programs.alacritty.settings.font.size;
       };
       settings = {
@@ -100,30 +101,17 @@ with lib; {
       };
     };
 
-    systemd.user.services.yubikey-touch-detector = {
-      Unit = {
-        Description = "Yubikey Touch Detector";
-        PartOf = "sway-session.target";
-        After = "sway-session.target";
-      };
-      Service = {
-        Type = "simple";
-        ExecStart = "${pkgs.yubikey-touch-detector}/bin/yubikey-touch-detector --libnotify";
-      };
-      Install.WantedBy = [ "sway-session.target" ];
-    };
-
     home.pointerCursor = {
       package = pkgs.gnome-themes-extra;
-      name = "Adwaita";
+      name = data.cursorTheme;
       size = mkDefault 24;
       x11.enable = true;
     };
 
     gtk = {
       enable = true;
-      theme = { package = pkgs.gnome-themes-extra; name = "Adwaita-dark"; };
-      iconTheme = { package = pkgs.gnome-themes-extra; name = "Adwaita"; };
+      theme = { package = pkgs.gnome-themes-extra; name = data.gtkTheme; };
+      iconTheme = { package = pkgs.gnome-themes-extra; name = data.gtkIconTheme; };
       gtk4 = removeAttrs config.gtk.gtk3 [ "bookmarks" "extraCss" "waylandSupport" ];
     };
 
@@ -132,7 +120,7 @@ with lib; {
       platformTheme = "gtk";
       style = {
         package = pkgs.adwaita-qt;
-        name = "adwaita-dark";
+        name = lib.toLower data.gtkTheme;
       };
     };
 
@@ -219,44 +207,6 @@ with lib; {
 
     services.kanshi.enable = config.custom.laptop.enable;
 
-    systemd.user.services.clipman = {
-      Unit = {
-        Description = "Clipboard manager";
-        Documentation = "man:clipman(1)";
-        PartOf = "sway-session.target";
-        After = "sway-session.target";
-      };
-      Service = {
-        Type = "simple";
-        Environment = [ "WAYLAND_DEBUG=1" "PATH=${makeBinPath [ pkgs.wl-clipboard ]}" ];
-        ExecStart = "${pkgs.wl-clipboard}/bin/wl-paste --type text/plain --watch ${pkgs.clipman}/bin/clipman store";
-      };
-      Install.WantedBy = [ "sway-session.target" ];
-    };
-
-    systemd.user.sockets.wob = {
-      Socket = {
-        ListenFIFO = "%t/wob.sock";
-        SocketMode = "0600";
-      };
-      Install.WantedBy = [ "sockets.target" ];
-    };
-
-    systemd.user.services.wob = {
-      Unit = {
-        Description = "A lightweight overlay volume/backlight/progress/anything bar for Wayland";
-        Documentation = "man:wob(1)";
-        PartOf = "sway-session.target";
-        After = "sway-session.target";
-        ConditionEnvironment = "WAYLAND_DISPLAY";
-      };
-      Service = {
-        StandardInput = "socket";
-        ExecStart = "${pkgs.wob}/bin/wob";
-      };
-      Install.WantedBy = [ "sway-session.target" ];
-    };
-
     wayland.windowManager.sway = {
       enable = true;
       inherit (systemConfig.programs.sway)
@@ -315,7 +265,7 @@ with lib; {
             { title = "^pipe:xwayland-mirror$"; }
           ];
           fonts = {
-            names = [ "JetBrains Mono" ];
+            names = [ data.font ];
             size = 12.0;
           };
           terminal = "${pkgs.wezterm-wayland}/bin/wezterm-gui";

@@ -1,6 +1,7 @@
 { config, lib, pkgs, ... }:
 let
   cfg = config.custom.gui;
+  data = import ./data.nix;
 in
 with lib;
 {
@@ -62,7 +63,7 @@ with lib;
     programs.wshowkeys.enable = true;
     environment.variables.BEMENU_OPTS = escapeShellArgs [
       "--ignorecase"
-      "--fn=JetBrains Mono"
+      "--fn=${data.font}"
       "--line-height=30"
     ];
 
@@ -112,5 +113,45 @@ with lib;
         export _JAVA_AWT_WM_NONREPARENTING=1
       '';
     };
+
+    systemd.user.services.yubikey-touch-detector = {
+      description = "Yubikey Touch Detector";
+      after = [ "sway-session.target" ];
+      partOf = [ "sway-session.target" ];
+      serviceConfig.ExecStart = "${pkgs.yubikey-touch-detector}/bin/yubikey-touch-detector --libnotify";
+      wantedBy = [ "sway-session.target" ];
+    };
+
+    systemd.user.services.clipman = {
+      description = "Clipboard manager";
+      documentation = [ "https://github.com/yory8/clipman" ];
+      after = [ "sway-session.target" ];
+      partOf = [ "sway-session.target" ];
+      path = [ pkgs.wl-clipboard ];
+      serviceConfig.ExecStart = "${pkgs.wl-clipboard}/bin/wl-paste --type text/plain --watch ${pkgs.clipman}/bin/clipman store";
+      wantedBy = [ "sway-session.target" ];
+    };
+
+    systemd.user.sockets.wob = {
+      socketConfig = {
+        ListenFIFO = "%t/wob.sock";
+        SocketMode = "0600";
+      };
+      wantedBy = [ "sockets.target" ];
+    };
+
+    systemd.user.services.wob = {
+      description = "A lightweight overlay volume/backlight/progress/anything bar for Wayland";
+      documentation = [ "https://github.com/francma/wob" ];
+      after = [ "sway-session.target" ];
+      partOf = [ "sway-session.target" ];
+      unitConfig.ConditionEnvironment = "WAYLAND_DISPLAY";
+      serviceConfig = {
+        StandardInput = "socket";
+        ExecStart = "${pkgs.wob}/bin/wob";
+      };
+      wantedBy = [ "sway-session.target" ];
+    };
+
   };
 }
