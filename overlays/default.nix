@@ -35,8 +35,8 @@ inputs: with inputs; {
           src = prev.fetchFromGitHub {
             owner = "jmbaur";
             repo = "wezterm";
-            rev = "73ef1627e50a304bdce0851fd5e4edf777ebfe0f";
-            sha256 = "sha256-fAKCgBjVysHhwq1r5oQptbvoD0KpUCGA88GuAbR16dc=";
+            rev = "4c846f11078a9e63721f7bf436cf12805e0d89b2";
+            sha256 = "sha256-LJVkhdNjz3N0FeK5pM82FVp5ey24KNeC2pkwxzlWfhI=";
             fetchSubmodules = true;
           };
 
