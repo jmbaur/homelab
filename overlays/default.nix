@@ -29,13 +29,24 @@ inputs: with inputs; {
           '';
         };
 
-        wezterm-wayland = prev.wezterm.overrideAttrs (old: {
-          patches = old.patches ++ [
-            (prev.fetchpatch {
-              url = "https://github.com/wez/wezterm/commit/88b49c9da0b993b832cd57fda3392c3876f97421.patch";
-              sha256 = "sha256-X1nGOFPJRx1YjYgAeKTFDfViXn/LExiMhbqWvjEDUM4=";
-            })
-          ];
+        wezterm-jmbaur = prev.wezterm.overrideAttrs (old: rec {
+          version = builtins.substring 0 7 src.rev;
+
+          src = prev.fetchFromGitHub {
+            owner = "jmbaur";
+            repo = "wezterm";
+            rev = "73ef1627e50a304bdce0851fd5e4edf777ebfe0f";
+            sha256 = "sha256-fAKCgBjVysHhwq1r5oQptbvoD0KpUCGA88GuAbR16dc=";
+            fetchSubmodules = true;
+          };
+
+          patches = [ ];
+
+          cargoDeps = old.cargoDeps.overrideAttrs (prev.lib.const {
+            name = "${old.pname}-vendor.tar.gz";
+            inherit src;
+            outputHash = "sha256-GTwJQFAgCTr92IbR8tOLx92djPwVd7vtUy2grVBMYn8=";
+          });
         });
 
         bitwarden-bemenu = prev.callPackage ./bitwarden-bemenu.nix { };

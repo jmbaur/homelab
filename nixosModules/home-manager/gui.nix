@@ -31,7 +31,7 @@ with lib; {
     };
 
     programs.kitty = {
-      enable = true;
+      enable = false;
       theme = "Modus Vivendi";
       font = {
         name = data.font;
@@ -205,7 +205,7 @@ with lib; {
             names = [ data.font ];
             size = 12.0;
           };
-          terminal = "${pkgs.wezterm-wayland}/bin/wezterm-gui";
+          terminal = "${pkgs.wezterm-jmbaur}/bin/wezterm-gui";
           menu = "${pkgs.bemenu}/bin/bemenu-run";
           modifier = "Mod4";
           workspaceLayout = "stacking";

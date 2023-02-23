@@ -45,7 +45,7 @@ let
       teams-webapp
       u-rootInitramfs
       v4l-show
-      wezterm-wayland
+      wezterm-jmbaur
       wip
       xremap
       yamlfmt

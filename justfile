@@ -30,7 +30,7 @@ build:
 		.\#pomo \
 		.\#runner-nix \
 		.\#webauthn-tiny \
-		.\#wezterm-wayland \
+		.\#wezterm-jmbaur \
 		.\#xremap \
 		.\#yamlfmt
 
