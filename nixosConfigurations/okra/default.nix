@@ -14,7 +14,6 @@
 
   services.fwupd.enable = true;
 
-  time.timeZone = "America/Los_Angeles";
   networking.hostName = "okra";
 
   custom.basicNetwork.enable = true;

@@ -21,6 +21,7 @@ with lib;
     fonts.fonts = [ pkgs.jetbrains-mono ];
 
     location.provider = "geoclue2";
+    services.automatic-timezoned.enable = lib.mkDefault true;
 
     nixpkgs.overlays = [
       (_: prev: {
