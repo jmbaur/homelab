@@ -5,6 +5,23 @@ let
   colors = data.colors.modus-vivendi;
   configFiles = pkgs.linkFarm "jared-config-files" [
     {
+      name = "etc/xdg/mimeapps.list";
+      path = (pkgs.formats.ini { }).generate "mimeapps.list" {
+        "Added Associations" = { };
+        "Removed Associations" = { };
+        "Default Applications" = {
+          "application/pdf" = "org.pwmt.zathura.desktop";
+          "audio/*" = "mpv.desktop";
+          "image/jpeg" = "imv.desktop";
+          "image/png" = "imv.desktop";
+          "text/*" = "nvim.desktop";
+          "video/*" = "mpv.desktop";
+          "x-scheme-handler/http" = "firefox.desktop";
+          "x-scheme-handler/https" = "firefox.desktop";
+        };
+      };
+    }
+    {
       name = "etc/xdg/gobar/gobar.yaml";
       path = (pkgs.formats.yaml { }).generate "gobar.yaml" {
         colorVariant = "dark";

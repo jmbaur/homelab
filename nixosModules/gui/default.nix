@@ -154,5 +154,49 @@ with lib;
       wantedBy = [ "sway-session.target" ];
     };
 
+    systemd.user.services.gammastep = {
+      description = "Gamma adjuster";
+      documentation = [ "https://gitlab.com/chinstrap/gammastep" ];
+      wants = [ "geoclue-agent.service" ];
+      after = [ "sway-session.target" "geoclue-agent.service" ];
+      partOf = [ "sway-session.target" ];
+      serviceConfig.ExecStart = "${pkgs.gammastep}/bin/gammastep -l geoclue2";
+      wantedBy = [ "sway-session.target" ];
+    };
+
+    systemd.user.services.swayidle = {
+      description = "Idle management daemon for Wayland";
+      documentation = [ "https://github.com/swaywm/swayidle" ];
+      partOf = [ "sway-session.target" ];
+      path = with pkgs; [
+        bash # needs a shell in path
+        swayidle
+        swaylock
+        sway
+        (writeShellScriptBin "laptop-conditional-suspend" ''
+          if [[ "$(cat /sys/class/power_supply/AC/online)" -ne 1 ]]; then
+            echo "laptop is not on AC, suspending"
+            ${pkgs.systemd}/bin/systemctl suspend
+          else
+            echo "laptop is on AC, not suspending"
+          fi
+        '')
+      ];
+      wantedBy = [ "sway-session.target" ];
+      script =
+        let
+          lockCmd = ''swaylock --daemonize --indicator-caps-lock --show-keyboard-layout --color "#222222"'';
+        in
+        ''
+          swayidle -w \
+            timeout 300 '${lockCmd}' \
+            timeout 600 'swaymsg "output * dpms off"' \
+              resume 'swaymsg "output * dpms on"' \
+            timeout 900 'laptop-conditional-suspend' \
+            before-sleep '${lockCmd}' \
+            lock '${lockCmd}' \
+            after-resume 'swaymsg "output * dpms on"'
+        '';
+    };
   };
 }
