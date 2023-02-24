@@ -42,17 +42,6 @@ with lib; {
       };
     };
 
-    programs.mako = {
-      enable = true;
-      anchor = "top-right";
-      defaultTimeout = 10000;
-      font = "${toString config.wayland.windowManager.sway.config.fonts.names} ${toString config.wayland.windowManager.sway.config.fonts.size}";
-      height = 1000;
-      icons = true;
-      layer = "overlay";
-      width = 500;
-    };
-
     services.gpg-agent = {
       pinentryFlavor = null;
       extraConfig =
@@ -70,8 +59,6 @@ with lib; {
           pinentry-program ${pinentryProgram}/bin/pinentry-bemenu
         '';
     };
-
-    services.kanshi.enable = config.custom.laptop.enable;
 
     wayland.windowManager.sway = {
       enable = true;

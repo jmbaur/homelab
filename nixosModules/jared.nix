@@ -5,6 +5,17 @@ let
   colors = data.colors.modus-vivendi;
   configFiles = pkgs.linkFarm "jared-config-files" [
     {
+      name = "etc/xdg/mako/config";
+      path = (pkgs.formats.keyValue { }).generate "make.config" {
+        default-timeout = 10000;
+        font = "${data.font} 12";
+        height = 1000;
+        icons = true;
+        layer = "overlay";
+        width = 500;
+      };
+    }
+    {
       name = "etc/xdg/mimeapps.list";
       path = (pkgs.formats.ini { }).generate "mimeapps.list" {
         "Added Associations" = { };

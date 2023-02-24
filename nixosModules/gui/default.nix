@@ -36,8 +36,11 @@ with lib;
       ffmpeg-full
       firefox
       libnotify
+      mako
       pulsemixer
       sway-launcher
+      swayidle
+      swaylock
       wl-clipboard
       xdg-utils
       zathura
