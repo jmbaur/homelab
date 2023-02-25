@@ -60,6 +60,17 @@ with lib; {
         '';
     };
 
+    programs.mako = {
+      enable = true;
+      anchor = "top-right";
+      defaultTimeout = 10000;
+      font = "${toString config.wayland.windowManager.sway.config.fonts.names} ${toString config.wayland.windowManager.sway.config.fonts.size}";
+      height = 1000;
+      icons = true;
+      layer = "overlay";
+      width = 500;
+    };
+
     wayland.windowManager.sway = {
       enable = true;
       inherit (systemConfig.programs.sway)

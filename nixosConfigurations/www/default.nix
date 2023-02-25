@@ -260,8 +260,12 @@ in
       snapshots=tar.gz tar.bz2 zip
       about-filter=${pkgs.cgit-pink}/lib/cgit/filters/about-formatting.sh
       source-filter=${pkgs.cgit-pink}/lib/cgit/filters/syntax-highlighting.py
+      section-from-path=1
+      clone-url=https://git.jmbaur.com/$CGIT_REPO_URL
 
       scan-path=${config.users.users.git.home}
+      repository-sort=age
+      branch-sort=age
       root-title=git.jmbaur.com
       root-desc=These aren't the droids you're looking for.
       side-by-side-diffs=0
@@ -270,7 +274,6 @@ in
       css=/cgit.css
       favicon=/favicon.ico
       logo=
-      clone-url=https://git.jmbaur.com/$CGIT_REPO_URL
       enable-http-clone=1
       cache-root=/var/cache/cgit
       cache-size=1000
