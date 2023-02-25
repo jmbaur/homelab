@@ -136,6 +136,28 @@
         "type": "github"
       }
     },
+    "fenix": {
+      "inputs": {
+        "nixpkgs": [
+          "microvm",
+          "nixpkgs"
+        ],
+        "rust-analyzer-src": "rust-analyzer-src"
+      },
+      "locked": {
+        "lastModified": 1677219923,
+        "narHash": "sha256-gvNqjERVoc7f9NSBqZCA5RqAX3HjJA+KOhjN0jNaXw0=",
+        "owner": "nix-community",
+        "repo": "fenix",
+        "rev": "20d2fcd01df0c3db0429112ab3d911ee0bc3a3b5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "fenix",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -356,11 +378,11 @@
     },
     "flake-utils_3": {
       "locked": {
-        "lastModified": 1667395993,
-        "narHash": "sha256-nuEHfE/LcWyuSWnS8t12N1wc105Qtau+/OdUAjtQ0rA=",
+        "lastModified": 1676283394,
+        "narHash": "sha256-XX2f9c3iySLCw54rJ/CZs+ZK6IQy7GXNY4nSOyu2QG4=",
         "owner": "numtide",
         "repo": "flake-utils",
-        "rev": "5aed5285a952e0b949eb3ba02c12fa4fcfef535f",
+        "rev": "3db36a8b464d0c4532ba1c7dda728f4576d6d073",
         "type": "github"
       },
       "original": {
@@ -617,11 +639,11 @@
         "utils": "utils_2"
       },
       "locked": {
-        "lastModified": 1677104801,
-        "narHash": "sha256-2V5nKOYVFMYlseYdDKiEaww2xqcE0GtS1ax3SoUX99I=",
+        "lastModified": 1677276957,
+        "narHash": "sha256-/vhdNhQj2CWgqdfD2KLEZWDleOfen0t2EiaGiyivnJU=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "4295fdfa6b0005c32f2e1f0b732faf5810c1bc7f",
+        "rev": "664945b3e09b4551c4e63e16efebd493cf5eac74",
         "type": "github"
       },
       "original": {
@@ -653,17 +675,18 @@
     },
     "microvm": {
       "inputs": {
+        "fenix": "fenix",
         "flake-utils": "flake-utils_3",
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1675983032,
-        "narHash": "sha256-V7EsrHnOYZtrK6uyHa9sgSXZPpbjxHqMUT5iiMUD+tM=",
+        "lastModified": 1677288898,
+        "narHash": "sha256-FWlKhpGsoMOxYw5wzAuMWvBvJm/aajrVylFLndy1B+g=",
         "owner": "astro",
         "repo": "microvm.nix",
-        "rev": "5882c4da762d1d5414aaa599f8f671e58100bccf",
+        "rev": "7632603a876686f9c869b04d25911d4f5e7951c6",
         "type": "github"
       },
       "original": {
@@ -696,11 +719,11 @@
     },
     "nixos-hardware": {
       "locked": {
-        "lastModified": 1676924492,
-        "narHash": "sha256-78278eyP55JRFe7UCpmFwdkrTY6H2arzTpVeteWo8kM=",
+        "lastModified": 1677232326,
+        "narHash": "sha256-rAk2/80kLvA3yIMmSV86T1B4kNvwCFMSQ1FxXndaUB0=",
         "owner": "NixOS",
         "repo": "nixos-hardware",
-        "rev": "d24ea777c57b69c6b143cf11d83184ef71b0dbbf",
+        "rev": "2d44015779cced4eec9df5b8dab238b9f6312cb2",
         "type": "github"
       },
       "original": {
@@ -713,14 +736,15 @@
       "inputs": {
         "nixpkgs": [
           "nixpkgs"
-        ]
+        ],
+        "nixpkgs-avahi-deny-interfaces": "nixpkgs-avahi-deny-interfaces"
       },
       "locked": {
-        "lastModified": 1676323552,
-        "narHash": "sha256-MDNHUITIilQ1yUiKhUE/5D7cw4VTbNB+1h/95VGqFdo=",
+        "lastModified": 1677347342,
+        "narHash": "sha256-l+g0zRsapuHAZqJTG4wa179DgYRl06+BcWRm/WkjiW4=",
         "owner": "jmbaur",
         "repo": "nixos-router",
-        "rev": "d9c662f32a9b6dbaf3615a1129f7206f31e46951",
+        "rev": "12be328c1973237ba62aefc96154a0b91292310f",
         "type": "github"
       },
       "original": {
@@ -741,6 +765,22 @@
       "original": {
         "owner": "NixOS",
         "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs-avahi-deny-interfaces": {
+      "locked": {
+        "lastModified": 1677346460,
+        "narHash": "sha256-0/1jcsKlEXs8yMU2/dpGb5g3MP1UV66qyYF1IvyyusI=",
+        "owner": "jmbaur",
+        "repo": "nixpkgs",
+        "rev": "63d01d75dbeb16e5230d639cc79701b62aff0a39",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jmbaur",
+        "ref": "avahi-daemon-deny-interfaces",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -1090,6 +1130,23 @@
       "original": {
         "owner": "jmbaur",
         "repo": "runner-nix",
+        "type": "github"
+      }
+    },
+    "rust-analyzer-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1676976502,
+        "narHash": "sha256-D0l5hvE4IFUqspKeorawIlLQRMKqCkMAhZ58KjDXJl8=",
+        "owner": "rust-lang",
+        "repo": "rust-analyzer",
+        "rev": "27239fbb58a115915ffc1ce65ededc951eb00fd2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "rust-lang",
+        "ref": "nightly",
+        "repo": "rust-analyzer",
         "type": "github"
       }
     },
