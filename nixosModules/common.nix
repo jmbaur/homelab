@@ -59,6 +59,7 @@ with lib; {
         bind-key J command-prompt -p "join pane from:"  "join-pane -h -s '%%'"
         set-option -g allow-passthrough on
         set-option -g automatic-rename on
+        set-option -g detach-on-destroy off
         set-option -g focus-events on
         set-option -g renumber-windows on
         set-option -g set-clipboard on
