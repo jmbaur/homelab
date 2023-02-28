@@ -28,18 +28,9 @@
   };
   custom.remoteBoot.enable = false;
 
-
   users.mutableUsers = true;
 
   nixpkgs.config.allowUnfree = true;
-  environment.systemPackages = with pkgs; [
-    (weechat.override { configure = { ... }: { scripts = with pkgs.weechatScripts; [ weechat-matrix ]; }; })
-    (writeShellScriptBin "rdp" "${pkgs.freerdp}/bin/wlfreerdp /sec:tls /cert:tofu /v:laptop.work.home.arpa -grab-keyboard +auto-reconnect")
-    (writeShellScriptBin "work-browser" "${chromium-wayland}/bin/chromium --user-data-dir=$HOME/.config/chromium-work --proxy-server=socks5://localhost:9050")
-    freerdp
-    outlook-webapp
-    teams-webapp
-  ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

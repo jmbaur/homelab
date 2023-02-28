@@ -140,6 +140,7 @@ in
       shell = pkgs.fish;
       openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
       packages = with pkgs; [
+        (weechat.override { configure = { ... }: { scripts = with pkgs.weechatScripts; [ weechat-matrix ]; }; })
         age-plugin-yubikey
         configFiles
         gmni
