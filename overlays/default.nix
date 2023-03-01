@@ -43,13 +43,14 @@ inputs: with inputs; {
         bitwarden-bemenu = prev.callPackage ./bitwarden-bemenu.nix { };
         git-get = prev.callPackage ./git-get { };
         git-shell-commands = prev.callPackage ./git-shell-commands { };
+        ixio = prev.writeShellScriptBin "ixio" "${prev.curl}/bin/curl -F 'f:1=<-' ix.io";
         j = prev.callPackage ./j.nix { };
+        kinesis-kint41-jmbaur = prev.callPackage ./kinesis-kint41-jmbaur.nix { };
         macgen = prev.callPackage ./macgen.nix { };
         mirror-to-x = prev.callPackage ./mirror-to-x.nix { };
         pomo = prev.callPackage ./pomo { };
         v4l-show = prev.callPackage ./v4l-show.nix { };
         wip = prev.writeShellScriptBin "wip" ''git commit --no-verify --no-gpg-sign --all --message "WIP"; git push'';
-        ixio = prev.writeShellScriptBin "ixio" "${prev.curl}/bin/curl -F 'f:1=<-' ix.io";
 
         vimPlugins = prev.vimPlugins // {
           jmbaur-settings = prev.vimUtils.buildVimPlugin {

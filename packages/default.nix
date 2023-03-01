@@ -33,6 +33,7 @@ let
       j
       jmbaur-github-ssh-keys
       jmbaur-keybase-pgp-keys
+      kinesis-kint41-jmbaur
       macgen
       mirror-to-x
       neovim
