@@ -23,13 +23,10 @@ build:
 		.\#git-get \
 		.\#gobar \
 		.\#gosee \
-		.\#ipwatch \
 		.\#neovim \
 		.\#neovim-all-languages \
 		.\#pd-notify \
 		.\#pomo \
-		.\#runner-nix \
-		.\#webauthn-tiny \
 		.\#wezterm-jmbaur \
 		.\#xremap \
 		.\#yamlfmt
