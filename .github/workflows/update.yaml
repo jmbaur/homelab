@@ -10,10 +10,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Install Nix
-        uses: cachix/install-nix-action@v19
-        with:
-          extra_nix_config: |
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+        uses: DeterminateSystems/nix-installer-action@main
       - name: Update out of tree packages
         run: nix develop .\#ci --command sh -c "just update"
       - name: Create pull request
@@ -26,10 +23,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Install Nix
-        uses: cachix/install-nix-action@v19
-        with:
-          extra_nix_config: |
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+        uses: DeterminateSystems/nix-installer-action@main
       - name: Update flake.lock
         uses: DeterminateSystems/update-flake-lock@v16
         with:
