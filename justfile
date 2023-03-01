@@ -47,3 +47,8 @@ setup_pam_u2f:
 
 setup_yubikey:
 	ykman openpgp keys set-touch sig cached-fixed
+
+flash_keyboard:
+	#!/usr/bin/env bash
+	out=$(nix build --print-out-paths .#kinesis-kint41-jmbaur)
+	teensy-loader-cli -w -v --mcu=TEENSY40 $out/kinesis_kint41_jmbaur.hex
