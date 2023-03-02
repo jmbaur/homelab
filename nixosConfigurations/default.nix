@@ -1,6 +1,11 @@
 inputs:
 let
-  mkInstaller = { system, modules ? [ ] }: inputs.nixpkgs.lib.nixosSystem {
+  nixosSystem = args: inputs.nixpkgs.lib.nixosSystem (inputs.nixpkgs.lib.recursiveUpdate
+    {
+      modules = [{ nix.registry.nixpkgs.flake = inputs.nixpkgs; }];
+    }
+    args);
+  mkInstaller = { system, modules ? [ ] }: nixosSystem {
     inherit system;
     modules = [
       inputs.self.nixosModules.default
@@ -24,7 +29,7 @@ let
   };
 in
 {
-  artichoke = inputs.nixpkgs.lib.nixosSystem {
+  artichoke = nixosSystem {
     system = "aarch64-linux";
     modules = with inputs; [
       ./artichoke
@@ -35,7 +40,7 @@ in
     ];
   };
 
-  squash = inputs.nixpkgs.lib.nixosSystem {
+  squash = nixosSystem {
     system = "armv7l-linux";
     modules = with inputs; [
       ./squash
@@ -43,7 +48,7 @@ in
     ];
   };
 
-  carrot = inputs.nixpkgs.lib.nixosSystem {
+  carrot = nixosSystem {
     system = "x86_64-linux";
     modules = with inputs; [
       ./carrot
@@ -51,7 +56,7 @@ in
     ];
   };
 
-  beetroot = inputs.nixpkgs.lib.nixosSystem {
+  beetroot = nixosSystem {
     system = "x86_64-linux";
     modules = with inputs; [
       ./beetroot
@@ -64,7 +69,7 @@ in
     ];
   };
 
-  kale = inputs.nixpkgs.lib.nixosSystem {
+  kale = nixosSystem {
     system = "aarch64-linux";
     modules = with inputs; [
       ./kale
@@ -74,12 +79,12 @@ in
     ];
   };
 
-  fennel = inputs.nixpkgs.lib.nixosSystem {
+  fennel = nixosSystem {
     system = "aarch64-linux";
     modules = with inputs; [ self.nixosModules.default ./fennel ];
   };
 
-  lxc-test = inputs.nixpkgs.lib.nixosSystem {
+  lxc-test = nixosSystem {
     system = "aarch64-linux";
     modules = [
       "${inputs.nixpkgs}/nixos/modules/virtualisation/lxc-container.nix"
@@ -89,7 +94,7 @@ in
     ];
   };
 
-  netboot-test = inputs.nixpkgs.lib.nixosSystem {
+  netboot-test = nixosSystem {
     system = "aarch64-linux";
     modules = [
       ({ modulesPath, ... }: {
@@ -100,12 +105,12 @@ in
     ];
   };
 
-  potato = inputs.nixpkgs.lib.nixosSystem {
+  potato = nixosSystem {
     system = "x86_64-linux";
     modules = [ ./potato ];
   };
 
-  rhubarb = inputs.nixpkgs.lib.nixosSystem {
+  rhubarb = nixosSystem {
     system = "aarch64-linux";
     modules = with inputs; [
       ./rhubarb
@@ -115,7 +120,7 @@ in
     ];
   };
 
-  www = inputs.nixpkgs.lib.nixosSystem {
+  www = nixosSystem {
     system = "aarch64-linux";
     modules = with inputs; [
       ./www
@@ -125,7 +130,7 @@ in
     ];
   };
 
-  okra = inputs.nixpkgs.lib.nixosSystem {
+  okra = nixosSystem {
     system = "x86_64-linux";
     modules = with inputs; [ ./okra self.nixosModules.default ];
   };

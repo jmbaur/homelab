@@ -15,7 +15,7 @@ in
   deploy = pkgs.mkShell {
     buildInputs = (with pkgs; [
       (terraform.withPlugins (p: with p; [ aws cloudflare http sops ]))
-      # awscli2
+      awscli2
       deploy-rs
       flarectl
       just

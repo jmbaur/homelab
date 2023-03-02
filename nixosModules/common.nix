@@ -25,7 +25,6 @@ with lib; {
     console.useXkbConfig = true;
 
     nix = {
-      nixPath = mkForce [ "nixpkgs=${pkgs.path}" ];
       settings = {
         experimental-features = [ "nix-command" "flakes" "repl-flake" ];
         trusted-users = [ "@wheel" ];
