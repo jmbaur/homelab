@@ -13,8 +13,6 @@ with lib; {
   };
 
   config = mkIf cfg.enable {
-    services.xserver.xkbOptions = lib.mkDefault "ctrl:nocaps";
-
     users.mutableUsers = mkDefault false;
 
     boot.cleanTmpDir = mkDefault isNotContainer;
