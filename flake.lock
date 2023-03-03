@@ -703,11 +703,11 @@
         "nixpkgs-avahi-deny-interfaces": "nixpkgs-avahi-deny-interfaces"
       },
       "locked": {
-        "lastModified": 1677729542,
-        "narHash": "sha256-cVW6hiF+lnwWB2Asf+py7miNJhdqImTq0YLG46WnRFo=",
+        "lastModified": 1677868085,
+        "narHash": "sha256-l+zjnip9pfaQwAyRBb2zlfGBC4jRbFUp1OoiCus2vDw=",
         "owner": "jmbaur",
         "repo": "nixos-router",
-        "rev": "9fe4e320d30e115f39e17d468b82fa9041753205",
+        "rev": "8cf8fbe50776a0b8d228fc6c38c80d1597324533",
         "type": "github"
       },
       "original": {
