@@ -33,8 +33,8 @@
         "wg/iot/artichoke" = wgSecret;
         "wg/www/artichoke" = wgSecret;
         "wg/trusted/artichoke" = wgSecret;
-        "wg/iot/phone" = { group = config.users.users.wg-config-server.group; };
-        "wg/trusted/beetroot" = { group = config.users.users.wg-config-server.group; };
+        "wg/iot/phone" = { owner = config.users.users.wg-config-server.name; };
+        "wg/trusted/beetroot" = { owner = config.users.users.wg-config-server.name; };
       };
   };
 
