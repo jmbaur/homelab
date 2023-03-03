@@ -48,14 +48,6 @@ in
     ];
   };
 
-  carrot = nixosSystem {
-    system = "x86_64-linux";
-    modules = with inputs; [
-      ./carrot
-      self.nixosModules.default
-    ];
-  };
-
   beetroot = nixosSystem {
     system = "x86_64-linux";
     modules = with inputs; [
