@@ -31,10 +31,10 @@
       {
         ipwatch_env = { };
         "wg/iot/artichoke" = wgSecret;
-        "wg/iot/phone" = { };
         "wg/www/artichoke" = wgSecret;
         "wg/trusted/artichoke" = wgSecret;
-        "wg/trusted/beetroot" = { };
+        "wg/iot/phone" = { group = config.users.users.wg-config-server.group; };
+        "wg/trusted/beetroot" = { group = config.users.users.wg-config-server.group; };
       };
   };
 
