@@ -178,14 +178,14 @@ with lib;
         swayidle
         swaylock
         sway
-        (writeShellScriptBin "laptop-conditional-suspend" ''
+        (writeShellScriptBin "conditional-suspend" (lib.optionalString config.custom.laptop.enable ''
           if [[ "$(cat /sys/class/power_supply/AC/online)" -ne 1 ]]; then
             echo "laptop is not on AC, suspending"
             ${pkgs.systemd}/bin/systemctl suspend
           else
             echo "laptop is on AC, not suspending"
           fi
-        '')
+        ''))
       ];
       wantedBy = [ "sway-session.target" ];
       script =
@@ -197,7 +197,7 @@ with lib;
             timeout 300 '${lockCmd}' \
             timeout 600 'swaymsg "output * dpms off"' \
               resume 'swaymsg "output * dpms on"' \
-            timeout 900 'laptop-conditional-suspend' \
+            timeout 900 'conditional-suspend' \
             before-sleep '${lockCmd}' \
             lock '${lockCmd}' \
             after-resume 'swaymsg "output * dpms on"'
