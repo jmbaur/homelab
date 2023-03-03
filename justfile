@@ -47,5 +47,5 @@ setup_yubikey:
 
 flash_keyboard:
 	#!/usr/bin/env bash
-	out=$(nix build --print-out-paths .#kinesis-kint41-jmbaur)
-	teensy-loader-cli -w -v --mcu=TEENSY40 $out/kinesis_kint41_jmbaur.hex
+	out=$(nix build --print-out-paths '.#kinesis-kint41-jmbaur')
+	teensy-loader-cli -w -v --mcu=TEENSY40 "${out}/kinesis_kint41_jmbaur.hex"

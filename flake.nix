@@ -17,8 +17,6 @@
     ipwatch.url = "github:jmbaur/ipwatch";
     microvm.inputs.nixpkgs.follows = "nixpkgs";
     microvm.url = "github:astro/microvm.nix";
-    nil.inputs.nixpkgs.follows = "nixpkgs";
-    nil.url = "github:oxalica/nil";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
     nixos-router.inputs.nixpkgs.follows = "nixpkgs";
     nixos-router.url = "github:jmbaur/nixos-router";

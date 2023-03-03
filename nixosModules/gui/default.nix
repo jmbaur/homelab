@@ -57,7 +57,7 @@ with lib;
     services.pcscd.enable = true;
     services.power-profiles-daemon.enable = true;
     services.printing.enable = true;
-    services.udev.packages = [ pkgs.yubikey-personalization pkgs.teensy-udev-rules ];
+    services.udev.packages = [ pkgs.yubikey-personalization pkgs.qmk-udev-rules pkgs.teensy-udev-rules ];
     services.upower.enable = true;
     services.udisks2.enable = true;
 

@@ -10,7 +10,7 @@ in
     buildInputs = with pkgs; [ just jq nix-prefetch-scripts nix-update ];
   };
   setup = pkgs.mkShell {
-    buildInputs = with pkgs; [ just pam_u2f yubikey-manager teensy-loader-cli ];
+    buildInputs = with pkgs; [ teensy-loader-cli just pam_u2f yubikey-manager teensy-loader-cli ];
   };
   deploy = pkgs.mkShell {
     buildInputs = (with pkgs; [

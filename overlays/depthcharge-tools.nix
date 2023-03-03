@@ -1,20 +1,4 @@
-{ python3
-, fetchFromGitHub
-, vboot_reference
-, makeWrapper
-, lib
-, bzip2
-, dtc
-, file
-, gzip
-, lz4
-, lzma
-, lzop
-, ubootTools
-, xz
-, zstd
-, ...
-}:
+{ python3, fetchFromGitHub, vboot_reference, makeWrapper, lib, bzip2, dtc, file, gzip, lz4, lzma, lzop, ubootTools, xz, zstd, ... }:
 let
   binPath = lib.makeBinPath [
     bzip2
