@@ -68,7 +68,7 @@ in
     mountPoint = gitHome;
     device = "[${wg.kale.ip}]:/";
     fsType = "nfs";
-    options = [ "vers=4" ];
+    options = [ "vers=4" "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
   };
 
   users.users.git = {
