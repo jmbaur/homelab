@@ -154,8 +154,7 @@ inputs: with inputs; {
             ({ runCommand, qemu }: runCommand "qemu-aarch64.dtb" { depsBuildBuild = [ qemu ]; } ''
               qemu-system-aarch64 \
                 -M virt,secure=on,virtualization=on,dumpdtb=$out \
-                -cpu cortex-a53 -m 2G -nographic \
-                -drive format=raw,if=virtio,file=$(mktemp)
+                -cpu cortex-a53 -m 4096M -nographic
             '')
             { };
         };
