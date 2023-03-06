@@ -6,7 +6,7 @@ in
   options.custom.installer.enable = lib.mkEnableOption "installer";
   config = lib.mkIf cfg.enable {
     system.stateVersion = "23.05";
-    boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
+    boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_6_1;
     custom.disableZfs = true;
     systemd.services.sshd.wantedBy = lib.mkForce [ "multi-user.target" ];
     users.users.nixos.openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
