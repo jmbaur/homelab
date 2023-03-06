@@ -96,16 +96,6 @@ let
 
     passAsFile = [ "extraConfig" ];
 
-    # Workaround '-idirafter' ordering bug in staging-next:
-    #   https://github.com/NixOS/nixpkgs/pull/210004
-    # where libc '-idirafter' gets added after user's idirafter and
-    # breaks.
-    # TODO(trofi): remove it in staging once fixed in cc-wrapper.
-    preConfigure = ''
-      export NIX_CFLAGS_COMPILE_BEFORE_${lib.replaceStrings ["-" "."] ["_" "_"] buildPackages.stdenv.hostPlatform.config}=$(<${buildPackages.gcc7Stdenv.cc}/nix-support/libc-cflags)
-      export NIX_CFLAGS_COMPILE_BEFORE_${lib.replaceStrings ["-" "."] ["_" "_"] gcc7Stdenv.hostPlatform.config}=$(<${gcc7Stdenv.cc}/nix-support/libc-cflags)
-    '';
-
     configurePhase = ''
       runHook preConfigure
       make ${defconfig}
