@@ -10,6 +10,7 @@
       in
       {
         ipwatch_env = { };
+        "wg/mon/artichoke" = wgSecret;
         "wg/iot/artichoke" = wgSecret;
         "wg/www/artichoke" = wgSecret;
         "wg/trusted/artichoke" = wgSecret;
