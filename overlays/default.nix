@@ -169,7 +169,7 @@ inputs: with inputs; {
 
         mkFitImage = prev.callPackage ./fitimage { };
         buildCoreboot = prev.callPackage ./coreboot {
-          # built with meson, includes pkgconfig support
+          # built with meson, includes pkg-config support
           flashrom = final.flashrom-cros;
         };
         coreboot-qemu-x86 = final.buildCoreboot {

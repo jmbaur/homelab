@@ -5,5 +5,5 @@ in
 with pkgs;
 mkShell {
   inputsFrom = [ linux ];
-  nativeBuildInputs = [ pkgconfig ncurses ];
+  nativeBuildInputs = [ pkg-config ncurses ];
 }

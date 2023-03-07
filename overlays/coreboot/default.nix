@@ -1,4 +1,4 @@
-{ stdenv, fetchgit, pkgsBuildBuild, python3, pkgconfig, flashrom, openssl, ... }:
+{ stdenv, fetchgit, pkgsBuildBuild, python3, pkg-config, flashrom, openssl, ... }:
 { boardName, configfile, extraConfig ? "", extraCbfsCommands ? "", ... }:
 let
   toolchain-system = {
@@ -20,7 +20,7 @@ stdenv.mkDerivation {
     sha256 = "sha256-QvQ87mPnETNZL3GbMHHBAOxJFvRDUzIlXSiuLG7wxEw=";
   };
   depsBuildBuild = [ pkgsBuildBuild.stdenv.cc ];
-  nativeBuildInputs = [ python3 pkgconfig ];
+  nativeBuildInputs = [ python3 pkg-config ];
   buildInputs = [ flashrom openssl ];
   patches = [ ./memory-layout.patch ];
   postPatch = ''
