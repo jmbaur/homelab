@@ -948,11 +948,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1677932085,
-        "narHash": "sha256-+AB4dYllWig8iO6vAiGGYl0NEgmMgGHpy9gzWJ3322g=",
+        "lastModified": 1678111249,
+        "narHash": "sha256-ZTIbK7vthZwti5XeLZE+twkb4l44q01q2XoLMmmJe94=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "3c5319ad3aa51551182ac82ea17ab1c6b0f0df89",
+        "rev": "a028e2873d7fcf44e66b784b4ba061824315537f",
         "type": "github"
       },
       "original": {
@@ -1373,11 +1373,11 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1678134013,
-        "narHash": "sha256-qPKqeap0oT3S+prWdDchAu+Q2yiu1vN/94f1GT/lJ38=",
+        "lastModified": 1678149458,
+        "narHash": "sha256-Ddkd7O9UJFY/lwLsb9mLYFm+36b0bLr5pb1By6LaJZs=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "e388504afe352291be2452a820a97c19a0e7a9c8",
+        "rev": "d1a8c61978c550530955341ff3999fbb1bae0ed1",
         "type": "github"
       },
       "original": {
@@ -1426,11 +1426,11 @@
         "rust-overlay": "rust-overlay_4"
       },
       "locked": {
-        "lastModified": 1677982679,
-        "narHash": "sha256-hvOQ5xIttyULikNyxpPys97X8tM9gPjwXE8D9CUyRoo=",
+        "lastModified": 1678155420,
+        "narHash": "sha256-68wRHZGeQgTWfELwN2B37N1TpEYA42u8ovk0rACQDNg=",
         "owner": "jmbaur",
         "repo": "webauthn-tiny",
-        "rev": "39bb0a208f6829ba377fe40a5b4cd813e05c38c2",
+        "rev": "86903bf283d9ec3eb30e9856f005dbea1a83db80",
         "type": "github"
       },
       "original": {
