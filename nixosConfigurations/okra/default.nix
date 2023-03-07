@@ -3,10 +3,9 @@
 
   fileSystems."/".options = [ "noatime" "discard=async" "compress=zstd" ];
   fileSystems."/nix".options = [ "noatime" "discard=async" "compress=zstd" ];
-  fileSystems."/home".options = [ "noatime" "discard=async" "compress=zstd" ];
   zramSwap.enable = true;
 
-  boot.initrd.luks.devices."cryptroot".crypttabExtraOpts = [ "fido2-device=auto" ];
+  boot.initrd.luks.devices."cryptroot".crypttabExtraOpts = [ "tpm2-device=auto" ];
   boot.initrd.systemd.enable = true;
   boot.kernelPackages = pkgs.linuxPackages_6_1;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -18,19 +17,11 @@
 
   custom.basicNetwork.enable = true;
   custom.basicNetwork.hasWireless = false; # it actually does, but we don't use it
-  custom.dev.enable = true;
-  custom.gui.enable = true;
-  custom.remoteBuilders.aarch64builder.enable = true;
-  custom.users.jared.enable = true;
   custom.deployee = {
     enable = true;
     authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
   };
   custom.remoteBoot.enable = false;
-
-  users.mutableUsers = true;
-
-  nixpkgs.config.allowUnfree = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

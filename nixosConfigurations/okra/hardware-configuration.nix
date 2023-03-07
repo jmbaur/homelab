@@ -9,37 +9,30 @@
       (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "usbhid" "sd_mod" "rtsx_pci_sdmmc" ];
+  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
     {
-      device = "/dev/disk/by-uuid/6fcae2b9-b2f2-4511-ae8a-56d8be07e616";
+      device = "/dev/disk/by-uuid/7e7d227a-6cb4-41aa-9c6d-dff91e1d8750";
       fsType = "btrfs";
       options = [ "subvol=@" ];
     };
 
-  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/92de65aa-470e-4229-9312-80b5b6ea78cf";
+  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/b76874e4-44cb-49a6-b038-1a16aa5e9cc4";
 
   fileSystems."/nix" =
     {
-      device = "/dev/disk/by-uuid/6fcae2b9-b2f2-4511-ae8a-56d8be07e616";
+      device = "/dev/disk/by-uuid/7e7d227a-6cb4-41aa-9c6d-dff91e1d8750";
       fsType = "btrfs";
       options = [ "subvol=@nix" ];
     };
 
-  fileSystems."/home" =
-    {
-      device = "/dev/disk/by-uuid/6fcae2b9-b2f2-4511-ae8a-56d8be07e616";
-      fsType = "btrfs";
-      options = [ "subvol=@home" ];
-    };
-
   fileSystems."/boot" =
     {
-      device = "/dev/disk/by-uuid/BB22-99EC";
+      device = "/dev/disk/by-uuid/89CA-CE1B";
       fsType = "vfat";
     };
 
@@ -56,6 +49,4 @@
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-  # high-resolution display
-  hardware.video.hidpi.enable = lib.mkDefault true;
 }
