@@ -8,6 +8,14 @@
       package = pkgs.flashrom-cros;
     };
 
+    boot.kernelPatches = [{
+      name = "enable_spi_cr50_tpm";
+      patch = null;
+      extraStructuredConfig = {
+        TCG_TIS_SPI_CR50 = lib.kernel.yes;
+      };
+    }];
+
     specialisation.flashfriendly.configuration.boot.kernelParams = [ "iomem=relaxed" ];
   };
 }
