@@ -75,9 +75,9 @@
         job_name = "node";
         static_configs = [{
           targets = [
-            "artichoke.lan.home.arpa:${toString config.services.prometheus.exporters.node.port}"
-            "kale.lan.home.arpa:${toString config.services.prometheus.exporters.node.port}"
-            "rhubarb.lan.home.arpa:${toString config.services.prometheus.exporters.node.port}"
+            "artichoke.home.arpa:${toString config.services.prometheus.exporters.node.port}"
+            "kale.home.arpa:${toString config.services.prometheus.exporters.node.port}"
+            "rhubarb.home.arpa:${toString config.services.prometheus.exporters.node.port}"
           ];
         }];
       }
