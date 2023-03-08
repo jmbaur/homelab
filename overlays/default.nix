@@ -58,7 +58,7 @@ inputs: with inputs; {
             version = "unversioned";
             src = ./neovim/settings;
           };
-          inherit (out-of-tree) mini-nvim smartyank-nvim;
+          inherit (out-of-tree) smartyank-nvim;
         };
 
         neovim = prev.callPackage ./neovim { };
