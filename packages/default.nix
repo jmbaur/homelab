@@ -19,7 +19,6 @@ let
       cicada
       coredns-utils
       depthcharge-tools
-      discord-webapp
       edk2-uefi-coreboot-payload
       flarectl
       flashrom-cros
@@ -38,12 +37,8 @@ let
       mirror-to-x
       neovim
       neovim-all-languages
-      outlook-webapp
       pd-notify
       pomo
-      slack-webapp
-      spotify-webapp
-      teams-webapp
       u-rootInitramfs
       v4l-show
       wezterm-jmbaur

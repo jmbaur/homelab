@@ -35,12 +35,6 @@ local keys = {
 	{ key = "l", mods = "SHIFT|CTRL", action = wezterm.action.ShowLauncher },
 }
 
-local ssh_domains = {
-	{ name = "kale", remote_address = "kale.mgmt.home.arpa" },
-	{ name = "okra", remote_address = "okra.trusted.home.arpa" },
-	{ name = "work", remote_address = "dev.work.home.arpa", username = "jbaur" },
-}
-
 return {
 	adjust_window_size_when_changing_font_size = false,
 	audible_bell = "Disabled",
@@ -53,7 +47,6 @@ return {
 	hide_tab_bar_if_only_one_tab = true,
 	keys = keys,
 	mouse_bindings = mouse_bindings,
-	ssh_domains = ssh_domains,
 	tab_bar_at_bottom = false,
 	term = "wezterm",
 	use_fancy_tab_bar = false,

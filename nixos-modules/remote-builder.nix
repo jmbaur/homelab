@@ -20,13 +20,13 @@
       programs.ssh = {
         knownHostsFiles = [
           (pkgs.writeText "known_hosts" ''
-            kale.mgmt.home.arpa ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN6q44hTsu6FVYG5izJxymw33SZJRDMttHxrwNBqdSJl
+            kale.lan.home.arpa ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN6q44hTsu6FVYG5izJxymw33SZJRDMttHxrwNBqdSJl
           '')
         ];
         extraConfig = ''
           Host aarch64builder
           User builder
-          HostName kale.mgmt.home.arpa
+          HostName kale.lan.home.arpa
           IdentitiesOnly yes
           IdentityFile /etc/ssh/ssh_host_ed25519_key
         '';

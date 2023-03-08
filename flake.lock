@@ -757,11 +757,11 @@
         "pre-commit-hooks": "pre-commit-hooks_2"
       },
       "locked": {
-        "lastModified": 1678251311,
-        "narHash": "sha256-/lK5H4Ufx8wACWcMRQVDYInJ9eOxpwR5XeUw6dKukYU=",
+        "lastModified": 1678252035,
+        "narHash": "sha256-InL21UP2meIF/xriyos5feDQ+p6ToxVAzER1G2u+uQQ=",
         "owner": "jmbaur",
         "repo": "nixos-router",
-        "rev": "ce4bf651b068a7c9466a54125bc5587190b9e4af",
+        "rev": "bb94b5c51249a4ea06e1bbabc228d98949b87106",
         "type": "github"
       },
       "original": {

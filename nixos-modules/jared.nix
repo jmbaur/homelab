@@ -202,15 +202,6 @@ in
         enable = true;
         matchBlocks = {
           "*.home.arpa".forwardAgent = true;
-          work = {
-            user = "jbaur";
-            hostname = "dev.work.home.arpa";
-            dynamicForwards = [{ port = 9050; }];
-            localForwards = [
-              { bind.port = 1025; host.address = "localhost"; host.port = 1025; }
-              { bind.port = 8000; host.address = "localhost"; host.port = 8000; }
-            ];
-          };
         };
       };
     };
