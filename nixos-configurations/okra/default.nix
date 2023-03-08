@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ config, lib, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
 
   fileSystems."/".options = [ "noatime" "discard=async" "compress=zstd" ];
@@ -15,8 +15,37 @@
 
   networking.hostName = "okra";
 
-  custom.basicNetwork.enable = true;
-  custom.basicNetwork.hasWireless = false; # it actually does, but we don't use it
+  networking.useDHCP = lib.mkForce false;
+  systemd.network.enable = true;
+
+  systemd.network.netdevs.wg0 = {
+    enable = false;
+    netdevConfig = {
+      Name = "wg0";
+      Kind = "wireguard";
+    };
+    wireguardConfig.PrivateKeyFile = "%d/wg0";
+    wireguardPeers = [{
+      AllowedIPs = [ ];
+      Endpoint = "vpn.jmbaur.com:51820";
+      PublicKey = "";
+    }];
+  };
+
+  # public key: zxPDYDdDg8SyHvNhhG3zTq/Ms0tHvnaipdBNGtoXV3c=
+  systemd.services.systemd-networkd.serviceConfig.SetCredentialEncrypted = "wg0:k6iUCUh0RJCQyvL8k8q1UyAAAAABAAAADAAAABAAAACJMUd67QrvL9Gmav4AAAAAgAAAAAAAAAALACMA8AAAACAAAAAAngAgd8ATpDnd/btNq2M/Qt8zoWjJy0Zyt1TqLcv+6qIbqQIAEKVbpNq/J4709E/vrfxQyw0xPL61Y6gJLL91UNvG32p6UFLFdEHwm2BS9EHjZTZlr87gF/SuowA/uUCERXezckpw4unlEk+TlyPQVdJel2sS3MHFpP9XQshYm6qJgPQNgiMttgl2AJJWALaUAouta7+r39I3avZqXNG2AE4ACAALAAAAEgAg9gpQ/Gm1MtY4hMLk8o8+Hnp3rKcrPO2Qh2rw9k+Fz+IAEAAgXKWcIqo+gf9eJ7PmbEZ1aE5Glrgpqjh2Rgto/5bCIrT2ClD8abUy1jiEwuTyjz4eenespys87ZCHavD2T4XP4gAAAAB/m+2QtpEUPNhTnabfB+LT9cWGmGxEFzm4RmjRLjr9Mq8Uge0WEubzvNuy9n42sd2Lg6K73cQ7vp4b0y/gQ4yFrjNZWdZLB61QMFPIGWXYlYhdedo=";
+
+  systemd.network.networks = {
+    wg0 = {
+      name = config.systemd.network.netdevs.wg0.netdevConfig.Name;
+      address = [ ];
+    };
+    ether = {
+      name = "en*";
+      DHCP = "yes";
+    };
+  };
+
   custom.deployee = {
     enable = true;
     authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];

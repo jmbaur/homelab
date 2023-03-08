@@ -124,7 +124,10 @@ in
 
   okra = nixosSystem {
     system = "x86_64-linux";
-    modules = with inputs; [ ./okra self.nixosModules.default ];
+    modules = with inputs; [
+      ./okra
+      self.nixosModules.default
+    ];
   };
 
   installer_iso_x86_64-linux = mkInstallerISO { system = "x86_64-linux"; };
