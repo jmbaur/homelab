@@ -191,7 +191,7 @@ in
                   ("<!DOCTYPE html>"
                     + (lib.concatMapStrings (host: ''<a href="/${host}/browse">${host}</a><br />'') logHosts));
               }
-              { name = "favicon.ico"; path = "${./logs_favicon.ico}"; }
+              { name = "favicon.ico"; path = "${./logs-favicon.ico}"; }
             ];
           };
         };

@@ -51,7 +51,7 @@ let
       "${cn913x_build}/patches/u-boot/0017-uboot-add-support-cn9131-cf-solidwan.patch"
       "${cn913x_build}/patches/u-boot/0018-uboot-add-support-bldn-mbv.patch"
       "${cn913x_build}/patches/u-boot/0019-uboot-cn9131-cf-solidwan-add-carrier-eeprom.patch"
-      ./ramdisk_addr_r.patch
+      ./ramdisk-addr-r.patch
     ];
     postPatch = ''
       patchShebangs tools

@@ -64,7 +64,7 @@ inputs: with inputs; {
         neovim = prev.callPackage ./neovim { };
         neovim-all-languages = prev.callPackage ./neovim { supportAllLanguages = true; };
 
-        mkWaylandVariant = prev.callPackage ./mkWaylandVariant.nix { };
+        mkWaylandVariant = prev.callPackage ./mk-wayland-variant.nix { };
         brave-wayland = final.mkWaylandVariant
           prev.brave;
         chromium-wayland = final.mkWaylandVariant
@@ -81,7 +81,7 @@ inputs: with inputs; {
           prev.slack;
 
         mkWebApp = prev.callPackage
-          ./mkWebApp.nix
+          ./mk-web-app.nix
           { chromium = final.chromium-wayland; };
         discord-webapp = final.mkWebApp
           "discord"
@@ -136,12 +136,12 @@ inputs: with inputs; {
           '';
           extraMeta.bootDevice = "spi";
         };
-        ubootCN9130_CF_Pro = prev.callPackage ./ubootCN9130_CF_Pro.nix { inherit cn913x_build; };
+        ubootCN9130_CF_Pro = prev.callPackage ./uboot-cn9130-cf-pro.nix { inherit cn913x_build; };
 
-        linux_cn913x = prev.callPackage ./kernels/linux_cn913x.nix { inherit cn913x_build; };
-        linux_mediatek = prev.callPackage ./kernels/linux_mediatek.nix { };
-        linux_mvebu_v7 = prev.callPackage ./kernels/linux_mvebu_v7.nix { };
-        linux_orangepi-5 = prev.callPackage ./kernels/linux_orangepi-5.nix { };
+        linux_cn913x = prev.callPackage ./kernels/linux-cn913x.nix { inherit cn913x_build; };
+        linux_mediatek = prev.callPackage ./kernels/linux-mediatek.nix { };
+        linux_mvebu_v7 = prev.callPackage ./kernels/linux-mvebu-v7.nix { };
+        linux_orangepi-5 = prev.callPackage ./kernels/linux-orangepi-5.nix { };
 
         linuxboot-qemu-aarch64-fitimage = final.mkFitImage {
           boardName = "qemu-aarch64";

@@ -8,7 +8,7 @@ inputs: {
       self.overlays.default
     ];
     imports = [
-      ./basic_network.nix
+      ./basic-network.nix
       ./btrfs.nix
       ./chromebook.nix
       ./common.nix
@@ -22,10 +22,10 @@ inputs: {
       ./installer.nix
       ./jared.nix
       ./laptop.nix
-      ./remote_boot.nix
-      ./remote_builder.nix
+      ./remote-boot.nix
+      ./remote-builder.nix
       ./server.nix
-      ./wg_www_peer.nix
+      ./wg-www-peer.nix
       ./wireless.nix
       ./zfs.nix
       inputs.home-manager.nixosModules.home-manager
