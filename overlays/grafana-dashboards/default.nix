@@ -7,14 +7,6 @@ let
       name = "coredns.json";
       options.path = "${./coredns.json}";
     }
-    {
-      name = "wireguard.json";
-      options.path = "${./wireguard.json}";
-    }
-    {
-      name = "kea-dhcp.json";
-      options.path = "${./kea-dhcp.json}";
-    }
   ] ++ (map
     (d: with d; {
       inherit name;

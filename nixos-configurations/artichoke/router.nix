@@ -52,9 +52,7 @@
         9153 # coredns
         9430 # corerad
         config.services.prometheus.exporters.blackbox.port
-        config.services.prometheus.exporters.kea.port
         config.services.prometheus.exporters.node.port
-        config.services.prometheus.exporters.wireguard.port
       ];
       ${config.systemd.network.networks.www.name}.allowedTCPPorts = [
         19531 # systemd-journal-gatewayd

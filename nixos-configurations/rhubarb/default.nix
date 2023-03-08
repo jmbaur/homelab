@@ -89,14 +89,6 @@
         job_name = "coredns";
         static_configs = [{ targets = [ "artichoke.mgmt.home.arpa:9153" ]; }];
       }
-      {
-        job_name = "wireguard";
-        static_configs = [{ targets = [ "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.wireguard.port}" ]; }];
-      }
-      {
-        job_name = "kea";
-        static_configs = [{ targets = [ "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.kea.port}" ]; }];
-      }
       # {
       #   job_name = "blackbox";
       #   static_configs = [{ targets = [ "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.blackbox.port}" ]; }];
