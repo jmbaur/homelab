@@ -18,8 +18,6 @@
         "wg/trusted/beetroot" = { owner = config.users.users.wg-config-server.name; };
       };
 
-    systemd.network.enable = true;
-
     systemd.network.netdevs.br0.netdevConfig = {
       Name = "br0";
       Kind = "bridge";

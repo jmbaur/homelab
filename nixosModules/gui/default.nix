@@ -53,13 +53,16 @@ with lib;
 
     programs.ssh.startAgent = true;
 
-    services.avahi.enable = true;
     services.pcscd.enable = true;
     services.power-profiles-daemon.enable = true;
     services.printing.enable = true;
     services.udev.packages = [ pkgs.yubikey-personalization pkgs.qmk-udev-rules pkgs.teensy-udev-rules ];
     services.upower.enable = true;
     services.udisks2.enable = true;
+    services.avahi.enable = true;
+    services.resolved.extraConfig = ''
+      MulticastDNS=no
+    '';
 
     services.greetd = {
       enable = true;

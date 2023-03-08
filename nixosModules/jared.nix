@@ -34,7 +34,7 @@ let
       };
     }
     {
-      name = "etc/xdg/gtk-4.0/settings.ini";
+      name = "etc/gtk-4.0/settings.ini";
       path = (pkgs.formats.ini { }).generate "settings.ini" {
         Settings = {
           gtk-icon-theme-name = data.gtkIconTheme;
@@ -43,7 +43,7 @@ let
       };
     }
     {
-      name = "etc/xdg/gtk-3.0/settings.ini";
+      name = "etc/gtk-3.0/settings.ini";
       path = (pkgs.formats.ini { }).generate "settings.ini" {
         Settings = {
           gtk-icon-theme-name = data.gtkIconTheme;
