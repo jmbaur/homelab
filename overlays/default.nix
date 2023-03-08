@@ -53,9 +53,8 @@ inputs: with inputs; {
         wip = prev.writeShellScriptBin "wip" ''git commit --no-verify --no-gpg-sign --all --message "WIP"; git push'';
 
         vimPlugins = prev.vimPlugins // {
-          jmbaur-settings = prev.vimUtils.buildVimPlugin {
-            pname = "jmbaur-settings";
-            version = "unversioned";
+          jmbaur-settings = prev.vimUtils.buildVimPluginFrom2Nix {
+            name = "jmbaur-settings";
             src = ./neovim/settings;
           };
           inherit (out-of-tree) smartyank-nvim;
