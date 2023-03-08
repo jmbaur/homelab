@@ -17,7 +17,7 @@ nixpkgs.lib.genAttrs
           program = pkgs.writeShellApplication {
             name = "bootstrap-beetroot";
             runtimeInputs = with pkgs; [ yq-go ];
-            text = builtins.readFile ../nixosConfigurations/beetroot/bootstrap.bash;
+            text = builtins.readFile ../nixos-configurations/beetroot/bootstrap.bash;
           };
         in
         "${program}/bin/bootstrap-beetroot";

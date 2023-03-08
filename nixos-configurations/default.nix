@@ -167,7 +167,7 @@ in
   installer_sd_image_kukui_fennel14 = mkInstaller {
     system = "aarch64-linux";
     modules = [
-      ../nixosModules/depthcharge/sd-image.nix
+      ../nixos-modules/depthcharge/sd-image.nix
       ({ ... }: {
         boot.loader.depthcharge.enable = true;
         boot.initrd.systemd.enable = true;
@@ -195,7 +195,7 @@ in
   installer_sd_image_asurada_spherion = mkInstaller {
     system = "aarch64-linux";
     modules = [
-      ../nixosModules/depthcharge/sd-image.nix
+      ../nixos-modules/depthcharge/sd-image.nix
       ({ ... }: {
         boot.loader.depthcharge.enable = true;
         boot.initrd.systemd.enable = true;

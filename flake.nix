@@ -57,8 +57,8 @@
     deploy = import ./deploy.nix inputs;
     devShells = import ./devShells.nix inputs;
     formatter = import ./formatter.nix inputs;
-    nixosConfigurations = import ./nixosConfigurations inputs;
-    nixosModules = import ./nixosModules inputs;
+    nixosConfigurations = import ./nixos-configurations inputs;
+    nixosModules = import ./nixos-modules inputs;
     overlays = import ./overlays inputs;
     packages = import ./packages inputs;
     apps = import ./apps inputs;
