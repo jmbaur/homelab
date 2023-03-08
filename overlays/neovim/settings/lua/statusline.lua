@@ -17,7 +17,7 @@ end
 
 function StatusLine()
 	if vim.g.statusline_winid == vim.fn.win_getid() then
-		return "%<%f %h%m%r%=%24.(%y%{luaeval('DiagnosticStatus()')}%) %8.(%l,%c%) %P"
+		return "%<%f %{FugitiveStatusline()}%m%r%=%24.(%y%{luaeval('DiagnosticStatus()')}%) %8.(%l,%c%) %P"
 	else
 		return "%<%f%=%m"
 	end
