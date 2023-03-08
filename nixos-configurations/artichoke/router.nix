@@ -11,11 +11,7 @@
       {
         ipwatch_env = { };
         "wg/mon/artichoke" = wgSecret;
-        "wg/iot/artichoke" = wgSecret;
         "wg/www/artichoke" = wgSecret;
-        "wg/trusted/artichoke" = wgSecret;
-        "wg/iot/phone" = { owner = config.users.users.wg-config-server.name; };
-        "wg/trusted/beetroot" = { owner = config.users.users.wg-config-server.name; };
       };
 
     systemd.network.netdevs.br0.netdevConfig = {
@@ -44,7 +40,8 @@
       };
     };
 
-    router.wan = config.systemd.network.links."10-wan".linkConfig.Name;
+    router.lanInterface = config.systemd.network.netdevs.br0.netdevConfig.Name;
+    router.wanInterface = config.systemd.network.links."10-wan".linkConfig.Name;
 
     router.firewall.interfaces = {
       ${config.systemd.network.networks.lan.name}.allowedTCPPorts = [ 22 ];
