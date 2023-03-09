@@ -11,7 +11,7 @@
     wg-mesh = {
       enable = true;
       peers.artichoke.extraOptions = {
-        Endpoint = "artichoke.home.arpa:51820"; # "vpn.jmbaur.com:51820";
+        Endpoint = "vpn.jmbaur.com:51820";
         PersistentKeepalive = 25;
       };
     };
