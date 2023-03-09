@@ -44,7 +44,7 @@ in
         ];
       in
       ''
-        add rule inet firewall ip6 saddr ${wg.okra.ip} meta l4proto tcp th dport { ${monPorts} } accept
+        ip6 saddr ${wg.okra.ip} meta l4proto tcp th dport { ${monPorts} } accept
       '';
 
     router.firewall.interfaces.${config.systemd.network.networks.lan.name}.allowedTCPPorts = [ 22 ];
