@@ -1,4 +1,8 @@
-{ config, lib, pkgs, ... }: {
+{ config, lib, pkgs, ... }:
+let
+  wg = import ../../nixos-modules/mesh-network/inventory.nix;
+in
+{
   config = lib.mkIf config.router.enable {
     sops.defaultSopsFile = ./secrets.yaml;
     sops.secrets = {
@@ -28,16 +32,22 @@
     router.wanInterface = config.systemd.network.links."10-wan".linkConfig.Name;
 
     router.firewall.allowedUDPPorts = [ config.systemd.network.netdevs.wg0.wireguardConfig.ListenPort ];
-    router.firewall.interfaces = {
-      ${config.systemd.network.networks.lan.name}.allowedTCPPorts = [ 22 ];
-      ${config.systemd.network.networks.wg0.name}.allowedTCPPorts = [
-        19531 # systemd-journal-gatewayd
-        9153 # coredns
-        9430 # corerad
-        config.services.prometheus.exporters.blackbox.port
-        config.services.prometheus.exporters.node.port
-      ];
-    };
+
+    router.firewall.extraInputRules =
+      let
+        monPorts = lib.concatMapStringsSep ", " toString [
+          19531 # systemd-journal-gatewayd
+          9153 # coredns
+          9430 # corerad
+          config.services.prometheus.exporters.blackbox.port
+          config.services.prometheus.exporters.node.port
+        ];
+      in
+      ''
+        add rule inet firewall ip6 saddr ${wg.okra.ip} meta l4proto tcp th dport { ${monPorts} } accept
+      '';
+
+    router.firewall.interfaces.${config.systemd.network.networks.lan.name}.allowedTCPPorts = [ 22 ];
 
     services.ipwatch = {
       enable = true;
