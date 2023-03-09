@@ -15,7 +15,7 @@ with lib;
         (path: {
           name = "share/alsa/ucm2/mt8183_da7219_r/${baseNameOf path}";
           inherit path;
-        }) [ ./HiFi.conf ./mt8183_da7219_rt1015p.conf ]))
+        }) [ ./hifi.conf ./mt8183-da7219-rt1015p.conf ]))
     ];
 
     hardware.chromebook.enable = true;

@@ -22,10 +22,10 @@ inputs: {
       ./installer.nix
       ./jared.nix
       ./laptop.nix
+      ./mesh-network
       ./remote-boot.nix
       ./remote-builder.nix
       ./server.nix
-      ./wg-www-peer.nix
       ./wireless.nix
       ./zfs.nix
       inputs.home-manager.nixosModules.home-manager

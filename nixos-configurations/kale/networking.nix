@@ -3,9 +3,14 @@
     useDHCP = lib.mkForce false;
     hostName = "kale";
     firewall = {
-      interfaces.eth0.allowedTCPPorts = lib.mkForce [ config.services.prometheus.exporters.node.port 80 ];
-      interfaces.www.allowedTCPPorts = lib.mkForce [ 19531 ];
+      interfaces.eth0.allowedTCPPorts = [ 22 ];
+      interfaces.wg0.allowedTCPPorts = [ config.services.prometheus.exporters.node.port 19531 ];
     };
+  };
+
+  custom.wg-mesh = {
+    enable = true;
+    peers.okra = { };
   };
 
   systemd.network = {
@@ -28,12 +33,11 @@
         linkConfig.Name = "sfpplus4";
       };
     };
-    networks = {
-      mgmt = {
-        name = "eth0";
-        DHCP = "yes";
-        dhcpV4Config.ClientIdentifier = "mac";
-      };
+
+    networks.ether = {
+      name = "eth0";
+      DHCP = "yes";
+      dhcpV4Config.ClientIdentifier = "mac";
     };
   };
 }

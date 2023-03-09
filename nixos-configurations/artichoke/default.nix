@@ -23,7 +23,6 @@
       authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
     };
     disableZfs = true;
-    wgWwwPeer.enable = true;
   };
 
   networking.hostName = "artichoke";

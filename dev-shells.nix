@@ -22,7 +22,7 @@ in
     ]);
   };
   default = pkgs.mkShell {
-    buildInputs = (with pkgs; [ bashInteractive just sops nix-update ]);
+    buildInputs = (with pkgs; [ bashInteractive just deploy-rs sops ]);
     inherit (inputs.pre-commit.lib.${system}.run {
       src = ./.;
       hooks = {

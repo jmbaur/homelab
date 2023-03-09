@@ -13,36 +13,35 @@
 
   services.fwupd.enable = true;
 
+  sops.defaultSopsFile = ./secrets.yaml;
+  sops.secrets."wg0" = { mode = "0640"; group = config.users.groups.systemd-network.name; };
+
   networking.hostName = "okra";
+
+  networking.firewall = {
+    interfaces = {
+      wg0.allowedTCPPorts = lib.mkForce [
+        config.services.grafana.settings.server.http_port
+        19531 # systemd-journal-gatewayd
+      ];
+    };
+  };
 
   networking.useDHCP = lib.mkForce false;
   systemd.network.enable = true;
 
-  systemd.network.netdevs.wg0 = {
-    enable = false;
-    netdevConfig = {
-      Name = "wg0";
-      Kind = "wireguard";
-    };
-    wireguardConfig.PrivateKeyFile = "%d/wg0";
-    wireguardPeers = [{
-      AllowedIPs = [ ];
-      Endpoint = "vpn.jmbaur.com:51820";
-      PublicKey = "";
-    }];
+  systemd.network.networks.ether = {
+    name = "en*";
+    DHCP = "yes";
   };
 
-  # public key: zxPDYDdDg8SyHvNhhG3zTq/Ms0tHvnaipdBNGtoXV3c=
-  systemd.services.systemd-networkd.serviceConfig.SetCredentialEncrypted = "wg0:k6iUCUh0RJCQyvL8k8q1UyAAAAABAAAADAAAABAAAACJMUd67QrvL9Gmav4AAAAAgAAAAAAAAAALACMA8AAAACAAAAAAngAgd8ATpDnd/btNq2M/Qt8zoWjJy0Zyt1TqLcv+6qIbqQIAEKVbpNq/J4709E/vrfxQyw0xPL61Y6gJLL91UNvG32p6UFLFdEHwm2BS9EHjZTZlr87gF/SuowA/uUCERXezckpw4unlEk+TlyPQVdJel2sS3MHFpP9XQshYm6qJgPQNgiMttgl2AJJWALaUAouta7+r39I3avZqXNG2AE4ACAALAAAAEgAg9gpQ/Gm1MtY4hMLk8o8+Hnp3rKcrPO2Qh2rw9k+Fz+IAEAAgXKWcIqo+gf9eJ7PmbEZ1aE5Glrgpqjh2Rgto/5bCIrT2ClD8abUy1jiEwuTyjz4eenespys87ZCHavD2T4XP4gAAAAB/m+2QtpEUPNhTnabfB+LT9cWGmGxEFzm4RmjRLjr9Mq8Uge0WEubzvNuy9n42sd2Lg6K73cQ7vp4b0y/gQ4yFrjNZWdZLB61QMFPIGWXYlYhdedo=";
-
-  systemd.network.networks = {
-    wg0 = {
-      name = config.systemd.network.netdevs.wg0.netdevConfig.Name;
-      address = [ ];
-    };
-    ether = {
-      name = "en*";
-      DHCP = "yes";
+  custom.wg-mesh = {
+    enable = true;
+    peers.kale.extraOptions.Endpoint = "kale.home.arpa:51820";
+    peers.artichoke.extraOptions.Endpoint = "artichoke.home.arpa:51820";
+    peers.www.extraOptions = {
+      Endpoint = "www.jmbaur.com:51820";
+      PersistentKeepalive = 25;
     };
   };
 
@@ -51,6 +50,106 @@
     authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
   };
   custom.remoteBoot.enable = false;
+
+  services.prometheus = {
+    enable = true;
+    exporters = {
+      node = {
+        enable = true;
+        enabledCollectors = [ "systemd" ];
+      };
+    };
+    # TODO(jared): Use DNS-SD?
+    scrapeConfigs = [
+      {
+        job_name = "node";
+        static_configs = [{
+          targets = [
+            "artichoke.home.arpa:${toString config.services.prometheus.exporters.node.port}"
+            "kale.home.arpa:${toString config.services.prometheus.exporters.node.port}"
+            "rhubarb.home.arpa:${toString config.services.prometheus.exporters.node.port}"
+          ];
+        }];
+      }
+      {
+        job_name = "prometheus";
+        static_configs = [{ targets = [ "rhubarb.home.arpa:${toString config.services.prometheus.port}" ]; }];
+      }
+      {
+        job_name = "coredns";
+        static_configs = [{ targets = [ "artichoke.home.arpa:9153" ]; }];
+      }
+      # {
+      #   job_name = "blackbox";
+      #   static_configs = [{ targets = [ "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.blackbox.port}" ]; }];
+      # }
+      # {
+      #   job_name = "icmpv4_connectivity";
+      #   metrics_path = "/probe";
+      #   params.module = [ "icmpv4_connectivity" ];
+      #   static_configs = [{ targets = [ "he.net" "iana.org" ]; }];
+      #   relabel_configs = [
+      #     {
+      #       source_labels = [ "__address__" ];
+      #       target_label = "__param_target";
+      #     }
+      #     {
+      #       source_labels = [ "__param_target" ];
+      #       target_label = "instance";
+      #     }
+      #     {
+      #       target_label = "__address__";
+      #       replacement = "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.blackbox.port}";
+      #     }
+      #   ];
+      # }
+      # {
+      #   job_name = "icmpv6_connectivity";
+      #   metrics_path = "/probe";
+      #   params.module = [ "icmpv6_connectivity" ];
+      #   static_configs = [{ targets = [ "he.net" "iana.org" ]; }];
+      #   relabel_configs = [
+      #     {
+      #       source_labels = [ "__address__" ];
+      #       target_label = "__param_target";
+      #     }
+      #     {
+      #       source_labels = [ "__param_target" ];
+      #       target_label = "instance";
+      #     }
+      #     {
+      #       target_label = "__address__";
+      #       replacement = "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.blackbox.port}";
+      #     }
+      #   ];
+      # }
+    ];
+  };
+
+  services.journald.enableHttpGateway = true;
+
+  services.grafana = {
+    enable = true;
+    settings = {
+      auth.disable_login_form = true;
+      "auth.anonymous".enabled = true;
+      server = {
+        domain = "mon.jmbaur.com";
+        http_addr = "[::]";
+      };
+    };
+    declarativePlugins = [ ];
+    provision = {
+      enable = true;
+      datasources.settings.datasources = [{
+        url = "http://localhost:${toString config.services.prometheus.port}";
+        type = "prometheus";
+        name = "prometheus";
+        isDefault = true;
+      }];
+      dashboards.settings.providers = pkgs.grafana-dashboards.dashboards;
+    };
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

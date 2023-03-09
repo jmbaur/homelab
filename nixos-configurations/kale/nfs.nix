@@ -1,11 +1,11 @@
 { config, ... }:
 let
-  wg = import ../www/wg.nix;
+  wg = import ../../nixos-modules/mesh-network/inventory.nix;
   nfsGitDir = "/srv/nfs/git";
   gitDir = "/var/lib/git";
 in
 {
-  networking.firewall = {
+  networking.firewall.interfaces.wg0 = {
     allowedTCPPorts = [ 111 2049 ];
     allowedUDPPorts = [ 111 2049 ];
   };
@@ -30,7 +30,7 @@ in
   services.nfs.server = {
     enable = true;
     exports = ''
-      ${nfsGitDir}  ${wg.www.ip}(rw,no_root_squash,no_subtree_check,fsid=0)
+      ${nfsGitDir} ${wg.www.ip}(rw,no_root_squash,no_subtree_check,fsid=0)
     '';
   };
 }

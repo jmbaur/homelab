@@ -127,6 +127,7 @@ in
     modules = with inputs; [
       ./okra
       self.nixosModules.default
+      sops-nix.nixosModules.sops
     ];
   };
 

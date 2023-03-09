@@ -1,6 +1,6 @@
 { config, lib, pkgs, modulesPath, ... }:
 let
-  wg = import ./wg.nix;
+  wg = import ../../nixos-modules/mesh-network/inventory.nix;
   gitHome = "/var/lib/git";
   gitShellCommands = "${gitHome}/git-shell-commands";
 in
@@ -22,14 +22,9 @@ in
 
   sops = {
     defaultSopsFile = ./secrets.yaml;
-    secrets = {
-      session_secret = { };
-      passwords = { };
-      "wg/www/www" = {
-        mode = "0640";
-        group = config.users.groups.systemd-network.name;
-      };
-    };
+    secrets.session_secret = { };
+    secrets.passwords = { };
+    secrets.wg0 = { mode = "0640"; group = config.users.groups.systemd-network.name; };
   };
 
   services.fail2ban = {
@@ -48,20 +43,22 @@ in
 
   networking = {
     hostName = "www";
+    useDHCP = false;
     firewall = {
-      allowedTCPPorts = [ 80 443 ];
-      allowedUDPPorts = [ config.networking.wireguard.interfaces.www.listenPort ];
+      allowedTCPPorts = [ 22 80 443 ];
+      allowedUDPPorts = [ config.systemd.network.netdevs.wg0.wireguardConfig.ListenPort ];
     };
-    wireguard.interfaces.www = {
-      privateKeyFile = config.sops.secrets."wg/www/www".path;
-      listenPort = 51820;
-      ips = [ (wg.www.ip + "/64") ];
-      peers = [
-        { allowedIPs = [ (wg.kale.ip + "/128") ]; publicKey = wg.kale.publicKey; }
-        { allowedIPs = [ (wg.rhubarb.ip + "/128") ]; publicKey = wg.rhubarb.publicKey; }
-        { allowedIPs = [ (wg.artichoke.ip + "/128") ]; publicKey = wg.artichoke.publicKey; }
-      ];
-    };
+  };
+
+  systemd.network.networks.physical = {
+    name = "en*";
+    DHCP = true;
+  };
+
+  custom.wg-mesh = {
+    enable = true;
+    peers.okra = { };
+    peers.kale = { };
   };
 
   fileSystems.git = {
@@ -93,7 +90,7 @@ in
       enable = true;
       virtualHost = "auth.jmbaur.com";
       useACMEHost = "jmbaur.com";
-      protectedVirtualHosts = [ "logs.jmbaur.com" "mon.jmbaur.com" ];
+      protectedVirtualHosts = [ "mon.jmbaur.com" ];
     };
   };
 
@@ -117,13 +114,13 @@ in
         forceSSL = true;
         useACMEHost = "jmbaur.com";
         locations."/" = {
-          proxyPass = "http://[${wg.rhubarb.ip}]:3000";
+          proxyPass = "http://[${wg.okra.ip}]:3000";
           extraConfig = ''
             proxy_set_header Host $host;
           '';
         };
         locations."/api/live" = {
-          proxyPass = "http://[${wg.rhubarb.ip}]:3000";
+          proxyPass = "http://[${wg.okra.ip}]:3000";
           extraConfig = ''
             proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
@@ -169,32 +166,6 @@ in
           fastcgi_pass        ${config.services.fcgiwrap.socketType}:${config.services.fcgiwrap.socketAddress};
         '';
       };
-      "logs.jmbaur.com" =
-        let
-          logHosts = [ "artichoke" "rhubarb" "www" "kale" ];
-          locationBlocks = {
-            locations = lib.listToAttrs (map
-              (host: lib.nameValuePair "/${host}/" {
-                proxyPass = "http://[${wg.${host}.ip}]:19531/";
-              })
-              logHosts);
-          };
-        in
-        lib.recursiveUpdate locationBlocks {
-          forceSSL = true;
-          useACMEHost = "jmbaur.com";
-          locations."/" = {
-            root = pkgs.linkFarm "root" [
-              {
-                name = "index.html";
-                path = pkgs.writeText "index.html"
-                  ("<!DOCTYPE html>"
-                    + (lib.concatMapStrings (host: ''<a href="/${host}/browse">${host}</a><br />'') logHosts));
-              }
-              { name = "favicon.ico"; path = "${./logs-favicon.ico}"; }
-            ];
-          };
-        };
       "jmbaur.com" = {
         default = true;
         enableACME = true;

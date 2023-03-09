@@ -23,13 +23,8 @@
 
   sops = {
     defaultSopsFile = ./secrets.yaml;
-    secrets = {
-      "nix-cache-signing-key" = { owner = config.users.users.builder.name; group = config.users.users.builder.group; };
-      "wg/www/kale" = {
-        mode = "0640";
-        group = config.users.groups.systemd-network.name;
-      };
-    };
+    secrets.nix-cache-signing-key = { owner = config.users.users.builder.name; group = config.users.users.builder.group; };
+    secrets.wg0 = { mode = "0640"; group = config.users.groups.systemd-network.name; };
   };
 
   nix.settings.trusted-users = [ config.users.users.builder.name ];
@@ -51,7 +46,6 @@
       enable = true;
       authorizedKeyFiles = config.custom.deployee.authorizedKeyFiles;
     };
-    wgWwwPeer.enable = true;
   };
 
   services.runner = {
