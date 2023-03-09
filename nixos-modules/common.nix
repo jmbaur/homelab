@@ -55,6 +55,8 @@ with lib; {
       plugins = with pkgs.tmuxPlugins; [ logging ];
       terminal = "tmux-256color";
       extraConfig = ''
+        bind-key -T copy-mode-vi v send-keys -X begin-selection
+        bind-key -T copy-mode-vi y send-keys -X copy-selection
         bind-key J command-prompt -p "join pane from:"  "join-pane -h -s '%%'"
         set-option -g allow-passthrough on
         set-option -g automatic-rename on
