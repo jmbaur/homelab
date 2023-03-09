@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 let
   cfg = config.custom.wg-mesh;
 
@@ -45,6 +45,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    environment.systemPackages = [ pkgs.wireguard-tools ];
     systemd.network.netdevs.wg0 = {
       netdevConfig = {
         Name = "wg0";

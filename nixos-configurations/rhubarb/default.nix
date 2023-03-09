@@ -47,7 +47,5 @@
     };
   };
 
-  environment.systemPackages = [ pkgs.wireguard-tools ];
-
   system.stateVersion = "23.05";
 }
