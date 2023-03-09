@@ -67,13 +67,12 @@
           targets = [
             "artichoke.home.arpa:${toString config.services.prometheus.exporters.node.port}"
             "kale.home.arpa:${toString config.services.prometheus.exporters.node.port}"
-            "rhubarb.home.arpa:${toString config.services.prometheus.exporters.node.port}"
           ];
         }];
       }
       {
         job_name = "prometheus";
-        static_configs = [{ targets = [ "rhubarb.home.arpa:${toString config.services.prometheus.port}" ]; }];
+        static_configs = [{ targets = [ "okra.home.arpa:${toString config.services.prometheus.port}" ]; }];
       }
       {
         job_name = "coredns";
