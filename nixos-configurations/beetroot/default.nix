@@ -38,6 +38,7 @@
     remoteBuilders.aarch64builder.enable = true;
     wg-mesh = {
       enable = true;
+      dns = true;
       peers.artichoke.extraConfig.Endpoint = "vpn.jmbaur.com:51820";
     };
   };

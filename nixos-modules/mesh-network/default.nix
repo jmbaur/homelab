@@ -7,6 +7,15 @@ let
 
   inventory = import ./inventory.nix;
   host = inventory."${cfg.name}";
+
+  corednsConfigFile = pkgs.writeText "wg-mesh.Corefile" ''
+    internal:1053 {
+      bind lo
+      hosts {
+        ${lib.concatMapStringsSep "\n    " ({ name, ...}: "${inventory.${name}.ip} ${name}.internal") (lib.attrValues cfg.peers) }
+      }
+    }
+  '';
 in
 {
 
@@ -17,6 +26,7 @@ in
       default = config.networking.hostName;
       description = mdDoc "The name of the host";
     };
+    dns = mkEnableOption "setup DNS for peers of this node";
     peers = mkOption {
       type = types.attrsOf (types.submodule ({ name, config, ... }: {
         options = {
@@ -106,6 +116,27 @@ in
     systemd.network.networks.wg0 = {
       name = config.systemd.network.netdevs.wg0.netdevConfig.Name;
       address = [ (host.ip + "/64") ];
+      dns = [ "[::1]:1053" ];
+      domains = [ "internal" ];
+    };
+
+    systemd.services.wg-mesh-coredns = lib.mkIf cfg.dns {
+      description = "Coredns wg-mesh dns server";
+      after = [ "network.target" ];
+      wantedBy = [ "multi-user.target" ];
+      partOf = [ "sys-subsystem-net-devices-wg0.device" ];
+      serviceConfig = {
+        PermissionsStartOnly = true;
+        LimitNPROC = 512;
+        LimitNOFILE = 1048576;
+        CapabilityBoundingSet = "cap_net_bind_service";
+        AmbientCapabilities = "cap_net_bind_service";
+        NoNewPrivileges = true;
+        DynamicUser = true;
+        ExecStart = "${lib.getBin config.services.coredns.package}/bin/coredns -conf=${corednsConfigFile}";
+        ExecReload = "${pkgs.coreutils}/bin/kill -SIGUSR1 $MAINPID";
+        Restart = "on-failure";
+      };
     };
 
     networking.firewall.extraInputRules = (lib.concatMapStrings

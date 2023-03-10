@@ -37,6 +37,7 @@
 
   custom.wg-mesh = {
     enable = true;
+    dns = true;
     peers.kale.extraConfig.Endpoint = "kale.home.arpa:51820";
     peers.artichoke.extraConfig.Endpoint = "artichoke.home.arpa:51820";
     peers.www.extraConfig = {
