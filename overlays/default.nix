@@ -57,7 +57,6 @@ inputs: with inputs; {
             name = "jmbaur-settings";
             src = ./neovim/settings;
           };
-          inherit (out-of-tree) smartyank-nvim;
         };
 
         neovim = prev.callPackage ./neovim { };
