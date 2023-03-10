@@ -139,6 +139,12 @@ in
       };
     };
 
+    networking.firewall.extraForwardRules = (lib.concatMapStrings
+      (ip: ''
+        ${if isIPv6 ip then "ip6" else "ip"} saddr ${ip} accept
+      '')
+      cfg.firewall.trustedIPs);
+
     networking.firewall.extraInputRules = (lib.concatMapStrings
       (ip: ''
         ${if isIPv6 ip then "ip6" else "ip"} saddr ${ip} accept
