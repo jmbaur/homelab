@@ -80,7 +80,7 @@
       }
       # {
       #   job_name = "blackbox";
-      #   static_configs = [{ targets = [ "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.blackbox.port}" ]; }];
+      #   static_configs = [{ targets = [ "artichoke.home.arpa:${toString config.services.prometheus.exporters.blackbox.port}" ]; }];
       # }
       # {
       #   job_name = "icmpv4_connectivity";
@@ -98,7 +98,7 @@
       #     }
       #     {
       #       target_label = "__address__";
-      #       replacement = "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.blackbox.port}";
+      #       replacement = "artichoke.home.arpa:${toString config.services.prometheus.exporters.blackbox.port}";
       #     }
       #   ];
       # }
@@ -118,7 +118,7 @@
       #     }
       #     {
       #       target_label = "__address__";
-      #       replacement = "artichoke.mgmt.home.arpa:${toString config.services.prometheus.exporters.blackbox.port}";
+      #       replacement = "artichoke.home.arpa:${toString config.services.prometheus.exporters.blackbox.port}";
       #     }
       #   ];
       # }

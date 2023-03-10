@@ -1,11 +1,11 @@
 keys:
   - &jmbaur_pgp D4A0692874AA71B7F1281491BB8667EA7EB08143
   - &artichoke age1n8w79x4tzq8ywhr8c6tx0ct2v032ndud2y65xqglhw56eazzvauqa8v37p
-  - &beetroot age1pqlhd0c6eze47wl7s7zm5sqrpln4g50l592crz4sr35x5f7shg6sx49wtz
+  - &beetroot age1wsy0k8zvvkt4rfcyfa3lqr8m3z4rx6y0snar78amm5604y0mr9aqyanlvf
   - &kale age1smqw9zensjnzrsqdlc7avf2d5qcxrp3755030e5uvtvv4c3phfcq8dzr5e
   - &rhubarb age1gr6ezp2sytvwh4arpw8xwmezx59x9evdfr86sfr9kcayp500hskse7cksq
   - &www age1y8n3ppl6pp9xy0pkuwjku7jc5xzje4nufy70hw526fs6re0czg9sapa3uq
-  # - &okra TODO
+  - &okra age17jejydtff70wy3ptdlpxm384dhf4xss7tnknuqrjhtv34w2yu53s5r5ec0
   # TODO(jared): for when sops is compatible with age plugins
   # - &yubikey5cnfc age1yubikey1q20xxhpyk00m3ezajg3769jpmgwkvasq4dzutg75jq96fytnlcmxs9ltmga
   # - &yubikey5nfc age1yubikey1q0tf5gp52t3smx6zduwyjnurw4cgjlqdm58a9dj6430e8mtrfexfg586p8p
@@ -24,7 +24,7 @@ creation_rules:
     age: *rhubarb
   - path_regex: nixosConfigurations/okra/secrets.yaml
     pgp: *jmbaur_pgp
-    # age: *okra
+    age: *okra
   - path_regex: nixosConfigurations/beetroot/secrets.yaml
     pgp: *jmbaur_pgp
     age: *beetroot
