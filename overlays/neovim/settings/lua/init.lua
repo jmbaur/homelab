@@ -9,6 +9,7 @@ if #vim.api.nvim_list_uis() > 0 then
 	require("gosee").setup()
 	require("launcher")
 	require("lsp")
+	require("mini.tabline").setup({ show_icons = false, set_vim_settings = false })
 	require("mini.trailspace").setup({})
 	require("run").setup()
 	require("sitter")
