@@ -10,25 +10,25 @@ keys:
   # - &yubikey5cnfc age1yubikey1q20xxhpyk00m3ezajg3769jpmgwkvasq4dzutg75jq96fytnlcmxs9ltmga
   # - &yubikey5nfc age1yubikey1q0tf5gp52t3smx6zduwyjnurw4cgjlqdm58a9dj6430e8mtrfexfg586p8p
 creation_rules:
-  - path_regex: nixosConfigurations/artichoke/secrets.yaml
+  - path_regex: nixos-configurations/artichoke/secrets.yaml
     pgp: *jmbaur_pgp
     age: *artichoke
-  - path_regex: nixosConfigurations/www/secrets.yaml
+  - path_regex: nixos-configurations/www/secrets.yaml
     pgp: *jmbaur_pgp
     age: *www
-  - path_regex: nixosConfigurations/kale/secrets.yaml
+  - path_regex: nixos-configurations/kale/secrets.yaml
     pgp: *jmbaur_pgp
     age: *kale
-  - path_regex: nixosConfigurations/rhubarb/secrets.yaml
+  - path_regex: nixos-configurations/rhubarb/secrets.yaml
     pgp: *jmbaur_pgp
     age: *rhubarb
-  - path_regex: nixosConfigurations/okra/secrets.yaml
+  - path_regex: nixos-configurations/okra/secrets.yaml
     pgp: *jmbaur_pgp
     age: *okra
-  - path_regex: nixosConfigurations/beetroot/secrets.yaml
+  - path_regex: nixos-configurations/beetroot/secrets.yaml
     pgp: *jmbaur_pgp
     age: *beetroot
-  # catch-all
+    # catch-all
   - pgp: *jmbaur_pgp
 # TODO(jared): for when sops is compatible with age plugins
 #     - age:

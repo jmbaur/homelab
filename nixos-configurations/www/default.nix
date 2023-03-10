@@ -24,7 +24,7 @@ in
     defaultSopsFile = ./secrets.yaml;
     secrets.session_secret = { };
     secrets.passwords = { };
-    secrets.wg0 = { mode = "0640"; group = config.users.groups.systemd-network.name; };
+    secrets.wg0 = { };
   };
 
   services.fail2ban = {

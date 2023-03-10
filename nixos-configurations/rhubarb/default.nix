@@ -10,7 +10,7 @@
     };
     wg-mesh = {
       enable = true;
-      peers.artichoke.extraOptions = {
+      peers.artichoke.extraConfig = {
         Endpoint = "vpn.jmbaur.com:51820";
         PersistentKeepalive = 25;
       };

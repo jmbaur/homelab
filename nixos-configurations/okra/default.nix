@@ -37,9 +37,9 @@
 
   custom.wg-mesh = {
     enable = true;
-    peers.kale.extraOptions.Endpoint = "kale.home.arpa:51820";
-    peers.artichoke.extraOptions.Endpoint = "artichoke.home.arpa:51820";
-    peers.www.extraOptions = {
+    peers.kale.extraConfig.Endpoint = "kale.home.arpa:51820";
+    peers.artichoke.extraConfig.Endpoint = "artichoke.home.arpa:51820";
+    peers.www.extraConfig = {
       Endpoint = "www.jmbaur.com:51820";
       PersistentKeepalive = 25;
     };

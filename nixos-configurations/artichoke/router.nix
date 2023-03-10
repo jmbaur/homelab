@@ -17,8 +17,9 @@ in
 
     custom.wg-mesh = {
       enable = true;
-      peers.rhubarb = { };
+      peers.beetroot = { };
       peers.okra = { };
+      peers.rhubarb = { };
     };
 
     systemd.network.networks = (lib.genAttrs
@@ -45,6 +46,10 @@ in
       in
       ''
         ip6 saddr ${wg.okra.ip} meta l4proto tcp th dport { ${monPorts} } accept
+      '' +
+      # Allow all traffic from beetroot
+      ''
+        ip6 saddr ${wg.beetroot.ip} accept
       '';
 
     router.firewall.interfaces.${config.systemd.network.networks.lan.name}.allowedTCPPorts = [ 22 ];

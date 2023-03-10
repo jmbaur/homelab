@@ -27,37 +27,38 @@
   hardware.chromebook.enable = true;
   networking.hostName = "beetroot";
 
-  users.mutableUsers = true;
   custom = {
     dev.enable = true;
     gui.enable = true;
     laptop.enable = true;
     users.jared = {
       enable = true;
-      # passwordFile = config.sops.secrets.jared_password.path;
+      passwordFile = config.sops.secrets.jared_password.path;
     };
     remoteBuilders.aarch64builder.enable = true;
+    wg-mesh = {
+      enable = true;
+      peers.artichoke.extraConfig.Endpoint = "vpn.jmbaur.com:51820";
+    };
   };
+
+  systemd.network.networks.wg0.linkConfig.ActivationPolicy = "manual";
 
   nixpkgs.config.allowUnfree = true;
 
-  # security.pam.u2f = {
-  # enable = true;
-  # cue = true;
-  # origin = "pam://homelab";
-  # authFile = config.sops.secrets.pam_u2f_authfile.path;
-  # };
+  security.pam.u2f = {
+    enable = true;
+    cue = true;
+    origin = "pam://homelab";
+    authFile = config.sops.secrets.pam_u2f_authfile.path;
+  };
 
-  # sops = {
-  # defaultSopsFile = ./secrets.yaml;
-  # secrets = {
-  # pam_u2f_authfile = { };
-  # jared_password.neededForUsers = true;
-  # "rdp/domain".owner = config.users.users.jared.name;
-  # "rdp/user".owner = config.users.users.jared.name;
-  # "rdp/password".owner = config.users.users.jared.name;
-  # };
-  # };
+  sops = {
+    defaultSopsFile = ./secrets.yaml;
+    secrets.wg0 = { };
+    secrets.pam_u2f_authfile = { };
+    secrets.jared_password.neededForUsers = true;
+  };
 
   home-manager.users.jared = { config, ... }: {
     services.kanshi = {
