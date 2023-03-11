@@ -36,7 +36,7 @@
   # networking.interfaces.lan6.useDHCP = lib.mkDefault true;
   # networking.interfaces.sfpplus.useDHCP = lib.mkDefault true;
   # networking.interfaces.wan.useDHCP = lib.mkDefault true;
-  # networking.interfaces.wlP1p1s0.useDHCP = lib.mkDefault true;
+  # networking.interfaces.wlp1s0.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
   powerManagement.cpuFreqGovernor = lib.mkDefault "ondemand";
