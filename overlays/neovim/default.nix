@@ -1,5 +1,5 @@
 { supportAllLanguages ? false
-, languageSupport ? lib.genAttrs [ "c" "go" "html" "latex" "lua" "markdown" "nix" "python" "rust" "shell" "toml" "typescript" "yaml" "zig" ] (_: supportAllLanguages)
+, languageSupport ? lib.genAttrs [ "c" "go" "haskell" "html" "latex" "lua" "markdown" "nix" "python" "rust" "shell" "toml" "typescript" "yaml" "zig" ] (_: supportAllLanguages)
 , clang-tools
 , deno
 , fd
@@ -7,6 +7,9 @@
 , go-tools
 , gofumpt
 , gopls
+, ghc
+, haskell-language-server
+, ormolu
 , html-tidy
 , lib
 , lua-language-server
@@ -71,6 +74,7 @@ wrapNeovimUnstable neovim-unwrapped (config // {
       binPath = lib.makeBinPath ([ fd git ripgrep skim tree-sitter ]
         ++ (lib.optionals languageSupport.c [ clang-tools ])
         ++ (lib.optionals languageSupport.go [ go-tools gofumpt gopls ])
+        ++ (lib.optionals languageSupport.haskell [ ghc haskell-language-server ormolu ])
         ++ (lib.optionals languageSupport.html [ html-tidy ])
         ++ (lib.optionals languageSupport.latex [ (texlive.combine { inherit (texlive) scheme-minimal latexindent; }) ])
         ++ (lib.optionals languageSupport.lua [ lua-language-server ])
