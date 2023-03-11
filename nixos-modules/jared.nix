@@ -164,7 +164,7 @@ in
         wireguard-tools
         zip
       ];
-      extraGroups = [ "dialout" "wheel" ]
+      extraGroups = [ "dialout" "wheel" "plugdev" ]
         ++ (lib.optional config.networking.networkmanager.enable "networkmanager")
         ++ (lib.optional config.programs.adb.enable "adbusers")
         ++ (lib.optional config.programs.flashrom.enable "plugdev")

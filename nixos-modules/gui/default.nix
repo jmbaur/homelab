@@ -53,6 +53,9 @@ with lib;
 
     programs.ssh.startAgent = true;
 
+    # ensure the plugdev group exists
+    users.groups.plugdev = { };
+
     services.pcscd.enable = true;
     services.power-profiles-daemon.enable = true;
     services.printing.enable = true;
