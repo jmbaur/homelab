@@ -39,6 +39,7 @@ let
       neovim-all-languages
       pd-notify
       pomo
+      stevenblack-blocklist
       u-rootInitramfs
       v4l-show
       wezterm-jmbaur

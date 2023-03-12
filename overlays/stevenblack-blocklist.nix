@@ -1,9 +1,9 @@
 { fetchFromGitHub }:
 fetchFromGitHub rec {
   pname = "stevenblack-blocklist";
-  version = "3.12.9";
+  version = "3.12.13";
   owner = "stevenblack";
   repo = "hosts";
   rev = version;
-  sha256 = "sha256-yw6Vm413yMEy3MNH3qW7ff5QrWjx7a2T8QNms3KDx0o=";
+  sha256 = "sha256-UARPP46L+11HTeh3uvuFfb3JadShMIgiZR9mJCh9bmw=";
 }
