@@ -3,6 +3,7 @@ rec {
   cursorTheme = "Adwaita";
   gtkIconTheme = cursorTheme;
   gtkTheme = "${gtkIconTheme}-dark";
+  swaylockFlags = [ "--daemonize" "--indicator-caps-lock" "--show-keyboard-layout" "--color" "#222222" ];
   colors = {
     modus-vivendi = {
       background = "000000";

@@ -1,8 +1,8 @@
 { config, lib, pkgs, systemConfig, ... }:
 let
   cfg = config.custom.gui;
-  data = import ../gui/data.nix;
-  lockerCommand = "${pkgs.swaylock}/bin/swaylock --daemonize --indicator-caps-lock --show-keyboard-layout --color '#222222'";
+  guiData = import ../gui/data.nix;
+  lockerCommand = "${pkgs.swaylock}/bin/swaylock ${lib.escapeShellArgs guiData.swaylockFlags}";
 in
 with lib; {
   options.custom.gui.enable = mkOption {
@@ -15,7 +15,7 @@ with lib; {
       enable = false;
       theme = "Modus Vivendi";
       font = {
-        name = data.font;
+        name = guiData.font;
         size = 16;
       };
       settings = {
@@ -28,9 +28,16 @@ with lib; {
 
     home.pointerCursor = {
       package = pkgs.gnome-themes-extra;
-      name = data.cursorTheme;
+      name = guiData.cursorTheme;
       size = mkDefault 24;
       x11.enable = true;
+    };
+
+    gtk = {
+      enable = true;
+      theme = { package = pkgs.gnome-themes-extra; name = guiData.gtkTheme; };
+      iconTheme = { package = pkgs.gnome-themes-extra; name = guiData.gtkIconTheme; };
+      gtk4 = removeAttrs config.gtk.gtk3 [ "bookmarks" "extraCss" "waylandSupport" ];
     };
 
     qt = {
@@ -38,7 +45,7 @@ with lib; {
       platformTheme = "gtk";
       style = {
         package = pkgs.adwaita-qt;
-        name = lib.toLower data.gtkTheme;
+        name = lib.toLower guiData.gtkTheme;
       };
     };
 
@@ -129,7 +136,7 @@ with lib; {
             { title = "^pipe:xwayland-mirror$"; }
           ];
           fonts = {
-            names = [ data.font ];
+            names = [ guiData.font ];
             size = 12.0;
           };
           terminal = "${pkgs.wezterm-jmbaur}/bin/wezterm-gui";

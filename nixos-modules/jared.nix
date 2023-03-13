@@ -34,24 +34,6 @@ let
       };
     }
     {
-      name = "etc/gtk-4.0/settings.ini";
-      path = (pkgs.formats.ini { }).generate "settings.ini" {
-        Settings = {
-          gtk-icon-theme-name = data.gtkIconTheme;
-          gtk-theme-name = data.gtkTheme;
-        };
-      };
-    }
-    {
-      name = "etc/gtk-3.0/settings.ini";
-      path = (pkgs.formats.ini { }).generate "settings.ini" {
-        Settings = {
-          gtk-icon-theme-name = data.gtkIconTheme;
-          gtk-theme-name = data.gtkTheme;
-        };
-      };
-    }
-    {
       name = "etc/xdg/alacritty/alacritty.yml";
       path = (pkgs.formats.yaml { }).generate "alacritty.yml" {
         live_config_reload = false;

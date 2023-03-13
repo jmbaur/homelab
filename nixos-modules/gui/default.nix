@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 let
   cfg = config.custom.gui;
-  data = import ./data.nix;
+  guiData = import ./data.nix;
 in
 with lib;
 {
@@ -75,7 +75,7 @@ with lib;
     programs.wshowkeys.enable = true;
     environment.variables.BEMENU_OPTS = escapeShellArgs [
       "--ignorecase"
-      "--fn=${data.font}"
+      "--fn=${guiData.font}"
       "--line-height=30"
     ];
 
@@ -196,7 +196,7 @@ with lib;
       wantedBy = [ "sway-session.target" ];
       script =
         let
-          lockCmd = ''swaylock --daemonize --indicator-caps-lock --show-keyboard-layout --color "#222222"'';
+          lockCmd = "swaylock ${lib.escapeShellArgs guiData.swaylockFlags}";
         in
         ''
           swayidle -w \
