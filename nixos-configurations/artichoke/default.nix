@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }: {
+{ config, pkgs, ... }: {
   imports = [ ./router.nix ./hardware-configuration.nix ];
 
   programs.flashrom.enable = true;
@@ -26,6 +26,8 @@
   };
 
   networking.hostName = "artichoke";
+
+  services.openssh.openFirewall = false;
 
   system.stateVersion = "23.05";
 }
