@@ -17,6 +17,8 @@ with lib; {
 
     users.mutableUsers = mkDefault false;
 
+    networking.nftables.enable = mkDefault true;
+
     boot.cleanTmpDir = mkDefault isNotContainer;
     boot.loader.grub.configurationLimit = mkDefault 50;
     boot.loader.systemd-boot.configurationLimit = mkDefault 50;
