@@ -18,7 +18,6 @@ let
   '';
 in
 {
-
   options.custom.wg-mesh = with lib; {
     enable = mkEnableOption "wireguard mesh network node";
     name = mkOption {
@@ -28,7 +27,7 @@ in
     };
     dns = mkEnableOption "setup DNS for peers of this node";
     peers = mkOption {
-      type = types.attrsOf (types.submodule ({ name, config, ... }: {
+      type = types.attrsOf (types.submodule ({ name, ... }: {
         options = {
           name = mkOption {
             type = types.str;
@@ -138,6 +137,11 @@ in
         Restart = "on-failure";
       };
     };
+
+    assertions = [{
+      assertion = config.networking.firewall.nftables.enable;
+      message = "nftables must be enabled";
+    }];
 
     networking.firewall.extraForwardRules = (lib.concatMapStrings
       (ip: ''
