@@ -139,7 +139,7 @@ in
     };
 
     assertions = [{
-      assertion = config.networking.firewall.nftables.enable;
+      assertion = config.networking.nftables.enable;
       message = "nftables must be enabled";
     }];
 
