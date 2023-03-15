@@ -136,20 +136,20 @@ with lib;
 
     systemd.user.services.yubikey-touch-detector = {
       description = "Yubikey Touch Detector";
-      after = [ "sway-session.target" ];
-      partOf = [ "sway-session.target" ];
+      after = [ "graphical-session.target" ];
+      partOf = [ "graphical-session.target" ];
       serviceConfig.ExecStart = "${pkgs.yubikey-touch-detector}/bin/yubikey-touch-detector --libnotify";
-      wantedBy = [ "sway-session.target" ];
+      wantedBy = [ "graphical-session.target" ];
     };
 
     systemd.user.services.clipman = {
       description = "Clipboard manager";
       documentation = [ "https://github.com/yory8/clipman" ];
-      after = [ "sway-session.target" ];
-      partOf = [ "sway-session.target" ];
+      after = [ "graphical-session.target" ];
+      partOf = [ "graphical-session.target" ];
       path = [ pkgs.wl-clipboard ];
       serviceConfig.ExecStart = "${pkgs.wl-clipboard}/bin/wl-paste --type text/plain --watch ${pkgs.clipman}/bin/clipman store";
-      wantedBy = [ "sway-session.target" ];
+      wantedBy = [ "graphical-session.target" ];
     };
 
     systemd.user.sockets.wob = {
@@ -163,30 +163,30 @@ with lib;
     systemd.user.services.wob = {
       description = "A lightweight overlay volume/backlight/progress/anything bar for Wayland";
       documentation = [ "https://github.com/francma/wob" ];
-      after = [ "sway-session.target" ];
-      partOf = [ "sway-session.target" ];
+      after = [ "graphical-session.target" ];
+      partOf = [ "graphical-session.target" ];
       unitConfig.ConditionEnvironment = "WAYLAND_DISPLAY";
       serviceConfig = {
         StandardInput = "socket";
         ExecStart = "${pkgs.wob}/bin/wob";
       };
-      wantedBy = [ "sway-session.target" ];
+      wantedBy = [ "graphical-session.target" ];
     };
 
     systemd.user.services.gammastep = {
       description = "Gamma adjuster";
       documentation = [ "https://gitlab.com/chinstrap/gammastep" ];
       wants = [ "geoclue-agent.service" ];
-      after = [ "sway-session.target" "geoclue-agent.service" ];
-      partOf = [ "sway-session.target" ];
+      after = [ "graphical-session.target" "geoclue-agent.service" ];
+      partOf = [ "graphical-session.target" ];
       serviceConfig.ExecStart = "${pkgs.gammastep}/bin/gammastep -l geoclue2";
-      wantedBy = [ "sway-session.target" ];
+      wantedBy = [ "graphical-session.target" ];
     };
 
     systemd.user.services.swayidle = {
       description = "Idle management daemon for Wayland";
       documentation = [ "https://github.com/swaywm/swayidle" ];
-      partOf = [ "sway-session.target" ];
+      partOf = [ "graphical-session.target" ];
       path = with pkgs; [
         bash # needs a shell in path
         swayidle
@@ -201,7 +201,7 @@ with lib;
           fi
         ''))
       ];
-      wantedBy = [ "sway-session.target" ];
+      wantedBy = [ "graphical-session.target" ];
       script =
         let
           lockCmd = "swaylock ${lib.escapeShellArgs guiData.swaylockFlags}";
