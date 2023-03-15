@@ -2,7 +2,6 @@
 let
   cfg = config.custom.gui;
   guiData = import ../gui/data.nix;
-  lockerCommand = "${pkgs.swaylock}/bin/swaylock ${lib.escapeShellArgs guiData.swaylockFlags}";
 in
 with lib; {
   options.custom.gui.enable = mkOption {
@@ -140,7 +139,7 @@ with lib; {
             "${mod}+7" = "workspace number 7";
             "${mod}+8" = "workspace number 8";
             "${mod}+9" = "workspace number 9";
-            "${mod}+Control+l" = "exec ${lockerCommand}";
+            "${mod}+Control+l" = "exec loginctl lock-session";
             "${mod}+Control+space" = "exec ${pkgs.mako}/bin/makoctl dismiss --all";
             "${mod}+Down" = "focus down";
             "${mod}+Left" = "focus left";

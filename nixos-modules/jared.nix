@@ -1,9 +1,53 @@
 { lib, config, pkgs, ... }:
 let
   cfg = config.custom.users.jared;
-  data = import ./gui/data.nix;
-  colors = data.colors.modus-vivendi;
+  guiData = import ./gui/data.nix;
+  colors = guiData.colors.modus-vivendi;
   configFiles = pkgs.linkFarm "jared-config-files" [
+    {
+      name = "etc/xdg/yambar/yambar.yml";
+      path = (pkgs.formats.ini { }).generate "yambar.yml" {
+        main = {
+          font = "${guiData.font}:size=10";
+          icon-theme = guiData.gtkIconTheme;
+          terminal = "wezterm start";
+        };
+        key-bindings = {
+          cancel = "Control+bracketleft Escape";
+          delete-prev = "BackSpace Control+h";
+          delete-prev-word = "Mod1+BackSpace Control+BackSpace Control+w";
+          delete-next = "Control+d";
+        };
+      };
+    }
+    {
+      name = "etc/xdg/fuzzel/fuzzel.ini";
+      path = (pkgs.formats.ini { }).generate "fuzzel.ini" {
+        main = {
+          font = "${guiData.font}:size=10";
+          icon-theme = guiData.gtkIconTheme;
+          terminal = "wezterm start";
+        };
+        key-bindings = {
+          cancel = "Control+bracketleft Escape";
+          delete-prev = "BackSpace Control+h";
+          delete-prev-word = "Mod1+BackSpace Control+BackSpace Control+w";
+          delete-next = "Control+d";
+        };
+      };
+    }
+    {
+      name = "etc/xdg/fnott/fnott.ini";
+      path = (pkgs.formats.ini { }).generate "fnott.ini" {
+        main = {
+          icon-theme = guiData.gtkIconTheme;
+          anchor = "top-right";
+          title-font = "${guiData.font}:size=10";
+          summary-font = "${guiData.font}:size=10";
+          body-font = "${guiData.font}:size=10";
+        };
+      };
+    }
     {
       name = "etc/xdg/mimeapps.list";
       path = (pkgs.formats.ini { }).generate "mimeapps.list" {
@@ -39,7 +83,7 @@ let
         live_config_reload = false;
         mouse.hide_when_typing = true;
         selection.save_to_clipboard = true;
-        font = { normal.family = data.font; size = 16; };
+        font = { normal.family = guiData.font; size = 16; };
         colors = lib.mapAttrsRecursive (_: color: "#${color}") {
           primary = {
             foreground = colors.foreground;
@@ -72,7 +116,7 @@ let
       name = "etc/xdg/foot/foot.ini";
       path = (pkgs.formats.ini { }).generate "foot.ini" {
         main = {
-          font = "${data.font}:size=10";
+          font = "${guiData.font}:size=10";
           selection-target = "clipboard";
           notify-focus-inhibit = "no";
         };

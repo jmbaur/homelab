@@ -138,7 +138,7 @@ with lib;
     };
 
     systemd.user.services.statusbar = {
-      description = "Desktop Status Bar";
+      description = "Desktop status bar";
       after = [ "graphical-session.target" ];
       partOf = [ "graphical-session.target" ];
       serviceConfig.ExecStart = "${pkgs.yambar}/bin/yambar";
@@ -146,7 +146,7 @@ with lib;
     };
 
     systemd.user.services.wallpaper = {
-      description = "Desktop Wallpaper";
+      description = "Desktop wallpaper";
       after = [ "graphical-session.target" ];
       partOf = [ "graphical-session.target" ];
       serviceConfig.ExecStart = "${pkgs.swaybg}/bin/swaybg --color='#222222' --mode=solid_color";
@@ -154,7 +154,7 @@ with lib;
     };
 
     systemd.user.services.yubikey-touch-detector = {
-      description = "Yubikey Touch Detector";
+      description = "Yubikey touch detector";
       after = [ "graphical-session.target" ];
       partOf = [ "graphical-session.target" ];
       serviceConfig.ExecStart = "${pkgs.yubikey-touch-detector}/bin/yubikey-touch-detector --libnotify";
@@ -162,7 +162,7 @@ with lib;
     };
 
     systemd.user.services.clipboard-manager = {
-      description = "Clipboard Manager";
+      description = "Clipboard manager";
       documentation = [ "https://github.com/yory8/clipman" ];
       after = [ "graphical-session.target" ];
       partOf = [ "graphical-session.target" ];
@@ -180,7 +180,7 @@ with lib;
     };
 
     systemd.user.services.wob = {
-      description = "A lightweight overlay volume/backlight/progress/anything bar for Wayland";
+      description = "Overlay volume/backlight/progress/anything bar";
       documentation = [ "https://github.com/francma/wob" ];
       after = [ "graphical-session.target" ];
       partOf = [ "graphical-session.target" ];
@@ -192,8 +192,8 @@ with lib;
       wantedBy = [ "graphical-session.target" ];
     };
 
-    systemd.user.services.screen-gamma = {
-      description = "Gamma Adjuster";
+    systemd.user.services.gamma = {
+      description = "Gamma adjuster";
       documentation = [ "https://gitlab.com/chinstrap/gammastep" ];
       wants = [ "geoclue-agent.service" ];
       after = [ "graphical-session.target" "geoclue-agent.service" ];
@@ -202,8 +202,8 @@ with lib;
       wantedBy = [ "graphical-session.target" ];
     };
 
-    systemd.user.services.screen-idle = {
-      description = "Idle management daemon for Wayland";
+    systemd.user.services.idle = {
+      description = "Idle management";
       documentation = [ "https://github.com/swaywm/swayidle" ];
       partOf = [ "graphical-session.target" ];
       path = with pkgs; [
@@ -223,7 +223,7 @@ with lib;
       wantedBy = [ "graphical-session.target" ];
       script =
         let
-          lockCmd = "swaylock ${lib.escapeShellArgs guiData.swaylockFlags}";
+          lockCmd = "swaylock ${lib.escapeShellArgs [ "--daemonize" "--indicator-caps-lock" "--show-keyboard-layout" "--color" "222222" ]}";
         in
         ''
           swayidle -w \
