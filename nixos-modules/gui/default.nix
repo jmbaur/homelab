@@ -44,7 +44,9 @@ with lib;
       fuzzel
       labwc
       libnotify
+      pulseaudio
       pulsemixer
+      sway-contrib.grimshot
       swayidle
       swaylock
       wezterm-jmbaur
