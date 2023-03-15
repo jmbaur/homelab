@@ -35,22 +35,37 @@ with lib;
 
     environment.systemPackages = with pkgs; [
       alacritty
+      bemenu
+      brightnessctl
       chromium
+      clipman
       desktop-launcher
       ffmpeg-full
       firefox
       fnott-dbus
       foot
       fuzzel
+      gnome-themes-extra
+      grim
+      imv
       labwc
       libnotify
+      mirror-to-x
+      mpv
       pulseaudio
       pulsemixer
+      qt5.qtwayland
+      slurp
       sway-contrib.grimshot
       swayidle
       swaylock
+      v4l-show
+      v4l-utils
+      wev
       wezterm-jmbaur
+      wf-recorder
       wl-clipboard
+      wlr-randr
       xdg-utils
       yambar
       zathura
@@ -99,27 +114,8 @@ with lib;
 
     programs.sway = {
       enable = true;
-      wrapperFeatures = {
-        base = true;
-        gtk = true;
-      };
-      extraPackages = with pkgs; [
-        bemenu
-        brightnessctl
-        clipman
-        gnome-themes-extra
-        grim
-        imv
-        mirror-to-x
-        mpv
-        qt5.qtwayland
-        slurp
-        v4l-show
-        v4l-utils
-        wev
-        wf-recorder
-        wlr-randr
-      ];
+      wrapperFeatures.base = true;
+      wrapperFeatures.gtk = true;
       extraSessionCommands = ''
         # vulkan renderer support
         # export WLR_RENDERER=vulkan
@@ -134,6 +130,14 @@ with lib;
       '';
     };
 
+    systemd.user.services.yambar = {
+      description = "Desktop Status Bar";
+      after = [ "graphical-session.target" ];
+      partOf = [ "graphical-session.target" ];
+      serviceConfig.ExecStart = "${pkgs.yambar}/bin/yambar";
+      wantedBy = [ "graphical-session.target" ];
+    };
+
     systemd.user.services.yubikey-touch-detector = {
       description = "Yubikey Touch Detector";
       after = [ "graphical-session.target" ];
@@ -143,7 +147,7 @@ with lib;
     };
 
     systemd.user.services.clipman = {
-      description = "Clipboard manager";
+      description = "Clipboard Manager";
       documentation = [ "https://github.com/yory8/clipman" ];
       after = [ "graphical-session.target" ];
       partOf = [ "graphical-session.target" ];
@@ -174,7 +178,7 @@ with lib;
     };
 
     systemd.user.services.gammastep = {
-      description = "Gamma adjuster";
+      description = "Gamma Adjuster";
       documentation = [ "https://gitlab.com/chinstrap/gammastep" ];
       wants = [ "geoclue-agent.service" ];
       after = [ "graphical-session.target" "geoclue-agent.service" ];
