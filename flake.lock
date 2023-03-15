@@ -35,11 +35,11 @@
     "cn913x_build": {
       "flake": false,
       "locked": {
-        "lastModified": 1674558179,
-        "narHash": "sha256-3cgwCL2guJR31WE9G2Pz8Jex9zWoq8asiZPdrxvxxSs=",
+        "lastModified": 1678877997,
+        "narHash": "sha256-bViiPfpPYo/qScjI+CXJIiDKh2recXGGB4Bj1L9gQ5A=",
         "owner": "solidrun",
         "repo": "cn913x_build",
-        "rev": "5d155c2e33c6cdfb9f2910a590b157e4531601be",
+        "rev": "0a5047c2ed2c4095f404a457f38776e9a7d6d731",
         "type": "github"
       },
       "original": {
@@ -677,11 +677,11 @@
         "utils": "utils_2"
       },
       "locked": {
-        "lastModified": 1678831854,
-        "narHash": "sha256-7HBmLFNVD2KjovSzypIN9NfyzpWelMe8sNbUVZIRsS0=",
+        "lastModified": 1678881170,
+        "narHash": "sha256-S22WL1ZVBn8CRTLCpJsF7m7+6tRfgRFez2jfqUbWVtI=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "cae54dc45c0d61c99c1dc8b04bc42f36c76f9771",
+        "rev": "5eec450c75ee10307b3068467ccfb03e41ea76e2",
         "type": "github"
       },
       "original": {
