@@ -39,7 +39,7 @@ with lib;
       desktop-launcher
       ffmpeg-full
       firefox
-      fnott
+      fnott-dbus
       foot
       fuzzel
       labwc

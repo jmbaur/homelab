@@ -20,9 +20,26 @@ inputs: with inputs; {
           yamlfmt
           ;
 
+        # provide dbus-activation for fnott
+        fnott-dbus = prev.symlinkJoin {
+          name = "fnott-dbus";
+          paths = [ prev.fnott ];
+          postBuild =
+            let
+              fnott-dbus-service = prev.writeText "fnott.service" ''
+                [D-BUS Service]
+                Name=org.freedesktop.Notifications
+                Exec=${prev.fnott}/bin/fnott
+              '';
+            in
+            ''
+              mkdir -p $out/share/dbus-1/services
+              ln -sf ${fnott-dbus-service} $out/share/dbus-1/services/fnott.service
+            '';
+        };
+
         wezterm-jmbaur = prev.wezterm.overrideAttrs (old: rec {
           version = builtins.substring 0 7 src.rev;
-
           src = prev.fetchFromGitHub {
             owner = "jmbaur";
             repo = "wezterm";
@@ -30,9 +47,7 @@ inputs: with inputs; {
             sha256 = "sha256-LJVkhdNjz3N0FeK5pM82FVp5ey24KNeC2pkwxzlWfhI=";
             fetchSubmodules = true;
           };
-
           patches = [ ];
-
           cargoDeps = old.cargoDeps.overrideAttrs (prev.lib.const {
             name = "${old.pname}-vendor.tar.gz";
             inherit src;
