@@ -1243,11 +1243,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1678397831,
-        "narHash": "sha256-7xbxSoiht8G+Zgz55R0ILPsTdbnksILCDMIxeg8Buns=",
+        "lastModified": 1678760344,
+        "narHash": "sha256-N8u9/O0NWt3PUQc9xmCeod1SFilOFicALjtYtslib2g=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "bdf08e2f43488283eeb25b4a7e7ecba9147a955c",
+        "rev": "d907affef544f64bd6886fe6bcc5fa2495a82373",
         "type": "github"
       },
       "original": {
@@ -1373,11 +1373,11 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1678400847,
-        "narHash": "sha256-GzFXe/RuMFFGGohpXsd6x+8dF2XfCzBDhFOgEcD/7Yw=",
+        "lastModified": 1678843349,
+        "narHash": "sha256-sCGoityyYudxip24S6uLukGvcIrxiLmoXmT04IY19rI=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "e66971f580f050d9b2a8624565a74f7607dc515e",
+        "rev": "fd72b3447d450788fdd349b7ca16b3483dc0d182",
         "type": "github"
       },
       "original": {
