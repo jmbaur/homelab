@@ -57,6 +57,7 @@ with lib;
       qt5.qtwayland
       slurp
       sway-contrib.grimshot
+      swaybg
       swayidle
       swaylock
       v4l-show
@@ -75,17 +76,23 @@ with lib;
     xdg.portal.enable = true;
 
     programs.ssh.startAgent = true;
+    programs.gnupg.agent.enable = true;
 
-    # ensure the plugdev group exists
+    # ensure the plugdev group exists for udev rules for qmk
     users.groups.plugdev = { };
+    services.udev.packages = [
+      pkgs.yubikey-personalization
+      pkgs.qmk-udev-rules
+      pkgs.teensy-udev-rules
+    ];
 
     services.pcscd.enable = true;
     services.power-profiles-daemon.enable = true;
     services.printing.enable = true;
-    services.udev.packages = [ pkgs.yubikey-personalization pkgs.qmk-udev-rules pkgs.teensy-udev-rules ];
     services.upower.enable = true;
     services.udisks2.enable = true;
     services.avahi.enable = true;
+
     services.resolved.extraConfig = ''
       MulticastDNS=no
     '';
@@ -130,11 +137,19 @@ with lib;
       '';
     };
 
-    systemd.user.services.yambar = {
+    systemd.user.services.statusbar = {
       description = "Desktop Status Bar";
       after = [ "graphical-session.target" ];
       partOf = [ "graphical-session.target" ];
       serviceConfig.ExecStart = "${pkgs.yambar}/bin/yambar";
+      wantedBy = [ "graphical-session.target" ];
+    };
+
+    systemd.user.services.wallpaper = {
+      description = "Desktop Wallpaper";
+      after = [ "graphical-session.target" ];
+      partOf = [ "graphical-session.target" ];
+      serviceConfig.ExecStart = "${pkgs.swaybg}/bin/swaybg --color='#222222' --mode=solid_color";
       wantedBy = [ "graphical-session.target" ];
     };
 
@@ -146,7 +161,7 @@ with lib;
       wantedBy = [ "graphical-session.target" ];
     };
 
-    systemd.user.services.clipman = {
+    systemd.user.services.clipboard-manager = {
       description = "Clipboard Manager";
       documentation = [ "https://github.com/yory8/clipman" ];
       after = [ "graphical-session.target" ];
@@ -177,7 +192,7 @@ with lib;
       wantedBy = [ "graphical-session.target" ];
     };
 
-    systemd.user.services.gammastep = {
+    systemd.user.services.screen-gamma = {
       description = "Gamma Adjuster";
       documentation = [ "https://gitlab.com/chinstrap/gammastep" ];
       wants = [ "geoclue-agent.service" ];
@@ -187,7 +202,7 @@ with lib;
       wantedBy = [ "graphical-session.target" ];
     };
 
-    systemd.user.services.swayidle = {
+    systemd.user.services.screen-idle = {
       description = "Idle management daemon for Wayland";
       documentation = [ "https://github.com/swaywm/swayidle" ];
       partOf = [ "graphical-session.target" ];

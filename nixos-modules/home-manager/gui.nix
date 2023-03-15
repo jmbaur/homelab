@@ -49,24 +49,6 @@ with lib; {
       };
     };
 
-    services.gpg-agent = {
-      pinentryFlavor = null;
-      extraConfig =
-        let
-          pinentryProgram = pkgs.symlinkJoin {
-            name = "pinentry-bemenu";
-            buildInputs = [ pkgs.makeWrapper ];
-            paths = [ pkgs.pinentry-bemenu ];
-            postBuild = ''
-              wrapProgram $out/bin/pinentry-bemenu --set BEMENU_OPTS "${systemConfig.environment.variables.BEMENU_OPTS}"
-            '';
-          };
-        in
-        ''
-          pinentry-program ${pinentryProgram}/bin/pinentry-bemenu
-        '';
-    };
-
     services.mako = {
       enable = false;
       anchor = "top-right";

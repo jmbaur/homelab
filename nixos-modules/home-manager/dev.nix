@@ -93,10 +93,6 @@ with lib; {
       mutableTrust = false;
       scdaemonSettings.disable-ccid = true;
     };
-    services.gpg-agent = {
-      enable = true;
-      pinentryFlavor = lib.mkDefault "curses";
-    };
 
     programs.git = {
       enable = true;
