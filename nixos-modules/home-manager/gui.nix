@@ -68,7 +68,7 @@ with lib; {
     };
 
     services.mako = {
-      enable = true;
+      enable = false;
       anchor = "top-right";
       defaultTimeout = 10000;
       font = "${toString config.wayland.windowManager.sway.config.fonts.names} ${toString config.wayland.windowManager.sway.config.fonts.size}";

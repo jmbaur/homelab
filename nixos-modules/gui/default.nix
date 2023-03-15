@@ -27,24 +27,31 @@ with lib;
 
     nixpkgs.overlays = [
       (_: prev: {
-        sway-launcher = prev.writeShellScriptBin "sway-launcher" ''
-          exec -a "$0" systemd-cat --identifier=sway sway
+        desktop-launcher = prev.writeShellScriptBin "desktop-launcher" ''
+          exec -a "$0" systemd-cat --identifier=labwc labwc
         '';
       })
     ];
 
     environment.systemPackages = with pkgs; [
+      alacritty
       chromium
+      desktop-launcher
       ffmpeg-full
       firefox
+      fnott
+      foot
+      fuzzel
+      labwc
       libnotify
       mako
       pulsemixer
-      sway-launcher
       swayidle
       swaylock
+      wezterm-jmbaur
       wl-clipboard
       xdg-utils
+      yambar
       zathura
     ];
 
@@ -70,7 +77,7 @@ with lib;
     services.greetd = {
       enable = true;
       vt = 7;
-      settings.default_session.command = "${pkgs.greetd.greetd}/bin/agreety --cmd sway-launcher";
+      settings.default_session.command = "${pkgs.greetd.greetd}/bin/agreety --cmd desktop-launcher";
     };
     programs.wshowkeys.enable = true;
     environment.variables.BEMENU_OPTS = escapeShellArgs [
