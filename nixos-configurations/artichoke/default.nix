@@ -26,6 +26,7 @@
   };
 
   networking.hostName = "artichoke";
+  networking.firewall.logRefusedConnections = false;
 
   services.openssh.openFirewall = false;
 

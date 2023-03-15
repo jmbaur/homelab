@@ -2,7 +2,7 @@ rec {
   font = "JetBrains Mono";
   cursorTheme = "Adwaita";
   gtkIconTheme = cursorTheme;
-  gtkTheme = "${gtkIconTheme}-dark";
+  gtkTheme = gtkIconTheme;
   swaylockFlags = [ "--daemonize" "--indicator-caps-lock" "--show-keyboard-layout" "--color" "#222222" ];
   colors = {
     modus-vivendi = {

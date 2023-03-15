@@ -79,7 +79,7 @@ with lib; {
     };
 
     wayland.windowManager.sway = {
-      enable = true;
+      enable = false;
       inherit (systemConfig.programs.sway)
         extraSessionCommands extraOptions wrapperFeatures;
       config =

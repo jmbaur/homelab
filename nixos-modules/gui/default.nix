@@ -44,7 +44,6 @@ with lib;
       fuzzel
       labwc
       libnotify
-      mako
       pulsemixer
       swayidle
       swaylock
