@@ -85,6 +85,17 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = config.systemd.network.enable;
+        message = "systemd-networkd must be enabled";
+      }
+      {
+        assertion = config.networking.nftables.enable;
+        message = "nftables must be enabled";
+      }
+    ];
+
     environment.systemPackages = [ pkgs.wireguard-tools ];
 
     sops.secrets.wg0 = { mode = "0640"; group = config.users.groups.systemd-network.name; };
@@ -137,11 +148,6 @@ in
         Restart = "on-failure";
       };
     };
-
-    assertions = [{
-      assertion = config.networking.nftables.enable;
-      message = "nftables must be enabled";
-    }];
 
     networking.firewall.extraForwardRules = (lib.concatMapStrings
       (ip: ''
