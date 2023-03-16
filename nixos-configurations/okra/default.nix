@@ -29,6 +29,7 @@ in
   systemd.network.networks.ethernet = {
     name = "en*";
     DHCP = "yes";
+    dhcpV4Config.ClientIdentifier = "mac";
   };
 
   custom.wg-mesh = {

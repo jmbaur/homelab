@@ -1,16 +1,26 @@
-{ config, lib, ... }: {
+{ config, lib, ... }:
+let
+  wg = import ../../nixos-modules/mesh-network/inventory.nix;
+in
+{
   networking = {
     useDHCP = lib.mkForce false;
     hostName = "kale";
-    firewall = {
-      interfaces.eth0.allowedTCPPorts = [ 22 ];
-      interfaces.wg0.allowedTCPPorts = [ config.services.prometheus.exporters.node.port 19531 ];
-    };
   };
 
   custom.wg-mesh = {
     enable = true;
     peers.okra = { };
+    peers.www.extraConfig = {
+      Endpoint = "www.jmbaur.com:51820";
+      PersistentKeepalive = 25;
+    };
+    firewall.ips."${wg.okra.ip}".allowedTCPPorts = [ config.services.prometheus.exporters.node.port 19531 ];
+    firewall.ips."${wg.www.ip}" = {
+      # nfs
+      allowedTCPPorts = [ 111 2049 ];
+      allowedUDPPorts = [ 111 2049 ];
+    };
   };
 
   systemd.network = {

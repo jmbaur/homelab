@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, ... }:
+{ config, pkgs, modulesPath, ... }:
 let
   wg = import ../../nixos-modules/mesh-network/inventory.nix;
   gitHome = "/var/lib/git";
@@ -44,15 +44,14 @@ in
   networking = {
     hostName = "www";
     useDHCP = false;
-    firewall = {
-      allowedTCPPorts = [ 22 80 443 ];
-      allowedUDPPorts = [ config.systemd.network.netdevs.wg0.wireguardConfig.ListenPort ];
-    };
+    firewall.allowedTCPPorts = [ 22 80 443 ];
   };
 
-  systemd.network.networks.physical = {
+  systemd.network.enable = true;
+  systemd.network.networks.ethernet = {
     name = "en*";
-    DHCP = true;
+    DHCP = "yes";
+    dhcpV4Config.ClientIdentifier = "mac";
   };
 
   custom.wg-mesh = {

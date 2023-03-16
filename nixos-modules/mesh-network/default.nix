@@ -100,6 +100,7 @@ in
 
     sops.secrets.wg0 = { mode = "0640"; group = config.users.groups.systemd-network.name; };
 
+    networking.firewall.allowedUDPPorts = [ config.systemd.network.netdevs.wg0.wireguardConfig.ListenPort ];
     systemd.network.netdevs.wg0 = {
       netdevConfig = {
         Name = "wg0";

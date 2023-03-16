@@ -5,11 +5,6 @@ let
   gitDir = "/var/lib/git";
 in
 {
-  networking.firewall.interfaces.wg0 = {
-    allowedTCPPorts = [ 111 2049 ];
-    allowedUDPPorts = [ 111 2049 ];
-  };
-
   fileSystems.${nfsGitDir} = {
     device = gitDir;
     options = [ "bind" ];
