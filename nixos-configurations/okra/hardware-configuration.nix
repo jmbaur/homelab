@@ -5,8 +5,7 @@
 
 {
   imports =
-    [
-      (modulesPath + "/installer/scan/not-detected.nix")
+    [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
@@ -15,24 +14,27 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    {
-      device = "/dev/disk/by-uuid/7e7d227a-6cb4-41aa-9c6d-dff91e1d8750";
+    { device = "/dev/disk/by-uuid/9de666fd-1b45-4daa-9e13-3314e6bc9304";
       fsType = "btrfs";
       options = [ "subvol=@" ];
     };
 
-  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/b76874e4-44cb-49a6-b038-1a16aa5e9cc4";
+  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/1d178610-c630-4acb-a427-b72995a08ab8";
 
   fileSystems."/nix" =
-    {
-      device = "/dev/disk/by-uuid/7e7d227a-6cb4-41aa-9c6d-dff91e1d8750";
+    { device = "/dev/disk/by-uuid/9de666fd-1b45-4daa-9e13-3314e6bc9304";
       fsType = "btrfs";
       options = [ "subvol=@nix" ];
     };
 
+  fileSystems."/home" =
+    { device = "/dev/disk/by-uuid/9de666fd-1b45-4daa-9e13-3314e6bc9304";
+      fsType = "btrfs";
+      options = [ "subvol=@home" ];
+    };
+
   fileSystems."/boot" =
-    {
-      device = "/dev/disk/by-uuid/89CA-CE1B";
+    { device = "/dev/disk/by-uuid/F158-986E";
       fsType = "vfat";
     };
 

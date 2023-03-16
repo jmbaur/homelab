@@ -1,8 +1,13 @@
-{ config, lib, pkgs, ... }: {
+{ config, pkgs, ... }:
+let
+  wg = import ../../nixos-modules/mesh-network/inventory.nix;
+in
+{
   imports = [ ./hardware-configuration.nix ];
 
   fileSystems."/".options = [ "noatime" "discard=async" "compress=zstd" ];
   fileSystems."/nix".options = [ "noatime" "discard=async" "compress=zstd" ];
+  fileSystems."/home".options = [ "noatime" "discard=async" "compress=zstd" ];
   zramSwap.enable = true;
 
   boot.initrd.luks.devices."cryptroot".crypttabExtraOpts = [ "tpm2-device=auto" ];
@@ -18,19 +23,10 @@
 
   networking.hostName = "okra";
 
-  networking.firewall = {
-    interfaces = {
-      wg0.allowedTCPPorts = lib.mkForce [
-        config.services.grafana.settings.server.http_port
-        19531 # systemd-journal-gatewayd
-      ];
-    };
-  };
-
-  networking.useDHCP = lib.mkForce false;
+  networking.useDHCP = false;
   systemd.network.enable = true;
 
-  systemd.network.networks.ether = {
+  systemd.network.networks.ethernet = {
     name = "en*";
     DHCP = "yes";
   };
@@ -44,6 +40,7 @@
       Endpoint = "www.jmbaur.com:51820";
       PersistentKeepalive = 25;
     };
+    firewall.ips."${wg.www.ip}".allowedTCPPorts = [ config.services.grafana.settings.server.http_port ];
   };
 
   custom.deployee = {
@@ -157,5 +154,5 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "22.11"; # Did you read the comment?
+  system.stateVersion = "23.05"; # Did you read the comment?
 }
