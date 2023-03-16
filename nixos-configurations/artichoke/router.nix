@@ -42,8 +42,6 @@ in
     router.lanInterface = config.systemd.network.netdevs.br0.netdevConfig.Name;
     router.wanInterface = config.systemd.network.links."10-wan".linkConfig.Name;
 
-    networking.firewall.allowedUDPPorts = [ config.systemd.network.netdevs.wg0.wireguardConfig.ListenPort ];
-
     networking.firewall.interfaces.${config.systemd.network.networks.lan.name}.allowedTCPPorts = [ 22 ];
 
     services.ipwatch = {
