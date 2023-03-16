@@ -198,7 +198,11 @@ with lib;
       wants = [ "geoclue-agent.service" ];
       after = [ "graphical-session.target" "geoclue-agent.service" ];
       partOf = [ "graphical-session.target" ];
-      serviceConfig.ExecStart = "${pkgs.gammastep}/bin/gammastep -l geoclue2";
+      serviceConfig = {
+        ExecStart = "${pkgs.gammastep}/bin/gammastep -l geoclue2";
+        Restart = "always";
+        RestartSec = 5;
+      };
       wantedBy = [ "graphical-session.target" ];
     };
 
