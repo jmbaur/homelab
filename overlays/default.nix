@@ -38,20 +38,20 @@ inputs: with inputs; {
             '';
         };
 
-        wezterm-jmbaur = prev.wezterm.overrideAttrs (old: rec {
+        wezterm = prev.wezterm.overrideAttrs (old: rec {
           version = builtins.substring 0 7 src.rev;
           src = prev.fetchFromGitHub {
-            owner = "jmbaur";
+            owner = "wez";
             repo = "wezterm";
-            rev = "4c846f11078a9e63721f7bf436cf12805e0d89b2";
-            sha256 = "sha256-LJVkhdNjz3N0FeK5pM82FVp5ey24KNeC2pkwxzlWfhI=";
+            rev = "2408367e6f9f951c7c456f651002d95112a81358";
+            sha256 = "sha256-RiMERzqga0XRDQ2VSrFnGECQm4AsMUAC0lTw5CGja/U=";
             fetchSubmodules = true;
           };
           patches = [ ];
           cargoDeps = old.cargoDeps.overrideAttrs (prev.lib.const {
             name = "${old.pname}-vendor.tar.gz";
             inherit src;
-            outputHash = "sha256-GTwJQFAgCTr92IbR8tOLx92djPwVd7vtUy2grVBMYn8=";
+            outputHash = "sha256-Ws1RDZOGcEUET17Li5JdK5ej/+uuiQMMCDg68vI2YJQ=";
           });
         });
 

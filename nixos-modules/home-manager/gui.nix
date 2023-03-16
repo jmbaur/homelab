@@ -120,7 +120,7 @@ with lib; {
             names = [ guiData.font ];
             size = 12.0;
           };
-          terminal = "${pkgs.wezterm-jmbaur}/bin/wezterm-gui";
+          terminal = "${pkgs.wezterm}/bin/wezterm-gui";
           menu = "${pkgs.bemenu}/bin/bemenu-run";
           modifier = "Mod4";
           workspaceLayout = "stacking";

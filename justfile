@@ -27,7 +27,7 @@ build:
 		.\#neovim-all-languages \
 		.\#pd-notify \
 		.\#pomo \
-		.\#wezterm-jmbaur \
+		.\#wezterm \
 		.\#xremap \
 		.\#yamlfmt
 

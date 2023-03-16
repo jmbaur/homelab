@@ -63,7 +63,7 @@ with lib;
       v4l-show
       v4l-utils
       wev
-      wezterm-jmbaur
+      wezterm
       wf-recorder
       wl-clipboard
       wlr-randr

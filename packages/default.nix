@@ -42,7 +42,7 @@ let
       stevenblack-blocklist
       u-rootInitramfs
       v4l-show
-      wezterm-jmbaur
+      wezterm
       wip
       xremap
       yamlfmt
