@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+
+<labwc_config>
+	<theme>
+		<name>GTK</name>
+		<font>
+			<name>JetBrains Mono</name>
+			<size>12</size>
+		</font>
+	</theme>
+
+	<keyboard>
+		<default />
+		<keybind key="W-Enter"><action name="Execute" command="alacritty" /></keybind>
+		<keybind key="W-Space"><action name="Execute" command="fuzzel" /></keybind>
+		<keybind key="W-Tab"><action name="GoToDesktop"><to>right</to></action></keybind>
+	</keyboard>
+
+	<libinput>
+		<device category="non-touch">
+			<naturalScroll>yes</naturalScroll>
+			<disableWhileTyping>yes</disableWhileTyping>
+		</device>
+	</libinput>
+
+	<desktops>
+		<names><name>1</name></names>
+		<names><name>2</name></names>
+	</desktops>
+</labwc_config>

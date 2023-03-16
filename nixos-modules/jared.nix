@@ -5,18 +5,45 @@ let
   colors = guiData.colors.modus-vivendi;
   configFiles = pkgs.linkFarm "jared-config-files" [
     {
-      name = "etc/xdg/yambar/yambar.yml";
-      path = (pkgs.formats.ini { }).generate "yambar.yml" {
-        main = {
-          font = "${guiData.font}:size=10";
-          icon-theme = guiData.gtkIconTheme;
-          terminal = "wezterm start";
-        };
-        key-bindings = {
-          cancel = "Control+bracketleft Escape";
-          delete-prev = "BackSpace Control+h";
-          delete-prev-word = "Mod1+BackSpace Control+BackSpace Control+w";
-          delete-next = "Control+d";
+      name = "share/themes/GTK/openbox-3/themerc";
+      path = ./home-manager/labwc-gtk-themerc;
+    }
+    {
+      name = "etc/xdg/labwc/autostart";
+      path = pkgs.writeText "labwc-autostart" ''
+        systemctl --user start graphical-session.target
+      '';
+    }
+    { name = "etc/xdg/labwc/rc.xml"; path = ./home-manager/labwc-rc.xml; }
+    { name = "etc/xdg/labwc/menu.xml"; path = ./home-manager/labwc-menu.xml; }
+    {
+      name = "etc/xdg/yambar/config.yml";
+      path = (pkgs.formats.yaml { }).generate "yambar.yml" {
+        bar = {
+          font = "${guiData.font}:size=14";
+          location = "top";
+          height = 30;
+          background = "353535ff";
+          foreground = "ffffffff";
+          left = [{
+            foreign-toplevel.content.map.conditions = {
+              "~activated".empty = { };
+              activated = [{ string = { text = "{app-id}: {title}"; max = 50; }; }];
+            };
+          }];
+          center = [{
+            clock = {
+              time-format = "%H:%M %Z";
+              content.string.text = "{date} {time}";
+            };
+          }];
+          right = [{
+            battery = {
+              name = "BAT0";
+              poll-interval = 30;
+              content.string.text = "BAT: {capacity}% {estimate}";
+            };
+          }];
         };
       };
     }
