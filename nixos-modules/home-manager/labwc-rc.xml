@@ -11,9 +11,27 @@
 
 	<keyboard>
 		<default />
-		<keybind key="W-Enter"><action name="Execute" command="alacritty" /></keybind>
+		<keybind key="W-Enter"><action name="Execute" command="wezterm" /></keybind>
 		<keybind key="W-Space"><action name="Execute" command="fuzzel" /></keybind>
+		<keybind key="W-m"><action name="ShowMenu"><menu>root-menu</menu></action></keybind>
+		<keybind key="Print"><action name="Execute" command="grimshot --notify save output" /></keybind>
+		<keybind key="XF86_AudioLowerVolume"><action name="Execute" command="pactl set-sink-volume @DEFAULT_SINK@ -5%" /></keybind>
+		<keybind key="XF86_AudioRaiseVolume"><action name="Execute" command="pactl set-sink-volume @DEFAULT_SINK@ +5%" /></keybind>
+		<keybind key="XF86_AudioMute"><action name="Execute" command="pactl set-sink-mute @DEFAULT_SINK@ toggle" /></keybind>
+		<keybind key="XF86_AudioMicMute"><action name="Execute" command="pactl set-source-mute @DEFAULT_SOURCE@ toggle" /></keybind>
+		<keybind key="XF86_MonBrightnessUp"><action name="Execute" command="brightnessctl set +10%" /></keybind>
+		<keybind key="XF86_MonBrightnessDown"><action name="Execute" command="brightnessctl set 10%-" /></keybind>
 		<keybind key="W-Tab"><action name="GoToDesktop"><to>right</to></action></keybind>
+		<keybind key="W-1"><action name="GoToDesktop"><to>1</to></action></keybind>
+		<keybind key="W-2"><action name="GoToDesktop"><to>2</to></action></keybind>
+		<keybind key="W-Shift-1"><action name="SendToDesktop"><to>1</to></action></keybind>
+		<keybind key="W-Shift-2"><action name="SendToDesktop"><to>2</to></action></keybind>
+		<keybind key="W-Shift-j"><action name="NextWindow" /></keybind>
+		<keybind key="W-Shift-k"><action name="PreviousWindow" /></keybind>
+		<keybind key="W-Shift-h"><action name="SnapToEdge"><direction>left</direction></action></keybind>
+		<keybind key="W-Shift-j"><action name="SnapToEdge"><direction>down</direction></action></keybind>
+		<keybind key="W-Shift-k"><action name="SnapToEdge"><direction>up</direction></action></keybind>
+		<keybind key="W-Shift-l"><action name="SnapToEdge"><direction>right</direction></action></keybind>
 	</keyboard>
 
 	<libinput>

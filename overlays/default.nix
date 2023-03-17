@@ -55,9 +55,21 @@ inputs: with inputs; {
           });
         });
 
+        libgit2_1_5_2 = prev.libgit2.overrideAttrs (_: rec {
+          version = "1.5.2";
+          src = prev.fetchFromGitHub {
+            owner = "libgit2";
+            repo = "libgit2";
+            rev = "v${version}";
+            hash = "sha256-zZetfuiSpiO0rRtZjBFOAqbdi+sCwl120utnXLtqMm0=";
+          };
+        });
+
         bitwarden-bemenu = prev.callPackage ./bitwarden-bemenu.nix { };
         git-get = prev.callPackage ./git-get { };
-        git-shell-commands = prev.callPackage ./git-shell-commands { };
+        git-shell-commands = prev.callPackage ./git-shell-commands {
+          libgit2 = final.libgit2_1_5_2;
+        };
         ixio = prev.writeShellScriptBin "ixio" "${prev.curl}/bin/curl -F 'f:1=<-' ix.io";
         j = prev.callPackage ./j.nix { };
         kinesis-kint41-jmbaur = prev.callPackage ./kinesis-kint41-jmbaur.nix { };
