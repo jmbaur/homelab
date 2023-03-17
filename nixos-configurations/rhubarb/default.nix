@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, ... }: {
+{ config, pkgs, modulesPath, ... }: {
   imports = [ "${modulesPath}/installer/sd-card/sd-image-aarch64.nix" ];
 
   custom = {
@@ -25,6 +25,7 @@
   networking = {
     hostName = "rhubarb";
     useDHCP = false;
+    firewall.allowedTCPPorts = [ 22 ];
   };
   services.resolved = {
     enable = true;

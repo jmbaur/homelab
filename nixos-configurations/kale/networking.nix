@@ -6,6 +6,7 @@ in
   networking = {
     useDHCP = lib.mkForce false;
     hostName = "kale";
+    firewall.interfaces.eth0.allowedTCPPorts = [ 22 ];
   };
 
   custom.wg-mesh = {
@@ -49,5 +50,6 @@ in
       DHCP = "yes";
       dhcpV4Config.ClientIdentifier = "mac";
     };
+
   };
 }

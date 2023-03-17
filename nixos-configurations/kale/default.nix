@@ -67,12 +67,10 @@
   };
 
   services.journald.enableHttpGateway = true;
-  services.prometheus.exporters = {
-    node = {
-      enable = true;
-      openFirewall = false;
-      enabledCollectors = [ "ethtool" "network_route" "systemd" ];
-    };
+  services.prometheus.exporters.node = {
+    enable = true;
+    openFirewall = false;
+    enabledCollectors = [ "ethtool" "network_route" "systemd" ];
   };
 
   programs.flashrom.enable = true;

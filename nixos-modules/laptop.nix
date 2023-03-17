@@ -6,8 +6,6 @@ in
 {
   options.custom.laptop.enable = lib.mkEnableOption "laptop config";
   config = lib.mkIf cfg.enable {
-    services.openssh.openFirewall = false;
-
     services.xserver.xkbOptions = lib.mkDefault "ctrl:nocaps";
 
     custom.basicNetwork.enable = true;

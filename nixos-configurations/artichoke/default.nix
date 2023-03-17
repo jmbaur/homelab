@@ -28,7 +28,5 @@
   networking.hostName = "artichoke";
   networking.firewall.logRefusedConnections = false;
 
-  services.openssh.openFirewall = false;
-
   system.stateVersion = "23.05";
 }

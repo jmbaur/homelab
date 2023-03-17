@@ -39,6 +39,7 @@ with lib; {
 
     services.openssh = mkIf isNotContainer {
       enable = true;
+      openFirewall = false;
       settings = {
         PermitRootLogin = mkDefault "prohibit-password";
         PasswordAuthentication = mkDefault false;

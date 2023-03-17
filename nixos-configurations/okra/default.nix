@@ -24,10 +24,11 @@ in
   networking.hostName = "okra";
 
   networking.useDHCP = false;
+  networking.firewall.interfaces.eno1.allowedTCPPorts = [ 22 ];
   systemd.network.enable = true;
 
   systemd.network.networks.ethernet = {
-    name = "en*";
+    name = "eno1";
     DHCP = "yes";
     dhcpV4Config.ClientIdentifier = "mac";
   };
