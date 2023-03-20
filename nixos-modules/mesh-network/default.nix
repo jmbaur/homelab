@@ -169,5 +169,14 @@ in
         ${if isIPv6 ip then "ip6" else "ip"} saddr ${ip} udp dport { ${lib.concatMapStringsSep ", " toString allowedUDPPorts} } accept
       ''))
       (lib.attrValues cfg.firewall.ips));
+
+    networking.nat =
+      let
+        partition = lib.partition isIPv6 cfg.firewall.trustedIPs;
+      in
+      {
+        internalIPv6s = partition.right;
+        internalIPs = partition.wrong;
+      };
   };
 }
