@@ -26,8 +26,8 @@
 		<keybind key="W-2"><action name="GoToDesktop"><to>2</to></action></keybind>
 		<keybind key="W-S-1"><action name="SendToDesktop"><to>1</to></action></keybind>
 		<keybind key="W-S-2"><action name="SendToDesktop"><to>2</to></action></keybind>
-		<keybind key="W-S-j"><action name="NextWindow" /></keybind>
-		<keybind key="W-S-k"><action name="PreviousWindow" /></keybind>
+		<keybind key="W-j"><action name="NextWindow" /></keybind>
+		<keybind key="W-k"><action name="PreviousWindow" /></keybind>
 		<keybind key="W-S-h"><action name="SnapToEdge"><direction>left</direction></action></keybind>
 		<keybind key="W-S-j"><action name="SnapToEdge"><direction>down</direction></action></keybind>
 		<keybind key="W-S-k"><action name="SnapToEdge"><direction>up</direction></action></keybind>
