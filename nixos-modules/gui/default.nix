@@ -28,7 +28,7 @@ with lib;
     nixpkgs.overlays = [
       (_: prev: {
         desktop-launcher = prev.writeShellScriptBin "desktop-launcher" ''
-          exec -a "$0" systemd-cat --identifier=labwc labwc
+          exec -a "$0" systemd-cat --identifier=river river
         '';
       })
     ];
@@ -55,6 +55,7 @@ with lib;
       pulseaudio
       pulsemixer
       qt5.qtwayland
+      river
       slurp
       sway-contrib.grimshot
       swaybg
@@ -138,7 +139,7 @@ with lib;
     };
 
     systemd.user.services.statusbar = {
-      description = "Desktop status bar";
+      description = "desktop status bar";
       after = [ "graphical-session.target" ];
       partOf = [ "graphical-session.target" ];
       serviceConfig.ExecStart = "${pkgs.yambar}/bin/yambar";
@@ -146,7 +147,7 @@ with lib;
     };
 
     systemd.user.services.wallpaper = {
-      description = "Desktop wallpaper";
+      description = "desktop wallpaper daemon";
       after = [ "graphical-session.target" ];
       partOf = [ "graphical-session.target" ];
       serviceConfig.ExecStart = "${pkgs.swaybg}/bin/swaybg --color='#222222' --mode=solid_color";
@@ -154,7 +155,7 @@ with lib;
     };
 
     systemd.user.services.yubikey-touch-detector = {
-      description = "Yubikey touch detector";
+      description = "yubikey touch detector";
       after = [ "graphical-session.target" ];
       partOf = [ "graphical-session.target" ];
       serviceConfig.ExecStart = "${pkgs.yubikey-touch-detector}/bin/yubikey-touch-detector --libnotify";
@@ -162,7 +163,7 @@ with lib;
     };
 
     systemd.user.services.clipboard-manager = {
-      description = "Clipboard manager";
+      description = "clipboard manager";
       documentation = [ "https://github.com/yory8/clipman" ];
       after = [ "graphical-session.target" ];
       partOf = [ "graphical-session.target" ];
@@ -180,7 +181,7 @@ with lib;
     };
 
     systemd.user.services.wob = {
-      description = "Overlay volume/backlight/progress/anything bar";
+      description = "overlay bar";
       documentation = [ "https://github.com/francma/wob" ];
       after = [ "graphical-session.target" ];
       partOf = [ "graphical-session.target" ];
@@ -193,7 +194,7 @@ with lib;
     };
 
     systemd.user.services.gamma = {
-      description = "Gamma adjuster";
+      description = "gamma adjuster";
       documentation = [ "https://gitlab.com/chinstrap/gammastep" ];
       wants = [ "geoclue-agent.service" ];
       after = [ "graphical-session.target" "geoclue-agent.service" ];
@@ -207,7 +208,7 @@ with lib;
     };
 
     systemd.user.services.idle = {
-      description = "Idle management";
+      description = "idle management daemon";
       documentation = [ "https://github.com/swaywm/swayidle" ];
       partOf = [ "graphical-session.target" ];
       path = with pkgs; [
