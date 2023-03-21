@@ -56,6 +56,7 @@ with lib;
       pulsemixer
       qt5.qtwayland
       river
+      rivercarro
       slurp
       sway-contrib.grimshot
       swaybg
@@ -143,14 +144,6 @@ with lib;
       after = [ "graphical-session.target" ];
       partOf = [ "graphical-session.target" ];
       serviceConfig.ExecStart = "${pkgs.yambar}/bin/yambar";
-      wantedBy = [ "graphical-session.target" ];
-    };
-
-    systemd.user.services.wallpaper = {
-      description = "desktop wallpaper daemon";
-      after = [ "graphical-session.target" ];
-      partOf = [ "graphical-session.target" ];
-      serviceConfig.ExecStart = "${pkgs.swaybg}/bin/swaybg --color='#222222' --mode=solid_color";
       wantedBy = [ "graphical-session.target" ];
     };
 
