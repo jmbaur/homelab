@@ -37,6 +37,7 @@ in
       (name: {
         inherit name;
         bridge = [ config.systemd.network.netdevs.br0.netdevConfig.Name ];
+        linkConfig.ActivationPolicy = "always-up";
       }));
 
     router.lanInterface = config.systemd.network.netdevs.br0.netdevConfig.Name;
