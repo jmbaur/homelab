@@ -77,8 +77,8 @@ with lib; {
               keyboardSettings = {
                 xkb_model = systemConfig.services.xserver.xkbModel;
                 xkb_options = systemConfig.services.xserver.xkbOptions;
-                repeat_rate = 50;
-                repeat_delay = 300;
+                repeat_rate = toString 50;
+                repeat_delay = toString 300;
               };
               touchpadSettings = {
                 dwt = "enabled";

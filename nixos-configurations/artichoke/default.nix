@@ -2,7 +2,9 @@
   imports = [ ./router.nix ./hardware-configuration.nix ];
 
   programs.flashrom.enable = true;
-  environment.systemPackages = [
+  environment.systemPackages = with pkgs; [
+    tshark
+    tcpdump
     (pkgs.writeShellScriptBin "update-bios" ''
       ${config.programs.flashrom.package}/bin/flashrom \
         --programmer linux_mtd:dev=0 \
