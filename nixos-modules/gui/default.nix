@@ -28,7 +28,7 @@ with lib;
     nixpkgs.overlays = [
       (_: prev: {
         desktop-launcher = prev.writeShellScriptBin "desktop-launcher" ''
-          exec -a "$0" systemd-cat --identifier=river river
+          exec -a "$0" systemd-cat --identifier=sway sway
         '';
       })
     ];
@@ -42,13 +42,12 @@ with lib;
       desktop-launcher
       ffmpeg-full
       firefox
-      fnott-dbus
+      # fnott-dbus
       foot
       fuzzel
       gnome-themes-extra
       grim
       imv
-      labwc
       libnotify
       mirror-to-x
       mpv
@@ -104,6 +103,7 @@ with lib;
       vt = 7;
       settings.default_session.command = "${pkgs.greetd.greetd}/bin/agreety --cmd desktop-launcher";
     };
+
     programs.wshowkeys.enable = true;
     environment.variables.BEMENU_OPTS = escapeShellArgs [
       "--ignorecase"
@@ -140,6 +140,7 @@ with lib;
     };
 
     systemd.user.services.statusbar = {
+      enable = false;
       description = "desktop status bar";
       after = [ "graphical-session.target" ];
       partOf = [ "graphical-session.target" ];

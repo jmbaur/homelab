@@ -11,7 +11,7 @@ with lib; {
 
   config = mkIf cfg.enable {
     programs.kitty = {
-      enable = false;
+      enable = true;
       theme = "Modus Vivendi";
       font = {
         name = guiData.font;
@@ -49,7 +49,7 @@ with lib; {
     };
 
     services.mako = {
-      enable = false;
+      enable = true;
       anchor = "top-right";
       defaultTimeout = 10000;
       font = "${toString config.wayland.windowManager.sway.config.fonts.names} ${toString config.wayland.windowManager.sway.config.fonts.size}";
@@ -60,7 +60,7 @@ with lib; {
     };
 
     wayland.windowManager.sway = {
-      enable = false;
+      enable = true;
       inherit (systemConfig.programs.sway)
         extraSessionCommands extraOptions wrapperFeatures;
       config =
@@ -163,7 +163,7 @@ with lib; {
             "${mod}+Shift+Up" = "move up";
             "${mod}+Shift+b" = "bar mode toggle";
             "${mod}+Shift+c" = "exec ${pkgs.wl-color-picker}/bin/wl-color-picker";
-            "${mod}+Shift+e" = "exec ${pkgs.sway}/bin/swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' '${pkgs.systemd}/bin/systemctl --user stop sway-session.target && ${pkgs.sway}/bin/swaymsg exit'";
+            "${mod}+Shift+e" = "exec ${pkgs.sway}/bin/swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' '${pkgs.systemd}/bin/systemctl --user stop graphical-session.target && ${pkgs.sway}/bin/swaymsg exit'";
             "${mod}+Shift+h" = "move left";
             "${mod}+Shift+j" = "move down";
             "${mod}+Shift+k" = "move up";
@@ -187,6 +187,7 @@ with lib; {
             "${mod}+minus" = "scratchpad show";
             "${mod}+p" = "exec ${config.wayland.windowManager.sway.config.menu}";
             "${mod}+r" = "mode resize";
+            "${mod}+F12" = "mode passthru";
             "${mod}+s" = "layout stacking";
             "${mod}+space" = "focus mode_toggle";
             "${mod}+v" = "split v";
@@ -200,6 +201,7 @@ with lib; {
             "XF86MonBrightnessUp" = "exec ${pkgs.brightnessctl}/bin/brightnessctl set +5% | sed -En 's/.*\\(([0-9]+)%\\).*/\\1/p' > $XDG_RUNTIME_DIR/wob.sock";
           };
           modes = {
+            passthru."${mod}+F12" = "mode default";
             resize = {
               "${mod}+r" = "mode default";
               Down = "resize grow height 10 px";
