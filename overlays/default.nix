@@ -127,14 +127,14 @@ inputs: with inputs; {
         grafana-dashboards = prev.callPackage ./grafana-dashboards { };
 
         # Enable fit images (w/signatures) and modify some hardware.
-        # - CON2 (configured for PCI) is located nearest the CPU
-        # - CON3 (configured for SATA) is located nearest the edge of the device
+        # - CON2 is located nearest the CPU
+        # - CON3 is located nearest the edge of the device
         ubootClearfog = prev.ubootClearfog.override {
           extraConfig = ''
             CONFIG_CLEARFOG_CON2_PCI=y
-            CONFIG_CLEARFOG_CON3_PCI=n
+            CONFIG_CLEARFOG_CON3_PCI=y
             CONFIG_CLEARFOG_CON2_SATA=n
-            CONFIG_CLEARFOG_CON3_SATA=y
+            CONFIG_CLEARFOG_CON3_SATA=n
             CONFIG_CLEARFOG_SFP_25GB=y
             CONFIG_FIT=y
             CONFIG_FIT_SIGNATURE=y

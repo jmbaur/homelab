@@ -51,6 +51,21 @@ let
   };
 in
 {
+  armv7l-linux =
+    let
+      pkgs = import nixpkgs {
+        system = "armv7l-linux";
+        overlays = [ self.overlays.default ];
+      };
+    in
+    {
+      inherit (pkgs)
+        ubootClearfog
+        ubootClearfogSpi
+        ubootClearfogUart
+        ;
+    };
+
   aarch64-linux =
     let
       pkgs = import nixpkgs {
