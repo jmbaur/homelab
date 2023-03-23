@@ -36,7 +36,6 @@ in
       ipwatch.nixosModules.default
       self.nixosModules.default
       nixos-router.nixosModules.default
-      sops-nix.nixosModules.sops
     ];
   };
 
@@ -53,7 +52,6 @@ in
     modules = with inputs; [
       ./beetroot
       self.nixosModules.default
-      sops-nix.nixosModules.sops
       ({ modulesPath, ... }: {
         disabledModules = [ "${modulesPath}/system/boot/loader/generic-extlinux-compatible" ];
         imports = [ "${nixpkgs-extlinux-specialisation}/nixos/modules/system/boot/loader/generic-extlinux-compatible" ];
@@ -67,7 +65,6 @@ in
       ./kale
       runner-nix.nixosModules.default
       self.nixosModules.default
-      sops-nix.nixosModules.sops
     ];
   };
 
@@ -108,7 +105,6 @@ in
       ./rhubarb
       nixos-hardware.nixosModules.raspberry-pi-4
       self.nixosModules.default
-      sops-nix.nixosModules.sops
     ];
   };
 
@@ -117,7 +113,6 @@ in
     modules = with inputs; [
       ./www
       self.nixosModules.default
-      sops-nix.nixosModules.sops
       webauthn-tiny.nixosModules.default
     ];
   };
@@ -127,7 +122,6 @@ in
     modules = with inputs; [
       ./okra
       self.nixosModules.default
-      sops-nix.nixosModules.sops
     ];
   };
 
