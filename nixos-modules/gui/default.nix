@@ -105,7 +105,7 @@ with lib;
     };
 
     programs.wshowkeys.enable = true;
-    environment.variables.BEMENU_OPTS = escapeShellArgs [
+    environment.sessionVariables.BEMENU_OPTS = escapeShellArgs [
       "--ignorecase"
       "--fn=${guiData.font}"
       "--line-height=30"

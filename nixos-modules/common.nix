@@ -46,7 +46,9 @@ with lib; {
       };
     };
 
-    environment.variables.XKB_DEFAULT_OPTIONS = config.services.xserver.xkbOptions;
+    environment.sessionVariables.XKB_DEFAULT_OPTIONS = config.services.xserver.xkbOptions;
+    environment.sessionVariables.XKB_DEFAULT_MODEL = config.services.xserver.xkbModel;
+    environment.sessionVariables.XKB_DEFAULT_VARIANT = config.services.xserver.xkbVariant;
 
     programs.tmux = {
       enable = true;

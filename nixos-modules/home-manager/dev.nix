@@ -1,4 +1,4 @@
-{ systemConfig, config, lib, pkgs, ... }:
+{ nixosConfig, config, lib, pkgs, ... }:
 let
   cfg = config.custom.dev;
 in
@@ -6,7 +6,7 @@ with lib; {
   options.custom.dev = {
     enable = mkOption {
       type = types.bool;
-      default = systemConfig.custom.dev.enable;
+      default = nixosConfig.custom.dev.enable;
     };
   };
 
@@ -138,7 +138,7 @@ with lib; {
 
     programs.tmux = {
       enable = true;
-      inherit (systemConfig.programs.tmux)
+      inherit (nixosConfig.programs.tmux)
         aggressiveResize
         baseIndex
         clock24
@@ -149,7 +149,7 @@ with lib; {
         ;
       disableConfirmationPrompt = true;
       prefix = "C-s";
-      extraConfig = systemConfig.programs.tmux.extraConfig + ''
+      extraConfig = nixosConfig.programs.tmux.extraConfig + ''
         bind-key J command-prompt -p "join pane from:"  "join-pane -h -s '%%'"
         bind-key j display-popup -E -h 75% -w 75% -b double -T "Jump to:" "${pkgs.j}/bin/j"
         set-option -g status-left-length 50

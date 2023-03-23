@@ -1,7 +1,7 @@
-{ lib, systemConfig, ... }:
+{ lib, nixosConfig, ... }:
 {
   options.custom.laptop.enable = lib.mkOption {
     type = lib.types.bool;
-    default = systemConfig.custom.laptop.enable;
+    default = nixosConfig.custom.laptop.enable;
   };
 }

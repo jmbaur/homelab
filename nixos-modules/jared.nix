@@ -96,12 +96,12 @@ let
       name = "etc/xdg/gobar/gobar.yaml";
       path = (pkgs.formats.yaml { }).generate "gobar.yaml" {
         colorVariant = "dark";
-        modules = (lib.optional config.custom.laptop.enable { module = "battery"; })
-          ++ [
-          { module = "network"; pattern = "(en|eth|wlp|wlan|wg)+"; }
-          { module = "memory"; }
-          { module = "datetime"; timezones = [ "Local" "UTC" ]; }
-        ];
+        modules = [{ module = "network"; pattern = "(en|eth|wlp|wlan|wg)+"; }] ++
+          (lib.optional config.custom.laptop.enable { module = "battery"; }) ++
+          [
+            { module = "memory"; }
+            { module = "datetime"; timezones = [ "Local" "UTC" ]; }
+          ];
       };
     }
     {
@@ -226,10 +226,10 @@ in
       ;
     };
 
-    home-manager.users.jared = { systemConfig, config, pkgs, ... }: {
+    home-manager.users.jared = { nixosConfig, config, pkgs, ... }: {
       programs.git = {
         userEmail = "jaredbaur@fastmail.com";
-        userName = systemConfig.users.users.jared.description;
+        userName = nixosConfig.users.users.jared.description;
         extraConfig = {
           commit.gpgSign = true;
           gpg.format = "ssh";

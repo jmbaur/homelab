@@ -1,4 +1,4 @@
-{ config, lib, pkgs, systemConfig, ... }:
+{ config, lib, pkgs, nixosConfig, ... }:
 let
   cfg = config.custom.gui;
   guiData = import ../gui/data.nix;
@@ -6,7 +6,7 @@ in
 with lib; {
   options.custom.gui.enable = mkOption {
     type = types.bool;
-    default = systemConfig.custom.gui.enable;
+    default = nixosConfig.custom.gui.enable;
   };
 
   config = mkIf cfg.enable {
@@ -61,7 +61,7 @@ with lib; {
 
     wayland.windowManager.sway = {
       enable = true;
-      inherit (systemConfig.programs.sway)
+      inherit (nixosConfig.programs.sway)
         extraSessionCommands extraOptions wrapperFeatures;
       config =
         let
@@ -75,8 +75,8 @@ with lib; {
             let
               mouseSettings = { accel_profile = "flat"; };
               keyboardSettings = {
-                xkb_model = systemConfig.services.xserver.xkbModel;
-                xkb_options = systemConfig.services.xserver.xkbOptions;
+                xkb_model = nixosConfig.services.xserver.xkbModel;
+                xkb_options = nixosConfig.services.xserver.xkbOptions;
                 repeat_rate = toString 50;
                 repeat_delay = toString 300;
               };

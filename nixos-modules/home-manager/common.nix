@@ -1,4 +1,4 @@
-{ config, lib, systemConfig, ... }:
+{ config, lib, nixosConfig, ... }:
 let
   cfg = config.custom.common;
 in
@@ -6,11 +6,11 @@ with lib; {
   options.custom.common = {
     enable = mkOption {
       type = types.bool;
-      default = systemConfig.custom.common.enable;
+      default = nixosConfig.custom.common.enable;
     };
   };
   config = mkIf cfg.enable {
-    home.stateVersion = systemConfig.system.stateVersion;
+    home.stateVersion = nixosConfig.system.stateVersion;
 
     nixpkgs.config.allowUnfree = true;
 
