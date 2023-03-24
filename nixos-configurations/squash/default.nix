@@ -1,5 +1,8 @@
 { config, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
+
+  boot.kernelParams = [ "cfg80211.ieee80211_regdom=US" ];
+
   networking.hostName = "squash";
   networking.useNetworkd = true;
   hardware.armada-a38x.enable = true;
@@ -11,6 +14,7 @@
       authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
     };
   };
+
   zramSwap.enable = true;
   system.stateVersion = "23.05";
 

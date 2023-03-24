@@ -1,6 +1,9 @@
 { config, pkgs, ... }: {
   imports = [ ./router.nix ./hardware-configuration.nix ];
 
+  boot.kernelParams = [ "cfg80211.ieee80211_regdom=US" ];
+  networking.wireless.athUserRegulatoryDomain = true;
+
   programs.flashrom.enable = true;
   environment.systemPackages = with pkgs; [
     tshark
