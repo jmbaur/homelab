@@ -5,8 +5,8 @@ stdenv.mkDerivation rec {
 
   src = fetchgit {
     url = "https://chromium.googlesource.com/chromiumos/third_party/flashrom";
-    rev = "d2516354f2ea6c36aa58992c07d0d29db67ff8d4";
-    sha256 = "sha256-T65C2jKFuAG8BloaymqGfJpmjHolKbvRbBU++S9WUII=";
+    rev = "0b9f06df7269182821b695e9f5d745855fa252c0";
+    sha256 = "sha256-GP16RB92tl1mmdOqPGRoDf5xNkskdcydhMIMZbilYvw=";
   };
 
   dontUseCmakeConfigure = true;
