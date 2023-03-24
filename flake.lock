@@ -735,11 +735,11 @@
     },
     "nixos-hardware": {
       "locked": {
-        "lastModified": 1679224149,
-        "narHash": "sha256-TSY37Zv0icF/aijR3/KWGLVBlnKKHlG9QTj7vHbF/UU=",
+        "lastModified": 1679598117,
+        "narHash": "sha256-Vs1f/7imI77OkMOQhO3xgx4jalN2Gx3D3C2wmnlpWJM=",
         "owner": "NixOS",
         "repo": "nixos-hardware",
-        "rev": "a4bc66709604ab78abc575b60baa6d23ae027a59",
+        "rev": "648021dcb2b65498eed3ea3a7339cdfc3bea4d82",
         "type": "github"
       },
       "original": {
@@ -756,11 +756,11 @@
         "pre-commit-hooks": "pre-commit-hooks_2"
       },
       "locked": {
-        "lastModified": 1679511841,
-        "narHash": "sha256-EpPdf9m6nUb1QE1Mi222LMGZoCjO2RQv1RZ8Zv9klHc=",
+        "lastModified": 1679632360,
+        "narHash": "sha256-hcmKzfEfVvp+WtMou3c7Y/81Yan+Svx0ZDeB1B2FwE8=",
         "owner": "jmbaur",
         "repo": "nixos-router",
-        "rev": "3f2b203b4e2647d32550f9ecff425bd7aec0133d",
+        "rev": "1c75059c8d33fe05d99c59061917bdacfff8bcf7",
         "type": "github"
       },
       "original": {
