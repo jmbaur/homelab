@@ -39,6 +39,6 @@ in
 ).overrideAttrs
   (old: {
     passthru = old.passthru // {
-      config = stdenv.hostPlatform.linux-kernel;
+      config = old.passthru.config // stdenv.hostPlatform.linux-kernel;
     };
   })

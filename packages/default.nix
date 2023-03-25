@@ -91,12 +91,6 @@ in
         ubootCN9130_CF_Pro
         ;
 
-      inherit (pkgs.pkgsCross.armv7l-hf-multiplatform)
-        linux_mvebu_v7
-        ubootClearfogSpi
-        ubootClearfogUart
-        ;
-
       installer_iso_lx2k = self.nixosConfigurations.installer_iso_lx2k.config.system.build.isoImage;
 
       installer_sd_image = self.nixosConfigurations.installer_sd_image_aarch64-linux.config.system.build.sdImage;
@@ -129,24 +123,6 @@ in
         coreboot-qemu-x86
         coreboot-volteer-elemi
         coreboot-msi-ms-7d25
-        ;
-
-      inherit (pkgs.pkgsCross.armv7l-hf-multiplatform)
-        linux_mvebu_v7
-        ubootClearfogSpi
-        ubootClearfogUart
-        ;
-
-      inherit (pkgs.pkgsCross.aarch64-multiplatform)
-        coreboot-asurada-spherion
-        coreboot-kukui-fennel14
-        coreboot-qemu-aarch64
-        ipwatch
-        linux_mediatek
-        linux_orangepi-5
-        runner-nix
-        ubootCN9130_CF_Pro
-        webauthn-tiny
         ;
     };
 }
