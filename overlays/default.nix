@@ -84,6 +84,7 @@ inputs: with inputs; {
         pomo = prev.callPackage ./pomo { };
         v4l-show = prev.callPackage ./v4l-show.nix { };
         wip = prev.writeShellScriptBin "wip" ''git commit --no-verify --no-gpg-sign --all --message "WIP"; git push'';
+        dookie = prev.callPackage ./dookie { };
 
         vimPlugins = prev.vimPlugins // {
           jmbaur-settings = prev.vimUtils.buildVimPluginFrom2Nix {
