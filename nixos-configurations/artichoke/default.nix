@@ -34,4 +34,8 @@
   networking.firewall.logRefusedConnections = false;
 
   system.stateVersion = "23.05";
+
+  # BTN_0 == 0x100
+  systemd.services.reset-button.serviceConfig.ExecStart =
+    "${pkgs.dookie}/bin/dookie --device=/dev/input/event0 --key-code=256 --action=restart";
 }
