@@ -43,8 +43,8 @@ inputs: with inputs; {
           src = prev.fetchFromGitHub {
             owner = "wez";
             repo = "wezterm";
-            rev = "b113cc909ea80552dac8ca7617a1154b3e58eea9";
-            sha256 = "sha256-rFpq6KnQEmcoCTDRcH2U3mTXR3ws3VPhPSkqOgYCCdA=";
+            rev = "5b511792653f7ce440bc51d9726e6e9f5c3914c5";
+            sha256 = "sha256-O9mDsqaY4rIpvcHQbyEL8kNSi6rti46+SG3LQcHme+A=";
             fetchSubmodules = true;
           };
           postPatch = ''
@@ -57,7 +57,7 @@ inputs: with inputs; {
           cargoDeps = old.cargoDeps.overrideAttrs (prev.lib.const {
             name = "${old.pname}-vendor.tar.gz";
             inherit src;
-            outputHash = "sha256-4jRf7ExSGQhbC+xVKajo+0iG1eyTrBHhyPW8K2tXFQA=";
+            outputHash = "sha256-xd9rIwAMS0NmT9lUg6OIs24pyUfvX9CIC8os+QyswPM=";
           });
         });
 
