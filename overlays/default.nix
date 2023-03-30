@@ -38,29 +38,6 @@ inputs: with inputs; {
             '';
         };
 
-        wezterm = prev.wezterm.overrideAttrs (old: rec {
-          version = builtins.substring 0 7 src.rev;
-          src = prev.fetchFromGitHub {
-            owner = "wez";
-            repo = "wezterm";
-            rev = "5b511792653f7ce440bc51d9726e6e9f5c3914c5";
-            sha256 = "sha256-O9mDsqaY4rIpvcHQbyEL8kNSi6rti46+SG3LQcHme+A=";
-            fetchSubmodules = true;
-          };
-          postPatch = ''
-            echo UNKNOWN > .tag
-
-            # tests are failing with: Unable to exchange encryption keys
-            rm -r wezterm-ssh/tests
-          '';
-          patches = [ ];
-          cargoDeps = old.cargoDeps.overrideAttrs (prev.lib.const {
-            name = "${old.pname}-vendor.tar.gz";
-            inherit src;
-            outputHash = "sha256-xd9rIwAMS0NmT9lUg6OIs24pyUfvX9CIC8os+QyswPM=";
-          });
-        });
-
         libgit2_1_5_2 = prev.libgit2.overrideAttrs (_: rec {
           version = "1.5.2";
           src = prev.fetchFromGitHub {

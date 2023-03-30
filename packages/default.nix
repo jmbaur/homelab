@@ -42,7 +42,6 @@ let
       stevenblack-blocklist
       u-rootInitramfs
       v4l-show
-      wezterm
       wip
       xremap
       yamlfmt
