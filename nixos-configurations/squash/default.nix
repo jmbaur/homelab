@@ -1,4 +1,4 @@
-{ config, pkgs, ... }: {
+{ config, lib, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
 
   boot.kernelParams = [ "cfg80211.ieee80211_regdom=US" ];
@@ -18,14 +18,13 @@
   zramSwap.enable = true;
   system.stateVersion = "23.05";
 
-  programs.flashrom.enable = true;
-  environment.systemPackages = [
-    (pkgs.writeShellScriptBin "update-bios" ''
+  programs.flashrom.enable = lib.mkDefault true;
+  environment.systemPackages = lib.optional config.programs.flashrom.enable
+    (pkgs.writeShellScriptBin "update-firmware" ''
       ${config.programs.flashrom.package}/bin/flashrom \
-        --programmer linux_mtd:dev=0 \
-        --write ${pkgs.ubootClearfogSpi}/spi.img
-    '')
-  ];
+      --programmer linux_mtd:dev=0 \
+      --write ${pkgs.ubootClearfogSpi}/spi.img
+    '');
 
   # BTN_0 == 0x100
   systemd.services.reset-button = {
