@@ -34,6 +34,9 @@
   system.stateVersion = "23.05";
 
   # BTN_0 == 0x100
-  systemd.services.reset-button.serviceConfig.ExecStart =
-    "${pkgs.pkgsCross.aarch64-multiplatform.dookie}/bin/dookie --device=/dev/input/event0 --key-code=256 --action=restart";
+  systemd.services.reset-button = {
+    serviceConfig.ExecStart =
+      "${pkgs.pkgsCross.aarch64-multiplatform.dookie}/bin/dookie --device=/dev/input/event0 --key-code=0x100 --action=restart";
+    wantedBy = [ "multi-user.target" ];
+  };
 }

@@ -54,6 +54,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "clap-num"
+version = "1.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "488557e97528174edaa2ee268b23a809e0c598213a4bbcb4f34575a46fda147e"
+dependencies = [
+ "num-traits",
+]
+
+[[package]]
 name = "clap_derive"
 version = "4.1.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -79,6 +88,7 @@ name = "dookie"
 version = "0.1.0"
 dependencies = [
  "clap",
+ "clap-num",
  "evdev",
  "libc",
 ]
@@ -190,6 +200,15 @@ dependencies = [
  "cfg-if",
  "libc",
  "memoffset",
+]
+
+[[package]]
+name = "num-traits"
+version = "0.2.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "578ede34cf02f8924ab9447f50c28075b4d3e5b269972345e7e0372b38c6cdcd"
+dependencies = [
+ "autocfg",
 ]
 
 [[package]]

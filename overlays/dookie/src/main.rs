@@ -1,4 +1,5 @@
 use clap::Parser;
+use clap_num::maybe_hex;
 use evdev::{Device, Key};
 
 #[derive(clap::ValueEnum, Clone)]
@@ -11,7 +12,7 @@ enum Action {
 struct Cli {
     #[arg(short, long)]
     device: std::path::PathBuf,
-    #[arg(short, long)]
+    #[arg(short, long, value_parser=maybe_hex::<u16>)]
     key_code: u16,
     #[arg(short, long, value_enum)]
     action: Action,
