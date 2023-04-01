@@ -61,6 +61,8 @@
     secrets.jared_password.neededForUsers = true;
   };
 
+  programs.adb.enable = true;
+
   home-manager.users.jared = { config, ... }: {
     services.kanshi = {
       profiles = {
