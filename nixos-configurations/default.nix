@@ -5,7 +5,7 @@ let
       modules = [{ nix.registry.nixpkgs.flake = inputs.nixpkgs; }];
     }
     args);
-  mkInstaller = { system, modules ? [ ] }: nixosSystem {
+  mkInstaller = { system ? null, modules ? [ ] }: nixosSystem {
     inherit system;
     modules = [
       inputs.self.nixosModules.default
@@ -16,7 +16,7 @@ let
     ] ++ modules;
   };
 
-  mkInstallerISO = { system, modules ? [ ] }: mkInstaller {
+  mkInstallerISO = { system ? null, modules ? [ ] }: mkInstaller {
     inherit system;
     modules = [
       ({ modulesPath, ... }: {
@@ -192,7 +192,6 @@ in
   };
 
   armada-388-clearfog-installer = mkInstaller {
-    system = "armv7l-linux";
     modules = [
       ({ config, pkgs, modulesPath, ... }: {
         disabledModules = [
@@ -207,6 +206,7 @@ in
         hardware.armada-a38x.enable = true;
         networking.useNetworkd = true;
         custom.server.enable = true;
+        custom.crossCompile.enable = true;
         custom.disableZfs = true;
         sdImage.populateFirmwareCommands = "";
         sdImage.populateRootCommands = ''
@@ -216,23 +216,6 @@ in
         sdImage.postBuildCommands = ''
           dd if=${pkgs.ubootClearfog}/u-boot-spl.kwb of=$img bs=512 seek=1 conv=notrunc
         '';
-      })
-    ];
-  };
-
-  test = nixosSystem {
-    modules = [
-      ({ ... }: {
-        boot.loader.grub.enable = false;
-        boot.loader.generic-extlinux-compatible.enable = true;
-        boot.initrd.systemd.enable = true;
-        documentation.enable = false;
-        fileSystems."/" = {
-          device = "/dev/disk/by-label/NIXOS_SD";
-          fsType = "ext4";
-        };
-        nixpkgs.hostPlatform = "aarch64-linux";
-        nixpkgs.buildPlatform = "x86_64-linux";
       })
     ];
   };
