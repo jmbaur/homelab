@@ -148,7 +148,6 @@ inputs: with inputs; {
         ubootCN9130_CF_Pro = prev.callPackage ./uboot-cn9130-cf-pro.nix { inherit cn913x_build; };
 
         linux_mediatek = prev.callPackage ./kernels/linux-mediatek.nix { };
-        linux_mvebu_v7 = prev.callPackage ./kernels/linux-mvebu-v7.nix { };
         linux_orangepi-5 = prev.callPackage ./kernels/linux-orangepi-5.nix { };
 
         linuxboot-qemu-aarch64-fitimage = final.mkFitImage {

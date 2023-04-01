@@ -1,13 +1,22 @@
-{ config, lib, pkgs, ... }: {
+{ config, lib, ... }: {
   options.hardware.armada-a38x = {
     enable = lib.mkEnableOption "armada-38x devices";
   };
 
   config = lib.mkIf config.hardware.armada-a38x.enable {
+    nixpkgs.hostPlatform = lib.recursiveUpdate lib.systems.examples.armv7l-hf-multiplatform {
+      linux-kernel = {
+        name = "armada-388x";
+        autoModules = true;
+        DTB = true;
+        baseConfig = "mvebu_v7_defconfig";
+        target = "zImage";
+      };
+    };
+
     boot.loader.grub.enable = false;
     boot.loader.generic-extlinux-compatible.enable = true;
     boot.kernelParams = [ "console=ttyS0,115200" ];
-    boot.kernelPackages = pkgs.linuxKernel.packagesFor pkgs.linux_mvebu_v7;
 
     hardware.deviceTree = {
       enable = true;
