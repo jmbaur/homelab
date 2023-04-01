@@ -7,6 +7,7 @@
   networking.useNetworkd = true;
   hardware.armada-a38x.enable = true;
   custom = {
+    crossCompile.enable = true;
     server.enable = true;
     disableZfs = true;
     deployee = {

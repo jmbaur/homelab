@@ -30,7 +30,6 @@ let
 in
 {
   artichoke = nixosSystem {
-    system = "aarch64-linux";
     modules = with inputs; [
       ./artichoke
       ipwatch.nixosModules.default
@@ -40,7 +39,6 @@ in
   };
 
   squash = nixosSystem {
-    system = "armv7l-linux";
     modules = with inputs; [
       ./squash
       self.nixosModules.default
@@ -48,7 +46,6 @@ in
   };
 
   beetroot = nixosSystem {
-    system = "x86_64-linux";
     modules = with inputs; [
       ./beetroot
       self.nixosModules.default
@@ -60,7 +57,6 @@ in
   };
 
   kale = nixosSystem {
-    system = "aarch64-linux";
     modules = with inputs; [
       ./kale
       runner-nix.nixosModules.default
@@ -69,12 +65,10 @@ in
   };
 
   fennel = nixosSystem {
-    system = "aarch64-linux";
     modules = with inputs; [ self.nixosModules.default ./fennel ];
   };
 
   lxc-test = nixosSystem {
-    system = "aarch64-linux";
     modules = [
       "${inputs.nixpkgs}/nixos/modules/virtualisation/lxc-container.nix"
       ({
@@ -84,7 +78,6 @@ in
   };
 
   netboot-test = nixosSystem {
-    system = "aarch64-linux";
     modules = [
       ({ modulesPath, ... }: {
         imports = [ "${modulesPath}/installer/netboot/netboot-minimal.nix" ];
@@ -95,12 +88,10 @@ in
   };
 
   potato = nixosSystem {
-    system = "x86_64-linux";
     modules = [ ./potato ];
   };
 
   rhubarb = nixosSystem {
-    system = "aarch64-linux";
     modules = with inputs; [
       ./rhubarb
       nixos-hardware.nixosModules.raspberry-pi-4
@@ -109,7 +100,6 @@ in
   };
 
   www = nixosSystem {
-    system = "aarch64-linux";
     modules = with inputs; [
       ./www
       self.nixosModules.default
@@ -118,7 +108,6 @@ in
   };
 
   okra = nixosSystem {
-    system = "x86_64-linux";
     modules = with inputs; [
       ./okra
       self.nixosModules.default
@@ -227,6 +216,23 @@ in
         sdImage.postBuildCommands = ''
           dd if=${pkgs.ubootClearfog}/u-boot-spl.kwb of=$img bs=512 seek=1 conv=notrunc
         '';
+      })
+    ];
+  };
+
+  test = nixosSystem {
+    modules = [
+      ({ ... }: {
+        boot.loader.grub.enable = false;
+        boot.loader.generic-extlinux-compatible.enable = true;
+        boot.initrd.systemd.enable = true;
+        documentation.enable = false;
+        fileSystems."/" = {
+          device = "/dev/disk/by-label/NIXOS_SD";
+          fsType = "ext4";
+        };
+        nixpkgs.hostPlatform = "aarch64-linux";
+        nixpkgs.buildPlatform = "x86_64-linux";
       })
     ];
   };

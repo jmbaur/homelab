@@ -9,7 +9,7 @@
 
     boot.kernelParams = [ "console=ttyS0,115200" "cma=256M" ];
 
-    boot.kernelPackages = pkgs.pkgsCross.aarch64-multiplatform.linuxPackages_5_15;
+    boot.kernelPackages = pkgs.linuxPackages_5_15;
     boot.kernelPatches =
       let
         cn913x_build = pkgs.fetchFromGitHub {

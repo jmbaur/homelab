@@ -12,6 +12,7 @@ inputs: {
       ./btrfs.nix
       ./chromebook.nix
       ./common.nix
+      ./cross-compile.nix
       ./deployee.nix
       ./deployer.nix
       ./depthcharge
