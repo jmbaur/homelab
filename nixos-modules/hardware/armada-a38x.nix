@@ -4,13 +4,11 @@
   };
 
   config = lib.mkIf config.hardware.armada-a38x.enable {
-    nixpkgs.hostPlatform = lib.recursiveUpdate lib.systems.examples.armv7l-hf-multiplatform {
+    nixpkgs.hostPlatform = lib.recursiveUpdate lib.systems.platforms.armv7l-hf-multiplatform {
+      config = "armv7l-unknown-linux-gnueabihf";
       linux-kernel = {
         name = "armada-388x";
-        autoModules = true;
-        DTB = true;
         baseConfig = "mvebu_v7_defconfig";
-        target = "zImage";
       };
     };
 
