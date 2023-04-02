@@ -156,6 +156,7 @@ in
         nixpkgs.hostPlatform = "aarch64-linux";
         boot.initrd.systemd.enable = true;
         hardware.clearfog-cn913x.enable = true;
+        custom.crossCompile.enable = true;
       })
     ];
   };
@@ -168,6 +169,26 @@ in
         boot.loader.depthcharge.enable = true;
         boot.initrd.systemd.enable = true;
         hardware.asurada-spherion.enable = true;
+      })
+    ];
+  };
+
+  bpi-r3-installer = mkInstaller {
+    modules = [
+      ({ modulesPath, ... }: {
+        # disabledModules = [
+        #   # prevent initrd from requiring a bunch of kernel modules we don't
+        #   # need
+        #   "${modulesPath}/profiles/all-hardware.nix"
+        # ];
+        imports = [ "${modulesPath}/installer/sd-card/sd-image-aarch64-installer.nix" ];
+        nixpkgs.hostPlatform = "aarch64-linux";
+        boot.initrd.systemd.enable = true;
+
+        hardware.bpi-r3.enable = true;
+        custom.server.enable = true;
+        custom.crossCompile.enable = true;
+        custom.disableZfs = true;
       })
     ];
   };
