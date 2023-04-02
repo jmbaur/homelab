@@ -740,11 +740,11 @@
         "pre-commit-hooks": "pre-commit-hooks_2"
       },
       "locked": {
-        "lastModified": 1679632360,
-        "narHash": "sha256-hcmKzfEfVvp+WtMou3c7Y/81Yan+Svx0ZDeB1B2FwE8=",
+        "lastModified": 1680441299,
+        "narHash": "sha256-NYGTN6fY8oBjV75wO+GGyNKaHZRC1qC7xhSH1K5kfm0=",
         "owner": "jmbaur",
         "repo": "nixos-router",
-        "rev": "1c75059c8d33fe05d99c59061917bdacfff8bcf7",
+        "rev": "15b6a28cefc61f06b2389f002962d3ecdebccbb5",
         "type": "github"
       },
       "original": {
@@ -1025,11 +1025,11 @@
         "nixpkgs-stable": "nixpkgs-stable_3"
       },
       "locked": {
-        "lastModified": 1678976941,
-        "narHash": "sha256-skNr08frCwN9NO+7I77MjOHHAw+L410/37JknNld+W4=",
+        "lastModified": 1680170909,
+        "narHash": "sha256-FtKU/edv1jFRr/KwUxWTYWXEyj9g8GBrHntC2o8oFI8=",
         "owner": "cachix",
         "repo": "pre-commit-hooks.nix",
-        "rev": "32b1dbedfd77892a6e375737ef04d8efba634e9e",
+        "rev": "29dbe1efaa91c3a415d8b45d62d48325a4748816",
         "type": "github"
       },
       "original": {
