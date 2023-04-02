@@ -145,10 +145,16 @@ inputs: with inputs; {
           '';
           extraMeta.bootDevice = "spi";
         };
-        ubootCN9130_CF_Pro = prev.callPackage ./uboot-cn9130-cf-pro.nix { inherit cn913x_build; };
 
-        linux_mediatek = prev.callPackage ./kernels/linux-mediatek.nix { };
-        linux_orangepi-5 = prev.callPackage ./kernels/linux-orangepi-5.nix { };
+        cn913x_build_repo = prev.fetchFromGitHub {
+          owner = "solidrun";
+          repo = "cn913x_build";
+          rev = "0a5047c2ed2c4095f404a457f38776e9a7d6d731";
+          sha256 = "sha256-bViiPfpPYo/qScjI+CXJIiDKh2recXGGB4Bj1L9gQ5A=";
+        };
+        ubootCN9130_CF_Pro = prev.callPackage ./uboot-cn9130-cf-pro.nix { inherit (final) cn913x_build_repo; };
+
+        # linux_orangepi-5 = prev.callPackage ./kernels/linux-orangepi-5.nix { };
 
         linuxboot-qemu-aarch64-fitimage = final.mkFitImage {
           boardName = "qemu-aarch64";

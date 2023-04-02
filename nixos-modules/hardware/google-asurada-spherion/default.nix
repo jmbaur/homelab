@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, ... }:
 with lib;
 {
   options.hardware.asurada-spherion = {
@@ -7,13 +7,12 @@ with lib;
   config = mkIf config.hardware.asurada-spherion.enable {
     custom.laptop.enable = true;
     hardware.chromebook.enable = true;
+    hardware.chromebook.mediatek = true;
     hardware.bluetooth.enable = mkDefault true;
     hardware.enableRedistributableFirmware = true;
     hardware.deviceTree = {
       enable = true;
       filter = "mt8192-asurada-spherion*.dtb";
     };
-
-    boot.kernelPackages = pkgs.linuxKernel.packagesFor pkgs.linux_mediatek;
   };
 }

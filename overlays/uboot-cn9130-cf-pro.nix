@@ -1,7 +1,7 @@
 { bc
 , bison
 , buildPackages
-, cn913x_build
+, cn913x_build_repo
 , dtc
 , fetchFromGitHub
 , fetchgit
@@ -32,25 +32,25 @@ let
     };
 
     patches = [
-      "${cn913x_build}/patches/u-boot/0001-cmd-add-tlv_eeprom-command.patch"
-      "${cn913x_build}/patches/u-boot/0002-cmd-tlv_eeprom.patch"
-      "${cn913x_build}/patches/u-boot/0003-cmd-tlv_eeprom-remove-use-of-global-variable-current.patch"
-      "${cn913x_build}/patches/u-boot/0004-cmd-tlv_eeprom-remove-use-of-global-variable-has_bee.patch"
-      "${cn913x_build}/patches/u-boot/0005-cmd-tlv_eeprom-do_tlv_eeprom-stop-using-non-api-read.patch"
-      "${cn913x_build}/patches/u-boot/0006-cmd-tlv_eeprom-convert-functions-used-by-command-to-.patch"
-      "${cn913x_build}/patches/u-boot/0007-cmd-tlv_eeprom-remove-empty-function-implementations.patch"
-      "${cn913x_build}/patches/u-boot/0008-cmd-tlv_eeprom-split-off-tlv-library-from-command.patch"
-      "${cn913x_build}/patches/u-boot/0009-lib-tlv_eeprom-add-function-for-reading-one-entry-in.patch"
-      "${cn913x_build}/patches/u-boot/0010-uboot-marvell-patches.patch"
-      "${cn913x_build}/patches/u-boot/0011-uboot-support-cn913x-solidrun-paltfroms.patch"
-      "${cn913x_build}/patches/u-boot/0012-add-SoM-and-Carrier-eeproms.patch"
-      "${cn913x_build}/patches/u-boot/0013-find-fdtfile-from-tlv-eeprom.patch"
-      "${cn913x_build}/patches/u-boot/0014-octeontx2_cn913x-support-distro-boot.patch"
-      "${cn913x_build}/patches/u-boot/0015-octeontx2_cn913x-remove-console-variable.patch"
-      "${cn913x_build}/patches/u-boot/0016-octeontx2_cn913x-enable-mmc-partconf-command.patch"
-      "${cn913x_build}/patches/u-boot/0017-uboot-add-support-cn9131-cf-solidwan.patch"
-      "${cn913x_build}/patches/u-boot/0018-uboot-add-support-bldn-mbv.patch"
-      "${cn913x_build}/patches/u-boot/0019-uboot-cn9131-cf-solidwan-add-carrier-eeprom.patch"
+      "${cn913x_build_repo}/patches/u-boot/0001-cmd-add-tlv_eeprom-command.patch"
+      "${cn913x_build_repo}/patches/u-boot/0002-cmd-tlv_eeprom.patch"
+      "${cn913x_build_repo}/patches/u-boot/0003-cmd-tlv_eeprom-remove-use-of-global-variable-current.patch"
+      "${cn913x_build_repo}/patches/u-boot/0004-cmd-tlv_eeprom-remove-use-of-global-variable-has_bee.patch"
+      "${cn913x_build_repo}/patches/u-boot/0005-cmd-tlv_eeprom-do_tlv_eeprom-stop-using-non-api-read.patch"
+      "${cn913x_build_repo}/patches/u-boot/0006-cmd-tlv_eeprom-convert-functions-used-by-command-to-.patch"
+      "${cn913x_build_repo}/patches/u-boot/0007-cmd-tlv_eeprom-remove-empty-function-implementations.patch"
+      "${cn913x_build_repo}/patches/u-boot/0008-cmd-tlv_eeprom-split-off-tlv-library-from-command.patch"
+      "${cn913x_build_repo}/patches/u-boot/0009-lib-tlv_eeprom-add-function-for-reading-one-entry-in.patch"
+      "${cn913x_build_repo}/patches/u-boot/0010-uboot-marvell-patches.patch"
+      "${cn913x_build_repo}/patches/u-boot/0011-uboot-support-cn913x-solidrun-paltfroms.patch"
+      "${cn913x_build_repo}/patches/u-boot/0012-add-SoM-and-Carrier-eeproms.patch"
+      "${cn913x_build_repo}/patches/u-boot/0013-find-fdtfile-from-tlv-eeprom.patch"
+      "${cn913x_build_repo}/patches/u-boot/0014-octeontx2_cn913x-support-distro-boot.patch"
+      "${cn913x_build_repo}/patches/u-boot/0015-octeontx2_cn913x-remove-console-variable.patch"
+      "${cn913x_build_repo}/patches/u-boot/0016-octeontx2_cn913x-enable-mmc-partconf-command.patch"
+      "${cn913x_build_repo}/patches/u-boot/0017-uboot-add-support-cn9131-cf-solidwan.patch"
+      "${cn913x_build_repo}/patches/u-boot/0018-uboot-add-support-bldn-mbv.patch"
+      "${cn913x_build_repo}/patches/u-boot/0019-uboot-cn9131-cf-solidwan-add-carrier-eeprom.patch"
       ./ramdisk-addr-r.patch
     ];
     postPatch = ''
@@ -118,7 +118,7 @@ let
     meta.platforms = [ "aarch64-linux" ];
   };
   BL33 = "${uboot}/u-boot.bin";
-  SCP_BL2 = "${cn913x_build}/binaries/atf/mrvl_scp_bl2.img";
+  SCP_BL2 = "${cn913x_build_repo}/binaries/atf/mrvl_scp_bl2.img";
   PLAT = "t9130";
 in
 gcc7Stdenv.mkDerivation {
@@ -131,8 +131,8 @@ gcc7Stdenv.mkDerivation {
     sha256 = "sha256-kHI6H1yym8nWWmLMNOOLUbdtdyNPdNEvimq8EdW0nZw=";
   };
   patches = [
-    "${cn913x_build}/patches/arm-trusted-firmware/0001-ddr-spd-read-failover-to-defualt-config.patch"
-    "${cn913x_build}/patches/arm-trusted-firmware/0002-som-sdp-failover-using-crc-verification.patch"
+    "${cn913x_build_repo}/patches/arm-trusted-firmware/0001-ddr-spd-read-failover-to-defualt-config.patch"
+    "${cn913x_build_repo}/patches/arm-trusted-firmware/0002-som-sdp-failover-using-crc-verification.patch"
   ];
   nativeBuildInputs = [ openssl dtc git ];
   hardeningDisable = [ "all" ];

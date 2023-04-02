@@ -10,7 +10,6 @@ inputs: {
     imports = [
       ./basic-network.nix
       ./btrfs.nix
-      ./chromebook.nix
       ./common.nix
       ./cross-compile.nix
       ./deployee.nix

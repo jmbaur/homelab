@@ -2,8 +2,6 @@
   description = "NixOS configurations for the homelab";
 
   inputs = {
-    cn913x_build.flake = false;
-    cn913x_build.url = "github:solidrun/cn913x_build";
     deploy-rs.url = "github:serokell/deploy-rs";
     disko.inputs.nixpkgs.follows = "nixpkgs";
     disko.url = "github:nix-community/disko";

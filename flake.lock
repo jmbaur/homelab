@@ -32,22 +32,6 @@
         "type": "github"
       }
     },
-    "cn913x_build": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1678877997,
-        "narHash": "sha256-bViiPfpPYo/qScjI+CXJIiDKh2recXGGB4Bj1L9gQ5A=",
-        "owner": "solidrun",
-        "repo": "cn913x_build",
-        "rev": "0a5047c2ed2c4095f404a457f38776e9a7d6d731",
-        "type": "github"
-      },
-      "original": {
-        "owner": "solidrun",
-        "repo": "cn913x_build",
-        "type": "github"
-      }
-    },
     "crane": {
       "inputs": {
         "flake-compat": "flake-compat_7",
@@ -1130,7 +1114,6 @@
     },
     "root": {
       "inputs": {
-        "cn913x_build": "cn913x_build",
         "deploy-rs": "deploy-rs",
         "disko": "disko",
         "gobar": "gobar",

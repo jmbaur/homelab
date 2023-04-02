@@ -42,4 +42,11 @@
     wantedBy = [ "multi-user.target" ];
   };
 
+  services.hostapd = {
+    enable = true;
+    countryCode = "US";
+    interface = "wlp1s0";
+  };
+
+  services.coredns.enable = true;
 }

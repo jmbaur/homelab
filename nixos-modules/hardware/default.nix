@@ -1,9 +1,10 @@
 {
   imports = [
     ./armada-a38x.nix
+    ./chromebook
     ./clearfog-cn913x.nix
-    ./google-kukui-fennel14
     ./google-asurada-spherion
+    ./google-kukui-fennel14
     ./lx2k.nix
   ];
 }

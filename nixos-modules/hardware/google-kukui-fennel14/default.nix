@@ -19,13 +19,12 @@ with lib;
     ];
 
     hardware.chromebook.enable = true;
+    hardware.chromebook.mediatek = true;
     hardware.bluetooth.enable = mkDefault true;
     hardware.enableRedistributableFirmware = true;
     hardware.deviceTree = {
       enable = true;
       filter = "mt8183-kukui-jacuzzi-fennel14*.dtb";
     };
-
-    boot.kernelPackages = pkgs.linuxKernel.packagesFor pkgs.linux_mediatek;
   };
 }
