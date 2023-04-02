@@ -33,11 +33,14 @@ in
     };
 
     systemd.network.networks = (lib.genAttrs
-      [ "lan1" "lan2" "lan3" "lan4" "lan5" "lan6" "wlp1s0" ]
+      [ "lan1" "lan2" "lan3" "lan4" "lan5" "wlp1s0" ]
       (name: {
         inherit name;
         bridge = [ config.systemd.network.netdevs.br0.netdevConfig.Name ];
-        linkConfig.ActivationPolicy = "always-up";
+        linkConfig = {
+          ActivationPolicy = "always-up";
+          RequiredForOnline = "no";
+        };
       }));
 
     router.lanInterface = config.systemd.network.netdevs.br0.netdevConfig.Name;
