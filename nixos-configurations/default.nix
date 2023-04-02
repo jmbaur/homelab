@@ -5,19 +5,17 @@ let
       modules = [{ nix.registry.nixpkgs.flake = inputs.nixpkgs; }];
     }
     args);
-  mkInstaller = { system ? null, modules ? [ ] }: nixosSystem {
-    inherit system;
+
+  mkInstaller = { modules ? [ ] }: nixosSystem {
     modules = [
       inputs.self.nixosModules.default
-      ({ config, ... }: {
+      ({ ... }: {
         custom.installer.enable = true;
-        custom.remoteBuilders.aarch64builder.enable = config.nixpkgs.system == "aarch64-linux";
       })
     ] ++ modules;
   };
 
-  mkInstallerISO = { system ? null, modules ? [ ] }: mkInstaller {
-    inherit system;
+  mkInstallerISO = { modules ? [ ] }: mkInstaller {
     modules = [
       ({ modulesPath, ... }: {
         imports = [
@@ -114,25 +112,29 @@ in
     ];
   };
 
-  installer_iso_x86_64-linux = mkInstallerISO { system = "x86_64-linux"; };
+  installer_iso_x86_64-linux = mkInstallerISO { modules = [{ nixpkgs.hostPlatform = "x86_64-linux"; }]; };
   installer_iso_aarch64-linux = mkInstallerISO {
-    system = "aarch64-linux";
     modules = [
       ({ config, ... }: {
+        nixpkgs.hostPlatform = "aarch64-linux";
         boot.loader.grub.extraFiles.dtbs = "${config.boot.kernelPackages.kernel}/dtbs";
       })
     ];
   };
 
   installer_iso_lx2k = mkInstallerISO {
-    system = "aarch64-linux";
-    modules = [ ({ hardware.lx2k.enable = true; }) ];
+    modules = [
+      ({
+        nixpkgs.hostPlatform = "aarch64-linux";
+        hardware.lx2k.enable = true;
+      })
+    ];
   };
 
   installer_sd_image_x86_64-linux = mkInstaller {
-    system = "x86_64-linux";
     modules = [
       ({ modulesPath, ... }: {
+        nixpkgs.hostPlatform = "x86_64-linux";
         imports = [
           "${modulesPath}/profiles/installation-device.nix"
           "${modulesPath}/installer/sd-card/sd-image-x86_64.nix"
@@ -141,9 +143,9 @@ in
     ];
   };
   installer_sd_image_aarch64-linux = mkInstaller {
-    system = "aarch64-linux";
     modules = [
       ({ modulesPath, ... }: {
+        nixpkgs.hostPlatform = "aarch64-linux";
         imports = [
           "${modulesPath}/installer/sd-card/sd-image-aarch64-installer.nix"
         ];
@@ -152,10 +154,10 @@ in
   };
 
   installer_sd_image_kukui_fennel14 = mkInstaller {
-    system = "aarch64-linux";
     modules = [
       ../nixos-modules/depthcharge/sd-image.nix
       ({ ... }: {
+        nixpkgs.hostPlatform = "aarch64-linux";
         boot.loader.depthcharge.enable = true;
         boot.initrd.systemd.enable = true;
         hardware.kukui-fennel14.enable = true;
@@ -164,7 +166,6 @@ in
   };
 
   installer_sd_image_cn9130_clearfog = mkInstaller {
-    system = "aarch64-linux";
     modules = [
       ({ modulesPath, ... }: {
         disabledModules = [
@@ -173,6 +174,7 @@ in
           "${modulesPath}/profiles/all-hardware.nix"
         ];
         imports = [ "${modulesPath}/installer/sd-card/sd-image-aarch64-installer.nix" ];
+        nixpkgs.hostPlatform = "aarch64-linux";
         boot.initrd.systemd.enable = true;
         hardware.clearfog-cn913x.enable = true;
       })
@@ -180,10 +182,10 @@ in
   };
 
   installer_sd_image_asurada_spherion = mkInstaller {
-    system = "aarch64-linux";
     modules = [
       ../nixos-modules/depthcharge/sd-image.nix
       ({ ... }: {
+        nixpkgs.hostPlatform = "aarch64-linux";
         boot.loader.depthcharge.enable = true;
         boot.initrd.systemd.enable = true;
         hardware.asurada-spherion.enable = true;
@@ -196,7 +198,7 @@ in
       ({ config, pkgs, modulesPath, ... }: {
         disabledModules = [
           # prevent initrd from requiring a bunch of kernel modules we don't
-          # have with the armada 388's kernel defconfig
+          # have with the armada 388's kernel mvebu_v7_defconfig
           "${modulesPath}/profiles/all-hardware.nix"
         ];
         imports = [
