@@ -7,6 +7,8 @@ in
 {
   imports = [ "${modulesPath}/virtualisation/amazon-image.nix" ];
   virtualisation.amazon-init.enable = false;
+  nixpkgs.hostPlatform = "aarch64-linux";
+  custom.crossCompile.enable = true;
 
   boot.initrd.systemd.enable = true;
   boot.kernelPackages = pkgs.linuxPackages_6_1;

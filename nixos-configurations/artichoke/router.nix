@@ -101,6 +101,5 @@ in
         enabledCollectors = [ "ethtool" "network_route" "systemd" ];
       };
     };
-
   };
 }

@@ -1,11 +1,12 @@
 { config, lib, pkgs, ... }: {
-  imports = [ ./hardware-configuration.nix ];
+  imports = [ ./router.nix ./hardware-configuration.nix ];
 
   boot.kernelParams = [ "cfg80211.ieee80211_regdom=US" ];
 
   networking.hostName = "squash";
-  networking.useNetworkd = true;
+
   hardware.armada-a38x.enable = true;
+
   custom = {
     crossCompile.enable = true;
     server.enable = true;
@@ -42,11 +43,8 @@
     wantedBy = [ "multi-user.target" ];
   };
 
-  services.hostapd = {
+  router = {
     enable = true;
-    countryCode = "US";
-    interface = "wlp1s0";
+    ipv6UlaPrefix = "fd4c:ddfe:28e9::/64";
   };
-
-  services.coredns.enable = true;
 }

@@ -39,7 +39,9 @@ in
   squash = nixosSystem {
     modules = with inputs; [
       ./squash
+      ipwatch.nixosModules.default
       self.nixosModules.default
+      nixos-router.nixosModules.default
     ];
   };
 
@@ -64,29 +66,6 @@ in
 
   fennel = nixosSystem {
     modules = with inputs; [ self.nixosModules.default ./fennel ];
-  };
-
-  lxc-test = nixosSystem {
-    modules = [
-      "${inputs.nixpkgs}/nixos/modules/virtualisation/lxc-container.nix"
-      ({
-        system.stateVersion = "22.11";
-      })
-    ];
-  };
-
-  netboot-test = nixosSystem {
-    modules = [
-      ({ modulesPath, ... }: {
-        imports = [ "${modulesPath}/installer/netboot/netboot-minimal.nix" ];
-        system.stateVersion = "23.05";
-        users.users.root.password = "dontpwnme";
-      })
-    ];
-  };
-
-  potato = nixosSystem {
-    modules = [ ./potato ];
   };
 
   rhubarb = nixosSystem {

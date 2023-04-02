@@ -1,7 +1,9 @@
 { config, pkgs, modulesPath, ... }: {
   imports = [ "${modulesPath}/installer/sd-card/sd-image-aarch64.nix" ];
+  nixpkgs.hostPlatform = "aarch64-linux";
 
   custom = {
+    crossCompile.enable = true;
     server.enable = true;
     disableZfs = true;
     deployee = {
