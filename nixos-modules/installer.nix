@@ -11,9 +11,6 @@ in
     systemd.services.sshd.wantedBy = lib.mkForce [ "multi-user.target" ];
     users.users.nixos.openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
     services.openssh.openFirewall = lib.mkForce true;
-    programs.ssh.startAgent = true;
-    programs.gnupg.agent.enable = true;
     programs.vim.defaultEditor = true;
-    environment.systemPackages = with pkgs; [ curl git tmux ];
   };
 }
