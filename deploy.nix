@@ -1,17 +1,25 @@
-inputs: with inputs;
+inputs:
 let
-  mkSystemNode = { name, hostname, system, magicRollback ? true, autoRollback ? true }: {
+  mkSystemNode = { name, hostname, magicRollback ? true, autoRollback ? true }: {
     inherit hostname magicRollback autoRollback;
     profiles.system = {
       sshUser = "root";
-      path = deploy-rs.lib.${system}.activate.nixos self.nixosConfigurations.${name};
+      path =
+        let
+          pkgs = import inputs.nixpkgs {
+            crossSystem = inputs.self.nixosConfigurations.${name}.config.nixpkgs.hostPlatform;
+            localSystem = "x86_64-linux";
+            overlays = [ inputs.deploy-rs.overlay ];
+          };
+        in
+        pkgs.deploy-rs.lib.activate.nixos inputs.self.nixosConfigurations.${name};
     };
   };
   nodes = builtins.listToAttrs [
-    { name = "kale"; value = mkSystemNode { name = "kale"; hostname = "kale.home.arpa"; system = "aarch64-linux"; }; }
-    { name = "okra"; value = mkSystemNode { name = "okra"; hostname = "okra.home.arpa"; system = "x86_64-linux"; }; }
-    { name = "rhubarb"; value = mkSystemNode { name = "rhubarb"; hostname = "rhubarb.home.arpa"; system = "aarch64-linux"; magicRollback = false; }; }
-    { name = "www"; value = mkSystemNode { name = "www"; hostname = "www.jmbaur.com"; system = "aarch64-linux"; }; }
+    { name = "kale"; value = mkSystemNode { name = "kale"; hostname = "kale.home.arpa"; }; }
+    { name = "okra"; value = mkSystemNode { name = "okra"; hostname = "okra.home.arpa"; }; }
+    { name = "rhubarb"; value = mkSystemNode { name = "rhubarb"; hostname = "rhubarb.home.arpa"; magicRollback = false; }; }
+    { name = "www"; value = mkSystemNode { name = "www"; hostname = "www.jmbaur.com"; }; }
   ];
 in
 {
