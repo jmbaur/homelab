@@ -42,9 +42,4 @@
     serviceConfig.ExecStart = "${pkgs.dookie}/bin/dookie --device=/dev/input/event0 --key-code=0x100 --action=restart";
     wantedBy = [ "multi-user.target" ];
   };
-
-  router = {
-    enable = true;
-    ipv6UlaPrefix = "fd4c:ddfe:28e9::/64";
-  };
 }
