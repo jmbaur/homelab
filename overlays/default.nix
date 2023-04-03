@@ -11,6 +11,7 @@ inputs: with inputs; {
           cicada
           coredns-utils
           depthcharge-tools
+          fdroidcl
           flarectl
           flashrom-cros
           flashrom-dasharo
