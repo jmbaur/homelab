@@ -120,28 +120,6 @@
         "type": "github"
       }
     },
-    "fenix": {
-      "inputs": {
-        "nixpkgs": [
-          "microvm",
-          "nixpkgs"
-        ],
-        "rust-analyzer-src": "rust-analyzer-src"
-      },
-      "locked": {
-        "lastModified": 1679466129,
-        "narHash": "sha256-BQt0ADAhPAwuoq3z+iprmHyw1NeyerOw1GiIEJkANGc=",
-        "owner": "nix-community",
-        "repo": "fenix",
-        "rev": "49237f7a76b98954306e77a7bd42f6491ad5c6a7",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "repo": "fenix",
-        "type": "github"
-      }
-    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -697,18 +675,17 @@
     },
     "microvm": {
       "inputs": {
-        "fenix": "fenix",
         "flake-utils": "flake-utils_3",
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1680291155,
-        "narHash": "sha256-s1YCdBGhKl3kqlhTICKgfrfHyIbiUczqiUM/TBzCyf4=",
+        "lastModified": 1680478525,
+        "narHash": "sha256-pxESi3hnOBNof5Pul+UQBx/OkDJ7oGCcaa1K5TRB6Jc=",
         "owner": "astro",
         "repo": "microvm.nix",
-        "rev": "2528d10d30524522027878c871b680532b5172da",
+        "rev": "f968ea83bdc542fd5e81e4bb1d726986098095b1",
         "type": "github"
       },
       "original": {
@@ -1153,23 +1130,6 @@
       "original": {
         "owner": "jmbaur",
         "repo": "runner-nix",
-        "type": "github"
-      }
-    },
-    "rust-analyzer-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1679428647,
-        "narHash": "sha256-gyS7UDFNzQfRKJvUDlVuM8wXCIyreBmVq+aiPXhfTlk=",
-        "owner": "rust-lang",
-        "repo": "rust-analyzer",
-        "rev": "3321799e8fac622db50fe8c3284062f7d0f1bf53",
-        "type": "github"
-      },
-      "original": {
-        "owner": "rust-lang",
-        "ref": "nightly",
-        "repo": "rust-analyzer",
         "type": "github"
       }
     },
