@@ -59,7 +59,7 @@ in
         type = types.listOf types.str;
         default = [ ];
         description = ''
-          IPs for which all traffic will be accepted.
+          IPs for which all traffic (input & forward) will be accepted.
         '';
       };
       ips = mkOption {
@@ -150,6 +150,7 @@ in
       };
     };
 
+    # always forward
     networking.firewall.extraForwardRules = (lib.concatMapStrings
       (ip: ''
         ${if isIPv6 ip then "ip6" else "ip"} saddr ${ip} accept
