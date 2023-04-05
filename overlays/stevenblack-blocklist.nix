@@ -5,5 +5,5 @@ fetchFromGitHub rec {
   owner = "stevenblack";
   repo = "hosts";
   rev = version;
-  sha256 = "sha256-HoNX57lCoIr36B/7HMuazWSWeAPPfWY1oZf6dXnxYIE=";
+  sha256 = "sha256-fza/PNaAWk90zIIbJr2QNt0rJ12SA3LHGYiXFMA8q/Y=";
 }
