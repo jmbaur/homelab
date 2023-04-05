@@ -7,9 +7,6 @@
 
   hardware.armada-a38x.enable = true;
 
-  # RTC doesn't seem to be working nicely.
-  services.resolved.dnssec = "false";
-
   custom = {
     crossCompile.enable = true;
     server.enable = true;
