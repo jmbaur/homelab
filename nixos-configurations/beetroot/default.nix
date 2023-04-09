@@ -39,7 +39,7 @@
     wg-mesh = {
       enable = true;
       dns = true;
-      peers.artichoke.extraConfig.Endpoint = "vpn.jmbaur.com:51820";
+      # peers.squash.extraConfig.Endpoint = "squash.home.arpa:51820"; # "vpn.jmbaur.com:51820";
     };
   };
 
