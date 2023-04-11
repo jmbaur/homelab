@@ -22,6 +22,7 @@ with lib; {
     boot.cleanTmpDir = mkDefault isNotContainer;
     boot.loader.grub.configurationLimit = mkDefault 50;
     boot.loader.systemd-boot.configurationLimit = mkDefault 50;
+    boot.bootspec.enable = true;
 
     i18n.defaultLocale = "en_US.UTF-8";
     console.useXkbConfig = true;
