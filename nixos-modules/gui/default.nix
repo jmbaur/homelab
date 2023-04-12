@@ -44,6 +44,8 @@ with lib;
       firefox
       foot
       fuzzel
+      glmark2
+      glxinfo
       gnome-themes-extra
       grim
       imv
@@ -62,6 +64,7 @@ with lib;
       swaylock
       v4l-show
       v4l-utils
+      vulkan-tools
       wev
       wezterm
       wf-recorder
@@ -127,7 +130,7 @@ with lib;
       extraSessionCommands = ''
         # vulkan renderer support
         # export WLR_RENDERER=vulkan
-        # export VK_LAYER_PATH=${pkgs.vulkan-validation-layers}/result/share/vulkan/explicit_layer.d
+        # export VK_LAYER_PATH=${pkgs.vulkan-validation-layers}/share/vulkan/explicit_layer.d
         # SDL:
         export SDL_VIDEODRIVER=wayland
         # QT (needs qt5.qtwayland in systemPackages):
