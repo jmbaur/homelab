@@ -42,15 +42,4 @@
     serviceConfig.ExecStart = "${pkgs.dookie}/bin/dookie --device=/dev/input/event0 --key-code=0x100 --action=restart";
     wantedBy = [ "multi-user.target" ];
   };
-
-  systemd.network.links = {
-    "10-wlan0" = {
-      matchConfig.MACAddress = "c4:4b:d1:c1:01:2f";
-      linkConfig.Name = "wlan0";
-    };
-    "10-wlan1" = {
-      matchConfig.MACAddress = "c4:4b:d1:c0:01:2f";
-      linkConfig.Name = "wlan1";
-    };
-  };
 }

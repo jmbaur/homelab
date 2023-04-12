@@ -6,7 +6,17 @@
     };
 
     systemd.network.networks = (lib.genAttrs
-      [ "lan1" "lan2" "lan3" "lan4" "lan5" "wlan1" ]
+      [
+        "lan1"
+        "lan2"
+        "lan3"
+        "lan4"
+        "lan5"
+        "wlp1s0"
+        # link shows up as wlan0/wlan1 inconsistently
+        "wlan0"
+        "wlan1"
+      ]
       (name: {
         inherit name;
         bridge = [ config.systemd.network.netdevs.br0.netdevConfig.Name ];
