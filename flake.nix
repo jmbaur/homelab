@@ -18,6 +18,8 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware";
     nixos-router.inputs.nixpkgs.follows = "nixpkgs";
     nixos-router.url = "github:jmbaur/nixos-router";
+    nixpkgs-wayland.url = "github:nix-community/nixpkgs-wayland";
+    nixpkgs-wayland.inputs.nixpkgs.follows = "nixpkgs";
     nixpkgs.url = "nixpkgs/nixos-unstable";
     pd-notify.inputs.nixpkgs.follows = "nixpkgs";
     pd-notify.url = "github:jmbaur/pd-notify";

@@ -3,6 +3,7 @@ inputs: {
     nixpkgs.overlays = with inputs; [
       gobar.overlays.default
       gosee.overlays.default
+      nixpkgs-wayland.overlays.default
       pd-notify.overlays.default
       self.overlays.default
       self.overlays.default

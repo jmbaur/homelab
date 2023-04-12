@@ -122,7 +122,7 @@ with lib; {
             names = [ guiData.font ];
             size = 12.0;
           };
-          terminal = "${pkgs.wezterm}/bin/wezterm-gui";
+          terminal = "${pkgs.kitty}/bin/kitty";
           menu = "${pkgs.bemenu}/bin/bemenu-run";
           modifier = "Mod4";
           workspaceLayout = "stacking";
