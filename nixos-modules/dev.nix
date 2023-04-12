@@ -33,6 +33,7 @@ with lib;
 
     virtualisation.podman = {
       enable = !config.boot.isContainer;
+      dockerCompat = true;
       defaultNetwork.settings.dns_enabled = true;
     };
 

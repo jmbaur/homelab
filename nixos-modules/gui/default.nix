@@ -42,7 +42,6 @@ with lib;
       desktop-launcher
       ffmpeg-full
       firefox
-      # fnott-dbus
       foot
       fuzzel
       gnome-themes-extra
