@@ -1,5 +1,5 @@
 { stdenv, fetchgit, pkgsBuildBuild, python3, pkg-config, flashrom, openssl, ... }:
-{ boardName, configfile, extraConfig ? "", extraCbfsCommands ? "", ... }:
+{ boardName, configfile, extraConfig ? "", ... }@args:
 let
   toolchain-system = {
     x86_64 = "i386";
@@ -10,7 +10,7 @@ let
   }.${stdenv.hostPlatform.linuxArch};
   toolchain = pkgsBuildBuild.coreboot-toolchain.${toolchain-system}.override { withAda = false; };
 in
-stdenv.mkDerivation {
+stdenv.mkDerivation ({
   pname = "coreboot-${boardName}";
   inherit (toolchain) version;
   src = fetchgit {
@@ -36,11 +36,10 @@ stdenv.mkDerivation {
     runHook postConfigure
   '';
   makeFlags = [ "XGCCPATH=${toolchain}/bin/" ];
-  preInstall = extraCbfsCommands;
   installPhase = ''
     runHook preInstall
     mkdir -p  $out
     cp build/coreboot.rom $out/coreboot.rom
     runHook postInstall
   '';
-}
+} // (builtins.removeAttrs args [ "boardName" "configfile" "extraConfig" ]))

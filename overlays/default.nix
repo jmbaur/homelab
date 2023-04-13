@@ -111,6 +111,21 @@ inputs: with inputs; {
 
         grafana-dashboards = prev.callPackage ./grafana-dashboards { };
 
+        ubootCoreboot = prev.buildUBoot {
+          defconfig = "coreboot_defconfig";
+          extraConfig = ''
+            CONFIG_BLK=y
+            CONFIG_CMD_BOOTEFI=y
+            CONFIG_CMD_QFW=y
+            # CONFIG_DEFAULT_DEVICE_TREE="qemu-x86_i440fx"
+            CONFIG_EFI_LOADER=y
+            CONFIG_PARTITIONS=y
+            # CONFIG_TARGET_QEMU_X86_64=y
+          '';
+          extraMeta.platforms = [ "x86_64-linux" ];
+          filesToInstall = [ "u-boot-dtb.bin" ];
+        };
+
         # Enable fit images (w/signatures) and modify some hardware.
         # - CON2 is located nearest the CPU
         # - CON3 is located nearest the edge of the device
@@ -189,9 +204,9 @@ inputs: with inputs; {
         coreboot-qemu-x86 = final.buildCoreboot {
           boardName = "qemu-x86";
           configfile = ./coreboot/qemu-x86.config;
-          extraConfig = ''
-            CONFIG_PAYLOAD_FILE="${final.tinyboot-kernel}/bzImage"
-            CONFIG_LINUX_INITRD="${final.tinyboot-initramfs.override { tinybootTTY = "ttyS0"; }}/initrd"
+          postInstall = ''
+            ./build/util/cbfstool/cbfstool $out/coreboot.rom add-flat-binary \
+              -f ${final.ubootCoreboot}/u-boot-dtb.bin -n fallback/payload -c lzma -l 0x1110000 -e 0x1110000
           '';
         };
         coreboot-qemu-aarch64 = final.buildCoreboot {
@@ -216,6 +231,10 @@ inputs: with inputs; {
               CONFIG_PAYLOAD_FILE="${final.tinyboot-kernel}/bzImage"
               CONFIG_LINUX_INITRD="${final.tinyboot-initramfs}/initrd"
             '';
+          postInstall = ''
+            ./build/util/cbfstool/cbfstool $out/coreboot.rom add-flat-binary \
+              -f ${final.ubootCoreboot}/u-boot-dtb.bin -n fallback/payload -c lzma -l 0x1110000 -e 0x1110000
+          '';
         };
         coreboot-msi-ms-7d25 = final.buildCoreboot {
           boardName = "msi-ms-7d25";
