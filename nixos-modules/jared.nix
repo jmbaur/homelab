@@ -183,10 +183,14 @@ in
       type = lib.types.nullOr lib.types.path;
       default = null;
     };
+    username = lib.mkOption {
+      type = lib.types.str;
+      default = "jared";
+    };
   };
   config = lib.mkIf cfg.enable {
     programs.fish.enable = true;
-    users.users.jared = {
+    users.users.${cfg.username} = {
       inherit (cfg) passwordFile;
       isNormalUser = true;
       description = "Jared Baur";
@@ -226,10 +230,10 @@ in
       ;
     };
 
-    home-manager.users.jared = { nixosConfig, config, pkgs, ... }: {
+    home-manager.users.${cfg.username} = { nixosConfig, config, pkgs, ... }: {
       programs.git = {
-        userEmail = "jaredbaur@fastmail.com";
-        userName = nixosConfig.users.users.jared.description;
+        userEmail = lib.mkDefault "jaredbaur@fastmail.com";
+        userName = nixosConfig.users.users.${cfg.username}.description;
         extraConfig = {
           commit.gpgSign = true;
           gpg.format = "ssh";
