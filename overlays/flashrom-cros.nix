@@ -1,13 +1,12 @@
-{ stdenv, cmake, cmocka, fetchgit, libftdi1, libjaylink, libusb1, meson, ninja, pciutils, pkg-config, sphinx, bash-completion, ... }:
+{ lib, stdenv, cmake, cmocka, fetchgit, libftdi1, libjaylink, libusb1, meson, ninja, pciutils, pkg-config, sphinx, bash-completion, ... }:
+let
+  source = lib.importJSON ./flashrom-cros-source.json;
+in
 stdenv.mkDerivation rec {
   pname = "flashrom-cros";
   version = builtins.substring 0 7 src.rev;
 
-  src = fetchgit {
-    url = "https://chromium.googlesource.com/chromiumos/third_party/flashrom";
-    rev = "6765c83adcfc877dd5298e0ff6bd532249391e47";
-    sha256 = "sha256-LBK/5btqjv/lS8H/gt2MQdGjA6BUsDl/v7drlCS2oTY=";
-  };
+  src = fetchgit { inherit (source) url rev sha256 fetchLFS fetchSubmodules deepClone leaveDotGit; };
 
   dontUseCmakeConfigure = true;
   nativeBuildInputs = [ cmake meson ninja pkg-config sphinx bash-completion ];

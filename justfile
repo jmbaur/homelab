@@ -34,6 +34,7 @@ update:
 	#!/usr/bin/env bash
 	cd {{justfile_directory()}}/overlays
 	export NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"
+	find ./overlays -type f -name "*source.json" -exec bash -c 'nix-prefetch-git $(jq -r ".url" < $0) > $0' {} \;
 	for drv in $(nix eval --impure --expr "builtins.attrNames (import ./out-of-tree.nix {})" --json | jq -r ".[]"); do
 		nix-update --file ./out-of-tree.nix $drv
 	done
