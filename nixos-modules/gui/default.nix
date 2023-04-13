@@ -28,7 +28,7 @@ with lib;
     nixpkgs.overlays = [
       (_: prev: {
         desktop-launcher = prev.writeShellScriptBin "desktop-launcher" ''
-          exec -a "$0" systemd-cat --identifier=sway sway
+          exec -a "$0" systemd-cat --identifier=sway ${config.programs.sway.package}/bin/sway
         '';
       })
     ];
