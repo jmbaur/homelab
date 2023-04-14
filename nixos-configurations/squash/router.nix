@@ -1,9 +1,31 @@
-{ config, lib, ... }: {
+{ config, lib, ... }:
+let
+  wg = import ../../nixos-modules/mesh-network/inventory.nix;
+in
+{
   config = lib.mkIf config.router.enable {
     systemd.network.netdevs.br0.netdevConfig = {
       Name = "br0";
       Kind = "bridge";
     };
+
+    custom.wg-mesh = {
+      enable = true;
+      peers.beetroot = { };
+      peers.okra = { };
+      peers.rhubarb = { };
+      firewall = {
+        trustedIPs = [ wg.beetroot.ip ];
+        ips."${wg.okra.ip}".allowedTCPPorts = [
+          19531 # systemd-journal-gatewayd
+          9153 # coredns
+          9430 # corerad
+          config.services.prometheus.exporters.blackbox.port
+          config.services.prometheus.exporters.node.port
+        ];
+      };
+    };
+
 
     systemd.network.networks = (lib.genAttrs
       [
