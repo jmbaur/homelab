@@ -117,10 +117,8 @@ inputs: with inputs; {
             CONFIG_BLK=y
             CONFIG_CMD_BOOTEFI=y
             CONFIG_CMD_QFW=y
-            # CONFIG_DEFAULT_DEVICE_TREE="qemu-x86_i440fx"
             CONFIG_EFI_LOADER=y
             CONFIG_PARTITIONS=y
-            # CONFIG_TARGET_QEMU_X86_64=y
           '';
           extraMeta.platforms = [ "x86_64-linux" ];
           filesToInstall = [ "u-boot-dtb.bin" ];
