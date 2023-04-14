@@ -1,5 +1,5 @@
-{ stdenv, fetchgit, pkgsBuildBuild, python3, pkg-config, flashrom, openssl, ... }:
-{ boardName, configfile, extraConfig ? "", ... }@args:
+{ lib, stdenv, fetchgit, pkgsBuildBuild, python3, pkg-config, flashrom, openssl, ... }:
+lib.makeOverridable ({ boardName, configfile, extraConfig ? "", ... }@args:
 let
   toolchain-system = {
     x86_64 = "i386";
@@ -42,4 +42,4 @@ stdenv.mkDerivation ({
     cp build/coreboot.rom $out/coreboot.rom
     runHook postInstall
   '';
-} // (builtins.removeAttrs args [ "boardName" "configfile" "extraConfig" ]))
+} // (builtins.removeAttrs args [ "boardName" "configfile" "extraConfig" ])))
