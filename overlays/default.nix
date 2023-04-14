@@ -116,7 +116,6 @@ inputs: with inputs; {
           extraConfig = ''
             CONFIG_BLK=y
             CONFIG_CMD_BOOTEFI=y
-            CONFIG_CMD_QFW=y
             CONFIG_EFI_LOADER=y
             CONFIG_PARTITIONS=y
           '';
@@ -124,19 +123,25 @@ inputs: with inputs; {
           filesToInstall = [ "u-boot-dtb.bin" ];
         };
 
-        # Enable fit images (w/signatures) and modify some hardware.
+        # Enable FIT images (w/signatures), UEFI compatibility, and modify some hardware.
         # - CON2 is located nearest the CPU
         # - CON3 is located nearest the edge of the device
         ubootClearfog = prev.ubootClearfog.override {
           extraConfig = ''
             CONFIG_CLEARFOG_CON2_PCI=y
-            CONFIG_CLEARFOG_CON3_PCI=y
             CONFIG_CLEARFOG_CON2_SATA=n
+            CONFIG_CLEARFOG_CON3_PCI=y
             CONFIG_CLEARFOG_CON3_SATA=n
             CONFIG_CLEARFOG_SFP_25GB=y
+
             CONFIG_FIT=y
             CONFIG_FIT_SIGNATURE=y
             CONFIG_RSA=y
+
+            CONFIG_BLK=y
+            CONFIG_CMD_BOOTEFI=y
+            CONFIG_EFI_LOADER=y
+            CONFIG_PARTITIONS=y
           '';
           # default boot device is mmc
           extraMeta.bootDevice = "mmc";
