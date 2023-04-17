@@ -39,7 +39,6 @@ let
     plugins = with vimPlugins;
       # start
       [
-        editorconfig-nvim
         fzf-lua
         gosee-nvim
         jmbaur-settings
