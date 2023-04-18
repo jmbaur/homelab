@@ -6,10 +6,14 @@ keys:
   - &rhubarb age1gr6ezp2sytvwh4arpw8xwmezx59x9evdfr86sfr9kcayp500hskse7cksq
   - &www age1y8n3ppl6pp9xy0pkuwjku7jc5xzje4nufy70hw526fs6re0czg9sapa3uq
   - &okra age17jejydtff70wy3ptdlpxm384dhf4xss7tnknuqrjhtv34w2yu53s5r5ec0
+  - &squash age1k0cthp9dy5xngnpjc4cjwp86h3fxyrgtuk6h2lzn39dgx3ap894saredq7
   # TODO(jared): for when sops is compatible with age plugins
   # - &yubikey5cnfc age1yubikey1q20xxhpyk00m3ezajg3769jpmgwkvasq4dzutg75jq96fytnlcmxs9ltmga
   # - &yubikey5nfc age1yubikey1q0tf5gp52t3smx6zduwyjnurw4cgjlqdm58a9dj6430e8mtrfexfg586p8p
 creation_rules:
+  - path_regex: nixos-configurations/squash/secrets.yaml
+    pgp: *jmbaur_pgp
+    age: *squash
   - path_regex: nixos-configurations/artichoke/secrets.yaml
     pgp: *jmbaur_pgp
     age: *artichoke
