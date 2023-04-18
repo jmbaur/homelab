@@ -12,7 +12,6 @@ with lib; {
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
-      (writeShellScriptBin "nvim-boring" ''exec -a "$0" ${neovim}/bin/nvim "$@"'')
       ansifilter
       as-tree
       bc

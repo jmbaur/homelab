@@ -72,7 +72,10 @@ local on_attach = get_on_attach({ format = false, org_imports = false })
 
 local servers = {
 	clangd = { required_exe = { "clangd" }, lsp_config = { on_attach = on_attach } },
-	hls = { required_exe = { "haskell-language-server-wrapper", "ghc" }, lsp_config = { on_attach = on_attach_format }, },
+	hls = {
+		required_exe = { "haskell-language-server-wrapper", "ghc" },
+		lsp_config = { on_attach = on_attach_format },
+	},
 	gopls = {
 		required_exe = { "go", "gopls", "gofumpt", "staticcheck" },
 		lsp_config = {
@@ -93,7 +96,7 @@ local servers = {
 		lsp_config = {
 			on_attach = on_attach_format,
 			settings = {
-					["rust-analyzer"] = {
+				["rust-analyzer"] = {
 					-- use cargo-clippy on save instead of cargo-check
 					check = { command = vim.fn.executable("cargo-clippy") == 1 and "clippy" or "check" },
 				},
@@ -144,17 +147,17 @@ for lsp, settings in pairs(servers) do
 end
 
 local conditional_null_ls_sources = {
-	{ required_exe = "cue",         source = null_ls.builtins.diagnostics.cue_fmt },
-	{ required_exe = "cue",         source = null_ls.builtins.formatting.cue_fmt },
-	{ required_exe = "deno",        source = null_ls.builtins.formatting.deno_fmt },
+	{ required_exe = "cue", source = null_ls.builtins.diagnostics.cue_fmt },
+	{ required_exe = "cue", source = null_ls.builtins.formatting.cue_fmt },
+	{ required_exe = "deno", source = null_ls.builtins.formatting.deno_fmt },
 	{ required_exe = "latexindent", source = null_ls.builtins.formatting.latexindent },
 	{ required_exe = "nixpkgs-fmt", source = null_ls.builtins.formatting.nixpkgs_fmt },
-	{ required_exe = "shellcheck",  source = null_ls.builtins.diagnostics.shellcheck },
-	{ required_exe = "shfmt",       source = null_ls.builtins.formatting.shfmt },
-	{ required_exe = "taplo",       source = null_ls.builtins.formatting.taplo },
-	{ required_exe = "tidy",        source = null_ls.builtins.diagnostics.tidy },
-	{ required_exe = "tidy",        source = null_ls.builtins.formatting.tidy },
-	{ required_exe = "yamlfmt",     source = null_ls.builtins.formatting.yamlfmt },
+	{ required_exe = "shellcheck", source = null_ls.builtins.diagnostics.shellcheck },
+	{ required_exe = "shfmt", source = null_ls.builtins.formatting.shfmt },
+	{ required_exe = "taplo", source = null_ls.builtins.formatting.taplo },
+	{ required_exe = "tidy", source = null_ls.builtins.diagnostics.tidy },
+	{ required_exe = "tidy", source = null_ls.builtins.formatting.tidy },
+	{ required_exe = "yamlfmt", source = null_ls.builtins.formatting.yamlfmt },
 }
 
 local null_ls_sources = {}
@@ -182,3 +185,17 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		vim.bo[args.buf].formatexpr = nil
 	end,
 })
+
+vim.api.nvim_create_user_command("ToggleFormatOnSave", function()
+	local ignoring_buf_write_pre = false
+	for _, event in pairs(vim.opt.eventignore:get()) do
+		if event == "BufWritePre" then
+			ignoring_buf_write_pre = true
+		end
+	end
+	if ignoring_buf_write_pre then
+		vim.opt.eventignore:remove({ "BufWritePre" })
+	else
+		vim.opt.eventignore:append({ "BufWritePre" })
+	end
+end, { desc = "Toggle format on save" })
