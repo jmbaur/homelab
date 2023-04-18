@@ -234,10 +234,6 @@ inputs: with inputs; {
               CONFIG_PAYLOAD_FILE="${final.tinyboot-kernel}/bzImage"
               CONFIG_LINUX_INITRD="${final.tinyboot-initramfs}/initrd"
             '';
-          postInstall = ''
-            ./build/util/cbfstool/cbfstool $out/coreboot.rom add-flat-binary \
-              -f ${final.ubootCoreboot}/u-boot-dtb.bin -n fallback/payload -c lzma -l 0x1110000 -e 0x1110000
-          '';
         };
         coreboot-msi-ms-7d25 = final.buildCoreboot {
           boardName = "msi-ms-7d25";
