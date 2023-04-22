@@ -1,13 +1,10 @@
 { config, pkgs, ... }: {
-  imports = [ ./hardware-configuration.nix ];
+  imports = [ ./hardware-configuration.nix ./disko.nix ];
   hardware.bluetooth.enable = true;
 
   zramSwap.enable = true;
 
-  boot.initrd.luks.devices."cryptroot".crypttabExtraOpts = [ "fido2-device=auto" ];
-  fileSystems."/".options = [ "noatime" "discard=async" "compress=zstd" ];
-  fileSystems."/nix".options = [ "noatime" "discard=async" "compress=zstd" ];
-  fileSystems."/home".options = [ "noatime" "discard=async" "compress=zstd" ];
+  boot.initrd.luks.devices.cryptroot.crypttabExtraOpts = [ "fido2-device=auto" ];
 
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   boot.initrd.availableKernelModules = [ "i915" ];
