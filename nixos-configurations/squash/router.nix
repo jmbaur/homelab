@@ -29,27 +29,22 @@ in
       };
     };
 
+    # Use udev for giving wireless interfaces a static name. Udev is used over
+    # systemd-networkd link units since hostapd needs to start before
+    # systemd-networkd, thus rendering a rename useless.
+    services.udev.extraRules = ''
+      SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="c4:4b:d1:c0:01:2f", NAME="wlan0"
+      SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="c4:4b:d1:c1:01:2f", NAME="wlan1"
+    '';
 
-    systemd.network.networks = (lib.genAttrs
-      [
-        "lan1"
-        "lan2"
-        "lan3"
-        "lan4"
-        "lan5"
-        "wlp1s0"
-        # link shows up as wlan0/wlan1 inconsistently
-        "wlan0"
-        "wlan1"
-      ]
-      (name: {
-        inherit name;
-        bridge = [ config.systemd.network.netdevs.br0.netdevConfig.Name ];
-        linkConfig = {
-          ActivationPolicy = "always-up";
-          RequiredForOnline = "no";
-        };
-      }));
+    systemd.network.networks = (lib.genAttrs [ "lan1" "lan2" "lan3" "lan4" "lan5" "wlan0" "wlan1" ] (name: {
+      inherit name;
+      bridge = [ config.systemd.network.netdevs.br0.netdevConfig.Name ];
+      linkConfig = {
+        ActivationPolicy = "always-up";
+        RequiredForOnline = "no";
+      };
+    }));
 
     router.lanInterface = config.systemd.network.netdevs.br0.netdevConfig.Name;
     router.wanInterface = config.systemd.network.links."10-wan".linkConfig.Name;
