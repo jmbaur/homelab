@@ -14,7 +14,7 @@
       name = "enable_spi_cr50_tpm";
       patch = null;
       extraStructuredConfig = {
-        TCG_TIS_SPI_CR50 = lib.kernel.module;
+        TCG_TIS_SPI_CR50 = lib.kernel.yes;
       };
     }];
 
