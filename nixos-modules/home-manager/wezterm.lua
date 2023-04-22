@@ -44,6 +44,7 @@ return {
 	font = wezterm.font("JetBrains Mono"),
 	font_size = 16.0,
 	force_reverse_video_cursor = true,
+	front_end = "WebGpu",
 	hide_tab_bar_if_only_one_tab = true,
 	keys = keys,
 	mouse_bindings = mouse_bindings,
