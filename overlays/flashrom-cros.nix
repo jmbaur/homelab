@@ -7,6 +7,7 @@ stdenv.mkDerivation rec {
   version = builtins.substring 0 7 src.rev;
 
   src = fetchgit { inherit (source) url rev sha256 fetchLFS fetchSubmodules deepClone leaveDotGit; };
+  patches = [ ./0001-flashrom-cros-no-powerd.patch ];
 
   dontUseCmakeConfigure = true;
   nativeBuildInputs = [ cmake meson ninja pkg-config sphinx bash-completion ];

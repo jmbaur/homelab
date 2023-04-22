@@ -22,7 +22,7 @@ if ! tmux_session_path=$(
 	fd "^\.git$" "$directory" \
 		--hidden \
 		--type directory \
-		--max-depth 5 \
+		--max-depth 6 \
 		--no-ignore |
 		sed "s,/\.git/,," |
 		{ [[ -n ${1-} ]] && grep ".*$1.*" || cat; } |
