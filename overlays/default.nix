@@ -127,6 +127,7 @@ inputs: with inputs; {
         # - CON2 is located nearest the CPU
         # - CON3 is located nearest the edge of the device
         ubootClearfog = prev.ubootClearfog.override {
+          filesToInstall = [ "u-boot-with-spl.kwb" ];
           extraConfig = ''
             CONFIG_CLEARFOG_CON2_PCI=y
             CONFIG_CLEARFOG_CON2_SATA=n
@@ -147,6 +148,7 @@ inputs: with inputs; {
           extraMeta.bootDevice = "mmc";
         };
         ubootClearfogUart = prev.ubootClearfog.override {
+          inherit (final.ubootClearfog) filesToInstall;
           extraConfig = final.ubootClearfog.extraConfig + ''
             CONFIG_MVEBU_SPL_BOOT_DEVICE_MMC=n
             CONFIG_MVEBU_SPL_BOOT_DEVICE_UART=y
@@ -154,13 +156,14 @@ inputs: with inputs; {
           extraMeta.bootDevice = "uart";
         };
         ubootClearfogSpi = prev.ubootClearfog.override {
+          inherit (final.ubootClearfog) filesToInstall;
           extraConfig = final.ubootClearfog.extraConfig + ''
             CONFIG_MVEBU_SPL_BOOT_DEVICE_MMC=n
             CONFIG_MVEBU_SPL_BOOT_DEVICE_SPI=y
           '';
           postInstall = ''
             dd bs=1M count=4 if=/dev/zero of=$out/spi.img
-            dd conv=notrunc if=$out/u-boot-spl.kwb of=$out/spi.img
+            dd conv=notrunc if=$out/u-boot-with-spl.kwb of=$out/spi.img
           '';
           extraMeta.bootDevice = "spi";
         };
