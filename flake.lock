@@ -37,34 +37,10 @@
         "flake-compat": "flake-compat_8",
         "flake-utils": "flake-utils_10",
         "nixpkgs": [
-          "tinyboot",
-          "nixpkgs"
-        ],
-        "rust-overlay": "rust-overlay"
-      },
-      "locked": {
-        "lastModified": 1682985522,
-        "narHash": "sha256-QpaH83EEJ5t2eucsgcuhdgBnvhnm90D1jrCihAql508=",
-        "owner": "ipetkov",
-        "repo": "crane",
-        "rev": "841b3f7017556aa6ed040744f83472835a5bf98e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "ipetkov",
-        "repo": "crane",
-        "type": "github"
-      }
-    },
-    "crane_2": {
-      "inputs": {
-        "flake-compat": "flake-compat_9",
-        "flake-utils": "flake-utils_12",
-        "nixpkgs": [
           "webauthn-tiny",
           "nixpkgs"
         ],
-        "rust-overlay": "rust-overlay_3"
+        "rust-overlay": "rust-overlay"
       },
       "locked": {
         "lastModified": 1682796879,
@@ -128,22 +104,6 @@
         "owner": "edolstra",
         "repo": "flake-compat",
         "rev": "009399224d5e398d03b22badca40a37ac85412a1",
-        "type": "github"
-      },
-      "original": {
-        "owner": "edolstra",
-        "repo": "flake-compat",
-        "type": "github"
-      }
-    },
-    "flake-compat_10": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1673956053,
-        "narHash": "sha256-4gtG9iQuiKITOjNQQeQIpoIB6b16fm+504Ch3sNKLd8=",
-        "owner": "edolstra",
-        "repo": "flake-compat",
-        "rev": "35bb57c0c8d8b62bbfd284272c928ceb64ddbde9",
         "type": "github"
       },
       "original": {
@@ -332,39 +292,6 @@
       }
     },
     "flake-utils_11": {
-      "inputs": {
-        "systems": "systems_4"
-      },
-      "locked": {
-        "lastModified": 1681202837,
-        "narHash": "sha256-H+Rh19JDwRtpVPAWp64F+rlEtxUWBAQW28eAi3SRSzg=",
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "rev": "cfacdce06f30d2b68473a46042957675eebb3401",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "type": "github"
-      }
-    },
-    "flake-utils_12": {
-      "locked": {
-        "lastModified": 1678901627,
-        "narHash": "sha256-U02riOqrKKzwjsxc/400XnElV+UtPUQWpANPlyazjH0=",
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "rev": "93a2b84fc4b70d9e089d029deacc3583435c2ed6",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "type": "github"
-      }
-    },
-    "flake-utils_13": {
       "locked": {
         "lastModified": 1667395993,
         "narHash": "sha256-nuEHfE/LcWyuSWnS8t12N1wc105Qtau+/OdUAjtQ0rA=",
@@ -379,9 +306,9 @@
         "type": "github"
       }
     },
-    "flake-utils_14": {
+    "flake-utils_12": {
       "inputs": {
-        "systems": "systems_5"
+        "systems": "systems_4"
       },
       "locked": {
         "lastModified": 1681202837,
@@ -866,22 +793,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-extlinux-specialisation_2": {
-      "locked": {
-        "lastModified": 1675185429,
-        "narHash": "sha256-TLasf36yY1N2kXUSYsCM92kBTCsGjQ/KDADRYUhm0zc=",
-        "owner": "jmbaur",
-        "repo": "nixpkgs",
-        "rev": "864673cfb6071819d50db2aa4a2cef786b79a969",
-        "type": "github"
-      },
-      "original": {
-        "owner": "jmbaur",
-        "ref": "extlinux-specialisation",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "nixpkgs-lib": {
       "locked": {
         "lastModified": 1681001314,
@@ -1224,8 +1135,8 @@
     },
     "pre-commit_3": {
       "inputs": {
-        "flake-compat": "flake-compat_10",
-        "flake-utils": "flake-utils_13",
+        "flake-compat": "flake-compat_9",
+        "flake-utils": "flake-utils_11",
         "gitignore": "gitignore_6",
         "nixpkgs": [
           "webauthn-tiny",
@@ -1266,7 +1177,6 @@
         "runner-nix": "runner-nix",
         "sops-nix": "sops-nix",
         "terranix": "terranix",
-        "tinyboot": "tinyboot",
         "webauthn-tiny": "webauthn-tiny"
       }
     },
@@ -1295,12 +1205,12 @@
     "rust-overlay": {
       "inputs": {
         "flake-utils": [
-          "tinyboot",
+          "webauthn-tiny",
           "crane",
           "flake-utils"
         ],
         "nixpkgs": [
-          "tinyboot",
+          "webauthn-tiny",
           "crane",
           "nixpkgs"
         ]
@@ -1321,56 +1231,7 @@
     },
     "rust-overlay_2": {
       "inputs": {
-        "flake-utils": "flake-utils_11",
-        "nixpkgs": [
-          "tinyboot",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1682993975,
-        "narHash": "sha256-LlI5vwUw97NLAwcOYHRLRfhICVdp7MK2KFcUSj0Zwdg=",
-        "owner": "oxalica",
-        "repo": "rust-overlay",
-        "rev": "07f421299826591e2b28e03bbbe19a5292395afe",
-        "type": "github"
-      },
-      "original": {
-        "owner": "oxalica",
-        "repo": "rust-overlay",
-        "type": "github"
-      }
-    },
-    "rust-overlay_3": {
-      "inputs": {
-        "flake-utils": [
-          "webauthn-tiny",
-          "crane",
-          "flake-utils"
-        ],
-        "nixpkgs": [
-          "webauthn-tiny",
-          "crane",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1680488274,
-        "narHash": "sha256-0vYMrZDdokVmPQQXtFpnqA2wEgCCUXf5a3dDuDVshn0=",
-        "owner": "oxalica",
-        "repo": "rust-overlay",
-        "rev": "7ec2ff598a172c6e8584457167575b3a1a5d80d8",
-        "type": "github"
-      },
-      "original": {
-        "owner": "oxalica",
-        "repo": "rust-overlay",
-        "type": "github"
-      }
-    },
-    "rust-overlay_4": {
-      "inputs": {
-        "flake-utils": "flake-utils_14",
+        "flake-utils": "flake-utils_12",
         "nixpkgs": [
           "webauthn-tiny",
           "nixpkgs"
@@ -1471,21 +1332,6 @@
         "type": "github"
       }
     },
-    "systems_5": {
-      "locked": {
-        "lastModified": 1681028828,
-        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
-        "owner": "nix-systems",
-        "repo": "default",
-        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-systems",
-        "repo": "default",
-        "type": "github"
-      }
-    },
     "terranix": {
       "inputs": {
         "bats-assert": "bats-assert",
@@ -1523,30 +1369,6 @@
         "type": "github"
       }
     },
-    "tinyboot": {
-      "inputs": {
-        "crane": "crane",
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "nixpkgs-extlinux-specialisation": "nixpkgs-extlinux-specialisation_2",
-        "rust-overlay": "rust-overlay_2"
-      },
-      "locked": {
-        "lastModified": 1683097061,
-        "narHash": "sha256-8fb9tUc6Z7GMXztqkmWmrCQXuUdwnrILlHfh2+PHD6w=",
-        "ref": "refs/heads/main",
-        "rev": "7b16f46c69db03d6f73f29117ed9dd41281b106e",
-        "shallow": true,
-        "type": "git",
-        "url": "file:/home/jared/projects/github.com/jmbaur/tinyboot"
-      },
-      "original": {
-        "shallow": true,
-        "type": "git",
-        "url": "file:/home/jared/projects/github.com/jmbaur/tinyboot"
-      }
-    },
     "utils": {
       "locked": {
         "lastModified": 1667395993,
@@ -1564,12 +1386,12 @@
     },
     "webauthn-tiny": {
       "inputs": {
-        "crane": "crane_2",
+        "crane": "crane",
         "nixpkgs": [
           "nixpkgs"
         ],
         "pre-commit": "pre-commit_3",
-        "rust-overlay": "rust-overlay_4"
+        "rust-overlay": "rust-overlay_2"
       },
       "locked": {
         "lastModified": 1682819396,

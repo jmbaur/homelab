@@ -17,7 +17,6 @@ let
       cicada
       coredns-utils
       depthcharge-tools
-      edk2-uefi-coreboot-payload
       flarectl
       flashrom-cros
       flashrom-dasharo
@@ -80,9 +79,6 @@ in
     in
     pkgs.lib.recursiveUpdate (commonDerivations pkgs) {
       inherit (pkgs)
-        coreboot-asurada-spherion
-        coreboot-kukui-fennel14
-        coreboot-qemu-aarch64
         # linux_orangepi-5
         ubootCN9130_CF_Pro
         ;
@@ -103,11 +99,5 @@ in
         ];
       };
     in
-    pkgs.lib.recursiveUpdate (commonDerivations pkgs) {
-      inherit (pkgs)
-        coreboot-qemu-x86
-        coreboot-volteer-elemi
-        coreboot-msi-ms-7d25
-        ;
-    };
+    pkgs.lib.recursiveUpdate (commonDerivations pkgs) { };
 }

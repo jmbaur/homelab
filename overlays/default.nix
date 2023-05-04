@@ -1,7 +1,6 @@
 inputs: with inputs; {
   default = nixpkgs.lib.composeManyExtensions [
     gosee.overlays.default
-    tinyboot.overlays.default
     (final: prev:
       let
         out-of-tree = prev.callPackage ./out-of-tree.nix { };
@@ -111,18 +110,6 @@ inputs: with inputs; {
 
         grafana-dashboards = prev.callPackage ./grafana-dashboards { };
 
-        ubootCoreboot = prev.buildUBoot {
-          defconfig = "coreboot_defconfig";
-          extraConfig = ''
-            CONFIG_BLK=y
-            CONFIG_CMD_BOOTEFI=y
-            CONFIG_EFI_LOADER=y
-            CONFIG_PARTITIONS=y
-          '';
-          extraMeta.platforms = [ "x86_64-linux" ];
-          filesToInstall = [ "u-boot-dtb.bin" ];
-        };
-
         # Enable FIT images (w/signatures), UEFI compatibility, and modify some hardware.
         # - CON2 is located nearest the CPU
         # - CON3 is located nearest the edge of the device
@@ -177,97 +164,6 @@ inputs: with inputs; {
         ubootCN9130_CF_Pro = prev.callPackage ./uboot-cn9130-cf-pro.nix { inherit (final) cn913x_build_repo; };
 
         # linux_orangepi-5 = prev.callPackage ./kernels/linux-orangepi-5.nix { };
-
-        linuxboot-qemu-aarch64-fitimage = final.mkFitImage {
-          boardName = "qemu-aarch64";
-          kernel = final.tinyboot-kernel;
-          initramfs = "${final.tinyboot-initramfs.override { tinybootTTY = "ttyAMA0"; }}/initrd";
-          # NOTE: See here as to why qemu needs to be in depsBuildBuild and
-          # not nativeBuildInputs:
-          # https://github.com/NixOS/nixpkgs/pull/146583
-          dtb = prev.callPackage
-            ({ runCommand, qemu }: runCommand "qemu-aarch64.dtb" { depsBuildBuild = [ qemu ]; } ''
-              qemu-system-aarch64 \
-                -M virt,secure=on,virtualization=on,dumpdtb=$out \
-                -cpu cortex-a53 -m 4096M -nographic
-            '')
-            { };
-        };
-        linuxboot-mediatek-fitimage = final.mkFitImage {
-          boardName = "mediatek";
-          kernel = final.tinyboot-kernel;
-          initramfs = "${final.tinyboot-initramfs}/initrd";
-          dtbPattern = "(mt8183|mt8192)";
-        };
-
-        edk2-uefi-coreboot-payload = prev.callPackage ./edk2-coreboot.nix { };
-
-        mkFitImage = prev.callPackage ./fitimage { };
-        buildCoreboot = prev.callPackage ./coreboot {
-          # built with meson, includes pkg-config support
-          flashrom = final.flashrom-cros;
-        };
-        coreboot-qemu-x86 = final.buildCoreboot {
-          boardName = "qemu-x86";
-          configfile = ./coreboot/qemu-x86.config;
-          postInstall = ''
-            ./build/util/cbfstool/cbfstool $out/coreboot.rom add-flat-binary \
-              -f ${final.ubootCoreboot}/u-boot-dtb.bin -n fallback/payload -c lzma -l 0x1110000 -e 0x1110000
-          '';
-        };
-        coreboot-qemu-aarch64 = final.buildCoreboot {
-          inherit (final.linuxboot-qemu-aarch64-fitimage) boardName;
-          configfile = ./coreboot/qemu-aarch64.config;
-          extraConfig = ''
-            CONFIG_PAYLOAD_FILE="${final.linuxboot-qemu-aarch64-fitimage}/uImage"
-          '';
-        };
-        coreboot-volteer-elemi = final.buildCoreboot {
-          boardName = "volteer-elemi";
-          configfile = ./coreboot/volteer-elemi.config;
-          extraConfig =
-            let
-              vbt = prev.fetchurl {
-                url = "https://github.com/intel/FSP/raw/d85493d0605921f46afab3445be01da90f0a8062/TigerLakeFspBinPkg/Client/SampleCode/Vbt/Vbt.bin";
-                sha256 = "sha256-IDp05CcwaTOucvXF8MmsTg1qyYKXU3E5xw2ZUisUXt4=";
-              };
-            in
-            ''
-              CONFIG_INTEL_GMA_VBT_FILE="${vbt}"
-              CONFIG_PAYLOAD_FILE="${final.tinyboot-kernel}/bzImage"
-              CONFIG_LINUX_INITRD="${final.tinyboot-initramfs.override { debug = true; }}/initrd"
-            '';
-        };
-        coreboot-msi-ms-7d25 = final.buildCoreboot {
-          boardName = "msi-ms-7d25";
-          configfile = ./coreboot/msi-ms-7d25.config;
-          extraConfig =
-            let
-              vbt = prev.fetchurl {
-                url = "https://github.com/intel/FSP/raw/d85493d0605921f46afab3445be01da90f0a8062/AlderLakeFspBinPkg/Client/AlderLakeP/SampleCode/Vbt/Vbt.bin";
-                sha256 = "sha256-bmdHLfbNIR1zCt2OMxCCLCPoqJskaUbnBZYQcJoJ/LQ=";
-              };
-            in
-            ''
-              CONFIG_INTEL_GMA_VBT_FILE="${vbt}"
-              CONFIG_PAYLOAD_FILE="${final.tinyboot-kernel}/bzImage"
-              CONFIG_LINUX_INITRD="${final.tinyboot-initramfs}/initrd"
-            '';
-        };
-        coreboot-kukui-fennel14 = final.buildCoreboot {
-          boardName = "kukui-fennel14";
-          configfile = ./coreboot/kukui-fennel.config;
-          extraConfig = ''
-            CONFIG_PAYLOAD_FILE="${final.linuxboot-mediatek-fitimage}/uImage"
-          '';
-        };
-        coreboot-asurada-spherion = final.buildCoreboot {
-          boardName = "asurada-spherion";
-          configfile = ./coreboot/asurada-spherion.config;
-          extraConfig = ''
-            CONFIG_PAYLOAD_FILE="${final.linuxboot-mediatek-fitimage}/uImage"
-          '';
-        };
 
         jmbaur-keybase-pgp-keys = prev.fetchurl {
           url = "https://keybase.io/jaredbaur/pgp_keys.asc";
