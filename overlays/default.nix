@@ -235,7 +235,7 @@ inputs: with inputs; {
             ''
               CONFIG_INTEL_GMA_VBT_FILE="${vbt}"
               CONFIG_PAYLOAD_FILE="${final.tinyboot-kernel}/bzImage"
-              CONFIG_LINUX_INITRD="${final.tinyboot-initramfs}/initrd"
+              CONFIG_LINUX_INITRD="${final.tinyboot-initramfs.override { debug = true; }}/initrd"
             '';
         };
         coreboot-msi-ms-7d25 = final.buildCoreboot {
