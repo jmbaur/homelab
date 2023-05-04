@@ -4,8 +4,8 @@ stdenv.mkDerivation {
   src = fetchFromGitHub {
     owner = "jmbaur";
     repo = "qmk_firmware";
-    rev = "ade74160c9d59013c6c35f15e50c021abca207bd";
-    sha256 = "sha256-vjfVTXuTORaj8K/UXjPRh638SkkgibTvvuj9ajVwjRo=";
+    rev = "14315d41079c08eb8b4bd3299bb4babf0b70e2c8";
+    sha256 = "sha256-AAwPLYSEGFum7920E6d/12VByPiH+dS2kF6IjVeGQ24=";
     fetchSubmodules = true;
   };
   nativeBuildInputs = [ qmk ];
