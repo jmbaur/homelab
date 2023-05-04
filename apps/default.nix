@@ -10,38 +10,13 @@ nixpkgs.lib.genAttrs
     mkApp = program: { type = "app"; inherit program; };
   in
   {
-    bootstrap-beetroot = {
-      type = "app";
-      program =
-        let
-          program = pkgs.writeShellApplication {
-            name = "bootstrap-beetroot";
-            runtimeInputs = with pkgs; [ yq-go ];
-            text = builtins.readFile ../nixos-configurations/beetroot/bootstrap.bash;
-          };
-        in
-        "${program}/bin/bootstrap-beetroot";
-    };
-    bitwarden-bemenu = mkApp "${pkgs.bitwarden-bemenu}/bin/bitwarden-bemenu";
-    cicada = mkApp "${pkgs.cicada}/bin/cicada";
-    coredns-keygen = mkApp "${pkgs.coredns-utils}/bin/coredns-keygen";
-    discord-webapp = mkApp "${pkgs.discord-webapp}/bin/discord-webapp";
-    flarectl = mkApp "${pkgs.flarectl}/bin/flarectl";
-    flashrom-cros = mkApp "${pkgs.flashrom-cros}/bin/flashrom";
-    flashrom-dasharo = mkApp "${pkgs.flashrom-dasharo}/bin/flashrom";
-    ixio = mkApp "${pkgs.ixio}/bin/ixio";
-    j = mkApp "${pkgs.j}/bin/j";
-    macgen = mkApp "${pkgs.macgen}/bin/macgen";
-    mirror-to-x = mkApp "${pkgs.mirror-to-x}/bin/mirror-to-x";
-    mkdepthcharge = mkApp "${pkgs.depthcharge-tools}/bin/mkdepthcharge";
-    neovim = mkApp "${pkgs.neovim}/bin/nvim";
-    neovim-all-languages = mkApp "${pkgs.neovim-all-languages}/bin/nvim";
-    outlook-webapp = mkApp "${pkgs.outlook-webapp}/bin/outlook-webapp";
-    slack-webapp = mkApp "${pkgs.slack-webapp}/bin/slack-webapp";
-    spotify-webapp = mkApp "${pkgs.spotify-webapp}/bin/spotify-webapp";
-    teams-webapp = mkApp "${pkgs.teams-webapp}/bin/teams-webapp";
-    u-root = mkApp "${pkgs.u-root}/bin/u-root";
-    v4l-show = mkApp "${pkgs.v4l-show}/bin/v4l-show";
-    wip = mkApp "${pkgs.wip}/bin/wip";
-    yamlfmt = mkApp "${pkgs.yamlfmt}/bin/yamlfmt";
+    setup-pam-u2f = mkApp (pkgs.writeShellScript "setup-pam-u2f" ''
+      ${pkgs.pam_u2f}/bin/pamu2fcfg -opam://homelab
+    '');
+    setup-yubikey = mkApp (pkgs.writeShellScript "setup-yubikey" ''
+      ${pkgs.yubikey-manager}/bin/ykman openpgp keys set-touch sig cached-fixed
+    '');
+    flash-kinesis = mkApp (pkgs.writeShellScript "flash-kinesis" ''
+      ${pkgs.teensy-loader-cli}/bin/teensy-loader-cli -w -v --mcu=TEENSY40 "${pkgs.kinesis_kint41_jmbaur}/kinesis_kint41_jmbaur.hex"
+    '');
   })

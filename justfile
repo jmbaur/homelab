@@ -38,14 +38,3 @@ update:
 	for drv in $(nix eval --impure --expr "builtins.attrNames (import ./out-of-tree.nix {})" --json | jq -r ".[]"); do
 		nix-update --file ./out-of-tree.nix $drv
 	done
-
-setup_pam_u2f:
-	pamu2fcfg -opam://homelab
-
-setup_yubikey:
-	ykman openpgp keys set-touch sig cached-fixed
-
-flash_keyboard:
-	#!/usr/bin/env bash
-	out=$(nix build --print-out-paths '.#kinesis-kint41-jmbaur')
-	teensy-loader-cli -w -v --mcu=TEENSY40 "${out}/kinesis_kint41_jmbaur.hex"
