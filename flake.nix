@@ -20,7 +20,7 @@
     nixos-router.url = "github:jmbaur/nixos-router";
     nixpkgs-wayland.url = "github:nix-community/nixpkgs-wayland";
     nixpkgs-wayland.inputs.nixpkgs.follows = "nixpkgs";
-    nixpkgs.url = "github:jmbaur/nixpkgs/67561dcc59607fe521d4dd10a70043e13c85a2e3";
+    nixpkgs.url = "nixpkgs/nixos-unstable";
     pd-notify.inputs.nixpkgs.follows = "nixpkgs";
     pd-notify.url = "github:jmbaur/pd-notify";
     pre-commit.inputs.nixpkgs.follows = "nixpkgs";
