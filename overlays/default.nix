@@ -147,6 +147,8 @@ inputs: with inputs; {
           extraConfig = final.ubootClearfog.extraConfig + ''
             CONFIG_MVEBU_SPL_BOOT_DEVICE_MMC=n
             CONFIG_MVEBU_SPL_BOOT_DEVICE_SPI=y
+            CONFIG_ENV_SECT_SIZE=0x10000
+            CONFIG_SUPPORT_EMMC_BOOT=y
           '';
           postInstall = ''
             dd bs=1M count=4 if=/dev/zero of=$out/spi.img
