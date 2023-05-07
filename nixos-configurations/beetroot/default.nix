@@ -10,16 +10,7 @@
   boot.initrd.availableKernelModules = [ "i915" ];
   boot.initrd.systemd.enable = true;
   boot.kernelPackages = pkgs.linuxPackages_6_1;
-  boot.loader = {
-    grub = {
-      enable = true;
-      device = "nodev";
-      efiInstallAsRemovable = true;
-      copyKernels = true;
-      efiSupport = true;
-    };
-    efi.canTouchEfiVariables = false;
-  };
+  boot.loader.systemd-boot.enable = true;
 
   hardware.chromebook.enable = true;
   networking.hostName = "beetroot";
