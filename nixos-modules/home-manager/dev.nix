@@ -220,7 +220,7 @@ with lib; {
 
     programs.bat = {
       enable = true;
-      config.theme = "Nord";
+      config.theme = "base16";
     };
 
     home.file.".sqliterc".text = ''
