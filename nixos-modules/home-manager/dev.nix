@@ -215,7 +215,7 @@ with lib; {
     programs.nushell = {
       enable = true;
       configFile.source = ./config.nu;
-      envFile.text = "";
+      envFile.source = ./env.nu;
     };
 
     programs.bat = {
