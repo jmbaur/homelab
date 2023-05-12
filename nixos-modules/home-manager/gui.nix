@@ -18,6 +18,7 @@ with lib; {
         size = 16;
       };
       settings = {
+        shell_integration = "no-cursor";
         enable_audio_bell = false;
         copy_on_select = true;
         tab_bar_style = "powerline";
