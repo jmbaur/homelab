@@ -13,13 +13,15 @@
     home-manager.url = "github:nix-community/home-manager";
     ipwatch.inputs.nixpkgs.follows = "nixpkgs";
     ipwatch.url = "github:jmbaur/ipwatch";
+    lanzaboote.inputs.nixpkgs.follows = "nixpkgs";
+    lanzaboote.url = "github:nix-community/lanzaboote";
     microvm.inputs.nixpkgs.follows = "nixpkgs";
     microvm.url = "github:astro/microvm.nix";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
     nixos-router.inputs.nixpkgs.follows = "nixpkgs";
     nixos-router.url = "github:jmbaur/nixos-router";
-    nixpkgs-wayland.url = "github:nix-community/nixpkgs-wayland";
     nixpkgs-wayland.inputs.nixpkgs.follows = "nixpkgs";
+    nixpkgs-wayland.url = "github:nix-community/nixpkgs-wayland";
     nixpkgs.url = "nixpkgs/nixos-unstable";
     pd-notify.inputs.nixpkgs.follows = "nixpkgs";
     pd-notify.url = "github:jmbaur/pd-notify";
@@ -35,19 +37,6 @@
 
     # TODO(jared): delete if/when merged
     nixpkgs-extlinux-specialisation.url = "github:jmbaur/nixpkgs/extlinux-specialisation";
-  };
-
-  nixConfig = {
-    extra-substituters = [
-      "https://microvm.cachix.org"
-      "https://nix-community.cachix.org"
-      "https://jmbaur.cachix.org"
-    ];
-    extra-trusted-public-keys = [
-      "microvm.cachix.org-1:oXnBc6hRE3eX5rSYdRyMYXnfzcCxC7yKPTbZXALsqys="
-      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-      "jmbaur.cachix.org-1:OpzNp/eBFYOmPtZBjnS6QD0FAPgK4ItMRea0QPuyJYM="
-    ];
   };
 
   outputs = inputs: {

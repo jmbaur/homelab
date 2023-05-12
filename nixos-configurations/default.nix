@@ -45,15 +45,17 @@ in
     ];
   };
 
-  beetroot = nixosSystem {
+  potato = nixosSystem {
     modules = with inputs; [
-      ./beetroot
+      ./potato
+      lanzaboote.nixosModules.lanzaboote
       self.nixosModules.default
-      ({ modulesPath, ... }: {
-        disabledModules = [ "${modulesPath}/system/boot/loader/generic-extlinux-compatible" ];
-        imports = [ "${nixpkgs-extlinux-specialisation}/nixos/modules/system/boot/loader/generic-extlinux-compatible" ];
-      })
+      nixos-hardware.nixosModules.lenovo-thinkpad-t480
     ];
+  };
+
+  beetroot = nixosSystem {
+    modules = with inputs; [ ./beetroot self.nixosModules.default ];
   };
 
   kale = nixosSystem {
