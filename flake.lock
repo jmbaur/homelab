@@ -1364,6 +1364,7 @@
         "runner-nix": "runner-nix",
         "sops-nix": "sops-nix",
         "terranix": "terranix",
+        "tinyboot": "tinyboot",
         "webauthn-tiny": "webauthn-tiny"
       }
     },
@@ -1608,6 +1609,26 @@
       "original": {
         "owner": "terranix",
         "repo": "terranix-examples",
+        "type": "github"
+      }
+    },
+    "tinyboot": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1684104588,
+        "narHash": "sha256-F7KxU1ybhgnjRRlXk6I2jO9nkId/DP6VsRrUI6MPY0k=",
+        "owner": "jmbaur",
+        "repo": "tinyboot",
+        "rev": "1f73bfc614eafb756bfe21fab8f2831dc90d8dcd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jmbaur",
+        "repo": "tinyboot",
         "type": "github"
       }
     },

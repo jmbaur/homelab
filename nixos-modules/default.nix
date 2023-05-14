@@ -6,7 +6,7 @@ inputs: {
       nixpkgs-wayland.overlays.default
       pd-notify.overlays.default
       self.overlays.default
-      self.overlays.default
+      tinyboot.overlays.default
     ];
     imports = [
       ./basic-network.nix
