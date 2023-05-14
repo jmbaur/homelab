@@ -73,6 +73,12 @@ with lib;
       xdg-utils
       yambar
       zathura
+      (writeShellScriptBin "caffeine" ''
+        stop() { systemctl restart --user idle.service; }
+        trap stop EXIT SIGINT
+        systemctl stop --user idle.service
+        sleep infinity
+      '')
     ];
 
     services.dbus.enable = true;
