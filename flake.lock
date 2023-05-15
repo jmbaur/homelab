@@ -832,11 +832,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1683150901,
-        "narHash": "sha256-wQuvrVytBm1AEhNh8fPrj/1Zjk34GYPWd6vGUmLu9YE=",
+        "lastModified": 1684113472,
+        "narHash": "sha256-Z0d13Xue0FwtCTv4zNcH4Nr8NRjnIxNHwO6AWw/RM68=",
         "owner": "astro",
         "repo": "microvm.nix",
-        "rev": "dc58e7a2250ddabb6e3c3d94283122b97c496d27",
+        "rev": "5cec173936d71f25d8f959db4893bf14bd053529",
         "type": "github"
       },
       "original": {
@@ -1619,11 +1619,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1684104588,
-        "narHash": "sha256-F7KxU1ybhgnjRRlXk6I2jO9nkId/DP6VsRrUI6MPY0k=",
+        "lastModified": 1684125748,
+        "narHash": "sha256-eZ7FLLhZUzZTybZvTW4y4q12V/YyK2W5pzDSVqTEhp4=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "1f73bfc614eafb756bfe21fab8f2831dc90d8dcd",
+        "rev": "a92791745b4dc4afbeaffff2b058517d16235773",
         "type": "github"
       },
       "original": {
