@@ -7,6 +7,8 @@ in
     sops.defaultSopsFile = ./secrets.yaml;
     sops.secrets.wg0 = { mode = "0640"; group = config.users.groups.systemd-network.name; };
 
+    systemd.network.wait-online.enable = false;
+
     systemd.network.netdevs.br0.netdevConfig = {
       Name = "br0";
       Kind = "bridge";
