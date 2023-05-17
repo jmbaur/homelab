@@ -57,6 +57,7 @@ with lib;
       qt5.qtwayland
       river
       rivercarro
+      shikane
       slurp
       sway-contrib.grimshot
       swaybg
