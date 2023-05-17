@@ -20,6 +20,8 @@ inputs: with inputs; {
           yamlfmt
           ;
 
+        nixos-kexec = prev.callPackage ./nixos-kexec { };
+
         # provide dbus-activation for fnott
         fnott-dbus = prev.symlinkJoin {
           name = "fnott-dbus";

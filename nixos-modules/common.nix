@@ -13,6 +13,8 @@ with lib; {
   };
 
   config = mkIf cfg.enable {
+    environment.systemPackages = [ pkgs.nixos-kexec ];
+
     security.sudo.extraRules = [{ groups = [ "wheel" ]; commands = [{ command = "/run/current-system/sw/bin/networkctl"; options = [ "NOPASSWD" ]; }]; }];
 
     users.mutableUsers = mkDefault false;
