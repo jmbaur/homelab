@@ -72,8 +72,9 @@ in
           ipwatch.overlays.default
           pd-notify.overlays.default
           runner-nix.overlays.default
-          webauthn-tiny.overlays.default
           self.overlays.default
+          tinyboot.overlays.default
+          webauthn-tiny.overlays.default
         ];
       };
     in
@@ -95,9 +96,17 @@ in
           pd-notify.overlays.default
           runner-nix.overlays.default
           self.overlays.default
+          tinyboot.overlays.default
           webauthn-tiny.overlays.default
         ];
       };
     in
-    pkgs.lib.recursiveUpdate (commonDerivations pkgs) { };
+    pkgs.lib.recursiveUpdate (commonDerivations pkgs) {
+      beetroot-firmware = pkgs.coreboot.volteer-elemi.override {
+        config.tinyboot.verifiedBoot = {
+          enable = true;
+          publicKey = ../nixos-configurations/beetroot/tinyboot-pubkey.pem;
+        };
+      };
+    };
 }
