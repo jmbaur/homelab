@@ -1,10 +1,14 @@
-{ config, pkgs, ... }: {
+{ config, lib, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ./disko.nix ];
   hardware.bluetooth.enable = true;
 
   zramSwap.enable = true;
 
   boot.initrd.luks.devices.cryptroot.crypttabExtraOpts = [ "tpm2-device=auto" ];
+
+  # Don't allow for unattended unlocking of the LUKS container when we are
+  # booting the "flashfriendly" specialisation.
+  specialisation.flashfriendly.configuration.boot.initrd.luks.devices.cryptroot.crypttabExtraOpts = lib.mkForce [ "fido2-device=auto" ];
 
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   boot.initrd.availableKernelModules = [ "i915" ];

@@ -14,6 +14,7 @@ parted $DISK -- mkpart primary 512MiB 100%
 cryptsetup luksFormat $CRYPT_PART
 cryptsetup luksOpen $CRYPT_PART cryptroot
 systemd-cryptenroll --fido2-device=auto $CRYPT_PART
+systemd-cryptenroll --tpm2-device=auto $CRYPT_PART
 
 mkfs.btrfs /dev/mapper/cryptroot
 mkfs.ext4 $BOOT_PART
