@@ -2,7 +2,7 @@
 
 choices=()
 
-for profile in /nix/var/nix/profiles/system-*; do
+for profile in $(find /nix/var/nix/profiles -type l -name "system-*" | sort); do
 	system_name=$(basename "$profile")
 	label=$(jq --raw-output '."org.nixos.bootspec.v1".label' <"${profile}/boot.json")
 	for specialisation in "$profile"/specialisation/*; do
@@ -13,8 +13,8 @@ for profile in /nix/var/nix/profiles/system-*; do
 	choices+=("${system_name}: ${label}")
 done
 
-choice=$(printf "%s\n" "${choices[@]}" | sk --tac --reverse | cut -d':' -f1)
+choice=$(printf "%s\n" "${choices[@]}" | fzf --tac --reverse | cut -d':' -f1)
 
 eval "$(jq --raw-output '."org.nixos.bootspec.v1" | "sudo kexec -l \(.kernel) --initrd=\(.initrd) --command-line=\"init=\(.init) \(.kernelParams | join(" "))\""' <"/nix/var/nix/profiles/${choice}/boot.json")"
 
-echo "Run 'systemctl kexec' to finish kexec"
+echo "Kexec loaded, run 'systemctl kexec' to finish kexec"

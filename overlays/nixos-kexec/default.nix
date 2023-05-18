@@ -1,6 +1,6 @@
-{ writeShellApplication, skim, jq }:
+{ writeShellApplication, fzf, jq }:
 writeShellApplication {
   name = "nixos-kexec";
-  runtimeInputs = [ skim jq ];
+  runtimeInputs = [ fzf jq ];
   text = builtins.readFile ./nixos-kexec.bash;
 }

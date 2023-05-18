@@ -1,10 +1,6 @@
-{ writeShellApplication
-, fd
-, skim
-, tmux
-}:
+{ writeShellApplication, fd, fzf, tmux }:
 writeShellApplication {
   name = "j";
-  runtimeInputs = [ skim fd tmux ];
+  runtimeInputs = [ fzf fd tmux ];
   text = builtins.readFile ./j.bash;
 }
