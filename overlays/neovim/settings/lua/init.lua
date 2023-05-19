@@ -1,11 +1,8 @@
 vim.g.mapleader = " "
 
 if #vim.api.nvim_list_uis() > 0 then
-	local oil = require("oil")
-	oil.setup()
-	vim.keymap.set("n", "-", oil.open, { desc = "Open parent directory" })
-
 	require("compile")
+	require("filemanager")
 	require("gosee").setup()
 	require("launcher")
 	require("lsp")
@@ -16,6 +13,7 @@ if #vim.api.nvim_list_uis() > 0 then
 	require("smartyank").setup({ highlight = { enabled = false }, osc52 = { silent = true } })
 	require("snippet")
 	require("statusline")
+	require("terminal")
 
 	vim.cmd.colorscheme("jared")
 	vim.opt.belloff = "all"

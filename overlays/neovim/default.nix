@@ -54,6 +54,7 @@ let
         playground
         smartyank-nvim
         snippets-nvim
+        toggleterm-nvim
         vim-dispatch
         vim-eunuch
         vim-flog
