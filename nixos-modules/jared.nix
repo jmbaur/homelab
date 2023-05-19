@@ -214,6 +214,7 @@ in
         stow
         tailscale
         tcpdump
+        tio
         tree
         unzip
         usbutils
