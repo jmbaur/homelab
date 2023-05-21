@@ -15,6 +15,6 @@ done
 
 choice=$(printf "%s\n" "${choices[@]}" | fzf --tac --reverse | cut -d':' -f1)
 
-eval "$(jq --raw-output '."org.nixos.bootspec.v1" | "sudo kexec -l \(.kernel) --initrd=\(.initrd) --command-line=\"init=\(.init) \(.kernelParams | join(" "))\""' <"/nix/var/nix/profiles/${choice}/boot.json")"
+eval "$(jq --raw-output '."org.nixos.bootspec.v1" | "sudo kexec -l \(.kernel) --initrd=\(.initrd) --command-line=\"init=\(.init) \(.kernelParams | join(" "))\""' <"/nix/var/nix/profiles/${choice}/boot.json") $*"
 
 echo "Kexec loaded, run 'systemctl kexec' to finish kexec"
