@@ -1,9 +1,9 @@
 {
   "url": "https://chromium.googlesource.com/chromiumos/third_party/flashrom",
-  "rev": "7524d7f4c89293c6a75353220036ddabaa844383",
-  "date": "2023-05-05T22:37:03+00:00",
-  "path": "/nix/store/hjllvdli6am4i7jw8bkqnqy2b0996px7-flashrom",
-  "sha256": "0dshcym45gvlp3jvx4k2nzgilvisf85i9wklsrx8nzyb7rplxa7z",
+  "rev": "71c9b34d43b3c9ae54eb137d50250224fc968f15",
+  "date": "2023-05-20T03:58:41+00:00",
+  "path": "/nix/store/s2w253ngjp55w0crx2rgwzd1kjaqmgmm-flashrom",
+  "sha256": "082s2jsw6qz5gxi3s6i0b3r9i3caskxx3yqy9b2qva71cwrym32f",
   "fetchLFS": false,
   "fetchSubmodules": false,
   "deepClone": false,
