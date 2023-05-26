@@ -170,14 +170,19 @@ for _, source in pairs(conditional_null_ls_sources) do
 end
 null_ls.setup({ on_attach = on_attach_format, sources = null_ls_sources })
 
-vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+vim.diagnostic.config({
 	underline = true,
-	virtual_text = { spacing = 4 },
+	virtual_text = false,
 	signs = false,
-	update_in_insert = false,
 })
 
-vim.diagnostic.config({ virtual_text = false })
+vim.api.nvim_create_autocmd("DiagnosticChanged", {
+	callback = function(args)
+		if #args.data.diagnostics > 0 then
+			vim.diagnostic.setqflist({ open = false })
+		end
+	end,
+})
 
 -- don't use `vim.lsp.formatexpr` for lsp attached buffers
 vim.api.nvim_create_autocmd("LspAttach", {
@@ -188,11 +193,13 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 vim.api.nvim_create_user_command("ToggleFormatOnSave", function()
 	local ignoring_buf_write_pre = false
+
 	for _, event in pairs(vim.opt.eventignore:get()) do
 		if event == "BufWritePre" then
 			ignoring_buf_write_pre = true
 		end
 	end
+
 	if ignoring_buf_write_pre then
 		vim.opt.eventignore:remove({ "BufWritePre" })
 	else

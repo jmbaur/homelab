@@ -22,6 +22,7 @@ if #vim.api.nvim_list_uis() > 0 then
 	vim.opt.laststatus = 2
 	vim.opt.number = true
 	vim.opt.relativenumber = true
+	vim.opt.splitkeep = "screen"
 end
 
 if vim.g.neovide then

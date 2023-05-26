@@ -22,6 +22,7 @@
 , ripgrep
 , ruff
 , rust-analyzer
+, rustfmt
 , shellcheck
 , shfmt
 , skim
@@ -54,6 +55,7 @@ let
         playground
         smartyank-nvim
         snippets-nvim
+        telescope-nvim
         toggleterm-nvim
         vim-dispatch
         vim-eunuch
@@ -80,7 +82,7 @@ wrapNeovimUnstable neovim-unwrapped (config // {
         ++ (lib.optionals languageSupport.lua [ lua-language-server ])
         ++ (lib.optionals languageSupport.markdown [ deno ])
         ++ (lib.optionals languageSupport.nix [ nil nixpkgs-fmt ])
-        ++ (lib.optionals languageSupport.rust [ rust-analyzer ])
+        ++ (lib.optionals languageSupport.rust [ rust-analyzer rustfmt ])
         ++ (lib.optionals languageSupport.shell [ shellcheck shfmt ])
         ++ (lib.optionals languageSupport.toml [ taplo ])
         ++ (lib.optionals languageSupport.typescript [ deno nodePackages.typescript-language-server ])
