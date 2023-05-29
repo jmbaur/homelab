@@ -13,6 +13,7 @@ inputs: {
       ./btrfs.nix
       ./common.nix
       ./cross-compile.nix
+      ./deploy.nix
       ./deployee.nix
       ./deployer.nix
       ./depthcharge

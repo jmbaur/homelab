@@ -1,6 +1,6 @@
 inputs: with inputs; {
   default = nixpkgs.lib.composeManyExtensions [
-    gosee.overlays.default
+    gosee.overlays.default # needed for plugin in overlayed neovim
     (final: prev:
       let
         out-of-tree = prev.callPackage ./out-of-tree.nix { };
