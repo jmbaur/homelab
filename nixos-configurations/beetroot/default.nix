@@ -15,10 +15,7 @@
   boot.initrd.systemd.enable = true;
   boot.kernelPackages = pkgs.linuxPackages_6_1;
   boot.loader.systemd-boot.enable = true;
-  boot.loader.systemd-boot.extraInstallCommands = ''
-    find /boot/EFI/nixos -type f -name "*.efi" \
-      -exec ${pkgs.tinyboot-client}/bin/tbootctl verified-boot sign --verbose --private-key /etc/tboot-privkey --file {} \;
-  '';
+  boot.loader.tinyboot.privateKey = "/etc/tboot-privkey";
 
   hardware.chromebook.enable = true;
   networking.hostName = "beetroot";
@@ -72,7 +69,7 @@
     };
   };
 
-  environment.systemPackages = [ pkgs.tinyboot ];
+  environment.systemPackages = [ pkgs.tinyboot-client ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

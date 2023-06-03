@@ -6,7 +6,6 @@ inputs: {
       nixpkgs-wayland.overlays.default
       pd-notify.overlays.default
       self.overlays.default
-      tinyboot.overlays.default
     ];
     imports = [
       ./basic-network.nix
@@ -33,6 +32,7 @@ inputs: {
       inputs.disko.nixosModules.disko
       inputs.home-manager.nixosModules.home-manager
       inputs.sops-nix.nixosModules.sops
+      inputs.tinyboot.nixosModules.default
     ];
   };
 }
