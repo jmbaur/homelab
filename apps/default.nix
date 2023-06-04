@@ -7,7 +7,7 @@ nixpkgs.lib.genAttrs
       inherit system;
       overlays = [ self.overlays.default ];
     };
-    mkApp = program: { type = "app"; inherit program; };
+    mkApp = script: { type = "app"; program = toString script; };
   in
   {
     setup-pam-u2f = mkApp (pkgs.writeShellScript "setup-pam-u2f" ''
@@ -17,6 +17,6 @@ nixpkgs.lib.genAttrs
       ${pkgs.yubikey-manager}/bin/ykman openpgp keys set-touch sig cached-fixed
     '');
     flash-kinesis = mkApp (pkgs.writeShellScript "flash-kinesis" ''
-      ${pkgs.teensy-loader-cli}/bin/teensy-loader-cli -w -v --mcu=TEENSY40 "${pkgs.kinesis_kint41_jmbaur}/kinesis_kint41_jmbaur.hex"
+      ${pkgs.teensy-loader-cli}/bin/teensy-loader-cli -w -v --mcu=TEENSY40 "${pkgs.kinesis-kint41-jmbaur}/kinesis_kint41_jmbaur.hex"
     '');
   })

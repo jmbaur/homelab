@@ -37,7 +37,7 @@ in
     enable = true;
     dns = true;
     peers.kale.extraConfig.Endpoint = "kale.home.arpa:51820";
-    peers.artichoke.extraConfig.Endpoint = "artichoke.home.arpa:51820";
+    peers.squash.extraConfig.Endpoint = "squash.home.arpa:51820";
     peers.www.extraConfig = {
       Endpoint = "www.jmbaur.com:51820";
       PersistentKeepalive = 25;

@@ -47,8 +47,10 @@ with lib;
       glmark2
       glxinfo
       gnome-themes-extra
+      gobar
       grim
       imv
+      kitty
       libnotify
       mirror-to-x
       mpv
@@ -70,6 +72,7 @@ with lib;
       wezterm
       wf-recorder
       wl-clipboard
+      wl-color-picker
       wlr-randr
       xdg-utils
       yambar
