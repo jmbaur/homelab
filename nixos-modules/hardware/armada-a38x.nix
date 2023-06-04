@@ -9,6 +9,7 @@
       linux-kernel = {
         name = "armada-388x";
         baseConfig = "mvebu_v7_defconfig";
+        autoModules = false;
       };
     };
 
