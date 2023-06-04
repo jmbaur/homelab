@@ -13,6 +13,7 @@
     disableZfs = true;
     deployee = {
       enable = true;
+      sshTarget = "root@squash.home.arpa";
       authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
     };
   };

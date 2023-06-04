@@ -1,4 +1,9 @@
-{ config, lib, ... }: {
+{ config, lib, modulesPath, ... }: {
+  # this includes modules that are not available on mvebu_v7_defconfig
+  disabledModules = [ "${modulesPath}/tasks/swraid.nix" ];
+  # NOTE: this is a hack to prevent build failures for this option that is used elsewhere
+  options.boot.initrd.services.swraid.mdadmConf = lib.mkOption { default = ""; };
+
   options.hardware.armada-a38x = {
     enable = lib.mkEnableOption "armada-38x devices";
   };
@@ -12,6 +17,9 @@
         autoModules = false;
       };
     };
+
+    # this includes modules that are not available on mvebu_v7_defconfig
+    boot.initrd.includeDefaultModules = false;
 
     boot.loader.grub.enable = false;
     boot.loader.generic-extlinux-compatible.enable = true;
