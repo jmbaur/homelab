@@ -85,8 +85,8 @@ bindsym XF86MonBrightnessUp exec brightnessctl set +5% | sed -En 's/.*\(([0-9]+)
 input "type:keyboard" {
   repeat_delay 300
   repeat_rate 50
-  xkb_model chromebook
-  xkb_options ctrl:swap_lwin_lctl
+  xkb_model @xkbModel@
+  xkb_options @xkbOptions@
 }
 
 input "type:pointer" {

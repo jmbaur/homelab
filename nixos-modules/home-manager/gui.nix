@@ -44,7 +44,10 @@ with lib; {
       width = 500;
     };
 
-    xdg.configFile."sway/config".source = ./sway.config;
+    xdg.configFile."sway/config".source = pkgs.substituteAll {
+      src = ./sway.config.in;
+      inherit (nixosConfig.services.xserver) xkbModel xkbOptions;
+    };
     xdg.configFile."kitty/kitty.conf".source = pkgs.writeText "kitty.conf" ''
       copy_on_select yes
       enable_audio_bell no
