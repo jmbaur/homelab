@@ -7,8 +7,6 @@ with lib;
 {
   options.custom.gui.enable = mkEnableOption "GUI config";
   config = mkIf cfg.enable {
-    boot.kernelParams = [ "systemd.show_status=auto" ];
-
     environment.enableAllTerminfo = true;
 
     hardware.pulseaudio.enable = mkForce false;
