@@ -35,7 +35,7 @@ with lib;
 
     system.build.deploy = pkgs.buildPackages.writeShellScriptBin "deploy" ''
       deploy_type=''${1:-switch}
-      nix-copy-closure --to ${cfg.sshTarget} ${config.system.build.toplevel}
+      nix copy $NIXCOPYOPTS --to ssh-ng://${cfg.sshTarget} ${config.system.build.toplevel}
       ssh $SSHOPTS ${cfg.sshTarget} \
         nix-env --profile /nix/var/nix/profiles/system --set ${config.system.build.toplevel}
       ssh $SSHOPTS ${cfg.sshTarget} \
