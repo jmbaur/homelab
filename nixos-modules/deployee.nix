@@ -33,7 +33,7 @@ with lib;
       keyFiles = cfg.authorizedKeyFiles;
     };
 
-    system.build.deploy = pkgs.writeShellScriptBin "deploy" ''
+    system.build.deploy = pkgs.buildPackages.writeShellScriptBin "deploy" ''
       deploy_type=''${1:-switch}
       nix-copy-closure --to ${cfg.sshTarget} ${config.system.build.toplevel}
       ssh $SSHOPTS ${cfg.sshTarget} \
