@@ -69,7 +69,22 @@
     };
   };
 
-  environment.systemPackages = [ pkgs.tinyboot-client ];
+  environment.systemPackages = [ pkgs.tinyboot-client ] ++ (
+    let
+      beetroot-firmware = pkgs.coreboot.volteer-elemi.override {
+        config.tinyboot.verifiedBoot = {
+          enable = true;
+          publicKey = ./tinyboot-pubkey.pem;
+        };
+      };
+    in
+    lib.optional config.programs.flashrom.enable
+      (pkgs.writeShellScriptBin "update-firmware" ''
+        ${config.programs.flashrom.package}/bin/flashrom \
+          --ifd -i bios \
+          --write ${beetroot-firmware}/coreboot.rom
+      '')
+  );
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

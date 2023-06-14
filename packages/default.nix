@@ -101,12 +101,5 @@ in
         ];
       };
     in
-    pkgs.lib.recursiveUpdate (commonDerivations pkgs) {
-      beetroot-firmware = pkgs.coreboot.volteer-elemi.override {
-        config.tinyboot.verifiedBoot = {
-          enable = true;
-          publicKey = ../nixos-configurations/beetroot/tinyboot-pubkey.pem;
-        };
-      };
-    };
+    pkgs.lib.recursiveUpdate (commonDerivations pkgs) { };
 }
