@@ -52,6 +52,7 @@ with lib;
       libnotify
       mirror-to-x
       mpv
+      pamixer
       pulseaudio
       pulsemixer
       qt5.qtwayland
