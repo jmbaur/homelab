@@ -13,6 +13,9 @@ with lib; {
   };
 
   config = mkIf cfg.enable {
+    # 2.16 has a fix for ssh control master when nix-copy'ing
+    nix.package = if lib.versionAtLeast pkgs.nix.version "2.16" then pkgs.nix else pkgs.nixVersions.nix_2_16;
+
     environment.systemPackages = [ pkgs.nixos-kexec ];
 
     security.sudo.extraRules = [{ groups = [ "wheel" ]; commands = [{ command = "/run/current-system/sw/bin/networkctl"; options = [ "NOPASSWD" ]; }]; }];
