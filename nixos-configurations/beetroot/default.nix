@@ -81,6 +81,7 @@
     lib.optional config.programs.flashrom.enable
       (pkgs.writeShellScriptBin "update-firmware" ''
         ${config.programs.flashrom.package}/bin/flashrom \
+          --programmer internal \
           --ifd -i bios \
           --write ${beetroot-firmware}/coreboot.rom
       '')
