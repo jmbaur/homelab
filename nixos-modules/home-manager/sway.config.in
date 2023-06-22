@@ -116,6 +116,11 @@ input "4617:13404:https://github.com/stapelberg_kinT_(kint41)" {
   xkb_options ''
 }
 
+# disable beetroot's touchscreen
+input "10900:43012:GTCH7503:00_2A94:A804" {
+  events disabled
+}
+
 output "*" {
   background #222222 solid_color
 }
