@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 let
   cfg = config.custom.common;
   isNotContainer = !config.boot.isContainer;
@@ -15,6 +15,8 @@ with lib; {
   config = mkIf cfg.enable {
     # 2.16 has a fix for ssh control master when nix-copy'ing
     nix.package = if lib.versionAtLeast pkgs.nix.version "2.16" then pkgs.nix else pkgs.nixVersions.nix_2_16;
+
+    nix.registry.nixpkgs.flake = inputs.nixpkgs;
 
     environment.systemPackages = [ pkgs.nixos-kexec ];
 

@@ -1,5 +1,6 @@
 inputs: {
   default = {
+    _module.args = { inherit inputs; };
     nixpkgs.overlays = with inputs; [
       gobar.overlays.default
       gosee.overlays.default

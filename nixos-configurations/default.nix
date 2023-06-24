@@ -1,10 +1,6 @@
 inputs:
 let
-  nixosSystem = args: inputs.nixpkgs.lib.nixosSystem (inputs.nixpkgs.lib.recursiveUpdate
-    {
-      modules = [{ nix.registry.nixpkgs.flake = inputs.nixpkgs; }];
-    }
-    args);
+  inherit (inputs.nixpkgs.lib) nixosSystem;
 
   mkInstaller = { modules ? [ ] }: nixosSystem {
     modules = [
