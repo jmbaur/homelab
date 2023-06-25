@@ -17,11 +17,12 @@ inputs: {
       ./deployer.nix
       ./depthcharge
       ./dev.nix
+      ./file.nix
       ./gui
       ./hardware
       ./home-manager
       ./installer.nix
-      ./jared.nix
+      ./jared
       ./laptop.nix
       ./mesh-network
       ./remote-boot.nix

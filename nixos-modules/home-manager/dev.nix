@@ -14,6 +14,7 @@ with lib; {
     home.packages = with pkgs; [
       ansifilter
       as-tree
+      bat
       bc
       bintools
       buildah
@@ -160,16 +161,7 @@ with lib; {
       nix-direnv.enable = true;
     };
 
-    programs.zoxide.enable = true;
-
     home.sessionVariables.PROJECTS_DIR = "${config.home.homeDirectory}/projects";
-
-    xdg.configFile."fd/ignore".text = ''
-      .git
-    '';
-
-    # commonly-used nix shells
-    xdg.configFile.shells = { recursive = true; source = ./shells; };
 
     programs.ssh = {
       enable = true;
@@ -178,54 +170,5 @@ with lib; {
       # ensure that local terminal terminfo's don't have to exist on any remote machine
       extraOptionOverrides.SetEnv = "TERM=xterm-256color";
     };
-
-    programs.fish = {
-      enable = true;
-      loginShellInit = ''
-        set -U fish_greeting ""
-      '';
-    };
-
-    programs.zsh = {
-      enable = true;
-      defaultKeymap = "emacs";
-      initExtraFirst = ''
-        setopt interactivecomments
-        setopt nonomatch
-        setopt prompt_subst
-      '';
-      initExtra = ''
-        if [[ -n "$SSH_CONNECTION" ]]; then
-          psvar=("ssh")
-        else
-          psvar=()
-        fi
-        autoload -Uz vcs_info
-        set_window_title() { print -Pn "\e]0;[%m] %~\a" }
-        precmd_functions+=(vcs_info set_window_title)
-        zstyle ':vcs_info:*' actionformats '%F{magenta}(%b|%a)%f'
-        zstyle ':vcs_info:git:*' formats '%F{cyan}(%b)%f'
-        zstyle ':vcs_info:*' enable git
-        PROMPT='%F{%(0V.yellow.green)}[%m]%f%F{white}%2~%f$vcs_info_msg_0_%(?..%F{red}[%?]%f)%(!.#.%#) '
-
-        bindkey \^U backward-kill-line
-      '';
-    };
-
-    programs.nushell = {
-      enable = true;
-      configFile.source = ./config.nu;
-      envFile.source = ./env.nu;
-    };
-
-    programs.bat = {
-      enable = true;
-      config.theme = "base16";
-    };
-
-    home.file.".sqliterc".text = ''
-      .headers ON
-      .mode columns
-    '';
   };
 }

@@ -31,6 +31,13 @@ with lib;
       })
     ];
 
+
+    qt = {
+      enable = true;
+      style = "adwaita-dark";
+      platformTheme = "gnome";
+    };
+
     environment.systemPackages = with pkgs; [
       alacritty
       bemenu
@@ -50,6 +57,7 @@ with lib;
       imv
       kitty
       libnotify
+      mako
       mirror-to-x
       mpv
       pamixer
@@ -123,14 +131,6 @@ with lib;
     ];
 
     xdg.portal.wlr.enable = true;
-
-    boot = {
-      extraModulePackages = [ config.boot.kernelPackages.v4l2loopback ];
-      kernelModules = [ "v4l2loopback" ];
-      extraModprobeConfig = ''
-        options v4l2loopback exclusive_caps=1 card_label=VirtualVideoDevice
-      '';
-    };
 
     programs.sway = {
       enable = true;

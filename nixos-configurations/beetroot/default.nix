@@ -69,7 +69,7 @@
     };
   };
 
-  environment.systemPackages = [ pkgs.pkgsStatic.tinyboot-client ] ++ (
+  environment.systemPackages = [ pkgs.tinyboot-client ] ++ (
     let
       beetroot-firmware = pkgs.coreboot.volteer-elemi.override {
         config.tinyboot.verifiedBoot = {
