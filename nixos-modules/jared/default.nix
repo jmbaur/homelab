@@ -18,13 +18,19 @@ in
   };
   config = lib.mkIf cfg.enable {
     programs.fish.enable = true;
+
     users.users.${cfg.username} = {
       inherit (cfg) passwordFile;
+
       isNormalUser = true;
+
       description = "Jared Baur";
+
       shell = pkgs.fish;
+
       openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
-      packages = with pkgs; [
+
+      packages = with pkgs; ([
         (weechat.override { configure = { ... }: { scripts = with pkgs.weechatScripts; [ weechat-matrix ]; }; })
         age-plugin-yubikey
         gmni
@@ -48,7 +54,84 @@ in
         w3m
         wireguard-tools
         zip
-      ];
+      ] ++ lib.optionals config.custom.dev.enable [
+        ansifilter
+        as-tree
+        bat
+        bc
+        bintools
+        bottom
+        buildah
+        cachix
+        cntr
+        curl
+        deadnix
+        diffsitter
+        dig
+        direnv
+        dnsutils
+        entr
+        fd
+        file
+        fsrx
+        gh
+        git
+        git-extras
+        git-get
+        git-gone
+        gnumake
+        gosee
+        grex
+        gron
+        htmlq
+        htop-vim
+        iputils
+        ixio
+        j
+        jo
+        jq
+        just
+        killall
+        lm_sensors
+        lsof
+        macgen
+        mdcat
+        mob
+        mosh
+        neovim-all-languages
+        nix-diff
+        nix-prefetch-scripts
+        nix-tree
+        nixos-generators
+        nload
+        nurl
+        openssl
+        patchelf
+        pciutils
+        pd-notify
+        podman-compose
+        podman-tui
+        pomo
+        procs
+        pstree
+        qemu
+        ripgrep
+        rlwrap
+        sd
+        skopeo
+        tcpdump
+        tea
+        tealdeer
+        tig
+        tokei
+        traceroute
+        usbutils
+        wip
+        xsv
+        ydiff
+        yj
+      ]);
+
       extraGroups = [ "dialout" "wheel" "plugdev" ]
         ++ (lib.optional config.networking.networkmanager.enable "networkmanager")
         ++ (lib.optional config.programs.adb.enable "adbusers")
@@ -205,7 +288,12 @@ in
       file.".config/fish/config.fish".text = ''
         if status is-interactive
           set -U fish_greeting ""
+          ${pkgs.direnv}/bin/direnv hook fish | source
         end
+      '';
+
+      file.".config/direnv/direnvrc".text = ''
+        source ${pkgs.nix-direnv}/share/nix-direnv/direnvrc
       '';
 
       # TODO(jared): make directories work

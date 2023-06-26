@@ -11,82 +11,6 @@ with lib; {
   };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [
-      ansifilter
-      as-tree
-      bat
-      bc
-      bintools
-      buildah
-      cachix
-      cntr
-      curl
-      deadnix
-      diffsitter
-      dig
-      direnv
-      dnsutils
-      entr
-      fd
-      file
-      fsrx
-      git
-      git-extras
-      git-get
-      git-gone
-      gnumake
-      gosee
-      grex
-      gron
-      htmlq
-      htop-vim
-      iputils
-      ixio
-      j
-      jo
-      jq
-      just
-      killall
-      lm_sensors
-      lsof
-      macgen
-      mdcat
-      mob
-      mosh
-      neovim-all-languages
-      nix-diff
-      nix-prefetch-scripts
-      nix-tree
-      nixos-generators
-      nload
-      nurl
-      openssl
-      patchelf
-      pciutils
-      pd-notify
-      podman-compose
-      podman-tui
-      pomo
-      procs
-      pstree
-      qemu
-      ripgrep
-      rlwrap
-      sd
-      skopeo
-      tcpdump
-      tea
-      tealdeer
-      tig
-      tokei
-      traceroute
-      usbutils
-      wip
-      xsv
-      ydiff
-      yj
-    ];
-
     programs.gpg = {
       enable = true;
       mutableKeys = false;
@@ -154,11 +78,6 @@ with lib; {
         bind-key j display-popup -E -h 75% -w 75% -b double -T "Jump to:" "${pkgs.j}/bin/j"
         set-option -g status-left-length 50
       '';
-    };
-
-    programs.direnv = {
-      enable = true;
-      nix-direnv.enable = true;
     };
 
     home.sessionVariables.PROJECTS_DIR = "${config.home.homeDirectory}/projects";
