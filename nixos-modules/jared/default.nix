@@ -129,7 +129,7 @@ in
         };
       };
 
-      file.".config/sway/sway.config".source = pkgs.substituteAll {
+      file.".config/sway/config".source = pkgs.substituteAll {
         name = "sway.config";
         src = ./sway.config.in;
         inherit (config.services.xserver) xkbModel xkbOptions;
@@ -208,7 +208,8 @@ in
         end
       '';
 
-      file.".config/shells".source = ./shells;
+      # TODO(jared): make directories work
+      file.".config/shells/kernel.nix".source = ./shells/kernel.nix;
     };
 
     home-manager.users.${cfg.username} = { nixosConfig, config, pkgs, ... }: {
