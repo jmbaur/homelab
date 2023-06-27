@@ -28,7 +28,8 @@ in
   services.nginx = {
     enable = true;
     recommendedTlsSettings = true;
-    recommendedZstdSettings = true;
+    recommendedZstdSettings = false; # TODO(jared): doesn't build
+    recommendedGzipSettings = false; # TODO(jared): doesn't build
     virtualHosts."okra.home.arpa" = {
       enableACME = false;
       forceSSL = false;
@@ -41,8 +42,7 @@ in
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection $connection_upgrade;
 
-        zstd on;
-        zstd_types application/x-nix-archive;
+        gzip_types application/x-nix-archive;
       '';
     };
   };
