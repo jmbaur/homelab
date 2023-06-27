@@ -11,6 +11,7 @@ inputs: {
     imports = [
       ./basic-network.nix
       ./btrfs.nix
+      ./builder.nix
       ./common.nix
       ./cross-compile.nix
       ./deployee.nix

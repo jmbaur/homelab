@@ -47,6 +47,11 @@ in
     };
   };
 
+  custom.builder.build = {
+    "beetroot-firmware".flakeUri = "github:jmbaur/homelab#nixosConfigurations.beetroot.config.system.build.firmware";
+    "squash-system-closure".flakeUri = "github:jmbaur/homelab#nixosConfigurations.squash.config.system.build.toplevel";
+  };
+
   # sops.defaultSopsFile = ./secrets.yaml;
   # sops.secrets."wg0" = { mode = "0640"; group = config.users.groups.systemd-network.name; };
 
@@ -76,6 +81,7 @@ in
 
   custom.deployee = {
     enable = true;
+    sshTarget = "root@okra.home.arpa";
     authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
   };
   custom.remoteBoot.enable = false;
