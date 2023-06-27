@@ -17,6 +17,37 @@ in
 
   services.fwupd.enable = true;
 
+  services.harmonia = {
+    enable = true;
+    signKeyPath = "/var/lib/secrets/harmonia.secret";
+    settings = { };
+  };
+
+  networking.firewall.allowedTCPPorts = [ 443 80 ];
+
+  services.nginx = {
+    enable = true;
+    package = pkgs.nginxStable.override { modules = [ pkgs.nginxModules.zstd ]; };
+    recommendedTlsSettings = true;
+    recommendedZstdSettings = true;
+    virtualHosts."okra.home.arpa" = {
+      enableACME = false;
+      forceSSL = false;
+      locations."/".extraConfig = ''
+        proxy_pass http://[::1]:5000;
+        proxy_set_header Host $host;
+        proxy_redirect http:// https://;
+        proxy_http_version 1.1;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+
+        zstd on;
+        zstd_types application/x-nix-archive;
+      '';
+    };
+  };
+
   # sops.defaultSopsFile = ./secrets.yaml;
   # sops.secrets."wg0" = { mode = "0640"; group = config.users.groups.systemd-network.name; };
 
