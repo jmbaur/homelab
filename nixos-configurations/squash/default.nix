@@ -30,12 +30,14 @@
     })
   ];
 
+  system.build.firmware = pkgs.ubootClearfogSpi;
+
   programs.flashrom.enable = lib.mkDefault true;
   environment.systemPackages = lib.optional config.programs.flashrom.enable
     (pkgs.writeShellScriptBin "update-firmware" ''
       ${config.programs.flashrom.package}/bin/flashrom \
       --programmer linux_mtd:dev=0 \
-      --write ${pkgs.ubootClearfogSpi}/spi.img
+      --write ${config.system.build.firmware}/spi.img
     '');
 
   systemd.services.reset-button = {

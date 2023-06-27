@@ -69,21 +69,20 @@
     };
   };
 
+  system.build.firmware = pkgs.coreboot.volteer-elemi.override {
+    config.tinyboot.verifiedBoot = {
+      enable = true;
+      publicKey = ./tinyboot-pubkey.pem;
+    };
+  };
+
   environment.systemPackages = [ pkgs.tinyboot-client ] ++ (
-    let
-      beetroot-firmware = pkgs.coreboot.volteer-elemi.override {
-        config.tinyboot.verifiedBoot = {
-          enable = true;
-          publicKey = ./tinyboot-pubkey.pem;
-        };
-      };
-    in
     lib.optional config.programs.flashrom.enable
       (pkgs.writeShellScriptBin "update-firmware" ''
         ${config.programs.flashrom.package}/bin/flashrom \
           --programmer internal \
           --ifd -i bios \
-          --write ${beetroot-firmware}/coreboot.rom
+          --write ${config.system.build.firmware}/coreboot.rom
       '')
   );
 

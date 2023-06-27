@@ -4,12 +4,14 @@
   boot.kernelParams = [ "cfg80211.ieee80211_regdom=US" ];
   networking.wireless.athUserRegulatoryDomain = true;
 
+  system.build.firmware = pkgs.ubootCN9130_CF_Pro;
+
   programs.flashrom.enable = lib.mkDefault true;
   environment.systemPackages = lib.optional config.programs.flashrom.enable
     (pkgs.writeShellScriptBin "update-firmware" ''
       ${config.programs.flashrom.package}/bin/flashrom \
       --programmer linux_mtd:dev=0 \
-      --write ${pkgs.ubootCN9130_CF_Pro}/spi.img
+      --write ${config.system.build.firmware}/spi.img
     '');
 
   boot.initrd.systemd.enable = true;
