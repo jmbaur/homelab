@@ -12,14 +12,13 @@ in
 
   boot.initrd.luks.devices."cryptroot".crypttabExtraOpts = [ "tpm2-device=auto" ];
   boot.initrd.systemd.enable = true;
-  boot.kernelPackages = pkgs.linuxPackages_6_1;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.systemd-boot.enable = true;
 
   services.fwupd.enable = true;
 
-  sops.defaultSopsFile = ./secrets.yaml;
-  sops.secrets."wg0" = { mode = "0640"; group = config.users.groups.systemd-network.name; };
+  # sops.defaultSopsFile = ./secrets.yaml;
+  # sops.secrets."wg0" = { mode = "0640"; group = config.users.groups.systemd-network.name; };
 
   networking.hostName = "okra";
 
@@ -28,13 +27,13 @@ in
   systemd.network.enable = true;
 
   systemd.network.networks.ethernet = {
-    name = "eno1";
+    name = "en*";
     DHCP = "yes";
     dhcpV4Config.ClientIdentifier = "mac";
   };
 
   custom.wg-mesh = {
-    enable = true;
+    enable = false;
     dns = true;
     peers.kale.extraConfig.Endpoint = "kale.home.arpa:51820";
     peers.squash.extraConfig.Endpoint = "squash.home.arpa:51820";
@@ -52,7 +51,7 @@ in
   custom.remoteBoot.enable = false;
 
   services.prometheus = {
-    enable = true;
+    enable = false;
     exporters = {
       node = {
         enable = true;
