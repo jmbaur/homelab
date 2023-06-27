@@ -27,7 +27,6 @@ in
 
   services.nginx = {
     enable = true;
-    package = pkgs.nginxStable.override { modules = [ pkgs.nginxModules.zstd ]; };
     recommendedTlsSettings = true;
     recommendedZstdSettings = true;
     virtualHosts."okra.home.arpa" = {
