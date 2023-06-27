@@ -18,7 +18,7 @@ let
   };
 
   systemdConfigs = lib.mapAttrs'
-    (name: { flakeUri, frequency }: lib.nameValuePair "build-${name}" {
+    (name: { flakeUri, frequency }: lib.nameValuePair "build@${name}" {
       timer = {
         timerConfig = {
           OnCalendar = frequency;
