@@ -46,7 +46,6 @@ with lib;
     };
 
     environment.systemPackages = with pkgs; [
-      # wl-screenrec # not in nixos-unstable yet
       alacritty
       bemenu
       brightnessctl
@@ -82,6 +81,7 @@ with lib;
       wf-recorder
       wl-clipboard
       wl-color-picker
+      # wl-screenrec
       wlr-randr
       xdg-utils
       zathura

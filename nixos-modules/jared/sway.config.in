@@ -46,7 +46,7 @@ bindsym Mod4+Shift+Right move right
 bindsym Mod4+Shift+Up move up
 bindsym Mod4+Shift+b bar mode toggle
 bindsym Mod4+Shift+c exec wl-color-picker
-bindsym Mod4+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'systemctl --user stop graphical-session.target && swaymsg exit'
+bindsym Mod4+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'systemctl --user stop sway-session.target && swaymsg exit'
 bindsym Mod4+Shift+h move left
 bindsym Mod4+Shift+j move down
 bindsym Mod4+Shift+k move up
@@ -166,4 +166,4 @@ for_window [title="^QEMU.*$"] floating enable
 for_window [title="^pipe:xwayland-mirror$"] floating enable
 for_window [app_id="^chrome-.*__.*"] shortcuts_inhibitor disable
 for_window [title="Firefox — Sharing Indicator"] kill
-exec "dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP XDG_SESSION_TYPE NIXOS_OZONE_WL; systemctl --user start graphical-session.target"
+exec "dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP XDG_SESSION_TYPE NIXOS_OZONE_WL; systemctl --user start sway-session.target"
