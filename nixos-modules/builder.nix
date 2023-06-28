@@ -30,6 +30,7 @@ let
       service = {
         description = "Build ${flakeUri}";
         path = [ config.nix.package ];
+        serviceConfig.DynamicUser = true;
         script = ''
           nix \
             --extra-experimental-features "nix-command flakes" \
