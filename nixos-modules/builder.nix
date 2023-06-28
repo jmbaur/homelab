@@ -30,7 +30,15 @@ let
       service = {
         description = "Build ${flakeUri}";
         path = [ config.nix.package ];
-        serviceConfig.DynamicUser = true;
+        environment = {
+          XDG_CACHE_HOME = "%C/builder";
+          XDG_STATE_HOME = "%S/builder";
+        };
+        serviceConfig = {
+          DynamicUser = true;
+          CacheDirectory = "builder";
+          StateDirectory = "builder";
+        };
         script = ''
           nix \
             --extra-experimental-features "nix-command flakes" \
