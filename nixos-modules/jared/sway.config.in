@@ -23,6 +23,8 @@ bindsym Mod4+9 workspace number 9
 bindsym Mod4+0 workspace number 10
 bindsym Mod4+Control+l exec loginctl lock-session
 bindsym Mod4+Control+space exec makoctl dismiss --all
+bindsym Mod4+Control+h exec makoctl restore
+bindsym Mod4+d exec "if [[ $(makoctl mode) == "do-not-disturb" ]]; then makoctl mode -s default; else makoctl mode -s do-not-disturb; fi"
 bindsym Mod4+Down focus down
 bindsym Mod4+F12 mode passthru
 bindsym Mod4+Left focus left
@@ -75,12 +77,12 @@ bindsym Mod4+space focus mode_toggle
 bindsym Mod4+v split v
 bindsym Mod4+w layout tabbed
 bindsym Print exec grimshot --notify save output
-bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5% && pactl get-sink-volume @DEFAULT_SINK@ | head -n 1| awk '{print substr($5, 1, length($5)-1)}' > $XDG_RUNTIME_DIR/wob.sock
-bindsym XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
-bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle && (pamixer --get-mute && echo 0 > $XDG_RUNTIME_DIR/wob.sock) || pamixer --get-volume > $XDG_RUNTIME_DIR/wob.sock
-bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5% && pactl get-sink-volume @DEFAULT_SINK@ | head -n 1| awk '{print substr($5, 1, length($5)-1)}' > $XDG_RUNTIME_DIR/wob.sock
-bindsym XF86MonBrightnessDown exec brightnessctl set 5%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $XDG_RUNTIME_DIR/wob.sock
-bindsym XF86MonBrightnessUp exec brightnessctl set +5% | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $XDG_RUNTIME_DIR/wob.sock
+bindsym XF86AudioMicMute exec notify-send --transient --hint int:value:$(pamixer --default-source --toggle-mute --get-volume) --hint string:x-canonical-private-synchronous:mic mic "$(if [[ $(pamixer --default-source --get-mute) == true ]]; then echo muted; else echo unmuted; fi)"
+bindsym XF86AudioMute exec notify-send --transient --hint int:value:$(pamixer --toggle-mute --get-volume) --hint string:x-canonical-private-synchronous:volume volume "$(if [[ $(pamixer --get-mute) == true ]]; then echo muted; else echo unmuted; fi)"
+bindsym XF86AudioRaiseVolume exec notify-send --transient --hint int:value:$(pamixer --increase 5 --get-volume) --hint string:x-canonical-private-synchronous:volume volume
+bindsym XF86AudioLowerVolume exec notify-send --transient --hint int:value:$(pamixer --decrease 5 --get-volume) --hint string:x-canonical-private-synchronous:volume volume
+bindsym XF86MonBrightnessUp exec notify-send --transient --hint int:value:$(brightnessctl set +5% | sed -En 's/.*\(([0-9]+)%\).*/\1/p') --hint string:x-canonical-private-synchronous:brightness brightness
+bindsym XF86MonBrightnessDown exec notify-send --transient --hint int:value:$(brightnessctl set 5%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p') --hint string:x-canonical-private-synchronous:brightness brightness
 
 input "type:keyboard" {
   repeat_delay 300

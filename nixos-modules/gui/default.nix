@@ -185,27 +185,6 @@ with lib;
       wantedBy = [ swaySessionTarget ];
     };
 
-    systemd.user.sockets.wob = {
-      socketConfig = {
-        ListenFIFO = "%t/wob.sock";
-        SocketMode = "0600";
-      };
-      wantedBy = [ "sockets.target" ];
-    };
-
-    systemd.user.services.wob = {
-      description = "overlay bar";
-      documentation = [ "https://github.com/francma/wob" ];
-      after = [ swaySessionTarget ];
-      partOf = [ swaySessionTarget ];
-      unitConfig.ConditionEnvironment = "WAYLAND_DISPLAY";
-      serviceConfig = {
-        StandardInput = "socket";
-        ExecStart = "${pkgs.wob}/bin/wob";
-      };
-      wantedBy = [ swaySessionTarget ];
-    };
-
     systemd.user.services.gamma = {
       description = "gamma adjuster";
       documentation = [ "https://gitlab.com/chinstrap/gammastep" ];

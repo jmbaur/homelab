@@ -228,23 +228,22 @@ in
         layer=overlay
         anchor=top-right
         font=JetBrains Mono 12
-        background-color=#285577FF
-        text-color=#FFFFFFFF
         width=500
         height=1000
         margin=10
         padding=5
         border-size=1
-        border-color=#4C7899FF
         border-radius=0
-        progress-color=over #5588AAFF
         icons=true
+        icon-path=/run/current-system/sw/share/icons/Adwaita
         max-icon-size=64
         markup=true
         actions=true
-        format=<b>%s</b>\n%b
         default-timeout=10000
         ignore-timeout=false
+
+        [mode=do-not-disturb]
+        invisible=1
       '';
 
       file.".config/gobar/gobar.yaml".source = (pkgs.formats.yaml { }).generate "gobar.yaml" {
