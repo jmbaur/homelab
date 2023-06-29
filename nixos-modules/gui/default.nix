@@ -81,7 +81,7 @@ with lib;
       wf-recorder
       wl-clipboard
       wl-color-picker
-      # wl-screenrec
+      wl-screenrec
       wlr-randr
       xdg-utils
       zathura
