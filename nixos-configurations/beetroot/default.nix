@@ -89,6 +89,7 @@
   nix.settings = {
     substituters = [ "http://okra.home.arpa" ];
     trusted-public-keys = [ "okra.home.arpa:vGwNstNvgTjz5g+kjV26WvtPqg1cmfB1WQ4wlkCdCJA=" ];
+    fallback = true;
   };
 
   # This value determines the NixOS release from which the default
