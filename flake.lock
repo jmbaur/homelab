@@ -727,11 +727,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1688168945,
-        "narHash": "sha256-AfBdMc2JU54YKaOAvCR0t3dWQIA1bLKb9vGnaZJUh0E=",
+        "lastModified": 1688220547,
+        "narHash": "sha256-cNKKLPaEOxd6t22Mt3tHGubyylbKGdoi2A3QkMTKes0=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "44d1a8542ac92f0ce75d970090216245043a2709",
+        "rev": "89d10f8adce369a80e046c2fd56d1e7b7507bb5b",
         "type": "github"
       },
       "original": {
@@ -812,11 +812,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1687369979,
-        "narHash": "sha256-pSkc15k9yug3vwnri5quvi0R6LHR4u7J0/8FkTpFlmQ=",
+        "lastModified": 1688254210,
+        "narHash": "sha256-DP8E8gaWnBW6QIB6EhDh+frHg0IxOaVF0Pqo1EVSOQQ=",
         "owner": "astro",
         "repo": "microvm.nix",
-        "rev": "c14833d8506a784f0b3cf91a2b864acb05662711",
+        "rev": "ab21a4807805a05768931ec244adfce818e62254",
         "type": "github"
       },
       "original": {
@@ -1065,11 +1065,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1688149242,
-        "narHash": "sha256-MhOqGami8rJ5IZkHSgDzOwMIoWOrDABM5LVft3i2WHQ=",
+        "lastModified": 1688246055,
+        "narHash": "sha256-e22x5nwgfFktD6HPhS8CZZjCOUi7gtaZiRDU10lx3Zc=",
         "owner": "nix-community",
         "repo": "nixpkgs-wayland",
-        "rev": "f8b7e02c95ea94a7c4b785b322c912df815c810b",
+        "rev": "5ce4dddf7de5f490c1b0892b399501435b0f5ec4",
         "type": "github"
       },
       "original": {
@@ -1649,11 +1649,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1687759854,
-        "narHash": "sha256-PWOeqqryC8GQgz4dFNheYjXc+WVJ/yGR7aoFpKd1KKw=",
+        "lastModified": 1688254154,
+        "narHash": "sha256-RglEPSZsC1LUHPkjFcAuoJWLKYe583Fv4+4slJKrlAI=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "2e896ece3ff691af0d1323c4fc83d3ee4f26110b",
+        "rev": "7acf1226a099e63f4b0ccd0581a9f35020c6edb6",
         "type": "github"
       },
       "original": {

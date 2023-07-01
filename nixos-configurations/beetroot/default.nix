@@ -1,10 +1,21 @@
 { config, lib, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ./disko.nix ];
+
+  tinyboot = {
+    board = "volteer-elemi";
+    verifiedBoot = {
+      enable = true;
+      caCertificate = ./x509_ima.pem;
+      signingPublicKey = ./x509_ima.der;
+      signingPrivateKey = "/etc/keys/privkey_ima.pem";
+    };
+  };
+
   hardware.bluetooth.enable = true;
 
   zramSwap.enable = true;
 
-  boot.initrd.luks.devices.cryptroot.crypttabExtraOpts = [ "tpm2-device=auto" ];
+  boot.initrd.luks.devices.cryptroot.crypttabExtraOpts = lib.mkForce [ "tpm2-device=auto" ];
 
   # Don't allow for unattended unlocking of the LUKS container when we are
   # booting the "flashfriendly" specialisation.
@@ -15,7 +26,6 @@
   boot.initrd.systemd.enable = true;
   boot.kernelPackages = pkgs.linuxPackages_6_1;
   boot.loader.systemd-boot.enable = true;
-  boot.loader.tinyboot.privateKey = "/etc/tboot-privkey";
 
   hardware.chromebook.enable = true;
   networking.hostName = "beetroot";
@@ -69,14 +79,7 @@
     };
   };
 
-  system.build.firmware = pkgs.coreboot.volteer-elemi.override {
-    config.tinyboot.verifiedBoot = {
-      enable = true;
-      publicKey = ./tinyboot-pubkey.pem;
-    };
-  };
-
-  environment.systemPackages = [ pkgs.tinyboot-client ] ++ (
+  environment.systemPackages = [ pkgs.tinyboot ] ++ (
     lib.optional config.programs.flashrom.enable
       (pkgs.writeShellScriptBin "update-firmware" ''
         ${config.programs.flashrom.package}/bin/flashrom \
