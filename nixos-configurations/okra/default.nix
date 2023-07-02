@@ -50,11 +50,11 @@ in
   custom.builder.build = {
     "tinyboot-qemu" = {
       flakeUri = "github:jmbaur/tinyboot#coreboot.qemu-${pkgs.stdenv.hostPlatform.qemuArch}";
-      frequency = "*-*-* 21:00:00";
+      frequency = "*-*-* 20:00:00";
     };
-    "beetroot-firmware" = {
-      flakeUri = "github:jmbaur/homelab#nixosConfigurations.beetroot.config.system.build.firmware";
-      frequency = "*-*-* 23:00:00";
+    "beetroot-system-closure" = {
+      flakeUri = "github:jmbaur/homelab#nixosConfigurations.beetroot.config.system.build.toplevel";
+      frequency = "*-*-* 22:00:00";
     };
     "squash-system-closure" = {
       flakeUri = "github:jmbaur/homelab#nixosConfigurations.squash.config.system.build.toplevel";
