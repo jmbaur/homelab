@@ -300,9 +300,6 @@ in
       file.".config/direnv/direnvrc".text = ''
         source ${pkgs.nix-direnv}/share/nix-direnv/direnvrc
       '';
-
-      # TODO(jared): make directories work
-      file.".config/shells/kernel.nix".source = ./shells/kernel.nix;
     };
 
     home-manager.users.${cfg.username} = { nixosConfig, config, pkgs, ... }: {
