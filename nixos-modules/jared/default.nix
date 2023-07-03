@@ -293,6 +293,7 @@ in
         if status is-interactive
           set -U fish_greeting ""
           ${pkgs.direnv}/bin/direnv hook fish | source
+          ${pkgs.nix-your-shell}/bin/nix-your-shell fish | source
         end
       '';
 
