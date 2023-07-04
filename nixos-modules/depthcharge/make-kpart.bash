@@ -14,7 +14,7 @@ PATH="@dtc@/bin:$PATH"
 
 dd if=/dev/zero of="$out/bootloader.bin" bs=512 count=1
 
-echo "init=/sbin/init $(cat "$out/kernel-params")" >"$out/kpart-config"
+echo "init=$out/init $(cat "$out/kernel-params")" >"$out/kpart-config"
 
 @vboot_reference@/bin/futility vbutil_kernel \
 	--pack "$out/kpart" \

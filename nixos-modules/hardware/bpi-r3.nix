@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }: {
   options.hardware.bpi-r3.enable = lib.mkEnableOption "bananapi r3";
   config = lib.mkIf config.hardware.bpi-r3.enable {
-    boot.kernelPackages = pkgs.linuxPackages_testing; # only available in kernel >= 6.3-rc1
+    boot.kernelPackages = pkgs.linuxPackages_latest;
 
     hardware.deviceTree.enable = true;
     hardware.deviceTree.name = "mt7986a-bananapi-bpi-r3.dtb";

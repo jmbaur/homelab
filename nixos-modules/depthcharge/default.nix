@@ -111,20 +111,6 @@ in
             '' else ''
               echo "Kpart produced at $kpart, but automatic installation is disabled."
             ''}
-
-            # install simple init to /sbin/init
-            mkdir -p /boot /sbin
-            target="/sbin/init"
-            tmp="$target.tmp"
-
-            content="$(
-              echo "#!/bin/sh"
-              echo "exec ''${system}/init"
-            )"
-
-            echo "$content" > $tmp
-            chmod +x $tmp
-            mv $tmp $target
           '';
         };
       in
