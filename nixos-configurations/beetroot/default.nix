@@ -3,6 +3,7 @@
 
   tinyboot = {
     board = "volteer-elemi";
+    flashrom.package = config.programs.flashrom.package;
     verifiedBoot = {
       enable = true;
       caCertificate = ./x509_ima.pem;
@@ -78,16 +79,6 @@
       };
     };
   };
-
-  environment.systemPackages = [ pkgs.tinyboot ] ++ (
-    lib.optional config.programs.flashrom.enable
-      (pkgs.writeShellScriptBin "update-firmware" ''
-        ${config.programs.flashrom.package}/bin/flashrom \
-          --programmer internal \
-          --ifd -i bios \
-          --write ${config.system.build.firmware}/coreboot.rom
-      '')
-  );
 
   nix.settings = {
     substituters = [ "http://okra.home.arpa" ];

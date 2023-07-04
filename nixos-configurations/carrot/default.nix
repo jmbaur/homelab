@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ config, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
 
   fileSystems."/".options = [ "noatime" "discard=async" "compress=zstd" ];
@@ -13,7 +13,10 @@
   #   "console=uart8250,mmio,0x91336000,115200n8"
   # ];
 
-  tinyboot.board = "fizz-fizz";
+  tinyboot = {
+    board = "fizz-fizz";
+    flashrom.package = config.programs.flashrom.package;
+  };
 
   boot.loader.systemd-boot.enable = true;
   boot.initrd.systemd.enable = true;
