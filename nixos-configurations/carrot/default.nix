@@ -28,7 +28,10 @@
 
   custom = {
     server.enable = true;
-    basicNetwork.enable = true;
+    basicNetwork = {
+      enable = true;
+      hasWireless = false;
+    };
     remoteBoot.enable = false;
     deployee = {
       enable = true;

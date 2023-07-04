@@ -6,22 +6,6 @@ in
   options.custom.basicNetwork = {
     enable = lib.mkEnableOption "basic network setup";
     hasWireless = lib.mkEnableOption "wireless";
-    wiredMatch = lib.mkOption {
-      type = lib.types.str;
-      default = "en*";
-      description = ''
-        The networkd-compatible regex (see systemd.networkd(5)) to use
-        for matching a wired network interface.
-      '';
-    };
-    wirelessMatch = lib.mkOption {
-      type = lib.types.str;
-      default = "wl*";
-      description = ''
-        The networkd-compatible regex (see systemd.networkd(5)) to use
-        for matching a wireless network interface.
-      '';
-    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -30,7 +14,7 @@ in
     networking = {
       useDHCP = false;
       wireless.enable = lib.mkForce false;
-      wireless.iwd.enable = lib.mkDefault true;
+      wireless.iwd.enable = lib.mkDefault cfg.hasWireless;
     };
 
     systemd.network = {
@@ -38,8 +22,8 @@ in
       networks = {
         wireless = {
           enable = cfg.hasWireless;
-          name = cfg.wirelessMatch;
           DHCP = "yes";
+          matchConfig.Type = "wlan";
           dhcpV4Config = {
             UseDomains = "route";
             RouteMetric = 2048;
@@ -54,8 +38,8 @@ in
           };
         };
         wired = {
-          name = cfg.wiredMatch;
           DHCP = "yes";
+          matchConfig.Type = "ether";
           dhcpV4Config = {
             UseDomains = "route";
             RouteMetric = 1024;
