@@ -54,6 +54,10 @@ in
     modules = with inputs; [ ./beetroot self.nixosModules.default ];
   };
 
+  carrot = nixosSystem {
+    modules = with inputs; [ ./carrot self.nixosModules.default ];
+  };
+
   kale = nixosSystem {
     modules = with inputs; [
       ./kale
@@ -83,10 +87,7 @@ in
   };
 
   okra = nixosSystem {
-    modules = with inputs; [
-      ./okra
-      self.nixosModules.default
-    ];
+    modules = with inputs; [ ./okra self.nixosModules.default ];
   };
 
   installer_iso_x86_64-linux = mkInstallerISO { modules = [{ nixpkgs.hostPlatform = "x86_64-linux"; }]; };

@@ -30,7 +30,7 @@ in
     networking = {
       useDHCP = false;
       wireless.enable = lib.mkForce false;
-      wireless.iwd.enable = true;
+      wireless.iwd.enable = lib.mkDefault true;
     };
 
     systemd.network = {
