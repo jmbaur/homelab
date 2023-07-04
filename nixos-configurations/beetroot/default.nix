@@ -22,7 +22,6 @@
   # booting the "flashfriendly" specialisation.
   specialisation.flashfriendly.configuration.boot.initrd.luks.devices.cryptroot.crypttabExtraOpts = lib.mkForce [ "fido2-device=auto" ];
 
-  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   boot.initrd.availableKernelModules = [ "i915" ];
   boot.initrd.systemd.enable = true;
   boot.kernelPackages = pkgs.linuxPackages_6_1;
