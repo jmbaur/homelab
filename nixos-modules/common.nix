@@ -46,7 +46,7 @@ with lib; {
 
     services.openssh = mkIf isNotContainer {
       enable = true;
-      openFirewall = false;
+      openFirewall = lib.mkDefault (!config.custom.gui.enable);
       settings = {
         PermitRootLogin = mkDefault "prohibit-password";
         PasswordAuthentication = mkDefault false;

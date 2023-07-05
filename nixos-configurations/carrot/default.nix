@@ -24,14 +24,19 @@
   hardware.chromebook.enable = true;
 
   networking.hostName = "carrot";
-  networking.wireless.enable = true;
+
+  networking.useDHCP = false;
+  systemd.network = {
+    enable = true;
+    networks.ether = {
+      matchConfig.Type = "ether";
+      DHCP = "yes";
+      dhcpV4Config.ClientIdentifier = "mac";
+    };
+  };
 
   custom = {
     server.enable = true;
-    basicNetwork = {
-      enable = true;
-      hasWireless = false;
-    };
     remoteBoot.enable = false;
     deployee = {
       enable = true;
@@ -39,6 +44,8 @@
       authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
     };
   };
+
+  users.users.root.password = "";
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
