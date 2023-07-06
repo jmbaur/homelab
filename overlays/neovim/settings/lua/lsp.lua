@@ -202,8 +202,10 @@ local function toggle_format_on_save()
 
 	if ignoring_buf_write_pre then
 		vim.opt.eventignore:remove({ "BufWritePre" })
+		vim.print("enabled format on save")
 	else
 		vim.opt.eventignore:append({ "BufWritePre" })
+		vim.print("disabled format on save")
 	end
 end
 
