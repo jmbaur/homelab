@@ -191,7 +191,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	end,
 })
 
-vim.api.nvim_create_user_command("ToggleFormatOnSave", function()
+local function toggle_format_on_save()
 	local ignoring_buf_write_pre = false
 
 	for _, event in pairs(vim.opt.eventignore:get()) do
@@ -205,4 +205,7 @@ vim.api.nvim_create_user_command("ToggleFormatOnSave", function()
 	else
 		vim.opt.eventignore:append({ "BufWritePre" })
 	end
-end, { desc = "Toggle format on save" })
+end
+
+vim.api.nvim_create_user_command("ToggleFormatOnSave", toggle_format_on_save, { desc = "Toggle format on save" })
+vim.keymap.set("n", "<leader>t", toggle_format_on_save, { desc = "Toggle format on save" })

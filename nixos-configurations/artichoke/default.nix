@@ -1,43 +1,37 @@
-{ config, lib, pkgs, ... }: {
-  imports = [ ./router.nix ./hardware-configuration.nix ];
+{ pkgs, ... }: {
+  imports = [ ./hardware-configuration.nix ];
 
-  boot.kernelParams = [ "cfg80211.ieee80211_regdom=US" ];
-  networking.wireless.athUserRegulatoryDomain = true;
-
-  system.build.firmware = pkgs.ubootCN9130_CF_Pro;
-
-  programs.flashrom.enable = lib.mkDefault true;
-  environment.systemPackages = lib.optional config.programs.flashrom.enable
-    (pkgs.writeShellScriptBin "update-firmware" ''
-      ${config.programs.flashrom.package}/bin/flashrom \
-      --programmer linux_mtd:dev=0 \
-      --write ${config.system.build.firmware}/spi.img
-    '');
-
-  boot.initrd.systemd.enable = true;
-
-  hardware.clearfog-cn913x.enable = true;
+  fileSystems."/".options = [ "discard=async" "noatime" "compress=zstd" ];
+  fileSystems."/nix".options = [ "discard=async" "noatime" "compress=zstd" ];
+  fileSystems."/home".options = [ "discard=async" "noatime" "compress=zstd" ];
 
   zramSwap.enable = true;
 
-  custom = {
-    crossCompile.enable = true;
-    server.enable = true;
-    deployee = {
-      enable = true;
-      authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
-    };
-    disableZfs = true;
-  };
+  boot.initrd.luks.devices."cryptroot".tryEmptyPassphrase = true;
+
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "artichoke";
-  networking.firewall.logRefusedConnections = false;
 
-  system.stateVersion = "23.05";
-
-  systemd.services.reset-button = {
-    # BTN_0 == 0x100
-    serviceConfig.ExecStart = "${pkgs.dookie}/bin/dookie --device=/dev/input/event0 --key-code=0x100 --action=restart";
-    wantedBy = [ "multi-user.target" ];
+  custom = {
+    server.enable = true;
+    remoteBoot.enable = false;
+    deployee = {
+      enable = true;
+      sshTarget = "root@artichoke.home.arpa";
+      authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
+    };
   };
+
+  services.nfs.server.enable = true;
+
+  # This value determines the NixOS release from which the default
+  # settings for stateful data, like file locations and database versions
+  # on your system were taken. It’s perfectly fine and recommended to leave
+  # this value at the release version of the first install of this system.
+  # Before changing this value read the documentation for this option
+  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
+  system.stateVersion = "23.05"; # Did you read the comment?
+
 }

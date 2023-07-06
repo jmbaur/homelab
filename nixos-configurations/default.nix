@@ -24,12 +24,7 @@ let
 in
 {
   artichoke = nixosSystem {
-    modules = with inputs; [
-      ./artichoke
-      ipwatch.nixosModules.default
-      self.nixosModules.default
-      nixos-router.nixosModules.default
-    ];
+    modules = with inputs; [ ./artichoke self.nixosModules.default ];
   };
 
   squash = nixosSystem {

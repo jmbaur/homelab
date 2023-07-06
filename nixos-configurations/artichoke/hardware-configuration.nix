@@ -5,19 +5,37 @@
 
 {
   imports =
-    [
-      (modulesPath + "/installer/scan/not-detected.nix")
+    [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ ];
+  boot.initrd.availableKernelModules = [ "ahci" "xhci_pci" "usbhid" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ ];
+  boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    {
-      device = "/dev/disk/by-uuid/7fdd5669-3ede-4a72-8ebe-6efc06c36f63";
-      fsType = "ext4";
+    { device = "/dev/mapper/cryptroot";
+      fsType = "btrfs";
+      options = [ "subvol=@" ];
+    };
+
+  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/e2b0c9bb-5081-41ef-a91d-99bbb2f81340";
+
+  fileSystems."/nix" =
+    { device = "/dev/mapper/cryptroot";
+      fsType = "btrfs";
+      options = [ "subvol=@nix" ];
+    };
+
+  fileSystems."/home" =
+    { device = "/dev/mapper/cryptroot";
+      fsType = "btrfs";
+      options = [ "subvol=@home" ];
+    };
+
+  fileSystems."/boot" =
+    { device = "/dev/disk/by-uuid/4AC8-5436";
+      fsType = "vfat";
     };
 
   swapDevices = [ ];
@@ -27,17 +45,9 @@
   # still possible to use this option, but it's recommended to use it in conjunction
   # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
   networking.useDHCP = lib.mkDefault true;
-  # networking.interfaces.lan.useDHCP = lib.mkDefault true;
-  # networking.interfaces.lan1.useDHCP = lib.mkDefault true;
-  # networking.interfaces.lan2.useDHCP = lib.mkDefault true;
-  # networking.interfaces.lan3.useDHCP = lib.mkDefault true;
-  # networking.interfaces.lan4.useDHCP = lib.mkDefault true;
-  # networking.interfaces.lan5.useDHCP = lib.mkDefault true;
-  # networking.interfaces.lan6.useDHCP = lib.mkDefault true;
-  # networking.interfaces.sfpplus.useDHCP = lib.mkDefault true;
-  # networking.interfaces.wan.useDHCP = lib.mkDefault true;
-  # networking.interfaces.wlp1s0.useDHCP = lib.mkDefault true;
+  # networking.interfaces.enp0s21f0u5.useDHCP = lib.mkDefault true;
+  # networking.interfaces.enp2s0.useDHCP = lib.mkDefault true;
 
-  nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
-  powerManagement.cpuFreqGovernor = lib.mkDefault "ondemand";
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
