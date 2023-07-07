@@ -33,6 +33,7 @@ in
       packages = with pkgs; ([
         (weechat.override { configure = { ... }: { scripts = with pkgs.weechatScripts; [ weechat-matrix ]; }; })
         age-plugin-yubikey
+        croc
         gmni
         iperf3
         librespeed-cli

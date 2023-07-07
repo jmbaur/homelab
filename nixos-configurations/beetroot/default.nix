@@ -80,8 +80,8 @@
   };
 
   nix.settings = {
-    substituters = [ "http://okra.home.arpa" ];
-    trusted-public-keys = [ "okra.home.arpa:vGwNstNvgTjz5g+kjV26WvtPqg1cmfB1WQ4wlkCdCJA=" ];
+    substituters = [ "http://carrot.home.arpa" ];
+    trusted-public-keys = [ "carrot.home.arpa:dxp2PztB2LlcVufzgvhsrM9FvrDJcRvP2SqMXr3GSt8=" ];
     fallback = true;
   };
 
