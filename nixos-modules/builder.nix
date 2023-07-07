@@ -42,7 +42,8 @@ let
         script = ''
           nix \
             --extra-experimental-features "nix-command flakes" \
-            build --refresh --no-link --print-out-paths --print-build-logs \
+            build --refresh --print-out-paths --print-build-logs \
+            --out-link $STATE_DIRECTORY/result-${name} \
             ${flakeUri}
         '';
       };
