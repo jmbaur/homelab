@@ -57,6 +57,12 @@
     };
   };
 
+  nix.settings = {
+    substituters = [ "http://carrot.home.arpa" ];
+    trusted-public-keys = [ "carrot.home.arpa:dxp2PztB2LlcVufzgvhsrM9FvrDJcRvP2SqMXr3GSt8=" ];
+    fallback = true;
+  };
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave

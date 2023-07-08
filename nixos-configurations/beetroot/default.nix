@@ -2,12 +2,15 @@
   imports = [ ./hardware-configuration.nix ./disko.nix ];
 
   tinyboot = {
-    board = "volteer-elemi";
-    verifiedBoot = {
-      enable = true;
-      caCertificate = ./x509_ima.pem;
-      signingPublicKey = ./x509_ima.der;
-      signingPrivateKey = "/etc/keys/privkey_ima.pem";
+    enable = true;
+    settings = {
+      board = "volteer-elemi";
+      verifiedBoot = {
+        enable = true;
+        caCertificate = ./x509_ima.pem;
+        signingPublicKey = ./x509_ima.der;
+        signingPrivateKey = "/etc/keys/privkey_ima.pem";
+      };
     };
   };
 
