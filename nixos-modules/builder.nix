@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, pkgs, lib, ... }:
 let
   cfg = config.custom.builder;
 
@@ -29,7 +29,7 @@ let
 
       service = {
         description = "Build ${flakeUri}";
-        path = [ config.nix.package ];
+        path = [ config.nix.package pkgs.git ];
         environment = {
           XDG_CACHE_HOME = "%C/builder";
           XDG_STATE_HOME = "%S/builder";

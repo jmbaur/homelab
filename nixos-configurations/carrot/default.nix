@@ -13,23 +13,24 @@ in
 
   boot.initrd.luks.devices."cryptroot".crypttabExtraOpts = [ "tpm2-device=auto" ];
 
-  security.tpm2.enable = true;
-  security.tpm2.abrmd.enable = true;
-  security.tpm2.tctiEnvironment.enable = true;
-
-  # boot.kernelParams = [
-  #   "console=ttyS0"
-  #   "console=uart8250,mmio,0xfe030000,115200n8"
-  #   "console=uart8250,mmio,0x91336000,115200n8"
-  # ];
+  boot.kernelParams = [
+    "console=ttyS0"
+    "console=ttyS1"
+    "console=tty1"
+    # "console=uart8250,mmio,0xfe030000,115200n8"
+    # "console=uart8250,mmio,0x91336000,115200n8"
+  ];
 
   tinyboot = {
-    board = "fizz-fizz";
-    verifiedBoot = {
-      enable = true;
-      caCertificate = ./x509_ima.pem;
-      signingPublicKey = ./x509_ima.der;
-      signingPrivateKey = "/etc/keys/privkey_ima.pem";
+    enable = true;
+    settings = {
+      board = "fizz-fizz";
+      verifiedBoot = {
+        enable = true;
+        caCertificate = ./x509_ima.pem;
+        signingPublicKey = ./x509_ima.der;
+        signingPrivateKey = "/etc/keys/privkey_ima.pem";
+      };
     };
   };
 
@@ -92,6 +93,10 @@ in
     "squash-system-closure" = {
       flakeUri = "github:jmbaur/homelab#nixosConfigurations.squash.config.system.build.toplevel";
       frequency = "*-*-* 00:00:00";
+    };
+    "potato-lanzaboote" = {
+      flakeUri = "github:jmbaur/homelab#nixosConfigurations.potato.config.boot.lanzaboote.package";
+      frequency = "*-*-* 01:00:00";
     };
   };
 
