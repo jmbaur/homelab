@@ -25,7 +25,6 @@ in
 
   tinyboot = {
     board = "fizz-fizz";
-    flashrom.package = config.programs.flashrom.package;
     verifiedBoot = {
       enable = true;
       caCertificate = ./x509_ima.pem;
