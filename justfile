@@ -18,8 +18,6 @@ build:
 		.\#cicada \
 		.\#coredns-utils \
 		.\#flarectl \
-		.\#flashrom-cros \
-		.\#flashrom-dasharo \
 		.\#git-get \
 		.\#gobar \
 		.\#gosee \

@@ -12,8 +12,6 @@ inputs: with inputs; {
           depthcharge-tools
           fdroidcl
           flarectl
-          flashrom-cros
-          flashrom-dasharo
           stevenblack-blocklist
           u-rootInitramfs
           xremap

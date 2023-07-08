@@ -4,8 +4,6 @@
   depthcharge-tools = pkgs.callPackage ./depthcharge-tools.nix { };
   fdroidcl = pkgs.callPackage ./fdroidcl.nix { };
   flarectl = pkgs.callPackage ./flarectl.nix { };
-  flashrom-cros = pkgs.callPackage ./flashrom-cros.nix { };
-  flashrom-dasharo = pkgs.callPackage ./flashrom-dasharo.nix { };
   stevenblack-blocklist = pkgs.callPackage ./stevenblack-blocklist.nix { };
   u-rootInitramfs = pkgs.callPackage ./u-root.nix { };
   xremap = pkgs.callPackage ./xremap.nix { features = [ "sway" ]; };

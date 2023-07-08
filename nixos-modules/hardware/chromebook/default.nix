@@ -5,10 +5,6 @@
   config = lib.mkIf config.hardware.chromebook.enable {
     services.xserver.xkbOptions = "ctrl:swap_lwin_lctl";
     services.xserver.xkbModel = "chromebook";
-    programs.flashrom = {
-      enable = true;
-      package = pkgs.flashrom-cros;
-    };
 
     # allow for CR50 TPM usage in initrd
     boot.initrd.availableKernelModules = [

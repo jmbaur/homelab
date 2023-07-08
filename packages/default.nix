@@ -18,8 +18,6 @@ let
       coredns-utils
       depthcharge-tools
       flarectl
-      flashrom-cros
-      flashrom-dasharo
       git-get
       git-shell-commands
       gobar
