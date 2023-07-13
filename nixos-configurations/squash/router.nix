@@ -17,11 +17,10 @@ in
     custom.wg-mesh = {
       enable = true;
       peers.beetroot = { };
-      peers.okra = { };
       peers.rhubarb = { };
       firewall = {
         trustedIPs = [ wg.beetroot.ip ];
-        ips."${wg.okra.ip}".allowedTCPPorts = [
+        ips."${wg.carrot.ip}".allowedTCPPorts = [
           19531 # systemd-journal-gatewayd
           9153 # coredns
           9430 # corerad

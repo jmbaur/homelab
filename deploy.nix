@@ -20,7 +20,7 @@ let
   };
   nodes = builtins.listToAttrs [
     (mkSystemNode { name = "kale"; hostname = "kale.home.arpa"; })
-    (mkSystemNode { name = "okra"; hostname = "okra.home.arpa"; })
+    (mkSystemNode { name = "carrot"; hostname = "carrot.home.arpa"; })
     (mkSystemNode { name = "rhubarb"; hostname = "rhubarb.home.arpa"; magicRollback = false; })
     (mkSystemNode { name = "www"; hostname = "www.jmbaur.com"; })
   ];

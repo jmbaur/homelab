@@ -58,7 +58,6 @@ in
 
   custom.wg-mesh = {
     enable = true;
-    peers.okra = { };
     peers.kale = { };
   };
 
@@ -115,13 +114,13 @@ in
         forceSSL = true;
         useACMEHost = "jmbaur.com";
         locations."/" = {
-          proxyPass = "http://[${wg.okra.ip}]:3000";
+          proxyPass = "http://[${wg.carrot.ip}]:3000";
           extraConfig = ''
             proxy_set_header Host $host;
           '';
         };
         locations."/api/live" = {
-          proxyPass = "http://[${wg.okra.ip}]:3000";
+          proxyPass = "http://[${wg.carrot.ip}]:3000";
           extraConfig = ''
             proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;

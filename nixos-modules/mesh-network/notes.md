@@ -1,8 +1,8 @@
 Links in the network:
 
-- okra -> kale (prometheus)
-- okra -> squash (prometheus)
-- okra -> www (prometheus)
-- www -> okra (grafana)
+- carrot -> kale (prometheus)
+- carrot -> squash (prometheus)
+- carrot -> www (prometheus)
+- www -> carrot (grafana)
 - www -> kale (nfs)
 - squash -> rhubarb (ssh)

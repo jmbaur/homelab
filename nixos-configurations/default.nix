@@ -81,10 +81,6 @@ in
     ];
   };
 
-  okra = nixosSystem {
-    modules = with inputs; [ ./okra self.nixosModules.default ];
-  };
-
   installer_iso_x86_64-linux = mkInstallerISO { modules = [{ nixpkgs.hostPlatform = "x86_64-linux"; }]; };
   installer_iso_aarch64-linux = mkInstallerISO {
     modules = [

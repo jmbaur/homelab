@@ -114,7 +114,7 @@ in
     recommendedTlsSettings = true;
     recommendedZstdSettings = false; # TODO(jared): doesn't build
     recommendedGzipSettings = false; # TODO(jared): doesn't build
-    virtualHosts."okra.home.arpa" = {
+    virtualHosts."carrot.home.arpa" = {
       enableACME = false;
       forceSSL = false;
       locations."/".extraConfig = ''
@@ -148,10 +148,6 @@ in
             "kale.home.arpa:${toString config.services.prometheus.exporters.node.port}"
           ];
         }];
-      }
-      {
-        job_name = "prometheus";
-        static_configs = [{ targets = [ "okra.home.arpa:${toString config.services.prometheus.port}" ]; }];
       }
       {
         job_name = "coredns";
