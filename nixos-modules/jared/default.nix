@@ -141,7 +141,10 @@ in
         ++ (lib.optional config.virtualisation.docker.enable "docker")
       ;
 
-      file.".config/kitty/kitty.conf".text = ''
+    };
+
+    home-manager.users.${cfg.username} = { nixosConfig, config, pkgs, ... }: {
+      home.file.".config/kitty/kitty.conf".text = ''
         copy_on_select yes
         enable_audio_bell no
         font_family JetBrains Mono
@@ -152,7 +155,7 @@ in
         update_check_interval 0
       '';
 
-      file.".config/foot/foot.ini".source = (pkgs.formats.ini { }).generate "foot.ini" {
+      home.file.".config/foot/foot.ini".source = (pkgs.formats.ini { }).generate "foot.ini" {
         main = {
           font = "${guiData.font}:size=10";
           selection-target = "clipboard";
@@ -166,8 +169,8 @@ in
         colors = { alpha = 1.0; } // colors;
       };
 
-      file.".config/wezterm/wezterm.lua".source = ./wezterm.lua;
-      file.".config/wezterm/colors/modus-vivendi.toml".source = (pkgs.formats.toml { }).generate "modus-vivendi.toml" {
+      home.file.".config/wezterm/wezterm.lua".source = ./wezterm.lua;
+      home.file.".config/wezterm/colors/modus-vivendi.toml".source = (pkgs.formats.toml { }).generate "modus-vivendi.toml" {
         colors = {
           background = "#${colors.background}";
           foreground = "#${colors.foreground}";
@@ -180,7 +183,7 @@ in
         metadata.name = "modus-vivendi";
       };
 
-      file.".config/alacritty/alacritty.yml".source = (pkgs.formats.yaml { }).generate "alacritty.yml" {
+      home.file.".config/alacritty/alacritty.yml".source = (pkgs.formats.yaml { }).generate "alacritty.yml" {
         live_config_reload = false;
         mouse.hide_when_typing = true;
         selection.save_to_clipboard = true;
@@ -213,10 +216,10 @@ in
         };
       };
 
-      file.".config/sway/config".source = pkgs.substituteAll {
+      home.file.".config/sway/config".source = pkgs.substituteAll {
         name = "sway.config";
         src = ./sway.config.in;
-        inherit (config.services.xserver) xkbModel xkbOptions;
+        inherit (nixosConfig.services.xserver) xkbModel xkbOptions;
         # public domain monet paintings: https://commons.wikimedia.org/wiki/Claude_Monet_Paintings_in_Public_Domain
         wallpaper = pkgs.fetchurl {
           url = "https://upload.wikimedia.org/wikipedia/commons/8/84/Sainte-Adresse_A12549.jpg?download";
@@ -224,11 +227,11 @@ in
         };
       };
 
-      file.".config/swaynag/config".text = ''
+      home.file.".config/swaynag/config".text = ''
         font=JetBrains Mono 12
       '';
 
-      file.".config/mako/config".text = ''
+      home.file.".config/mako/config".text = ''
         max-visible=5
         sort=-time
         layer=overlay
@@ -252,17 +255,17 @@ in
         invisible=1
       '';
 
-      file.".config/gobar/gobar.yaml".source = (pkgs.formats.yaml { }).generate "gobar.yaml" {
+      home.file.".config/gobar/gobar.yaml".source = (pkgs.formats.yaml { }).generate "gobar.yaml" {
         colorVariant = "dark";
         modules = [{ module = "network"; pattern = "(en|eth|wlp|wlan|wg)+"; }] ++
-          (lib.optional config.custom.laptop.enable { module = "battery"; }) ++
+          (lib.optional nixosConfig.custom.laptop.enable { module = "battery"; }) ++
           [
             { module = "memory"; }
             { module = "datetime"; timezones = [ "Local" "UTC" ]; }
           ];
       };
 
-      file.".config/mimeapps.list".source = (pkgs.formats.ini { }).generate "mimeapps.list" {
+      home.file.".config/mimeapps.list".source = (pkgs.formats.ini { }).generate "mimeapps.list" {
         "Added Associations" = { };
         "Removed Associations" = { };
         "Default Applications" = {
@@ -277,20 +280,20 @@ in
         };
       };
 
-      file.".sqliterc".text = ''
+      home.file.".sqliterc".text = ''
         .headers ON
         .mode columns
       '';
 
-      file.".config/bat/config".text = ''
+      home.file.".config/bat/config".text = ''
         --theme='base16'
       '';
 
-      file.".config/fd/ignore".text = ''
+      home.file.".config/fd/ignore".text = ''
         .git
       '';
 
-      file.".config/fish/config.fish".text = ''
+      home.file.".config/fish/config.fish".text = ''
         if status is-interactive
           set -U fish_greeting ""
           ${pkgs.direnv}/bin/direnv hook fish | source
@@ -298,12 +301,10 @@ in
         end
       '';
 
-      file.".config/direnv/direnvrc".text = ''
+      home.file.".config/direnv/direnvrc".text = ''
         source ${pkgs.nix-direnv}/share/nix-direnv/direnvrc
       '';
-    };
 
-    home-manager.users.${cfg.username} = { nixosConfig, config, pkgs, ... }: {
       programs.git = {
         userEmail = lib.mkDefault "jaredbaur@fastmail.com";
         userName = nixosConfig.users.users.${cfg.username}.description;
@@ -319,20 +320,16 @@ in
           user.signingKey = "key::sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIBhCHaXn5ghEJQVpVZr4hOajD6Zp/0PO4wlymwfrg/S5AAAABHNzaDo=";
         };
       };
-      programs.gpg.publicKeys = [
-        {
-          trust = 5;
-          source = pkgs.fetchurl {
-            url = "https://keybase.io/jaredbaur/pgp_keys.asc";
-            sha256 = "0rw02akfvdrpdrznhaxsy8105ng5r8xb5mlmjwh9msf4brnbwrj7";
-          };
-        }
-      ];
+      programs.gpg.publicKeys = [{
+        trust = 5;
+        source = pkgs.fetchurl {
+          url = "https://keybase.io/jaredbaur/pgp_keys.asc";
+          sha256 = "0rw02akfvdrpdrznhaxsy8105ng5r8xb5mlmjwh9msf4brnbwrj7";
+        };
+      }];
       programs.ssh = {
         enable = true;
-        matchBlocks = {
-          "*.home.arpa".forwardAgent = true;
-        };
+        matchBlocks = { "*.home.arpa".forwardAgent = true; };
       };
     };
   };

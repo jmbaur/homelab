@@ -18,7 +18,6 @@ inputs: {
       ./deployer.nix
       ./depthcharge
       ./dev.nix
-      ./file.nix
       ./gui
       ./hardware
       ./home-manager
