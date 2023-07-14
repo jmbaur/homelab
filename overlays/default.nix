@@ -165,6 +165,8 @@ inputs: with inputs; {
         };
         ubootCN9130_CF_Pro = prev.callPackage ./uboot-cn9130-cf-pro.nix { inherit (final) cn913x_build_repo; };
 
+        bpiR3Firmware = prev.callPackage ./bpi-r3-firmware.nix { };
+
         # linux_orangepi-5 = prev.callPackage ./kernels/linux-orangepi-5.nix { };
 
         jmbaur-keybase-pgp-keys = prev.fetchurl {
