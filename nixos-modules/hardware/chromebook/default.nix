@@ -11,7 +11,5 @@
       "tpm_tis_spi"
     ] ++ (lib.optionals (pkgs.stdenv.hostPlatform.system == "x86_64-linux")
       [ "intel_lpss_pci" "spi_pxa2xx_platform" "spi_intel_pci" ]);
-
-    specialisation.flashfriendly.configuration.boot.kernelParams = [ "iomem=relaxed" ];
   };
 }
