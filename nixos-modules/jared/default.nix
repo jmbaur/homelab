@@ -157,7 +157,7 @@ in
 
       home.file.".config/foot/foot.ini".source = (pkgs.formats.ini { }).generate "foot.ini" {
         main = {
-          font = "${guiData.font}:size=10";
+          font = "${guiData.font}:size=16";
           selection-target = "clipboard";
           notify-focus-inhibit = "no";
         };
