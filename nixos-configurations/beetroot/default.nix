@@ -48,17 +48,9 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  security.pam.u2f = {
-    enable = true;
-    cue = true;
-    origin = "pam://homelab";
-    authFile = config.sops.secrets.pam_u2f_authfile.path;
-  };
-
   sops = {
     defaultSopsFile = ./secrets.yaml;
     secrets.wg0 = { };
-    secrets.pam_u2f_authfile = { };
     secrets.jared_password.neededForUsers = true;
   };
 

@@ -16,10 +16,12 @@ function DiagnosticStatus()
 end
 
 function StatusLine()
-	if vim.g.statusline_winid == vim.fn.win_getid() then
-		return "%<%t %m%{FugitiveStatusline()}%r%=%24.(%y%{luaeval('DiagnosticStatus()')}%) %8.(%l,%c%) %P"
+	if vim.bo.filetype == "oil" then
+		return "%f"
+	elseif vim.g.statusline_winid == vim.fn.win_getid() then
+		return "%t %m%<%{FugitiveStatusline()}%r%=%24.(%y%{luaeval('DiagnosticStatus()')}%) %8.(%l,%c%) %P"
 	else
-		return "%<%t %m"
+		return "%t %m"
 	end
 end
 
