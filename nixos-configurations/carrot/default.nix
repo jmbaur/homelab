@@ -75,7 +75,7 @@ in
 
   custom.builder.build = {
     "tinyboot-qemu" = {
-      flakeUri = "github:jmbaur/tinyboot#coreboot.qemu-${pkgs.stdenv.hostPlatform.qemuArch}";
+      flakeUri = "github:jmbaur/tinyboot#coreboot.qemu-${pkgs.stdenv.hostPlatform.qemuArch}.config.build.firmware";
       frequency = "*-*-* 20:00:00";
     };
     "carrot-firmware" = {
