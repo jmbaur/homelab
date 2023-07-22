@@ -18,7 +18,7 @@ with lib; {
 
     nix.registry.nixpkgs.flake = inputs.nixpkgs;
 
-    environment.systemPackages = [ pkgs.nixos-kexec ];
+    environment.systemPackages = [ pkgs.nixos-kexec pkgs.bottom ];
 
     security.sudo.extraRules = [{ groups = [ "wheel" ]; commands = [{ command = "/run/current-system/sw/bin/networkctl"; options = [ "NOPASSWD" ]; }]; }];
 

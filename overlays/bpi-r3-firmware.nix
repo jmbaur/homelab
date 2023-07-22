@@ -12,7 +12,46 @@ let
     # eMMC and SD are mutually exclusive on this board, choose one
     defconfig = "mt7986a_bpir3_${if internalBoot then "emmc" else "sd"}_defconfig";
     extraMeta.platforms = [ "aarch64-linux" ];
-    extraConfig = '''';
+    # these should be in the defconfig, but alas are not
+    extraConfig = ''
+      CONFIG_CMD_DM=y
+      CONFIG_CMD_MTD=y
+      CONFIG_CMD_SF=y
+      CONFIG_CMD_SPI=y
+      CONFIG_CMD_USB=y
+
+      CONFIG_DM_MTD=y
+      CONFIG_DM_SPI=y
+      CONFIG_DM_SPI_FLASH=y
+      CONFIG_DM_USB=y
+      CONFIG_MTD=y
+      CONFIG_MTD_SPI_NAND=y
+      CONFIG_MTK_SPIM=y
+      CONFIG_PHY=y
+      CONFIG_PHY_MTK_TPHY=y
+      CONFIG_SPI=y
+      CONFIG_USB=y
+      CONFIG_USB_XHCI_HCD=y
+      CONFIG_USB_XHCI_MTK=y
+
+      CONFIG_FIT=y
+      CONFIG_FIT_SIGNATURE=y
+      CONFIG_RSA=y
+
+      CONFIG_BLK=y
+      CONFIG_CMD_BOOTEFI=y
+      CONFIG_EFI_LOADER=y
+      CONFIG_PARTITIONS=y
+
+      CONFIG_ENV_IS_NOWHERE=y
+
+      CONFIG_AUTOBOOT=y
+      CONFIG_BOOTDELAY=1
+      CONFIG_BOOTSTD_DEFAULTS=y
+      CONFIG_BOOTSTD_FULL=y
+      CONFIG_CMD_BOOTFLOW_FULL=y
+      CONFIG_USE_BOOTCOMMAND=y
+    '';
   }).overrideAttrs (_: {
     # omit nixpkpgs patches for u-boot
     patches = [ ];
