@@ -23,6 +23,7 @@ end
 
 -- editor highlight groups
 hi("Normal", { fg = xterm[15], bg = xterm[0] }) -- Normal must be first
+hi("NormalFloat", { fg = xterm[15], bg = xterm[0] })
 hi("ColorColumn", { bg = xterm[235] })
 hi("Cursor", { fg = xterm[0], bg = "fg" })
 hi("CursorLine", { ctermfg = "white" }) -- https://github.com/neovim/neovim/issues/9800
@@ -60,6 +61,7 @@ hi("diffAdded", { fg = xterm[72] })
 hi("diffChanged", { bg = xterm[220] })
 hi("diffRemoved", { fg = xterm[204] })
 link("Error", "ErrorMsg")
+link("NormalFloat", "Normal")
 link("TelescopeMatching", "Search")
 
 -- code highlight groups
