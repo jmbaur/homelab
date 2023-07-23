@@ -86,7 +86,10 @@ in
     modules = [
       ({ config, ... }: {
         nixpkgs.hostPlatform = "aarch64-linux";
-        boot.loader.grub.extraFiles.dtbs = "${config.boot.kernelPackages.kernel}/dtbs";
+        isoImage.contents = [{
+          source = "${config.boot.kernelPackages.kernel}/dtbs";
+          target = "boot/dtbs";
+        }];
       })
     ];
   };
@@ -165,10 +168,12 @@ in
 
   bpi-r3-installer = mkInstaller {
     modules = [
-      ({ modulesPath, ... }: {
-        imports = [ "${modulesPath}/installer/sd-card/sd-image-aarch64-installer.nix" ];
+      ../nixos-modules/sd-image.nix
+      ({ config, ... }: {
+        boot.loader.systemd-boot.extraFiles = {
+          "efi/dtbs" = "${config.boot.kernelPackages.kernel}/dtbs";
+        };
         nixpkgs.hostPlatform = "aarch64-linux";
-        boot.initrd.systemd.enable = true;
         hardware.bpi-r3.enable = true;
         custom.server.enable = true; # limits packages needed for cross-compilation
         custom.crossCompile.enable = true;

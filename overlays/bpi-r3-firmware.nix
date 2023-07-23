@@ -1,7 +1,7 @@
 { internalBoot ? true, writeText, fetchFromGitHub, buildUBoot, buildArmTrustedFirmware, buildPackages, dtc, openssl }:
 let
   env = writeText "bpi-r3-uboot-env" ''
-    // Linux mt6978a.dtsi defines the following reserved memory in the
+    // Linux mt7986a.dtsi defines the following reserved memory in the
     // first 256MB:
     // 0x4300_0000 - 0x4302_FFFF
     // 0x4FC0_0000 - 0x4FCF_FFFF
@@ -12,14 +12,15 @@ let
     // You need to be mindful of these when defining memory locations
     // for u-boot to use to boot the system, or these will clobber.
 
-    fdt_addr_r=0x46000000
-    kernel_addr_r=0x46200000
-    ramdisk_addr_r=0x50000000
-    scriptaddr=0x90000000
+    // bootm_size=0x10000000
+    fdt_addr_r=0x43030000
+    kernel_addr_r=0x43200000
     pxefile_addr_r=0x90100000
+    ramdisk_addr_r=0x4b100000
+    scriptaddr=0x90000000
 
     // Set initrd high to be under the reserved memory
-    initrd_high=0x4fc00000
+    // initrd_high=0x4fc00000
 
     // CONFIG_DEFAULT_FDT_FILE has quotes around path, which makes for an invalid path
     fdtfile=mediatek/mt7986a-bananapi-bpi-r3.dtb
@@ -83,6 +84,7 @@ let
 
       CONFIG_ENV_SOURCE_FILE="mt7986-nixos"
       CONFIG_DEFAULT_FDT_FILE="mediatek/mt7986a-bananapi-bpi-r3.dtb"
+      CONFIG_SYS_BOOTM_LEN=0x6000000
     '';
   }).overrideAttrs (_: {
     # omit nixpkpgs patches for u-boot
