@@ -163,15 +163,16 @@ in
     ];
   };
 
-  bpi-r3-installer = mkInstallerISO {
+  bpi-r3-installer = mkInstaller {
     modules = [
-      ({ config, ... }: {
+      ({ modulesPath, ... }: {
+        imports = [ "${modulesPath}/installer/sd-card/sd-image-aarch64-installer.nix" ];
         nixpkgs.hostPlatform = "aarch64-linux";
         boot.initrd.systemd.enable = true;
-        boot.loader.grub.extraFiles.dtbs = "${config.boot.kernelPackages.kernel}/dtbs";
         hardware.bpi-r3.enable = true;
         custom.server.enable = true; # limits packages needed for cross-compilation
         custom.crossCompile.enable = true;
+        custom.disableZfs = true;
       })
     ];
   };

@@ -11,8 +11,8 @@
         dtboFile = "${config.boot.kernelPackages.kernel}/dtbs/mediatek/mt7986a-bananapi-bpi-r3-nand.dtbo";
       }
       {
-        name = "mt7986a-bananapi-bpi-r3-emmc.dtbo";
-        dtboFile = "${config.boot.kernelPackages.kernel}/dtbs/mediatek/mt7986a-bananapi-bpi-r3-emmc.dtbo";
+        name = "mt7986a-bananapi-bpi-r3-sd.dtbo";
+        dtboFile = "${config.boot.kernelPackages.kernel}/dtbs/mediatek/mt7986a-bananapi-bpi-r3-sd.dtbo";
       }
     ];
   };

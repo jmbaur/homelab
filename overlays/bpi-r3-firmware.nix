@@ -12,12 +12,11 @@ let
     // You need to be mindful of these when defining memory locations
     // for u-boot to use to boot the system, or these will clobber.
 
-    bootm_size=0x10000000
-    fdt_addr_r=0x43030000
-    kernel_addr_r=0x43200000
-    pxefile_addr_r=0x90100000
-    ramdisk_addr_r=0x4b100000
+    fdt_addr_r=0x46000000
+    kernel_addr_r=0x46200000
+    ramdisk_addr_r=0x50000000
     scriptaddr=0x90000000
+    pxefile_addr_r=0x90100000
 
     // Set initrd high to be under the reserved memory
     initrd_high=0x4fc00000
@@ -35,7 +34,7 @@ let
     };
     filesToInstall = [ "u-boot.bin" ];
     # eMMC and SD are mutually exclusive on this board, choose one
-    defconfig = "mt7986a_bpir3_${if internalBoot then "emmc" else "sd"}_defconfig";
+    defconfig = "mt7986a_bpir3_${"sd" /*if internalBoot then "emmc" else "sd"*/}_defconfig";
     extraMeta.platforms = [ "aarch64-linux" ];
     postPatch = ''
       cp ${env} board/mediatek/mt7986/mt7986-nixos.env
