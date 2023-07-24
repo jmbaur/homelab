@@ -89,8 +89,8 @@ in
       flakeUri = "github:jmbaur/homelab#nixosConfigurations.squash.config.system.build.toplevel";
       frequency = "*-*-* 00:00:00";
     };
-    "potato-lanzaboote" = {
-      flakeUri = "github:jmbaur/homelab#nixosConfigurations.potato.config.boot.lanzaboote.package";
+    "potato-system-closure" = {
+      flakeUri = "github:jmbaur/homelab#nixosConfigurations.potato.config.system.build.toplevel";
       frequency = "*-*-* 01:00:00";
     };
   };
