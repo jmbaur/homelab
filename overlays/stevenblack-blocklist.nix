@@ -1,9 +1,11 @@
-{ fetchFromGitHub }:
-fetchFromGitHub rec {
+{ lib, fetchFromGitHub }:
+let
+  source = lib.importJSON ./stevenblack-blocklist-source.json;
+in
+fetchFromGitHub {
   pname = "stevenblack-blocklist";
-  version = "3.12.17";
+  version = builtins.substring 0 7 source.rev;
   owner = "stevenblack";
   repo = "hosts";
-  rev = version;
-  sha256 = "sha256-fza/PNaAWk90zIIbJr2QNt0rJ12SA3LHGYiXFMA8q/Y=";
+  inherit (source) rev sha256;
 }
