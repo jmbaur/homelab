@@ -14,11 +14,11 @@ in
   boot.initrd.luks.devices."cryptroot".crypttabExtraOpts = [ "tpm2-device=auto" ];
 
   boot.kernelParams = [
-    "console=ttyS0"
-    "console=ttyS1"
+    "console=uart8250,mmio,0x91334000,115200n8"
+    "console=uart8250,mmio,0x91336000,115200n8"
+    "console=uart8250,mmio,0x91337000,115200n8"
+    "console=uart8250,mmio,0xfe030000,115200n8"
     "console=tty1"
-    # "console=uart8250,mmio,0xfe030000,115200n8"
-    # "console=uart8250,mmio,0x91336000,115200n8"
   ];
 
   tinyboot = {
@@ -26,7 +26,6 @@ in
     settings = {
       board = "fizz-fizz";
       verifiedBoot = {
-        enable = true;
         caCertificate = ./x509_ima.pem;
         signingPublicKey = ./x509_ima.der;
         signingPrivateKey = "/etc/keys/privkey_ima.pem";

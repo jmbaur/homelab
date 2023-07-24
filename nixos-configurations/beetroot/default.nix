@@ -6,7 +6,6 @@
     settings = {
       board = "volteer-elemi";
       verifiedBoot = {
-        enable = true;
         caCertificate = ./x509_ima.pem;
         signingPublicKey = ./x509_ima.der;
         signingPrivateKey = "/etc/keys/privkey_ima.pem";
@@ -20,6 +19,7 @@
 
   boot.initrd.luks.devices.cryptroot.crypttabExtraOpts = lib.mkForce [ "tpm2-device=auto" ];
 
+  # boot.kernelParams = [ "console=uart8250,mmio,0xfe03e000,115200n8" ];
   boot.initrd.availableKernelModules = [ "i915" ];
   boot.initrd.systemd.enable = true;
   boot.kernelPackages = pkgs.linuxPackages_6_1;
