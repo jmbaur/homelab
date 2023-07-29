@@ -222,8 +222,8 @@ in
         inherit (nixosConfig.services.xserver) xkbModel xkbOptions;
         # public domain monet paintings: https://commons.wikimedia.org/wiki/Claude_Monet_Paintings_in_Public_Domain
         wallpaper = pkgs.fetchurl {
-          url = "https://upload.wikimedia.org/wikipedia/commons/8/84/Sainte-Adresse_A12549.jpg?download";
-          sha256 = "sha256-uq9PbNVgfoSBtGCP27zS2ck4d52B7jLeDtyqPElKoS8=";
+          url = "https://upload.wikimedia.org/wikipedia/commons/7/70/Los_nen%C3%BAfares_%28Monet%29.jpg";
+          sha256 = "sha256-VQdogXH5yXU/icTHfVVcJWubYmFNGzpCNsKGqeXPh0s=";
         };
       };
 
