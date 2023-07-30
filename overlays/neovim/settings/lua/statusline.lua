@@ -19,7 +19,7 @@ function StatusLine()
 	if vim.bo.filetype == "oil" then
 		return "%f"
 	elseif vim.g.statusline_winid == vim.fn.win_getid() then
-		return "%f %m%<%{FugitiveStatusline()}%r%=%24.(%y%{luaeval('DiagnosticStatus()')}%) %8.(%l,%c%) %P"
+		return "%<%f %m%{FugitiveStatusline()}%r%=%24.(%y%{luaeval('DiagnosticStatus()')}%) %8.(%l,%c%) %P"
 	else
 		return "%f %m"
 	end
