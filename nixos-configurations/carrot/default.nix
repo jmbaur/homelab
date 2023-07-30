@@ -108,7 +108,7 @@ in
     enable = true;
     recommendedTlsSettings = true;
     recommendedZstdSettings = false; # TODO(jared): doesn't build
-    recommendedGzipSettings = false; # TODO(jared): doesn't build
+    recommendedGzipSettings = true;
     virtualHosts."carrot.home.arpa" = {
       enableACME = false;
       forceSSL = false;
