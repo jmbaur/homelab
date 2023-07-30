@@ -19,7 +19,7 @@ with lib;
     };
 
     fonts.fontconfig.enable = true;
-    fonts.fonts = [ pkgs.jetbrains-mono ];
+    fonts.packages = [ pkgs.jetbrains-mono ];
 
     location.provider = "geoclue2";
     services.automatic-timezoned.enable = lib.mkDefault true;
