@@ -13,14 +13,6 @@ in
 
   boot.initrd.luks.devices."cryptroot".crypttabExtraOpts = [ "tpm2-device=auto" ];
 
-  boot.kernelParams = [
-    "console=uart8250,mmio,0x91334000,115200n8"
-    "console=uart8250,mmio,0x91336000,115200n8"
-    "console=uart8250,mmio,0x91337000,115200n8"
-    "console=uart8250,mmio,0xfe030000,115200n8"
-    "console=tty1"
-  ];
-
   tinyboot = {
     enable = true;
     settings = {
