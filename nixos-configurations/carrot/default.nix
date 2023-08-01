@@ -5,12 +5,15 @@ in
 {
   imports = [ ./hardware-configuration.nix ];
 
+  hardware.bluetooth.enable = true;
+
   fileSystems."/".options = [ "noatime" "discard=async" "compress=zstd" ];
   fileSystems."/nix".options = [ "noatime" "discard=async" "compress=zstd" ];
   fileSystems."/home".options = [ "noatime" "discard=async" "compress=zstd" ];
 
   zramSwap.enable = true;
 
+  boot.kernelParams = [ "console=ttyS0,115200n8" ];
   boot.initrd.luks.devices."cryptroot".crypttabExtraOpts = [ "tpm2-device=auto" ];
 
   tinyboot = {

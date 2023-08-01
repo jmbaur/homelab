@@ -55,10 +55,8 @@ with lib; {
 
     programs.gh = {
       enable = true;
-      enableGitCredentialHelper = true;
+      gitCredentialHelper.enable = true;
     };
-
-    programs.bottom.enable = true;
 
     programs.tmux = {
       enable = true;
