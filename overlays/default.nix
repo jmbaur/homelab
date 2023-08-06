@@ -18,16 +18,6 @@ inputs: with inputs; {
           yamlfmt
           ;
 
-        libftdi1 =
-          if prev.hostPlatform.isArmv7
-          then
-            (prev.libftdi1.override {
-              pythonSupport = false;
-              docSupport = false;
-              libusb1 = prev.libusb;
-            })
-          else prev.libftdi1;
-
         nixos-kexec = prev.callPackage ./nixos-kexec { };
 
         # provide dbus-activation for fnott
@@ -48,7 +38,7 @@ inputs: with inputs; {
             '';
         };
 
-        libgit2_1_5_2 = prev.libgit2.overrideAttrs (_: rec {
+        libgit2_1_5 = prev.libgit2.overrideAttrs (_: rec {
           version = "1.5.2";
           src = prev.fetchFromGitHub {
             owner = "libgit2";
@@ -61,7 +51,7 @@ inputs: with inputs; {
         bitwarden-bemenu = prev.callPackage ./bitwarden-bemenu.nix { };
         git-get = prev.callPackage ./git-get { };
         git-shell-commands = prev.callPackage ./git-shell-commands {
-          libgit2 = final.libgit2_1_5_2;
+          libgit2 = final.libgit2_1_5;
         };
         ixio = prev.writeShellScriptBin "ixio" "${prev.curl}/bin/curl -F 'f:1=<-' ix.io";
         j = prev.callPackage ./j.nix { };
