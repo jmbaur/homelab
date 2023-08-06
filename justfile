@@ -19,11 +19,8 @@ build:
 		.\#coredns-utils \
 		.\#flarectl \
 		.\#git-get \
-		.\#gobar \
-		.\#gosee \
 		.\#neovim \
 		.\#neovim-all-languages \
-		.\#pd-notify \
 		.\#pomo \
 		.\#xremap \
 		.\#yamlfmt

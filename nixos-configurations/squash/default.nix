@@ -21,15 +21,6 @@
   zramSwap.enable = true;
   system.stateVersion = "23.05";
 
-  nixpkgs.overlays = [
-    # cross-compile workaround
-    (_: prev: {
-      libftdi1 = prev.libftdi1.override {
-        libusb1 = prev.libusb;
-      };
-    })
-  ];
-
   system.build.firmware = pkgs.ubootClearfogSpi;
 
   programs.flashrom.enable = lib.mkDefault true;

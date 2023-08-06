@@ -18,6 +18,16 @@ inputs: with inputs; {
           yamlfmt
           ;
 
+        libftdi1 =
+          if prev.hostPlatform.isArmv7
+          then
+            (prev.libftdi1.override {
+              pythonSupport = false;
+              docSupport = false;
+              libusb1 = prev.libusb;
+            })
+          else prev.libftdi1;
+
         nixos-kexec = prev.callPackage ./nixos-kexec { };
 
         # provide dbus-activation for fnott
