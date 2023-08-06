@@ -1,7 +1,7 @@
-{ bc
+{ cn913x_build_repo
+, bc
 , bison
 , buildPackages
-, cn913x_build_repo
 , dtc
 , fetchFromGitHub
 , fetchgit
@@ -51,6 +51,12 @@ let
       "${cn913x_build_repo}/patches/u-boot/0017-uboot-add-support-cn9131-cf-solidwan.patch"
       "${cn913x_build_repo}/patches/u-boot/0018-uboot-add-support-bldn-mbv.patch"
       "${cn913x_build_repo}/patches/u-boot/0019-uboot-cn9131-cf-solidwan-add-carrier-eeprom.patch"
+      "${cn913x_build_repo}/patches/u-boot/0020-arm64-dts-cn9131-cf-solidwan-fix-indentation-to-use-.patch"
+      "${cn913x_build_repo}/patches/u-boot/0021-arm64-dts-cn9131-cf-solidwan-update-model-property-t.patch"
+      "${cn913x_build_repo}/patches/u-boot/0022-fix-erratic-fdtfile-detection-of-com-express.patch"
+      "${cn913x_build_repo}/patches/u-boot/0023-arm64-dts-cn9130-som-support-eeprom-replacement-part.patch"
+      "${cn913x_build_repo}/patches/u-boot/0024-board-cn913x-som-read-mac-addresses-from-eeprom.patch"
+      "${cn913x_build_repo}/patches/u-boot/0025-lib-tlv_eeprom-mac_read_from_eeprom-support-2-eeprom.patch"
       ./ramdisk-addr-r.patch
     ];
     postPatch = ''
@@ -156,9 +162,10 @@ gcc7Stdenv.mkDerivation {
     let
       marvell-embedded-processors = fetchgit {
         leaveDotGit = true;
+        branchName = "mv-ddr-devel";
         url = "https://github.com/MarvellEmbeddedProcessors/mv-ddr-marvell";
         rev = "305d923e6bc4236cd3b902f6679b0aef9e5fa52d";
-        sha256 = "sha256-d9tS0ajHGzVEi1XJzdu0dCvfeEHSPVCrfBqV8qLqC5c=";
+        sha256 = "sha256-FtVIpOnwRbOYndrbN7Si8IzBx9prbeOkKSQOv7I9PCA=";
       };
     in
     ''
@@ -170,4 +177,5 @@ gcc7Stdenv.mkDerivation {
     dd bs=1M count=8 if=/dev/zero of=$out/spi.img
     dd conv=notrunc if=build/${PLAT}/release/flash-image.bin of=$out/spi.img
   '';
+  meta.platforms = [ "aarch64-linux" ];
 }

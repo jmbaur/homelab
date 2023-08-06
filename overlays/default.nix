@@ -160,8 +160,8 @@ inputs: with inputs; {
         cn913x_build_repo = prev.fetchFromGitHub {
           owner = "solidrun";
           repo = "cn913x_build";
-          rev = "0a5047c2ed2c4095f404a457f38776e9a7d6d731";
-          sha256 = "sha256-bViiPfpPYo/qScjI+CXJIiDKh2recXGGB4Bj1L9gQ5A=";
+          rev = "e978cfc96430c1876c741656624e47744eaf9358";
+          hash = "sha256-NTLcn9EA8lI9rZxYwgrv5ddksr9hZwUMWLwIdX2qMDQ=";
         };
         ubootCN9130_CF_Pro = prev.callPackage ./uboot-cn9130-cf-pro.nix { inherit (final) cn913x_build_repo; };
 
