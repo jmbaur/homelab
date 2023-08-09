@@ -1,6 +1,11 @@
 {
   description = "NixOS configurations for the homelab";
 
+  nixConfig = {
+    extra-substituters = [ "https://nix-community.cachix.org" ];
+    extra-trusted-public-keys = [ "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=" ];
+  };
+
   inputs = {
     deploy-rs.url = "github:serokell/deploy-rs";
     disko.inputs.nixpkgs.follows = "nixpkgs";
@@ -14,7 +19,7 @@
     ipwatch.inputs.nixpkgs.follows = "nixpkgs";
     ipwatch.url = "github:jmbaur/ipwatch";
     lanzaboote.inputs.nixpkgs.follows = "nixpkgs";
-    lanzaboote.url = "github:nix-community/lanzaboote";
+    lanzaboote.url = "github:nix-community/lanzaboote/v0.3.0";
     microvm.inputs.nixpkgs.follows = "nixpkgs";
     microvm.url = "github:astro/microvm.nix";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
