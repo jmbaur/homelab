@@ -207,9 +207,14 @@ with lib;
       wantedBy = [ swaySessionTarget ];
       path = with pkgs; [
         bash # needs a shell in path
+        chayang
         swayidle
         swaylock
         sway
+        (writeShellScriptBin "lock" ''
+          chayang
+          swaylock ${lib.escapeShellArgs [ "--daemonize" "--indicator-caps-lock" "--show-keyboard-layout" "--color" "000000" ]}
+        '')
         (writeShellScriptBin "conditional-suspend" (lib.optionalString config.custom.laptop.enable ''
           if [[ "$(cat /sys/class/power_supply/AC/online)" -ne 1 ]]; then
             echo "laptop is not on AC, suspending"
@@ -219,20 +224,16 @@ with lib;
           fi
         ''))
       ];
-      script =
-        let
-          lockCmd = "swaylock ${lib.escapeShellArgs [ "--daemonize" "--indicator-caps-lock" "--show-keyboard-layout" "--color" "222222" ]}";
-        in
-        ''
-          swayidle -w \
-            timeout 300 '${lockCmd}' \
-            timeout 600 'swaymsg "output * dpms off"' \
-              resume 'swaymsg "output * dpms on"' \
-            timeout 900 'conditional-suspend' \
-            before-sleep '${lockCmd}' \
-            lock '${lockCmd}' \
-            after-resume 'swaymsg "output * dpms on"'
-        '';
+      script = ''
+        swayidle -w \
+          timeout 300 'lock' \
+          timeout 600 'swaymsg "output * dpms off"' \
+            resume 'swaymsg "output * dpms on"' \
+          timeout 900 'conditional-suspend' \
+          before-sleep 'lock' \
+          lock 'lock' \
+          after-resume 'swaymsg "output * dpms on"'
+      '';
     };
   };
 }
