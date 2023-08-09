@@ -28,7 +28,7 @@ bindsym Mod4+d exec "if [[ $(makoctl mode) == "do-not-disturb" ]]; then makoctl 
 bindsym Mod4+Down focus down
 bindsym Mod4+F12 mode passthru
 bindsym Mod4+Left focus left
-bindsym Mod4+Print exec grimshot --notify save window
+bindsym Mod4+Print exec shotman --capture window
 bindsym Mod4+Return exec kitty
 bindsym Mod4+Right focus right
 bindsym Mod4+Shift+1 move container to workspace number 1
@@ -43,7 +43,7 @@ bindsym Mod4+Shift+9 move container to workspace number 9
 bindsym Mod4+Shift+0 move container to workspace number 10
 bindsym Mod4+Shift+Down move down
 bindsym Mod4+Shift+Left move left
-bindsym Mod4+Shift+Print exec grimshot --notify save area
+bindsym Mod4+Shift+Print exec shotman --capture region
 bindsym Mod4+Shift+Right move right
 bindsym Mod4+Shift+Up move up
 bindsym Mod4+Shift+b bar mode toggle
@@ -76,7 +76,7 @@ bindsym Mod4+s layout stacking
 bindsym Mod4+space focus mode_toggle
 bindsym Mod4+v split v
 bindsym Mod4+w layout tabbed
-bindsym Print exec grimshot --notify save output
+bindsym Print exec shotman --capture output
 bindsym XF86AudioMicMute exec notify-send --transient --hint int:value:$(pamixer --default-source --toggle-mute --get-volume) --hint string:x-canonical-private-synchronous:mic mic "$(if [[ $(pamixer --default-source --get-mute) == true ]]; then echo muted; else echo unmuted; fi)"
 bindsym XF86AudioMute exec notify-send --transient --hint int:value:$(pamixer --toggle-mute --get-volume) --hint string:x-canonical-private-synchronous:volume volume "$(if [[ $(pamixer --get-mute) == true ]]; then echo muted; else echo unmuted; fi)"
 bindsym XF86AudioRaiseVolume exec notify-send --transient --hint int:value:$(pamixer --increase 5 --get-volume) --hint string:x-canonical-private-synchronous:volume volume

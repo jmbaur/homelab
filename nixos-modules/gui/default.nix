@@ -70,8 +70,8 @@ with lib;
       pulsemixer
       qt5.qtwayland
       shikane
+      shotman
       slurp
-      sway-contrib.grimshot
       swaybg
       swayidle
       swaylock
