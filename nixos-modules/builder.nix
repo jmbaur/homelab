@@ -41,6 +41,7 @@ let
         };
         script = ''
           nix \
+            --accept-flake-config \
             --extra-experimental-features "nix-command flakes" \
             build --refresh --print-out-paths --print-build-logs \
             --out-link $STATE_DIRECTORY/result-${name} \
