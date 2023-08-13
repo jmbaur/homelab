@@ -108,7 +108,6 @@ in
       ({ modulesPath, ... }: {
         nixpkgs.hostPlatform = "x86_64-linux";
         imports = [
-          "${modulesPath}/profiles/installation-device.nix"
           "${modulesPath}/installer/sd-card/sd-image-x86_64.nix"
         ];
       })
@@ -168,11 +167,11 @@ in
 
   bpi-r3-installer = mkInstaller {
     modules = [
-      ../nixos-modules/sd-image.nix
-      ({ config, ... }: {
-        boot.loader.systemd-boot.extraFiles = {
-          "efi/dtbs" = "${config.boot.kernelPackages.kernel}/dtbs";
-        };
+      # ../nixos-modules/sd-image.nix
+      ({ lib, modulesPath, ... }: {
+        imports = [ "${modulesPath}/installer/sd-card/sd-image-aarch64.nix" ];
+        boot.initrd.systemd.enable = true;
+        sdImage.populateFirmwareCommands = lib.mkForce "";
         nixpkgs.hostPlatform = "aarch64-linux";
         hardware.bpi-r3.enable = true;
         custom.server.enable = true; # limits packages needed for cross-compilation

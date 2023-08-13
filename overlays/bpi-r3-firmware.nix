@@ -12,30 +12,23 @@ let
     // You need to be mindful of these when defining memory locations
     // for u-boot to use to boot the system, or these will clobber.
 
-    // bootm_size=0x10000000
-    fdt_addr_r=0x43030000
-    kernel_addr_r=0x43200000
+    bootm_size=0x10000000
+    kernel_addr_r=0x43040000
+    fdt_addr_r=0x47140000
+    ramdisk_addr_r=0x47340000
     pxefile_addr_r=0x90100000
-    ramdisk_addr_r=0x4b100000
     scriptaddr=0x90000000
 
     // Set initrd high to be under the reserved memory
-    // initrd_high=0x4fc00000
+    initrd_high=0x4fc00000
 
     // CONFIG_DEFAULT_FDT_FILE has quotes around path, which makes for an invalid path
     fdtfile=mediatek/mt7986a-bananapi-bpi-r3.dtb
   '';
-  uboot = (buildUBoot rec {
-    version = "2023.07.02";
-    src = fetchFromGitHub {
-      owner = "u-boot";
-      repo = "u-boot";
-      rev = "v${version}";
-      hash = "sha256-HPBjm/rIkfTCyAKCFvCqoK7oNN9e9rV9l32qLmI/qz4=";
-    };
+  uboot = (buildUBoot {
     filesToInstall = [ "u-boot.bin" ];
     # eMMC and SD are mutually exclusive on this board, choose one
-    defconfig = "mt7986a_bpir3_${"sd" /*if internalBoot then "emmc" else "sd"*/}_defconfig";
+    defconfig = "mt7986a_bpir3_sd_defconfig";
     extraMeta.platforms = [ "aarch64-linux" ];
     postPatch = ''
       cp ${env} board/mediatek/mt7986/mt7986-nixos.env
