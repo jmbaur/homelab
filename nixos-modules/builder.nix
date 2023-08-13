@@ -36,6 +36,7 @@ let
         };
         serviceConfig = {
           DynamicUser = true;
+          User = "builder";
           CacheDirectory = "builder";
           StateDirectory = "builder";
         };
@@ -61,6 +62,8 @@ in
   };
 
   config = lib.mkIf (cfg.build != { }) {
+    users.groups.builder = { };
+    nix.settings.trusted-users = [ "builder" ];
     systemd.timers = lib.mapAttrs (_: { timer, ... }: timer) systemdConfigs;
     systemd.services = lib.mapAttrs (_: { service, ... }: service) systemdConfigs;
   };
