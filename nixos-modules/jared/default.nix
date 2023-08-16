@@ -433,6 +433,7 @@ in
             gh = pkgs.gh;
             userName = config.users.users.${cfg.username}.description;
             inherit (cfg.git) email signingKey allowedSignersFile extraConfig;
+            signCommits = lib.boolToString cfg.git.signCommits;
           };
         }
         {

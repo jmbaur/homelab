@@ -14,7 +14,7 @@
         markUnblamableLines = true
 
 [commit]
-        gpgSign = true
+        gpgSign = @signCommits@
 
 [credential "https://github.com"]
         helper = "@gh@/bin/gh auth git-credential"
