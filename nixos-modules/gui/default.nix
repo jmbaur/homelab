@@ -1,7 +1,6 @@
 { config, lib, pkgs, ... }:
 let
   cfg = config.custom.gui;
-  guiData = import ./data.nix;
   swaySessionTarget = "sway-session.target";
 in
 with lib;
@@ -38,24 +37,20 @@ with lib;
       })
     ];
 
-
-    qt = {
-      enable = true;
-      style = "adwaita-dark";
-      platformTheme = "gnome";
-    };
+    qt.enable = true;
 
     environment.systemPackages = with pkgs; [
       alacritty
       bemenu
       brightnessctl
       caffeine
-      chromium
+      chromium-wayland
       clipman
       desktop-launcher
       ffmpeg-full
       firefox
       foot
+      glib
       gnome-themes-extra
       gobar
       grim
@@ -119,11 +114,6 @@ with lib;
     };
 
     programs.wshowkeys.enable = true;
-    environment.sessionVariables.BEMENU_OPTS = escapeShellArgs [
-      "--ignorecase"
-      "--fn=${guiData.font}"
-      "--line-height=30"
-    ];
 
     xdg.portal.wlr.enable = true;
 

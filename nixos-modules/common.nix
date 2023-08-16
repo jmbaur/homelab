@@ -52,32 +52,5 @@ with lib; {
         PasswordAuthentication = mkDefault false;
       };
     };
-
-    programs.tmux = {
-      enable = true;
-      aggressiveResize = true;
-      baseIndex = 1;
-      clock24 = true;
-      escapeTime = 10;
-      keyMode = "vi";
-      plugins = with pkgs.tmuxPlugins; [ logging ];
-      terminal = "tmux-256color";
-      extraConfig = ''
-        bind-key -T copy-mode-vi v send-keys -X begin-selection
-        bind-key -T copy-mode-vi y send-keys -X copy-selection
-        bind-key J command-prompt -p "join pane from:"  "join-pane -h -s '%%'"
-        set-option -g allow-passthrough on
-        set-option -g automatic-rename on
-        set-option -g detach-on-destroy off
-        set-option -g focus-events on
-        set-option -g renumber-windows on
-        set-option -g set-clipboard on
-        set-option -g set-titles on
-        set-option -g set-titles-string "#T"
-        set-option -g status-left ""
-        set-option -g status-right "#S"
-        set-option -sa terminal-overrides ',xterm-256color:RGB'
-      '';
-    };
   };
 }

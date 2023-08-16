@@ -1,0 +1,58 @@
+# vim: ft=gitconfig
+
+[alias]
+        br = "branch"
+        co = "checkout"
+        di = "diff"
+        dt = "difftool"
+        lg = "log --graph --decorate --pretty=oneline --abbrev-commit --all"
+        st = "status --short --branch"
+
+[blame]
+        ignoreRevsFile = ".git-blame-ignore-revs"
+        markIgnoredLines = true
+        markUnblamableLines = true
+
+[commit]
+        gpgSign = true
+
+[credential "https://github.com"]
+        helper = "@gh@/bin/gh auth git-credential"
+
+[diff]
+        tool = "difftastic"
+
+[difftool]
+        prompt = false
+
+[difftool "difftastic"]
+        cmd = "@difftastic@/bin/difft \"$LOCAL\" \"$REMOTE\""
+
+[gpg]
+        format = "ssh"
+
+[gpg "ssh"]
+        allowedSignersFile = "@allowedSignersFile@"
+        defaultKeyCommand = "ssh-add -L"
+
+[init]
+        defaultBranch = "main"
+
+[pager]
+        difftool = true
+
+[pull]
+        rebase = true
+
+[push]
+        autoSetupRemote = true
+
+[url "git@github.com:"]
+        pushInsteadOf = "https://github.com/"
+
+[user]
+        email = @email@
+        name = "@userName@"
+        signingKey = "@signingKey@"
+
+@extraConfig@

@@ -20,8 +20,6 @@
     gobar.url = "github:jmbaur/gobar";
     gosee.inputs.nixpkgs.follows = "nixpkgs";
     gosee.url = "github:jmbaur/gosee";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    home-manager.url = "github:nix-community/home-manager";
     ipwatch.inputs.nixpkgs.follows = "nixpkgs";
     ipwatch.url = "github:jmbaur/ipwatch";
     lanzaboote.inputs.nixpkgs.follows = "nixpkgs";

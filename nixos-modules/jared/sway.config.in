@@ -168,4 +168,11 @@ for_window [title="^QEMU.*$"] floating enable
 for_window [title="^pipe:xwayland-mirror$"] floating enable
 for_window [app_id="^chrome-.*__.*"] shortcuts_inhibitor disable
 for_window [title="Firefox — Sharing Indicator"] kill
+
+exec_always {
+  gsettings set org.gnome.desktop.interface gtk-theme "Adwaita-dark"
+  gsettings set org.gnome.desktop.interface icon-theme "Adwaita"
+  gsettings set org.gnome.desktop.interface cursor-theme "Adwaita"
+  gsettings set org.gnome.desktop.interface cursor-size 24
+}
 exec "dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP XDG_SESSION_TYPE NIXOS_OZONE_WL; systemctl --user start sway-session.target"
