@@ -16,7 +16,11 @@ with lib; {
     # 2.16 has a fix for ssh control master when nix-copy'ing
     nix.package = if lib.versionAtLeast pkgs.nix.version "2.16" then pkgs.nix else pkgs.nixVersions.nix_2_16;
 
+    # pin a local system's registry for nixpkgs
     nix.registry.nixpkgs.flake = inputs.nixpkgs;
+
+    # opt out of nix channels
+    nix.channel.enable = false;
 
     environment.systemPackages = [ pkgs.nixos-kexec pkgs.bottom ];
 
