@@ -167,13 +167,14 @@ in
 
   bpi-r3-installer = mkInstaller {
     modules = [
-      ../nixos-modules/sd-image.nix
-      ({ ... }: {
+      ({ lib, modulesPath, ... }: {
+        imports = [ "${modulesPath}/installer/sd-card/sd-image-aarch64.nix" ];
         nixpkgs.hostPlatform = "aarch64-linux";
         hardware.bpi-r3.enable = true;
         custom.server.enable = true; # limits packages needed for cross-compilation
         custom.crossCompile.enable = true;
         custom.disableZfs = true;
+        sdImage.populateFirmwareCommands = lib.mkForce "";
       })
     ];
   };
