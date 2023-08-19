@@ -88,6 +88,14 @@ in
       flakeUri = "github:jmbaur/homelab#nixosConfigurations.potato.config.system.build.toplevel";
       frequency = "*-*-* 01:00:00";
     };
+    "cn9130-kernel" = {
+      flakeUri = "github:jmbaur/homelab#nixosConfigurations.installer_sd_image_cn9130_clearfog.config.system.build.kernel";
+      frequency = "*-*-* 04:00:00";
+    };
+    "cn9130-firmware" = {
+      flakeUri = "github:jmbaur/homelab#nixosConfigurations.installer_sd_image_cn9130_clearfog.config.system.build.firmware";
+      frequency = "*-*-* 05:00:00";
+    };
   };
 
 

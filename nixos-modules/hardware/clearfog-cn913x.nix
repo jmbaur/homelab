@@ -4,6 +4,8 @@
   };
 
   config = lib.mkIf config.hardware.clearfog-cn913x.enable {
+    system.build.firmware = pkgs.cn9130ClearfogProFirmware;
+
     boot.loader.grub.enable = false;
     boot.loader.generic-extlinux-compatible.enable = true;
 
