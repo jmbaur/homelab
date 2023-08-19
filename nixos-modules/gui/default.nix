@@ -202,8 +202,9 @@ with lib;
         swaylock
         sway
         (writeShellScriptBin "lock" ''
-          chayang
-          swaylock ${lib.escapeShellArgs [ "--daemonize" "--indicator-caps-lock" "--show-keyboard-layout" "--color" "000000" ]}
+          if chayang; then
+            swaylock ${lib.escapeShellArgs [ "--daemonize" "--indicator-caps-lock" "--show-keyboard-layout" "--color" "000000" ]}
+          fi
         '')
         (writeShellScriptBin "conditional-suspend" (lib.optionalString config.custom.laptop.enable ''
           if [[ "$(cat /sys/class/power_supply/AC/online)" -ne 1 ]]; then
