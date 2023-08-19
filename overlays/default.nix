@@ -151,8 +151,8 @@ inputs: with inputs; {
             CONFIG_SUPPORT_EMMC_BOOT=y
           '';
           postInstall = ''
-            dd bs=1M count=4 if=/dev/zero of=$out/spi.img
-            dd conv=notrunc if=$out/u-boot-with-spl.kwb of=$out/spi.img
+            dd bs=1M count=4 if=/dev/zero of=$out
+            dd conv=notrunc if=$out/u-boot-with-spl.kwb of=$out
           '';
           extraMeta.bootDevice = "spi";
         };
@@ -160,10 +160,11 @@ inputs: with inputs; {
         cn913x_build_repo = prev.fetchFromGitHub {
           owner = "solidrun";
           repo = "cn913x_build";
-          rev = "e978cfc96430c1876c741656624e47744eaf9358";
-          hash = "sha256-NTLcn9EA8lI9rZxYwgrv5ddksr9hZwUMWLwIdX2qMDQ=";
+          rev = "d6d0577e6b6e86d29837618e9a02f5ee4ac136cb";
+          hash = "sha256-5PGu7XQxtg0AP9RovDDqmPuVnrNQow1bYaorAmUFQ7Q=";
         };
-        ubootCN9130_CF_Pro = prev.callPackage ./uboot-cn9130-cf-pro.nix { inherit (final) cn913x_build_repo; };
+
+        cn9130ClearfogProFirmware = prev.callPackage ./cn9130-clearfog-pro-firmware.nix { inherit (final) cn913x_build_repo; };
 
         bpiR3Firmware = prev.callPackage ./bpi-r3-firmware.nix { };
 

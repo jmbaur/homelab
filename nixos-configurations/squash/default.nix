@@ -28,7 +28,7 @@
     (pkgs.writeShellScriptBin "update-firmware" ''
       ${config.programs.flashrom.package}/bin/flashrom \
       --programmer linux_mtd:dev=0 \
-      --write ${config.system.build.firmware}/spi.img
+      --write ${config.system.build.firmware}
     '');
 
   systemd.services.reset-button = {

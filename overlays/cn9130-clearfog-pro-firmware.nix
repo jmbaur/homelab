@@ -57,6 +57,7 @@ let
       "${cn913x_build_repo}/patches/u-boot/0023-arm64-dts-cn9130-som-support-eeprom-replacement-part.patch"
       "${cn913x_build_repo}/patches/u-boot/0024-board-cn913x-som-read-mac-addresses-from-eeprom.patch"
       "${cn913x_build_repo}/patches/u-boot/0025-lib-tlv_eeprom-mac_read_from_eeprom-support-2-eeprom.patch"
+      "${cn913x_build_repo}/patches/u-boot/0026-board-cn9131-cf-solidwan-switch-cp0_phy0-to-auto-neg.patch"
       ./ramdisk-addr-r.patch
     ];
     postPatch = ''
@@ -67,6 +68,10 @@ let
     # prevent non-volatile memory environment from being used
     extraConfig = ''
       CONFIG_ENV_IS_NOWHERE=y
+      CONFIG_BLK=y
+      CONFIG_CMD_BOOTEFI=y
+      CONFIG_EFI_LOADER=y
+      CONFIG_PARTITIONS=y
     '';
 
     nativeBuildInputs = [
@@ -128,8 +133,7 @@ let
   PLAT = "t9130";
 in
 gcc7Stdenv.mkDerivation {
-  inherit BL33 SCP_BL2;
-  name = "ubootCN9130_CF_Pro";
+  name = "atf-cn9130-clearfog-pro";
   src = fetchFromGitHub {
     owner = "ARM-software";
     repo = "arm-trusted-firmware";
@@ -140,6 +144,7 @@ gcc7Stdenv.mkDerivation {
     "${cn913x_build_repo}/patches/arm-trusted-firmware/0001-ddr-spd-read-failover-to-defualt-config.patch"
     "${cn913x_build_repo}/patches/arm-trusted-firmware/0002-som-sdp-failover-using-crc-verification.patch"
   ];
+  env = { inherit BL33 SCP_BL2; };
   nativeBuildInputs = [ openssl dtc git ];
   hardeningDisable = [ "all" ];
   dontStrip = true;
@@ -165,7 +170,7 @@ gcc7Stdenv.mkDerivation {
         branchName = "mv-ddr-devel";
         url = "https://github.com/MarvellEmbeddedProcessors/mv-ddr-marvell";
         rev = "305d923e6bc4236cd3b902f6679b0aef9e5fa52d";
-        sha256 = "sha256-FtVIpOnwRbOYndrbN7Si8IzBx9prbeOkKSQOv7I9PCA=";
+        sha256 = "sha256-mgI84gDdzGLBzKaIyu7c/EtpFcUGEI+uNtYJfhzRd8U=";
       };
     in
     ''
@@ -174,8 +179,8 @@ gcc7Stdenv.mkDerivation {
     '';
   installPhase = ''
     mkdir -p $out
-    dd bs=1M count=8 if=/dev/zero of=$out/spi.img
-    dd conv=notrunc if=build/${PLAT}/release/flash-image.bin of=$out/spi.img
+    dd bs=1M count=8 if=/dev/zero of=$out
+    dd conv=notrunc if=build/${PLAT}/release/flash-image.bin of=$out
   '';
   meta.platforms = [ "aarch64-linux" ];
 }
