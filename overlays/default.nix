@@ -151,8 +151,8 @@ inputs: with inputs; {
             CONFIG_SUPPORT_EMMC_BOOT=y
           '';
           postInstall = ''
-            dd bs=1M count=4 if=/dev/zero of=$out
-            dd conv=notrunc if=$out/u-boot-with-spl.kwb of=$out
+            dd bs=1M count=4 if=/dev/zero of=$out/firmware.bin
+            dd conv=notrunc if=$out/u-boot-with-spl.kwb of=$out/firmware.bin
           '';
           extraMeta.bootDevice = "spi";
         };

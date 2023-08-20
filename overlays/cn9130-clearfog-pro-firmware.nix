@@ -14,9 +14,9 @@
 , libuuid
 , ncurses
 , openssl
+, runCommand
 , swig
 , which
-, ...
 }:
 let
   defconfig = "sr_cn913x_cex7_defconfig";
@@ -131,56 +131,60 @@ let
   BL33 = "${uboot}/u-boot.bin";
   SCP_BL2 = "${cn913x_build_repo}/binaries/atf/mrvl_scp_bl2.img";
   PLAT = "t9130";
-in
-gcc7Stdenv.mkDerivation {
-  name = "atf-cn9130-clearfog-pro";
-  src = fetchFromGitHub {
-    owner = "ARM-software";
-    repo = "arm-trusted-firmware";
-    rev = "00ad74c7afe67b2ffaf08300710f18d3dafebb45";
-    sha256 = "sha256-kHI6H1yym8nWWmLMNOOLUbdtdyNPdNEvimq8EdW0nZw=";
-  };
-  patches = [
-    "${cn913x_build_repo}/patches/arm-trusted-firmware/0001-ddr-spd-read-failover-to-defualt-config.patch"
-    "${cn913x_build_repo}/patches/arm-trusted-firmware/0002-som-sdp-failover-using-crc-verification.patch"
-  ];
-  env = { inherit BL33 SCP_BL2; };
-  nativeBuildInputs = [ openssl dtc git ];
-  hardeningDisable = [ "all" ];
-  dontStrip = true;
-  depsBuildBuild = [ buildPackages.gcc7Stdenv.cc ];
-  makeFlags = [
-    "CROSS_COMPILE=${gcc7Stdenv.cc.targetPrefix}"
-    # binutils 2.39 regression
-    # `warning: /build/source/build/rk3399/release/bl31/bl31.elf has a LOAD segment with RWX permissions`
-    # See also: https://developer.trustedfirmware.org/T996
-    "LDFLAGS=-no-warn-rwx-segments"
-    "PLAT=${PLAT}"
-    "USE_COHERENT_MEM=0"
-    "LOG_LEVEL=20"
-    "MV_DDR_PATH=/tmp/mv_ddr_marvell"
-    "CP_NUM=1" # cn9130-cf-pro
-    "all"
-    "fip"
-  ];
-  preBuild =
-    let
-      marvell-embedded-processors = fetchgit {
-        leaveDotGit = true;
-        branchName = "mv-ddr-devel";
-        url = "https://github.com/MarvellEmbeddedProcessors/mv-ddr-marvell";
-        rev = "305d923e6bc4236cd3b902f6679b0aef9e5fa52d";
-        sha256 = "sha256-mgI84gDdzGLBzKaIyu7c/EtpFcUGEI+uNtYJfhzRd8U=";
-      };
-    in
-    ''
-      cp -r ${marvell-embedded-processors} /tmp/mv_ddr_marvell
-      chmod -R +w /tmp/mv_ddr_marvell
+  atf = gcc7Stdenv.mkDerivation rec {
+    pname = "atf-cn9130-clearfog-pro";
+    version = builtins.substring 0 7 src.rev;
+    src = fetchFromGitHub {
+      owner = "ARM-software";
+      repo = "arm-trusted-firmware";
+      rev = "00ad74c7afe67b2ffaf08300710f18d3dafebb45";
+      sha256 = "sha256-kHI6H1yym8nWWmLMNOOLUbdtdyNPdNEvimq8EdW0nZw=";
+    };
+    patches = [
+      "${cn913x_build_repo}/patches/arm-trusted-firmware/0001-ddr-spd-read-failover-to-defualt-config.patch"
+      "${cn913x_build_repo}/patches/arm-trusted-firmware/0002-som-sdp-failover-using-crc-verification.patch"
+    ];
+    env = { inherit BL33 SCP_BL2; };
+    nativeBuildInputs = [ openssl dtc git ];
+    hardeningDisable = [ "all" ];
+    dontStrip = true;
+    depsBuildBuild = [ buildPackages.gcc7Stdenv.cc ];
+    makeFlags = [
+      "CROSS_COMPILE=${gcc7Stdenv.cc.targetPrefix}"
+      # binutils 2.39 regression
+      # `warning: /build/source/build/rk3399/release/bl31/bl31.elf has a LOAD segment with RWX permissions`
+      # See also: https://developer.trustedfirmware.org/T996
+      "LDFLAGS=-no-warn-rwx-segments"
+      "PLAT=${PLAT}"
+      "USE_COHERENT_MEM=0"
+      "LOG_LEVEL=20"
+      "MV_DDR_PATH=/tmp/mv_ddr_marvell"
+      "CP_NUM=1" # cn9130-cf-pro
+      "all"
+      "fip"
+    ];
+    preBuild =
+      let
+        marvell-embedded-processors = fetchgit {
+          leaveDotGit = true;
+          branchName = "mv-ddr-devel";
+          url = "https://github.com/MarvellEmbeddedProcessors/mv-ddr-marvell";
+          rev = "305d923e6bc4236cd3b902f6679b0aef9e5fa52d";
+          sha256 = "sha256-mgI84gDdzGLBzKaIyu7c/EtpFcUGEI+uNtYJfhzRd8U=";
+        };
+      in
+      ''
+        cp -r ${marvell-embedded-processors} /tmp/mv_ddr_marvell
+        chmod -R +w /tmp/mv_ddr_marvell
+      '';
+    installPhase = ''
+      mkdir -p $out
+      cp build/${PLAT}/release/flash-image.bin $out
     '';
-  installPhase = ''
-    mkdir -p $out
-    dd bs=1M count=8 if=/dev/zero of=$out
-    dd conv=notrunc if=build/${PLAT}/release/flash-image.bin of=$out
-  '';
-  meta.platforms = [ "aarch64-linux" ];
-}
+    meta.platforms = [ "aarch64-linux" ];
+  };
+in
+runCommand "cn9130-cf-pro-firmware.bin" { } ''
+  dd bs=1M count=8 if=/dev/zero of=$out
+  dd conv=notrunc if=${atf}/flash-image.bin of=$out
+''
