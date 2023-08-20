@@ -22,7 +22,9 @@ with lib; {
     # opt out of nix channels
     nix.channel.enable = false;
 
-    environment.systemPackages = [ pkgs.nixos-kexec pkgs.bottom ];
+    environment.systemPackages = [ pkgs.nixos-kexec pkgs.bottom pkgs.tmux ];
+
+    programs.vim.defaultEditor = true;
 
     security.sudo.extraRules = [{ groups = [ "wheel" ]; commands = [{ command = "/run/current-system/sw/bin/networkctl"; options = [ "NOPASSWD" ]; }]; }];
 
