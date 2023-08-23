@@ -181,7 +181,7 @@ in
 
   armada-388-clearfog-installer = mkInstaller {
     modules = [
-      ({ config, pkgs, modulesPath, ... }: {
+      ({ config, lib, pkgs, modulesPath, ... }: {
         disabledModules = [
           # prevent initrd from requiring a bunch of kernel modules we don't
           # have with the armada 388's kernel mvebu_v7_defconfig
@@ -196,7 +196,7 @@ in
         custom.server.enable = true;
         custom.crossCompile.enable = true;
         custom.disableZfs = true;
-        sdImage.populateFirmwareCommands = "";
+        sdImage.populateFirmwareCommands = lib.mkForce "";
         sdImage.populateRootCommands = ''
           mkdir -p ./files/boot
           ${config.boot.loader.generic-extlinux-compatible.populateCmd} -c ${config.system.build.toplevel} -d ./files/boot
@@ -204,6 +204,32 @@ in
         sdImage.postBuildCommands = ''
           dd if=${pkgs.ubootClearfog}/u-boot-with-spl.kwb of=$img bs=512 seek=1 conv=notrunc
         '';
+      })
+    ];
+  };
+
+  trogdor-installer = mkInstaller {
+    modules = [
+      ({ config, lib, modulesPath, ... }: {
+        imports = [
+          "${modulesPath}/profiles/installation-device.nix"
+          "${modulesPath}/installer/sd-card/sd-image-aarch64.nix"
+        ];
+        tinyboot = {
+          enable = true;
+          settings.board = "trogdor-wormdingler";
+        };
+        disabledModules = [ "${modulesPath}/profiles/installation-device.nix" ];
+        hardware.chromebook.enable = true;
+        nixpkgs.hostPlatform = "aarch64-linux";
+        custom.crossCompile.enable = true;
+        custom.disableZfs = true;
+        sdImage.populateFirmwareCommands = lib.mkForce "";
+        sdImage.populateRootCommands = ''
+          mkdir -p ./files/boot
+          ${config.boot.loader.generic-extlinux-compatible.populateCmd} -c ${config.system.build.toplevel} -d ./files/boot
+        '';
+
       })
     ];
   };
