@@ -783,11 +783,11 @@
         "pre-commit-hooks": "pre-commit-hooks"
       },
       "locked": {
-        "lastModified": 1692858381,
-        "narHash": "sha256-6OdrVVrGW8z7zR4xY/2q7XaLVWX//ROEemHLtpdPc5w=",
+        "lastModified": 1692863486,
+        "narHash": "sha256-CV+Nws5QY3u4nByZdBVEgUqqw6aWYCznZgHQCk3l24Q=",
         "owner": "jmbaur",
         "repo": "ipwatch",
-        "rev": "6c0ff637c716edc27bf0c6958fee551e799675b3",
+        "rev": "5998afa3afe3c185dcde77f2b0e2f06970396146",
         "type": "github"
       },
       "original": {
