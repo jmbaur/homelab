@@ -17,7 +17,7 @@ in
     services.ipwatch = {
       enable = true;
       interfaces = [ config.router.wanInterface ];
-      filters = [ "IsGlobalUnicast" "!Is4In6" ];
+      filters = [ "IsGlobalUnicast" "!IsPrivate" "!IsLoopback" "!Is4In6" ];
     };
 
     custom.wg-mesh = {
