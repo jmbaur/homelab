@@ -14,6 +14,12 @@ in
       Kind = "bridge";
     };
 
+    services.ipwatch = {
+      enable = true;
+      interfaces = [ config.router.wanInterface ];
+      filters = [ "IsGlobalUnicast" "!Is4In6" ];
+    };
+
     custom.wg-mesh = {
       enable = true;
       peers.beetroot = { };

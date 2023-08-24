@@ -210,7 +210,7 @@ in
 
   trogdor-installer = mkInstaller {
     modules = [
-      ({ config, lib, modulesPath, ... }: {
+      ({ config, lib, pkgs, modulesPath, ... }: {
         imports = [
           "${modulesPath}/profiles/installation-device.nix"
           "${modulesPath}/installer/sd-card/sd-image-aarch64.nix"
@@ -219,11 +219,13 @@ in
           enable = true;
           settings.board = "trogdor-wormdingler";
         };
+        boot.kernelParams = [ "pd_ignore_unused" "clk_ignore_unused" "console=ttyMSM0,115200" ];
         disabledModules = [ "${modulesPath}/profiles/installation-device.nix" ];
         hardware.chromebook.enable = true;
         nixpkgs.hostPlatform = "aarch64-linux";
         custom.crossCompile.enable = true;
         custom.disableZfs = true;
+        boot.kernelPackages = pkgs.linuxPackages_latest;
         sdImage.populateFirmwareCommands = lib.mkForce "";
         sdImage.populateRootCommands = ''
           mkdir -p ./files/boot
