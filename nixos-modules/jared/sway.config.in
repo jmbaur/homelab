@@ -124,7 +124,7 @@ input "10900:43012:GTCH7503:00_2A94:A804" {
 }
 
 output "*" {
-  background @wallpaper@ fill
+  background @backgroundColor@ solid_color
 }
 
 seat "*" {

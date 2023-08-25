@@ -268,11 +268,7 @@ in
             name = "sway.config";
             src = ./sway.config.in;
             inherit (config.services.xserver) xkbModel xkbOptions;
-            # public domain monet paintings: https://commons.wikimedia.org/wiki/Claude_Monet_Paintings_in_Public_Domain
-            wallpaper = pkgs.fetchurl {
-              url = "https://upload.wikimedia.org/wikipedia/commons/7/70/Los_nen%C3%BAfares_%28Monet%29.jpg";
-              sha256 = "sha256-VQdogXH5yXU/icTHfVVcJWubYmFNGzpCNsKGqeXPh0s=";
-            };
+            inherit (guiData) backgroundColor;
           };
         }
         {
