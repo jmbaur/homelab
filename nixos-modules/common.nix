@@ -4,13 +4,7 @@ let
   isNotContainer = !config.boot.isContainer;
 in
 with lib; {
-  options.custom.common.enable = mkOption {
-    type = types.bool;
-    default = true;
-    description = ''
-      Options that are generic to all nixos machines.
-    '';
-  };
+  options.custom.common.enable = mkEnableOption "common config" // { default = true; };
 
   config = mkIf cfg.enable {
     # 2.16 has a fix for ssh control master when nix-copy'ing
@@ -54,9 +48,14 @@ with lib; {
       enable = true;
       openFirewall = lib.mkDefault (!config.custom.gui.enable);
       settings = {
+        # use more secure defaults
         PermitRootLogin = mkDefault "prohibit-password";
         PasswordAuthentication = mkDefault false;
       };
     };
+
+    system.userActivationScripts.tmpfiles = ''
+      ${config.systemd.package}/bin/systemd-tmpfiles --user --create --remove
+    '';
   };
 }
