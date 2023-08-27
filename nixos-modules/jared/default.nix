@@ -176,279 +176,295 @@ in
       ;
     };
 
-    systemd.user.tmpfiles.users.${cfg.username}.rules = map
-      ({ target, path }: "L+ %h/${target} - - - - ${path}")
-      [
-        {
-          target = ".config/kitty/kitty.conf";
-          path = pkgs.writeText "kitty.conf" ''
-            copy_on_select yes
-            enable_audio_bell no
-            font_family JetBrains Mono
-            font_size 16
-            include ${pkgs.kitty-themes}/share/kitty-themes/themes/Modus_Vivendi.conf
-            shell_integration no-cursor
-            tab_bar_style powerline
-            update_check_interval 0
-          '';
-        }
-        {
-          target = ".config/foot/foot.ini";
-          path = (pkgs.formats.ini { }).generate "foot.ini" {
-            main = {
-              font = "${guiData.font}:size=16";
-              selection-target = "clipboard";
-              notify-focus-inhibit = "no";
-            };
-            bell = {
-              urgent = "yes";
-              command-focused = "yes";
-            };
-            mouse.hide-when-typing = "yes";
-            colors = { alpha = 1.0; } // colors;
-          };
-        }
-        {
-          target = ".config/wezterm/wezterm.lua";
-          path = ./wezterm.lua;
-        }
-        {
-          target = ".config/wezterm/colors/modus-vivendi.toml";
-          path = (pkgs.formats.toml { }).generate "modus-vivendi.toml" {
-            colors = {
-              background = "#${colors.background}";
-              foreground = "#${colors.foreground}";
-              cursor_border = "#${colors.foreground}";
-              selection_bg = "rgba(40% 40% 40% 40%)";
-              selection_fg = "none";
-              ansi = map (color: "#${color}") [ colors.regular0 colors.regular1 colors.regular2 colors.regular3 colors.regular4 colors.regular5 colors.regular6 colors.regular7 ];
-              brights = map (color: "#${color}") [ colors.bright0 colors.bright1 colors.bright2 colors.bright3 colors.bright4 colors.bright5 colors.bright6 colors.bright7 ];
-            };
-            metadata.name = "modus-vivendi";
-          };
-        }
-        {
-          target = ".config/alacritty/alacritty.yml";
-          path = (pkgs.formats.yaml { }).generate "alacritty.yml" {
-            live_config_reload = false;
-            mouse.hide_when_typing = true;
-            selection.save_to_clipboard = true;
-            font = { normal.family = guiData.font; size = 16; };
-            colors = lib.mapAttrsRecursive (_: color: "#${color}") {
-              primary = {
-                foreground = colors.foreground;
-                background = colors.background;
+    systemd.user.tmpfiles.users.${cfg.username}.rules =
+      # xdg user dirs
+      (map
+        # don't apply any cleanup
+        (dir: "d %h/${dir} 0755 ${config.users.users.${cfg.username}.name} ${config.users.users.${cfg.username}.group} - -")
+        [
+          "Desktop"
+          "Documents"
+          "Downloads"
+          "Music"
+          "Pictures"
+          "Public"
+          "Templates"
+          "Videos"
+        ]) ++
+      # config files
+      (map
+        ({ target, path }: "L+ %h/${target} - - - - ${path}")
+        [
+          {
+            target = ".config/kitty/kitty.conf";
+            path = pkgs.writeText "kitty.conf" ''
+              copy_on_select yes
+              enable_audio_bell no
+              font_family JetBrains Mono
+              font_size 16
+              include ${pkgs.kitty-themes}/share/kitty-themes/themes/Modus_Vivendi.conf
+              shell_integration no-cursor
+              tab_bar_style powerline
+              update_check_interval 0
+            '';
+          }
+          {
+            target = ".config/foot/foot.ini";
+            path = (pkgs.formats.ini { }).generate "foot.ini" {
+              main = {
+                font = "${guiData.font}:size=16";
+                selection-target = "clipboard";
+                notify-focus-inhibit = "no";
               };
-              normal = {
-                black = colors.regular0;
-                red = colors.regular1;
-                green = colors.regular2;
-                yellow = colors.regular3;
-                blue = colors.regular4;
-                magenta = colors.regular5;
-                cyan = colors.regular6;
-                white = colors.regular7;
+              bell = {
+                urgent = "yes";
+                command-focused = "yes";
               };
-              bright = {
-                black = colors.bright0;
-                red = colors.bright1;
-                green = colors.bright2;
-                yellow = colors.bright3;
-                blue = colors.bright4;
-                magenta = colors.bright5;
-                cyan = colors.bright6;
-                white = colors.bright7;
+              mouse.hide-when-typing = "yes";
+              colors = { alpha = 1.0; } // colors;
+            };
+          }
+          {
+            target = ".config/wezterm/wezterm.lua";
+            path = ./wezterm.lua;
+          }
+          {
+            target = ".config/wezterm/colors/modus-vivendi.toml";
+            path = (pkgs.formats.toml { }).generate "modus-vivendi.toml" {
+              colors = {
+                background = "#${colors.background}";
+                foreground = "#${colors.foreground}";
+                cursor_border = "#${colors.foreground}";
+                selection_bg = "rgba(40% 40% 40% 40%)";
+                selection_fg = "none";
+                ansi = map (color: "#${color}") [ colors.regular0 colors.regular1 colors.regular2 colors.regular3 colors.regular4 colors.regular5 colors.regular6 colors.regular7 ];
+                brights = map (color: "#${color}") [ colors.bright0 colors.bright1 colors.bright2 colors.bright3 colors.bright4 colors.bright5 colors.bright6 colors.bright7 ];
+              };
+              metadata.name = "modus-vivendi";
+            };
+          }
+          {
+            target = ".config/alacritty/alacritty.yml";
+            path = (pkgs.formats.yaml { }).generate "alacritty.yml" {
+              live_config_reload = false;
+              mouse.hide_when_typing = true;
+              selection.save_to_clipboard = true;
+              font = { normal.family = guiData.font; size = 16; };
+              colors = lib.mapAttrsRecursive (_: color: "#${color}") {
+                primary = {
+                  foreground = colors.foreground;
+                  background = colors.background;
+                };
+                normal = {
+                  black = colors.regular0;
+                  red = colors.regular1;
+                  green = colors.regular2;
+                  yellow = colors.regular3;
+                  blue = colors.regular4;
+                  magenta = colors.regular5;
+                  cyan = colors.regular6;
+                  white = colors.regular7;
+                };
+                bright = {
+                  black = colors.bright0;
+                  red = colors.bright1;
+                  green = colors.bright2;
+                  yellow = colors.bright3;
+                  blue = colors.bright4;
+                  magenta = colors.bright5;
+                  cyan = colors.bright6;
+                  white = colors.bright7;
+                };
               };
             };
-          };
-        }
-        {
-          target = ".config/sway/config";
-          path = pkgs.substituteAll {
-            name = "sway.config";
-            src = ./sway.config.in;
-            inherit (config.services.xserver) xkbModel xkbOptions;
-            inherit (guiData) backgroundColor;
-          };
-        }
-        {
-          target = ".config/swaynag/config";
-          path = pkgs.writeText "swaynag.config" ''
-            font=JetBrains Mono 12
-          '';
-        }
-        {
-          target = ".config/mako/config";
-          path = pkgs.writeText "mako.config" ''
-            max-visible=5
-            sort=-time
-            layer=overlay
-            anchor=top-right
-            font=JetBrains Mono 12
-            width=500
-            height=1000
-            margin=10
-            padding=5
-            border-size=1
-            border-radius=0
-            icons=true
-            icon-path=/run/current-system/sw/share/icons/Adwaita
-            max-icon-size=64
-            markup=true
-            actions=true
-            default-timeout=10000
-            ignore-timeout=false
+          }
+          {
+            target = ".config/sway/config";
+            path = pkgs.substituteAll {
+              name = "sway.config";
+              src = ./sway.config.in;
+              inherit (config.services.xserver) xkbModel xkbOptions;
+              inherit (guiData) backgroundColor;
+            };
+          }
+          {
+            target = ".config/swaynag/config";
+            path = pkgs.writeText "swaynag.config" ''
+              font=JetBrains Mono 12
+            '';
+          }
+          {
+            target = ".config/mako/config";
+            path = pkgs.writeText "mako.config" ''
+              max-visible=5
+              sort=-time
+              layer=overlay
+              anchor=top-right
+              font=JetBrains Mono 12
+              width=500
+              height=1000
+              margin=10
+              padding=5
+              border-size=1
+              border-radius=0
+              icons=true
+              icon-path=/run/current-system/sw/share/icons/Adwaita
+              max-icon-size=64
+              markup=true
+              actions=true
+              default-timeout=10000
+              ignore-timeout=false
 
-            [mode=do-not-disturb]
-            invisible=1
-          '';
-        }
-        {
-          target = ".config/gobar/gobar.yaml";
-          path = (pkgs.formats.yaml { }).generate "gobar.yaml" {
-            colorVariant = "dark";
-            modules = [{ module = "network"; pattern = "(en|eth|wlp|wlan|wg)+"; }] ++
+              [mode=do-not-disturb]
+              invisible=1
+            '';
+          }
+          {
+            target = ".config/gobar/gobar.yaml";
+            path = (pkgs.formats.yaml { }).generate "gobar.yaml" {
+              colorVariant = "dark";
+              modules = [{ module = "network"; pattern = "(en|eth|wlp|wlan|wg)+"; }] ++
               (lib.optional config.custom.laptop.enable { module = "battery"; }) ++
               [
                 { module = "memory"; }
                 { module = "datetime"; timezones = [ "Local" "UTC" ]; }
               ];
-          };
-        }
-
-        {
-          target = ".config/mimeapps.list";
-          path = (pkgs.formats.ini { }).generate "mimeapps.list" {
-            "Added Associations" = { };
-            "Removed Associations" = { };
-            "Default Applications" = {
-              "application/pdf" = "org.pwmt.zathura.desktop";
-              "audio/*" = "mpv.desktop";
-              "image/jpeg" = "imv.desktop";
-              "image/png" = "imv.desktop";
-              "text/*" = "nvim.desktop";
-              "video/*" = "mpv.desktop";
-              "x-scheme-handler/http" = "firefox.desktop";
-              "x-scheme-handler/https" = "firefox.desktop";
             };
-          };
-        }
-        {
-          target = ".sqliterc";
-          path = pkgs.writeText "sqliterc" ''
-            .headers ON
-            .mode columns
-          '';
-        }
-        {
-          target = ".config/bat/config";
-          path = pkgs.writeText "bat.config" ''
-            --theme='base16'
-          '';
-        }
-        {
-          target = ".config/fd/ignore";
-          path = pkgs.writeText "fdignore.config" ''
-            .git
-          '';
-        }
-        {
-          target = ".config/fish/config.fish";
-          path = pkgs.writeText "fish.config" ''
-            if status is-interactive
-              set -U fish_greeting ""
-              ${pkgs.direnv}/bin/direnv hook fish | source
-              ${pkgs.nix-your-shell}/bin/nix-your-shell fish | source
-              ${lib.optionalString config.custom.dev.enable ''
-              set -U PROJECTS_DIR ${config.users.users.${cfg.username}.home}/projects
-              ''}
-            end
-          '';
-        }
-        {
-          target = ".config/direnv/direnvrc";
-          path = pkgs.writeText "direnvrc" ''
-            source ${pkgs.nix-direnv}/share/nix-direnv/direnvrc
-          '';
-        }
-        {
-          target = ".ssh/config";
-          path = pkgs.writeText "ssh.config" ''
-            SetEnv TERM=xterm-256color
+          }
 
-            Host *.home.arpa
-              ForwardAgent yes
+          {
+            target = ".config/mimeapps.list";
+            path = (pkgs.formats.ini { }).generate "mimeapps.list" {
+              "Added Associations" = { };
+              "Removed Associations" = { };
+              "Default Applications" = {
+                "application/pdf" = "org.pwmt.zathura.desktop";
+                "audio/*" = "mpv.desktop";
+                "image/jpeg" = "imv.desktop";
+                "image/png" = "imv.desktop";
+                "text/*" = "nvim.desktop";
+                "video/*" = "mpv.desktop";
+                "x-scheme-handler/http" = "firefox.desktop";
+                "x-scheme-handler/https" = "firefox.desktop";
+              };
+            };
+          }
+          {
+            target = ".sqliterc";
+            path = pkgs.writeText "sqliterc" ''
+              .headers ON
+              .mode columns
+            '';
+          }
+          {
+            target = ".config/bat/config";
+            path = pkgs.writeText "bat.config" ''
+              --theme='base16'
+            '';
+          }
+          {
+            target = ".config/fd/ignore";
+            path = pkgs.writeText "fdignore.config" ''
+              .git
+            '';
+          }
+          {
+            target = ".config/fish/config.fish";
+            path = pkgs.writeText "fish.config" ''
+              if status is-interactive
+                set -U fish_greeting ""
+                ${pkgs.direnv}/bin/direnv hook fish | source
+                ${pkgs.nix-your-shell}/bin/nix-your-shell fish | source
+                ${lib.optionalString config.custom.dev.enable ''
+                set -U PROJECTS_DIR ${config.users.users.${cfg.username}.home}/projects
+                ''}
+              end
+            '';
+          }
+          {
+            target = ".config/direnv/direnvrc";
+            path = pkgs.writeText "direnvrc" ''
+              source ${pkgs.nix-direnv}/share/nix-direnv/direnvrc
+            '';
+          }
+          {
+            target = ".ssh/config";
+            path = pkgs.writeText "ssh.config" ''
+              SetEnv TERM=xterm-256color
 
-            Host *
-              ForwardAgent no
-              Compression no
-              ServerAliveInterval 0
-              ServerAliveCountMax 3
-              HashKnownHosts no
-              UserKnownHostsFile ~/.ssh/known_hosts
-              ControlMaster auto
-              ControlPath ~/.ssh/master-%r@%n:%p
-              ControlPersist 30m
-          '';
-        }
-        {
-          target = ".gnupg/scdaemon.conf";
-          path = pkgs.writeText "scdaemon.conf" ''
-            disable-ccid
-          '';
-        }
-        {
-          target = ".gnupg/gpg.conf";
-          path = pkgs.writeText "gpg.conf" ''
-            cert-digest-algo SHA512
-            charset utf-8
-            default-preference-list SHA512 SHA384 SHA256 AES256 AES192 AES ZLIB BZIP2 ZIP Uncompressed
-            fixed-list-mode
-            keyid-format 0xlong
-            list-options show-uid-validity
-            no-comments
-            no-emit-version
-            no-symkey-cache
-            personal-cipher-preferences AES256 AES192 AES
-            personal-compress-preferences ZLIB BZIP2 ZIP Uncompressed
-            personal-digest-preferences SHA512 SHA384 SHA256
-            require-cross-certification
-            s2k-cipher-algo AES256
-            s2k-digest-algo SHA512
-            use-agent
-            verify-options show-uid-validity
-            with-fingerprint
-          '';
-        }
-        {
-          target = ".config/git/config";
-          path = pkgs.substituteAll {
-            name = "git.config";
-            src = ./git.config.in;
-            difftastic = pkgs.difftastic;
-            gh = pkgs.gh;
-            userName = config.users.users.${cfg.username}.description;
-            inherit (cfg.git) email signingKey allowedSignersFile extraConfig;
-            signCommits = lib.boolToString cfg.git.signCommits;
-          };
-        }
-        {
-          target = ".config/git/ignore";
-          path = pkgs.writeText "gitignore.config" ''
-            *~
-            *.swp
-          '';
-        }
-        {
-          target = ".config/tmux/tmux.conf";
-          path = pkgs.substituteAll {
-            name = "tmux.conf";
-            src = ./tmux.conf.in;
-            sensible = pkgs.tmuxPlugins.sensible;
-            logging = pkgs.tmuxPlugins.logging;
-            j = pkgs.j;
-          };
-        }
-      ];
+              Host *.home.arpa
+                ForwardAgent yes
+
+              Host *
+                ForwardAgent no
+                Compression no
+                ServerAliveInterval 0
+                ServerAliveCountMax 3
+                HashKnownHosts no
+                UserKnownHostsFile ~/.ssh/known_hosts
+                ControlMaster auto
+                ControlPath ~/.ssh/master-%r@%n:%p
+                ControlPersist 30m
+            '';
+          }
+          {
+            target = ".gnupg/scdaemon.conf";
+            path = pkgs.writeText "scdaemon.conf" ''
+              disable-ccid
+            '';
+          }
+          {
+            target = ".gnupg/gpg.conf";
+            path = pkgs.writeText "gpg.conf" ''
+              cert-digest-algo SHA512
+              charset utf-8
+              default-preference-list SHA512 SHA384 SHA256 AES256 AES192 AES ZLIB BZIP2 ZIP Uncompressed
+              fixed-list-mode
+              keyid-format 0xlong
+              list-options show-uid-validity
+              no-comments
+              no-emit-version
+              no-symkey-cache
+              personal-cipher-preferences AES256 AES192 AES
+              personal-compress-preferences ZLIB BZIP2 ZIP Uncompressed
+              personal-digest-preferences SHA512 SHA384 SHA256
+              require-cross-certification
+              s2k-cipher-algo AES256
+              s2k-digest-algo SHA512
+              use-agent
+              verify-options show-uid-validity
+              with-fingerprint
+            '';
+          }
+          {
+            target = ".config/git/config";
+            path = pkgs.substituteAll {
+              name = "git.config";
+              src = ./git.config.in;
+              difftastic = pkgs.difftastic;
+              gh = pkgs.gh;
+              userName = config.users.users.${cfg.username}.description;
+              inherit (cfg.git) email signingKey allowedSignersFile extraConfig;
+              signCommits = lib.boolToString cfg.git.signCommits;
+            };
+          }
+          {
+            target = ".config/git/ignore";
+            path = pkgs.writeText "gitignore.config" ''
+              *~
+              *.swp
+            '';
+          }
+          {
+            target = ".config/tmux/tmux.conf";
+            path = pkgs.substituteAll {
+              name = "tmux.conf";
+              src = ./tmux.conf.in;
+              sensible = pkgs.tmuxPlugins.sensible;
+              logging = pkgs.tmuxPlugins.logging;
+              j = pkgs.j;
+            };
+          }
+        ]);
   };
 }
