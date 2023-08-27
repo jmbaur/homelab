@@ -162,9 +162,9 @@ in
 
     systemd.services.wg-mesh-coredns = {
       description = "Coredns wg-mesh dns server";
-      after = [ deviceUnit ];
-      partOf = [ deviceUnit ];
-      wantedBy = [ deviceUnit ];
+      after = [ "network-online.target" deviceUnit ];
+      partOf = [ "network-online.target" deviceUnit ];
+      wantedBy = [ "network-online.target" deviceUnit ];
       serviceConfig = {
         PermissionsStartOnly = true;
         LimitNPROC = 512;
@@ -183,9 +183,9 @@ in
       # don't enable this if there are no endpoints to query
       enable = wgEndpointRefreshArgs != "";
       description = "Endpoint refresh for wireguard peers";
-      after = [ deviceUnit ];
-      partOf = [ deviceUnit ];
-      wantedBy = [ deviceUnit ];
+      after = [ "network-online.target" deviceUnit ];
+      partOf = [ "network-online.target" deviceUnit ];
+      wantedBy = [ "network-online.target" deviceUnit ];
       path = [ pkgs.parallel wgEndpointRefresh ];
       serviceConfig = {
         PermissionsStartOnly = true;
