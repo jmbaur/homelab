@@ -3,7 +3,7 @@ rec {
   cursorTheme = "Adwaita";
   gtkIconTheme = cursorTheme;
   gtkTheme = "${gtkIconTheme}-dark";
-  backgroundColor = "#222222";
+  backgroundColor = "#333333";
   colors = {
     modus-vivendi = {
       background = "000000";
