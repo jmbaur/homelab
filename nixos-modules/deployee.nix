@@ -34,6 +34,7 @@ with lib;
     };
 
     system.build.deploy = pkgs.buildPackages.writeShellScriptBin "deploy" ''
+      set -e
       deploy_type=''${1:-switch}
       nix copy $NIXCOPYOPTS --to ssh-ng://${cfg.sshTarget} ${config.system.build.toplevel}
       ssh $SSHOPTS ${cfg.sshTarget} \
