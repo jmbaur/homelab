@@ -38,7 +38,6 @@ in
       default = config.networking.hostName;
       description = mdDoc "The name of the host";
     };
-    dns = mkEnableOption "setup DNS for peers of this node" // { default = true; };
     peers = mkOption {
       type = types.attrsOf (types.submodule ({ name, ... }: {
         options = {
