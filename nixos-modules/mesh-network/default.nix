@@ -128,7 +128,10 @@ in
       name = config.systemd.network.netdevs.wg0.netdevConfig.Name;
       address = [ (host.ip + "/64") ];
       dns = [ "[::1]:1053" ];
-      domains = [ "internal" ];
+      # Use as a routing-only domain
+      domains = [ "~internal" ];
+      # Only use this link's DNS settings for the configured domain
+      networkConfig.DNSDefaultRoute = false;
     };
 
     systemd.services.wg-mesh-coredns = lib.mkIf cfg.dns {
