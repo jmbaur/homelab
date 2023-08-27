@@ -17,12 +17,13 @@ while true; do
 		read -r ttl addr < <(echo "$answer" | awk '{ print $2, $5 }')
 
 		if wg show wg0 endpoints | grep --silent "$pubkey.*$addr.*"; then
-			echo "peer endpoint is up to date"
-			echo "sleeping ${ttl}s until cache is invalid"
+			if [[ ${DEBUG:-0} == "1" ]]; then
+				echo "peer endpoint is up to date"
+				echo "sleeping ${ttl}s until cache is invalid"
+			fi
 			sleep "$(("$ttl" + 1))"
 			continue 2
 		else
-			echo "peer endpoint is out of date"
 			new_endpoint=
 			if [[ $record_type == "AAAA" ]]; then
 				new_endpoint="[$addr]:51820"
@@ -30,6 +31,7 @@ while true; do
 				new_endpoint="$addr:51820"
 			fi
 
+			echo "peer endpoint is out of date"
 			echo "setting endpoint for $pubkey to $new_endpoint"
 			wg set wg0 peer "$pubkey" endpoint "$new_endpoint"
 			break 1
