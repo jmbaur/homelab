@@ -1,11 +1,10 @@
-{ config, lib, pkgs, ... }:
-let
-  wg = import ../../nixos-modules/mesh-network/inventory.nix;
-in
-{
+{ config, lib, pkgs, ... }: {
   config = lib.mkIf config.router.enable {
     sops.defaultSopsFile = ./secrets.yaml;
-    sops.secrets.wg0 = { mode = "0640"; group = config.users.groups.systemd-network.name; };
+    sops.secrets = {
+      ipwatch_env = { };
+      wg0 = { mode = "0640"; group = config.users.groups.systemd-network.name; };
+    };
 
     systemd.network.netdevs.br0.netdevConfig = {
       Name = "br0";
@@ -15,7 +14,33 @@ in
     services.ipwatch = {
       enable = true;
       interfaces = [ config.router.wanInterface ];
+      hookEnvironmentFile = config.sops.secrets.ipwatch_env.path;
       filters = [ "IsGlobalUnicast" "!IsPrivate" "!IsLoopback" "!Is4In6" ];
+      hooks =
+        let
+          updateCloudflare = recordType: ''
+            ${pkgs.curl}/bin/curl \
+              --silent \
+              --show-error \
+              --request PUT \
+              --header "Content-Type: application/json" \
+              --header "Authorization: Bearer ''${CF_DNS_API_TOKEN}" \
+              --data '{"type":"${recordType}","name":"squash.jmbaur.com","content":"'"''${ADDR}"'","proxied":false}' \
+              "https://api.cloudflare.com/client/v4/zones/''${CF_ZONE_ID}/dns_records/''${CF_RECORD_ID_${recordType}}" | ${pkgs.jq}/bin/jq
+          '';
+          updateCloudflareA = updateCloudflare "A";
+          updateCloudflareAAAA = updateCloudflare "AAAA";
+          script = pkgs.writeShellScript "update-cloudflare" ''
+            if [[ "$IS_IP6" == "1" ]]; then
+              ${updateCloudflareAAAA}
+            elif [[ "$IS_IP4" == "1" ]]; then
+              ${updateCloudflareA}
+            else
+              echo nothing to update
+            fi
+          '';
+        in
+        [ "internal:echo" "executable:${script}" ];
     };
 
     custom.wg-mesh = {
@@ -23,8 +48,8 @@ in
       peers.beetroot = { };
       peers.rhubarb = { };
       firewall = {
-        trustedIPs = [ wg.beetroot.ip ];
-        ips."${wg.carrot.ip}".allowedTCPPorts = [
+        beetroot.allowAll = true;
+        carrot.allowedTCPPorts = [
           19531 # systemd-journal-gatewayd
           9153 # coredns
           9430 # corerad
@@ -79,6 +104,5 @@ in
         wifi6.enable = true;
       };
     };
-
   };
 }

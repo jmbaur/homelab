@@ -12,9 +12,9 @@
     };
     wg-mesh = {
       enable = true;
-      peers.squash.extraConfig = {
-        Endpoint = "vpn.jmbaur.com:51820";
-        PersistentKeepalive = 25;
+      peers.squash = {
+        endpoint = "squash.jmbaur.com";
+        extraConfig.PersistentKeepalive = 25;
       };
     };
   };

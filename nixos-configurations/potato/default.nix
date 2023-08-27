@@ -36,7 +36,6 @@
     wg-mesh = {
       enable = false;
       dns = true;
-      # peers.squash.extraConfig.Endpoint = "squash.home.arpa:51820"; # "vpn.jmbaur.com:51820";
     };
   };
 

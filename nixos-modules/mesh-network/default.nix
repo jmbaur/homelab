@@ -2,9 +2,6 @@
 let
   cfg = config.custom.wg-mesh;
 
-  matchIPv4 = builtins.match "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+";
-  isIPv6 = ip: (matchIPv4 ip) == null;
-
   inventory = import ./inventory.nix;
   host = inventory."${cfg.name}";
 
@@ -81,33 +78,28 @@ in
         Peers of this wg node
       '';
     };
-    firewall = {
-      trustedIPs = mkOption {
-        type = types.listOf types.str;
-        default = [ ];
-        description = ''
-          IPs for which all traffic (input & forward) will be accepted.
-        '';
-      };
-      ips = mkOption {
-        type = types.attrsOf (types.submodule ({ name, ... }: {
-          options = {
-            ip = mkOption {
-              type = types.str;
-              default = name;
-            };
-            allowedTCPPorts = mkOption {
-              type = types.listOf types.port;
-              default = [ ];
-            };
-            allowedUDPPorts = mkOption {
-              type = types.listOf types.port;
-              default = [ ];
-            };
+    firewall = mkOption {
+      type = types.attrsOf (types.submodule ({ name, ... }: {
+        options = {
+          peer = mkOption {
+            type = types.str;
+            default = name;
           };
-        }));
-        default = { };
-      };
+          allowAll = mkOption {
+            type = types.bool;
+            default = false;
+          };
+          allowedTCPPorts = mkOption {
+            type = types.listOf types.port;
+            default = [ ];
+          };
+          allowedUDPPorts = mkOption {
+            type = types.listOf types.port;
+            default = [ ];
+          };
+        };
+      }));
+      default = { };
     };
   };
 
@@ -132,6 +124,7 @@ in
     sops.secrets.wg0 = { mode = "0640"; group = config.users.groups.systemd-network.name; };
 
     networking.firewall.allowedUDPPorts = [ config.systemd.network.netdevs.wg0.wireguardConfig.ListenPort ];
+
     systemd.network.netdevs.wg0 = {
       netdevConfig = {
         Name = "wg0";
@@ -160,7 +153,7 @@ in
     systemd.network.networks.wg0 = {
       name = config.systemd.network.netdevs.wg0.netdevConfig.Name;
       address = [ (host.ip + "/64") ];
-      dns = [ "[${host.ip}]:53" ];
+      dns = [ host.ip ];
       # Use as a routing-only domain
       domains = [ "~internal" ];
       networkConfig = {
@@ -212,34 +205,19 @@ in
       scriptArgs = wgEndpointRefreshArgs;
     };
 
-    # always forward
-    networking.firewall.extraForwardRules = (lib.concatMapStrings
-      (ip: ''
-        ${if isIPv6 ip then "ip6" else "ip"} saddr ${ip} accept
-      '')
-      cfg.firewall.trustedIPs);
-
-    networking.firewall.extraInputRules = (lib.concatMapStrings
-      (ip: ''
-        ${if isIPv6 ip then "ip6" else "ip"} saddr ${ip} accept
-      '')
-      cfg.firewall.trustedIPs)
-    +
-    (lib.concatMapStrings
-      ({ ip, allowedTCPPorts, allowedUDPPorts, ... }: (lib.optionalString (allowedTCPPorts != [ ]) ''
-        ${if isIPv6 ip then "ip6" else "ip"} saddr ${ip} tcp dport { ${lib.concatMapStringsSep ", " toString allowedTCPPorts} } accept
-      '') + (lib.optionalString (allowedUDPPorts != [ ]) ''
-        ${if isIPv6 ip then "ip6" else "ip"} saddr ${ip} udp dport { ${lib.concatMapStringsSep ", " toString allowedUDPPorts} } accept
-      ''))
-      (lib.attrValues cfg.firewall.ips));
-
-    networking.nat =
-      let
-        partition = lib.partition isIPv6 cfg.firewall.trustedIPs;
-      in
-      {
-        internalIPv6s = partition.right;
-        internalIPs = partition.wrong;
-      };
+    networking.firewall.extraInputRules = lib.concatMapStrings
+      ({ peer, allowAll, allowedTCPPorts, allowedUDPPorts, ... }:
+        let
+          inherit (inventory.${peer}) ip;
+        in
+        if allowAll then ''
+          ip6 saddr ${ip} accept
+        '' else
+          ((lib.optionalString (allowedTCPPorts != [ ]) ''
+            ip6 saddr ${ip} tcp dport { ${lib.concatMapStringsSep ", " toString allowedTCPPorts} } accept
+          '') + (lib.optionalString (allowedUDPPorts != [ ]) ''
+            ip6 saddr ${ip} udp dport { ${lib.concatMapStringsSep ", " toString allowedUDPPorts} } accept
+          '')))
+      (lib.attrValues cfg.firewall);
   };
 }

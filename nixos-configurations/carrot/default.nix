@@ -1,8 +1,4 @@
-{ config, pkgs, ... }:
-let
-  wg = import ../../nixos-modules/mesh-network/inventory.nix;
-in
-{
+{ config, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
 
   hardware.bluetooth.enable = true;
@@ -58,13 +54,13 @@ in
   custom.wg-mesh = {
     enable = false;
     dns = true;
-    peers.kale.extraConfig.Endpoint = "kale.home.arpa:51820";
-    peers.squash.extraConfig.Endpoint = "squash.home.arpa:51820";
-    peers.www.extraConfig = {
-      Endpoint = "www.jmbaur.com:51820";
-      PersistentKeepalive = 25;
+    peers.kale.endpoint = "kale.home.arpa";
+    peers.squash.endpoint = "squash.jmbaur.com";
+    peers.www = {
+      endpoint = "www.jmbaur.com";
+      extraConfig.PersistentKeepalive = 25;
     };
-    firewall.ips."${wg.www.ip}".allowedTCPPorts = [ config.services.grafana.settings.server.http_port ];
+    firewall.peers.www.allowedTCPPorts = [ config.services.grafana.settings.server.http_port ];
   };
 
   custom.builder.build = {
