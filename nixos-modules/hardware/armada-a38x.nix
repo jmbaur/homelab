@@ -42,7 +42,7 @@
     # interfaces.
     systemd.network.networks.lan-master = {
       name = "lan";
-      linkConfig.RequiredForOnline = "no";
+      linkConfig.RequiredForOnline = false;
       networkConfig = {
         LinkLocalAddressing = "no";
         BindCarrier = map (i: "lan${toString i}") [ 1 2 3 4 5 ];
