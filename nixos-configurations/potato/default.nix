@@ -33,10 +33,7 @@
     laptop.enable = true;
     users.jared.enable = true;
     remoteBuilders.aarch64builder.enable = false;
-    wg-mesh = {
-      enable = false;
-      dns = true;
-    };
+    wg-mesh.enable = false;
   };
 
   nixpkgs.config.allowUnfree = true;

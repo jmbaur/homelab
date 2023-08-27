@@ -38,7 +38,7 @@ in
       default = config.networking.hostName;
       description = mdDoc "The name of the host";
     };
-    dns = mkEnableOption "setup DNS for peers of this node";
+    dns = mkEnableOption "setup DNS for peers of this node" // { default = true; };
     peers = mkOption {
       type = types.attrsOf (types.submodule ({ name, ... }: {
         options = {
@@ -85,10 +85,7 @@ in
             type = types.str;
             default = name;
           };
-          allowAll = mkOption {
-            type = types.bool;
-            default = false;
-          };
+          allowAll = mkEnableOption "allow all traffic from this peer";
           allowedTCPPorts = mkOption {
             type = types.listOf types.port;
             default = [ ];
@@ -164,7 +161,7 @@ in
       };
     };
 
-    systemd.services.wg-mesh-coredns = lib.mkIf cfg.dns {
+    systemd.services.wg-mesh-coredns = {
       description = "Coredns wg-mesh dns server";
       after = [ deviceUnit ];
       partOf = [ deviceUnit ];

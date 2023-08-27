@@ -53,7 +53,6 @@
 
   custom.wg-mesh = {
     enable = false;
-    dns = true;
     peers.kale.endpoint = "kale.home.arpa";
     peers.squash.endpoint = "squash.jmbaur.com";
     peers.www = {

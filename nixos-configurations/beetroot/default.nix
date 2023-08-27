@@ -39,7 +39,6 @@
     remoteBuilders.aarch64builder.enable = false;
     wg-mesh = {
       enable = true;
-      dns = true;
       peers.squash.dnsName = "squash.jmbaur.com";
     };
   };
