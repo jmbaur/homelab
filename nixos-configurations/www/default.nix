@@ -26,7 +26,6 @@ in
     defaultSopsFile = ./secrets.yaml;
     secrets.session_secret = { };
     secrets.passwords = { };
-    secrets.wg0 = { };
   };
 
   services.fail2ban = {

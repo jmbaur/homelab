@@ -49,7 +49,6 @@
 
   sops = {
     defaultSopsFile = ./secrets.yaml;
-    secrets.wg0 = { };
     secrets.jared_password.neededForUsers = true;
   };
 

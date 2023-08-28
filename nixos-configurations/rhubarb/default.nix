@@ -1,4 +1,4 @@
-{ config, pkgs, modulesPath, ... }: {
+{ pkgs, modulesPath, ... }: {
   imports = [ "${modulesPath}/installer/sd-card/sd-image-aarch64.nix" ];
   nixpkgs.hostPlatform = "aarch64-linux";
 
@@ -13,7 +13,7 @@
     wg-mesh = {
       enable = true;
       peers.squash = {
-        endpoint = "squash.jmbaur.com";
+        dnsName = "squash.jmbaur.com";
         extraConfig.PersistentKeepalive = 25;
       };
     };
@@ -36,10 +36,7 @@
     dnssec = "false";
   };
 
-  sops = {
-    defaultSopsFile = ./secrets.yaml;
-    secrets.wg0 = { mode = "0640"; group = config.users.groups.systemd-network.name; };
-  };
+  sops.defaultSopsFile = ./secrets.yaml;
 
   systemd.network = {
     enable = true;

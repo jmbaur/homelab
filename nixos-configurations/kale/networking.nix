@@ -9,7 +9,7 @@
     enable = true;
     peers.carrot = { };
     peers.www = {
-      endpoint = "www.jmbaur.com";
+      dnsName = "www.jmbaur.com";
       extraConfig.PersistentKeepalive = 25;
     };
     firewall.carrot.allowedTCPPorts = [ config.services.prometheus.exporters.node.port 19531 ];

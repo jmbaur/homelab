@@ -1,10 +1,7 @@
 { config, lib, pkgs, ... }: {
   config = lib.mkIf config.router.enable {
     sops.defaultSopsFile = ./secrets.yaml;
-    sops.secrets = {
-      ipwatch_env = { };
-      wg0 = { mode = "0640"; group = config.users.groups.systemd-network.name; };
-    };
+    sops.secrets.ipwatch_env = { };
 
     systemd.network.netdevs.br0.netdevConfig = {
       Name = "br0";
@@ -46,16 +43,16 @@
     custom.wg-mesh = {
       enable = true;
       peers.beetroot = { };
-      peers.rhubarb = { };
+      peers.carrot = { };
       firewall = {
         beetroot.allowAll = true;
-        # carrot.allowedTCPPorts = [
-        #   19531 # systemd-journal-gatewayd
-        #   9153 # coredns
-        #   9430 # corerad
-        #   config.services.prometheus.exporters.blackbox.port
-        #   config.services.prometheus.exporters.node.port
-        # ];
+        carrot.allowedTCPPorts = [
+          19531 # systemd-journal-gatewayd
+          9153 # coredns
+          9430 # corerad
+          config.services.prometheus.exporters.blackbox.port
+          config.services.prometheus.exporters.node.port
+        ];
       };
     };
 

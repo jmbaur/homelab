@@ -1,6 +1,8 @@
 { config, pkgs, ... }: {
   imports = [ ./hardware-configuration.nix ];
 
+  sops.defaultSopsFile = ./secrets.yaml;
+
   hardware.bluetooth.enable = true;
 
   fileSystems."/".options = [ "noatime" "discard=async" "compress=zstd" ];
@@ -52,14 +54,8 @@
   };
 
   custom.wg-mesh = {
-    enable = false;
-    peers.kale.endpoint = "kale.home.arpa";
-    peers.squash.endpoint = "squash.jmbaur.com";
-    peers.www = {
-      endpoint = "www.jmbaur.com";
-      extraConfig.PersistentKeepalive = 25;
-    };
-    firewall.peers.www.allowedTCPPorts = [ config.services.grafana.settings.server.http_port ];
+    enable = true;
+    peers.squash.dnsName = "squash.jmbaur.com";
   };
 
   custom.builder.build = {
