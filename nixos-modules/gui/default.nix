@@ -101,10 +101,10 @@ with lib;
     services.printing.enable = true;
     services.upower.enable = true;
     services.udisks2.enable = true;
-    services.avahi.enable = true;
 
+    networking.firewall.allowedUDPPorts = [ 5353 ];
     services.resolved.extraConfig = ''
-      MulticastDNS=no
+      MulticastDNS=yes
     '';
 
     services.greetd = {

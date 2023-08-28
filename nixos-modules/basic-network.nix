@@ -35,6 +35,7 @@ in
           networkConfig = {
             IPv6PrivacyExtensions = "kernel";
             Domains = "~.";
+            MulticastDNS = true;
           };
         };
         wired = {
@@ -51,6 +52,7 @@ in
           networkConfig = {
             IPv6PrivacyExtensions = "kernel";
             Domains = "~.";
+            MulticastDNS = true;
           };
         };
       };
