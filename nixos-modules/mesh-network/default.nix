@@ -33,14 +33,7 @@ let
 
   deviceUnit = "sys-subsystem-net-devices-wg0.device";
 
-  corednsConfigFile = pkgs.writeText "wg-mesh.Corefile" ''
-    internal {
-      bind wg0
-      hosts {
-        ${lib.concatStringsSep "\n    " (lib.mapAttrsToList (name: {ip, ...}: "${ip} ${name}.internal") inventory)}
-      }
-    }
-  '';
+  extraHosts = lib.concatLines (lib.mapAttrsToList (name: { ip, ... }: "${ip} ${name}.internal") inventory);
 
   wgEndpointRefresh = pkgs.writeShellApplication {
     name = "wg-endpoint-refresh";
@@ -176,7 +169,6 @@ in
     systemd.network.networks.wg0 = {
       name = config.systemd.network.netdevs.wg0.netdevConfig.Name;
       address = [ (host.ip + "/64") ];
-      dns = [ host.ip ];
       # Use as a routing-only domain
       domains = [ "~internal" ];
       networkConfig = {
@@ -206,24 +198,7 @@ in
             inventory));
     };
 
-    systemd.services.wg-mesh-coredns = {
-      description = "Coredns wg-mesh dns server";
-      after = [ "network-online.target" deviceUnit ];
-      partOf = [ "network-online.target" deviceUnit ];
-      wantedBy = [ "network-online.target" deviceUnit ];
-      serviceConfig = {
-        PermissionsStartOnly = true;
-        LimitNPROC = 512;
-        LimitNOFILE = 1048576;
-        CapabilityBoundingSet = "cap_net_bind_service";
-        AmbientCapabilities = "cap_net_bind_service";
-        NoNewPrivileges = true;
-        DynamicUser = true;
-        ExecStart = "${lib.getBin config.services.coredns.package}/bin/coredns -conf=${corednsConfigFile}";
-        ExecReload = "${pkgs.coreutils}/bin/kill -SIGUSR1 $MAINPID";
-        Restart = "on-failure";
-      };
-    };
+    networking.extraHosts = extraHosts;
 
     systemd.services.wg-endpoint-refresh = {
       # don't enable this if there are no endpoints to query
