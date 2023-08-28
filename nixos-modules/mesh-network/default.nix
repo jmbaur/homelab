@@ -18,7 +18,7 @@ let
 
   wgEndpointRefresh = pkgs.writeShellApplication {
     name = "wg-endpoint-refresh";
-    runtimeInputs = [ pkgs.dnsutils pkgs.wireguard-tools pkgs.gawk ];
+    runtimeInputs = with pkgs; [ dnsutils wireguard-tools gawk iproute2 ];
     text = builtins.readFile ./wg-endpoint-refresh.bash;
   };
 

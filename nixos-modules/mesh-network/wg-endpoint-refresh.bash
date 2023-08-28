@@ -15,6 +15,12 @@ while true; do
 		fi
 
 		read -r ttl addr < <(echo "$answer" | awk '{ print $2, $5 }')
+		if ! ip route get "$addr" >/dev/null 2>&1; then
+			if [[ ${DEBUG:-0} == "1" ]]; then
+				echo "address $addr not reachable"
+			fi
+			continue 1
+		fi
 
 		if wg show wg0 endpoints | grep --silent "$pubkey.*$addr.*"; then
 			if [[ ${DEBUG:-0} == "1" ]]; then
