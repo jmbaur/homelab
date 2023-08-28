@@ -4,6 +4,18 @@ let
 
   network = "fdc9:ef0a:6a3c:0";
 
+  # find the route to a node given a graph of the network
+  routeToNode = graph: visited: start: end:
+    if start == end then
+      visited
+    else
+      lib.flatten (map
+        (node: routeToNode graph
+          (visited ++ [ start ])
+          node
+          end)
+        (lib.filter (node: !(lib.elem node (visited ++ [ start ]))) graph.${start}));
+
   inventory = lib.mapAttrs
     (name: publicKey: {
       ip = builtins.readFile (
@@ -14,6 +26,8 @@ let
       inherit publicKey;
     })
     (import ./inventory.nix);
+
+  graph = import ./graph.nix;
 
   host = inventory."${cfg.name}";
 
@@ -149,7 +163,8 @@ in
           in
           {
             wireguardPeerConfig = lib.recursiveUpdate extraConfig ({
-              AllowedIPs = [ (peer.ip + "/64") ];
+              # allow any IP on the network
+              AllowedIPs = lib.mapAttrsToList (_: { ip, ... }: ip + "/128") (lib.filterAttrs (name: _: name != cfg.name) inventory);
               PublicKey = peer.publicKey;
             } // lib.optionalAttrs (dnsName != null) {
               Endpoint = "${dnsName}:51820";
@@ -170,6 +185,25 @@ in
         # This is private DNS, so DNSSEC does not make sense here
         DNSSEC = false;
       };
+      # configure routes to all other nodes in the network
+      routes = lib.attrValues
+        (lib.filterAttrs (_: cfg: cfg != { })
+          (lib.mapAttrs
+            (name: { ip, ... }:
+              let
+                start = cfg.name;
+                end = name;
+                fullRoute = routeToNode graph [ ] start end;
+                firstHop = lib.elemAt fullRoute 1;
+              in
+              lib.optionalAttrs (lib.length fullRoute > 1) {
+                routeConfig = {
+                  Destination = inventory.${end}.ip + "/128";
+                  Gateway = inventory.${firstHop}.ip;
+                  GatewayOnLink = true;
+                };
+              })
+            inventory));
     };
 
     systemd.services.wg-mesh-coredns = {
@@ -225,7 +259,8 @@ in
             ip6 saddr ${ip} tcp dport { ${lib.concatMapStringsSep ", " toString allowedTCPPorts} } accept
           '') + (lib.optionalString (allowedUDPPorts != [ ]) ''
             ip6 saddr ${ip} udp dport { ${lib.concatMapStringsSep ", " toString allowedUDPPorts} } accept
-          '')))
+          ''))
+      )
       (lib.attrValues cfg.firewall);
 
 
