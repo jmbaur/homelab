@@ -49,13 +49,13 @@
       peers.rhubarb = { };
       firewall = {
         beetroot.allowAll = true;
-        carrot.allowedTCPPorts = [
-          19531 # systemd-journal-gatewayd
-          9153 # coredns
-          9430 # corerad
-          config.services.prometheus.exporters.blackbox.port
-          config.services.prometheus.exporters.node.port
-        ];
+        # carrot.allowedTCPPorts = [
+        #   19531 # systemd-journal-gatewayd
+        #   9153 # coredns
+        #   9430 # corerad
+        #   config.services.prometheus.exporters.blackbox.port
+        #   config.services.prometheus.exporters.node.port
+        # ];
       };
     };
 

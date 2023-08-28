@@ -2,7 +2,19 @@
 let
   cfg = config.custom.wg-mesh;
 
-  inventory = import ./inventory.nix;
+  network = "fdc9:ef0a:6a3c:0";
+
+  inventory = lib.mapAttrs
+    (name: publicKey: {
+      ip = builtins.readFile (
+        pkgs.runCommand "wg-mesh-${name}-ip" { } ''
+          hash=$(echo -n ${name} | sha256sum | cut -d' ' -f1)
+          echo -n ${network}:''${hash:0:4}:''${hash:4:4}:''${hash:8:4}:''${hash:12:4} > $out
+        '');
+      inherit publicKey;
+    })
+    (import ./inventory.nix);
+
   host = inventory."${cfg.name}";
 
   deviceUnit = "sys-subsystem-net-devices-wg0.device";
