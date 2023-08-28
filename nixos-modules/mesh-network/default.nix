@@ -228,7 +228,9 @@ in
           '')))
       (lib.attrValues cfg.firewall);
 
+
     # allow forwarding for all configured peers
+    boot.kernel.sysctl."net.ipv6.conf.wg0.forwarding" = true;
     networking.firewall.filterForward = true;
     networking.firewall.extraForwardRules = lib.concatMapStrings
       ({ name, ... }: ''
