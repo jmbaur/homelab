@@ -149,7 +149,7 @@ in
           in
           {
             wireguardPeerConfig = lib.recursiveUpdate extraConfig ({
-              AllowedIPs = [ (peer.ip + "/128") ];
+              AllowedIPs = [ (peer.ip + "/64") ];
               PublicKey = peer.publicKey;
             } // lib.optionalAttrs (dnsName != null) {
               Endpoint = "${dnsName}:51820";
