@@ -23,7 +23,7 @@ let
     internal {
       bind wg0
       hosts {
-        ${lib.concatMapStringsSep "\n    " ({ name, ...}: "${inventory.${name}.ip} ${name}.internal") (lib.attrValues cfg.peers) }
+        ${lib.concatStringsSep "\n    " (lib.mapAttrsToList (name: {ip, ...}: "${ip} ${name}.internal") inventory)}
       }
     }
   '';
@@ -227,5 +227,13 @@ in
             ip6 saddr ${ip} udp dport { ${lib.concatMapStringsSep ", " toString allowedUDPPorts} } accept
           '')))
       (lib.attrValues cfg.firewall);
+
+    # allow forwarding for all configured peers
+    networking.firewall.filterForward = true;
+    networking.firewall.extraForwardRules = lib.concatMapStrings
+      ({ name, ... }: ''
+        ip6 saddr ${inventory.${name}.ip} accept
+      '')
+      (lib.attrValues cfg.peers);
   };
 }
