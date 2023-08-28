@@ -35,11 +35,14 @@ with lib;
 
     system.build.deploy = pkgs.buildPackages.writeShellScriptBin "deploy" ''
       set -e
+
       deploy_type=''${1:-switch}
-      nix copy $NIXCOPYOPTS --to ssh-ng://${cfg.sshTarget} ${config.system.build.toplevel}
-      ssh $SSHOPTS ${cfg.sshTarget} \
+      target=''${SSHTARGET:-${cfg.sshTarget}}
+
+      nix copy $NIXCOPYOPTS --to ssh-ng://$target ${config.system.build.toplevel}
+      ssh $SSHOPTS $target \
         nix-env --profile /nix/var/nix/profiles/system --set ${config.system.build.toplevel}
-      ssh $SSHOPTS ${cfg.sshTarget} \
+      ssh $SSHOPTS $target \
         ${config.system.build.toplevel}/bin/switch-to-configuration "$deploy_type"
       if [[ "$deploy_type" == "boot" ]]; then
         echo "system set to switch to new configuration at next boot, reboot to see changes"
