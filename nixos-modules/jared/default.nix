@@ -389,6 +389,7 @@ in
               name = "config.nu";
               src = ./config.nu.in;
               inherit (pkgs.nushellPlugins) gstat;
+              inherit (pkgs) nu_scripts;
             };
           }
           {
