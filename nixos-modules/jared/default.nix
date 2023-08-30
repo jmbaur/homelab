@@ -385,7 +385,11 @@ in
           }
           {
             target = ".config/nushell/config.nu";
-            path = ./config.nu;
+            path = pkgs.substituteAll {
+              name = "config.nu";
+              src = ./config.nu.in;
+              inherit (pkgs.nushellPlugins) gstat;
+            };
           }
           {
             target = ".config/direnv/direnvrc";

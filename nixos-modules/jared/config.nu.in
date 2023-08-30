@@ -1,3 +1,7 @@
+# vim: ft=nu
+
+register @gstat@/bin/nu_plugin_gstat
+
 $env.config = {
     shell_integration: true
     show_banner: false
