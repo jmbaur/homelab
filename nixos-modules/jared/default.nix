@@ -40,8 +40,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    programs.fish.enable = true;
-
     # TODO(jared): scope these to just user
     qt = {
       style = "adwaita-dark";
@@ -60,7 +58,7 @@ in
 
       description = "Jared Baur";
 
-      shell = pkgs.fish;
+      shell = pkgs.nushell;
 
       openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
 
@@ -380,6 +378,14 @@ in
                 ''}
               end
             '';
+          }
+          {
+            target = ".config/nushell/env.nu";
+            path = ./env.nu;
+          }
+          {
+            target = ".config/nushell/config.nu";
+            path = ./config.nu;
           }
           {
             target = ".config/direnv/direnvrc";

@@ -55,7 +55,7 @@
   programs.adb.enable = true;
 
   nix.settings = {
-    substituters = [ "http://carrot.home.arpa" ];
+    substituters = [ "http://carrot.internal" ];
     trusted-public-keys = [ "carrot.home.arpa:dxp2PztB2LlcVufzgvhsrM9FvrDJcRvP2SqMXr3GSt8=" ];
     fallback = true;
   };
