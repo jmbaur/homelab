@@ -17,9 +17,15 @@ def create_left_prompt [] {
     let separator_color = (if (is-admin) { ansi light_red_bold } else { ansi light_green_bold })
     let path_segment = $"($path_color)($dir)"
 
-   let branch = gstat | get branch
+    let path = $path_segment | str replace --all (char path_sep) $"($separator_color)/($path_color)"
 
-   [ ($path_segment | str replace --all (char path_sep) $"($separator_color)/($path_color)") $"(ansi yellow)\(($branch))" ] | str join ' '
+    let branch = gstat | get branch
+
+    if $branch == "no_branch" {
+        $path
+    } else {
+        [$path] | append $"(ansi yellow)\(($branch))" | str join ' '
+    }
 }
 
 $env.PROMPT_COMMAND = {|| create_left_prompt }
