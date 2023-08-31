@@ -86,6 +86,7 @@ in
         usbutils
         w3m
         wireguard-tools
+        zellij
         zip
       ] ++ lib.optionals config.custom.dev.enable [
         ansifilter
@@ -380,14 +381,18 @@ in
             '';
           }
           {
+            target = ".config/zellij/config.kdl";
+            path = ./zellij-config.kdl;
+          }
+          {
             target = ".config/nushell/env.nu";
-            path = ./env.nu;
+            path = ./nushell-env.nu;
           }
           {
             target = ".config/nushell/config.nu";
             path = pkgs.substituteAll {
               name = "config.nu";
-              src = ./config.nu.in;
+              src = ./nushell-config.nu.in;
               inherit (pkgs.nushellPlugins) gstat;
               inherit (pkgs) nu_scripts;
             };

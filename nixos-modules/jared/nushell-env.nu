@@ -19,13 +19,7 @@ def create_left_prompt [] {
 
     let path = $path_segment | str replace --all (char path_sep) $"($separator_color)/($path_color)"
 
-    let branch = gstat | get branch
-
-    if $branch == "no_branch" {
-        $path
-    } else {
-        [$path] | append $"(ansi yellow)\(($branch))" | str join ' '
-    }
+    $path
 }
 
 $env.PROMPT_COMMAND = {|| create_left_prompt }
