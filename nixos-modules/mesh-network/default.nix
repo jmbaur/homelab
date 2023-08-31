@@ -4,18 +4,6 @@ let
 
   network = "fdc9:ef0a:6a3c:0";
 
-  # find the route to a node given a graph of the network
-  routeToNode = graph: visited: start: end:
-    if start == end then
-      visited
-    else
-      lib.flatten (map
-        (node: routeToNode graph
-          (visited ++ [ start ])
-          node
-          end)
-        (lib.filter (node: !(lib.elem node (visited ++ [ start ]))) graph.${start}));
-
   inventory = lib.mapAttrs
     (name: publicKey: {
       ip = builtins.readFile (
@@ -26,8 +14,6 @@ let
       inherit publicKey;
     })
     (import ./inventory.nix);
-
-  graph = import ./graph.nix;
 
   host = inventory."${cfg.name}";
 
@@ -177,25 +163,6 @@ in
         # This is private DNS, so DNSSEC does not make sense here
         DNSSEC = false;
       };
-      # configure routes to all other nodes in the network
-      routes = lib.attrValues
-        (lib.filterAttrs (_: cfg: cfg != { })
-          (lib.mapAttrs
-            (name: { ip, ... }:
-              let
-                start = cfg.name;
-                end = name;
-                fullRoute = routeToNode graph [ ] start end;
-                firstHop = lib.elemAt fullRoute 1;
-              in
-              lib.optionalAttrs (lib.length fullRoute > 1) {
-                routeConfig = {
-                  Destination = inventory.${end}.ip + "/128";
-                  Gateway = inventory.${firstHop}.ip;
-                  GatewayOnLink = true;
-                };
-              })
-            inventory));
     };
 
     networking.extraHosts = extraHosts;
@@ -234,18 +201,8 @@ in
             ip6 saddr ${ip} tcp dport { ${lib.concatMapStringsSep ", " toString allowedTCPPorts} } accept
           '') + (lib.optionalString (allowedUDPPorts != [ ]) ''
             ip6 saddr ${ip} udp dport { ${lib.concatMapStringsSep ", " toString allowedUDPPorts} } accept
-          ''))
-      )
+          '')
+          ))
       (lib.attrValues cfg.firewall);
-
-
-    # allow forwarding for all configured peers
-    boot.kernel.sysctl."net.ipv6.conf.wg0.forwarding" = true;
-    networking.firewall.filterForward = true;
-    networking.firewall.extraForwardRules = lib.concatMapStrings
-      ({ name, ... }: ''
-        ip6 saddr ${inventory.${name}.ip} accept
-      '')
-      (lib.attrValues cfg.peers);
   };
 }

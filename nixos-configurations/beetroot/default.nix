@@ -43,8 +43,6 @@
     };
   };
 
-  systemd.network.networks.wg0.linkConfig.ActivationPolicy = "manual";
-
   nixpkgs.config.allowUnfree = true;
 
   sops = {
@@ -55,7 +53,7 @@
   programs.adb.enable = true;
 
   nix.settings = {
-    substituters = [ "http://carrot.internal" ];
+    substituters = [ "http://carrot.home.arpa" ];
     trusted-public-keys = [ "carrot.home.arpa:dxp2PztB2LlcVufzgvhsrM9FvrDJcRvP2SqMXr3GSt8=" ];
     fallback = true;
   };
