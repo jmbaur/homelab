@@ -222,6 +222,7 @@ in
         boot.kernelParams = [ "pd_ignore_unused" "clk_ignore_unused" "console=ttyMSM0,115200" ];
         disabledModules = [ "${modulesPath}/profiles/installation-device.nix" ];
         hardware.chromebook.enable = true;
+        services.fwupd.enable = false;
         nixpkgs.hostPlatform = "aarch64-linux";
         custom.crossCompile.enable = true;
         custom.disableZfs = true;

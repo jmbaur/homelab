@@ -65,6 +65,7 @@ in
       packages = with pkgs; ([
         (weechat.override { configure = { ... }: { scripts = with pkgs.weechatScripts; [ weechat-matrix ]; }; })
         age-plugin-yubikey
+        carapace
         croc
         gmni
         iperf3
