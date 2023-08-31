@@ -68,6 +68,7 @@ in
         croc
         gmni
         iperf3
+        jc
         librespeed-cli
         nmap
         nvme-cli
