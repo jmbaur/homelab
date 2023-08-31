@@ -387,6 +387,13 @@ in
             path = ./zellij-config.kdl;
           }
           {
+            target = ".config/starship.toml";
+            path = (pkgs.formats.toml { }).generate "starship.toml" {
+              add_newline = false;
+              format = "$username$hostname$directory$git_branch$git_commit$git_state$git_metrics$git_status$character";
+            };
+          }
+          {
             target = ".config/nushell/env.nu";
             path = ./nushell-env.nu;
           }
@@ -397,6 +404,9 @@ in
               src = ./nushell-config.nu.in;
               inherit (pkgs.nushellPlugins) gstat;
               inherit (pkgs) nu_scripts;
+              starshipInit = pkgs.runCommand "starship-init.nu" { } ''
+                ${pkgs.starship}/bin/starship init nu > $out
+              '';
             };
           }
           {
