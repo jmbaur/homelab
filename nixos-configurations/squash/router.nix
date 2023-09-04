@@ -81,15 +81,6 @@
     services.openssh.openFirewall = false;
     networking.firewall.interfaces.${config.systemd.network.networks.lan.name}.allowedTCPPorts = [ 22 ];
 
-    # The hostapd nixos module uses gnu coreutils' `cat`, which uses the
-    # fadvise64_64 system call, which does not work on armv7 with this module
-    # (using SystemCallFilter) for some reason (see
-    # https://github.com/systemd/systemd/issues/28350). This fixes the issue by
-    # placing busybox in the service's PATH before coreutils. Busybox's `cat`
-    # does not use fadvise64_64, so this works fine for now.
-    # PR for fix: https://github.com/systemd/systemd/pull/28351
-    systemd.services.hostapd.path = lib.mkBefore [ pkgs.busybox ];
-
     environment.systemPackages = [ pkgs.iw ];
 
     services.hostapd = {

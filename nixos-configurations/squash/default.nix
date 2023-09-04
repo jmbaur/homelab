@@ -7,6 +7,20 @@
 
   hardware.armada-a38x.enable = true;
 
+  nixpkgs.overlays = [
+    (_: prev: {
+      systemd = prev.systemd.overrideAttrs (old: {
+        patches = (old.patches or [ ]) ++ [
+          (prev.fetchpatch {
+            name = "add-arm_fadvise64_64-to-system-service-group";
+            url = "https://github.com/systemd/systemd/commit/9f52c2bda8f5042eabf661d05600092326d67f60.patch";
+            hash = "sha256-iFtlSDoaehEhHwS682tv90a4Qf4VITr6N9lDK2ItwuE=";
+          })
+        ];
+      });
+    })
+  ];
+
   custom = {
     crossCompile.enable = true;
     server.enable = true;
