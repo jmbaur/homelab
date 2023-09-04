@@ -220,6 +220,7 @@ in
           settings.board = "trogdor-wormdingler";
         };
         boot.kernelParams = [ "pd_ignore_unused" "clk_ignore_unused" "console=ttyMSM0,115200" ];
+        boot.initrd.availableKernelModules = [ "msm" ];
         disabledModules = [ "${modulesPath}/profiles/installation-device.nix" ];
         hardware.chromebook.enable = true;
         services.fwupd.enable = false;
@@ -231,6 +232,9 @@ in
         sdImage.populateRootCommands = ''
           mkdir -p ./files/boot
           ${config.boot.loader.generic-extlinux-compatible.populateCmd} -c ${config.system.build.toplevel} -d ./files/boot
+          echo "signing boot files"
+          find ./files/boot/nixos -type f \
+            -exec ${config.tinyboot.settings.build.linux}/bin/sign-file sha256 ${config.tinyboot.settings.verifiedBoot.signingPrivateKey} ${config.tinyboot.settings.verifiedBoot.signingPublicKey} {} \;
         '';
 
       })

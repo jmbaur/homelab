@@ -1,5 +1,7 @@
 { config, lib, pkgs, ... }: {
   config = lib.mkIf config.router.enable {
+    services.usbguard.enable = true;
+
     sops.defaultSopsFile = ./secrets.yaml;
     sops.secrets.ipwatch_env = { };
 
