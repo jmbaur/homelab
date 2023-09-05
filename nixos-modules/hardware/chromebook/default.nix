@@ -1,5 +1,5 @@
 { config, lib, pkgs, ... }: {
-  imports = [ ./mediatek.nix ];
+  imports = [ ./mediatek.nix ./qualcomm.nix ];
 
   options.hardware.chromebook.enable = lib.mkEnableOption "chromebook";
   config = lib.mkIf config.hardware.chromebook.enable {

@@ -89,7 +89,6 @@
     };
   };
 
-
   services.harmonia = {
     enable = true;
     signKeyPath = "/var/lib/secrets/harmonia.secret";
