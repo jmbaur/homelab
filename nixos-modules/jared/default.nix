@@ -402,7 +402,6 @@ in
             path = pkgs.substituteAll {
               name = "config.nu";
               src = ./nushell-config.nu.in;
-              inherit (pkgs.nushellPlugins) gstat;
               inherit (pkgs) nu_scripts;
               starshipInit = pkgs.runCommand "starship-init.nu" { } ''
                 ${pkgs.starship}/bin/starship init nu > $out
