@@ -115,11 +115,11 @@
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1686747123,
-        "narHash": "sha256-XUQK9kwHpTeilHoad7L4LjMCCyY13Oq383CoFADecRE=",
+        "lastModified": 1694158470,
+        "narHash": "sha256-yWx9eBDHt6WR3gr65+J85KreHdMypty/P6yM35tIYYM=",
         "owner": "serokell",
         "repo": "deploy-rs",
-        "rev": "724463b5a94daa810abfc64a4f87faef4e00f984",
+        "rev": "d0cfc042eba92eb206611c9e8784d41a2c053bab",
         "type": "github"
       },
       "original": {
@@ -135,11 +135,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1694069327,
-        "narHash": "sha256-Si2otUNjCe8kY5nsV7tILi4PsI0odBFrdSu8cCjn/eQ=",
+        "lastModified": 1694266353,
+        "narHash": "sha256-NutPFFKc5FK05zq8JYm8quBKJ93goYowxjW/FKcXAdI=",
         "owner": "nix-community",
         "repo": "disko",
-        "rev": "7bee8de8e6755506c70323b864a884f9624cc23a",
+        "rev": "f9907fcf6df79a76ea7e3a3afe9340a672cb9c6e",
         "type": "github"
       },
       "original": {
@@ -742,11 +742,11 @@
         "pre-commit": "pre-commit"
       },
       "locked": {
-        "lastModified": 1693717201,
-        "narHash": "sha256-Bnbxl0G7nEngEqdOWZfHFsEs6p2QdfMlraZG3XeBe6k=",
+        "lastModified": 1694309888,
+        "narHash": "sha256-1WRXeMCcfNrL1kvMtSJic/6CCFo/GB1piIsqmyH7aq8=",
         "owner": "jmbaur",
         "repo": "gobar",
-        "rev": "0e6f55fdb65305707c6302eefdce449502602121",
+        "rev": "548448c5ce8dc517c9bf7677b0cae13f0b1ae49e",
         "type": "github"
       },
       "original": {
@@ -762,11 +762,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1693711344,
-        "narHash": "sha256-OoETOZ7YpcS0u3g53iNpUdYFRavojEU8Vow93CKOPmw=",
+        "lastModified": 1694309906,
+        "narHash": "sha256-VaWR5Mm1P96+anjZCPGwtOLPMuCdL6GIi6ffwx9eYqw=",
         "owner": "jmbaur",
         "repo": "gosee",
-        "rev": "c159355d95039888d56eac75d0030dd080fd134a",
+        "rev": "705f6d7c540150bb222fdc6005ff65972f417837",
         "type": "github"
       },
       "original": {
@@ -783,11 +783,11 @@
         "pre-commit-hooks": "pre-commit-hooks"
       },
       "locked": {
-        "lastModified": 1693717276,
-        "narHash": "sha256-EdSYerk+1MSSqD6Y602iRnDulEdBS61xfBKGQVLygpU=",
+        "lastModified": 1694309851,
+        "narHash": "sha256-sItM6oEtWgAc9G9O/nxYdyoPxYK09OWyJliqJF+dnTw=",
         "owner": "jmbaur",
         "repo": "ipwatch",
-        "rev": "96ac2f5e74a13698d60d066b1f2764e9ee60b22a",
+        "rev": "129ff24b53f99978357545f6956e6ef41df41590",
         "type": "github"
       },
       "original": {
@@ -850,11 +850,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1693938349,
-        "narHash": "sha256-EfBNsd0okJz0PrBiLxTKQVpZKxrQe+Xn/Ji/o4bCTyc=",
+        "lastModified": 1694176289,
+        "narHash": "sha256-246x9Nem9+6V9r7SX+t0dX1qTU2f3e2dfDtmQ+WAQYs=",
         "owner": "astro",
         "repo": "microvm.nix",
-        "rev": "8d2a99baa151bc120b3f062aadbfaca7a942c23a",
+        "rev": "25460d97cffffe24f565a9d654c4aab1848598b4",
         "type": "github"
       },
       "original": {
@@ -1104,11 +1104,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1694139708,
-        "narHash": "sha256-b9Z3V0TIduiHzLqjNPYGFxB7UZ/Oxlfnw/Yg3kkZmgg=",
+        "lastModified": 1694307990,
+        "narHash": "sha256-a7G3BlQhlD9FPm4RDXSUclnJGi1NMdYo2skg90p10xY=",
         "owner": "nix-community",
         "repo": "nixpkgs-wayland",
-        "rev": "778aad15d7665104b2f877c12e6fab85f6486474",
+        "rev": "242a5048488396894a53d9240b655b9dd38e39da",
         "type": "github"
       },
       "original": {
@@ -1119,11 +1119,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1693985761,
-        "narHash": "sha256-K5b+7j7Tt3+AqbWkcw+wMeqOAWyCD1MH26FPZyWXpdo=",
+        "lastModified": 1694183432,
+        "narHash": "sha256-YyPGNapgZNNj51ylQMw9lAgvxtM2ai1HZVUu3GS8Fng=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "0bffda19b8af722f8069d09d8b6a24594c80b352",
+        "rev": "db9208ab987cdeeedf78ad9b4cf3c55f5ebd269b",
         "type": "github"
       },
       "original": {
@@ -1396,11 +1396,11 @@
         "pre-commit-hooks": "pre-commit-hooks_3"
       },
       "locked": {
-        "lastModified": 1693717223,
-        "narHash": "sha256-Gtsh5TtjbcJ2XXyeJkiM5QMMuz6LNDUXIXEIm265eS0=",
+        "lastModified": 1694309838,
+        "narHash": "sha256-73Nzr1H8djIFWe9f4E3v3wni51g987U3fwD2VAasDF4=",
         "owner": "jmbaur",
         "repo": "runner-nix",
-        "rev": "49bb7ab284620e2662be854714015a23925fc805",
+        "rev": "40bb3a374baa3ff9bff775e74a2c7bc4a3b97fe9",
         "type": "github"
       },
       "original": {
