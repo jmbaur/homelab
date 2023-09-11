@@ -176,7 +176,7 @@ inputs: with inputs; {
         };
         jmbaur-github-ssh-keys = prev.fetchurl {
           url = "https://github.com/jmbaur.keys";
-          sha256 = "sha256-AWOgwTfJ7a2t+8VOViNQCXMDGe+zx29jHOqgFPnlzCo=";
+          sha256 = "sha256-B80abOJCi8MoPQsGOVTKtufchA/xnpMnap+n2RY0Wcw=";
         };
       })
   ];
