@@ -51,6 +51,8 @@ in
       "--line-height=30"
     ];
 
+    programs.zsh.enable = true;
+
     users.users.${cfg.username} = {
       inherit (cfg) passwordFile;
 
@@ -58,7 +60,7 @@ in
 
       description = "Jared Baur";
 
-      shell = pkgs.nushell;
+      shell = pkgs.zsh;
 
       openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
 
@@ -406,6 +408,14 @@ in
               starshipInit = pkgs.runCommand "starship-init.nu" { } ''
                 ${pkgs.starship}/bin/starship init nu > $out
               '';
+            };
+          }
+          {
+            target = ".zshrc";
+            path = pkgs.substituteAll {
+              name = "zshrc";
+              src = ./rc.zsh.in;
+              direnvHook = pkgs.runCommand "direnv-hook.zsh" { } "${pkgs.direnv}/bin/direnv hook zsh > $out";
             };
           }
           {

@@ -1,0 +1,30 @@
+# prompt
+# if [[ -n "$SSH_CONNECTION" ]]; then
+#   psvar=("ssh")
+# else
+#   psvar=()
+# fi
+autoload -Uz vcs_info
+# set_window_title() { print -Pn "\e]0;[%m] %~\a" }
+# precmd_functions+=(vcs_info set_window_title)
+precmd_functions+=(vcs_info)
+zstyle ':vcs_info:*' actionformats '(%b|%a)'
+zstyle ':vcs_info:git:*' formats '(%b)'
+zstyle ':vcs_info:*' enable git
+# PROMPT='[%F{%(0V.yellow.green)}%m%f:%F{white}%2~%f$vcs_info_msg_0_%(?..:%F{red}%?%f)]%(!.#.%#) '
+
+precmd() { print "" }
+PROMPT='%B%F{green}[%n@%m:%2~]$vcs_info_msg_0_$%f%b '
+
+# keybindings
+bindkey -e
+bindkey \^U backward-kill-line
+
+# interactivity
+setopt interactivecomments
+setopt nonomatch
+setopt prompt_subst
+autoload -U select-word-style
+select-word-style bash
+
+source "@direnvHook@"
