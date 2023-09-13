@@ -17,13 +17,6 @@ with lib;
     environment.systemPackages = [ pkgs.man-pages pkgs.man-pages-posix ];
     documentation.dev.enable = true;
 
-    environment.variables.EDITOR = lib.mkForce "nvim";
-
-    nix.settings = {
-      keep-outputs = true;
-      keep-derivations = true;
-    };
-
     programs.ssh.startAgent = true;
 
     virtualisation.containers = {

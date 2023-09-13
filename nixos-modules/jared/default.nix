@@ -411,6 +411,12 @@ in
             };
           }
           {
+            target = ".zshenv";
+            path = pkgs.writeText "zshenv" ''
+              export EDITOR=nvim
+            '';
+          }
+          {
             target = ".zshrc";
             path = pkgs.substituteAll {
               name = "zshrc";
