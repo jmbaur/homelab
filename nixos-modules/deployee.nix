@@ -41,11 +41,13 @@ with lib;
           deploy_type=''${1:-switch}
           target=''${SSHTARGET:-${cfg.sshTarget}}
 
-          nix copy "$NIXCOPYOPTS" --to "ssh-ng://''${target}" ${config.system.build.toplevel}
-          ssh "$SSHOPTS" "$target" \
+          # shellcheck disable=SC2086
+          nix copy ''${NIXCOPYOPTS:-} --to "ssh-ng://''${target}" ${config.system.build.toplevel}
+          # shellcheck disable=SC2086
+          ssh ''${SSHOPTS:-} "$target" \
             nix-env --profile /nix/var/nix/profiles/system --set ${config.system.build.toplevel}
-          # shellcheck disable=SC2029
-          ssh "$SSHOPTS" "$target" \
+          # shellcheck disable=SC2029,SC2086
+          ssh ''${SSHOPTS:-} "$target" \
             ${config.system.build.toplevel}/bin/switch-to-configuration "$deploy_type"
           if [[ "$deploy_type" == "boot" ]]; then
             echo "system set to switch to new configuration at next boot, reboot to see changes"
