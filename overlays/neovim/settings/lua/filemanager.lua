@@ -1,4 +1,6 @@
-local oil = require("oil")
+local mini_files = require("mini.files")
 
-oil.setup()
-vim.keymap.set("n", "-", oil.open, { desc = "Open parent directory" })
+-- don't show icons
+mini_files.setup({ content = { prefix = function() end } })
+
+vim.keymap.set("n", "-", MiniFiles.open, { desc = "Open parent directory" })

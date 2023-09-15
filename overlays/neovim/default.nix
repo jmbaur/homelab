@@ -51,7 +51,6 @@ let
         nvim-treesitter-refactor
         nvim-treesitter-textobjects
         nvim-treesitter.withAllGrammars
-        oil-nvim
         playground
         smartyank-nvim
         snippets-nvim
