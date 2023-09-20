@@ -15,6 +15,7 @@ with lib; {
 
     # opt out of nix channels
     nix.channel.enable = false;
+    nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
 
     environment.systemPackages = [ pkgs.nixos-kexec pkgs.bottom pkgs.tmux ];
 
