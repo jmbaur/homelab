@@ -1,20 +1,13 @@
-# prompt
-# if [[ -n "$SSH_CONNECTION" ]]; then
-#   psvar=("ssh")
-# else
-#   psvar=()
-# fi
+# prompt and window title
 autoload -Uz vcs_info
-# set_window_title() { print -Pn "\e]0;[%m] %~\a" }
-# precmd_functions+=(vcs_info set_window_title)
-precmd_functions+=(vcs_info)
+set_window_title() { print -Pn "\e]0;%n@%m: %~\a" } # same as bash
+precmd_functions+=(vcs_info set_window_title)
 zstyle ':vcs_info:*' actionformats '(%b|%a)'
 zstyle ':vcs_info:git:*' formats '(%b)'
 zstyle ':vcs_info:*' enable git
-# PROMPT='[%F{%(0V.yellow.green)}%m%f:%F{white}%2~%f$vcs_info_msg_0_%(?..:%F{red}%?%f)]%(!.#.%#) '
 
-precmd() { print "" }
-PROMPT='%B%F{green}[%n@%m:%2~]$vcs_info_msg_0_$%f%b '
+precmd() { print "" } # newline before each prompt
+PROMPT='%B%S[%n@%m:%2~]$vcs_info_msg_0_$%s%b '
 
 # keybindings
 bindkey -e
