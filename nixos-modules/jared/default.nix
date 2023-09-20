@@ -7,7 +7,7 @@ in
 {
   options.custom.users.jared = with lib; {
     enable = mkEnableOption "jared";
-    passwordFile = mkOption {
+    hashedPasswordFile = mkOption {
       type = types.nullOr types.path;
       default = null;
     };
@@ -54,7 +54,7 @@ in
     programs.zsh.enable = true;
 
     users.users.${cfg.username} = {
-      inherit (cfg) passwordFile;
+      inherit (cfg) hashedPasswordFile;
 
       isNormalUser = true;
 

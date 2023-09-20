@@ -36,7 +36,7 @@
     laptop.enable = true;
     users.jared = {
       enable = true;
-      passwordFile = config.sops.secrets.jared_password.path;
+      hashedPasswordFile = config.sops.secrets.jared_password.path;
     };
     remoteBuilders.aarch64builder.enable = false;
     wg-mesh = {
