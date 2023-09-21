@@ -197,7 +197,7 @@ in
       # config files
       (map
         ({ target, path }: "L+ %h/${target} - - - - ${path}")
-        [
+        ([
           {
             target = ".config/kitty/kitty.conf";
             path = pkgs.writeText "kitty.conf" ''
@@ -421,6 +421,7 @@ in
             path = pkgs.substituteAll {
               name = "zshrc";
               src = ./rc.zsh.in;
+              nixYourShell = pkgs.runCommand "nix-your-shell.zsh" { } "${pkgs.nix-your-shell}/bin/nix-your-shell zsh > $out";
               direnvHook = pkgs.runCommand "direnv-hook.zsh" { } "${pkgs.direnv}/bin/direnv hook zsh > $out";
             };
           }
@@ -508,6 +509,33 @@ in
               j = pkgs.j;
             };
           }
-        ]);
+        ] ++ lib.optional (config.custom.laptop.enable && config.custom.laptop.displays != { }) {
+          target = ".config/kanshi/config";
+          path =
+            let
+              splitDisplays = lib.partition (disp: disp.isInternal) (lib.mapAttrsToList
+                (match: { isInternal, ... }: { inherit match isInternal; })
+                config.custom.laptop.displays);
+              internalDisplays = splitDisplays.right;
+              externalDisplays = splitDisplays.wrong;
+            in
+            pkgs.writeText "kanshi.config" ''
+              profile docked {
+                ${lib.concatMapStrings (disp: ''
+                  output '${disp.match}' disable
+                '') internalDisplays}
+                ${lib.concatMapStrings (disp: ''
+                  output '${disp.match}' enable
+                '') externalDisplays}
+              }
+
+              profile undocked {
+                ${lib.concatMapStrings (disp: ''
+                  output '${disp.match}' enable
+                '') internalDisplays}
+              }
+            '';
+        })
+      );
   };
 }

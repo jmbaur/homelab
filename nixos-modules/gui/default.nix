@@ -152,6 +152,16 @@ with lib;
       wantedBy = [ swaySessionTarget ];
     };
 
+    systemd.user.services.display-manager = {
+      inherit (config.custom.laptop) enable;
+      description = "laptop display manager";
+      after = [ swaySessionTarget ];
+      partOf = [ swaySessionTarget ];
+      unitConfig.ConditionPathExists = "%h/.config/kanshi/config";
+      serviceConfig.ExecStart = "${pkgs.kanshi}/bin/kanshi";
+      wantedBy = [ swaySessionTarget ];
+    };
+
     systemd.user.services.yubikey-touch-detector = {
       description = "yubikey touch detector";
       after = [ swaySessionTarget ];

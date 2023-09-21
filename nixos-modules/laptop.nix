@@ -4,7 +4,17 @@ let
 in
 
 {
-  options.custom.laptop.enable = lib.mkEnableOption "laptop config";
+  options.custom.laptop = with lib; {
+    enable = mkEnableOption "laptop config";
+    displays = mkOption {
+      type = types.attrsOf (types.submodule {
+        options = {
+          isInternal = mkEnableOption "internal display";
+        };
+      });
+      default = { };
+    };
+  };
   config = lib.mkIf cfg.enable {
     services.xserver.xkbOptions = lib.mkDefault "ctrl:nocaps";
 

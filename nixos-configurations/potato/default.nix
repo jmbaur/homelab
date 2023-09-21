@@ -30,7 +30,13 @@
   custom = {
     dev.enable = true;
     gui.enable = true;
-    laptop.enable = true;
+    laptop = {
+      enable = true;
+      displays = {
+        eDP-1.isInternal = true;
+        "Lenovo Group Limited LEN P24q-20 V306P4GR" = { };
+      };
+    };
     users.jared.enable = true;
     remoteBuilders.aarch64builder.enable = false;
     wg-mesh.enable = false;
