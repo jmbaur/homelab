@@ -7,16 +7,6 @@ with lib; {
   options.custom.common.enable = mkEnableOption "common config" // { default = true; };
 
   config = mkIf cfg.enable {
-    # 2.16 has a fix for ssh control master when nix-copy'ing
-    nix.package = if lib.versionAtLeast pkgs.nix.version "2.16" then pkgs.nix else pkgs.nixVersions.nix_2_16;
-
-    # pin a local system's registry for nixpkgs
-    nix.registry.nixpkgs.flake = inputs.nixpkgs;
-
-    # opt out of nix channels
-    nix.channel.enable = false;
-    nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
-
     environment.systemPackages = [ pkgs.nixos-kexec pkgs.bottom pkgs.tmux ];
 
     programs.vim.defaultEditor = true;
@@ -34,8 +24,17 @@ with lib; {
     i18n.defaultLocale = "en_US.UTF-8";
     console.useXkbConfig = true;
 
+    # 2.16 has a fix for ssh control master when nix-copy'ing
+    nix.package = if lib.versionAtLeast pkgs.nix.version "2.16" then pkgs.nix else pkgs.nixVersions.nix_2_16;
+
+    # pin a local system's registry for nixpkgs
+    nix.registry.nixpkgs.flake = inputs.nixpkgs;
+
     nix = {
+      channel.enable = false; # opt out of nix channels
+      nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
       settings = {
+        nix-path = config.nix.nixPath;
         experimental-features = [ "nix-command" "flakes" "repl-flake" ];
         trusted-users = [ "@wheel" ];
       };
