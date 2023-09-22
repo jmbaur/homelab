@@ -17,6 +17,9 @@ with lib;
       pulse.enable = true;
     };
 
+    boot.extraModulePackages = [ config.boot.kernelPackages.ddcci-driver ];
+    boot.kernelModules = [ "ddcci" ];
+
     fonts.fontconfig.enable = true;
     fonts.packages = [ pkgs.jetbrains-mono ];
 

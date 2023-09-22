@@ -13,5 +13,14 @@
       "tpm_tis_spi"
     ] ++ (lib.optionals (pkgs.stdenv.hostPlatform.system == "x86_64-linux")
       [ "intel_lpss_pci" "spi_pxa2xx_platform" "spi_intel_pci" ]);
+
+    services.udev.packages = [
+      (pkgs.runCommand "chromiumos-autosuspend-udev-rules" { } ''
+        mkdir -p $out/lib/udev/rules.d
+        ${lib.getExe pkgs.python3} \
+          ${config.systemd.package.src}/tools/chromiumos/gen_autosuspend_rules.py \
+          >$out/lib/udev/rules.d/01-chromium-autosuspend.rules
+      '')
+    ];
   };
 }
