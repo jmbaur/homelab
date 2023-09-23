@@ -35,6 +35,7 @@ with lib;
           stop() { systemctl restart --user idle.service; }
           trap stop EXIT SIGINT
           systemctl stop --user idle.service
+          echo "Press CTRL-C to restart auto-sleep"
           sleep infinity
         '';
       })

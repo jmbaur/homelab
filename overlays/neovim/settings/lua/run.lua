@@ -25,7 +25,7 @@ local make_nix_run_builtin = function(executable_name, nix_run_fallback)
 end
 
 local nix_repl = function()
-	return "nix repl nixpkgs"
+	return "nix repl --expr 'import <nixpkgs>{}'"
 end
 
 local current_shell = function()
