@@ -110,51 +110,36 @@ inputs: with inputs; {
 
         grafana-dashboards = prev.callPackage ./grafana-dashboards { };
 
-        # Enable FIT images (w/signatures), UEFI compatibility, and modify some hardware.
-        # - CON2 is located nearest the CPU
-        # - CON3 is located nearest the edge of the device
-        ubootClearfog = prev.ubootClearfog.override {
+        ubootClearfog = (prev.ubootClearfog.override {
           filesToInstall = [ "u-boot-with-spl.kwb" ];
+          # UEFI support
           extraConfig = ''
-            CONFIG_CLEARFOG_CON2_PCI=y
-            CONFIG_CLEARFOG_CON2_SATA=n
-            CONFIG_CLEARFOG_CON3_PCI=y
-            CONFIG_CLEARFOG_CON3_SATA=n
-            CONFIG_CLEARFOG_SFP_25GB=y
-
-            CONFIG_FIT=y
-            CONFIG_FIT_SIGNATURE=y
-            CONFIG_RSA=y
-
             CONFIG_BLK=y
             CONFIG_CMD_BOOTEFI=y
             CONFIG_EFI_LOADER=y
+            CONFIG_EFI_SECURE_BOOT=y
+            CONFIG_FIT=y
+            CONFIG_FIT_SIGNATURE=y
             CONFIG_PARTITIONS=y
+            CONFIG_RSA=y
           '';
-          # default boot device is mmc
-          extraMeta.bootDevice = "mmc";
-        };
-        ubootClearfogUart = prev.ubootClearfog.override {
-          inherit (final.ubootClearfog) filesToInstall;
+        }).overrideAttrs (old: {
+          # needed for CONFIG_EFI_SECURE_BOOT
+          nativeBuildInputs = old.nativeBuildInputs ++ [ prev.buildPackages.perl ];
+        });
+        ubootClearfogUart = final.ubootClearfog.override {
           extraConfig = final.ubootClearfog.extraConfig + ''
             CONFIG_MVEBU_SPL_BOOT_DEVICE_MMC=n
             CONFIG_MVEBU_SPL_BOOT_DEVICE_UART=y
           '';
-          extraMeta.bootDevice = "uart";
         };
-        ubootClearfogSpi = prev.ubootClearfog.override {
-          inherit (final.ubootClearfog) filesToInstall;
-          extraConfig = final.ubootClearfog.extraConfig + ''
-            CONFIG_MVEBU_SPL_BOOT_DEVICE_MMC=n
-            CONFIG_MVEBU_SPL_BOOT_DEVICE_SPI=y
-            CONFIG_ENV_SECT_SIZE=0x10000
-            CONFIG_SUPPORT_EMMC_BOOT=y
-          '';
+        ubootClearfogSpi = final.ubootClearfog.override {
+          defconfig = "clearfog_spi_defconfig";
+          # TODO(jared): don't do this once we get mtdparts working
           postInstall = ''
             dd bs=1M count=4 if=/dev/zero of=$out/firmware.bin
             dd conv=notrunc if=$out/u-boot-with-spl.kwb of=$out/firmware.bin
           '';
-          extraMeta.bootDevice = "spi";
         };
 
         cn913x_build_repo = prev.fetchFromGitHub {
