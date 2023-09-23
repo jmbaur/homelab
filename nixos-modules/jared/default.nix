@@ -138,6 +138,7 @@ in
         mosh
         neovim-all-languages
         nix-diff
+        nix-output-monitor
         nix-prefetch-scripts
         nix-tree
         nixos-generators
