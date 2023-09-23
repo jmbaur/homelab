@@ -1,11 +1,13 @@
 vim.g.mapleader = " "
 
 if #vim.api.nvim_list_uis() > 0 then
+	local launcher = require("launcher")
+	launcher.setup()
+
 	require("compile")
 	require("filemanager")
 	require("gosee").setup()
-	require("launcher")
-	require("lsp")
+	require("lsp").setup({ launcher = launcher })
 	require("mini.tabline").setup({ show_icons = false, set_vim_settings = false })
 	require("mini.trailspace").setup({})
 	require("run").setup()

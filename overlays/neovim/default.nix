@@ -40,7 +40,6 @@ let
     plugins = with vimPlugins;
       # start
       [
-        fzf-lua
         gosee-nvim
         jmbaur-settings
         mini-nvim
@@ -54,7 +53,9 @@ let
         playground
         smartyank-nvim
         snippets-nvim
+        telescope-frecency-nvim
         telescope-nvim
+        telescope-ui-select-nvim
         toggleterm-nvim
         vim-dispatch
         vim-eunuch

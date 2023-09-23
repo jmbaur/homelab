@@ -1,37 +1,27 @@
-local fzf = require("fzf-lua")
-local actions = require("fzf-lua.actions")
+local telescope = require("telescope")
+local telescope_builtins = require("telescope.builtin")
 
-fzf.setup({
-	fzf_bin = "sk",
-	files = {
-		file_icons = false,
-		git_icons = false,
-		actions = {
-			-- override the default action for horizontal split
-			["ctrl-b"] = actions.file_split,
-		},
-	},
-	grep = {
-		file_icons = false,
-		git_icons = false,
-	},
-	lsp = {
-		file_icons = false,
-		git_icons = false,
-	},
-	diagnostics = {
-		file_icons = false,
-		git_icons = false,
-	},
-})
+local document_diagnostics = function()
+	telescope_builtins.diagnostics({ bufnr = 0 })
+end
 
-fzf.register_ui_select()
+local M = {}
+M.setup = function()
+	telescope.load_extension("frecency")
+	telescope.load_extension("ui-select")
 
-vim.keymap.set("n", "<leader>?", fzf.help_tags, { desc = "Find help tags" })
-vim.keymap.set("n", "<leader>_", fzf.registers, { desc = "Find registers" })
-vim.keymap.set("n", "<leader>b", fzf.buffers, { desc = "Find buffers" })
-vim.keymap.set("n", "<leader>d", fzf.lsp_document_diagnostics, { desc = "Find document diagnostics" })
-vim.keymap.set("n", "<leader>f", fzf.files, { desc = "Find files" })
-vim.keymap.set("n", "<leader>g", fzf.live_grep, { desc = "Find regexp pattern" })
-vim.keymap.set("n", "<leader>h", fzf.command_history, { desc = "Find Ex-mode history" })
-vim.keymap.set("n", "<leader>w", fzf.lsp_workspace_diagnostics, { desc = "Find workspace diagnostics" })
+	vim.keymap.set("n", "<leader>?", telescope_builtins.help_tags, { desc = "Find help tags" })
+	vim.keymap.set("n", "<leader>F", telescope.extensions.frecency.frecency, { desc = "Find files (frecency)" })
+	vim.keymap.set("n", "<leader>_", telescope_builtins.registers, { desc = "Find registers" })
+	vim.keymap.set("n", "<leader>b", telescope_builtins.buffers, { desc = "Find buffers" })
+	vim.keymap.set("n", "<leader>d", document_diagnostics, { desc = "Find document diagnostics" })
+	vim.keymap.set("n", "<leader>f", telescope_builtins.find_files, { desc = "Find files (frecency)" })
+	vim.keymap.set("n", "<leader>g", telescope_builtins.live_grep, { desc = "Find regexp pattern" })
+	vim.keymap.set("n", "<leader>h", telescope_builtins.command_history, { desc = "Find Ex-mode history" })
+	vim.keymap.set("n", "<leader>w", telescope_builtins.diagnostics, { desc = "Find workspace diagnostics" })
+end
+
+M.lsp_implementations = telescope_builtins.lsp_implementations
+M.lsp_references = telescope_builtins.lsp_references
+
+return M
