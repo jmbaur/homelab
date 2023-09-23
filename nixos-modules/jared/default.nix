@@ -511,31 +511,36 @@ in
             };
           }
         ] ++ lib.optional (config.custom.laptop.enable && config.custom.laptop.displays != { }) {
-          target = ".config/kanshi/config";
+          target = ".config/shikane/config.toml";
           path =
             let
-              splitDisplays = lib.partition (disp: disp.isInternal) (lib.mapAttrsToList
-                (match: { isInternal, ... }: { inherit match isInternal; })
-                config.custom.laptop.displays);
+              splitDisplays = lib.partition (disp: disp.isInternal) (lib.attrValues config.custom.laptop.displays);
               internalDisplays = splitDisplays.right;
               externalDisplays = splitDisplays.wrong;
             in
-            pkgs.writeText "kanshi.config" ''
-              profile docked {
-                ${lib.concatMapStrings (disp: ''
-                  output '${disp.match}' disable
-                '') internalDisplays}
-                ${lib.concatMapStrings (disp: ''
-                  output '${disp.match}' enable
-                '') externalDisplays}
-              }
-
-              profile undocked {
-                ${lib.concatMapStrings (disp: ''
-                  output '${disp.match}' enable
-                '') internalDisplays}
-              }
-            '';
+            (pkgs.formats.toml { }).generate "shikane.toml" {
+              profile = map
+                (profile: profile // {
+                  exec = [
+                    "${pkgs.libnotify}/bin/notify-send shikane \"Profile $SHIKANE_PROFILE_NAME has been applied\""
+                  ];
+                }) [
+                {
+                  name = "dock";
+                  output = (map
+                    (disp: { inherit (disp) match; enable = false; })
+                    internalDisplays) ++ (map
+                    (disp: { inherit (disp) match; enable = true; })
+                    externalDisplays);
+                }
+                {
+                  name = "laptop";
+                  output = (map
+                    (disp: { inherit (disp) match; enable = true; })
+                    internalDisplays);
+                }
+              ];
+            };
         })
       );
   };

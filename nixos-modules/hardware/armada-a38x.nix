@@ -7,14 +7,24 @@
     nixpkgs.hostPlatform = lib.recursiveUpdate lib.systems.platforms.armv7l-hf-multiplatform {
       config = "armv7l-unknown-linux-gnueabihf";
       linux-kernel = {
-        name = "armada-388x";
+        name = "armada-38x";
         baseConfig = "mvebu_v7_defconfig";
+        # TODO(jared): don't build big kernel with lots of unused modules
+        # autoModules = false;
+
+        # # allow booting as an EFI stub
+        # extraConfig = lib.systems.platforms.armv7l-hf-multiplatform.linux-kernel.extraConfig + ''
+        #   EFI y
+        # '';
       };
     };
 
     boot.loader.grub.enable = false;
     boot.loader.generic-extlinux-compatible.enable = true;
     boot.kernelParams = [ "console=ttyS0,115200" ];
+
+    # get helpful kernel logs regarding device peripherals
+    boot.consoleLogLevel = 6;
 
     hardware.deviceTree = {
       enable = true;

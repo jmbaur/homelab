@@ -7,11 +7,18 @@ in
   options.custom.laptop = with lib; {
     enable = mkEnableOption "laptop config";
     displays = mkOption {
-      type = types.attrsOf (types.submodule {
+      type = types.attrsOf (types.submodule ({ name, ... }: {
         options = {
+          match = mkOption {
+            type = types.str;
+            default = name;
+            description = mdDoc ''
+              Shikane-compatible (shikane(5)) match statements.
+            '';
+          };
           isInternal = mkEnableOption "internal display";
         };
-      });
+      }));
       default = { };
     };
   };

@@ -116,6 +116,8 @@ inputs: with inputs; {
           extraConfig = ''
             CONFIG_BLK=y
             CONFIG_CMD_BOOTEFI=y
+            CONFIG_EFI_CAPSULE_AUTHENTICATE=y
+            CONFIG_EFI_CAPSULE_ON_DISK=y
             CONFIG_EFI_LOADER=y
             CONFIG_EFI_SECURE_BOOT=y
             CONFIG_FIT=y
@@ -133,14 +135,33 @@ inputs: with inputs; {
             CONFIG_MVEBU_SPL_BOOT_DEVICE_UART=y
           '';
         };
-        ubootClearfogSpi = final.ubootClearfog.override {
-          defconfig = "clearfog_spi_defconfig";
-          # TODO(jared): don't do this once we get mtdparts working
-          postInstall = ''
-            dd bs=1M count=4 if=/dev/zero of=$out/firmware.bin
-            dd conv=notrunc if=$out/u-boot-with-spl.kwb of=$out/firmware.bin
-          '';
-        };
+        ubootClearfogSpi =
+          # u-boot 0MiB    - 2MiB
+          # env    2MiB    - 2.25MiB
+          # empty  2.25MiB - 4MiB
+          let
+            envSize = 256 * 1024; # 256KiB in bytes
+            envOffset = 2 * 1024 * 1024; # 2MiB in bytes
+            ubootSize = envOffset; # ubootSize equals envOffset since uboot starts from zero
+          in
+          final.ubootClearfog.override {
+            defconfig = "clearfog_spi_defconfig";
+            extraConfig =
+              final.ubootClearfog.extraConfig + ''
+                CONFIG_OF_LIBFDT=y
+                CONFIG_CMD_MTDPARTS=y
+                CONFIG_FDT_FIXUP_PARTITIONS=y
+                CONFIG_ENV_OFFSET=0x${prev.lib.toHexString envOffset}
+                CONFIG_ENV_SIZE=0x${prev.lib.toHexString envSize}
+                CONFIG_MTDIDS_DEFAULT="nor0=w25q32"
+                CONFIG_MTDPARTS_DEFAULT="w25q32:${toString ubootSize}(u-boot),${toString envSize}(u-boot-env),-(empty)"
+              '';
+            postInstall = let blockSize = 512; in ''
+              dd bs=${toString blockSize} count=${toString (ubootSize / blockSize)} if=/dev/zero of=$out/firmware.bin
+              dd conv=notrunc if=$out/u-boot-with-spl.kwb of=$out/firmware.bin
+            '';
+            extraPatches = [ ./clearfog-spi-mtd-fixup.patch ];
+          };
 
         cn913x_build_repo = prev.fetchFromGitHub {
           owner = "solidrun";

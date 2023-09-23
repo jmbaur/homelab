@@ -1,0 +1,29 @@
+diff --git a/board/solidrun/clearfog/clearfog.c b/board/solidrun/clearfog/clearfog.c
+index 6edb422155..3be98fc91f 100644
+--- a/board/solidrun/clearfog/clearfog.c
++++ b/board/solidrun/clearfog/clearfog.c
+@@ -17,6 +17,9 @@
+ #include <asm/arch/soc.h>
+ #include <linux/bitops.h>
+ #include <linux/delay.h>
++#include <mtd_node.h>
++#include <jffs2/load_kernel.h>
++#include <fdt_support.h>
+ #include "../common/tlv_data.h"
+ 
+ #include "../drivers/ddr/marvell/a38x/ddr3_init.h"
+@@ -292,5 +295,14 @@ int ft_board_setup(void *blob, struct bd_info *bd)
+ 		return fdt_setprop_empty(blob, node, "non-removable");
+ 	}
+ 
++#ifdef CONFIG_FDT_FIXUP_PARTITIONS
++  static const struct node_info nodes[] = {
++    { "w25q32", MTD_DEV_TYPE_NOR, },
++  };
++
++	puts("   Updating MTD partitions...\n");
++	fdt_fixup_mtdparts(blob, nodes, ARRAY_SIZE(nodes));
++#endif
++
+ 	return 0;
+ }

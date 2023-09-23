@@ -1,8 +1,8 @@
 { config, lib, pkgs, ... }: {
   imports = [ ./router.nix ./hardware-configuration.nix ];
 
-  boot.initrd.systemd.enable = true;
   boot.kernelParams = [ "cfg80211.ieee80211_regdom=US" ];
+  boot.initrd.systemd.enable = true;
 
   networking.hostName = "squash";
 

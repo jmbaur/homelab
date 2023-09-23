@@ -33,8 +33,11 @@
     laptop = {
       enable = true;
       displays = {
-        eDP-1.isInternal = true;
-        "Lenovo Group Limited LEN P24q-20 V306P4GR" = { };
+        laptopDisplay = {
+          match = "eDP-1";
+          isInternal = true;
+        };
+        externalMonitor.match = "/Lenovo.*P24q-20.*/";
       };
     };
     users.jared.enable = true;

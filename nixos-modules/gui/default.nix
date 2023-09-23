@@ -152,7 +152,7 @@ with lib;
       description = "desktop status bar";
       after = [ swaySessionTarget ];
       partOf = [ swaySessionTarget ];
-      serviceConfig.ExecStart = "${pkgs.yambar}/bin/yambar";
+      serviceConfig.ExecStart = "${lib.getExe pkgs.yambar}";
       wantedBy = [ swaySessionTarget ];
     };
 
@@ -161,8 +161,10 @@ with lib;
       description = "laptop display manager";
       after = [ swaySessionTarget ];
       partOf = [ swaySessionTarget ];
-      unitConfig.ConditionPathExists = "%h/.config/kanshi/config";
-      serviceConfig.ExecStart = "${pkgs.kanshi}/bin/kanshi";
+      path = [ pkgs.bash ]; # needs a shell to run [[profile.exec]] statements
+      environment.SHIKANE_LOG = "info";
+      unitConfig.ConditionPathExists = "%h/.config/shikane/config.toml";
+      serviceConfig.ExecStart = "${pkgs.shikane}/bin/shikane";
       wantedBy = [ swaySessionTarget ];
     };
 
@@ -170,7 +172,7 @@ with lib;
       description = "yubikey touch detector";
       after = [ swaySessionTarget ];
       partOf = [ swaySessionTarget ];
-      serviceConfig.ExecStart = "${pkgs.yubikey-touch-detector}/bin/yubikey-touch-detector --libnotify";
+      serviceConfig.ExecStart = "${lib.getExe pkgs.yubikey-touch-detector} --libnotify";
       wantedBy = [ swaySessionTarget ];
     };
 
@@ -196,7 +198,7 @@ with lib;
       after = [ swaySessionTarget "geoclue-agent.service" ];
       partOf = [ swaySessionTarget ];
       serviceConfig = {
-        ExecStart = "${pkgs.gammastep}/bin/gammastep -l geoclue2";
+        ExecStart = "${pkgs.gammastep}/bin/gammastep -l ${config.location.provider}";
         Restart = "always";
         RestartSec = 5;
       };
