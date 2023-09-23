@@ -17,8 +17,7 @@ with lib;
       pulse.enable = true;
     };
 
-    boot.extraModulePackages = [ config.boot.kernelPackages.ddcci-driver ];
-    boot.kernelModules = [ "ddcci" ];
+    boot.kernelModules = [ "i2c_dev" ]; # for ddc monitor control
 
     fonts.fontconfig.enable = true;
     fonts.packages = [ pkgs.jetbrains-mono ];
@@ -50,6 +49,7 @@ with lib;
       caffeine
       chromium-wayland
       clipman
+      ddcutil
       desktop-launcher
       ffmpeg-full
       firefox
