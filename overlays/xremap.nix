@@ -1,14 +1,14 @@
 { rustPlatform, fetchFromGitHub, buildFeatures ? [ "sway" ], ... }:
 rustPlatform.buildRustPackage rec {
   pname = "xremap";
-  version = "0.8.7";
+  version = "0.8.9";
   src = fetchFromGitHub {
     owner = "k0kubun";
     repo = pname;
     rev = "v${version}";
-    sha256 = "sha256-fypHpJTCB0SLzcIuWzJIsBSk8OHuSjmtQNNrs0HtTgM=";
+    sha256 = "sha256-BFngW889qO0uhTSvi+rhfrmqzID6uj34IrgN5eWEWWc=";
   };
-  cargoSha256 = "sha256-uI1gwE4EXuSzQiRmvD4YO3ziPWk73ZtKw2gtO5JEbu8=";
+  cargoSha256 = "sha256-93zGIR+1zOyAftC5b/Ns1XuhaLCZX5eSCBj4qEC28HU=";
   buildNoDefaultFeatures = true;
   inherit buildFeatures;
 }
