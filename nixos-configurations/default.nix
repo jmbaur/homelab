@@ -196,6 +196,16 @@ in
         custom.server.enable = true;
         custom.crossCompile.enable = true;
         custom.disableZfs = true;
+        environment.systemPackages = [
+          (pkgs.writeShellScriptBin "generate-macaddrs" ''
+            echo "ethaddr $(${lib.getExe pkgs.macgen})" | tee -a macaddrs
+            echo "eth1addr $(${lib.getExe pkgs.macgen})" | tee -a macaddrs
+            echo "eth2addr $(${lib.getExe pkgs.macgen})" | tee -a macaddrs
+            echo "eth3addr $(${lib.getExe pkgs.macgen})" | tee -a macaddrs
+            ${pkgs.ubootEnvTools}/bin/fw_setenv --script macaddrs
+            echo "wrote new macaddrs to uboot environment"
+          '')
+        ];
         sdImage.populateFirmwareCommands = lib.mkForce "";
         sdImage.populateRootCommands = ''
           mkdir -p ./files/boot
