@@ -16,6 +16,6 @@ in
 
     services.getty.autologinUser = "root";
     users.users.root.initialHashedPassword = "";
-    users.users.root.openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
+    users.users.root.openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-ssh-keys ];
   };
 }

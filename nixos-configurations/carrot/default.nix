@@ -49,7 +49,7 @@
     deployee = {
       enable = true;
       sshTarget = "root@carrot.home.arpa";
-      authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
+      authorizedKeyFiles = [ pkgs.jmbaur-ssh-keys ];
     };
   };
 

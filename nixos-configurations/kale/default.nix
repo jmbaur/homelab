@@ -30,7 +30,7 @@
   users.users.builder = {
     isNormalUser = true;
     openssh.authorizedKeys = {
-      keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
+      keyFiles = [ pkgs.jmbaur-ssh-keys ];
       keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIer9NAxijyKMklfKe4yiZXOCyMa5RchUKt4Y4DK7SRT root@beetroot" ];
     };
   };
@@ -39,7 +39,7 @@
     server.enable = true;
     deployee = {
       enable = true;
-      authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
+      authorizedKeyFiles = [ pkgs.jmbaur-ssh-keys ];
     };
     remoteBoot = {
       enable = true;

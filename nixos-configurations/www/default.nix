@@ -19,7 +19,7 @@ in
   custom.server.enable = true;
   custom.deployee = {
     enable = true;
-    authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
+    authorizedKeyFiles = [ pkgs.jmbaur-ssh-keys ];
   };
 
   sops = {
@@ -72,7 +72,7 @@ in
     uid = config.ids.uids.git;
     group = "git";
     shell = pkgs.git;
-    openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
+    openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-ssh-keys ];
   };
   users.groups.git.gid = config.ids.gids.git;
 

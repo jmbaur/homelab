@@ -62,7 +62,7 @@ in
 
       shell = pkgs.zsh;
 
-      openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-github-ssh-keys ];
+      openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-ssh-keys ];
 
       packages = with pkgs; ([
         (weechat.override { configure = { ... }: { scripts = with pkgs.weechatScripts; [ weechat-matrix ]; }; })

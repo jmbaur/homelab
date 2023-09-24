@@ -8,7 +8,7 @@
     disableZfs = true;
     deployee = {
       enable = true;
-      authorizedKeyFiles = [ pkgs.jmbaur-github-ssh-keys ];
+      authorizedKeyFiles = [ pkgs.jmbaur-ssh-keys ];
     };
     wg-mesh = {
       enable = true;
