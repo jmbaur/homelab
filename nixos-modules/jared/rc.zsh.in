@@ -7,7 +7,7 @@ zstyle ':vcs_info:git:*' formats '(%b)'
 zstyle ':vcs_info:*' enable git
 
 precmd() { print "" } # newline before each prompt
-PROMPT='%B%S[%n@%m:%2~]$vcs_info_msg_0_$%s%b '
+PROMPT='%S[%n@%m:%2~]$vcs_info_msg_0_$%s '
 
 # keybindings
 bindkey -e
