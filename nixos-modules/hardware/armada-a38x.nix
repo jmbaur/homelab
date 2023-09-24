@@ -12,10 +12,10 @@
         # TODO(jared): don't build big kernel with lots of unused modules
         # autoModules = false;
 
-        # # allow booting as an EFI stub
-        # extraConfig = lib.systems.platforms.armv7l-hf-multiplatform.linux-kernel.extraConfig + ''
-        #   EFI y
-        # '';
+        # allow booting as an EFI stub
+        extraConfig = lib.systems.platforms.armv7l-hf-multiplatform.linux-kernel.extraConfig + ''
+          EFI y
+        '';
       };
     };
 
