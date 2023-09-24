@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }: {
+{ pkgs, ... }: {
   imports = [ ./router.nix ./hardware-configuration.nix ];
 
   boot.kernelParams = [ "cfg80211.ieee80211_regdom=US" ];
@@ -35,36 +35,4 @@
 
   zramSwap.enable = true;
   system.stateVersion = "23.11";
-
-  system.build.firmware = pkgs.ubootClearfogSpi;
-
-  # for fw_printenv and fw_setenv
-  environment.etc."fw_env.config".text =
-    let
-      mtdpartsValue = lib.elemAt
-        (lib.filter
-          (lib.hasPrefix "CONFIG_MTDPARTS_DEFAULT")
-          (lib.splitString "\n" config.system.build.firmware.extraConfig)) 0;
-    in
-    ''
-      # values obtained from ${mtdpartsValue}
-      # MTD device name       Device offset   Env. size       Flash sector size       Number of sectors
-      /dev/mtd2               0x0000          0x40000         0x10000
-    '';
-
-  programs.flashrom.enable = lib.mkDefault true;
-  environment.systemPackages = [
-    pkgs.ubootEnvTools
-  ] ++ lib.optional config.programs.flashrom.enable
-    (pkgs.writeShellScriptBin "update-firmware" ''
-      ${config.programs.flashrom.package}/bin/flashrom \
-      --programmer linux_mtd:dev=0 \
-      --write ${config.system.build.firmware}/firmware.bin
-    '');
-
-  systemd.services.reset-button = {
-    # BTN_0 == 0x100
-    serviceConfig.ExecStart = "${pkgs.dookie}/bin/dookie --device=/dev/input/event0 --key-code=0x100 --action=restart";
-    wantedBy = [ "multi-user.target" ];
-  };
 }
