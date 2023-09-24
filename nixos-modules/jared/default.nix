@@ -201,16 +201,23 @@ in
         ([
           {
             target = ".config/kitty/kitty.conf";
-            path = pkgs.writeText "kitty.conf" ''
-              copy_on_select yes
-              enable_audio_bell no
-              font_family JetBrains Mono
-              font_size 16
-              include ${pkgs.kitty-themes}/share/kitty-themes/themes/Modus_Vivendi.conf
-              shell_integration no-cursor
-              tab_bar_style powerline
-              update_check_interval 0
-            '';
+            path =
+              let
+                # keep kitty default tab and selection colors
+                modusVivendi = pkgs.runCommand "modus_vivendi.conf" { } ''
+                  grep -vi -e tab -e select ${pkgs.kitty-themes}/share/kitty-themes/themes/Modus_Vivendi.conf > $out
+                '';
+              in
+              pkgs.writeText "kitty.conf" ''
+                copy_on_select yes
+                enable_audio_bell no
+                font_family JetBrains Mono
+                font_size 16
+                include ${modusVivendi}
+                shell_integration no-cursor
+                tab_bar_style powerline
+                update_check_interval 0
+              '';
           }
           {
             target = ".config/foot/foot.ini";
