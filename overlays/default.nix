@@ -170,14 +170,16 @@ inputs: with inputs; {
           hash = "sha256-5PGu7XQxtg0AP9RovDDqmPuVnrNQow1bYaorAmUFQ7Q=";
         };
 
-        clearfogProSdFirmware = prev.callPackage ./cn9130-clearfog-pro-firmware.nix {
+        cn9130CfProSdFirmware = prev.callPackage ./cn9130-clearfog-pro-firmware.nix {
           inherit (final) cn913x_build_repo;
           spi = false;
         };
-        clearfogProSpiFirmware = prev.callPackage ./cn9130-clearfog-pro-firmware.nix {
+        cn9130CfProSpiFirmware = prev.callPackage ./cn9130-clearfog-pro-firmware.nix {
           spi = true;
           inherit (final) cn913x_build_repo;
         };
+
+        mrvlUart = prev.callPackage ./mrvl-uart.nix { };
 
         bpiR3Firmware = prev.callPackage ./bpi-r3-firmware.nix { };
 

@@ -147,7 +147,7 @@ in
         imports = [ "${modulesPath}/installer/sd-card/sd-image-aarch64.nix" ];
         sdImage.populateFirmwareCommands = lib.mkForce "";
         sdImage.postBuildCommands = ''
-          dd if=${pkgs.clearfogProSdFirmware} of=$img bs=512 seek=4096 conv=sync
+          dd if=${pkgs.cn9130CfProSdFirmware} of=$img bs=512 seek=4096 conv=notrunc,sync
         '';
         nixpkgs.hostPlatform = "aarch64-linux";
         boot.initrd.systemd.enable = true;

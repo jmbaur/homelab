@@ -1,14 +1,11 @@
 { spi ? false
-, cn913x_build_repo
 , buildPackages
-, dtc
 , fetchFromGitHub
 , fetchgit
-, gcc7Stdenv
-, git
-, openssl
 , runCommand
 , buildUBoot
+, buildArmTrustedFirmware
+, symlinkJoin
 }:
 let
   uboot = (buildUBoot {
@@ -37,66 +34,60 @@ let
     filesToInstall = [ "u-boot.bin" ];
   }).overrideAttrs (_: { patches = [ ]; });
 
-  BL33 = "${uboot}/u-boot.bin";
-  SCP_BL2 = "${cn913x_build_repo}/binaries/atf/mrvl_scp_bl2.img";
-  PLAT = "t9130";
+  marvellBinaries = fetchFromGitHub {
+    owner = "MarvellEmbeddedProcessors";
+    repo = "binaries-marvell";
+    rev = "c6c529ea3d905a28cc77331964c466c3e2dc852e";
+    hash = "sha256-zcOEfOCcaxuMJspMVYDtmijwyh8B1xULqmw5h08eIQs=";
+  };
 
-  atf = gcc7Stdenv.mkDerivation rec {
-    pname = "atf-cn9130-clearfog-pro";
-    version = builtins.substring 0 7 src.rev;
-    src = fetchFromGitHub {
-      owner = "ARM-software";
-      repo = "arm-trusted-firmware";
-      rev = "00ad74c7afe67b2ffaf08300710f18d3dafebb45";
-      sha256 = "sha256-kHI6H1yym8nWWmLMNOOLUbdtdyNPdNEvimq8EdW0nZw=";
+  mvDdrMarvell = fetchgit {
+    leaveDotGit = true; # needed for ATF build process
+    url = "https://github.com/MarvellEmbeddedProcessors/mv-ddr-marvell";
+    rev = "bfcf62051be835f725005bb5137928f7c27b792e";
+    hash = "sha256-ikAUTTlvSeyOqcMpwegD62z/SoM6A63iEFkxDUxiT3I=";
+  };
+
+  atf = (buildArmTrustedFirmware rec {
+    platform = "t9130";
+
+    env = {
+      SCP_BL2 = "${marvellBinaries}/mrvl_scp_bl2.img";
+      BL33 = "${uboot}/u-boot.bin";
     };
-    patches = [
-      "${cn913x_build_repo}/patches/arm-trusted-firmware/0001-ddr-spd-read-failover-to-defualt-config.patch"
-      "${cn913x_build_repo}/patches/arm-trusted-firmware/0002-som-sdp-failover-using-crc-verification.patch"
-    ];
-    env = { inherit BL33 SCP_BL2; };
-    nativeBuildInputs = [ openssl dtc git ];
-    hardeningDisable = [ "all" ];
-    dontStrip = true;
-    depsBuildBuild = [ buildPackages.gcc7Stdenv.cc ];
-    makeFlags = [
-      "CROSS_COMPILE=${gcc7Stdenv.cc.targetPrefix}"
-      # binutils 2.39 regression
-      # `warning: /build/source/build/rk3399/release/bl31/bl31.elf has a LOAD segment with RWX permissions`
-      # See also: https://developer.trustedfirmware.org/T996
-      "LDFLAGS=-no-warn-rwx-segments"
-      "PLAT=${PLAT}"
+
+    preBuild = ''
+      cp -r ${mvDdrMarvell} /tmp/mv_ddr_marvell
+      chmod -R +w /tmp/mv_ddr_marvell
+    '';
+
+    extraMakeFlags = [
       "USE_COHERENT_MEM=0"
-      "LOG_LEVEL=20"
       "MV_DDR_PATH=/tmp/mv_ddr_marvell"
       "CP_NUM=1" # cn9130-cf-pro
+      "OPENSSL_DIR=${symlinkJoin { name = "openssl-dir"; paths = with buildPackages.openssl; [ out bin ]; }}"
       "all"
       "fip"
     ];
-    preBuild =
-      let
-        marvell-embedded-processors = fetchgit {
-          leaveDotGit = true;
-          branchName = "mv-ddr-devel";
-          url = "https://github.com/MarvellEmbeddedProcessors/mv-ddr-marvell";
-          rev = "305d923e6bc4236cd3b902f6679b0aef9e5fa52d";
-          sha256 = "sha256-mgI84gDdzGLBzKaIyu7c/EtpFcUGEI+uNtYJfhzRd8U=";
-        };
-      in
-      ''
-        cp -r ${marvell-embedded-processors} /tmp/mv_ddr_marvell
-        chmod -R +w /tmp/mv_ddr_marvell
-      '';
-    installPhase = ''
-      mkdir -p $out
-      cp build/${PLAT}/release/flash-image.bin $out
-    '';
-    meta.platforms = [ "aarch64-linux" ];
-  };
+
+    filesToInstall = [ "build/${platform}/release/fip.bin" ];
+
+    patches = [
+      # "${cn913x_build_repo}/patches/arm-trusted-firmware/0001-ddr-spd-read-failover-to-defualt-config.patch"
+      # "${cn913x_build_repo}/patches/arm-trusted-firmware/0002-som-sdp-failover-using-crc-verification.patch"
+    ];
+  }).overrideAttrs
+    (old: {
+      nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ (with buildPackages; [
+        git # mv-ddr-marvell
+        openssl # fiptool
+      ]);
+    });
+
 in
 runCommand "cn9130-cf-pro-firmware.bin" { } (if spi then ''
   dd bs=1M count=8 if=/dev/zero of=$out
-  dd conv=notrunc if=${atf}/flash-image.bin of=$out
+  dd conv=notrunc if=${atf}/fip.bin of=$out
 '' else ''
-  cp ${atf}/flash-image.bin $out
+  cp ${atf}/fip.bin $out
 '')
