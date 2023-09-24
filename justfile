@@ -22,8 +22,7 @@ build:
 		.\#neovim \
 		.\#neovim-all-languages \
 		.\#pomo \
-		.\#xremap \
-		.\#yamlfmt
+		.\#xremap
 
 update:
 	#!/usr/bin/env bash

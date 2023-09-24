@@ -10,12 +10,10 @@ inputs: with inputs; {
           cicada
           coredns-utils
           depthcharge-tools
-          fdroidcl
           flarectl
           stevenblack-blocklist
           u-rootInitramfs
           xremap
-          yamlfmt
           ;
 
         nixos-kexec = prev.callPackage ./nixos-kexec { };
