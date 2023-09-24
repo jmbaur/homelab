@@ -110,6 +110,8 @@ inputs: with inputs; {
 
         grafana-dashboards = prev.callPackage ./grafana-dashboards { };
 
+        ubootEnvTools = prev.callPackage ./uboot-env-tools.nix { };
+
         ubootClearfog = (prev.ubootClearfog.override {
           filesToInstall = [ "u-boot-with-spl.kwb" ];
           # UEFI support

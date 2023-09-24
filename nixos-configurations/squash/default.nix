@@ -39,7 +39,9 @@
   system.build.firmware = pkgs.ubootClearfogSpi;
 
   programs.flashrom.enable = lib.mkDefault true;
-  environment.systemPackages = lib.optional config.programs.flashrom.enable
+  environment.systemPackages = [
+    pkgs.ubootEnvTools
+  ] ++ lib.optional config.programs.flashrom.enable
     (pkgs.writeShellScriptBin "update-firmware" ''
       ${config.programs.flashrom.package}/bin/flashrom \
       --programmer linux_mtd:dev=0 \
