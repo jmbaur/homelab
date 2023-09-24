@@ -1,133 +1,27 @@
 { cn913x_build_repo
-, bc
-, bison
 , buildPackages
 , dtc
 , fetchFromGitHub
 , fetchgit
-, fetchurl
-, flex
 , gcc7Stdenv
 , git
-, gnutls
-, lib
-, libuuid
-, ncurses
 , openssl
 , runCommand
-, swig
-, which
+, buildUBoot
 }:
 let
-  defconfig = "sr_cn913x_cex7_defconfig";
-  extraMakeFlags = [ "DEVICE_TREE=cn9130-cf-pro" ];
-  filesToInstall = [ "u-boot.bin" ];
-  installDir = "$out";
-  uboot = gcc7Stdenv.mkDerivation rec {
-    pname = "uboot-${defconfig}";
-    version = "2019.10";
-    src = fetchurl {
-      url = "ftp://ftp.denx.de/pub/u-boot/u-boot-${version}.tar.bz2";
-      hash = "sha256-jW1gcHOVIt0jbLpwVbhza/6StPrA6hitgJgpynlmcBQ=";
+  uboot = (buildUBoot {
+    defconfig = "sr_cn913x_cex7_defconfig";
+    version = "2023.07.02";
+    src = fetchFromGitHub {
+      owner = "jmbaur";
+      repo = "u-boot";
+      rev = "c384e8009c22e4567b43e8b0f10be599da64fc9a"; # branch "cn913x"
+      hash = "sha256-c44ut+daUgsA0N4pJmpaamAT1vgie5SNJv9VZdtP+JQ=";
     };
-
-    patches = [
-      "${cn913x_build_repo}/patches/u-boot/0001-cmd-add-tlv_eeprom-command.patch"
-      "${cn913x_build_repo}/patches/u-boot/0002-cmd-tlv_eeprom.patch"
-      "${cn913x_build_repo}/patches/u-boot/0003-cmd-tlv_eeprom-remove-use-of-global-variable-current.patch"
-      "${cn913x_build_repo}/patches/u-boot/0004-cmd-tlv_eeprom-remove-use-of-global-variable-has_bee.patch"
-      "${cn913x_build_repo}/patches/u-boot/0005-cmd-tlv_eeprom-do_tlv_eeprom-stop-using-non-api-read.patch"
-      "${cn913x_build_repo}/patches/u-boot/0006-cmd-tlv_eeprom-convert-functions-used-by-command-to-.patch"
-      "${cn913x_build_repo}/patches/u-boot/0007-cmd-tlv_eeprom-remove-empty-function-implementations.patch"
-      "${cn913x_build_repo}/patches/u-boot/0008-cmd-tlv_eeprom-split-off-tlv-library-from-command.patch"
-      "${cn913x_build_repo}/patches/u-boot/0009-lib-tlv_eeprom-add-function-for-reading-one-entry-in.patch"
-      "${cn913x_build_repo}/patches/u-boot/0010-uboot-marvell-patches.patch"
-      "${cn913x_build_repo}/patches/u-boot/0011-uboot-support-cn913x-solidrun-paltfroms.patch"
-      "${cn913x_build_repo}/patches/u-boot/0012-add-SoM-and-Carrier-eeproms.patch"
-      "${cn913x_build_repo}/patches/u-boot/0013-find-fdtfile-from-tlv-eeprom.patch"
-      "${cn913x_build_repo}/patches/u-boot/0014-octeontx2_cn913x-support-distro-boot.patch"
-      "${cn913x_build_repo}/patches/u-boot/0015-octeontx2_cn913x-remove-console-variable.patch"
-      "${cn913x_build_repo}/patches/u-boot/0016-octeontx2_cn913x-enable-mmc-partconf-command.patch"
-      "${cn913x_build_repo}/patches/u-boot/0017-uboot-add-support-cn9131-cf-solidwan.patch"
-      "${cn913x_build_repo}/patches/u-boot/0018-uboot-add-support-bldn-mbv.patch"
-      "${cn913x_build_repo}/patches/u-boot/0019-uboot-cn9131-cf-solidwan-add-carrier-eeprom.patch"
-      "${cn913x_build_repo}/patches/u-boot/0020-arm64-dts-cn9131-cf-solidwan-fix-indentation-to-use-.patch"
-      "${cn913x_build_repo}/patches/u-boot/0021-arm64-dts-cn9131-cf-solidwan-update-model-property-t.patch"
-      "${cn913x_build_repo}/patches/u-boot/0022-fix-erratic-fdtfile-detection-of-com-express.patch"
-      "${cn913x_build_repo}/patches/u-boot/0023-arm64-dts-cn9130-som-support-eeprom-replacement-part.patch"
-      "${cn913x_build_repo}/patches/u-boot/0024-board-cn913x-som-read-mac-addresses-from-eeprom.patch"
-      "${cn913x_build_repo}/patches/u-boot/0025-lib-tlv_eeprom-mac_read_from_eeprom-support-2-eeprom.patch"
-      "${cn913x_build_repo}/patches/u-boot/0026-board-cn9131-cf-solidwan-switch-cp0_phy0-to-auto-neg.patch"
-      ./ramdisk-addr-r.patch
-    ];
-    postPatch = ''
-      patchShebangs tools
-      patchShebangs arch/arm/mach-rockchip
-    '';
-
-    # prevent non-volatile memory environment from being used
-    extraConfig = ''
-      CONFIG_ENV_IS_NOWHERE=y
-      CONFIG_BLK=y
-      CONFIG_CMD_BOOTEFI=y
-      CONFIG_EFI_LOADER=y
-      CONFIG_PARTITIONS=y
-    '';
-
-    nativeBuildInputs = [
-      ncurses # tools/kwboot
-      bc
-      bison
-      dtc
-      flex
-      openssl
-      (buildPackages.python3.withPackages (p: [
-        p.libfdt
-        p.setuptools # for pkg_resources
-      ]))
-      swig
-      which # for scripts/dtc-version.sh
-    ];
-    depsBuildBuild = [ buildPackages.gcc7Stdenv.cc ];
-
-    buildInputs = [
-      ncurses # tools/kwboot
-      libuuid # tools/mkeficapsule
-      gnutls # tools/mkeficapsule
-    ];
-
-    hardeningDisable = [ "all" ];
-
-    enableParallelBuilding = true;
-
-    makeFlags = [
-      "DTC=dtc"
-      "CROSS_COMPILE=${gcc7Stdenv.cc.targetPrefix}"
-    ] ++ extraMakeFlags;
-
-    passAsFile = [ "extraConfig" ];
-
-    configurePhase = ''
-      runHook preConfigure
-      make ${defconfig}
-      cat $extraConfigPath >> .config
-      runHook postConfigure
-    '';
-
-    installPhase = ''
-      runHook preInstall
-      mkdir -p ${installDir}
-      cp ${lib.concatStringsSep " " filesToInstall} ${installDir}
-      mkdir -p "$out/nix-support"
-      ${lib.concatMapStrings (file: ''
-        echo "file binary-dist ${installDir}/${builtins.baseNameOf file}" >> "$out/nix-support/hydra-build-products"
-      '') filesToInstall}
-      runHook postInstall
-    '';
-
-    dontStrip = true;
-    meta.platforms = [ "aarch64-linux" ];
-  };
+    extraMakeFlags = [ "DEVICE_TREE=cn9130-cf-pro" ];
+    filesToInstall = [ "u-boot.bin" ];
+  }).overrideAttrs (_: { patches = [ ]; });
   BL33 = "${uboot}/u-boot.bin";
   SCP_BL2 = "${cn913x_build_repo}/binaries/atf/mrvl_scp_bl2.img";
   PLAT = "t9130";
