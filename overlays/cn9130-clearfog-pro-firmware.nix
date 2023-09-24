@@ -71,11 +71,6 @@ let
     ];
 
     filesToInstall = [ "build/${platform}/release/fip.bin" ];
-
-    patches = [
-      # "${cn913x_build_repo}/patches/arm-trusted-firmware/0001-ddr-spd-read-failover-to-defualt-config.patch"
-      # "${cn913x_build_repo}/patches/arm-trusted-firmware/0002-som-sdp-failover-using-crc-verification.patch"
-    ];
   }).overrideAttrs
     (old: {
       nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ (with buildPackages; [
@@ -83,7 +78,6 @@ let
         openssl # fiptool
       ]);
     });
-
 in
 runCommand "cn9130-cf-pro-firmware.bin" { } (if spi then ''
   dd bs=1M count=8 if=/dev/zero of=$out
