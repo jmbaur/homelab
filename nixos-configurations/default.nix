@@ -138,13 +138,17 @@ in
 
   installer_sd_image_cn9130_clearfog = mkInstaller {
     modules = [
-      ({ modulesPath, ... }: {
+      ({ lib, pkgs, modulesPath, ... }: {
         disabledModules = [
           # prevent initrd from requiring a bunch of kernel modules we don't
           # need
           "${modulesPath}/profiles/all-hardware.nix"
         ];
-        imports = [ "${modulesPath}/installer/sd-card/sd-image-aarch64-installer.nix" ];
+        imports = [ "${modulesPath}/installer/sd-card/sd-image-aarch64.nix" ];
+        sdImage.populateFirmwareCommands = lib.mkForce "";
+        sdImage.postBuildCommands = ''
+          dd if=${pkgs.clearfogProSdFirmware} of=$img bs=512 seek=4096 conv=sync
+        '';
         nixpkgs.hostPlatform = "aarch64-linux";
         boot.initrd.systemd.enable = true;
         hardware.clearfog-cn913x.enable = true;

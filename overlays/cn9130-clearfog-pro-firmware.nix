@@ -1,4 +1,5 @@
-{ cn913x_build_repo
+{ spi ? false
+, cn913x_build_repo
 , buildPackages
 , dtc
 , fetchFromGitHub
@@ -20,11 +21,26 @@ let
       hash = "sha256-c44ut+daUgsA0N4pJmpaamAT1vgie5SNJv9VZdtP+JQ=";
     };
     extraMakeFlags = [ "DEVICE_TREE=cn9130-cf-pro" ];
+    extraConfig =
+      if spi then ''
+        CONFIG_ENV_IS_IN_MMC=n
+        CONFIG_ENV_IS_IN_SPI_FLASH=y
+        CONFIG_ENV_SIZE=0x10000
+        CONFIG_ENV_OFFSET=0x3f0000
+        CONFIG_ENV_SECT_SIZE=0x10000
+      '' else ''
+        CONFIG_ENV_IS_IN_MMC=y
+        CONFIG_SYS_MMC_ENV_DEV=1
+        CONFIG_SYS_MMC_ENV_PART=0
+        CONFIG_ENV_IS_IN_SPI_FLASH=n
+      '';
     filesToInstall = [ "u-boot.bin" ];
   }).overrideAttrs (_: { patches = [ ]; });
+
   BL33 = "${uboot}/u-boot.bin";
   SCP_BL2 = "${cn913x_build_repo}/binaries/atf/mrvl_scp_bl2.img";
   PLAT = "t9130";
+
   atf = gcc7Stdenv.mkDerivation rec {
     pname = "atf-cn9130-clearfog-pro";
     version = builtins.substring 0 7 src.rev;
@@ -78,7 +94,9 @@ let
     meta.platforms = [ "aarch64-linux" ];
   };
 in
-runCommand "cn9130-cf-pro-firmware.bin" { } ''
+runCommand "cn9130-cf-pro-firmware.bin" { } (if spi then ''
   dd bs=1M count=8 if=/dev/zero of=$out
   dd conv=notrunc if=${atf}/flash-image.bin of=$out
-''
+'' else ''
+  cp ${atf}/flash-image.bin $out
+'')
