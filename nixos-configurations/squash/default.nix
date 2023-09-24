@@ -38,6 +38,20 @@
 
   system.build.firmware = pkgs.ubootClearfogSpi;
 
+  # for fw_printenv and fw_setenv
+  environment.etc."fw_env.config".text =
+    let
+      mtdpartsValue = lib.elemAt
+        (lib.filter
+          (lib.hasPrefix "CONFIG_MTDPARTS_DEFAULT")
+          (lib.splitString "\n" config.system.build.firmware.extraConfig)) 0;
+    in
+    ''
+      # values obtained from ${mtdpartsValue}
+      # MTD device name       Device offset   Env. size       Flash sector size       Number of sectors
+      /dev/mtd2               0x0000          0x40000         0x10000
+    '';
+
   programs.flashrom.enable = lib.mkDefault true;
   environment.systemPackages = [
     pkgs.ubootEnvTools
