@@ -75,9 +75,13 @@
       flakeUri = "github:jmbaur/homelab#nixosConfigurations.squash.config.system.build.toplevel";
       frequency = "*-*-* 00:00:00";
     };
+    "pea-system-closure" = {
+      flakeUri = "github:jmbaur/homelab#nixosConfigurations.pea.config.system.build.toplevel";
+      frequency = "*-*-* 01:00:00";
+    };
     "potato-system-closure" = {
       flakeUri = "github:jmbaur/homelab#nixosConfigurations.potato.config.system.build.toplevel";
-      frequency = "*-*-* 01:00:00";
+      frequency = "*-*-* 02:00:00";
     };
     "cn9130-kernel" = {
       flakeUri = "github:jmbaur/homelab#nixosConfigurations.installer_sd_image_cn9130_clearfog.config.system.build.kernel";

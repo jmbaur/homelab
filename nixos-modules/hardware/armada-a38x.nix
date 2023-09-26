@@ -4,20 +4,20 @@
   };
 
   config = lib.mkIf config.hardware.armada-a38x.enable {
-    nixpkgs.hostPlatform = lib.recursiveUpdate lib.systems.platforms.armv7l-hf-multiplatform {
-      config = "armv7l-unknown-linux-gnueabihf";
-      linux-kernel = {
-        name = "armada-38x";
-        baseConfig = "mvebu_v7_defconfig";
-        # TODO(jared): don't build big kernel with lots of unused modules
-        # autoModules = false;
+    nixpkgs.hostPlatform = lib.recursiveUpdate lib.systems.platforms.armv7l-hf-multiplatform
+      (lib.systems.examples.armv7l-hf-multiplatform // {
+        linux-kernel = {
+          name = "armada-38x";
+          baseConfig = "mvebu_v7_defconfig";
+          # TODO(jared): don't build big kernel with lots of unused modules
+          # autoModules = false;
 
-        # allow booting as an EFI stub
-        extraConfig = lib.systems.platforms.armv7l-hf-multiplatform.linux-kernel.extraConfig + ''
-          EFI y
-        '';
-      };
-    };
+          # allow booting as an EFI stub
+          extraConfig = lib.systems.platforms.armv7l-hf-multiplatform.linux-kernel.extraConfig + ''
+            EFI y
+          '';
+        };
+      });
 
     boot.loader.grub.enable = false;
     boot.loader.generic-extlinux-compatible.enable = true;
