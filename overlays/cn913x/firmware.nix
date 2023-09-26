@@ -6,6 +6,8 @@
 , buildUBoot
 , buildArmTrustedFirmware
 , symlinkJoin
+, cn913x_build_repo
+, ...
 }:
 let
   uboot =
@@ -15,8 +17,8 @@ let
       src = fetchFromGitHub {
         owner = "jmbaur";
         repo = "u-boot";
-        rev = "7216198c8672068f85f3879f9dc5ab508a180a8e"; # branch "cn913x"
-        hash = "sha256-DmYvy5XyVvO7CD7FZoL0xcAqXjLZeRXnobd4fBE08yA=";
+        rev = "05159bbf60f8416e19caa7beaa9b7baf62e30606"; # branch "cn913x"
+        hash = "sha256-5lyLvDImghbq+1/cyu3YRlBgDC6XgYXFjOojqgCB/6o=";
       };
       extraMakeFlags = [ "DEVICE_TREE=cn9130-cf-pro" ];
       extraConfig =
@@ -35,12 +37,15 @@ let
       filesToInstall = [ "u-boot.bin" ];
     }).overrideAttrs (_: { patches = [ ]; });
 
-  marvellBinaries = fetchFromGitHub {
-    owner = "MarvellEmbeddedProcessors";
-    repo = "binaries-marvell";
-    rev = "c6c529ea3d905a28cc77331964c466c3e2dc852e";
-    hash = "sha256-zcOEfOCcaxuMJspMVYDtmijwyh8B1xULqmw5h08eIQs=";
-  };
+  # the mrvl_scp_bl2.img binary from solidrun/cn913x_build works better:
+  #   NOTICE:  Load image to AP0 MSS
+  #   NOTICE:   Loading MSS FW from addr. 0x404662c Size 0x5400 to MSS at 0xf0580000
+  # marvellBinaries = fetchFromGitHub {
+  #   owner = "MarvellEmbeddedProcessors";
+  #   repo = "binaries-marvell";
+  #   rev = "c6c529ea3d905a28cc77331964c466c3e2dc852e";
+  #   hash = "sha256-zcOEfOCcaxuMJspMVYDtmijwyh8B1xULqmw5h08eIQs=";
+  # };
 
   mvDdrMarvell = fetchgit {
     leaveDotGit = true;
@@ -53,15 +58,10 @@ let
     platform = "t9130";
 
     version = "2.9.0";
-    src = fetchFromGitHub {
-      owner = "jmbaur";
-      repo = "arm-trusted-firmware";
-      rev = "da4d6edf62287eddecce6722b58145ed598b9b52";
-      hash = "sha256-oQbrjOYFD4WO3eDrhujhXSgzWwNDmlc7duLW+DlsuFg=";
-    };
+    patches = [ ./atf-enablement.patch ];
 
     env = {
-      SCP_BL2 = "${marvellBinaries}/mrvl_scp_bl2.img";
+      SCP_BL2 = "${cn913x_build_repo}/binaries/atf/mrvl_scp_bl2.img"; # "${marvellBinaries}/mrvl_scp_bl2.img";
       BL33 = "${uboot}/u-boot.bin";
     };
 
