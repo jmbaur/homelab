@@ -177,6 +177,12 @@ inputs: with inputs; {
 
         bpiR3Firmware = prev.callPackage ./bpi-r3-firmware.nix { };
 
+        ubootBananaPim2Zero = prev.buildUBoot {
+          defconfig = "bananapi_m2_zero_defconfig";
+          filesToInstall = [ "u-boot-sunxi-with-spl.bin" ];
+          extraMeta.platforms = [ "armv7l-linux" ];
+        };
+
         # linux_orangepi-5 = prev.callPackage ./kernels/linux-orangepi-5.nix { };
 
         jmbaur-keybase-pgp-keys = prev.fetchurl {
