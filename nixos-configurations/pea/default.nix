@@ -11,6 +11,8 @@
     };
   };
 
+  custom.crossCompile.enable = true;
+
   users.allowNoPasswordLogin = true;
 
   sdImage.populateFirmwareCommands = lib.mkForce ""; # don't need rpi-specific files
