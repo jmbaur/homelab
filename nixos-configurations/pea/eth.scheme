@@ -1,0 +1,30 @@
+attrs :
+{
+    idVendor = 0x1D6B;
+    idProduct = 0x104;
+};
+strings = (
+        {
+                lang = 0x409;
+                manufacturer = "Collabora";
+                product = "ECM";
+        }
+);
+functions :
+{
+    ecm_usb0 :
+    {
+        instance = "usb0";
+        type = "ecm";
+    };
+};
+configs = (
+    {
+        id = 1;
+        name = "c";
+        functions = (
+            {
+                name = "ecm.usb0";
+                function = "ecm_usb0";
+            } );
+    } );
