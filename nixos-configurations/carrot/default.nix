@@ -75,8 +75,8 @@
       flakeUri = "github:jmbaur/homelab#nixosConfigurations.squash.config.system.build.toplevel";
       frequency = "*-*-* 00:00:00";
     };
-    "pea-system-closure" = {
-      flakeUri = "github:jmbaur/homelab#nixosConfigurations.pea.config.system.build.toplevel";
+    "pea-sd-image" = {
+      flakeUri = "github:jmbaur/homelab#nixosConfigurations.pea.config.system.build.sdImage";
       frequency = "*-*-* 01:00:00";
     };
     "potato-system-closure" = {
