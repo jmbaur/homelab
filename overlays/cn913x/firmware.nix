@@ -6,8 +6,6 @@
 , buildUBoot
 , buildArmTrustedFirmware
 , symlinkJoin
-, cn913x_build_repo
-, ...
 }:
 let
   uboot =
@@ -37,15 +35,13 @@ let
       filesToInstall = [ "u-boot.bin" ];
     }).overrideAttrs (_: { patches = [ ]; });
 
-  # the mrvl_scp_bl2.img binary from solidrun/cn913x_build works better:
-  #   NOTICE:  Load image to AP0 MSS
-  #   NOTICE:   Loading MSS FW from addr. 0x404662c Size 0x5400 to MSS at 0xf0580000
-  # marvellBinaries = fetchFromGitHub {
-  #   owner = "MarvellEmbeddedProcessors";
-  #   repo = "binaries-marvell";
-  #   rev = "c6c529ea3d905a28cc77331964c466c3e2dc852e";
-  #   hash = "sha256-zcOEfOCcaxuMJspMVYDtmijwyh8B1xULqmw5h08eIQs=";
-  # };
+  marvellBinaries = fetchFromGitHub {
+    owner = "MarvellEmbeddedProcessors";
+    repo = "binaries-marvell";
+    # branch: binaries-marvell-armada-SDK10.0.1.0
+    rev = "b3d449e72196db5d48a2087c3df40b935834d304";
+    hash = "sha256-m8NdvFSVo5+TPtpiGevyzXIMR1YcSQu5Xi5ewUX983Y=";
+  };
 
   mvDdrMarvell = fetchgit {
     leaveDotGit = true;
@@ -61,7 +57,7 @@ let
     patches = [ ./atf-enablement.patch ];
 
     env = {
-      SCP_BL2 = "${cn913x_build_repo}/binaries/atf/mrvl_scp_bl2.img"; # "${marvellBinaries}/mrvl_scp_bl2.img";
+      SCP_BL2 = "${marvellBinaries}/mrvl_scp_bl2.img";
       BL33 = "${uboot}/u-boot.bin";
     };
 

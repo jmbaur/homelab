@@ -163,15 +163,8 @@ inputs: with inputs; {
             extraPatches = [ ./clearfog-spi-mtd-fixup.patch ];
           };
 
-        cn913x_build_repo = prev.fetchFromGitHub {
-          owner = "solidrun";
-          repo = "cn913x_build";
-          rev = "d6d0577e6b6e86d29837618e9a02f5ee4ac136cb";
-          hash = "sha256-5PGu7XQxtg0AP9RovDDqmPuVnrNQow1bYaorAmUFQ7Q=";
-        };
-
-        cn9130CfProSdFirmware = prev.callPackage ./cn913x/firmware.nix { spi = false; inherit (final) cn913x_build_repo; };
-        cn9130CfProSpiFirmware = prev.callPackage ./cn913x/firmware.nix { spi = true; inherit (final) cn913x_build_repo; };
+        cn9130CfProSdFirmware = prev.callPackage ./cn913x/firmware.nix { spi = false; };
+        cn9130CfProSpiFirmware = prev.callPackage ./cn913x/firmware.nix { spi = true; };
 
         mrvlUart = prev.callPackage ./mrvl-uart.nix { };
 
