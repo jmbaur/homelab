@@ -17,8 +17,8 @@ let
       src = fetchFromGitHub {
         owner = "jmbaur";
         repo = "u-boot";
-        rev = "05159bbf60f8416e19caa7beaa9b7baf62e30606"; # branch "cn913x"
-        hash = "sha256-5lyLvDImghbq+1/cyu3YRlBgDC6XgYXFjOojqgCB/6o=";
+        rev = "20048d16c8587f976a670af8b029dbace003e1b7"; # branch "cn913x"
+        hash = "sha256-WvLwWdJylWAW3eLyUPVhVhiPbmsBz6dPrbjWrCjHgY4=";
       };
       extraMakeFlags = [ "DEVICE_TREE=cn9130-cf-pro" ];
       extraConfig =
