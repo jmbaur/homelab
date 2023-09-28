@@ -44,11 +44,10 @@ with lib;
 
     environment.systemPackages = with pkgs; [
       alacritty
-      bemenu
       brightnessctl
       caffeine
       chromium-wayland
-      clipman
+      cliphist
       ddcutil
       desktop-launcher
       ffmpeg-full
@@ -68,6 +67,7 @@ with lib;
       pulseaudio
       pulsemixer
       qt5.qtwayland
+      rofi-wayland
       shikane
       shotman
       slurp
@@ -178,12 +178,12 @@ with lib;
 
     systemd.user.services.clipboard-manager = {
       description = "clipboard manager";
-      documentation = [ "https://github.com/yory8/clipman" ];
+      documentation = [ "https://github.com/sentriz/cliphist" ];
       after = [ swaySessionTarget ];
       partOf = [ swaySessionTarget ];
       path = [ pkgs.wl-clipboard ];
       serviceConfig = {
-        ExecStart = "${pkgs.wl-clipboard}/bin/wl-paste --type text/plain --watch ${pkgs.clipman}/bin/clipman store";
+        ExecStart = "${pkgs.wl-clipboard}/bin/wl-paste --type text/plain --watch ${lib.getExe pkgs.cliphist} store";
         ExecReload = "${pkgs.coreutils}/bin/kill -SIGUSR2 $MAINPID";
         Restart = "on-failure";
         KillMode = "mixed";

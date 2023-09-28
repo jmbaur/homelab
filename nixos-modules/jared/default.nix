@@ -511,6 +511,14 @@ in
               j = pkgs.j;
             };
           }
+          {
+            target = ".config/rofi/config.rasi";
+            path = pkgs.writeText "rofi.rasi" ''
+              configuration {
+                font: "JetBrains Mono 12";
+              }
+            '';
+          }
         ] ++ lib.optional (config.custom.laptop.enable && config.custom.laptop.displays != { }) {
           target = ".config/shikane/config.toml";
           path =

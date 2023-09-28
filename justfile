@@ -10,8 +10,12 @@ clean: init
 	rm -rf {{justfile_directory()}}/result*
 	rm -rf $out/*
 
-switch:
-	nixos-rebuild switch -L --use-remote-sudo --flake .#
+switch type="switch":
+	nixos-rebuild \
+		--print-build-logs \
+		--use-remote-sudo \
+		--flake {{justfile_directory()}} \
+		{{type}} 
 
 build:
 	nix build -L --accept-flake-config \

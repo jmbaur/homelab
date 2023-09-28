@@ -46,7 +46,6 @@ inputs: with inputs; {
           };
         });
 
-        bitwarden-bemenu = prev.callPackage ./bitwarden-bemenu.nix { };
         git-get = prev.callPackage ./git-get { };
         git-shell-commands = prev.callPackage ./git-shell-commands {
           libgit2 = final.libgit2_1_5;
