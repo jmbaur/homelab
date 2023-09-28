@@ -183,7 +183,7 @@ with lib;
       partOf = [ swaySessionTarget ];
       path = [ pkgs.wl-clipboard ];
       serviceConfig = {
-        ExecStart = "${pkgs.wl-clipboard}/bin/wl-paste --type text/plain --watch ${lib.getExe pkgs.cliphist} store";
+        ExecStart = "${pkgs.wl-clipboard}/bin/wl-paste --watch ${lib.getExe pkgs.cliphist} store";
         ExecReload = "${pkgs.coreutils}/bin/kill -SIGUSR2 $MAINPID";
         Restart = "on-failure";
         KillMode = "mixed";
