@@ -8,7 +8,6 @@ with lib;
 
   config = mkIf cfg.enable {
     programs = {
-      adb.enable = true;
       flashrom.enable = true;
       mosh.enable = true;
       wireshark.enable = true;

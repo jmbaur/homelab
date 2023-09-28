@@ -65,34 +65,26 @@ in
       openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-ssh-keys ];
 
       packages = with pkgs; ([
-        (weechat.override { configure = { ... }: { scripts = with pkgs.weechatScripts; [ weechat-matrix ]; }; })
         age-plugin-yubikey
-        carapace
         croc
         gmni
         iperf3
-        jc
         librespeed-cli
         nmap
         nvme-cli
-        picocom
         pwgen
         rage
-        rtorrent
         sl
-        smartmontools
-        stow
         tailscale
         tcpdump
-        tio
         tree
         unzip
         usbutils
         w3m
         wireguard-tools
-        zellij
         zip
       ] ++ lib.optionals config.custom.dev.enable [
+        tio
         ansifilter
         as-tree
         bat
@@ -179,6 +171,8 @@ in
         ++ (lib.optional config.virtualisation.docker.enable "docker")
       ;
     };
+
+    programs.adb.enable = config.custom.gui.enable;
 
     systemd.user.tmpfiles.users.${cfg.username}.rules =
       # xdg user dirs

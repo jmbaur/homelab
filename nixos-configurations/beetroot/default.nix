@@ -52,8 +52,6 @@
     secrets.jared_password.neededForUsers = true;
   };
 
-  programs.adb.enable = true;
-
   nix.settings = {
     substituters = [ "http://carrot.home.arpa" ];
     trusted-public-keys = [ "carrot.home.arpa:dxp2PztB2LlcVufzgvhsrM9FvrDJcRvP2SqMXr3GSt8=" ];
