@@ -36,11 +36,7 @@ let
     fdtfile=mediatek/mt7986a-bananapi-bpi-r3.dtb
   '';
   uboot = (buildUBoot {
-    # The eMMC and SD on this board are mutually exclusive. Let's choose to
-    # enable emmc since we can always use usb as an external storage medium if
-    # we need to boot externally. This means we can potentially install the
-    # entire OS on the emmc instead of needing a sata disk.
-    defconfig = "mt7986a_bpir3_emmc_defconfig";
+    defconfig = "mt7986a_bpir3_${if internalBoot then "emmc" else "sd"}_defconfig";
     filesToInstall = [ "u-boot.bin" ];
     extraMeta.platforms = [ "aarch64-linux" ];
     postPatch = ''

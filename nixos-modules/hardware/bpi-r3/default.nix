@@ -1,5 +1,9 @@
 { config, lib, pkgs, ... }: {
-  options.hardware.bpi-r3.enable = lib.mkEnableOption "bananapi r3";
+  options.hardware.bpi-r3 = {
+    enable = lib.mkEnableOption "bananapi r3";
+    internalBoot = lib.mkEnableOption "boot from internal storage" // { default = true; };
+  };
+
   config = lib.mkIf config.hardware.bpi-r3.enable {
     boot.kernelPackages = pkgs.linuxPackages_latest;
 
@@ -44,10 +48,11 @@
         name = builtins.baseNameOf dtboFile;
       }) [
       "${config.boot.kernelPackages.kernel}/dtbs/mediatek/mt7986a-bananapi-bpi-r3-nand.dtbo"
-      # There is also a DTBO for enabling the sd-card, but the emmc and sd
-      # support are mutually exclusive on this device. Use emmc since we can
-      # store the root filesystem on it.
-      "${config.boot.kernelPackages.kernel}/dtbs/mediatek/mt7986a-bananapi-bpi-r3-emmc.dtbo"
+    ] ++ [
+      (if config.hardware.bpi-r3.internalBoot then
+        "${config.boot.kernelPackages.kernel}/dtbs/mediatek/mt7986a-bananapi-bpi-r3-emmc.dtbo"
+      else
+        "${config.boot.kernelPackages.kernel}/dtbs/mediatek/mt7986a-bananapi-bpi-r3-sd.dtbo")
     ];
   };
 }

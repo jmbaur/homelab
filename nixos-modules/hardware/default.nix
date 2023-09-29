@@ -1,7 +1,7 @@
 {
   imports = [
     ./armada-a38x.nix
-    ./bpi-r3.nix
+    ./bpi-r3
     ./chromebook
     ./clearfog-cn913x.nix
     ./google-asurada-spherion

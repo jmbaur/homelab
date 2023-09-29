@@ -172,16 +172,15 @@ in
     ];
   };
 
-  bpi-r3-installer = mkInstaller {
+  installer_sd_image_bpi_r3 = mkInstaller {
     modules = [
-      ({ lib, modulesPath, ... }: {
-        imports = [ "${modulesPath}/installer/sd-card/sd-image-aarch64.nix" ];
+      ({
+        imports = [ ../nixos-modules/hardware/bpi-r3/sd-image.nix ];
         nixpkgs.hostPlatform = "aarch64-linux";
         hardware.bpi-r3.enable = true;
         custom.server.enable = true; # limits packages needed for cross-compilation
         custom.crossCompile.enable = true;
         custom.disableZfs = true;
-        sdImage.populateFirmwareCommands = lib.mkForce "";
       })
     ];
   };
