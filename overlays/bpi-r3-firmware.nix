@@ -1,4 +1,14 @@
-{ internalBoot ? true, writeText, fetchFromGitHub, buildUBoot, buildArmTrustedFirmware, buildPackages, dtc, openssl }:
+{ internalBoot ? true
+, writeText
+, fetchFromGitHub
+, buildUBoot
+, buildArmTrustedFirmware
+, buildPackages
+, dtc
+, openssl
+, symlinkJoin
+, perl
+}:
 let
   env = writeText "bpi-r3-uboot-env" ''
     // Linux mt7986a.dtsi defines the following reserved memory in the
@@ -26,14 +36,16 @@ let
     fdtfile=mediatek/mt7986a-bananapi-bpi-r3.dtb
   '';
   uboot = (buildUBoot {
+    # The eMMC and SD on this board are mutually exclusive. Let's choose to
+    # enable emmc since we can always use usb as an external storage medium if
+    # we need to boot externally. This means we can potentially install the
+    # entire OS on the emmc instead of needing a sata disk.
+    defconfig = "mt7986a_bpir3_emmc_defconfig";
     filesToInstall = [ "u-boot.bin" ];
-    # eMMC and SD are mutually exclusive on this board, choose one
-    defconfig = "mt7986a_bpir3_sd_defconfig";
     extraMeta.platforms = [ "aarch64-linux" ];
     postPatch = ''
-      cp ${env} board/mediatek/mt7986/mt7986-nixos.env
+      cp ${env} board/mediatek/mt7986/mt7986a-bpi-r3.env
     '';
-    # these should be in the defconfig, but alas are not
     extraConfig = ''
       CONFIG_CMD_DM=y
       CONFIG_CMD_MTD=y
@@ -62,6 +74,7 @@ let
       CONFIG_BLK=y
       CONFIG_CMD_BOOTEFI=y
       CONFIG_EFI_LOADER=y
+      CONFIG_EFI_SECURE_BOOT=y
       CONFIG_PARTITIONS=y
 
       CONFIG_ENV_IS_NOWHERE=y
@@ -75,27 +88,27 @@ let
       CONFIG_DISTRO_DEFAULTS=y
       CONFIG_ISO_PARTITION=y
 
-      CONFIG_ENV_SOURCE_FILE="mt7986-nixos"
-      CONFIG_DEFAULT_FDT_FILE="mediatek/mt7986a-bananapi-bpi-r3.dtb"
       CONFIG_SYS_BOOTM_LEN=0x6000000
+      CONFIG_ENV_SOURCE_FILE="mt7986a-bpi-r3"
     '';
-  }).overrideAttrs (_: {
+  }).overrideAttrs (old: {
     # omit nixpkpgs patches for u-boot
     patches = [ ];
+    nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ perl ];
   });
   atf = buildArmTrustedFirmware rec {
+    platform = "mt7986";
     version = builtins.substring 0 7 src.rev;
     # mt7986 not in upstream ATF yet
     src = fetchFromGitHub {
       owner = "mtk-openwrt";
       repo = "arm-trusted-firmware";
-      rev = "abcbd12b3bc0500f74a9f3e6f27fb7566e23fc5d";
-      hash = "sha256-DcneBABDvtb7DQTvcfAVaw61jqmdjFogXfuiYKtkVRk=";
+      rev = "00ac6db375b76e57e1f5e9e9bffa033e907c3581";
+      hash = "sha256-BeEqpUb97joBzj5M+2uBC0ueI2oHDfYJBJtBrJvMWKQ=";
     };
     nativeBuildInputs = [ dtc openssl ];
-    platform = "mt7986";
     extraMakeFlags = [
-      "OPENSSL_DIR=${buildPackages.openssl}"
+      "OPENSSL_DIR=${symlinkJoin { name = "openssl-dir"; paths = with buildPackages.openssl; [ out bin ]; }}"
       "BL33=${uboot}/u-boot.bin"
       "DRAM_USE_DDR4=1"
       # defines where the FIP image lives

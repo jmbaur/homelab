@@ -56,17 +56,14 @@ let
     version = "2.9.0";
     patches = [ ./atf-enablement.patch ];
 
-    env = {
-      SCP_BL2 = "${marvellBinaries}/mrvl_scp_bl2.img";
-      BL33 = "${uboot}/u-boot.bin";
-    };
-
     preBuild = ''
       cp -r ${mvDdrMarvell} /tmp/mv_ddr_marvell
       chmod -R +w /tmp/mv_ddr_marvell
     '';
 
     extraMakeFlags = [
+      "SCP_BL2=${marvellBinaries}/mrvl_scp_bl2.img"
+      "BL33=${uboot}/u-boot.bin"
       "USE_COHERENT_MEM=0"
       "MV_DDR_PATH=/tmp/mv_ddr_marvell"
       "CP_NUM=1" # cn9130-cf-pro

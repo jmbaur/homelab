@@ -38,15 +38,16 @@
 
     hardware.deviceTree.enable = true;
     hardware.deviceTree.name = "mediatek/mt7986a-bananapi-bpi-r3.dtb";
-    hardware.deviceTree.overlays = [
-      {
-        name = "mt7986a-bananapi-bpi-r3-nand.dtbo";
-        dtboFile = "${config.boot.kernelPackages.kernel}/dtbs/mediatek/mt7986a-bananapi-bpi-r3-nand.dtbo";
-      }
-      {
-        name = "mt7986a-bananapi-bpi-r3-sd.dtbo";
-        dtboFile = "${config.boot.kernelPackages.kernel}/dtbs/mediatek/mt7986a-bananapi-bpi-r3-sd.dtbo";
-      }
+    hardware.deviceTree.overlays = map
+      (dtboFile: {
+        inherit dtboFile;
+        name = builtins.baseNameOf dtboFile;
+      }) [
+      "${config.boot.kernelPackages.kernel}/dtbs/mediatek/mt7986a-bananapi-bpi-r3-nand.dtbo"
+      # There is also a DTBO for enabling the sd-card, but the emmc and sd
+      # support are mutually exclusive on this device. Use emmc since we can
+      # store the root filesystem on it.
+      "${config.boot.kernelPackages.kernel}/dtbs/mediatek/mt7986a-bananapi-bpi-r3-emmc.dtbo"
     ];
   };
 }
