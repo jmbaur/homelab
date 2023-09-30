@@ -1,6 +1,8 @@
 { pkgs, ... }: {
   imports = [ ./base.nix ];
 
+  system.stateVersion = "23.11";
+
   # systemd.services.otg-ethernet = {
   #   serviceConfig = {
   #     Type = "simple";

@@ -33,6 +33,9 @@ with lib;
       keyFiles = cfg.authorizedKeyFiles;
     };
 
+    # We don't need nixos-rebuild on a machine that gets remote deployments.
+    system.disableInstallerTools = true;
+
     system.build.deploy = pkgs.pkgsBuildBuild.callPackage
       ({ writeShellApplication, openssh }: writeShellApplication {
         name = "deploy";

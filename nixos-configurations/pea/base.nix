@@ -1,5 +1,8 @@
-{ lib, pkgs, modulesPath, ... }: {
-  disabledModules = [ "${modulesPath}/profiles/all-hardware.nix" ];
+{ config, lib, pkgs, modulesPath, ... }: {
+  disabledModules = [
+    "${modulesPath}/profiles/base.nix"
+    "${modulesPath}/profiles/all-hardware.nix"
+  ];
   imports = [ "${modulesPath}/installer/sd-card/sd-image-armv7l-multiplatform.nix" ];
 
   nixpkgs.hostPlatform = lib.recursiveUpdate lib.systems.platforms.armv7l-hf-multiplatform
@@ -14,6 +17,8 @@
 
   custom.crossCompile.enable = true;
 
+
+  users.users.root.password = ""; # TODO(jared): delete this line
   users.allowNoPasswordLogin = true;
 
   sdImage.populateFirmwareCommands = lib.mkForce ""; # don't need rpi-specific files
@@ -38,4 +43,44 @@
   # limit rebuilding to a minimum
   boot.supportedFilesystems = lib.mkForce [ "vfat" "ext4" ];
   boot.initrd.includeDefaultModules = false;
+
+
+  # limit the number of tools needing to be built
+  system.disableInstallerTools = true;
+  environment.defaultPackages = [ ];
+
+  # TODO(jared): these should probably be fixed in nixpkgs? They all assume
+  # `config.systemd.package` is not set to something custom.
+  nixpkgs.overlays = [
+    (_: prev: {
+      util-linux = prev.util-linux.override {
+        nlsSupport = false;
+        ncursesSupport = false;
+        systemdSupport = false;
+        translateManpages = false;
+      };
+
+      mdadm = prev.mdadm.override {
+        udev = config.systemd.package;
+      };
+
+      tmux = prev.tmux.override {
+        withSystemd = false;
+      };
+
+      dhcpcd = prev.dhcpcd.override {
+        udev = config.systemd.package;
+      };
+
+      procps = prev.procps.override {
+        withSystemd = false;
+      };
+
+      v4l-utils = prev.v4l-utils.override {
+        udev = config.systemd.package;
+      };
+    })
+  ];
+
+  services.lvm.enable = false;
 }

@@ -8,6 +8,7 @@ with lib; {
 
   config = mkIf cfg.enable {
     environment.systemPackages = [ pkgs.nixos-kexec pkgs.bottom pkgs.tmux ];
+    environment.defaultPackages = [ ];
 
     programs.vim.defaultEditor = true;
 
