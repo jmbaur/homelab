@@ -61,7 +61,7 @@ inputs: with inputs; {
         dookie = prev.callPackage ./dookie { };
 
         vimPlugins = prev.vimPlugins // {
-          jmbaur-settings = prev.vimUtils.buildVimPluginFrom2Nix {
+          jmbaur-settings = prev.vimUtils.buildVimPlugin {
             name = "jmbaur-settings";
             src = ./neovim/settings;
           };
