@@ -1,8 +1,41 @@
 local lspconfig = require("lspconfig")
-local util = require("lspconfig.util")
-local null_ls = require("null-ls")
 
 local M = {}
+
+local conditional_efm_languages = {
+	sh = {
+		{ required_exe = "shfmt", config = require("efmls-configs.formatters.shfmt") },
+		{ required_exe = "shellcheck", config = require("efmls-configs.linters.shellcheck") },
+	},
+	nix = {
+		{
+			required_exe = "nixpkgs-fmt",
+			config = { formatCommand = "nixpkgs-fmt", formatStdin = true },
+		},
+	},
+	toml = { { required_exe = "taplo", config = require("efmls-configs.formatters.taplo") } },
+	latex = {
+		{ required_exe = "latexindent", config = require("efmls-configs.formatters.latexindent") },
+	},
+}
+
+local toggle_format_on_save = function()
+	local ignoring_buf_write_pre = false
+
+	for _, event in pairs(vim.opt.eventignore:get()) do
+		if event == "BufWritePre" then
+			ignoring_buf_write_pre = true
+		end
+	end
+
+	if ignoring_buf_write_pre then
+		vim.opt.eventignore:remove({ "BufWritePre" })
+		vim.print("enabled format on save")
+	else
+		vim.opt.eventignore:append({ "BufWritePre" })
+		vim.print("disabled format on save")
+	end
+end
 
 -- TODO(jared): maybe don't put this in one big setup function?
 M.setup = function(config)
@@ -70,13 +103,36 @@ M.setup = function(config)
 			vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts("Go to definition"))
 		end
 	end
+
 	local on_attach_format_orgimports = get_on_attach({ format = true, org_imports = true })
 	local on_attach_format = get_on_attach({ format = true, org_imports = false })
 	local on_attach_orgimports = get_on_attach({ format = false, org_imports = true })
 	local on_attach = get_on_attach({ format = false, org_imports = false })
 
+	local efm_languages = {}
+	for lang, lang_config in pairs(conditional_efm_languages) do
+		local lang_efm_config = {}
+		for _, tool in pairs(lang_config) do
+			if vim.fn.executable(tool.required_exe) == 1 then
+				table.insert(lang_efm_config, tool.config)
+			end
+		end
+		efm_languages[lang] = lang_efm_config
+	end
+
 	local servers = {
 		clangd = { required_exe = { "clangd" }, lsp_config = { on_attach = on_attach_format } },
+		efm = {
+			required_exe = { "efm-langserver" },
+			lsp_config = {
+				on_attach = on_attach_format,
+				init_options = { documentFormatting = true },
+				settings = {
+					rootMarkers = { ".git/" },
+					languages = efm_languages,
+				},
+			},
+		},
 		hls = {
 			required_exe = { "haskell-language-server-wrapper", "ghc" },
 			lsp_config = { on_attach = on_attach_format },
@@ -122,28 +178,7 @@ M.setup = function(config)
 				},
 			},
 		},
-		tsserver = {
-			required_exe = { "tsserver", "typescript-language-server" },
-			lsp_config = {
-				on_attach = on_attach_orgimports,
-				root_dir = util.root_pattern("package.json", "tsconfig.json"),
-			},
-		},
 		zls = { required_exe = { "zls" }, lsp_config = { on_attach = on_attach_format } },
-	}
-
-	local conditional_null_ls_sources = {
-		{ required_exe = "cue", source = null_ls.builtins.diagnostics.cue_fmt },
-		{ required_exe = "cue", source = null_ls.builtins.formatting.cue_fmt },
-		{ required_exe = "deno", source = null_ls.builtins.formatting.deno_fmt },
-		{ required_exe = "latexindent", source = null_ls.builtins.formatting.latexindent },
-		{ required_exe = "nixpkgs-fmt", source = null_ls.builtins.formatting.nixpkgs_fmt },
-		{ required_exe = "shellcheck", source = null_ls.builtins.diagnostics.shellcheck },
-		{ required_exe = "shfmt", source = null_ls.builtins.formatting.shfmt },
-		{ required_exe = "taplo", source = null_ls.builtins.formatting.taplo },
-		{ required_exe = "tidy", source = null_ls.builtins.diagnostics.tidy },
-		{ required_exe = "tidy", source = null_ls.builtins.formatting.tidy },
-		{ required_exe = "yamlfmt", source = null_ls.builtins.formatting.yamlfmt },
 	}
 
 	for lsp, settings in pairs(servers) do
@@ -165,16 +200,6 @@ M.setup = function(config)
 		end
 	end
 
-	local null_ls_sources = {}
-	for _, source in pairs(conditional_null_ls_sources) do
-		-- If the required executable for a given null_ls source is found,
-		-- setup the source.
-		if vim.fn.executable(source.required_exe) == 1 then
-			table.insert(null_ls_sources, source.source)
-		end
-	end
-	null_ls.setup({ on_attach = on_attach_format, sources = null_ls_sources })
-
 	vim.diagnostic.config({
 		underline = true,
 		virtual_text = false,
@@ -195,24 +220,6 @@ M.setup = function(config)
 			vim.bo[args.buf].formatexpr = nil
 		end,
 	})
-
-	local toggle_format_on_save = function()
-		local ignoring_buf_write_pre = false
-
-		for _, event in pairs(vim.opt.eventignore:get()) do
-			if event == "BufWritePre" then
-				ignoring_buf_write_pre = true
-			end
-		end
-
-		if ignoring_buf_write_pre then
-			vim.opt.eventignore:remove({ "BufWritePre" })
-			vim.print("enabled format on save")
-		else
-			vim.opt.eventignore:append({ "BufWritePre" })
-			vim.print("disabled format on save")
-		end
-	end
 
 	vim.api.nvim_create_user_command("ToggleFormatOnSave", toggle_format_on_save, { desc = "Toggle format on save" })
 	vim.keymap.set("n", "<leader>t", toggle_format_on_save, { desc = "Toggle format on save" })
