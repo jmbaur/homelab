@@ -3,6 +3,14 @@
 
   system.stateVersion = "23.11";
 
+  # TODO(jared): delete these lines
+  users.users.root.password = "";
+  networking.wireless.enable = true;
+  # TODO end
+
+  # needed for bcm4329 wifi
+  hardware.firmware = [ pkgs.linux-firmware ];
+
   # systemd.services.otg-ethernet = {
   #   serviceConfig = {
   #     Type = "simple";
@@ -15,6 +23,21 @@
   #   after = [ "sys-kernel-config.mount" ];
   #   wantedBy = [ "usb-gadget.target" ];
   # };
+
+  hardware.deviceTree.overlays = [{
+    name = "usb-host-mode";
+    dtsText = ''
+      /dts-v1/;
+      /plugin/;
+      / {
+        compatible = "allwinner,sun8i-h3";
+      };
+      &usb_otg {
+        dr_mode = "host";
+        status = "okay";
+      };
+    '';
+  }];
 
   systemd.services.camera-stream = {
     path = [ pkgs.ffmpeg-headless ];

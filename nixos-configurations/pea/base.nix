@@ -17,8 +17,6 @@
 
   custom.crossCompile.enable = true;
 
-
-  users.users.root.password = ""; # TODO(jared): delete this line
   users.allowNoPasswordLogin = true;
 
   sdImage.populateFirmwareCommands = lib.mkForce ""; # don't need rpi-specific files

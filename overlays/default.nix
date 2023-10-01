@@ -175,6 +175,27 @@ inputs: with inputs; {
           extraMeta.platforms = [ "armv7l-linux" ];
         };
 
+        ubootCoreboot64 = prev.buildUBoot {
+          defconfig = "coreboot64_defconfig";
+          filesToInstall = [ "u-boot-x86-with-spl.bin" ];
+          extraConfig = ''
+            CONFIG_NVME=y
+            CONFIG_EFI_LOADER=y
+            CONFIG_COREBOOT_SERIAL=y
+          '';
+          extraMeta.platforms = [ "x86_64-linux" ];
+        };
+
+        ubootCoreboot = prev.buildUBoot {
+          defconfig = "coreboot_defconfig";
+          filesToInstall = [ "u-boot.bin" ];
+          extraConfig = ''
+            CONFIG_NVME=y
+            CONFIG_COREBOOT_SERIAL=y
+          '';
+          extraMeta.platforms = [ "x86_64-linux" ];
+        };
+
         # linux_orangepi-5 = prev.callPackage ./kernels/linux-orangepi-5.nix { };
 
         jmbaur-keybase-pgp-keys = prev.fetchurl {
