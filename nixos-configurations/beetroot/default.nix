@@ -13,8 +13,6 @@
     };
   };
 
-  services.homed.enable = true;
-
   hardware.bluetooth.enable = true;
 
   zramSwap.enable = true;
@@ -24,7 +22,7 @@
   # boot.kernelParams = [ "console=uart8250,mmio,0xfe03e000,115200n8" ];
   boot.initrd.availableKernelModules = [ "i915" ];
   boot.initrd.systemd.enable = true;
-  boot.kernelPackages = pkgs.linuxPackages_6_1;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.loader.systemd-boot.enable = true;
 
   hardware.chromebook.enable = true;
