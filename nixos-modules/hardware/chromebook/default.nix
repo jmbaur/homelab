@@ -3,9 +3,12 @@
 
   options.hardware.chromebook.enable = lib.mkEnableOption "chromebook";
   config = lib.mkIf config.hardware.chromebook.enable {
+
     services.xserver.xkbOptions = "ctrl:swap_lwin_lctl";
     services.xserver.xkbModel = "chromebook";
 
+    # causes large rebuilds of fwupd if this is set to true
+    environment.noXlibs = false;
     services.fwupd.enable = lib.mkDefault true;
 
     # allow for CR50 TPM usage in initrd
