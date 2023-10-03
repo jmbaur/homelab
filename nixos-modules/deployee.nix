@@ -46,12 +46,28 @@ with lib;
 
           # shellcheck disable=SC2086
           nix copy ''${NIXCOPYOPTS:-} --to "ssh-ng://''${target}" ${config.system.build.toplevel}
+
           # shellcheck disable=SC2086
           ssh ''${SSHOPTS:-} "$target" \
             nix-env --profile /nix/var/nix/profiles/system --set ${config.system.build.toplevel}
+
+          # using systemd-run during switch-to-configuration: https://github.com/NixOS/nixpkgs/pull/258571
           # shellcheck disable=SC2029,SC2086
           ssh ''${SSHOPTS:-} "$target" \
-            ${config.system.build.toplevel}/bin/switch-to-configuration "$deploy_type"
+            systemd-run \
+              -E LOCALE_ARCHIVE \
+              -E NIX_PATH \
+              -E PATH \
+              --collect \
+              --no-ask-password \
+              --pty \
+              --quiet \
+              --same-dir \
+              --service-type=exec \
+              --unit=nixos-rebuild-switch-to-configuration \
+              --wait \
+              ${config.system.build.toplevel}/bin/switch-to-configuration "$deploy_type"
+
           if [[ "$deploy_type" == "boot" ]]; then
             echo "system set to switch to new configuration at next boot, reboot to see changes"
           fi
