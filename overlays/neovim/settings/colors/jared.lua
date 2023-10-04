@@ -81,3 +81,9 @@ hi("String", { fg = xterm[72] })
 hi("Title", { bold = true, fg = xterm[146] })
 hi("Todo", { fg = xterm[232], bg = xterm[227] })
 hi("Type", { fg = xterm[176] })
+
+-- custom statusline highlight groups
+hi("StatusLineDiagnosticError", { fg = xterm[161], bg = xterm[251] })
+hi("StatusLineDiagnosticHint", { fg = xterm[241], bg = xterm[251] })
+hi("StatusLineDiagnosticInfo", { fg = xterm[241], bg = xterm[251] })
+hi("StatusLineDiagnosticWarn", { fg = xterm[172], bg = xterm[251] })

@@ -4,7 +4,7 @@ local M = {}
 
 local conditional_efm_languages = {
 	sh = {
-		{ required_exe = "shfmt", config = require("efmls-configs.formatters.shfmt") },
+		{ required_exe = "shfmt",      config = require("efmls-configs.formatters.shfmt") },
 		{ required_exe = "shellcheck", config = require("efmls-configs.linters.shellcheck") },
 	},
 	nix = {
@@ -37,7 +37,6 @@ local toggle_format_on_save = function()
 	end
 end
 
--- TODO(jared): maybe don't put this in one big setup function?
 M.setup = function(config)
 	local lsp_implementations = config.launcher.lsp_implementations
 	local lsp_references = config.launcher.lsp_references
