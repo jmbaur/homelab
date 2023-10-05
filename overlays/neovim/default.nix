@@ -38,6 +38,7 @@ let
       # start
       [
         efmls-configs-nvim
+        gitsigns-nvim
         gosee-nvim
         jmbaur-settings
         mini-nvim
