@@ -18,6 +18,19 @@ inputs: with inputs; {
 
         nixos-kexec = prev.callPackage ./nixos-kexec { };
 
+        wezterm = prev.wezterm.overrideAttrs (_: rec {
+          version = "nightly-${builtins.substring 0 7 src.rev}";
+          src = prev.fetchgit {
+            inherit (prev.lib.importJSON ./wezterm-source.json) url rev hash fetchSubmodules deepClone leaveDotGit;
+          };
+          cargoDeps = prev.rustPlatform.importCargoLock {
+            # Not acceptable for upstream nixpkgs, but we just want to track main on
+            # wezterm in the easiest manner.
+            lockFile = "${src}/Cargo.lock";
+            allowBuiltinFetchGit = true;
+          };
+        });
+
         # provide dbus-activation for fnott
         fnott-dbus = prev.symlinkJoin {
           name = "fnott-dbus";

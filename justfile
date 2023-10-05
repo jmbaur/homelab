@@ -15,7 +15,7 @@ switch type="switch":
 		--print-build-logs \
 		--use-remote-sudo \
 		--flake {{justfile_directory()}} \
-		{{type}} 
+		{{type}}
 
 build:
 	nix build -L --accept-flake-config \

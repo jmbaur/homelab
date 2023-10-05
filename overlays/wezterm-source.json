@@ -1,0 +1,12 @@
+{
+  "url": "https://github.com/wez/wezterm",
+  "rev": "11dec45f08e3c7a611f59b030d4a9bd391807604",
+  "date": "2023-10-04T11:31:17-07:00",
+  "path": "/nix/store/ami22dvjhpl48z7kbplkvwd47cyd44dm-wezterm",
+  "sha256": "09dlk3ac14aqmlpldpxvcpfwn2zgz56pr0m6mqfcwhd5f2kdixa6",
+  "hash": "sha256-RvXYpnClQc4crqaCfE357wvL3WW730YvrViRwNSYtCU=",
+  "fetchLFS": false,
+  "fetchSubmodules": false,
+  "deepClone": false,
+  "leaveDotGit": false
+}
