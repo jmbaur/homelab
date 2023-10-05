@@ -32,7 +32,14 @@ update:
 	#!/usr/bin/env bash
 	cd {{justfile_directory()}}/overlays
 	export NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"
-	find -type f -name "*source.json" -exec bash -c 'nix-prefetch-git $(jq -r ".url" < $0) > $0' {} \;
+	for source in $(find -type f -name "*source.json"); do
+		args=()
+		if [[ $(jq -r ".fetchSubmodules" < "$source") == "true" ]]; then
+			args+=("--fetch-submodules")
+		fi
+		args+=("$(jq -r ".url" < $source)")
+		nix-prefetch-git "${args[@]}" > "$source"
+	done
 	for drv in $(nix eval --impure --expr "builtins.attrNames (import ./out-of-tree.nix {})" --json | jq -r ".[]"); do
 		nix-update --file ./out-of-tree.nix $drv
 	done
