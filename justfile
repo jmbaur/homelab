@@ -1,5 +1,3 @@
-# vim: ft=make
-
 help:
 	@just --list
 

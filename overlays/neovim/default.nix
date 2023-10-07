@@ -61,6 +61,7 @@ let
         vim-flog
         vim-fugitive
         vim-gist
+        vim-just
         vim-nix
         vim-repeat
         vim-rsi

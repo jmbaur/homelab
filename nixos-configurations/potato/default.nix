@@ -4,7 +4,7 @@
 
   zramSwap.enable = true;
 
-  environment.systemPackages = [ pkgs.sbctl ];
+  environment.systemPackages = [ pkgs.sbctl pkgs.signal-desktop ];
 
   boot.initrd.luks.devices.cryptroot.crypttabExtraOpts = [ "tpm2-device=auto" ];
 
