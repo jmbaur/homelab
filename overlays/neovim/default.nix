@@ -37,6 +37,7 @@ let
     plugins = with vimPlugins;
       # start
       [
+        diffview-nvim
         efmls-configs-nvim
         gitsigns-nvim
         gosee-nvim

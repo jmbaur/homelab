@@ -161,6 +161,8 @@ in
         xsv
         ydiff
         yj
+      ] ++ lib.optionals config.custom.gui.enable [
+        luakit
       ]);
 
       extraGroups = [ "dialout" "wheel" "plugdev" ]

@@ -60,7 +60,6 @@ hi("diffAdded", { fg = xterm[72] })
 hi("diffChanged", { bg = xterm[220] })
 hi("diffRemoved", { fg = xterm[204] })
 link("Error", "ErrorMsg")
-link("TelescopeMatching", "Search")
 
 -- code highlight groups
 hi("Boolean", { fg = xterm[133] })
@@ -81,6 +80,17 @@ hi("String", { fg = xterm[72] })
 hi("Title", { bold = true, fg = xterm[146] })
 hi("Todo", { fg = xterm[232], bg = xterm[227] })
 hi("Type", { fg = xterm[176] })
+
+-- telescope.nvim highlight groups
+link("TelescopeMatching", "Search")
+
+-- gitsigns.nvim highlight groups
+hi("GitSignsAdd", { fg = xterm[72], bg = "bg" })
+hi("GitSignsChange", { fg = xterm[220], bg = "bg" })
+hi("GitSignsDelete", { fg = xterm[204], bg = "bg" })
+
+-- diffview.nvim highlight groups
+hi("DiffviewStatusModified", { fg = xterm[220], bg = "bg" })
 
 -- custom statusline highlight groups
 hi("StatusLineDiagnosticError", { fg = xterm[161], bg = xterm[251] })
