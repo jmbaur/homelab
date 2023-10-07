@@ -290,6 +290,11 @@ in
               src = ./sway.config.in;
               inherit (config.services.xserver) xkbModel xkbOptions;
               inherit (guiData) backgroundColor;
+              terminal =
+                if lib.elem "nvidia" config.services.xserver.videoDrivers then
+                  "kitty"
+                else
+                  "wezterm";
             };
           }
           {
