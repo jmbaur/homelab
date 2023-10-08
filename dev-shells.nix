@@ -10,13 +10,7 @@ in
     buildInputs = with pkgs; [ just jq nix-prefetch-scripts nix-update ];
   };
   deploy = pkgs.mkShell {
-    buildInputs = (with pkgs; [
-      (terraform.withPlugins (p: with p; [ aws cloudflare http sops ]))
-      awscli2
-      deploy-rs
-      flarectl
-      just
-    ]);
+    buildInputs = (with pkgs; [ awscli2 deploy-rs flarectl just ]);
   };
   default = pkgs.mkShell {
     buildInputs = (with pkgs; [ bashInteractive just deploy-rs sops ]);

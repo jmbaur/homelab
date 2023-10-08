@@ -40,7 +40,6 @@
     runner-nix.url = "github:jmbaur/runner-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";
-    terranix.url = "github:terranix/terranix";
     tinyboot.inputs.nixpkgs.follows = "nixpkgs";
     tinyboot.url = "github:jmbaur/tinyboot";
     webauthn-tiny.inputs.nixpkgs.follows = "nixpkgs";
