@@ -1,5 +1,5 @@
 help:
-	@just --list
+	just --list
 
 init:
 	mkdir -p $out

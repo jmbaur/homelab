@@ -3,6 +3,7 @@
 , clang-tools
 , efm-langserver
 , fd
+, fetchgit
 , ghc
 , git
 , go-tools
@@ -28,27 +29,45 @@
 , texlive
 , tree-sitter
 , vimPlugins
+, vimUtils
 , wrapNeovimUnstable
 , zls
-, ...
 }:
 let
+  tree-sitter-just = tree-sitter.buildGrammar rec {
+    language = "just";
+    version = builtins.substring 0 7 src.rev;
+    src = fetchgit {
+      inherit (lib.importJSON ../tree-sitter-just-source.json) url rev hash;
+    };
+  };
+
+  tree-sitter-just-plugin = vimUtils.buildVimPlugin {
+    name = "tree-sitter-just";
+    inherit (tree-sitter-just) src;
+  };
+
+  jmbaur-config = vimUtils.buildVimPlugin {
+    name = "jmbaur-nvim-config";
+    src = ./settings;
+  };
+
   config = neovimUtils.makeNeovimConfig {
     plugins = with vimPlugins;
       # start
       [
+        (nvim-treesitter.withPlugins (_: nvim-treesitter.allGrammars ++ [ tree-sitter-just ]))
         diffview-nvim
         efmls-configs-nvim
         gitsigns-nvim
         gosee-nvim
-        jmbaur-settings
+        jmbaur-config
         mini-nvim
         nvim-colorizer-lua
         nvim-lspconfig
         nvim-surround
         nvim-treesitter-refactor
         nvim-treesitter-textobjects
-        nvim-treesitter.withAllGrammars
         playground
         smartyank-nvim
         snippets-nvim
@@ -56,6 +75,7 @@ let
         telescope-nvim
         telescope-ui-select-nvim
         toggleterm-nvim
+        tree-sitter-just-plugin
         vim-dispatch
         vim-eunuch
         vim-flog

@@ -73,13 +73,6 @@ inputs: with inputs; {
         wip = prev.writeShellScriptBin "wip" ''git commit --no-verify --no-gpg-sign --all --message "WIP"; git push'';
         dookie = prev.callPackage ./dookie { };
 
-        vimPlugins = prev.vimPlugins // {
-          jmbaur-settings = prev.vimUtils.buildVimPlugin {
-            name = "jmbaur-settings";
-            src = ./neovim/settings;
-          };
-        };
-
         neovim = prev.callPackage ./neovim { };
         neovim-all-languages = prev.callPackage ./neovim { supportAllLanguages = true; };
 
