@@ -23,8 +23,7 @@ build:
 		.\#git-get \
 		.\#neovim \
 		.\#neovim-all-languages \
-		.\#pomo \
-		.\#xremap
+		.\#pomo
 
 update:
 	#!/usr/bin/env bash

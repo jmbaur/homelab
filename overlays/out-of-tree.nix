@@ -5,5 +5,4 @@
   flarectl = pkgs.callPackage ./flarectl.nix { };
   stevenblack-blocklist = pkgs.callPackage ./stevenblack-blocklist.nix { };
   u-rootInitramfs = pkgs.callPackage ./u-root.nix { };
-  xremap = pkgs.callPackage ./xremap.nix { features = [ "sway" ]; };
 }

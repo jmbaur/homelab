@@ -13,7 +13,6 @@ inputs: with inputs; {
           flarectl
           stevenblack-blocklist
           u-rootInitramfs
-          xremap
           ;
 
         nixos-kexec = prev.callPackage ./nixos-kexec { };
