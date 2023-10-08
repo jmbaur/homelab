@@ -18,7 +18,7 @@ local mouse_bindings = {
 	},
 	{
 		event = { Up = { streak = 1, button = "Left" } },
-		mods = "CTRL",
+		mods = "SHIFT",
 		action = wezterm.action.OpenLinkAtMouseCursor,
 	},
 }
