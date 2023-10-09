@@ -56,8 +56,6 @@ with lib;
           ssh ''${SSHOPTS:-} "$target" \
             systemd-run \
               -E LOCALE_ARCHIVE \
-              -E NIX_PATH \
-              -E PATH \
               --collect \
               --no-ask-password \
               --pty \
