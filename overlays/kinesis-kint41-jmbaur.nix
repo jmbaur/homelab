@@ -13,8 +13,7 @@ stdenv.mkDerivation {
   installPhase = ''
     runHook preInstall
 
-    mkdir -p $out
-    cp .build/kinesis_kint41_jmbaur.hex $out
+    install -D --target-directory=$out .build/kinesis_kint41_jmbaur.hex
 
     runHook postInstall
   '';
