@@ -67,6 +67,7 @@ with lib;
       pulseaudio
       pulsemixer
       qt5.qtwayland
+      rio
       rofi-wayland
       shikane
       shotman
