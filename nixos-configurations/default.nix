@@ -135,6 +135,7 @@ in
         boot.loader.depthcharge.enable = true;
         boot.initrd.systemd.enable = true;
         hardware.kukui-fennel14.enable = true;
+        custom.crossCompile.enable = true;
       })
     ];
   };
@@ -168,6 +169,7 @@ in
         boot.loader.depthcharge.enable = true;
         boot.initrd.systemd.enable = true;
         hardware.asurada-spherion.enable = true;
+        custom.crossCompile.enable = true;
       })
     ];
   };

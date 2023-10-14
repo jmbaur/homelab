@@ -3,6 +3,9 @@
 
   sops.defaultSopsFile = ./secrets.yaml;
 
+  # causes large rebuilds of fwupd if this is set to true
+  environment.noXlibs = false;
+
   hardware.bluetooth.enable = true;
 
   fileSystems."/".options = [ "noatime" "discard=async" "compress=zstd" ];

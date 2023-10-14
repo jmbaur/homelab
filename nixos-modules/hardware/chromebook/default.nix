@@ -7,8 +7,6 @@
     services.xserver.xkbOptions = "ctrl:swap_lwin_lctl";
     services.xserver.xkbModel = "chromebook";
 
-    # causes large rebuilds of fwupd if this is set to true
-    environment.noXlibs = false;
     services.fwupd.enable = lib.mkDefault true;
 
     # allow for CR50 TPM usage in initrd
@@ -18,9 +16,9 @@
       [ "intel_lpss_pci" "spi_pxa2xx_platform" "spi_intel_pci" ]);
 
     services.udev.packages = [
-      (pkgs.runCommand "chromiumos-autosuspend-udev-rules" { } ''
+      (pkgs.buildPackages.runCommand "chromiumos-autosuspend-udev-rules" { } ''
         mkdir -p $out/lib/udev/rules.d
-        ${lib.getExe pkgs.python3} \
+        ${lib.getExe pkgs.buildPackages.python3} \
           ${config.systemd.package.src}/tools/chromiumos/gen_autosuspend_rules.py \
           >$out/lib/udev/rules.d/01-chromium-autosuspend.rules
       '')

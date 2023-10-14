@@ -1,4 +1,4 @@
-{ config, pkgs, modulesPath, ... }:
+{ config, pkgs, ... }:
 let
   rootfsImage = pkgs.callPackage "${pkgs.path}/nixos/lib/make-ext4-fs.nix" ({
     storePaths = [ config.system.build.toplevel ];
@@ -7,11 +7,6 @@ let
   });
 in
 {
-  imports = [
-    "${modulesPath}/profiles/base.nix"
-    "${modulesPath}/profiles/installation-device.nix"
-  ];
-
   boot.loader.depthcharge = {
     enable = true;
     partition = "nodev";
@@ -21,6 +16,8 @@ in
     device = "/dev/disk/by-label/NIXOS_SD";
     fsType = "ext4";
   };
+
+  services.fwupd.enable = false;
 
   system.build.sdImage = pkgs.callPackage
     ({ stdenv
@@ -35,7 +32,6 @@ in
      , vboot_reference
      , xz
      , zstd
-     , ...
      }:
       stdenv.mkDerivation rec {
         name = "depthcharge-test-sd-image.img";

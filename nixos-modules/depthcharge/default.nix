@@ -6,7 +6,7 @@ let
   makeKernelITS = pkgs.writeShellScript "make-kernel-its.bash" (builtins.readFile ./make-kernel-its.bash);
   makeKpart = pkgs.runCommand "make-kpart.bash"
     {
-      inherit (pkgs) vboot_reference ubootTools dtc xz;
+      inherit (pkgs.buildPackages) vboot_reference ubootTools dtc xz;
       inherit makeKernelITS;
     } ''
     substituteAll ${./make-kpart.bash} $out
