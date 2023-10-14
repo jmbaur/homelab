@@ -29,10 +29,6 @@ if #vim.api.nvim_list_uis() > 0 then
 	vim.opt.splitkeep = "screen"
 end
 
-if vim.g.neovide then
-	require("neovide")
-end
-
 require("mini.bracketed").setup({})
 require("mini.comment").setup({
 	ignore_blank_line = true,
