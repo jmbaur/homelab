@@ -84,6 +84,9 @@ bindsym XF86AudioLowerVolume exec notify-send --transient --hint int:value:$(pam
 bindsym XF86MonBrightnessUp exec notify-send --transient --hint int:value:$(brightnessctl set +5% | sed -En 's/.*\(([0-9]+)%\).*/\1/p') --hint string:x-canonical-private-synchronous:brightness brightness
 bindsym XF86MonBrightnessDown exec notify-send --transient --hint int:value:$(brightnessctl set 5%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p') --hint string:x-canonical-private-synchronous:brightness brightness
 
+bindgesture swipe:right workspace prev
+bindgesture swipe:left workspace next
+
 input "type:keyboard" {
   repeat_delay 300
   repeat_rate 50
