@@ -71,7 +71,6 @@ let
         playground
         smartyank-nvim
         snippets-nvim
-        telescope-frecency-nvim
         telescope-nvim
         telescope-ui-select-nvim
         toggleterm-nvim
