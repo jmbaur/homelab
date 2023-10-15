@@ -3,9 +3,6 @@
 
   sops.defaultSopsFile = ./secrets.yaml;
 
-  # causes large rebuilds of fwupd if this is set to true
-  environment.noXlibs = false;
-
   hardware.bluetooth.enable = true;
 
   fileSystems."/".options = [ "noatime" "discard=async" "compress=zstd" ];
@@ -14,7 +11,6 @@
 
   zramSwap.enable = true;
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.kernelParams = [ "console=ttyS0,115200n8" ];
   boot.initrd.luks.devices."cryptroot".crypttabExtraOpts = [ "tpm2-device=auto" ];
 
@@ -220,6 +216,8 @@
       dashboards.settings.providers = pkgs.grafana-dashboards.dashboards;
     };
   };
+
+  services.tailscale.enable = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

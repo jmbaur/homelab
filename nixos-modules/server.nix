@@ -5,8 +5,6 @@ in
 with lib; {
   options.custom.server.enable = mkEnableOption "server";
   config = mkIf cfg.enable {
-    environment.noXlibs = mkDefault true;
-
     documentation.enable = mkDefault false;
     documentation.doc.enable = mkDefault false;
     documentation.info.enable = mkDefault false;

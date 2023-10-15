@@ -5,6 +5,8 @@
   fileSystems."/nix".options = [ "discard=async" "noatime" "compress=zstd" ];
   fileSystems."/home".options = [ "discard=async" "noatime" "compress=zstd" ];
 
+  services.fwupd.enable = true;
+
   zramSwap.enable = true;
 
   boot.initrd.luks.devices."cryptroot".tryEmptyPassphrase = true;
