@@ -21,7 +21,5 @@
   custom.remoteBuilders.aarch64builder.enable = true;
   custom.users.jared.enable = true;
 
-  users.mutableUsers = true;
-
   system.stateVersion = "22.11";
 }

@@ -41,7 +41,7 @@ return {
 	automatically_reload_config = false,
 	check_for_updates = false,
 	color_scheme = "modus-vivendi",
-	font = wezterm.font("JetBrains Mono"),
+	font = wezterm.font("monospace"),
 	font_size = 16.0,
 	force_reverse_video_cursor = true,
 	front_end = "WebGpu",

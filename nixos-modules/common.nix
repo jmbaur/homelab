@@ -14,8 +14,6 @@ with lib; {
 
     security.sudo.extraRules = [{ groups = [ "wheel" ]; commands = [{ command = "/run/current-system/sw/bin/networkctl"; options = [ "NOPASSWD" ]; }]; }];
 
-    users.mutableUsers = mkDefault false;
-
     networking.nftables.enable = mkDefault true;
 
     boot.tmp.cleanOnBoot = mkDefault isNotContainer;

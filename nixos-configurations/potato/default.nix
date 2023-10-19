@@ -25,8 +25,6 @@
 
   services.fwupd.enable = true;
 
-  users.mutableUsers = true;
-
   custom = {
     dev.enable = true;
     gui.enable = true;

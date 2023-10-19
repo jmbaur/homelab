@@ -1,8 +1,7 @@
 { lib, config, pkgs, ... }:
 let
   cfg = config.custom.users.jared;
-  guiData = import ./data.nix;
-  colors = guiData.colors.modus-vivendi;
+  colors = (import ./colors.nix).modus-vivendi;
 in
 {
   options.custom.users.jared = with lib; {
@@ -40,25 +39,14 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # TODO(jared): scope these to just user
-    qt = {
-      style = "adwaita-dark";
-      platformTheme = "gnome";
-    };
-    environment.sessionVariables.BEMENU_OPTS = lib.escapeShellArgs [
-      "--ignorecase"
-      "--fn=${guiData.font}"
-      "--line-height=30"
-    ];
-
     programs.zsh.enable = true;
 
     users.users.${cfg.username} = {
-      inherit (cfg) hashedPasswordFile;
-
       isNormalUser = true;
 
       description = "Jared Baur";
+
+      initialPassword = cfg.username;
 
       shell = pkgs.zsh;
 
@@ -207,7 +195,7 @@ in
               pkgs.writeText "kitty.conf" ''
                 copy_on_select yes
                 enable_audio_bell no
-                font_family JetBrains Mono
+                font_family monospace
                 font_size 16
                 include ${modusVivendi}
                 shell_integration no-cursor
@@ -219,7 +207,7 @@ in
             target = ".config/foot/foot.ini";
             path = (pkgs.formats.ini { }).generate "foot.ini" {
               main = {
-                font = "${guiData.font}:size=16";
+                font = "monospace:size=16";
                 selection-target = "clipboard";
                 notify-focus-inhibit = "no";
               };
@@ -255,7 +243,7 @@ in
             path = (pkgs.formats.toml { }).generate "rio.toml" {
               fonts = {
                 size = 28;
-                family = "JetBrains Mono";
+                family = "monospace";
               };
               colors = {
                 selection-foreground = "#FFFFFF";
@@ -289,7 +277,7 @@ in
               live_config_reload = false;
               mouse.hide_when_typing = true;
               selection.save_to_clipboard = true;
-              font = { normal.family = guiData.font; size = 16; };
+              font = { normal.family = "monospace"; size = 16; };
               colors = lib.mapAttrsRecursive (_: color: "#${color}") {
                 primary = {
                   foreground = colors.foreground;
@@ -323,15 +311,14 @@ in
             path = pkgs.substituteAll {
               name = "sway.config";
               src = ./sway.config.in;
-              inherit (config.services.xserver) xkbModel xkbOptions;
-              inherit (guiData) backgroundColor;
               terminal = "kitty";
+              inherit (config.services.xserver) xkbModel xkbOptions;
             };
           }
           {
             target = ".config/swaynag/config";
             path = pkgs.writeText "swaynag.config" ''
-              font=JetBrains Mono 12
+              font=sans 12
             '';
           }
           {
@@ -341,7 +328,7 @@ in
               sort=-time
               layer=overlay
               anchor=top-right
-              font=JetBrains Mono 12
+              font=sans 12
               width=500
               height=1000
               margin=10
@@ -551,7 +538,7 @@ in
             target = ".config/rofi/config.rasi";
             path = pkgs.writeText "rofi.rasi" ''
               configuration {
-                font: "JetBrains Mono 12";
+                font: "sans 12";
               }
             '';
           }
