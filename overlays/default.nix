@@ -66,7 +66,6 @@ inputs: with inputs; {
         j = prev.callPackage ./j.nix { };
         kinesis-kint41-jmbaur = prev.callPackage ./kinesis-kint41-jmbaur.nix { };
         macgen = prev.callPackage ./macgen.nix { };
-        mirror-to-x = prev.callPackage ./mirror-to-x.nix { };
         pomo = prev.callPackage ./pomo { };
         v4l-show = prev.callPackage ./v4l-show.nix { };
         wip = prev.writeShellScriptBin "wip" ''git commit --no-verify --no-gpg-sign --all --message "WIP"; git push'';

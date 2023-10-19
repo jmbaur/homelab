@@ -1,8 +1,8 @@
-{ config, lib, pkgs, ... }: {
-  imports = [ ./hardware-configuration.nix ./disko.nix ];
+{ lib, pkgs, ... }: {
+  imports = [ ./hardware-configuration.nix ];
 
   tinyboot = {
-    enable = true;
+    enable = false;
     settings = {
       board = "volteer-elemi";
       verifiedBoot = {
@@ -17,13 +17,17 @@
 
   zramSwap.enable = true;
 
+  boot.initrd.luks.devices.cryptroot.tryEmptyPassphrase = true;
   boot.initrd.luks.devices.cryptroot.crypttabExtraOpts = lib.mkForce [ "tpm2-device=auto" ];
 
-  # boot.kernelParams = [ "console=uart8250,mmio,0xfe03e000,115200n8" ];
-  boot.initrd.availableKernelModules = [ "i915" ];
   boot.initrd.systemd.enable = true;
   boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
+  fileSystems."/".options = [ "noatime" "discard=async" "compress=zstd" ];
+  fileSystems."/nix".options = [ "noatime" "discard=async" "compress=zstd" ];
+  fileSystems."/home".options = [ "noatime" "discard=async" "compress=zstd" ];
 
   hardware.chromebook.enable = true;
   networking.hostName = "beetroot";
@@ -32,23 +36,15 @@
     dev.enable = true;
     gui.enable = true;
     laptop.enable = true;
-    users.jared = {
-      enable = true;
-      hashedPasswordFile = config.sops.secrets.jared_password.path;
-    };
+    users.jared.enable = true;
     remoteBuilders.aarch64builder.enable = false;
     wg-mesh = {
-      enable = true;
+      enable = false;
       peers.squash.dnsName = "squash.jmbaur.com";
     };
   };
 
   nixpkgs.config.allowUnfree = true;
-
-  sops = {
-    defaultSopsFile = ./secrets.yaml;
-    secrets.jared_password.neededForUsers = true;
-  };
 
   nix.settings = {
     # substituters = [ "http://carrot.home.arpa" ];

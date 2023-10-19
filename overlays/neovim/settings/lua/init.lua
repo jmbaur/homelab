@@ -1,3 +1,5 @@
+vim.loader.enable()
+
 vim.g.mapleader = " "
 
 if #vim.api.nvim_list_uis() > 0 then

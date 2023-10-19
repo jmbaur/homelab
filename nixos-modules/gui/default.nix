@@ -1,14 +1,13 @@
 { config, lib, pkgs, ... }:
 let
   cfg = config.custom.gui;
+
   swaySessionTarget = "sway-session.target";
 in
 with lib;
 {
   options.custom.gui.enable = mkEnableOption "GUI config";
   config = mkIf cfg.enable {
-    environment.enableAllTerminfo = true;
-
     hardware.pulseaudio.enable = mkForce false;
     security.rtkit.enable = true;
     services.pipewire = {
@@ -17,20 +16,32 @@ with lib;
       pulse.enable = true;
     };
 
-    boot.kernelModules = [ "i2c_dev" ]; # for ddc monitor control
-
-    fonts.fontconfig.enable = true;
-    fonts.packages = [ pkgs.jetbrains-mono ];
-
-    location.provider = "geoclue2";
-    services.automatic-timezoned.enable = lib.mkDefault true;
+    fonts = {
+      packages = [ pkgs.roboto pkgs.roboto-serif pkgs.jetbrains-mono ];
+      fontconfig = {
+        enable = true;
+        defaultFonts = {
+          sansSerif = [ "Roboto" ];
+          serif = [ "Roboto Serif" ];
+          monospace = [ "JetBrains Mono" ];
+        };
+      };
+    };
 
     nixpkgs.overlays = [
-      (_: prev: {
-        desktop-launcher = prev.writeShellScriptBin "desktop-launcher" ''
-          exec -a "$0" systemd-cat --identifier=sway ${config.programs.sway.package}/bin/sway
+      (final: _: {
+        mirror-to-x = final.writeShellScriptBin "mirror-to-x" ''
+          env SDL_VIDEODRIVER=x11 \
+            ${final.wf-recorder}/bin/wf-recorder \
+            -c rawvideo \
+            -m sdl \
+            -f pipe:xwayland-mirror
         '';
-        caffeine = prev.writeShellScriptBin "caffeine" ''
+        desktop-launcher = final.writeShellScriptBin "desktop-launcher" ''
+          exec -a "$0" systemd-cat --identifier=sway \
+            ${config.programs.sway.package}/bin/sway
+        '';
+        caffeine = final.writeShellScriptBin "caffeine" ''
           stop() { systemctl restart --user idle.service; }
           trap stop EXIT SIGINT
           systemctl stop --user idle.service
@@ -40,19 +51,13 @@ with lib;
       })
     ];
 
-    qt.enable = true;
-
     environment.systemPackages = with pkgs; [
-      alacritty
       brightnessctl
       caffeine
       chromium-wayland
       cliphist
-      ddcutil
       desktop-launcher
-      ffmpeg-full
       firefox
-      foot
       glib
       gnome-themes-extra
       gobar
@@ -66,8 +71,6 @@ with lib;
       pamixer
       pulseaudio
       pulsemixer
-      qt5.qtwayland
-      rio
       rofi-wayland
       shikane
       shotman
@@ -75,23 +78,14 @@ with lib;
       swaybg
       swayidle
       swaylock
-      vulkan-tools
       wev
-      wezterm
       wf-recorder
       wl-clipboard
       wl-color-picker
       wl-screenrec
       wlr-randr
       xdg-utils
-      zathura
     ];
-
-    services.dbus.enable = true;
-    xdg.portal.enable = true;
-
-    programs.ssh.startAgent = true;
-    programs.gnupg.agent.enable = true;
 
     # ensure the plugdev group exists for udev rules for qmk
     users.groups.plugdev = { };
@@ -101,11 +95,19 @@ with lib;
       pkgs.teensy-udev-rules
     ];
 
+    location.provider = "geoclue2";
+    programs.gnupg.agent.enable = true;
+    programs.ssh.startAgent = true;
+    programs.wshowkeys.enable = true;
+    services.automatic-timezoned.enable = lib.mkDefault true;
+    services.dbus.enable = true;
     services.pcscd.enable = true;
     services.power-profiles-daemon.enable = true;
     services.printing.enable = true;
-    services.upower.enable = true;
     services.udisks2.enable = true;
+    services.upower.enable = true;
+    xdg.portal.enable = true;
+    xdg.portal.wlr.enable = true;
 
     networking.firewall.allowedUDPPorts = [ 5353 ];
     services.resolved.extraConfig = ''
@@ -117,10 +119,6 @@ with lib;
       vt = 7;
       settings.default_session.command = "${pkgs.greetd.greetd}/bin/agreety --cmd desktop-launcher";
     };
-
-    programs.wshowkeys.enable = true;
-
-    xdg.portal.wlr.enable = true;
 
     programs.sway = {
       enable = true;
@@ -146,15 +144,6 @@ with lib;
       bindsTo = [ "graphical-session.target" ];
       wants = [ "graphical-session-pre.target" ];
       after = [ "graphical-session-pre.target" ];
-    };
-
-    systemd.user.services.statusbar = {
-      enable = false;
-      description = "desktop status bar";
-      after = [ swaySessionTarget ];
-      partOf = [ swaySessionTarget ];
-      serviceConfig.ExecStart = "${lib.getExe pkgs.yambar}";
-      wantedBy = [ swaySessionTarget ];
     };
 
     systemd.user.services.display-manager = {
