@@ -109,10 +109,7 @@ with lib;
     xdg.portal.enable = true;
     xdg.portal.wlr.enable = true;
 
-    networking.firewall.allowedUDPPorts = [ 5353 ];
-    services.resolved.extraConfig = ''
-      MulticastDNS=yes
-    '';
+    services.avahi.enable = true;
 
     services.greetd = {
       enable = true;
