@@ -9,13 +9,8 @@
         linux-kernel = {
           name = "armada-38x";
           baseConfig = "mvebu_v7_defconfig";
-          # TODO(jared): don't build big kernel with lots of unused modules
-          # autoModules = false;
-
-          # allow booting as an EFI stub
-          extraConfig = lib.systems.platforms.armv7l-hf-multiplatform.linux-kernel.extraConfig + ''
-            EFI y
-          '';
+          autoModules = false;
+          preferBuiltin = true;
         };
       });
 
