@@ -76,6 +76,10 @@ in
     ];
   };
 
+  garlic = nixosSystem {
+    modules = with inputs; [ ./garlic self.nixosModules.default ];
+  };
+
   www = nixosSystem {
     modules = with inputs; [
       ./www

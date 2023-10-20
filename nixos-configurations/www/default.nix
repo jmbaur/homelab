@@ -14,8 +14,6 @@ in
   boot.kernelPackages = pkgs.linuxPackages_6_1;
   boot.loader.grub.configurationLimit = 2;
 
-  system.stateVersion = "22.11";
-
   custom.server.enable = true;
   custom.deployee = {
     enable = true;
