@@ -5,8 +5,6 @@ in
 {
   options.custom.installer.enable = lib.mkEnableOption "installer";
   config = lib.mkIf cfg.enable {
-    system.stateVersion = "23.11";
-
     boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_6_1;
     custom.disableZfs = true;
     programs.vim.defaultEditor = true;

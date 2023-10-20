@@ -20,6 +20,4 @@
   custom.laptop.enable = true;
   custom.remoteBuilders.aarch64builder.enable = true;
   custom.users.jared.enable = true;
-
-  system.stateVersion = "22.11";
 }

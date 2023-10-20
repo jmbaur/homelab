@@ -2,6 +2,7 @@
 - [x] beetroot
 - [x] carrot
 - [x] fennel
+- [x] garlic
 - [x] kale
 - [x] pea
 - [x] potato
@@ -12,7 +13,6 @@
 - [ ] cabbage
 - [ ] cauliflower
 - [ ] celery
-- [ ] garlic
 - [ ] olive
 - [ ] onion
 - [ ] pumpkin

@@ -7,6 +7,9 @@ with lib; {
   options.custom.common.enable = mkEnableOption "common config" // { default = true; };
 
   config = mkIf cfg.enable {
+    # NOTE: this should be set explicitly if it is actually needed
+    system.stateVersion = lib.mkDefault "23.11";
+
     environment.systemPackages = [ pkgs.nixos-kexec pkgs.bottom pkgs.tmux ];
     environment.defaultPackages = [ ];
 

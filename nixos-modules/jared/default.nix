@@ -39,7 +39,12 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    programs.zsh.enable = true;
+    assertions = [{
+      assertion = config.users.mutableUsers;
+      message = "Setting `users.users.${cfg.username}.initialPassword` with `users.mutableUsers = true;` is not safe!";
+    }];
+
+    programs.fish.enable = true;
 
     users.users.${cfg.username} = {
       isNormalUser = true;
@@ -48,7 +53,7 @@ in
 
       initialPassword = cfg.username;
 
-      shell = pkgs.zsh;
+      shell = pkgs.fish;
 
       openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-ssh-keys ];
 
@@ -166,7 +171,7 @@ in
 
     systemd.user.tmpfiles.users.${cfg.username}.rules =
       # xdg user dirs
-      (map
+      (lib.optionals config.custom.gui.enable (map
         # don't apply any cleanup
         (dir: "d %h/${dir} 0755 ${config.users.users.${cfg.username}.name} ${config.users.users.${cfg.username}.group} - -")
         [
@@ -178,7 +183,7 @@ in
           "Public"
           "Templates"
           "Videos"
-        ]) ++
+        ])) ++
       # config files
       (map
         ({ target, path }: "L+ %h/${target} - - - - ${path}")
@@ -398,16 +403,21 @@ in
           }
           {
             target = ".config/fish/config.fish";
-            path = pkgs.writeText "fish.config" ''
-              if status is-interactive
-                set -U fish_greeting ""
-                ${pkgs.direnv}/bin/direnv hook fish | source
-                ${pkgs.nix-your-shell}/bin/nix-your-shell fish | source
-                ${lib.optionalString config.custom.dev.enable ''
-                set -U PROJECTS_DIR ${config.users.users.${cfg.username}.home}/projects
-                ''}
-              end
-            '';
+            path =
+              let
+                nixYourShell = pkgs.runCommand "nix-your-shell.fish" { } "${pkgs.nix-your-shell}/bin/nix-your-shell fish > $out";
+                direnvHook = pkgs.runCommand "direnv-hook.fish" { } "${pkgs.direnv}/bin/direnv hook fish > $out";
+              in
+              pkgs.writeText "fish.config" ''
+                if status is-interactive
+                  set -U fish_greeting ""
+                  ${lib.optionalString config.custom.dev.enable ''
+                  source ${nixYourShell}
+                  source ${direnvHook}
+                  set -U PROJECTS_DIR ${config.users.users.${cfg.username}.home}/projects
+                  ''}
+                end
+              '';
           }
           {
             target = ".config/zellij/config.kdl";

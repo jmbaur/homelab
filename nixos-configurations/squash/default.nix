@@ -40,7 +40,4 @@
   };
 
   zramSwap.enable = true;
-
-  system.disableInstallerTools = true;
-  system.stateVersion = "23.11";
 }

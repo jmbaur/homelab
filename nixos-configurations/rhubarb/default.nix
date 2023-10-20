@@ -46,6 +46,4 @@
       dhcpV4Config.ClientIdentifier = "mac";
     };
   };
-
-  system.stateVersion = "23.05";
 }

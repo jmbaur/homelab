@@ -1,8 +1,6 @@
 { pkgs, ... }: {
   imports = [ ./base.nix ];
 
-  system.stateVersion = "23.11";
-
   # TODO(jared): delete these lines
   users.users.root.password = "";
   networking.wireless.enable = true;
