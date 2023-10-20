@@ -158,7 +158,6 @@ bar {
 	status_command gobar
 	swaybar_command swaybar
 	tray_output *
-	height 30
 }
 
 for_window {
