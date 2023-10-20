@@ -77,7 +77,6 @@ in
         wireguard-tools
         zip
       ] ++ lib.optionals config.custom.dev.enable [
-        tio
         ansifilter
         as-tree
         bat
@@ -143,10 +142,12 @@ in
         rlwrap
         sd
         skopeo
+        strace
         tcpdump
         tea
         tealdeer
         tig
+        tio
         tokei
         traceroute
         usbutils
