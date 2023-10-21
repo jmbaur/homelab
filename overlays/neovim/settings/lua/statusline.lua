@@ -1,3 +1,21 @@
+local utils = require("jmbaur.utils")
+
+local statusline_hl = utils.resolve_hl("StatusLine")
+local bg = statusline_hl.bg
+if statusline_hl.reverse then
+	bg = statusline_hl.fg
+end
+
+local error_hl = { bg = bg, fg = utils.resolve_hl("DiagnosticError").fg }
+local hint_hl = { bg = bg, fg = utils.resolve_hl("DiagnosticHint").fg }
+local info_hl = { bg = bg, fg = utils.resolve_hl("DiagnosticInfo").fg }
+local warn_hl = { bg = bg, fg = utils.resolve_hl("DiagnosticWarn").fg }
+
+vim.api.nvim_set_hl(0, "StatusLineDiagnosticError", error_hl)
+vim.api.nvim_set_hl(0, "StatusLineDiagnosticHint", hint_hl)
+vim.api.nvim_set_hl(0, "StatusLineDiagnosticInfo", info_hl)
+vim.api.nvim_set_hl(0, "StatusLineDiagnosticWarn", warn_hl)
+
 local diagnostics_config = {
 	{ display = "E", severity = vim.diagnostic.severity.ERROR, hi = "StatusLineDiagnosticError" },
 	{ display = "W", severity = vim.diagnostic.severity.WARN,  hi = "StatusLineDiagnosticWarn" },
@@ -20,8 +38,6 @@ function StatusLine()
 			-- the active window
 			if statusline_is_current_window then
 				table.insert(curr_diagnostics, "%#" .. diag["hi"] .. "#" .. diag["display"] .. num_indicators .. "%*")
-			else
-				table.insert(curr_diagnostics, diag["display"] .. num_indicators)
 			end
 		end
 	end

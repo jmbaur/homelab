@@ -1,4 +1,5 @@
-local xterm = require("xterm")
+local utils = require("jmbaur.utils")
+local xterm = utils.xterm
 
 if vim.fn.exists("syntax_on") then
 	vim.cmd.syntax("reset")
@@ -91,9 +92,3 @@ hi("GitSignsDelete", { fg = xterm[204], bg = "bg" })
 
 -- diffview.nvim highlight groups
 hi("DiffviewStatusModified", { fg = xterm[220], bg = "bg" })
-
--- custom statusline highlight groups
-hi("StatusLineDiagnosticError", { fg = xterm[161], bg = xterm[251] })
-hi("StatusLineDiagnosticHint", { fg = xterm[241], bg = xterm[251] })
-hi("StatusLineDiagnosticInfo", { fg = xterm[241], bg = xterm[251] })
-hi("StatusLineDiagnosticWarn", { fg = xterm[172], bg = xterm[251] })

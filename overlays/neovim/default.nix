@@ -61,9 +61,9 @@ let
         efmls-configs-nvim
         gitsigns-nvim
         gosee-nvim
+        gruvbox-nvim
         jmbaur-config
         mini-nvim
-        nvim-colorizer-lua
         nvim-lspconfig
         nvim-surround
         nvim-treesitter-refactor

@@ -3,6 +3,8 @@ vim.loader.enable()
 vim.g.mapleader = " "
 
 if #vim.api.nvim_list_uis() > 0 then
+	vim.cmd.colorscheme("gruvbox")
+
 	local launcher = require("launcher")
 	launcher.setup()
 
@@ -21,10 +23,9 @@ if #vim.api.nvim_list_uis() > 0 then
 	require("statusline")
 	require("terminal")
 
-	vim.cmd.colorscheme("jared")
 	vim.opt.belloff = "all"
 	vim.opt.colorcolumn = "80"
-	vim.opt.cursorline = true
+	vim.opt.cursorline = false
 	vim.opt.laststatus = 2
 	vim.opt.number = true
 	vim.opt.relativenumber = true
