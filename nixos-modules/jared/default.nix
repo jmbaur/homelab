@@ -68,7 +68,6 @@ in
         pwgen
         rage
         sl
-        tailscale
         tcpdump
         tree
         unzip
@@ -79,7 +78,6 @@ in
       ] ++ lib.optionals config.custom.dev.enable [
         ansifilter
         as-tree
-        bat
         bc
         bintools
         bottom
@@ -369,12 +367,6 @@ in
             '';
           }
           {
-            target = ".config/bat/config";
-            path = pkgs.writeText "bat.config" ''
-              --theme='base16'
-            '';
-          }
-          {
             target = ".config/fd/ignore";
             path = pkgs.writeText "fdignore.config" ''
               .git
@@ -531,36 +523,33 @@ in
               }
             '';
           }
-        ] ++ lib.optional (config.custom.laptop.enable && config.custom.laptop.displays != { }) {
+        ] ++ lib.optional (config.custom.gui.enable && config.custom.gui.displays != { }) {
           target = ".config/shikane/config.toml";
           path =
             let
-              splitDisplays = lib.partition (disp: disp.isInternal) (lib.attrValues config.custom.laptop.displays);
+              splitDisplays = lib.partition (disp: disp.isInternal) (lib.attrValues config.custom.gui.displays);
               internalDisplays = splitDisplays.right;
               externalDisplays = splitDisplays.wrong;
             in
             (pkgs.formats.toml { }).generate "shikane.toml" {
               profile = map
                 (profile: profile // {
-                  exec = [
-                    "${pkgs.libnotify}/bin/notify-send shikane \"Profile $SHIKANE_PROFILE_NAME has been applied\""
-                  ];
-                }) [
-                {
+                  exec = [ "${pkgs.libnotify}/bin/notify-send shikane \"Profile $SHIKANE_PROFILE_NAME has been applied\"" ];
+                })
+                ((lib.optional (externalDisplays != [ ]) {
                   name = "dock";
                   output = (map
-                    (disp: { inherit (disp) match; enable = false; })
+                    (disp: { inherit (disp) match scale; enable = false; })
                     internalDisplays) ++ (map
-                    (disp: { inherit (disp) match; enable = true; })
+                    (disp: { inherit (disp) match scale; enable = true; })
                     externalDisplays);
-                }
-                {
+                }) ++
+                (lib.optional (internalDisplays != [ ]) {
                   name = "laptop";
                   output = (map
-                    (disp: { inherit (disp) match; enable = true; })
+                    (disp: { inherit (disp) match scale; enable = true; })
                     internalDisplays);
-                }
-              ];
+                }));
             };
         })
       );

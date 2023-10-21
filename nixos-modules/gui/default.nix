@@ -4,11 +4,33 @@ let
 
   swaySessionTarget = "sway-session.target";
 in
-with lib;
 {
-  options.custom.gui.enable = mkEnableOption "GUI config";
-  config = mkIf cfg.enable {
-    hardware.pulseaudio.enable = mkForce false;
+  options.custom.gui = with lib; {
+    enable = mkEnableOption "GUI config";
+
+    displays = mkOption {
+      type = types.attrsOf (types.submodule ({ name, ... }: {
+        options = {
+          match = mkOption {
+            type = types.str;
+            default = name;
+            description = mdDoc ''
+              Shikane-compatible (shikane(5)) match statements.
+            '';
+          };
+          scale = mkOption {
+            type = types.float;
+            default = 1.0;
+          };
+          isInternal = mkEnableOption "internal display";
+        };
+      }));
+      default = { };
+    };
+  };
+
+  config = lib.mkIf cfg.enable {
+    hardware.pulseaudio.enable = lib.mkForce false;
     security.rtkit.enable = true;
     services.pipewire = {
       enable = true;
