@@ -1,7 +1,7 @@
 { lib, config, pkgs, ... }:
 let
   cfg = config.custom.users.jared;
-  colors = (import ./colors.nix).modus-vivendi;
+  colors = (import ./colors.nix).gruvbox-dark;
 in
 {
   options.custom.users.jared = with lib; {
@@ -191,23 +191,34 @@ in
         ([
           {
             target = ".config/kitty/kitty.conf";
-            path =
-              let
-                # keep kitty default tab and selection colors
-                modusVivendi = pkgs.runCommand "modus_vivendi.conf" { } ''
-                  grep -vi -e tab -e select ${pkgs.kitty-themes}/share/kitty-themes/themes/Modus_Vivendi.conf > $out
-                '';
-              in
-              pkgs.writeText "kitty.conf" ''
-                copy_on_select yes
-                enable_audio_bell no
-                font_family monospace
-                font_size 16
-                include ${modusVivendi}
-                shell_integration no-cursor
-                tab_bar_style powerline
-                update_check_interval 0
-              '';
+            path = pkgs.writeText "kitty.conf" ''
+              copy_on_select yes
+              enable_audio_bell no
+              font_family monospace
+              font_size 16
+              shell_integration no-cursor
+              tab_bar_style powerline
+              update_check_interval 0
+
+              background ${colors.background}
+              foreground ${colors.foreground}
+              color0     ${colors.regular0}
+              color1     ${colors.regular1}
+              color2     ${colors.regular2}
+              color3     ${colors.regular3}
+              color4     ${colors.regular4}
+              color5     ${colors.regular5}
+              color6     ${colors.regular6}
+              color7     ${colors.regular7}
+              color8     ${colors.regular0}
+              color9     ${colors.bright1}
+              color10    ${colors.bright2}
+              color11    ${colors.bright3}
+              color12    ${colors.bright4}
+              color13    ${colors.bright5}
+              color14    ${colors.bright6}
+              color15    ${colors.bright7}
+            '';
           }
           {
             target = ".config/foot/foot.ini";
@@ -230,8 +241,8 @@ in
             path = ./wezterm.lua;
           }
           {
-            target = ".config/wezterm/colors/modus-vivendi.toml";
-            path = (pkgs.formats.toml { }).generate "modus-vivendi.toml" {
+            target = ".config/wezterm/colors/gruvbox-dark.toml";
+            path = (pkgs.formats.toml { }).generate "gruvbox-dark.toml" {
               colors = {
                 background = "#${colors.background}";
                 foreground = "#${colors.foreground}";
@@ -241,7 +252,7 @@ in
                 ansi = map (color: "#${color}") [ colors.regular0 colors.regular1 colors.regular2 colors.regular3 colors.regular4 colors.regular5 colors.regular6 colors.regular7 ];
                 brights = map (color: "#${color}") [ colors.bright0 colors.bright1 colors.bright2 colors.bright3 colors.bright4 colors.bright5 colors.bright6 colors.bright7 ];
               };
-              metadata.name = "modus-vivendi";
+              metadata.name = "gruvbox-dark";
             };
           }
           {
