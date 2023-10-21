@@ -104,7 +104,7 @@
   services.nginx = {
     enable = true;
     recommendedTlsSettings = true;
-    recommendedZstdSettings = false; # TODO(jared): doesn't build
+    recommendedZstdSettings = true;
     recommendedGzipSettings = true;
     virtualHosts."carrot.home.arpa" = {
       enableACME = false;
@@ -118,6 +118,7 @@
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection $connection_upgrade;
         gzip_types application/x-nix-archive;
+        zstd_types application/x-nix-archive;
       '';
     };
   };
