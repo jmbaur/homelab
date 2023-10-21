@@ -256,39 +256,6 @@ in
             };
           }
           {
-            target = ".config/rio/config.toml";
-            path = (pkgs.formats.toml { }).generate "rio.toml" {
-              fonts = {
-                size = 28;
-                family = "monospace";
-              };
-              colors = {
-                selection-foreground = "#FFFFFF";
-                selection-background = "#5C5C5C";
-                tabs = "#2F2F2F";
-                tabs-active = "#545454";
-                foreground = "#${colors.foreground}";
-                background = "#${colors.background}";
-                black = "#${colors.regular0}";
-                red = "#${colors.regular1}";
-                green = "#${colors.regular2}";
-                yellow = "#${colors.regular3}";
-                blue = "#${colors.regular4}";
-                magenta = "#${colors.regular5}";
-                cyan = "#${colors.regular6}";
-                white = "#${colors.regular7}";
-                light-black = "#${colors.bright0}";
-                light-red = "#${colors.bright1}";
-                light-green = "#${colors.bright2}";
-                light-yellow = "#${colors.bright3}";
-                light-blue = "#${colors.bright4}";
-                light-magenta = "#${colors.bright5}";
-                light-cyan = "#${colors.bright6}";
-                light-white = "#${colors.bright7}";
-              };
-            };
-          }
-          {
             target = ".config/alacritty/alacritty.yml";
             path = (pkgs.formats.yaml { }).generate "alacritty.yml" {
               live_config_reload = false;
