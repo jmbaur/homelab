@@ -153,8 +153,6 @@ in
         xsv
         ydiff
         yj
-      ] ++ lib.optionals config.custom.gui.enable [
-        luakit
       ]);
 
       extraGroups = [ "dialout" "wheel" "plugdev" ]
@@ -198,24 +196,24 @@ in
               tab_bar_style powerline
               update_check_interval 0
 
-              background ${colors.background}
-              foreground ${colors.foreground}
-              color0     ${colors.regular0}
-              color1     ${colors.regular1}
-              color2     ${colors.regular2}
-              color3     ${colors.regular3}
-              color4     ${colors.regular4}
-              color5     ${colors.regular5}
-              color6     ${colors.regular6}
-              color7     ${colors.regular7}
-              color8     ${colors.regular0}
-              color9     ${colors.bright1}
-              color10    ${colors.bright2}
-              color11    ${colors.bright3}
-              color12    ${colors.bright4}
-              color13    ${colors.bright5}
-              color14    ${colors.bright6}
-              color15    ${colors.bright7}
+              background #${colors.background}
+              foreground #${colors.foreground}
+              color0     #${colors.regular0}
+              color1     #${colors.regular1}
+              color2     #${colors.regular2}
+              color3     #${colors.regular3}
+              color4     #${colors.regular4}
+              color5     #${colors.regular5}
+              color6     #${colors.regular6}
+              color7     #${colors.regular7}
+              color8     #${colors.regular0}
+              color9     #${colors.bright1}
+              color10    #${colors.bright2}
+              color11    #${colors.bright3}
+              color12    #${colors.bright4}
+              color13    #${colors.bright5}
+              color14    #${colors.bright6}
+              color15    #${colors.bright7}
             '';
           }
           {
