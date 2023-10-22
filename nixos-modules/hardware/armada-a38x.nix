@@ -54,6 +54,7 @@
       };
     };
 
+    # TODO(jared): replace with https://github.com/KarsMulder/evsieve
     systemd.services.reset-button = {
       # BTN_0 == 0x100
       serviceConfig.ExecStart = "${pkgs.dookie}/bin/dookie --device=/dev/input/event0 --key-code=0x100 --action=restart";
