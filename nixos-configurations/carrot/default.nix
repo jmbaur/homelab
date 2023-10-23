@@ -16,17 +16,14 @@
 
   tinyboot = {
     enable = true;
-    settings = {
-      board = "fizz-fizz";
-      verifiedBoot = {
-        caCertificate = ./x509_ima.pem;
-        signingPublicKey = ./x509_ima.der;
-        signingPrivateKey = "/etc/keys/privkey_ima.pem";
-      };
+    board = "fizz-fizz";
+    verifiedBoot = {
+      caCertificate = ./x509_ima.pem;
+      signingPublicKey = ./x509_ima.der;
+      signingPrivateKey = "/etc/keys/privkey_ima.pem";
     };
   };
 
-  boot.loader.systemd-boot.enable = true;
   boot.initrd.systemd.enable = true;
 
   hardware.chromebook.enable = true;
