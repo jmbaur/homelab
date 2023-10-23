@@ -9,8 +9,6 @@
         linux-kernel = {
           name = "armada-38x";
           baseConfig = "mvebu_v7_defconfig";
-          autoModules = false;
-          preferBuiltin = true;
         };
       });
 
