@@ -293,6 +293,9 @@ in
               src = ./sway.config.in;
               terminal = "kitty";
               inherit (config.services.xserver) xkbModel xkbOptions;
+              extraConfig = lib.optionalString (config.custom.gui.enable && config.custom.gui.displays != { }) ''
+                exec_always shikane -o
+              '';
             };
           }
           {
