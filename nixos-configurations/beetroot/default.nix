@@ -3,13 +3,11 @@
 
   tinyboot = {
     enable = false;
-    settings = {
-      board = "volteer-elemi";
-      verifiedBoot = {
-        caCertificate = ./x509_ima.pem;
-        signingPublicKey = ./x509_ima.der;
-        signingPrivateKey = "/etc/keys/privkey_ima.pem";
-      };
+    board = "volteer-elemi";
+    verifiedBoot = {
+      caCertificate = ./x509_ima.pem;
+      signingPublicKey = ./x509_ima.der;
+      signingPrivateKey = "/etc/keys/privkey_ima.pem";
     };
   };
 
