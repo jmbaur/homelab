@@ -15,7 +15,6 @@ inputs: {
       ./common.nix
       ./cross-compile.nix
       ./deployee.nix
-      ./deployer.nix
       ./depthcharge
       ./dev.nix
       ./gui
