@@ -26,6 +26,8 @@
 
   networking.hostName = "squash";
 
+  router.enable = true;
+
   hardware.armada-a38x.enable = true;
 
   custom = {

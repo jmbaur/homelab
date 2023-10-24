@@ -1,5 +1,10 @@
 { config, lib, pkgs, ... }: {
   config = lib.mkIf config.router.enable {
+    router = {
+      ipv4Prefix = "192.168.1.0/24";
+      ipv6UlaPrefix = "fd4c:ddfe:28e9::/64";
+    };
+
     services.usbguard.enable = true;
 
     sops.defaultSopsFile = ./secrets.yaml;
@@ -84,7 +89,6 @@
     environment.systemPackages = [ pkgs.iw ];
 
     services.hostapd = {
-      enable = true;
       radios.wlan0.countryCode = "US";
       radios.wlan1 = {
         band = "5g";
