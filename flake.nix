@@ -13,7 +13,6 @@
   };
 
   inputs = {
-    deploy-rs.url = "github:serokell/deploy-rs";
     disko.inputs.nixpkgs.follows = "nixpkgs";
     disko.url = "github:nix-community/disko";
     gobar.inputs.nixpkgs.follows = "nixpkgs";
@@ -36,8 +35,6 @@
     pd-notify.url = "github:jmbaur/pd-notify";
     pre-commit.inputs.nixpkgs.follows = "nixpkgs";
     pre-commit.url = "github:cachix/pre-commit-hooks.nix";
-    runner-nix.inputs.nixpkgs.follows = "nixpkgs";
-    runner-nix.url = "github:jmbaur/runner-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";
     tinyboot.inputs.nixpkgs.follows = "nixpkgs";
@@ -48,8 +45,6 @@
 
   outputs = inputs: {
     apps = import ./apps inputs;
-    checks = import ./checks.nix inputs;
-    deploy = import ./deploy.nix inputs;
     devShells = import ./dev-shells.nix inputs;
     formatter = import ./formatter.nix inputs;
     legacyPackages = import ./legacy-packages.nix inputs;

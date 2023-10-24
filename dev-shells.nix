@@ -9,16 +9,13 @@ in
   ci = pkgs.mkShell {
     buildInputs = with pkgs; [ just jq nix-prefetch-scripts nix-update ];
   };
-  deploy = pkgs.mkShell {
-    buildInputs = (with pkgs; [ awscli2 deploy-rs flarectl just ]);
-  };
   default = pkgs.mkShell {
-    buildInputs = (with pkgs; [ bashInteractive just deploy-rs sops ]);
+    buildInputs = (with pkgs; [ bashInteractive just sops ]);
     inherit (inputs.pre-commit.lib.${system}.run {
       src = ./.;
       hooks = {
-        deadnix = { enable = true; excludes = [ "hardware-configuration\\.nix" ]; };
-        nixpkgs-fmt = { enable = true; excludes = [ "hardware-configuration\\.nix" ]; };
+        deadnix.enable = true;
+        nixpkgs-fmt.enable = true;
         revive.enable = true;
         shellcheck.enable = true;
         shfmt.enable = true;
