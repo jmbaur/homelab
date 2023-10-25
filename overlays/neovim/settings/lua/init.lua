@@ -5,15 +5,13 @@ vim.g.mapleader = " "
 if #vim.api.nvim_list_uis() > 0 then
 	vim.cmd.colorscheme("gruvbox")
 
-	local launcher = require("launcher")
-	launcher.setup()
-
+	require("picker")
 	require("diffview").setup({ use_icons = false })
 	require("compile")
 	require("filemanager")
 	require("gitsigns").setup({ signcolumn = false })
 	require("gosee").setup()
-	require("lsp").setup({ launcher = launcher })
+	require("lsp").setup()
 	require("mini.tabline").setup({ show_icons = false, set_vim_settings = false })
 	require("mini.trailspace").setup({})
 	require("run").setup()
