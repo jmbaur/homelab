@@ -71,8 +71,6 @@ let
         playground
         smartyank-nvim
         snippets-nvim
-        telescope-nvim
-        telescope-ui-select-nvim
         toggleterm-nvim
         tree-sitter-just-plugin
         vim-dispatch

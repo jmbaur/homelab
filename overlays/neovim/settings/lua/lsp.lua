@@ -37,10 +37,10 @@ local toggle_format_on_save = function()
 	end
 end
 
-M.setup = function(config)
-	local lsp_implementations = config.launcher.lsp_implementations
-	local lsp_references = config.launcher.lsp_references
-
+M.setup = function()
+	-- local lsp_implementations = config.launcher.lsp_implementations
+	-- local lsp_references = config.launcher.lsp_references
+	--
 	local org_imports = function()
 		local params = vim.lsp.util.make_range_params()
 		params.context = { only = { "source.organizeImports" } }
@@ -92,9 +92,9 @@ M.setup = function(config)
 			vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts("Signature help"))
 			vim.keymap.set("n", "<leader>D", vim.lsp.buf.type_definition, opts("Type definition"))
 			vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, opts("Code action"))
-			vim.keymap.set("n", "<leader>i", lsp_implementations, opts("LSP implementations"))
 			vim.keymap.set("n", "<leader>n", vim.lsp.buf.rename, opts("Rename"))
-			vim.keymap.set("n", "<leader>r", lsp_references, opts("LSP references"))
+			-- vim.keymap.set("n", "<leader>i", lsp_implementations, opts("LSP implementations"))
+			-- vim.keymap.set("n", "<leader>r", lsp_references, opts("LSP references"))
 			vim.keymap.set("n", "K", vim.lsp.buf.hover, opts("Hover"))
 			vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts("Go to previous diagnostic"))
 			vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts("Go to next diagnostic"))
