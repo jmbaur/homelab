@@ -1,4 +1,4 @@
-{ config, pkgs, ... }: {
+{ config, pkgs, inputs, ... }: {
   imports = [ ./hardware-configuration.nix ];
 
   sops.defaultSopsFile = ./secrets.yaml;
@@ -11,6 +11,7 @@
 
   zramSwap.enable = true;
 
+  # boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.kernelParams = [ "console=ttyS0,115200n8" ];
   boot.initrd.luks.devices."cryptroot".crypttabExtraOpts = [ "tpm2-device=auto" ];
 
@@ -23,6 +24,30 @@
       signingPrivateKey = "/etc/keys/privkey_ima.pem";
     };
   };
+
+  system.build.installer =
+    let
+      rootFslabel = "external";
+      rootFsDevice = "/dev/disk/by-label/${rootFslabel}";
+      parentConfig = config;
+    in
+    (pkgs.nixos ({ config, lib, ... }: {
+      imports = [ inputs.self.nixosModules.default ];
+      custom.installer.enable = true;
+      nixpkgs = { inherit (parentConfig.nixpkgs) hostPlatform; };
+      boot = { inherit (parentConfig.boot) kernelParams; };
+      tinyboot = { inherit (parentConfig.tinyboot) enable board verifiedBoot; };
+      fileSystems."/".device = rootFsDevice;
+      system.build.diskImage = pkgs.callPackage "${pkgs.path}/nixos/lib/make-disk-image.nix" {
+        inherit config;
+        partitionTableType = "efi";
+        format = "raw";
+        label = rootFslabel;
+        postVM = ''
+          ${pkgs.zstd}/bin/zstd $diskImage && rm $diskImage
+        '';
+      };
+    }))/*; # */.config.system.build.diskImage;
 
   boot.initrd.systemd.enable = true;
 
@@ -101,7 +126,7 @@
   services.nginx = {
     enable = true;
     recommendedTlsSettings = true;
-    recommendedZstdSettings = true;
+    recommendedZstdSettings = false;
     recommendedGzipSettings = true;
     virtualHosts."carrot.home.arpa" = {
       enableACME = false;

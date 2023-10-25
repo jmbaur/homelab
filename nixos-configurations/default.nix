@@ -36,7 +36,6 @@ in
     ];
   };
 
-
   pea = nixosSystem { modules = [ ./pea inputs.self.nixosModules.default ]; };
 
   potato = nixosSystem {
