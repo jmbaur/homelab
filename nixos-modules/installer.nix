@@ -4,8 +4,8 @@ let
 in
 {
   options.custom.installer.enable = lib.mkEnableOption "installer";
+
   config = lib.mkIf cfg.enable {
-    boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_6_1;
     custom.disableZfs = true;
     programs.vim.defaultEditor = true;
 
