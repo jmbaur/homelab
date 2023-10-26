@@ -161,7 +161,7 @@ bar {
 }
 
 for_window {
-	[app_id=".*"] floating enable, border normal
+	[app_id=".*"] floating enable
 	[app_id="(kitty|foot|Alacritty)"] floating disable
 	# fix for PWAs not having keyboard shortcuts
 	[app_id="^chrome-.*__.*"] shortcuts_inhibitor disable
