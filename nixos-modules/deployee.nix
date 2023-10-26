@@ -56,6 +56,7 @@ with lib;
           ssh ''${SSHOPTS:-} "$target" \
             systemd-run \
               -E LOCALE_ARCHIVE \
+              -E NIXOS_INSTALL_BOOTLOADER \
               --collect \
               --no-ask-password \
               --pty \
