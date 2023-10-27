@@ -31,7 +31,7 @@
       rootFsDevice = "/dev/disk/by-label/${rootFslabel}";
       parentConfig = config;
     in
-    (pkgs.nixos ({ config, lib, ... }: {
+    (pkgs.nixos ({ config, ... }: {
       imports = [ inputs.self.nixosModules.default ];
       custom.installer.enable = true;
       nixpkgs = { inherit (parentConfig.nixpkgs) hostPlatform; };
@@ -123,10 +123,27 @@
 
   networking.firewall.allowedTCPPorts = [ 443 80 ];
 
+  nixpkgs.overlays = [
+    (_: prev: {
+      nginxModules =
+        assert prev.lib.versionOlder prev.nginxModules.zstd.src.rev "0.1.1";
+        prev.nginxModules // {
+          zstd = prev.nginxModules.zstd // {
+            src = prev.fetchFromGitHub {
+              owner = "tokers";
+              repo = "zstd-nginx-module";
+              rev = "0.1.1";
+              hash = "sha256-1gCV7uUsuYnZfb9e8VfjWkUloVINOUH5qzeJ03kIHgs=";
+            };
+          };
+        };
+    })
+  ];
+
   services.nginx = {
     enable = true;
     recommendedTlsSettings = true;
-    recommendedZstdSettings = false;
+    recommendedZstdSettings = true;
     recommendedGzipSettings = true;
     virtualHosts."carrot.home.arpa" = {
       enableACME = false;
