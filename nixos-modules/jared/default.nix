@@ -323,7 +323,7 @@ in
               max-icon-size=64
               markup=true
               actions=true
-              default-timeout=10000
+              default-timeout=5000
               ignore-timeout=false
 
               [mode=do-not-disturb]
