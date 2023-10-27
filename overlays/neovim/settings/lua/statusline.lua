@@ -49,7 +49,9 @@ function StatusLine()
 
 	local statusline = "%.60f %m%r" .. "%=" .. display_diagnostics .. "%y %P"
 
-	if vim.b.gitsigns_status_dict ~= nil and statusline_is_current_window then
+	if vim.b.gitsigns_status_dict ~= nil
+		and vim.b.gitsigns_status_dict.head ~= ""
+		and statusline_is_current_window then
 		statusline = "[" .. vim.b.gitsigns_status_dict.head .. "] " .. statusline
 	end
 

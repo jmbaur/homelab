@@ -839,11 +839,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1698268396,
-        "narHash": "sha256-E4++3+TMybScXB+HkzQ+A7zxHPsbDpkU68x00uWR9mk=",
+        "lastModified": 1698354843,
+        "narHash": "sha256-eTsga6QxX9gVwC6zsUNs0UPyQX9hToVi5jSE0XUH42Y=",
         "owner": "nix-community",
         "repo": "nixpkgs-wayland",
-        "rev": "86f4d7375a30cf2f876334d9f59238b90c9772a2",
+        "rev": "50c2725465ab035b232ef8ae9b976f4ac25c772b",
         "type": "github"
       },
       "original": {
@@ -1236,11 +1236,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1698131360,
-        "narHash": "sha256-L0hwoshXwIbBueN2kjoBA6C28Ct+ixHNIQmianevV+4=",
+        "lastModified": 1698369911,
+        "narHash": "sha256-Nw827PkeP6/lX8d8jMUKIYGkDXsNpFW4CrpnzaX241s=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "1774bfd2c3428b5918af29462b6d24049bda37f4",
+        "rev": "236776d59f16b17f1a5627bf1ed0a2df6223e15c",
         "type": "github"
       },
       "original": {
