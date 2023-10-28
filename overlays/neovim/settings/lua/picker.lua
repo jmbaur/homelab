@@ -12,7 +12,7 @@ vim.cmd [[ highlight! link MiniPickMatchCurrent Done ]]
 -- https://github.com/echasnovski/mini.nvim/issues/513#issuecomment-1775085181
 pick.registry.document_diagnostics = function()
 	local items = {}
-	local results = vim.diagnostic.get()
+	local results = vim.diagnostic.get(0)
 
 	for _, result in ipairs(results) do
 		table.insert(items, {

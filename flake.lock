@@ -657,11 +657,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1698444422,
-        "narHash": "sha256-SVgMiLYpvNmYjF6ELRffuspYHzn+hjNBnTid/Pj2Kco=",
+        "lastModified": 1698447438,
+        "narHash": "sha256-xhTbsaj0LIJvRxqpZHjywvII0nEoZciRPERdoXJnM6o=",
         "owner": "jmbaur",
         "repo": "nix-sandbox-escape-hatch",
-        "rev": "1d6eb4f979232f09758833801ddf84544a9bc344",
+        "rev": "d05c6ea343e7a049ee7060d430844590d93d7aa2",
         "type": "github"
       },
       "original": {
