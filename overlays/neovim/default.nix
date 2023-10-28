@@ -65,11 +65,11 @@ let
         jmbaur-config
         mini-nvim
         nvim-lspconfig
+        nvim-osc52
         nvim-surround
         nvim-treesitter-refactor
         nvim-treesitter-textobjects
         playground
-        smartyank-nvim
         snippets-nvim
         toggleterm-nvim
         tree-sitter-just-plugin

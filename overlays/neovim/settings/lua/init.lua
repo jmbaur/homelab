@@ -16,7 +16,7 @@ if #vim.api.nvim_list_uis() > 0 then
 	require("mini.trailspace").setup({})
 	require("run").setup()
 	require("sitter")
-	require("smartyank").setup({ highlight = { enabled = false }, osc52 = { silent = true } })
+	require("clipboard")
 	require("snippet")
 	require("statusline")
 	require("terminal")
