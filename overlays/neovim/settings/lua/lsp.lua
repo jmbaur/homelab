@@ -38,9 +38,6 @@ local toggle_format_on_save = function()
 end
 
 M.setup = function()
-	-- local lsp_implementations = config.launcher.lsp_implementations
-	-- local lsp_references = config.launcher.lsp_references
-	--
 	local org_imports = function()
 		local params = vim.lsp.util.make_range_params()
 		params.context = { only = { "source.organizeImports" } }
@@ -56,12 +53,11 @@ M.setup = function()
 		end
 	end
 
-	local lsp_formatting_augroup = vim.api.nvim_create_augroup("LspFormatting", {})
-	local org_imports_augroup = vim.api.nvim_create_augroup("OrgImports", {})
 
 	local get_on_attach = function(settings)
 		return function(client, bufnr)
 			if settings.format and client.supports_method("textDocument/formatting") then
+				local lsp_formatting_augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 				vim.api.nvim_clear_autocmds({ group = lsp_formatting_augroup, buffer = bufnr })
 				vim.api.nvim_create_autocmd("BufWritePre", {
 					group = lsp_formatting_augroup,
@@ -75,6 +71,7 @@ M.setup = function()
 			end
 
 			if settings.org_imports and client.supports_method("textDocument/codeAction") then
+				local org_imports_augroup = vim.api.nvim_create_augroup("OrgImports", {})
 				vim.api.nvim_clear_autocmds({ group = org_imports_augroup, buffer = bufnr })
 				vim.api.nvim_create_autocmd("BufWritePre", {
 					group = org_imports_augroup,
@@ -105,7 +102,6 @@ M.setup = function()
 
 	local on_attach_format_orgimports = get_on_attach({ format = true, org_imports = true })
 	local on_attach_format = get_on_attach({ format = true, org_imports = false })
-	local on_attach_orgimports = get_on_attach({ format = false, org_imports = true })
 	local on_attach = get_on_attach({ format = false, org_imports = false })
 
 	local efm_languages = {}
