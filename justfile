@@ -18,8 +18,6 @@ nixos type="switch":
 build:
 	nix build -L --accept-flake-config \
 		.\#cicada \
-		.\#coredns-utils \
-		.\#flarectl \
 		.\#git-get \
 		.\#neovim \
 		.\#neovim-all-languages \

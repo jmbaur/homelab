@@ -10,9 +10,7 @@ inputs: with inputs; {
           cicada
           coredns-utils
           depthcharge-tools
-          flarectl
           stevenblack-blocklist
-          u-rootInitramfs
           ;
 
         nixos-kexec = prev.callPackage ./nixos-kexec { };
