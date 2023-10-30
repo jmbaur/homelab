@@ -3,13 +3,24 @@
 
   tinyboot = {
     enable = false;
-    board = "volteer-elemi";
+    board = "brya-banshee";
     verifiedBoot = {
       caCertificate = ./x509_ima.pem;
       signingPublicKey = ./x509_ima.der;
       signingPrivateKey = "/etc/keys/privkey_ima.pem";
     };
   };
+
+
+  boot.kernelPatches = [{
+    name = "google-firmware";
+    patch = null;
+    extraStructuredConfig = with lib.kernel; {
+      GOOGLE_FIRMWARE = yes;
+      GOOGLE_COREBOOT_TABLE = yes;
+      GOOGLE_VPD = yes;
+    };
+  }];
 
   hardware.bluetooth.enable = true;
 
