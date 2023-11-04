@@ -1280,11 +1280,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1699051727,
-        "narHash": "sha256-c2+Ek0iInsL3z9UxkhOWWXo0GQMN1RQJp3Gw9Ha5deo=",
+        "lastModified": 1699080074,
+        "narHash": "sha256-TUi6VSXT2bCR0g6LmZo24Sv68NPAgu+mx8N27SjYsbc=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "3b1f5c017920c75e6d0c210aaf39e866a1cb0587",
+        "rev": "21e58f84c4b28e4899fc2559521b4989d848ceaf",
         "type": "github"
       },
       "original": {
