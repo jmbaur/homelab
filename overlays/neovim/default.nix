@@ -71,6 +71,8 @@ let
         nvim-treesitter-textobjects
         playground
         snippets-nvim
+        telescope-nvim
+        telescope-ui-select-nvim
         toggleterm-nvim
         tree-sitter-just-plugin
         vim-dispatch
