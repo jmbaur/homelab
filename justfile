@@ -17,7 +17,6 @@ nixos type="switch":
 
 build:
 	nix build -L --accept-flake-config \
-		.\#cicada \
 		.\#git-get \
 		.\#neovim \
 		.\#neovim-all-languages \
@@ -25,7 +24,6 @@ build:
 
 update:
 	#!/usr/bin/env bash
-	cd {{justfile_directory()}}/overlays
 	export NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"
 	for source in $(find -type f -name "*source.json"); do
 		args=()
@@ -34,7 +32,4 @@ update:
 		fi
 		args+=("$(jq -r ".url" < $source)")
 		nix-prefetch-git "${args[@]}" > "$source"
-	done
-	for drv in $(nix eval --impure --expr "builtins.attrNames (import ./out-of-tree.nix {})" --json | jq -r ".[]"); do
-		nix-update --file ./out-of-tree.nix $drv
 	done
