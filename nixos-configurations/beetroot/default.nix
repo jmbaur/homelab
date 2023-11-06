@@ -1,38 +1,18 @@
-{ lib, pkgs, ... }: {
+{ lib, ... }: {
   imports = [ ./hardware-configuration.nix ];
 
   tinyboot = {
-    enable = false;
+    enable = true;
     board = "brya-banshee";
-    verifiedBoot = {
-      caCertificate = ./x509_ima.pem;
-      signingPublicKey = ./x509_ima.der;
-      signingPrivateKey = "/etc/keys/privkey_ima.pem";
-    };
   };
-
-
-  boot.kernelPatches = [{
-    name = "google-firmware";
-    patch = null;
-    extraStructuredConfig = with lib.kernel; {
-      GOOGLE_FIRMWARE = yes;
-      GOOGLE_COREBOOT_TABLE = yes;
-      GOOGLE_VPD = yes;
-    };
-  }];
 
   hardware.bluetooth.enable = true;
 
   zramSwap.enable = true;
 
+  boot.initrd.systemd.enable = true;
   boot.initrd.luks.devices.cryptroot.tryEmptyPassphrase = true;
   boot.initrd.luks.devices.cryptroot.crypttabExtraOpts = lib.mkForce [ "tpm2-device=auto" ];
-
-  boot.initrd.systemd.enable = true;
-  boot.kernelPackages = pkgs.linuxPackages_testing;
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
 
   fileSystems."/".options = [ "noatime" "discard=async" "compress=zstd" ];
   fileSystems."/nix".options = [ "noatime" "discard=async" "compress=zstd" ];
