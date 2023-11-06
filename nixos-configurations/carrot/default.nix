@@ -11,18 +11,12 @@
 
   zramSwap.enable = true;
 
-  # boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.kernelParams = [ "console=ttyS0,115200n8" ];
   boot.initrd.luks.devices."cryptroot".crypttabExtraOpts = [ "tpm2-device=auto" ];
 
   tinyboot = {
     enable = true;
     board = "fizz-fizz";
-    verifiedBoot = {
-      caCertificate = ./x509_ima.pem;
-      signingPublicKey = ./x509_ima.der;
-      signingPrivateKey = "/etc/keys/privkey_ima.pem";
-    };
   };
 
   system.build.installer =
