@@ -55,4 +55,7 @@
         name = "@userName@"
         signingKey = "@signingKey@"
 
+[git-extras "get"]
+	clone-path = "~/projects"
+
 @extraConfig@
