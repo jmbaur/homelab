@@ -491,6 +491,7 @@ in
               difftastic = pkgs.difftastic;
               gh = pkgs.gh;
               userName = config.users.users.${cfg.username}.description;
+              inherit (config.users.users.${cfg.username}) home;
               inherit (cfg.git) email signingKey allowedSignersFile extraConfig;
               signCommits = lib.boolToString cfg.git.signCommits;
             };

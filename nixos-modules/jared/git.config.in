@@ -56,6 +56,6 @@
         signingKey = "@signingKey@"
 
 [git-extras "get"]
-	clone-path = "~/projects"
+	clone-path = "@home@/projects"
 
 @extraConfig@
