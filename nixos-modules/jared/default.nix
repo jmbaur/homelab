@@ -377,14 +377,12 @@ in
             target = ".config/fish/config.fish";
             path =
               let
-                nixYourShell = pkgs.runCommand "nix-your-shell.fish" { } "${pkgs.nix-your-shell}/bin/nix-your-shell fish > $out";
                 direnvHook = pkgs.runCommand "direnv-hook.fish" { } "${pkgs.direnv}/bin/direnv hook fish > $out";
               in
               pkgs.writeText "fish.config" ''
                 if status is-interactive
                   set -U fish_greeting ""
                   ${lib.optionalString config.custom.dev.enable ''
-                  source ${nixYourShell}
                   source ${direnvHook}
                   set -U PROJECTS_DIR ${config.users.users.${cfg.username}.home}/projects
                   ''}
@@ -428,7 +426,6 @@ in
             path = pkgs.substituteAll {
               name = "zshrc";
               src = ./rc.zsh.in;
-              nixYourShell = pkgs.runCommand "nix-your-shell.zsh" { } "${pkgs.nix-your-shell}/bin/nix-your-shell zsh > $out";
               direnvHook = pkgs.runCommand "direnv-hook.zsh" { } "${pkgs.direnv}/bin/direnv hook zsh > $out";
             };
           }
