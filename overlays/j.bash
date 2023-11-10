@@ -11,18 +11,20 @@ function usage() {
 	echo "overridden by setting the $PROJECTS_DIR environment variable."
 }
 
-directory=${PROJECTS_DIR:-${HOME}/projects}
-if ! test -d "$directory"; then
+base_directory=${PROJECTS_DIR:-${HOME}/projects}
+if ! test -d "$base_directory"; then
 	usage "Cannot find projects directory"
 	exit 1
 fi
 
+cd "$base_directory" || exit
+
 tmux_session_path=
 if ! tmux_session_path=$(
-	fd "^\.git$" "$directory" \
+	fd "^\.git$" \
 		--hidden \
 		--type directory \
-		--max-depth 6 \
+		--max-depth 2 \
 		--no-ignore |
 		sed "s,/\.git/,," |
 		{ [[ -n ${1-} ]] && grep ".*$1.*" || cat; } |
@@ -37,11 +39,11 @@ function escape_basename() {
 	basename "$1" | sed "s,\.,_,g"
 }
 
-tmux_session_name="$(escape_basename "$(dirname "$tmux_session_path")")/$(escape_basename "$tmux_session_path")"
+tmux_session_name="$(escape_basename "$tmux_session_path")"
 
 clients_attached=$(tmux start \; list-sessions -f "#{==:#{session_name},$tmux_session_name}" -F "#{session_attached}" 2>/dev/null)
 if [[ -z $clients_attached ]]; then
-	tmux new-session -d -s "$tmux_session_name" -c "$tmux_session_path"
+	tmux new-session -d -s "$tmux_session_name" -c "${base_directory}/${tmux_session_path}"
 elif [[ $clients_attached -gt 0 ]]; then
 	exit 0
 fi
