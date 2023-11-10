@@ -69,6 +69,7 @@ let
         nvim-surround
         nvim-treesitter-refactor
         nvim-treesitter-textobjects
+        oil-nvim
         playground
         snippets-nvim
         telescope-nvim
