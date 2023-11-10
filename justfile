@@ -17,7 +17,6 @@ nixos type="switch":
 
 build:
 	nix build -L --accept-flake-config \
-		.\#git-get \
 		.\#neovim \
 		.\#neovim-all-languages \
 		.\#pomo

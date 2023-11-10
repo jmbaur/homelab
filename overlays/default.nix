@@ -47,7 +47,6 @@ inputs: with inputs; {
         };
       });
 
-      git-get = prev.callPackage ./git-get { };
       git-shell-commands = prev.callPackage ./git-shell-commands {
         libgit2 = final.libgit2_1_5;
       };

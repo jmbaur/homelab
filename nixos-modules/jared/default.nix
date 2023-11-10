@@ -97,7 +97,6 @@ in
         gh
         git
         git-extras
-        git-get
         git-gone
         gnumake
         gosee
