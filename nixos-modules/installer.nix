@@ -9,6 +9,8 @@ in
     custom.disableZfs = true;
     programs.vim.defaultEditor = true;
 
+    hardware.enableRedistributableFirmware = lib.mkDefault true;
+
     services.openssh.openFirewall = lib.mkForce true;
     systemd.services.sshd.wantedBy = lib.mkForce [ "multi-user.target" ];
 
