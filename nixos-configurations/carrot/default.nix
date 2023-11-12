@@ -1,5 +1,5 @@
 { config, pkgs, inputs, ... }: {
-  imports = [ ./hardware-configuration.nix ];
+  imports = [ ./hardware-configuration.nix ./disko.nix ];
 
   sops.defaultSopsFile = ./secrets.yaml;
 
@@ -19,29 +19,14 @@
     board = "fizz-fizz";
   };
 
-  system.build.installer =
-    let
-      rootFslabel = "external";
-      rootFsDevice = "/dev/disk/by-label/${rootFslabel}";
-      parentConfig = config;
-    in
-    (pkgs.nixos ({ config, ... }: {
+  system.build.installer = let parentConfig = config; in
+    (pkgs.nixos ({
       imports = [ inputs.self.nixosModules.default ];
       custom.installer.enable = true;
       nixpkgs = { inherit (parentConfig.nixpkgs) hostPlatform; };
       boot = { inherit (parentConfig.boot) kernelParams; };
       tinyboot = { inherit (parentConfig.tinyboot) enable board verifiedBoot; };
-      fileSystems."/".device = rootFsDevice;
-      system.build.diskImage = pkgs.callPackage "${pkgs.path}/nixos/lib/make-disk-image.nix" {
-        inherit config;
-        partitionTableType = "efi";
-        format = "raw";
-        label = rootFslabel;
-        postVM = ''
-          ${pkgs.zstd}/bin/zstd $diskImage && rm $diskImage
-        '';
-      };
-    }))/*; # */.config.system.build.diskImage;
+    })).config.system.build.diskoImages;
 
   boot.initrd.systemd.enable = true;
 

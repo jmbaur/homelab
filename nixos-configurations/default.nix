@@ -87,49 +87,6 @@ in
     ];
   };
 
-  installer_iso_x86_64-linux = mkInstallerISO { modules = [{ nixpkgs.hostPlatform = "x86_64-linux"; }]; };
-  installer_iso_aarch64-linux = mkInstallerISO {
-    modules = [
-      ({ config, ... }: {
-        nixpkgs.hostPlatform = "aarch64-linux";
-        isoImage.contents = [{
-          source = "${config.boot.kernelPackages.kernel}/dtbs";
-          target = "boot/dtbs";
-        }];
-      })
-    ];
-  };
-
-  installer_iso_lx2k = mkInstallerISO {
-    modules = [
-      ({
-        nixpkgs.hostPlatform = "aarch64-linux";
-        hardware.lx2k.enable = true;
-      })
-    ];
-  };
-
-  installer_sd_image_x86_64-linux = mkInstaller {
-    modules = [
-      ({ modulesPath, ... }: {
-        nixpkgs.hostPlatform = "x86_64-linux";
-        imports = [
-          "${modulesPath}/installer/sd-card/sd-image-x86_64.nix"
-        ];
-      })
-    ];
-  };
-  installer_sd_image_aarch64-linux = mkInstaller {
-    modules = [
-      ({ modulesPath, ... }: {
-        nixpkgs.hostPlatform = "aarch64-linux";
-        imports = [
-          "${modulesPath}/installer/sd-card/sd-image-aarch64-installer.nix"
-        ];
-      })
-    ];
-  };
-
   installer_sd_image_kukui_fennel14 = mkInstaller {
     modules = [
       ../nixos-modules/depthcharge/sd-image.nix
@@ -255,7 +212,6 @@ in
           find ./files/boot/nixos -maxdepth 1 -type f \
             -exec ${config.tinyboot.settings.build.linux}/bin/sign-file sha256 ${config.tinyboot.settings.verifiedBoot.signingPrivateKey} ${config.tinyboot.settings.verifiedBoot.signingPublicKey} {} \;
         '';
-
       })
     ];
   };

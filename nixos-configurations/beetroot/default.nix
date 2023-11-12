@@ -1,4 +1,4 @@
-{ lib, ... }: {
+{ config, lib, pkgs, inputs, ... }: {
   imports = [ ./hardware-configuration.nix ];
 
   tinyboot = {
@@ -47,4 +47,13 @@
     # trusted-public-keys = [ "carrot.home.arpa:dxp2PztB2LlcVufzgvhsrM9FvrDJcRvP2SqMXr3GSt8=" ];
     # fallback = true;
   };
+
+  system.build.installer = let parentConfig = config; in
+    (pkgs.nixos ({
+      imports = [ inputs.self.nixosModules.default ./disko.nix ];
+      custom.installer.enable = true;
+      nixpkgs = { inherit (parentConfig.nixpkgs) hostPlatform; };
+      boot = { inherit (parentConfig.boot) kernelParams; };
+      tinyboot = { inherit (parentConfig.tinyboot) enable board verifiedBoot; };
+    })).config.system.build.diskoImages;
 }
