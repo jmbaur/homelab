@@ -26,6 +26,7 @@ inputs: {
       ./remote-boot.nix
       ./remote-builder.nix
       ./server.nix
+      ./tinyboot-installer.nix
       ./wireless.nix
       ./zfs.nix
       inputs.disko.nixosModules.disko

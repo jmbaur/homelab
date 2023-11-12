@@ -10,17 +10,6 @@ let
       })
     ] ++ modules;
   };
-
-  mkInstallerISO = { modules ? [ ] }: mkInstaller {
-    modules = [
-      ({ modulesPath, ... }: {
-        imports = [
-          "${modulesPath}/installer/cd-dvd/channel.nix"
-          "${modulesPath}/installer/cd-dvd/installation-cd-minimal.nix"
-        ];
-      })
-    ] ++ modules;
-  };
 in
 {
   artichoke = nixosSystem {
@@ -213,6 +202,18 @@ in
             -exec ${config.tinyboot.settings.build.linux}/bin/sign-file sha256 ${config.tinyboot.settings.verifiedBoot.signingPrivateKey} ${config.tinyboot.settings.verifiedBoot.signingPublicKey} {} \;
         '';
       })
+    ];
+  };
+
+  test-installer = nixosSystem {
+    modules = [
+      inputs.self.nixosModules.default
+      {
+        nixpkgs.hostPlatform = "x86_64-linux";
+        tinyboot.enable = true;
+        tinyboot.board = "qemu-x86_64";
+        custom.tinyboot-installer.enable = true;
+      }
     ];
   };
 }
