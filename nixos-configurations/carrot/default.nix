@@ -5,7 +5,11 @@
   ];
 
   system.build.installer = (pkgs.nixos ({
-    imports = [ inputs.self.nixosModules.default ./minimal.nix ];
+    imports = [
+      ({ modulesPath, ... }: { imports = [ "${modulesPath}/profiles/all-hardware.nix" ]; })
+      inputs.self.nixosModules.default
+      ./minimal.nix
+    ];
     custom.tinyboot-installer.enable = true;
   })).config.system.build.diskImage;
 

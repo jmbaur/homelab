@@ -6,7 +6,9 @@
 
   hardware.chromebook.enable = true;
 
-  boot.kernelParams = [ "console=ttyS0,115200" ];
+  boot.kernelParams = [ "earlycon" "console=ttyS0,115200" ];
+
+  hardware.enableRedistributableFirmware = true;
 
   nixpkgs.hostPlatform = "x86_64-linux";
   powerManagement.cpuFreqGovernor = "powersave";

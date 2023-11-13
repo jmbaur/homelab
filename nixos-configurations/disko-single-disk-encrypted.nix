@@ -23,7 +23,7 @@ device: {
               content = {
                 type = "luks";
                 name = "cryptroot";
-                passwordFile = "/tmp/secret.key";
+                askPassword = true;
                 content = {
                   type = "btrfs";
                   subvolumes = {

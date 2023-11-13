@@ -1,12 +1,6 @@
 { config, lib, pkgs, ... }:
 let
-  espSizeMB = 128;
-
   espLabel = "ESP";
-
-  espPartitionID = "22222222-2222-2222-2222-222222222222";
-
-  squashfsLabel = "NIX_RO_STORE";
 
   squashfsImage = pkgs.callPackage "${pkgs.path}/nixos/lib/make-squashfs.nix" {
     storeContents = [ config.system.build.toplevel ];
@@ -19,6 +13,7 @@ let
     echo "default installer.conf" >> $BOOT/loader/loader.conf
     cp ${config.system.build.kernel}/${pkgs.stdenv.hostPlatform.linux-kernel.target} $BOOT/linux
     cp ${config.system.build.initialRamdisk}/initrd $BOOT/initrd
+    cp ${squashfsImage} $BOOT/nix-store.squashfs
     cat > $BOOT/loader/entries/installer.conf <<EOF
     title NixOS Installer
     linux /linux
@@ -38,7 +33,10 @@ in
     boot.initrd.systemd.enable = true;
     boot.initrd.systemd.emergencyAccess = true;
 
-    boot.initrd.kernelModules = [ "squashfs" "loop" "overlay" ];
+    boot.initrd.kernelModules = [ "loop" "overlay" ];
+    boot.initrd.availableKernelModules = [ "squashfs" "overlay" ];
+
+    boot.kernelParams = [ "boot.shell_on_fail" ];
 
     boot.postBootCommands = ''
       # After booting, register the contents of the Nix store
@@ -51,33 +49,50 @@ in
       ${config.nix.package}/bin/nix-env -p /nix/var/nix/profiles/system --set /run/current-system
     '';
 
+    boot.initrd.systemd.mounts = [{
+      where = "/sysroot/nix/store";
+      what = "overlay";
+      type = "overlay";
+      options = "lowerdir=/sysroot/nix/.ro-store,upperdir=/sysroot/nix/.rw-store/store,workdir=/sysroot/nix/.rw-store/work";
+      wantedBy = [ "initrd-fs.target" ];
+      before = [ "initrd-fs.target" ];
+      requires = [ "rw-store.service" ];
+      after = [ "rw-store.service" ];
+      unitConfig.RequiresMountsFor = "/sysroot/nix/.ro-store";
+    }];
+
+    boot.initrd.systemd.services.rw-store = {
+      unitConfig = {
+        DefaultDependencies = false;
+        RequiresMountsFor = "/sysroot/nix/.rw-store";
+      };
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = "/bin/mkdir -p -m 0755 /sysroot/nix/.rw-store/store /sysroot/nix/.rw-store/work /sysroot/nix/store";
+      };
+    };
+
     fileSystems."/" = {
       fsType = "tmpfs";
       options = [ "size=2G" "mode=0755" "defaults" ];
+      neededForBoot = true;
+    };
+    fileSystems."/boot" = {
+      fsType = "vfat";
+      device = "/dev/disk/by-partlabel/${espLabel}";
+      neededForBoot = true;
     };
     fileSystems."/nix/.ro-store" = {
       fsType = "squashfs";
-      device = "/dev/disk/by-partlabel/${squashfsLabel}";
+      device = "/sysroot/boot/nix-store.squashfs";
+      options = [ "loop" "x-systemd.requires=/sysroot/boot" ];
+      depends = [ "/boot" ];
       neededForBoot = true;
     };
     fileSystems."/nix/.rw-store" = {
       fsType = "tmpfs";
       options = [ "defaults" "mode=0755" ];
       neededForBoot = true;
-    };
-    fileSystems."/nix/store" = {
-      fsType = "overlay";
-      device = "overlay";
-      options = [
-        "lowerdir=/nix/.ro-store"
-        "upperdir=/nix/.rw-store/store"
-        "workdir=/nix/.rw-store/work"
-      ];
-      depends = [
-        "/nix/.ro-store"
-        "/nix/.rw-store/store"
-        "/nix/.rw-store/work"
-      ];
     };
 
     system.build = { inherit squashfsImage; };
@@ -105,16 +120,15 @@ in
 
           # Create the image file sized to fit boot files and the squashfs image
           squashfsSizeBytes=$(du --bytes $squashfs_image | awk '{ print $1 }')
-          extraBytes=$((8 * 1024 * 1024))
-          imageSizeBytes=$((extraBytes + squashfsSizeBytes + ${toString (espSizeMB * 1024 * 1024)}))
+          extraBytes=$((128 * 1024 * 1024))
+          imageSizeBytes=$((extraBytes + squashfsSizeBytes))
           truncate -s $imageSizeBytes $img
 
           sfdisk $img <<EOF
               label: gpt
               label-id: 11111111-1111-1111-1111-111111111111
 
-              size=${toString espSizeMB}M, type=uefi , uuid=${espPartitionID}                   , name=${espLabel}
-              size=                      , type=linux, uuid=33333333-3333-3333-3333-333333333333, name=${squashfsLabel}
+              size=, type=uefi, uuid=22222222-2222-2222-2222-222222222222, name=${espLabel}
           EOF
 
           # Create a FAT32 filesystem for the boot partition of suitable size
@@ -144,10 +158,6 @@ in
           # Verify the FAT partition before copying it.
           fsck.vfat -vn $boot_image
           dd conv=notrunc if=$boot_image of=$img seek=$START count=$SECTORS
-
-          # Copy the squashfs image into the disk image
-          eval $(partx $img -o START,SECTORS --nr 2 --pairs)
-          dd conv=notrunc if=$squashfs_image of=$img seek=$START count=$SECTORS
 
           zstd -T$NIX_BUILD_CORES --rm $img
         '';
