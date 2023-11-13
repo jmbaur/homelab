@@ -76,19 +76,6 @@ in
     ];
   };
 
-  installer_sd_image_kukui_fennel14 = mkInstaller {
-    modules = [
-      ../nixos-modules/depthcharge/sd-image.nix
-      ({ ... }: {
-        nixpkgs.hostPlatform = "aarch64-linux";
-        boot.loader.depthcharge.enable = true;
-        boot.initrd.systemd.enable = true;
-        hardware.kukui-fennel14.enable = true;
-        custom.crossCompile.enable = true;
-      })
-    ];
-  };
-
   installer_sd_image_cn9130_clearfog = mkInstaller {
     modules = [
       ({ lib, pkgs, modulesPath, ... }: {
@@ -105,19 +92,6 @@ in
         nixpkgs.hostPlatform = "aarch64-linux";
         boot.initrd.systemd.enable = true;
         hardware.clearfog-cn913x.enable = true;
-        custom.crossCompile.enable = true;
-      })
-    ];
-  };
-
-  installer_sd_image_asurada_spherion = mkInstaller {
-    modules = [
-      ../nixos-modules/depthcharge/sd-image.nix
-      ({ ... }: {
-        nixpkgs.hostPlatform = "aarch64-linux";
-        boot.loader.depthcharge.enable = true;
-        boot.initrd.systemd.enable = true;
-        hardware.asurada-spherion.enable = true;
         custom.crossCompile.enable = true;
       })
     ];
@@ -172,49 +146,6 @@ in
           dd if=${pkgs.ubootClearfog}/u-boot-with-spl.kwb of=$img bs=512 seek=1 conv=notrunc
         '';
       })
-    ];
-  };
-
-  trogdor-installer = mkInstaller {
-    modules = [
-      ({ config, lib, modulesPath, ... }: {
-        imports = [
-          "${modulesPath}/profiles/installation-device.nix"
-          "${modulesPath}/installer/sd-card/sd-image-aarch64.nix"
-        ];
-        tinyboot = {
-          enable = true;
-          settings.board = "trogdor-wormdingler";
-        };
-        disabledModules = [ "${modulesPath}/profiles/installation-device.nix" ];
-        nixpkgs.hostPlatform = "aarch64-linux";
-        hardware.chromebook.enable = true;
-        hardware.chromebook.qualcomm = true;
-        services.fwupd.enable = false;
-        custom.crossCompile.enable = true;
-        custom.disableZfs = true;
-        sdImage.populateFirmwareCommands = lib.mkForce "";
-        sdImage.populateRootCommands = ''
-          mkdir -p ./files/boot
-          ${config.boot.loader.generic-extlinux-compatible.populateCmd} -c ${config.system.build.toplevel} -d ./files/boot
-          echo "signing boot files"
-          find ./files/boot/nixos -maxdepth 1 -type f \
-            -exec ${config.tinyboot.settings.build.linux}/bin/sign-file sha256 ${config.tinyboot.settings.verifiedBoot.signingPrivateKey} ${config.tinyboot.settings.verifiedBoot.signingPublicKey} {} \;
-        '';
-      })
-    ];
-  };
-
-  test-installer = nixosSystem {
-    modules = [
-      inputs.self.nixosModules.default
-      {
-        nixpkgs.hostPlatform = "x86_64-linux";
-        boot.kernelParams = [ "console=ttyS0,115200" ];
-        tinyboot.enable = true;
-        tinyboot.board = "qemu-x86_64";
-        custom.tinyboot-installer.enable = true;
-      }
     ];
   };
 }

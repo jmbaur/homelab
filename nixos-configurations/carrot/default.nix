@@ -1,40 +1,28 @@
 { config, pkgs, inputs, ... }: {
-  imports = [ ./hardware-configuration.nix ./disko.nix ];
+  imports = [
+    (import ../disko-single-disk-encrypted.nix "/dev/nvme0n1")
+    ./minimal.nix
+  ];
+
+  system.build.installer = (pkgs.nixos ({
+    imports = [ inputs.self.nixosModules.default ./minimal.nix ];
+    custom.tinyboot-installer.enable = true;
+  })).config.system.build.diskImage;
 
   sops.defaultSopsFile = ./secrets.yaml;
 
   hardware.bluetooth.enable = true;
 
-  fileSystems."/".options = [ "noatime" "discard=async" "compress=zstd" ];
-  fileSystems."/nix".options = [ "noatime" "discard=async" "compress=zstd" ];
-  fileSystems."/home".options = [ "noatime" "discard=async" "compress=zstd" ];
-
   zramSwap.enable = true;
 
-  boot.kernelParams = [ "console=ttyS0,115200n8" ];
   boot.initrd.luks.devices."cryptroot".crypttabExtraOpts = [ "tpm2-device=auto" ];
 
-  tinyboot = {
-    enable = true;
-    board = "fizz-fizz";
-  };
-
-  system.build.installer = let parentConfig = config; in
-    (pkgs.nixos ({
-      imports = [ inputs.self.nixosModules.default ];
-      custom.installer.enable = true;
-      nixpkgs = { inherit (parentConfig.nixpkgs) hostPlatform; };
-      boot = { inherit (parentConfig.boot) kernelParams; };
-      tinyboot = { inherit (parentConfig.tinyboot) enable board verifiedBoot; };
-    })).config.system.build.diskoImages;
-
   boot.initrd.systemd.enable = true;
-
-  hardware.chromebook.enable = true;
 
   networking.hostName = "carrot";
 
   networking.useDHCP = false;
+
   systemd.network = {
     enable = true;
     networks.ether = {

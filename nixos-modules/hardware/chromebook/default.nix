@@ -7,8 +7,6 @@
     services.xserver.xkbOptions = "ctrl:swap_lwin_lctl";
     services.xserver.xkbModel = "chromebook";
 
-    services.fwupd.enable = lib.mkDefault true;
-
     # allow for CR50 TPM usage in initrd
     boot.initrd.availableKernelModules = [
       "tpm_tis_spi"
