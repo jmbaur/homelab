@@ -3,6 +3,6 @@ buildGoModule {
   pname = "pomo";
   version = "0.0.1";
   src = ./.;
-  vendorSha256 = null;
+  vendorHash = null;
   ldflags = [ "-s" "-w" ];
 }

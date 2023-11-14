@@ -4,11 +4,12 @@
     ./hardware.nix
   ];
 
-  users.users.jared = {
-    initialPassword = "jared";
-    isNormalUser = true;
-    extraGroups = [ "wheel" ];
-  };
+  custom.users.jared.enable =true;
+  custom.dev.enable = true;
+  custom.gui.enable = true;
+
+  zramSwap.enable = true;
+  hardware.bluetooth.enable = true;
 
   system.build.installer = (pkgs.nixos ({
     imports = [ inputs.self.nixosModules.default ./hardware.nix ];

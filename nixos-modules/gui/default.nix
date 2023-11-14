@@ -93,6 +93,7 @@ in
       pamixer
       pulseaudio
       pulsemixer
+      qt5.qtwayland
       rofi-wayland
       shikane
       shotman
@@ -143,14 +144,15 @@ in
       enable = true;
       wrapperFeatures.base = true;
       wrapperFeatures.gtk = true;
+      # vulkan renderer support
+      # export WLR_RENDERER=vulkan
+      # export VK_LAYER_PATH=${pkgs.vulkan-validation-layers}/share/vulkan/explicit_layer.d
       extraSessionCommands = ''
-        # vulkan renderer support
-        # export WLR_RENDERER=vulkan
-        # export VK_LAYER_PATH=${pkgs.vulkan-validation-layers}/share/vulkan/explicit_layer.d
         # SDL:
         export SDL_VIDEODRIVER=wayland
         # QT (needs qt5.qtwayland in systemPackages):
         export QT_QPA_PLATFORM=wayland-egl
+        export QT_WAYLAND_DISABLE_WINDOWDECORATION="1"
         # Fix for some Java AWT applications (e.g. Android Studio), use this if
         # they aren't displayed properly:
         export _JAVA_AWT_WM_NONREPARENTING=1
