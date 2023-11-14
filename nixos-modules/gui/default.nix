@@ -39,12 +39,12 @@ in
     };
 
     fonts = {
-      packages = [ pkgs.roboto pkgs.roboto-serif pkgs.jetbrains-mono ];
+      packages = [ pkgs.noto-fonts pkgs.jetbrains-mono ];
       fontconfig = {
         enable = true;
         defaultFonts = {
-          sansSerif = [ "Roboto" ];
-          serif = [ "Roboto Serif" ];
+          sansSerif = [ "Noto Sans" ];
+          serif = [ "Noto Serif" ];
           monospace = [ "JetBrains Mono" ];
         };
       };
