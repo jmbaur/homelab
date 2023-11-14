@@ -25,6 +25,10 @@ in
     ];
   };
 
+  cabbage = nixosSystem {
+    modules = [ ./cabbage inputs.self.nixosModules.default ];
+  };
+
   pea = nixosSystem { modules = [ ./pea inputs.self.nixosModules.default ]; };
 
   potato = nixosSystem {

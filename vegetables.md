@@ -1,5 +1,6 @@
 - [x] artichoke
 - [x] beetroot
+- [x] cabbage
 - [x] carrot
 - [x] fennel
 - [x] garlic
@@ -10,7 +11,6 @@
 - [x] squash
 - [ ] asparagus
 - [ ] broccoli
-- [ ] cabbage
 - [ ] cauliflower
 - [ ] celery
 - [ ] olive
