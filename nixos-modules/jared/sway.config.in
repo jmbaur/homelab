@@ -123,7 +123,7 @@ input "4617:13404:https://github.com/stapelberg_kinT_(kint41)" {
 }
 
 output "*" {
-	background #333333 solid_color
+	background #3c3836 solid_color
 	scale 1
 }
 

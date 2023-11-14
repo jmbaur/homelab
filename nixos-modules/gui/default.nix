@@ -228,7 +228,7 @@ in
         sway
         (writeShellScriptBin "lock" ''
           if chayang; then
-            swaylock ${lib.escapeShellArgs [ "--daemonize" "--indicator-caps-lock" "--show-keyboard-layout" "--color" "000000" ]}
+            swaylock ${lib.escapeShellArgs [ "--daemonize" "--indicator-caps-lock" "--show-keyboard-layout" "--color" "1d2021" ]}
           fi
         '')
         (writeShellScriptBin "conditional-suspend" (lib.optionalString config.custom.laptop.enable ''

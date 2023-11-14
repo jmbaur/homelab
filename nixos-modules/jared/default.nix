@@ -519,6 +519,7 @@ in
               configuration {
                 font: "sans 12";
               }
+              @theme "gruvbox-dark-soft"
             '';
           }
         ] ++ lib.optional (config.custom.gui.enable && config.custom.gui.displays != { }) {
