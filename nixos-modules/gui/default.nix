@@ -222,14 +222,11 @@ in
       wantedBy = [ swaySessionTarget ];
       path = with pkgs; [
         bash # needs a shell in path
-        chayang
         swayidle
         swaylock
-        sway
+        config.programs.sway.package
         (writeShellScriptBin "lock" ''
-          if chayang; then
-            swaylock ${lib.escapeShellArgs [ "--daemonize" "--indicator-caps-lock" "--show-keyboard-layout" "--color" "1d2021" ]}
-          fi
+          swaylock ${lib.escapeShellArgs [ "--daemonize" "--indicator-caps-lock" "--show-keyboard-layout" "--color" "1d2021" ]}
         '')
         (writeShellScriptBin "conditional-suspend" (lib.optionalString config.custom.laptop.enable ''
           if [[ "$(cat /sys/class/power_supply/AC/online)" -ne 1 ]]; then
@@ -242,10 +239,10 @@ in
       ];
       script = ''
         swayidle -w \
-          timeout 300 'lock' \
-          timeout 600 'swaymsg "output * dpms off"' \
+          timeout 600 'lock' \
+          timeout 900 'swaymsg "output * dpms off"' \
             resume 'swaymsg "output * dpms on"' \
-          timeout 900 'conditional-suspend' \
+          timeout 1200 'conditional-suspend' \
           before-sleep 'lock' \
           lock 'lock' \
           after-resume 'swaymsg "output * dpms on"'

@@ -154,7 +154,8 @@ in
         yj
       ]);
 
-      extraGroups = [ "dialout" "wheel" "plugdev" ]
+      extraGroups = [ "wheel" ]
+        ++ (lib.optionals config.custom.dev.enable [ "dialout" "plugdev" ])
         ++ (lib.optional config.networking.networkmanager.enable "networkmanager")
         ++ (lib.optional config.programs.adb.enable "adbusers")
         ++ (lib.optional config.programs.flashrom.enable "plugdev")
