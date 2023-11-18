@@ -4,10 +4,12 @@
     ./hardware.nix
   ];
 
-  custom.users.jared.enable =true;
+  custom.users.jared.enable = true;
   custom.dev.enable = true;
   custom.gui.enable = true;
 
+  boot.initrd.systemd.enable = true;
+  services.fwupd.enable = true;
   zramSwap.enable = true;
   hardware.bluetooth.enable = true;
 

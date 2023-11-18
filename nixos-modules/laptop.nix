@@ -26,6 +26,9 @@ in
         MACAddressPolicy = "random";
       };
     };
-    systemd.network.links."80-iwd".linkConfig.MACAddressPolicy = "random";
+
+    systemd.network.links."80-iwd" = lib.mkIf config.networking.wireless.iwd.enable {
+      linkConfig.MACAddressPolicy = "random";
+    };
   };
 }
