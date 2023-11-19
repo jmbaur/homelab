@@ -577,11 +577,11 @@
         "nixpkgs-lib": "nixpkgs-lib"
       },
       "locked": {
-        "lastModified": 1699790908,
-        "narHash": "sha256-8CO4KQhiEyO7rce4KVOq8arpk9802fVwxtN/oLeRFag=",
+        "lastModified": 1700395747,
+        "narHash": "sha256-pzLYZGK34vhAFfyAJjcZYX3BK0Ap/QY/rd8B6Q30tHo=",
         "owner": "nix-community",
         "repo": "lib-aggregate",
-        "rev": "6c60a229fa422698325b2788e93dfeeba3f11391",
+        "rev": "474538707da35589543af5a1c8c31f9978841add",
         "type": "github"
       },
       "original": {
@@ -674,21 +674,6 @@
         "type": "github"
       }
     },
-    "nixos-hardware": {
-      "locked": {
-        "lastModified": 1700315735,
-        "narHash": "sha256-zlSLW6dX5XwBEwN87CIVtMr8zDSKvTRFmWmIQ9FfWgo=",
-        "owner": "NixOS",
-        "repo": "nixos-hardware",
-        "rev": "1721da31f9b30cbf4460c4ec5068b3b6174a4694",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "repo": "nixos-hardware",
-        "type": "github"
-      }
-    },
     "nixos-router": {
       "inputs": {
         "nixpkgs": [
@@ -728,11 +713,11 @@
     },
     "nixpkgs-lib": {
       "locked": {
-        "lastModified": 1699750082,
-        "narHash": "sha256-4Vx6Vr975vPGzGACyu4u6JfWo2Auwy0AeC6sTSOXdTQ=",
+        "lastModified": 1700354803,
+        "narHash": "sha256-kJYhswYp1XMdpI2p/2oRcZxvwW83e64r1av/9zypFLU=",
         "owner": "nix-community",
         "repo": "nixpkgs.lib",
-        "rev": "55682344eae38a1975ccd2cfac0dcb4197faedf8",
+        "rev": "07e160fb6ad2c4bcabecd43425ebaaa4336c5da2",
         "type": "github"
       },
       "original": {
@@ -863,11 +848,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1700370857,
-        "narHash": "sha256-/6r39wroNCrY8G8diQON9eoM9OQbkfLLOZ89M9POmQc=",
+        "lastModified": 1700403207,
+        "narHash": "sha256-ILWsdtLq4lf7Vf14VWTns5I/6YYR0PlCXtSVWSADV5g=",
         "owner": "nix-community",
         "repo": "nixpkgs-wayland",
-        "rev": "ddf9de8eccdded6a182ac5effed5723928af7fc7",
+        "rev": "39cfeb4ed2036d44bf5333b6d49fbdbd4d747c4c",
         "type": "github"
       },
       "original": {
@@ -1076,7 +1061,6 @@
         "lanzaboote": "lanzaboote",
         "microvm": "microvm",
         "nix-sandbox-escape-hatch": "nix-sandbox-escape-hatch",
-        "nixos-hardware": "nixos-hardware",
         "nixos-router": "nixos-router",
         "nixpkgs": "nixpkgs",
         "nixpkgs-wayland": "nixpkgs-wayland",
@@ -1260,11 +1244,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1700377528,
-        "narHash": "sha256-EudUPXhBUQi7tY3vApOQS0RG+weMKZcRfr1C6DkNeLU=",
+        "lastModified": 1700413558,
+        "narHash": "sha256-xymzdFiiJ0piXDxqA0hxCb9JHHjELX2ajwotX2WAcp8=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "08dad60e4b263f6e1e2bbcb0a9fe7ff12f1daed4",
+        "rev": "77a012d577f4c38037e9dbab64bacecb534efae4",
         "type": "github"
       },
       "original": {

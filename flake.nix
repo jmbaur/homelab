@@ -27,7 +27,6 @@
     microvm.url = "github:astro/microvm.nix";
     nix-sandbox-escape-hatch.inputs.nixpkgs.follows = "nixpkgs";
     nix-sandbox-escape-hatch.url = "github:jmbaur/nix-sandbox-escape-hatch";
-    nixos-hardware.url = "github:NixOS/nixos-hardware";
     nixos-router.inputs.nixpkgs.follows = "nixpkgs";
     nixos-router.url = "github:jmbaur/nixos-router";
     nixpkgs-wayland.inputs.nixpkgs.follows = "nixpkgs";

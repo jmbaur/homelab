@@ -6,8 +6,6 @@
 - [x] garlic
 - [x] kale
 - [x] pea
-- [x] potato
-- [x] rhubarb
 - [x] squash
 - [ ] asparagus
 - [ ] broccoli
@@ -15,7 +13,9 @@
 - [ ] celery
 - [ ] olive
 - [ ] onion
+- [ ] potato
 - [ ] pumpkin
 - [ ] radish
+- [ ] rhubarb
 - [ ] tomato
 - [ ] zucchini

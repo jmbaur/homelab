@@ -31,15 +31,6 @@ in
 
   pea = nixosSystem { modules = [ ./pea inputs.self.nixosModules.default ]; };
 
-  potato = nixosSystem {
-    modules = with inputs; [
-      ./potato
-      lanzaboote.nixosModules.lanzaboote
-      self.nixosModules.default
-      nixos-hardware.nixosModules.lenovo-thinkpad-t480
-    ];
-  };
-
   beetroot = nixosSystem {
     modules = with inputs; [ ./beetroot self.nixosModules.default ];
   };
@@ -58,14 +49,6 @@ in
 
   fennel = nixosSystem {
     modules = with inputs; [ self.nixosModules.default ./fennel ];
-  };
-
-  rhubarb = nixosSystem {
-    modules = with inputs; [
-      ./rhubarb
-      nixos-hardware.nixosModules.raspberry-pi-4
-      self.nixosModules.default
-    ];
   };
 
   garlic = nixosSystem {
