@@ -84,6 +84,7 @@ in
       gnome-themes-extra
       gobar
       grim
+      hyprpicker
       imv
       kitty
       libnotify
@@ -104,7 +105,6 @@ in
       wev
       wf-recorder
       wl-clipboard
-      wl-color-picker
       wl-screenrec
       wlr-randr
       xdg-utils

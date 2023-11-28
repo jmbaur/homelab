@@ -51,7 +51,7 @@ bindsym Mod4+Shift+Print exec shotman --capture region
 bindsym Mod4+Shift+Right move right
 bindsym Mod4+Shift+Up move up
 bindsym Mod4+Shift+b bar mode toggle
-bindsym Mod4+Shift+c exec wl-color-picker
+bindsym Mod4+Shift+c exec hyprpicker --autocopy
 bindsym Mod4+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'systemctl --user stop sway-session.target && swaymsg exit'
 bindsym Mod4+Shift+h move left
 bindsym Mod4+Shift+j move down
