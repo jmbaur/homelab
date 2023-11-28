@@ -1,7 +1,6 @@
 { lib, pkgs, inputs, ... }: {
   imports = [
     (import ../disko-single-disk-encrypted.nix "/dev/nvme0n1")
-    ./hardware-configuration.nix
     ./minimal.nix
   ];
 
@@ -10,24 +9,17 @@
     custom.tinyboot-installer.enable = true;
   })).config.system.build.diskImage;
 
-  tinyboot = {
-    enable = true;
-    board = "brya-banshee";
-  };
-
   hardware.bluetooth.enable = true;
 
   zramSwap.enable = true;
 
   boot.initrd.systemd.enable = true;
-  boot.initrd.luks.devices.cryptroot.tryEmptyPassphrase = true;
   boot.initrd.luks.devices.cryptroot.crypttabExtraOpts = lib.mkForce [ "tpm2-device=auto" ];
 
   fileSystems."/".options = [ "noatime" "discard=async" "compress=zstd" ];
   fileSystems."/nix".options = [ "noatime" "discard=async" "compress=zstd" ];
   fileSystems."/home".options = [ "noatime" "discard=async" "compress=zstd" ];
 
-  hardware.chromebook.enable = true;
   networking.hostName = "beetroot";
 
   custom = {

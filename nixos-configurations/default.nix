@@ -29,6 +29,10 @@ in
     modules = [ ./cabbage inputs.self.nixosModules.default ];
   };
 
+  pumpkin = nixosSystem {
+    modules = [ ./pumpkin inputs.self.nixosModules.default ];
+  };
+
   pea = nixosSystem { modules = [ ./pea inputs.self.nixosModules.default ]; };
 
   beetroot = nixosSystem {
