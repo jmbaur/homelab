@@ -118,6 +118,9 @@ in
       pkgs.teensy-udev-rules
     ];
 
+    nixpkgs.config.allowUnfreePredicate = pkg:
+      builtins.elem (lib.getName pkg) [ "teensy-udev-rules" ];
+
     location.provider = "geoclue2";
     programs.gnupg.agent.enable = true;
     programs.ssh.startAgent = true;

@@ -11,8 +11,6 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  nixpkgs.config.allowUnfree = true;
-
   custom = {
     dev.enable = true;
     gui.enable = true;
