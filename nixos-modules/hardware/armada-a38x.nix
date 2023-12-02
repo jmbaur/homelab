@@ -52,13 +52,17 @@
       };
     };
 
-    # TODO(jared): replace with https://github.com/KarsMulder/evsieve
+    # https://github.com/torvalds/linux/blob/815fb87b753055df2d9e50f6cd80eb10235fe3e9/include/uapi/linux/input-event-codes.h#L344
+    # solidrun clearfog uses BTN_0
+    # BTN_0 = 0x100 = 256
     systemd.services.reset-button = {
-      # BTN_0 == 0x100
-      serviceConfig.ExecStart = "${pkgs.dookie}/bin/dookie --device=/dev/input/event0 --key-code=0x100 --action=restart";
+      serviceConfig.ExecStart = toString [
+        (lib.getBin pkgs.evsieve)
+        "--input /dev/input/event0"
+        "--hook btn:%256 exec-shell=\"systemctl reboot\""
+      ];
       wantedBy = [ "multi-user.target" ];
     };
-
 
     programs.flashrom.enable = lib.mkDefault true;
 

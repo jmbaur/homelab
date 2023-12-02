@@ -57,7 +57,6 @@ inputs: with inputs; {
       pomo = prev.callPackage ./pomo { };
       v4l-show = prev.callPackage ./v4l-show.nix { };
       wip = prev.writeShellScriptBin "wip" ''git commit --no-verify --no-gpg-sign --all --message "WIP"; git push'';
-      dookie = prev.callPackage ./dookie { };
 
       neovim = prev.callPackage ./neovim { };
       neovim-all-languages = prev.callPackage ./neovim { supportAllLanguages = true; };
