@@ -1,0 +1,27 @@
+diff --git a/runtime/lua/vim/ui/clipboard/osc52.lua b/runtime/lua/vim/ui/clipboard/osc52.lua
+index 6483f0387..1e47f3cfc 100644
+--- a/runtime/lua/vim/ui/clipboard/osc52.lua
++++ b/runtime/lua/vim/ui/clipboard/osc52.lua
+@@ -1,12 +1,21 @@
+ local M = {}
+ 
++local is_in_tmux = os.getenv('TMUX')
++
+ --- Return the OSC 52 escape sequence
+ ---
+ --- @param clipboard string The clipboard to read from or write to
+ --- @param contents string The Base64 encoded contents to write to the clipboard, or '?' to read
+ ---                        from the clipboard
+ local function osc52(clipboard, contents)
+-  return string.format('\027]52;%s;%s\027\\', clipboard, contents)
++  local query = string.format('\027]52;%s;%s\007', clipboard, contents)
++
++  -- If running in tmux, wrap with the passthrough sequence
++  if is_in_tmux then
++    query = string.format('\027Ptmux;\027%s\027\\', query)
++  end
++
++  return query
+ end
+ 
+ function M.copy(reg)

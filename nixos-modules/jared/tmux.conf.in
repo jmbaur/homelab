@@ -1,42 +1,40 @@
 # vim: ft=tmux
-run-shell @sensible@/share/tmux-plugins/sensible/sensible.tmux
-
-set  -g default-terminal "tmux-256color"
-set  -g base-index      1
-setw -g pane-base-index 1
-
-set -g status-keys vi
-set -g mode-keys   vi
-
-# rebind main key: C-s
-unbind C-b
-set -g prefix C-s
-bind -N "Send the prefix key through to the application" \
-  C-s send-prefix
-
-bind-key -N "Kill the current window" & kill-window
-bind-key -N "Kill the current pane" x kill-pane
-
-set  -g mouse             off
-setw -g aggressive-resize on
-setw -g clock-mode-style  24
-set  -s escape-time       10
-set  -g history-limit     2000
 
 run-shell @logging@/share/tmux-plugins/logging/logging.tmux
+run-shell @fingers@/share/tmux-plugins/fingers/tmux-fingers.tmux
+
+# rebind main key: C-s
+unbind-key C-b
+set-option -g prefix C-s
+bind-key -N "Send the prefix key through to the application" C-s send-prefix
 
 set-option -g allow-passthrough on
 set-option -g automatic-rename on
+set-option -g base-index 1
+set-option -g default-terminal "tmux-256color"
 set-option -g detach-on-destroy off
+set-option -g display-time 4000
 set-option -g focus-events on
+set-option -g history-limit 50000
+set-option -g mode-keys vi
+set-option -g mouse off
 set-option -g renumber-windows on
 set-option -g set-clipboard on
 set-option -g set-titles on
 set-option -g set-titles-string "#{pane_title}"
+set-option -g status-interval 5
+set-option -g status-keys emacs
+set-option -g status-keys vi
 set-option -g status-left "[#{session_name}] "
 set-option -g status-left-length 50
+set-option -s escape-time 10
 set-option -sa terminal-features ',xterm-256color:RGB'
+set-option -wg aggressive-resize on
+set-option -wg clock-mode-style 24
+set-option -wg pane-base-index 1
 
+bind-key -N "Kill the current pane" x kill-pane                         .
+bind-key -N "Kill the current window" & kill-window                     .
 bind-key -T copy-mode-vi v send-keys -X begin-selection
 bind-key -T copy-mode-vi y send-keys -X copy-selection
 bind-key J command-prompt -p "join pane from:"  "join-pane -h -s '%%'"

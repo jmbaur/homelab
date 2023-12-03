@@ -1,7 +1,6 @@
 { lib, config, pkgs, ... }:
 let
   cfg = config.custom.users.jared;
-  colors = (import ./colors.nix).gruvbox-dark;
 in
 {
   options.custom.users.jared = with lib; {
@@ -107,6 +106,7 @@ in
         iputils
         ixio
         j
+        jared-neovim-all-languages
         jo
         jq
         just
@@ -117,7 +117,6 @@ in
         mdcat
         mob
         mosh
-        neovim-all-languages
         nix-diff
         nix-output-monitor
         nix-prefetch-scripts
@@ -196,24 +195,8 @@ in
               tab_bar_style powerline
               update_check_interval 0
 
-              background #${colors.background}
-              foreground #${colors.foreground}
-              color0     #${colors.regular0}
-              color1     #${colors.regular1}
-              color2     #${colors.regular2}
-              color3     #${colors.regular3}
-              color4     #${colors.regular4}
-              color5     #${colors.regular5}
-              color6     #${colors.regular6}
-              color7     #${colors.regular7}
-              color8     #${colors.regular0}
-              color9     #${colors.bright1}
-              color10    #${colors.bright2}
-              color11    #${colors.bright3}
-              color12    #${colors.bright4}
-              color13    #${colors.bright5}
-              color14    #${colors.bright6}
-              color15    #${colors.bright7}
+              background #1c1d23
+              foreground #d7dae1
             '';
           }
           {
@@ -229,60 +212,20 @@ in
                 command-focused = "yes";
               };
               mouse.hide-when-typing = "yes";
-              colors = { alpha = 1.0; } // colors;
-            };
-          }
-          {
-            target = ".config/wezterm/wezterm.lua";
-            path = ./wezterm.lua;
-          }
-          {
-            target = ".config/wezterm/colors/gruvbox-dark.toml";
-            path = (pkgs.formats.toml { }).generate "gruvbox-dark.toml" {
-              colors = {
-                background = "#${colors.background}";
-                foreground = "#${colors.foreground}";
-                cursor_border = "#${colors.foreground}";
-                selection_bg = "rgba(40% 40% 40% 40%)";
-                selection_fg = "none";
-                ansi = map (color: "#${color}") [ colors.regular0 colors.regular1 colors.regular2 colors.regular3 colors.regular4 colors.regular5 colors.regular6 colors.regular7 ];
-                brights = map (color: "#${color}") [ colors.bright0 colors.bright1 colors.bright2 colors.bright3 colors.bright4 colors.bright5 colors.bright6 colors.bright7 ];
-              };
-              metadata.name = "gruvbox-dark";
+              scrollback.indicator-position = "none";
+              colors = { alpha = 1.0; foreground = "d7dae1"; background = "1c1d23"; };
             };
           }
           {
             target = ".config/alacritty/alacritty.yml";
             path = (pkgs.formats.yaml { }).generate "alacritty.yml" {
+              env.TERM = "xterm-256color"; # colors are weird in neovim without this
               live_config_reload = false;
               mouse.hide_when_typing = true;
               selection.save_to_clipboard = true;
               font = { normal.family = "monospace"; size = 16; };
               colors = lib.mapAttrsRecursive (_: color: "#${color}") {
-                primary = {
-                  foreground = colors.foreground;
-                  background = colors.background;
-                };
-                normal = {
-                  black = colors.regular0;
-                  red = colors.regular1;
-                  green = colors.regular2;
-                  yellow = colors.regular3;
-                  blue = colors.regular4;
-                  magenta = colors.regular5;
-                  cyan = colors.regular6;
-                  white = colors.regular7;
-                };
-                bright = {
-                  black = colors.bright0;
-                  red = colors.bright1;
-                  green = colors.bright2;
-                  yellow = colors.bright3;
-                  blue = colors.bright4;
-                  magenta = colors.bright5;
-                  cyan = colors.bright6;
-                  white = colors.bright7;
-                };
+                primary = { foreground = "d7dae1"; background = "1c1d23"; };
               };
             };
           }
@@ -291,13 +234,15 @@ in
             path = pkgs.substituteAll {
               name = "sway.config";
               src = ./sway.config.in;
-              terminal = "kitty";
               inherit (config.services.xserver) xkbModel xkbOptions;
-              extraConfig = lib.optionalString (config.custom.gui.enable && config.custom.gui.displays != { }) ''
-                exec_always shikane -o
-              '';
             };
           }
+        ] ++ (lib.optional (config.custom.gui.enable && config.custom.gui.displays != { }) {
+          target = ".config/sway/config.d/shikane.config";
+          path = pkgs.writeText "sway-shikane.config" ''
+            exec_always shikane -o
+          '';
+        }) ++ [
           {
             target = ".config/swayidle/config";
             path =
@@ -534,9 +479,8 @@ in
             path = pkgs.substituteAll {
               name = "tmux.conf";
               src = ./tmux.conf.in;
-              sensible = pkgs.tmuxPlugins.sensible;
-              logging = pkgs.tmuxPlugins.logging;
               j = pkgs.j;
+              inherit (pkgs.tmuxPlugins) logging fingers;
             };
           }
           {
@@ -545,7 +489,7 @@ in
               configuration {
                 font: "sans 12";
               }
-              @theme "gruvbox-dark-soft"
+              @theme "Arc-Dark"
             '';
           }
         ] ++ lib.optional (config.custom.gui.enable && config.custom.gui.displays != { }) {

@@ -25,6 +25,8 @@
     lanzaboote.url = "github:nix-community/lanzaboote/v0.3.0";
     microvm.inputs.nixpkgs.follows = "nixpkgs";
     microvm.url = "github:astro/microvm.nix";
+    neovim.inputs.nixpkgs.follows = "nixpkgs";
+    neovim.url = "github:neovim/neovim?dir=contrib";
     nix-sandbox-escape-hatch.inputs.nixpkgs.follows = "nixpkgs";
     nix-sandbox-escape-hatch.url = "github:jmbaur/nix-sandbox-escape-hatch";
     nixos-router.inputs.nixpkgs.follows = "nixpkgs";

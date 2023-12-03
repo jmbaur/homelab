@@ -74,6 +74,7 @@ in
     ];
 
     environment.systemPackages = with pkgs; [
+      alacritty
       brightnessctl
       caffeine
       chromium-wayland
@@ -86,7 +87,6 @@ in
       grim
       hyprpicker
       imv
-      kitty
       libnotify
       mako
       mirror-to-x
@@ -227,6 +227,7 @@ in
       after = [ swaySessionTarget ];
       wantedBy = [ swaySessionTarget ];
       path = with pkgs; [ bash ]; # needs a shell in path
+      unitConfig.ConditionPathExists = "%h/.config/swayidle/config";
       serviceConfig.ExecStart = "${lib.getExe pkgs.swayidle} -w";
     };
   };

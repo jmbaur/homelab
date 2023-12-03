@@ -16,10 +16,7 @@ nixos type="switch":
 		{{type}}
 
 build:
-	nix build -L --accept-flake-config \
-		.\#neovim \
-		.\#neovim-all-languages \
-		.\#pomo
+	nix build -L --accept-flake-config .\#jared-neovim .\#pomo
 
 update:
 	#!/usr/bin/env bash

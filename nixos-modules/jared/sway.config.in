@@ -33,7 +33,7 @@ bindsym Mod4+Down focus down
 bindsym Mod4+F12 mode passthru
 bindsym Mod4+Left focus left
 bindsym Mod4+Print exec shotman --capture window
-bindsym Mod4+Return exec @terminal@
+bindsym Mod4+Return exec alacritty
 bindsym Mod4+Right focus right
 bindsym Mod4+Shift+1 move container to workspace number 1
 bindsym Mod4+Shift+2 move container to workspace number 2
@@ -52,7 +52,7 @@ bindsym Mod4+Shift+Right move right
 bindsym Mod4+Shift+Up move up
 bindsym Mod4+Shift+b bar mode toggle
 bindsym Mod4+Shift+c exec hyprpicker --autocopy
-bindsym Mod4+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'systemctl --user stop sway-session.target && swaymsg exit'
+bindsym Mod4+Shift+e exec swaynag -t warning -m "You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session." -B "Yes, exit sway" "systemctl --user stop sway-session.target && swaymsg exit"
 bindsym Mod4+Shift+h move left
 bindsym Mod4+Shift+j move down
 bindsym Mod4+Shift+k move up
@@ -85,8 +85,8 @@ bindsym XF86AudioMicMute exec notify-send --transient --hint int:value:$(pamixer
 bindsym XF86AudioMute exec notify-send --transient --hint int:value:$(pamixer --toggle-mute --get-volume) --hint string:x-canonical-private-synchronous:volume volume "$(if [[ $(pamixer --get-mute) == true ]]; then echo muted; else echo unmuted; fi)"
 bindsym XF86AudioRaiseVolume exec notify-send --transient --hint int:value:$(pamixer --increase 5 --get-volume) --hint string:x-canonical-private-synchronous:volume volume
 bindsym XF86AudioLowerVolume exec notify-send --transient --hint int:value:$(pamixer --decrease 5 --get-volume) --hint string:x-canonical-private-synchronous:volume volume
-bindsym XF86MonBrightnessUp exec notify-send --transient --hint int:value:$(brightnessctl set +5% | sed -En 's/.*\(([0-9]+)%\).*/\1/p') --hint string:x-canonical-private-synchronous:brightness brightness
-bindsym XF86MonBrightnessDown exec notify-send --transient --hint int:value:$(brightnessctl set 5%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p') --hint string:x-canonical-private-synchronous:brightness brightness
+bindsym XF86MonBrightnessUp exec notify-send --transient --hint int:value:$(brightnessctl set +5% | sed -En "s/.*\(([0-9]+)%\).*/\1/p") --hint string:x-canonical-private-synchronous:brightness brightness
+bindsym XF86MonBrightnessDown exec notify-send --transient --hint int:value:$(brightnessctl set 5%- | sed -En "s/.*\(([0-9]+)%\).*/\1/p") --hint string:x-canonical-private-synchronous:brightness brightness
 
 input "type:keyboard" {
 	repeat_delay 300
@@ -119,11 +119,11 @@ input "4617:13404:https://github.com/stapelberg_kinT_(kint41)" {
 	repeat_delay 300
 	repeat_rate 50
 	xkb_model pc104
-	xkb_options ''
+	xkb_options ""
 }
 
 output "*" {
-	background #3c3836 solid_color
+	background #333333 solid_color
 	scale 1
 }
 
@@ -174,7 +174,7 @@ exec_always {
 	gsettings set org.gnome.desktop.interface cursor-size 32
 }
 
-@extraConfig@
+include config.d/*
 
 exec "dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XCURSOR_THEME XCURSOR_SIZE NIXOS_OZONE_WL; systemctl --user start sway-session.target"
 exec assign-cgroups.py

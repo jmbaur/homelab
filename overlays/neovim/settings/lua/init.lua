@@ -3,8 +3,6 @@ vim.loader.enable()
 vim.g.mapleader = " "
 
 if #vim.api.nvim_list_uis() > 0 then
-	vim.cmd.colorscheme("gruvbox")
-
 	local launcher = require("launcher")
 	launcher.setup()
 
@@ -21,8 +19,8 @@ if #vim.api.nvim_list_uis() > 0 then
 	require("clipboard")
 	require("snippet")
 	require("statusline")
-	require("terminal")
 
+	vim.opt.termguicolors = true
 	vim.opt.belloff = "all"
 	vim.opt.colorcolumn = "80"
 	vim.opt.cursorline = false

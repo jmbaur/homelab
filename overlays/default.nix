@@ -6,19 +6,6 @@ inputs: with inputs; {
 
       nixos-kexec = prev.callPackage ./nixos-kexec { };
 
-      wezterm = prev.wezterm.overrideAttrs (_: rec {
-        version = "nightly-${builtins.substring 0 7 src.rev}";
-        src = prev.fetchgit {
-          inherit (prev.lib.importJSON ./wezterm-source.json) url rev hash fetchSubmodules deepClone leaveDotGit;
-        };
-        cargoDeps = prev.rustPlatform.importCargoLock {
-          # Not acceptable for upstream nixpkgs, but we just want to track main on
-          # wezterm in the easiest manner.
-          lockFile = "${src}/Cargo.lock";
-          allowBuiltinFetchGit = true;
-        };
-      });
-
       # provide dbus-activation for fnott
       fnott-dbus = prev.symlinkJoin {
         name = "fnott-dbus";
@@ -58,8 +45,10 @@ inputs: with inputs; {
       v4l-show = prev.callPackage ./v4l-show.nix { };
       wip = prev.writeShellScriptBin "wip" ''git commit --no-verify --no-gpg-sign --all --message "WIP"; git push'';
 
-      neovim = prev.callPackage ./neovim { };
-      neovim-all-languages = prev.callPackage ./neovim { supportAllLanguages = true; };
+      jared-neovim = prev.callPackage ./neovim {
+        neovim-unwrapped = inputs.neovim.packages.${prev.system}.neovim;
+      };
+      jared-neovim-all-languages = final.jared-neovim.override { supportAllLanguages = true; };
 
       mkWaylandVariant = prev.callPackage ./mk-wayland-variant.nix { };
       brave-wayland = final.mkWaylandVariant

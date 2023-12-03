@@ -1,17 +1,15 @@
-local osc52 = require("osc52")
+vim.opt.clipboard = "unnamedplus"
 
-local function copy(lines, _)
-	osc52.copy(table.concat(lines, "\n"))
-end
-
-local function paste()
-	return { vim.fn.split(vim.fn.getreg(""), "\n"), vim.fn.getregtype("") }
-end
+local osc52 = require("vim.ui.clipboard.osc52")
 
 vim.g.clipboard = {
-	name = "osc52",
-	copy = { ["+"] = copy, ["*"] = copy },
-	paste = { ["+"] = paste, ["*"] = paste },
+	name = "OSC 52",
+	copy = {
+		["+"] = osc52.copy("+"),
+		["*"] = osc52.copy("*"),
+	},
+	paste = {
+		["+"] = osc52.paste("+"),
+		["*"] = osc52.paste("*"),
+	},
 }
-
-vim.opt.clipboard = "unnamedplus"

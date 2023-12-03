@@ -61,20 +61,16 @@ let
         efmls-configs-nvim
         gitsigns-nvim
         gosee-nvim
-        gruvbox-nvim
         jmbaur-config
         mini-nvim
         nvim-lspconfig
-        nvim-osc52
         nvim-surround
         nvim-treesitter-refactor
         nvim-treesitter-textobjects
         oil-nvim
-        playground
         snippets-nvim
         telescope-nvim
         telescope-ui-select-nvim
-        toggleterm-nvim
         tree-sitter-just-plugin
         vim-dispatch
         vim-eunuch
@@ -89,8 +85,12 @@ let
       # opt
       ++ (map (plugin: { inherit plugin; optional = true; }) [ ]);
   };
+
+  neovim = neovim-unwrapped.overrideAttrs (old: {
+    patches = (old.patches or [ ]) ++ [ /*./tmux-osc52.patch*/ ];
+  });
 in
-wrapNeovimUnstable neovim-unwrapped (config // {
+wrapNeovimUnstable neovim (config // {
   vimAlias = true;
   wrapperArgs = config.wrapperArgs ++ (
     let
