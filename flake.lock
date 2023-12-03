@@ -490,11 +490,11 @@
         "pre-commit": "pre-commit"
       },
       "locked": {
-        "lastModified": 1700965663,
-        "narHash": "sha256-G91ivqic0fqYL6oRsi1+0HLurU+sljpM8h1XO48OF6U=",
+        "lastModified": 1701565512,
+        "narHash": "sha256-EbSMvTWHtbjWsagyAHEcqiMv351FVhOoAzQcQxdwq2s=",
         "owner": "jmbaur",
         "repo": "gobar",
-        "rev": "1fe8dbacc8bce3308d9e8caaed0e38767c411ed8",
+        "rev": "a89cf4ea7062856816196b378ff962123800f84f",
         "type": "github"
       },
       "original": {
@@ -510,11 +510,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1700965650,
-        "narHash": "sha256-ZAiHHr5QPM1PPmC85yJzeh89RC1UiLjTxSZPem/AkSs=",
+        "lastModified": 1701565486,
+        "narHash": "sha256-TElN/OmhiziEV1YgVQW5oZnGl+GDVtsMEQ3ydA0uZuE=",
         "owner": "jmbaur",
         "repo": "gosee",
-        "rev": "14b6cfac22dc0102ec0c169fba0019bafcba9a98",
+        "rev": "cc8068f005a4f96a801c326f5dd53981f2eb2cc2",
         "type": "github"
       },
       "original": {
@@ -531,11 +531,11 @@
         "pre-commit-hooks": "pre-commit-hooks"
       },
       "locked": {
-        "lastModified": 1700965680,
-        "narHash": "sha256-wEfPu/B2Mk5X3SKX/OW34hwqW8BHBlWy2tvd69I6+SE=",
+        "lastModified": 1701567291,
+        "narHash": "sha256-OYeYXbPOcrWw44IZvs33gkQG6EQvjK+bZFq2MzZqHCU=",
         "owner": "jmbaur",
         "repo": "ipwatch",
-        "rev": "b660c5e035ae864dcf1ba022415675d3ae744116",
+        "rev": "4feb5f58849f4bfab7e9f4e49ad244233f8b5071",
         "type": "github"
       },
       "original": {
@@ -808,11 +808,11 @@
     },
     "nixpkgs-stable_6": {
       "locked": {
-        "lastModified": 1700905716,
-        "narHash": "sha256-w1vHn2MbGfdC+CrP3xLZ3scsI06N0iQLU7eTHIVEFGw=",
+        "lastModified": 1701568804,
+        "narHash": "sha256-iwr1fjOCvlirVL/xNvOTwY9kg3L/F3TC/7yh/QszaPI=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "dfb95385d21475da10b63da74ae96d89ab352431",
+        "rev": "dc01248a9c946953ad4d438b0a626f5c987a93e4",
         "type": "github"
       },
       "original": {
@@ -1104,11 +1104,11 @@
         "nixpkgs-stable": "nixpkgs-stable_6"
       },
       "locked": {
-        "lastModified": 1701127353,
-        "narHash": "sha256-qVNX0wOl0b7+I35aRu78xUphOyELh+mtUp1KBx89K1Q=",
+        "lastModified": 1701572436,
+        "narHash": "sha256-0anfOQqDend6kSuF8CmOSAZsiAS1nwOsin5VQukh6Q4=",
         "owner": "Mic92",
         "repo": "sops-nix",
-        "rev": "b1edbf5c0464b4cced90a3ba6f999e671f0af631",
+        "rev": "8bca48cb9a12bbd8766f359ad00336924e91b7f7",
         "type": "github"
       },
       "original": {
@@ -1287,11 +1287,11 @@
         "pre-commit": "pre-commit_3"
       },
       "locked": {
-        "lastModified": 1700965638,
-        "narHash": "sha256-I3A9EKE1FgDkcn/AktCATrM0zkmCrMb2gEOieVo45V4=",
+        "lastModified": 1701564756,
+        "narHash": "sha256-6QKwgdEAXZLgtt2hS9OK3n0TtVQwMtrXOVP789Yp33g=",
         "owner": "jmbaur",
         "repo": "webauthn-tiny",
-        "rev": "341d1b761227ab1b56d5082ab626c8808aa9f751",
+        "rev": "d61ee29db861922cc63815068f545d78867b8d2c",
         "type": "github"
       },
       "original": {
