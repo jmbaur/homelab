@@ -299,6 +299,31 @@ in
             };
           }
           {
+            target = ".config/swayidle/config";
+            path =
+              let
+                lock = pkgs.writeShellScriptBin "lock" ''
+                  ${lib.getExe pkgs.swaylock} ${lib.escapeShellArgs [ "--daemonize" "--indicator-caps-lock" "--show-keyboard-layout" "--color" "1d2021" ]}
+                '';
+                conditionalSuspend = pkgs.writeShellScriptBin "conditional-suspend" (lib.optionalString config.custom.laptop.enable ''
+                  if [[ "$(cat /sys/class/power_supply/AC/online)" -ne 1 ]]; then
+                    echo "laptop is not on AC, suspending"
+                    ${config.systemd.package}/bin/systemctl suspend
+                  else
+                    echo "laptop is on AC, not suspending"
+                  fi
+                '');
+              in
+              pkgs.writeText "swayidle.config" ''
+                timeout 600 '${lib.getExe lock}'
+                timeout 900 '${config.programs.sway.package}/bin/swaymsg "output * dpms off"'
+                timeout 1200 '${lib.getExe conditionalSuspend}'
+                before-sleep '${lib.getExe lock}'
+                lock '${lib.getExe lock}'
+                after-resume '${config.programs.sway.package}/bin/swaymsg "output * dpms on"'
+              '';
+          }
+          {
             target = ".config/swaynag/config";
             path = pkgs.writeText "swaynag.config" ''
               font=sans 12
@@ -555,4 +580,3 @@ in
       );
   };
 }
-

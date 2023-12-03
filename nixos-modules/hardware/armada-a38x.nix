@@ -57,7 +57,7 @@
     # BTN_0 = 0x100 = 256
     systemd.services.reset-button = {
       serviceConfig.ExecStart = toString [
-        (lib.getBin pkgs.evsieve)
+        (lib.getExe pkgs.evsieve)
         "--input /dev/input/event0"
         "--hook btn:%256 exec-shell=\"systemctl reboot\""
       ];

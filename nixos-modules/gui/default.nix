@@ -99,6 +99,7 @@ in
       shikane
       shotman
       slurp
+      sway-assign-cgroups
       swaybg
       swayidle
       swaylock
@@ -225,33 +226,8 @@ in
       partOf = [ swaySessionTarget ];
       after = [ swaySessionTarget ];
       wantedBy = [ swaySessionTarget ];
-      path = with pkgs; [
-        bash # needs a shell in path
-        swayidle
-        swaylock
-        config.programs.sway.package
-        (writeShellScriptBin "lock" ''
-          swaylock ${lib.escapeShellArgs [ "--daemonize" "--indicator-caps-lock" "--show-keyboard-layout" "--color" "1d2021" ]}
-        '')
-        (writeShellScriptBin "conditional-suspend" (lib.optionalString config.custom.laptop.enable ''
-          if [[ "$(cat /sys/class/power_supply/AC/online)" -ne 1 ]]; then
-            echo "laptop is not on AC, suspending"
-            ${pkgs.systemd}/bin/systemctl suspend
-          else
-            echo "laptop is on AC, not suspending"
-          fi
-        ''))
-      ];
-      script = ''
-        swayidle -w \
-          timeout 600 'lock' \
-          timeout 900 'swaymsg "output * dpms off"' \
-            resume 'swaymsg "output * dpms on"' \
-          timeout 1200 'conditional-suspend' \
-          before-sleep 'lock' \
-          lock 'lock' \
-          after-resume 'swaymsg "output * dpms on"'
-      '';
+      path = with pkgs; [ bash ]; # needs a shell in path
+      serviceConfig.ExecStart = "${lib.getExe pkgs.swayidle} -w";
     };
   };
 }
