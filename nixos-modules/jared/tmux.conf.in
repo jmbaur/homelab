@@ -33,8 +33,8 @@ set-option -wg aggressive-resize on
 set-option -wg clock-mode-style 24
 set-option -wg pane-base-index 1
 
-bind-key -N "Kill the current pane" x kill-pane                         .
-bind-key -N "Kill the current window" & kill-window                     .
+bind-key -N "Kill the current pane" x kill-pane
+bind-key -N "Kill the current window" & kill-window
 bind-key -T copy-mode-vi v send-keys -X begin-selection
 bind-key -T copy-mode-vi y send-keys -X copy-selection
 bind-key J command-prompt -p "join pane from:"  "join-pane -h -s '%%'"
