@@ -261,7 +261,7 @@ in
               in
               pkgs.writeText "swayidle.config" ''
                 timeout 600 '${lib.getExe lock}'
-                timeout 900 '${config.programs.sway.package}/bin/swaymsg "output * dpms off"'
+                timeout 900 '${config.programs.sway.package}/bin/swaymsg "output * dpms off"' resume '${config.programs.sway.package}/bin/swaymsg "output * dpms on"'
                 timeout 1200 '${lib.getExe conditionalSuspend}'
                 before-sleep '${lib.getExe lock}'
                 lock '${lib.getExe lock}'
