@@ -104,7 +104,6 @@ in
         htmlq
         htop-vim
         iputils
-        ixio
         j
         jared-neovim-all-languages
         jo
@@ -126,6 +125,7 @@ in
         nurl
         openssl
         patchelf
+        pb
         pciutils
         pd-notify
         podman-compose

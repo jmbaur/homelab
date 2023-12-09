@@ -37,7 +37,7 @@ inputs: with inputs; {
       git-shell-commands = prev.callPackage ./git-shell-commands {
         libgit2 = final.libgit2_1_5;
       };
-      ixio = prev.writeShellScriptBin "ixio" "${prev.curl}/bin/curl -F 'f:1=<-' ix.io";
+      pb = prev.writeShellScriptBin "pb" "${prev.curl}/bin/curl --data-binary @- https://paste.rs/";
       j = prev.callPackage ./j.nix { };
       kinesis-kint41-jmbaur = prev.callPackage ./kinesis-kint41-jmbaur.nix { };
       macgen = prev.callPackage ./macgen.nix { };
