@@ -151,6 +151,7 @@ in
         xsv
         ydiff
         yj
+        zoxide
       ]);
 
       extraGroups = [ "wheel" ]
@@ -347,13 +348,15 @@ in
             target = ".config/fish/config.fish";
             path =
               let
-                direnvHook = pkgs.runCommand "direnv-hook.fish" { } "${pkgs.direnv}/bin/direnv hook fish > $out";
+                direnvHook = pkgs.runCommand "direnv-hook.fish" { } "${lib.getExe pkgs.direnv} hook fish > $out";
+                zoxideHook = pkgs.runCommand "zoxide-hook.fish" { } "${lib.getExe pkgs.zoxide} init fish > $out";
               in
               pkgs.writeText "fish.config" ''
                 if status is-interactive
                   set -U fish_greeting ""
                   ${lib.optionalString config.custom.dev.enable ''
                   source ${direnvHook}
+                  source ${zoxideHook}
                   set -U PROJECTS_DIR ${config.users.users.${cfg.username}.home}/projects
                   ''}
                 end
@@ -362,13 +365,6 @@ in
           {
             target = ".config/zellij/config.kdl";
             path = ./zellij-config.kdl;
-          }
-          {
-            target = ".config/starship.toml";
-            path = (pkgs.formats.toml { }).generate "starship.toml" {
-              add_newline = false;
-              format = "$username$hostname$directory$git_branch$git_commit$git_state$git_metrics$git_status$character";
-            };
           }
           {
             target = ".config/nushell/env.nu";
@@ -380,9 +376,6 @@ in
               name = "config.nu";
               src = ./nushell-config.nu.in;
               inherit (pkgs) nu_scripts;
-              starshipInit = pkgs.runCommand "starship-init.nu" { } ''
-                ${pkgs.starship}/bin/starship init nu > $out
-              '';
             };
           }
           {
@@ -396,7 +389,8 @@ in
             path = pkgs.substituteAll {
               name = "zshrc";
               src = ./rc.zsh.in;
-              direnvHook = pkgs.runCommand "direnv-hook.zsh" { } "${pkgs.direnv}/bin/direnv hook zsh > $out";
+              direnvHook = pkgs.runCommand "direnv-hook.zsh" { } "${lib.getExe pkgs.direnv} hook zsh > $out";
+              zoxideHook = pkgs.runCommand "zoxide-hook.zsh" { } "${lib.getExe pkgs.zoxide} init zsh > $out";
             };
           }
           {

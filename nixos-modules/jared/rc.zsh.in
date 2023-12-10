@@ -21,3 +21,4 @@ autoload -U select-word-style
 select-word-style bash
 
 source "@direnvHook@"
+source "@zoxideHook@"

@@ -8,8 +8,9 @@ vim.g.clipboard = {
 		["+"] = osc52.copy("+"),
 		["*"] = osc52.copy("*"),
 	},
-	paste = {
-		["+"] = osc52.paste("+"),
-		["*"] = osc52.paste("*"),
-	},
+	-- doesn't work well for all terminals (yet)
+	-- paste = {
+	-- 	["+"] = osc52.paste("+"),
+	-- 	["*"] = osc52.paste("*"),
+	-- },
 }
