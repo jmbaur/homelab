@@ -56,11 +56,15 @@
     # solidrun clearfog uses BTN_0
     # BTN_0 = 0x100 = 256
     systemd.services.reset-button = {
-      serviceConfig.ExecStart = toString [
-        (lib.getExe' pkgs.evsieve "evsieve")
-        "--input /dev/input/event0"
-        "--hook btn:%256 exec-shell=\"systemctl reboot\""
-      ];
+      description = "Restart the system when the reset button is pressed";
+      unitConfig.ConditionPathExists = [ "/dev/input/event0" ];
+      # make sure evsieve button identifiers are escaped
+      serviceConfig.ExecStart = lib.replaceStrings [ "%" ] [ "%%" ]
+        (toString [
+          (lib.getExe' pkgs.evsieve "evsieve")
+          "--input /dev/input/event0"
+          "--hook btn:%256 exec-shell=\"systemctl reboot\""
+        ]);
       wantedBy = [ "multi-user.target" ];
     };
 
