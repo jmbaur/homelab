@@ -87,6 +87,7 @@ in
       grim
       hyprpicker
       imv
+      kitty
       libnotify
       mako
       mirror-to-x

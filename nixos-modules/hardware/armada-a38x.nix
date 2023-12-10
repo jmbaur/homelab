@@ -54,7 +54,7 @@
 
     # https://github.com/torvalds/linux/blob/815fb87b753055df2d9e50f6cd80eb10235fe3e9/include/uapi/linux/input-event-codes.h#L344
     # solidrun clearfog uses BTN_0
-    # BTN_0 = 0x100 = 256
+    # BTN_0 == 0x100 == 256
     systemd.services.reset-button = {
       description = "Restart the system when the reset button is pressed";
       unitConfig.ConditionPathExists = [ "/dev/input/event0" ];

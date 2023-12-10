@@ -45,6 +45,26 @@ in
 
     programs.fish.enable = true;
 
+    systemd.user.services.emacs.path = with pkgs; [ zls gopls rust-analyzer ];
+    services.emacs = {
+      enable = config.custom.dev.enable;
+      startWithGraphical = false;
+      package = (pkgs.emacsPackagesFor pkgs.emacs29-nox).withPackages (epkgs: with epkgs; [
+        clipetty
+        envrc
+        evil
+        evil-collection
+        evil-commentary
+        evil-surround
+        go-mode
+        magit
+        nix-mode
+        projectile
+        rust-mode
+        zig-mode
+      ]);
+    };
+
     users.users.${cfg.username} = {
       isNormalUser = true;
 
@@ -238,12 +258,6 @@ in
               inherit (config.services.xserver) xkbModel xkbOptions;
             };
           }
-        ] ++ (lib.optional (config.custom.gui.enable && config.custom.gui.displays != { }) {
-          target = ".config/sway/config.d/shikane.config";
-          path = pkgs.writeText "sway-shikane.config" ''
-            exec_always shikane -o
-          '';
-        }) ++ [
           {
             target = ".config/swayidle/config";
             path =
@@ -486,35 +500,48 @@ in
               @theme "Arc-Dark"
             '';
           }
-        ] ++ lib.optional (config.custom.gui.enable && config.custom.gui.displays != { }) {
-          target = ".config/shikane/config.toml";
-          path =
-            let
-              splitDisplays = lib.partition (disp: disp.isInternal) (lib.attrValues config.custom.gui.displays);
-              internalDisplays = splitDisplays.right;
-              externalDisplays = splitDisplays.wrong;
-            in
-            (pkgs.formats.toml { }).generate "shikane.toml" {
-              profile = map
-                (profile: profile // {
-                  exec = [ "${pkgs.libnotify}/bin/notify-send shikane \"Profile $SHIKANE_PROFILE_NAME has been applied\"" ];
-                })
-                ((lib.optional (externalDisplays != [ ]) {
-                  name = "dock";
-                  output = (map
-                    (disp: { inherit (disp) match scale; enable = false; })
-                    internalDisplays) ++ (map
-                    (disp: { inherit (disp) match scale; enable = true; })
-                    externalDisplays);
-                }) ++
-                (lib.optional (internalDisplays != [ ]) {
-                  name = "laptop";
-                  output = (map
-                    (disp: { inherit (disp) match scale; enable = true; })
-                    internalDisplays);
-                }));
-            };
-        })
+          {
+            target = ".config/emacs/init.el";
+            path = ./emacs.el;
+          }
+        ] ++ lib.optionals (config.custom.gui.enable && config.custom.gui.displays != { }) [
+          {
+            target = ".config/sway/config.d/shikane.config";
+            path = pkgs.writeText "sway-shikane.config" ''
+              exec_always shikane -o
+            '';
+          }
+          {
+            target = ".config/shikane/config.toml";
+            path =
+              let
+                splitDisplays = lib.partition (disp: disp.isInternal) (lib.attrValues config.custom.gui.displays);
+                internalDisplays = splitDisplays.right;
+                externalDisplays = splitDisplays.wrong;
+              in
+              (pkgs.formats.toml { }).generate "shikane.toml" {
+                profile = map
+                  (profile: profile // {
+                    exec = [ "${pkgs.libnotify}/bin/notify-send shikane \"Profile $SHIKANE_PROFILE_NAME has been applied\"" ];
+                  })
+                  ((lib.optional (externalDisplays != [ ]) {
+                    name = "dock";
+                    output = (map
+                      (disp: { inherit (disp) match scale; enable = false; })
+                      internalDisplays) ++ (map
+                      (disp: { inherit (disp) match scale; enable = true; })
+                      externalDisplays);
+                  }) ++
+                  (lib.optional (internalDisplays != [ ]) {
+                    name = "laptop";
+                    output = (map
+                      (disp: { inherit (disp) match scale; enable = true; })
+                      internalDisplays);
+                  }));
+              };
+          }
+        ]
+        )
       );
   };
 }
