@@ -45,24 +45,39 @@ in
 
     programs.fish.enable = true;
 
-    systemd.user.services.emacs.path = with pkgs; [ zls gopls rust-analyzer ];
     services.emacs = {
       enable = config.custom.dev.enable;
       startWithGraphical = false;
-      package = (pkgs.emacsPackagesFor pkgs.emacs29-nox).withPackages (epkgs: with epkgs; [
-        clipetty
-        envrc
-        evil
-        evil-collection
-        evil-commentary
-        evil-surround
-        go-mode
-        magit
-        nix-mode
-        projectile
-        rust-mode
-        zig-mode
-      ]);
+      package =
+        let
+          emacs = (pkgs.emacsPackagesFor pkgs.emacs29-nox).withPackages (epkgs: with epkgs; [
+            clipetty
+            company
+            envrc
+            evil
+            evil-collection
+            evil-commentary
+            evil-surround
+            go-mode
+            magit
+            markdown-mode
+            nix-mode
+            projectile
+            rg
+            rust-mode
+            zig-mode
+          ]);
+        in
+        pkgs.symlinkJoin {
+          name = lib.appendToName "with-tools" emacs;
+          paths = [ emacs ] ++ (with pkgs; [
+            zls
+            rust-analyzer
+            gopls
+            nil
+            nixpkgs-fmt
+          ]);
+        };
     };
 
     users.users.${cfg.username} = {

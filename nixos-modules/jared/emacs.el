@@ -2,7 +2,8 @@
 (load-theme 'modus-vivendi)
 (global-display-line-numbers-mode 1)
 (menu-bar-mode -1)
-(toggle-truncate-lines 1)
+(tool-bar-mode -1)
+(set-default 'truncate-lines t)
 (global-set-key "\C-h" 'delete-backward-char)
 (global-set-key "\C-xh" 'help-command) ;; overrides mark-whole-buffer
 
@@ -17,6 +18,7 @@
 (evil-collection-init)
 (evil-commentary-mode 1)
 (evil-surround-mode 1)
+(evil-set-undo-system 'undo-redo)
 
 ;; completion
 (setq ido-enable-flex-matching t)
@@ -29,3 +31,13 @@
 
 ;; direnv
 (envrc-global-mode 1)
+
+;; completions
+(add-hook 'after-init-hook 'global-company-mode)
+
+;; lsp
+(setq eldoc-echo-area-use-multiline-p nil)
+(add-hook 'go-mode-hook 'eglot-ensure)
+(add-hook 'nix-mode-hook 'eglot-ensure)
+(add-hook 'rust-mode-hook 'eglot-ensure)
+(add-hook 'zig-mode-hook 'eglot-ensure)
