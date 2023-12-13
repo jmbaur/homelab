@@ -57,12 +57,8 @@ keyboard.appendChild(create_keybinding("W-p", create_execute_action("rofi -show 
 keyboard.appendChild(create_keybinding("W-Tab", create_goto_desktop_action("right")))
 keyboard.appendChild(create_keybinding("W-1", create_goto_desktop_action("1")))
 keyboard.appendChild(create_keybinding("W-2", create_goto_desktop_action("2")))
-keyboard.appendChild(create_keybinding("W-3", create_goto_desktop_action("3")))
-keyboard.appendChild(create_keybinding("W-4", create_goto_desktop_action("4")))
 keyboard.appendChild(create_keybinding("W-S-1", create_sendto_desktop_action("1")))
 keyboard.appendChild(create_keybinding("W-S-2", create_sendto_desktop_action("2")))
-keyboard.appendChild(create_keybinding("W-S-3", create_sendto_desktop_action("3")))
-keyboard.appendChild(create_keybinding("W-S-4", create_sendto_desktop_action("4")))
 
 font = root.createElement("font")
 font.setAttribute("name", "sans")
@@ -85,7 +81,7 @@ libinput = root.createElement("libinput")
 libinput.appendChild(touchpad)
 
 desktops = root.createElement("desktops")
-desktops.setAttribute("number", "4")
+desktops.setAttribute("number", "2")
 
 labwc_config = root.createElement("labwc_config")
 labwc_config.appendChild(keyboard)

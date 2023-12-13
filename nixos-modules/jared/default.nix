@@ -267,8 +267,14 @@ in
           }
           {
             target = ".config/labwc/rc.xml";
-            path = pkgs.runCommand "labwc.rc.xml" { } ''
-              ${lib.getExe pkgs.buildPackages.python3} ${./labwc.py} > $out
+            path = pkgs.runCommand "labwc-rc.xml" { } ''
+              ${lib.getExe pkgs.buildPackages.python3} ${./labwc-rc.py} > $out
+            '';
+          }
+          {
+            target = ".config/labwc/menu.xml";
+            path = pkgs.runCommand "labwc-menu.xml" { } ''
+              ${lib.getExe pkgs.buildPackages.python3} ${./labwc-menu.py} > $out
             '';
           }
           {

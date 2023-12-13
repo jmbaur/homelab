@@ -3,6 +3,7 @@ let
   cfg = config.custom.gui;
 
   swaySessionTarget = "sway-session.target";
+  # labwcSessionTarget = "labwc-session.target";
 in
 {
   options.custom.gui = with lib; {
@@ -88,6 +89,7 @@ in
       hyprpicker
       imv
       kitty
+      labwc
       libnotify
       mako
       mirror-to-x
