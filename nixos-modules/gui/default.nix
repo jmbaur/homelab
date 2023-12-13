@@ -2,12 +2,25 @@
 let
   cfg = config.custom.gui;
 
-  swaySessionTarget = "sway-session.target";
-  # labwcSessionTarget = "labwc-session.target";
+  compositor = {
+    sway = {
+      target = "sway-session.target";
+      executable = lib.getExe config.programs.sway.package;
+    };
+    labwc = {
+      target = "labwc-session.target";
+      executable = lib.getExe' pkgs.labwc "labwc";
+    };
+  }.${cfg.compositor};
 in
 {
   options.custom.gui = with lib; {
     enable = mkEnableOption "GUI config";
+
+    compositor = mkOption {
+      type = types.enum [ "sway" "labwc" ];
+      default = "sway";
+    };
 
     displays = mkOption {
       type = types.attrsOf (types.submodule ({ name, ... }: {
@@ -61,8 +74,7 @@ in
             -f pipe:xwayland-mirror
         '';
         desktop-launcher = final.writeShellScriptBin "desktop-launcher" ''
-          exec -a "$0" systemd-cat --identifier=sway \
-            ${config.programs.sway.package}/bin/sway
+          exec -a "$0" systemd-cat --identifier=${cfg.compositor} ${compositor.executable}
         '';
         caffeine = final.writeShellScriptBin "caffeine" ''
           stop() { systemctl restart --user idle.service; }
@@ -174,31 +186,39 @@ in
       after = [ "graphical-session-pre.target" ];
     };
 
+    systemd.user.targets.labwc-session = {
+      description = "labwc compositor session";
+      documentation = [ "man:systemd.special(7)" ];
+      bindsTo = [ "graphical-session.target" ];
+      wants = [ "graphical-session-pre.target" ];
+      after = [ "graphical-session-pre.target" ];
+    };
+
     systemd.user.services.display-manager = {
       inherit (config.custom.laptop) enable;
       description = "laptop display manager";
-      after = [ swaySessionTarget ];
-      partOf = [ swaySessionTarget ];
+      after = [ compositor.target ];
+      partOf = [ compositor.target ];
       path = [ pkgs.bash ]; # needs a shell to run [[profile.exec]] statements
       environment.SHIKANE_LOG = "info";
       unitConfig.ConditionPathExists = "%h/.config/shikane/config.toml";
       serviceConfig.ExecStart = "${pkgs.shikane}/bin/shikane";
-      wantedBy = [ swaySessionTarget ];
+      wantedBy = [ compositor.target ];
     };
 
     systemd.user.services.yubikey-touch-detector = {
       description = "yubikey touch detector";
-      after = [ swaySessionTarget ];
-      partOf = [ swaySessionTarget ];
+      after = [ compositor.target ];
+      partOf = [ compositor.target ];
       serviceConfig.ExecStart = "${lib.getExe pkgs.yubikey-touch-detector} --libnotify";
-      wantedBy = [ swaySessionTarget ];
+      wantedBy = [ compositor.target ];
     };
 
     systemd.user.services.clipboard-manager = {
       description = "clipboard manager";
       documentation = [ "https://github.com/sentriz/cliphist" ];
-      after = [ swaySessionTarget ];
-      partOf = [ swaySessionTarget ];
+      after = [ compositor.target ];
+      partOf = [ compositor.target ];
       path = [ pkgs.wl-clipboard ];
       serviceConfig = {
         ExecStart = "${pkgs.wl-clipboard}/bin/wl-paste --watch ${lib.getExe pkgs.cliphist} store";
@@ -206,29 +226,29 @@ in
         Restart = "on-failure";
         KillMode = "mixed";
       };
-      wantedBy = [ swaySessionTarget ];
+      wantedBy = [ compositor.target ];
     };
 
     systemd.user.services.gamma = {
       description = "gamma adjuster";
       documentation = [ "https://gitlab.com/chinstrap/gammastep" ];
       wants = [ "geoclue-agent.service" ];
-      after = [ swaySessionTarget "geoclue-agent.service" ];
-      partOf = [ swaySessionTarget ];
+      after = [ compositor.target "geoclue-agent.service" ];
+      partOf = [ compositor.target ];
       serviceConfig = {
         ExecStart = "${pkgs.gammastep}/bin/gammastep -l ${config.location.provider}";
         Restart = "always";
         RestartSec = 5;
       };
-      wantedBy = [ swaySessionTarget ];
+      wantedBy = [ compositor.target ];
     };
 
     systemd.user.services.idle = {
       description = "idle management daemon";
       documentation = [ "https://github.com/swaywm/swayidle" ];
-      partOf = [ swaySessionTarget ];
-      after = [ swaySessionTarget ];
-      wantedBy = [ swaySessionTarget ];
+      partOf = [ compositor.target ];
+      after = [ compositor.target ];
+      wantedBy = [ compositor.target ];
       path = with pkgs; [ bash ]; # needs a shell in path
       unitConfig.ConditionPathExists = "%h/.config/swayidle/config";
       serviceConfig.ExecStart = "${lib.getExe pkgs.swayidle} -w";

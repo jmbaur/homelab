@@ -266,6 +266,26 @@ in
             };
           }
           {
+            target = ".config/labwc/autostart";
+            path = pkgs.writeText "labwc-autostart" ''
+              dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XCURSOR_THEME XCURSOR_SIZE NIXOS_OZONE_WL
+              systemctl --user start labwc-session.target
+            '';
+          }
+          {
+            target = ".config/labwc/environment";
+            path = pkgs.writeText "labwc-environment" ''
+              QT_QPA_PLATFORM=wayland-egl
+              QT_WAYLAND_DISABLE_WINDOWDECORATION="1"
+              SDL_VIDEODRIVER=wayland
+              XCURSOR_SIZE=32
+              XCURSOR_THEME=Adwaita
+              XKB_DEFAULT_MODEL=${config.services.xserver.xkbModel}
+              XKB_DEFAULT_OPTIONS=${config.services.xserver.xkbOptions}
+              _JAVA_AWT_WM_NONREPARENTING=1
+            '';
+          }
+          {
             target = ".config/labwc/rc.xml";
             path = pkgs.runCommand "labwc-rc.xml" { } ''
               ${lib.getExe pkgs.buildPackages.python3} ${./labwc-rc.py} > $out
@@ -524,7 +544,6 @@ in
               configuration {
                 font: "sans 12";
               }
-              @theme "Arc-Dark"
             '';
           }
           {
