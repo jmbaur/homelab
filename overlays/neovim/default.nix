@@ -80,6 +80,7 @@ let
         vim-just
         vim-nix
         vim-repeat
+        vim-rhubarb
         vim-rsi
       ]
       # opt
