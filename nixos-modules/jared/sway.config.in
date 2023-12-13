@@ -168,7 +168,7 @@ for_window {
 }
 
 exec_always {
-	gsettings set org.gnome.desktop.interface gtk-theme "Adwaita-dark"
+	gsettings set org.gnome.desktop.interface gtk-theme "Adwaita"
 	gsettings set org.gnome.desktop.interface icon-theme "Adwaita"
 	gsettings set org.gnome.desktop.interface cursor-theme "Adwaita"
 	gsettings set org.gnome.desktop.interface cursor-size 32

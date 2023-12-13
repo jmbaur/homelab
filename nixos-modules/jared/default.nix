@@ -266,6 +266,12 @@ in
             };
           }
           {
+            target = ".config/labwc/rc.xml";
+            path = pkgs.runCommand "labwc.rc.xml" { } ''
+              ${lib.getExe pkgs.buildPackages.python3} ${./labwc.py} > $out
+            '';
+          }
+          {
             target = ".config/sway/config";
             path = pkgs.substituteAll {
               name = "sway.config";
