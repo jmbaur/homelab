@@ -122,8 +122,10 @@ input "4617:13404:https://github.com/stapelberg_kinT_(kint41)" {
 	xkb_options ""
 }
 
+# disable running swaybg (see systemd.user.services.background in <this-repo>/nixos-modules/gui/default.nix)
+swaybg_command -
+
 output "*" {
-	background #333333 solid_color
 	scale 1
 }
 
@@ -151,14 +153,6 @@ mode "resize" {
 
 assign [title="FreeRDP"] 6
 assign [title="pipe:xwayland-mirror"] 7
-bar {
-	font pango:sans 12
-	mode dock
-	position top
-	status_command gobar
-	swaybar_command swaybar
-	tray_output *
-}
 
 for_window {
 	# fix for PWAs not having keyboard shortcuts

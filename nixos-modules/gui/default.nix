@@ -19,7 +19,7 @@ in
 
     compositor = mkOption {
       type = types.enum [ "sway" "labwc" ];
-      default = "sway";
+      default = "labwc";
     };
 
     displays = mkOption {
@@ -124,6 +124,13 @@ in
       wl-screenrec
       wlr-randr
       xdg-utils
+    ] ++ [
+      (pkgs.writeShellScriptBin "rofi-cliphist-copy" ''
+        cliphist list |
+        rofi -i -p clipboard -dmenu -display-columns 2 |
+        cliphist decode |
+        wl-copy
+      '')
     ];
 
     # ensure the plugdev group exists for udev rules for qmk
@@ -194,6 +201,25 @@ in
       after = [ "graphical-session-pre.target" ];
     };
 
+    systemd.user.services.background = {
+      description = "desktop background";
+      documentation = [ "https://github.com/swaywm/swaybg" ];
+      after = [ compositor.target ];
+      partOf = [ compositor.target ];
+      serviceConfig.ExecStart = "${lib.getExe pkgs.swaybg} --color='#444444'";
+      wantedBy = [ compositor.target ];
+    };
+
+    systemd.user.services.statusbar = {
+      description = "statusbar";
+      documentation = [ "https://codeberg.com/dnkl/yambar" ];
+      after = [ compositor.target ];
+      partOf = [ compositor.target ];
+      serviceConfig.ExecStart = "${lib.getExe' pkgs.yambar "yambar"}";
+      unitConfig.ConditionPathExists = "%h/.config/yambar/config.yml";
+      wantedBy = [ compositor.target ];
+    };
+
     systemd.user.services.display-manager = {
       inherit (config.custom.laptop) enable;
       description = "laptop display manager";
@@ -214,8 +240,8 @@ in
       wantedBy = [ compositor.target ];
     };
 
-    systemd.user.services.clipboard-manager = {
-      description = "clipboard manager";
+    systemd.user.services.clipboard = {
+      description = "clipboard";
       documentation = [ "https://github.com/sentriz/cliphist" ];
       after = [ compositor.target ];
       partOf = [ compositor.target ];

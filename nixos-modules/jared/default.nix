@@ -286,6 +286,10 @@ in
             '';
           }
           {
+            target = ".config/yambar/config.yml";
+            path = (pkgs.formats.yaml { }).generate "yambar.yaml" (import ./yambar.nix { });
+          }
+          {
             target = ".config/labwc/rc.xml";
             path = pkgs.runCommand "labwc-rc.xml" { } ''
               ${lib.getExe pkgs.buildPackages.python3} ${./labwc-rc.py} > $out
