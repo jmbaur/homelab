@@ -221,6 +221,14 @@ in
         ({ target, path }: "L+ %h/${target} - - - - ${path}")
         ([
           {
+            target = ".config/dconf/user";
+            path = pkgs.runCommand "dconf" { } ''
+              mkdir dconf.d
+              cp ${./dconf.conf} dconf.d/settings
+              ${lib.getExe' pkgs.buildPackages.dconf "dconf"} compile $out dconf.d
+            '';
+          }
+          {
             target = ".config/kitty/kitty.conf";
             path = pkgs.writeText "kitty.conf" ''
               copy_on_select yes
@@ -287,7 +295,10 @@ in
           }
           {
             target = ".config/yambar/config.yml";
-            path = (pkgs.formats.yaml { }).generate "yambar.yaml" (import ./yambar.nix { });
+            path = (pkgs.formats.yaml { }).generate "yambar.yaml"
+              (import ./yambar.nix (lib.optionalAttrs config.custom.laptop.enable {
+                inherit (config.custom.laptop) batteries;
+              }));
           }
           {
             target = ".config/labwc/rc.xml";

@@ -51,6 +51,7 @@ keyboard.setAttribute("repeatDelay", "300")
 keyboard.appendChild(root.createElement("default"))
 keyboard.appendChild(create_keybinding("W-1", create_goto_desktop_action("1")))
 keyboard.appendChild(create_keybinding("W-2", create_goto_desktop_action("2")))
+keyboard.appendChild(create_keybinding("W-F12", create_action("ToggleKeybinds")))
 keyboard.appendChild(create_keybinding("W-Return", create_execute_action("alacritty")))
 keyboard.appendChild(create_keybinding("W-S-1", create_sendto_desktop_action("1")))
 keyboard.appendChild(create_keybinding("W-S-2", create_sendto_desktop_action("2")))
@@ -58,12 +59,26 @@ keyboard.appendChild(create_keybinding("W-Tab", create_goto_desktop_action("righ
 keyboard.appendChild(create_keybinding("W-j", create_action("NextWindow")))
 keyboard.appendChild(create_keybinding("W-k", create_action("PreviousWindow")))
 keyboard.appendChild(create_keybinding("W-m", show_menu_action))
-keyboard.appendChild(create_keybinding("W-p", create_execute_action("rofi -show drun")))
+keyboard.appendChild(
+    create_keybinding("W-p", create_execute_action("rofi -show drun -show-icons"))
+)
 keyboard.appendChild(
     create_keybinding("W-l", create_execute_action("loginctl lock-session"))
 )
 keyboard.appendChild(
     create_keybinding("W-c", create_execute_action("rofi-cliphist-copy"))
+)
+keyboard.appendChild(
+    create_keybinding("W-S-c", create_execute_action("hyprpicker --autocopy"))
+)
+keyboard.appendChild(
+    create_keybinding("W-S-Print", create_execute_action("shotman --capture region"))
+)
+keyboard.appendChild(
+    create_keybinding("W-Print", create_execute_action("shotman --capture window"))
+)
+keyboard.appendChild(
+    create_keybinding("Print", create_execute_action("shotman --capture output"))
 )
 
 font = root.createElement("font")

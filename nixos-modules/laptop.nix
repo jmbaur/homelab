@@ -6,6 +6,11 @@ in
 {
   options.custom.laptop = with lib; {
     enable = mkEnableOption "laptop config";
+
+    batteries = mkOption {
+      type = types.listOf types.str;
+      default = [ "BAT0" ];
+    };
   };
 
   config = lib.mkIf cfg.enable {
