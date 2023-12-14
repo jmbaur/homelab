@@ -2,7 +2,6 @@
 (load-theme 'modus-vivendi)
 (global-display-line-numbers-mode 1)
 (menu-bar-mode -1)
-(scroll-bar-mode -1)
 (tool-bar-mode -1)
 (set-default 'truncate-lines t)
 (global-set-key "\C-h" 'delete-backward-char)
