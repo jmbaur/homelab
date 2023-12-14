@@ -146,20 +146,18 @@ font.setAttribute("size", "12")
 theme = root.createElement("theme")
 theme.appendChild(font)
 
-# TODO(jared): use natural scroll once there is better libinput device type
-# filtering in labwc
-# natural_scroll = root.createElement("naturalScroll")
-# natural_scroll.appendChild(root.createTextNode("yes"))
-disable_while_typing = root.createElement("disableWhileTyping")
-disable_while_typing.appendChild(root.createTextNode("yes"))
+natural_scroll_enabled = root.createElement("naturalScroll")
+natural_scroll_enabled.appendChild(root.createTextNode("yes"))
+disable_while_typing_enabled = root.createElement("disableWhileTyping")
+disable_while_typing_enabled.appendChild(root.createTextNode("yes"))
 
-touchpad = root.createElement("device")
-touchpad.setAttribute("category", "non-touch")
-# touchpad.appendChild(natural_scroll)
-touchpad.appendChild(disable_while_typing)
+touchpad_devices = root.createElement("device")
+touchpad_devices.setAttribute("category", "touchpad")
+touchpad_devices.appendChild(natural_scroll_enabled)
+touchpad_devices.appendChild(disable_while_typing_enabled)
 
 libinput = root.createElement("libinput")
-libinput.appendChild(touchpad)
+libinput.appendChild(touchpad_devices)
 
 desktops = root.createElement("desktops")
 desktops.setAttribute("number", "2")

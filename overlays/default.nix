@@ -24,6 +24,21 @@ inputs: with inputs; {
           '';
       };
 
+      labwc = prev.labwc.overrideAttrs (old: {
+        patches = (old.patches or [ ]) ++ [
+          (prev.fetchpatch2 {
+            name = "Add-omnipresent-flag-for-views";
+            url = "https://github.com/labwc/labwc/commit/bad8f334ead5587208ec62fb01ddf9dd2be5ff67.patch";
+            hash = "sha256-Djx+0cHklJCu/nmpwhO0dlHETeJnp5rG4hTjS3Wadg0=";
+          })
+          (prev.fetchpatch2 {
+            name = "Add-touchpad-device-type";
+            url = "https://github.com/labwc/labwc/pull/1329/commits/f7b40211e68739e54bf53b7e1e10fb8af4b3cd60.patch";
+            hash = "sha256-1XbWpHb/0XCEzRd74Jx/t93QV93NTggKj/TBjxfcT14=";
+          })
+        ];
+      });
+
       libgit2_1_5 = prev.libgit2.overrideAttrs (_: rec {
         version = "1.5.2";
         src = prev.fetchFromGitHub {

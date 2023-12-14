@@ -136,12 +136,12 @@ in
       xdg-utils
     ]
     ++
-    (lib.optionals cfg.compositor == "labwc" [
+    (lib.optionals (cfg.compositor == "labwc") [
       labwc
       fnott-dbus
     ])
     ++
-    (lib.optionals cfg.compositor == "sway" [
+    (lib.optionals (cfg.compositor == "sway") [
       mako
       sway-assign-cgroups
       gobar
