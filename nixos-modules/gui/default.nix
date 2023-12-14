@@ -79,15 +79,24 @@ in
             -m sdl \
             -f pipe:xwayland-mirror
         '';
+
         desktop-launcher = final.writeShellScriptBin "desktop-launcher" ''
           exec -a "$0" systemd-cat --identifier=${cfg.compositor} ${compositor.executable}
         '';
+
         caffeine = final.writeShellScriptBin "caffeine" ''
           stop() { systemctl restart --user idle.service; }
           trap stop EXIT SIGINT
           systemctl stop --user idle.service
           echo "Press CTRL-C to restart auto-sleep"
           sleep infinity
+        '';
+
+        rofi-cliphist-copy = final.writeShellScriptBin "rofi-cliphist-copy" ''
+          cliphist list |
+            rofi -i -p clipboard -dmenu -display-columns 2 |
+            cliphist decode |
+            wl-copy
         '';
       })
     ];
@@ -100,7 +109,6 @@ in
       cliphist
       desktop-launcher
       firefox
-      glib
       gnome-themes-extra
       gobar
       grim
@@ -116,6 +124,7 @@ in
       pulseaudio
       pulsemixer
       qt5.qtwayland
+      rofi-cliphist-copy
       rofi-wayland
       shikane
       shotman
@@ -129,13 +138,6 @@ in
       wl-screenrec
       wlr-randr
       xdg-utils
-    ] ++ [
-      (pkgs.writeShellScriptBin "rofi-cliphist-copy" ''
-        cliphist list |
-        rofi -i -p clipboard -dmenu -display-columns 2 |
-        cliphist decode |
-        wl-copy
-      '')
     ];
 
     # ensure the plugdev group exists for udev rules for qmk
