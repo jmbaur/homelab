@@ -6,7 +6,7 @@
     height = 30;
     location = "top";
     background = "000000ff";
-    font = "sans:pixelsize=14";
+    font = "sans:pixelsize=16";
     spacing = 5;
     left = [{
       foreign-toplevel.content.map.conditions = {

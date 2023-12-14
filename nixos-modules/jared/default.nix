@@ -124,6 +124,7 @@ in
         dig
         direnv
         dnsutils
+        dt
         entr
         fd
         file
