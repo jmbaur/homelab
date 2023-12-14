@@ -52,6 +52,12 @@ in
       pulse.enable = true;
     };
 
+    security.polkit.enable = true;
+    security.pam.services.waylock = { };
+
+    hardware.opengl.enable = true;
+    fonts.enableDefaultPackages = true;
+
     fonts = {
       packages = [ pkgs.noto-fonts pkgs.jetbrains-mono ];
       fontconfig = {
@@ -117,7 +123,6 @@ in
       sway-assign-cgroups
       swaybg
       swayidle
-      swaylock
       wev
       wf-recorder
       wl-clipboard
@@ -145,20 +150,24 @@ in
       builtins.elem (lib.getName pkg) [ "teensy-udev-rules" ];
 
     location.provider = "geoclue2";
+
+    programs.dconf.enable = true;
     programs.gnupg.agent.enable = true;
     programs.ssh.startAgent = true;
     programs.wshowkeys.enable = true;
+    programs.xwayland.enable = true;
+
     services.automatic-timezoned.enable = lib.mkDefault true;
+    services.avahi.enable = true;
     services.dbus.enable = true;
     services.pcscd.enable = true;
     services.power-profiles-daemon.enable = true;
     services.printing.enable = true;
     services.udisks2.enable = true;
     services.upower.enable = true;
+
     xdg.portal.enable = true;
     xdg.portal.wlr.enable = true;
-
-    services.avahi.enable = true;
 
     services.greetd = {
       enable = true;

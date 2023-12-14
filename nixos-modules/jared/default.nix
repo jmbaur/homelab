@@ -314,7 +314,7 @@ in
             path =
               let
                 lock = pkgs.writeShellScriptBin "lock" ''
-                  ${lib.getExe pkgs.swaylock} ${lib.escapeShellArgs [ "--daemonize" "--indicator-caps-lock" "--show-keyboard-layout" "--color" "1d2021" ]}
+                  ${lib.getExe pkgs.waylock} ${lib.escapeShellArgs [ "-fork-on-lock" "-init-color" "0x333333" "-input-color" "0x555555" "-fail-color" "0xFF0000" ]}
                 '';
                 conditionalSuspend = pkgs.writeShellScriptBin "conditional-suspend" (lib.optionalString config.custom.laptop.enable ''
                   if [[ "$(cat /sys/class/power_supply/AC/online)" -ne 1 ]]; then
