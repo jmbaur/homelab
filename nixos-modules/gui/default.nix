@@ -101,7 +101,7 @@ in
       })
     ];
 
-    environment.systemPackages = with pkgs; [
+    environment.systemPackages = with pkgs; ([
       alacritty
       brightnessctl
       caffeine
@@ -110,14 +110,11 @@ in
       desktop-launcher
       firefox
       gnome-themes-extra
-      gobar
       grim
       hyprpicker
       imv
       kitty
-      labwc
       libnotify
-      mako
       mirror-to-x
       mpv
       pamixer
@@ -129,7 +126,6 @@ in
       shikane
       shotman
       slurp
-      sway-assign-cgroups
       swaybg
       swayidle
       wev
@@ -138,7 +134,18 @@ in
       wl-screenrec
       wlr-randr
       xdg-utils
-    ];
+    ]
+    ++
+    (lib.optionals cfg.compositor == "labwc" [
+      labwc
+      fnott-dbus
+    ])
+    ++
+    (lib.optionals cfg.compositor == "sway" [
+      mako
+      sway-assign-cgroups
+      gobar
+    ]));
 
     # ensure the plugdev group exists for udev rules for qmk
     users.groups.plugdev = { };
