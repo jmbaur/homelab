@@ -298,12 +298,17 @@ in
           {
             target = ".config/waybar/config";
             path = (pkgs.formats.json { }).generate "waybar-config.json" {
-              height = 30;
+              height = 34;
               spacing = 4;
-              modules-left = [ ];
+              modules-left = [ "wlr/taskbar" ];
               modules-center = [ "clock" ];
               modules-right = [ "network" "memory" "battery" "privacy" "tray" ];
               clock.format = "{:%F %H:%M}";
+              "wlr/taskbar" = {
+                format = "{icon} {name}";
+                on-click = "activate";
+                on-click-middle = "close";
+              };
             };
           }
           {

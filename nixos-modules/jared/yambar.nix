@@ -3,11 +3,11 @@
 }:
 {
   bar = {
-    height = 30;
+    height = 34;
     location = "top";
     background = "000000ff";
     font = "sans:pixelsize=16";
-    spacing = 5;
+    spacing = 4;
     left = [{
       foreign-toplevel.content.map.conditions = {
         "~activated".empty = { };
