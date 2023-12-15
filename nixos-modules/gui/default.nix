@@ -230,11 +230,10 @@ in
 
     systemd.user.services.statusbar = {
       description = "statusbar";
-      documentation = [ "https://codeberg.com/dnkl/yambar" ];
+      documentation = [ "https://github.com/Alexays/waybar" ];
       after = [ compositor.target ];
       partOf = [ compositor.target ];
-      serviceConfig.ExecStart = "${lib.getExe' pkgs.yambar "yambar"}";
-      unitConfig.ConditionPathExists = "%h/.config/yambar/config.yml";
+      serviceConfig.ExecStart = lib.getExe pkgs.waybar;
       wantedBy = [ compositor.target ];
     };
 

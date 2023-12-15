@@ -294,6 +294,18 @@ in
               _JAVA_AWT_WM_NONREPARENTING=1
             '';
           }
+          { target = ".config/waybar/style.css"; path = ./waybar-style.css; }
+          {
+            target = ".config/waybar/config";
+            path = (pkgs.formats.json { }).generate "waybar-config.json" {
+              height = 30;
+              spacing = 4;
+              modules-left = [ ];
+              modules-center = [ "clock" ];
+              modules-right = [ "network" "memory" "battery" "privacy" "tray" ];
+              clock.format = "{:%F %H:%M}";
+            };
+          }
           {
             target = ".config/yambar/config.yml";
             path = (pkgs.formats.yaml { }).generate "yambar.yaml"
