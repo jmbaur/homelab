@@ -53,6 +53,9 @@
 [url "git@gitlab.com:"]
         pushInsteadOf = "https://gitlab.com/"
 
+[url "git@codeberg.org:"]
+        pushInsteadOf = "https://codeberg.org/"
+
 [user]
         email = @email@
         name = "@userName@"
