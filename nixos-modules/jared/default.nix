@@ -277,7 +277,7 @@ in
           {
             target = ".config/labwc/autostart";
             path = pkgs.writeText "labwc-autostart" ''
-              dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XCURSOR_THEME XCURSOR_SIZE NIXOS_OZONE_WL
+              dbus-update-activation-environment --systemd --all
               systemctl --user start labwc-session.target
             '';
           }
@@ -306,6 +306,7 @@ in
               clock.format = "{:%F %H:%M}";
               "wlr/taskbar" = {
                 format = "{icon} {name}";
+                # icon-theme = "hicolor";
                 on-click = "activate";
                 on-click-middle = "close";
               };

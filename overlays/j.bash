@@ -28,7 +28,10 @@ if ! tmux_session_path=$(
 		--no-ignore |
 		sed "s,/\.git/,," |
 		{ [[ -n ${1-} ]] && grep ".*$1.*" || cat; } |
-		fzf -0 -1
+		fzf -0 -1 \
+			--preview-label=remotes \
+			--preview-window=down \
+			--preview="git -C {} remote -v"
 ); then
 	echo "No matches"
 	exit 2
@@ -41,9 +44,13 @@ function escape_basename() {
 
 tmux_session_name="$(escape_basename "$tmux_session_path")"
 
-clients_attached=$(tmux start \; list-sessions -f "#{==:#{session_name},$tmux_session_name}" -F "#{session_attached}" 2>/dev/null)
+clients_attached=$(tmux start \; list-sessions \
+	-f "#{==:#{session_name},$tmux_session_name}" \
+	-F "#{session_attached}" 2>/dev/null)
 if [[ -z $clients_attached ]]; then
-	tmux new-session -d -s "$tmux_session_name" -c "${base_directory}/${tmux_session_path}"
+	tmux new-session -d \
+		-s "$tmux_session_name" \
+		-c "${base_directory}/${tmux_session_path}"
 elif [[ $clients_attached -gt 0 ]]; then
 	exit 0
 fi

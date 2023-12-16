@@ -163,5 +163,5 @@ for_window {
 
 include config.d/*
 
-exec "dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XCURSOR_THEME XCURSOR_SIZE NIXOS_OZONE_WL; systemctl --user start sway-session.target"
+exec "dbus-update-activation-environment --systemd --all; systemctl --user start sway-session.target"
 exec assign-cgroups.py
