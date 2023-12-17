@@ -20,12 +20,28 @@ let
        "/org/gtk/libgtk/theme/Adwaita/gtk-contained${lib.optionalString (cfg.theme == "dark") "-dark"}.css" >$out
   '';
 
-  labwcGtkTheme = pkgs.runCommand "labwc-gtk-theme" { } ''
-    mkdir -p $out/share/themes/GTK/openbox-3
-    ${lib.getExe pkgs.buildPackages.labwc-gtktheme} \
-      --css-file ${gtkCss} \
-      --outfile $out/share/themes/GTK/openbox-3/themerc
-  '';
+  defaultConfigs = pkgs.linkFarm "gui-default-configs" [
+    {
+      name = "share/themes/GTK/openbox-3/themerc";
+      path = pkgs.runCommand "labwc-gtk-theme" { } ''
+        ${lib.getExe pkgs.buildPackages.labwc-gtktheme} --css-file ${gtkCss} --outfile $out
+      '';
+    }
+    {
+      name = "etc/xdg/fnott/fnott.ini";
+      path = pkgs.writeText "fnott.ini" (lib.generators.toINIWithGlobalSection { } {
+        globalSection = {
+          background = "ffffffff";
+          body-color = "000000ff";
+          default-timeout = 10;
+          max-width = 400;
+          progress-bar-color = "000000ff";
+          summary-color = "000000ff";
+          title-color = "000000ff";
+        };
+      });
+    }
+  ];
 in
 {
   options.custom.gui = with lib; {
@@ -137,6 +153,7 @@ in
     };
 
     environment.systemPackages = with pkgs; ([
+      defaultConfigs
       alacritty
       brightnessctl
       caffeine
@@ -174,7 +191,6 @@ in
       xdg-utils
     ] ++ (lib.optionals (cfg.compositor == "labwc") [
       labwc
-      labwcGtkTheme
     ]) ++ (lib.optionals (cfg.compositor == "sway") [
       sway-assign-cgroups
       gobar
@@ -271,11 +287,15 @@ in
       documentation = [ "https://github.com/Alexays/waybar" ];
       after = [ compositor.target ];
       partOf = [ compositor.target ];
-      serviceConfig.ExecStart = toString [
-        (lib.getExe pkgs.waybar)
-        "--style=${./waybar-style.css}"
-        "--config=${(pkgs.formats.json {}).generate "waybar.json" (import ./waybar.nix)}"
-      ];
+      serviceConfig = {
+        Restart = "on-failure";
+        ExecStart = toString [
+          (lib.getExe pkgs.waybar)
+          "--style=${./waybar-style.css}"
+          "--config=${(pkgs.formats.json {}).generate "waybar.json" (import ./waybar.nix)}"
+        ];
+        ExecReload = "kill -SIGUSR2 $MAINPID";
+      };
       wantedBy = [ compositor.target ];
     };
 

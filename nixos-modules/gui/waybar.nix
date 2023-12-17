@@ -19,12 +19,12 @@
   network = {
     format = "{ifname}";
     format-disconnected = "";
-    format-ethernet = "{ifname} ";
+    format-ethernet = "{ifname} ";
     format-wifi = "{essid} ";
     max-length = 50;
     tooltip-format = "{ifname}";
-    tooltip-format-disconnected = "Disconnected";
-    tooltip-format-ethernet = "{ifname} ";
+    tooltip-format-disconnected = "Disconnected ⚠";
+    tooltip-format-ethernet = "{ifname} ";
     tooltip-format-wifi = "{essid} ({signalStrength}%) ";
   };
   "wlr/taskbar" = {

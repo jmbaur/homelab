@@ -46,7 +46,7 @@ in
     programs.fish.enable = true;
 
     services.emacs = {
-      enable = config.custom.dev.enable;
+      enable = false; # config.custom.dev.enable;
       startWithGraphical = false;
       package =
         let
@@ -267,17 +267,11 @@ in
             };
           }
           {
-            target = ".config/fnott/fnott.ini";
-            path = pkgs.writeText "fnott.ini" (lib.generators.toINIWithGlobalSection { } {
-              globalSection = {
-                default-timeout = 10;
-                background = "ffffffff";
-                title-color = "000000ff";
-                summary-color = "000000ff";
-                body-color = "000000ff";
-                progress-bar-color = "000000ff";
-              };
-            });
+            target = ".config/labwc/autostart";
+            path = pkgs.writeText "labwc-autostart" ''
+              dbus-update-activation-environment --systemd --all
+              systemctl --user start labwc-session.target
+            '';
           }
           {
             target = ".config/labwc/rc.xml";
@@ -551,8 +545,7 @@ in
               *.swp
             '';
           }
-        ]
-        )
+        ])
       );
   };
 }
