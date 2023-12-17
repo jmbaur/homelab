@@ -220,7 +220,7 @@ in
       # config files
       (map
         ({ target, path }: "L+ %h/${target} - - - - ${path}")
-        ([
+        ((lib.optionals config.custom.gui.enable [
           {
             target = ".config/kitty/kitty.conf";
             path = pkgs.writeText "kitty.conf" ''
@@ -392,6 +392,59 @@ in
             };
           }
           {
+            target = ".config/rofi/config.rasi";
+            path = pkgs.writeText "rofi.rasi" ''
+              configuration {
+                font: "sans 12";
+              }
+              @theme "Arc"
+            '';
+          }
+          {
+            target = ".config/emacs/init.el";
+            path = ./emacs.el;
+          }
+        ]) ++ lib.optionals (config.custom.gui.enable && config.custom.gui.displays != { }) [
+          {
+            target = ".config/shikane/config.toml";
+            path =
+              let
+                splitDisplays = lib.partition (disp: disp.isInternal) (lib.attrValues config.custom.gui.displays);
+                internalDisplays = splitDisplays.right;
+                externalDisplays = splitDisplays.wrong;
+              in
+              (pkgs.formats.toml { }).generate "shikane.toml" {
+                profile = map
+                  (profile: profile // {
+                    exec = [ "${pkgs.libnotify}/bin/notify-send shikane \"Profile $SHIKANE_PROFILE_NAME has been applied\"" ];
+                  })
+                  ((lib.optional (externalDisplays != [ ]) {
+                    name = "dock";
+                    output = (map
+                      (disp: { inherit (disp) match scale; enable = false; })
+                      internalDisplays) ++ (map
+                      (disp: { inherit (disp) match scale; enable = true; })
+                      externalDisplays);
+                  }) ++
+                  (lib.optional (internalDisplays != [ ]) {
+                    name = "laptop";
+                    output = (map
+                      (disp: { inherit (disp) match scale; enable = true; })
+                      internalDisplays);
+                  }));
+              };
+          }
+        ] ++ [
+          {
+            target = ".config/tmux/tmux.conf";
+            path = pkgs.substituteAll {
+              name = "tmux.conf";
+              src = ./tmux.conf.in;
+              j = pkgs.j;
+              inherit (pkgs.tmuxPlugins) logging fingers;
+            };
+          }
+          {
             target = ".sqliterc";
             path = pkgs.writeText "sqliterc" ''
               .headers ON
@@ -527,58 +580,6 @@ in
               *~
               *.swp
             '';
-          }
-          {
-            target = ".config/tmux/tmux.conf";
-            path = pkgs.substituteAll {
-              name = "tmux.conf";
-              src = ./tmux.conf.in;
-              j = pkgs.j;
-              inherit (pkgs.tmuxPlugins) logging fingers;
-            };
-          }
-          {
-            target = ".config/rofi/config.rasi";
-            path = pkgs.writeText "rofi.rasi" ''
-              configuration {
-                font: "sans 12";
-              }
-              @theme "Arc"
-            '';
-          }
-          {
-            target = ".config/emacs/init.el";
-            path = ./emacs.el;
-          }
-        ] ++ lib.optionals (config.custom.gui.enable && config.custom.gui.displays != { }) [
-          {
-            target = ".config/shikane/config.toml";
-            path =
-              let
-                splitDisplays = lib.partition (disp: disp.isInternal) (lib.attrValues config.custom.gui.displays);
-                internalDisplays = splitDisplays.right;
-                externalDisplays = splitDisplays.wrong;
-              in
-              (pkgs.formats.toml { }).generate "shikane.toml" {
-                profile = map
-                  (profile: profile // {
-                    exec = [ "${pkgs.libnotify}/bin/notify-send shikane \"Profile $SHIKANE_PROFILE_NAME has been applied\"" ];
-                  })
-                  ((lib.optional (externalDisplays != [ ]) {
-                    name = "dock";
-                    output = (map
-                      (disp: { inherit (disp) match scale; enable = false; })
-                      internalDisplays) ++ (map
-                      (disp: { inherit (disp) match scale; enable = true; })
-                      externalDisplays);
-                  }) ++
-                  (lib.optional (internalDisplays != [ ]) {
-                    name = "laptop";
-                    output = (map
-                      (disp: { inherit (disp) match scale; enable = true; })
-                      internalDisplays);
-                  }));
-              };
           }
         ]
         )
