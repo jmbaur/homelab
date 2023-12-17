@@ -222,14 +222,6 @@ in
         ({ target, path }: "L+ %h/${target} - - - - ${path}")
         ([
           {
-            target = ".config/dconf/user";
-            path = pkgs.runCommand "dconf" { } ''
-              mkdir dconf.d
-              cp ${./dconf.conf} dconf.d/settings
-              ${lib.getExe' pkgs.buildPackages.dconf "dconf"} compile $out dconf.d
-            '';
-          }
-          {
             target = ".config/kitty/kitty.conf";
             path = pkgs.writeText "kitty.conf" ''
               copy_on_select yes
@@ -240,8 +232,8 @@ in
               tab_bar_style powerline
               update_check_interval 0
 
-              background #1c1d23
-              foreground #d7dae1
+              background #14161b
+              foreground #e0e2ea
             '';
           }
           {
@@ -258,7 +250,7 @@ in
               };
               mouse.hide-when-typing = "yes";
               scrollback.indicator-position = "none";
-              colors = { alpha = 1.0; foreground = "d7dae1"; background = "1c1d23"; };
+              colors = { alpha = 1.0; foreground = "e0e2ea"; background = "14161b"; };
             };
           }
           {
@@ -270,9 +262,22 @@ in
               selection.save_to_clipboard = true;
               font = { normal.family = "monospace"; size = 16; };
               colors = lib.mapAttrsRecursive (_: color: "#${color}") {
-                primary = { foreground = "d7dae1"; background = "1c1d23"; };
+                primary = { foreground = "e0e2ea"; background = "14161b"; };
               };
             };
+          }
+          {
+            target = ".config/fnott/fnott.ini";
+            path = pkgs.writeText "fnott.ini" (lib.generators.toINIWithGlobalSection { } {
+              globalSection = {
+                default-timeout = 10;
+                background = "ffffffff";
+                title-color = "000000ff";
+                summary-color = "000000ff";
+                body-color = "000000ff";
+                progress-bar-color = "000000ff";
+              };
+            });
           }
           {
             target = ".config/labwc/autostart";
@@ -281,20 +286,6 @@ in
               systemctl --user start labwc-session.target
             '';
           }
-          {
-            target = ".config/labwc/environment";
-            path = pkgs.writeText "labwc-environment" ''
-              QT_QPA_PLATFORM=wayland-egl
-              QT_WAYLAND_DISABLE_WINDOWDECORATION="1"
-              SDL_VIDEODRIVER=wayland
-              XCURSOR_SIZE=32
-              XCURSOR_THEME=Adwaita
-              XKB_DEFAULT_MODEL=${config.services.xserver.xkbModel}
-              XKB_DEFAULT_OPTIONS=${config.services.xserver.xkbOptions}
-              _JAVA_AWT_WM_NONREPARENTING=1
-            '';
-          }
-          { target = ".config/waybar/style.css"; path = ./waybar-style.css; }
           {
             target = ".config/waybar/config";
             path = (pkgs.formats.json { }).generate "waybar-config.json" {
@@ -306,7 +297,6 @@ in
               clock.format = "{:%F %H:%M}";
               "wlr/taskbar" = {
                 format = "{icon} {name}";
-                # icon-theme = "hicolor";
                 on-click = "activate";
                 on-click-middle = "close";
               };
@@ -368,32 +358,6 @@ in
             target = ".config/swaynag/config";
             path = pkgs.writeText "swaynag.config" ''
               font=sans 12
-            '';
-          }
-          {
-            target = ".config/mako/config";
-            path = pkgs.writeText "mako.config" ''
-              max-visible=5
-              sort=-time
-              layer=overlay
-              anchor=top-right
-              font=sans 12
-              width=500
-              height=1000
-              margin=10
-              padding=5
-              border-size=1
-              border-radius=0
-              icons=true
-              icon-path=/run/current-system/sw/share/icons/Adwaita
-              max-icon-size=64
-              markup=true
-              actions=true
-              default-timeout=5000
-              ignore-timeout=false
-
-              [mode=do-not-disturb]
-              invisible=1
             '';
           }
           {
@@ -585,12 +549,6 @@ in
             path = ./emacs.el;
           }
         ] ++ lib.optionals (config.custom.gui.enable && config.custom.gui.displays != { }) [
-          {
-            target = ".config/sway/config.d/shikane.config";
-            path = pkgs.writeText "sway-shikane.config" ''
-              exec_always shikane -o
-            '';
-          }
           {
             target = ".config/shikane/config.toml";
             path =

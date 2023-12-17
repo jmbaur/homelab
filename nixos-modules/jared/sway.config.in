@@ -26,9 +26,6 @@ bindsym Mod4+8 workspace number 8
 bindsym Mod4+9 workspace number 9
 bindsym Mod4+0 workspace number 10
 bindsym Mod4+Control+l exec loginctl lock-session
-bindsym Mod4+Control+space exec makoctl dismiss --all
-bindsym Mod4+Control+h exec makoctl restore
-bindsym Mod4+d exec "if [[ $(makoctl mode) == "do-not-disturb" ]]; then makoctl mode -s default; else makoctl mode -s do-not-disturb; fi"
 bindsym Mod4+Down focus down
 bindsym Mod4+F12 mode passthru
 bindsym Mod4+Left focus left
@@ -127,10 +124,6 @@ swaybg_command -
 
 output "*" {
 	scale 1
-}
-
-seat "*" {
-	xcursor_theme Adwaita 32
 }
 
 mode "passthru" {

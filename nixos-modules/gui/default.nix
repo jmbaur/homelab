@@ -12,6 +12,20 @@ let
       executable = lib.getExe' pkgs.labwc "labwc";
     };
   }.${cfg.compositor};
+
+  gtkCss = pkgs.runCommand "gtk.css" { } ''
+    ${lib.getDev pkgs.buildPackages.glib}/bin/gresource \
+       extract \
+       ${pkgs.gtk3}/lib/libgtk-3.so \
+       "/org/gtk/libgtk/theme/Adwaita/gtk-contained${lib.optionalString (cfg.theme == "dark") "-dark"}.css" >$out
+  '';
+
+  labwcGtkTheme = pkgs.runCommand "labwc-gtk-theme" { } ''
+    mkdir -p $out/share/themes/GTK/openbox-3
+    ${lib.getExe pkgs.buildPackages.labwc-gtktheme} \
+      --css-file ${gtkCss} \
+      --outfile $out/share/themes/GTK/openbox-3/themerc
+  '';
 in
 {
   options.custom.gui = with lib; {
@@ -20,6 +34,11 @@ in
     compositor = mkOption {
       type = types.enum [ "sway" "labwc" ];
       default = "labwc";
+    };
+
+    theme = mkOption {
+      type = types.enum [ "light" "dark" ];
+      default = "light";
     };
 
     displays = mkOption {
@@ -98,8 +117,24 @@ in
             cliphist decode |
             wl-copy
         '';
+
+        default-icon-theme = final.runCommand "default-icon-theme" { } ''
+          install -D <(echo -e "[icon theme]\nInherits=Adwaita") $out/share/icons/default/index.theme
+        '';
       })
     ];
+
+    environment.sessionVariables = {
+      QT_QPA_PLATFORM = "wayland-egl";
+      QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
+      SDL_VIDEODRIVER = "wayland";
+      XCURSOR_SIZE = "32";
+      XCURSOR_THEME = "Adwaita";
+      XKB_DEFAULT_MODEL = config.services.xserver.xkbModel;
+      XKB_DEFAULT_OPTIONS = config.services.xserver.xkbOptions;
+      XKB_DEFAULT_VARIANT = config.services.xserver.xkbVariant;
+      _JAVA_AWT_WM_NONREPARENTING = "1";
+    };
 
     environment.systemPackages = with pkgs; ([
       alacritty
@@ -107,8 +142,11 @@ in
       caffeine
       chromium-wayland
       cliphist
+      default-icon-theme
       desktop-launcher
       firefox
+      fnott
+      fuzzel
       gnome-themes-extra
       grim
       hyprpicker
@@ -134,15 +172,10 @@ in
       wl-screenrec
       wlr-randr
       xdg-utils
-    ]
-    ++
-    (lib.optionals (cfg.compositor == "labwc") [
+    ] ++ (lib.optionals (cfg.compositor == "labwc") [
       labwc
-      fnott-dbus
-    ])
-    ++
-    (lib.optionals (cfg.compositor == "sway") [
-      mako
+      labwcGtkTheme
+    ]) ++ (lib.optionals (cfg.compositor == "sway") [
       sway-assign-cgroups
       gobar
     ]));
@@ -160,7 +193,19 @@ in
 
     location.provider = "geoclue2";
 
-    programs.dconf.enable = true;
+    programs.dconf = {
+      enable = true;
+      profiles.user.databases = [{
+        settings = with lib.gvariant; {
+          "org/gnome/desktop/interface" = {
+            gtk-theme = mkString "Default";
+            cursor-theme = mkString "Default";
+            cursor-size = mkInt32 32;
+          };
+        };
+      }];
+    };
+
     programs.gnupg.agent.enable = true;
     programs.ssh.startAgent = true;
     programs.wshowkeys.enable = true;
@@ -177,6 +222,10 @@ in
 
     xdg.portal.enable = true;
     xdg.portal.wlr.enable = true;
+    xdg.portal.config = {
+      sway = { sway.default = [ "wlr" "gtk" ]; };
+      labwc = { wlroots.default = [ "wlr" "gtk" ]; };
+    }.${cfg.compositor};
 
     services.greetd = {
       enable = true;
@@ -185,22 +234,9 @@ in
     };
 
     programs.sway = {
-      enable = true;
+      enable = cfg.compositor == "sway";
       wrapperFeatures.base = true;
       wrapperFeatures.gtk = true;
-      # vulkan renderer support
-      # export WLR_RENDERER=vulkan
-      # export VK_LAYER_PATH=${pkgs.vulkan-validation-layers}/share/vulkan/explicit_layer.d
-      extraSessionCommands = ''
-        # SDL:
-        export SDL_VIDEODRIVER=wayland
-        # QT (needs qt5.qtwayland in systemPackages):
-        export QT_QPA_PLATFORM=wayland-egl
-        export QT_WAYLAND_DISABLE_WINDOWDECORATION="1"
-        # Fix for some Java AWT applications (e.g. Android Studio), use this if
-        # they aren't displayed properly:
-        export _JAVA_AWT_WM_NONREPARENTING=1
-      '';
     };
 
     systemd.user.targets.sway-session = {
@@ -233,7 +269,7 @@ in
       documentation = [ "https://github.com/Alexays/waybar" ];
       after = [ compositor.target ];
       partOf = [ compositor.target ];
-      serviceConfig.ExecStart = lib.getExe pkgs.waybar;
+      serviceConfig.ExecStart = "${lib.getExe pkgs.waybar} --style=${./waybar-style.css}";
       wantedBy = [ compositor.target ];
     };
 

@@ -6,24 +6,6 @@ inputs: with inputs; {
 
       nixos-kexec = prev.callPackage ./nixos-kexec { };
 
-      # provide dbus-activation for fnott
-      fnott-dbus = prev.symlinkJoin {
-        name = "fnott-dbus";
-        paths = [ prev.fnott ];
-        postBuild =
-          let
-            fnott-dbus-service = prev.writeText "fnott.service" ''
-              [D-BUS Service]
-              Name=org.freedesktop.Notifications
-              Exec=${prev.fnott}/bin/fnott
-            '';
-          in
-          ''
-            mkdir -p $out/share/dbus-1/services
-            ln -sf ${fnott-dbus-service} $out/share/dbus-1/services/fnott.service
-          '';
-      };
-
       labwc = prev.labwc.overrideAttrs (old: {
         patches = (old.patches or [ ]) ++ [
           (prev.fetchpatch2 {
@@ -33,8 +15,31 @@ inputs: with inputs; {
           })
           (prev.fetchpatch2 {
             name = "Add-touchpad-device-type";
-            url = "https://github.com/labwc/labwc/pull/1329/commits/f7b40211e68739e54bf53b7e1e10fb8af4b3cd60.patch";
-            hash = "sha256-1XbWpHb/0XCEzRd74Jx/t93QV93NTggKj/TBjxfcT14=";
+            url = "https://github.com/jmbaur/labwc/commit/57394fc05261c63221b08a6821ad86a4831cf5fc.patch";
+            hash = "sha256-siAV5VNSj+pcLxfM5Ljl8VczWlnczApkDu6xOD5pQvM=";
+          })
+        ];
+      });
+
+      labwc-gtktheme = prev.callPackage ./labwc-gtktheme.nix { };
+
+      fuzzel = prev.fuzzel.overrideAttrs (old: {
+        patches = (old.patches or [ ]) ++ [
+          (prev.fetchpatch2 {
+            name = "config-add-CTRL-to-default-keybindings";
+            url = "https://codeberg.org/jmbaur/fuzzel/commit/2ecdc51a4f9ed83e94741a80648429ff7b062a14.patch";
+            hash = "sha256-0cWbtc1O37zD8OCgufIurzCyuPzh5IRYPviRiOuhLpo=";
+          })
+        ];
+      });
+
+      fnott = prev.fnott.overrideAttrs (old: {
+        patches = (old.patches or [ ]) ++ [
+          (prev.fetchpatch2 {
+            name = "add-dbus-service-file";
+            url = "https://codeberg.org/sewn/fnott/commit/6a092ba5fea58764cb56cfb037fcd334a8e3d67c.patch";
+            excludes = [ "README.md" ]; # fails to apply
+            hash = "sha256-ZwfVOHiPmd0JulWLOXyj2HOtyKsPHPmYcvl7jBMchUQ=";
           })
         ];
       });
@@ -194,8 +199,8 @@ inputs: with inputs; {
       # linux_orangepi-5 = prev.callPackage ./kernels/linux-orangepi-5.nix { };
 
       jmbaur-keybase-pgp-keys = prev.fetchurl {
-        url = "https://keybase.io/jaredbaur/pgp_keys.asc";
-        sha256 = "sha256-R2a+bF7E6Zogl5XWsjrK5dkCAvK6K2h/bje37aYSgGc=";
+        url = " https://keybase.io/jaredbaur/pgp_keys.asc ";
+        sha256 = " sha256-R2a+bF7E6Zogl5XWsjrK5dkCAvK6K2h/bje37aYSgGc=";
       };
 
       jmbaur-ssh-keys = prev.writeText "jmbaur.keys" ''

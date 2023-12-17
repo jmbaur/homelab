@@ -143,8 +143,12 @@ font = root.createElement("font")
 font.setAttribute("name", "sans")
 font.setAttribute("size", "12")
 
+gtk_theme = root.createElement("name")
+gtk_theme.appendChild(root.createTextNode("GTK"))
+
 theme = root.createElement("theme")
 theme.appendChild(font)
+theme.appendChild(gtk_theme)
 
 natural_scroll_enabled = root.createElement("naturalScroll")
 natural_scroll_enabled.appendChild(root.createTextNode("yes"))
