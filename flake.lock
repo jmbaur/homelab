@@ -528,11 +528,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1702780144,
-        "narHash": "sha256-1WANXQMlyTHx1ZZK5iQ50qUuSxeFTm6KFj1tcu6Vkts=",
+        "lastModified": 1702789294,
+        "narHash": "sha256-UQ59hMdtjNvkLRG3y22wu8d20jKrDPnjV3QfwJZy2mc=",
         "owner": "jmbaur",
         "repo": "gosee",
-        "rev": "c8e34af0d2dd40cc901d470adaf79a3656c64a08",
+        "rev": "65083e1fc4f4b27b1017240d818cbc53f0274388",
         "type": "github"
       },
       "original": {
