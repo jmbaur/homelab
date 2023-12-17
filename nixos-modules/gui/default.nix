@@ -78,7 +78,7 @@ in
     fonts.enableDefaultPackages = true;
 
     fonts = {
-      packages = [ pkgs.noto-fonts pkgs.jetbrains-mono ];
+      packages = [ pkgs.noto-fonts pkgs.jetbrains-mono pkgs.font-awesome ];
       fontconfig = {
         enable = true;
         defaultFonts = {
@@ -207,6 +207,8 @@ in
     };
 
     programs.gnupg.agent.enable = true;
+    programs.gnupg.agent.pinentryFlavor = null;
+    programs.gnupg.agent.settings.pinentry-program = "${pkgs.wayprompt}/bin/pinentry-wayprompt";
     programs.ssh.startAgent = true;
     programs.wshowkeys.enable = true;
     programs.xwayland.enable = true;
@@ -269,7 +271,11 @@ in
       documentation = [ "https://github.com/Alexays/waybar" ];
       after = [ compositor.target ];
       partOf = [ compositor.target ];
-      serviceConfig.ExecStart = "${lib.getExe pkgs.waybar} --style=${./waybar-style.css}";
+      serviceConfig.ExecStart = toString [
+        (lib.getExe pkgs.waybar)
+        "--style=${./waybar-style.css}"
+        "--config=${(pkgs.formats.json {}).generate "waybar.json" (import ./waybar.nix)}"
+      ];
       wantedBy = [ compositor.target ];
     };
 

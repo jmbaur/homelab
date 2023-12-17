@@ -280,36 +280,6 @@ in
             });
           }
           {
-            target = ".config/labwc/autostart";
-            path = pkgs.writeText "labwc-autostart" ''
-              dbus-update-activation-environment --systemd --all
-              systemctl --user start labwc-session.target
-            '';
-          }
-          {
-            target = ".config/waybar/config";
-            path = (pkgs.formats.json { }).generate "waybar-config.json" {
-              height = 34;
-              spacing = 4;
-              modules-left = [ "wlr/taskbar" ];
-              modules-center = [ "clock" ];
-              modules-right = [ "network" "memory" "battery" "privacy" "tray" ];
-              clock.format = "{:%F %H:%M}";
-              "wlr/taskbar" = {
-                format = "{icon} {name}";
-                on-click = "activate";
-                on-click-middle = "close";
-              };
-            };
-          }
-          {
-            target = ".config/yambar/config.yml";
-            path = (pkgs.formats.yaml { }).generate "yambar.yaml"
-              (import ./yambar.nix (lib.optionalAttrs config.custom.laptop.enable {
-                inherit (config.custom.laptop) batteries;
-              }));
-          }
-          {
             target = ".config/labwc/rc.xml";
             path = pkgs.runCommand "labwc-rc.xml" { } ''
               ${lib.getExe pkgs.buildPackages.python3} ${./labwc-rc.py} > $out
