@@ -542,6 +542,7 @@ in
               configuration {
                 font: "sans 12";
               }
+              @theme "Arc"
             '';
           }
           {
