@@ -61,6 +61,7 @@ let
         efmls-configs-nvim
         gitsigns-nvim
         gosee-nvim
+        iron-nvim
         jmbaur-config
         mini-nvim
         nvim-lspconfig

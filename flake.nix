@@ -42,6 +42,8 @@
     sops-nix.url = "github:Mic92/sops-nix";
     tinyboot.inputs.nixpkgs.follows = "nixpkgs";
     tinyboot.url = "github:jmbaur/tinyboot";
+    u-boot-nix.inputs.nixpkgs.follows = "nixpkgs";
+    u-boot-nix.url = "github:jmbaur/u-boot.nix";
     webauthn-tiny.inputs.nixpkgs.follows = "nixpkgs";
     webauthn-tiny.url = "github:jmbaur/webauthn-tiny";
   };

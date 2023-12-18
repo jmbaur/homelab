@@ -224,6 +224,7 @@ in
           {
             target = ".config/kitty/kitty.conf";
             path = pkgs.writeText "kitty.conf" ''
+              # clipboard_control write-clipboard write-primary
               copy_on_select yes
               enable_audio_bell no
               font_family monospace
