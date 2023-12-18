@@ -1,11 +1,12 @@
 { spi ? false
 , buildPackages
 , fetchFromGitHub
-, fetchgit
 , runCommand
 , buildUBoot
 , buildArmTrustedFirmware
 , symlinkJoin
+, marvellBinaries
+, mvDdrMarvell
 }:
 let
   uboot =
@@ -35,25 +36,9 @@ let
       filesToInstall = [ "u-boot.bin" ];
     }).overrideAttrs (_: { patches = [ ]; });
 
-  marvellBinaries = fetchFromGitHub {
-    owner = "MarvellEmbeddedProcessors";
-    repo = "binaries-marvell";
-    # branch: binaries-marvell-armada-SDK10.0.1.0
-    rev = "b3d449e72196db5d48a2087c3df40b935834d304";
-    hash = "sha256-m8NdvFSVo5+TPtpiGevyzXIMR1YcSQu5Xi5ewUX983Y=";
-  };
-
-  mvDdrMarvell = fetchgit {
-    leaveDotGit = true;
-    url = "https://github.com/MarvellEmbeddedProcessors/mv-ddr-marvell";
-    rev = "bfcf62051be835f725005bb5137928f7c27b792e";
-    hash = "sha256-ikAUTTlvSeyOqcMpwegD62z/SoM6A63iEFkxDUxiT3I=";
-  };
-
   atf = (buildArmTrustedFirmware rec {
     platform = "t9130";
 
-    version = "2.9.0";
     patches = [ ./atf-enablement.patch ];
 
     preBuild = ''
@@ -76,13 +61,12 @@ let
     ];
 
     filesToInstall = [ "build/${platform}/release/flash-image.bin" ];
-  }).overrideAttrs
-    (old: {
-      nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ (with buildPackages; [
-        git # mv-ddr-marvell
-        openssl # fiptool
-      ]);
-    });
+  }).overrideAttrs (old: {
+    nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ (with buildPackages; [
+      git # mv-ddr-marvell
+      openssl # fiptool
+    ]);
+  });
 in
 runCommand "cn9130-cf-pro-firmware.bin" { } (if spi then ''
   dd bs=1M count=8 if=/dev/zero of=$out

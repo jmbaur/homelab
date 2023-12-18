@@ -163,12 +163,29 @@ inputs: {
           extraPatches = [ ./clearfog-spi-mtd-fixup.patch ];
         };
 
-      cn9130CfProSdFirmware = prev.callPackage ./cn913x/firmware.nix { spi = false; };
-      cn9130CfProSpiFirmware = prev.callPackage ./cn913x/firmware.nix { spi = true; };
-
       mrvlUart = prev.callPackage ./mrvl-uart.nix { };
 
       bpiR3Firmware = prev.callPackage ./bpi-r3-firmware.nix { };
+
+      marvellBinaries = prev.fetchFromGitHub {
+        owner = "MarvellEmbeddedProcessors";
+        repo = "binaries-marvell";
+        # branch: binaries-marvell-armada-SDK10.0.1.0
+        rev = "b3d449e72196db5d48a2087c3df40b935834d304";
+        hash = "sha256-m8NdvFSVo5+TPtpiGevyzXIMR1YcSQu5Xi5ewUX983Y=";
+      };
+
+      mvDdrMarvell = prev.fetchgit {
+        leaveDotGit = true;
+        url = "https://github.com/MarvellEmbeddedProcessors/mv-ddr-marvell";
+        rev = "bfcf62051be835f725005bb5137928f7c27b792e";
+        hash = "sha256-ikAUTTlvSeyOqcMpwegD62z/SoM6A63iEFkxDUxiT3I=";
+      };
+
+      cn9130CfProSdFirmware = prev.callPackage ./cn913x/firmware.nix { spi = false; };
+      cn9130CfProSpiFirmware = prev.callPackage ./cn913x/firmware.nix { spi = true; };
+
+      mcbinFirmware = prev.callPackage ./mcbin-firmware { };
 
       # linux_orangepi-5 = prev.callPackage ./kernels/linux-orangepi-5.nix { };
 
