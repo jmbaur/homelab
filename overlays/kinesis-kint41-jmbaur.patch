@@ -1,0 +1,203 @@
+From c81b9e10675aa9e8d089b7165bfa54fc003b8f63 Mon Sep 17 00:00:00 2001
+From: Jared Baur <jaredbaur@fastmail.com>
+Date: Tue, 28 Feb 2023 19:54:56 -0800
+Subject: [PATCH 1/4] Add keymap for kinesis/kint41
+
+---
+ keyboards/kinesis/keymaps/jmbaur/keymap.c  | 53 ++++++++++++++++++++++
+ keyboards/kinesis/keymaps/jmbaur/readme.md |  1 +
+ keyboards/kinesis/keymaps/jmbaur/rules.mk  |  9 ++++
+ 3 files changed, 63 insertions(+)
+ create mode 100644 keyboards/kinesis/keymaps/jmbaur/keymap.c
+ create mode 100644 keyboards/kinesis/keymaps/jmbaur/readme.md
+ create mode 100644 keyboards/kinesis/keymaps/jmbaur/rules.mk
+
+diff --git a/keyboards/kinesis/keymaps/jmbaur/keymap.c b/keyboards/kinesis/keymaps/jmbaur/keymap.c
+new file mode 100644
+index 0000000000000..7baeb6fef9a2c
+--- /dev/null
++++ b/keyboards/kinesis/keymaps/jmbaur/keymap.c
+@@ -0,0 +1,53 @@
++#include QMK_KEYBOARD_H
++
++#define QWERTY 0 // Base qwerty
++
++
++/****************************************************************************************************
++*
++* Keymap: Default Layer in Qwerty
++*
++* ,-------------------------------------------------------------------------------------------------------------------.
++* | Esc    |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  |  F8  |  F9  |  F10 |  F12 | PSCR | SLCK | PAUS |  FN0 |  BOOT  |
++* |--------+------+------+------+------+------+---------------------------+------+------+------+------+------+--------|
++* | =+     |  1!  |  2@  |  3#  |  4$  |  5%  |                           |  6^  |  7&  |  8*  |  9(  |  0)  | -_     |
++* |--------+------+------+------+------+------|                           +------+------+------+------+------+--------|
++* | Tab    |   Q  |   W  |   E  |   R  |   T  |                           |   Y  |   U  |   I  |   O  |   P  | \|     |
++* |--------+------+------+------+------+------|                           |------+------+------+------+------+--------|
++* | Esc    |   A  |   S  |   D  |   F  |   G  |                           |   H  |   J  |   K  |   L  |  ;:  | '"     |
++* |--------+------+------+------+------+------|                           |------+------+------+------+------+--------|
++* | Shift  |   Z  |   X  |   C  |   V  |   B  |                           |   N  |   M  |  ,.  |  .>  |  /?  | Shift  |
++* `--------+------+------+------+------+-------                           `------+------+------+------+------+--------'
++*          | `~   | INS  | Left | Right|                                         | Up   | Down |  [{  |  ]}  |
++*          `---------------------------'                                         `---------------------------'
++*                                        ,-------------.         ,-------------.
++*                                        | Ctrl | Alt  |         | Alt  | Ctrl |
++*                                 ,------|------|------|         |------+------+------.
++*                                 |      |      | Gui  |         | PgUp |      |      |
++*                                 | BkSp | Del  |------|         |------|Return| Space|
++*                                 |      |      | Caps |         | PgDn |      |      |
++*                                 `--------------------'         `--------------------'
++*/
++
++const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
++[QWERTY] = LAYOUT(
++           KC_ESC, KC_F1  ,KC_F2  ,KC_F3  ,KC_F4  ,KC_F5  ,KC_F6  ,KC_F7  ,KC_F8,
++           KC_EQL, KC_1   ,KC_2   ,KC_3   ,KC_4   ,KC_5   ,
++           KC_TAB, KC_Q   ,KC_W   ,KC_E   ,KC_R   ,KC_T   ,
++           KC_ESC,KC_A   ,KC_S   ,KC_D   ,KC_F   ,KC_G   ,
++           KC_LSFT,KC_Z   ,KC_X   ,KC_C   ,KC_V   ,KC_B   ,
++                   KC_GRV ,KC_INS ,KC_LEFT,KC_RGHT,
++			   KC_LCTL,KC_LALT,
++                                    KC_LGUI,
++                           KC_BSPC,KC_DEL ,KC_CAPS ,
++    KC_F9  ,KC_F10 ,KC_F11 ,KC_F12 ,KC_PSCR ,KC_SCRL  ,KC_PAUS, KC_NO, QK_BOOT,
++	KC_6   ,KC_7   ,KC_8   ,KC_9   ,KC_0   ,KC_MINS,
++	KC_Y   ,KC_U   ,KC_I   ,KC_O   ,KC_P   ,KC_BSLS,
++	KC_H   ,KC_J   ,KC_K   ,KC_L   ,KC_SCLN,KC_QUOT,
++	KC_N   ,KC_M   ,KC_COMM,KC_DOT ,KC_SLSH,KC_RSFT,
++		KC_UP  ,KC_DOWN,KC_LBRC,KC_RBRC,
++           KC_RALT,KC_RCTL,
++           KC_PGUP,
++           KC_PGDN,KC_ENTER ,KC_SPC
++    )
++};
+diff --git a/keyboards/kinesis/keymaps/jmbaur/readme.md b/keyboards/kinesis/keymaps/jmbaur/readme.md
+new file mode 100644
+index 0000000000000..da033be1e9506
+--- /dev/null
++++ b/keyboards/kinesis/keymaps/jmbaur/readme.md
+@@ -0,0 +1 @@
++# The default keymap for kinesis-advantage
+diff --git a/keyboards/kinesis/keymaps/jmbaur/rules.mk b/keyboards/kinesis/keymaps/jmbaur/rules.mk
+new file mode 100644
+index 0000000000000..adb07adf7d29a
+--- /dev/null
++++ b/keyboards/kinesis/keymaps/jmbaur/rules.mk
+@@ -0,0 +1,9 @@
++BOOTMAGIC_ENABLE = no       # Enable Bootmagic Lite
++MOUSEKEY_ENABLE = yes       # Mouse keys
++EXTRAKEY_ENABLE = yes       # Audio control and System control
++CONSOLE_ENABLE = no         # Console for debug
++COMMAND_ENABLE = yes        # Commands for debug and configuration
++NKRO_ENABLE = yes
++BACKLIGHT_ENABLE = no       # Enable keyboard backlight functionality
++AUDIO_ENABLE = no           # Audio output
++RGBLIGHT_ENABLE = no        # Enable WS2812 RGB underlight. 
+
+From 86bcc8ec7e85ea44bc31e8b144adbf5c44a37067 Mon Sep 17 00:00:00 2001
+From: Jared Baur <jaredbaur@fastmail.com>
+Date: Fri, 3 Mar 2023 08:41:59 -0800
+Subject: [PATCH 2/4] Setup pretty layout and mod-tap with ctrl/esc
+
+---
+ keyboards/kinesis/keymaps/jmbaur/keymap.c | 33 +++++++++--------------
+ 1 file changed, 13 insertions(+), 20 deletions(-)
+
+diff --git a/keyboards/kinesis/keymaps/jmbaur/keymap.c b/keyboards/kinesis/keymaps/jmbaur/keymap.c
+index 7baeb6fef9a2c..2094cad2fb0bf 100644
+--- a/keyboards/kinesis/keymaps/jmbaur/keymap.c
++++ b/keyboards/kinesis/keymaps/jmbaur/keymap.c
+@@ -30,24 +30,17 @@
+ */
+ 
+ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+-[QWERTY] = LAYOUT(
+-           KC_ESC, KC_F1  ,KC_F2  ,KC_F3  ,KC_F4  ,KC_F5  ,KC_F6  ,KC_F7  ,KC_F8,
+-           KC_EQL, KC_1   ,KC_2   ,KC_3   ,KC_4   ,KC_5   ,
+-           KC_TAB, KC_Q   ,KC_W   ,KC_E   ,KC_R   ,KC_T   ,
+-           KC_ESC,KC_A   ,KC_S   ,KC_D   ,KC_F   ,KC_G   ,
+-           KC_LSFT,KC_Z   ,KC_X   ,KC_C   ,KC_V   ,KC_B   ,
+-                   KC_GRV ,KC_INS ,KC_LEFT,KC_RGHT,
+-			   KC_LCTL,KC_LALT,
+-                                    KC_LGUI,
+-                           KC_BSPC,KC_DEL ,KC_CAPS ,
+-    KC_F9  ,KC_F10 ,KC_F11 ,KC_F12 ,KC_PSCR ,KC_SCRL  ,KC_PAUS, KC_NO, QK_BOOT,
+-	KC_6   ,KC_7   ,KC_8   ,KC_9   ,KC_0   ,KC_MINS,
+-	KC_Y   ,KC_U   ,KC_I   ,KC_O   ,KC_P   ,KC_BSLS,
+-	KC_H   ,KC_J   ,KC_K   ,KC_L   ,KC_SCLN,KC_QUOT,
+-	KC_N   ,KC_M   ,KC_COMM,KC_DOT ,KC_SLSH,KC_RSFT,
+-		KC_UP  ,KC_DOWN,KC_LBRC,KC_RBRC,
+-           KC_RALT,KC_RCTL,
+-           KC_PGUP,
+-           KC_PGDN,KC_ENTER ,KC_SPC
+-    )
++
++  [QWERTY] = LAYOUT_pretty(
++    KC_ESC,         KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,    KC_F7,    KC_F8,         KC_F9,    KC_F10,   KC_F11,   KC_F12,   KC_PSCR,  KC_SCRL,  KC_PAUS,  KC_NO,    QK_BOOT,
++    KC_EQL,         KC_1,     KC_2,     KC_3,     KC_4,     KC_5,                                                                      KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,
++    KC_TAB,         KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,                                                                      KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_BSLS,
++    LCTL_T(KC_ESC), KC_A,     KC_S,     KC_D,     KC_F,     KC_G,                                                                      KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,
++    KC_LSFT,        KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,                                                                      KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  KC_RSFT,
++                    KC_GRV,   KC_INS,   KC_LEFT,  KC_RGHT,                                                                                       KC_UP,    KC_DOWN,  KC_LBRC,  KC_RBRC,
++                                                            KC_LCTL,  KC_LALT,                                               KC_RALT,  KC_RCTL,
++                                                                      KC_LGUI,                                               KC_PGUP,
++                                                  KC_BSPC,  KC_DEL,   KC_CAPS,                                               KC_PGDN,  KC_ENTER, KC_SPC
++  )
++
+ };
+
+From d1c2b28608c3ac4e543064c381ff52e832bc1236 Mon Sep 17 00:00:00 2001
+From: Jared Baur <jaredbaur@fastmail.com>
+Date: Fri, 3 Mar 2023 08:55:13 -0800
+Subject: [PATCH 3/4] Enable caps word
+
+---
+ keyboards/kinesis/keymaps/jmbaur/config.h | 3 +++
+ keyboards/kinesis/keymaps/jmbaur/rules.mk | 3 ++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+ create mode 100644 keyboards/kinesis/keymaps/jmbaur/config.h
+
+diff --git a/keyboards/kinesis/keymaps/jmbaur/config.h b/keyboards/kinesis/keymaps/jmbaur/config.h
+new file mode 100644
+index 0000000000000..53a5d8d7096eb
+--- /dev/null
++++ b/keyboards/kinesis/keymaps/jmbaur/config.h
+@@ -0,0 +1,3 @@
++#pragma once
++
++#define DOUBLE_TAP_SHIFT_TURNS_ON_CAPS_WORD
+diff --git a/keyboards/kinesis/keymaps/jmbaur/rules.mk b/keyboards/kinesis/keymaps/jmbaur/rules.mk
+index adb07adf7d29a..c5a107ce25094 100644
+--- a/keyboards/kinesis/keymaps/jmbaur/rules.mk
++++ b/keyboards/kinesis/keymaps/jmbaur/rules.mk
+@@ -6,4 +6,5 @@ COMMAND_ENABLE = yes        # Commands for debug and configuration
+ NKRO_ENABLE = yes
+ BACKLIGHT_ENABLE = no       # Enable keyboard backlight functionality
+ AUDIO_ENABLE = no           # Audio output
+-RGBLIGHT_ENABLE = no        # Enable WS2812 RGB underlight. 
++RGBLIGHT_ENABLE = no        # Enable WS2812 RGB underlight.
++CAPS_WORD_ENABLE = yes
+
+From bdbbc5d7d551f8b2ed0252575ae6ca5bfc436d1e Mon Sep 17 00:00:00 2001
+From: Jared Baur <jaredbaur@fastmail.com>
+Date: Fri, 22 Sep 2023 21:57:15 -0700
+Subject: [PATCH 4/4] LAYOUT_pretty renamed to LAYOUT in info.json for kint41,
+ use that instead
+
+---
+ keyboards/kinesis/keymaps/jmbaur/keymap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/keyboards/kinesis/keymaps/jmbaur/keymap.c b/keyboards/kinesis/keymaps/jmbaur/keymap.c
+index 2094cad2fb0bf..d77e767013e20 100644
+--- a/keyboards/kinesis/keymaps/jmbaur/keymap.c
++++ b/keyboards/kinesis/keymaps/jmbaur/keymap.c
+@@ -31,7 +31,7 @@
+ 
+ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+ 
+-  [QWERTY] = LAYOUT_pretty(
++  [QWERTY] = LAYOUT(
+     KC_ESC,         KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,    KC_F7,    KC_F8,         KC_F9,    KC_F10,   KC_F11,   KC_F12,   KC_PSCR,  KC_SCRL,  KC_PAUS,  KC_NO,    QK_BOOT,
+     KC_EQL,         KC_1,     KC_2,     KC_3,     KC_4,     KC_5,                                                                      KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,
+     KC_TAB,         KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,                                                                      KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_BSLS,

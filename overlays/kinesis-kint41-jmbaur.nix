@@ -1,20 +1,24 @@
-{ stdenv, fetchFromGitHub, qmk, ... }:
+{ lib, stdenv, fetchgit, qmk, ... }:
+
+let
+  source = lib.importJSON ./qmk-source.json;
+in
 stdenv.mkDerivation {
-  name = "kinesis-kint41-jmbaur";
-  src = fetchFromGitHub {
-    owner = "jmbaur";
-    repo = "qmk_firmware";
-    rev = "bdbbc5d7d551f8b2ed0252575ae6ca5bfc436d1e";
-    hash = "sha256-EPpfv9Td16MD2VNkzvygfTbBgVga8kDgrKLab8exGks=";
-    fetchSubmodules = true;
-  };
+  pname = "kinesis-kint41-jmbaur";
+  version = "unstable-${builtins.substring 0 7 source.rev}";
+
+  src = fetchgit { inherit (source) url hash fetchSubmodules; };
+
   nativeBuildInputs = [ qmk ];
+
+  patches = [ ./kinesis-kint41-jmbaur.patch ];
+
   makeFlags = [ "kinesis/kint41:jmbaur" ];
+
   installPhase = ''
     runHook preInstall
-
     install -D --target-directory=$out .build/kinesis_kint41_jmbaur.hex
-
     runHook postInstall
   '';
 }
+

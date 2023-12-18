@@ -1,0 +1,12 @@
+{
+  "url": "https://github.com/qmk/qmk_firmware",
+  "rev": "f25226453fb253b5d1c2f1684365d6248d8b5750",
+  "date": "2023-12-18T14:06:47+11:00",
+  "path": "/nix/store/1a4f06q4v9icflnnxxdcnlk0l71g272c-qmk_firmware",
+  "sha256": "0yal5fp1lx70fgzgcqcybn7qj8f0ay0vqyl5q3zzlg67lzrzzk3v",
+  "hash": "sha256-e8z/86fHPPr/wIV6vIFXwCGJj12eYfb+c+B0Gq4rVHk=",
+  "fetchLFS": false,
+  "fetchSubmodules": true,
+  "deepClone": false,
+  "leaveDotGit": false
+}

@@ -1,6 +1,7 @@
-inputs: with inputs; {
-  default = nixpkgs.lib.composeManyExtensions [
-    gosee.overlays.default # needed for plugin in overlayed neovim
+inputs: {
+  default = inputs.nixpkgs.lib.composeManyExtensions [
+    inputs.gosee.overlays.default # needed for plugin in overlayed neovim
+    inputs.u-boot-nix.overlays.default
     (final: prev: {
       stevenblack-blocklist = prev.callPackage ./stevenblack-blocklist.nix { };
 
@@ -168,33 +169,6 @@ inputs: with inputs; {
       mrvlUart = prev.callPackage ./mrvl-uart.nix { };
 
       bpiR3Firmware = prev.callPackage ./bpi-r3-firmware.nix { };
-
-      ubootBananaPim2Zero = prev.buildUBoot {
-        defconfig = "bananapi_m2_zero_defconfig";
-        filesToInstall = [ "u-boot-sunxi-with-spl.bin" ];
-        extraMeta.platforms = [ "armv7l-linux" ];
-      };
-
-      ubootCoreboot64 = prev.buildUBoot {
-        defconfig = "coreboot64_defconfig";
-        filesToInstall = [ "u-boot-x86-with-spl.bin" ];
-        extraConfig = ''
-          CONFIG_NVME=y
-          CONFIG_EFI_LOADER=y
-          CONFIG_COREBOOT_SERIAL=y
-        '';
-        extraMeta.platforms = [ "x86_64-linux" ];
-      };
-
-      ubootCoreboot = prev.buildUBoot {
-        defconfig = "coreboot_defconfig";
-        filesToInstall = [ "u-boot.bin" ];
-        extraConfig = ''
-          CONFIG_NVME=y
-          CONFIG_COREBOOT_SERIAL=y
-        '';
-        extraMeta.platforms = [ "x86_64-linux" ];
-      };
 
       # linux_orangepi-5 = prev.callPackage ./kernels/linux-orangepi-5.nix { };
 
