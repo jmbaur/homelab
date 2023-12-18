@@ -1,4 +1,3 @@
-# shellcheck shell=bash
 # SPDX-License-Identifier: GPL-2.0
 #
 ######################################################
@@ -14,9 +13,11 @@
 #
 ######################################################
 
+# shellcheck shell=bash
+
 pattern_repeat=1500
 default_baudrate=115200
-tmpfile=/tmp/xmodem.pattern
+tmpfile=$(mktemp)
 
 if [[ -z $1 || -z $2 ]]; then
 	echo -e "\nMarvell recovery image downloader for Armada SoC family."
@@ -47,21 +48,21 @@ else
 fi
 
 if [ -f "$tmpfile" ]; then
-	rm -f $tmpfile
+	rm -f "$tmpfile"
 fi
 
 # Send the escape sequence to target board using default debug port speed
 stty -F "$port" raw ignbrk time 5 $default_baudrate
 counter=0
 while [ $counter -lt $pattern_repeat ]; do
-	echo -n -e "\xBB\x11\x22\x33\x44\x55\x66\x77" >>$tmpfile
+	echo -n -e "\xBB\x11\x22\x33\x44\x55\x66\x77" >>"$tmpfile"
 	((counter = counter + 1))
 done
 
 echo -en 'Press the "Reset" button on the target board and '
 echo -en 'the "Enter" key on the host keyboard simultaneously'
 read -r
-dd if=$tmpfile of="$port" &>/dev/null
+dd if="$tmpfile" of="$port" &>/dev/null
 
 # Speed up the binary image transfer
 stty -F "$port" raw ignbrk time 5 $default_baudrate

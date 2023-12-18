@@ -1,6 +1,6 @@
 {
   imports = [
-    ./armada-a38x.nix
+    ./armada-388-clearfog.nix
     ./bpi-r3
     ./chromebook
     ./clearfog-cn913x.nix

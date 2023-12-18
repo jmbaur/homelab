@@ -113,7 +113,7 @@ in
           "${modulesPath}/profiles/installation-device.nix"
           "${modulesPath}/installer/sd-card/sd-image.nix"
         ];
-        hardware.armada-a38x.enable = true;
+        hardware.armada-388-clearfog.enable = true;
         networking.useNetworkd = true;
         custom.server.enable = true;
         custom.crossCompile.enable = true;

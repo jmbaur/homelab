@@ -8,7 +8,7 @@
 
   router.enable = true;
 
-  hardware.armada-a38x.enable = true;
+  hardware.armada-388-clearfog.enable = true;
 
   custom = {
     crossCompile.enable = true;

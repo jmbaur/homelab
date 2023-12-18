@@ -1,13 +1,13 @@
 { config, lib, pkgs, ... }: {
-  options.hardware.armada-a38x = {
-    enable = lib.mkEnableOption "armada-38x devices";
+  options.hardware.armada-388-clearfog = {
+    enable = lib.mkEnableOption "armada-388-clearfog devices";
   };
 
-  config = lib.mkIf config.hardware.armada-a38x.enable {
+  config = lib.mkIf config.hardware.armada-388-clearfog.enable {
     nixpkgs.hostPlatform = lib.recursiveUpdate lib.systems.platforms.armv7l-hf-multiplatform
       (lib.systems.examples.armv7l-hf-multiplatform // {
         linux-kernel = {
-          name = "armada-38x";
+          name = "armada-388-clearfog";
           baseConfig = "mvebu_v7_defconfig";
         };
       });
@@ -21,7 +21,11 @@
 
     hardware.deviceTree = {
       enable = true;
-      filter = "armada-38*.dtb";
+      filter = "armada-388-clearfog*.dtb";
+      overlays = [{
+        name = "mtd-partitions";
+        dtsFile = ./clearfog-mtd-partitions.dtso;
+      }];
     };
 
     systemd.network.links = {
@@ -74,26 +78,22 @@
       pkgs.ubootEnvTools
     ] ++ lib.optional config.programs.flashrom.enable
       (pkgs.writeShellScriptBin "update-firmware" ''
+        firmware=$(mktemp)
+
+        dd bs=1 count=$((0x200000)) if=/dev/zero of=$firmware
+        dd conv=notrunc if=${config.system.build.firmware}/u-boot-with-spl.kwb of=$firmware
+
         ${config.programs.flashrom.package}/bin/flashrom \
-        --programmer linux_mtd:dev=0 \
-        --write ${config.system.build.firmware}/firmware.bin
+          --programmer linux_mtd:dev=0 \
+          --write $firmware
       '');
 
-    system.build.firmware = pkgs.ubootClearfogSpi;
+    system.build.firmware = pkgs.uboot-clearfog_spi;
 
     # for fw_printenv and fw_setenv
-    environment.etc."fw_env.config".text =
-      let
-        mtdpartsValue = lib.elemAt
-          (lib.filter
-            (lib.hasPrefix "CONFIG_MTDPARTS_DEFAULT")
-            (lib.splitString "\n" config.system.build.firmware.extraConfig)) 0;
-      in
-      ''
-        # values obtained from ${mtdpartsValue}
-        # MTD device name       Device offset   Env. size       Flash sector size       Number of sectors
-        /dev/mtd2               0x0000          0x40000         0x10000
-      '';
-
+    environment.etc."fw_env.config".text = ''
+      # MTD device name       Device offset   Env. size       Flash sector size       Number of sectors
+      /dev/mtd2               0x0000          0x40000         0x10000
+    '';
   };
 }
