@@ -298,6 +298,11 @@ in
             target = ".config/swayidle/config";
             path =
               let
+                dpms-all = pkgs.writeShellScriptBin "dpms-all" ''
+                  ${lib.getExe pkgs.wlopm} --json |
+                    jq --raw-output '.[].output' |
+                    xargs -n1 ${lib.getExe pkgs.wlopm} $1
+                '';
                 lock = pkgs.writeShellScriptBin "lock" ''
                   ${lib.getExe pkgs.waylock} ${lib.escapeShellArgs [ "-fork-on-lock" "-init-color" "0x333333" "-input-color" "0x555555" "-fail-color" "0xFF0000" ]}
                 '';
@@ -312,11 +317,11 @@ in
               in
               pkgs.writeText "swayidle.config" ''
                 timeout 600 '${lib.getExe lock}'
-                timeout 900 '${config.programs.sway.package}/bin/swaymsg "output * dpms off"' resume '${config.programs.sway.package}/bin/swaymsg "output * dpms on"'
+                timeout 900 '${lib.getExe dpms-all} --off' resume '${lib.getExe dpms-all} --on'
                 timeout 1200 '${lib.getExe conditionalSuspend}'
                 before-sleep '${lib.getExe lock}'
                 lock '${lib.getExe lock}'
-                after-resume '${config.programs.sway.package}/bin/swaymsg "output * dpms on"'
+                after-resume '${lib.getExe dpms-all} --on'
               '';
           }
           {
