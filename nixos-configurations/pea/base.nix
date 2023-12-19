@@ -11,24 +11,25 @@ let
     };
   };
 
-  uImage = pkgs.buildPackages.callPackage
-    (import ../../overlays/fitimage {
-      boardName = config.networking.hostName;
-      kernel = "${config.system.build.kernel}/${config.system.boot.loader.kernelFile}";
-      initrd = "${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile}";
-      dtbsDir = config.hardware.deviceTree.package;
-    })
-    { };
-
   bootScript = pkgs.writeText "boot.cmd" ''
     bootflow -lb
   '';
+
+  repartKernel = subName: {
+    repartConfig = {
+      Type = "linux-generic";
+      Label = "kernel-${subName}";
+      CopyBlocks = toString config.system.build.fitImage;
+      SizeMaxBytes = "64M";
+      SplitName = "-";
+    };
+  };
 
   repartRoot = subName: {
     storePaths = [ config.system.build.toplevel ];
     repartConfig = {
       Type = "root-${pkgs.stdenv.hostPlatform.linuxArch}";
-      Label = "nixos-${subName}";
+      Label = "root-${subName}";
       Format = "ext4";
       Minimize = "guess";
       SplitName = "-";
@@ -43,9 +44,7 @@ in
 
   imports = [ "${modulesPath}/image/repart.nix" ];
 
-  system.extraSystemBuilderCmds = ''
-    cp ${uImage} $out/uImage
-  '';
+  custom.fitImage.padToSize = 64 * 1024 * 1024; # 64MiB
 
   image.repart = {
     name = "image";
@@ -68,10 +67,10 @@ in
           SplitName = "boot";
         };
       };
-      "nixos-a" = lib.recursiveUpdate (repartRoot "a") {
-        repartConfig.SplitName = "nixos";
-      };
-      "nixos-b" = repartRoot "b";
+      "kernel-a" = lib.recursiveUpdate (repartKernel "a") { repartConfig.SplitName = "kernel"; };
+      "kernel-b" = repartKernel "b";
+      "root-a" = lib.recursiveUpdate (repartRoot "a") { repartConfig.SplitName = "root"; };
+      "root-b" = repartRoot "b";
     };
   };
 
