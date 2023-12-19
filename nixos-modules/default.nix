@@ -1,13 +1,7 @@
 inputs: {
   default = {
     _module.args = { inherit inputs; };
-    nixpkgs.overlays = with inputs; [
-      gobar.overlays.default
-      gosee.overlays.default
-      nixpkgs-wayland.overlays.default
-      pd-notify.overlays.default
-      self.overlays.default
-    ];
+    nixpkgs.overlays = with inputs; [ self.overlays.default ];
     imports = [
       ./basic-network.nix
       ./btrfs.nix

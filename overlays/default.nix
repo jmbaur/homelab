@@ -1,6 +1,8 @@
 inputs: {
   default = inputs.nixpkgs.lib.composeManyExtensions [
+    inputs.gobar.overlays.default
     inputs.gosee.overlays.default # needed for plugin in overlayed neovim
+    inputs.pd-notify.overlays.default
     inputs.u-boot-nix.overlays.default
     (final: prev: {
       stevenblack-blocklist = prev.callPackage ./stevenblack-blocklist.nix { };

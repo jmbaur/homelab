@@ -24,14 +24,7 @@
 
   custom = {
     dev.enable = true;
-    gui = {
-      enable = true;
-      displays.laptopDisplay = {
-        match = "eDP-1";
-        isInternal = true;
-        scale = 1.25;
-      };
-    };
+    gui.enable = true;
     laptop.enable = true;
     users.jared.enable = true;
     remoteBuilders.aarch64builder.enable = false;

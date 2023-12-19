@@ -1,10 +1,36 @@
 { config, lib, pkgs, modulesPath, ... }:
 let
-  uboot = pkgs.uboot-bananapi_m2_zero.override {
+  sectorSize = 512;
+  splSector = 256;
+  splSizeKiB = 32;
+  splOffsetKiB = sectorSize * splSector / 1024;
+
+  # ubootSectorOffset = 16; # see CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_DATA_PART_OFFSET
+
+  ubootSector = (splOffsetKiB + splSizeKiB) * 1024 / 512;
+
+  uboot = (pkgs.uboot-bananapi_m2_zero.override {
     extraStructuredConfig = with pkgs.ubootLib; {
+      # Allow for using u-boot scripts.
       BOOTSTD_FULL = yes;
+
+      # We write the firmware image at disk sector 256 instead of sector 8 so
+      # we don't interfere with our disk partition table. Since we write the
+      # firmware image at a non-default disk sector, we have to make the SPL
+      # find u-boot at a higher disk sector as well. See https://linux-sunxi.org/Bootable_SD_card.
+      SYS_MMCSD_RAW_MODE_U_BOOT_SECTOR = freeform "0x${lib.toHexString ubootSector}";
+      SYS_MMCSD_RAW_MODE_U_BOOT_DATA_PART_OFFSET = freeform "0x0";
+
+      LOG = yes;
+      LOGLEVEL = freeform 8;
+      SPL_LOG = yes;
+      SPL_LOG_MAX_LEVEL = freeform 8;
+      SPL_SHOW_ERRORS = yes;
     };
-  };
+  }).overrideAttrs (old: {
+    env.NIX_CFLAGS_COMPILE = (old.NIX_CFLAGS_COMPILE or "") + " -DDEBUG";
+  });
+
   uImage = pkgs.buildPackages.callPackage
     (import ../../overlays/fitimage {
       boardName = config.networking.hostName;
@@ -76,7 +102,7 @@ in
   system.build.firmware = uboot;
   system.build.imageWithBootloader = pkgs.runCommand "image-with-bootloader" { } ''
     dd if=${config.system.build.image}/image.raw of=$out
-    dd if=${config.system.build.firmware}/u-boot-sunxi-with-spl.bin of=$out bs=1K seek=128 conv=notrunc,sync
+    dd if=${config.system.build.firmware}/u-boot-sunxi-with-spl.bin of=$out bs=1K seek=${toString splOffsetKiB} conv=notrunc,sync
   '';
 
   nixpkgs.hostPlatform = lib.recursiveUpdate lib.systems.platforms.armv7l-hf-multiplatform

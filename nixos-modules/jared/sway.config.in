@@ -88,8 +88,8 @@ bindsym XF86MonBrightnessDown exec notify-send --transient --hint int:value:$(br
 input "type:keyboard" {
 	repeat_delay 300
 	repeat_rate 50
-	xkb_model @xkbModel@
-	xkb_options @xkbOptions@
+	xkb_model @model@
+	xkb_options @options@
 }
 
 input "type:pointer" {
