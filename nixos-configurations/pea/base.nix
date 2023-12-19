@@ -34,6 +34,17 @@ let
   bootScript = pkgs.writeText "boot.cmd" ''
     bootflow -lb
   '';
+
+  repartRoot = subName: {
+    storePaths = [ config.system.build.toplevel ];
+    repartConfig = {
+      Type = "root-${pkgs.stdenv.hostPlatform.linuxArch}";
+      Label = "nixos-${subName}";
+      Format = "ext4";
+      Minimize = "guess";
+      SplitName = "-";
+    };
+  };
 in
 {
   disabledModules = [
@@ -65,28 +76,13 @@ in
           Type = "linux-generic";
           Format = "ext4";
           SizeMinBytes = "4M";
+          SplitName = "boot";
         };
       };
-      "nixos-a" = {
-        storePaths = [ config.system.build.toplevel ];
-        repartConfig = rec {
-          Type = "root-${pkgs.stdenv.hostPlatform.linuxArch}";
-          Label = "nixos-a";
-          Format = "ext4";
-          Minimize = "guess";
-          SplitName = Label;
-        };
+      "nixos-a" = lib.recursiveUpdate (repartRoot "a") {
+        repartConfig.SplitName = "nixos";
       };
-      "nixos-b" = {
-        storePaths = [ config.system.build.toplevel ];
-        repartConfig = rec {
-          Type = "root-${pkgs.stdenv.hostPlatform.linuxArch}";
-          Label = "nixos-b";
-          Format = "ext4";
-          Minimize = "guess";
-          SplitName = Label;
-        };
-      };
+      "nixos-b" = repartRoot "b";
     };
   };
 
