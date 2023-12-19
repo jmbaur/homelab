@@ -2,12 +2,16 @@
 
 cd "$PWD" || exit 1
 
-if [[ ! -d dtbs ]] || [[ ! -f Image.lzma ]] || [[ ! -f initramfs.cpio.xz ]]; then
+kernel=$1
+initrd=$2
+dtbs=$3
+
+if [[ ! -f $1 ]] || [[ ! -f $2 ]] || [[ ! -d $dtbs ]]; then
 	echo "required files/directories not found"
 	exit 2
 fi
 
-mapfile -t dtb_files < <(find -L dtbs -type f -name '*.dtb')
+mapfile -t dtb_files < <(find -L "$dtbs" -type f -name '*.dtb')
 
 fdt_definition() {
 	local idx=$1
@@ -40,12 +44,12 @@ EOF
 cat <<EOF
 /dts-v1/;
 / {
-    description = "kernel, dtbs, and initramfs";
+    description = "kernel, initrd, and dtbs";
     #address-cells = <1>;
     images {
         kernel {
             description = "kernel";
-            data = /incbin/("Image.lzma");
+            data = /incbin/("$kernel");
             type = "kernel";
             arch = "arm64";
             os = "linux";
@@ -55,8 +59,8 @@ cat <<EOF
             };
         };
         ramdisk {
-            description = "ramdisk";
-            data = /incbin/("initramfs.cpio.xz");
+            description = "initrd";
+            data = /incbin/("$initrd");
             type = "ramdisk";
             arch = "arm64";
             os = "linux";
