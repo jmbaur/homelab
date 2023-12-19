@@ -5,11 +5,11 @@ let
   splSizeKiB = 32;
   splOffsetKiB = sectorSize * splSector / 1024;
 
-  # ubootSectorOffset = 16; # see CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_DATA_PART_OFFSET
+  defaultUbootSectorOffset = 16; # see CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_DATA_PART_OFFSET
 
-  ubootSector = (splOffsetKiB + splSizeKiB) * 1024 / 512;
+  ubootSector = ((splOffsetKiB + splSizeKiB) * 1024 / 512) - defaultUbootSectorOffset;
 
-  uboot = (pkgs.uboot-bananapi_m2_zero.override {
+  uboot = pkgs.uboot-bananapi_m2_zero.override {
     extraStructuredConfig = with pkgs.ubootLib; {
       # Allow for using u-boot scripts.
       BOOTSTD_FULL = yes;
@@ -19,17 +19,8 @@ let
       # firmware image at a non-default disk sector, we have to make the SPL
       # find u-boot at a higher disk sector as well. See https://linux-sunxi.org/Bootable_SD_card.
       SYS_MMCSD_RAW_MODE_U_BOOT_SECTOR = freeform "0x${lib.toHexString ubootSector}";
-      SYS_MMCSD_RAW_MODE_U_BOOT_DATA_PART_OFFSET = freeform "0x0";
-
-      LOG = yes;
-      LOGLEVEL = freeform 8;
-      SPL_LOG = yes;
-      SPL_LOG_MAX_LEVEL = freeform 8;
-      SPL_SHOW_ERRORS = yes;
     };
-  }).overrideAttrs (old: {
-    env.NIX_CFLAGS_COMPILE = (old.NIX_CFLAGS_COMPILE or "") + " -DDEBUG";
-  });
+  };
 
   uImage = pkgs.buildPackages.callPackage
     (import ../../overlays/fitimage {
@@ -58,6 +49,7 @@ in
 
   image.repart = {
     name = "image";
+    split = true;
     partitions = {
       "boot" = {
         contents."/boot.scr".source = pkgs.runCommand "boot.scr" { } ''
@@ -77,20 +69,22 @@ in
       };
       "nixos-a" = {
         storePaths = [ config.system.build.toplevel ];
-        repartConfig = {
+        repartConfig = rec {
           Type = "root-${pkgs.stdenv.hostPlatform.linuxArch}";
           Label = "nixos-a";
           Format = "ext4";
           Minimize = "guess";
+          SplitName = Label;
         };
       };
       "nixos-b" = {
         storePaths = [ config.system.build.toplevel ];
-        repartConfig = {
+        repartConfig = rec {
           Type = "root-${pkgs.stdenv.hostPlatform.linuxArch}";
           Label = "nixos-b";
           Format = "ext4";
           Minimize = "guess";
+          SplitName = Label;
         };
       };
     };
