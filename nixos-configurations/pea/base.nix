@@ -2,23 +2,12 @@
 let
   sectorSize = 512;
   splSector = 256;
-  splSizeKiB = 32;
   splOffsetKiB = sectorSize * splSector / 1024;
-
-  defaultUbootSectorOffset = 16; # see CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_DATA_PART_OFFSET
-
-  ubootSector = ((splOffsetKiB + splSizeKiB) * 1024 / 512) - defaultUbootSectorOffset;
 
   uboot = pkgs.uboot-bananapi_m2_zero.override {
     extraStructuredConfig = with pkgs.ubootLib; {
       # Allow for using u-boot scripts.
       BOOTSTD_FULL = yes;
-
-      # We write the firmware image at disk sector 256 instead of sector 8 so
-      # we don't interfere with our disk partition table. Since we write the
-      # firmware image at a non-default disk sector, we have to make the SPL
-      # find u-boot at a higher disk sector as well. See https://linux-sunxi.org/Bootable_SD_card.
-      SYS_MMCSD_RAW_MODE_U_BOOT_SECTOR = freeform "0x${lib.toHexString ubootSector}";
     };
   };
 
