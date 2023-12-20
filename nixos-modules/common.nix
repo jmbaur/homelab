@@ -10,7 +10,7 @@ with lib; {
     # NOTE: this should be set explicitly if it is actually needed
     system.stateVersion = lib.mkDefault "24.05";
 
-    environment.systemPackages = [ pkgs.nixos-kexec pkgs.bottom pkgs.tmux ];
+    environment.systemPackages = lib.optional config.nix.enable pkgs.nixos-kexec;
     environment.defaultPackages = [ ];
 
     programs.vim.defaultEditor = true;
