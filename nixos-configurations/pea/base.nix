@@ -8,30 +8,41 @@ let
     extraStructuredConfig = with pkgs.ubootLib; {
       # Allow for using u-boot scripts.
       BOOTSTD_FULL = yes;
+
+      # Change the bootm size limit to 32MiB, we shouldn't need much more than
+      # 16MiB though.
+      SYS_BOOTM_LEN = freeform "0x${lib.toHexString (32 * 1024 * 1024)}";
     };
   };
 
+  # TODO(jared): make this generic across nixos A/B partitions
   bootScript = pkgs.writeText "boot.cmd" ''
-    bootflow -lb
+    setenv bootargs "nixos.nix_store=nixos-a"
+    load mmc 0:1 $loadaddr uImage.a
+    source ''${loadaddr}:bootscript
   '';
 
-  repartKernel = subName: {
+  bootScriptImage = pkgs.runCommand "boot.scr" { } ''
+    ${lib.getExe' pkgs.buildPackages.ubootTools "mkimage"} \
+      -A ${pkgs.stdenv.hostPlatform.linuxArch} \
+      -O linux \
+      -T script \
+      -C none \
+      -d ${bootScript} \
+      $out
+  '';
+
+  repartNixos = subName: {
+    # TODO(jared): We don't need everything from toplevel, like the linux
+    # kernel and initrd are unecessary here
+    storePaths = [ config.system.build.toplevel ];
+    stripNixStorePrefix = true;
     repartConfig = {
       Type = "linux-generic";
-      Label = "kernel-${subName}";
-      CopyBlocks = toString config.system.build.fitImage;
-      SizeMaxBytes = "64M";
-      SplitName = "-";
-    };
-  };
-
-  repartRoot = subName: {
-    storePaths = [ config.system.build.toplevel ];
-    repartConfig = {
-      Type = "root-${pkgs.stdenv.hostPlatform.linuxArch}";
-      Label = "root-${subName}";
-      Format = "ext4";
-      Minimize = "guess";
+      Label = "nixos-${subName}";
+      Format = "ext4"; # "erofs";
+      SizeMinBytes = "3G";
+      SizeMaxBytes = "3G";
       SplitName = "-";
     };
   };
@@ -44,38 +55,81 @@ in
 
   imports = [ "${modulesPath}/image/repart.nix" ];
 
-  custom.fitImage.padToSize = 64 * 1024 * 1024; # 64MiB
-
   image.repart = {
     name = "image";
     split = true;
     partitions = {
       "boot" = {
-        contents."/boot.scr".source = pkgs.runCommand "boot.scr" { } ''
-          ${lib.getExe' pkgs.buildPackages.ubootTools "mkimage"} \
-            -A ${pkgs.stdenv.hostPlatform.linuxArch} \
-            -O linux \
-            -T script \
-            -C none \
-            -d ${bootScript} \
-            $out
-        '';
+        contents = {
+          "/boot.scr".source = bootScriptImage;
+          "/uImage.a".source = config.system.build.fitImage;
+          # "/uImage.b".source = config.system.build.fitImage;
+        };
         repartConfig = {
-          Type = "linux-generic";
-          Format = "ext4";
-          SizeMinBytes = "4M";
+          Type = "esp";
+          Format = "vfat";
+          Label = "boot";
+          SizeMinBytes = "64M";
+          SizeMaxBytes = "64M";
           SplitName = "boot";
         };
       };
-      "kernel-a" = lib.recursiveUpdate (repartKernel "a") { repartConfig.SplitName = "kernel"; };
-      "kernel-b" = repartKernel "b";
-      "root-a" = lib.recursiveUpdate (repartRoot "a") { repartConfig.SplitName = "root"; };
-      "root-b" = repartRoot "b";
+      "nixos-a" = lib.recursiveUpdate (repartNixos "a") { repartConfig.SplitName = "nixos"; };
+      # "nixos-b" = repartNixos "b";
+      "state".repartConfig = {
+        Type = "linux-generic";
+        Format = "ext4"; # TODO(jared): use something like btrfs
+        Label = "state";
+        SplitName = "-";
+        MakeDirectories = "/var";
+      };
     };
   };
 
+  boot.kernelPatches = [{
+    name = "more-filesystem-support";
+    patch = null;
+    extraStructuredConfig = with lib.kernel; {
+      EROFS_FS = yes;
+    };
+  }];
+
+  # TODO(jared): switch to systemd-based initrd
+  boot.initrd.systemd.enable = lib.mkForce false;
+  boot.initrd.postDeviceCommands = ''
+    (
+      set -e
+      nix_store=$(cat /proc/cmdline | tr ' ' '\n' | grep nixos.nix_store= | cut -d'=' -f2)
+      ln -sfv "/dev/disk/by-partlabel/$nix_store" ${config.fileSystems."/nix/store".device}
+    )
+  '';
+
+  # TODO(jared): use systemd-repart in the initrd to create the state partition
+  # boot.initrd.systemd.repart = {
+  #   enable = true;
+  #   partitions."10-state" = { };
+  # };
+  boot.initrd.systemd.emergencyAccess = true;
+
   boot.loader.grub.enable = false;
-  fileSystems."/".device = "/dev/root";
+  fileSystems."/" = {
+    device = "none";
+    fsType = "tmpfs";
+    options = [ "defaults" "mode=755" ];
+  };
+  fileSystems."/nix/store" = {
+    device = "/dev/nixos";
+    fsType = "ext4"; # "erofs";
+    options = [ "ro" ];
+  };
+  fileSystems."/state" = {
+    device = "/dev/disk/by-partlabel/${config.image.repart.partitions.state.repartConfig.Label}";
+    neededForBoot = true;
+  };
+  fileSystems."/var" = {
+    device = "/state/var";
+    options = [ "bind" ];
+  };
 
   system.build.firmware = uboot;
   system.build.imageWithBootloader = pkgs.runCommand "image-with-bootloader" { } ''
@@ -95,58 +149,18 @@ in
 
   custom.crossCompile.enable = true;
 
+  # TODO(jared): delete this
   users.allowNoPasswordLogin = true;
 
   hardware.deviceTree.enable = true;
-  hardware.deviceTree.filter = "sun8i-h3-bananapi-m2*.dtb";
-
-  systemd.package = pkgs.systemdMinimal.override {
-    withLogind = true;
-    withPam = true;
-    withTimedated = true;
-    withTimesyncd = true;
-  };
-
-  # these do not work with pkgs.systemdMinimal
-  systemd.coredump.enable = false;
-  systemd.oomd.enable = false;
+  hardware.deviceTree.filter = "sun8i-h2-plus-bananapi-m2-zero.dtb";
 
   # limit rebuilding to a minimum
   boot.supportedFilesystems = lib.mkForce [ "ext4" ];
+  boot.initrd.supportedFilesystems = lib.mkForce [ "ext4" "erofs" ];
   boot.initrd.includeDefaultModules = false;
 
   # limit the number of tools needing to be built
   system.disableInstallerTools = true;
   environment.defaultPackages = [ ];
-
-  # TODO(jared): these should probably be fixed in nixpkgs? They all assume
-  # `config.systemd.package` is not set to something custom.
-  nixpkgs.overlays = [
-    (_: prev: {
-      util-linux = prev.util-linux.override {
-        nlsSupport = false;
-        ncursesSupport = false;
-        systemdSupport = false;
-        translateManpages = false;
-      };
-
-      mdadm = prev.mdadm.override {
-        udev = config.systemd.package;
-      };
-
-      tmux = prev.tmux.override {
-        withSystemd = false;
-      };
-
-      dhcpcd = prev.dhcpcd.override {
-        udev = config.systemd.package;
-      };
-
-      procps = prev.procps.override {
-        withSystemd = false;
-      };
-    })
-  ];
-
-  services.lvm.enable = false;
 }

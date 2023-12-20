@@ -2,6 +2,13 @@
 let
   deps = with pkgs.buildPackages; lib.makeBinPath [ ubootTools dtc xz ];
   inherit (config.custom.fitImage) padToSize;
+
+  kernelPath = "${config.system.build.kernel}/${config.system.boot.loader.kernelFile}";
+
+  bootScript = pkgs.writeText "boot.cmd" ''
+    setenv bootargs "init=${config.system.build.toplevel}/init ${toString config.boot.kernelParams} ''${bootargs}"
+    bootm $loadaddr
+  '';
 in
 {
   options = with lib; {
@@ -16,15 +23,31 @@ in
   };
 
   config = {
-    system.build.fitImage = pkgs.runCommand "uImage" { } ''
+    system.build.fitImage = pkgs.runCommand "uImage" { } (''
       export PATH=${deps}:$PATH
 
+      declare kernel_compression
       export description="${with config.system.nixos; "${distroName} ${codeName} ${version}"}"
       export arch=${pkgs.stdenv.hostPlatform.linuxArch}
-      export linux_kernel=$PWD/kernel.lzma
+      export linux_kernel=kernel
       export initrd=${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile}
+      export bootscript=${bootScript}
 
-      lzma --threads 0 <${config.system.build.kernel}/${config.system.boot.loader.kernelFile} >$linux_kernel
+    '' + {
+      "Image" = ''
+        kernel_compression=lzma
+        lzma --threads 0 <${kernelPath} >$linux_kernel
+      '';
+      "zImage" = ''
+        kernel_compression=none
+        cp ${kernelPath} $linux_kernel
+      '';
+      "bzImage" = ''
+        kernel_compression=none
+        cp ${kernelPath} $linux_kernel
+      '';
+    }.${config.system.boot.loader.kernelFile} + ''
+      export kernel_compression
 
       bash ${./make-fit-image-its.bash} ${config.hardware.deviceTree.package} >image.its
 
@@ -33,6 +56,6 @@ in
       dd status=none bs=1K count=${toString (padToSize / 1024)} if=/dev/zero of=$out
       ''}
       dd status=none bs=1K conv=notrunc if=uImage of=$out
-    '';
+    '');
   };
 }

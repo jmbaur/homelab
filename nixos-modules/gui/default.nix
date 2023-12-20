@@ -52,6 +52,7 @@ in
       chromium-wayland
       firefox
       kitty
+      wl-clipboard
       xdg-terminal-exec
     ];
 

@@ -4,6 +4,8 @@ declare description
 declare arch
 declare linux_kernel
 declare initrd
+declare kernel_compression
+declare bootscript
 
 dtbs=$1
 mapfile -t dtb_files < <(find -L "$dtbs" -type f -name '*.dtb')
@@ -18,15 +20,24 @@ function top() {
 	#address-cells = <1>;
 
 	images {
+		bootscript {
+			description = "bootscript";
+			data = /incbin/("$bootscript");
+			type = "script";
+			compression = "none";
+			hash-1 {
+				algo = "crc32";
+			};
+		};
 		kernel {
 			description = "linux kernel";
 			data = /incbin/("$linux_kernel");
 			type = "kernel";
 			arch = "$arch";
 			os = "linux";
-			compression = "lzma";
-			load = <00000000>;
-			entry = <00000000>;
+			compression = "$kernel_compression";
+			load = <0>;
+			entry = <0>;
 			hash-1 {
 				algo = "crc32";
 			};
@@ -38,8 +49,6 @@ function top() {
 			arch = "$arch";
 			os = "linux";
 			compression = "none";
-			load = <00000000>;
-			entry = <00000000>;
 			hash-1 {
 				algo = "crc32";
 			};
@@ -79,11 +88,13 @@ EOF
 
 fdt_reference() {
 	local idx=$1
+	local filepath=$2
 	cat <<EOF
 		conf-${idx} {
+			description = "Configuration for $(basename "$filepath")";
 			kernel = "kernel";
-			fdt = "fdt-${idx}";
 			ramdisk = "ramdisk";
+			fdt = "fdt-${idx}";
 		};
 EOF
 }

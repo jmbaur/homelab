@@ -28,7 +28,7 @@
       /dts-v1/;
       /plugin/;
       / {
-        compatible = "allwinner,sun8i-h3";
+        compatible = "sinovoip,bpi-m2-zero";
       };
       &usb_otg {
         dr_mode = "host";
