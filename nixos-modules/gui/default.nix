@@ -51,6 +51,8 @@ in
       alacritty
       chromium-wayland
       firefox
+      gnomeExtensions.appindicator
+      gnomeExtensions.clipboard-indicator
       kitty
       wl-clipboard
       xdg-terminal-exec
