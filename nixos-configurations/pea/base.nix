@@ -52,15 +52,19 @@ let
     repartConfig = {
       Type = "linux-generic";
       Label = "nixos-${subName}";
-      Format = "erofs";
+      Format = "ext4";
       SizeMinBytes = "3G";
       SizeMaxBytes = "3G";
       SplitName = "-";
     };
   };
 
-  linkNixStore = pkgs.callPackage ./link-nix-store.nix { };
+  testActiveNixStorePartition = pkgs.writeScript "test-active-nix-store-partition" ''
+    #!/bin/bash
+    [[ "$1" == "$2" ]] && echo -n active || echo -n inactive
+  '';
 in
+
 {
   disabledModules = [
     "${modulesPath}/profiles/base.nix"
@@ -68,8 +72,7 @@ in
   ];
 
   imports = [
-    # TODO(jared): import this, causes a bunch of rebuilds for some reason
-    # "${modulesPath}/profiles/image-based-appliance.nix"
+    "${modulesPath}/profiles/image-based-appliance.nix"
     "${modulesPath}/image/repart.nix"
   ];
 
@@ -88,21 +91,14 @@ in
         repartConfig = {
           Type = "esp";
           Format = "vfat";
-          Label = "boot";
+          Label = "BOOT";
           SizeMinBytes = "64M";
           SizeMaxBytes = "64M";
           SplitName = "boot";
         };
       };
       "nixos-a" = lib.recursiveUpdate (repartNixos "a") { repartConfig.SplitName = "nixos"; };
-      # "nixos-b" = repartNixos "b";
-      "state".repartConfig = {
-        Type = "linux-generic";
-        Format = "ext4";
-        Label = "state";
-        SplitName = "-";
-        MakeDirectories = "/var";
-      };
+      "nixos-b" = repartNixos "b";
     };
   };
 
@@ -115,32 +111,39 @@ in
     };
   }];
 
-  # https://www.freedesktop.org/software/systemd/man/latest/bootup.html#Bootup%20in%20the%20initrd
   boot.initrd.systemd.enable = true;
   boot.initrd.systemd.enableTpm2 = false; # tpm kernel modules aren't built in our defconfig
-  boot.initrd.systemd.emergencyAccess = true; # TODO(jared): set to false
-  boot.initrd.systemd.storePaths = [ linkNixStore ];
-  boot.initrd.systemd.services.link-nix-store = {
-    unitConfig.DefaultDependencies = false;
-    # Only run this after systemd-udevd has settled, so we will have
-    # /dev/disk/* symlinks.
-    after = [ "systemd-udev-settle.service" ];
-    wantedBy = [ "initrd-fs.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      ExecStart = lib.getExe linkNixStore;
-    };
-  };
+  boot.initrd.systemd.emergencyAccess = false;
+
+  # There's gotta be a way to test simple equality in native udev, not shell
+  # out to bash or something...
+  boot.initrd.systemd.storePaths = [ testActiveNixStorePartition ];
+  boot.initrd.services.udev.rules = ''
+    SUBSYSTEM!="block", GOTO="active_nixos_partition_end"
+    ENV{ID_PART_ENTRY_NAME}=="nixos-[ab]", IMPORT{cmdline}="nixos.nix_store"
+    ENV{ID_PART_ENTRY_NAME}=="nixos-[ab]", PROGRAM="${testActiveNixStorePartition} $env{ID_PART_ENTRY_NAME} $env{nixos.nix_store}", SYMLINK+="disk/nixos/%c", TAG="systemd"
+    LABEL="active_nixos_partition_end"
+  '';
+
+  # https://www.freedesktop.org/software/systemd/man/latest/bootup.html#Bootup%20in%20the%20initrd
   boot.initrd.systemd.mounts = [{
     where = "/sysroot/nix/store";
-    what = "/dev/nixos";
-    type = config.image.repart.partitions.nixos-a.repartConfig.Format;
+    what = "/dev/disk/nixos/active";
+    type = config.image.repart.partitions."nixos-a".repartConfig.Format;
+    options = "ro";
     wantedBy = [ "initrd-fs.target" ];
     before = [ "initrd-fs.target" ];
-    requires = [ "link-nix-store.service" ];
-    after = [ "link-nix-store.service" ];
   }];
+
+  boot.initrd.systemd.repart.enable = true;
+  boot.initrd.systemd.repart.device = "/dev/disk/by-path/platform-1c0f000.mmc";
+  systemd.repart.partitions = {
+    "10-state" = {
+      Type = "var";
+      Label = "state";
+      Format = "ext4";
+    };
+  };
 
   boot.loader.grub.enable = false;
   fileSystems."/" = {
@@ -148,11 +151,15 @@ in
     fsType = "tmpfs";
     options = [ "defaults" "mode=755" ];
   };
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-partlabel/${config.image.repart.partitions."boot".repartConfig.Label}";
+    fsType = config.image.repart.partitions."boot".repartConfig.Format;
+    options = [ "x-systemd.automount" ];
+  };
   fileSystems."/state" = {
-    device = "/dev/disk/by-partlabel/${config.image.repart.partitions.state.repartConfig.Label}";
-    fsType = config.image.repart.partitions.state.repartConfig.Format;
+    device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions."10-state".Label}";
+    fsType = config.systemd.repart.partitions."10-state".Format;
     neededForBoot = true;
-    autoResize = true;
   };
   fileSystems."/var" = {
     device = "/state/var";
