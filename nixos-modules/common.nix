@@ -8,7 +8,7 @@ with lib; {
 
   config = mkIf cfg.enable {
     # NOTE: this should be set explicitly if it is actually needed
-    system.stateVersion = lib.mkDefault "23.11";
+    system.stateVersion = lib.mkDefault "24.05";
 
     environment.systemPackages = [ pkgs.nixos-kexec pkgs.bottom pkgs.tmux ];
     environment.defaultPackages = [ ];
@@ -40,7 +40,7 @@ with lib; {
         experimental-features = [ "nix-command" "flakes" "repl-flake" ];
         trusted-users = [ "@wheel" ];
       };
-      gc = mkIf isNotContainer {
+      gc = mkIf (config.nix.enable && isNotContainer) {
         automatic = mkDefault true;
         dates = mkDefault "weekly";
       };

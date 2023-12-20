@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 let
   deps = with pkgs.buildPackages; lib.makeBinPath [ ubootTools dtc xz ];
-  inherit (config.custom.fitImage) padToSize;
+  inherit (config.custom.fitImage) padToSize loadAddress;
 
   kernelPath = "${config.system.build.kernel}/${config.system.boot.loader.kernelFile}";
 
@@ -20,6 +20,10 @@ in
       '';
       example = literalExpression ''64 * 1024 * 1024''; # 64M
     };
+    custom.fitImage.loadAddress = mkOption {
+      type = types.str;
+      default = "0x0";
+    };
   };
 
   config = {
@@ -32,6 +36,7 @@ in
       export linux_kernel=kernel
       export initrd=${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile}
       export bootscript=${bootScript}
+      export load_address=${loadAddress}
 
     '' + {
       "Image" = ''

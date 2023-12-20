@@ -6,6 +6,7 @@ declare linux_kernel
 declare initrd
 declare kernel_compression
 declare bootscript
+declare load_address
 
 dtbs=$1
 mapfile -t dtb_files < <(find -L "$dtbs" -type f -name '*.dtb')
@@ -36,8 +37,8 @@ function top() {
 			arch = "$arch";
 			os = "linux";
 			compression = "$kernel_compression";
-			load = <0>;
-			entry = <0>;
+			load = <$load_address>;
+			entry = <$load_address>;
 			hash-1 {
 				algo = "crc32";
 			};
