@@ -1,6 +1,8 @@
 { config, lib, pkgs, ... }:
 let
   cfg = config.custom.gui;
+
+  enabledGnomeExtensions = with pkgs.gnomeExtensions; [ appindicator clipboard-indicator ];
 in
 {
   options.custom.gui = with lib; {
@@ -47,16 +49,14 @@ in
       pulse.enable = true;
     };
 
-    environment.systemPackages = with pkgs; [
+    environment.systemPackages = enabledGnomeExtensions ++ (with pkgs; [
       alacritty
       chromium-wayland
       firefox
-      gnomeExtensions.appindicator
-      gnomeExtensions.clipboard-indicator
       kitty
       wl-clipboard
       xdg-terminal-exec
-    ];
+    ]);
 
     programs.dconf = {
       enable = true;
@@ -84,6 +84,9 @@ in
             clock-show-weekday = mkBoolean true;
             color-scheme = mkString "prefer-light";
             cursor-size = mkInt32 32;
+          };
+          "org/gnome/shell" = {
+            enabled-extensions = map (e: e.extensionUuid) enabledGnomeExtensions;
           };
         };
       }];
