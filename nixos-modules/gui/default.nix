@@ -60,36 +60,46 @@ in
 
     programs.dconf = {
       enable = true;
-      profiles.user.databases = [{
-        settings = with lib.gvariant; {
-          "org/gnome/desktop/peripherals/keyboard" = {
-            repeat-interval = mkUint32 25;
-            delay = mkUint32 300;
+      profiles = with lib.gvariant; {
+        gdm.databases = [{
+          settings = {
+            "org/gnome/desktop/interface" = {
+              color-scheme = mkString "prefer-light";
+              cursor-size = mkInt32 32;
+            };
           };
-          "org/gnome/desktop/background" = {
-            picture-uri = mkString "file:///run/current-system/sw/share/backgrounds/gnome/vnc-l.png";
-            picture-uri-dark = mkString "file:///run/current-system/sw/share/backgrounds/gnome/vnc-d.png";
+        }];
+        user.databases = [{
+          settings = {
+            "org/gnome/desktop/peripherals/keyboard" = {
+              repeat-interval = mkUint32 25;
+              delay = mkUint32 300;
+            };
+            "org/gnome/desktop/background" = {
+              picture-uri = mkString "file:///run/current-system/sw/share/backgrounds/gnome/vnc-l.png";
+              picture-uri-dark = mkString "file:///run/current-system/sw/share/backgrounds/gnome/vnc-d.png";
+            };
+            "org/gnome/desktop/wm/preferences" = {
+              resize-with-right-button = mkBoolean true;
+            };
+            "org/gnome/desktop/peripherals/touchpad" = {
+              tap-to-click = mkBoolean true;
+            };
+            "org/gnome/desktop/input-sources" = {
+              xkb-options = lib.splitString "," config.services.xserver.xkb.options;
+            };
+            "org/gnome/desktop/interface" = {
+              clock-show-date = mkBoolean true;
+              clock-show-weekday = mkBoolean true;
+              color-scheme = mkString "prefer-light";
+              cursor-size = mkInt32 32;
+            };
+            "org/gnome/shell" = {
+              enabled-extensions = map (e: e.extensionUuid) enabledGnomeExtensions;
+            };
           };
-          "org/gnome/desktop/wm/preferences" = {
-            resize-with-right-button = mkBoolean true;
-          };
-          "org/gnome/desktop/peripherals/touchpad" = {
-            tap-to-click = mkBoolean true;
-          };
-          "org/gnome/desktop/input-sources" = {
-            xkb-options = lib.splitString "," config.services.xserver.xkb.options;
-          };
-          "org/gnome/desktop/interface" = {
-            clock-show-date = mkBoolean true;
-            clock-show-weekday = mkBoolean true;
-            color-scheme = mkString "prefer-light";
-            cursor-size = mkInt32 32;
-          };
-          "org/gnome/shell" = {
-            enabled-extensions = map (e: e.extensionUuid) enabledGnomeExtensions;
-          };
-        };
-      }];
+        }];
+      };
     };
   };
 }
