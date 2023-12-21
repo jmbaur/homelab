@@ -3,25 +3,26 @@ let
   cfg = config.custom.common;
   isNotContainer = !config.boot.isContainer;
 in
-with lib; {
-  options.custom.common.enable = mkEnableOption "common config" // { default = true; };
+{
+  options.custom.common.enable = lib.mkEnableOption "common config" // { default = true; };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     # NOTE: this should be set explicitly if it is actually needed
     system.stateVersion = lib.mkDefault "24.05";
 
-    environment.systemPackages = lib.optional config.nix.enable pkgs.nixos-kexec;
     environment.defaultPackages = [ ];
+    environment.systemPackages = lib.optional config.nix.enable pkgs.nixos-kexec
+      ++ (map (x: x.terminfo) (with pkgs.pkgsBuildBuild; [ alacritty foot kitty rio tmux wezterm ]));
 
     programs.vim.defaultEditor = true;
 
     security.sudo.extraRules = [{ groups = [ "wheel" ]; commands = [{ command = "/run/current-system/sw/bin/networkctl"; options = [ "NOPASSWD" ]; }]; }];
 
-    networking.nftables.enable = mkDefault true;
+    networking.nftables.enable = lib.mkDefault true;
 
-    boot.tmp.cleanOnBoot = mkDefault isNotContainer;
-    boot.loader.grub.configurationLimit = mkDefault 50;
-    boot.loader.systemd-boot.configurationLimit = mkDefault 50;
+    boot.tmp.cleanOnBoot = lib.mkDefault isNotContainer;
+    boot.loader.grub.configurationLimit = lib.mkDefault 50;
+    boot.loader.systemd-boot.configurationLimit = lib.mkDefault 50;
 
     i18n.defaultLocale = "en_US.UTF-8";
     console.useXkbConfig = true;
@@ -40,19 +41,19 @@ with lib; {
         experimental-features = [ "nix-command" "flakes" "repl-flake" ];
         trusted-users = [ "@wheel" ];
       };
-      gc = mkIf (config.nix.enable && isNotContainer) {
-        automatic = mkDefault true;
-        dates = mkDefault "weekly";
+      gc = lib.mkIf (config.nix.enable && isNotContainer) {
+        automatic = lib.mkDefault true;
+        dates = lib.mkDefault "weekly";
       };
     };
 
-    services.openssh = mkIf isNotContainer {
+    services.openssh = lib.mkIf isNotContainer {
       enable = true;
       openFirewall = lib.mkDefault (!config.custom.gui.enable);
       settings = {
         # use more secure defaults
-        PermitRootLogin = mkDefault "prohibit-password";
-        PasswordAuthentication = mkDefault false;
+        PermitRootLogin = lib.mkDefault "prohibit-password";
+        PasswordAuthentication = lib.mkDefault false;
       };
     };
   };
