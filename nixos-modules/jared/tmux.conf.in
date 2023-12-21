@@ -28,10 +28,13 @@ set-option -g status-keys vi
 set-option -g status-left "[#{session_name}] "
 set-option -g status-left-length 50
 set-option -s escape-time 10
-set-option -sa terminal-features ',xterm-256color:RGB'
 set-option -wg aggressive-resize on
 set-option -wg clock-mode-style 24
 set-option -wg pane-base-index 1
+
+# make tmux recognize that some terminals do infact support truecolors
+set-option -ag terminal-overrides ",rio:Tc"
+set-option -ag terminal-overrides ",alacritty:Tc"
 
 bind-key -N "Kill the current pane" x kill-pane
 bind-key -N "Kill the current window" & kill-window

@@ -233,7 +233,6 @@ in
         {
           target = ".config/alacritty/alacritty.yml";
           path = (pkgs.formats.yaml { }).generate "alacritty.yml" {
-            env.TERM = "xterm-256color"; # colors are weird in neovim without this
             live_config_reload = false;
             mouse.hide_when_typing = true;
             selection.save_to_clipboard = true;
@@ -246,16 +245,17 @@ in
         {
           target = ".config/rio/config.toml";
           path = (pkgs.formats.toml { }).generate "rio-config.toml" {
+            use-kitty-keyboard-protocol = true;
             fonts = {
               # TODO(jared): setting "monospace" doesn't work...
               family = "JetBrains Mono";
               size = 28;
             };
-            colors = {
+            colors = rec {
               background = "#14161b";
               foreground = "#e0e2ea";
-              selection-background = "#1f1f1f";
-              selection-foreground = "#d6dbe5";
+              selection-background = foreground; # "#1f1f1f";
+              selection-foreground = background; # "#d6dbe5";
               cursor = "#b9b9b9";
               black = "#1f1f1f";
               red = "#f81118";
