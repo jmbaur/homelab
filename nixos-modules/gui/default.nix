@@ -54,6 +54,7 @@ in
       chromium-wayland
       firefox
       kitty
+      rio
       wl-clipboard
       xdg-terminal-exec
     ]);

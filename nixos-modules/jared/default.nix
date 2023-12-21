@@ -243,6 +243,39 @@ in
             };
           };
         }
+        {
+          target = ".config/rio/config.toml";
+          path = (pkgs.formats.toml { }).generate "rio-config.toml" {
+            fonts = {
+              # TODO(jared): setting "monospace" doesn't work...
+              family = "JetBrains Mono";
+              size = 28;
+            };
+            colors = {
+              background = "#14161b";
+              foreground = "#e0e2ea";
+              selection-background = "#1f1f1f";
+              selection-foreground = "#d6dbe5";
+              cursor = "#b9b9b9";
+              black = "#1f1f1f";
+              red = "#f81118";
+              green = "#2dc55e";
+              yellow = "#ecba0f";
+              blue = "#2a84d2";
+              magenta = "#4e5ab7";
+              cyan = "#1081d6";
+              white = "#d6dbe5";
+              light_black = "#d6dbe5";
+              light_red = "#de352e";
+              light_green = "#1dd361";
+              light_yellow = "#f3bd09";
+              light_blue = "#1081d6";
+              light_magenta = "#5350b9";
+              light_cyan = "#0f7ddb";
+              light_white = "#ffffff";
+            };
+          };
+        }
         # {
         #   target = ".config/foot/foot.ini";
         #   path = (pkgs.formats.ini { }).generate "foot.ini" {
