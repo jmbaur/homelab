@@ -61,7 +61,7 @@ inputs: {
         libgit2 = final.libgit2_1_5;
       };
       pb = prev.writeShellScriptBin "pb" "${prev.curl}/bin/curl --data-binary @- https://paste.rs/";
-      j = prev.callPackage ./j.nix { };
+      tmux-jump = prev.callPackage ./tmux-jump.nix { };
       kinesis-kint41-jmbaur = prev.callPackage ./kinesis-kint41-jmbaur.nix { };
       macgen = prev.callPackage ./macgen.nix { };
       pomo = prev.callPackage ./pomo { };

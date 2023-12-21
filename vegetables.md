@@ -8,6 +8,7 @@
 - [x] pea
 - [x] pumpkin
 - [x] squash
+- [x] zucchini
 - [ ] asparagus
 - [ ] broccoli
 - [ ] cauliflower
@@ -18,4 +19,3 @@
 - [ ] radish
 - [ ] rhubarb
 - [ ] tomato
-- [ ] zucchini

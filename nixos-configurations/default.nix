@@ -139,4 +139,8 @@ in
       })
     ];
   };
+
+  zucchini = nixosSystem {
+    modules = [ ./zucchini inputs.self.nixosModules.default ];
+  };
 }

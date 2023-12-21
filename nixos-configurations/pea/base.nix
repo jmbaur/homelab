@@ -4,33 +4,47 @@ let
   splSector = 256;
   splOffsetKiB = sectorSize * splSector / 1024;
 
-  uboot = pkgs.uboot-bananapi_m2_zero.override {
-    extraStructuredConfig = with pkgs.ubootLib; {
-      # Allow for using u-boot scripts.
-      BOOTSTD_FULL = yes;
-
-      # Allow for larger than the default 8MiB kernel size
-      SYS_BOOTM_LEN = freeform "0x${lib.toHexString (12 * 1024 * 1024)}";
-    };
-  };
-
   loadAddr = "0x42000000";
   kernelAddrR = "0x44000000";
   fdtAddrR = "0x45000000";
   ramdiskAddrR = "0x45400000";
 
+  uboot = pkgs.uboot-bananapi_m2_zero.override {
+    debug = true;
+    extraStructuredConfig = with pkgs.ubootLib; {
+      # Allow for using u-boot scripts.
+      BOOTSTD_FULL = yes;
+
+      # Allow for larger than the default 8MiB kernel size
+      SYS_BOOTM_LEN = freeform "0x${lib.toHexString (12 * 1024 * 1024)}"; # 12MiB
+
+      # Default load address
+      SYS_LOAD_ADDR = freeform loadAddr;
+
+      BOOTCOUNT_LIMIT = yes;
+      BOOTCOUNT_ENV = yes;
+
+      USE_DEFAULT_ENV_FILE = yes;
+      DEFAULT_ENV_FILE = freeform (pkgs.substituteAll {
+        name = "u-boot.env";
+        src = ./u-boot.env.in;
+        inherit loadAddr kernelAddrR fdtAddrR ramdiskAddrR;
+      });
+    };
+  };
+
   # DRAM starts at 0x4000_0000
   # Default $loadaddr is 0x4200_0000
   # https://wiki.friendlyelec.com/wiki/images/0/08/Allwinner_H2+_Datasheet_V1.2.pdf
-  #
-  # TODO(jared): make this generic across nixos A/B partitions
   bootScript = pkgs.writeText "boot.cmd" ''
-    setenv loadaddr       ${loadAddr};
-    setenv kernel_addr_r  ${kernelAddrR}
-    setenv fdt_addr_r     ${fdtAddrR}
-    setenv ramdisk_addr_r ${ramdiskAddrR}
-    setenv bootargs       "nixos.nix_store=nixos-a"
-    load mmc 0:1 $loadaddr uImage.a
+    if test -z $active; then
+      setenv active a;
+      saveenv
+      echo no active partition set, using partition A
+    fi
+
+    setenv bootargs nixos.active=nixos-$active
+    load mmc 0:1 $loadaddr uImage.$active
     source ''${loadaddr}:bootscript
   '';
 
@@ -120,8 +134,8 @@ in
   boot.initrd.systemd.storePaths = [ testActiveNixStorePartition ];
   boot.initrd.services.udev.rules = ''
     SUBSYSTEM!="block", GOTO="active_nixos_partition_end"
-    ENV{ID_PART_ENTRY_NAME}=="nixos-[ab]", IMPORT{cmdline}="nixos.nix_store"
-    ENV{ID_PART_ENTRY_NAME}=="nixos-[ab]", PROGRAM="${testActiveNixStorePartition} $env{ID_PART_ENTRY_NAME} $env{nixos.nix_store}", SYMLINK+="disk/nixos/%c", TAG="systemd"
+    ENV{ID_PART_ENTRY_NAME}=="nixos-[ab]", IMPORT{cmdline}="nixos.active"
+    ENV{ID_PART_ENTRY_NAME}=="nixos-[ab]", PROGRAM="${testActiveNixStorePartition} $env{ID_PART_ENTRY_NAME} $env{nixos.active}", SYMLINK+="disk/nixos/%c", TAG="systemd"
     LABEL="active_nixos_partition_end"
   '';
 

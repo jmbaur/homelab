@@ -139,7 +139,6 @@ in
         htmlq
         htop-vim
         iputils
-        j
         jared-neovim-all-languages
         jo
         jq
@@ -179,6 +178,8 @@ in
         tealdeer
         tig
         tio
+        tmux
+        tmux-jump
         tokei
         traceroute
         usbutils
@@ -368,7 +369,7 @@ in
           path = pkgs.substituteAll {
             name = "tmux.conf";
             src = ./tmux.conf.in;
-            j = pkgs.j;
+            tmuxJump = pkgs.tmux-jump;
             inherit (pkgs.tmuxPlugins) logging fingers;
           };
         }
@@ -399,6 +400,7 @@ in
                 source ${direnvHook}
                 source ${zoxideHook}
                 set -U PROJECTS_DIR ${config.users.users.${cfg.username}.home}/projects
+                alias j tmux-jump
                 ''}
               end
             '';

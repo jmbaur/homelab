@@ -38,4 +38,4 @@ bind-key -N "Kill the current window" & kill-window
 bind-key -T copy-mode-vi v send-keys -X begin-selection
 bind-key -T copy-mode-vi y send-keys -X copy-selection
 bind-key J command-prompt -p "join pane from:"  "join-pane -h -s '%%'"
-bind-key j display-popup -E -h 75% -w 75% -b double -T "Jump to:" "@j@/bin/j"
+bind-key j display-popup -E -h 75% -w 75% -b double -T "Jump to:" "@tmuxJump@/bin/tmux-jump"

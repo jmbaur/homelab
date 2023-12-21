@@ -1,6 +1,6 @@
 { writeShellApplication, fd, fzf, tmux }:
 writeShellApplication {
-  name = "j";
+  name = "tmux-jump";
   runtimeInputs = [ fzf fd tmux ];
-  text = builtins.readFile ./j.bash;
+  text = builtins.readFile ./tmux-jump.bash;
 }
