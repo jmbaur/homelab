@@ -2,7 +2,7 @@
 let
   cfg = config.custom.gui;
 
-  enabledGnomeExtensions = with pkgs.gnomeExtensions; [ appindicator clipboard-indicator ];
+  enabledGnomeExtensions = with pkgs.gnomeExtensions; [ appindicator clipboard-indicator caffeine ];
 in
 {
   options.custom.gui = with lib; {
@@ -95,9 +95,9 @@ in
               color-scheme = mkString "prefer-light";
               cursor-size = mkInt32 32;
             };
-            "org/gnome/shell" = {
-              enabled-extensions = map (e: e.extensionUuid) enabledGnomeExtensions;
-            };
+            "org/gnome/shell".enabled-extensions = map (e: e.extensionUuid) enabledGnomeExtensions;
+            "org/gnome/system/location".enabled = mkBoolean true;
+            "org/gnome/desktop/datetime".automatic-timezone = mkBoolean true;
           };
         }];
       };
