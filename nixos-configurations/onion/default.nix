@@ -41,7 +41,6 @@ in
   };
 
   networking = {
-    hostName = "www";
     useDHCP = false;
     firewall.allowedTCPPorts = [ 22 80 443 ];
   };

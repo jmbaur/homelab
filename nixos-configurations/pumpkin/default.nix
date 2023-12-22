@@ -1,7 +1,6 @@
-{
+{ ... }: {
   imports = [ ./hardware.nix ];
 
-  networking.hostName = "pumpkin";
   hardware.bluetooth.enable = true;
 
   boot.initrd.systemd.enable = true;

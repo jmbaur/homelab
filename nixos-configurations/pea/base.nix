@@ -66,9 +66,11 @@ let
     repartConfig = {
       Type = "linux-generic";
       Label = "nixos-${subName}";
-      Format = "ext4";
-      SizeMinBytes = "3G";
-      SizeMaxBytes = "3G";
+      Format = "erofs";
+      Minimize = true;
+      # 512M of wiggle room for future updates
+      PaddingMinBytes = "512M";
+      PaddingMaxBytes = "512M";
       SplitName = "-";
     };
   };
@@ -112,7 +114,6 @@ in
         };
       };
       "nixos-a" = lib.recursiveUpdate (repartNixos "a") { repartConfig.SplitName = "nixos"; };
-      "nixos-b" = repartNixos "b";
     };
   };
 
@@ -120,8 +121,14 @@ in
     name = "more-filesystem-support";
     patch = null;
     extraStructuredConfig = with lib.kernel; {
-      EROFS_FS = yes; # for read-only nix-store partition
-      AUTOFS_FS = yes; # systemd-based initrd needs this
+      EROFS_FS = yes;
+      EROFS_FS_XATTR = yes;
+      EROFS_FS_POSIX_ACL = yes;
+      EROFS_FS_SECURITY = yes;
+      EROFS_FS_ZIP = yes;
+
+      # systemd-based initrd needs this
+      AUTOFS_FS = yes;
     };
   }];
 
@@ -150,13 +157,13 @@ in
   }];
 
   boot.initrd.systemd.repart.enable = true;
-  boot.initrd.systemd.repart.device = "/dev/disk/by-path/platform-1c0f000.mmc";
   systemd.repart.partitions = {
     "10-state" = {
       Type = "var";
       Label = "state";
       Format = "ext4";
     };
+    "nixos-b" = (repartNixos "b").repartConfig;
   };
 
   boot.loader.grub.enable = false;
@@ -200,13 +207,11 @@ in
 
   # TODO(jared): delete this
   users.allowNoPasswordLogin = true;
+  users.users.root.password = "";
 
   hardware.deviceTree.enable = true;
   hardware.deviceTree.filter = "sun8i-h2-plus-bananapi-m2-zero.dtb";
 
-  # limit rebuilding to a minimum
-  boot.supportedFilesystems = lib.mkForce [ "ext4" "erofs" ];
-  boot.initrd.supportedFilesystems = lib.mkForce [ "ext4" "erofs" ];
   boot.initrd.includeDefaultModules = false;
 
   # limit the number of tools needing to be built

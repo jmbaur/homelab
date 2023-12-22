@@ -46,6 +46,7 @@
 
   outputs = inputs: {
     apps = import ./apps inputs;
+    checks = import ./checks.nix inputs;
     devShells = import ./dev-shells.nix inputs;
     formatter = import ./formatter.nix inputs;
     legacyPackages = import ./legacy-packages.nix inputs;

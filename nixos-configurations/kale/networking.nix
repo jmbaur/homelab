@@ -1,7 +1,6 @@
 { config, lib, ... }: {
   networking = {
     useDHCP = lib.mkForce false;
-    hostName = "kale";
     firewall.interfaces.eth0.allowedTCPPorts = [ 22 ];
   };
 

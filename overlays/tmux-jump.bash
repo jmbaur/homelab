@@ -28,7 +28,10 @@ if ! tmux_session_path=$(
 		--no-ignore |
 		sed "s,/\.git/,," |
 		{ [[ -n ${1-} ]] && grep ".*$1.*" || cat; } |
-		fzf -0 -1 \
+		fzf \
+			--cycle \
+			--exit-0 \
+			--select-1 \
 			--preview-label=remotes \
 			--preview-window=down \
 			--preview="git -C {} remote -v"

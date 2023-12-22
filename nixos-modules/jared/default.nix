@@ -403,7 +403,9 @@ in
             name = "tmux.conf";
             src = ./tmux.conf.in;
             tmuxJump = pkgs.tmux-jump;
-            inherit (pkgs.tmuxPlugins) logging fingers;
+            tmuxLogging = pkgs.tmuxPlugins.logging;
+            tmuxFingers = pkgs.tmuxPlugins.fingers;
+            tmuxFzf = pkgs.tmuxPlugins.tmux-fzf;
           };
         }
         {

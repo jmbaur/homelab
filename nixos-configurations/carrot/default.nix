@@ -23,8 +23,6 @@
 
   boot.initrd.systemd.enable = true;
 
-  networking.hostName = "carrot";
-
   networking.useDHCP = false;
 
   systemd.network = {

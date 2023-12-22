@@ -1,5 +1,5 @@
 inputs: {
-  default = {
+  default = { ... }: {
     _module.args = { inherit inputs; };
     nixpkgs.overlays = with inputs; [ self.overlays.default ];
     imports = [
@@ -14,6 +14,7 @@ inputs: {
       ./fit-image
       ./gui
       ./hardware
+      ./image
       ./installer.nix
       ./jared
       ./laptop.nix
@@ -25,6 +26,8 @@ inputs: {
       ./wireless.nix
       ./zfs.nix
       inputs.disko.nixosModules.disko
+      inputs.ipwatch.nixosModules.default
+      inputs.nixos-router.nixosModules.default
       inputs.sops-nix.nixosModules.sops
       inputs.tinyboot.nixosModules.default
     ];

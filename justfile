@@ -15,17 +15,17 @@ nixos type="switch":
 		--flake {{justfile_directory()}} \
 		{{type}}
 
-build:
-	nix build -L --accept-flake-config .\#jared-neovim .\#pomo
-
 update:
 	#!/usr/bin/env bash
+	echo '```console' > /tmp/pr-body
 	export NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"
+	nix flake update 2>&1 | tee -a /tmp/pr-body
 	for source in $(find -type f -name "*source.json"); do
 		args=()
 		if [[ $(jq -r ".fetchSubmodules" < "$source") == "true" ]]; then
 			args+=("--fetch-submodules")
 		fi
 		args+=("$(jq -r ".url" < $source)")
-		nix-prefetch-git "${args[@]}" > "$source"
+		nix-prefetch-git "${args[@]}" | tee "$source" | tee -a /tmp/pr-body
 	done
+	echo '```' >> /tmp/pr-body

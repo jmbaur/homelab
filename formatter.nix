@@ -1,3 +1,4 @@
-inputs: with inputs; nixpkgs.lib.genAttrs
-  [ "aarch64-linux" "x86_64-linux" ]
-  (system: nixpkgs.legacyPackages.${system}.nixpkgs-fmt)
+inputs:
+inputs.nixpkgs.lib.mapAttrs
+  (_: pkgs: pkgs.nixpkgs-fmt)
+  inputs.self.legacyPackages

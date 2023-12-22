@@ -5,6 +5,7 @@
 - [x] fennel
 - [x] garlic
 - [x] kale
+- [x] onion
 - [x] pea
 - [x] pumpkin
 - [x] squash
@@ -14,7 +15,6 @@
 - [ ] cauliflower
 - [ ] celery
 - [ ] olive
-- [ ] onion
 - [ ] potato
 - [ ] radish
 - [ ] rhubarb

@@ -11,8 +11,7 @@ in
     system.stateVersion = lib.mkDefault "24.05";
 
     environment.defaultPackages = [ ];
-    environment.systemPackages = lib.optional config.nix.enable pkgs.nixos-kexec
-      ++ (map (x: x.terminfo) (with pkgs.pkgsBuildBuild; [ alacritty foot kitty rio tmux wezterm ]));
+    environment.systemPackages = lib.optional config.nix.enable pkgs.nixos-kexec;
 
     programs.vim.defaultEditor = true;
 

@@ -21,14 +21,15 @@ if #vim.api.nvim_list_uis() > 0 then
 	require("snippet")
 	require("statusline")
 
-	vim.opt.termguicolors = true
 	vim.opt.belloff = "all"
 	vim.opt.colorcolumn = "80"
 	vim.opt.cursorline = false
 	vim.opt.laststatus = 2
 	vim.opt.number = true
 	vim.opt.relativenumber = true
+	vim.opt.shell = "/run/current-system/sw/bin/bash"
 	vim.opt.splitkeep = "screen"
+	vim.opt.termguicolors = true
 end
 
 require("mini.bracketed").setup({})

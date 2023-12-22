@@ -14,8 +14,6 @@
 
   boot.initrd.systemd.enable = true;
 
-  networking.hostName = "fennel";
-
   custom.dev.enable = true;
   custom.gui.enable = true;
   custom.laptop.enable = true;

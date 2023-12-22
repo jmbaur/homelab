@@ -1,10 +1,7 @@
 { pkgs, ... }: {
   imports = [ ./base.nix ];
 
-  # TODO(jared): delete these lines
-  users.users.root.password = "";
   networking.wireless.enable = true;
-  # TODO end
 
   # needed for bcm4329 wifi
   hardware.firmware = [ pkgs.linux-firmware ];

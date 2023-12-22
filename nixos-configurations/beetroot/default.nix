@@ -20,8 +20,6 @@
   fileSystems."/nix".options = [ "noatime" "discard=async" "compress=zstd" ];
   fileSystems."/home".options = [ "noatime" "discard=async" "compress=zstd" ];
 
-  networking.hostName = "beetroot";
-
   custom = {
     dev.enable = true;
     gui.enable = true;

@@ -14,8 +14,6 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "artichoke";
-
   custom = {
     server.enable = true;
     remoteBoot.enable = false;

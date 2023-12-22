@@ -1,7 +1,7 @@
 # vim: ft=tmux
 
-run-shell @logging@/share/tmux-plugins/logging/logging.tmux
-run-shell @fingers@/share/tmux-plugins/fingers/tmux-fingers.tmux
+run-shell "@tmuxLogging@/share/tmux-plugins/logging/logging.tmux"
+run-shell "@tmuxFingers@/share/tmux-plugins/fingers/tmux-fingers.tmux"
 
 # rebind main key: C-s
 unbind-key C-b
@@ -40,5 +40,7 @@ bind-key -N "Kill the current pane" x kill-pane
 bind-key -N "Kill the current window" & kill-window
 bind-key -T copy-mode-vi v send-keys -X begin-selection
 bind-key -T copy-mode-vi y send-keys -X copy-selection
+bind-key ESCAPE copy-mode
 bind-key J command-prompt -p "join pane from:"  "join-pane -h -s '%%'"
 bind-key j display-popup -E -h 75% -w 75% -b double -T "Jump to:" "@tmuxJump@/bin/tmux-jump"
+bind-key W run-shell -b "@tmuxFzf@/share/tmux-plugins/tmux-fzf/scripts/session.sh switch"

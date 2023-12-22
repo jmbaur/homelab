@@ -4,7 +4,6 @@
 
   hardware.chromebook.enable = true;
 
-  networking.hostName = "cabbage";
   custom.laptop.enable = true;
 
   hardware.enableRedistributableFirmware = true;
