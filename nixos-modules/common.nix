@@ -11,9 +11,6 @@ in
     system.stateVersion = lib.mkDefault "24.05";
 
     environment.defaultPackages = [ ];
-    environment.systemPackages = lib.optional config.nix.enable pkgs.nixos-kexec;
-
-    programs.vim.defaultEditor = true;
 
     security.sudo.extraRules = [{ groups = [ "wheel" ]; commands = [{ command = "/run/current-system/sw/bin/networkctl"; options = [ "NOPASSWD" ]; }]; }];
 

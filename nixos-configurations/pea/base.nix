@@ -4,6 +4,9 @@ let
   splSector = 256;
   splOffsetKiB = sectorSize * splSector / 1024;
 
+  # DRAM starts at 0x4000_0000
+  # Default $loadaddr is 0x4200_0000
+  # https://wiki.friendlyelec.com/wiki/images/0/08/Allwinner_H2+_Datasheet_V1.2.pdf
   loadAddr = "0x42000000";
   kernelAddrR = "0x44000000";
   fdtAddrR = "0x45000000";
@@ -33,88 +36,20 @@ let
     };
   };
 
-  # DRAM starts at 0x4000_0000
-  # Default $loadaddr is 0x4200_0000
-  # https://wiki.friendlyelec.com/wiki/images/0/08/Allwinner_H2+_Datasheet_V1.2.pdf
-  bootScript = pkgs.writeText "boot.cmd" ''
-    if test -z $active; then
-      setenv active a;
-      saveenv
-      echo no active partition set, using partition A
-    fi
-
-    setenv bootargs nixos.active=nixos-$active
-    load mmc 0:1 $loadaddr uImage.$active
-    source ''${loadaddr}:bootscript
-  '';
-
-  bootScriptImage = pkgs.runCommand "boot.scr" { } ''
-    ${lib.getExe' pkgs.buildPackages.ubootTools "mkimage"} \
-      -A ${pkgs.stdenv.hostPlatform.linuxArch} \
-      -O linux \
-      -T script \
-      -C none \
-      -d ${bootScript} \
-      $out
-  '';
-
-  repartNixos = subName: {
-    # TODO(jared): We don't need everything from toplevel, like the linux
-    # kernel and initrd are unecessary here
-    storePaths = [ config.system.build.toplevel ];
-    stripNixStorePrefix = true;
-    repartConfig = {
-      Type = "linux-generic";
-      Label = "nixos-${subName}";
-      Format = "erofs";
-      Minimize = true;
-      # 512M of wiggle room for future updates
-      PaddingMinBytes = "512M";
-      PaddingMaxBytes = "512M";
-      SplitName = "-";
-    };
-  };
-
-  testActiveNixStorePartition = pkgs.writeScript "test-active-nix-store-partition" ''
-    #!/bin/bash
-    [[ "$1" == "$2" ]] && echo -n active || echo -n inactive
-  '';
 in
-
 {
   disabledModules = [
     "${modulesPath}/profiles/base.nix"
     "${modulesPath}/profiles/all-hardware.nix"
   ];
 
-  imports = [
-    "${modulesPath}/profiles/image-based-appliance.nix"
-    "${modulesPath}/image/repart.nix"
-  ];
+  imports = [ "${modulesPath}/profiles/image-based-appliance.nix" ];
 
   custom.fitImage.loadAddress = kernelAddrR;
-
-  image.repart = {
-    name = "image";
-    split = true;
-    partitions = {
-      "boot" = {
-        contents = {
-          "/boot.scr".source = bootScriptImage;
-          "/uImage.a".source = config.system.build.fitImage;
-          "/uImage.b".source = config.system.build.fitImage;
-        };
-        repartConfig = {
-          Type = "esp";
-          Format = "vfat";
-          Label = "BOOT";
-          SizeMinBytes = "64M";
-          SizeMaxBytes = "64M";
-          SplitName = "boot";
-        };
-      };
-      "nixos-a" = lib.recursiveUpdate (repartNixos "a") { repartConfig.SplitName = "nixos"; };
-    };
+  custom.image = {
+    enable = true;
+    bootVariant = "fit-image";
+    ubootBootMedium.type = "mmc";
   };
 
   boot.kernelPatches = [{
@@ -132,60 +67,8 @@ in
     };
   }];
 
-  boot.initrd.systemd.enable = true;
   boot.initrd.systemd.enableTpm2 = false; # tpm kernel modules aren't built in our defconfig
   boot.initrd.systemd.emergencyAccess = false;
-
-  # There's gotta be a way to test simple equality in native udev, not shell
-  # out to bash or something...
-  boot.initrd.systemd.storePaths = [ testActiveNixStorePartition ];
-  boot.initrd.services.udev.rules = ''
-    SUBSYSTEM!="block", GOTO="active_nixos_partition_end"
-    ENV{ID_PART_ENTRY_NAME}=="nixos-[ab]", IMPORT{cmdline}="nixos.active"
-    ENV{ID_PART_ENTRY_NAME}=="nixos-[ab]", PROGRAM="${testActiveNixStorePartition} $env{ID_PART_ENTRY_NAME} $env{nixos.active}", SYMLINK+="disk/nixos/%c", TAG="systemd"
-    LABEL="active_nixos_partition_end"
-  '';
-
-  # https://www.freedesktop.org/software/systemd/man/latest/bootup.html#Bootup%20in%20the%20initrd
-  boot.initrd.systemd.mounts = [{
-    where = "/sysroot/nix/store";
-    what = "/dev/disk/nixos/active";
-    type = config.image.repart.partitions."nixos-a".repartConfig.Format;
-    options = "ro";
-    wantedBy = [ "initrd-fs.target" ];
-    before = [ "initrd-fs.target" ];
-  }];
-
-  boot.initrd.systemd.repart.enable = true;
-  systemd.repart.partitions = {
-    "10-state" = {
-      Type = "var";
-      Label = "state";
-      Format = "ext4";
-    };
-    "nixos-b" = (repartNixos "b").repartConfig;
-  };
-
-  boot.loader.grub.enable = false;
-  fileSystems."/" = {
-    device = "none";
-    fsType = "tmpfs";
-    options = [ "defaults" "mode=755" ];
-  };
-  fileSystems."/boot" = {
-    device = "/dev/disk/by-partlabel/${config.image.repart.partitions."boot".repartConfig.Label}";
-    fsType = config.image.repart.partitions."boot".repartConfig.Format;
-    options = [ "x-systemd.automount" ];
-  };
-  fileSystems."/state" = {
-    device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions."10-state".Label}";
-    fsType = config.systemd.repart.partitions."10-state".Format;
-    neededForBoot = true;
-  };
-  fileSystems."/var" = {
-    device = "/state/var";
-    options = [ "bind" ];
-  };
 
   system.build.firmware = uboot;
   system.build.imageWithBootloader = pkgs.runCommand "image-with-bootloader" { } ''

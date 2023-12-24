@@ -8,6 +8,7 @@
 - [x] onion
 - [x] pea
 - [x] pumpkin
+- [x] rhubarb
 - [x] squash
 - [x] zucchini
 - [ ] asparagus
@@ -17,5 +18,4 @@
 - [ ] olive
 - [ ] potato
 - [ ] radish
-- [ ] rhubarb
 - [ ] tomato

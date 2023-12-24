@@ -2,23 +2,20 @@
 
 nixosTest {
   name = "immutable-image";
-  nodes.machine = {
+  nodes.machine = { lib, ... }: {
     imports = [ ../nixos-modules/image ];
 
     virtualisation.directBoot.enable = false;
     virtualisation.mountHostNixStore = false;
     virtualisation.useEFIBoot = true;
 
-    # TODO(jared): this should be populated automatically, but maybe the
-    # nixos test driver is messing with us?
-    boot.initrd.supportedFilesystems = [ "squashfs" "erofs" "btrfs" "ext4" ];
+    # Make the qemu-vm.nix module use what is found under
+    # `config.fileSystems`.
+    virtualisation.fileSystems = lib.mkForce { };
 
-    boot.kernelParams = [ "console=tty1" ];
-
-    boot.loader.grub.enable = false;
-
-    custom.image.immutable = {
+    custom.image = {
       enable = true;
+      rootDevicePath = "/dev/vda";
     };
   };
 
