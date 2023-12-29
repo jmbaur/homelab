@@ -231,8 +231,8 @@ in
           '';
         }
         {
-          target = ".config/alacritty/alacritty.yml";
-          path = (pkgs.formats.yaml { }).generate "alacritty.yml" {
+          target = ".config/alacritty/alacritty.toml";
+          path = (pkgs.formats.toml { }).generate "alacritty-config.toml" {
             live_config_reload = false;
             mouse.hide_when_typing = true;
             selection.save_to_clipboard = true;
