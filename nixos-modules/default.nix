@@ -30,6 +30,7 @@ inputs: {
       inputs.nixos-router.nixosModules.default
       inputs.sops-nix.nixosModules.sops
       inputs.tinyboot.nixosModules.default
+      inputs.webauthn-tiny.nixosModules.default
     ];
   };
 }

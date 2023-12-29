@@ -72,8 +72,7 @@ in
           };
         };
       }));
-      default = { };
-      example = ''
+      example = literalExpression ''
         {
           peer1.extraConfig.PersistentKeepalive = 25;
         }
@@ -81,6 +80,7 @@ in
       description = mdDoc ''
         Peers of this wg node
       '';
+      default = { };
     };
     firewall = mkOption {
       type = types.attrsOf (types.submodule ({ name, ... }: {
