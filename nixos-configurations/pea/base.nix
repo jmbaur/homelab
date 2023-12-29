@@ -68,7 +68,6 @@ in
   }];
 
   boot.initrd.systemd.enableTpm2 = false; # tpm kernel modules aren't built in our defconfig
-  boot.initrd.systemd.emergencyAccess = false;
 
   system.build.firmware = uboot;
   system.build.imageWithBootloader = pkgs.runCommand "image-with-bootloader" { } ''

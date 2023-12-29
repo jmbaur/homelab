@@ -18,8 +18,8 @@ inputs: {
           })
           (prev.fetchpatch2 {
             name = "Add-touchpad-device-type";
-            url = "https://github.com/jmbaur/labwc/commit/57394fc05261c63221b08a6821ad86a4831cf5fc.patch";
-            hash = "sha256-siAV5VNSj+pcLxfM5Ljl8VczWlnczApkDu6xOD5pQvM=";
+            url = "https://github.com/jmbaur/labwc/commit/6faee17d20637df35e27cd2cac462323e4d665a1.patch";
+            hash = "sha256-5HptxaEK7zH1eoyxYYyYZpKECE8MXznj6zLVDC0Kkyg=";
           })
         ];
       });

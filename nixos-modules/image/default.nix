@@ -3,23 +3,6 @@
 let
   cfg = config.custom.image;
 
-  nixosRepartPartitionFor =
-    # the A or B slot partition
-    partSlot:
-    {
-      # we call this a "usr" type, but systemd's meaning of "usr" maps to
-      # our use case of anything that is static (i.e. the toplevel
-      # derivation of a nixos system).
-      Type = "usr-${pkgs.stdenv.hostPlatform.linuxArch}";
-      Label = "nixos-${partSlot}";
-      Format = "erofs";
-      Minimize = "best";
-      SplitName = "nixos";
-      # 512M of wiggle room for future updates
-      PaddingMinBytes = "512M";
-      PaddingMaxBytes = "512M";
-    };
-
   testActiveNixStorePartition = pkgs.writeScript "test-active-nix-store-partition" ''
     #!/bin/bash
     [[ "$1" == "$2" ]] && echo -n active || echo -n inactive
@@ -68,7 +51,11 @@ in
       partitions.nixosPartitionA = {
         storePaths = [ config.system.build.toplevel ];
         stripNixStorePrefix = true;
-        repartConfig = nixosRepartPartitionFor "a";
+        repartConfig = config.systemd.repart.partitions.nixosPartitionA // {
+          # 512M of wiggle room for future updates
+          PaddingMinBytes = "512M";
+          PaddingMaxBytes = "512M";
+        };
       };
     };
 
@@ -93,33 +80,71 @@ in
     };
 
     systemd.repart.partitions = {
-      # The "B" update partition and root partition get created on first boot.
+      nixosPartitionA = {
+        # we call this a "usr" type, but systemd's meaning of "usr" maps to
+        # our use case of anything that is static (i.e. the toplevel
+        # derivation of a nixos system).
+        Type = "usr-${pkgs.stdenv.hostPlatform.linuxArch}";
+        Label = "nixos-a";
+        Format = "erofs";
+        Minimize = "best";
+        SplitName = "nixos";
+        # This partition is populated at image creation time, but in order for
+        # systemd-repart to work in the initrd, it needs to think it has to do
+        # some "work", such as creating the root directory of the partition.
+        MakeDirectories = "/";
+      };
+
+      # TODO(jared): doesn't work since systemd-repart starts before
+      # systemd-udevd gets to resolve the disk partition label symlink
+      # # The "B" update partition and state partition get created on first boot.
       # nixosPartitionB = {
       #   Type = "usr-${pkgs.stdenv.hostPlatform.linuxArch}";
       #   Label = "nixos-b";
       #   CopyBlocks = "/dev/disk/by-partlabel/nixos-a";
       # };
-      root = {
-        Type = "root-${pkgs.stdenv.hostPlatform.linuxArch}";
-        Label = "root";
+
+      state = {
+        Type = "linux-generic";
+        Label = "state";
         Format = "btrfs";
+        MakeDirectories = toString [ "/home" "/var" "/etc" ];
       };
     };
 
     fileSystems."/" = {
-      # fsType = "tmpfs";
-      # device = "none";
-      fsType = config.systemd.repart.partitions.root.Format;
-      device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions.root.Label}";
+      fsType = "tmpfs";
+      device = "none";
+      neededForBoot = true;
     };
     fileSystems."/nix/store" = {
-      fsType = config.image.repart.partitions.nixosPartitionA.repartConfig.Format;
-      device = "/dev/disk/by-partlabel/nixos-a"; # "/dev/disk/nixos/active";
+      fsType = config.systemd.repart.partitions.nixosPartitionA.Format;
+      device = "/dev/disk/by-partlabel/nixos-a"; # TODO(jared): /dev/disk/nixos/active
     };
     fileSystems."/boot" = {
       device = "/dev/disk/by-partlabel/${config.image.repart.partitions.boot.repartConfig.Label}";
       fsType = config.image.repart.partitions.boot.repartConfig.Format;
       options = [ "x-systemd.automount" ];
+    };
+    fileSystems."/state" = {
+      fsType = config.systemd.repart.partitions.state.Format;
+      device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions.state.Label}";
+      neededForBoot = true;
+    };
+    fileSystems."/etc" = {
+      device = "/state/etc";
+      options = [ "bind" ];
+      neededForBoot = true;
+    };
+    fileSystems."/var" = {
+      device = "/state/var";
+      options = [ "bind" ];
+      neededForBoot = true;
+    };
+    fileSystems."/home" = {
+      device = "/state/home";
+      options = [ "bind" ];
+      neededForBoot = true;
     };
 
     boot.postBootCommands = ''

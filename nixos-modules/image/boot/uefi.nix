@@ -21,18 +21,20 @@ let
 in
 {
   config = lib.mkIf (cfg.bootVariant == "uefi") {
+    systemd.repart.partitions.boot = {
+      Type = "esp";
+      Label = "BOOT";
+      Format = "vfat";
+      SizeMinBytes = "256M";
+      SizeMaxBytes = "256M";
+    };
+
     image.repart.partitions.boot = {
       contents = {
         "/EFI/BOOT/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI".source = systemdBoot;
         "/EFI/Linux/nixos${config.system.nixos.versionSuffix}.efi".source = nixosUki;
       };
-      repartConfig = {
-        Type = "esp";
-        Label = "BOOT";
-        Format = "vfat";
-        SizeMinBytes = "256M";
-        SizeMaxBytes = "256M";
-      };
+      repartConfig = config.systemd.repart.partitions.boot;
     };
   };
 }

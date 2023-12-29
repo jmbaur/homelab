@@ -30,7 +30,7 @@ in
 
     fonts = {
       enableDefaultPackages = true;
-      packages = [ pkgs.noto-fonts pkgs.jetbrains-mono pkgs.font-awesome ];
+      packages = [ pkgs.noto-fonts pkgs.jetbrains-mono ];
       fontconfig = {
         enable = true;
         defaultFonts = {

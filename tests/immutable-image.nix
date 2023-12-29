@@ -5,6 +5,8 @@ nixosTest {
   nodes.machine = { lib, ... }: {
     imports = [ ../nixos-modules/image ];
 
+    boot.initrd.systemd.emergencyAccess = true;
+
     virtualisation.directBoot.enable = false;
     virtualisation.mountHostNixStore = false;
     virtualisation.useEFIBoot = true;
@@ -36,6 +38,7 @@ nixosTest {
       "-F",
       "raw",
       tmp_disk_image.name,
+      "3G",
     ])
 
     # Set NIX_DISK_IMAGE so that the qemu script finds the right disk image.

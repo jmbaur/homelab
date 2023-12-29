@@ -31,7 +31,6 @@ in
     custom.installer.enable = true;
 
     boot.initrd.systemd.enable = true;
-    boot.initrd.systemd.emergencyAccess = true;
 
     boot.initrd.kernelModules = [ "loop" "overlay" "squashfs" ];
     boot.initrd.availableKernelModules = [ "uas" ];
