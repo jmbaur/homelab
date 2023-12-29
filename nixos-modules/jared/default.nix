@@ -434,8 +434,9 @@ in
                 ${lib.optionalString config.custom.dev.enable ''
                 source ${direnvHook}
                 source ${zoxideHook}
-                set -U PROJECTS_DIR ${config.users.users.${cfg.username}.home}/projects
                 alias j tmux-jump
+                set --global --export PROJECTS_DIR ${config.users.users.${cfg.username}.home}/projects
+                set --global --export EDITOR nvim
                 ''}
               end
             '';
