@@ -49,6 +49,9 @@ in
       pulse.enable = true;
     };
 
+    # needed by some apps
+    environment.sessionVariables.XCURSOR_SIZE = "32";
+
     environment.systemPackages = enabledGnomeExtensions ++ (with pkgs; [
       alacritty
       chromium-wayland
