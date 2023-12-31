@@ -32,7 +32,8 @@ in
 
   boot.kernelParams = [ "console=ttyAMA0" ];
 
-  # TODO(jared): delete this
+  # {{{ TODO(jared): delete this
   users.allowNoPasswordLogin = true;
   users.users.root.password = "";
+  # }}}
 }

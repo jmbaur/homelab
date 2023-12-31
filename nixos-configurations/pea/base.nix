@@ -71,9 +71,10 @@ in
 
   custom.crossCompile.enable = true;
 
-  # TODO(jared): delete this
+  # {{{ TODO(jared): delete this
   users.allowNoPasswordLogin = true;
   users.users.root.password = "";
+  # }}}
 
   hardware.deviceTree.enable = true;
   hardware.deviceTree.filter = "sun8i-h2-plus-bananapi-m2-zero.dtb";

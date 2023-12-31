@@ -23,7 +23,7 @@
 let
   seed = "39c4020e-af73-434a-93e4-7e37fdcc7f96";
 
-  bootPartition = partitions."10-boot";
+  bootPartition = partitions."10-boot" // { };
   dataPartition = partitions."20-usr-a" // {
     Minimize = "best";
     PaddingMinBytes = immutablePadding;

@@ -24,14 +24,18 @@ in
       # ukify does not output to stderr
       ${systemdUkify}/lib/systemd/ukify build \
         --no-sign-kernel \
+        --efi-arch=${pkgs.stdenv.hostPlatform.efiArch} \
+        --uname=${config.system.build.kernel.version} \
         --linux=${config.system.build.kernel}/${config.system.boot.loader.kernelFile} \
         --cmdline="$(echo "''${cmdline[@]}")" \
         --initrd=${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile} \
         --os-release=@${config.environment.etc."os-release".source} \
+        ${lib.optionalString config.hardware.deviceTree.enable
+          "--devicetree=${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name}"} \
         --output=$out/uki.efi \
         1>&2
 
-      echo "$out/uki.efi:/EFI/Linux/nixos-${config.system.nixos.versionSuffix}.efi"
+      echo "$out/uki.efi:/EFI/Linux/nixos${config.system.nixos.versionSuffix}.efi"
     '';
   };
 }
