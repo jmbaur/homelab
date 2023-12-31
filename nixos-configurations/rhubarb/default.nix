@@ -24,7 +24,9 @@ in
   custom.image.enable = true;
   custom.image.bootVariant = "fit-image";
   custom.image.ubootBootMedium.type = "mmc";
-  image.repart.partitions.boot.contents."kernel.img".source = "${uboot}/u-boot.bin";
+  custom.image.bootFileCommands = ''
+    echo "${uboot}/u-boot.bin:kernel.img"
+  '';
 
   hardware.deviceTree.enable = true;
   hardware.deviceTree.filter = "bcm2711-rpi-4-b.dtb";

@@ -5,9 +5,7 @@
 , zstd
 , formats
 , closureInfo
-, e2fsprogs
 , squashfsTools
-, erofs-utils
 , dosfstools
 , mtools
 , jq
@@ -52,17 +50,15 @@ let
 in
 runCommand "nixos-image"
 {
-  nativeBuildInputs = [
+  depsBuildBuild = [
+    dosfstools
     fakeroot
+    jq
+    mtools
+    sbsigntool
+    squashfsTools
     systemd
     zstd
-    e2fsprogs
-    squashfsTools
-    erofs-utils
-    dosfstools
-    mtools
-    jq
-    sbsigntool
   ];
   inherit bootFileCommands;
   passAsFile = [ "bootFileCommands" ];

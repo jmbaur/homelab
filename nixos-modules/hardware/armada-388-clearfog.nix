@@ -89,6 +89,7 @@
       '');
 
     system.build.firmware = pkgs.uboot-clearfog_spi;
+    custom.fitImage.loadAddress = config.system.build.firmware.config.SYS_LOAD_ADDR.value;
 
     # for fw_printenv and fw_setenv
     environment.etc."fw_env.config".text = ''
