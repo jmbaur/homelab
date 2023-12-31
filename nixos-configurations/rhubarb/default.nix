@@ -1,4 +1,4 @@
-{ pkgs, modulesPath, ... }:
+{ pkgs, ... }:
 let
   uboot = pkgs.uboot-rpi_4.override {
     extraStructuredConfig = with pkgs.ubootLib; {
@@ -14,8 +14,6 @@ let
   };
 in
 {
-  imports = [ "${modulesPath}/profiles/image-based-appliance.nix" ];
-
   custom.crossCompile.enable = true;
   nixpkgs.hostPlatform = "aarch64-linux";
 

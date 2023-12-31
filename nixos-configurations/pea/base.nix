@@ -43,8 +43,6 @@ in
     "${modulesPath}/profiles/all-hardware.nix"
   ];
 
-  imports = [ "${modulesPath}/profiles/image-based-appliance.nix" ];
-
   custom.fitImage.loadAddress = kernelAddrR;
   custom.image = {
     enable = true;
