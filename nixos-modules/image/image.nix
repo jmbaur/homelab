@@ -1,15 +1,18 @@
-{ stdenv
-, runCommand
-, fakeroot
-, systemd
-, zstd
-, formats
-, closureInfo
-, squashfsTools
+{ closureInfo
 , dosfstools
-, mtools
+, dtc
+, fakeroot
+, formats
 , jq
+, mtools
+, runCommand
 , sbsigntool
+, squashfsTools
+, stdenv
+, systemd
+, ubootTools
+, xz
+, zstd
 
   # arguments
 , toplevel
@@ -52,12 +55,15 @@ runCommand "nixos-image"
 {
   depsBuildBuild = [
     dosfstools
+    dtc
     fakeroot
     jq
     mtools
     sbsigntool
     squashfsTools
     systemd
+    ubootTools
+    xz
     zstd
   ];
   inherit bootFileCommands;

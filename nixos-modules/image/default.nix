@@ -41,27 +41,11 @@ in
         TODO
       '';
     };
-
-    ubootBootMedium = {
-      type = mkOption {
-        type = types.enum [ "mmc" "nvme" "usb" ];
-        description = mdDoc ''
-          TODO
-        '';
-      };
-      index = mkOption {
-        type = types.int;
-        default = 0;
-        description = mdDoc ''
-          TODO
-        '';
-      };
-    };
   };
 
   imports = [
-    ./boot/uefi.nix
-    ./boot/fit-image.nix
+    ./boot/fit-image
+    ./boot/uefi
   ];
 
   config = lib.mkIf cfg.enable {

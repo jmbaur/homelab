@@ -43,20 +43,22 @@ in
     "${modulesPath}/profiles/all-hardware.nix"
   ];
 
-  custom.fitImage.loadAddress = kernelAddrR;
   custom.image = {
     enable = true;
     bootVariant = "fit-image";
     primaryDisk = "/dev/mmcblk0";
     ubootBootMedium.type = "mmc";
+    ubootLoadAddress = kernelAddrR;
   };
 
   boot.initrd.systemd.enableTpm2 = false; # tpm kernel modules aren't built in our defconfig
 
   system.build.firmware = uboot;
   system.build.imageWithBootloader = pkgs.runCommand "image-with-bootloader" { } ''
-    ${lib.getExe' pkgs.buildPackages.zstd "zstd"} -d <${config.system.build.image}/image.raw.zst >$out
-    dd if=${config.system.build.firmware}/u-boot-sunxi-with-spl.bin of=$out bs=1K seek=${toString splOffsetKiB} conv=notrunc,sync
+    mkdir -p $out
+    ${lib.getExe' pkgs.buildPackages.zstd "zstd"} -d <${config.system.build.image}/image.raw.zst >image.raw
+    dd if=${config.system.build.firmware}/u-boot-sunxi-with-spl.bin of=image.raw bs=1K seek=${toString splOffsetKiB} conv=notrunc,sync
+    ${lib.getExe' pkgs.buildPackages.zstd "zstd"} -o $out/image.raw.zst image.raw
   '';
 
   nixpkgs.hostPlatform = lib.recursiveUpdate lib.systems.platforms.armv7l-hf-multiplatform

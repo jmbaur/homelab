@@ -11,7 +11,6 @@ inputs: {
       ./deployee.nix
       ./depthcharge
       ./dev.nix
-      ./fit-image
       ./gui
       ./hardware
       ./image

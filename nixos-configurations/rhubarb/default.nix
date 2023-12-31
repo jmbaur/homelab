@@ -17,15 +17,16 @@ in
   custom.crossCompile.enable = true;
   nixpkgs.hostPlatform = "aarch64-linux";
 
-  custom.fitImage.loadAddress = "0x80000";
-
-  custom.image.enable = true;
-  custom.image.bootVariant = "fit-image";
-  custom.image.ubootBootMedium.type = "mmc";
-  custom.image.primaryDisk = "/dev/mmcblk0";
-  custom.image.bootFileCommands = ''
-    echo "${uboot}/u-boot.bin:kernel.img"
-  '';
+  custom.image = {
+    enable = true;
+    bootVariant = "fit-image";
+    ubootBootMedium.type = "mmc";
+    ubootLoadAddress = "0x80000";
+    primaryDisk = "/dev/mmcblk0";
+    bootFileCommands = ''
+      echo "${uboot}/u-boot.bin:kernel.img"
+    '';
+  };
 
   hardware.deviceTree.enable = true;
   hardware.deviceTree.filter = "bcm2711-rpi-4-b.dtb";
