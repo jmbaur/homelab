@@ -67,8 +67,11 @@ in
     boot.loader.grub.enable = false;
 
     boot.kernelParams = [
-      "mount.usr=fstab" # tell systemd to not automount anything on /usr
       "systemd.verity_root_options=panic-on-corruption"
+
+      # Tell systemd to not automount anything on /usr. We don't
+      # actually have a /usr mount in our fstab...
+      "mount.usr=fstab"
     ];
 
     # We do this because we need the udev rules and some binaries from the lvm2
@@ -79,7 +82,6 @@ in
       systemd = {
         enable = true;
         repart.enable = true;
-        # managerEnvironment.SYSTEMD_LOG_LEVEL = "debug";
         additionalUpstreamUnits = [
           "remote-veritysetup.target"
           "veritysetup-pre.target"
@@ -101,46 +103,44 @@ in
         repart.device = cfg.rootDevicePath;
       };
 
-      supportedFilesystems = [ config.fileSystems."/nix/store".fsType ];
-      kernelModules = [ "dm-verity" ];
+      availableKernelModules = [ "dm-verity" ];
     };
 
     systemd.repart.partitions = {
-      boot = {
+      "10-boot" = {
         Type = "esp";
         Label = "BOOT";
         Format = "vfat";
         SizeMinBytes = "256M";
         SizeMaxBytes = "256M";
       };
-      usrPartitionA = {
+      "20-usr-a" = {
         Type = "usr";
         Label = "usr-a";
         SizeMinBytes = cfg.rootSize;
         SizeMaxBytes = cfg.rootSize;
       };
-      hashUsrPartitionA = {
+      "20-usr-a-hash" = {
         Type = "usr-verity";
-        Label = "${config.systemd.repart.partitions.usrPartitionA.Label}-hash";
+        Label = "usr-a-hash";
         SizeMinBytes = verityHashSize;
         SizeMaxBytes = verityHashSize;
       };
 
       # The "B" update partition and root partition get created on first boot.
-      usrPartitionB = {
+      "20-usr-b" = {
         Type = "usr";
         Label = "usr-b";
         SizeMinBytes = cfg.rootSize;
         SizeMaxBytes = cfg.rootSize;
       };
-      hashUsrPartitionB = {
+      "20-usr-b-hash" = {
         Type = "usr-verity";
-        Label = "${config.systemd.repart.partitions.usrPartitionB.Label}-hash";
+        Label = "usr-b-hash";
         SizeMinBytes = verityHashSize;
         SizeMaxBytes = verityHashSize;
       };
-
-      root = {
+      "30-root" = {
         Type = "root";
         Label = "root";
         Format = "btrfs";
@@ -149,18 +149,18 @@ in
     };
 
     fileSystems."/" = {
-      device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions.root.Label}";
-      fsType = config.systemd.repart.partitions.root.Format;
+      device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions."30-root".Label}";
+      fsType = config.systemd.repart.partitions."30-root".Format;
     };
     fileSystems."/nix/store" = {
       device = "/dev/mapper/usr";
-      fsType = "squashfs"; # TODO(jared): erofs results in veritysetup corruption
+      fsType = "squashfs"; # TODO(jared): erofs results in dm-verity corruption
       options = [ "ro" ];
       neededForBoot = true;
     };
     fileSystems."/boot" = {
-      device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions.boot.Label}";
-      fsType = config.systemd.repart.partitions.boot.Format;
+      device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions."10-boot".Label}";
+      fsType = config.systemd.repart.partitions."10-boot".Format;
       options = [ "x-systemd.automount" ];
     };
 
@@ -172,20 +172,10 @@ in
     '';
 
     system.build.image = pkgs.callPackage ./image.nix {
+      usrFormat = config.fileSystems."/nix/store".fsType;
       inherit (cfg) bootFileCommands;
       inherit (config.system.build) toplevel;
-      bootPartition = config.systemd.repart.partitions.boot;
-      dataPartition = config.systemd.repart.partitions.usrPartitionA // {
-        Format = config.fileSystems."/nix/store".fsType;
-        Verity = "data";
-        VerityMatchKey = "usr";
-        SplitName = "usr";
-      };
-      hashPartition = config.systemd.repart.partitions.hashUsrPartitionA // {
-        Verity = "hash";
-        VerityMatchKey = "usr";
-        SplitName = "usr-hash";
-      };
+      inherit (config.systemd.repart) partitions;
     };
   };
 }

@@ -53,21 +53,6 @@ in
     ubootBootMedium.type = "mmc";
   };
 
-  boot.kernelPatches = [{
-    name = "more-filesystem-support";
-    patch = null;
-    extraStructuredConfig = with lib.kernel; {
-      EROFS_FS = yes;
-      EROFS_FS_XATTR = yes;
-      EROFS_FS_POSIX_ACL = yes;
-      EROFS_FS_SECURITY = yes;
-      EROFS_FS_ZIP = yes;
-
-      # systemd-based initrd needs this
-      AUTOFS_FS = yes;
-    };
-  }];
-
   boot.initrd.systemd.enableTpm2 = false; # tpm kernel modules aren't built in our defconfig
 
   system.build.firmware = uboot;
@@ -81,7 +66,7 @@ in
       linux-kernel = {
         name = "sunxi";
         baseConfig = "sunxi_defconfig";
-        autoModules = false;
+        autoModules = true;
         preferBuiltin = true;
       };
     });
