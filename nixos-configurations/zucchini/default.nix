@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ pkgs, lib, ... }: {
   # {{{ TODO(jared): delete this
   users.allowNoPasswordLogin = true;
   users.users.root.password = "";
@@ -9,9 +9,17 @@
   custom.crossCompile.enable = true;
 
   custom.image.enable = true;
-  custom.image.primaryDisk = "/dev/nvme0n1";
+  custom.image.primaryDisk = "/dev/disk/by-path/platform-a41000000.pcie-pci-0004:41:00.0-nvme-1";
 
   boot.kernelPackages = pkgs.linuxPackages_testing;
+
+  boot.initrd.availableKernelModules = [ "phy-rockchip-naneng-combphy" "nvme" ];
+
+  boot.kernelPatches = [{
+    name = "zboot-compression";
+    patch = null;
+    extraStructuredConfig.EFI_ZBOOT = lib.kernel.yes;
+  }];
 
   hardware.deviceTree = {
     enable = true;
@@ -44,3 +52,4 @@
     };
   };
 }
+
