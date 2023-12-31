@@ -26,21 +26,9 @@ let
 in
 {
   config = lib.mkIf (cfg.bootVariant == "fit-image") {
-    systemd.repart.partitions.boot = {
-      Type = "esp";
-      Label = "BOOT";
-      Format = "vfat";
-      SizeMinBytes = "256M";
-      SizeMaxBytes = "256M";
-      SplitName = "-";
-    };
-    image.repart.partitions.boot = {
-      contents = {
-        "/boot.scr".source = bootScriptImage;
-        "/uImage.a".source = config.system.build.fitImage;
-        "/uImage.b".source = config.system.build.fitImage;
-      };
-      repartConfig = config.systemd.repart.partitions.boot;
-    };
+    custom.image.bootFileCommands = ''
+      echo "${bootScriptImage}:/boot.scr"
+      echo "${config.system.build.fitImage}:/uImage.a"
+    '';
   };
 }

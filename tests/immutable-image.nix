@@ -1,4 +1,4 @@
-{ nixosTest }:
+{ lib, nixosTest, zstd }:
 
 nixosTest {
   name = "immutable-image";
@@ -15,9 +15,13 @@ nixosTest {
     # `config.fileSystems`.
     virtualisation.fileSystems = lib.mkForce { };
 
+    users.allowNoPasswordLogin = true;
+    users.users.root.password = "";
+
     custom.image = {
       enable = true;
       rootDevicePath = "/dev/vda";
+      rootSize = "1G";
     };
   };
 
@@ -29,12 +33,19 @@ nixosTest {
     tmp_disk_image = tempfile.NamedTemporaryFile()
 
     subprocess.run([
+      "${lib.getExe' zstd "zstd"}",
+      "-d",
+      "-o",
+      "image.raw",
+      "${nodes.machine.system.build.image}/image.raw.zst",
+    ])
+    subprocess.run([
       "${nodes.machine.virtualisation.qemu.package}/bin/qemu-img",
       "create",
       "-f",
       "qcow2",
       "-b",
-      "${nodes.machine.system.build.image}/image.raw",
+      "image.raw",
       "-F",
       "raw",
       tmp_disk_image.name,

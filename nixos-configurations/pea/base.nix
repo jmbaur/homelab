@@ -49,6 +49,7 @@ in
   custom.image = {
     enable = true;
     bootVariant = "fit-image";
+    rootDevicePath = "/dev/mmcblk0";
     ubootBootMedium.type = "mmc";
   };
 
@@ -71,7 +72,7 @@ in
 
   system.build.firmware = uboot;
   system.build.imageWithBootloader = pkgs.runCommand "image-with-bootloader" { } ''
-    dd if=${config.system.build.image}/image.raw of=$out
+    ${lib.getExe' pkgs.buildPackages.zstd "zstd"} -d <${config.system.build.image}/image.raw.zst >$out
     dd if=${config.system.build.firmware}/u-boot-sunxi-with-spl.bin of=$out bs=1K seek=${toString splOffsetKiB} conv=notrunc,sync
   '';
 

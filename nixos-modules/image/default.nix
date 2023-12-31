@@ -1,16 +1,21 @@
-{ config, lib, pkgs, modulesPath, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   cfg = config.custom.image;
 
-  testActiveNixStorePartition = pkgs.writeScript "test-active-nix-store-partition" ''
-    #!/bin/bash
-    [[ "$1" == "$2" ]] && echo -n active || echo -n inactive
-  '';
+  verityHashSize = "128M";
 in
 {
   options.custom.image = with lib; {
     enable = mkEnableOption "TODO";
+
+    bootFileCommands = mkOption {
+      type = types.lines;
+      default = "";
+      description = mdDoc ''
+        TODO
+      '';
+    };
 
     rootDevicePath = mkOption {
       type = types.path;
@@ -19,24 +24,40 @@ in
       '';
     };
 
+    rootSize = mkOption {
+      type = types.str;
+      default = "2G";
+      description = mdDoc ''
+        TODO
+      '';
+    };
+
     bootVariant = mkOption {
       type = types.enum [ "uefi" "fit-image" ];
       default = "uefi";
+      description = mdDoc ''
+        TODO
+      '';
     };
 
     ubootBootMedium = {
       type = mkOption {
         type = types.enum [ "mmc" "nvme" "usb" ];
+        description = mdDoc ''
+          TODO
+        '';
       };
       index = mkOption {
         type = types.int;
         default = 0;
+        description = mdDoc ''
+          TODO
+        '';
       };
     };
   };
 
   imports = [
-    "${modulesPath}/image/repart.nix" # TODO(jared): why isn't this included in nixpkgs?
     ./boot/uefi.nix
     ./boot/fit-image.nix
   ];
@@ -45,106 +66,102 @@ in
     # we don't need nixpkgs boot-loading infrastructure
     boot.loader.grub.enable = false;
 
-    image.repart = {
-      name = "image";
-      split = true;
-      partitions.nixosPartitionA = {
-        storePaths = [ config.system.build.toplevel ];
-        stripNixStorePrefix = true;
-        repartConfig = config.systemd.repart.partitions.nixosPartitionA // {
-          # 512M of wiggle room for future updates
-          PaddingMinBytes = "512M";
-          PaddingMaxBytes = "512M";
-        };
-      };
-    };
+    boot.kernelParams = [
+      "mount.usr=fstab" # tell systemd to not automount anything on /usr
+      "systemd.verity_root_options=panic-on-corruption"
+    ];
+
+    # We do this because we need the udev rules and some binaries from the lvm2
+    # package.
+    boot.initrd.services.lvm.enable = true;
 
     boot.initrd = {
-      systemd.enable = true;
-      systemd.repart = {
+      systemd = {
         enable = true;
-        # this needs to be set in order to create the root partition
-        # dynamically on first boot
-        device = cfg.rootDevicePath;
+        repart.enable = true;
+        # managerEnvironment.SYSTEMD_LOG_LEVEL = "debug";
+        additionalUpstreamUnits = [
+          "remote-veritysetup.target"
+          "veritysetup-pre.target"
+          "veritysetup.target"
+        ];
+        storePaths = [
+          "${config.boot.initrd.systemd.package}/lib/systemd/system-generators/systemd-veritysetup-generator"
+          "${config.boot.initrd.systemd.package}/lib/systemd/systemd-veritysetup"
+        ];
+
+        # Require that systemd-repart only starts after we have our dm-verity
+        # device. This prevents a race condition between systemd-repart and
+        # systemd-veritysetup.
+        services.systemd-repart.after = [ "dev-mapper-usr.device" ];
+        services.systemd-repart.requires = [ "dev-mapper-usr.device" ];
+
+        # This needs to be set in order to create the root partition
+        # dynamically on first boot.
+        repart.device = cfg.rootDevicePath;
       };
 
-      # There's gotta be a way to test simple equality in native udev, not shell
-      # out to bash or something...
-      systemd.storePaths = [ testActiveNixStorePartition ];
-      services.udev.rules = ''
-        SUBSYSTEM!="block", GOTO="active_nixos_partition_end"
-        ENV{ID_PART_ENTRY_NAME}=="nixos-[ab]", IMPORT{cmdline}="nixos.active"
-        ENV{ID_PART_ENTRY_NAME}=="nixos-[ab]", PROGRAM="${testActiveNixStorePartition} $env{ID_PART_ENTRY_NAME} $env{nixos.active}", SYMLINK+="disk/nixos/%c", TAG="systemd"
-        LABEL="active_nixos_partition_end"
-      '';
+      supportedFilesystems = [ config.fileSystems."/nix/store".fsType ];
+      kernelModules = [ "dm-verity" ];
     };
 
     systemd.repart.partitions = {
-      nixosPartitionA = {
-        # we call this a "usr" type, but systemd's meaning of "usr" maps to
-        # our use case of anything that is static (i.e. the toplevel
-        # derivation of a nixos system).
-        Type = "usr-${pkgs.stdenv.hostPlatform.linuxArch}";
-        Label = "nixos-a";
-        Format = "erofs";
-        Minimize = "best";
-        SplitName = "nixos";
-        # This partition is populated at image creation time, but in order for
-        # systemd-repart to work in the initrd, it needs to think it has to do
-        # some "work", such as creating the root directory of the partition.
-        MakeDirectories = "/";
+      boot = {
+        Type = "esp";
+        Label = "BOOT";
+        Format = "vfat";
+        SizeMinBytes = "256M";
+        SizeMaxBytes = "256M";
+      };
+      usrPartitionA = {
+        Type = "usr";
+        Label = "usr-a";
+        SizeMinBytes = cfg.rootSize;
+        SizeMaxBytes = cfg.rootSize;
+      };
+      hashUsrPartitionA = {
+        Type = "usr-verity";
+        Label = "${config.systemd.repart.partitions.usrPartitionA.Label}-hash";
+        SizeMinBytes = verityHashSize;
+        SizeMaxBytes = verityHashSize;
       };
 
-      # TODO(jared): doesn't work since systemd-repart starts before
-      # systemd-udevd gets to resolve the disk partition label symlink
-      # # The "B" update partition and state partition get created on first boot.
-      # nixosPartitionB = {
-      #   Type = "usr-${pkgs.stdenv.hostPlatform.linuxArch}";
-      #   Label = "nixos-b";
-      #   CopyBlocks = "/dev/disk/by-partlabel/nixos-a";
-      # };
+      # The "B" update partition and root partition get created on first boot.
+      usrPartitionB = {
+        Type = "usr";
+        Label = "usr-b";
+        SizeMinBytes = cfg.rootSize;
+        SizeMaxBytes = cfg.rootSize;
+      };
+      hashUsrPartitionB = {
+        Type = "usr-verity";
+        Label = "${config.systemd.repart.partitions.usrPartitionB.Label}-hash";
+        SizeMinBytes = verityHashSize;
+        SizeMaxBytes = verityHashSize;
+      };
 
-      state = {
-        Type = "linux-generic";
-        Label = "state";
+      root = {
+        Type = "root";
+        Label = "root";
         Format = "btrfs";
-        MakeDirectories = toString [ "/home" "/var" "/etc" ];
+        FactoryReset = true;
       };
     };
 
     fileSystems."/" = {
-      fsType = "tmpfs";
-      device = "none";
-      neededForBoot = true;
+      device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions.root.Label}";
+      fsType = config.systemd.repart.partitions.root.Format;
     };
     fileSystems."/nix/store" = {
-      fsType = config.systemd.repart.partitions.nixosPartitionA.Format;
-      device = "/dev/disk/by-partlabel/nixos-a"; # TODO(jared): /dev/disk/nixos/active
+      device = "/dev/mapper/usr";
+      fsType = "squashfs"; # TODO(jared): erofs results in veritysetup corruption
+      options = [ "ro" ];
+      neededForBoot = true;
     };
     fileSystems."/boot" = {
-      device = "/dev/disk/by-partlabel/${config.image.repart.partitions.boot.repartConfig.Label}";
-      fsType = config.image.repart.partitions.boot.repartConfig.Format;
+      device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions.boot.Label}";
+      fsType = config.systemd.repart.partitions.boot.Format;
       options = [ "x-systemd.automount" ];
-    };
-    fileSystems."/state" = {
-      fsType = config.systemd.repart.partitions.state.Format;
-      device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions.state.Label}";
-      neededForBoot = true;
-    };
-    fileSystems."/etc" = {
-      device = "/state/etc";
-      options = [ "bind" ];
-      neededForBoot = true;
-    };
-    fileSystems."/var" = {
-      device = "/state/var";
-      options = [ "bind" ];
-      neededForBoot = true;
-    };
-    fileSystems."/home" = {
-      device = "/state/home";
-      options = [ "bind" ];
-      neededForBoot = true;
     };
 
     boot.postBootCommands = ''
@@ -153,5 +170,22 @@ in
         rm -f /nix-path-registration
       fi
     '';
+
+    system.build.image = pkgs.callPackage ./image.nix {
+      inherit (cfg) bootFileCommands;
+      inherit (config.system.build) toplevel;
+      bootPartition = config.systemd.repart.partitions.boot;
+      dataPartition = config.systemd.repart.partitions.usrPartitionA // {
+        Format = config.fileSystems."/nix/store".fsType;
+        Verity = "data";
+        VerityMatchKey = "usr";
+        SplitName = "usr";
+      };
+      hashPartition = config.systemd.repart.partitions.hashUsrPartitionA // {
+        Verity = "hash";
+        VerityMatchKey = "usr";
+        SplitName = "usr-hash";
+      };
+    };
   };
 }
