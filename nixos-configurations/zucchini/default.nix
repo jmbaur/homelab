@@ -11,7 +11,7 @@
   custom.image.enable = true;
   custom.image.primaryDisk = "/dev/nvme0n1";
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackages_testing;
 
   hardware.deviceTree = {
     enable = true;

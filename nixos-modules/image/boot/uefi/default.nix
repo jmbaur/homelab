@@ -13,7 +13,7 @@ in
 {
   config = lib.mkIf (cfg.bootVariant == "uefi") {
     custom.image.bootFileCommands = ''
-      echo "${systemdBoot}:/EFI/BOOT/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI"
+      echo "${systemdBoot}:/EFI/BOOT/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI" >> $bootfiles
 
       cmdline=("init=${config.system.build.toplevel}/init")
       cmdline+=("usrhash=$(jq --raw-output '.[] | select(.label=="usr-a") | .roothash' <$out/repart-output.json)")
@@ -21,7 +21,6 @@ in
         cmdline+=("$param")
       done
 
-      # ukify does not output to stderr
       ${systemdUkify}/lib/systemd/ukify build \
         --no-sign-kernel \
         --efi-arch=${pkgs.stdenv.hostPlatform.efiArch} \
@@ -32,10 +31,9 @@ in
         --os-release=@${config.environment.etc."os-release".source} \
         ${lib.optionalString config.hardware.deviceTree.enable
           "--devicetree=${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name}"} \
-        --output=$out/uki.efi \
-        1>&2
+        --output=$out/uki.efi
 
-      echo "$out/uki.efi:/EFI/Linux/nixos${config.system.nixos.versionSuffix}.efi"
+      echo "$out/uki.efi:/EFI/Linux/nixos${config.system.nixos.versionSuffix}.efi" >> $bootfiles
     '';
   };
 }

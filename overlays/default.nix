@@ -154,8 +154,6 @@ inputs: {
 
       mcbinFirmware = prev.callPackage ./mcbin-firmware { };
 
-      # linux_orangepi-5 = prev.callPackage ./kernels/linux-orangepi-5.nix { };
-
       jmbaur-keybase-pgp-keys = prev.fetchurl {
         url = " https://keybase.io/jaredbaur/pgp_keys.asc ";
         sha256 = " sha256-R2a+bF7E6Zogl5XWsjrK5dkCAvK6K2h/bje37aYSgGc=";

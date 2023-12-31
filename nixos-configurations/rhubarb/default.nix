@@ -24,7 +24,7 @@ in
     ubootLoadAddress = "0x80000";
     primaryDisk = "/dev/mmcblk0";
     bootFileCommands = ''
-      echo "${uboot}/u-boot.bin:kernel.img"
+      echo "${uboot}/u-boot.bin:kernel.img" >> $bootfiles
     '';
   };
 

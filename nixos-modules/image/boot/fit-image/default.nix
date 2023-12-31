@@ -9,7 +9,6 @@ let
       echo no active partition set, using partition A
     fi
 
-    setenv bootargs nixos.active=nixos-$active
     load ${cfg.ubootBootMedium.type} ${toString cfg.ubootBootMedium.index}:1 $loadaddr uImage.$active
     source ''${loadaddr}:bootscript
   '';
@@ -27,7 +26,7 @@ let
   kernelPath = "${config.system.build.kernel}/${config.system.boot.loader.kernelFile}";
 
   bootScript = pkgs.writeText "boot.cmd" ''
-    setenv bootargs "init=${config.system.build.toplevel}/init ${toString config.boot.kernelParams} usrhash=@usrhash@ ''${bootargs}"
+    setenv bootargs "init=${config.system.build.toplevel}/init usrhash=@usrhash@ ${toString config.boot.kernelParams}"
     bootm $loadaddr
   '';
 in
@@ -63,6 +62,9 @@ in
   config = lib.mkIf (cfg.bootVariant == "fit-image") {
     custom.image.bootFileCommands = ''
       (
+        # source the setup file to get access to `substituteInPlace`
+        source $stdenv/setup
+
         declare kernel_compression
         export description="${with config.system.nixos; "${distroName} ${codeName} ${version}"}"
         export arch=${pkgs.stdenv.hostPlatform.linuxArch}
@@ -73,7 +75,7 @@ in
 
         install -Dm0644 ${bootScript} $bootscript
         substituteInPlace $bootscript \
-          --replace '@usrhash@' $(jq --raw-output '.[] | select(.label=="usr-a") | .roothash' <$out/repart-output.json)
+          --subst-var-by usrhash $(jq --raw-output '.[] | select(.label=="usr-a") | .roothash' <$out/repart-output.json)
 
     '' + {
       "Image" = ''
@@ -93,10 +95,10 @@ in
 
         bash ${./make-fit-image-its.bash} ${config.hardware.deviceTree.package} >image.its
 
-        mkimage -f image.its $out/uImage
+        mkimage --fit image.its $out/uImage
 
-        echo "${globalBootScriptImage}:/boot.scr"
-        echo "$out/uImage:/uImage.a"
+        echo "${globalBootScriptImage}:/boot.scr" >> $bootfiles
+        echo "$out/uImage:/uImage.a" >> $bootfiles
       )
     '';
   };

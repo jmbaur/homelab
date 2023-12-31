@@ -5,7 +5,6 @@
 , formats
 , jq
 , mtools
-, runCommand
 , sbsigntool
 , squashfsTools
 , stdenv
@@ -51,8 +50,9 @@ let
   dataPartitionConfig = (formats.ini { }).generate "20-usr-a.conf" { Partition = dataPartition; };
   hashPartitionConfig = (formats.ini { }).generate "20-usr-a-hash.conf" { Partition = hashPartition; };
 in
-runCommand "nixos-image"
-{
+stdenv.mkDerivation {
+  name = "nixos-image";
+
   depsBuildBuild = [
     dosfstools
     dtc
@@ -66,42 +66,48 @@ runCommand "nixos-image"
     xz
     zstd
   ];
+
   inherit bootFileCommands;
   passAsFile = [ "bootFileCommands" ];
-} ''
-  install -Dm0644 ${bootPartitionConfig} repart.d/10-boot.conf
-  install -Dm0644 ${dataPartitionConfig} repart.d/20-usr-a.conf
-  install -Dm0644 ${hashPartitionConfig} repart.d/20-usr-a-hash.conf
 
-  echo "CopyFiles=${closure}/registration:/nix-path-registration" >> repart.d/20-usr-a.conf
-  for path in $(cat ${closure}/store-paths); do
-    echo "CopyFiles=$path:''${path#/nix/store}" >> repart.d/20-usr-a.conf
-  done
+  buildCommand = ''
+    install -Dm0644 ${bootPartitionConfig} repart.d/10-boot.conf
+    install -Dm0644 ${dataPartitionConfig} repart.d/20-usr-a.conf
+    install -Dm0644 ${hashPartitionConfig} repart.d/20-usr-a-hash.conf
 
-  repart_args=(
-    "--dry-run=no"
-    "--architecture=${systemdArchitecture}"
-    "--seed=${seed}"
-    "--definitions=./repart.d"
-    "--json=pretty"
-  )
+    echo "CopyFiles=${closure}/registration:/nix-path-registration" >> repart.d/20-usr-a.conf
+    for path in $(cat ${closure}/store-paths); do
+      echo "CopyFiles=$path:''${path#/nix/store}" >> repart.d/20-usr-a.conf
+    done
 
-  mkdir -p $out
+    repart_args=(
+      "--dry-run=no"
+      "--architecture=${systemdArchitecture}"
+      "--seed=${seed}"
+      "--definitions=./repart.d"
+      "--json=pretty"
+    )
 
-  fakeroot systemd-repart ''${repart_args[@]} \
-    --defer-partitions=esp \
-    --empty=create \
-    --size=auto \
-    --split=yes \
-    $out/image.raw \
-    | tee $out/repart-output.json
+    mkdir -p $out
 
-  for line in $(bash "$bootFileCommandsPath"); do
-    echo "CopyFiles=$line" >> repart.d/10-boot.conf
-  done
+    fakeroot systemd-repart ''${repart_args[@]} \
+      --defer-partitions=esp \
+      --empty=create \
+      --size=auto \
+      --split=yes \
+      $out/image.raw \
+      | tee $out/repart-output.json
 
-  fakeroot systemd-repart ''${repart_args[@]} \
-    $out/image.raw
+    export bootfiles=bootfiles
+    bash "$bootFileCommandsPath"
+    for line in $(cat $bootfiles); do
+      echo "copying boot file $line"
+      echo "CopyFiles=$line" >> repart.d/10-boot.conf
+    done
 
-  zstd --rm $out/*.raw
-''
+    fakeroot systemd-repart ''${repart_args[@]} \
+      $out/image.raw
+
+    zstd --rm $out/*.raw
+  '';
+}
