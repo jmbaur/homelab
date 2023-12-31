@@ -237,6 +237,7 @@ in
             mouse.hide_when_typing = true;
             selection.save_to_clipboard = true;
             font = { normal.family = "monospace"; size = 16; };
+            terminal.osc52 = "CopyPaste";
             colors = lib.mapAttrsRecursive (_: color: "#${color}") {
               primary = { foreground = "e0e2ea"; background = "14161b"; };
             };
