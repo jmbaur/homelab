@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, utils, ... }:
 
 let
   cfg = config.custom.image;
@@ -17,16 +17,16 @@ in
       '';
     };
 
-    rootDevicePath = mkOption {
+    primaryDisk = mkOption {
       type = types.path;
       description = mdDoc ''
         TODO
       '';
     };
 
-    rootSize = mkOption {
+    immutablePadding = mkOption {
       type = types.str;
-      default = "2G";
+      default = "512M";
       description = mdDoc ''
         TODO
       '';
@@ -78,6 +78,10 @@ in
     # package.
     boot.initrd.services.lvm.enable = true;
 
+    systemd.package = pkgs.systemd.overrideAttrs (old: {
+      patches = old.patches ++ [ ./systemd-repart.patch ];
+    });
+
     boot.initrd = {
       systemd = {
         enable = true;
@@ -95,12 +99,15 @@ in
         # Require that systemd-repart only starts after we have our dm-verity
         # device. This prevents a race condition between systemd-repart and
         # systemd-veritysetup.
-        services.systemd-repart.after = [ "dev-mapper-usr.device" ];
-        services.systemd-repart.requires = [ "dev-mapper-usr.device" ];
+        services.systemd-repart.after = map (device: "${utils.escapeSystemdPath device}.device") [
+          "/dev/mapper/usr"
+          "/dev/disk/by-partlabel/usr-a"
+        ];
+        services.systemd-repart.requires = config.boot.initrd.systemd.services.systemd-repart.after;
 
         # This needs to be set in order to create the root partition
         # dynamically on first boot.
-        repart.device = cfg.rootDevicePath;
+        repart.device = cfg.primaryDisk;
       };
 
       availableKernelModules = [ "dm-verity" ];
@@ -117,22 +124,18 @@ in
       "20-usr-a" = {
         Type = "usr";
         Label = "usr-a";
-        SizeMinBytes = cfg.rootSize;
-        SizeMaxBytes = cfg.rootSize;
       };
       "20-usr-a-hash" = {
         Type = "usr-verity";
         Label = "usr-a-hash";
-        SizeMinBytes = verityHashSize;
-        SizeMaxBytes = verityHashSize;
       };
 
       # The "B" update partition and root partition get created on first boot.
+      # TODO(jared): get CopyBlocks to work
       "20-usr-b" = {
         Type = "usr";
         Label = "usr-b";
-        SizeMinBytes = cfg.rootSize;
-        SizeMaxBytes = cfg.rootSize;
+        CopyBlocks = "/dev/disk/by-partlabel/usr-a";
       };
       "20-usr-b-hash" = {
         Type = "usr-verity";
@@ -173,7 +176,8 @@ in
 
     system.build.image = pkgs.callPackage ./image.nix {
       usrFormat = config.fileSystems."/nix/store".fsType;
-      inherit (cfg) bootFileCommands;
+      inherit verityHashSize;
+      inherit (cfg) immutablePadding bootFileCommands;
       inherit (config.system.build) toplevel;
       inherit (config.systemd.repart) partitions;
     };

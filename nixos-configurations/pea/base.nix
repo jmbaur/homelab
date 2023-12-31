@@ -49,7 +49,7 @@ in
   custom.image = {
     enable = true;
     bootVariant = "fit-image";
-    rootDevicePath = "/dev/mmcblk0";
+    primaryDisk = "/dev/mmcblk0";
     ubootBootMedium.type = "mmc";
   };
 

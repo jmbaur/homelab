@@ -15,6 +15,8 @@
 
   # arguments
 , toplevel
+, verityHashSize
+, immutablePadding
 , bootFileCommands
 , partitions
 , usrFormat
@@ -25,17 +27,21 @@ let
 
   bootPartition = partitions."10-boot";
   dataPartition = partitions."20-usr-a" // {
+    Minimize = "best";
+    PaddingMinBytes = immutablePadding;
+    PaddingMaxBytes = immutablePadding;
     Format = usrFormat;
     Verity = "data";
     VerityMatchKey = "usr";
     SplitName = "usr";
   };
   hashPartition = partitions."20-usr-a-hash" // {
+    SizeMinBytes = verityHashSize;
+    SizeMaxBytes = verityHashSize;
     Verity = "hash";
     VerityMatchKey = "usr";
     SplitName = "usr-hash";
   };
-
 
   systemdArchitecture = builtins.replaceStrings [ "_" ] [ "-" ] stdenv.hostPlatform.linuxArch;
   closure = closureInfo { rootPaths = [ toplevel ]; };

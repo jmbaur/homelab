@@ -20,8 +20,8 @@ nixosTest {
 
     custom.image = {
       enable = true;
-      rootDevicePath = "/dev/vda";
-      rootSize = "1G";
+      primaryDisk = "/dev/vda";
+      immutablePadding = "0";
     };
   };
 
@@ -49,7 +49,7 @@ nixosTest {
       "-F",
       "raw",
       tmp_disk_image.name,
-      "3G",
+      "2G",
     ])
 
     # Set NIX_DISK_IMAGE so that the qemu script finds the right disk image.
