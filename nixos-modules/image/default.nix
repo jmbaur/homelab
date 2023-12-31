@@ -9,6 +9,8 @@ in
   options.custom.image = with lib; {
     enable = mkEnableOption "TODO";
 
+    mutableNixStore = mkEnableOption "TODO";
+
     bootFileCommands = mkOption {
       type = types.lines;
       default = "";
@@ -110,7 +112,7 @@ in
         repart.device = cfg.primaryDisk;
       };
 
-      availableKernelModules = [ "dm-verity" ];
+      availableKernelModules = [ "dm-verity" ] ++ lib.optional cfg.mutableNixStore "overlay";
     };
 
     systemd.repart.partitions = {
@@ -148,19 +150,34 @@ in
         Label = "root";
         Format = "btrfs";
         FactoryReset = true;
+        MakeDirectories = lib.mkIf cfg.mutableNixStore (toString [ "/nix/.rw-store/upper" "/nix/.rw-store/work" ]);
       };
     };
+
+    # enable zram by default since we don't create any swap partitions
+    zramSwap.enable = lib.mkDefault true;
 
     fileSystems."/" = {
       device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions."30-root".Label}";
       fsType = config.systemd.repart.partitions."30-root".Format;
+      options = [ "compress=zstd" "noatime" "defaults" ];
     };
-    fileSystems."/nix/store" = {
+    fileSystems."/nix/.ro-store" = {
       device = "/dev/mapper/usr";
       fsType = "squashfs"; # TODO(jared): erofs results in dm-verity corruption
       options = [ "ro" ];
       neededForBoot = true;
     };
+    fileSystems."/nix/store" =
+      if cfg.mutableNixStore then {
+        device = "overlay";
+        fsType = "overlay";
+        options = [ "lowerdir=/sysroot/nix/.ro-store" "upperdir=/sysroot/nix/.rw-store/upper" "workdir=/sysroot/nix/.rw-store/work" ];
+      } else {
+        device = "/nix/.ro-store";
+        fsType = "none";
+        options = [ "bind" ];
+      };
     fileSystems."/boot" = {
       device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions."10-boot".Label}";
       fsType = config.systemd.repart.partitions."10-boot".Format;
@@ -175,7 +192,7 @@ in
     '';
 
     system.build.image = pkgs.callPackage ./image.nix {
-      usrFormat = config.fileSystems."/nix/store".fsType;
+      usrFormat = config.fileSystems."/nix/.ro-store".fsType;
       inherit verityHashSize;
       inherit (cfg) immutablePadding bootFileCommands;
       inherit (config.system.build) toplevel;
