@@ -25,6 +25,7 @@ in
         --no-sign-kernel \
         --efi-arch=${pkgs.stdenv.hostPlatform.efiArch} \
         --uname=${config.system.build.kernel.version} \
+        --stub=${config.systemd.package}/lib/systemd/boot/efi/linux${pkgs.stdenv.hostPlatform.efiArch}.efi.stub \
         --linux=${config.system.build.kernel}/${config.system.boot.loader.kernelFile} \
         --cmdline="$(echo "''${cmdline[@]}")" \
         --initrd=${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile} \
