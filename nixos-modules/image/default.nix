@@ -52,7 +52,7 @@ in
     # we don't need nixpkgs boot-loading infrastructure
     boot.loader.grub.enable = false;
 
-    nix.enable = !cfg.mutableNixStore;
+    nix.enable = cfg.mutableNixStore;
     system.switch.enable = false;
     users.mutableUsers = cfg.mutableNixStore;
 

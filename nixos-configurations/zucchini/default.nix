@@ -4,7 +4,11 @@
   users.users.root.password = "";
   # }}}
 
-  nixpkgs.hostPlatform = "aarch64-linux";
+  nixpkgs.hostPlatform = lib.recursiveUpdate lib.systems.platforms.aarch64-multiplatform
+    (lib.systems.examples.aarch64-multiplatform // {
+      # Compressed kernel in an EFI stub that self-decompresses on startup.
+      linux-kernel.target = "vmlinuz.efi";
+    });
 
   custom.crossCompile.enable = true;
 
