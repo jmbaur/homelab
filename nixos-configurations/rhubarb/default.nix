@@ -22,6 +22,7 @@ in
   custom.image.enable = true;
   custom.image.bootVariant = "fit-image";
   custom.image.ubootBootMedium.type = "mmc";
+  custom.image.primaryDisk = "/dev/mmcblk0";
   custom.image.bootFileCommands = ''
     echo "${uboot}/u-boot.bin:kernel.img"
   '';
