@@ -11,6 +11,7 @@
   boot.extraModulePackages = [ ];
 
   hardware.bluetooth.enable = true;
+  networking.wireless.iwd.enable = true;
 
   services.fwupd.enable = true;
 
