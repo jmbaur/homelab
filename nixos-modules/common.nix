@@ -45,7 +45,7 @@ in
     nix = {
       channel.enable = false; # opt out of nix channels
       settings = {
-        experimental-features = [ "nix-command" "flakes" "repl-flake" ];
+        experimental-features = [ "nix-command" "flakes" ];
         trusted-users = [ "@wheel" ];
       };
       gc = lib.mkIf (config.nix.enable && isNotContainer) {

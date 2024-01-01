@@ -16,11 +16,12 @@ nixos type="switch":
 		{{type}}
 
 home:
-	$(nix build \
+	hmConfig=$(nix build \
 		--no-link \
 		--print-out-paths \
 		--print-build-logs \
-		{{justfile_directory()}}#homeConfigurations.$(whoami)-$(hostname).activationPackage)/activate
+		{{justfile_directory()}}#homeConfigurations.$(whoami)-$(hostname).activationPackage) \
+		&& $hmConfig/activate
 
 update:
 	#!/usr/bin/env bash

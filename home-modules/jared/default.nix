@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 let
   cfg = config.jared;
 in
@@ -15,6 +15,15 @@ in
   config = lib.mkMerge [
     {
       home.stateVersion = "24.05";
+
+      nix = {
+        package = pkgs.nix;
+        registry.nixpkgs.flake = inputs.nixpkgs;
+        settings = {
+          nix-path = [ "nixpkgs=${inputs.nixpkgs}" ];
+          experimental-features = [ "nix-command" "flakes" "repl-flake" ];
+        };
+      };
 
       home.username = lib.mkDefault "jared";
       home.homeDirectory = "/home/${config.home.username}";
@@ -54,7 +63,6 @@ in
       home.sessionVariables = {
         PROJECTS_DIR = "${config.home.homeDirectory}/projects";
         EDITOR = "nvim";
-        NIX_PATH = "nixpkgs=${pkgs.path}";
       };
       home.shellAliases = {
         j = "tmux-jump";
@@ -225,6 +233,7 @@ in
       home.packages = with pkgs; [
         chromium-wayland
         firefox
+        font-awesome
         jetbrains-mono
         wl-clipboard
         xdg-terminal-exec
@@ -243,7 +252,7 @@ in
         settings = {
           background = "#14161b";
           clipboard_control = "write-clipboard write-primary read-clipboard read-primary";
-          copy_on_select = false;
+          copy_on_select = true;
           enable_audio_bell = false;
           font_family = "JetBrains Mono";
           font_size = 14;
@@ -291,6 +300,25 @@ in
         createDirectories = true;
       };
 
+      programs.waybar = {
+        enable = false;
+        systemd.enable = true;
+        style = ''
+          window#waybar {
+              background: @theme_base_color;
+              border-bottom: 1px solid @unfocused_borders;
+              color: @theme_text_color;
+          }
+        '';
+        settings.main = {
+          layer = "top";
+          position = "top";
+          modules-left = [ "sway/workspaces" "sway/mode" "idle_inhibitor" ];
+          modules-center = [ "clock" ];
+          modules-right = [ "privacy" "wireplumber" "battery" "tray" ];
+        };
+      };
+
       programs.swaylock = {
         enable = true;
         settings.color = "333333";
@@ -310,6 +338,7 @@ in
 
       wayland.windowManager.sway = {
         enable = true;
+        systemd.enable = true;
         config = {
           modifier = "Mod4";
           terminal = "kitty";
@@ -317,6 +346,11 @@ in
           workspaceAutoBackAndForth = true;
           workspaceLayout = "stacking";
           seat."*".xcursor_theme = with config.home.pointerCursor; "${name} ${toString size}";
+          bars = lib.optional (!config.programs.waybar.enable) {
+            position = "top";
+            trayOutput = "*";
+            statusCommand = "${pkgs.i3status}/bin/i3status";
+          };
           input."type:pointer" = {
             accel_profile = "flat";
           };
