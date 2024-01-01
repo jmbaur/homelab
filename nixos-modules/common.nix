@@ -27,17 +27,14 @@ in
     documentation.man.enable = lib.mkDefault false;
     documentation.nixos.enable = lib.mkDefault false;
 
-    boot.enableContainers = lib.mkDefault false;
-
     programs.command-not-found.enable = false;
 
     security.sudo.extraRules = [{ groups = [ "wheel" ]; commands = [{ command = "/run/current-system/sw/bin/networkctl"; options = [ "NOPASSWD" ]; }]; }];
 
     networking.nftables.enable = lib.mkDefault true;
 
+    boot.enableContainers = lib.mkDefault false;
     boot.tmp.cleanOnBoot = lib.mkDefault isNotContainer;
-    boot.loader.grub.configurationLimit = lib.mkDefault 50;
-    boot.loader.systemd-boot.configurationLimit = lib.mkDefault 50;
 
     i18n.defaultLocale = "en_US.UTF-8";
     console.useXkbConfig = true;
@@ -47,10 +44,6 @@ in
       settings = {
         experimental-features = [ "nix-command" "flakes" ];
         trusted-users = [ "@wheel" ];
-      };
-      gc = lib.mkIf (config.nix.enable && isNotContainer) {
-        automatic = lib.mkDefault true;
-        dates = lib.mkDefault "weekly";
       };
     };
 

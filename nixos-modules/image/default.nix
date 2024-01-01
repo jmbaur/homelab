@@ -55,7 +55,7 @@ in
     boot.loader.grub.enable = false;
 
     users.mutableUsers = cfg.mutableNixStore;
-    nix.enable = cfg.mutableNixStore;
+    nix.enable = true; # cfg.mutableNixStore;
     system.disableInstallerTools = true;
     system.switch.enable = false;
 
