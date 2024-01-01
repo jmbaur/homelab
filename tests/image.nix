@@ -58,17 +58,13 @@ lib.genAttrs [ "immutable" "mutable" ] (test: nixosTest {
     bootctl_status = machine.succeed("bootctl status")
 
     machine.succeed("test -f /nix/.ro-store/.nix-path-registration")
+    ${lib.optionalString nodes.machine.custom.image.mutableNixStore ''
     machine.succeed("test $(nix-store --dump-db | wc -l) -gt 0")
+    ''}
 
-    with subtest("nix utilities"):
-      machine.fail("command -v nixos-rebuild")
-      machine.fail("test -f /run/current-system/bin/switch-to-configuration")
+    machine.fail("command -v nixos-rebuild")
+    machine.fail("test -f /run/current-system/bin/switch-to-configuration")
 
-    with subtest("${test} nix store"):
-      ${if test == "immutable" then ''
-      machine.fail("touch foo && nix store add-file ./foo")
-      '' else ''
-      machine.succeed("touch foo && nix store add-file ./foo")
-      ''}
+    machine.${if nodes.machine.custom.image.mutableNixStore then "succeed" else "fail"}("touch foo && nix store add-file ./foo")
   '';
 })

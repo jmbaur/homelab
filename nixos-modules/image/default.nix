@@ -57,7 +57,7 @@ in
     users.mutableUsers = cfg.mutableNixStore;
     system.disableInstallerTools = true;
     system.switch.enable = false;
-    nix.enable = true;
+    nix.enable = cfg.mutableNixStore;
 
     boot.kernelParams = [
       "systemd.verity_root_options=panic-on-corruption"
@@ -183,7 +183,7 @@ in
       options = [ "x-systemd.automount" ];
     };
 
-    boot.postBootCommands = ''
+    boot.postBootCommands = lib.optionalString cfg.mutableNixStore ''
       ${lib.getExe' config.nix.package "nix-store"} --load-db </nix/.ro-store/.nix-path-registration
     '';
 
