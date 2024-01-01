@@ -1,4 +1,4 @@
-{ config, lib, pkgs, inputs, ... }:
+{ options, config, lib, pkgs, inputs, ... }:
 let
   cfg = config.custom.common;
   isNotContainer = !config.boot.isContainer;
@@ -11,7 +11,7 @@ in
     system.stateVersion = lib.mkDefault "24.05";
 
     # we build on x86_64-linux
-    nixpkgs.buildPlatform = lib.mkIf (config.nixpkgs.hostPlatform != "x86_64-linux") "x86_64-linux";
+    nixpkgs.buildPlatform = "x86_64-linux";
 
     environment.defaultPackages = [ ];
 
