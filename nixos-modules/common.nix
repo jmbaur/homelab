@@ -10,8 +10,14 @@ in
     # NOTE: this should be set explicitly if it is actually needed
     system.stateVersion = lib.mkDefault "24.05";
 
-    # we build on x86_64-linux
-    nixpkgs.buildPlatform = "x86_64-linux";
+    # We build on x86_64-linux.
+    #
+    # NOTE: We cannot simply set buildPlatform to "x86_64-linux" since the
+    # applied option is passed to lib.systems.elaborate, and for some reason
+    # (lib.systems.elaborate "x86_64-linux") != (lib.systems.elaborate
+    # "x86_64-linux"), which is determined by nixpkgs if the nixos system needs
+    # to be cross-compiled. See https://github.com/NixOS/nixpkgs/issues/278001.
+    nixpkgs.buildPlatform = if (!config.nixpkgs.hostPlatform.isx86_64) then "x86_64-linux" else config.nixpkgs.hostPlatform;
 
     environment.defaultPackages = [ ];
 
