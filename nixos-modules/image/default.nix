@@ -97,6 +97,8 @@ in
       availableKernelModules = [ "dm-verity" ] ++ lib.optional cfg.mutableNixStore "overlay";
     };
 
+    # We specify Weight=0 for all partitions that we don't want to grow at all
+    # during first boot.
     systemd.repart.partitions = {
       "10-boot" = {
         Type = "esp";
@@ -104,14 +106,17 @@ in
         Format = "vfat";
         SizeMinBytes = "256M";
         SizeMaxBytes = "256M";
+        Weight = 0;
       };
       "20-usr-a" = {
         Type = "usr";
         Label = "usr-a";
+        Weight = 0;
       };
       "20-usr-a-hash" = {
         Type = "usr-verity";
         Label = "usr-a-hash";
+        Weight = 0;
       };
 
       # The "B" update partition and root partition get created on first boot.
@@ -119,13 +124,13 @@ in
         Type = "usr";
         Label = "usr-b";
         CopyBlocks = "/dev/disk/by-partlabel/usr-a";
-        Weight = 0; # Don't allocate any extra space for this partition
+        Weight = 0;
       };
       "20-usr-b-hash" = {
         Type = "usr-verity";
         Label = "usr-b-hash";
         CopyBlocks = "/dev/disk/by-partlabel/usr-a-hash";
-        Weight = 0; # Don't allocate any extra space for this partition
+        Weight = 0;
       };
       "30-root" = {
         Type = "root";

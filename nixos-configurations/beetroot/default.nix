@@ -1,13 +1,8 @@
-{ lib, pkgs, inputs, ... }: {
+{ lib, ... }: {
   imports = [
     (import ../disko-single-disk-encrypted.nix "/dev/nvme0n1")
     ./minimal.nix
   ];
-
-  system.build.installer = (pkgs.nixos ({
-    imports = [ inputs.self.nixosModules.default ./minimal.nix ];
-    custom.tinyboot-installer.enable = true;
-  })).config.system.build.diskImage;
 
   hardware.bluetooth.enable = true;
 

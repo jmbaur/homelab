@@ -1,4 +1,4 @@
-{ options, config, lib, pkgs, inputs, ... }:
+{ config, lib, ... }:
 let
   cfg = config.custom.common;
   isNotContainer = !config.boot.isContainer;
@@ -42,17 +42,9 @@ in
     i18n.defaultLocale = "en_US.UTF-8";
     console.useXkbConfig = true;
 
-    # 2.16 has a fix for ssh control master when nix-copy'ing
-    nix.package = if lib.versionAtLeast pkgs.nix.version "2.16" then pkgs.nix else pkgs.nixVersions.nix_2_16;
-
-    # pin a local system's registry for nixpkgs
-    nix.registry.nixpkgs.flake = inputs.nixpkgs;
-
     nix = {
       channel.enable = false; # opt out of nix channels
-      nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
       settings = {
-        nix-path = config.nix.nixPath;
         experimental-features = [ "nix-command" "flakes" "repl-flake" ];
         trusted-users = [ "@wheel" ];
       };

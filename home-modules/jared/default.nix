@@ -54,6 +54,7 @@ in
       home.sessionVariables = {
         PROJECTS_DIR = "${config.home.homeDirectory}/projects";
         EDITOR = "nvim";
+        NIX_PATH = "nixpkgs=${pkgs.path}";
       };
       home.shellAliases = {
         j = "tmux-jump";
@@ -230,7 +231,7 @@ in
       ];
 
       xdg.configFile."xdg-terminals.list".text = ''
-        alacritty.desktop
+        Alacritty.desktop
         kitty.desktop
       '';
 
@@ -244,7 +245,6 @@ in
           font_family = "JetBrains Mono";
           font_size = 14;
           foreground = "#e0e2ea";
-          linux_display_server = "x11";
           shell_integration = "no-cursor";
           tab_bar_style = "powerline";
           update_check_interval = 0;

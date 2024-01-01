@@ -1,17 +1,8 @@
-{ config, pkgs, inputs, ... }: {
+{ config, pkgs, ... }: {
   imports = [
     (import ../disko-single-disk-encrypted.nix "/dev/nvme0n1")
     ./minimal.nix
   ];
-
-  system.build.installer = (pkgs.nixos ({
-    imports = [
-      ({ modulesPath, ... }: { imports = [ "${modulesPath}/profiles/all-hardware.nix" ]; })
-      inputs.self.nixosModules.default
-      ./minimal.nix
-    ];
-    custom.tinyboot-installer.enable = true;
-  })).config.system.build.diskImage;
 
   sops.defaultSopsFile = ./secrets.yaml;
 

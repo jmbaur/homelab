@@ -1,6 +1,5 @@
 inputs: {
   default = { ... }: {
-    _module.args = { inherit inputs; };
     nixpkgs.overlays = with inputs; [ self.overlays.default ];
     imports = [
       ./basic-network.nix

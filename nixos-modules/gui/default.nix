@@ -2,28 +2,20 @@
 let
   cfg = config.custom.gui;
 
-  enabledGnomeExtensions = with pkgs.gnomeExtensions; [ appindicator clipboard-indicator caffeine ];
+  launcher = pkgs.writeShellScript "greetd-launcher" ''
+    if command -v greetd-launcher >/dev/null; then
+      exec -a "$0" greetd-launcher
+    else
+      exec -a "$0" "$SHELL"
+    fi
+  '';
 in
 {
-  options.custom.gui = with lib; {
-    enable = mkEnableOption "GUI config";
-  };
+  options.custom.gui.enable = lib.mkEnableOption "gui";
 
   config = lib.mkIf cfg.enable {
-    services.xserver.enable = true;
-    services.xserver.displayManager.gdm.enable = true;
-    services.xserver.desktopManager.gnome.enable = true;
-
-    programs.gnupg.agent.enable = true;
-    programs.ssh.startAgent = true;
-
-    # ensure the plugdev group exists for udev rules for qmk
-    users.groups.plugdev = { };
-    services.udev.packages = [
-      pkgs.yubikey-personalization
-      pkgs.qmk-udev-rules
-      pkgs.teensy-udev-rules
-    ];
+    hardware.keyboard.qmk.enable = true;
+    services.udev.packages = [ pkgs.yubikey-personalization pkgs.teensy-udev-rules ];
 
     nixpkgs.config.allowUnfreePredicate = pkg:
       builtins.elem (lib.getName pkg) [ "teensy-udev-rules" ];
@@ -36,53 +28,30 @@ in
       pulse.enable = true;
     };
 
-    # needed by some apps
-    environment.sessionVariables.XCURSOR_SIZE = "32";
+    location.provider = "geoclue2";
 
-    environment.systemPackages = enabledGnomeExtensions;
-
-    programs.dconf = {
+    programs.gnupg.agent.enable = true;
+    programs.ssh.startAgent = true;
+    programs.wshowkeys.enable = true;
+    programs.sway = {
       enable = true;
-      profiles = with lib.gvariant; {
-        gdm.databases = [{
-          settings = {
-            "org/gnome/desktop/interface" = {
-              color-scheme = mkString "prefer-light";
-              cursor-size = mkInt32 32;
-            };
-          };
-        }];
-        user.databases = [{
-          settings = {
-            "org/gnome/desktop/peripherals/keyboard" = {
-              repeat-interval = mkUint32 25;
-              delay = mkUint32 300;
-            };
-            "org/gnome/desktop/background" = {
-              picture-uri = mkString "file:///run/current-system/sw/share/backgrounds/gnome/vnc-l.png";
-              picture-uri-dark = mkString "file:///run/current-system/sw/share/backgrounds/gnome/vnc-d.png";
-            };
-            "org/gnome/desktop/wm/preferences" = {
-              resize-with-right-button = mkBoolean true;
-            };
-            "org/gnome/desktop/peripherals/touchpad" = {
-              tap-to-click = mkBoolean true;
-            };
-            "org/gnome/desktop/input-sources" = {
-              xkb-options = lib.splitString "," config.services.xserver.xkb.options;
-            };
-            "org/gnome/desktop/interface" = {
-              clock-show-date = mkBoolean true;
-              clock-show-weekday = mkBoolean true;
-              color-scheme = mkString "prefer-light";
-              cursor-size = mkInt32 32;
-            };
-            "org/gnome/shell".enabled-extensions = map (e: e.extensionUuid) enabledGnomeExtensions;
-            "org/gnome/system/location".enabled = mkBoolean true;
-            "org/gnome/desktop/datetime".automatic-timezone = mkBoolean true;
-          };
-        }];
-      };
+      extraPackages = [ ];
+      wrapperFeatures = { base = true; gtk = true; };
+    };
+
+    services.automatic-timezoned.enable = true;
+    services.avahi.enable = true;
+    services.dbus.enable = true;
+    services.pcscd.enable = true;
+    services.power-profiles-daemon.enable = true;
+    services.printing.enable = true;
+    services.udisks2.enable = true;
+    services.upower.enable = true;
+
+    services.greetd = {
+      enable = true;
+      vt = 7;
+      settings.default_session.command = "${pkgs.greetd.greetd}/bin/agreety --cmd ${launcher}";
     };
   };
 }
