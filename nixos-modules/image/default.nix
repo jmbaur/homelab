@@ -175,6 +175,7 @@ in
 
     system.build.image = pkgs.callPackage ./image.nix {
       usrFormat = config.fileSystems."/nix/.ro-store".fsType;
+      imageName = config.networking.hostName;
       inherit (cfg) immutablePadding bootFileCommands;
       inherit (config.system.build) toplevel;
       inherit (config.systemd.repart) partitions;

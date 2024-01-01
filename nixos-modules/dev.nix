@@ -14,9 +14,12 @@ with lib;
     };
 
     environment.systemPackages = [ pkgs.man-pages pkgs.man-pages-posix ];
-    environment.enableAllTerminfo = true;
 
-    documentation.dev.enable = true;
+    documentation.enable = true;
+    documentation.doc.enable = true;
+    documentation.info.enable = true;
+    documentation.man.enable = true;
+    documentation.nixos.enable = true;
 
     programs.ssh.startAgent = true;
 

@@ -1,20 +1,16 @@
 { pkgs, lib, ... }: {
-  # {{{ TODO(jared): delete this
-  users.allowNoPasswordLogin = true;
-  users.users.root.password = "";
-  # }}}
-
   nixpkgs.hostPlatform = lib.recursiveUpdate lib.systems.platforms.aarch64-multiplatform
     (lib.systems.examples.aarch64-multiplatform // {
       # Compressed kernel in an EFI stub that self-decompresses on startup.
       linux-kernel.target = "vmlinuz.efi";
     });
 
-  custom.crossCompile.enable = true;
-
+  custom.basicNetwork.enable = true;
+  custom.dev.enable = true;
   custom.image.enable = true;
   custom.image.mutableNixStore = true;
   custom.image.primaryDisk = "/dev/disk/by-path/platform-a41000000.pcie-pci-0004:41:00.0-nvme-1";
+  custom.users.jared.enable = true;
 
   boot.kernelPackages = pkgs.linuxPackages_testing;
 

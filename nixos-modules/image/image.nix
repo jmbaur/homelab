@@ -19,6 +19,7 @@
 , bootFileCommands
 , partitions
 , usrFormat
+, imageName
 }:
 
 let
@@ -54,7 +55,7 @@ let
   hashPartitionConfig = (formats.ini { }).generate "20-usr-a-hash.conf" { Partition = hashPartition; };
 in
 stdenv.mkDerivation {
-  name = "nixos-image";
+  name = "nixos-image-${imageName}";
 
   depsBuildBuild = [
     dosfstools

@@ -29,7 +29,6 @@ inputs.nixpkgs.lib.mapAttrs
 #       nixpkgs.hostPlatform = "aarch64-linux";
 #       boot.initrd.systemd.enable = true;
 #       hardware.clearfog-cn913x.enable = true;
-#       custom.crossCompile.enable = true;
 #     })
 #   ];
 # };
@@ -41,7 +40,6 @@ inputs.nixpkgs.lib.mapAttrs
 #       nixpkgs.hostPlatform = "aarch64-linux";
 #       hardware.bpi-r3.enable = true;
 #       custom.server.enable = true; # limits packages needed for cross-compilation
-#       custom.crossCompile.enable = true;
 #       custom.disableZfs = true;
 #     })
 #   ];
@@ -62,7 +60,6 @@ inputs.nixpkgs.lib.mapAttrs
 #       hardware.armada-388-clearfog.enable = true;
 #       networking.useNetworkd = true;
 #       custom.server.enable = true;
-#       custom.crossCompile.enable = true;
 #       custom.disableZfs = true;
 #       environment.systemPackages = [
 #         (pkgs.writeShellScriptBin "generate-macaddrs" ''

@@ -10,7 +10,20 @@ in
     # NOTE: this should be set explicitly if it is actually needed
     system.stateVersion = lib.mkDefault "24.05";
 
+    # we build on x86_64-linux
+    nixpkgs.buildPlatform = lib.mkIf (config.nixpkgs.hostPlatform != "x86_64-linux") "x86_64-linux";
+
     environment.defaultPackages = [ ];
+
+    documentation.enable = lib.mkDefault false;
+    documentation.doc.enable = lib.mkDefault false;
+    documentation.info.enable = lib.mkDefault false;
+    documentation.man.enable = lib.mkDefault false;
+    documentation.nixos.enable = lib.mkDefault false;
+
+    boot.enableContainers = lib.mkDefault false;
+
+    programs.command-not-found.enable = false;
 
     security.sudo.extraRules = [{ groups = [ "wheel" ]; commands = [{ command = "/run/current-system/sw/bin/networkctl"; options = [ "NOPASSWD" ]; }]; }];
 
@@ -45,7 +58,6 @@ in
 
     services.openssh = lib.mkIf isNotContainer {
       enable = true;
-      openFirewall = lib.mkDefault (!config.custom.gui.enable);
       settings = {
         # use more secure defaults
         PermitRootLogin = lib.mkDefault "prohibit-password";

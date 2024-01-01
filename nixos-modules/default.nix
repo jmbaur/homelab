@@ -7,7 +7,6 @@ inputs: {
       ./btrfs.nix
       ./builder.nix
       ./common.nix
-      ./cross-compile.nix
       ./deployee.nix
       ./depthcharge
       ./dev.nix

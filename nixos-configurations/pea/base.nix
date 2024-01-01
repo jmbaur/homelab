@@ -71,8 +71,6 @@ in
       };
     });
 
-  custom.crossCompile.enable = true;
-
   # {{{ TODO(jared): delete this
   users.allowNoPasswordLogin = true;
   users.users.root.password = "";

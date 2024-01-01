@@ -14,7 +14,6 @@ let
   };
 in
 {
-  custom.crossCompile.enable = true;
   nixpkgs.hostPlatform = "aarch64-linux";
 
   custom.image = {

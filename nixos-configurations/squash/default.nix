@@ -9,7 +9,6 @@
   hardware.armada-388-clearfog.enable = true;
 
   custom = {
-    crossCompile.enable = true;
     server.enable = true;
     disableZfs = true;
     deployee = {
