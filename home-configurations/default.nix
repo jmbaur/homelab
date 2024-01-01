@@ -18,7 +18,7 @@ builtins.listToAttrs (flatten (
           inherit system;
           overlays = [ inputs.self.overlays.default ];
         };
-        modules = [ inputs.self.homeModules.jared ] ++ modules;
+        modules = [ inputs.self.homeModules.${userName} ] ++ modules;
       }))
       (filterAttrs (_: entryType: entryType == "directory") (builtins.readDir ./${userName})))
     (filterAttrs (_: entryType: entryType == "directory") (builtins.readDir ./.))
