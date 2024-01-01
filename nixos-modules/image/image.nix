@@ -40,13 +40,11 @@ let
       SplitName = "usr";
     }) [ "SizeMinBytes" ];
 
-  hashPartition = builtins.removeAttrs
-    (partitions."20-usr-a-hash" // {
-      Minimize = "best";
+  hashPartition = partitions."20-usr-a-hash" // {
       Verity = "hash";
       VerityMatchKey = "usr";
       SplitName = "usr-hash";
-    }) [ "SizeMinBytes" ];
+    };
 
   systemdArchitecture = builtins.replaceStrings [ "_" ] [ "-" ] stdenv.hostPlatform.linuxArch;
   closure = closureInfo { rootPaths = [ toplevel ]; };

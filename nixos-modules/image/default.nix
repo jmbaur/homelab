@@ -108,8 +108,6 @@ in
       availableKernelModules = [ "dm-verity" ] ++ lib.optional cfg.mutableNixStore "overlay";
     };
 
-    # We specify Weight=0 for all partitions that we don't want to grow at all
-    # during first boot.
     systemd.repart.partitions = {
       "10-boot" = {
         Type = "esp";
