@@ -14,6 +14,8 @@ in
   options.custom.gui.enable = lib.mkEnableOption "gui";
 
   config = lib.mkIf cfg.enable {
+    custom.basicNetwork.enable = true;
+
     hardware.keyboard.qmk.enable = true;
     services.udev.packages = [ pkgs.yubikey-personalization pkgs.teensy-udev-rules ];
 
@@ -35,7 +37,6 @@ in
     programs.wshowkeys.enable = true;
     programs.sway = {
       enable = true;
-      extraPackages = [ ];
       wrapperFeatures = { base = true; gtk = true; };
     };
 

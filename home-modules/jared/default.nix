@@ -49,7 +49,7 @@ in
     }
 
     (lib.mkIf cfg.dev.enable {
-      home.packages = with pkgs; [ ansifilter as-tree bc bintools bottom buildah cachix cntr curl deadnix diffsitter dig dnsutils dt entr fd file fsrx gh git-extras git-gone gnumake gosee grex gron htmlq htop-vim iputils jared-neovim-all-languages jo jq just killall lm_sensors lsof macgen mdcat mob mosh nix-diff nix-output-monitor nix-prefetch-scripts nix-tree nixos-generators nload nurl openssl patchelf pb pciutils pd-notify podman-compose podman-tui pomo procs pstree qemu ripgrep rlwrap sd skopeo strace tcpdump tea tealdeer tig tio tmux-jump tokei traceroute usbutils wip xsv ydiff yj ];
+      home.packages = with pkgs; [ ansifilter as-tree bc bintools bottom buildah cachix cntr curl deadnix diffsitter dig dnsutils dt entr fd file fsrx gh git-extras git-gone gnumake gosee grex gron htmlq htop-vim iputils jared-neovim-all-languages jo jq just killall lm_sensors lsof macgen mdcat mob mosh nix-diff nix-output-monitor nix-prefetch-scripts nix-tree nixos-generators nload nurl patchelf pb pciutils pd-notify podman-compose podman-tui pomo procs pstree qemu ripgrep rlwrap sd skopeo strace tcpdump tea tealdeer tig tio tmux-jump tokei traceroute usbutils wip xsv ydiff yj ];
 
       home.sessionVariables = {
         PROJECTS_DIR = "${config.home.homeDirectory}/projects";
@@ -228,11 +228,14 @@ in
         jetbrains-mono
         wl-clipboard
         xdg-terminal-exec
+        (pkgs.writeShellScriptBin "greetd-launcher" ''
+          ${lib.getExe' pkgs.systemd "systemd-cat"} --identifier=sway sway
+        '')
       ];
 
       xdg.configFile."xdg-terminals.list".text = ''
-        Alacritty.desktop
         kitty.desktop
+        Alacritty.desktop
       '';
 
       programs.kitty = {
@@ -265,23 +268,62 @@ in
         };
       };
 
-      # {
-      #   target = ".config/foot/foot.ini";
-      #   path = (pkgs.formats.ini { }).generate "foot.ini" {
-      #     main = {
-      #       font = "monospace:size=16";
-      #       selection-target = "clipboard";
-      #       notify-focus-inhibit = "no";
-      #     };
-      #     bell = {
-      #       urgent = "yes";
-      #       command-focused = "yes";
-      #     };
-      #     mouse.hide-when-typing = "yes";
-      #     scrollback.indicator-position = "none";
-      #     colors = { alpha = 1.0; foreground = "e0e2ea"; background = "14161b"; };
-      #   };
-      # }
+      programs.foot = {
+        enable = true;
+        settings = {
+          main = {
+            font = "JetBrains Mono:size=16";
+            selection-target = "clipboard";
+            notify-focus-inhibit = "no";
+          };
+          bell = {
+            urgent = "yes";
+            command-focused = "yes";
+          };
+          mouse.hide-when-typing = "yes";
+          scrollback.indicator-position = "none";
+          colors = { alpha = 1.0; foreground = "e0e2ea"; background = "14161b"; };
+        };
+      };
+
+      xdg.userDirs = {
+        enable = true;
+        createDirectories = true;
+      };
+
+      programs.swaylock = {
+        enable = true;
+        settings.color = "333333";
+      };
+
+      services.swayidle = {
+        enable = true;
+      };
+
+      gtk.enable = true;
+      home.pointerCursor = {
+        package = pkgs.gnome.gnome-themes-extra;
+        name = "Adwaita";
+        gtk.enable = true;
+        x11.enable = true;
+      };
+
+      wayland.windowManager.sway = {
+        enable = true;
+        config = {
+          modifier = "Mod4";
+          terminal = "kitty";
+          window.hideEdgeBorders = "smart";
+          workspaceAutoBackAndForth = true;
+          workspaceLayout = "stacking";
+          input."type:keyboard" = {
+            repeat_delay = "300";
+            repeat_rate = "50";
+            xkb_options = "ctrl:nocaps";
+          };
+        };
+      };
+
       # {
       #   target = ".config/labwc/autostart";
       #   path = pkgs.writeText "labwc-autostart" ''
@@ -384,7 +426,6 @@ in
       #     @theme "Arc"
       #   '';
       # }
-
     })
   ];
 }
