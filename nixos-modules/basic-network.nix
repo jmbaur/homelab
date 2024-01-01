@@ -1,6 +1,8 @@
 { lib, config, ... }:
 let
   cfg = config.custom.basicNetwork;
+
+  hasWireless = with config.networking.wireless; enable || iwd.enable;
 in
 {
   options.custom.basicNetwork = {
@@ -12,10 +14,11 @@ in
 
     networking.useDHCP = false;
 
+    systemd.network.wait-online.enable = !hasWireless;
     systemd.network = {
       enable = true;
       networks = {
-        wireless = lib.mkIf (with config.networking.wireless; enable || iwd.enable) {
+        wireless = lib.mkIf hasWireless {
           DHCP = "yes";
           matchConfig.Type = "wlan";
           dhcpV4Config = {
