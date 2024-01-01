@@ -80,7 +80,7 @@ stdenv.mkDerivation {
     install -Dm0644 ${dataPartitionConfig} repart.d/20-usr-a.conf
     install -Dm0644 ${hashPartitionConfig} repart.d/20-usr-a-hash.conf
 
-    echo "CopyFiles=${closure}/registration:/nix-path-registration" >> repart.d/20-usr-a.conf
+    echo "CopyFiles=${closure}/registration:/.nix-path-registration" >> repart.d/20-usr-a.conf
     for path in $(cat ${closure}/store-paths); do
       echo "CopyFiles=$path:''${path#/nix/store}" >> repart.d/20-usr-a.conf
     done

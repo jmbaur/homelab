@@ -316,6 +316,16 @@ in
           window.hideEdgeBorders = "smart";
           workspaceAutoBackAndForth = true;
           workspaceLayout = "stacking";
+          seat."*".xcursor_theme = with config.home.pointerCursor; "${name} ${toString size}";
+          input."type:pointer" = {
+            accel_profile = "flat";
+          };
+          input."type:touchpad" = {
+            natural_scroll = "enabled";
+            dwt = "enabled";
+            middle_emulation = "enabled";
+            tap = "enabled";
+          };
           input."type:keyboard" = {
             repeat_delay = "300";
             repeat_rate = "50";
@@ -342,14 +352,6 @@ in
       #   path = pkgs.runCommand "labwc-menu.xml" { } ''
       #     ${lib.getExe pkgs.buildPackages.python3} ${./labwc-menu.py} > $out
       #   '';
-      # }
-      # {
-      #   target = ".config/sway/config";
-      #   path = pkgs.substituteAll {
-      #     name = "sway.config";
-      #     src = ./sway.config.in;
-      #     inherit (config.services.xserver.xkb) model options;
-      #   };
       # }
       # {
       #   target = ".config/swayidle/config";

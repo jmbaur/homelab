@@ -183,11 +183,8 @@ in
       options = [ "x-systemd.automount" ];
     };
 
-    boot.postBootCommands = ''
-      if [ -f /nix-path-registration ]; then
-        ${lib.getExe' config.nix.package "nix-store"} --load-db < /nix-path-registration
-        rm -f /nix-path-registration
-      fi
+    boot.postBootCommands = lib.optionalString cfg.mutableNixStore ''
+      ${lib.getExe' config.nix.package "nix-store"} --load-db </nix/.ro-store/.nix-path-registration
     '';
 
     system.build.image = pkgs.callPackage ./image.nix {
