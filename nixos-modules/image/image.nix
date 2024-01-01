@@ -15,7 +15,6 @@
 
   # arguments
 , toplevel
-, verityHashSize
 , immutablePadding
 , bootFileCommands
 , partitions
@@ -25,19 +24,23 @@
 let
   seed = "39c4020e-af73-434a-93e4-7e37fdcc7f96";
 
+  usrPadding = 512;
+  usrHashPadding = usrPadding / 8;
+
   bootPartition = partitions."10-boot" // { };
   dataPartition = partitions."20-usr-a" // {
     Minimize = "best";
-    PaddingMinBytes = immutablePadding;
-    PaddingMaxBytes = immutablePadding;
+    PaddingMinBytes = if immutablePadding then "${toString usrPadding}M" else "0";
+    PaddingMaxBytes = if immutablePadding then "${toString usrPadding}M" else "0";
     Format = usrFormat;
     Verity = "data";
     VerityMatchKey = "usr";
     SplitName = "usr";
   };
   hashPartition = partitions."20-usr-a-hash" // {
-    SizeMinBytes = verityHashSize;
-    SizeMaxBytes = verityHashSize;
+    Minimize = "best";
+    PaddingMinBytes = if immutablePadding then "${toString usrHashPadding}M" else "0";
+    PaddingMaxBytes = if immutablePadding then "${toString usrHashPadding}M" else "0";
     Verity = "hash";
     VerityMatchKey = "usr";
     SplitName = "usr-hash";

@@ -5,23 +5,17 @@ in
 {
   options.custom.basicNetwork = {
     enable = lib.mkEnableOption "basic network setup";
-    hasWireless = lib.mkEnableOption "wireless";
   };
 
   config = lib.mkIf cfg.enable {
     services.resolved.enable = true;
 
-    networking = {
-      useDHCP = false;
-      wireless.enable = lib.mkForce false;
-      wireless.iwd.enable = lib.mkDefault cfg.hasWireless;
-    };
+    networking.useDHCP = false;
 
     systemd.network = {
       enable = true;
       networks = {
-        wireless = {
-          enable = cfg.hasWireless;
+        wireless = lib.mkIf (with config.networking.wireless; enable || iwd.enable) {
           DHCP = "yes";
           matchConfig.Type = "wlan";
           dhcpV4Config = {

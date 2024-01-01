@@ -22,7 +22,7 @@ nixosTest {
       enable = true;
       mutableNixStore = true;
       primaryDisk = "/dev/vda";
-      immutablePadding = "0";
+      immutablePadding = false;
     };
   };
 

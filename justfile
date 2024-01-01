@@ -15,6 +15,13 @@ nixos type="switch":
 		--flake {{justfile_directory()}} \
 		{{type}}
 
+home:
+	$(nix build \
+		--no-link \
+		--print-out-paths \
+		--print-build-logs \
+		{{justfile_directory()}}#homeConfigurations.$(whoami)-$(hostname).activationPackage)/activate
+
 update:
 	#!/usr/bin/env bash
 	echo '```console' > /tmp/pr-body

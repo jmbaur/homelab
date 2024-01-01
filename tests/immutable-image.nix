@@ -21,7 +21,7 @@ nixosTest {
     custom.image = {
       enable = true;
       primaryDisk = "/dev/vda";
-      immutablePadding = "0";
+      immutablePadding = false;
     };
   };
 

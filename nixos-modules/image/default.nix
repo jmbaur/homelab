@@ -2,8 +2,6 @@
 
 let
   cfg = config.custom.image;
-
-  verityHashSize = "128M";
 in
 {
   options.custom.image = with lib; {
@@ -26,12 +24,8 @@ in
       '';
     };
 
-    immutablePadding = mkOption {
-      type = types.str;
-      default = "512M";
-      description = mdDoc ''
-        TODO
-      '';
+    immutablePadding = mkEnableOption "padding for immutable partitions" // {
+      default = true;
     };
 
     bootVariant = mkOption {
@@ -121,17 +115,17 @@ in
       };
 
       # The "B" update partition and root partition get created on first boot.
-      # TODO(jared): get CopyBlocks to work
       "20-usr-b" = {
         Type = "usr";
         Label = "usr-b";
         CopyBlocks = "/dev/disk/by-partlabel/usr-a";
+        Weight = 0; # Don't allocate any extra space for this partition
       };
       "20-usr-b-hash" = {
         Type = "usr-verity";
         Label = "usr-b-hash";
-        SizeMinBytes = verityHashSize;
-        SizeMaxBytes = verityHashSize;
+        CopyBlocks = "/dev/disk/by-partlabel/usr-a-hash";
+        Weight = 0; # Don't allocate any extra space for this partition
       };
       "30-root" = {
         Type = "root";
@@ -181,7 +175,6 @@ in
 
     system.build.image = pkgs.callPackage ./image.nix {
       usrFormat = config.fileSystems."/nix/.ro-store".fsType;
-      inherit verityHashSize;
       inherit (cfg) immutablePadding bootFileCommands;
       inherit (config.system.build) toplevel;
       inherit (config.systemd.repart) partitions;

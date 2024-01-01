@@ -17,6 +17,8 @@
     gobar.url = "github:jmbaur/gobar";
     gosee.inputs.nixpkgs.follows = "nixpkgs";
     gosee.url = "github:jmbaur/gosee";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager.url = "github:nix-community/home-manager";
     ipwatch.inputs.nixpkgs.follows = "nixpkgs";
     ipwatch.url = "github:jmbaur/ipwatch";
     lanzaboote.inputs.nixpkgs.follows = "nixpkgs";
@@ -49,6 +51,8 @@
     checks = import ./checks.nix inputs;
     devShells = import ./dev-shells.nix inputs;
     formatter = import ./formatter.nix inputs;
+    homeConfigurations = import ./home-configurations inputs;
+    homeModules = import ./home-modules inputs;
     legacyPackages = import ./legacy-packages.nix inputs;
     nixosConfigurations = import ./nixos-configurations inputs;
     nixosModules = import ./nixos-modules inputs;

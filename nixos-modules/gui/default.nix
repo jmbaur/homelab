@@ -28,19 +28,6 @@ in
     nixpkgs.config.allowUnfreePredicate = pkg:
       builtins.elem (lib.getName pkg) [ "teensy-udev-rules" ];
 
-    fonts = {
-      enableDefaultPackages = true;
-      packages = [ pkgs.noto-fonts pkgs.jetbrains-mono ];
-      fontconfig = {
-        enable = true;
-        defaultFonts = {
-          sansSerif = [ "Noto Sans" ];
-          serif = [ "Noto Serif" ];
-          monospace = [ "JetBrains Mono" ];
-        };
-      };
-    };
-
     hardware.pulseaudio.enable = lib.mkForce false;
     security.rtkit.enable = true;
     services.pipewire = {
@@ -52,15 +39,7 @@ in
     # needed by some apps
     environment.sessionVariables.XCURSOR_SIZE = "32";
 
-    environment.systemPackages = enabledGnomeExtensions ++ (with pkgs; [
-      alacritty
-      chromium-wayland
-      firefox
-      kitty
-      rio
-      wl-clipboard
-      xdg-terminal-exec
-    ]);
+    environment.systemPackages = enabledGnomeExtensions;
 
     programs.dconf = {
       enable = true;
