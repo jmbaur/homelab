@@ -2,6 +2,9 @@
 
 let
   cfg = config.custom.image;
+
+  maxUsrSize = cfg.immutableMaxSize;
+  maxUsrHashSize = maxUsrSize / 8;
 in
 {
   options.custom.image = with lib; {
@@ -24,8 +27,13 @@ in
       '';
     };
 
-    immutablePadding = mkEnableOption "padding for immutable partitions" // {
-      default = true;
+    immutableMaxSize = mkOption {
+      type = types.int;
+      default = 2 * 1024 * 1024 * 1024; # 2G
+      example = literalExpression "2 * 1024 * 1024 * 1024 /* 2G */";
+      description = lib.mdDoc ''
+        Maximum size for immutable partitions.
+      '';
     };
 
     bootVariant = mkOption {
@@ -46,9 +54,10 @@ in
     # we don't need nixpkgs boot-loading infrastructure
     boot.loader.grub.enable = false;
 
-    nix.enable = cfg.mutableNixStore;
-    system.switch.enable = false;
     users.mutableUsers = cfg.mutableNixStore;
+    nix.enable = cfg.mutableNixStore;
+    system.disableInstallerTools = true;
+    system.switch.enable = false;
 
     boot.kernelParams = [
       "systemd.verity_root_options=panic-on-corruption"
@@ -68,6 +77,8 @@ in
 
     boot.initrd = {
       systemd = {
+        emergencyAccess = lib.warn "initrd emergency access enabled" true;
+
         enable = true;
         repart.enable = true;
         additionalUpstreamUnits = [
@@ -106,31 +117,32 @@ in
         Format = "vfat";
         SizeMinBytes = "256M";
         SizeMaxBytes = "256M";
-        Weight = 0;
       };
       "20-usr-a" = {
         Type = "usr";
         Label = "usr-a";
-        Weight = 0;
+        SizeMinBytes = toString maxUsrSize;
+        SizeMaxBytes = toString maxUsrSize;
       };
       "20-usr-a-hash" = {
         Type = "usr-verity";
         Label = "usr-a-hash";
-        Weight = 0;
+        SizeMinBytes = toString maxUsrHashSize;
+        SizeMaxBytes = toString maxUsrHashSize;
       };
 
       # The "B" update partition and root partition get created on first boot.
       "20-usr-b" = {
         Type = "usr";
         Label = "usr-b";
-        CopyBlocks = "/dev/disk/by-partlabel/usr-a";
-        Weight = 0;
+        SizeMinBytes = toString maxUsrSize;
+        SizeMaxBytes = toString maxUsrSize;
       };
       "20-usr-b-hash" = {
         Type = "usr-verity";
         Label = "usr-b-hash";
-        CopyBlocks = "/dev/disk/by-partlabel/usr-a-hash";
-        Weight = 0;
+        SizeMinBytes = toString maxUsrHashSize;
+        SizeMaxBytes = toString maxUsrHashSize;
       };
       "30-root" = {
         Type = "root";
@@ -181,7 +193,7 @@ in
     system.build.image = pkgs.callPackage ./image.nix {
       usrFormat = config.fileSystems."/nix/.ro-store".fsType;
       imageName = config.networking.hostName;
-      inherit (cfg) immutablePadding bootFileCommands;
+      inherit (cfg) bootFileCommands;
       inherit (config.system.build) toplevel;
       inherit (config.systemd.repart) partitions;
     };

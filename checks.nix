@@ -1,7 +1,6 @@
 inputs:
 inputs.nixpkgs.lib.mapAttrs
   (_: pkgs: {
-    immutable-image = pkgs.callPackage ./tests/immutable-image.nix { };
-    mutable-image = pkgs.callPackage ./tests/mutable-image.nix { };
+    inherit (pkgs.callPackage ./tests/image.nix { }) immutable mutable;
   })
   inputs.self.legacyPackages

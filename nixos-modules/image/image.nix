@@ -15,7 +15,6 @@
 
   # arguments
 , toplevel
-, immutablePadding
 , bootFileCommands
 , partitions
 , usrFormat
@@ -25,27 +24,29 @@
 let
   seed = "39c4020e-af73-434a-93e4-7e37fdcc7f96";
 
-  usrPadding = 512;
-  usrHashPadding = usrPadding / 8;
-
   bootPartition = partitions."10-boot" // { };
-  dataPartition = partitions."20-usr-a" // {
-    Minimize = "best";
-    PaddingMinBytes = if immutablePadding then "${toString usrPadding}M" else "0";
-    PaddingMaxBytes = if immutablePadding then "${toString usrPadding}M" else "0";
-    Format = usrFormat;
-    Verity = "data";
-    VerityMatchKey = "usr";
-    SplitName = "usr";
-  };
-  hashPartition = partitions."20-usr-a-hash" // {
-    Minimize = "best";
-    PaddingMinBytes = if immutablePadding then "${toString usrHashPadding}M" else "0";
-    PaddingMaxBytes = if immutablePadding then "${toString usrHashPadding}M" else "0";
-    Verity = "hash";
-    VerityMatchKey = "usr";
-    SplitName = "usr-hash";
-  };
+
+  # We want to enforce SizeMaxBytes when creating the data and hash partitions
+  # during image creation, since we would rather the image fail to build then
+  # the initrd repart process to result in the "A" and "B" partitions having
+  # different sizes. We remove SizeMinBytes since we want the image to be as
+  # small as possible.
+  dataPartition = builtins.removeAttrs
+    (partitions."20-usr-a" // {
+      Minimize = "best";
+      Format = usrFormat;
+      Verity = "data";
+      VerityMatchKey = "usr";
+      SplitName = "usr";
+    }) [ "SizeMinBytes" ];
+
+  hashPartition = builtins.removeAttrs
+    (partitions."20-usr-a-hash" // {
+      Minimize = "best";
+      Verity = "hash";
+      VerityMatchKey = "usr";
+      SplitName = "usr-hash";
+    }) [ "SizeMinBytes" ];
 
   systemdArchitecture = builtins.replaceStrings [ "_" ] [ "-" ] stdenv.hostPlatform.linuxArch;
   closure = closureInfo { rootPaths = [ toplevel ]; };

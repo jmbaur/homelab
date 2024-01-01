@@ -1,9 +1,11 @@
 { lib, nixosTest, zstd }:
 
-nixosTest {
-  name = "immutable-image";
+lib.genAttrs [ "immutable" "mutable" ] (test: nixosTest {
+  name = "${test}-image";
   nodes.machine = { lib, ... }: {
     imports = [ ../nixos-modules/image ];
+
+    nix.settings.experimental-features = [ "nix-command" ];
 
     boot.initrd.systemd.emergencyAccess = true;
 
@@ -15,13 +17,11 @@ nixosTest {
     # `config.fileSystems`.
     virtualisation.fileSystems = lib.mkForce { };
 
-    users.allowNoPasswordLogin = true;
-    users.users.root.password = "";
-
     custom.image = {
       enable = true;
       primaryDisk = "/dev/vda";
-      immutablePadding = false;
+      immutableMaxSize = 512 * 1024 * 1024; # 512M
+      mutableNixStore = test == "mutable";
     };
   };
 
@@ -56,5 +56,16 @@ nixosTest {
     os.environ['NIX_DISK_IMAGE'] = tmp_disk_image.name
 
     bootctl_status = machine.succeed("bootctl status")
+
+    with subtest("nix utilities"):
+      machine.fail("command -v nixos-rebuild")
+      machine.fail("test -f /run/current-system/bin/switch-to-configuration")
+
+    with subtest("${test} nix store"):
+      ${if test == "immutable" then ''
+      machine.fail("touch foo && nix store add-file ./foo")
+      '' else ''
+      machine.succeed("touch foo && nix store add-file ./foo")
+      ''}
   '';
-}
+})
