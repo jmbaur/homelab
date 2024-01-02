@@ -13,6 +13,10 @@ with lib;
       wireshark.enable = true;
     };
 
+    # enable some nicer interactive shells
+    programs.fish.enable = true;
+    programs.zsh.enable = true;
+
     environment.systemPackages = [ pkgs.man-pages pkgs.man-pages-posix ];
 
     documentation.enable = true;

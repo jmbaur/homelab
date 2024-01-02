@@ -17,8 +17,6 @@ in
       message = "Setting `users.users.${cfg.username}.initialPassword` with `users.mutableUsers = true;` is not safe!";
     }];
 
-    programs.fish.enable = true;
-
     users.users.${cfg.username} = {
       isNormalUser = true;
 
@@ -26,7 +24,7 @@ in
 
       initialPassword = cfg.username;
 
-      shell = pkgs.fish;
+      shell = if config.programs.fish.enable then pkgs.fish else null;
 
       openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-ssh-keys ];
 
@@ -39,7 +37,5 @@ in
         ++ (lib.optional config.virtualisation.docker.enable "docker")
       ;
     };
-
-    programs.adb.enable = config.custom.gui.enable;
   };
 }
