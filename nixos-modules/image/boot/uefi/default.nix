@@ -8,11 +8,17 @@ let
     withBootloader = true;
   };
 
+  loaderConf = pkgs.writeText "loader.conf" ''
+    timeout 5
+    editor yes
+  '';
+
   systemdBoot = "${config.systemd.package}/lib/systemd/boot/efi/systemd-boot${pkgs.stdenv.hostPlatform.efiArch}.efi";
 in
 {
   config = lib.mkIf (cfg.bootVariant == "uefi") {
     custom.image.bootFileCommands = ''
+      echo "${loaderConf}:/loader/loader.conf"
       echo "${systemdBoot}:/EFI/BOOT/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI" >> $bootfiles
 
       cmdline=("init=${config.system.build.toplevel}/init")

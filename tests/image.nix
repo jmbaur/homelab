@@ -30,13 +30,15 @@ lib.genAttrs [ "immutable" "mutable" ] (test: nixosTest {
     import subprocess
     import tempfile
 
+    tmp_backing_file_image = tempfile.NamedTemporaryFile()
     tmp_disk_image = tempfile.NamedTemporaryFile()
 
     subprocess.run([
       "${lib.getExe' zstd "zstd"}",
-      "-d",
+      "--force",
+      "--decompress",
       "-o",
-      "image.raw",
+      tmp_backing_file_image.name,
       "${nodes.machine.system.build.image}/image.raw.zst",
     ])
     subprocess.run([
@@ -45,7 +47,7 @@ lib.genAttrs [ "immutable" "mutable" ] (test: nixosTest {
       "-f",
       "qcow2",
       "-b",
-      "image.raw",
+      tmp_backing_file_image.name,
       "-F",
       "raw",
       tmp_disk_image.name,
@@ -57,6 +59,25 @@ lib.genAttrs [ "immutable" "mutable" ] (test: nixosTest {
 
     bootctl_status = machine.succeed("bootctl status")
 
+    def disk_size(partlabel):
+      return machine.succeed(f"blockdev --getsize64 /dev/disk/by-partlabel/{partlabel}").strip()
+
+    usr_a_size = disk_size("usr-a")
+    print(f"{usr_a_size=}")
+    usr_b_size = disk_size("usr-b")
+    print(f"{usr_b_size=}")
+
+    if usr_a_size != usr_b_size:
+      raise Exception("mismatching usr disk sizes")
+
+    usr_a_hash_size = disk_size("usr-a-hash")
+    print(f"{usr_a_hash_size=}")
+    usr_b_hash_size = disk_size("usr-b-hash")
+    print(f"{usr_b_hash_size=}")
+
+    if usr_a_hash_size != usr_b_hash_size:
+      raise Exception("mismatching usr-hash disk sizes")
+
     machine.succeed("test -f /nix/.ro-store/.nix-path-registration")
     ${lib.optionalString nodes.machine.custom.image.mutableNixStore ''
     machine.succeed("test $(nix-store --dump-db | wc -l) -gt 0")
@@ -66,5 +87,10 @@ lib.genAttrs [ "immutable" "mutable" ] (test: nixosTest {
     machine.fail("test -f /run/current-system/bin/switch-to-configuration")
 
     machine.${if nodes.machine.custom.image.mutableNixStore then "succeed" else "fail"}("touch foo && nix store add-file ./foo")
+
+    # TODO(jared): do an update, then reboot
+    machine.shutdown()
+
+    bootctl_status = machine.succeed("bootctl status")
   '';
 })

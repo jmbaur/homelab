@@ -169,7 +169,12 @@ in
       if cfg.mutableNixStore then {
         device = "overlay";
         fsType = "overlay";
-        options = [ "lowerdir=/sysroot/nix/.ro-store" "upperdir=/sysroot/nix/.rw-store/upper" "workdir=/sysroot/nix/.rw-store/work" ];
+        options = [
+          "lowerdir=/sysroot/nix/.ro-store"
+          "upperdir=/sysroot/nix/.rw-store/upper"
+          "workdir=/sysroot/nix/.rw-store/work"
+          "x-systemd.requires=${utils.escapeSystemdPath "/sysroot/nix/.ro-store"}.mount"
+        ];
       } else {
         device = "/nix/.ro-store";
         fsType = "none";
