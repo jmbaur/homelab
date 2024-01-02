@@ -237,7 +237,8 @@ in
         wl-clipboard
         xdg-terminal-exec
         (pkgs.writeShellScriptBin "greetd-launcher" ''
-          ${lib.getExe' pkgs.systemd "systemd-cat"} --identifier=sway sway
+          systemd-cat --identifier=sway sway
+          systemctl --user stop sway-session.target
         '')
       ];
 
@@ -355,6 +356,18 @@ in
           { timeout = 900; command = "${config.wayland.windowManager.sway.package}/bin/swaymsg 'output * dpms off'"; resumeCommand = "${config.wayland.windowManager.sway.package}/bin/swaymsg 'output * dpms on'"; }
           { timeout = 1200; command = "systemctl suspend"; }
         ];
+      };
+
+      services.mako = {
+        enable = true;
+        defaultTimeout = 10 * 1000; # 10s
+      };
+
+      services.cliphist.enable = true;
+
+      services.gammastep = {
+        enable = true;
+        provider = "geoclue2";
       };
 
       gtk.enable = true;
