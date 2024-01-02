@@ -91,6 +91,23 @@ in
           "${config.boot.initrd.systemd.package}/lib/systemd/systemd-veritysetup"
         ];
 
+        mounts = [
+          ({
+            where = "/sysroot/nix/store";
+            wantedBy = [ "initrd-fs.target" ];
+            before = [ "initrd-fs.target" ];
+            unitConfig.RequiresMountsFor = "/sysroot/nix/.ro-store";
+          } // (if cfg.mutableNixStore then {
+            what = "overlay";
+            type = "overlay";
+            options = "lowerdir=/sysroot/nix/.ro-store,upperdir=/sysroot/nix/.rw-store/store,workdir=/sysroot/nix/.rw-store/work";
+          } else {
+            what = "/nix/.ro-store";
+            type = "none";
+            options = "bind";
+          }))
+        ];
+
         # Require that systemd-repart only starts after we have our dm-verity
         # device. This prevents a race condition between systemd-repart and
         # systemd-veritysetup.
@@ -147,7 +164,7 @@ in
         Label = "root";
         Format = "btrfs";
         FactoryReset = true;
-        MakeDirectories = lib.mkIf cfg.mutableNixStore (toString [ "/nix/.rw-store/upper" "/nix/.rw-store/work" ]);
+        MakeDirectories = lib.mkIf cfg.mutableNixStore (toString [ "/nix/.rw-store/store" "/nix/.rw-store/work" ]);
       };
     };
 
@@ -165,21 +182,6 @@ in
       options = [ "ro" ];
       neededForBoot = true;
     };
-    fileSystems."/nix/store" =
-      if cfg.mutableNixStore then {
-        device = "overlay";
-        fsType = "overlay";
-        options = [
-          "lowerdir=/sysroot/nix/.ro-store"
-          "upperdir=/sysroot/nix/.rw-store/upper"
-          "workdir=/sysroot/nix/.rw-store/work"
-          "x-systemd.requires=${utils.escapeSystemdPath "/sysroot/nix/.ro-store"}.mount"
-        ];
-      } else {
-        device = "/nix/.ro-store";
-        fsType = "none";
-        options = [ "bind" ];
-      };
     fileSystems."/boot" = {
       device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions."10-boot".Label}";
       fsType = config.systemd.repart.partitions."10-boot".Format;

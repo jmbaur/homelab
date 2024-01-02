@@ -62,20 +62,10 @@ lib.genAttrs [ "immutable" "mutable" ] (test: nixosTest {
     def disk_size(partlabel):
       return machine.succeed(f"blockdev --getsize64 /dev/disk/by-partlabel/{partlabel}").strip()
 
-    usr_a_size = disk_size("usr-a")
-    print(f"{usr_a_size=}")
-    usr_b_size = disk_size("usr-b")
-    print(f"{usr_b_size=}")
-
-    if usr_a_size != usr_b_size:
+    if disk_size("usr-a") != disk_size("usr-b"):
       raise Exception("mismatching usr disk sizes")
 
-    usr_a_hash_size = disk_size("usr-a-hash")
-    print(f"{usr_a_hash_size=}")
-    usr_b_hash_size = disk_size("usr-b-hash")
-    print(f"{usr_b_hash_size=}")
-
-    if usr_a_hash_size != usr_b_hash_size:
+    if disk_size("usr-a-hash") != disk_size("usr-b-hash"):
       raise Exception("mismatching usr-hash disk sizes")
 
     machine.succeed("test -f /nix/.ro-store/.nix-path-registration")
@@ -87,6 +77,9 @@ lib.genAttrs [ "immutable" "mutable" ] (test: nixosTest {
     machine.fail("test -f /run/current-system/bin/switch-to-configuration")
 
     machine.${if nodes.machine.custom.image.mutableNixStore then "succeed" else "fail"}("touch foo && nix store add-file ./foo")
+
+    # ensure security wrappers are mounted
+    machine.succeed("test -d /run/wrappers/bin")
 
     # TODO(jared): do an update, then reboot
     machine.shutdown()
