@@ -18,7 +18,7 @@ in
 {
   config = lib.mkIf (cfg.bootVariant == "uefi") {
     custom.image.bootFileCommands = ''
-      echo "${loaderConf}:/loader/loader.conf"
+      echo "${loaderConf}:/loader/loader.conf" >> $bootfiles
       echo "${systemdBoot}:/EFI/BOOT/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI" >> $bootfiles
 
       cmdline=("init=${config.system.build.toplevel}/init")
