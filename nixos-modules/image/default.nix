@@ -71,9 +71,10 @@ in
     # package.
     boot.initrd.services.lvm.enable = true;
 
-    systemd.package = pkgs.systemd.overrideAttrs (old: {
-      patches = old.patches ++ [ ./systemd-repart.patch ];
-    });
+    # NOTE: only needed if we are going to use CopyBlocks
+    # systemd.package = pkgs.systemd.overrideAttrs (old: {
+    #   patches = old.patches ++ [ ./systemd-repart.patch ];
+    # });
 
     boot.initrd = {
       systemd = {
