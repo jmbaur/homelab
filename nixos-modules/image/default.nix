@@ -93,20 +93,30 @@ in
         ];
 
         mounts = [
-          ({
-            where = "/sysroot/nix/store";
-            wantedBy = [ "initrd-fs.target" ];
-            before = [ "initrd-fs.target" ];
-            unitConfig.RequiresMountsFor = "/sysroot/nix/.ro-store";
-          } // (if cfg.mutableNixStore then {
-            what = "overlay";
-            type = "overlay";
-            options = "lowerdir=/sysroot/nix/.ro-store,upperdir=/sysroot/nix/.rw-store/store,workdir=/sysroot/nix/.rw-store/work";
-          } else {
-            what = "/nix/.ro-store";
-            type = "none";
-            options = "bind";
-          }))
+          (lib.recursiveUpdate
+            {
+              where = "/sysroot/nix/store";
+              wantedBy = [ "initrd-fs.target" ];
+              conflicts = [ "umount.target" ];
+              before = [ "initrd-fs.target" "umount.target" ];
+              unitConfig = {
+                DefaultDependencies = false;
+                RequiresMountsFor = "/sysroot/nix/.ro-store";
+              };
+            }
+            (if cfg.mutableNixStore then {
+              what = "overlay";
+              type = "overlay";
+              options = lib.concatStringsSep "," [
+                "lowerdir=/sysroot/nix/.ro-store"
+                "upperdir=/sysroot/nix/.rw-store/store"
+                "workdir=/sysroot/nix/.rw-store/work"
+              ];
+            } else {
+              what = "/sysroot/nix/.ro-store";
+              type = "none";
+              options = "bind";
+            }))
         ];
 
         # Require that systemd-repart only starts after we have our dm-verity
