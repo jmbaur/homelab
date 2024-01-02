@@ -24,6 +24,7 @@ in
           experimental-features = [ "nix-command" "flakes" "repl-flake" ];
         };
       };
+      nixpkgs.overlays = [ inputs.nur.overlay ];
 
       home.username = lib.mkDefault "jared";
       home.homeDirectory = "/home/${config.home.username}";
@@ -231,8 +232,6 @@ in
       fonts.fontconfig.enable = true;
 
       home.packages = with pkgs; [
-        chromium-wayland
-        firefox
         font-awesome
         jetbrains-mono
         wl-clipboard
@@ -246,6 +245,27 @@ in
         kitty.desktop
         Alacritty.desktop
       '';
+
+      programs.firefox = {
+        enable = true;
+        profiles.default = {
+          extensions = with pkgs.nur.repos.rycee.firefox-addons; [ bitwarden vimium ];
+          settings = {
+            "browser.newtabpage.enabled" = false;
+            "browser.startup.homepage" = "chrome://browser/content/blanktab.html";
+            "browser.tabs.inTitlebar" = 0;
+            "signon.rememberSignons" = false;
+          };
+        };
+      };
+
+      programs.chromium = {
+        enable = true;
+        extensions = [
+          { id = "nngceckbapebfimnlniiiahkandclblb"; } # bitwarden
+          { id = "dbepggeogbaibhgnhhndojpepiihcmeb"; } # vimium
+        ];
+      };
 
       programs.kitty = {
         enable = true;

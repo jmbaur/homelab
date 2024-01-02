@@ -768,6 +768,21 @@
         "type": "github"
       }
     },
+    "nur": {
+      "locked": {
+        "lastModified": 1704170379,
+        "narHash": "sha256-6i2lhC7kg142H+4ccclyVe6jQ4Ngm7X+TD63Xl29MNg=",
+        "owner": "nix-community",
+        "repo": "NUR",
+        "rev": "08b00e3e5a6934452fbfaeea217e0afe35cd2107",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "NUR",
+        "type": "github"
+      }
+    },
     "pd-notify": {
       "inputs": {
         "nixpkgs": [
@@ -956,6 +971,7 @@
         "nix-sandbox-escape-hatch": "nix-sandbox-escape-hatch",
         "nixos-router": "nixos-router",
         "nixpkgs": "nixpkgs",
+        "nur": "nur",
         "pd-notify": "pd-notify",
         "pre-commit": "pre-commit_2",
         "sops-nix": "sops-nix",

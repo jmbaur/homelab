@@ -32,6 +32,7 @@
     nixos-router.inputs.nixpkgs.follows = "nixpkgs";
     nixos-router.url = "github:jmbaur/nixos-router";
     nixpkgs.url = "github:jmbaur/nixpkgs/nixos-unstable";
+    nur.url = "github:nix-community/NUR";
     pd-notify.inputs.nixpkgs.follows = "nixpkgs";
     pd-notify.url = "github:jmbaur/pd-notify";
     pre-commit.inputs.nixpkgs.follows = "nixpkgs";
