@@ -41,10 +41,10 @@ let
     }) [ "SizeMinBytes" ];
 
   hashPartition = partitions."20-usr-a-hash" // {
-      Verity = "hash";
-      VerityMatchKey = "usr";
-      SplitName = "usr-hash";
-    };
+    Verity = "hash";
+    VerityMatchKey = "usr";
+    SplitName = "usr-hash";
+  };
 
   systemdArchitecture = builtins.replaceStrings [ "_" ] [ "-" ] stdenv.hostPlatform.linuxArch;
   closure = closureInfo { rootPaths = [ toplevel ]; };

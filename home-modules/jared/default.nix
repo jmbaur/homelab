@@ -59,7 +59,7 @@ in
     }
 
     (lib.mkIf cfg.dev.enable {
-      home.packages = with pkgs; [ ansifilter as-tree bc bintools bottom buildah cachix cntr curl deadnix diffsitter dig dnsutils dt entr fd file fsrx gh git-extras git-gone gnumake gosee grex gron htmlq htop-vim iputils jared-neovim-all-languages jo jq just killall lm_sensors lsof macgen mdcat mob mosh nix-diff nix-output-monitor nix-prefetch-scripts nix-tree nixos-generators nload nurl patchelf pb pciutils pd-notify podman-compose podman-tui pomo procs pstree qemu ripgrep rlwrap sd skopeo strace tcpdump tea tealdeer tig tio tmux-jump tokei traceroute usbutils wip xsv ydiff yj ];
+      home.packages = with pkgs; [ ansifilter as-tree bc bintools bottom buildah cachix cntr curl dig dnsutils dt entr fd file fsrx gh git-extras git-gone gnumake gosee grex gron htmlq htop-vim iputils jared-neovim-all-languages jo jq just killall lm_sensors lsof macgen mdcat mob mosh nix-diff nix-output-monitor nix-prefetch-scripts nix-tree nload nurl patchelf pb pciutils pd-notify podman-compose podman-tui pomo procs pstree qemu ripgrep rlwrap sd skopeo strace tcpdump tea tealdeer tig tio tmux-jump tokei traceroute usbutils wip xsv ydiff yj ];
 
       home.sessionVariables = {
         PROJECTS_DIR = "${config.home.homeDirectory}/projects";
@@ -397,55 +397,19 @@ in
         };
       };
 
-      # {
-      #   target = ".config/labwc/autostart";
-      #   path = pkgs.writeText "labwc-autostart" ''
-      #     dbus-update-activation-environment --systemd --all
-      #     systemctl --user start labwc-session.target
-      #   '';
-      # }
-      # {
-      #   target = ".config/labwc/rc.xml";
-      #   path = pkgs.runCommand "labwc-rc.xml" { } ''
-      #     ${lib.getExe pkgs.buildPackages.python3} ${./labwc-rc.py} > $out
-      #   '';
-      # }
-      # {
-      #   target = ".config/labwc/menu.xml";
-      #   path = pkgs.runCommand "labwc-menu.xml" { } ''
-      #     ${lib.getExe pkgs.buildPackages.python3} ${./labwc-menu.py} > $out
-      #   '';
-      # }
-      # {
-      #   target = ".config/swayidle/config";
-      #   path =
-      #     let
-      #       dpms-all = pkgs.writeShellScriptBin "dpms-all" ''
-      #         ${lib.getExe pkgs.wlopm} --json |
-      #           jq --raw-output '.[].output' |
-      #           xargs -n1 ${lib.getExe pkgs.wlopm} $1
-      #       '';
-      #       lock = pkgs.writeShellScriptBin "lock" ''
-      #         ${lib.getExe pkgs.waylock} ${lib.escapeShellArgs [ "-fork-on-lock" "-init-color" "0x333333" "-input-color" "0x555555" "-fail-color" "0xFF0000" ]}
-      #       '';
-      #       conditionalSuspend = pkgs.writeShellScriptBin "conditional-suspend" (lib.optionalString config.custom.laptop.enable ''
-      #         if [[ "$(cat /sys/class/power_supply/AC/online)" -ne 1 ]]; then
-      #           echo "laptop is not on AC, suspending"
-      #           ${config.systemd.package}/bin/systemctl suspend
-      #         else
-      #           echo "laptop is on AC, not suspending"
-      #         fi
-      #       '');
-      #     in
-      #     pkgs.writeText "swayidle.config" ''
-      #       timeout 600 '${lib.getExe lock}'
-      #       timeout 900 '${lib.getExe dpms-all} --off' resume '${lib.getExe dpms-all} --on'
-      #       timeout 1200 '${lib.getExe conditionalSuspend}'
-      #       before-sleep '${lib.getExe lock}'
-      #       lock '${lib.getExe lock}'
-      #       after-resume '${lib.getExe dpms-all} --on'
-      #     '';
-      # }
+      xdg.configFile."labwc/autostart".text = ''
+        dbus-update-activation-environment --systemd --all
+        systemctl --user start labwc-session.target
+      '';
+
+      xdg.configFile."labwc/rc.xml".source = pkgs.runCommand "labwc-rc.xml" { } ''
+        ${lib.getExe pkgs.buildPackages.python3} ${./labwc-rc.py} > $out
+      '';
+
+      xdg.configFile."labwc/menu.xml".source = pkgs.runCommand "labwc-rc.xml" { } ''
+        ${lib.getExe pkgs.buildPackages.python3} ${./labwc-menu.py} > $out
+      '';
+
       # {
       #   target = ".config/swaynag/config";
       #   path = pkgs.writeText "swaynag.config" ''

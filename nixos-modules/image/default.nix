@@ -10,6 +10,13 @@ in
   options.custom.image = with lib; {
     enable = mkEnableOption "TODO";
 
+    version = mkOption {
+      type = types.str;
+      description = mdDoc ''
+        TODO
+      '';
+    };
+
     mutableNixStore = mkEnableOption "TODO";
 
     bootFileCommands = mkOption {

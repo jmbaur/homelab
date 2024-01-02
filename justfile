@@ -8,6 +8,9 @@ clean: init
 	rm -rf {{justfile_directory()}}/result*
 	rm -rf $out/*
 
+bump type="patch":
+	cat {{justfile_directory()}}/.version | xargs semver bump {{type}} | tee {{justfile_directory()}}/.version
+
 nixos type="switch":
 	nixos-rebuild \
 		--print-build-logs \

@@ -40,7 +40,7 @@ in
           "--devicetree=${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name}"} \
         --output=$out/uki.efi
 
-      echo "$out/uki.efi:/EFI/Linux/nixos${config.system.nixos.versionSuffix}.efi" >> $bootfiles
+      echo "$out/uki.efi:/EFI/Linux/${config.system.nixos.distroId}-${config.custom.image.version}.efi" >> $bootfiles
     '';
   };
 }

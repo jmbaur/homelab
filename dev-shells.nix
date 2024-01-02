@@ -4,7 +4,7 @@ inputs: inputs.nixpkgs.lib.mapAttrs
       buildInputs = with pkgs; [ just jq nix-prefetch-scripts nix-update ];
     };
     default = pkgs.mkShell {
-      buildInputs = (with pkgs; [ bashInteractive just sops nix-update nix-prefetch-scripts jq ]);
+      buildInputs = (with pkgs; [ bashInteractive just sops nix-update nix-prefetch-scripts jq semver-tool ]);
       inherit (inputs.pre-commit.lib.${system}.run {
         src = ./.;
         hooks = {
