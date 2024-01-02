@@ -12,4 +12,5 @@
   services.fwupd.enable = true;
   zramSwap.enable = true;
   hardware.bluetooth.enable = true;
+  networking.wireless.iwd.enable = true;
 }

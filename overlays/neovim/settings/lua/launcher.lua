@@ -8,6 +8,7 @@ end
 local M = {}
 M.setup = function()
 	telescope.load_extension("ui-select")
+	telescope.load_extension("zf-native")
 
 	vim.keymap.set("n", "<leader>?", telescope_builtins.help_tags, { desc = "Find help tags" })
 	vim.keymap.set("n", "<leader>_", telescope_builtins.registers, { desc = "Find registers" })

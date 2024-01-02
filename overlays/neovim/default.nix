@@ -72,6 +72,7 @@ let
         snippets-nvim
         telescope-nvim
         telescope-ui-select-nvim
+        telescope-zf-native-nvim
         tree-sitter-just-plugin
         vim-dispatch
         vim-eunuch
