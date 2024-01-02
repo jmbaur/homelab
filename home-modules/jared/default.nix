@@ -346,6 +346,15 @@ in
 
       services.swayidle = {
         enable = true;
+        events = [
+          { event = "before-sleep"; command = "${config.programs.swaylock.package}/bin/swaylock -fF"; }
+          { event = "lock"; command = "${config.programs.swaylock.package}/bin/swaylock -fF"; }
+        ];
+        timeouts = [
+          { timeout = 600; command = "${config.programs.swaylock.package}/bin/swaylock -fF"; }
+          { timeout = 900; command = "${config.wayland.windowManager.sway.package}/bin/swaymsg 'output * dpms off'"; resumeCommand = "${config.wayland.windowManager.sway.package}/bin/swaymsg 'output * dpms on'"; }
+          { timeout = 1200; command = "systemctl suspend"; }
+        ];
       };
 
       gtk.enable = true;
