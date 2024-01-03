@@ -33,10 +33,7 @@ in
     programs.gnupg.agent.enable = true;
     programs.ssh.startAgent = true;
     programs.wshowkeys.enable = true;
-    programs.sway = {
-      enable = true;
-      wrapperFeatures = { base = true; gtk = true; };
-    };
+    programs.sway.enable = true;
 
     # Use automatic-timezoned for convenience. This enables geoclue2, which
     # requires avahi to be enabled, so we want to make sure systemd-resolved's
