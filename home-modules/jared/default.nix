@@ -270,6 +270,7 @@ in
 
       programs.chromium = {
         enable = true;
+        package = pkgs.chromium-wayland;
         extensions = [
           { id = "nngceckbapebfimnlniiiahkandclblb"; } # bitwarden
           { id = "dbepggeogbaibhgnhhndojpepiihcmeb"; } # vimium
@@ -331,28 +332,34 @@ in
 
       programs.swaylock = {
         enable = true;
-        settings.color = "333333";
+        settings.color = "222222";
       };
 
       programs.rofi = {
         enable = true;
+        package = pkgs.rofi-wayland;
         font = "${font} ${toString fontSize}";
         theme = "android_notification";
         inherit (config.wayland.windowManager.sway.config) terminal;
       };
 
-      services.swayidle = {
-        enable = true;
-        events = [
-          { event = "before-sleep"; command = "${config.programs.swaylock.package}/bin/swaylock -fF"; }
-          { event = "lock"; command = "${config.programs.swaylock.package}/bin/swaylock -fF"; }
-        ];
-        timeouts = [
-          { timeout = 600; command = "${config.programs.swaylock.package}/bin/swaylock -fF"; }
-          { timeout = 900; command = "${config.wayland.windowManager.sway.package}/bin/swaymsg 'output * dpms off'"; resumeCommand = "${config.wayland.windowManager.sway.package}/bin/swaymsg 'output * dpms on'"; }
-          { timeout = 1200; command = "systemctl suspend"; }
-        ];
-      };
+      services.swayidle =
+        let
+          lockCmd = "${lib.getExe config.programs.swaylock.package} -fF";
+          swaymsg = lib.getExe' config.wayland.windowManager.sway.package "swaymsg";
+        in
+        {
+          enable = true;
+          events = [
+            { event = "before-sleep"; command = lockCmd; }
+            { event = "lock"; command = lockCmd; }
+          ];
+          timeouts = [
+            { timeout = 600; command = lockCmd; }
+            { timeout = 900; command = "${swaymsg} output * power toggle"; resumeCommand = "${swaymsg} output * power toggle"; }
+            { timeout = 1200; command = "systemctl suspend"; }
+          ];
+        };
 
       services.mako = {
         enable = true;
@@ -435,6 +442,7 @@ in
                 { criteria.shell = "xwayland"; command = ''title_format "%title (%shell)"''; }
               ];
             };
+            output."*".background = "#222222 solid_color";
             input."type:pointer" = {
               accel_profile = "flat";
             };
