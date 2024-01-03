@@ -15,7 +15,7 @@ in
   config = lib.mkIf cfg.enable {
     assertions = [{
       assertion = config.users.mutableUsers;
-      message = "Setting `users.users.${cfg.username}.initialPassword` with `users.mutableUsers = true;` is not safe!";
+      message = "Setting `users.users.${cfg.username}.initialPassword` with `users.mutableUsers = false;` is not safe!";
     }];
 
     users.users.${cfg.username} = {

@@ -16,6 +16,7 @@
   # arguments
 , toplevel
 , bootFileCommands
+, postImageCommands
 , partitions
 , usrFormat
 , imageName
@@ -111,6 +112,8 @@ stdenv.mkDerivation {
     fakeroot systemd-repart ''${repart_args[@]} \
       $out/image.raw
 
-    zstd --rm $out/*.raw
+    ${postImageCommands}
+
+    zstd --rm $out/*.{raw,vhdx}
   '';
 }

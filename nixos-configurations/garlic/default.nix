@@ -1,12 +1,24 @@
-{ ... }: {
-  imports = [ ./hardware-configuration.nix ];
+{ pkgs, ... }: {
+  nixpkgs.hostPlatform = "aarch64-linux";
 
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot.initrd.availableKernelModules = [ "sr_mod" ];
+  boot.initrd.kernelModules = [ ];
+  boot.kernelModules = [ ];
+  boot.extraModulePackages = [ ];
 
-  # python -m http.server
-  networking.firewall.allowedTCPPorts = [ 8000 ];
+  virtualisation.hypervGuest.enable = true;
 
   custom.dev.enable = true;
   custom.users.jared.enable = true;
+  custom.basicNetwork.enable = true;
+
+  custom.image = {
+    enable = true;
+    mutableNixStore = true;
+    primaryDisk = "/dev/sda";
+    postImageCommands = ''
+      ${pkgs.vmTools.qemu}/bin/qemu-img convert -f raw -o subformat=dynamic -O vhdx image.raw $out/image.vhdx
+      rm image.raw
+    '';
+  };
 }

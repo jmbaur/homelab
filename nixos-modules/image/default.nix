@@ -19,6 +19,14 @@ in
 
     mutableNixStore = mkEnableOption "TODO";
 
+    postImageCommands = mkOption {
+      type = types.lines;
+      default = "";
+      description = mdDoc ''
+        TODO
+      '';
+    };
+
     bootFileCommands = mkOption {
       type = types.lines;
       default = "";
@@ -213,7 +221,7 @@ in
     system.build.image = pkgs.callPackage ./image.nix {
       usrFormat = config.fileSystems."/nix/.ro-store".fsType;
       imageName = config.networking.hostName;
-      inherit (cfg) bootFileCommands;
+      inherit (cfg) bootFileCommands postImageCommands;
       inherit (config.system.build) toplevel;
       inherit (config.systemd.repart) partitions;
     };
