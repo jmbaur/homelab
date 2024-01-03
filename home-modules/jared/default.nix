@@ -446,7 +446,7 @@ in
             input."4617:13404:https://github.com/stapelberg_kinT_(kint41)" = {
               repeat_delay = "300";
               repeat_rate = "50";
-              xkb_options = "";
+              xkb_options = ''""''; # explicitly empty
             };
             modes = lib.mkOptionDefault {
               passthru."${modifier}+F12" = "mode default";
