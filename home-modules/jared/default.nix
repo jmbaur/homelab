@@ -240,7 +240,9 @@ in
         wl-clipboard
         xdg-terminal-exec
         (pkgs.writeShellScriptBin "caffeine" ''
-          systemd-inhibit --what=idle --who=caffeine --why=Caffeine --mode=block sleep infinity
+          time=''${1:-infinity}
+          echo "inhibiting idle for $time"
+          systemd-inhibit --what=idle --who=caffeine --why=Caffeine --mode=block sleep "$time"
         '')
         (pkgs.writeShellScriptBin "greetd-launcher" ''
           systemd-cat --identifier=sway sway
