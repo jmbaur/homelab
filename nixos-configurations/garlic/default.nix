@@ -16,6 +16,7 @@
     enable = true;
     mutableNixStore = true;
     primaryDisk = "/dev/sda";
+    hasTpm2 = true;
     postImageCommands = ''
       ${pkgs.vmTools.qemu}/bin/qemu-img convert -f raw -o subformat=dynamic -O vhdx image.raw $out/image.vhdx
       rm image.raw
