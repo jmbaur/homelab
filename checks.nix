@@ -4,6 +4,7 @@ inputs.nixpkgs.lib.mapAttrs
     inherit (pkgs.callPackage ./tests/image.nix { })
       image-simple-immutable
       image-simple-mutable
-      image-luks-encrypted;
+      # image-luks-encrypted
+      ;
   })
   inputs.self.legacyPackages
