@@ -321,29 +321,12 @@ in
         createDirectories = true;
       };
 
-      programs.waybar = {
-        enable = false;
-        systemd.enable = true;
-        style = ''
-          window#waybar {
-              background: @theme_base_color;
-              border-bottom: 1px solid @unfocused_borders;
-              color: @theme_text_color;
-          }
-        '';
-        settings.main = {
-          layer = "top";
-          position = "top";
-          modules-left = [ "sway/workspaces" "sway/mode" "idle_inhibitor" ];
-          modules-center = [ "clock" ];
-          modules-right = [ "privacy" "wireplumber" "battery" "tray" ];
-        };
-      };
-
       programs.swaylock = {
         enable = true;
         settings.color = "333333";
       };
+
+      programs.rofi.enable = true;
 
       services.swayidle = {
         enable = true;
@@ -370,7 +353,14 @@ in
         provider = "geoclue2";
       };
 
-      gtk.enable = true;
+      gtk = {
+        enable = true;
+        theme = {
+          package = pkgs.gnome.gnome-themes-extra;
+          name = "Adwaita-dark";
+        };
+      };
+
       home.pointerCursor = {
         package = pkgs.gnome.gnome-themes-extra;
         name = "Adwaita";
@@ -381,33 +371,87 @@ in
       wayland.windowManager.sway = {
         enable = true;
         systemd.enable = true;
-        config = {
-          modifier = "Mod4";
-          terminal = "kitty";
-          window.hideEdgeBorders = "smart";
-          workspaceAutoBackAndForth = true;
-          workspaceLayout = "stacking";
-          seat."*".xcursor_theme = with config.home.pointerCursor; "${name} ${toString size}";
-          bars = lib.optional (!config.programs.waybar.enable) {
-            position = "top";
-            trayOutput = "*";
-            statusCommand = "${pkgs.i3status}/bin/i3status";
+        wrapperFeatures = { base = true; gtk = true; };
+        extraConfig = ''
+          bindgesture swipe:right workspace prev
+          bindgesture swipe:left workspace next
+        '';
+        config =
+          let
+            modifier = config.wayland.windowManager.sway.config.modifier;
+            shotman = lib.getExe' pkgs.shotman "shotman";
+            hyprpicker = lib.getExe pkgs.hyprpicker;
+            cliphist = lib.getExe config.services.cliphist.package;
+            rofi = lib.getExe config.programs.rofi.package;
+            wl-copy = lib.getExe' pkgs.wl-clipboard "wl-copy";
+            notify-send = lib.getExe' pkgs.libnotify "notify-send";
+            pamixer = lib.getExe pkgs.pamixer;
+            brightnessctl = lib.getExe pkgs.brightnessctl;
+          in
+          {
+            modifier = "Mod4";
+            terminal = "kitty";
+            menu = "${rofi} -show drun -show-icons";
+            workspaceAutoBackAndForth = true;
+            workspaceLayout = "stacking";
+            focus.wrapping = "yes";
+            seat."*".xcursor_theme = with config.home.pointerCursor; "${name} ${toString size}";
+            fonts = { names = [ "sans" ]; size = 12.0; };
+            bars = [{
+              position = "top";
+              trayOutput = "*";
+              statusCommand = "${pkgs.i3status}/bin/i3status";
+              # By using the same font and setting status_padding to 4, we get
+              # a bar with the same height as window titlebars.
+              inherit (config.wayland.windowManager.sway.config) fonts;
+              extraConfig = ''
+                status_padding 4
+              '';
+            }];
+            window = {
+              hideEdgeBorders = "smart";
+              commands = [
+                { criteria.app_id = "^chrome-.*__.*"; command = "shortcuts_inhibitor disable"; }
+                { criteria.shell = "xwayland"; command = ''title_format "%title (%shell)"''; }
+              ];
+            };
+            input."type:pointer" = {
+              accel_profile = "flat";
+            };
+            input."type:touchpad" = {
+              natural_scroll = "enabled";
+              dwt = "enabled";
+              middle_emulation = "enabled";
+              tap = "enabled";
+            };
+            input."type:keyboard" = {
+              repeat_delay = "300";
+              repeat_rate = "50";
+              xkb_options = "ctrl:nocaps";
+            };
+            modes = lib.mkOptionDefault {
+              passthru."${modifier}+F12" = "mode default";
+            };
+            keybindings =
+              lib.mkOptionDefault ((lib.mapAttrs' (keys: lib.nameValuePair "${modifier}+${keys}") {
+                "Control+l" = "exec loginctl lock-session";
+                "F12" = "mode passthru";
+                "Print" = "exec ${shotman} --capture window";
+                "Shift+Print" = "exec ${shotman} --capture region";
+                "Shift+b" = "bar mode toggle";
+                "Shift+c" = "exec ${hyprpicker} --autocopy";
+                "c" = "exec ${cliphist} list | ${rofi} -i -p clipboard -dmenu -display-columns 2 | ${cliphist} decode | ${wl-copy}";
+                "p" = "exec ${config.wayland.windowManager.sway.config.menu}";
+              }) // {
+                "Print" = "exec ${shotman} --capture output";
+                "XF86AudioMicMute" = ''exec ${notify-send} --transient --hint int:value:$(${pamixer} --default-source --toggle-mute --get-volume) --hint string:x-canonical-private-synchronous:mic mic "$(if [[ $(${pamixer} --default-source --get-mute) == true ]]; then echo muted; else echo unmuted; fi)"'';
+                "XF86AudioMute" = ''exec ${notify-send} --transient --hint int:value:$(${pamixer} --toggle-mute --get-volume) --hint string:x-canonical-private-synchronous:volume volume "$(if [[ $(${pamixer} --get-mute) == true ]]; then echo muted; else echo unmuted; fi)"'';
+                "XF86AudioRaiseVolume" = ''exec ${notify-send} --transient --hint int:value:$(${pamixer} --increase 5 --get-volume) --hint string:x-canonical-private-synchronous:volume volume'';
+                "XF86AudioLowerVolume" = ''exec ${notify-send} --transient --hint int:value:$(${pamixer} --decrease 5 --get-volume) --hint string:x-canonical-private-synchronous:volume volume'';
+                "XF86MonBrightnessUp" = ''exec ${notify-send} --transient --hint int:value:$(${brightnessctl} set +5% | sed -En "s/.*\(([0-9]+)%\).*/\1/p") --hint string:x-canonical-private-synchronous:brightness brightness'';
+                "XF86MonBrightnessDown" = ''exec ${notify-send} --transient --hint int:value:$(${brightnessctl} set 5%- | sed -En "s/.*\(([0-9]+)%\).*/\1/p") --hint string:x-canonical-private-synchronous:brightness brightness'';
+              });
           };
-          input."type:pointer" = {
-            accel_profile = "flat";
-          };
-          input."type:touchpad" = {
-            natural_scroll = "enabled";
-            dwt = "enabled";
-            middle_emulation = "enabled";
-            tap = "enabled";
-          };
-          input."type:keyboard" = {
-            repeat_delay = "300";
-            repeat_rate = "50";
-            xkb_options = "ctrl:nocaps";
-          };
-        };
       };
 
       xdg.configFile."labwc/autostart".text = ''
@@ -423,12 +467,6 @@ in
         ${lib.getExe pkgs.buildPackages.python3} ${./labwc-menu.py} > $out
       '';
 
-      # {
-      #   target = ".config/swaynag/config";
-      #   path = pkgs.writeText "swaynag.config" ''
-      #     font=sans 12
-      #   '';
-      # }
       # {
       #   target = ".config/gobar/gobar.yaml";
       #   path = (pkgs.formats.yaml { }).generate "gobar.yaml" {
@@ -458,15 +496,6 @@ in
       #       "x-scheme-handler/https" = "firefox.desktop";
       #     };
       #   };
-      # }
-      # {
-      #   target = ".config/rofi/config.rasi";
-      #   path = pkgs.writeText "rofi.rasi" ''
-      #     configuration {
-      #       font: "sans 12";
-      #     }
-      #     @theme "Arc"
-      #   '';
       # }
     })
   ];
