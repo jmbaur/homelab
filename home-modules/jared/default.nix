@@ -441,6 +441,11 @@ in
               repeat_rate = "50";
               xkb_options = "ctrl:nocaps";
             };
+            input."4617:13404:https://github.com/stapelberg_kinT_(kint41)" = {
+              repeat_delay = "300";
+              repeat_rate = "50";
+              xkb_options = "";
+            };
             modes = lib.mkOptionDefault {
               passthru."${modifier}+F12" = "mode default";
             };
