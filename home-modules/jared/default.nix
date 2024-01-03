@@ -375,6 +375,12 @@ in
         };
       };
 
+      qt = {
+        enable = true;
+        platformTheme = "gtk3";
+        style = { name = "adwaita-dark"; package = pkgs.adwaita-qt; };
+      };
+
       home.pointerCursor = {
         package = pkgs.gnome.gnome-themes-extra;
         name = "Adwaita";

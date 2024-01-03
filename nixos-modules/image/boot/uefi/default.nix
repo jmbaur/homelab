@@ -17,6 +17,11 @@ let
 in
 {
   config = lib.mkIf (cfg.bootVariant == "uefi") {
+    assertions = [{
+      assertion = config.hardware.deviceTree.enable -> config.hardware.deviceTree.name != null;
+      message = "need to specify config.hardware.deviceTree.name";
+    }];
+
     custom.image.bootFileCommands = ''
       echo "${loaderConf}:/loader/loader.conf" >> $bootfiles
       echo "${systemdBoot}:/EFI/BOOT/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI" >> $bootfiles

@@ -11,6 +11,9 @@
   custom.dev.enable = true;
   custom.users.jared.enable = true;
   custom.basicNetwork.enable = true;
+  custom.server.enable = true;
+
+  hardware.deviceTree.enable = false;
 
   custom.image = {
     enable = true;
