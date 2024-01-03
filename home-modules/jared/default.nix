@@ -4,9 +4,10 @@ let
 in
 {
   options.jared = {
+    includePersonalConfigs = lib.mkEnableOption "personal configs" // { default = true; };
+
     dev = {
       enable = lib.mkEnableOption "dev";
-      includePersonalConfigs = lib.mkEnableOption "personal dev configs" // { default = true; };
     };
 
     gui.enable = lib.mkEnableOption "gui";
@@ -96,7 +97,7 @@ in
         extraConfig = ''
           SetEnv TERM=xterm-256color
         '';
-        matchBlocks = lib.optionalAttrs cfg.dev.includePersonalConfigs {
+        matchBlocks = lib.optionalAttrs cfg.includePersonalConfigs {
           "*.home.arpa" = {
             forwardAgent = true;
           };
@@ -116,7 +117,7 @@ in
           lg = "log --graph --decorate --pretty=oneline --abbrev-commit --all";
           st = "status --short --branch";
         };
-        includes = lib.optional cfg.dev.includePersonalConfigs {
+        includes = lib.optional cfg.includePersonalConfigs {
           contents =
             let
               primaryKey = "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIBhCHaXn5ghEJQVpVZr4hOajD6Zp/0PO4wlymwfrg/S5AAAABHNzaDo=";

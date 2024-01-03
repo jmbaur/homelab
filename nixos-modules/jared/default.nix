@@ -9,6 +9,7 @@ in
       type = types.str;
       default = "jared";
     };
+    includePersonalConfigs = lib.mkEnableOption "personal configs" // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {
@@ -26,10 +27,10 @@ in
 
       shell = if config.programs.fish.enable then pkgs.fish else null;
 
-      openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-ssh-keys ];
+      openssh.authorizedKeys.keyFiles = lib.optional cfg.includePersonalConfigs pkgs.jmbaur-ssh-keys;
 
       extraGroups = [ "wheel" ]
-        ++ (lib.optionals config.custom.dev.enable [ "dialout" "plugdev" ])
+        ++ (lib.optional config.custom.dev.enable "dialout")
         ++ (lib.optional config.networking.networkmanager.enable "networkmanager")
         ++ (lib.optional config.programs.adb.enable "adbusers")
         ++ (lib.optional config.programs.flashrom.enable "plugdev")
