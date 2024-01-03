@@ -1,8 +1,7 @@
 { lib, nixosTest, zstd }:
 
-lib.genAttrs [ "immutable" "mutable" ] (test: nixosTest {
-  name = "${test}-image";
-  nodes.machine = { lib, ... }: {
+let
+  baseConfig = { lib, ... }: {
     imports = [ ../nixos-modules/image ];
 
     nix.settings.experimental-features = [ "nix-command" ];
@@ -22,69 +21,87 @@ lib.genAttrs [ "immutable" "mutable" ] (test: nixosTest {
       version = "0.0.0";
       primaryDisk = "/dev/vda";
       immutableMaxSize = 512 * 1024 * 1024; # 512M
-      mutableNixStore = test == "mutable";
     };
   };
+in
+lib.mapAttrs'
+  (test: nixosConfig:
+  let
+    name = "image-${test}";
+  in
+  lib.nameValuePair name (nixosTest {
+    inherit name;
 
-  testScript = { nodes, ... }: ''
-    import os
-    import subprocess
-    import tempfile
+    nodes.machine = { imports = [ baseConfig nixosConfig ]; };
 
-    tmp_backing_file_image = tempfile.NamedTemporaryFile()
-    tmp_disk_image = tempfile.NamedTemporaryFile()
+    testScript = { nodes, ... }: ''
+      import os
+      import subprocess
+      import tempfile
 
-    subprocess.run([
-      "${lib.getExe' zstd "zstd"}",
-      "--force",
-      "--decompress",
-      "-o",
-      tmp_backing_file_image.name,
-      "${nodes.machine.system.build.image}/image.raw.zst",
-    ])
-    subprocess.run([
-      "${nodes.machine.virtualisation.qemu.package}/bin/qemu-img",
-      "create",
-      "-f",
-      "qcow2",
-      "-b",
-      tmp_backing_file_image.name,
-      "-F",
-      "raw",
-      tmp_disk_image.name,
-      "2G",
-    ])
+      tmp_backing_file_image = tempfile.NamedTemporaryFile()
+      tmp_disk_image = tempfile.NamedTemporaryFile()
 
-    # Set NIX_DISK_IMAGE so that the qemu script finds the right disk image.
-    os.environ['NIX_DISK_IMAGE'] = tmp_disk_image.name
+      subprocess.run([
+        "${lib.getExe' zstd "zstd"}",
+        "--force",
+        "--decompress",
+        "-o",
+        tmp_backing_file_image.name,
+        "${nodes.machine.system.build.image}/image.raw.zst",
+      ])
 
-    bootctl_status = machine.succeed("bootctl status")
+      subprocess.run([
+        "${nodes.machine.virtualisation.qemu.package}/bin/qemu-img",
+        "create",
+        "-f",
+        "qcow2",
+        "-b",
+        tmp_backing_file_image.name,
+        "-F",
+        "raw",
+        tmp_disk_image.name,
+        "2G",
+      ])
 
-    def disk_size(partlabel):
-      return machine.succeed(f"blockdev --getsize64 /dev/disk/by-partlabel/{partlabel}").strip()
+      # Set NIX_DISK_IMAGE so that the qemu script finds the right disk image.
+      os.environ['NIX_DISK_IMAGE'] = tmp_disk_image.name
 
-    if disk_size("usr-a") != disk_size("usr-b"):
-      raise Exception("mismatching usr disk sizes")
+      bootctl_status = machine.succeed("bootctl status")
 
-    if disk_size("usr-a-hash") != disk_size("usr-b-hash"):
-      raise Exception("mismatching usr-hash disk sizes")
+      def disk_size(partlabel):
+        return machine.succeed(f"blockdev --getsize64 /dev/disk/by-partlabel/{partlabel}").strip()
 
-    machine.succeed("test -f /nix/.ro-store/.nix-path-registration")
-    ${lib.optionalString nodes.machine.custom.image.mutableNixStore ''
-    machine.succeed("test $(nix-store --dump-db | wc -l) -gt 0")
-    ''}
+      if disk_size("usr-a") != disk_size("usr-b"):
+        raise Exception("mismatching usr disk sizes")
 
-    machine.fail("command -v nixos-rebuild")
-    machine.fail("test -f /run/current-system/bin/switch-to-configuration")
+      if disk_size("usr-a-hash") != disk_size("usr-b-hash"):
+        raise Exception("mismatching usr-hash disk sizes")
 
-    machine.${if nodes.machine.custom.image.mutableNixStore then "succeed" else "fail"}("touch foo && nix store add-file ./foo")
+      machine.succeed("test -f /nix/.ro-store/.nix-path-registration")
+      ${lib.optionalString nodes.machine.custom.image.mutableNixStore ''
+      machine.succeed("test $(nix-store --dump-db | wc -l) -gt 0")
+      ''}
 
-    # ensure security wrappers are mounted
-    machine.succeed("test -d /run/wrappers/bin")
+      machine.fail("command -v nixos-rebuild")
+      machine.fail("test -f /run/current-system/bin/switch-to-configuration")
 
-    # TODO(jared): do an update, then reboot
-    machine.shutdown()
+      machine.${if nodes.machine.custom.image.mutableNixStore then "succeed" else "fail"}("touch foo && nix store add-file ./foo")
 
-    bootctl_status = machine.succeed("bootctl status")
-  '';
-})
+      # ensure security wrappers are mounted
+      machine.succeed("test -d /run/wrappers/bin")
+
+      # TODO(jared): do an update, then reboot
+      machine.shutdown()
+
+      bootctl_status = machine.succeed("bootctl status")
+    '';
+  }))
+{
+  simple-immutable = { };
+  simple-mutable = { custom.image.mutableNixStore = true; };
+  luks-encrypted = {
+    virtualisation.tpm.enable = true;
+    custom.image.hasTpm2 = true;
+  };
+}

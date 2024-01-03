@@ -17,6 +17,8 @@ in
       '';
     };
 
+    hasTpm2 = mkEnableOption "TODO";
+
     mutableNixStore = mkEnableOption "TODO";
 
     postImageCommands = mkOption {
@@ -191,6 +193,8 @@ in
         Format = "btrfs";
         FactoryReset = true;
         MakeDirectories = lib.mkIf cfg.mutableNixStore (toString [ "/nix/.rw-store/store" "/nix/.rw-store/work" ]);
+        # TODO(jared): doesn't work?
+        # Encrypt = if cfg.hasTpm2 then "tpm2" else "off";
       };
     };
 

@@ -1,6 +1,9 @@
 { config, lib, pkgs, inputs, ... }:
 let
   cfg = config.jared;
+
+  font = "sans";
+  fontSize = 12.0;
 in
 {
   options.jared = {
@@ -233,7 +236,6 @@ in
       fonts.fontconfig.enable = true;
 
       home.packages = with pkgs; [
-        font-awesome
         jetbrains-mono
         wl-clipboard
         xdg-terminal-exec
@@ -327,7 +329,12 @@ in
         settings.color = "333333";
       };
 
-      programs.rofi.enable = true;
+      programs.rofi = {
+        enable = true;
+        font = "${font} ${toString fontSize}";
+        theme = "android_notification";
+        inherit (config.wayland.windowManager.sway.config) terminal;
+      };
 
       services.swayidle = {
         enable = true;
@@ -345,6 +352,7 @@ in
       services.mako = {
         enable = true;
         defaultTimeout = 10 * 1000; # 10s
+        font = "${font} ${toString fontSize}";
       };
 
       services.cliphist.enable = true;
@@ -397,7 +405,7 @@ in
             workspaceLayout = "stacking";
             focus.wrapping = "yes";
             seat."*".xcursor_theme = with config.home.pointerCursor; "${name} ${toString size}";
-            fonts = { names = [ "sans" ]; size = 12.0; };
+            fonts = { names = [ font ]; size = fontSize; };
             bars = [{
               position = "top";
               trayOutput = "*";

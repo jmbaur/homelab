@@ -18,10 +18,14 @@
   custom = {
     dev.enable = true;
     gui.enable = true;
-    image.enable = true;
-    image.mutableNixStore = true;
-    image.primaryDisk = "/dev/disk/by-path/pci-0000:03:00.0-nvme-1";
     laptop.enable = true;
     users.jared.enable = true;
+  };
+
+  custom.image = {
+    enable = true;
+    hasTpm2 = true;
+    mutableNixStore = true;
+    primaryDisk = "/dev/disk/by-path/pci-0000:03:00.0-nvme-1";
   };
 }
