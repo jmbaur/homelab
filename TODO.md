@@ -1,4 +1,5 @@
 # image based systems
+- Figure out how to handle versioning
 - UKI version names need to be different on every commit, not just nixpkgs
   commit
 - Add a way to add trusted user on first boot, see:

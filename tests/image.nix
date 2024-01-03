@@ -19,6 +19,7 @@ lib.genAttrs [ "immutable" "mutable" ] (test: nixosTest {
 
     custom.image = {
       enable = true;
+      version = "0.0.0";
       primaryDisk = "/dev/vda";
       immutableMaxSize = 512 * 1024 * 1024; # 512M
       mutableNixStore = test == "mutable";
