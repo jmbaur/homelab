@@ -174,8 +174,10 @@ in
         terminal = "tmux-256color";
         plugins = with pkgs.tmuxPlugins; [ fingers logging ];
         extraConfig = ''
-          set-option -ag terminal-overrides ",alacritty:Tc"
-          set-option -ag terminal-overrides ",rio:Tc"
+          set-option -as terminal-features ",alacritty:RGB"
+          set-option -as terminal-features ",kitty:RGB"
+          set-option -as terminal-features ",rio:RGB"
+          set-option -as terminal-features ",xterm-256color:RGB"
           set-option -g allow-passthrough on
           set-option -g automatic-rename on
           set-option -g detach-on-destroy off
