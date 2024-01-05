@@ -376,6 +376,20 @@ in
         provider = "geoclue2";
       };
 
+      systemd.user.services.yubikey-touch-detector = {
+        Unit = {
+          Description = "YubiKey touch notifier";
+          Documentation = "https://github.com/maximbaz/yubikey-touch-detector";
+          PartOf = [ "graphical-session.target" ];
+        };
+        Service = {
+          Type = "simple";
+          Restart = "always";
+          ExecStart = "${lib.getExe pkgs.yubikey-touch-detector} --libnotify";
+        };
+        Install.WantedBy = [ "graphical-session.target" ];
+      };
+
       gtk = {
         enable = true;
         theme = {
