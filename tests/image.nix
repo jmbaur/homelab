@@ -6,6 +6,7 @@ let
 
     nix.settings.experimental-features = [ "nix-command" ];
 
+    boot.loader.timeout = 0;
     boot.initrd.systemd.emergencyAccess = true;
 
     virtualisation.directBoot.enable = false;

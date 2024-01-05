@@ -9,7 +9,7 @@ let
   };
 
   loaderConf = pkgs.writeText "loader.conf" ''
-    timeout 5
+    timeout ${if (config.boot.loader.timeout != null) then toString config.boot.loader.timeout else "menu-force"}
     editor yes
   '';
 
