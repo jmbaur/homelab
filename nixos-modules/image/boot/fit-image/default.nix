@@ -59,7 +59,7 @@ in
     };
   };
 
-  config = lib.mkIf (cfg.bootVariant == "fit-image") {
+  config = lib.mkIf (cfg.enable && cfg.bootVariant == "fit-image") {
     custom.image.bootFileCommands = ''
       (
         # source the setup file to get access to `substituteInPlace`
