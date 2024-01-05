@@ -10,7 +10,7 @@ in
     # NOTE: this should be set explicitly if it is actually needed
     system.stateVersion = lib.mkDefault "24.05";
 
-    custom.image.version = builtins.readFile ../.version;
+    custom.image.version = lib.head (builtins.match "(.*)[[:space:]]" (builtins.readFile ../.version));
 
     # We build on x86_64-linux.
     #
