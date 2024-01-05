@@ -481,25 +481,26 @@ in
             modes = lib.mkOptionDefault {
               passthru."${modifier}+F12" = "mode default";
             };
-            keybindings =
-              lib.mkOptionDefault ((lib.mapAttrs' (keys: lib.nameValuePair "${modifier}+${keys}") {
-                "Control+l" = "exec loginctl lock-session";
-                "F12" = "mode passthru";
-                "Print" = "exec ${shotman} --capture window";
-                "Shift+Print" = "exec ${shotman} --capture region";
-                "Shift+b" = "bar mode toggle";
-                "Shift+c" = "exec ${hyprpicker} --autocopy";
-                "c" = "exec ${cliphist} list | ${rofi} -i -p clipboard -dmenu -display-columns 2 | ${cliphist} decode | ${wl-copy}";
-                "p" = "exec ${config.wayland.windowManager.sway.config.menu}";
-              }) // {
-                "Print" = "exec ${shotman} --capture output";
-                "XF86AudioMicMute" = ''exec ${notify-send} --transient --hint int:value:$(${pamixer} --default-source --toggle-mute --get-volume) --hint string:x-canonical-private-synchronous:mic mic "$(if [[ $(${pamixer} --default-source --get-mute) == true ]]; then echo muted; else echo unmuted; fi)"'';
-                "XF86AudioMute" = ''exec ${notify-send} --transient --hint int:value:$(${pamixer} --toggle-mute --get-volume) --hint string:x-canonical-private-synchronous:volume volume "$(if [[ $(${pamixer} --get-mute) == true ]]; then echo muted; else echo unmuted; fi)"'';
-                "XF86AudioRaiseVolume" = ''exec ${notify-send} --transient --hint int:value:$(${pamixer} --increase 5 --get-volume) --hint string:x-canonical-private-synchronous:volume volume'';
-                "XF86AudioLowerVolume" = ''exec ${notify-send} --transient --hint int:value:$(${pamixer} --decrease 5 --get-volume) --hint string:x-canonical-private-synchronous:volume volume'';
-                "XF86MonBrightnessUp" = ''exec ${notify-send} --transient --hint int:value:$(${brightnessctl} set +5% | sed -En "s/.*\(([0-9]+)%\).*/\1/p") --hint string:x-canonical-private-synchronous:brightness brightness'';
-                "XF86MonBrightnessDown" = ''exec ${notify-send} --transient --hint int:value:$(${brightnessctl} set 5%- | sed -En "s/.*\(([0-9]+)%\).*/\1/p") --hint string:x-canonical-private-synchronous:brightness brightness'';
-              });
+            keybindings = lib.mkOptionDefault ((lib.mapAttrs' (keys: lib.nameValuePair "${modifier}+${keys}") {
+              "Control+l" = "exec loginctl lock-session";
+              "F12" = "mode passthru";
+              "Print" = "exec ${shotman} --capture window";
+              "Shift+Print" = "exec ${shotman} --capture region";
+              "Shift+b" = "bar mode toggle";
+              "Shift+c" = "exec ${hyprpicker} --autocopy";
+              "Shift+s" = "sticky toggle";
+              "Tab" = "workspace back_and_forth";
+              "c" = "exec ${cliphist} list | ${rofi} -i -p clipboard -dmenu -display-columns 2 | ${cliphist} decode | ${wl-copy}";
+              "p" = "exec ${config.wayland.windowManager.sway.config.menu}";
+            }) // {
+              "Print" = "exec ${shotman} --capture output";
+              "XF86AudioMicMute" = ''exec ${notify-send} --transient --hint int:value:$(${pamixer} --default-source --toggle-mute --get-volume) --hint string:x-canonical-private-synchronous:mic mic "$(if [[ $(${pamixer} --default-source --get-mute) == true ]]; then echo muted; else echo unmuted; fi)"'';
+              "XF86AudioMute" = ''exec ${notify-send} --transient --hint int:value:$(${pamixer} --toggle-mute --get-volume) --hint string:x-canonical-private-synchronous:volume volume "$(if [[ $(${pamixer} --get-mute) == true ]]; then echo muted; else echo unmuted; fi)"'';
+              "XF86AudioRaiseVolume" = ''exec ${notify-send} --transient --hint int:value:$(${pamixer} --increase 5 --get-volume) --hint string:x-canonical-private-synchronous:volume volume'';
+              "XF86AudioLowerVolume" = ''exec ${notify-send} --transient --hint int:value:$(${pamixer} --decrease 5 --get-volume) --hint string:x-canonical-private-synchronous:volume volume'';
+              "XF86MonBrightnessUp" = ''exec ${notify-send} --transient --hint int:value:$(${brightnessctl} set +5% | sed -En "s/.*\(([0-9]+)%\).*/\1/p") --hint string:x-canonical-private-synchronous:brightness brightness'';
+              "XF86MonBrightnessDown" = ''exec ${notify-send} --transient --hint int:value:$(${brightnessctl} set 5%- | sed -En "s/.*\(([0-9]+)%\).*/\1/p") --hint string:x-canonical-private-synchronous:brightness brightness'';
+            });
           };
       };
 

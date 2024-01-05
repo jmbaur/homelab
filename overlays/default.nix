@@ -9,8 +9,8 @@ inputs: {
 
       nixos-kexec = prev.callPackage ./nixos-kexec { };
 
-      labwc = prev.labwc.overrideAttrs (old: {
-        patches = (old.patches or [ ]) ++ [
+      labwc = prev.labwc.overrideAttrs ({ patches ? [ ], ... }: {
+        patches = patches ++ [
           (prev.fetchpatch2 {
             name = "Add-omnipresent-flag-for-views";
             url = "https://github.com/labwc/labwc/commit/bad8f334ead5587208ec62fb01ddf9dd2be5ff67.patch";
@@ -18,7 +18,7 @@ inputs: {
           })
           (prev.fetchpatch2 {
             name = "Add-touchpad-device-type";
-            url = "https://github.com/jmbaur/labwc/commit/6faee17d20637df35e27cd2cac462323e4d665a1.patch";
+            url = "https://github.com/labwc/labwc/commit/6faee17d20637df35e27cd2cac462323e4d665a1.patch";
             hash = "sha256-5HptxaEK7zH1eoyxYYyYZpKECE8MXznj6zLVDC0Kkyg=";
           })
         ];
@@ -26,8 +26,8 @@ inputs: {
 
       labwc-gtktheme = prev.callPackage ./labwc-gtktheme.nix { };
 
-      fuzzel = prev.fuzzel.overrideAttrs (old: {
-        patches = (old.patches or [ ]) ++ [
+      fuzzel = prev.fuzzel.overrideAttrs ({ patches ? [ ], ... }: {
+        patches = patches ++ [
           (prev.fetchpatch2 {
             name = "config-add-CTRL-to-default-keybindings";
             url = "https://codeberg.org/jmbaur/fuzzel/commit/2ecdc51a4f9ed83e94741a80648429ff7b062a14.patch";
@@ -36,8 +36,8 @@ inputs: {
         ];
       });
 
-      fnott = prev.fnott.overrideAttrs (old: {
-        patches = (old.patches or [ ]) ++ [
+      fnott = prev.fnott.overrideAttrs ({ patches ? [ ], ... }: {
+        patches = patches ++ [
           (prev.fetchpatch2 {
             name = "add-dbus-service-file";
             url = "https://codeberg.org/sewn/fnott/commit/6a092ba5fea58764cb56cfb037fcd334a8e3d67c.patch";
