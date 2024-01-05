@@ -23,6 +23,8 @@
 }:
 
 let
+  iniFormat = formats.ini { };
+
   seed = "39c4020e-af73-434a-93e4-7e37fdcc7f96";
 
   bootPartition = partitions."10-boot" // { };
@@ -50,9 +52,9 @@ let
   systemdArchitecture = builtins.replaceStrings [ "_" ] [ "-" ] stdenv.hostPlatform.linuxArch;
   closure = closureInfo { rootPaths = [ toplevel ]; };
 
-  bootPartitionConfig = (formats.ini { }).generate "10-boot.conf" { Partition = bootPartition; };
-  dataPartitionConfig = (formats.ini { }).generate "20-usr-a.conf" { Partition = dataPartition; };
-  hashPartitionConfig = (formats.ini { }).generate "20-usr-a-hash.conf" { Partition = hashPartition; };
+  bootPartitionConfig = iniFormat.generate "10-boot.conf" { Partition = bootPartition; };
+  dataPartitionConfig = iniFormat.generate "20-usr-a.conf" { Partition = dataPartition; };
+  hashPartitionConfig = iniFormat.generate "20-usr-a-hash.conf" { Partition = hashPartition; };
 in
 stdenv.mkDerivation {
   name = "nixos-image-${imageName}";

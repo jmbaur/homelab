@@ -5,6 +5,8 @@ let
 
   maxUsrSize = cfg.immutableMaxSize;
   maxUsrHashSize = maxUsrSize / 8;
+
+  encrypt = if cfg.encrypt then (if cfg.hasTpm2 then "tpm2" else "key-file") else "none";
 in
 {
   options.custom.image = with lib; {
@@ -18,6 +20,8 @@ in
     };
 
     hasTpm2 = mkEnableOption "TODO";
+
+    encrypt = mkEnableOption "TODO" // { default = true; };
 
     mutableNixStore = mkEnableOption "TODO";
 
@@ -81,6 +85,10 @@ in
 
       # Tell systemd to not automount anything on /usr. We don't
       # actually have a /usr mount in our fstab...
+      #
+      # TODO(jared): we should be using the SD_GPT_FLAG_NO_AUTO partition flag
+      # to indicate that the partition should not be auto-mounted. See
+      # https://uapi-group.org/specifications/specs/discoverable_partitions_specification/#partition-attribute-flags
       "mount.usr=fstab"
     ];
 
@@ -150,7 +158,13 @@ in
         repart.device = cfg.primaryDisk;
       };
 
-      availableKernelModules = [ "dm-verity" ] ++ lib.optional cfg.mutableNixStore "overlay";
+      availableKernelModules = [
+        "dm_verity"
+
+        # systemd-repart wants to use loop devices for doing "online" partition
+        # creation
+        "loop"
+      ] ++ lib.optional cfg.mutableNixStore "overlay";
     };
 
     systemd.repart.partitions = {
@@ -193,18 +207,27 @@ in
         Format = "btrfs";
         FactoryReset = true;
         MakeDirectories = lib.mkIf cfg.mutableNixStore (toString [ "/nix/.rw-store/store" "/nix/.rw-store/work" ]);
-        # TODO(jared): doesn't work?
-        # Encrypt = if cfg.hasTpm2 then "tpm2" else "off";
+        Encrypt = encrypt;
       };
+    };
+
+    boot.initrd.luks.devices.root = lib.mkIf cfg.encrypt {
+      device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions."30-root".Label}";
+      crypttabExtraOpts = lib.optional cfg.hasTpm2 "tpm2-device=auto";
+      tryEmptyPassphrase = !cfg.hasTpm2;
     };
 
     # enable zram by default since we don't create any swap partitions
     zramSwap.enable = lib.mkDefault true;
 
     fileSystems."/" = {
-      device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions."30-root".Label}";
       fsType = config.systemd.repart.partitions."30-root".Format;
       options = [ "compress=zstd" "noatime" "defaults" ];
+      device =
+        if cfg.encrypt then
+          "/dev/mapper/root"
+        else
+          "/dev/disk/by-partlabel/${config.systemd.repart.partitions."30-root".Label}";
     };
     fileSystems."/nix/.ro-store" = {
       device = "/dev/mapper/usr";

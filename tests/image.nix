@@ -16,6 +16,7 @@ let
     # Make the qemu-vm.nix module use what is found under
     # `config.fileSystems`.
     virtualisation.fileSystems = lib.mkForce { };
+    virtualisation.useDefaultFilesystems = false;
 
     custom.image = {
       enable = true;
@@ -68,6 +69,8 @@ lib.mapAttrs'
       # Set NIX_DISK_IMAGE so that the qemu script finds the right disk image.
       os.environ['NIX_DISK_IMAGE'] = tmp_disk_image.name
 
+      machine.start(allow_reboot=True)
+
       bootctl_status = machine.succeed("bootctl status")
 
       def disk_size(partlabel):
@@ -99,9 +102,10 @@ lib.mapAttrs'
     '';
   }))
 {
-  simple-immutable = { };
-  simple-mutable = { custom.image.mutableNixStore = true; };
-  luks-encrypted = {
+  immutable = { };
+  mutable = { custom.image.mutableNixStore = true; };
+  unencrypted = { custom.image.encrypt = false; };
+  tpm2-encrypted = {
     virtualisation.tpm.enable = true;
     custom.image.hasTpm2 = true;
   };
