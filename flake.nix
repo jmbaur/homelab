@@ -18,7 +18,7 @@
     gosee.inputs.nixpkgs.follows = "nixpkgs";
     gosee.url = "github:jmbaur/gosee";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    home-manager.url = "github:jmbaur/home-manager?ref=sway-env-vars";
+    home-manager.url = "github:jmbaur/home-manager?ref=homelab";
     ipwatch.inputs.nixpkgs.follows = "nixpkgs";
     ipwatch.url = "github:jmbaur/ipwatch";
     lanzaboote.inputs.nixpkgs.follows = "nixpkgs";
