@@ -11,13 +11,19 @@ clean: init
 bump type="patch":
 	cat {{justfile_directory()}}/.version | xargs semver bump {{type}} | tee {{justfile_directory()}}/.version
 
+# We don't do `nix-env --set --profile ..` here since we aren't using nix
+# profiles to manage the system.
+#
+# run switch-to-configuration for a nixos system
 nixos type="switch":
-	nixos-rebuild \
+	nixosConfig=$(nix build \
+		--no-link \
+		--print-out-paths \
 		--print-build-logs \
-		--use-remote-sudo \
-		--flake {{justfile_directory()}} \
-		{{type}}
+		{{justfile_directory()}}#nixosConfigurations.$(hostname).config.system.build.toplevel) \
+		&& sudo $nixosConfig/bin/switch-to-configuration {{type}}
 
+# activate the latest home-manager configuration
 home:
 	hmConfig=$(nix build \
 		--no-link \
@@ -26,6 +32,7 @@ home:
 		{{justfile_directory()}}#homeConfigurations.$(whoami)-$(hostname).activationPackage) \
 		&& $hmConfig/activate
 
+# update all managed packages, meant to be run in CI
 update:
 	#!/usr/bin/env bash
 	echo '```console' > /tmp/pr-body

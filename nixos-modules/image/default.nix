@@ -72,12 +72,21 @@ in
   ];
 
   config = lib.mkIf cfg.enable {
-    # we don't need nixpkgs boot-loading infrastructure
-    boot.loader.grub.enable = false;
+    boot.loader.external.enable = true;
+    boot.loader.external.installHook = lib.getExe' pkgs.coreutils "true"; # do nothing
 
     users.mutableUsers = cfg.mutableNixStore;
+
+    # When we have a mutable nix-store, we can still do
+    # switch-to-configuration, it just won't be persistent until the updated
+    # image is written to one of the update partitions. This can be useful
+    # since it still allows us to have runtime updates of systemd services and
+    # other things done through the activation script.
+    system.switch.enable = cfg.mutableNixStore;
     system.disableInstallerTools = true;
-    system.switch.enable = false;
+
+    # Having nix available on a system with a read-only nix-store is
+    # meaningless.
     nix.enable = cfg.mutableNixStore;
 
     boot.kernelParams = [
