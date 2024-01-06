@@ -121,10 +121,7 @@ lib.mapAttrs'
       ''}
 
       machine.fail("command -v nixos-rebuild")
-      ${lib.optionalString (!nodes.machine.custom.image.mutableNixStore) ''
-      machine.fail("test -f /run/current-system/bin/switch-to-configuration")
-      ''}
-
+      machine.${if nodes.machine.custom.image.mutableNixStore then "succeed" else "fail"}("test -f /run/current-system/bin/switch-to-configuration")
       machine.${if nodes.machine.custom.image.mutableNixStore then "succeed" else "fail"}("touch foo && nix store add-file ./foo")
 
       # ensure security wrappers are mounted
