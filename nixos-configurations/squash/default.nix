@@ -4,8 +4,6 @@
   boot.kernelParams = [ "cfg80211.ieee80211_regdom=US" ];
   boot.initrd.systemd.enable = true;
 
-  router.enable = true;
-
   hardware.armada-388-clearfog.enable = true;
 
   custom = {
