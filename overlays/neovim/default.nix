@@ -66,6 +66,7 @@ let
         mini-nvim
         nvim-lspconfig
         nvim-surround
+        nvim-treesitter-context
         nvim-treesitter-refactor
         nvim-treesitter-textobjects
         oil-nvim

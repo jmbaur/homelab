@@ -1,2 +1,2 @@
-vim.opt.winbar = ""
-vim.opt.colorcolumn = ""
+vim.opt_local.winbar = ""
+vim.opt_local.colorcolumn = ""

@@ -1,2 +1,2 @@
-vim.opt.commentstring = "// %s"
-vim.opt.expandtab = false
+vim.opt_local.commentstring = "// %s"
+vim.opt_local.expandtab = false
