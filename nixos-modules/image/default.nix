@@ -172,6 +172,8 @@ in
 
         # systemd-repart wants to use loop devices for doing "online" partition
         # creation
+        #
+        # TODO(jared): remove when https://github.com/NixOS/nixpkgs/pull/278895 lands
         "loop"
       ] ++ lib.optional cfg.mutableNixStore "overlay";
     };
