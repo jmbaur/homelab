@@ -13,9 +13,9 @@
     image = {
       enable = true;
       encrypt = false;
-      primaryDisk = "/dev/disk/by-path/TODO";
+      primaryDisk = "/dev/disk/by-path/platform-f10a8000.sata-ata-1";
       bootVariant = "fit-image";
-      ubootBootMedium.type = "mmc"; # TODO(jared): This should probably be sata?
+      ubootBootMedium.type = "scsi";
     };
   };
 }
