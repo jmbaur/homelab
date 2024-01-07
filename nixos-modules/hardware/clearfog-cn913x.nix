@@ -3,8 +3,8 @@ let
   cn913xBuildRepo = pkgs.fetchFromGitHub {
     owner = "solidrun";
     repo = "cn913x_build";
-    rev = "d6d0577e6b6e86d29837618e9a02f5ee4ac136cb";
-    hash = "sha256-5PGu7XQxtg0AP9RovDDqmPuVnrNQow1bYaorAmUFQ7Q=";
+    rev = "93008bfe927670788d2a5b1ce4fe056600ff5cdf";
+    hash = "sha256-kydd2srTTCaWWsakaQEHwmtByX8OHIcxbBgdl8KwRCQ=";
   };
   cn913xLinuxPatchesPath = "${cn913xBuildRepo}/patches/linux";
 in
@@ -14,10 +14,9 @@ in
   };
 
   config = lib.mkIf config.hardware.clearfog-cn913x.enable {
-    system.build.firmware = pkgs.cn9130CfProSpiFirmware;
+    nixpkgs.hostPlatform = "aarch64-linux";
 
-    boot.loader.grub.enable = false;
-    boot.loader.generic-extlinux-compatible.enable = true;
+    system.build.firmware = pkgs.cn9130CfProSpiFirmware;
 
     boot.kernelParams = [ "console=ttyS0,115200" "cma=256M" ];
 

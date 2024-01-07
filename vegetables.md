@@ -1,4 +1,5 @@
 - [x] artichoke
+- [x] asparagus
 - [x] beetroot
 - [x] cabbage
 - [x] carrot
@@ -11,7 +12,6 @@
 - [x] rhubarb
 - [x] squash
 - [x] zucchini
-- [ ] asparagus
 - [ ] broccoli
 - [ ] cauliflower
 - [ ] celery

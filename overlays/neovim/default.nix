@@ -85,6 +85,7 @@ let
         vim-repeat
         vim-rhubarb
         vim-rsi
+        zen-mode-nvim
       ]
       # opt
       ++ (map (plugin: { inherit plugin; optional = true; }) [ ]);

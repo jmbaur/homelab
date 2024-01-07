@@ -2,9 +2,8 @@
 let
   cfg = config.custom.deployee;
 in
-with lib;
 {
-  options.custom.deployee = {
+  options.custom.deployee = with lib; {
     enable = mkEnableOption "deploy target";
     authorizedKeys = mkOption {
       type = types.listOf types.str;
@@ -17,7 +16,7 @@ with lib;
     sshTarget = lib.mkOption { type = lib.types.str; };
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     assertions = [{
       assertion = (cfg.authorizedKeyFiles != [ ] || cfg.authorizedKeys != [ ]);
       message = "No authorized keys configured for deployee";
