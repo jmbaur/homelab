@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ lib, pkgs, ... }: {
   nixpkgs.hostPlatform = "aarch64-linux";
 
   boot.initrd.availableKernelModules = [ "sr_mod" ];
@@ -21,8 +21,8 @@
     primaryDisk = "/dev/sda";
     hasTpm2 = true;
     postImageCommands = ''
-      ${pkgs.vmTools.qemu}/bin/qemu-img convert -f raw -o subformat=dynamic -O vhdx image.raw $out/image.vhdx
-      rm image.raw
+      ${lib.getExe' pkgs.buildPackages.qemu-utils "qemu-img"} convert -f raw -o subformat=dynamic -O vhdx $out/image.raw $out/image.vhdx
+      rm $out/image.raw
     '';
   };
 }
