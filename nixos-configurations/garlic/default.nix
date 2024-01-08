@@ -19,7 +19,8 @@
     enable = true;
     mutableNixStore = true;
     primaryDisk = "/dev/sda";
-    hasTpm2 = true;
+    encrypt = false;
+    hasTpm2 = false; # hyper-v for arm64 windows does not have tpm support
     postImageCommands = ''
       ${lib.getExe' pkgs.buildPackages.qemu-utils "qemu-img"} convert -f raw -o subformat=dynamic -O vhdx $out/image.raw $out/image.vhdx
       rm $out/image.raw
