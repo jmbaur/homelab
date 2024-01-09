@@ -34,18 +34,18 @@
 , zls
 }:
 let
-  tree-sitter-just = tree-sitter.buildGrammar rec {
-    language = "just";
-    version = builtins.substring 0 7 src.rev;
-    src = fetchgit {
-      inherit (lib.importJSON ../tree-sitter-just-source.json) url rev hash;
-    };
-  };
+  # tree-sitter-just = tree-sitter.buildGrammar rec {
+  #   language = "just";
+  #   version = builtins.substring 0 7 src.rev;
+  #   src = fetchgit {
+  #     inherit (lib.importJSON ../tree-sitter-just-source.json) url rev hash;
+  #   };
+  # };
 
-  tree-sitter-just-plugin = vimUtils.buildVimPlugin {
-    name = "tree-sitter-just";
-    inherit (tree-sitter-just) src;
-  };
+  # tree-sitter-just-plugin = vimUtils.buildVimPlugin {
+  #   name = "tree-sitter-just";
+  #   inherit (tree-sitter-just) src;
+  # };
 
   jmbaur-config = vimUtils.buildVimPlugin {
     name = "jmbaur-nvim-config";
@@ -56,7 +56,7 @@ let
     plugins = with vimPlugins;
       # start
       [
-        (nvim-treesitter.withPlugins (_: nvim-treesitter.allGrammars ++ [ tree-sitter-just ]))
+        (nvim-treesitter.withPlugins (_: nvim-treesitter.allGrammars ++ [ /*tree-sitter-just*/ ]))
         diffview-nvim
         efmls-configs-nvim
         gitsigns-nvim
@@ -75,7 +75,7 @@ let
         telescope-nvim
         telescope-ui-select-nvim
         telescope-zf-native-nvim
-        tree-sitter-just-plugin
+        # tree-sitter-just-plugin
         vim-dispatch
         vim-eunuch
         vim-flog

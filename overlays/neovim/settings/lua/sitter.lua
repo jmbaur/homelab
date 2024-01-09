@@ -3,11 +3,11 @@ local install = require("nvim-treesitter.install")
 
 install.compilers = { "echo" } -- we don't install parsers from nvim-treesitter
 
-vim.opt.foldmethod = "marker"
--- vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
--- vim.opt.foldtext = "v:lua.vim.treesitter.foldtext()"
-
 configs.setup({
+	auto_install = false,
+	ignore_install = {},
+	ensure_installed = {},
+	sync_install = false,
 	highlight = {
 		enable = true,
 		additional_vim_regex_highlighting = false,

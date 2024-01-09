@@ -24,6 +24,7 @@ if #vim.api.nvim_list_uis() > 0 then
 	vim.opt.belloff = "all"
 	vim.opt.colorcolumn = "80"
 	vim.opt.cursorline = false
+	vim.opt.foldmethod = "marker"
 	vim.opt.laststatus = 2
 	vim.opt.number = true
 	vim.opt.relativenumber = true
