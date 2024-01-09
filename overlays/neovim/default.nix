@@ -64,6 +64,7 @@ let
         iron-nvim
         jmbaur-config
         mini-nvim
+        nvim-gdb
         nvim-lspconfig
         nvim-surround
         nvim-treesitter-context
