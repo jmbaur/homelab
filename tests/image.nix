@@ -149,8 +149,8 @@ lib.mapAttrs'
       # necessary.
       with open("${nodes.machine.system.build.image}/repart-output.json") as f:
           repart_output = json.load(f)
-          hash_uuid = uuid.UUID(repart_output[2]["roothash"][32:])
           data_uuid = uuid.UUID(repart_output[2]["roothash"][:32])
+          hash_uuid = uuid.UUID(repart_output[2]["roothash"][32:])
           machine.succeed(f"sfdisk --part-uuid /dev/vda 2 {uuid.uuid4()}")
           machine.succeed(f"sfdisk --part-uuid /dev/vda 3 {uuid.uuid4()}")
           machine.succeed(f"sfdisk --part-uuid /dev/vda 4 {hash_uuid}")
