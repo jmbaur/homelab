@@ -2,6 +2,8 @@
 let
   cfg = config.custom.image;
 
+  systemdArchitecture = builtins.replaceStrings [ "_" ] [ "-" ] pkgs.stdenv.hostPlatform.linuxArch;
+
   globalBootScript = pkgs.writeText "boot.cmd" ''
     if test -z $active; then
       setenv active a;
@@ -75,7 +77,7 @@ in
 
         install -Dm0644 ${bootScript} $bootscript
         substituteInPlace $bootscript \
-          --subst-var-by usrhash $(jq --raw-output '.[] | select(.label=="usr-a") | .roothash' <$out/repart-output.json)
+          --subst-var-by usrhash $(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}") | .roothash' <$out/repart-output.json)
 
     '' + {
       "Image" = ''

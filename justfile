@@ -8,9 +8,6 @@ clean: init
 	rm -rf {{justfile_directory()}}/result*
 	rm -rf $out/*
 
-bump type="patch":
-	cat {{justfile_directory()}}/.version | xargs semver bump {{type}} | tee {{justfile_directory()}}/.version
-
 # We don't do `nix-env --set --profile ..` here since we aren't using nix
 # profiles to manage the system.
 #

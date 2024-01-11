@@ -11,15 +11,16 @@
 , systemd
 , ubootTools
 , xz
-, zstd
 
   # arguments
-, toplevel
 , bootFileCommands
-, postImageCommands
-, partitions
-, usrFormat
+, distroId
 , imageName
+, partitions
+, postImageCommands
+, toplevel
+, usrFormat
+, version
 }:
 
 let
@@ -43,7 +44,7 @@ let
       SplitName = "usr";
     }) [ "SizeMinBytes" ];
 
-  hashPartition = partitions."20-usr-a-hash" // {
+  hashPartition = partitions."20-usr-hash-a" // {
     Verity = "hash";
     VerityMatchKey = "usr";
     SplitName = "usr-hash";
@@ -54,24 +55,14 @@ let
 
   bootPartitionConfig = iniFormat.generate "10-boot.conf" { Partition = bootPartition; };
   dataPartitionConfig = iniFormat.generate "20-usr-a.conf" { Partition = dataPartition; };
-  hashPartitionConfig = iniFormat.generate "20-usr-a-hash.conf" { Partition = hashPartition; };
+  hashPartitionConfig = iniFormat.generate "20-usr-hash-a.conf" { Partition = hashPartition; };
 in
 stdenv.mkDerivation {
   name = "nixos-image-${imageName}";
 
-  depsBuildBuild = [
-    dosfstools
-    dtc
-    fakeroot
-    jq
-    mtools
-    sbsigntool
-    squashfsTools
-    systemd
-    ubootTools
-    xz
-    zstd
-  ];
+  depsBuildBuild = [ dosfstools dtc fakeroot jq mtools sbsigntool squashfsTools systemd ubootTools xz ];
+
+  outputs = [ "out" "update" ];
 
   inherit bootFileCommands;
   passAsFile = [ "bootFileCommands" ];
@@ -79,7 +70,7 @@ stdenv.mkDerivation {
   buildCommand = ''
     install -Dm0644 ${bootPartitionConfig} repart.d/10-boot.conf
     install -Dm0644 ${dataPartitionConfig} repart.d/20-usr-a.conf
-    install -Dm0644 ${hashPartitionConfig} repart.d/20-usr-a-hash.conf
+    install -Dm0644 ${hashPartitionConfig} repart.d/20-usr-hash-a.conf
 
     echo "CopyFiles=${closure}/registration:/.nix-path-registration" >> repart.d/20-usr-a.conf
     for path in $(cat ${closure}/store-paths); do
@@ -94,7 +85,7 @@ stdenv.mkDerivation {
       "--json=pretty"
     )
 
-    mkdir -p $out
+    mkdir -p $out $update
 
     fakeroot systemd-repart ''${repart_args[@]} \
       --defer-partitions=esp \
@@ -116,6 +107,17 @@ stdenv.mkDerivation {
 
     ${postImageCommands}
 
-    zstd --rm $out/*.{raw,vhdx}
+    data_uuid=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}") | .uuid' <$out/repart-output.json)
+    hash_uuid=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}-verity") | .uuid' <$out/repart-output.json)
+    data_orig_path=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}") | .split_path' <$out/repart-output.json)
+    hash_orig_path=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}-verity") | .split_path' <$out/repart-output.json)
+
+    data_new_path="''${update}/${distroId}_${toString version}_''${data_uuid}_1_1.usr.raw"
+    hash_new_path="''${update}/${distroId}_${toString version}_''${hash_uuid}_1_1.usr-hash.raw"
+
+    mv "$data_orig_path" "$data_new_path"
+    mv "$hash_orig_path" "$hash_new_path"
+
+    xz --compress --verbose $out/*.{raw,vhdx} $update/*.raw
   '';
 }

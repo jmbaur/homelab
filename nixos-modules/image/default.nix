@@ -9,11 +9,18 @@ let
   encrypt = if cfg.encrypt then (if cfg.hasTpm2 then "tpm2" else "key-file") else "none";
 in
 {
+  imports = [
+    ./update.nix
+    ./boot/fit-image
+    ./boot/uefi
+  ];
+
+
   options.custom.image = with lib; {
     enable = mkEnableOption "TODO";
 
     version = mkOption {
-      type = types.str;
+      type = types.ints.positive;
       description = mdDoc ''
         TODO
       '';
@@ -65,11 +72,6 @@ in
       '';
     };
   };
-
-  imports = [
-    ./boot/fit-image
-    ./boot/uefi
-  ];
 
   config = lib.mkIf cfg.enable {
     boot.loader.external.enable = true;
@@ -158,7 +160,6 @@ in
         # systemd-veritysetup.
         services.systemd-repart.after = map (device: "${utils.escapeSystemdPath device}.device") [
           "/dev/mapper/usr"
-          "/dev/disk/by-partlabel/usr-a"
         ];
         services.systemd-repart.requires = config.boot.initrd.systemd.services.systemd-repart.after;
 
@@ -188,29 +189,37 @@ in
       };
       "20-usr-a" = {
         Type = "usr";
-        Label = "usr-a";
+        Label = "usr-${toString cfg.version}";
         SizeMinBytes = toString maxUsrSize;
         SizeMaxBytes = toString maxUsrSize;
+        NoAuto = true;
+        ReadOnly = true;
       };
-      "20-usr-a-hash" = {
+      "20-usr-hash-a" = {
         Type = "usr-verity";
-        Label = "usr-a-hash";
+        Label = "usr-hash-${toString cfg.version}";
         SizeMinBytes = toString maxUsrHashSize;
         SizeMaxBytes = toString maxUsrHashSize;
+        NoAuto = true;
+        ReadOnly = true;
       };
 
       # The "B" update partition and root partition get created on first boot.
       "20-usr-b" = {
         Type = "usr";
-        Label = "usr-b";
+        Label = "usr-${toString (cfg.version - 1)}";
         SizeMinBytes = toString maxUsrSize;
         SizeMaxBytes = toString maxUsrSize;
+        NoAuto = true;
+        ReadOnly = true;
       };
-      "20-usr-b-hash" = {
+      "20-usr-hash-b" = {
         Type = "usr-verity";
-        Label = "usr-b-hash";
+        Label = "usr-hash-${toString (cfg.version - 1)}";
         SizeMinBytes = toString maxUsrHashSize;
         SizeMaxBytes = toString maxUsrHashSize;
+        NoAuto = true;
+        ReadOnly = true;
       };
       "30-root" = {
         Type = "root";
@@ -259,8 +268,9 @@ in
     system.build.image = pkgs.callPackage ./image.nix {
       usrFormat = config.fileSystems."/nix/.ro-store".fsType;
       imageName = config.networking.hostName;
-      inherit (cfg) bootFileCommands postImageCommands;
+      inherit (cfg) version bootFileCommands postImageCommands;
       inherit (config.system.build) toplevel;
+      inherit (config.system.nixos) distroId;
       inherit (config.systemd.repart) partitions;
     };
   };
