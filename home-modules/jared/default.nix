@@ -439,7 +439,7 @@ in
             workspaceLayout = "stacking";
             focus.wrapping = "yes";
             seat."*".xcursor_theme = with config.home.pointerCursor; "${name} ${toString size}";
-            fonts = { names = [ font ]; size = fontSize; };
+            fonts = { names = [ font ]; style = "Bold Semi-Condensed"; size = fontSize; };
             bars = [{
               position = "top";
               trayOutput = "*";
