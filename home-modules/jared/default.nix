@@ -39,6 +39,7 @@ in
         enable = true;
         interactiveShellInit = ''
           set -U fish_greeting ""
+          complete --command nom --wraps nix
         '';
       };
 
