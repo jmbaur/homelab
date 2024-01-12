@@ -1,3 +1,6 @@
 { lib, config, ... }: {
-  systemd.tmpfiles.rules = lib.optional config.networking.wireless.enable "f /etc/wpa_supplicant.conf 600 root root - -";
+  systemd.tmpfiles.settings."10-wpa-supplicant" =
+    lib.mkIf config.networking.wireless.enable {
+      "/etc/wpa_supplicant.conf".f = { user = "root"; group = "root"; mode = "600"; };
+    };
 }

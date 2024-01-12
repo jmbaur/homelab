@@ -5,7 +5,11 @@ let
 in
 {
   config = lib.mkIf (btrfsMounts != { }) {
-    systemd.tmpfiles.rules = [ "d /var/lib/snapshots - root root 30d -" ];
+    systemd.tmpfiles.settings."10-snapshots"."/var/lib/snapshots".d = {
+      user = "root";
+      group = "root";
+      age = "30d";
+    };
     systemd.timers.snapshot-home = {
       enable = hasHomeSubvolume;
       description = "snapshot home subvolume";
