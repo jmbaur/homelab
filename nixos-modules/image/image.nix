@@ -118,6 +118,6 @@ stdenv.mkDerivation {
     mv "$data_orig_path" "$data_new_path"
     mv "$hash_orig_path" "$hash_new_path"
 
-    xz -3 --compress --verbose $out/*.{raw,vhdx} $update/*.raw
+    xz -3 --compress --verbose --threads=0 $out/*.{raw,vhdx} $update/*.raw
   '';
 }

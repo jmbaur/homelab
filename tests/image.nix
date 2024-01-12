@@ -163,6 +163,8 @@ lib.mapAttrs'
         machine.shutdown()
 
         assert_boot_entry("nixos_${newerVersion}+3-0.efi")
+        machine.wait_for_unit("boot-complete.target")
+        machine.wait_until_succeeds("test -f ${nodes.machine.boot.loader.efi.efiSysMountPoint}/EFI/Linux/nixos_${newerVersion}.efi")
       '';
   }))
 {

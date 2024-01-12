@@ -26,6 +26,11 @@ in
       message = "need to specify config.hardware.deviceTree.name";
     }];
 
+    systemd.additionalUpstreamSystemUnits = [
+      "boot-complete.target"
+      "systemd-bless-boot.service"
+    ];
+
     systemd.sysupdate.transfers."70-uki" = {
       Transfer.ProtectVersion = "%A";
       Source = {
