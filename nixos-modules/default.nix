@@ -22,7 +22,6 @@ inputs: {
       ./tinyboot-installer.nix
       ./wireless.nix
       ./zfs.nix
-      inputs.disko.nixosModules.disko
       inputs.ipwatch.nixosModules.default
       inputs.nixos-router.nixosModules.default
       inputs.sops-nix.nixosModules.sops

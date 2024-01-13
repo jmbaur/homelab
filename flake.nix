@@ -11,8 +11,6 @@
   };
 
   inputs = {
-    disko.inputs.nixpkgs.follows = "nixpkgs";
-    disko.url = "github:nix-community/disko";
     gobar.inputs.nixpkgs.follows = "nixpkgs";
     gobar.url = "github:jmbaur/gobar";
     gosee.inputs.nixpkgs.follows = "nixpkgs";
@@ -21,8 +19,6 @@
     home-manager.url = "github:jmbaur/home-manager?ref=homelab";
     ipwatch.inputs.nixpkgs.follows = "nixpkgs";
     ipwatch.url = "github:jmbaur/ipwatch";
-    lanzaboote.inputs.nixpkgs.follows = "nixpkgs";
-    lanzaboote.url = "github:nix-community/lanzaboote/v0.3.0";
     microvm.inputs.nixpkgs.follows = "nixpkgs";
     microvm.url = "github:astro/microvm.nix";
     neovim.inputs.nixpkgs.follows = "nixpkgs";
@@ -33,8 +29,6 @@
     nixos-router.url = "github:jmbaur/nixos-router";
     nixpkgs.url = "github:jmbaur/nixpkgs/nixos-unstable";
     nur.url = "github:nix-community/NUR";
-    pd-notify.inputs.nixpkgs.follows = "nixpkgs";
-    pd-notify.url = "github:jmbaur/pd-notify";
     pre-commit.inputs.nixpkgs.follows = "nixpkgs";
     pre-commit.url = "github:cachix/pre-commit-hooks.nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";

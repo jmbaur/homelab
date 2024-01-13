@@ -107,15 +107,13 @@ in
     # package.
     boot.initrd.services.lvm.enable = true;
 
-    # NOTE: only needed if we are going to use CopyBlocks
+    # NOTE: only needed if we are going to use CopyBlocks on the B partition
     # systemd.package = pkgs.systemd.overrideAttrs (old: {
     #   patches = old.patches ++ [ ./systemd-repart.patch ];
     # });
 
     boot.initrd = {
       systemd = {
-        emergencyAccess = lib.warn "initrd emergency access enabled" true;
-
         enable = true;
         repart.enable = true;
         additionalUpstreamUnits = [

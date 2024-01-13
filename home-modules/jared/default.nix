@@ -64,7 +64,7 @@ in
     }
 
     (lib.mkIf cfg.dev.enable {
-      home.packages = with pkgs; [ ansifilter as-tree bc bintools bottom cachix cntr curl dig dnsutils dt entr fd file fsrx gh git-extras git-gone gnumake gosee grex gron htmlq htop-vim iputils jared-neovim-all-languages jo jq just killall lm_sensors lsof macgen mdcat mob mosh nix-diff nix-output-monitor nix-prefetch-scripts nix-tree nload nurl patchelf pb pciutils pd-notify podman-compose podman-tui pomo procs pstree qemu ripgrep rlwrap sd skopeo strace tcpdump tea tealdeer tig tio tmux-jump tokei traceroute usbutils wip xsv ydiff yj ];
+      home.packages = with pkgs; [ ansifilter as-tree bc bintools bottom cachix cntr curl dig dnsutils dt entr fd file fsrx gh git-extras git-gone gnumake gosee grex gron htmlq htop-vim iputils jared-neovim-all-languages jo jq just killall lm_sensors lsof macgen mdcat mob mosh nix-diff nix-output-monitor nix-prefetch-scripts nix-tree nload nurl patchelf pb pciutils pomo procs pstree qemu ripgrep rlwrap sd skopeo strace tcpdump tea tealdeer tig tio tmux-jump tokei traceroute usbutils wip xsv ydiff yj ];
 
       home.sessionVariables = {
         PROJECTS_DIR = "${config.home.homeDirectory}/projects";
