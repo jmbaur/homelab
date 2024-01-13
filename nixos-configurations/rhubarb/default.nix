@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 let
   uboot = pkgs.uboot-rpi_4.override {
     extraStructuredConfig = with pkgs.ubootLib; {
@@ -34,6 +34,6 @@ in
 
   # {{{ TODO(jared): delete this
   users.allowNoPasswordLogin = true;
-  users.users.root.password = "";
+  users.users.root.password = lib.warn "EMPTY ROOT PASSWORD, DO NOT USE IN 'PRODUCTION'" "";
   # }}}
 }

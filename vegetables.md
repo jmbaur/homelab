@@ -1,21 +1,21 @@
 - [x] artichoke
 - [x] asparagus
 - [x] beetroot
-- [x] cabbage
-- [x] carrot
 - [x] fennel
 - [x] garlic
-- [x] kale
-- [x] onion
 - [x] pea
 - [x] pumpkin
 - [x] rhubarb
 - [x] squash
 - [x] zucchini
 - [ ] broccoli
+- [ ] cabbage
+- [ ] carrot
 - [ ] cauliflower
 - [ ] celery
+- [ ] kale
 - [ ] olive
+- [ ] onion
 - [ ] potato
 - [ ] radish
 - [ ] tomato

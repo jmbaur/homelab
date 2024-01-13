@@ -70,7 +70,7 @@ in
 
   # {{{ TODO(jared): delete this
   users.allowNoPasswordLogin = true;
-  users.users.root.password = "";
+  users.users.root.password = lib.warn "EMPTY ROOT PASSWORD, DO NOT USE IN 'PRODUCTION'" "";
   # }}}
 
   hardware.deviceTree.enable = true;
