@@ -10,7 +10,7 @@ in
     # NOTE: this should be set explicitly if it is actually needed
     system.stateVersion = lib.mkDefault "24.05";
 
-    custom.image.version = 1;
+    custom.image.version = 2;
 
     # We build on x86_64-linux.
     #
