@@ -70,12 +70,17 @@ let
       custom.image.bootVariant = "fit-image";
       custom.image.ubootBootMedium.type = "virtio";
       # TODO(jared): what would this be for aarch64?
-      custom.image.ubootLoadAddress = "0x1000000";
+      custom.image.ubootLoadAddress = "0x01000000";
       virtualisation.bios = pkgs.linkFarm "u-boot-nixos-vm-bios" [{
         name = "bios.bin";
         path = {
-          x86_64 = "${pkgs.ubootQemuX86}/u-boot.rom";
-          aarch64 = "${pkgs.ubootQemuAarch64}/u-boot.bin";
+          x86_64 = "${pkgs.uboot-qemu-x86_64.override {
+            extraStructuredConfig = with pkgs.ubootLib; {
+              CMD_LZMADEC = yes;
+              SYS_LOAD_ADDR = freeform "0x04000000"; # allow for larger than 16MiB kernel size
+            };
+          }}/u-boot.rom";
+          aarch64 = "${pkgs.uboot-qemu_arm64}/u-boot.bin";
         }.${pkgs.stdenv.hostPlatform.qemuArch};
       }];
     };
@@ -204,10 +209,10 @@ builtins.listToAttrs (map
   ))
   # TODO(jared): test with all boot methods, right now uefi is easiest
   (
-    /*lib.filter ({ bootMethod, ... }: bootMethod == "uefi")*/
-    (lib.cartesianProductOfSets {
-      bootMethod = [ "uefi" "fit-image" ];
-      imageType = [ "immutable" "mutable" "unencrypted" "tpm2-encrypted" ];
-    })
+    lib.filter ({ bootMethod, ... }: bootMethod == "uefi")
+      (lib.cartesianProductOfSets {
+        bootMethod = [ "uefi" "fit-image" ];
+        imageType = [ "immutable" "mutable" "unencrypted" "tpm2-encrypted" ];
+      })
   ))
 

@@ -47,7 +47,6 @@ in
     custom.image = {
       ubootLoadAddress = mkOption {
         type = types.str;
-        default = "0x0";
         description = mdDoc ''
           TODO
         '';
@@ -99,6 +98,7 @@ in
         source $stdenv/setup
 
         declare kernel_compression
+        declare x86_setup_code # unused on non-x86 systems
         export description="${with config.system.nixos; "${distroName} ${codeName} ${version}"}"
         export arch=${pkgs.stdenv.hostPlatform.linuxArch}
         export linux_kernel=kernel
@@ -120,8 +120,22 @@ in
         cp ${kernelPath} $linux_kernel
       '';
       "bzImage" = ''
-        kernel_compression=none
-        cp ${kernelPath} $linux_kernel
+        kernel_compression=lzma
+        tmp=$(mktemp)
+        objcopy -O binary ${lib.getDev config.system.build.kernel}/vmlinux $tmp
+        du -sh $tmp
+        exit 3
+        lzma --threads 0 <$tmp >$linux_kernel
+
+        # The bzImage is (in simplified form) a concatenation of some setup
+        # code (setup.bin) with a compressed vmlinux. The setup.bin _should_ be
+        # within the first 17KiB of the bzImage, so we take the first 17KiB.
+        #
+        # TODO(jared): we should be smarter about only extracting what is
+        # needed here.
+        x86_setup_code=$(mktemp)
+        dd bs=1K count=17 if=${kernelPath} of=$x86_setup_code
+        export x86_setup_code
       '';
     }.${config.system.boot.loader.kernelFile} + ''
         export kernel_compression

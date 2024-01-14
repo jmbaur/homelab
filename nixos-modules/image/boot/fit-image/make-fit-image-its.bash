@@ -7,6 +7,7 @@ declare initrd
 declare kernel_compression
 declare bootscript
 declare load_address
+declare x86_setup_code
 
 function top() {
 	echo
@@ -71,6 +72,35 @@ function fdt_definition() {
 EOF
 }
 
+function x86_setup_node() {
+	cat <<EOF
+		setup {
+			description = "Linux setup.bin";
+			data = /incbin/("${x86_setup_code}");
+			type = "x86_setup";
+			arch = "$arch";
+			os = "linux";
+			compression = "none";
+			load = <0x00090000>;
+			entry = <0x00090000>;
+			hash-1 {
+				algo = "crc32";
+			};
+		};
+EOF
+}
+
+function x86_setup_configuration() {
+	cat <<EOF
+		conf-0 {
+			description = "Configuration 0";
+			setup = "setup";
+			kernel = "kernel";
+			ramdisk = "ramdisk";
+		};
+EOF
+}
+
 function close_image_node() {
 	cat <<EOF
 	};
@@ -112,10 +142,15 @@ if ! test -z "$1"; then
 	for index in "${!dtb_files[@]}"; do
 		fdt_definition "$index" "${dtb_files[$index]}"
 	done
+	close_image_node
+	configurations
+	for index in "${!dtb_files[@]}"; do
+		fdt_reference "$index" "${dtb_files[$index]}"
+	done
+elif [[ -n $x86_setup_code ]]; then
+	x86_setup_node
+	close_image_node
+	configurations
+	x86_setup_configuration
 fi
-close_image_node
-configurations
-for index in "${!dtb_files[@]}"; do
-	fdt_reference "$index" "${dtb_files[$index]}"
-done
 bottom
