@@ -46,8 +46,6 @@ in
       home.packages = with pkgs; [
         age-plugin-yubikey
         croc
-        gmni
-        iperf3
         librespeed-cli
         nmap
         pwgen
