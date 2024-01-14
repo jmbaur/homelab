@@ -2,13 +2,18 @@
 let
   cfg = config.custom.image;
 
+  inherit (config.system.nixos) distroId;
+
   systemdArchitecture = builtins.replaceStrings [ "_" ] [ "-" ] pkgs.stdenv.hostPlatform.linuxArch;
 
   globalBootScript = pkgs.writeText "boot.cmd" ''
-    if test -z $active; then
-      setenv active a;
+    if test -z $altbootcmd; then
+      setenv altbootcmd "setenv active uImage.inactive; run bootcmd"
       saveenv
-      echo no active partition set, using partition A
+    fi
+
+    if test -z $active; then
+      setenv active uImage.active;
     fi
 
     load ${cfg.ubootBootMedium.type} ${toString cfg.ubootBootMedium.index}:1 $loadaddr uImage.$active
@@ -62,6 +67,27 @@ in
   };
 
   config = lib.mkIf (cfg.enable && cfg.bootVariant == "fit-image") {
+    # TODO(jared): need to add a non-UEFI equivalent to systemd-bless-boot
+    systemd.additionalUpstreamSystemUnits = [ /*"systemd-bless-boot.service"*/ ];
+
+    systemd.sysupdate.transfers."70-fit-image" = {
+      Transfer.ProtectVersion = "%A";
+      Source = {
+        Type = "regular-file";
+        Path = "/run/update";
+        MatchPattern = "${distroId}_@v.efi";
+      };
+      Target = {
+        Type = "regular-file";
+        Path = "/";
+        PathRelativeTo = config.systemd.repart.partitions."10-boot".Type;
+        MatchPattern = "${distroId}_@v.efi";
+        Mode = "0444";
+        # Ensure that no more than 2 FIT images are present on the ESP at once.
+        InstancesMax = 2;
+      };
+    };
+
     custom.image.bootFileCommands = ''
       (
         # source the setup file to get access to `substituteInPlace`
@@ -97,10 +123,11 @@ in
 
         bash ${./make-fit-image-its.bash} ${config.hardware.deviceTree.package} >image.its
 
-        mkimage --fit image.its $out/uImage
+        fitimage_name=${distroId}_${toString cfg.version}.uImage
+        mkimage --fit image.its "''${out}/''${fitimage_name}"
 
         echo "${globalBootScriptImage}:/boot.scr" >> $bootfiles
-        echo "$out/uImage:/uImage.a" >> $bootfiles
+        echo "$out/''${fitimage_name}:/''${fitimage_name}" >> $bootfiles
       )
     '';
   };

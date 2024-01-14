@@ -26,10 +26,7 @@ in
       message = "need to specify config.hardware.deviceTree.name";
     }];
 
-    systemd.additionalUpstreamSystemUnits = [
-      "boot-complete.target"
-      "systemd-bless-boot.service"
-    ];
+    systemd.additionalUpstreamSystemUnits = [ "systemd-bless-boot.service" ];
 
     systemd.sysupdate.transfers."70-uki" = {
       Transfer.ProtectVersion = "%A";
@@ -42,8 +39,6 @@ in
         Type = "regular-file";
         Path = "/EFI/Linux";
         PathRelativeTo = config.systemd.repart.partitions."10-boot".Type;
-        # TODO(jared): this should work, but nixpkgs is using pkgs.formats.ini
-        # MatchPattern = [ "${distroId}_@v+@l-@d.efi" "${distroId}_@v+@l.efi" "${distroId}_@v.efi" ];
         MatchPattern = "${distroId}_@v+@l-@d.efi";
         Mode = "0444";
         TriesLeft = 3;

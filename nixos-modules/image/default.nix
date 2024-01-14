@@ -74,6 +74,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    systemd.additionalUpstreamSystemUnits = [ "boot-complete.target" ];
+
     boot.loader.external.enable = true;
     boot.loader.external.installHook = lib.getExe' pkgs.coreutils "true"; # do nothing
 
