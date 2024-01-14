@@ -1,8 +1,8 @@
+local M = {}
+
 -- Resolve a highlight group, recursively. This resolves the case when a
 -- highlight group is a link to another highlight group, but you want to get
 -- the actual highlight group values, not know what the link is.
-local M = {}
-
 M.resolve_hl = function(hl_group)
 	local hl = vim.api.nvim_get_hl(0, { name = hl_group })
 	if hl.link ~= nil then
@@ -12,6 +12,7 @@ M.resolve_hl = function(hl_group)
 	end
 end
 
+-- xterm 256 colors
 M.xterm = {
 	[0] = "#000000",
 	[1] = "#800000",

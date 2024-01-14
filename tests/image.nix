@@ -69,6 +69,8 @@ let
     fit-image = { pkgs, ... }: {
       custom.image.bootVariant = "fit-image";
       custom.image.ubootBootMedium.type = "virtio";
+      # TODO(jared): what would this be for aarch64?
+      custom.image.ubootLoadAddress = "0x1000000";
       virtualisation.bios = pkgs.linkFarm "u-boot-nixos-vm-bios" [{
         name = "bios.bin";
         path = {
@@ -201,8 +203,11 @@ builtins.listToAttrs (map
     }
   ))
   # TODO(jared): test with all boot methods, right now uefi is easiest
-  (lib.filter ({ bootMethod, ... }: bootMethod == "uefi")
+  (
+    /*lib.filter ({ bootMethod, ... }: bootMethod == "uefi")*/
     (lib.cartesianProductOfSets {
       bootMethod = [ "uefi" "fit-image" ];
       imageType = [ "immutable" "mutable" "unencrypted" "tpm2-encrypted" ];
-    })))
+    })
+  ))
+

@@ -6,10 +6,10 @@ if statusline_hl.reverse then
 	bg = statusline_hl.fg
 end
 
-local error_hl = { bg = bg, fg = utils.resolve_hl("DiagnosticError").fg }
-local hint_hl = { bg = bg, fg = utils.resolve_hl("DiagnosticHint").fg }
-local info_hl = { bg = bg, fg = utils.resolve_hl("DiagnosticInfo").fg }
-local warn_hl = { bg = bg, fg = utils.resolve_hl("DiagnosticWarn").fg }
+local error_hl = { bg = bg, fg = utils.xterm[88] }
+local hint_hl = { bg = bg, fg = utils.xterm[57] }
+local info_hl = { bg = bg, fg = utils.xterm[28] }
+local warn_hl = { bg = bg, fg = utils.xterm[172] }
 
 vim.api.nvim_set_hl(0, "StatusLineDiagnosticError", error_hl)
 vim.api.nvim_set_hl(0, "StatusLineDiagnosticHint", hint_hl)
