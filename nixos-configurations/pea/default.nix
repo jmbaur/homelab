@@ -1,6 +1,8 @@
 { pkgs, ... }: {
   imports = [ ./base.nix ];
 
+  custom.server.enable = true;
+
   networking.wireless.enable = true;
 
   # needed for bcm4329 wifi
