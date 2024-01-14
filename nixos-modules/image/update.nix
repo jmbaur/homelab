@@ -5,6 +5,8 @@ let
 in
 {
   config = lib.mkIf cfg.enable {
+    systemd.tmpfiles.settings."10-update"."/run/update".d = { };
+
     systemd.sysupdate = {
       enable = true;
 
