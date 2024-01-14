@@ -8,9 +8,6 @@ declare kernel_compression
 declare bootscript
 declare load_address
 
-dtbs=$1
-mapfile -t dtb_files < <(find -L "$dtbs" -type f -name '*.dtb')
-
 function top() {
 	echo
 	cat <<EOF
@@ -74,7 +71,7 @@ function fdt_definition() {
 EOF
 }
 
-function finish_fdt_definition() {
+function close_image_node() {
 	cat <<EOF
 	};
 EOF
@@ -109,10 +106,14 @@ EOF
 
 # print fit image ITS content
 top
-for index in "${!dtb_files[@]}"; do
-	fdt_definition "$index" "${dtb_files[$index]}"
-done
-finish_fdt_definition
+if ! test -z "$1"; then
+	mapfile -t dtb_files < <(find -L "$1" -type f -name '*.dtb')
+
+	for index in "${!dtb_files[@]}"; do
+		fdt_definition "$index" "${dtb_files[$index]}"
+	done
+fi
+close_image_node
 configurations
 for index in "${!dtb_files[@]}"; do
 	fdt_reference "$index" "${dtb_files[$index]}"

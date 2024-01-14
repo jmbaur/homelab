@@ -6,17 +6,22 @@ let
 
   systemdArchitecture = builtins.replaceStrings [ "_" ] [ "-" ] pkgs.stdenv.hostPlatform.linuxArch;
 
+  fixedFitImageName = "${distroId}_${toString cfg.version}.uImage";
+
+  # depends on:
+  # - CONFIG_CMD_SAVEENV
+  # - $loadaddr being set
+  # - fitimage containing an embedded script called "bootscript"
   globalBootScript = pkgs.writeText "boot.cmd" ''
-    if test -z $altbootcmd; then
-      setenv altbootcmd "setenv active uImage.inactive; run bootcmd"
+    if test ! env exists version; then env set version ${toString cfg.version} fi
+    if test ! env exists altversion; then env set altversion ${toString cfg.version} fi
+
+    if test ! altbootcmd; then
+      env set altbootcmd 'env set badversion ''${version}; env set version ''${altversion}; env set altversion ''${badversion}; env delete -f badversion; run bootcmd'
       saveenv
     fi
 
-    if test -z $active; then
-      setenv active uImage.active;
-    fi
-
-    load ${cfg.ubootBootMedium.type} ${toString cfg.ubootBootMedium.index}:1 $loadaddr uImage.$active
+    load ${cfg.ubootBootMedium.type} ${toString cfg.ubootBootMedium.index}:1 $loadaddr "${distroId}_''${version}.uImage"
     source ''${loadaddr}:bootscript
   '';
 
@@ -50,7 +55,7 @@ in
 
       ubootBootMedium = {
         type = mkOption {
-          type = types.enum [ "mmc" "nvme" "usb" ];
+          type = types.enum [ "mmc" "nvme" "usb" "virtio" ];
           description = mdDoc ''
             TODO
           '';
@@ -121,13 +126,12 @@ in
     }.${config.system.boot.loader.kernelFile} + ''
         export kernel_compression
 
-        bash ${./make-fit-image-its.bash} ${config.hardware.deviceTree.package} >image.its
+        bash ${./make-fit-image-its.bash} ${with config.hardware.deviceTree; lib.optionalString enable package} >image.its
 
-        fitimage_name=${distroId}_${toString cfg.version}.uImage
-        mkimage --fit image.its "''${out}/''${fitimage_name}"
+        mkimage --fit image.its "''${out}/${fixedFitImageName}"
 
         echo "${globalBootScriptImage}:/boot.scr" >> $bootfiles
-        echo "$out/''${fitimage_name}:/''${fitimage_name}" >> $bootfiles
+        echo "''${out}/${fixedFitImageName}:/${fixedFitImageName}" >> $bootfiles
       )
     '';
   };
