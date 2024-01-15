@@ -20,7 +20,13 @@ in
     enable = mkEnableOption "TODO";
 
     version = mkOption {
-      type = types.ints.positive;
+      type = mkOptionType {
+        name = "semverString";
+        description = "semantic version string";
+        descriptionClass = "noun";
+        check = x: types.str.check x && versionAtLeast x "0.0.1";
+        merge = mergeEqualOption;
+      };
       description = mdDoc ''
         TODO
       '';
@@ -189,13 +195,13 @@ in
       };
       "20-usr-a" = {
         Type = "usr";
-        Label = "usr-${toString cfg.version}";
+        Label = "usr-${cfg.version}";
         SizeMinBytes = toString maxUsrSize;
         SizeMaxBytes = toString maxUsrSize;
       };
       "20-usr-hash-a" = {
         Type = "usr-verity";
-        Label = "usr-hash-${toString cfg.version}";
+        Label = "usr-hash-${cfg.version}";
         SizeMinBytes = toString maxUsrHashSize;
         SizeMaxBytes = toString maxUsrHashSize;
       };
@@ -203,13 +209,13 @@ in
       # The "B" update partition and root partition get created on first boot.
       "20-usr-b" = {
         Type = "usr";
-        Label = "usr-${toString (cfg.version - 1)}";
+        Label = "usr-0.0.0";
         SizeMinBytes = toString maxUsrSize;
         SizeMaxBytes = toString maxUsrSize;
       };
       "20-usr-hash-b" = {
         Type = "usr-verity";
-        Label = "usr-hash-${toString (cfg.version - 1)}";
+        Label = "usr-hash-0.0.0";
         SizeMinBytes = toString maxUsrHashSize;
         SizeMaxBytes = toString maxUsrHashSize;
       };
