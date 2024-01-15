@@ -93,7 +93,7 @@ in
     custom.image.bootFileCommands = ''
       declare kernel_compression
       declare x86_setup_code # unused on non-x86 systems
-      export description="${with config.system.nixos; "${distroName} ${codeName} ${cfg.version}"}"
+      export description="${with config.system.nixos; "${distroName} ${codeName} ${release}"}"
       export arch=${pkgs.stdenv.hostPlatform.linuxArch}
       export linux_kernel=kernel
       export initrd=${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile}
