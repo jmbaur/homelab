@@ -57,7 +57,7 @@ let
       enable = true;
       version = 1;
       primaryDisk = "/dev/vda";
-      immutableMaxSize = 768 * 1024 * 1024; # 768M
+      immutableMaxSize = 512 * 1024 * 1024; # 512M
     };
   };
 
@@ -145,7 +145,7 @@ builtins.listToAttrs (map
             "-F",
             "raw",
             tmp_disk_image.name,
-            "2.5G",
+            "2G",
           ])
 
           # Set NIX_DISK_IMAGE so that the qemu script finds the right disk image.

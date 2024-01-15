@@ -61,6 +61,8 @@ stdenv.mkDerivation {
   inherit bootFileCommands;
   passAsFile = [ "bootFileCommands" ];
 
+  env.SYSTEMD_REPART_MKFS_OPTIONS_EROFS = "-zlz4hc";
+
   buildCommand = ''
     install -Dm0644 ${bootPartitionConfig} repart.d/10-boot.conf
     install -Dm0644 ${dataPartitionConfig} repart.d/20-usr-a.conf
