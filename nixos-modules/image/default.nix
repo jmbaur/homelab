@@ -10,9 +10,10 @@ let
 in
 {
   imports = [
-    ./update.nix
+    ./boot/bootloaderspec
     ./boot/fit-image
     ./boot/uefi
+    ./update.nix
   ];
 
 
@@ -71,7 +72,7 @@ in
     };
 
     bootVariant = mkOption {
-      type = types.enum [ "uefi" "fit-image" ];
+      type = types.enum [ "uefi" "fit-image" "bootloaderspec" ];
       default = "uefi";
       description = mdDoc ''
         TODO

@@ -58,7 +58,10 @@ stdenv.mkDerivation {
 
   outputs = [ "out" "update" ];
 
-  inherit bootFileCommands;
+  bootFileCommands = ''
+    # source the setup file to get access to `substituteInPlace`
+    source $stdenv/setup
+  '' + bootFileCommands;
   passAsFile = [ "bootFileCommands" ];
 
   env.SYSTEMD_REPART_MKFS_OPTIONS_EROFS = "-zlz4hc";
@@ -90,6 +93,8 @@ stdenv.mkDerivation {
       --split=yes \
       $out/image.raw \
       | tee $out/repart-output.json
+
+    export usrhash=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}") | .roothash' <$out/repart-output.json)
 
     export bootfiles=bootfiles
     bash "$bootFileCommandsPath"

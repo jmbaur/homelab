@@ -211,11 +211,11 @@ builtins.listToAttrs (map
       '';
     }
   ))
-  # TODO(jared): test with all boot methods, right now uefi is easiest
   (
+    # TODO(jared): test with all boot methods, right now uefi is easiest
     lib.filter ({ bootMethod, ... }: bootMethod == "uefi")
       (lib.cartesianProductOfSets {
-        bootMethod = [ "uefi" "fit-image" ];
+        bootMethod = [ "uefi" "fit-image" "bootloaderspec" ];
         imageType = [ "immutable" "mutable" "unencrypted" "tpm2-encrypted" ];
       })
   ))

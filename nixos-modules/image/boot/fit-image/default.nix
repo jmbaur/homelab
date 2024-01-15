@@ -4,17 +4,15 @@ let
 
   inherit (config.system.nixos) distroId;
 
-  systemdArchitecture = builtins.replaceStrings [ "_" ] [ "-" ] pkgs.stdenv.hostPlatform.linuxArch;
-
-  fixedFitImageName = "${distroId}_${toString cfg.version}.uImage";
+  fixedFitImageName = "${distroId}_${cfg.version}.uImage";
 
   # depends on:
   # - CONFIG_CMD_SAVEENV
   # - $loadaddr being set
   # - fitimage containing an embedded script called "bootscript"
   globalBootScript = pkgs.writeText "boot.cmd" ''
-    if test ! env exists version; then env set version ${toString cfg.version} fi
-    if test ! env exists altversion; then env set altversion ${toString cfg.version} fi
+    if test ! env exists version; then env set version ${cfg.version} fi
+    if test ! env exists altversion; then env set altversion ${cfg.version} fi
 
     if test ! altbootcmd; then
       env set altbootcmd 'env set badversion ''${version}; env set version ''${altversion}; env set altversion ''${badversion}; env delete -f badversion; run bootcmd'
@@ -79,13 +77,13 @@ in
       Source = {
         Type = "regular-file";
         Path = "/run/update";
-        MatchPattern = "${distroId}_@v.efi";
+        MatchPattern = "${distroId}_@v.uImage";
       };
       Target = {
         Type = "regular-file";
         Path = "/";
         PathRelativeTo = config.systemd.repart.partitions."10-boot".Type;
-        MatchPattern = "${distroId}_@v.efi";
+        MatchPattern = "${distroId}_@v.uImage";
         Mode = "0444";
         # Ensure that no more than 2 FIT images are present on the ESP at once.
         InstancesMax = 2;
@@ -93,22 +91,17 @@ in
     };
 
     custom.image.bootFileCommands = ''
-      (
-        # source the setup file to get access to `substituteInPlace`
-        source $stdenv/setup
+      declare kernel_compression
+      declare x86_setup_code # unused on non-x86 systems
+      export description="${with config.system.nixos; "${distroName} ${codeName} ${cfg.version}"}"
+      export arch=${pkgs.stdenv.hostPlatform.linuxArch}
+      export linux_kernel=kernel
+      export initrd=${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile}
+      export bootscript=bootscript
+      export load_address=${cfg.ubootLoadAddress}
 
-        declare kernel_compression
-        declare x86_setup_code # unused on non-x86 systems
-        export description="${with config.system.nixos; "${distroName} ${codeName} ${version}"}"
-        export arch=${pkgs.stdenv.hostPlatform.linuxArch}
-        export linux_kernel=kernel
-        export initrd=${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile}
-        export bootscript=bootscript
-        export load_address=${cfg.ubootLoadAddress}
-
-        install -Dm0644 ${bootScript} $bootscript
-        substituteInPlace $bootscript \
-          --subst-var-by usrhash $(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}") | .roothash' <$out/repart-output.json)
+      install -Dm0644 ${bootScript} $bootscript
+      substituteInPlace $bootscript --subst-var usrhash
 
     '' + {
       "Image" = ''
@@ -138,15 +131,14 @@ in
         export x86_setup_code
       '';
     }.${config.system.boot.loader.kernelFile} + ''
-        export kernel_compression
+      export kernel_compression
 
-        bash ${./make-fit-image-its.bash} ${with config.hardware.deviceTree; lib.optionalString enable package} >image.its
+      bash ${./make-fit-image-its.bash} ${with config.hardware.deviceTree; lib.optionalString enable package} >image.its
 
-        mkimage --fit image.its "''${out}/${fixedFitImageName}"
+      mkimage --fit image.its "''${out}/${fixedFitImageName}"
 
-        echo "${globalBootScriptImage}:/boot.scr" >> $bootfiles
-        echo "''${out}/${fixedFitImageName}:/${fixedFitImageName}" >> $bootfiles
-      )
+      echo "${globalBootScriptImage}:/boot.scr" >> $bootfiles
+      echo "''${out}/${fixedFitImageName}:/${fixedFitImageName}" >> $bootfiles
     '';
   };
 }

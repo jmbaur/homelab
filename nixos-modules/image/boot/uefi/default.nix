@@ -4,8 +4,6 @@ let
 
   inherit (config.system.nixos) distroId;
 
-  systemdArchitecture = builtins.replaceStrings [ "_" ] [ "-" ] pkgs.stdenv.hostPlatform.linuxArch;
-
   systemdUkify = pkgs.buildPackages.systemdMinimal.override {
     withEfi = true;
     withUkify = true;
@@ -53,26 +51,20 @@ in
         echo "${loaderConf}:/loader/loader.conf" >> $bootfiles
         echo "${systemdBoot}:/EFI/BOOT/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI" >> $bootfiles
 
-        cmdline=("init=${config.system.build.toplevel}/init")
-        cmdline+=("usrhash=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}") | .roothash' <$out/repart-output.json)")
-        for param in ${toString config.boot.kernelParams}; do
-          cmdline+=("$param")
-        done
-
         ${systemdUkify}/lib/systemd/ukify build \
           --no-sign-kernel \
           --efi-arch=${pkgs.stdenv.hostPlatform.efiArch} \
           --uname=${config.system.build.kernel.version} \
           --stub=${config.systemd.package}/lib/systemd/boot/efi/linux${pkgs.stdenv.hostPlatform.efiArch}.efi.stub \
           --linux=${config.system.build.kernel}/${config.system.boot.loader.kernelFile} \
-          --cmdline="$(echo "''${cmdline[@]}")" \
+          --cmdline="init=${config.system.build.toplevel}/init usrhash=$usrhash ${toString config.boot.kernelParams}" \
           --initrd=${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile} \
           --os-release=@${config.environment.etc."os-release".source} \
           ${lib.optionalString config.hardware.deviceTree.enable
             "--devicetree=${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name}"} \
-          --output=$update/${distroId}_${toString cfg.version}.efi
+          --output=$update/${distroId}_${cfg.version}.efi
 
-        echo "$update/${distroId}_${toString cfg.version}.efi:/EFI/Linux/${distroId}_${toString cfg.version}.efi" >> $bootfiles
+        echo "$update/${distroId}_${cfg.version}.efi:/EFI/Linux/${distroId}_${cfg.version}.efi" >> $bootfiles
       '';
     };
   };
