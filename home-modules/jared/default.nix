@@ -259,7 +259,9 @@ in
       programs.firefox = {
         enable = true;
         profiles.default = {
-          extensions = with pkgs.nur.repos.rycee.firefox-addons; [ bitwarden vimium ];
+          extensions = with pkgs.nur.repos.rycee.firefox-addons; [
+            vimium
+          ] ++ lib.optional cfg.includePersonalConfigs bitwarden;
           settings = {
             "browser.newtabpage.enabled" = false;
             "browser.startup.homepage" = "chrome://browser/content/blanktab.html";
@@ -273,9 +275,8 @@ in
         enable = true;
         package = pkgs.chromium-wayland;
         extensions = [
-          { id = "nngceckbapebfimnlniiiahkandclblb"; } # bitwarden
-          { id = "dbepggeogbaibhgnhhndojpepiihcmeb"; } # vimium
-        ];
+          { /* vimium */ id = "dbepggeogbaibhgnhhndojpepiihcmeb"; }
+        ] ++ lib.optional cfg.includePersonalConfigs { /* bitwarden */ id = "nngceckbapebfimnlniiiahkandclblb"; };
       };
 
       programs.kitty = {
@@ -298,6 +299,7 @@ in
         enable = true;
         settings = {
           live_config_reload = false;
+          import = [ "${pkgs.alacritty-theme}/papercolor_dark.toml" ];
           mouse.hide_when_typing = true;
           selection.save_to_clipboard = true;
           font = { normal.family = "JetBrains Mono"; size = 14; };

@@ -57,7 +57,7 @@ let
       enable = true;
       version = 1;
       primaryDisk = "/dev/vda";
-      immutableMaxSize = 512 * 1024 * 1024; # 512M
+      immutableMaxSize = 768 * 1024 * 1024; # 768M
     };
   };
 
@@ -145,7 +145,7 @@ builtins.listToAttrs (map
             "-F",
             "raw",
             tmp_disk_image.name,
-            "2G",
+            "2.5G",
           ])
 
           # Set NIX_DISK_IMAGE so that the qemu script finds the right disk image.
@@ -162,11 +162,16 @@ builtins.listToAttrs (map
 
           partitions = json.loads(machine.succeed("sfdisk --json ${nodes.machine.custom.image.primaryDisk}"))["partitiontable"]["partitions"]
 
-          if not all([p["size"] for p in partitions if p["type"] == "${linuxUsrPartitionTypeUuid}"]):
-              raise Exception("mismatching usr disk sizes")
+          def equal_elements(xs):
+              return all([x == xs[0] for x in xs])
 
-          if not all([p["size"] for p in partitions if p["type"] == "${linuxUsrVerityPartitionTypeUuid}"]):
-              raise Exception("mismatching usr-hash disk sizes")
+          usr_partitions = [p["size"] for p in partitions if p["type"] == "${linuxUsrPartitionTypeUuid}"]
+          if not equal_elements(usr_partitions):
+              raise Exception(f"mismatching usr disk sizes: {usr_partitions}")
+
+          usr_hash_partitions = [p["size"] for p in partitions if p["type"] == "${linuxUsrVerityPartitionTypeUuid}"]
+          if not equal_elements(usr_hash_partitions):
+              raise Exception(f"mismatching usr-hash disk sizes: {usr_hash_partitions}")
 
           machine.succeed("test -f /nix/.ro-store/.nix-path-registration")
           ${lib.optionalString nodes.machine.custom.image.mutableNixStore ''

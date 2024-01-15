@@ -14,15 +14,13 @@ in
       # %o -> operating system ID (e.g. "nixos")
       # @v -> version
       # @u -> partition UUID
-      # @a -> set SD_GPT_FLAG_NO_AUTO partition flag
-      # @r -> set SD_GPT_FLAG_READ_ONLY partition flag
       transfers = {
         "50-verity" = {
           Transfer.ProtectVersion = "%A";
           Source = {
             Type = "regular-file";
             Path = "/run/update";
-            MatchPattern = "%o_@v_@u_@a_@r.usr-hash.raw.xz";
+            MatchPattern = "%o_@v_@u.usr-hash.raw.xz";
           };
           Target = {
             Type = "partition";
@@ -37,7 +35,7 @@ in
           Source = {
             Type = "regular-file";
             Path = "/run/update";
-            MatchPattern = "%o_@v_@u_@a_@r.usr.raw.xz";
+            MatchPattern = "%o_@v_@u.usr.raw.xz";
           };
           Target = {
             Type = "partition";

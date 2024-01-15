@@ -192,16 +192,12 @@ in
         Label = "usr-${toString cfg.version}";
         SizeMinBytes = toString maxUsrSize;
         SizeMaxBytes = toString maxUsrSize;
-        NoAuto = true;
-        ReadOnly = true;
       };
       "20-usr-hash-a" = {
         Type = "usr-verity";
         Label = "usr-hash-${toString cfg.version}";
         SizeMinBytes = toString maxUsrHashSize;
         SizeMaxBytes = toString maxUsrHashSize;
-        NoAuto = true;
-        ReadOnly = true;
       };
 
       # The "B" update partition and root partition get created on first boot.
@@ -210,16 +206,12 @@ in
         Label = "usr-${toString (cfg.version - 1)}";
         SizeMinBytes = toString maxUsrSize;
         SizeMaxBytes = toString maxUsrSize;
-        NoAuto = true;
-        ReadOnly = true;
       };
       "20-usr-hash-b" = {
         Type = "usr-verity";
         Label = "usr-hash-${toString (cfg.version - 1)}";
         SizeMinBytes = toString maxUsrHashSize;
         SizeMaxBytes = toString maxUsrHashSize;
-        NoAuto = true;
-        ReadOnly = true;
       };
       "30-root" = {
         Type = "root";

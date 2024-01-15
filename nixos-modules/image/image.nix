@@ -30,19 +30,13 @@ let
 
   bootPartition = partitions."10-boot" // { };
 
-  # We want to enforce SizeMaxBytes when creating the data and hash partitions
-  # during image creation, since we would rather the image fail to build then
-  # the initrd repart process to result in the "A" and "B" partitions having
-  # different sizes. We remove SizeMinBytes since we want the image to be as
-  # small as possible.
-  dataPartition = builtins.removeAttrs
-    (partitions."20-usr-a" // {
-      Minimize = "best";
-      Format = usrFormat;
-      Verity = "data";
-      VerityMatchKey = "usr";
-      SplitName = "usr";
-    }) [ "SizeMinBytes" ];
+  dataPartition = partitions."20-usr-a" // {
+    Minimize = "best";
+    Format = usrFormat;
+    Verity = "data";
+    VerityMatchKey = "usr";
+    SplitName = "usr";
+  };
 
   hashPartition = partitions."20-usr-hash-a" // {
     Verity = "hash";
@@ -112,8 +106,8 @@ stdenv.mkDerivation {
     data_orig_path=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}") | .split_path' <$out/repart-output.json)
     hash_orig_path=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}-verity") | .split_path' <$out/repart-output.json)
 
-    data_new_path="''${update}/${distroId}_${toString version}_''${data_uuid}_1_1.usr.raw"
-    hash_new_path="''${update}/${distroId}_${toString version}_''${hash_uuid}_1_1.usr-hash.raw"
+    data_new_path="''${update}/${distroId}_${toString version}_''${data_uuid}.usr.raw"
+    hash_new_path="''${update}/${distroId}_${toString version}_''${hash_uuid}.usr-hash.raw"
 
     mv "$data_orig_path" "$data_new_path"
     mv "$hash_orig_path" "$hash_new_path"
