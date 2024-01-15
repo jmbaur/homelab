@@ -251,7 +251,7 @@ in
     };
     fileSystems."/nix/.ro-store" = {
       device = "/dev/mapper/usr";
-      fsType = "squashfs"; # TODO(jared): erofs results in dm-verity corruption
+      fsType = "erofs";
       options = [ "ro" ];
       neededForBoot = true;
     };

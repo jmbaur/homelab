@@ -1,12 +1,12 @@
 { closureInfo
 , dosfstools
 , dtc
+, erofs-utils
 , fakeroot
 , formats
 , jq
 , mtools
 , sbsigntool
-, squashfsTools
 , stdenv
 , systemd
 , ubootTools
@@ -60,7 +60,7 @@ in
 stdenv.mkDerivation {
   name = "nixos-image-${imageName}";
 
-  depsBuildBuild = [ dosfstools dtc fakeroot jq mtools sbsigntool squashfsTools systemd ubootTools xz ];
+  depsBuildBuild = [ dosfstools dtc erofs-utils fakeroot jq mtools sbsigntool systemd ubootTools xz ];
 
   outputs = [ "out" "update" ];
 
