@@ -299,7 +299,7 @@ in
         enable = true;
         settings = {
           live_config_reload = false;
-          import = [ "${pkgs.alacritty-theme}/papercolor_dark.toml" ];
+          import = [ "${pkgs.alacritty-theme}/smoooooth.toml" ];
           mouse.hide_when_typing = true;
           selection.save_to_clipboard = true;
           font = { normal.family = "JetBrains Mono"; size = 14; };
