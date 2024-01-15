@@ -6,14 +6,18 @@ let
   fontSize = 12.0;
 in
 {
-  options.jared = {
-    includePersonalConfigs = lib.mkEnableOption "personal configs" // { default = true; };
+  options.jared = with lib; {
+    includePersonalConfigs = mkEnableOption "personal configs" // { default = true; };
 
-    dev = {
-      enable = lib.mkEnableOption "dev";
+    dev.enable = mkEnableOption "dev";
+
+    gui = {
+      enable = mkEnableOption "gui";
+      defaultXkbOptions = mkOption {
+        type = types.str;
+        default = "ctrl:nocaps";
+      };
     };
-
-    gui.enable = lib.mkEnableOption "gui";
   };
 
   config = lib.mkMerge [
@@ -472,7 +476,7 @@ in
             input."type:keyboard" = {
               repeat_delay = "300";
               repeat_rate = "50";
-              xkb_options = "ctrl:nocaps";
+              xkb_options = cfg.gui.defaultXkbOptions;
             };
             input."4617:13404:https://github.com/stapelberg_kinT_(kint41)" = {
               repeat_delay = "300";
