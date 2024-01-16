@@ -31,7 +31,6 @@ let
   bootPartition = partitions."10-boot" // { };
 
   dataPartition = partitions."20-usr-a" // {
-    Minimize = "best";
     Format = usrFormat;
     Verity = "data";
     VerityMatchKey = "usr";
