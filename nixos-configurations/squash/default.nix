@@ -9,7 +9,6 @@
 
   custom = {
     server.enable = true;
-    disableZfs = true;
     image = {
       enable = true;
       encrypt = false;

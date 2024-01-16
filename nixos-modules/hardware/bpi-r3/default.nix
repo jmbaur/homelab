@@ -1,7 +1,6 @@
 { config, lib, pkgs, ... }: {
   options.hardware.bpi-r3 = {
     enable = lib.mkEnableOption "bananapi r3";
-    internalBoot = lib.mkEnableOption "boot from internal storage" // { default = true; };
   };
 
   config = lib.mkIf config.hardware.bpi-r3.enable {
@@ -48,11 +47,7 @@
         name = builtins.baseNameOf dtboFile;
       }) [
       "${config.boot.kernelPackages.kernel}/dtbs/mediatek/mt7986a-bananapi-bpi-r3-nand.dtbo"
-    ] ++ [
-      (if config.hardware.bpi-r3.internalBoot then
-        "${config.boot.kernelPackages.kernel}/dtbs/mediatek/mt7986a-bananapi-bpi-r3-emmc.dtbo"
-      else
-        "${config.boot.kernelPackages.kernel}/dtbs/mediatek/mt7986a-bananapi-bpi-r3-sd.dtbo")
+      "${config.boot.kernelPackages.kernel}/dtbs/mediatek/mt7986a-bananapi-bpi-r3-emmc.dtbo"
     ];
   };
 }

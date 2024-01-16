@@ -1,5 +1,4 @@
-{ internalBoot ? true
-, writeText
+{ writeText
 , fetchFromGitHub
 , buildUBoot
 , buildArmTrustedFirmware
@@ -36,7 +35,7 @@ let
     fdtfile=mediatek/mt7986a-bananapi-bpi-r3.dtb
   '';
   uboot = (buildUBoot {
-    defconfig = "mt7986a_bpir3_${if internalBoot then "emmc" else "sd"}_defconfig";
+    defconfig = "mt7986a_bpir3_emmc_defconfig";
     filesToInstall = [ "u-boot.bin" ];
     extraMeta.platforms = [ "aarch64-linux" ];
     postPatch = ''
@@ -99,8 +98,8 @@ let
     src = fetchFromGitHub {
       owner = "mtk-openwrt";
       repo = "arm-trusted-firmware";
-      rev = "00ac6db375b76e57e1f5e9e9bffa033e907c3581";
-      hash = "sha256-BeEqpUb97joBzj5M+2uBC0ueI2oHDfYJBJtBrJvMWKQ=";
+      rev = "0ea67d76ae8be127c91caa3fcdf449b1fe533175";
+      hash = "sha256-mlAzGRcqpLgWO3TmkrFvdFFmun+KiE+8FxGuqz+TKtI=";
     };
     nativeBuildInputs = [ dtc openssl ];
     extraMakeFlags = [
@@ -108,7 +107,7 @@ let
       "BL33=${uboot}/u-boot.bin"
       "DRAM_USE_DDR4=1"
       # defines where the FIP image lives
-      "BOOT_DEVICE=${if internalBoot then "spim-nand" else "sdmmc"}"
+      "BOOT_DEVICE=spim-nand"
       "all"
       "fip"
     ];
