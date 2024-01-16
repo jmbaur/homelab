@@ -149,8 +149,6 @@ builtins.listToAttrs (map
         # Set NIX_DISK_IMAGE so that the qemu script finds the right disk image.
         os.environ['NIX_DISK_IMAGE'] = tmp_disk_image.name
 
-        machine.start(allow_reboot=True)
-
         def assert_boot_entry(filename: str):
             booted_entry = machine.succeed("iconv -f UTF-16 -t UTF-8 /sys/firmware/efi/efivars/LoaderEntrySelected-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f").strip('\x06').strip('\x00')
             if booted_entry != filename:
