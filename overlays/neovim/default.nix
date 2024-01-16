@@ -3,7 +3,6 @@
 , clang-tools
 , efm-langserver
 , fd
-, fetchgit
 , ghc
 , git
 , go-tools
@@ -34,35 +33,20 @@
 , zls
 }:
 let
-  # tree-sitter-just = tree-sitter.buildGrammar rec {
-  #   language = "just";
-  #   version = builtins.substring 0 7 src.rev;
-  #   src = fetchgit {
-  #     inherit (lib.importJSON ../tree-sitter-just-source.json) url rev hash;
-  #   };
-  # };
-
-  # tree-sitter-just-plugin = vimUtils.buildVimPlugin {
-  #   name = "tree-sitter-just";
-  #   inherit (tree-sitter-just) src;
-  # };
-
   jmbaur-config = vimUtils.buildVimPlugin {
     name = "jmbaur-nvim-config";
     src = ./settings;
   };
 
   config = neovimUtils.makeNeovimConfig {
-    plugins = with vimPlugins;
+    plugins = [ jmbaur-config ] ++ (with vimPlugins;
       # start
       [
-        (nvim-treesitter.withPlugins (_: nvim-treesitter.allGrammars ++ [ /*tree-sitter-just*/ ]))
         diffview-nvim
         efmls-configs-nvim
         gitsigns-nvim
         gosee-nvim
         iron-nvim
-        jmbaur-config
         mini-nvim
         nvim-gdb
         nvim-lspconfig
@@ -70,12 +54,12 @@ let
         nvim-treesitter-context
         nvim-treesitter-refactor
         nvim-treesitter-textobjects
+        nvim-treesitter.withAllGrammars
         oil-nvim
         snippets-nvim
         telescope-nvim
         telescope-ui-select-nvim
         telescope-zf-native-nvim
-        # tree-sitter-just-plugin
         vim-dispatch
         vim-eunuch
         vim-flog
@@ -89,7 +73,7 @@ let
         zen-mode-nvim
       ]
       # opt
-      ++ (map (plugin: { inherit plugin; optional = true; }) [ ]);
+      ++ (map (plugin: { inherit plugin; optional = true; }) [ ]));
   };
 
   neovim = neovim-unwrapped.overrideAttrs (old: {
