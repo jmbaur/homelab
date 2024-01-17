@@ -31,6 +31,8 @@ if #vim.api.nvim_list_uis() > 0 then
 	vim.opt.shell = "/run/current-system/sw/bin/bash"
 	vim.opt.splitkeep = "screen"
 	vim.opt.termguicolors = true
+	vim.opt.list = true
+	vim.opt.listchars = { eol = "↴", tab = "  ⇥", nbsp = "·" }
 end
 
 require("mini.bracketed").setup({})
