@@ -1,11 +1,12 @@
 { lib
 , symlinkJoin
 , makeWrapper
+, forceWayland ? false
 , forceDarkMode ? false
 , WebRTCPipeWireCapturer ? true
 , SystemNotifications ? true
 , TouchpadOverscrollHistoryNavigation ? true
-, ...
+, package
 }:
 let
   enableFeatures = lib.concatStringsSep "," ([ "UseOzonePlatform" "WaylandWindowDecorations" "WebUIDarkMode" ]
@@ -14,30 +15,30 @@ let
     ++ (lib.optional WebRTCPipeWireCapturer "WebRTCPipeWireCapturer")
   );
 in
-drv:
-if lib.hasAttr "commandLineArgs" (lib.functionArgs drv.override)
+if lib.hasAttr "commandLineArgs" (lib.functionArgs package.override)
 then
-  (drv.override {
+  (package.override {
     commandLineArgs = [
       "--enable-features=${enableFeatures}"
-      "--ozone-platform-hint=auto"
-    ] ++ (lib.optional forceDarkMode "--force-dark-mode");
+      (if forceWayland then "--ozone-platform=wayland" else "--ozone-platform-hint=auto")
+    ]
+    ++ lib.optional forceDarkMode "--force-dark-mode";
   })
 else
   let
     mainProgram =
-      if lib.hasAttr "mainProgram" drv.meta
-      then drv.meta.mainProgram
-      else drv.pname;
+      if lib.hasAttr "mainProgram" package.meta
+      then package.meta.mainProgram
+      else package.pname;
   in
   symlinkJoin {
     name = "${mainProgram}-wayland";
-    paths = [ drv ];
+    paths = [ package ];
     buildInputs = [ makeWrapper ];
     postBuild = ''
       wrapProgram $out/bin/${mainProgram} \
-      --add-flags "--enable-features=${enableFeatures}" \
-      --add-flags "--ozone-platform-hint=auto" \
-      --add-flags "--force-dark-mode"
+        --add-flags "--enable-features=${enableFeatures}" \
+        --add-flags "${if forceWayland then "--ozone-platform=wayland" else "--ozone-platform-hint=auto"}" \
+        ${lib.optionalString forceDarkMode ''--add-flags "--force-dark-mode"''}
     '';
   }

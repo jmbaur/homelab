@@ -72,21 +72,14 @@ inputs: {
       };
       jared-neovim-all-languages = final.jared-neovim.override { supportAllLanguages = true; };
 
-      mkWaylandVariant = prev.callPackage ./mk-wayland-variant.nix { };
-      brave-wayland = final.mkWaylandVariant
-        prev.brave;
-      chromium-wayland = final.mkWaylandVariant
-        prev.chromium;
-      google-chrome-wayland = final.mkWaylandVariant
-        prev.google-chrome;
-      bitwarden-wayland = final.mkWaylandVariant
-        prev.bitwarden;
-      discord-wayland = final.mkWaylandVariant
-        prev.discord;
-      signal-desktop-wayland = final.mkWaylandVariant
-        prev.signal-desktop;
-      slack-wayland = final.mkWaylandVariant
-        prev.slack;
+      bitwarden-wayland = prev.callPackage ./mk-wayland-variant.nix { package = prev.bitwarden; };
+      brave-wayland = prev.callPackage ./mk-wayland-variant.nix { package = prev.brave; };
+      chromium-wayland = prev.callPackage ./mk-wayland-variant.nix { package = prev.chromium; };
+      discord-wayland = prev.callPackage ./mk-wayland-variant.nix { package = prev.discord; };
+      google-chrome-wayland = prev.callPackage ./mk-wayland-variant.nix { package = prev.google-chrome; };
+      signal-desktop-wayland = prev.callPackage ./mk-wayland-variant.nix { package = prev.signal-desktop; };
+      slack-wayland = prev.callPackage ./mk-wayland-variant.nix { package = prev.slack; };
+      spotify-wayland = prev.callPackage ./mk-wayland-variant.nix { package = prev.spotify; forceWayland = true; };
 
       mkWebApp = prev.callPackage
         ./mk-web-app.nix
