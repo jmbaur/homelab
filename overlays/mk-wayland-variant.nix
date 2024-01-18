@@ -1,15 +1,15 @@
 { lib
 , symlinkJoin
 , makeWrapper
-, forceWayland ? false
 , forceDarkMode ? false
 , WebRTCPipeWireCapturer ? true
 , SystemNotifications ? true
 , TouchpadOverscrollHistoryNavigation ? true
 , package
 }:
+
 let
-  enableFeatures = lib.concatStringsSep "," ([ "UseOzonePlatform" "WaylandWindowDecorations" "WebUIDarkMode" ]
+  enableFeatures = lib.concatStringsSep "," ([ "UseOzonePlatform" "WaylandWindowDecorations" ]
     ++ (lib.optional SystemNotifications "SystemNotifications")
     ++ (lib.optional TouchpadOverscrollHistoryNavigation "TouchpadOverscrollHistoryNavigation")
     ++ (lib.optional WebRTCPipeWireCapturer "WebRTCPipeWireCapturer")
@@ -20,7 +20,7 @@ then
   (package.override {
     commandLineArgs = [
       "--enable-features=${enableFeatures}"
-      (if forceWayland then "--ozone-platform=wayland" else "--ozone-platform-hint=auto")
+      "--ozone-platform=wayland"
     ]
     ++ lib.optional forceDarkMode "--force-dark-mode";
   })
@@ -38,7 +38,7 @@ else
     postBuild = ''
       wrapProgram $out/bin/${mainProgram} \
         --add-flags "--enable-features=${enableFeatures}" \
-        --add-flags "${if forceWayland then "--ozone-platform=wayland" else "--ozone-platform-hint=auto"}" \
+        --add-flags "--ozone-platform=wayland" \
         ${lib.optionalString forceDarkMode ''--add-flags "--force-dark-mode"''}
     '';
   }

@@ -79,7 +79,7 @@ inputs: {
       google-chrome-wayland = prev.callPackage ./mk-wayland-variant.nix { package = prev.google-chrome; };
       signal-desktop-wayland = prev.callPackage ./mk-wayland-variant.nix { package = prev.signal-desktop; };
       slack-wayland = prev.callPackage ./mk-wayland-variant.nix { package = prev.slack; };
-      spotify-wayland = prev.callPackage ./mk-wayland-variant.nix { package = prev.spotify; forceWayland = true; };
+      spotify-wayland = prev.callPackage ./mk-wayland-variant.nix { package = prev.spotify; };
 
       mkWebApp = prev.callPackage
         ./mk-web-app.nix
