@@ -16,7 +16,7 @@
     gosee.inputs.nixpkgs.follows = "nixpkgs";
     gosee.url = "github:jmbaur/gosee";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    home-manager.url = "github:jmbaur/home-manager?ref=homelab";
+    home-manager.url = "github:nix-community/home-manager";
     ipwatch.inputs.nixpkgs.follows = "nixpkgs";
     ipwatch.url = "github:jmbaur/ipwatch";
     microvm.inputs.nixpkgs.follows = "nixpkgs";
