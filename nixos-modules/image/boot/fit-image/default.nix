@@ -2,24 +2,24 @@
 let
   cfg = config.custom.image;
 
-  inherit (config.system.nixos) distroId;
+  inherit (config.system.image) id version;
 
-  fixedFitImageName = "${distroId}_${cfg.version}.uImage";
+  fixedFitImageName = "${id}_${version}.uImage";
 
   # depends on:
   # - CONFIG_CMD_SAVEENV
   # - $loadaddr being set
   # - fitimage containing an embedded script called "bootscript"
   globalBootScript = pkgs.writeText "boot.cmd" ''
-    if test ! env exists version; then env set version ${cfg.version} fi
-    if test ! env exists altversion; then env set altversion ${cfg.version} fi
+    if test ! env exists version; then env set version ${version} fi
+    if test ! env exists altversion; then env set altversion ${version} fi
 
     if test ! altbootcmd; then
       env set altbootcmd 'env set badversion ''${version}; env set version ''${altversion}; env set altversion ''${badversion}; env delete -f badversion; run bootcmd'
       saveenv
     fi
 
-    load ${cfg.ubootBootMedium.type} ${toString cfg.ubootBootMedium.index}:1 $loadaddr "${distroId}_''${version}.uImage"
+    load ${cfg.ubootBootMedium.type} ${toString cfg.ubootBootMedium.index}:1 $loadaddr "${id}_''${version}.uImage"
     source ''${loadaddr}:bootscript
   '';
 
@@ -77,13 +77,13 @@ in
       Source = {
         Type = "regular-file";
         Path = "/run/update";
-        MatchPattern = "${distroId}_@v.uImage";
+        MatchPattern = "${id}_@v.uImage";
       };
       Target = {
         Type = "regular-file";
         Path = "/";
         PathRelativeTo = config.systemd.repart.partitions."10-boot".Type;
-        MatchPattern = "${distroId}_@v.uImage";
+        MatchPattern = "${id}_@v.uImage";
         Mode = "0444";
         # Ensure that no more than 2 FIT images are present on the ESP at once.
         InstancesMax = 2;

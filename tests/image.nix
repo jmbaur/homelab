@@ -56,9 +56,10 @@ let
       };
     };
 
+    system.image.id = config.system.nixos.distroId;
+    system.image.version = version;
     custom.image = {
       enable = true;
-      inherit version;
       primaryDisk = "/dev/vda";
       immutableMaxSize = 512 * 1024 * 1024; # 512M
     };

@@ -14,7 +14,7 @@
 
   # arguments
 , bootFileCommands
-, distroId
+, id
 , imageName
 , partitions
 , postImageCommands
@@ -113,8 +113,8 @@ stdenv.mkDerivation {
     data_orig_path=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}") | .split_path' <$out/repart-output.json)
     hash_orig_path=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}-verity") | .split_path' <$out/repart-output.json)
 
-    data_new_path="''${update}/${distroId}_${version}_''${data_uuid}.usr.raw"
-    hash_new_path="''${update}/${distroId}_${version}_''${hash_uuid}.usr-hash.raw"
+    data_new_path="''${update}/${id}_${version}_''${data_uuid}.usr.raw"
+    hash_new_path="''${update}/${id}_${version}_''${hash_uuid}.usr-hash.raw"
 
     mv "$data_orig_path" "$data_new_path"
     mv "$hash_orig_path" "$hash_new_path"

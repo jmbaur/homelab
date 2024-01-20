@@ -10,7 +10,8 @@ in
     # NOTE: this should be set explicitly if it is actually needed
     system.stateVersion = lib.mkDefault "24.05";
 
-    custom.image.version = "0.0.1";
+    system.image.id = config.system.nixos.distroId;
+    system.image.version = "0.0.1";
 
     # We build on x86_64-linux.
     #

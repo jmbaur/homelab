@@ -3,6 +3,8 @@
 let
   cfg = config.custom.image;
 
+  inherit (config.system.image) version;
+
   maxUsrSize = cfg.immutableMaxSize;
   maxUsrHashSize = maxUsrSize / 8;
 
@@ -19,19 +21,6 @@ in
 
   options.custom.image = with lib; {
     enable = mkEnableOption "TODO";
-
-    version = mkOption {
-      type = mkOptionType {
-        name = "semverString";
-        description = "semantic version string";
-        descriptionClass = "noun";
-        check = x: types.str.check x && versionAtLeast x "0.0.1";
-        merge = mergeEqualOption;
-      };
-      description = mdDoc ''
-        TODO
-      '';
-    };
 
     hasTpm2 = mkEnableOption "TODO";
 
@@ -81,6 +70,17 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = config.system.image.version != null && lib.versionAtLeast config.system.image.version "0.0.1";
+        message = "Image version must be set and must be at least 0.0.1";
+      }
+      {
+        assertion = config.system.image.id != null;
+        message = "Image ID must be set";
+      }
+    ];
+
     systemd.additionalUpstreamSystemUnits = [ "boot-complete.target" ];
 
     boot.loader.external.enable = true;
@@ -190,13 +190,13 @@ in
       };
       "20-usr-a" = {
         Type = "usr";
-        Label = "usr-${cfg.version}";
+        Label = "usr-${version}";
         SizeMinBytes = toString maxUsrSize;
         SizeMaxBytes = toString maxUsrSize;
       };
       "20-usr-hash-a" = {
         Type = "usr-verity";
-        Label = "usr-hash-${cfg.version}";
+        Label = "usr-hash-${version}";
         SizeMinBytes = toString maxUsrHashSize;
         SizeMaxBytes = toString maxUsrHashSize;
       };
@@ -261,9 +261,9 @@ in
     system.build.image = pkgs.callPackage ./image.nix {
       usrFormat = config.fileSystems."/nix/.ro-store".fsType;
       imageName = config.networking.hostName;
-      inherit (cfg) version bootFileCommands postImageCommands;
+      inherit (cfg) bootFileCommands postImageCommands;
       inherit (config.system.build) toplevel;
-      inherit (config.system.nixos) distroId;
+      inherit (config.system.image) id version;
       inherit (config.systemd.repart) partitions;
     };
   };

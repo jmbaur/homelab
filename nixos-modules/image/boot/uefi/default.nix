@@ -2,7 +2,7 @@
 let
   cfg = config.custom.image;
 
-  inherit (config.system.nixos) distroId;
+  inherit (config.system.image) id version;
 
   systemdUkify = pkgs.buildPackages.systemdMinimal.override {
     withEfi = true;
@@ -31,13 +31,13 @@ in
       Source = {
         Type = "regular-file";
         Path = "/run/update";
-        MatchPattern = "${distroId}_@v.efi";
+        MatchPattern = "${id}_@v.efi";
       };
       Target = {
         Type = "regular-file";
         Path = "/EFI/Linux";
         PathRelativeTo = config.systemd.repart.partitions."10-boot".Type;
-        MatchPattern = "${distroId}_@v+@l-@d.efi";
+        MatchPattern = "${id}_@v+@l-@d.efi";
         Mode = "0444";
         TriesLeft = 3;
         TriesDone = 0;
@@ -62,9 +62,9 @@ in
           --os-release=@${config.environment.etc."os-release".source} \
           ${lib.optionalString config.hardware.deviceTree.enable
             "--devicetree=${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name}"} \
-          --output=$update/${distroId}_${cfg.version}.efi
+          --output=$update/${id}_${version}.efi
 
-        echo "$update/${distroId}_${cfg.version}.efi:/EFI/Linux/${distroId}_${cfg.version}.efi" >> $bootfiles
+        echo "$update/${id}_${version}.efi:/EFI/Linux/${id}_${version}.efi" >> $bootfiles
       '';
     };
   };
