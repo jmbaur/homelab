@@ -52,7 +52,7 @@ in
 
       ubootBootMedium = {
         type = mkOption {
-          type = types.enum [ "mmc" "nvme" "usb" "virtio" ];
+          type = types.enum [ "mmc" "scsi" "nvme" "usb" "virtio" ];
           description = mdDoc ''
             TODO
           '';
