@@ -6,8 +6,6 @@
     dns.adblock.enable = true;
   };
 
-  services.usbguard.enable = true;
-
   sops.defaultSopsFile = ./secrets.yaml;
   sops.secrets.ipwatch_env = { };
 
