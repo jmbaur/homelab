@@ -8,6 +8,12 @@ inputs: {
 
       nixos-kexec = prev.callPackage ./nixos-kexec { };
 
+      libfido2 =
+        if prev.stdenv.hostPlatform != prev.stdenv.buildPlatform then
+          (prev.libfido2.override { withPcsclite = false; })
+        else
+          prev.libfido2;
+
       labwc = prev.labwc.overrideAttrs ({ patches ? [ ], ... }: {
         patches = patches ++ [
           (prev.fetchpatch2 {
