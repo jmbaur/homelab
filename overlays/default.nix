@@ -8,11 +8,13 @@ inputs: {
 
       nixos-kexec = prev.callPackage ./nixos-kexec { };
 
-      libfido2 =
-        if prev.stdenv.hostPlatform != prev.stdenv.buildPlatform then
-          (prev.libfido2.override { withPcsclite = false; })
-        else
-          prev.libfido2;
+      libfido2 = prev.libfido2.override {
+        withPcsclite = prev.stdenv.hostPlatform == prev.stdenv.buildPlatform;
+      };
+
+      gnupg = prev.gnupg.override {
+        enableMinimal = prev.stdenv.hostPlatform != prev.stdenv.buildPlatform;
+      };
 
       labwc = prev.labwc.overrideAttrs ({ patches ? [ ], ... }: {
         patches = patches ++ [
