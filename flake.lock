@@ -323,11 +323,11 @@
         "pre-commit": "pre-commit"
       },
       "locked": {
-        "lastModified": 1705799319,
-        "narHash": "sha256-dzVBGb+7AkVhgZOaGEU+t7GYgbM6DWQ18qHkJyo2mFQ=",
+        "lastModified": 1705847358,
+        "narHash": "sha256-Jmh7rgkmZK3RjUcHRKVmxrkYRFJczbFx7zIn7Jj1Onk=",
         "owner": "jmbaur",
         "repo": "gobar",
-        "rev": "37f03a6f621d7d0d366a2bee1d2505b8df156715",
+        "rev": "38e239a5a4dbff768c3d1ea1b20849942233414e",
         "type": "github"
       },
       "original": {
@@ -363,11 +363,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1705794055,
-        "narHash": "sha256-mv/KrxEAZNhpPJcDqdQ709If9p2DTEYIDPo2r9xchlg=",
+        "lastModified": 1706306660,
+        "narHash": "sha256-lZvgkHtVeduGByPb0Tz9LpAi4olfkEm8XPgv0o7GRsk=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "9b378afae72cb07471e19aefc30e8e05ef2d7a61",
+        "rev": "b2f56952074cb46e93902ecaabfb04dd93733434",
         "type": "github"
       },
       "original": {
@@ -406,11 +406,11 @@
         "spectrum": "spectrum"
       },
       "locked": {
-        "lastModified": 1705802752,
-        "narHash": "sha256-0EY+M5vnXcm/0bQQo9Yu2k+NF69qoLdpa6Vb2ARa1Zw=",
+        "lastModified": 1706214321,
+        "narHash": "sha256-42FZWeJQNYgz0ZkclMzShuvjT9TvJNRN78Iu3SEyD4M=",
         "owner": "astro",
         "repo": "microvm.nix",
-        "rev": "f07dd64526ee203d25329c517eec3b697860fa6b",
+        "rev": "186b8bf6dbacc1ab55fe8ac8d5a2bbf76a1a70e1",
         "type": "github"
       },
       "original": {
@@ -428,18 +428,17 @@
       },
       "locked": {
         "dir": "contrib",
-        "lastModified": 1705751383,
-        "narHash": "sha256-cxzYCWSbOGLnkhfBRwTV2r0hU0jYqO2zo7/gX0tKFu4=",
+        "lastModified": 1706292373,
+        "narHash": "sha256-jwk3WyY194aq4JL9vv+eb6ah/KCecuxETnR/fp9WWXE=",
         "owner": "neovim",
         "repo": "neovim",
-        "rev": "ed103cde28dd6aeb8d240240309c26d3f20060f4",
+        "rev": "a9df0c5ce6caa5e623c3140a80baf4b3c1ce07db",
         "type": "github"
       },
       "original": {
         "dir": "contrib",
         "owner": "neovim",
         "repo": "neovim",
-        "rev": "ed103cde28dd6aeb8d240240309c26d3f20060f4",
         "type": "github"
       }
     },
@@ -486,15 +485,15 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1705791947,
-        "narHash": "sha256-aVxIY5h0nr8qbglzIBF0ClD+33L7tSeXcBkBO4GBgvc=",
-        "owner": "jmbaur",
+        "lastModified": 1706191920,
+        "narHash": "sha256-eLihrZAPZX0R6RyM5fYAWeKVNuQPYjAkCUBr+JNvtdE=",
+        "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "ae7c316c3e01c23c5d024030518611c400a83ae3",
+        "rev": "ae5c332cbb5827f6b1f02572496b141021de335f",
         "type": "github"
       },
       "original": {
-        "owner": "jmbaur",
+        "owner": "nixos",
         "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
@@ -598,11 +597,11 @@
     },
     "nur": {
       "locked": {
-        "lastModified": 1705801736,
-        "narHash": "sha256-t+merRH3MW8ASSIf968SIJJxiRnhomFGapP/X4usTyc=",
+        "lastModified": 1706312665,
+        "narHash": "sha256-UcIACtb5+PocrtEaeB7U9pd+95AOD6jekxLoyebspOE=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "ff6497ef576a1d88ef7ecb7e40e3a7cd9a410b2b",
+        "rev": "fa82aede91c5640c359c9cabc616a3450d217e9c",
         "type": "github"
       },
       "original": {
@@ -762,11 +761,11 @@
         "nixpkgs-stable": "nixpkgs-stable_5"
       },
       "locked": {
-        "lastModified": 1705805983,
-        "narHash": "sha256-HluB9w7l75I4kK25uO4y6baY4fcDm2Rho0WI1DN2Hmc=",
+        "lastModified": 1706130372,
+        "narHash": "sha256-fHZxKH1DhsXPP36a2vJ91Zy6S+q6+QRIFlpLr9fZHU8=",
         "owner": "Mic92",
         "repo": "sops-nix",
-        "rev": "ae171b54e76ced88d506245249609f8c87305752",
+        "rev": "4606d9b1595e42ffd9b75b9e69667708c70b1d68",
         "type": "github"
       },
       "original": {
@@ -903,11 +902,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1705558186,
-        "narHash": "sha256-/NvZ4coK/hFRLjivtBcLEOSYR5rTIH/yFWVH/wN5VaM=",
+        "lastModified": 1706030273,
+        "narHash": "sha256-aY52zZmbB/oqa+7bwZ316PB9DIvh64OeujxIruh/JdQ=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "ba22c6bc00e762cc59f84d059d40f963e932d71f",
+        "rev": "3f7f755b45a7e959e44baeec449914054404e090",
         "type": "github"
       },
       "original": {
