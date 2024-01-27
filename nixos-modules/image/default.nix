@@ -29,9 +29,7 @@ in
     mutableNixStore = mkEnableOption "TODO";
 
     sectorSize = lib.mkOption {
-      type = with lib.types; addCheck
-        int
-        (x: x >= 512 && x <= 4096 && lib.mod x 2 == 0);
+      type = with lib.types; enum [ 512 1024 2048 4096 ];
       default = 4096;
       example = lib.literalExpression "4096";
       description = lib.mdDoc ''
