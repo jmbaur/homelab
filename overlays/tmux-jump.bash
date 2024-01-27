@@ -60,7 +60,7 @@ fi
 
 if [[ -n ${TMUX-} ]]; then
 	# current attached to a tmux session
-	tmux switch-client -t "$tmux_session_name"
+	exec tmux switch-client -t "$tmux_session_name"
 else
-	tmux attach-session -t "$tmux_session_name"
+	exec tmux attach-session -t "$tmux_session_name"
 fi
