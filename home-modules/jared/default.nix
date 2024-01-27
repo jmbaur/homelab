@@ -249,10 +249,6 @@ in
           echo "inhibiting idle for $time"
           systemd-inhibit --what=idle --who=caffeine --why=Caffeine --mode=block sleep "$time"
         '')
-        (pkgs.writeShellScriptBin "greetd-launcher" ''
-          systemd-cat --identifier=sway ${lib.getExe config.wayland.windowManager.sway.package}
-          systemctl --user stop sway-session.target
-        '')
       ];
 
       xdg.configFile."xdg-terminals.list".text = ''

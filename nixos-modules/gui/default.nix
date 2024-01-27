@@ -2,12 +2,16 @@
 let
   cfg = config.custom.gui;
 
-  launcher = pkgs.writeShellScript "greetd-launcher-wrapper" ''
-    if command -v greetd-launcher >/dev/null; then
-      exec -a "$0" greetd-launcher
-    else
-      exec -a "$0" "$SHELL"
-    fi
+  wlgreetSwayConfig = pkgs.writeText "wlgreet-sway.config" ''
+    exec "${pkgs.greetd.wlgreet}/bin/wlgreet --command sway; swaymsg exit"
+
+    bindsym Mod4+shift+e exec swaynag \
+      -t warning \
+      -m "What do you want to do?" \
+      -b "Poweroff" "systemctl poweroff" \
+      -b "Reboot" "systemctl reboot"
+
+    include /etc/sway/config.d/*
   '';
 in
 {
@@ -55,7 +59,7 @@ in
     services.greetd = {
       enable = true;
       vt = 7;
-      settings.default_session.command = "${pkgs.greetd.greetd}/bin/agreety --cmd ${launcher}";
+      settings.default_session.command = "sway --config ${wlgreetSwayConfig}";
     };
   };
 }
