@@ -4,12 +4,6 @@ let
 
   inherit (config.system.image) id version;
 
-  systemdUkify = pkgs.buildPackages.systemdMinimal.override {
-    withEfi = true;
-    withUkify = true;
-    withBootloader = true;
-  };
-
   loaderConf = pkgs.writeText "loader.conf" ''
     timeout ${if (config.boot.loader.timeout != null) then toString config.boot.loader.timeout else "menu-force"}
     editor yes
@@ -51,7 +45,7 @@ in
         echo "${loaderConf}:/loader/loader.conf" >> $bootfiles
         echo "${systemdBoot}:/EFI/BOOT/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI" >> $bootfiles
 
-        ${systemdUkify}/lib/systemd/ukify build \
+        ${lib.getExe' pkgs.buildPackages.systemdUkify "ukify"} build \
           --no-sign-kernel \
           --efi-arch=${pkgs.stdenv.hostPlatform.efiArch} \
           --uname=${config.system.build.kernel.version} \
