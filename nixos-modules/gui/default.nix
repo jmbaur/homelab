@@ -2,7 +2,7 @@
 let
   cfg = config.custom.gui;
 
-  launcher = pkgs.writeShellScript "greetd-launcher" ''
+  launcher = pkgs.writeShellScript "greetd-launcher-wrapper" ''
     if command -v greetd-launcher >/dev/null; then
       exec -a "$0" greetd-launcher
     else

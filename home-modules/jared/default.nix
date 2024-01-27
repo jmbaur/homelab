@@ -250,7 +250,7 @@ in
           systemd-inhibit --what=idle --who=caffeine --why=Caffeine --mode=block sleep "$time"
         '')
         (pkgs.writeShellScriptBin "greetd-launcher" ''
-          systemd-cat --identifier=sway sway
+          systemd-cat --identifier=sway ${lib.getExe config.wayland.windowManager.sway.package}
           systemctl --user stop sway-session.target
         '')
       ];
