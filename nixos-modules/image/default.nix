@@ -28,6 +28,18 @@ in
 
     mutableNixStore = mkEnableOption "TODO";
 
+    sectorSize = lib.mkOption {
+      type = with lib.types; addCheck
+        int
+        (x: x >= 512 && x <= 4096 && lib.mod x 2 == 0);
+      default = 4096;
+      example = lib.literalExpression "4096";
+      description = lib.mdDoc ''
+        The sector size of the disk image produced by systemd-repart. This
+        value must be a power of 2 between 512 and 4096.
+      '';
+    };
+
     postImageCommands = mkOption {
       type = types.lines;
       default = "";
@@ -261,7 +273,7 @@ in
     system.build.image = pkgs.callPackage ./image.nix {
       usrFormat = config.fileSystems."/nix/.ro-store".fsType;
       imageName = config.networking.hostName;
-      inherit (cfg) bootFileCommands postImageCommands;
+      inherit (cfg) bootFileCommands postImageCommands sectorSize;
       inherit (config.system.build) toplevel;
       inherit (config.system.image) id version;
       inherit (config.systemd.repart) partitions;

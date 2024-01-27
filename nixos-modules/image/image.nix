@@ -21,6 +21,7 @@
 , toplevel
 , usrFormat
 , version
+, sectorSize
 }:
 
 let
@@ -80,6 +81,7 @@ stdenv.mkDerivation {
       "--dry-run=no"
       "--architecture=${systemdArchitecture}"
       "--seed=${seed}"
+      "--sector-size=${toString sectorSize}"
       "--definitions=./repart.d"
       "--json=pretty"
     )

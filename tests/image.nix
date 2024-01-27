@@ -61,6 +61,7 @@ let
     custom.image = {
       enable = true;
       primaryDisk = "/dev/vda";
+      sectorSize = 512; # OVMF only supports 512B sector size?
       immutableMaxSize = 512 * 1024 * 1024; # 512M
     };
   };
