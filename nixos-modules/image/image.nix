@@ -66,7 +66,6 @@ stdenv.mkDerivation {
   passAsFile = [ "bootFileCommands" ];
 
   env.SYSTEMD_REPART_MKFS_OPTIONS_EROFS = "-zlz4hc";
-  env.SYSTEMD_LOG_LEVEL = "debug";
 
   buildCommand = ''
     install -Dm0644 ${bootPartitionConfig} repart.d/10-boot.conf

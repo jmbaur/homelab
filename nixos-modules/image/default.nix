@@ -30,7 +30,7 @@ in
 
     sectorSize = lib.mkOption {
       type = with lib.types; enum [ 512 1024 2048 4096 ];
-      default = 4096;
+      default = 512;
       example = lib.literalExpression "4096";
       description = lib.mdDoc ''
         The sector size of the disk image produced by systemd-repart. This

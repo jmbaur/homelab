@@ -12,15 +12,17 @@
     boot.loader.systemd-boot.extraFiles."dtb" = config.hardware.deviceTree.package;
     boot.loader.grub.extraFiles."dtb" = config.hardware.deviceTree.package;
 
-    hardware.deviceTree.enable = true;
-    hardware.deviceTree.name = "mediatek/mt7986a-bananapi-bpi-r3.dtb";
-    hardware.deviceTree.overlays = map
-      (dtboFile: {
-        inherit dtboFile;
-        name = builtins.baseNameOf dtboFile;
-      }) [
-      "${config.boot.kernelPackages.kernel}/dtbs/mediatek/mt7986a-bananapi-bpi-r3-nand.dtbo"
-      "${config.boot.kernelPackages.kernel}/dtbs/mediatek/mt7986a-bananapi-bpi-r3-emmc.dtbo"
-    ];
+    hardware.deviceTree = {
+      enable = true;
+      name = "mediatek/mt7986a-bananapi-bpi-r3.dtb";
+      overlays = map
+        (dtboFile: {
+          inherit dtboFile;
+          name = builtins.baseNameOf dtboFile;
+        }) [
+        "${config.boot.kernelPackages.kernel}/dtbs/mediatek/mt7986a-bananapi-bpi-r3-nand.dtbo"
+        "${config.boot.kernelPackages.kernel}/dtbs/mediatek/mt7986a-bananapi-bpi-r3-emmc.dtbo"
+      ];
+    };
   };
 }

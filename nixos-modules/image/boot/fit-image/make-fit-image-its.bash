@@ -9,6 +9,9 @@ declare bootscript
 declare load_address
 declare x86_setup_code
 
+devicetree_package=${1:-}
+devicetree_name=${2:-}
+
 function top() {
 	echo
 	cat <<EOF
@@ -136,8 +139,13 @@ EOF
 
 # print fit image ITS content
 top
-if ! test -z "$1"; then
-	mapfile -t dtb_files < <(find -L "$1" -type f -name '*.dtb')
+if [[ -n $devicetree_package ]]; then
+	declare dtb_files
+	if [[ -n $devicetree_name ]]; then
+		dtb_files="${devicetree_package}/${devicetree_name}"
+	else
+		mapfile -t dtb_files < <(find -L "$devicetree_package" -type f -name '*.dtb')
+	fi
 
 	for index in "${!dtb_files[@]}"; do
 		fdt_definition "$index" "${dtb_files[$index]}"

@@ -6,6 +6,10 @@ let
 
   fixedFitImageName = "${id}_${version}.uImage";
 
+  deviceTreeArgs = with config.hardware.deviceTree;
+    lib.optionals enable
+      ([ package ] ++ lib.optional (name != null) name);
+
   # depends on:
   # - CONFIG_CMD_SAVEENV
   # - $loadaddr being set
@@ -133,12 +137,12 @@ in
     }.${config.system.boot.loader.kernelFile} + ''
       export kernel_compression
 
-      bash ${./make-fit-image-its.bash} ${with config.hardware.deviceTree; lib.optionalString enable package} >image.its
+      bash ${./make-fit-image-its.bash} ${toString deviceTreeArgs} >image.its
 
-      mkimage --fit image.its "''${out}/${fixedFitImageName}"
+      mkimage --fit image.its "$update/${fixedFitImageName}"
 
       echo "${globalBootScriptImage}:/boot.scr" >> $bootfiles
-      echo "''${out}/${fixedFitImageName}:/${fixedFitImageName}" >> $bootfiles
+      echo "$update/${fixedFitImageName}:/${fixedFitImageName}" >> $bootfiles
     '';
   };
 }

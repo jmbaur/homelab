@@ -5,7 +5,14 @@
 , openssl
 , symlinkJoin
 , uboot-mt7986a_bpir3_emmc
+, ubootLib
 }:
+
+let
+  uboot = uboot-mt7986a_bpir3_emmc.override {
+    extraStructuredConfig = with ubootLib; { BOOTSTD_FULL = yes; };
+  };
+in
 buildArmTrustedFirmware rec {
   platform = "mt7986";
   version = builtins.substring 0 7 src.rev;
@@ -19,7 +26,7 @@ buildArmTrustedFirmware rec {
   nativeBuildInputs = [ dtc openssl ];
   extraMakeFlags = [
     "OPENSSL_DIR=${symlinkJoin { name = "openssl-dir"; paths = with buildPackages.openssl; [ out bin ]; }}"
-    "BL33=${uboot-mt7986a_bpir3_emmc}/u-boot.bin"
+    "BL33=${uboot}/u-boot.bin"
     "DRAM_USE_DDR4=1"
     # defines where the FIP image lives
     "BOOT_DEVICE=spim-nand"
