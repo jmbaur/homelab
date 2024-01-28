@@ -323,11 +323,11 @@
         "pre-commit": "pre-commit"
       },
       "locked": {
-        "lastModified": 1705847358,
-        "narHash": "sha256-Jmh7rgkmZK3RjUcHRKVmxrkYRFJczbFx7zIn7Jj1Onk=",
+        "lastModified": 1706406950,
+        "narHash": "sha256-PEwxcCtK7SzlzrheyttxPzdZfy+leuAfM6W4Bw4c6DI=",
         "owner": "jmbaur",
         "repo": "gobar",
-        "rev": "38e239a5a4dbff768c3d1ea1b20849942233414e",
+        "rev": "eecdd261815d0d797ef662119ac4da7ea760fba4",
         "type": "github"
       },
       "original": {
@@ -343,11 +343,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1705799296,
-        "narHash": "sha256-T/Tbd2yiMtcjBGQyvT1+QIN2kVfEVNPuoV41U2zmvUs=",
+        "lastModified": 1706406927,
+        "narHash": "sha256-2XTmZ9N6UGw/Fyn3vEgm/t0WzH7m2OzqL9ES7u9K8qU=",
         "owner": "jmbaur",
         "repo": "gosee",
-        "rev": "2129ca27d75d960ff569757f9dbc924f8fe8422c",
+        "rev": "352563b2f9cb528f66012be4302dfd37c1786901",
         "type": "github"
       },
       "original": {
@@ -384,11 +384,11 @@
         "pre-commit-hooks": "pre-commit-hooks"
       },
       "locked": {
-        "lastModified": 1705801616,
-        "narHash": "sha256-w4YGVC1LntxA18G5fXu6VkPMoD4yK2WFpM1XvfiqBZw=",
+        "lastModified": 1706406963,
+        "narHash": "sha256-Q0rY91N7GYQnSjWlquo53vKETFzQRYM6GhZFt5QZ0y0=",
         "owner": "jmbaur",
         "repo": "ipwatch",
-        "rev": "aeebe1b91de4ff9f11db4a905d6993eabc228f82",
+        "rev": "3e9ae2ccda27dda0474b35f4699613db2a1326c0",
         "type": "github"
       },
       "original": {
@@ -566,11 +566,11 @@
     },
     "nixpkgs-stable_5": {
       "locked": {
-        "lastModified": 1705033721,
-        "narHash": "sha256-K5eJHmL1/kev6WuqyqqbS1cdNnSidIZ3jeqJ7GbrYnQ=",
+        "lastModified": 1705957679,
+        "narHash": "sha256-Q8LJaVZGJ9wo33wBafvZSzapYsjOaNjP/pOnSiKVGHY=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "a1982c92d8980a0114372973cbdfe0a307f1bdea",
+        "rev": "9a333eaa80901efe01df07eade2c16d183761fa3",
         "type": "github"
       },
       "original": {
@@ -598,11 +598,11 @@
     },
     "nur": {
       "locked": {
-        "lastModified": 1706373899,
-        "narHash": "sha256-fO9+l0Q21kMWTuWlQFa5RZIWn8PN4N0ROOz2Zwhtjr8=",
+        "lastModified": 1706405996,
+        "narHash": "sha256-hJbt3cTW0ma3k/kZ51F/T9MijyJxR1S3ZIeQHL2JPYw=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "84cb8996e17777f663003cf34de1761397e4f8fb",
+        "rev": "ab8cf147ee2254ef91e87ff7272524975fcbba3f",
         "type": "github"
       },
       "original": {
@@ -762,11 +762,11 @@
         "nixpkgs-stable": "nixpkgs-stable_5"
       },
       "locked": {
-        "lastModified": 1706130372,
-        "narHash": "sha256-fHZxKH1DhsXPP36a2vJ91Zy6S+q6+QRIFlpLr9fZHU8=",
+        "lastModified": 1706410821,
+        "narHash": "sha256-iCfXspqUOPLwRobqQNAQeKzprEyVowLMn17QaRPQc+M=",
         "owner": "Mic92",
         "repo": "sops-nix",
-        "rev": "4606d9b1595e42ffd9b75b9e69667708c70b1d68",
+        "rev": "73bf36912e31a6b21af6e0f39218e067283c67ef",
         "type": "github"
       },
       "original": {
@@ -903,11 +903,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1706030273,
-        "narHash": "sha256-aY52zZmbB/oqa+7bwZ316PB9DIvh64OeujxIruh/JdQ=",
+        "lastModified": 1706404219,
+        "narHash": "sha256-xvuj8rEI1lVr3WgAhI60zCWXULkKDJHvLS0NsqSX+F4=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "3f7f755b45a7e959e44baeec449914054404e090",
+        "rev": "6e2ac9c4d87be5ce834fd3fabbb1e99c47e9bd05",
         "type": "github"
       },
       "original": {
@@ -944,11 +944,11 @@
         "pre-commit": "pre-commit_3"
       },
       "locked": {
-        "lastModified": 1705798252,
-        "narHash": "sha256-hm5X8e4TYFFWIBEp69+rGBszJtD1OnJ0xT0rGLVdKE0=",
+        "lastModified": 1706406998,
+        "narHash": "sha256-ohuYQnJKH4cgpxFJLcYCzlT0LI4mlfuI9GdqgRsw8gM=",
         "owner": "jmbaur",
         "repo": "webauthn-tiny",
-        "rev": "57eacd2450bbc34f3b74d09017ca7748a66d474d",
+        "rev": "8093cc18980676ae03184b0195c02b010ef876f3",
         "type": "github"
       },
       "original": {
