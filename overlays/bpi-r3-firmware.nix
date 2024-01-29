@@ -10,7 +10,15 @@
 
 let
   uboot = uboot-mt7986a_bpir3_emmc.override {
-    extraStructuredConfig = with ubootLib; { BOOTSTD_FULL = yes; };
+    extraStructuredConfig = with ubootLib; {
+      BOOTSTD_FULL = yes;
+      MTD = yes;
+      DM_MTD = yes;
+      SPI = yes;
+      DM_SPI = yes;
+      MTD_SPI_NAND = yes;
+      CMD_MTD = yes;
+    };
   };
 in
 buildArmTrustedFirmware rec {
@@ -36,4 +44,3 @@ buildArmTrustedFirmware rec {
   filesToInstall = [ "build/${platform}/release/bl2.img" "build/${platform}/release/fip.bin" ];
   extraMeta.platforms = [ "aarch64-linux" ];
 }
-
