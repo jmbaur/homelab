@@ -119,17 +119,6 @@ inputs: {
         };
       };
 
-      uboot-clearfog_spi =
-        # u-boot 0MiB    - 2MiB
-        # env    2MiB    - 2.25MiB
-        # empty  2.25MiB - 4MiB
-        (prev.uboot-clearfog_spi.override {
-          extraStructuredConfig = with prev.ubootLib; {
-            ENV_OFFSET = freeform "0x200000";
-            ENV_SIZE = freeform "0x40000";
-          };
-        });
-
       mrvlUart = prev.callPackage ./mrvl-uart.nix { };
 
       marvellBinaries = prev.fetchFromGitHub {

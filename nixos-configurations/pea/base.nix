@@ -27,6 +27,7 @@ let
       BOOTCOUNT_LIMIT = yes;
       BOOTCOUNT_ENV = yes;
 
+      # TODO(jared): probably don't need this
       USE_DEFAULT_ENV_FILE = yes;
       DEFAULT_ENV_FILE = freeform (pkgs.substituteAll {
         name = "u-boot.env";

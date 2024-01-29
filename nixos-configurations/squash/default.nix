@@ -1,9 +1,11 @@
-{ pkgs, ... }: {
+{ lib, pkgs, ... }: {
   imports = [ ./router.nix ];
 
   boot.kernelParams = [ "cfg80211.ieee80211_regdom=US" ];
 
   hardware.armada-388-clearfog.enable = true;
+
+  boot.initrd.systemd.emergencyAccess = lib.warn "initrd emergency access enabled" true;
 
   users.users.root.openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-ssh-keys ];
 
@@ -16,9 +18,6 @@
       uboot = {
         enable = true;
         bootMedium.type = "scsi";
-        # The default load address is 0x800000, so let's leave up to 32MiB for
-        # the fit-image.
-        kernelLoadAddress = "0x2800000";
       };
     };
   };

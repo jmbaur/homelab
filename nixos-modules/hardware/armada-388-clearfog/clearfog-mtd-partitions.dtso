@@ -12,13 +12,23 @@
 		#size-cells = <1>;
 
 		partition@0 {
-			label = "u-boot";
+			label = "uboot";
 			reg = <0x0 0x200000>;
 		};
 
 		partition@200000 {
-			label = "u-boot-env";
-			reg = <0x200000 0x40000>;
+			label = "ubootenv";
+			reg = <0x200000 0x20000>;
+		};
+
+		partition@220000 {
+			label = "ubootenvred";
+			reg = <0x220000 0x20000>;
+		};
+
+		partition@240000 {
+			label = "empty";
+			reg = <0x240000 0x1c0000>;
 		};
 	};
 };

@@ -85,16 +85,43 @@
       ubootEnvTools
       mtdutils
       (pkgs.writeShellScriptBin "update-firmware" ''
-        ${lib.getExe' pkgs.mtdutils "flashcp"} --verbose ${config.system.build.firmware}/u-boot-with-spl.kwb mtd:u-boot
+        ${lib.getExe' pkgs.mtdutils "flashcp"} --verbose ${config.system.build.firmware}/u-boot-with-spl.kwb mtd:uboot
       '')
     ];
 
-    system.build.firmware = pkgs.uboot-clearfog_spi;
+    # name           start     size
+    # -----------------------------
+    # uboot           0KiB  2048KiB
+    # ubootenv     2048KiB   128KiB
+    # ubootenvred  2176KiB   128KiB
+    # empty        2304KiB  1792KiB
+    system.build.firmware = pkgs.uboot-clearfog_spi.override {
+      extraStructuredConfig = with pkgs.ubootLib; {
+        BOOTCOUNT_ENV = yes;
+        BOOTCOUNT_LIMIT = yes;
+        BOOTSTD_DEFAULTS = yes;
+        BOOTSTD_FULL = yes;
+        DISTRO_DEFAULTS = unset;
+        ENV_OFFSET = freeform "0x200000";
+        ENV_OFFSET_REDUND = freeform "0x220000";
+        ENV_SECT_SIZE = freeform "0x10000";
+        ENV_SIZE = freeform "0x20000";
+        ENV_SIZE_REDUND = freeform "0x20000";
+        FIT = yes;
+        FIT_BEST_MATCH = yes;
+        SYS_BOOTM_LEN = freeform "0x${lib.toHexString (12 * 1024 * 1024)}"; # 12MiB
+        SYS_REDUNDAND_ENVIRONMENT = yes;
+      };
+    };
+
+    # The default load address is 0x800000, so let's leave up to 32MiB for
+    # the fit-image.
+    custom.image.uboot.kernelLoadAddress = "0x2800000";
 
     # for fw_printenv and fw_setenv
     environment.etc."fw_env.config".text = ''
       # MTD device name       Device offset   Env. size       Flash sector size       Number of sectors
-      /dev/mtd2               0x0000          0x40000         0x10000
+      /dev/mtd2               0x0             0x20000         0x10000
     '';
   };
 }

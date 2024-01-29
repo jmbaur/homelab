@@ -28,6 +28,13 @@
       ];
     };
 
+    # for fw_printenv and fw_setenv
+    environment.etc."fw_env.config".text = ''
+      # MTD device name       Device offset   Env. size       Flash sector size       Number of sectors
+      /dev/ubi0:ubootenv      0x0             0x1f000         0x1f000
+      /dev/ubi0:ubootenvred   0x0             0x1f000         0x1f000
+    '';
+
     system.build = {
       uboot = pkgs.uboot-mt7986a_bpir3_emmc.override {
         extraStructuredConfig = with pkgs.ubootLib; {
@@ -53,7 +60,7 @@
           ENV_SIZE_REDUND = freeform "0x1f000";
           ENV_UBI_PART = freeform "ubi";
           ENV_UBI_VOLUME = freeform "ubootenv";
-          ENV_UBI_VOLUME_REDUND = freeform "ubootenv2";
+          ENV_UBI_VOLUME_REDUND = freeform "ubootenvred";
           ENV_VARS_UBOOT_RUNTIME_CONFIG = yes;
           FIT = yes;
           MTD = yes;
@@ -69,6 +76,7 @@
           SCSI_AHCI = yes;
           SPI = yes;
           SUPPORT_EMMC_BOOT = yes;
+          SYS_REDUNDAND_ENVIRONMENT = yes;
           USB = yes;
           USB_HOST = yes;
           USB_STORAGE = yes;

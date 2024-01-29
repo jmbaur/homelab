@@ -42,9 +42,9 @@ let
       vol_type = "dynamic";
       vol_size = "0x1f000";
     };
-    ubootenv2 = ubootenv // {
+    ubootenvred = ubootenv // {
       vol_id = 2;
-      vol_name = "ubootenv2";
+      vol_name = "ubootenvred";
     };
   };
   ubiImage = runCommand "bpi-r3-ubi-image" { nativeBuildInputs = [ mtdutils ]; } ''
