@@ -9,13 +9,13 @@
   boot.initrd.systemd.emergencyAccess = true;
   # }}}
 
-  environment.systemPackages = [ pkgs.mtdutils ];
+  environment.systemPackages = with pkgs; [ mtdutils ubootEnvTools ];
 
   custom.image = {
     enable = true;
     bootVariant = "fit-image";
     primaryDisk = "/dev/disk/by-path/platform-11230000.mmc";
-    ubootLoadAddress = "0x80000000";
+    ubootLoadAddress = "0x50000000";
     ubootBootMedium.type = "mmc";
   };
 }

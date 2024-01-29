@@ -15,11 +15,22 @@ let
   # - $loadaddr being set
   # - fitimage containing an embedded script called "bootscript"
   globalBootScript = pkgs.writeText "boot.cmd" ''
-    if test ! env exists version; then env set version ${version} fi
-    if test ! env exists altversion; then env set altversion ${version} fi
+    if test ! env exists version; then
+      env set version ${version}
+      env set needs_saveenv 1
+    fi
+
+    if test ! env exists altversion; then
+      env set altversion ${version}
+      env set needs_saveenv 1
+    fi
 
     if test ! altbootcmd; then
       env set altbootcmd 'env set badversion ''${version}; env set version ''${altversion}; env set altversion ''${badversion}; env delete -f badversion; run bootcmd'
+      env set needs_saveenv 1
+    fi
+
+    if test -n $needs_saveenv; then
       saveenv
     fi
 
@@ -141,7 +152,9 @@ in
 
       mkimage --fit image.its "$update/${fixedFitImageName}"
 
-      echo "${globalBootScriptImage}:/boot.scr" >> $bootfiles
+      ln -sf ${globalBootScriptImage}/boot.scr $update/boot.scr
+
+      echo "$update/boot.scr:/boot.scr" >> $bootfiles
       echo "$update/${fixedFitImageName}:/${fixedFitImageName}" >> $bootfiles
     '';
   };

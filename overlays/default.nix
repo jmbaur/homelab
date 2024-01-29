@@ -132,8 +132,6 @@ inputs: {
 
       mrvlUart = prev.callPackage ./mrvl-uart.nix { };
 
-      bpiR3Firmware = prev.callPackage ./bpi-r3-firmware.nix { };
-
       marvellBinaries = prev.fetchFromGitHub {
         owner = "MarvellEmbeddedProcessors";
         repo = "binaries-marvell";
