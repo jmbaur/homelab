@@ -152,7 +152,7 @@ in
 
       mkimage --fit image.its "$update/${fixedFitImageName}"
 
-      ln -sf ${globalBootScriptImage}/boot.scr $update/boot.scr
+      ln -sf ${globalBootScriptImage} $update/boot.scr
 
       echo "$update/boot.scr:/boot.scr" >> $bootfiles
       echo "$update/${fixedFitImageName}:/${fixedFitImageName}" >> $bootfiles

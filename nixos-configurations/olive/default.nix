@@ -9,7 +9,11 @@
   boot.initrd.systemd.emergencyAccess = true;
   # }}}
 
-  environment.systemPackages = with pkgs; [ mtdutils ubootEnvTools libmbim ];
+  environment.systemPackages = with pkgs; [
+    mtdutils
+    ubootEnvTools
+    # TODO(jared): `libmbim` requires building a bunch of extra cruft
+  ];
 
   custom.image = {
     enable = true;
