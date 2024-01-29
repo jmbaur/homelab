@@ -97,7 +97,7 @@
         ENV_SIZE = freeform "0x20000";
         ENV_SIZE_REDUND = freeform "0x20000";
         FIT = yes;
-        FIT_BEST_MATCH = yes;
+        FIT_BEST_MATCH = yes; # TODO(jared): seems to not work
         SYS_BOOTM_LEN = freeform "0x${lib.toHexString (12 * 1024 * 1024)}"; # 12MiB
         SYS_REDUNDAND_ENVIRONMENT = yes;
       };
@@ -117,8 +117,9 @@
     # so the device has persistent mac addresses across reboots.
     systemd.services.stable-mac-address = {
       path = with pkgs; [ gnugrep ubootEnvTools macgen ];
+      wantedBy = [ "multi-user.target" ];
       script = ''
-        if ! fw_printenv | grep --silent ethaddr; then
+        if ! fw_printenv | grep --silent -e eth1addr -e eth2addr -e eth3addr; then
           tmp=$(mktemp)
           echo "ethaddr $(macgen)" | tee -a $tmp
           echo "eth1addr $(macgen)" | tee -a $tmp

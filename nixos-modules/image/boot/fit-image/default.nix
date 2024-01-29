@@ -31,6 +31,7 @@ let
     fi
 
     if test -n $needs_saveenv; then
+      env delete -f needs_saveenv
       saveenv
     fi
 
