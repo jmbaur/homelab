@@ -1,1 +1,1 @@
-../x86_64-gui-dev.nix
+../x86_64-chromebook-gui-dev.nix
