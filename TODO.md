@@ -7,3 +7,4 @@
   recovery key. Currently it is a manual process of ensuring
   libcryptsetup-token-systemd-tpm2.so is in LD_LIBRARY_PATH and doing
   `cryptsetup luksAddKey --token-id 0 --token-type systemd-tpm2 /path/to/device`.
+- add a recovery boot option
