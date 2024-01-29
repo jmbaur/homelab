@@ -81,6 +81,10 @@ in
         assertion = config.system.image.id != null;
         message = "Image ID must be set";
       }
+      {
+        assertion = lib.length (lib.filter (enabled: enabled) [ cfg.uefi.enable cfg.uboot.enable cfg.bootloaderspec.enable ]) == 1;
+        message = "Only one boot variant can be enabled at once";
+      }
     ];
 
     systemd.additionalUpstreamSystemUnits = [ "boot-complete.target" ];
