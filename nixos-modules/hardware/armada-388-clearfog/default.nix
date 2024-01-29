@@ -1,14 +1,3 @@
-# TODO(jared): mac addresses on the armada 388 are stored in u-boot's environment.
-# If no variables for these mac addresses exist, we need to generate themm so the device has persistent mac addresses across reboots.
-# (pkgs.writeShellScriptBin "generate-macaddrs" ''
-#   echo "ethaddr $(${lib.getExe pkgs.macgen})" | tee -a macaddrs
-#   echo "eth1addr $(${lib.getExe pkgs.macgen})" | tee -a macaddrs
-#   echo "eth2addr $(${lib.getExe pkgs.macgen})" | tee -a macaddrs
-#   echo "eth3addr $(${lib.getExe pkgs.macgen})" | tee -a macaddrs
-#   ${pkgs.ubootEnvTools}/bin/fw_setenv --script macaddrs
-#   echo "wrote new macaddrs to uboot environment"
-# '')
-
 { config, lib, pkgs, ... }: {
   options.hardware.armada-388-clearfog = {
     enable = lib.mkEnableOption "armada-388-clearfog devices";
@@ -123,5 +112,23 @@
       # MTD device name       Device offset   Env. size       Flash sector size       Number of sectors
       /dev/mtd2               0x0             0x20000         0x10000
     '';
+
+    # If no variables for these mac addresses exist, we need to generate them
+    # so the device has persistent mac addresses across reboots.
+    systemd.services.stable-mac-address = {
+      path = with pkgs; [ gnugrep ubootEnvTools macgen ];
+      script = ''
+        if ! fw_printenv | grep --silent ethaddr; then
+          tmp=$(mktemp)
+          echo "ethaddr $(macgen)" | tee -a $tmp
+          echo "eth1addr $(macgen)" | tee -a $tmp
+          echo "eth2addr $(macgen)" | tee -a $tmp
+          echo "eth3addr $(macgen)" | tee -a $tmp
+          fw_setenv --script $tmp
+          echo "wrote new macaddrs to uboot environment"
+          rm $tmp
+        fi
+      '';
+    };
   };
 }
