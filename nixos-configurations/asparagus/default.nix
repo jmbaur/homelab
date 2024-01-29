@@ -7,7 +7,9 @@
     enable = true;
     encrypt = false;
     primaryDisk = "/dev/disk/by-path/TODO";
-    bootVariant = "fit-image";
-    ubootBootMedium.type = "mmc"; # TODO(jared): This should probably be sata?
+    uboot = {
+      enable = true;
+      bootMedium.type = "mmc"; # TODO(jared): This should probably be sata?
+    };
   };
 }

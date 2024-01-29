@@ -172,8 +172,7 @@ in
       enable = wgEndpointRefreshArgs != "";
       description = "Endpoint refresh for wireguard peers";
       after = [ "network-online.target" deviceUnit ];
-      partOf = [ "network-online.target" deviceUnit ];
-      wantedBy = [ "network-online.target" deviceUnit ];
+      requires = [ "network-online.target" deviceUnit ];
       path = [ pkgs.parallel wgEndpointRefresh ];
       serviceConfig = {
         PermissionsStartOnly = true;

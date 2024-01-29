@@ -68,14 +68,17 @@ let
 
   bootMethodConfig = {
     uefi = {
-      custom.image.bootVariant = "uefi";
+      custom.image.uefi.enable = true;
       virtualisation.useEFIBoot = true;
     };
     fit-image = { pkgs, ... }: {
-      custom.image.bootVariant = "fit-image";
-      custom.image.ubootBootMedium.type = "virtio";
-      # TODO(jared): what would this be for aarch64?
-      custom.image.ubootLoadAddress = "0x01000000";
+      custom.image.uboot.enable = true;
+      custom.image.uboot.bootMedium.type = "virtio";
+      custom.image.uboot.kernelLoadAddress =
+        if pkgs.stdenv.hostPlatform.isx86_64 then
+          "0x01000000"
+        else
+          throw "don't know what load address should be";
       virtualisation.bios = pkgs.linkFarm "u-boot-nixos-vm-bios" [{
         name = "bios.bin";
         path = {

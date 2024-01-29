@@ -17,9 +17,11 @@
 
   custom.image = {
     enable = true;
-    bootVariant = "fit-image";
     primaryDisk = "/dev/disk/by-path/platform-11230000.mmc";
-    ubootLoadAddress = "0x50000000";
-    ubootBootMedium.type = "mmc";
+    uboot = {
+      enable = true;
+      kernelLoadAddress = "0x50000000";
+      bootMedium.type = "mmc";
+    };
   };
 }

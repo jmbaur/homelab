@@ -18,13 +18,15 @@ in
 
   custom.image = {
     enable = true;
-    bootVariant = "fit-image";
-    ubootBootMedium.type = "mmc";
-    ubootLoadAddress = "0x80000";
     primaryDisk = "/dev/mmcblk0";
     bootFileCommands = ''
       echo "${uboot}/u-boot.bin:kernel.img" >> $bootfiles
     '';
+    uboot = {
+      enable = true;
+      bootMedium.type = "mmc";
+      kernelLoadAddress = "0x80000";
+    };
   };
 
   hardware.deviceTree.enable = true;

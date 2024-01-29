@@ -13,8 +13,13 @@
       enable = true;
       encrypt = false;
       primaryDisk = "/dev/disk/by-path/platform-f10a8000.sata-ata-1";
-      bootVariant = "fit-image";
-      ubootBootMedium.type = "scsi";
+      uboot = {
+        enable = true;
+        bootMedium.type = "scsi";
+        # The default load address is 0x800000, so let's leave up to 32MiB for
+        # the fit-image.
+        kernelLoadAddress = "0x2800000";
+      };
     };
   };
 }

@@ -12,7 +12,9 @@ let
   systemdBoot = "${config.systemd.package}/lib/systemd/boot/efi/systemd-boot${pkgs.stdenv.hostPlatform.efiArch}.efi";
 in
 {
-  config = lib.mkIf (cfg.enable && cfg.bootVariant == "uefi") {
+  options.custom.image.uefi.enable = lib.mkEnableOption "TODO";
+
+  config = lib.mkIf (cfg.enable && cfg.uefi.enable) {
     assertions = [{
       assertion = config.hardware.deviceTree.enable -> config.hardware.deviceTree.name != null;
       message = "need to specify config.hardware.deviceTree.name";

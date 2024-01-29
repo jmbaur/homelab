@@ -69,14 +69,6 @@ in
         Maximum size for immutable partitions.
       '';
     };
-
-    bootVariant = mkOption {
-      type = types.enum [ "uefi" "fit-image" "bootloaderspec" ];
-      default = "uefi";
-      description = mdDoc ''
-        TODO
-      '';
-    };
   };
 
   config = lib.mkIf cfg.enable {

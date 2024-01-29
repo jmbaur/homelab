@@ -70,35 +70,26 @@
     # BTN_0 == 0x100 == 256
     systemd.services.reset-button = {
       description = "Restart the system when the reset button is pressed";
-      unitConfig.ConditionPathExists = [ "/dev/input/event0" ];
+      unitConfig.ConditionPathExists = [ "/dev/input/by-path/platform-gpio-keys-event" ];
       # make sure evsieve button identifiers are escaped
       serviceConfig.ExecStart = lib.replaceStrings [ "%" ] [ "%%" ]
         (toString [
           (lib.getExe' pkgs.evsieve "evsieve")
-          "--input /dev/input/event0"
+          "--input /dev/input/by-path/platform-gpio-keys-event"
           "--hook btn:%256 exec-shell=\"systemctl reboot\""
         ]);
       wantedBy = [ "multi-user.target" ];
     };
 
-    programs.flashrom.enable = lib.mkDefault true;
-
-    environment.systemPackages = [
-      pkgs.ubootEnvTools
-    ] ++ lib.optional config.programs.flashrom.enable
+    environment.systemPackages = with pkgs; [
+      ubootEnvTools
+      mtdutils
       (pkgs.writeShellScriptBin "update-firmware" ''
-        firmware=$(mktemp)
-
-        dd bs=1 count=$((0x200000)) if=/dev/zero of=$firmware
-        dd conv=notrunc if=${config.system.build.firmware}/u-boot-with-spl.kwb of=$firmware
-
-        ${config.programs.flashrom.package}/bin/flashrom \
-          --programmer linux_mtd:dev=0 \
-          --write $firmware
-      '');
+        ${lib.getExe' pkgs.mtdutils "flashcp"} --verbose ${config.system.build.firmware}/u-boot-with-spl.kwb mtd:u-boot
+      '')
+    ];
 
     system.build.firmware = pkgs.uboot-clearfog_spi;
-    custom.image.ubootLoadAddress = config.system.build.firmware.config.SYS_LOAD_ADDR.value;
 
     # for fw_printenv and fw_setenv
     environment.etc."fw_env.config".text = ''

@@ -22,7 +22,9 @@ let
   '');
 in
 {
-  config = lib.mkIf (cfg.enable && cfg.bootVariant == "bootloaderspec") {
+  options.custom.image.bootloaderspec.enable = lib.mkEnableOption "TODO";
+
+  config = lib.mkIf (cfg.enable && cfg.bootloaderspec.enable) {
     assertions = [{
       assertion = config.hardware.deviceTree.enable -> config.hardware.deviceTree.name != null;
       message = "need to specify config.hardware.deviceTree.name";

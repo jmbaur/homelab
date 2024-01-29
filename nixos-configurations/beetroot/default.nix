@@ -8,7 +8,7 @@
 
   custom.image = {
     enable = true;
-    bootVariant = "fit-image";
     primaryDisk = "/dev/disk/by-path/TODO";
+    uboot.enable = true;
   };
 }

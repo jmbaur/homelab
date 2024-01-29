@@ -45,13 +45,15 @@ in
 
   custom.image = {
     enable = true;
-    bootVariant = "fit-image";
     primaryDisk = "/dev/mmcblk0";
-    ubootBootMedium.type = "mmc";
-    ubootLoadAddress = kernelAddrR;
     postImageCommands = ''
       dd if=${config.system.build.firmware}/u-boot-sunxi-with-spl.bin of=$out/image.raw bs=1K seek=${toString splOffsetKiB} conv=notrunc,sync
     '';
+    uboot = {
+      enable = true;
+      bootMedium.type = "mmc";
+      kernelLoadAddress = kernelAddrR;
+    };
   };
 
   boot.initrd.systemd.enableTpm2 = false; # tpm kernel modules aren't built in our defconfig

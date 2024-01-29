@@ -15,8 +15,8 @@
 
   custom.image = {
     enable = true;
-    bootVariant = "bootloaderspec";
     mutableNixStore = true;
     primaryDisk = "/dev/disk/by-path/pci-0000:03:00.0-nvme-1";
+    bootloaderspec.enable = true;
   };
 }
