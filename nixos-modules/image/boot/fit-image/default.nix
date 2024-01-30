@@ -31,10 +31,12 @@ let
     fi
 
     if env exists needs_saveenv; then
+      echo "needs saveenv"
       env delete -f needs_saveenv
       saveenv
     fi
 
+    echo "booting ${id}_''${version}.uImage"
     load ${cfg.uboot.bootMedium.type} ${toString cfg.uboot.bootMedium.index}:1 $loadaddr "${id}_''${version}.uImage"
     source ''${loadaddr}:bootscript
   '';
@@ -85,7 +87,6 @@ in
   };
 
   config = lib.mkIf (cfg.enable && cfg.uboot.enable) {
-    system.build.bootscr = globalBootScriptImage;
     # TODO(jared): need to add a non-UEFI equivalent to systemd-bless-boot
     systemd.additionalUpstreamSystemUnits = [ /*"systemd-bless-boot.service"*/ ];
 
