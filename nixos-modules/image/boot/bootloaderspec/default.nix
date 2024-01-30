@@ -42,7 +42,8 @@ in
           Type = "regular-file";
           Path = "/loader/entries";
           PathRelativeTo = config.systemd.repart.partitions."10-boot".Type;
-          MatchPattern = "${id}_@v+@l-@d.conf";
+          # TODO(jared): We shouldn't have to use `toString` here
+          MatchPattern = toString [ "${id}_@v+@l-@d.conf" "${id}_@v+@l.conf" "${id}_@v.conf" ];
           Mode = "0444";
           TriesLeft = 3;
           TriesDone = 0;
