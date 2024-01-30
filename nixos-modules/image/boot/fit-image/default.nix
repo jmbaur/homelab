@@ -15,22 +15,22 @@ let
   # - $loadaddr being set
   # - fitimage containing an embedded script called "bootscript"
   globalBootScript = pkgs.writeText "boot.cmd" ''
-    if test ! env exists version; then
+    if test ! -n ''${version}; then
       env set version ${version}
       env set needs_saveenv 1
     fi
 
-    if test ! env exists altversion; then
+    if test ! -n ''${altversion}; then
       env set altversion ${version}
       env set needs_saveenv 1
     fi
 
-    if test ! altbootcmd; then
+    if test ! -n ''${altbootcmd}; then
       env set altbootcmd 'env set badversion ''${version}; env set version ''${altversion}; env set altversion ''${badversion}; env delete -f badversion; run bootcmd'
       env set needs_saveenv 1
     fi
 
-    if test -n $needs_saveenv; then
+    if env exists needs_saveenv; then
       env delete -f needs_saveenv
       saveenv
     fi
@@ -85,6 +85,7 @@ in
   };
 
   config = lib.mkIf (cfg.enable && cfg.uboot.enable) {
+    system.build.bootscr = globalBootScriptImage;
     # TODO(jared): need to add a non-UEFI equivalent to systemd-bless-boot
     systemd.additionalUpstreamSystemUnits = [ /*"systemd-bless-boot.service"*/ ];
 
