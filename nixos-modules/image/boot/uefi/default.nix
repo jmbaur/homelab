@@ -44,9 +44,6 @@ in
 
     custom.image = {
       bootFileCommands = ''
-        echo "${loaderConf}:/loader/loader.conf" >> $bootfiles
-        echo "${systemdBoot}:/EFI/BOOT/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI" >> $bootfiles
-
         ${lib.getExe' pkgs.buildPackages.systemdUkify "ukify"} build \
           --no-sign-kernel \
           --efi-arch=${pkgs.stdenv.hostPlatform.efiArch} \
@@ -59,6 +56,12 @@ in
           ${lib.optionalString config.hardware.deviceTree.enable
             "--devicetree=${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name}"} \
           --output=$update/${id}_${version}.efi
+
+        ln -sf ${loaderConf} $update/loader.conf
+        ln -sf ${systemdBoot} $update/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI
+
+        echo "$update/loader.conf:/loader/loader.conf" >> $bootfiles
+        echo "$update/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI:/EFI/BOOT/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI" >> $bootfiles
 
         echo "$update/${id}_${version}.efi:/EFI/Linux/${id}_${version}.efi" >> $bootfiles
       '';
