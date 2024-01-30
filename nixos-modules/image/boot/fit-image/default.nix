@@ -14,25 +14,25 @@ let
   # - CONFIG_CMD_SAVEENV
   # - $loadaddr being set
   # - fitimage containing an embedded script called "bootscript"
+  #
+  # TODO(jared): For some reason checking if altbootcmd is set does not work,
+  # so we just set it unconditionally.
   globalBootScript = pkgs.writeText "boot.cmd" ''
     if test ! -n ''${version}; then
+      echo "version not set, setting to ${version}"
       env set version ${version}
       env set needs_saveenv 1
     fi
 
     if test ! -n ''${altversion}; then
+      echo "altversion not set, setting to ${version}"
       env set altversion ${version}
       env set needs_saveenv 1
     fi
 
-    if test ! -n ''${altbootcmd}; then
-      env set altbootcmd 'env set badversion ''${version}; env set version ''${altversion}; env set altversion ''${badversion}; env delete -f badversion; run bootcmd'
-      env set needs_saveenv 1
-    fi
-
     if env exists needs_saveenv; then
-      echo "needs saveenv"
       env delete -f needs_saveenv
+      env set altbootcmd 'env set badversion ''${version}; env set version ''${altversion}; env set altversion ''${badversion}; env delete -f badversion; run bootcmd'
       saveenv
     fi
 

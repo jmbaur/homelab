@@ -122,7 +122,6 @@
       script = ''
         if ! fw_printenv | grep --silent -e eth1addr -e eth2addr -e eth3addr; then
           tmp=$(mktemp)
-          echo "ethaddr $(macgen)" | tee -a $tmp
           echo "eth1addr $(macgen)" | tee -a $tmp
           echo "eth2addr $(macgen)" | tee -a $tmp
           echo "eth3addr $(macgen)" | tee -a $tmp
