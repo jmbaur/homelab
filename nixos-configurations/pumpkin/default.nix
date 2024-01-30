@@ -26,6 +26,7 @@
     enable = true;
     hasTpm2 = true;
     mutableNixStore = true;
+    uefi.enable = true;
     primaryDisk = "/dev/disk/by-path/pci-0000:03:00.0-nvme-1";
   };
 }

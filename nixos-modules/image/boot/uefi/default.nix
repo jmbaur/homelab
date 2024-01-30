@@ -12,7 +12,7 @@ let
   systemdBoot = "${config.systemd.package}/lib/systemd/boot/efi/systemd-boot${pkgs.stdenv.hostPlatform.efiArch}.efi";
 in
 {
-  options.custom.image.uefi.enable = lib.mkEnableOption "TODO" // { default = true; };
+  options.custom.image.uefi.enable = lib.mkEnableOption "TODO";
 
   config = lib.mkIf (cfg.enable && cfg.uefi.enable) {
     assertions = [{
