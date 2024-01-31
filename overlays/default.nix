@@ -31,8 +31,6 @@ inputs: {
         ];
       });
 
-      labwc-gtktheme = prev.callPackage ./labwc-gtktheme.nix { };
-
       fuzzel = prev.fuzzel.overrideAttrs ({ patches ? [ ], ... }: {
         patches = patches ++ [
           (prev.fetchpatch2 {
