@@ -5,6 +5,10 @@ let
   wlgreetSwayConfig = pkgs.writeText "wlgreet-sway.config" ''
     exec "${pkgs.greetd.wlgreet}/bin/wlgreet --command sway; swaymsg exit"
 
+    seat '*' hide_cursor 100
+    input type:touchpad events disabled
+    input type:pointer events disabled
+
     bindsym Mod4+shift+e exec swaynag \
       -t warning \
       -m "What do you want to do?" \
