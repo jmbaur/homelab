@@ -2,15 +2,18 @@
 let
   cfg = config.custom.wg-mesh;
 
-  network = "fdc9:ef0a:6a3c:0";
+  network = "fdc9:ef0a:6a3c:";
 
   inventory = lib.mapAttrs
     (name: publicKey: {
-      ip = builtins.readFile (
-        pkgs.runCommand "wg-mesh-${name}-ip" { } ''
-          hash=$(echo -n ${name} | sha256sum | cut -d' ' -f1)
-          echo -n ${network}:''${hash:0:4}:''${hash:4:4}:''${hash:8:4}:''${hash:12:4} > $out
-        '');
+      ip =
+        let
+          hash = builtins.hashString "sha256" name;
+        in
+        network +
+        (lib.concatStringsSep ":"
+          (map (x: builtins.substring x 4 hash)
+            (builtins.genList (x: x * 4) 5)));
       inherit publicKey;
     })
     (import ./inventory.nix);
