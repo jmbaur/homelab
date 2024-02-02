@@ -30,7 +30,7 @@
 
     # for fw_printenv and fw_setenv
     environment.etc."fw_env.config".text = ''
-      # MTD device name       Device offset   Env. size       Flash sector size       Number of sectors
+      # UBI volume            Device offset   Env. size       Flash sector size       Number of sectors
       /dev/ubi0:ubootenv      0x0             0x1f000         0x1f000
       /dev/ubi0:ubootenvred   0x0             0x1f000         0x1f000
     '';

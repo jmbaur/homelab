@@ -12,6 +12,10 @@ inputs: {
         withPcsclite = prev.stdenv.hostPlatform == prev.stdenv.buildPlatform;
       };
 
+      wpa_supplicant = prev.wpa_supplicant.override {
+        withPcsclite = prev.stdenv.hostPlatform == prev.stdenv.buildPlatform;
+      };
+
       gnupg = prev.gnupg.override {
         enableMinimal = prev.stdenv.hostPlatform != prev.stdenv.buildPlatform;
       };

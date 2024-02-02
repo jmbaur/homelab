@@ -3,7 +3,7 @@
 
   custom.server.enable = true;
 
-  networking.wireless.enable = true;
+  networking.wireless.iwd.enable = true;
 
   # needed for bcm4329 wifi
   hardware.firmware = [ pkgs.linux-firmware ];

@@ -95,7 +95,6 @@
         ENV_OFFSET_REDUND = freeform "0x220000";
         ENV_SECT_SIZE = freeform "0x10000";
         ENV_SIZE = freeform "0x20000";
-        ENV_SIZE_REDUND = freeform "0x20000";
         FIT = yes;
         FIT_BEST_MATCH = yes; # TODO(jared): seems to not work
         SYS_BOOTM_LEN = freeform "0x${lib.toHexString (12 * 1024 * 1024)}"; # 12MiB

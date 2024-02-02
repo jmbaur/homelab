@@ -254,7 +254,7 @@ in
       options = [ "ro" ];
       neededForBoot = true;
     };
-    fileSystems."/boot" = {
+    fileSystems.${config.boot.loader.efi.efiSysMountPoint} = {
       device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions."10-boot".Label}";
       fsType = config.systemd.repart.partitions."10-boot".Format;
       options = [ "x-systemd.automount" ];
