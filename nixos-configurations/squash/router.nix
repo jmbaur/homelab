@@ -1,7 +1,6 @@
 { config, lib, pkgs, ... }: {
   router = {
     enable = true;
-    ipv4Prefix = "192.168.1.0/24";
     ipv6UlaPrefix = "fd4c:ddfe:28e9::/64";
     dns.adblock.enable = true;
   };
