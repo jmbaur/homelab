@@ -32,7 +32,7 @@ let
 
     if env exists needs_saveenv; then
       env delete -f needs_saveenv
-      env set altbootcmd 'env set badversion ''${version}; env set version ''${altversion}; env set altversion ''${badversion}; env delete -f badversion; run bootcmd'
+      env set altbootcmd 'env set badversion ''${version}; env set version ''${altversion}; env set altversion ''${badversion}; env delete -f badversion; saveenv; run bootcmd'
       saveenv
     fi
 
