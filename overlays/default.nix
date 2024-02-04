@@ -20,6 +20,16 @@ inputs: {
         enableMinimal = prev.stdenv.hostPlatform != prev.stdenv.buildPlatform;
       };
 
+
+      # Can be deleted when this PR is merged: https://github.com/NixOS/nixpkgs/pull/284160
+      greetd = prev.greetd // {
+        wlgreet = prev.greetd.wlgreet.overrideAttrs ({ nativeBuildInputs ? [ ], buildInputs ? [ ], ... }: {
+          nativeBuildInputs = nativeBuildInputs ++ [ prev.buildPackages.autoPatchelfHook ];
+          buildInputs = buildInputs ++ [ prev.gcc-unwrapped ];
+          runtimeDependencies = map prev.lib.getLib (with prev; [ gcc-unwrapped wayland libxkbcommon ]);
+        });
+      };
+
       labwc = prev.labwc.overrideAttrs ({ patches ? [ ], ... }: {
         patches = patches ++ [
           (prev.fetchpatch2 {
