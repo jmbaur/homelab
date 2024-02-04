@@ -6,6 +6,10 @@ let
 
   uboot = pkgs.uboot-bananapi_m2_zero.override {
     extraStructuredConfig = with pkgs.ubootLib; {
+      DISTRO_DEFAULTS = unset;
+      BOOTSTD_DEFAULTS = yes;
+      FIT = yes;
+
       # Allow for using u-boot scripts.
       BOOTSTD_FULL = yes;
 
@@ -65,7 +69,7 @@ in
   # for fw_printenv and fw_setenv
   environment.etc."fw_env.config".text = ''
     # VFAT file                                             Device offset   Env. size       Flash sector size       Number of sectors
-    ${config.boot.loader.efi.efiSysMountPoint}/uboot.env    0x0000          0x4000
+    ${config.boot.loader.efi.efiSysMountPoint}/uboot.env    0x0000          0x10000
   '';
 
   environment.systemPackages = with pkgs; [ ubootEnvTools ];

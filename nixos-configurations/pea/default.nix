@@ -39,7 +39,7 @@
   systemd.services.camera-stream = {
     path = [ pkgs.ffmpeg-headless ];
     serviceConfig = {
-      ExecStart = "ffmpeg -f v4l2 -i /dev/video0 -pix_fmt yuv420p -preset ultrafast -b:v 600k -f rtsp rtsp://localhost:8554/stream";
+      ExecStart = "ffmpeg -f v4l2 -i /dev/video1 -pix_fmt yuv420p -preset ultrafast -b:v 600k -f rtsp rtsp://localhost:8554/stream";
       DynamicUser = true;
       ProtectSystem = "strict";
       ProtectHome = true;
