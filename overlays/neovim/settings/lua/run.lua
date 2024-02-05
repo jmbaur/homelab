@@ -63,7 +63,7 @@ M.run = function(cmd)
 		cmd = cmd_fn()
 	end
 
-	vim.cmd.split(string.format("term://%s", cmd))
+	vim.cmd.terminal(cmd)
 end
 
 M.select_results = {}

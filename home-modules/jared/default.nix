@@ -281,6 +281,7 @@ in
 
       programs.kitty = {
         enable = true;
+        shellIntegration.mode = "no-cursor";
         settings = {
           background = "#14161b";
           clipboard_control = "write-clipboard write-primary read-clipboard read-primary";
@@ -289,7 +290,6 @@ in
           font_family = "JetBrains Mono";
           font_size = 14;
           foreground = "#e0e2ea";
-          shell_integration = "no-cursor";
           tab_bar_style = "powerline";
           update_check_interval = 0;
         };
