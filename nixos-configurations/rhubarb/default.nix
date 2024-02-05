@@ -12,6 +12,16 @@ let
       BOOTCOUNT_ENV = yes;
     };
   };
+  configTxt = pkgs.writeText "config.txt" ''
+    [all]
+    arm_64bit=1
+    arm_boost=1
+    armstub=armstub8-gic.bin
+    avoid_warnings=1
+    disable_overscan=1
+    enable_gic=1
+    enable_uart=1
+  '';
 in
 {
   nixpkgs.hostPlatform = "aarch64-linux";
@@ -21,7 +31,18 @@ in
     enable = true;
     primaryDisk = "/dev/mmcblk0";
     bootFileCommands = ''
-      echo "${uboot}/u-boot.bin:/kernel8.img" >> $bootfiles
+      echo ${uboot}/u-boot.bin:/kernel8.img >> $bootfiles
+      echo ${configTxt}:/config.txt >> $bootfiles
+      echo ${pkgs.raspberrypi-armstubs}/armstub8-gic.bin:/armstub8-gic.bin >> $bootfiles
+      echo ${pkgs.raspberrypifw}/share/raspberrypi/boot/bcm2711-rpi-4-b.dtb:/bcm2711-rpi-4-b.dtb >> $bootfiles
+      find ${pkgs.raspberrypifw}/share/raspberrypi/boot -name "fixup*" \
+        -exec sh -c 'echo {}:/$(basename {})' \; >> $bootfiles
+      find ${pkgs.raspberrypifw}/share/raspberrypi/boot -name "start*" \
+        -exec sh -c 'echo {}:/$(basename {})' \; >> $bootfiles
+    '';
+    # AFAIK, RPI firmware doesn't support GPT disks
+    postImageCommands = ''
+      ${lib.getExe' pkgs.buildPackages.gptfdisk "sgdisk"} --hybrid=1 $out/image.raw
     '';
     uboot = {
       enable = true;
