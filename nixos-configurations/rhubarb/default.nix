@@ -20,12 +20,12 @@ in
     enable = true;
     primaryDisk = "/dev/mmcblk0";
     bootFileCommands = ''
-      echo "${uboot}/u-boot.bin:kernel.img" >> $bootfiles
+      echo "${uboot}/u-boot.bin:kernel8.img" >> $bootfiles
     '';
     uboot = {
       enable = true;
       bootMedium.type = "mmc";
-      kernelLoadAddress = "0x80000";
+      kernelLoadAddress = "0x3000000";
     };
   };
 
