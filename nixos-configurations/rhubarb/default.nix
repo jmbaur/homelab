@@ -16,6 +16,7 @@ in
 {
   nixpkgs.hostPlatform = "aarch64-linux";
 
+  custom.server.enable = true;
   custom.image = {
     enable = true;
     primaryDisk = "/dev/mmcblk0";
@@ -28,6 +29,8 @@ in
       kernelLoadAddress = "0x3000000";
     };
   };
+
+  system.build.firmware = uboot;
 
   hardware.deviceTree.enable = true;
   hardware.deviceTree.filter = "bcm2711-rpi-4-b.dtb";
