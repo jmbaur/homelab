@@ -21,7 +21,7 @@ in
     enable = true;
     primaryDisk = "/dev/mmcblk0";
     bootFileCommands = ''
-      echo "${uboot}/u-boot.bin:kernel8.img" >> $bootfiles
+      echo "${uboot}/u-boot.bin:/kernel8.img" >> $bootfiles
     '';
     uboot = {
       enable = true;
