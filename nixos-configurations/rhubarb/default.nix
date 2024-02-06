@@ -54,9 +54,9 @@ in
   system.build.firmware = uboot;
 
   hardware.deviceTree.enable = true;
-  hardware.deviceTree.filter = "bcm2711-rpi-4-b.dtb";
+  hardware.deviceTree.name = "broadcom/bcm2711-rpi-4-b.dtb";
 
-  boot.kernelParams = [ "console=ttyAMA0,115200" ];
+  boot.kernelParams = [ "console=ttyS0,115200" ];
 
   # {{{ TODO(jared): delete this
   users.allowNoPasswordLogin = true;
