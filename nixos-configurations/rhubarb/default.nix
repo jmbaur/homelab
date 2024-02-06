@@ -56,7 +56,7 @@ in
   hardware.deviceTree.enable = true;
   hardware.deviceTree.filter = "bcm2711-rpi-4-b.dtb";
 
-  boot.kernelParams = [ "console=ttyAMA0" ];
+  boot.kernelParams = [ "console=ttyAMA0,115200" ];
 
   # {{{ TODO(jared): delete this
   users.allowNoPasswordLogin = true;
