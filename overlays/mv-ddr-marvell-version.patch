@@ -1,17 +1,19 @@
 diff --git a/scripts/localversion.sh b/scripts/localversion.sh
-index 7d5fa35..b16b2be 100755
+index 7d5fa35..2a983a4 100755
 --- a/scripts/localversion.sh
 +++ b/scripts/localversion.sh
-@@ -103,10 +103,10 @@ MV_DDR_ROOT=$1
+@@ -103,13 +103,7 @@ MV_DDR_ROOT=$1
  MV_DDR_VER_CSRC=$2
  
  # get mv_ddr git commit id
 -MV_DDR_COMMIT_ID=`git -C $MV_DDR_ROOT rev-parse --verify --quiet --short HEAD 2> /dev/null`
-+MV_DDR_COMMIT_ID=`cat .MV_DDR_COMMIT_ID`
- 
- # check for uncommitted changes in mv_ddr git
+-
+-# check for uncommitted changes in mv_ddr git
 -MV_DDR_DIRTY_CHK=`git -C $MV_DDR_ROOT diff-index --name-only HEAD 2> /dev/null`
-+MV_DDR_DIRTY_CHK=`cat .MV_DDR_DIRTY_CHK`
- if [ "$MV_DDR_DIRTY_CHK" != "" ]; then
- 	MV_DDR_COMMIT_ID="${MV_DDR_COMMIT_ID}-dirty"
- fi
+-if [ "$MV_DDR_DIRTY_CHK" != "" ]; then
+-	MV_DDR_COMMIT_ID="${MV_DDR_COMMIT_ID}-dirty"
+-fi
++MV_DDR_COMMIT_ID=@shortRev@
+ 
+ # get mv_ddr version from localversion file in mv_ddr directory
+ MV_DDR_VERSION=`awk '{$1=$1;print}' $MV_DDR_ROOT/localversion 2> /dev/null`

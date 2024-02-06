@@ -1,7 +1,6 @@
 { spi ? false
 , buildPackages
 , fetchFromGitHub
-, runCommand
 , buildUBoot
 , buildArmTrustedFirmware
 , symlinkJoin
@@ -36,41 +35,34 @@ let
       filesToInstall = [ "u-boot.bin" ];
     }).overrideAttrs (_: { patches = [ ]; });
 
-  atf = (buildArmTrustedFirmware rec {
-    platform = "t9130";
-
-    patches = [ ./atf-enablement.patch ];
-
-    preBuild = ''
-      cp -r ${mvDdrMarvell} /tmp/mv_ddr_marvell
-      chmod -R +w /tmp/mv_ddr_marvell
-    '';
-
-    extraMakeFlags = [
-      "SCP_BL2=${marvellBinaries}/mrvl_scp_bl2.img"
-      "BL33=${uboot}/u-boot.bin"
-      "USE_COHERENT_MEM=0"
-      "MV_DDR_PATH=/tmp/mv_ddr_marvell"
-      "CP_NUM=1" # cn9130-cf-pro
-      "LOG_LEVEL=20"
-      "MARVELL_SECURE_BOOT=0"
-      "OPENSSL_DIR=${symlinkJoin { name = "openssl-dir"; paths = with buildPackages.openssl; [ out bin ]; }}"
-      "all"
-      "fip"
-      "mrvl_flash"
-    ];
-
-    filesToInstall = [ "build/${platform}/release/flash-image.bin" ];
-  }).overrideAttrs (old: {
-    nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ (with buildPackages; [
-      git # mv-ddr-marvell
-      openssl # fiptool
-    ]);
-  });
 in
-runCommand "cn9130-cf-pro-firmware.bin" { } (if spi then ''
-  dd bs=1M count=8 if=/dev/zero of=$out
-  dd conv=notrunc if=${atf}/flash-image.bin of=$out
-'' else ''
-  cp ${atf}/flash-image.bin $out
-'')
+(buildArmTrustedFirmware rec {
+  platform = "t9130";
+
+  patches = [ ./atf-enablement.patch ];
+
+  preBuild = ''
+    cp -r ${mvDdrMarvell} /tmp/mv_ddr_marvell
+    chmod -R +w /tmp/mv_ddr_marvell
+  '';
+
+  extraMakeFlags = [
+    "SCP_BL2=${marvellBinaries}/mrvl_scp_bl2.img"
+    "BL33=${uboot}/u-boot.bin"
+    "USE_COHERENT_MEM=0"
+    "MV_DDR_PATH=/tmp/mv_ddr_marvell"
+    "CP_NUM=1" # cn9130-cf-pro
+    "LOG_LEVEL=20"
+    "MARVELL_SECURE_BOOT=0"
+    "OPENSSL_DIR=${symlinkJoin { name = "openssl-dir"; paths = with buildPackages.openssl; [ out bin ]; }}"
+    "all"
+    "fip"
+    "mrvl_flash"
+  ];
+
+  filesToInstall = [ "build/${platform}/release/flash-image.bin" ];
+}).overrideAttrs (old: {
+  patches = (old.patches or [ ]) ++ [ ../marvell-atf-no-git.patch ];
+  nativeBuildInputs = (old.nativeBuildInputs or [ ])
+    ++ (with buildPackages; [ openssl ]);
+})

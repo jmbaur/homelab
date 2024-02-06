@@ -141,11 +141,18 @@ inputs: {
         hash = "sha256-m8NdvFSVo5+TPtpiGevyzXIMR1YcSQu5Xi5ewUX983Y=";
       };
 
-      mvDdrMarvell = prev.fetchgit {
-        leaveDotGit = true;
-        url = "https://github.com/MarvellEmbeddedProcessors/mv-ddr-marvell";
-        rev = "bfcf62051be835f725005bb5137928f7c27b792e";
-        hash = "sha256-ikAUTTlvSeyOqcMpwegD62z/SoM6A63iEFkxDUxiT3I=";
+      mvDdrMarvell = prev.applyPatches rec {
+        src = prev.fetchgit {
+          url = "https://github.com/MarvellEmbeddedProcessors/mv-ddr-marvell";
+          rev = "bfcf62051be835f725005bb5137928f7c27b792e";
+          hash = "sha256-a6Hjx4/4uxQqNZRRa331B7aOtsyaUNhGh3izOSBrL3c=";
+        };
+        patches = [
+          (prev.substituteAll {
+            src = ./mv-ddr-marvell-version.patch;
+            shortRev = builtins.substring 0 7 src.rev;
+          })
+        ];
       };
 
       cn9130CfProSdFirmware = prev.callPackage ./cn913x/firmware.nix { spi = false; };

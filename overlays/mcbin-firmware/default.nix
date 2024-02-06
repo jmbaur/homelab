@@ -29,10 +29,9 @@ let
 
     filesToInstall = [ "build/${platform}/release/flash-image.bin" ];
   }).overrideAttrs (old: {
-    nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ (with buildPackages; [
-      git # mv-ddr-marvell
-      openssl # fiptool
-    ]);
+    patches = (old.patches or [ ]) ++ [ ../marvell-atf-no-git.patch ];
+    nativeBuildInputs = (old.nativeBuildInputs or [ ])
+      ++ (with buildPackages; [ openssl ]);
   });
 in
 atf
