@@ -6,7 +6,6 @@
   # {{{ TODO(jared): delete this
   users.allowNoPasswordLogin = true;
   users.users.root.password = lib.warn "EMPTY ROOT PASSWORD, DO NOT USE IN 'PRODUCTION'" "";
-  boot.initrd.systemd.emergencyAccess = true;
   # }}}
 
   environment.systemPackages = with pkgs; [

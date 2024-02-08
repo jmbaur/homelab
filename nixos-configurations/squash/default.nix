@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }: {
+{ pkgs, ... }: {
   imports = [ ./router.nix ];
 
   boot.kernelParams = [ "cfg80211.ieee80211_regdom=US" ];
@@ -11,8 +11,6 @@
   # TODO(jared): use FIT_BEST_MATCH feature in u-boot to choose this automatically
   # TODO(jared): latest linux kernels have <vendor>/<dtb> for armv7
   hardware.deviceTree.name = "armada-388-clearfog-pro.dtb";
-
-  boot.initrd.systemd.emergencyAccess = lib.warn "initrd emergency access enabled" true;
 
   users.users.root.openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-ssh-keys ];
 
