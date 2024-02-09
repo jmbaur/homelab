@@ -4,6 +4,7 @@
   custom.basicNetwork.enable = true;
   custom.dev.enable = true;
   custom.image.enable = true;
+  custom.image.uefi.enable = true;
   custom.image.mutableNixStore = true;
   custom.image.primaryDisk = "/dev/disk/by-path/platform-a41000000.pcie-pci-0004:41:00.0-nvme-1";
   custom.users.jared.enable = true;
