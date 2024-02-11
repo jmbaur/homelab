@@ -1,7 +1,7 @@
 inputs: inputs.nixpkgs.lib.mapAttrs
   (system: pkgs: {
     ci = pkgs.mkShell {
-      buildInputs = with pkgs; [ just jq nix-prefetch-scripts nix-update ];
+      buildInputs = with pkgs; [ ansi2html just jq nix-prefetch-scripts nix-update ];
     };
     default = pkgs.mkShell {
       buildInputs = (with pkgs; [ bashInteractive just sops nix-update nix-prefetch-scripts jq ]);

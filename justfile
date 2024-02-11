@@ -32,15 +32,15 @@ home:
 # update all managed packages, meant to be run in CI
 update:
 	#!/usr/bin/env bash
-	echo '```console' > /tmp/pr-body
+	tmp=$(mktemp)
 	export NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"
-	nix flake update --accept-flake-config 2>&1 1>&- | tee -a /tmp/pr-body
+	nix flake update --accept-flake-config 2>&1 1>&- | tee $tmp
 	for source in $(find -type f -name "*source.json"); do
 		args=()
 		if [[ $(jq -r ".fetchSubmodules" < "$source") == "true" ]]; then
 			args+=("--fetch-submodules")
 		fi
 		args+=("$(jq -r ".url" < $source)")
-		nix-prefetch-git "${args[@]}" | tee "$source" | tee -a /tmp/pr-body
+		nix-prefetch-git "${args[@]}" | tee "$source" | tee -a $tmp
 	done
-	echo '```' >> /tmp/pr-body
+	ansi2html < $tmp > /tmp/pr-body
