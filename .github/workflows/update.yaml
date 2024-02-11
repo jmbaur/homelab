@@ -14,7 +14,7 @@ jobs:
       - name: Update out of tree packages
         run: nix develop .\#ci --command sh -c "just update"
       - name: Create pull request
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v6
         with:
           branch: update-dependencies
           delete-branch: true
