@@ -33,8 +33,7 @@ in
         Type = "regular-file";
         Path = "/EFI/Linux";
         PathRelativeTo = config.systemd.repart.partitions."10-boot".Type;
-        # TODO(jared): We shouldn't have to use `toString` here
-        MatchPattern = toString [ "${id}_@v+@l-@d.efi" "${id}_@v+@l.efi" "${id}_@v.efi" ];
+        MatchPattern = [ "${id}_@v+@l-@d.efi" "${id}_@v+@l.efi" "${id}_@v.efi" ];
         Mode = "0444";
         TriesLeft = 3;
         TriesDone = 0;
