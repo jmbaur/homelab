@@ -43,6 +43,6 @@ update:
 		args+=("$(jq -r ".url" < $source)")
 		nix-prefetch-git "${args[@]}" | tee "$source" | tee -a $tmp
 	done
-	echo "```console" > /tmp/pr-body
+	echo '```console' > /tmp/pr-body
 	ansifilter < $tmp >> /tmp/pr-body
-	echo "```" > /tmp/pr-body
+	echo '```' >> /tmp/pr-body
