@@ -34,7 +34,7 @@ update:
 	#!/usr/bin/env bash
 	tmp=$(mktemp)
 	export NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"
-	nix flake update --accept-flake-config 2>&1 1>&- | tee $tmp
+	nix flake update --accept-flake-config 2>&1 1>&- | tee -a $tmp
 	for source in $(find -type f -name "*source.json"); do
 		args=()
 		if [[ $(jq -r ".fetchSubmodules" < "$source") == "true" ]]; then
@@ -43,4 +43,6 @@ update:
 		args+=("$(jq -r ".url" < $source)")
 		nix-prefetch-git "${args[@]}" | tee "$source" | tee -a $tmp
 	done
-	ansi2html < $tmp > /tmp/pr-body
+	echo "```console" > /tmp/pr-body
+	ansifilter < $tmp >> /tmp/pr-body
+	echo "```" > /tmp/pr-body
