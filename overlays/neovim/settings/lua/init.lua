@@ -26,13 +26,14 @@ if #vim.api.nvim_list_uis() > 0 then
 	vim.opt.cursorline = false
 	vim.opt.foldmethod = "marker"
 	vim.opt.laststatus = 2
+	vim.opt.list = true
+	vim.opt.listchars = { eol = "↴", tab = "  ⇥", nbsp = "·" }
 	vim.opt.number = true
 	vim.opt.relativenumber = true
 	vim.opt.shell = "/run/current-system/sw/bin/bash"
 	vim.opt.splitkeep = "screen"
 	vim.opt.termguicolors = true
-	vim.opt.list = true
-	vim.opt.listchars = { eol = "↴", tab = "  ⇥", nbsp = "·" }
+	vim.opt.title = true
 end
 
 require("mini.bracketed").setup({})
