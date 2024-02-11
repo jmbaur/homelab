@@ -261,7 +261,10 @@ in
         profiles.default = {
           extensions = with pkgs.nur.repos.rycee.firefox-addons; [
             vimium
-          ] ++ lib.optional cfg.includePersonalConfigs bitwarden;
+          ] ++ lib.optionals cfg.includePersonalConfigs [
+            bitwarden
+            privacy-badger
+          ];
           settings = {
             "browser.newtabpage.enabled" = false;
             "browser.startup.homepage" = "chrome://browser/content/blanktab.html";
@@ -276,7 +279,12 @@ in
         package = pkgs.chromium-wayland;
         extensions = [
           { /* vimium */ id = "dbepggeogbaibhgnhhndojpepiihcmeb"; }
-        ] ++ lib.optional cfg.includePersonalConfigs { /* bitwarden */ id = "nngceckbapebfimnlniiiahkandclblb"; };
+        ] ++ lib.optionals
+          cfg.includePersonalConfigs
+          [
+            { /* bitwarden */ id = "nngceckbapebfimnlniiiahkandclblb"; }
+            { /* privacy badger */ id = "pkehgijcmpdhfbdbbnkijodmdjhbjlgp"; }
+          ];
       };
 
       programs.kitty = {
