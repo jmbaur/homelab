@@ -4,19 +4,16 @@ local M = {}
 
 local conditional_efm_languages = {
 	sh = {
-		{ required_exe = "shfmt",      config = require("efmls-configs.formatters.shfmt") },
-		{ required_exe = "shellcheck", config = require("efmls-configs.linters.shellcheck") },
+		{ enable = vim.g.lang_support_shell, config = require("efmls-configs.formatters.shfmt") },
+		{ enable = vim.g.lang_support_shell, config = require("efmls-configs.linters.shellcheck") },
 	},
-	nix = {
-		{
-			required_exe = "nixpkgs-fmt",
-			config = { formatCommand = "nixpkgs-fmt", formatStdin = true },
-		},
-	},
-	toml = { { required_exe = "taplo", config = require("efmls-configs.formatters.taplo") } },
-	latex = {
-		{ required_exe = "latexindent", config = require("efmls-configs.formatters.latexindent") },
-	},
+	nix = { {
+		enable = vim.g.lang_support_nix, config = { formatCommand = "nixpkgs-fmt", formatStdin = true },
+	} },
+	toml = { { enable = vim.g.lang_support_nix, config = require("efmls-configs.formatters.taplo") } },
+	latex = { {
+		enable = vim.g.lang_support_latex, config = require("efmls-configs.formatters.latexindent")
+	} },
 }
 
 local toggle_format_on_save = function()
@@ -111,7 +108,7 @@ M.setup = function(config)
 	for lang, lang_config in pairs(conditional_efm_languages) do
 		local lang_efm_config = {}
 		for _, tool in pairs(lang_config) do
-			if vim.fn.executable(tool.required_exe) == 1 then
+			if tool.enable then
 				table.insert(lang_efm_config, tool.config)
 			end
 		end
@@ -119,10 +116,10 @@ M.setup = function(config)
 	end
 
 	local servers = {
-		clangd = { required_exe = { "clangd" }, lsp_config = { on_attach = on_attach_format } },
+		clangd = { enable = vim.g.lang_support_c, config = { on_attach = on_attach_format } },
 		efm = {
-			required_exe = { "efm-langserver" },
-			lsp_config = {
+			enable = true,
+			config = {
 				on_attach = on_attach_format,
 				init_options = { documentFormatting = true },
 				settings = {
@@ -132,27 +129,27 @@ M.setup = function(config)
 			},
 		},
 		hls = {
-			required_exe = { "haskell-language-server-wrapper", "ghc" },
-			lsp_config = { on_attach = on_attach_format },
+			enable = vim.g.lang_support_haskell,
+			config = { on_attach = on_attach_format },
 		},
 		gopls = {
-			required_exe = { "go", "gopls", "gofumpt", "staticcheck" },
-			lsp_config = {
+			enable = vim.g.lang_support_go,
+			config = {
 				on_attach = on_attach_format_orgimports,
 				settings = { gopls = { gofumpt = true, staticcheck = true } },
 			},
 		},
 		pylsp = {
-			required_exe = { "pylsp" },
-			lsp_config = {
+			enable = vim.g.lang_support_python,
+			config = {
 				on_attach = on_attach_format,
 				settings = { pylsp = { plugins = { black = { enabled = true } } } },
 			},
 		},
-		nil_ls = { required_exe = { "nil" }, lsp_config = { on_attach = on_attach } },
+		nil_ls = { enable = vim.g.lang_support_nix, config = { on_attach = on_attach } },
 		rust_analyzer = {
-			required_exe = { "cargo", "rustc", "rust-analyzer" },
-			lsp_config = {
+			enable = vim.g.lang_support_rust,
+			config = {
 				on_attach = on_attach_format,
 				settings = {
 					["rust-analyzer"] = {
@@ -163,8 +160,8 @@ M.setup = function(config)
 			},
 		},
 		lua_ls = {
-			required_exe = { "lua-language-server" },
-			lsp_config = {
+			enable = vim.g.lang_support_lua,
+			config = {
 				on_attach = on_attach_format,
 				settings = {
 					Lua = {
@@ -176,25 +173,12 @@ M.setup = function(config)
 				},
 			},
 		},
-		zls = { required_exe = { "zls" }, lsp_config = { on_attach = on_attach_format } },
+		zls = { enable = vim.g.lang_support_zig, config = { on_attach = on_attach_format } },
 	}
 
 	for lsp, settings in pairs(servers) do
-		local do_setup = true
-		if settings.required_exe ~= nil then
-			for _, exe in ipairs(settings.required_exe) do
-				-- If any required executables for a given language
-				-- server are not found, don't setup the LSP.
-				if vim.fn.executable(exe) == 0 then
-					do_setup = false
-					break
-				end
-			end
-		else
-			do_setup = true
-		end
-		if do_setup then
-			lspconfig[lsp].setup(settings.lsp_config)
+		if settings.enable then
+			lspconfig[lsp].setup(settings.config)
 		end
 	end
 

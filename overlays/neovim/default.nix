@@ -1,6 +1,4 @@
-{ supportAllLanguages ? false
-, languageSupport ? lib.genAttrs [ "c" "go" "haskell" "latex" "lua" "nix" "python" "rust" "shell" "toml" "zig" ] (_: supportAllLanguages)
-, clang-tools
+{ clang-tools
 , efm-langserver
 , fd
 , ghc
@@ -31,6 +29,10 @@
 , vimUtils
 , wrapNeovimUnstable
 , zls
+, supportAllLanguages ? false
+, languageSupport ? lib.genAttrs
+    [ "c" "go" "haskell" "latex" "lua" "nix" "python" "rust" "shell" "toml" "zig" ]
+    (_: supportAllLanguages)
 }:
 let
   jmbaur-config = vimUtils.buildVimPlugin {
@@ -76,12 +78,16 @@ let
       ++ (map (plugin: { inherit plugin; optional = true; }) [ ]));
   };
 
-  neovim = neovim-unwrapped.overrideAttrs (old: {
-    patches = (old.patches or [ ]) ++ [ /*./tmux-osc52.patch*/ ];
+  neovim = neovim-unwrapped.overrideAttrs ({ patches ? [ ], ... }: {
+    patches = patches ++ [ /*./tmux-osc52.patch*/ ];
   });
 in
 wrapNeovimUnstable neovim (config // {
   vimAlias = true;
+  luaRcContent = lib.concatLines (lib.mapAttrsToList
+    (lang: supported:
+      ''vim.g.lang_support_${lang} = ${lib.boolToString supported}'')
+    languageSupport);
   wrapperArgs = config.wrapperArgs ++ (
     let
       binPath = lib.makeBinPath ([ fd git ripgrep skim tree-sitter efm-langserver ]
@@ -95,14 +101,7 @@ wrapNeovimUnstable neovim (config // {
         ++ (lib.optionals languageSupport.shell [ shellcheck shfmt ])
         ++ (lib.optionals languageSupport.toml [ taplo ])
         ++ (lib.optionals languageSupport.zig [ zls ])
-        ++ (lib.optionals languageSupport.python [
-        ruff
-        (python3.withPackages (p: with p; [
-          pylsp-mypy
-          python-lsp-black
-          python-lsp-server
-        ]))
-      ])
+        ++ (lib.optionals languageSupport.python [ ruff (python3.withPackages (p: with p; [ pylsp-mypy python-lsp-black python-lsp-server ])) ])
       );
     in
     [ "--prefix" "PATH" ":" binPath ]
