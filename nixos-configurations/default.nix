@@ -16,11 +16,9 @@ let
     "cauliflower"
     "celery"
     "kale"
-    "olive"
     "onion"
     "potato"
     "radish"
-    "tomato"
   ];
 in
 inputs:
