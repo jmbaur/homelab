@@ -34,6 +34,7 @@ inputs.nixpkgs.lib.mapAttrs
           message = "Hostname is not a vegetable! It is impossible to proceed further";
         }];
         networking.hostName = directory;
+        sops.defaultSopsFile = ./${directory}/secrets.yaml;
       })
       inputs.self.nixosModules.default
       ./${directory}

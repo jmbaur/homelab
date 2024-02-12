@@ -30,14 +30,33 @@
 
   environment.systemPackages = [ pkgs.iw ];
 
+  sops.secrets = {
+    ipwatch_env = { };
+    wlan0 = { };
+    wlan1 = { };
+  };
+
   services.hostapd = {
-    radios.wlan0.countryCode = "US";
+    enable = true;
+    radios.wlan0 = {
+      countryCode = "US";
+      networks.wlan0 = {
+        ssid = "Silence of the LANs";
+        authentication.saePasswordsFile = config.sops.secrets.wlan0.path;
+        settings.ieee80211w = 2;
+      };
+    };
     radios.wlan1 = {
       band = "5g";
       channel = 0;
       countryCode = "US";
       wifi4.enable = false;
       wifi6.enable = true;
+      networks.wlan1 = {
+        ssid = "SpiderLAN";
+        authentication.saePasswordsFile = config.sops.secrets.wlan1.path;
+        settings.ieee80211w = 2;
+      };
     };
   };
 }

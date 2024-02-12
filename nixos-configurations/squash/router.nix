@@ -8,7 +8,6 @@
     dns.adblock.enable = true;
   };
 
-  sops.defaultSopsFile = ./secrets.yaml;
   sops.secrets.ipwatch_env = { };
 
   systemd.network.netdevs.br0.netdevConfig = {
