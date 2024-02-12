@@ -61,6 +61,11 @@
 
     environment.systemPackages = with pkgs; [ mtdutils ubootEnvTools ];
 
+    boot.kernelModules = [ "ubi" ];
+    boot.extraModprobeConfig = ''
+      options ubi mtd=ubi
+    '';
+
     # for fw_printenv and fw_setenv
     environment.etc."fw_env.config".text = ''
       # UBI volume            Device offset   Env. size       Flash sector size       Number of sectors
