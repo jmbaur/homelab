@@ -8,7 +8,7 @@ keys:
   - &okra age17jejydtff70wy3ptdlpxm384dhf4xss7tnknuqrjhtv34w2yu53s5r5ec0
   - &squash age1k0cthp9dy5xngnpjc4cjwp86h3fxyrgtuk6h2lzn39dgx3ap894saredq7
   - &carrot age17kyw0e23mvu3usc4gj3d8qdhhzeyea7fvgqun5s9qgjmqwwnkc2s54rkme
-  - &olive age13q35qj0c7c86np8t28sea9rf6mef9g5yes0at2h9g7xdjw7zyscshqqmp6
+  - &celery age13q35qj0c7c86np8t28sea9rf6mef9g5yes0at2h9g7xdjw7zyscshqqmp6
   # TODO(jared): for when sops is compatible with age plugins
   # - &yubikey5cnfc age1yubikey1q20xxhpyk00m3ezajg3769jpmgwkvasq4dzutg75jq96fytnlcmxs9ltmga
   # - &yubikey5nfc age1yubikey1q0tf5gp52t3smx6zduwyjnurw4cgjlqdm58a9dj6430e8mtrfexfg586p8p
@@ -37,9 +37,9 @@ creation_rules:
   - path_regex: nixos-configurations/carrot/secrets.yaml
     pgp: *jmbaur_pgp
     age: *carrot
-  - path_regex: nixos-configurations/olive/secrets.yaml
+  - path_regex: nixos-configurations/celery/secrets.yaml
     pgp: *jmbaur_pgp
-    age: *olive
+    age: *celery
     # catch-all
   - pgp: *jmbaur_pgp
 # TODO(jared): for when sops is compatible with age plugins
