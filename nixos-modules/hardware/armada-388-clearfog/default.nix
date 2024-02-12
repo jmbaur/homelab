@@ -74,7 +74,10 @@
       ubootEnvTools
       mtdutils
       (pkgs.writeShellScriptBin "update-firmware" ''
-        ${lib.getExe' pkgs.mtdutils "flashcp"} --verbose ${config.system.build.firmware}/u-boot-with-spl.kwb mtd:uboot
+        ${lib.getExe' pkgs.mtdutils "flashcp"} \
+          --verbose \
+          ${config.system.build.firmware}/u-boot-with-spl.kwb \
+          mtd:uboot
       '')
     ];
 

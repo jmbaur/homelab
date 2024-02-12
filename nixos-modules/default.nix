@@ -10,6 +10,7 @@ inputs: {
       ./gui
       ./hardware
       ./image
+      ./installer
       ./jared
       ./laptop.nix
       ./mesh-network

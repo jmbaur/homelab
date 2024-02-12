@@ -1,18 +1,11 @@
-{ lib, pkgs, ... }: {
+{ pkgs, ... }: {
+  imports = [ ./router.nix ];
+
   nixpkgs.hostPlatform = "aarch64-linux";
 
   hardware.bpi-r3.enable = true;
 
-  # {{{ TODO(jared): delete this
-  users.allowNoPasswordLogin = true;
-  users.users.root.password = lib.warn "EMPTY ROOT PASSWORD, DO NOT USE IN 'PRODUCTION'" "";
-  # }}}
-
-  environment.systemPackages = with pkgs; [
-    mtdutils
-    ubootEnvTools
-    # TODO(jared): `libmbim` requires building a bunch of extra cruft
-  ];
+  users.users.root.openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-ssh-keys ];
 
   custom.image = {
     enable = true;

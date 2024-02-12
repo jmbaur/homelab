@@ -1,4 +1,7 @@
 { config, lib, pkgs, ... }: {
+  boot.kernelParams = [ "cfg80211.ieee80211_regdom=US" ];
+  hardware.wirelessRegulatoryDatabase = true;
+
   router = {
     enable = true;
     ipv6UlaPrefix = "fd4c:ddfe:28e9::/64";

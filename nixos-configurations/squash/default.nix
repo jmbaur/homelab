@@ -1,16 +1,16 @@
 { pkgs, ... }: {
   imports = [ ./router.nix ];
 
-  boot.kernelParams = [ "cfg80211.ieee80211_regdom=US" ];
-
   # needed for mt7915 firmware
   hardware.firmware = [ pkgs.linux-firmware ];
 
   hardware.armada-388-clearfog.enable = true;
 
   # TODO(jared): use FIT_BEST_MATCH feature in u-boot to choose this automatically
-  # TODO(jared): latest linux kernels have <vendor>/<dtb> for armv7
   hardware.deviceTree.name = "armada-388-clearfog-pro.dtb";
+
+  # TODO(jared): this will be the default soon
+  boot.kernelPackages = pkgs.linuxPackages_6_6;
 
   users.users.root.openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-ssh-keys ];
 
@@ -19,6 +19,7 @@
     image = {
       enable = true;
       encrypt = false;
+      # TODO(jared): switched to mpcie card, need to obtain new disk path
       primaryDisk = "/dev/disk/by-path/platform-f10a8000.sata-ata-1";
       uboot = {
         enable = true;
