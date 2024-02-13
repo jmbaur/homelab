@@ -14,12 +14,13 @@ let
   startupScript = pkgs.writeScript "installer-startup-script" ''
     #!/bin/sh
 
-    mkdir -p /proc /sys /dev/pts /run
+    mkdir /proc /sys /dev /run
     mount -t proc proc /proc
     mount -t sysfs sysfs /sys
     mount -t devtmpfs devtmpfs /dev
-    # TODO(jared): not working: mount -t devpts devpts /dev/pts
     mount -t tmpfs tmpfs /run
+    mkdir /dev/pts
+    mount -t devpts devpts /dev/pts
   '';
 in
 {
