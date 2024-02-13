@@ -446,6 +446,7 @@ in
             menu = "${rofi} -show drun -show-icons";
             workspaceAutoBackAndForth = true;
             workspaceLayout = "stacking";
+            defaultWorkspace = "workspace number 1";
             focus.wrapping = "yes";
             seat."*".xcursor_theme = with config.home.pointerCursor; "${name} ${toString size}";
             fonts = { names = [ font ]; style = "Bold Semi-Condensed"; size = fontSize; };
