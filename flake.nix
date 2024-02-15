@@ -22,7 +22,7 @@
     microvm.inputs.nixpkgs.follows = "nixpkgs";
     microvm.url = "github:astro/microvm.nix";
     neovim.inputs.nixpkgs.follows = "nixpkgs";
-    neovim.url = "github:neovim/neovim?dir=contrib&rev=4e59422e1d4950a3042bad41a7b81c8db4f8b648";
+    neovim.url = "github:neovim/neovim?dir=contrib";
     nix-sandbox-escape-hatch.inputs.nixpkgs.follows = "nixpkgs";
     nix-sandbox-escape-hatch.url = "github:jmbaur/nix-sandbox-escape-hatch";
     nixos-router.inputs.nixpkgs.follows = "nixpkgs";
