@@ -147,6 +147,7 @@ in
           init.defaultBranch = "main";
           pull.rebase = true;
           push.autoSetupRemote = true;
+          rerere.enabled = true;
           blame = {
             ignoreRevsFile = ".git-blame-ignore-revs";
             markIgnoredLines = true;
@@ -188,9 +189,12 @@ in
           set-option -g set-clipboard on
           set-option -g set-titles on
           set-option -g set-titles-string "#{pane_title}"
+          set-option -g status-justify left
           set-option -g status-keys emacs
           set-option -g status-left "[#{session_name}] "
-          set-option -g status-left-length 50
+          set-option -g status-left-length 90
+          set-option -g status-right-length 90
+          set-option -g status-style bg=default
 
           bind-key -T copy-mode-vi v send-keys -X begin-selection
           bind-key -T copy-mode-vi y send-keys -X copy-selection
@@ -198,6 +202,7 @@ in
           bind-key J command-prompt -p "join pane from:"  "join-pane -h -s '%%'"
           bind-key W run-shell -b "${pkgs.tmuxPlugins.tmux-fzf}/share/tmux-plugins/tmux-fzf/scripts/session.sh switch"
           bind-key j display-popup -E -h 75% -w 75% -b double -T "Jump to:" "tmux-jump"
+
         '';
       };
 
