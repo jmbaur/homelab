@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }: {
+{ pkgs, ... }: {
   imports = [ ./router.nix ];
 
   nixpkgs.hostPlatform = "aarch64-linux";
@@ -10,7 +10,7 @@
   environment.systemPackages = [ pkgs.i2c-tools ];
 
   # quartz-load-femtofarads enum [7000 12500]
-  hardware.deviceTree.overlays = lib.optionals false [{
+  hardware.deviceTree.overlays = [{
     name = "real-time-clock";
     dtsText = ''
       /dts-v1/;
@@ -21,10 +21,10 @@
       };
 
       &i2c0 {
-        rtc0: rtc@90 {
-          compatible = "nxp,pcf8523";
-          reg = <0x90>;
-          quartz-load-femtofarads = <12500>;
+        rtc@68 {
+            compatible = "nxp,pcf8523";
+            reg = <0x68>;
+            quartz-load-femtofarads = <7000>;
         };
       };
     '';
