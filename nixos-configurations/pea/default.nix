@@ -26,9 +26,11 @@
     dtsText = ''
       /dts-v1/;
       /plugin/;
+
       / {
         compatible = "sinovoip,bpi-m2-zero";
       };
+
       &usb_otg {
         dr_mode = "host";
         status = "okay";
