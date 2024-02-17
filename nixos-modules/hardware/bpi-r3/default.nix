@@ -14,6 +14,7 @@
           HSR = yes;
           MEDIATEK_GE_PHY = yes;
           MTD_NAND_ECC_MEDIATEK = yes;
+          MTD_SPI_NAND = yes;
           MTK_LVTS_THERMAL = yes;
           MTK_SOC_THERMAL = yes;
           MTK_THERMAL = yes;
