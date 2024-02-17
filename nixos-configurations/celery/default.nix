@@ -7,9 +7,6 @@
 
   users.users.root.openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-ssh-keys ];
 
-  environment.systemPackages = [ pkgs.i2c-tools ];
-
-  # quartz-load-femtofarads enum [7000 12500]
   hardware.deviceTree.overlays = [{
     name = "real-time-clock";
     dtsText = ''
