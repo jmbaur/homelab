@@ -144,23 +144,30 @@ in
             };
         };
         extraConfig = {
-          init.defaultBranch = "main";
-          pull.rebase = true;
-          push.autoSetupRemote = true;
-          rerere.enabled = true;
-          blame = {
-            ignoreRevsFile = ".git-blame-ignore-revs";
-            markIgnoredLines = true;
-            markUnblamableLines = true;
-          };
-          "url \"git@github.com:\"".pushInsteadOf = "https://github.com/";
-          "url \"git@gitlab.com:\"".pushInsteadOf = "https://gitlab.com/";
-          "url \"git@codeberg.com:\"".pushInsteadOf = "https://codeberg.org/";
-          pager.difftool = true;
-          diff.tool = "difftastic";
-          difftool.prompt = false;
           "difftool \"difftastic\"".cmd = "${lib.getExe' pkgs.difftastic "difft"}  \"$LOCAL\" \"$REMOTE\"";
           "git-extras \"get\"".clone-path = config.home.sessionVariables.PROJECTS_DIR;
+          "url \"git@codeberg.com:\"".pushInsteadOf = "https://codeberg.org/";
+          "url \"git@github.com:\"".pushInsteadOf = "https://github.com/";
+          "url \"git@gitlab.com:\"".pushInsteadOf = "https://gitlab.com/";
+          blame.ignoreRevsFile = ".git-blame-ignore-revs";
+          blame.markIgnoredLines = true;
+          blame.markUnblamableLines = true;
+          branch.sort = "-committerdate";
+          commit.verbose = true;
+          diff.algorithm = "histogram";
+          diff.tool = "difftastic";
+          difftool.prompt = false;
+          fetch.fsckobjects = true;
+          fetch.prune = true;
+          fetch.prunetags = true;
+          init.defaultBranch = "main";
+          merge.conflictstyle = "zdiff3";
+          pager.difftool = true;
+          pull.rebase = true;
+          push.autoSetupRemote = true;
+          receive.fsckObjects = true;
+          rerere.enabled = true;
+          transfer.fsckobjects = true;
         };
       };
 
