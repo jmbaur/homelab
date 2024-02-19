@@ -922,11 +922,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1708358293,
-        "narHash": "sha256-KrIp7a6/fJoccKk+zHx7qesKeI9hBysfOnnRqFdsVnQ=",
+        "lastModified": 1708358460,
+        "narHash": "sha256-saJqCKtDYktXbiFE/xZGIpKJJGiAL2JPKUv3z+BZ/Ds=",
         "owner": "jmbaur",
         "repo": "u-boot.nix",
-        "rev": "61045685eaa86fca04e385902557550dfa89ca24",
+        "rev": "bae1a388550f2b0f5a9668aca1b1ea7ca749cb9f",
         "type": "github"
       },
       "original": {
