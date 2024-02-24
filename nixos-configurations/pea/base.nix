@@ -5,7 +5,7 @@ let
   splOffsetKiB = sectorSize * splSector / 1024;
 
   uboot = pkgs.uboot-bananapi_m2_zero.override {
-    extraStructuredConfig = with pkgs.ubootLib; {
+    extraStructuredConfig = with lib.kernel; {
       DISTRO_DEFAULTS = unset;
       BOOTSTD_DEFAULTS = yes;
       FIT = yes;

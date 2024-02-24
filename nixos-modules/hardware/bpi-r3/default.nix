@@ -93,7 +93,7 @@
 
     system.build = {
       uboot = (pkgs.uboot-mt7986a_bpir3_emmc.override {
-        extraStructuredConfig = with pkgs.ubootLib; {
+        extraStructuredConfig = with lib.kernel; {
           AHCI = yes;
           AHCI_PCI = yes;
           AUTOBOOT = yes;

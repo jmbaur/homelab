@@ -125,7 +125,7 @@ inputs: {
       ubootEnvTools = prev.callPackage ./uboot-env-tools.nix { };
 
       uboot-clearfog_uart = prev.uboot-clearfog.override {
-        extraStructuredConfig = with prev.ubootLib; {
+        extraStructuredConfig = with prev.lib.kernel; {
           MVEBU_SPL_BOOT_DEVICE_MMC = no;
           MVEBU_SPL_BOOT_DEVICE_UART = yes;
         };

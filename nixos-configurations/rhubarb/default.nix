@@ -1,7 +1,7 @@
 { lib, pkgs, ... }:
 let
   uboot = pkgs.uboot-rpi_4.override {
-    extraStructuredConfig = with pkgs.ubootLib; {
+    extraStructuredConfig = with lib.kernel; {
       # Not enabled by default for RPI 4
       FIT = yes;
 

@@ -83,7 +83,7 @@ let
         name = "bios.bin";
         path = {
           x86_64 = "${pkgs.uboot-qemu-x86_64.override {
-            extraStructuredConfig = with pkgs.ubootLib; {
+            extraStructuredConfig = with lib.kernel; {
               CMD_LZMADEC = yes;
               SYS_LOAD_ADDR = freeform "0x04000000"; # allow for larger than 16MiB kernel size
             };
