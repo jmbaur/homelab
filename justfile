@@ -13,21 +13,17 @@ clean: init
 #
 # run switch-to-configuration for a nixos system
 nixos type="switch":
-	nixosConfig=$(nix build \
-		--no-link \
-		--print-out-paths \
-		--print-build-logs \
-		{{justfile_directory()}}#nixosConfigurations.$(hostname).config.system.build.toplevel) \
-		&& sudo $nixosConfig/bin/switch-to-configuration {{type}}
+	nix shell --print-build-logs \
+		"{{justfile_directory()}}#nixosConfigurations.$(hostname).config.system.build.toplevel" \
+		--command sudo switch-to-configuration {{type}}
 
 # activate the latest home-manager configuration
 home:
-	hmConfig=$(nix build \
+	$(nix build \
 		--no-link \
 		--print-out-paths \
 		--print-build-logs \
-		{{justfile_directory()}}#homeConfigurations.$(whoami)-$(hostname).activationPackage) \
-		&& $hmConfig/activate
+		"{{justfile_directory()}}#homeConfigurations.$(whoami)-$(hostname).activationPackage")/activate
 
 # update all managed packages, meant to be run in CI
 update:
