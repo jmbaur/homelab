@@ -52,7 +52,6 @@ let
         mini-nvim
         nvim-gdb
         nvim-lspconfig
-        nvim-surround
         nvim-treesitter-context
         nvim-treesitter-refactor
         nvim-treesitter-textobjects
