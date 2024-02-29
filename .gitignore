@@ -11,5 +11,3 @@ config.tf.json
 terraform.tfstate*
 
 .nixos-test-history
-
-Session.vim

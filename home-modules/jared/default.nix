@@ -114,7 +114,7 @@ in
       programs.git = {
         enable = true;
         userName = "Jared Baur";
-        ignores = [ "*~" "*.swp" ];
+        ignores = [ "*~" "*.swp" "Session.vim" ];
         aliases = {
           br = "branch";
           co = "checkout";

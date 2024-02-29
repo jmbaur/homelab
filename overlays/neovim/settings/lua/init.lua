@@ -2,6 +2,7 @@ vim.loader.enable()
 
 vim.g.mapleader = " "
 
+-- If not using nvim's remote UI
 if #vim.api.nvim_list_uis() > 0 then
 	local launcher = require("jmbaur.launcher")
 	launcher.setup()
@@ -18,7 +19,7 @@ if #vim.api.nvim_list_uis() > 0 then
 	require("jmbaur.snippets")
 	require("jmbaur.statusline")
 	require("jmbaur.treesitter")
-	require("mini.sessions").setup({})
+	require("jmbaur.sessions")
 	require("mini.tabline").setup({ show_icons = false, set_vim_settings = false })
 	require("mini.trailspace").setup({})
 
