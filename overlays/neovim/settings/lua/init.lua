@@ -3,23 +3,24 @@ vim.loader.enable()
 vim.g.mapleader = " "
 
 if #vim.api.nvim_list_uis() > 0 then
-	local launcher = require("launcher")
+	local launcher = require("jmbaur.launcher")
 	launcher.setup()
 
-	require("clipboard")
-	require("compile")
 	require("diffview").setup({ use_icons = false })
-	require("filemanager")
 	require("gitsigns").setup({ signcolumn = false })
 	require("gosee").setup()
-	require("lsp").setup({ launcher = launcher })
+	require("jmbaur.clipboard")
+	require("jmbaur.compile")
+	require("jmbaur.filemanager")
+	require("jmbaur.lsp").setup({ launcher = launcher })
+	require("jmbaur.repl")
+	require("jmbaur.run").setup()
+	require("jmbaur.snippets")
+	require("jmbaur.statusline")
+	require("jmbaur.treesitter")
+	require("mini.sessions").setup({})
 	require("mini.tabline").setup({ show_icons = false, set_vim_settings = false })
 	require("mini.trailspace").setup({})
-	require("repl")
-	require("run").setup()
-	require("sitter")
-	require("snippet")
-	require("statusline")
 
 	vim.opt.belloff = "all"
 	vim.opt.colorcolumn = "80"
