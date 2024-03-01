@@ -40,16 +40,15 @@ in
       find ${pkgs.raspberrypifw}/share/raspberrypi/boot -name "start*" \
         -exec sh -c 'echo {}:/$(basename {})' \; >> $bootfiles
     '';
-    # AFAIK, RPI firmware doesn't support GPT disks
-    postImageCommands = ''
-      ${lib.getExe' pkgs.buildPackages.gptfdisk "sgdisk"} --hybrid=1 $out/image.raw
-    '';
     uboot = {
       enable = true;
       bootMedium.type = "mmc";
       kernelLoadAddress = "0x3000000";
     };
   };
+
+  # https://forums.raspberrypi.com/viewtopic.php?t=319435
+  systemd.repart.partitions."10-boot".Type = lib.mkForce "EBD0A0A2-B9E5-4433-87C0-68B6B72699C7";
 
   system.build.firmware = uboot;
 
