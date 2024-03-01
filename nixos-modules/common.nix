@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 let
   cfg = config.custom.common;
   isNotContainer = !config.boot.isContainer;
@@ -11,7 +11,7 @@ in
     system.stateVersion = lib.mkDefault "24.05";
 
     system.image.id = config.system.nixos.distroId;
-    system.image.version = "0.0.21";
+    system.image.version = "0.0.22";
 
     # We build on x86_64-linux.
     #
@@ -23,6 +23,8 @@ in
     nixpkgs.buildPlatform = if (!config.nixpkgs.hostPlatform.isx86_64) then "x86_64-linux" else config.nixpkgs.hostPlatform;
 
     environment.defaultPackages = [ ];
+
+    programs.less.lessopen = lib.mkIf (pkgs.stdenv.hostPlatform != pkgs.stdenv.buildPlatform) null;
 
     documentation.enable = lib.mkDefault false;
     documentation.doc.enable = lib.mkDefault false;
