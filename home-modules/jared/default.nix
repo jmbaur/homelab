@@ -439,7 +439,6 @@ in
       services.swayidle =
         let
           lockCmd = "${lib.getExe config.programs.swaylock.package} -fF";
-          swaymsg = lib.getExe' config.wayland.windowManager.sway.package "swaymsg";
         in
         {
           enable = true;
@@ -449,7 +448,7 @@ in
           ];
           timeouts = [
             { timeout = 600; command = lockCmd; }
-            { timeout = 900; command = "${swaymsg} output * power toggle"; resumeCommand = "${swaymsg} output * power toggle"; }
+            { timeout = 900; command = "swaymsg output * power toggle"; resumeCommand = "swaymsg output * power toggle"; }
             { timeout = 1200; command = "systemctl suspend"; }
           ];
         };
@@ -504,8 +503,8 @@ in
 
       wayland.windowManager.sway = {
         enable = true;
+        package = null; # use sway from nixos configuration
         systemd.enable = true;
-        wrapperFeatures = { base = true; gtk = true; };
         extraConfig = ''
           bindgesture swipe:right workspace prev
           bindgesture swipe:left workspace next

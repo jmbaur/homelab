@@ -33,8 +33,10 @@ in
     programs.gnupg.agent.enable = true;
     programs.ssh.startAgent = true;
     programs.wshowkeys.enable = true;
-    programs.sway.enable = true;
-
+    programs.sway = {
+      enable = true;
+      wrapperFeatures = { base = true; gtk = true; };
+    };
 
     hardware.pulseaudio.enable = lib.mkForce false;
     security.rtkit.enable = true;
