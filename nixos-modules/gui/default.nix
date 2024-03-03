@@ -1,22 +1,6 @@
 { config, lib, pkgs, ... }:
 let
   cfg = config.custom.gui;
-
-  wlgreetSwayConfig = pkgs.writeText "wlgreet-sway.config" ''
-    exec "${pkgs.greetd.wlgreet}/bin/wlgreet --command sway; swaymsg exit"
-
-    seat '*' hide_cursor 100
-    input type:touchpad events disabled
-    input type:pointer events disabled
-
-    bindsym Mod4+shift+e exec swaynag \
-      -t warning \
-      -m "What do you want to do?" \
-      -b "Poweroff" "systemctl poweroff" \
-      -b "Reboot" "systemctl reboot"
-
-    include /etc/sway/config.d/*
-  '';
 in
 {
   options.custom.gui.enable = lib.mkEnableOption "gui";
@@ -65,7 +49,7 @@ in
     services.greetd = {
       enable = true;
       vt = 7;
-      settings.default_session.command = "sway --config ${wlgreetSwayConfig}";
+      settings.default_session.command = "''${pkgs.greetd.greetd}/bin/agreety --cmd sway";
     };
   };
 }
