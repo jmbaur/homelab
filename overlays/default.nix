@@ -20,7 +20,6 @@ inputs: {
         enableMinimal = prev.stdenv.hostPlatform != prev.stdenv.buildPlatform;
       };
 
-
       # Can be deleted when this PR is merged: https://github.com/NixOS/nixpkgs/pull/284160
       greetd = prev.greetd // {
         wlgreet = prev.greetd.wlgreet.overrideAttrs ({ nativeBuildInputs ? [ ], buildInputs ? [ ], ... }: {
