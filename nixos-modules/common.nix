@@ -11,7 +11,7 @@ in
     system.stateVersion = lib.mkDefault "24.05";
 
     system.image.id = config.system.nixos.distroId;
-    system.image.version = "0.0.24";
+    system.image.version = "0.0.25";
 
     # We always build on x86_64-linux.
     #
