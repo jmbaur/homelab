@@ -84,7 +84,7 @@ inputs: {
       macgen = prev.callPackage ./macgen.nix { };
       pomo = prev.callPackage ./pomo { };
       v4l-show = prev.callPackage ./v4l-show.nix { };
-      wip = prev.writeShellScriptBin "wip" ''git commit --no-verify --no-gpg-sign --all --message "WIP"; git push'';
+      wip = prev.callPackage ./wip.nix { };
 
       jared-neovim = prev.callPackage ./neovim {
         neovim-unwrapped = inputs.neovim.packages.${prev.system}.neovim;
