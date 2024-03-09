@@ -1,15 +1,6 @@
 {
   description = "NixOS configurations for the homelab";
 
-  nixConfig = {
-    extra-substituters = [
-      "https://nix-community.cachix.org"
-    ];
-    extra-trusted-public-keys = [
-      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-    ];
-  };
-
   inputs = {
     gobar.inputs.nixpkgs.follows = "nixpkgs";
     gobar.url = "github:jmbaur/gobar";
@@ -26,7 +17,7 @@
     nix-sandbox-escape-hatch.inputs.nixpkgs.follows = "nixpkgs";
     nix-sandbox-escape-hatch.url = "github:jmbaur/nix-sandbox-escape-hatch";
     nixos-router.inputs.nixpkgs.follows = "nixpkgs";
-    nixos-router.url = "github:jmbaur/nixos-router";
+    nixos-router.url = "github:jmbaur/nixos-router/ipv6-only";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nur.url = "github:nix-community/NUR";
     pre-commit.inputs.nixpkgs.follows = "nixpkgs";
