@@ -20,6 +20,16 @@ inputs: {
         enableMinimal = prev.stdenv.hostPlatform != prev.stdenv.buildPlatform;
       };
 
+      tcpdump = prev.tcpdump.overrideAttrs (old: {
+        patches = (old.patches or [ ]) ++ [
+          # add support for pref64
+          (prev.fetchpatch {
+            url = "https://github.com/the-tcpdump-group/tcpdump/commit/d879d9349ab7b3dffc4797b6a8ece758e93636c1.patch";
+            hash = "sha256-Z1gHBYNUMdIkNT+miI3Iis183yJvc29OLAvg6kkvDGY=";
+          })
+        ];
+      });
+
       # Can be deleted when this PR is merged: https://github.com/NixOS/nixpkgs/pull/284160
       greetd = prev.greetd // {
         wlgreet = prev.greetd.wlgreet.overrideAttrs ({ nativeBuildInputs ? [ ], buildInputs ? [ ], ... }: {
