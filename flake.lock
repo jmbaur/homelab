@@ -363,11 +363,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1710062421,
-        "narHash": "sha256-FiCNRfyUgJOLYIokLiFsfI7B+Zn9HDnOzFR3uVr5qsQ=",
+        "lastModified": 1710164657,
+        "narHash": "sha256-l64+ZjaQAVkHDVaK0VHwtXBdjcBD6nLBD+p7IfyBp/w=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "36f873dfc8e2b6b89936ff3e2b74803d50447e0a",
+        "rev": "017b12de5b899ef9b64e2c035ce257bfe95b8ae2",
         "type": "github"
       },
       "original": {
@@ -406,11 +406,11 @@
         "spectrum": "spectrum"
       },
       "locked": {
-        "lastModified": 1709942129,
-        "narHash": "sha256-gvHNvVz6gJrnGxBTsUn38ifK7MEwhxemF98RksQkTrQ=",
+        "lastModified": 1710080963,
+        "narHash": "sha256-E1qvw0/ZfJfVDMysc5EN7g8wD/0j2uF3a1efVxz7pWk=",
         "owner": "astro",
         "repo": "microvm.nix",
-        "rev": "8b4539658e09b3c35adda0c4c7bb491aa29dcfef",
+        "rev": "30e577e95ba469ba0d0c08e64e81604b1d097f9c",
         "type": "github"
       },
       "original": {
@@ -428,11 +428,11 @@
       },
       "locked": {
         "dir": "contrib",
-        "lastModified": 1710061680,
-        "narHash": "sha256-8fRR1LOqTm+2Jyr7ZGoaBeXa6WOQ/BRrRuPgOzOsYBU=",
+        "lastModified": 1710227755,
+        "narHash": "sha256-nXpnLxpoD4jJ09u1R5v+pN8MdJpIOide1HgLuK/k1UY=",
         "owner": "neovim",
         "repo": "neovim",
-        "rev": "b465ede2c7a4fb39cf84682d645a3acd08631010",
+        "rev": "41fb98d6fab5aa02ef370d1b2b283b078517ffa4",
         "type": "github"
       },
       "original": {
@@ -470,16 +470,15 @@
         "pre-commit-hooks": "pre-commit-hooks_2"
       },
       "locked": {
-        "lastModified": 1710075117,
-        "narHash": "sha256-c0kZodim89x4fU54cT8EIDtzXBMlDiTkcFhJpXQZro4=",
+        "lastModified": 1710251786,
+        "narHash": "sha256-2Homnaiw7+7owJfkfIv+3o9sFYJkjyPFr5WP6/W5zjo=",
         "owner": "jmbaur",
         "repo": "nixos-router",
-        "rev": "2f5ec95cfc0b95db6bc6a680e518dceed3872183",
+        "rev": "6adb38aa45f965d90df4e259f2095f0a28e60d0b",
         "type": "github"
       },
       "original": {
         "owner": "jmbaur",
-        "ref": "ipv6-only",
         "repo": "nixos-router",
         "type": "github"
       }
@@ -598,11 +597,11 @@
     },
     "nur": {
       "locked": {
-        "lastModified": 1710073779,
-        "narHash": "sha256-epPYS7ARFulaYhzmQYY7AynCpAvTuMWz+HB4NZlS5Gs=",
+        "lastModified": 1710248086,
+        "narHash": "sha256-fD3JB80kJ6oGt5ensxoL9UYRZ7BrkKi+sfCvKLJfWKM=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "e7dbfe2166ae91b36011848ce6b8ca48447b7129",
+        "rev": "825b348f07d89830d945cfe9a7a37f26d39db2ce",
         "type": "github"
       },
       "original": {
@@ -762,11 +761,11 @@
         "nixpkgs-stable": "nixpkgs-stable_5"
       },
       "locked": {
-        "lastModified": 1710039806,
-        "narHash": "sha256-vC2fo/phnetp6ub/nRv6mgAi5LbhJ6ujGQWrRD2VgNs=",
+        "lastModified": 1710195194,
+        "narHash": "sha256-KFxCJp0T6TJOz1IOKlpRdpsCr9xsvlVuWY/VCiAFnTE=",
         "owner": "Mic92",
         "repo": "sops-nix",
-        "rev": "f8d5c8baa83fe620a28c0db633be9db3e34474b4",
+        "rev": "e52d8117b330f690382f1d16d81ae43daeb4b880",
         "type": "github"
       },
       "original": {
@@ -903,11 +902,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1709793626,
-        "narHash": "sha256-0A5+R2+Q2dGVhbAtmMPEaIrehMlXiIAsx3dYRDK1/0Q=",
+        "lastModified": 1710126747,
+        "narHash": "sha256-yfPraIyokO+9V/R28/qHwa0Nc8RHpayEJ4F/f162uZA=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "f35cf5a87207ff7b093b0c68fd24b7cf818d5290",
+        "rev": "31554e231d158dce858f72e9013409384851fff4",
         "type": "github"
       },
       "original": {

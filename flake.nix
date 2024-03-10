@@ -17,7 +17,7 @@
     nix-sandbox-escape-hatch.inputs.nixpkgs.follows = "nixpkgs";
     nix-sandbox-escape-hatch.url = "github:jmbaur/nix-sandbox-escape-hatch";
     nixos-router.inputs.nixpkgs.follows = "nixpkgs";
-    nixos-router.url = "github:jmbaur/nixos-router/ipv6-only";
+    nixos-router.url = "github:jmbaur/nixos-router";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nur.url = "github:nix-community/NUR";
     pre-commit.inputs.nixpkgs.follows = "nixpkgs";
