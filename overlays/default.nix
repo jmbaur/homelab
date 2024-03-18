@@ -4,8 +4,6 @@ inputs: {
     inputs.gosee.overlays.default # needed for plugin in overlayed neovim
     inputs.u-boot-nix.overlays.default
     (final: prev: {
-      stevenblack-blocklist = prev.callPackage ./stevenblack-blocklist.nix { };
-
       nixos-kexec = prev.callPackage ./nixos-kexec { };
 
       libfido2 = prev.libfido2.override {

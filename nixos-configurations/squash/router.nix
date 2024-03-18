@@ -5,7 +5,6 @@
   router = {
     enable = true;
     ipv6UlaPrefix = "fd4c:ddfe:28e9::/64";
-    dns.adblock.enable = true;
   };
 
   sops.secrets.ipwatch_env = { };
