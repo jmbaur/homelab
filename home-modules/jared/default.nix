@@ -256,7 +256,7 @@ in
         plugins = with pkgs.tmuxPlugins; [ fingers logging ];
         extraConfig = ''
           set-option -as terminal-features ",alacritty:RGB"
-          set-option -as terminal-features ",kitty:RGB"
+          set-option -as terminal-features ",xterm-kitty:RGB"
           set-option -as terminal-features ",rio:RGB"
           set-option -as terminal-features ",xterm-256color:RGB"
           set-option -g allow-passthrough on
