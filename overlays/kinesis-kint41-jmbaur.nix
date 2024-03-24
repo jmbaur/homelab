@@ -7,9 +7,14 @@ stdenv.mkDerivation {
   pname = "kinesis-kint41-jmbaur";
   version = "unstable-${builtins.substring 0 7 source.rev}";
 
-  src = fetchgit { inherit (source) url hash fetchSubmodules; };
+  src = fetchgit {
+    inherit (source)
+      url hash fetchSubmodules fetchLFS deepClone leaveDotGit;
+  };
 
   nativeBuildInputs = [ qmk ];
+
+  enableParallelBuilding = true;
 
   patches = [ ./kinesis-kint41-jmbaur.patch ];
 
