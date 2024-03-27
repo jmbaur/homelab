@@ -91,7 +91,7 @@ inputs: {
       git-shell-commands = prev.callPackage ./git-shell-commands {
         libgit2 = final.libgit2_1_5;
       };
-      pb = prev.writeShellScriptBin "pb" "${final.curl}/bin/curl --data-binary @- https://paste.rs/";
+      pb = prev.writeShellScriptBin "pb" "echo $(${final.curl}/bin/curl --silent --data-binary @- https://paste.rs/)";
       tmux-jump = prev.callPackage ./tmux-jump.nix { };
       kinesis-kint41-jmbaur = prev.callPackage ./kinesis-kint41-jmbaur.nix { };
       macgen = prev.callPackage ./macgen.nix { };
