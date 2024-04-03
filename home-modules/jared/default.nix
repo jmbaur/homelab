@@ -313,7 +313,7 @@ in
       #         rust-analyzer
       #         gopls
       #         nil
-      #         nixpkgs-fmt
+      #         nixfmt-rfc-style
       #       ]);
       #     };
       # };

@@ -9,7 +9,6 @@ inputs: inputs.nixpkgs.lib.mapAttrs
         src = ./.;
         hooks = {
           deadnix.enable = true;
-          nixpkgs-fmt.enable = true;
           revive.enable = true;
           shellcheck.enable = true;
           shfmt.enable = true;

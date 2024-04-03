@@ -8,7 +8,7 @@ local conditional_efm_languages = {
 		{ enable = vim.g.lang_support_shell, config = require("efmls-configs.linters.shellcheck") },
 	},
 	nix = { {
-		enable = vim.g.lang_support_nix, config = { formatCommand = "nixpkgs-fmt", formatStdin = true },
+		enable = vim.g.lang_support_nix, config = { formatCommand = "nixfmt-rfc-style", formatStdin = true },
 	} },
 	toml = { { enable = vim.g.lang_support_nix, config = require("efmls-configs.formatters.taplo") } },
 	latex = { {

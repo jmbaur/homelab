@@ -12,7 +12,7 @@
 , neovim-unwrapped
 , neovimUtils
 , nil
-, nixpkgs-fmt
+, nixfmt-rfc-style
 , ormolu
 , python3
 , ripgrep
@@ -94,7 +94,7 @@ wrapNeovimUnstable neovim (config // {
         ++ (lib.optionals languageSupport.haskell [ ghc haskell-language-server ormolu ])
         ++ (lib.optionals languageSupport.latex [ (texlive.combine { inherit (texlive) scheme-minimal latexindent; }) ])
         ++ (lib.optionals languageSupport.lua [ lua-language-server ])
-        ++ (lib.optionals languageSupport.nix [ nil nixpkgs-fmt ])
+        ++ (lib.optionals languageSupport.nix [ nil nixfmt-rfc-style ])
         ++ (lib.optionals languageSupport.rust [ rust-analyzer rustfmt ])
         ++ (lib.optionals languageSupport.shell [ shellcheck shfmt ])
         ++ (lib.optionals languageSupport.toml [ taplo ])
