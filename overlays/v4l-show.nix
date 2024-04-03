@@ -1,4 +1,8 @@
-{ writeShellScriptBin, v4l-utils, ffmpeg-full }:
+{
+  writeShellScriptBin,
+  v4l-utils,
+  ffmpeg-full,
+}:
 writeShellScriptBin "v4l-show" ''
   export SDL_VIDEODRIVER=x11
   ${v4l-utils}/bin/v4l2-ctl --list-devices \

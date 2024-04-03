@@ -1,13 +1,14 @@
-{ fetchFromGitHub
-, buildArmTrustedFirmware
-, buildPackages
-, dtc
-, openssl
-, symlinkJoin
-, uboot-mt7986a_bpir3_emmc
-, runCommand
-, mtdutils
-, formats
+{
+  fetchFromGitHub,
+  buildArmTrustedFirmware,
+  buildPackages,
+  dtc,
+  openssl,
+  symlinkJoin,
+  uboot-mt7986a_bpir3_emmc,
+  runCommand,
+  mtdutils,
+  formats,
 }:
 
 let
@@ -21,9 +22,20 @@ let
       rev = "0ea67d76ae8be127c91caa3fcdf449b1fe533175";
       hash = "sha256-mlAzGRcqpLgWO3TmkrFvdFFmun+KiE+8FxGuqz+TKtI=";
     };
-    nativeBuildInputs = [ dtc openssl ];
+    nativeBuildInputs = [
+      dtc
+      openssl
+    ];
     extraMakeFlags = [
-      "OPENSSL_DIR=${symlinkJoin { name = "openssl-dir"; paths = with buildPackages.openssl; [ out bin ]; }}"
+      "OPENSSL_DIR=${
+        symlinkJoin {
+          name = "openssl-dir";
+          paths = with buildPackages.openssl; [
+            out
+            bin
+          ];
+        }
+      }"
       "BL33=${uboot-mt7986a_bpir3_emmc}/u-boot.bin"
       "DRAM_USE_DDR4=1"
       # defines where the FIP image lives
@@ -31,7 +43,10 @@ let
       "all"
       "fip"
     ];
-    filesToInstall = [ "build/${platform}/release/bl2.img" "build/${platform}/release/fip.bin" ];
+    filesToInstall = [
+      "build/${platform}/release/bl2.img"
+      "build/${platform}/release/fip.bin"
+    ];
     extraMeta.platforms = [ "aarch64-linux" ];
   };
   ubinizeConfig = (formats.ini { }).generate "ubinize.ini" rec {
@@ -54,5 +69,8 @@ let
 in
 symlinkJoin {
   name = "bpi-r3-firmware";
-  paths = [ atf ubiImage ];
+  paths = [
+    atf
+    ubiImage
+  ];
 }

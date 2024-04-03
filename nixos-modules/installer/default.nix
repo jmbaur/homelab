@@ -28,11 +28,26 @@ in
     strip = true;
 
     contents = [
-      { object = "${modulesClosure}/lib"; symlink = "/lib"; }
-      { object = "${pkgs.busybox}/bin/busybox"; symlink = "/init"; }
-      { object = "${pkgs.busybox}/bin"; symlink = "/bin"; }
-      { object = "${pkgs.busybox}/sbin"; symlink = "/sbin"; }
-      { object = startupScript; symlink = "/etc/init.d/rcS"; }
+      {
+        object = "${modulesClosure}/lib";
+        symlink = "/lib";
+      }
+      {
+        object = "${pkgs.busybox}/bin/busybox";
+        symlink = "/init";
+      }
+      {
+        object = "${pkgs.busybox}/bin";
+        symlink = "/bin";
+      }
+      {
+        object = "${pkgs.busybox}/sbin";
+        symlink = "/sbin";
+      }
+      {
+        object = startupScript;
+        symlink = "/etc/init.d/rcS";
+      }
     ];
   };
 }

@@ -1,11 +1,18 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.custom.image;
 
   inherit (config.system.image) id version;
 
   loaderConf = pkgs.writeText "loader.conf" ''
-    timeout ${if (config.boot.loader.timeout != null) then toString config.boot.loader.timeout else "menu-force"}
+    timeout ${
+      if (config.boot.loader.timeout != null) then toString config.boot.loader.timeout else "menu-force"
+    }
     editor yes
   '';
 
@@ -15,10 +22,12 @@ in
   options.custom.image.uefi.enable = lib.mkEnableOption "TODO";
 
   config = lib.mkIf (cfg.enable && cfg.uefi.enable) {
-    assertions = [{
-      assertion = config.hardware.deviceTree.enable -> config.hardware.deviceTree.name != null;
-      message = "need to specify config.hardware.deviceTree.name";
-    }];
+    assertions = [
+      {
+        assertion = config.hardware.deviceTree.enable -> config.hardware.deviceTree.name != null;
+        message = "need to specify config.hardware.deviceTree.name";
+      }
+    ];
 
     systemd.additionalUpstreamSystemUnits = [ "systemd-bless-boot.service" ];
 
@@ -33,7 +42,11 @@ in
         Type = "regular-file";
         Path = "/EFI/Linux";
         PathRelativeTo = config.systemd.repart.partitions."10-boot".Type;
-        MatchPattern = [ "${id}_@v+@l-@d.efi" "${id}_@v+@l.efi" "${id}_@v.efi" ];
+        MatchPattern = [
+          "${id}_@v+@l-@d.efi"
+          "${id}_@v+@l.efi"
+          "${id}_@v.efi"
+        ];
         Mode = "0444";
         TriesLeft = 3;
         TriesDone = 0;
@@ -53,8 +66,7 @@ in
           --cmdline="init=${config.system.build.toplevel}/init usrhash=$usrhash ${toString config.boot.kernelParams}" \
           --initrd=${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile} \
           --os-release=@${config.environment.etc."os-release".source} \
-          ${lib.optionalString config.hardware.deviceTree.enable
-            "--devicetree=${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name}"} \
+          ${lib.optionalString config.hardware.deviceTree.enable "--devicetree=${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name}"} \
           --output=$update/${id}_${version}.efi
 
         ln -sf ${loaderConf} $update/loader.conf

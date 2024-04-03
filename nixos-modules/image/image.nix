@@ -1,27 +1,28 @@
-{ closureInfo
-, dosfstools
-, dtc
-, erofs-utils
-, fakeroot
-, formats
-, jq
-, mtools
-, sbsigntool
-, stdenv
-, systemd
-, ubootTools
-, xz
+{
+  closureInfo,
+  dosfstools,
+  dtc,
+  erofs-utils,
+  fakeroot,
+  formats,
+  jq,
+  mtools,
+  sbsigntool,
+  stdenv,
+  systemd,
+  ubootTools,
+  xz,
 
   # arguments
-, bootFileCommands
-, id
-, imageName
-, partitions
-, postImageCommands
-, toplevel
-, usrFormat
-, version
-, sectorSize
+  bootFileCommands,
+  id,
+  imageName,
+  partitions,
+  postImageCommands,
+  toplevel,
+  usrFormat,
+  version,
+  sectorSize,
 }:
 
 let
@@ -55,14 +56,30 @@ in
 stdenv.mkDerivation {
   name = "nixos-image-${imageName}";
 
-  depsBuildBuild = [ dosfstools dtc erofs-utils fakeroot jq mtools sbsigntool systemd ubootTools xz ];
+  depsBuildBuild = [
+    dosfstools
+    dtc
+    erofs-utils
+    fakeroot
+    jq
+    mtools
+    sbsigntool
+    systemd
+    ubootTools
+    xz
+  ];
 
-  outputs = [ "out" "update" ];
+  outputs = [
+    "out"
+    "update"
+  ];
 
-  bootFileCommands = ''
-    # source the setup file to get access to `substituteInPlace`
-    source $stdenv/setup
-  '' + bootFileCommands;
+  bootFileCommands =
+    ''
+      # source the setup file to get access to `substituteInPlace`
+      source $stdenv/setup
+    ''
+    + bootFileCommands;
   passAsFile = [ "bootFileCommands" ];
 
   env.SYSTEMD_REPART_MKFS_OPTIONS_EROFS = "-zlz4hc,12";

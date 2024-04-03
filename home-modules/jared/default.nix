@@ -1,4 +1,10 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 let
   cfg = config.jared;
 
@@ -7,7 +13,9 @@ let
 in
 {
   options.jared = with lib; {
-    includePersonalConfigs = mkEnableOption "personal configs" // { default = true; };
+    includePersonalConfigs = mkEnableOption "personal configs" // {
+      default = true;
+    };
 
     dev.enable = mkEnableOption "dev";
 
@@ -29,7 +37,11 @@ in
         registry.nixpkgs.flake = inputs.nixpkgs;
         settings = {
           nix-path = [ "nixpkgs=${inputs.nixpkgs}" ];
-          experimental-features = [ "nix-command" "flakes" "repl-flake" ];
+          experimental-features = [
+            "nix-command"
+            "flakes"
+            "repl-flake"
+          ];
         };
       };
       nixpkgs.overlays = [ inputs.nur.overlay ];
@@ -184,7 +196,11 @@ in
       programs.git = {
         enable = true;
         userName = "Jared Baur";
-        ignores = [ "*~" "*.swp" "Session.vim" ];
+        ignores = [
+          "*~"
+          "*.swp"
+          "Session.vim"
+        ];
         aliases = {
           br = "branch";
           co = "checkout";
@@ -253,7 +269,10 @@ in
         prefix = "C-s";
         sensibleOnTop = false;
         terminal = "tmux-256color";
-        plugins = with pkgs.tmuxPlugins; [ fingers logging ];
+        plugins = with pkgs.tmuxPlugins; [
+          fingers
+          logging
+        ];
         extraConfig = ''
           set-option -as terminal-features ",alacritty:RGB"
           set-option -as terminal-features ",xterm-kitty:RGB"
@@ -341,12 +360,13 @@ in
       programs.firefox = {
         enable = true;
         profiles.default = {
-          extensions = with pkgs.nur.repos.rycee.firefox-addons; [
-            vimium
-          ] ++ lib.optionals cfg.includePersonalConfigs [
-            bitwarden
-            privacy-badger
-          ];
+          extensions =
+            with pkgs.nur.repos.rycee.firefox-addons;
+            [ vimium ]
+            ++ lib.optionals cfg.includePersonalConfigs [
+              bitwarden
+              privacy-badger
+            ];
           settings = {
             "browser.newtabpage.enabled" = false;
             "browser.startup.homepage" = "chrome://browser/content/blanktab.html";
@@ -359,13 +379,22 @@ in
       programs.chromium = {
         enable = true;
         package = pkgs.chromium-wayland;
-        extensions = [
-          { /* vimium */ id = "dbepggeogbaibhgnhhndojpepiihcmeb"; }
-        ] ++ lib.optionals
-          cfg.includePersonalConfigs
+        extensions =
           [
-            { /* bitwarden */ id = "nngceckbapebfimnlniiiahkandclblb"; }
-            { /* privacy badger */ id = "pkehgijcmpdhfbdbbnkijodmdjhbjlgp"; }
+            {
+              # vimium
+              id = "dbepggeogbaibhgnhhndojpepiihcmeb";
+            }
+          ]
+          ++ lib.optionals cfg.includePersonalConfigs [
+            {
+              # bitwarden
+              id = "nngceckbapebfimnlniiiahkandclblb";
+            }
+            {
+              # privacy badger
+              id = "pkehgijcmpdhfbdbbnkijodmdjhbjlgp";
+            }
           ];
       };
 
@@ -392,10 +421,16 @@ in
           import = [ "${pkgs.alacritty-theme}/smoooooth.toml" ];
           mouse.hide_when_typing = true;
           selection.save_to_clipboard = true;
-          font = { normal.family = "JetBrains Mono"; size = 14; };
+          font = {
+            normal.family = "JetBrains Mono";
+            size = 14;
+          };
           terminal.osc52 = "CopyPaste";
           colors = lib.mapAttrsRecursive (_: color: "#${color}") {
-            primary = { foreground = "e0e2ea"; background = "14161b"; };
+            primary = {
+              foreground = "e0e2ea";
+              background = "14161b";
+            };
           };
         };
       };
@@ -414,7 +449,11 @@ in
           };
           mouse.hide-when-typing = "yes";
           scrollback.indicator-position = "none";
-          colors = { alpha = 1.0; foreground = "e0e2ea"; background = "14161b"; };
+          colors = {
+            alpha = 1.0;
+            foreground = "e0e2ea";
+            background = "14161b";
+          };
         };
       };
 
@@ -443,13 +482,29 @@ in
         {
           enable = true;
           events = [
-            { event = "before-sleep"; command = lockCmd; }
-            { event = "lock"; command = lockCmd; }
+            {
+              event = "before-sleep";
+              command = lockCmd;
+            }
+            {
+              event = "lock";
+              command = lockCmd;
+            }
           ];
           timeouts = [
-            { timeout = 600; command = lockCmd; }
-            { timeout = 900; command = "swaymsg output * power toggle"; resumeCommand = "swaymsg output * power toggle"; }
-            { timeout = 1200; command = "systemctl suspend"; }
+            {
+              timeout = 600;
+              command = lockCmd;
+            }
+            {
+              timeout = 900;
+              command = "swaymsg output * power toggle";
+              resumeCommand = "swaymsg output * power toggle";
+            }
+            {
+              timeout = 1200;
+              command = "systemctl suspend";
+            }
           ];
         };
 
@@ -491,7 +546,10 @@ in
       qt = {
         enable = true;
         platformTheme = "gtk3";
-        style = { name = "adwaita-dark"; package = pkgs.adwaita-qt; };
+        style = {
+          name = "adwaita-dark";
+          package = pkgs.adwaita-qt;
+        };
       };
 
       home.pointerCursor = {
@@ -530,23 +588,35 @@ in
             defaultWorkspace = "workspace number 1";
             focus.wrapping = "yes";
             seat."*".xcursor_theme = with config.home.pointerCursor; "${name} ${toString size}";
-            fonts = { names = [ font ]; style = "Bold Semi-Condensed"; size = fontSize; };
-            bars = [{
-              position = "top";
-              trayOutput = "*";
-              statusCommand = "${pkgs.i3status}/bin/i3status";
-              # By using the same font and setting status_padding to 4, we get
-              # a bar with the same height as window titlebars.
-              inherit (config.wayland.windowManager.sway.config) fonts;
-              extraConfig = ''
-                status_padding 4
-              '';
-            }];
+            fonts = {
+              names = [ font ];
+              style = "Bold Semi-Condensed";
+              size = fontSize;
+            };
+            bars = [
+              {
+                position = "top";
+                trayOutput = "*";
+                statusCommand = "${pkgs.i3status}/bin/i3status";
+                # By using the same font and setting status_padding to 4, we get
+                # a bar with the same height as window titlebars.
+                inherit (config.wayland.windowManager.sway.config) fonts;
+                extraConfig = ''
+                  status_padding 4
+                '';
+              }
+            ];
             window = {
               hideEdgeBorders = "smart";
               commands = [
-                { criteria.app_id = "^chrome-.*__.*"; command = "shortcuts_inhibitor disable"; }
-                { criteria.shell = "xwayland"; command = ''title_format "%title (%shell)"''; }
+                {
+                  criteria.app_id = "^chrome-.*__.*";
+                  command = "shortcuts_inhibitor disable";
+                }
+                {
+                  criteria.shell = "xwayland";
+                  command = ''title_format "%title (%shell)"'';
+                }
               ];
             };
             output."*".background = "#222222 solid_color";
@@ -569,29 +639,30 @@ in
               repeat_rate = "50";
               xkb_options = ''""''; # explicitly empty
             };
-            modes = lib.mkOptionDefault {
-              passthru."${modifier}+F12" = "mode default";
-            };
-            keybindings = lib.mkOptionDefault ((lib.mapAttrs' (keys: lib.nameValuePair "${modifier}+${keys}") {
-              "Control+l" = "exec loginctl lock-session";
-              "F12" = "mode passthru";
-              "Print" = "exec ${shotman} --capture window";
-              "Shift+Print" = "exec ${shotman} --capture region";
-              "Shift+b" = "bar mode toggle";
-              "Shift+c" = "exec ${hyprpicker} --autocopy";
-              "Shift+s" = "sticky toggle";
-              "Tab" = "workspace back_and_forth";
-              "c" = "exec ${cliphist} list | ${rofi} -i -p clipboard -dmenu -display-columns 2 | ${cliphist} decode | ${wl-copy}";
-              "p" = "exec ${config.wayland.windowManager.sway.config.menu}";
-            }) // {
-              "Print" = "exec ${shotman} --capture output";
-              "XF86AudioMicMute" = ''exec ${notify-send} --transient --hint int:value:$(${pamixer} --default-source --toggle-mute --get-volume) --hint string:x-canonical-private-synchronous:mic mic "$(if [[ $(${pamixer} --default-source --get-mute) == true ]]; then echo muted; else echo unmuted; fi)"'';
-              "XF86AudioMute" = ''exec ${notify-send} --transient --hint int:value:$(${pamixer} --toggle-mute --get-volume) --hint string:x-canonical-private-synchronous:volume volume "$(if [[ $(${pamixer} --get-mute) == true ]]; then echo muted; else echo unmuted; fi)"'';
-              "XF86AudioRaiseVolume" = ''exec ${notify-send} --transient --hint int:value:$(${pamixer} --increase 5 --get-volume) --hint string:x-canonical-private-synchronous:volume volume'';
-              "XF86AudioLowerVolume" = ''exec ${notify-send} --transient --hint int:value:$(${pamixer} --decrease 5 --get-volume) --hint string:x-canonical-private-synchronous:volume volume'';
-              "XF86MonBrightnessUp" = ''exec ${notify-send} --transient --hint int:value:$(${brightnessctl} set +5% | sed -En "s/.*\(([0-9]+)%\).*/\1/p") --hint string:x-canonical-private-synchronous:brightness brightness'';
-              "XF86MonBrightnessDown" = ''exec ${notify-send} --transient --hint int:value:$(${brightnessctl} set 5%- | sed -En "s/.*\(([0-9]+)%\).*/\1/p") --hint string:x-canonical-private-synchronous:brightness brightness'';
-            });
+            modes = lib.mkOptionDefault { passthru."${modifier}+F12" = "mode default"; };
+            keybindings = lib.mkOptionDefault (
+              (lib.mapAttrs' (keys: lib.nameValuePair "${modifier}+${keys}") {
+                "Control+l" = "exec loginctl lock-session";
+                "F12" = "mode passthru";
+                "Print" = "exec ${shotman} --capture window";
+                "Shift+Print" = "exec ${shotman} --capture region";
+                "Shift+b" = "bar mode toggle";
+                "Shift+c" = "exec ${hyprpicker} --autocopy";
+                "Shift+s" = "sticky toggle";
+                "Tab" = "workspace back_and_forth";
+                "c" = "exec ${cliphist} list | ${rofi} -i -p clipboard -dmenu -display-columns 2 | ${cliphist} decode | ${wl-copy}";
+                "p" = "exec ${config.wayland.windowManager.sway.config.menu}";
+              })
+              // {
+                "Print" = "exec ${shotman} --capture output";
+                "XF86AudioMicMute" = ''exec ${notify-send} --transient --hint int:value:$(${pamixer} --default-source --toggle-mute --get-volume) --hint string:x-canonical-private-synchronous:mic mic "$(if [[ $(${pamixer} --default-source --get-mute) == true ]]; then echo muted; else echo unmuted; fi)"'';
+                "XF86AudioMute" = ''exec ${notify-send} --transient --hint int:value:$(${pamixer} --toggle-mute --get-volume) --hint string:x-canonical-private-synchronous:volume volume "$(if [[ $(${pamixer} --get-mute) == true ]]; then echo muted; else echo unmuted; fi)"'';
+                "XF86AudioRaiseVolume" = ''exec ${notify-send} --transient --hint int:value:$(${pamixer} --increase 5 --get-volume) --hint string:x-canonical-private-synchronous:volume volume'';
+                "XF86AudioLowerVolume" = ''exec ${notify-send} --transient --hint int:value:$(${pamixer} --decrease 5 --get-volume) --hint string:x-canonical-private-synchronous:volume volume'';
+                "XF86MonBrightnessUp" = ''exec ${notify-send} --transient --hint int:value:$(${brightnessctl} set +5% | sed -En "s/.*\(([0-9]+)%\).*/\1/p") --hint string:x-canonical-private-synchronous:brightness brightness'';
+                "XF86MonBrightnessDown" = ''exec ${notify-send} --transient --hint int:value:$(${brightnessctl} set 5%- | sed -En "s/.*\(([0-9]+)%\).*/\1/p") --hint string:x-canonical-private-synchronous:brightness brightness'';
+              }
+            );
           };
       };
 

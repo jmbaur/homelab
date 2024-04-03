@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.custom.image;
 
@@ -6,9 +11,9 @@ let
 
   fixedFitImageName = "${id}_${version}.uImage";
 
-  deviceTreeArgs = with config.hardware.deviceTree;
-    lib.optionals enable
-      ([ package ] ++ lib.optional (name != null) name);
+  deviceTreeArgs =
+    with config.hardware.deviceTree;
+    lib.optionals enable ([ package ] ++ lib.optional (name != null) name);
 
   # depends on:
   # - CONFIG_CMD_SAVEENV
@@ -71,7 +76,13 @@ in
 
     bootMedium = {
       type = mkOption {
-        type = types.enum [ "mmc" "scsi" "nvme" "usb" "virtio" ];
+        type = types.enum [
+          "mmc"
+          "scsi"
+          "nvme"
+          "usb"
+          "virtio"
+        ];
         description = mdDoc ''
           TODO
         '';
@@ -88,7 +99,10 @@ in
 
   config = lib.mkIf (cfg.enable && cfg.uboot.enable) {
     # TODO(jared): need to add a non-UEFI equivalent to systemd-bless-boot
-    systemd.additionalUpstreamSystemUnits = [ /*"systemd-bless-boot.service"*/ ];
+    systemd.additionalUpstreamSystemUnits =
+      [
+        # "systemd-bless-boot.service"
+      ];
 
     systemd.sysupdate.transfers."70-fit-image" = {
       Transfer.ProtectVersion = "%A";
@@ -108,57 +122,61 @@ in
       };
     };
 
-    custom.image.bootFileCommands = ''
-      declare kernel_compression
-      declare x86_setup_code # unused on non-x86 systems
-      export description="${with config.system.nixos; "${distroName} ${codeName} ${release}"}"
-      export arch=${pkgs.stdenv.hostPlatform.linuxArch}
-      export linux_kernel=kernel
-      export initrd=${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile}
-      export bootscript=bootscript
-      export load_address=${cfg.uboot.kernelLoadAddress}
+    custom.image.bootFileCommands =
+      ''
+        declare kernel_compression
+        declare x86_setup_code # unused on non-x86 systems
+        export description="${with config.system.nixos; "${distroName} ${codeName} ${release}"}"
+        export arch=${pkgs.stdenv.hostPlatform.linuxArch}
+        export linux_kernel=kernel
+        export initrd=${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile}
+        export bootscript=bootscript
+        export load_address=${cfg.uboot.kernelLoadAddress}
 
-      install -Dm0644 ${bootScript} $bootscript
-      substituteInPlace $bootscript --subst-var usrhash
+        install -Dm0644 ${bootScript} $bootscript
+        substituteInPlace $bootscript --subst-var usrhash
 
-    '' + {
-      "Image" = ''
-        kernel_compression=lzma
-        lzma --threads 0 <${kernelPath} >$linux_kernel
+      ''
+      + {
+        "Image" = ''
+          kernel_compression=lzma
+          lzma --threads 0 <${kernelPath} >$linux_kernel
+        '';
+        "zImage" = ''
+          kernel_compression=none
+          cp ${kernelPath} $linux_kernel
+        '';
+        "bzImage" = ''
+          kernel_compression=lzma
+          tmp=$(mktemp)
+          objcopy -O binary ${lib.getDev config.system.build.kernel}/vmlinux $tmp
+          du -sh $tmp
+          exit 3
+          lzma --threads 0 <$tmp >$linux_kernel
+
+          # The bzImage is (in simplified form) a concatenation of some setup
+          # code (setup.bin) with a compressed vmlinux. The setup.bin _should_ be
+          # within the first 17KiB of the bzImage, so we take the first 17KiB.
+          #
+          # TODO(jared): we should be smarter about only extracting what is
+          # needed here.
+          x86_setup_code=$(mktemp)
+          dd bs=1K count=17 if=${kernelPath} of=$x86_setup_code
+          export x86_setup_code
+        '';
+      }
+      .${config.system.boot.loader.kernelFile}
+      + ''
+        export kernel_compression
+
+        bash ${./make-fit-image-its.bash} ${toString deviceTreeArgs} >image.its
+
+        mkimage --fit image.its "$update/${fixedFitImageName}"
+
+        ln -sf ${globalBootScriptImage} $update/boot.scr
+
+        echo "$update/boot.scr:/boot.scr" >> $bootfiles
+        echo "$update/${fixedFitImageName}:/${fixedFitImageName}" >> $bootfiles
       '';
-      "zImage" = ''
-        kernel_compression=none
-        cp ${kernelPath} $linux_kernel
-      '';
-      "bzImage" = ''
-        kernel_compression=lzma
-        tmp=$(mktemp)
-        objcopy -O binary ${lib.getDev config.system.build.kernel}/vmlinux $tmp
-        du -sh $tmp
-        exit 3
-        lzma --threads 0 <$tmp >$linux_kernel
-
-        # The bzImage is (in simplified form) a concatenation of some setup
-        # code (setup.bin) with a compressed vmlinux. The setup.bin _should_ be
-        # within the first 17KiB of the bzImage, so we take the first 17KiB.
-        #
-        # TODO(jared): we should be smarter about only extracting what is
-        # needed here.
-        x86_setup_code=$(mktemp)
-        dd bs=1K count=17 if=${kernelPath} of=$x86_setup_code
-        export x86_setup_code
-      '';
-    }.${config.system.boot.loader.kernelFile} + ''
-      export kernel_compression
-
-      bash ${./make-fit-image-its.bash} ${toString deviceTreeArgs} >image.its
-
-      mkimage --fit image.its "$update/${fixedFitImageName}"
-
-      ln -sf ${globalBootScriptImage} $update/boot.scr
-
-      echo "$update/boot.scr:/boot.scr" >> $bootfiles
-      echo "$update/${fixedFitImageName}:/${fixedFitImageName}" >> $bootfiles
-    '';
   };
 }

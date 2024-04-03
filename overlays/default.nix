@@ -30,48 +30,80 @@ inputs: {
 
       # Can be deleted when this PR is merged: https://github.com/NixOS/nixpkgs/pull/284160
       greetd = prev.greetd // {
-        wlgreet = prev.greetd.wlgreet.overrideAttrs ({ nativeBuildInputs ? [ ], buildInputs ? [ ], ... }: {
-          nativeBuildInputs = nativeBuildInputs ++ [ final.buildPackages.autoPatchelfHook ];
-          buildInputs = buildInputs ++ [ final.gcc-unwrapped ];
-          runtimeDependencies = map prev.lib.getLib (with final; [ gcc-unwrapped wayland libxkbcommon ]);
-        });
+        wlgreet = prev.greetd.wlgreet.overrideAttrs (
+          {
+            nativeBuildInputs ? [ ],
+            buildInputs ? [ ],
+            ...
+          }:
+          {
+            nativeBuildInputs = nativeBuildInputs ++ [ final.buildPackages.autoPatchelfHook ];
+            buildInputs = buildInputs ++ [ final.gcc-unwrapped ];
+            runtimeDependencies = map prev.lib.getLib (
+              with final;
+              [
+                gcc-unwrapped
+                wayland
+                libxkbcommon
+              ]
+            );
+          }
+        );
       };
 
-      labwc = prev.labwc.overrideAttrs ({ patches ? [ ], ... }: {
-        patches = patches ++ [
-          (final.fetchpatch2 {
-            name = "Add-omnipresent-flag-for-views";
-            url = "https://github.com/labwc/labwc/commit/bad8f334ead5587208ec62fb01ddf9dd2be5ff67.patch";
-            hash = "sha256-Djx+0cHklJCu/nmpwhO0dlHETeJnp5rG4hTjS3Wadg0=";
-          })
-          (final.fetchpatch2 {
-            name = "Add-touchpad-device-type";
-            url = "https://github.com/labwc/labwc/commit/6faee17d20637df35e27cd2cac462323e4d665a1.patch";
-            hash = "sha256-5HptxaEK7zH1eoyxYYyYZpKECE8MXznj6zLVDC0Kkyg=";
-          })
-        ];
-      });
+      labwc = prev.labwc.overrideAttrs (
+        {
+          patches ? [ ],
+          ...
+        }:
+        {
+          patches = patches ++ [
+            (final.fetchpatch2 {
+              name = "Add-omnipresent-flag-for-views";
+              url = "https://github.com/labwc/labwc/commit/bad8f334ead5587208ec62fb01ddf9dd2be5ff67.patch";
+              hash = "sha256-Djx+0cHklJCu/nmpwhO0dlHETeJnp5rG4hTjS3Wadg0=";
+            })
+            (final.fetchpatch2 {
+              name = "Add-touchpad-device-type";
+              url = "https://github.com/labwc/labwc/commit/6faee17d20637df35e27cd2cac462323e4d665a1.patch";
+              hash = "sha256-5HptxaEK7zH1eoyxYYyYZpKECE8MXznj6zLVDC0Kkyg=";
+            })
+          ];
+        }
+      );
 
-      fuzzel = prev.fuzzel.overrideAttrs ({ patches ? [ ], ... }: {
-        patches = patches ++ [
-          (final.fetchpatch2 {
-            name = "config-add-CTRL-to-default-keybindings";
-            url = "https://codeberg.org/jmbaur/fuzzel/commit/2ecdc51a4f9ed83e94741a80648429ff7b062a14.patch";
-            hash = "sha256-0cWbtc1O37zD8OCgufIurzCyuPzh5IRYPviRiOuhLpo=";
-          })
-        ];
-      });
+      fuzzel = prev.fuzzel.overrideAttrs (
+        {
+          patches ? [ ],
+          ...
+        }:
+        {
+          patches = patches ++ [
+            (final.fetchpatch2 {
+              name = "config-add-CTRL-to-default-keybindings";
+              url = "https://codeberg.org/jmbaur/fuzzel/commit/2ecdc51a4f9ed83e94741a80648429ff7b062a14.patch";
+              hash = "sha256-0cWbtc1O37zD8OCgufIurzCyuPzh5IRYPviRiOuhLpo=";
+            })
+          ];
+        }
+      );
 
-      fnott = prev.fnott.overrideAttrs ({ patches ? [ ], ... }: {
-        patches = patches ++ [
-          (final.fetchpatch2 {
-            name = "add-dbus-service-file";
-            url = "https://codeberg.org/sewn/fnott/commit/6a092ba5fea58764cb56cfb037fcd334a8e3d67c.patch";
-            excludes = [ "README.md" ]; # fails to apply
-            hash = "sha256-ZwfVOHiPmd0JulWLOXyj2HOtyKsPHPmYcvl7jBMchUQ=";
-          })
-        ];
-      });
+      fnott = prev.fnott.overrideAttrs (
+        {
+          patches ? [ ],
+          ...
+        }:
+        {
+          patches = patches ++ [
+            (final.fetchpatch2 {
+              name = "add-dbus-service-file";
+              url = "https://codeberg.org/sewn/fnott/commit/6a092ba5fea58764cb56cfb037fcd334a8e3d67c.patch";
+              excludes = [ "README.md" ]; # fails to apply
+              hash = "sha256-ZwfVOHiPmd0JulWLOXyj2HOtyKsPHPmYcvl7jBMchUQ=";
+            })
+          ];
+        }
+      );
 
       libgit2_1_5 = prev.libgit2.overrideAttrs (_: rec {
         version = "1.5.2";
@@ -83,9 +115,7 @@ inputs: {
         };
       });
 
-      git-shell-commands = prev.callPackage ./git-shell-commands {
-        libgit2 = final.libgit2_1_5;
-      };
+      git-shell-commands = prev.callPackage ./git-shell-commands { libgit2 = final.libgit2_1_5; };
       pb = prev.writeShellScriptBin "pb" "echo $(${final.curl}/bin/curl --silent --data-binary @- https://paste.rs/)";
       tmux-jump = prev.callPackage ./tmux-jump.nix { };
       kinesis-kint41-jmbaur = prev.callPackage ./kinesis-kint41-jmbaur.nix { };
@@ -103,29 +133,21 @@ inputs: {
       brave-wayland = prev.callPackage ./mk-wayland-variant.nix { package = final.brave; };
       chromium-wayland = prev.callPackage ./mk-wayland-variant.nix { package = final.chromium; };
       discord-wayland = prev.callPackage ./mk-wayland-variant.nix { package = final.discord; };
-      google-chrome-wayland = prev.callPackage ./mk-wayland-variant.nix { package = final.google-chrome; };
-      signal-desktop-wayland = prev.callPackage ./mk-wayland-variant.nix { package = final.signal-desktop; };
+      google-chrome-wayland = prev.callPackage ./mk-wayland-variant.nix {
+        package = final.google-chrome;
+      };
+      signal-desktop-wayland = prev.callPackage ./mk-wayland-variant.nix {
+        package = final.signal-desktop;
+      };
       slack-wayland = prev.callPackage ./mk-wayland-variant.nix { package = final.slack; };
       spotify-wayland = prev.callPackage ./mk-wayland-variant.nix { package = final.spotify; };
 
-      mkWebApp = prev.callPackage
-        ./mk-web-app.nix
-        { chromium = final.chromium-wayland; };
-      discord-webapp = final.mkWebApp
-        "discord"
-        "https://discord.com/app";
-      outlook-webapp = final.mkWebApp
-        "outlook"
-        "https://outlook.office365.com/mail";
-      slack-webapp = final.mkWebApp
-        "slack"
-        "https://app.slack.com/client";
-      spotify-webapp = final.mkWebApp
-        "spotify"
-        "https://open.spotify.com";
-      teams-webapp = final.mkWebApp
-        "teams"
-        "https://teams.microsoft.com";
+      mkWebApp = prev.callPackage ./mk-web-app.nix { chromium = final.chromium-wayland; };
+      discord-webapp = final.mkWebApp "discord" "https://discord.com/app";
+      outlook-webapp = final.mkWebApp "outlook" "https://outlook.office365.com/mail";
+      slack-webapp = final.mkWebApp "slack" "https://app.slack.com/client";
+      spotify-webapp = final.mkWebApp "spotify" "https://open.spotify.com";
+      teams-webapp = final.mkWebApp "teams" "https://teams.microsoft.com";
 
       grafana-dashboards = prev.callPackage ./grafana-dashboards { };
 

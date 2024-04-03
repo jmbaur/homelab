@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cn913xBuildRepo = pkgs.fetchFromGitHub {
     owner = "solidrun";
@@ -18,40 +23,51 @@ in
 
     system.build.firmware = pkgs.cn9130CfProSpiFirmware;
 
-    boot.kernelParams = [ "console=ttyS0,115200" "cma=256M" ];
+    boot.kernelParams = [
+      "console=ttyS0,115200"
+      "cma=256M"
+    ];
 
     boot.kernelPackages = pkgs.linuxPackages_6_1;
-    boot.kernelPatches = (map
-      (patch: {
-        name = lib.replaceStrings [ ".patch" ] [ "" ] patch;
-        patch = "${cn913xLinuxPatchesPath}/${patch}";
-      })
-      (lib.attrNames (lib.filterAttrs (_: entry: entry == "regular") (builtins.readDir cn913xLinuxPatchesPath))))
-    ++ [{
-      name = "cn913x-enablement";
-      patch = null;
-      extraStructuredConfig = with lib.kernel; {
-        ACPI_CPPC_CPUFREQ = yes;
-        ARM_ARMADA_8K_CPUFREQ = yes;
-        CPU_FREQ_DEFAULT_GOV_ONDEMAND = yes;
-        CPU_FREQ_GOV_CONSERVATIVE = yes;
-        CPU_FREQ_GOV_POWERSAVE = yes;
-        EEPROM_AT24 = yes;
-        GPIO_SYSFS = yes;
-        MARVELL_10G_PHY = yes;
-        MARVELL_PHY = yes;
-        NET_DSA = module;
-        NET_DSA_MV88E6XXX = module;
-        SENSORS_MCP3021 = yes;
-        SENSORS_PWM_FAN = yes;
-        SFP = yes;
-        UIO = yes;
-        USB_SERIAL = yes;
-        USB_SERIAL_FTDI_SIO = yes;
-        USB_SERIAL_OPTION = yes;
-        USB_SERIAL_WWAN = yes;
-      };
-    }];
+    boot.kernelPatches =
+      (map
+        (patch: {
+          name = lib.replaceStrings [ ".patch" ] [ "" ] patch;
+          patch = "${cn913xLinuxPatchesPath}/${patch}";
+        })
+        (
+          lib.attrNames (
+            lib.filterAttrs (_: entry: entry == "regular") (builtins.readDir cn913xLinuxPatchesPath)
+          )
+        )
+      )
+      ++ [
+        {
+          name = "cn913x-enablement";
+          patch = null;
+          extraStructuredConfig = with lib.kernel; {
+            ACPI_CPPC_CPUFREQ = yes;
+            ARM_ARMADA_8K_CPUFREQ = yes;
+            CPU_FREQ_DEFAULT_GOV_ONDEMAND = yes;
+            CPU_FREQ_GOV_CONSERVATIVE = yes;
+            CPU_FREQ_GOV_POWERSAVE = yes;
+            EEPROM_AT24 = yes;
+            GPIO_SYSFS = yes;
+            MARVELL_10G_PHY = yes;
+            MARVELL_PHY = yes;
+            NET_DSA = module;
+            NET_DSA_MV88E6XXX = module;
+            SENSORS_MCP3021 = yes;
+            SENSORS_PWM_FAN = yes;
+            SFP = yes;
+            UIO = yes;
+            USB_SERIAL = yes;
+            USB_SERIAL_FTDI_SIO = yes;
+            USB_SERIAL_OPTION = yes;
+            USB_SERIAL_WWAN = yes;
+          };
+        }
+      ];
 
     hardware.deviceTree = {
       enable = true;
@@ -81,7 +97,13 @@ in
       linkConfig.RequiredForOnline = false;
       networkConfig = {
         LinkLocalAddressing = "no";
-        BindCarrier = map (i: "lan${toString i}") [ 1 2 3 4 5 ];
+        BindCarrier = map (i: "lan${toString i}") [
+          1
+          2
+          3
+          4
+          5
+        ];
       };
     };
   };

@@ -1,18 +1,34 @@
-{ config, lib, pkgs, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
   options.custom.remoteBuilders = {
     aarch64builder.enable = lib.mkEnableOption "aarch64 builder";
   };
   config = lib.mkMerge [
     (lib.mkIf config.custom.remoteBuilders.aarch64builder.enable {
-      nix.buildMachines = [{
-        protocol = "ssh-ng";
-        hostName = "aarch64builder";
-        systems = [ "aarch64-linux" "armv7l-linux" ];
-        maxJobs = 8;
-        speedFactor = 2;
-        supportedFeatures = [ "nixos-test" "benchmark" "big-parallel" "kvm" ];
-        mandatoryFeatures = [ ];
-      }];
+      nix.buildMachines = [
+        {
+          protocol = "ssh-ng";
+          hostName = "aarch64builder";
+          systems = [
+            "aarch64-linux"
+            "armv7l-linux"
+          ];
+          maxJobs = 8;
+          speedFactor = 2;
+          supportedFeatures = [
+            "nixos-test"
+            "benchmark"
+            "big-parallel"
+            "kvm"
+          ];
+          mandatoryFeatures = [ ];
+        }
+      ];
       nix.distributedBuilds = true;
       # optional, useful when the builder has a faster internet connection than yours
       nix.settings.builders-use-substitutes = true;

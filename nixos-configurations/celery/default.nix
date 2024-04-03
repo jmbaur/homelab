@@ -1,4 +1,5 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
   imports = [ ./router.nix ];
 
   nixpkgs.hostPlatform = "aarch64-linux";
@@ -7,25 +8,27 @@
 
   users.users.root.openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-ssh-keys ];
 
-  hardware.deviceTree.overlays = [{
-    name = "real-time-clock";
-    dtsText = ''
-      /dts-v1/;
-      /plugin/;
+  hardware.deviceTree.overlays = [
+    {
+      name = "real-time-clock";
+      dtsText = ''
+        /dts-v1/;
+        /plugin/;
 
-      / {
-        compatible = "bananapi,bpi-r3";
-      };
-
-      &i2c0 {
-        rtc@68 {
-            compatible = "nxp,pcf8523";
-            reg = <0x68>;
-            quartz-load-femtofarads = <7000>;
+        / {
+          compatible = "bananapi,bpi-r3";
         };
-      };
-    '';
-  }];
+
+        &i2c0 {
+          rtc@68 {
+              compatible = "nxp,pcf8523";
+              reg = <0x68>;
+              quartz-load-femtofarads = <7000>;
+          };
+        };
+      '';
+    }
+  ];
 
   custom.image = {
     enable = true;

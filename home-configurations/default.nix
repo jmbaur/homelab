@@ -1,25 +1,34 @@
 inputs:
 
 let
-  inherit (inputs.nixpkgs.lib) flatten filterAttrs mapAttrsToList nameValuePair;
-in
-builtins.listToAttrs (flatten (
-  mapAttrsToList
-    (userName: _:
-
+  inherit (inputs.nixpkgs.lib)
+    flatten
+    filterAttrs
     mapAttrsToList
-      (hostName: _:
+    nameValuePair
+    ;
+in
+builtins.listToAttrs (
+  flatten (
+    mapAttrsToList (
+      userName: _:
 
-      let
-        inherit (import ./${userName}/${hostName}) system modules;
-      in
-      nameValuePair "${userName}-${hostName}" (inputs.home-manager.lib.homeManagerConfiguration {
-        pkgs = import inputs.nixpkgs {
-          inherit system;
-          overlays = [ inputs.self.overlays.default ];
-        };
-        modules = [ inputs.self.homeModules.${userName} ] ++ modules;
-      }))
-      (filterAttrs (_: entryType: entryType == "directory") (builtins.readDir ./${userName})))
-    (filterAttrs (_: entryType: entryType == "directory") (builtins.readDir ./.))
-))
+      mapAttrsToList (
+        hostName: _:
+
+        let
+          inherit (import ./${userName}/${hostName}) system modules;
+        in
+        nameValuePair "${userName}-${hostName}" (
+          inputs.home-manager.lib.homeManagerConfiguration {
+            pkgs = import inputs.nixpkgs {
+              inherit system;
+              overlays = [ inputs.self.overlays.default ];
+            };
+            modules = [ inputs.self.homeModules.${userName} ] ++ modules;
+          }
+        )
+      ) (filterAttrs (_: entryType: entryType == "directory") (builtins.readDir ./${userName}))
+    ) (filterAttrs (_: entryType: entryType == "directory") (builtins.readDir ./.))
+  )
+)

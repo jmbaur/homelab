@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   btrfsMounts = lib.filterAttrs (_: mount: mount.fsType == "btrfs") config.fileSystems;
   hasHomeSubvolume = (lib.filterAttrs (_: mount: mount.mountPoint == "/home") btrfsMounts) != { };

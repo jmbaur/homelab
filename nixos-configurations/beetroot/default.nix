@@ -1,4 +1,5 @@
-{ lib, ... }: {
+{ lib, ... }:
+{
   nixpkgs.hostPlatform = "aarch64-linux";
 
   # requires linux 6.8

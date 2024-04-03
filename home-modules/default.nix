@@ -1,6 +1,8 @@
 inputs: {
   jared = {
     imports = [ ./jared ];
-    _module.args = { inherit inputs; };
+    _module.args = {
+      inherit inputs;
+    };
   };
 }

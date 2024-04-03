@@ -1,4 +1,10 @@
-{ config, lib, pkgs, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
   boot.kernelParams = [ "cfg80211.ieee80211_regdom=US" ];
   hardware.wirelessRegulatoryDatabase = true;
 
@@ -18,7 +24,12 @@
     enable = true;
     interfaces = [ config.router.wanInterface ];
     hookEnvironmentFile = config.sops.secrets.ipwatch_env.path;
-    filters = [ "IsGlobalUnicast" "!IsPrivate" "!IsLoopback" "!Is4In6" ];
+    filters = [
+      "IsGlobalUnicast"
+      "!IsPrivate"
+      "!IsLoopback"
+      "!Is4In6"
+    ];
     hooks =
       let
         updateCloudflare = recordType: ''
@@ -43,7 +54,10 @@
           fi
         '';
       in
-      [ "internal:echo" "executable:${script}" ];
+      [
+        "internal:echo"
+        "executable:${script}"
+      ];
   };
 
   custom.wg-mesh = {
@@ -70,14 +84,26 @@
     SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="c4:4b:d1:c1:01:2f", NAME="wlan1"
   '';
 
-  systemd.network.networks = (lib.genAttrs [ "lan1" "lan2" "lan3" "lan4" "lan5" "wlan0" "wlan1" ] (name: {
-    inherit name;
-    bridge = [ config.systemd.network.netdevs.br0.netdevConfig.Name ];
-    linkConfig = {
-      ActivationPolicy = "always-up";
-      RequiredForOnline = false;
-    };
-  }));
+  systemd.network.networks = (
+    lib.genAttrs
+      [
+        "lan1"
+        "lan2"
+        "lan3"
+        "lan4"
+        "lan5"
+        "wlan0"
+        "wlan1"
+      ]
+      (name: {
+        inherit name;
+        bridge = [ config.systemd.network.netdevs.br0.netdevConfig.Name ];
+        linkConfig = {
+          ActivationPolicy = "always-up";
+          RequiredForOnline = false;
+        };
+      })
+  );
 
   router.lanInterface = config.systemd.network.netdevs.br0.netdevConfig.Name;
   router.wanInterface = config.systemd.network.links."10-wan".linkConfig.Name;

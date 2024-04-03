@@ -1,24 +1,31 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   cfg = config.custom.builder;
 
-  buildModule = { ... }: {
-    options = {
-      flakeUri = lib.mkOption {
-        type = lib.types.str;
-      };
-      frequency = lib.mkOption {
-        type = lib.types.str;
-        default = "daily";
-        description = lib.mdDoc ''
-          Any value systemd.time(7) value.
-        '';
+  buildModule =
+    { ... }:
+    {
+      options = {
+        flakeUri = lib.mkOption { type = lib.types.str; };
+        frequency = lib.mkOption {
+          type = lib.types.str;
+          default = "daily";
+          description = lib.mdDoc ''
+            Any value systemd.time(7) value.
+          '';
+        };
       };
     };
-  };
 
-  systemdConfigs = lib.mapAttrs'
-    (name: { flakeUri, frequency }: lib.nameValuePair "build@${name}" {
+  systemdConfigs = lib.mapAttrs' (
+    name:
+    { flakeUri, frequency }:
+    lib.nameValuePair "build@${name}" {
       timer = {
         timerConfig = {
           OnCalendar = frequency;
@@ -29,7 +36,10 @@ let
 
       service = {
         description = "Build ${flakeUri}";
-        path = [ config.nix.package pkgs.git ];
+        path = [
+          config.nix.package
+          pkgs.git
+        ];
         environment = {
           XDG_CACHE_HOME = "%C/builder";
           XDG_STATE_HOME = "%S/builder";
@@ -49,9 +59,8 @@ let
             ${flakeUri}
         '';
       };
-    })
-    cfg.build;
-
+    }
+  ) cfg.build;
 in
 {
   options.custom.builder = {

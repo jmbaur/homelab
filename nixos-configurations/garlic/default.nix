@@ -1,4 +1,5 @@
-{ lib, pkgs, ... }: {
+{ lib, pkgs, ... }:
+{
   nixpkgs.hostPlatform = "aarch64-linux";
 
   boot.initrd.availableKernelModules = [ "sr_mod" ];

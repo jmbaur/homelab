@@ -1,11 +1,12 @@
-{ spi ? false
-, buildPackages
-, fetchFromGitHub
-, buildUBoot
-, buildArmTrustedFirmware
-, symlinkJoin
-, marvellBinaries
-, mvDdrMarvell
+{
+  spi ? false,
+  buildPackages,
+  fetchFromGitHub,
+  buildUBoot,
+  buildArmTrustedFirmware,
+  symlinkJoin,
+  marvellBinaries,
+  mvDdrMarvell,
 }:
 let
   uboot =
@@ -19,22 +20,28 @@ let
         hash = "sha256-WvLwWdJylWAW3eLyUPVhVhiPbmsBz6dPrbjWrCjHgY4=";
       };
       extraMakeFlags = [ "DEVICE_TREE=cn9130-cf-pro" ];
-      extraConfig =
-        (if spi then ''
-          CONFIG_ENV_IS_IN_MMC=n
-          CONFIG_ENV_IS_IN_SPI_FLASH=y
-          CONFIG_ENV_SIZE=0x10000
-          CONFIG_ENV_OFFSET=0x3f0000
-          CONFIG_ENV_SECT_SIZE=0x10000
-        '' else ''
-          CONFIG_ENV_IS_IN_MMC=y
-          CONFIG_SYS_MMC_ENV_DEV=1
-          CONFIG_SYS_MMC_ENV_PART=0
-          CONFIG_ENV_IS_IN_SPI_FLASH=n
-        '');
+      extraConfig = (
+        if spi then
+          ''
+            CONFIG_ENV_IS_IN_MMC=n
+            CONFIG_ENV_IS_IN_SPI_FLASH=y
+            CONFIG_ENV_SIZE=0x10000
+            CONFIG_ENV_OFFSET=0x3f0000
+            CONFIG_ENV_SECT_SIZE=0x10000
+          ''
+        else
+          ''
+            CONFIG_ENV_IS_IN_MMC=y
+            CONFIG_SYS_MMC_ENV_DEV=1
+            CONFIG_SYS_MMC_ENV_PART=0
+            CONFIG_ENV_IS_IN_SPI_FLASH=n
+          ''
+      );
       filesToInstall = [ "u-boot.bin" ];
-    }).overrideAttrs (_: { patches = [ ]; });
-
+    }).overrideAttrs
+      (_: {
+        patches = [ ];
+      });
 in
 (buildArmTrustedFirmware rec {
   platform = "t9130";
@@ -54,15 +61,23 @@ in
     "CP_NUM=1" # cn9130-cf-pro
     "LOG_LEVEL=20"
     "MARVELL_SECURE_BOOT=0"
-    "OPENSSL_DIR=${symlinkJoin { name = "openssl-dir"; paths = with buildPackages.openssl; [ out bin ]; }}"
+    "OPENSSL_DIR=${
+      symlinkJoin {
+        name = "openssl-dir";
+        paths = with buildPackages.openssl; [
+          out
+          bin
+        ];
+      }
+    }"
     "all"
     "fip"
     "mrvl_flash"
   ];
 
   filesToInstall = [ "build/${platform}/release/flash-image.bin" ];
-}).overrideAttrs (old: {
-  patches = (old.patches or [ ]) ++ [ ../marvell-atf-no-git.patch ];
-  nativeBuildInputs = (old.nativeBuildInputs or [ ])
-    ++ (with buildPackages; [ openssl ]);
-})
+}).overrideAttrs
+  (old: {
+    patches = (old.patches or [ ]) ++ [ ../marvell-atf-no-git.patch ];
+    nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ (with buildPackages; [ openssl ]);
+  })

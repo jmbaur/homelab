@@ -1,16 +1,24 @@
-{ config, lib, pkgs, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
   options.hardware.armada-388-clearfog = {
     enable = lib.mkEnableOption "armada-388-clearfog devices";
   };
 
   config = lib.mkIf config.hardware.armada-388-clearfog.enable {
-    nixpkgs.hostPlatform = lib.recursiveUpdate lib.systems.platforms.armv7l-hf-multiplatform
-      (lib.systems.examples.armv7l-hf-multiplatform // {
+    nixpkgs.hostPlatform = lib.recursiveUpdate lib.systems.platforms.armv7l-hf-multiplatform (
+      lib.systems.examples.armv7l-hf-multiplatform
+      // {
         linux-kernel = {
           name = "armada-388-clearfog";
           baseConfig = "mvebu_v7_defconfig";
         };
-      });
+      }
+    );
 
     boot.kernelParams = [ "console=ttyS0,115200" ];
 
@@ -20,10 +28,12 @@
     hardware.deviceTree = {
       enable = true;
       filter = "armada-388-clearfog*.dtb";
-      overlays = [{
-        name = "mtd-partitions";
-        dtsFile = ./clearfog-mtd-partitions.dtso;
-      }];
+      overlays = [
+        {
+          name = "mtd-partitions";
+          dtsFile = ./clearfog-mtd-partitions.dtso;
+        }
+      ];
     };
 
     systemd.network.links = {
@@ -50,7 +60,13 @@
       linkConfig.RequiredForOnline = false;
       networkConfig = {
         LinkLocalAddressing = "no";
-        BindCarrier = map (i: "lan${toString i}") [ 1 2 3 4 5 ];
+        BindCarrier = map (i: "lan${toString i}") [
+          1
+          2
+          3
+          4
+          5
+        ];
       };
     };
 
@@ -61,12 +77,11 @@
       description = "Restart the system when the reset button is pressed";
       unitConfig.ConditionPathExists = [ "/dev/input/by-path/platform-gpio-keys-event" ];
       # make sure evsieve button identifiers are escaped
-      serviceConfig.ExecStart = lib.replaceStrings [ "%" ] [ "%%" ]
-        (toString [
-          (lib.getExe' pkgs.evsieve "evsieve")
-          "--input /dev/input/by-path/platform-gpio-keys-event"
-          "--hook btn:%256 exec-shell=\"systemctl reboot\""
-        ]);
+      serviceConfig.ExecStart = lib.replaceStrings [ "%" ] [ "%%" ] (toString [
+        (lib.getExe' pkgs.evsieve "evsieve")
+        "--input /dev/input/by-path/platform-gpio-keys-event"
+        "--hook btn:%256 exec-shell=\"systemctl reboot\""
+      ]);
       wantedBy = [ "multi-user.target" ];
     };
 
@@ -119,7 +134,11 @@
     # If no variables for these mac addresses exist, we need to generate them
     # so the device has persistent mac addresses across reboots.
     systemd.services.stable-mac-address = {
-      path = with pkgs; [ gnugrep ubootEnvTools macgen ];
+      path = with pkgs; [
+        gnugrep
+        ubootEnvTools
+        macgen
+      ];
       wantedBy = [ "multi-user.target" ];
       script = ''
         if ! fw_printenv | grep --silent -e eth1addr -e eth2addr -e eth3addr; then

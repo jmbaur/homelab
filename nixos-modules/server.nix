@@ -2,7 +2,8 @@
 let
   cfg = config.custom.server;
 in
-with lib; {
+with lib;
+{
   options.custom.server.enable = mkEnableOption "server";
   config = mkIf cfg.enable {
     documentation.enable = mkDefault false;

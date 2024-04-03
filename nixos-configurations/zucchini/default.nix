@@ -1,4 +1,5 @@
-{ pkgs, lib, ... }: {
+{ pkgs, lib, ... }:
+{
   nixpkgs.hostPlatform = "aarch64-linux";
 
   custom.basicNetwork.enable = true;
@@ -11,32 +12,39 @@
 
   boot.kernelPackages = pkgs.linuxPackages_testing;
 
-  boot.initrd.availableKernelModules = [ "phy-rockchip-naneng-combphy" "nvme" ];
+  boot.initrd.availableKernelModules = [
+    "phy-rockchip-naneng-combphy"
+    "nvme"
+  ];
 
-  boot.kernelPatches = [{
-    name = "zboot-compression";
-    patch = null;
-    extraStructuredConfig.EFI_ZBOOT = lib.kernel.yes;
-  }];
+  boot.kernelPatches = [
+    {
+      name = "zboot-compression";
+      patch = null;
+      extraStructuredConfig.EFI_ZBOOT = lib.kernel.yes;
+    }
+  ];
 
   hardware.deviceTree = {
     enable = true;
     name = "rockchip/rk3588s-orangepi-5.dtb";
-    overlays = [{
-      name = "use-standard-baudrate";
-      dtsText = ''
-        /dts-v1/;
-        /plugin/;
+    overlays = [
+      {
+        name = "use-standard-baudrate";
+        dtsText = ''
+          /dts-v1/;
+          /plugin/;
 
-        / {
-          compatible = "rockchip,rk3588s";
-        };
+          / {
+            compatible = "rockchip,rk3588s";
+          };
 
-        &{/chosen} {
-          stdout-path = "serial2:115200n8";
-        };
-      '';
-    }];
+          &{/chosen} {
+            stdout-path = "serial2:115200n8";
+          };
+        '';
+      }
+    ];
   };
 
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem pkg.pname [ "rkbin" ];
@@ -50,4 +58,3 @@
     };
   };
 }
-

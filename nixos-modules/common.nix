@@ -1,10 +1,17 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.custom.common;
   isNotContainer = !config.boot.isContainer;
 in
 {
-  options.custom.common.enable = lib.mkEnableOption "common config" // { default = true; };
+  options.custom.common.enable = lib.mkEnableOption "common config" // {
+    default = true;
+  };
 
   config = lib.mkIf cfg.enable {
     # NOTE: this should be set explicitly if it is actually needed
@@ -30,7 +37,17 @@ in
 
     programs.command-not-found.enable = false;
 
-    security.sudo.extraRules = [{ groups = [ "wheel" ]; commands = [{ command = "/run/current-system/sw/bin/networkctl"; options = [ "NOPASSWD" ]; }]; }];
+    security.sudo.extraRules = [
+      {
+        groups = [ "wheel" ];
+        commands = [
+          {
+            command = "/run/current-system/sw/bin/networkctl";
+            options = [ "NOPASSWD" ];
+          }
+        ];
+      }
+    ];
 
     networking.nftables.enable = lib.mkDefault true;
 
@@ -43,7 +60,10 @@ in
     nix = {
       channel.enable = false; # opt out of nix channels
       settings = {
-        experimental-features = [ "nix-command" "flakes" ];
+        experimental-features = [
+          "nix-command"
+          "flakes"
+        ];
         trusted-users = [ "@wheel" ];
       };
     };

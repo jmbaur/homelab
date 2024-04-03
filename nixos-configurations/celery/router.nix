@@ -1,4 +1,10 @@
-{ config, lib, pkgs, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
   boot.kernelParams = [ "cfg80211.ieee80211_regdom=US" ];
   hardware.wirelessRegulatoryDatabase = true;
 
@@ -12,14 +18,25 @@
     Kind = "bridge";
   };
 
-  systemd.network.networks = (lib.genAttrs [ "lan1" "lan2" "lan3" "lan4" "wlan0" "wlan1" ] (name: {
-    inherit name;
-    bridge = [ config.systemd.network.netdevs.br0.netdevConfig.Name ];
-    linkConfig = {
-      ActivationPolicy = "always-up";
-      RequiredForOnline = false;
-    };
-  }));
+  systemd.network.networks = (
+    lib.genAttrs
+      [
+        "lan1"
+        "lan2"
+        "lan3"
+        "lan4"
+        "wlan0"
+        "wlan1"
+      ]
+      (name: {
+        inherit name;
+        bridge = [ config.systemd.network.netdevs.br0.netdevConfig.Name ];
+        linkConfig = {
+          ActivationPolicy = "always-up";
+          RequiredForOnline = false;
+        };
+      })
+  );
 
   router.lanInterface = config.systemd.network.netdevs.br0.netdevConfig.Name;
   router.wanInterface = "wan";

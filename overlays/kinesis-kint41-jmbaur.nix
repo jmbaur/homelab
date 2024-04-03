@@ -1,4 +1,10 @@
-{ lib, stdenv, fetchgit, qmk, ... }:
+{
+  lib,
+  stdenv,
+  fetchgit,
+  qmk,
+  ...
+}:
 
 let
   source = lib.importJSON ./qmk-source.json;
@@ -9,7 +15,13 @@ stdenv.mkDerivation {
 
   src = fetchgit {
     inherit (source)
-      url hash fetchSubmodules fetchLFS deepClone leaveDotGit;
+      url
+      hash
+      fetchSubmodules
+      fetchLFS
+      deepClone
+      leaveDotGit
+      ;
   };
 
   nativeBuildInputs = [ qmk ];
@@ -26,4 +38,3 @@ stdenv.mkDerivation {
     runHook postInstall
   '';
 }
-

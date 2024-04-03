@@ -1,4 +1,10 @@
-{ config, lib, pkgs, modulesPath, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  modulesPath,
+  ...
+}:
 let
   sectorSize = 512;
   splSector = 256;
@@ -20,7 +26,6 @@ let
       BOOTCOUNT_ENV = yes;
     };
   };
-
 in
 {
   disabledModules = [
@@ -46,15 +51,17 @@ in
 
   system.build.firmware = uboot;
 
-  nixpkgs.hostPlatform = lib.recursiveUpdate lib.systems.platforms.armv7l-hf-multiplatform
-    (lib.systems.examples.armv7l-hf-multiplatform // {
+  nixpkgs.hostPlatform = lib.recursiveUpdate lib.systems.platforms.armv7l-hf-multiplatform (
+    lib.systems.examples.armv7l-hf-multiplatform
+    // {
       linux-kernel = {
         name = "sunxi";
         baseConfig = "sunxi_defconfig";
         autoModules = true;
         preferBuiltin = true;
       };
-    });
+    }
+  );
 
   # {{{ TODO(jared): delete this
   users.users.root.password = lib.warn "EMPTY ROOT PASSWORD, DO NOT USE IN 'PRODUCTION'" "";

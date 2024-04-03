@@ -1,4 +1,5 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
   imports = [ ./base.nix ];
 
   custom.server.enable = true;
@@ -21,22 +22,24 @@
   #   wantedBy = [ "usb-gadget.target" ];
   # };
 
-  hardware.deviceTree.overlays = [{
-    name = "usb-host-mode";
-    dtsText = ''
-      /dts-v1/;
-      /plugin/;
+  hardware.deviceTree.overlays = [
+    {
+      name = "usb-host-mode";
+      dtsText = ''
+        /dts-v1/;
+        /plugin/;
 
-      / {
-        compatible = "sinovoip,bpi-m2-zero";
-      };
+        / {
+          compatible = "sinovoip,bpi-m2-zero";
+        };
 
-      &usb_otg {
-        dr_mode = "host";
-        status = "okay";
-      };
-    '';
-  }];
+        &usb_otg {
+          dr_mode = "host";
+          status = "okay";
+        };
+      '';
+    }
+  ];
 
   systemd.services.camera-stream = {
     path = [ pkgs.ffmpeg-headless ];

@@ -1,52 +1,64 @@
-{ config, lib, pkgs, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
   options.hardware.chromebook.qualcomm = lib.mkEnableOption "qualcomm chromebook";
   config = lib.mkIf config.hardware.chromebook.qualcomm {
     boot.kernelPackages = pkgs.linuxPackages_latest;
-    boot.kernelParams = [ "pd_ignore_unused" "clk_ignore_unused" "console=ttyMSM0,115200" ];
-    boot.kernelPatches = [{
-      name = "qcom-enablement";
-      patch = null;
-      extraStructuredConfig = with lib.kernel; {
-        ARM_SMMU_QCOM = yes;
-        INTERCONNECT_QCOM = yes;
-        INTERCONNECT_QCOM_OSM_L3 = yes;
-        INTERCONNECT_QCOM_SC7180 = yes;
-        PHY_QCOM_QUSB2 = yes;
-        PHY_QCOM_USB_SNPS_FEMTO_V2 = yes;
-        QCOM_GENI_SE = yes;
-        QCOM_IPCC = yes;
-        QCOM_LLCC = yes;
-        QCOM_PDC = yes;
-        QCOM_PIL_INFO = yes;
-        QCOM_Q6V5_COMMON = yes;
-        QCOM_RPMH = yes;
-        QCOM_RPMHPD = yes;
-        QCOM_RPROC_COMMON = yes;
-        QCOM_SCM = yes;
-        QCOM_SMEM = yes;
-        QCOM_SMP2P = yes;
-        QCOM_SOCINFO = yes;
-        QCOM_SPMI_ADC5 = yes;
-        QCOM_SPMI_ADC_TM5 = yes;
-        QCOM_SPMI_TEMP_ALARM = yes;
-        QCOM_STATS = yes;
-        QCOM_SYSMON = yes;
-        QCOM_TSENS = yes;
-        QCOM_WDT = yes;
-        SC_CAMCC_7180 = yes;
-        SC_CAMCC_7280 = yes;
-        SC_DISPCC_7180 = yes;
-        SC_DISPCC_7280 = yes;
-        SC_GPUCC_7180 = yes;
-        SC_GPUCC_7280 = yes;
-        SC_LPASSCC_7280 = yes;
-        SC_LPASS_CORECC_7180 = yes;
-        SC_LPASS_CORECC_7280 = yes;
-        SC_MSS_7180 = yes;
-        SC_VIDEOCC_7180 = yes;
-        SC_VIDEOCC_7280 = yes;
-      };
-    }];
+    boot.kernelParams = [
+      "pd_ignore_unused"
+      "clk_ignore_unused"
+      "console=ttyMSM0,115200"
+    ];
+    boot.kernelPatches = [
+      {
+        name = "qcom-enablement";
+        patch = null;
+        extraStructuredConfig = with lib.kernel; {
+          ARM_SMMU_QCOM = yes;
+          INTERCONNECT_QCOM = yes;
+          INTERCONNECT_QCOM_OSM_L3 = yes;
+          INTERCONNECT_QCOM_SC7180 = yes;
+          PHY_QCOM_QUSB2 = yes;
+          PHY_QCOM_USB_SNPS_FEMTO_V2 = yes;
+          QCOM_GENI_SE = yes;
+          QCOM_IPCC = yes;
+          QCOM_LLCC = yes;
+          QCOM_PDC = yes;
+          QCOM_PIL_INFO = yes;
+          QCOM_Q6V5_COMMON = yes;
+          QCOM_RPMH = yes;
+          QCOM_RPMHPD = yes;
+          QCOM_RPROC_COMMON = yes;
+          QCOM_SCM = yes;
+          QCOM_SMEM = yes;
+          QCOM_SMP2P = yes;
+          QCOM_SOCINFO = yes;
+          QCOM_SPMI_ADC5 = yes;
+          QCOM_SPMI_ADC_TM5 = yes;
+          QCOM_SPMI_TEMP_ALARM = yes;
+          QCOM_STATS = yes;
+          QCOM_SYSMON = yes;
+          QCOM_TSENS = yes;
+          QCOM_WDT = yes;
+          SC_CAMCC_7180 = yes;
+          SC_CAMCC_7280 = yes;
+          SC_DISPCC_7180 = yes;
+          SC_DISPCC_7280 = yes;
+          SC_GPUCC_7180 = yes;
+          SC_GPUCC_7280 = yes;
+          SC_LPASSCC_7280 = yes;
+          SC_LPASS_CORECC_7180 = yes;
+          SC_LPASS_CORECC_7280 = yes;
+          SC_MSS_7180 = yes;
+          SC_VIDEOCC_7180 = yes;
+          SC_VIDEOCC_7280 = yes;
+        };
+      }
+    ];
     boot.initrd.availableKernelModules = [
       "dispcc-sc7180"
       "extcon-qcom-spmi-misc"

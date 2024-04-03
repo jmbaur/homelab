@@ -1,4 +1,10 @@
-{ config, lib, pkgs, utils, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  utils,
+  ...
+}:
 
 let
   cfg = config.custom.image;
@@ -18,18 +24,26 @@ in
     ./update.nix
   ];
 
-
   options.custom.image = with lib; {
     enable = mkEnableOption "TODO";
 
     hasTpm2 = mkEnableOption "TODO";
 
-    encrypt = mkEnableOption "TODO" // { default = true; };
+    encrypt = mkEnableOption "TODO" // {
+      default = true;
+    };
 
     mutableNixStore = mkEnableOption "TODO";
 
     sectorSize = lib.mkOption {
-      type = with lib.types; enum [ 512 1024 2048 4096 ];
+      type =
+        with lib.types;
+        enum [
+          512
+          1024
+          2048
+          4096
+        ];
       default = 512;
       example = lib.literalExpression "4096";
       description = lib.mdDoc ''
@@ -74,7 +88,8 @@ in
   config = lib.mkIf cfg.enable {
     assertions = [
       {
-        assertion = config.system.image.version != null && lib.versionAtLeast config.system.image.version "0.0.1";
+        assertion =
+          config.system.image.version != null && lib.versionAtLeast config.system.image.version "0.0.1";
         message = "Image version must be set and must be at least 0.0.1";
       }
       {
@@ -82,7 +97,14 @@ in
         message = "Image ID must be set";
       }
       {
-        assertion = lib.length (lib.filter (enabled: enabled) [ cfg.uefi.enable cfg.uboot.enable cfg.bootloaderspec.enable ]) == 1;
+        assertion =
+          lib.length (
+            lib.filter (enabled: enabled) [
+              cfg.uefi.enable
+              cfg.uboot.enable
+              cfg.bootloaderspec.enable
+            ]
+          ) == 1;
         message = "Only one boot variant can be enabled at once";
       }
     ];
@@ -147,25 +169,34 @@ in
               where = "/sysroot/nix/store";
               wantedBy = [ "initrd-fs.target" ];
               conflicts = [ "umount.target" ];
-              before = [ "initrd-fs.target" "umount.target" ];
+              before = [
+                "initrd-fs.target"
+                "umount.target"
+              ];
               unitConfig = {
                 DefaultDependencies = false;
                 RequiresMountsFor = "/sysroot/nix/.ro-store";
               };
             }
-            (if cfg.mutableNixStore then {
-              what = "overlay";
-              type = "overlay";
-              options = lib.concatStringsSep "," [
-                "lowerdir=/sysroot/nix/.ro-store"
-                "upperdir=/sysroot/nix/.rw-store/store"
-                "workdir=/sysroot/nix/.rw-store/work"
-              ];
-            } else {
-              what = "/sysroot/nix/.ro-store";
-              type = "none";
-              options = "bind";
-            }))
+            (
+              if cfg.mutableNixStore then
+                {
+                  what = "overlay";
+                  type = "overlay";
+                  options = lib.concatStringsSep "," [
+                    "lowerdir=/sysroot/nix/.ro-store"
+                    "upperdir=/sysroot/nix/.rw-store/store"
+                    "workdir=/sysroot/nix/.rw-store/work"
+                  ];
+                }
+              else
+                {
+                  what = "/sysroot/nix/.ro-store";
+                  type = "none";
+                  options = "bind";
+                }
+            )
+          )
         ];
 
         # Require that systemd-repart only starts after we have our dm-verity
@@ -181,9 +212,7 @@ in
         repart.device = cfg.primaryDisk;
       };
 
-      availableKernelModules = [
-        "dm_verity"
-      ] ++ lib.optional cfg.mutableNixStore "overlay";
+      availableKernelModules = [ "dm_verity" ] ++ lib.optional cfg.mutableNixStore "overlay";
     };
 
     systemd.repart.partitions = {
@@ -225,7 +254,10 @@ in
         Label = "root";
         Format = "btrfs";
         FactoryReset = true;
-        MakeDirectories = lib.mkIf cfg.mutableNixStore (toString [ "/nix/.rw-store/store" "/nix/.rw-store/work" ]);
+        MakeDirectories = lib.mkIf cfg.mutableNixStore (toString [
+          "/nix/.rw-store/store"
+          "/nix/.rw-store/work"
+        ]);
         Encrypt = encrypt;
       };
     };
@@ -241,7 +273,11 @@ in
 
     fileSystems."/" = {
       fsType = config.systemd.repart.partitions."30-root".Format;
-      options = [ "compress=zstd" "noatime" "defaults" ];
+      options = [
+        "compress=zstd"
+        "noatime"
+        "defaults"
+      ];
       device =
         if cfg.encrypt then
           "/dev/mapper/root"

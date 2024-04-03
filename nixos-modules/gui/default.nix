@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.custom.gui;
 in
@@ -9,17 +14,21 @@ in
     custom.basicNetwork.enable = true;
 
     hardware.keyboard.qmk.enable = true;
-    services.udev.packages = [ pkgs.yubikey-personalization pkgs.teensy-udev-rules ];
-    nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-      "teensy-udev-rules"
+    services.udev.packages = [
+      pkgs.yubikey-personalization
+      pkgs.teensy-udev-rules
     ];
+    nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "teensy-udev-rules" ];
 
     programs.gnupg.agent.enable = true;
     programs.ssh.startAgent = true;
     programs.wshowkeys.enable = true;
     programs.sway = {
       enable = true;
-      wrapperFeatures = { base = true; gtk = true; };
+      wrapperFeatures = {
+        base = true;
+        gtk = true;
+      };
     };
 
     hardware.pulseaudio.enable = lib.mkForce false;
