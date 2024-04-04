@@ -14,9 +14,15 @@ inputs: {
         withPcsclite = final.stdenv.hostPlatform == final.stdenv.buildPlatform;
       };
 
-      gnupg = prev.gnupg.override {
+      gnupg = (prev.gnupg.override {
         enableMinimal = final.stdenv.hostPlatform != final.stdenv.buildPlatform;
-      };
+      }).overrideAttrs (old: {
+        # TODO(jared): can remove when https://github.com/NixOS/nixpkgs/pull/298001 is merged
+        configureFlags = old.configureFlags ++
+          final.lib.optional (final.stdenv.hostPlatform != final.stdenv.buildPlatform)
+            "GPGRT_CONFIG=${prev.lib.getDev final.libgpg-error}/bin/gpgrt-config";
+      });
+
 
       tcpdump = prev.tcpdump.overrideAttrs (old: {
         patches = (old.patches or [ ]) ++ [

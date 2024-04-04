@@ -4,16 +4,24 @@ local M = {}
 
 local conditional_efm_languages = {
 	sh = {
-		{ enable = vim.g.lang_support_shell, config = require("efmls-configs.formatters.shfmt") },
-		{ enable = vim.g.lang_support_shell, config = require("efmls-configs.linters.shellcheck") },
+		enable = vim.g.lang_support_shell,
+		tools = {
+			require("efmls-configs.formatters.shfmt"),
+			require("efmls-configs.linters.shellcheck"),
+		},
 	},
-	nix = { {
-		enable = vim.g.lang_support_nix, config = { formatCommand = "nixfmt-rfc-style", formatStdin = true },
-	} },
-	toml = { { enable = vim.g.lang_support_nix, config = require("efmls-configs.formatters.taplo") } },
-	latex = { {
-		enable = vim.g.lang_support_latex, config = require("efmls-configs.formatters.latexindent")
-	} },
+	nix = {
+		enable = vim.g.lang_support_nix,
+		tools = { { formatCommand = "nixfmt", formatStdin = false }, },
+	},
+	toml = {
+		enable = vim.g.lang_support_toml,
+		tools = { require("efmls-configs.formatters.taplo") },
+	},
+	latex = {
+		enable = vim.g.lang_support_latex,
+		tools = { require("efmls-configs.formatters.latexindent") },
+	},
 }
 
 local toggle_format_on_save = function()
@@ -62,12 +70,8 @@ M.setup = function(config)
 				vim.api.nvim_create_autocmd("BufWritePre", {
 					group = lsp_formatting_augroup,
 					buffer = bufnr,
-					callback = function()
-						vim.lsp.buf.format()
-					end,
+					callback = vim.lsp.buf.format,
 				})
-			else
-				client.server_capabilities.documentFormattingProvider = false
 			end
 
 			if settings.org_imports and client.supports_method("textDocument/codeAction") then
@@ -105,11 +109,13 @@ M.setup = function(config)
 	local on_attach = get_on_attach({ format = false, org_imports = false })
 
 	local efm_languages = {}
+	local efm_filetypes = {}
 	for lang, lang_config in pairs(conditional_efm_languages) do
 		local lang_efm_config = {}
-		for _, tool in pairs(lang_config) do
-			if tool.enable then
-				table.insert(lang_efm_config, tool.config)
+		if lang_config.enable then
+			table.insert(efm_filetypes, lang)
+			for _, tool in pairs(lang_config.tools) do
+				table.insert(lang_efm_config, tool)
 			end
 		end
 		efm_languages[lang] = lang_efm_config
@@ -126,6 +132,7 @@ M.setup = function(config)
 					rootMarkers = { ".git/" },
 					languages = efm_languages,
 				},
+				filetypes = efm_filetypes,
 			},
 		},
 		hls = {
