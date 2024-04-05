@@ -1,5 +1,5 @@
 {
-    description = "NixOS configurations for the homelab";
+  description = "NixOS configurations for the homelab";
 
   inputs = {
     gobar.inputs.nixpkgs.follows = "nixpkgs";

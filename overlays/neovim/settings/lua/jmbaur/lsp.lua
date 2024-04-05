@@ -12,7 +12,7 @@ local conditional_efm_languages = {
 	},
 	nix = {
 		enable = vim.g.lang_support_nix,
-		tools = { { formatCommand = "nixfmt", formatStdin = false }, },
+		tools = { { formatCommand = "nixfmt", formatStdin = true }, },
 	},
 	toml = {
 		enable = vim.g.lang_support_toml,
@@ -70,7 +70,9 @@ M.setup = function(config)
 				vim.api.nvim_create_autocmd("BufWritePre", {
 					group = lsp_formatting_augroup,
 					buffer = bufnr,
-					callback = vim.lsp.buf.format,
+					callback = function()
+						vim.lsp.buf.format()
+					end,
 				})
 			end
 
