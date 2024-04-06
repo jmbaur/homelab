@@ -104,6 +104,7 @@ in
         htmlq
         htop-vim
         iputils
+        jared-emacs
         jared-neovim-all-languages
         jo
         jq
@@ -124,6 +125,7 @@ in
         nload
         nurl
         patchelf
+        pax-utils
         pb
         pciutils
         pomo
@@ -302,40 +304,7 @@ in
         '';
       };
 
-      # services.emacs = {
-      #   enable = false; # config.custom.dev.enable;
-      #   startWithGraphical = false;
-      #   package =
-      #     let
-      #       emacs = (pkgs.emacsPackagesFor pkgs.emacs29-nox).withPackages (epkgs: with epkgs; [
-      #         clipetty
-      #         company
-      #         envrc
-      #         evil
-      #         evil-collection
-      #         evil-commentary
-      #         evil-surround
-      #         go-mode
-      #         magit
-      #         markdown-mode
-      #         nix-mode
-      #         projectile
-      #         rg
-      #         rust-mode
-      #         zig-mode
-      #       ]);
-      #     in
-      #     pkgs.symlinkJoin {
-      #       name = lib.appendToName "with-tools" emacs;
-      #       paths = [ emacs ] ++ (with pkgs; [
-      #         zls
-      #         rust-analyzer
-      #         gopls
-      #         nil
-      #         nixfmt-rfc-style
-      #       ]);
-      #     };
-      # };
+      xdg.configFile."emacs/init.el".source = ./emacs.el;
     })
 
     (lib.mkIf cfg.gui.enable {

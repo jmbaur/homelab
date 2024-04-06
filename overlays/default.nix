@@ -14,15 +14,17 @@ inputs: {
         withPcsclite = final.stdenv.hostPlatform == final.stdenv.buildPlatform;
       };
 
-      gnupg = (prev.gnupg.override {
-        enableMinimal = final.stdenv.hostPlatform != final.stdenv.buildPlatform;
-      }).overrideAttrs (old: {
-        # TODO(jared): can remove when https://github.com/NixOS/nixpkgs/pull/298001 is merged
-        configureFlags = old.configureFlags ++
-          final.lib.optional (final.stdenv.hostPlatform != final.stdenv.buildPlatform)
-            "GPGRT_CONFIG=${prev.lib.getDev final.libgpg-error}/bin/gpgrt-config";
-      });
-
+      gnupg =
+        (prev.gnupg.override { enableMinimal = final.stdenv.hostPlatform != final.stdenv.buildPlatform; })
+        .overrideAttrs
+          (old: {
+            # TODO(jared): can remove when https://github.com/NixOS/nixpkgs/pull/298001 is merged
+            configureFlags =
+              old.configureFlags
+              ++ final.lib.optional (
+                final.stdenv.hostPlatform != final.stdenv.buildPlatform
+              ) "GPGRT_CONFIG=${prev.lib.getDev final.libgpg-error}/bin/gpgrt-config";
+          });
 
       tcpdump = prev.tcpdump.overrideAttrs (old: {
         patches = (old.patches or [ ]) ++ [
@@ -134,6 +136,7 @@ inputs: {
         neovim-unwrapped = inputs.neovim.packages.${prev.system}.neovim;
       };
       jared-neovim-all-languages = final.jared-neovim.override { supportAllLanguages = true; };
+      jared-emacs = prev.callPackage ./emacs { };
 
       bitwarden-wayland = prev.callPackage ./mk-wayland-variant.nix { package = final.bitwarden; };
       brave-wayland = prev.callPackage ./mk-wayland-variant.nix { package = final.brave; };
