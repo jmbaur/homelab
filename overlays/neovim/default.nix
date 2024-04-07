@@ -15,7 +15,6 @@
   nil,
   nixfmt-rfc-style,
   ormolu,
-  python3,
   ripgrep,
   ruff,
   rust-analyzer,
@@ -100,11 +99,9 @@ let
       ...
     }:
     {
-      patches =
-        patches
-        ++ [
-          # ./tmux-osc52.patch
-        ];
+      patches = patches ++ [
+        # ./tmux-osc52.patch
+      ];
     }
   );
 in
@@ -159,16 +156,7 @@ wrapNeovimUnstable neovim (
             ])
             ++ (lib.optionals languageSupport.toml [ taplo ])
             ++ (lib.optionals languageSupport.zig [ zls ])
-            ++ (lib.optionals languageSupport.python [
-              ruff
-              (python3.withPackages (
-                p: with p; [
-                  pylsp-mypy
-                  python-lsp-black
-                  python-lsp-server
-                ]
-              ))
-            ])
+            ++ (lib.optionals languageSupport.python [ ruff ])
           );
         in
         [

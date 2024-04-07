@@ -3,16 +3,23 @@ local lspconfig = require("lspconfig")
 local M = {}
 
 local conditional_efm_languages = {
+	nix = {
+		enable = vim.g.lang_support_nix,
+		tools = { { formatCommand = "nixfmt", formatStdin = true }, },
+	},
+	python = {
+		enable = vim.g.lang_support_python,
+		tools = {
+			require("efmls-configs.formatters.ruff"),
+			require("efmls-configs.linters.ruff"),
+		},
+	},
 	sh = {
 		enable = vim.g.lang_support_shell,
 		tools = {
 			require("efmls-configs.formatters.shfmt"),
 			require("efmls-configs.linters.shellcheck"),
 		},
-	},
-	nix = {
-		enable = vim.g.lang_support_nix,
-		tools = { { formatCommand = "nixfmt", formatStdin = true }, },
 	},
 	toml = {
 		enable = vim.g.lang_support_toml,
@@ -146,13 +153,6 @@ M.setup = function(config)
 			config = {
 				on_attach = on_attach_format_orgimports,
 				settings = { gopls = { gofumpt = true, staticcheck = true } },
-			},
-		},
-		pylsp = {
-			enable = vim.g.lang_support_python,
-			config = {
-				on_attach = on_attach_format,
-				settings = { pylsp = { plugins = { black = { enabled = true } } } },
 			},
 		},
 		nil_ls = { enable = vim.g.lang_support_nix, config = { on_attach = on_attach } },
