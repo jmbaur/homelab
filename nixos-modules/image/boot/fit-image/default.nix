@@ -99,10 +99,9 @@ in
 
   config = lib.mkIf (cfg.enable && cfg.uboot.enable) {
     # TODO(jared): need to add a non-UEFI equivalent to systemd-bless-boot
-    systemd.additionalUpstreamSystemUnits =
-      [
-        # "systemd-bless-boot.service"
-      ];
+    systemd.additionalUpstreamSystemUnits = [
+      # "systemd-bless-boot.service"
+    ];
 
     systemd.sysupdate.transfers."70-fit-image" = {
       Transfer.ProtectVersion = "%A";
