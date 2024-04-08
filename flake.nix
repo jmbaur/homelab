@@ -2,6 +2,8 @@
   description = "NixOS configurations for the homelab";
 
   inputs = {
+    git-hooks.inputs.nixpkgs.follows = "nixpkgs";
+    git-hooks.url = "github:cachix/git-hooks.nix";
     gobar.inputs.nixpkgs.follows = "nixpkgs";
     gobar.url = "github:jmbaur/gobar";
     gosee.inputs.nixpkgs.follows = "nixpkgs";
@@ -20,8 +22,6 @@
     nixos-router.url = "github:jmbaur/nixos-router";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nur.url = "github:nix-community/NUR";
-    pre-commit.inputs.nixpkgs.follows = "nixpkgs";
-    pre-commit.url = "github:cachix/pre-commit-hooks.nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";
     tinyboot.inputs.nixpkgs.follows = "nixpkgs";

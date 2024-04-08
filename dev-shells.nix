@@ -22,10 +22,12 @@ inputs.nixpkgs.lib.mapAttrs (system: pkgs: {
       ]
     );
     inherit
-      (inputs.pre-commit.lib.${system}.run {
+      (inputs.git-hooks.lib.${system}.run {
         src = ./.;
         hooks = {
           deadnix.enable = true;
+          nixfmt.enable = true;
+          nixfmt.package = pkgs.nixfmt-rfc-style;
           revive.enable = true;
           shellcheck.enable = true;
           shfmt.enable = true;
