@@ -153,8 +153,9 @@ in
       ];
 
       home.sessionVariables = {
-        PROJECTS_DIR = "${config.home.homeDirectory}/projects";
         EDITOR = "nvim";
+        GOPATH = "${config.home.homeDirectory}/.go";
+        PROJECTS_DIR = "${config.home.homeDirectory}/projects";
       };
       home.shellAliases = {
         j = "tmux-jump";
