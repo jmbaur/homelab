@@ -110,6 +110,7 @@ in
         jq
         just
         killall
+        libarchive
         lm_sensors
         lsof
         macgen
