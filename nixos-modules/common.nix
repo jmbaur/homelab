@@ -18,7 +18,7 @@ in
     system.stateVersion = lib.mkDefault "24.05";
 
     system.image.id = config.system.nixos.distroId;
-    system.image.version = "0.0.39";
+    system.image.version = "0.0.40";
 
     # We always build on x86_64-linux.
     #
@@ -58,7 +58,7 @@ in
     console.useXkbConfig = true;
 
     nix = {
-      package = pkgs.nixVersions.nix_2_20;
+      package = pkgs.nixVersions.nix_2_21;
       channel.enable = false; # opt out of nix channels
       settings = {
         experimental-features = [
