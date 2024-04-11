@@ -49,11 +49,23 @@ local toggle_format_on_save = function()
 	end
 end
 
+M.format_on_save = function()
+	if vim.g.format_on_save == nil then
+		vim.g.format_on_save = true
+	end
+
+	return vim.g.format_on_save
+end
+
 M.setup = function(config)
 	local lsp_implementations = config.launcher.lsp_implementations
 	local lsp_references = config.launcher.lsp_references
 
 	local org_imports = function()
+		if not (M.format_on_save()) then
+			return
+		end
+
 		local params = vim.lsp.util.make_range_params()
 		params.context = { only = { "source.organizeImports" } }
 		local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, 1000)
@@ -78,7 +90,9 @@ M.setup = function(config)
 					group = lsp_formatting_augroup,
 					buffer = bufnr,
 					callback = function()
-						vim.lsp.buf.format()
+						if M.format_on_save() then
+							vim.lsp.buf.format()
+						end
 					end,
 				})
 			end

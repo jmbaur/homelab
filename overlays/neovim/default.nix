@@ -2,6 +2,7 @@
   clang-tools,
   efm-langserver,
   fd,
+  fswatch,
   ghc,
   git,
   go-tools,
@@ -28,7 +29,9 @@
   vimPlugins,
   vimUtils,
   wrapNeovimUnstable,
+  writeText,
   zls,
+  runCommand,
   supportAllLanguages ? false,
   languageSupport ? lib.genAttrs [
     "c"
@@ -45,9 +48,20 @@
   ] (_: supportAllLanguages),
 }:
 let
+  langSupportLua = writeText "lang-support.lua" (
+    lib.concatLines (
+      lib.mapAttrsToList (
+        lang: supported: ''vim.g.lang_support_${lang} = ${lib.boolToString supported}''
+      ) languageSupport
+    )
+  );
+
   jmbaur-config = vimUtils.buildVimPlugin {
     name = "jmbaur-nvim-config";
-    src = ./settings;
+    src = runCommand "jmbaur-nvim-config-src" { inherit langSupportLua; } ''
+      cp -r ${./settings} $out
+      substituteInPlace $out/lua/init.lua --subst-var langSupportLua
+    '';
   };
 
   config = neovimUtils.makeNeovimConfig {
@@ -63,7 +77,6 @@ let
           gosee-nvim
           iron-nvim
           mini-nvim
-          nvim-gdb
           nvim-lspconfig
           nvim-treesitter-context
           nvim-treesitter-refactor
@@ -109,23 +122,22 @@ wrapNeovimUnstable neovim (
   config
   // {
     vimAlias = true;
-    luaRcContent = lib.concatLines (
-      lib.mapAttrsToList (
-        lang: supported: ''vim.g.lang_support_${lang} = ${lib.boolToString supported}''
-      ) languageSupport
-    );
+    # Disable wrapRc since it adds a `-u` flag to nvim, causing stuff like exrc
+    # to not work OOTB.
+    wrapRc = false;
     wrapperArgs =
       config.wrapperArgs
       ++ (
         let
           binPath = lib.makeBinPath (
             [
-              fd
-              git
-              ripgrep
+              efm-langserver
+              fd # telescope
+              fswatch # for faster LSP experience
+              git # vim-fugitive
+              ripgrep # telescope
               skim
               tree-sitter
-              efm-langserver
             ]
             ++ (lib.optionals languageSupport.c [ clang-tools ])
             ++ (lib.optionals languageSupport.go [

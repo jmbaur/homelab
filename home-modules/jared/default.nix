@@ -204,6 +204,9 @@ in
           "*~"
           "*.swp"
           "Session.vim"
+          ".nvim.lua"
+          ".nvimrc"
+          ".exrc"
         ];
         aliases = {
           br = "branch";
@@ -285,6 +288,7 @@ in
           set-option -g allow-passthrough on
           set-option -g automatic-rename on
           set-option -g detach-on-destroy off
+          set-option -g focus-events on
           set-option -g renumber-windows on
           set-option -g set-clipboard on
           set-option -g set-titles on
@@ -307,6 +311,9 @@ in
       };
 
       xdg.configFile."emacs/init.el".source = ./emacs.el;
+
+      # so neovim doesn't complain that init.lua doesn't exist
+      xdg.configFile."nvim/init.lua".source = pkgs.emptyFile;
     })
 
     (lib.mkIf cfg.gui.enable {
