@@ -312,8 +312,11 @@ in
 
       xdg.configFile."emacs/init.el".source = ./emacs.el;
 
-      # so neovim doesn't complain that init.lua doesn't exist
-      xdg.configFile."nvim/init.lua".source = pkgs.emptyFile;
+      # Enabling exrc support _must_ be done in the user's init.lua, it cannot
+      # be done in a plugin.
+      xdg.configFile."nvim/init.lua".source = pkgs.writeText "init.lua" ''
+        vim.opt.exrc = true
+      '';
     })
 
     (lib.mkIf cfg.gui.enable {

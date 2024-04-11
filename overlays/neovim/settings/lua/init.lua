@@ -28,7 +28,6 @@ if #vim.api.nvim_list_uis() > 0 then
 	vim.opt.belloff = "all"
 	vim.opt.colorcolumn = "80"
 	vim.opt.cursorline = false
-	vim.opt.exrc = true
 	vim.opt.foldmethod = "marker"
 	vim.opt.laststatus = 2
 	vim.opt.list = true
