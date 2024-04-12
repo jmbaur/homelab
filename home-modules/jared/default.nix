@@ -421,7 +421,7 @@ in
         settings = {
           main = {
             font = "JetBrains Mono:size=16";
-            selection-target = "clipboard";
+            selection-target = "both";
             notify-focus-inhibit = "no";
           };
           bell = {
