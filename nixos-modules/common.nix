@@ -18,7 +18,7 @@ in
     system.stateVersion = lib.mkDefault "24.05";
 
     system.image.id = config.system.nixos.distroId;
-    system.image.version = "0.0.41";
+    system.image.version = "0.0.42";
 
     # We always build on x86_64-linux.
     #
@@ -36,18 +36,6 @@ in
     documentation.nixos.enable = lib.mkDefault false;
 
     programs.command-not-found.enable = false;
-
-    security.sudo.extraRules = [
-      {
-        groups = [ "wheel" ];
-        commands = [
-          {
-            command = "/run/current-system/sw/bin/networkctl";
-            options = [ "NOPASSWD" ];
-          }
-        ];
-      }
-    ];
 
     networking.nftables.enable = lib.mkDefault true;
 
