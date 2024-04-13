@@ -10,6 +10,11 @@ let
 
   font = "sans";
   fontSize = 12.0;
+  fontStyle = "Bold Semi-Condensed";
+
+  cliphistSelectionWrapper = pkgs.writers.writeRustBin "cliphist-selection-wrapper" { } (
+    builtins.readFile ./cliphist-selection-wrapper.rs
+  );
 in
 {
   options.jared = with lib; {
@@ -441,12 +446,13 @@ in
         settings.color = "222222";
       };
 
-      programs.rofi = {
+      programs.bemenu = {
         enable = true;
-        package = pkgs.rofi-wayland;
-        font = "${font} ${toString fontSize}";
-        theme = "android_notification";
-        inherit (config.wayland.windowManager.sway.config) terminal;
+        settings = {
+          line-height = 27; # TODO(jared): this just happens to be the right height
+          ignorecase = true;
+          fn = "${font} ${fontStyle} ${toString fontSize}";
+        };
       };
 
       services.swayidle =
@@ -547,7 +553,8 @@ in
             shotman = lib.getExe' pkgs.shotman "shotman";
             hyprpicker = lib.getExe pkgs.hyprpicker;
             cliphist = lib.getExe config.services.cliphist.package;
-            rofi = lib.getExe config.programs.rofi.package;
+            bemenu = lib.getExe config.programs.bemenu.package;
+            bemenuRun = lib.getExe' config.programs.bemenu.package "bemenu-run";
             wl-copy = lib.getExe' pkgs.wl-clipboard "wl-copy";
             notify-send = lib.getExe' pkgs.libnotify "notify-send";
             pamixer = lib.getExe pkgs.pamixer;
@@ -556,7 +563,7 @@ in
           {
             modifier = "Mod4";
             terminal = "kitty";
-            menu = "${rofi} -show drun -show-icons";
+            menu = bemenuRun;
             workspaceAutoBackAndForth = true;
             workspaceLayout = "stacking";
             defaultWorkspace = "workspace number 1";
@@ -564,7 +571,7 @@ in
             seat."*".xcursor_theme = with config.home.pointerCursor; "${name} ${toString size}";
             fonts = {
               names = [ font ];
-              style = "Bold Semi-Condensed";
+              style = fontStyle;
               size = fontSize;
             };
             bars = [
@@ -624,7 +631,7 @@ in
                 "Shift+c" = "exec ${hyprpicker} --autocopy";
                 "Shift+s" = "sticky toggle";
                 "Tab" = "workspace back_and_forth";
-                "c" = "exec ${cliphist} list | ${rofi} -i -p clipboard -dmenu -display-columns 2 | ${cliphist} decode | ${wl-copy}";
+                "c" = "exec ${cliphist} list | ${lib.getExe cliphistSelectionWrapper} ${bemenu} --list 10 --prompt clipboard | ${cliphist} decode | ${wl-copy}";
                 "p" = "exec ${config.wayland.windowManager.sway.config.menu}";
               })
               // {

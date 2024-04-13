@@ -33,25 +33,26 @@
   zls,
   runCommand,
   supportAllLanguages ? false,
-  languageSupport_c ? supportAllLanguages,
-  languageSupport_go ? supportAllLanguages,
-  languageSupport_haskell ? supportAllLanguages,
-  languageSupport_latex ? supportAllLanguages,
-  languageSupport_lua ? supportAllLanguages,
-  languageSupport_nix ? supportAllLanguages,
-  languageSupport_python ? supportAllLanguages,
-  languageSupport_rust ? supportAllLanguages,
-  languageSupport_shell ? supportAllLanguages,
-  languageSupport_toml ? supportAllLanguages,
-  languageSupport_zig ? supportAllLanguages,
-}@args:
+  languageSupport ? lib.genAttrs [
+    "c"
+    "go"
+    "haskell"
+    "latex"
+    "lua"
+    "nix"
+    "python"
+    "rust"
+    "shell"
+    "toml"
+    "zig"
+  ] (_: supportAllLanguages),
+}:
 let
   langSupportLua = writeText "lang-support.lua" (
     lib.concatLines (
       lib.mapAttrsToList (
-        arg: supported:
-        ''vim.g.lang_support_${lib.removePrefix "languageSupport_" arg} = ${lib.boolToString supported}''
-      ) (lib.filterAttrs (arg: _: lib.hasPrefix "languageSupport_" arg) args)
+        lang: supported: ''vim.g.lang_support_${lang} = ${lib.boolToString supported}''
+      ) languageSupport
     )
   );
 
@@ -126,36 +127,36 @@ wrapNeovimUnstable neovim-unwrapped (
               skim
               tree-sitter
             ]
-            ++ (lib.optionals languageSupport_c [ clang-tools ])
-            ++ (lib.optionals languageSupport_go [
+            ++ (lib.optionals languageSupport.c [ clang-tools ])
+            ++ (lib.optionals languageSupport.go [
               go-tools
               gofumpt
               gopls
             ])
-            ++ (lib.optionals languageSupport_haskell [
+            ++ (lib.optionals languageSupport.haskell [
               ghc
               haskell-language-server
               ormolu
             ])
-            ++ (lib.optionals languageSupport_latex [
+            ++ (lib.optionals languageSupport.latex [
               (texlive.combine { inherit (texlive) scheme-minimal latexindent; })
             ])
-            ++ (lib.optionals languageSupport_lua [ lua-language-server ])
-            ++ (lib.optionals languageSupport_nix [
+            ++ (lib.optionals languageSupport.lua [ lua-language-server ])
+            ++ (lib.optionals languageSupport.nix [
               nil
               nixfmt-rfc-style
             ])
-            ++ (lib.optionals languageSupport_rust [
+            ++ (lib.optionals languageSupport.rust [
               rust-analyzer
               rustfmt
             ])
-            ++ (lib.optionals languageSupport_shell [
+            ++ (lib.optionals languageSupport.shell [
               shellcheck
               shfmt
             ])
-            ++ (lib.optionals languageSupport_toml [ taplo ])
-            ++ (lib.optionals languageSupport_zig [ zls ])
-            ++ (lib.optionals languageSupport_python [ ruff ])
+            ++ (lib.optionals languageSupport.toml [ taplo ])
+            ++ (lib.optionals languageSupport.zig [ zls ])
+            ++ (lib.optionals languageSupport.python [ ruff ])
           );
         in
         [
