@@ -260,6 +260,7 @@ in
           push.autoSetupRemote = true;
           receive.fsckObjects = true;
           rerere.enabled = true;
+          tag.sort = "creatordate";
           transfer.fsckobjects = true;
         };
       };
@@ -298,7 +299,6 @@ in
           set-option -g status-left "[#{session_name}] "
           set-option -g status-left-length 90
           set-option -g status-right-length 90
-          set-option -g status-style bg=default
 
           bind-key -T copy-mode-vi v send-keys -X begin-selection
           bind-key -T copy-mode-vi y send-keys -X copy-selection
@@ -361,21 +361,15 @@ in
         enable = true;
         package = pkgs.chromium-wayland;
         extensions =
-          [
-            {
-              # vimium
-              id = "dbepggeogbaibhgnhhndojpepiihcmeb";
-            }
-          ]
+          let
+            vimium = "dbepggeogbaibhgnhhndojpepiihcmeb";
+            bitwarden = "nngceckbapebfimnlniiiahkandclblb";
+            privacyBadger = "pkehgijcmpdhfbdbbnkijodmdjhbjlgp";
+          in
+          [ { id = vimium; } ]
           ++ lib.optionals cfg.includePersonalConfigs [
-            {
-              # bitwarden
-              id = "nngceckbapebfimnlniiiahkandclblb";
-            }
-            {
-              # privacy badger
-              id = "pkehgijcmpdhfbdbbnkijodmdjhbjlgp";
-            }
+            { id = bitwarden; }
+            { id = privacyBadger; }
           ];
       };
 
@@ -383,13 +377,13 @@ in
         enable = true;
         shellIntegration.mode = "no-cursor";
         settings = {
-          background = "#14161b";
+          background = "#000000";
           clipboard_control = "write-clipboard write-primary read-clipboard read-primary";
           copy_on_select = true;
           enable_audio_bell = false;
           font_family = "JetBrains Mono";
           font_size = 14;
-          foreground = "#e0e2ea";
+          foreground = "#ffffff";
           tab_bar_style = "powerline";
           update_check_interval = 0;
         };
@@ -399,7 +393,6 @@ in
         enable = true;
         settings = {
           live_config_reload = false;
-          import = [ "${pkgs.alacritty-theme}/smoooooth.toml" ];
           mouse.hide_when_typing = true;
           selection.save_to_clipboard = true;
           font = {
@@ -409,8 +402,8 @@ in
           terminal.osc52 = "CopyPaste";
           colors = lib.mapAttrsRecursive (_: color: "#${color}") {
             primary = {
-              foreground = "e0e2ea";
-              background = "14161b";
+              foreground = "ffffff";
+              background = "000000";
             };
           };
         };
@@ -432,8 +425,8 @@ in
           scrollback.indicator-position = "none";
           colors = {
             alpha = 1.0;
-            foreground = "e0e2ea";
-            background = "14161b";
+            foreground = "ffffff";
+            background = "000000";
           };
         };
       };

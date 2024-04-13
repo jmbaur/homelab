@@ -6,6 +6,8 @@ vim.g.mapleader = " "
 
 -- If not using nvim's remote UI
 if #vim.api.nvim_list_uis() > 0 then
+	vim.cmd.colorscheme("lunaperche")
+
 	local launcher = require("jmbaur.launcher")
 	launcher.setup()
 

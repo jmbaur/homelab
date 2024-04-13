@@ -33,26 +33,25 @@
   zls,
   runCommand,
   supportAllLanguages ? false,
-  languageSupport ? lib.genAttrs [
-    "c"
-    "go"
-    "haskell"
-    "latex"
-    "lua"
-    "nix"
-    "python"
-    "rust"
-    "shell"
-    "toml"
-    "zig"
-  ] (_: supportAllLanguages),
-}:
+  languageSupport_c ? supportAllLanguages,
+  languageSupport_go ? supportAllLanguages,
+  languageSupport_haskell ? supportAllLanguages,
+  languageSupport_latex ? supportAllLanguages,
+  languageSupport_lua ? supportAllLanguages,
+  languageSupport_nix ? supportAllLanguages,
+  languageSupport_python ? supportAllLanguages,
+  languageSupport_rust ? supportAllLanguages,
+  languageSupport_shell ? supportAllLanguages,
+  languageSupport_toml ? supportAllLanguages,
+  languageSupport_zig ? supportAllLanguages,
+}@args:
 let
   langSupportLua = writeText "lang-support.lua" (
     lib.concatLines (
       lib.mapAttrsToList (
-        lang: supported: ''vim.g.lang_support_${lang} = ${lib.boolToString supported}''
-      ) languageSupport
+        arg: supported:
+        ''vim.g.lang_support_${lib.removePrefix "languageSupport_" arg} = ${lib.boolToString supported}''
+      ) (lib.filterAttrs (arg: _: lib.hasPrefix "languageSupport_" arg) args)
     )
   );
 
@@ -105,20 +104,8 @@ let
         }) [ ])
       );
   };
-
-  neovim = neovim-unwrapped.overrideAttrs (
-    {
-      patches ? [ ],
-      ...
-    }:
-    {
-      patches = patches ++ [
-        # ./tmux-osc52.patch
-      ];
-    }
-  );
 in
-wrapNeovimUnstable neovim (
+wrapNeovimUnstable neovim-unwrapped (
   config
   // {
     vimAlias = true;
@@ -139,40 +126,42 @@ wrapNeovimUnstable neovim (
               skim
               tree-sitter
             ]
-            ++ (lib.optionals languageSupport.c [ clang-tools ])
-            ++ (lib.optionals languageSupport.go [
+            ++ (lib.optionals languageSupport_c [ clang-tools ])
+            ++ (lib.optionals languageSupport_go [
               go-tools
               gofumpt
               gopls
             ])
-            ++ (lib.optionals languageSupport.haskell [
+            ++ (lib.optionals languageSupport_haskell [
               ghc
               haskell-language-server
               ormolu
             ])
-            ++ (lib.optionals languageSupport.latex [
+            ++ (lib.optionals languageSupport_latex [
               (texlive.combine { inherit (texlive) scheme-minimal latexindent; })
             ])
-            ++ (lib.optionals languageSupport.lua [ lua-language-server ])
-            ++ (lib.optionals languageSupport.nix [
+            ++ (lib.optionals languageSupport_lua [ lua-language-server ])
+            ++ (lib.optionals languageSupport_nix [
               nil
               nixfmt-rfc-style
             ])
-            ++ (lib.optionals languageSupport.rust [
+            ++ (lib.optionals languageSupport_rust [
               rust-analyzer
               rustfmt
             ])
-            ++ (lib.optionals languageSupport.shell [
+            ++ (lib.optionals languageSupport_shell [
               shellcheck
               shfmt
             ])
-            ++ (lib.optionals languageSupport.toml [ taplo ])
-            ++ (lib.optionals languageSupport.zig [ zls ])
-            ++ (lib.optionals languageSupport.python [ ruff ])
+            ++ (lib.optionals languageSupport_toml [ taplo ])
+            ++ (lib.optionals languageSupport_zig [ zls ])
+            ++ (lib.optionals languageSupport_python [ ruff ])
           );
         in
         [
-          "--prefix"
+          # Append shell path with tools so that whatever we have in our
+          # environment has precedence.
+          "--suffix"
           "PATH"
           ":"
           binPath
