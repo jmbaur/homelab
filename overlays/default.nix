@@ -6,6 +6,8 @@ inputs: {
     (final: prev: {
       nixos-kexec = prev.callPackage ./nixos-kexec { };
 
+      clatd = prev.callPackage ./clatd.nix { };
+
       libfido2 = prev.libfido2.override {
         withPcsclite = final.stdenv.hostPlatform == final.stdenv.buildPlatform;
       };
