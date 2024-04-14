@@ -448,11 +448,30 @@ in
 
       programs.bemenu = {
         enable = true;
+        # TODO(jared): home-manager does not seem to implement this module in
+        # such a way where bemenu picks it up correctly.
+        package = pkgs.symlinkJoin {
+          name = "bemenu-with-opts";
+          paths = [ pkgs.bemenu ];
+          nativeBuildInputs = [ pkgs.makeWrapper ];
+          inherit (pkgs.bemenu) meta;
+          postBuild = ''
+            for program in bemenu bemenu-run; do
+              wrapProgram $out/bin/$program \
+                --set BEMENU_OPTS "${config.home.sessionVariables.BEMENU_OPTS}"
+            done
+          '';
+        };
         settings = {
           line-height = 27; # TODO(jared): this just happens to be the right height
           ignorecase = true;
           fn = "${font} ${fontStyle} ${toString fontSize}";
         };
+      };
+
+      # set by the bemenu module
+      systemd.user.sessionVariables = {
+        inherit (config.home.sessionVariables) BEMENU_OPTS;
       };
 
       services.swayidle =
@@ -563,7 +582,7 @@ in
           {
             modifier = "Mod4";
             terminal = "kitty";
-            menu = bemenuRun;
+            menu = "${bemenuRun} --prompt program";
             workspaceAutoBackAndForth = true;
             workspaceLayout = "stacking";
             defaultWorkspace = "workspace number 1";
