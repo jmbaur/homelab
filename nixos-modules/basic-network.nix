@@ -10,6 +10,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    services.clatd.enable = true;
+
     services.resolved.enable = true;
 
     networking.useDHCP = false;

@@ -7,6 +7,7 @@ inputs: {
         ./basic-network.nix
         ./btrfs.nix
         ./builder.nix
+        ./clatd.nix
         ./common.nix
         ./dev.nix
         ./gui
