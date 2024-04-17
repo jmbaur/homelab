@@ -15,7 +15,7 @@ let
         frequency = lib.mkOption {
           type = lib.types.str;
           default = "daily";
-          description = lib.mdDoc ''
+          description = ''
             Any value systemd.time(7) value.
           '';
         };

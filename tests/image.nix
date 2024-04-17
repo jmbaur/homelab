@@ -83,15 +83,15 @@ let
 
   bootMethodConfig = {
     uefi = {
-      custom.image.uefi.enable = true;
+      custom.image.boot.uefi.enable = true;
       virtualisation.useEFIBoot = true;
     };
     fit-image =
       { pkgs, ... }:
       {
-        custom.image.uboot.enable = true;
-        custom.image.uboot.bootMedium.type = "virtio";
-        custom.image.uboot.kernelLoadAddress =
+        custom.image.boot.uboot.enable = true;
+        custom.image.boot.uboot.bootMedium.type = "virtio";
+        custom.image.boot.uboot.kernelLoadAddress =
           if pkgs.stdenv.hostPlatform.isx86_64 then
             "0x01000000"
           else

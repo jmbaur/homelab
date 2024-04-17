@@ -8,7 +8,7 @@
     enable = true;
     encrypt = false;
     primaryDisk = "/dev/disk/by-path/TODO";
-    uboot = {
+    boot.uboot = {
       enable = true;
       bootMedium.type = "mmc"; # TODO(jared): This should probably be sata?
     };

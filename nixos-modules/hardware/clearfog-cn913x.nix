@@ -8,8 +8,8 @@ let
   cn913xBuildRepo = pkgs.fetchFromGitHub {
     owner = "solidrun";
     repo = "cn913x_build";
-    rev = "93008bfe927670788d2a5b1ce4fe056600ff5cdf";
-    hash = "sha256-kydd2srTTCaWWsakaQEHwmtByX8OHIcxbBgdl8KwRCQ=";
+    rev = "65517257c998abd034b4f5f81b50a22ac9986005";
+    hash = "sha256-MtMfOBZ2WUTs5SsmJG9Gww5xVkYyl585AfVfflrujf8=";
   };
   cn913xLinuxPatchesPath = "${cn913xBuildRepo}/patches/linux";
 in

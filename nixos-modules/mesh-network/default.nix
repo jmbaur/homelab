@@ -52,7 +52,7 @@ in
     name = mkOption {
       type = types.str;
       default = config.networking.hostName;
-      description = mdDoc "The name of the host";
+      description = "The name of the host";
     };
     peers = mkOption {
       type = types.attrsOf (
@@ -63,14 +63,14 @@ in
               name = mkOption {
                 type = types.str;
                 default = name;
-                description = mdDoc ''
+                description = ''
                   The name of the peer.
                 '';
               };
               dnsName = mkOption {
                 type = types.nullOr types.str;
                 default = null;
-                description = mdDoc ''
+                description = ''
                   The DNS name of the peer. This will be used to create a wireguard
                   endpoint on this peer. Leave to null if this client does not
                   initiate the wireguard tunnel to this peer.
@@ -79,7 +79,7 @@ in
               extraConfig = mkOption {
                 type = types.attrs;
                 default = { };
-                description = mdDoc ''
+                description = ''
                   Options that would go under the [WireguardPeer] section in
                   systemd.netdev(5).
                 '';
@@ -93,7 +93,7 @@ in
           peer1.extraConfig.PersistentKeepalive = 25;
         }
       '';
-      description = mdDoc ''
+      description = ''
         Peers of this wg node
       '';
       default = { };

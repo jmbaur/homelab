@@ -40,7 +40,7 @@ in
       find ${pkgs.raspberrypifw}/share/raspberrypi/boot -name "start*" \
         -exec sh -c 'echo {}:/$(basename {})' \; >> $bootfiles
     '';
-    uboot = {
+    boot.uboot = {
       enable = true;
       bootMedium.type = "mmc";
       kernelLoadAddress = "0x3000000";

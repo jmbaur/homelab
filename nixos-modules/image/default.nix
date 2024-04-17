@@ -18,9 +18,7 @@ let
 in
 {
   imports = [
-    ./boot/bootloaderspec
-    ./boot/fit-image
-    ./boot/uefi
+    ./boot
     ./update.nix
   ];
 
@@ -46,7 +44,7 @@ in
         ];
       default = 512;
       example = lib.literalExpression "4096";
-      description = lib.mdDoc ''
+      description = ''
         The sector size of the disk image produced by systemd-repart. This
         value must be a power of 2 between 512 and 4096.
       '';
@@ -55,7 +53,7 @@ in
     postImageCommands = mkOption {
       type = types.lines;
       default = "";
-      description = mdDoc ''
+      description = ''
         TODO
       '';
     };
@@ -63,14 +61,14 @@ in
     bootFileCommands = mkOption {
       type = types.lines;
       default = "";
-      description = mdDoc ''
+      description = ''
         TODO
       '';
     };
 
     primaryDisk = mkOption {
       type = types.path;
-      description = mdDoc ''
+      description = ''
         TODO
       '';
     };
@@ -79,7 +77,7 @@ in
       type = types.int;
       default = 2 * 1024 * 1024 * 1024; # 2G
       example = literalExpression "2 * 1024 * 1024 * 1024 /* 2G */";
-      description = lib.mdDoc ''
+      description = ''
         Maximum size for immutable partitions.
       '';
     };
@@ -95,17 +93,6 @@ in
       {
         assertion = config.system.image.id != null;
         message = "Image ID must be set";
-      }
-      {
-        assertion =
-          lib.length (
-            lib.filter (enabled: enabled) [
-              cfg.uefi.enable
-              cfg.uboot.enable
-              cfg.bootloaderspec.enable
-            ]
-          ) == 1;
-        message = "Only one boot variant can be enabled at once";
       }
     ];
 

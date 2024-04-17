@@ -122,7 +122,7 @@
 
     # The default load address is 0x800000, so let's leave up to 32MiB for
     # the fit-image.
-    custom.image.uboot.kernelLoadAddress = "0x2800000";
+    custom.image.boot.uboot.kernelLoadAddress = "0x2800000";
 
     # for fw_printenv and fw_setenv
     environment.etc."fw_env.config".text = ''

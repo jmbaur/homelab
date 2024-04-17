@@ -39,7 +39,7 @@ in
     postImageCommands = ''
       dd if=${config.system.build.firmware}/u-boot-sunxi-with-spl.bin of=$out/image.raw bs=1K seek=${toString splOffsetKiB} conv=notrunc,sync
     '';
-    uboot = {
+    boot.uboot = {
       enable = true;
       bootMedium.type = "mmc";
       kernelLoadAddress = "0x44000000";

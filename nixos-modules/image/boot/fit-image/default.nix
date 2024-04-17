@@ -42,7 +42,7 @@ let
     fi
 
     echo "booting ${id}_''${version}.uImage"
-    load ${cfg.uboot.bootMedium.type} ${toString cfg.uboot.bootMedium.index}:1 $loadaddr "${id}_''${version}.uImage"
+    load ${cfg.boot.uboot.bootMedium.type} ${toString cfg.boot.uboot.bootMedium.index}:1 $loadaddr "${id}_''${version}.uImage"
     source ''${loadaddr}:bootscript
   '';
 
@@ -64,40 +64,7 @@ let
   '';
 in
 {
-  options.custom.image.uboot = with lib; {
-    enable = mkEnableOption "TODO";
-
-    kernelLoadAddress = mkOption {
-      type = types.str;
-      description = mdDoc ''
-        TODO
-      '';
-    };
-
-    bootMedium = {
-      type = mkOption {
-        type = types.enum [
-          "mmc"
-          "scsi"
-          "nvme"
-          "usb"
-          "virtio"
-        ];
-        description = mdDoc ''
-          TODO
-        '';
-      };
-      index = mkOption {
-        type = types.int;
-        default = 0;
-        description = mdDoc ''
-          TODO
-        '';
-      };
-    };
-  };
-
-  config = lib.mkIf (cfg.enable && cfg.uboot.enable) {
+  config = lib.mkIf (cfg.enable && cfg.boot.uboot.enable or false) {
     # TODO(jared): need to add a non-UEFI equivalent to systemd-bless-boot
     systemd.additionalUpstreamSystemUnits = [
       # "systemd-bless-boot.service"
@@ -130,7 +97,7 @@ in
         export linux_kernel=kernel
         export initrd=${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile}
         export bootscript=bootscript
-        export load_address=${cfg.uboot.kernelLoadAddress}
+        export load_address=${cfg.boot.uboot.kernelLoadAddress}
 
         install -Dm0644 ${bootScript} $bootscript
         substituteInPlace $bootscript --subst-var usrhash

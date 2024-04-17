@@ -33,9 +33,7 @@ let
   );
 in
 {
-  options.custom.image.bootloaderspec.enable = lib.mkEnableOption "TODO";
-
-  config = lib.mkIf (cfg.enable && cfg.bootloaderspec.enable) {
+  config = lib.mkIf (cfg.enable && cfg.boot.bootLoaderSpec.enable or false) {
     assertions = [
       {
         assertion = config.hardware.deviceTree.enable -> config.hardware.deviceTree.name != null;

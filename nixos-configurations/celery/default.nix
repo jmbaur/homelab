@@ -33,7 +33,7 @@
   custom.image = {
     enable = true;
     primaryDisk = "/dev/disk/by-path/platform-11230000.mmc";
-    uboot = {
+    boot.uboot = {
       enable = true;
       kernelLoadAddress = "0x50000000";
       bootMedium.type = "mmc";
