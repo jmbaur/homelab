@@ -6,7 +6,7 @@ pub fn main() -> std::io::Result<()> {
     let cmd = args.next().unwrap();
     let cmd_args: Vec<String> = args.collect();
 
-    let mut map = std::collections::HashMap::new();
+    let mut items = Vec::new();
 
     for line in std::io::stdin().lines() {
         let Ok(line) = line else {
@@ -17,12 +17,12 @@ pub fn main() -> std::io::Result<()> {
             break;
         };
 
-        _ = map.insert(num.to_owned(), content.to_owned());
+        items.push((num.to_owned(), content.to_owned()));
     }
 
     let mut cmd_input = String::new();
-    for val in map.values() {
-        cmd_input.push_str(val);
+    for (_, content) in &items {
+        cmd_input.push_str(&content);
         cmd_input.push('\n');
     }
 
@@ -46,7 +46,7 @@ pub fn main() -> std::io::Result<()> {
     let selection = output.lines().next().unwrap();
 
     let found = 'f: {
-        for (key, value) in map {
+        for (key, value) in items {
             if selection == &value {
                 println!("{key}\t{value}");
                 break 'f true;

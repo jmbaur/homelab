@@ -462,11 +462,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1713166971,
-        "narHash": "sha256-t0P/rKlsE5l1O3O2LYtAelLzp7PeoPCSzsIietQ1hSM=",
+        "lastModified": 1713294767,
+        "narHash": "sha256-LmaabaQZdx52MPGKPRt9Opoc9Gd9RbwvCdysUUYQoXI=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "1c43dcfac48a2d622797f7ab741670fdbcf8f609",
+        "rev": "fa8c16e2452bf092ac76f09ee1fb1e9f7d0796e7",
         "type": "github"
       },
       "original": {
@@ -527,11 +527,11 @@
       },
       "locked": {
         "dir": "contrib",
-        "lastModified": 1713247509,
-        "narHash": "sha256-V/a+zRL/vZQCIFDreJs74wg4iTzgXSPv1LA+XXW7C0Y=",
+        "lastModified": 1713307949,
+        "narHash": "sha256-hfiUG/nGWaPnYdiDXVHagVLoezxflWHdKiAtghkIHYc=",
         "owner": "neovim",
         "repo": "neovim",
-        "rev": "7fa24948a936a95519f0c8c496402488b6508c14",
+        "rev": "2f371ad7d0294072d407bb05816425b5694d1935",
         "type": "github"
       },
       "original": {
@@ -584,11 +584,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1712963716,
-        "narHash": "sha256-WKm9CvgCldeIVvRz87iOMi8CFVB1apJlkUT4GGvA0iM=",
+        "lastModified": 1713248628,
+        "narHash": "sha256-NLznXB5AOnniUtZsyy/aPWOk8ussTuePp2acb9U+ISA=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "cfd6b5fc90b15709b780a5a1619695a88505a176",
+        "rev": "5672bc9dbf9d88246ddab5ac454e82318d094bb8",
         "type": "github"
       },
       "original": {
@@ -696,11 +696,11 @@
     },
     "nur": {
       "locked": {
-        "lastModified": 1713253240,
-        "narHash": "sha256-nF209Ie82jotqWYRsQ61yg2AVW/5YamV5ESiIVgvceA=",
+        "lastModified": 1713318798,
+        "narHash": "sha256-0EU70UNeskvfpiyht66HMO52FLpEyi4mMCTNoXOwCJo=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "48fcfae33d072445a1d6b8fa209fa8565da697b3",
+        "rev": "2019468cdfc6d4a3ffc7627c06e2c0cae010d6d8",
         "type": "github"
       },
       "original": {
