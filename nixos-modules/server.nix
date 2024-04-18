@@ -1,8 +1,9 @@
 { lib, config, ... }:
 let
   cfg = config.custom.server;
+
+  inherit (lib) mkDefault mkEnableOption mkIf;
 in
-with lib;
 {
   options.custom.server.enable = mkEnableOption "server";
   config = mkIf cfg.enable {
@@ -28,7 +29,7 @@ with lib;
     sound.enable = false;
 
     # UTC everywhere!
-    time.timeZone = lib.mkDefault "UTC";
+    time.timeZone = mkDefault "UTC";
 
     systemd = {
       # Given that our systems are headless, emergency mode is useless.
