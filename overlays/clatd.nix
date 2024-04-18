@@ -21,19 +21,26 @@ stdenv.mkDerivation rec {
     hash = "sha256-ZUGWQTXXgATy539NQxkZSvQA7HIWkIPsw1NJrz0xKEg=";
   };
 
-  nativeBuildInputs = [ makeWrapper ];
+  strictDeps = true;
+
+  nativeBuildInputs = [
+    makeWrapper
+    perl # for pod2man
+  ];
+
   buildInputs = with perlPackages; [
     perl
     NetIP
     NetDNS
   ];
 
-  dontBuild = true;
+  makeFlags = [ "PREFIX=$(out)" ];
 
-  installPhase = ''
-    runHook preInstall
+  preBuild = ''
+    mkdir -p $out/{sbin,share/man/man8}
+  '';
 
-    install -Dm0755 --target-directory=$out/bin clatd
+  postFixup = ''
     patchShebangs $out/bin/clatd
     wrapProgram $out/bin/clatd \
       --set PERL5LIB $PERL5LIB \
@@ -44,8 +51,6 @@ stdenv.mkDerivation rec {
           iptables
         ]
       }
-
-    runHook postInstall
   '';
 
   meta = with lib; {

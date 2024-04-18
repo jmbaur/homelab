@@ -15,10 +15,11 @@ let
       "clatd.conf"
       {
         clat-dev = ifaceName;
-        debug = 2;
-        # TODO(jared): The perl DNS resolver does not seem to work well without
-        # this, but this obviously won't work outside of the home network.
-        dns64-servers = [ "fd4c:ddfe:28e9::1" ];
+        # NOTE: Perl's Net::DNS resolver does not seem to work well querying
+        # for AAAA records to systemd-resolved's default IPv4 bind address
+        # (127.0.0.53), so we add an IPv6 listener address to systemd-resolved
+        # and tell clatd to use that instead.
+        dns64-servers = lib.optionals config.services.resolved.enable [ "::1" ];
       };
 in
 {
@@ -68,6 +69,10 @@ in
       };
       wantedBy = [ "multi-user.target" ];
     };
+
+    services.resolved.extraConfig = ''
+      DNSStubListenerExtra=::1
+    '';
 
     systemd.network.networks."50-clatd" = lib.mkIf isNetworkd {
       matchConfig.Name = ifaceName;
