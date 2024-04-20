@@ -15,6 +15,23 @@ let
   maxUsrHashSize = maxUsrSize / 8;
 
   encrypt = if cfg.encrypt then (if cfg.hasTpm2 then "tpm2" else "key-file") else "none";
+
+  rootFs =
+    if config.custom.normalUser.enable then
+      # to support fscrypt storage
+      {
+        Format = "ext4";
+        options = [ "defaults" ];
+      }
+    else
+      {
+        Format = "btrfs";
+        options = [
+          "compress=zstd"
+          "noatime"
+          "defaults"
+        ];
+      };
 in
 {
   imports = [
@@ -237,12 +254,7 @@ in
       "30-root" = {
         Type = "root";
         Label = "root";
-        Format =
-          if config.custom.desktop.enable then
-            # to support fscrypt systemd-homed storage option
-            "ext4"
-          else
-            "btrfs";
+        Format = rootFs.Format;
         FactoryReset = true;
         MakeDirectories = lib.mkIf cfg.mutableNixStore (toString [
           "/nix/.rw-store/store"
@@ -263,11 +275,7 @@ in
 
     fileSystems."/" = {
       fsType = config.systemd.repart.partitions."30-root".Format;
-      options = [
-        "compress=zstd"
-        "noatime"
-        "defaults"
-      ];
+      options = rootFs.options;
       device =
         if cfg.encrypt then
           "/dev/mapper/root"
