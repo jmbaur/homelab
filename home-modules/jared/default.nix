@@ -51,7 +51,7 @@ in
       };
       nixpkgs.overlays = [ inputs.nur.overlay ];
 
-      home.username = lib.mkDefault "jared";
+      home.username = lib.mkDefault "riker";
       home.homeDirectory = "/home/${config.home.username}";
 
       programs.home-manager.enable = true;
