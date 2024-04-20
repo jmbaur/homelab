@@ -1,7 +1,8 @@
 {
+  inputs,
   lib,
-  stdenv,
   nixosTest,
+  stdenv,
   xz,
 }:
 
@@ -26,7 +27,7 @@ let
   baseConfig =
     { config, lib, ... }:
     {
-      imports = [ ../nixos-modules/image ];
+      imports = [ inputs.self.nixosModules.default ];
 
       nix.settings.experimental-features = [ "nix-command" ];
 

@@ -5,12 +5,13 @@
   ...
 }:
 let
-  cfg = config.custom.gui;
+  cfg = config.custom.desktop;
 in
 {
-  options.custom.gui.enable = lib.mkEnableOption "gui";
+  options.custom.desktop.enable = lib.mkEnableOption "desktop";
 
   config = lib.mkIf cfg.enable {
+    custom.normalUser.enable = true;
     custom.basicNetwork.enable = true;
 
     hardware.keyboard.qmk.enable = true;

@@ -23,9 +23,7 @@
 
   custom = {
     dev.enable = true;
-    gui.enable = true;
-    laptop.enable = true;
-    users.jared.enable = true;
+    desktop.enable = true;
   };
 
   custom.image = {

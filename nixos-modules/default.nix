@@ -5,18 +5,16 @@ inputs: {
       nixpkgs.overlays = with inputs; [ self.overlays.default ];
       imports = [
         ./basic-network.nix
-        ./btrfs.nix
         ./builder.nix
         ./clatd.nix
         ./common.nix
+        ./desktop
         ./dev.nix
-        ./gui
         ./hardware
         ./image
         ./installer
-        ./jared
-        ./laptop.nix
         ./mesh-network
+        ./normal-user
         ./server.nix
         ./wireless.nix
         inputs.ipwatch.nixosModules.default

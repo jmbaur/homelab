@@ -101,8 +101,6 @@ in
     boot.loader.external.enable = true;
     boot.loader.external.installHook = lib.getExe' pkgs.coreutils "true"; # do nothing
 
-    users.mutableUsers = cfg.mutableNixStore;
-
     # When we have a mutable nix-store, we can still do
     # switch-to-configuration, it just won't be persistent until the updated
     # image is written to one of the update partitions. This can be useful
@@ -239,7 +237,12 @@ in
       "30-root" = {
         Type = "root";
         Label = "root";
-        Format = "btrfs";
+        Format =
+          if config.custom.desktop.enable then
+            # to support fscrypt systemd-homed storage option
+            "ext4"
+          else
+            "btrfs";
         FactoryReset = true;
         MakeDirectories = lib.mkIf cfg.mutableNixStore (toString [
           "/nix/.rw-store/store"

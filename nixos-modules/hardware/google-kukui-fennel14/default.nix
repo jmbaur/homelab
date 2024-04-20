@@ -10,8 +10,6 @@ with lib;
     enable = mkEnableOption "google kukui-fennel14 board";
   };
   config = mkIf config.hardware.kukui-fennel14.enable {
-    custom.laptop.enable = true;
-
     environment.pathsToLink = [ "/share/alsa" ];
     environment.systemPackages = [
       # https://chromium.googlesource.com/chromiumos/overlays/board-overlays/+/refs/heads/main/overlay-jacuzzi/chromeos-base/chromeos-bsp-jacuzzi/files/fennel14/audio/ucm-config

@@ -17,8 +17,6 @@
   boot.kernelModules = [ ];
   boot.extraModulePackages = [ ];
 
-  custom.users.jared.enable = true;
-
   boot.initrd.systemd.emergencyAccess = lib.warn "initrd emergency access enabled" true;
 
   custom.image = {

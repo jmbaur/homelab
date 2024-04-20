@@ -10,7 +10,6 @@
   virtualisation.hypervGuest.enable = true;
 
   custom.dev.enable = true;
-  custom.users.jared.enable = true;
   custom.basicNetwork.enable = true;
   custom.server.enable = true;
 
