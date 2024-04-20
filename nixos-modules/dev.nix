@@ -17,15 +17,5 @@ in
     programs.zsh.enable = true;
 
     programs.ssh.startAgent = true;
-
-    virtualisation.containers = {
-      enable = !config.boot.isContainer;
-      containersConf.settings.engine.detach_keys = "ctrl-q,ctrl-e";
-    };
-
-    virtualisation.podman = {
-      enable = !config.boot.isContainer;
-      defaultNetwork.settings.dns_enabled = true;
-    };
   };
 }
