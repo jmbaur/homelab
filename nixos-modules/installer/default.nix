@@ -22,6 +22,31 @@ let
   '';
 in
 {
+  system.build.installerUki = pkgs.callPackage (
+    {
+      lib,
+      stdenv,
+      systemdUkify,
+    }:
+    stdenv.mkDerivation {
+      name = "installer-uki";
+      nativeBuildInputs = [ systemdUkify ];
+      buildCommand = ''
+        ukify build \
+          --no-sign-kernel \
+          --efi-arch=${pkgs.stdenv.hostPlatform.efiArch} \
+          --uname=${config.system.build.kernel.version} \
+          --stub=${config.systemd.package}/lib/systemd/boot/efi/linux${pkgs.stdenv.hostPlatform.efiArch}.efi.stub \
+          --linux=${config.system.build.kernel}/${config.system.boot.loader.kernelFile} \
+          --cmdline="${toString config.boot.kernelParams}" \
+          --initrd=${config.system.build.installerInitialRamdisk}/${config.system.boot.loader.initrdFile} \
+          --os-release=@${config.environment.etc."os-release".source} \
+          ${lib.optionalString config.hardware.deviceTree.enable "--devicetree=${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name}"} \
+          --output=$out
+      '';
+    }
+  ) { };
+
   system.build.installerInitialRamdisk = pkgs.makeInitrdNG {
     name = "installer-initrd-${kernel-name}";
     inherit (config.boot.initrd) compressor compressorArgs prepend;
