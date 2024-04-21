@@ -24,8 +24,8 @@ in
 
     dev.enable = mkEnableOption "dev";
 
-    gui = {
-      enable = mkEnableOption "gui";
+    desktop = {
+      enable = mkEnableOption "desktop";
       defaultXkbOptions = mkOption {
         type = types.str;
         default = "ctrl:nocaps";
@@ -325,7 +325,7 @@ in
       '';
     })
 
-    (lib.mkIf cfg.gui.enable {
+    (lib.mkIf cfg.desktop.enable {
       fonts.fontconfig.enable = true;
 
       home.packages = with pkgs; [
@@ -633,7 +633,7 @@ in
             input."type:keyboard" = {
               repeat_delay = "300";
               repeat_rate = "50";
-              xkb_options = cfg.gui.defaultXkbOptions;
+              xkb_options = cfg.desktop.defaultXkbOptions;
             };
             input."4617:13404:https://github.com/stapelberg_kinT_(kint41)" = {
               repeat_delay = "300";
