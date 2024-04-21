@@ -40,27 +40,6 @@ inputs: {
         ];
       });
 
-      labwc = prev.labwc.overrideAttrs (
-        {
-          patches ? [ ],
-          ...
-        }:
-        {
-          patches = patches ++ [
-            (final.fetchpatch2 {
-              name = "Add-omnipresent-flag-for-views";
-              url = "https://github.com/labwc/labwc/commit/bad8f334ead5587208ec62fb01ddf9dd2be5ff67.patch";
-              hash = "sha256-Djx+0cHklJCu/nmpwhO0dlHETeJnp5rG4hTjS3Wadg0=";
-            })
-            (final.fetchpatch2 {
-              name = "Add-touchpad-device-type";
-              url = "https://github.com/labwc/labwc/commit/6faee17d20637df35e27cd2cac462323e4d665a1.patch";
-              hash = "sha256-5HptxaEK7zH1eoyxYYyYZpKECE8MXznj6zLVDC0Kkyg=";
-            })
-          ];
-        }
-      );
-
       fuzzel = prev.fuzzel.overrideAttrs (
         {
           patches ? [ ],
