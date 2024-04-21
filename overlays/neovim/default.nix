@@ -34,26 +34,41 @@
   writeText,
   zls,
   supportAllLanguages ? false,
-  languageSupport ? lib.genAttrs [
-    "c"
-    "go"
-    "haskell"
-    "latex"
-    "lua"
-    "nix"
-    "python"
-    "rust"
-    "shell"
-    "toml"
-    "zig"
-  ] (_: supportAllLanguages),
+  cSupport ? supportAllLanguages,
+  goSupport ? supportAllLanguages,
+  haskellSupport ? supportAllLanguages,
+  latexSupport ? supportAllLanguages,
+  luaSupport ? supportAllLanguages,
+  nixSupport ? supportAllLanguages,
+  pythonSupport ? supportAllLanguages,
+  rustSupport ? supportAllLanguages,
+  shellSupport ? supportAllLanguages,
+  tomlSupport ? supportAllLanguages,
+  zigSupport ? supportAllLanguages,
 }:
 let
   langSupportLua = writeText "lang-support.lua" (
     lib.concatLines (
-      lib.mapAttrsToList (
-        lang: supported: ''vim.g.lang_support_${lang} = ${lib.boolToString supported}''
-      ) languageSupport
+      lib.mapAttrsToList
+        (
+          lang: supported:
+          ''vim.g.lang_support_${lib.removeSuffix "Support" lang} = ${lib.boolToString supported}''
+        )
+        {
+          inherit
+            cSupport
+            goSupport
+            haskellSupport
+            latexSupport
+            luaSupport
+            nixSupport
+            pythonSupport
+            rustSupport
+            shellSupport
+            tomlSupport
+            zigSupport
+            ;
+        }
     )
   );
 
@@ -100,7 +115,7 @@ let
             vim-rsi
             zen-mode-nvim
           ]
-          ++ lib.optionals languageSupport.rust [
+          ++ lib.optionals rustSupport [
             # Use rustaceanvim for single-file support. See
             # https://github.com/neovim/nvim-lspconfig/issues/1528.
             rustaceanvim
@@ -135,37 +150,37 @@ wrapNeovimUnstable neovim-unwrapped (
               skim
               tree-sitter
             ]
-            ++ (lib.optionals languageSupport.c [ clang-tools ])
-            ++ (lib.optionals languageSupport.go [
+            ++ (lib.optionals cSupport [ clang-tools ])
+            ++ (lib.optionals goSupport [
               go-tools
               gofumpt
               gopls
             ])
-            ++ (lib.optionals languageSupport.haskell [
+            ++ (lib.optionals haskellSupport [
               ghc
               haskell-language-server
               ormolu
             ])
-            ++ (lib.optionals languageSupport.latex [
+            ++ (lib.optionals latexSupport [
               (texlive.combine { inherit (texlive) scheme-minimal latexindent; })
             ])
-            ++ (lib.optionals languageSupport.lua [ lua-language-server ])
-            ++ (lib.optionals languageSupport.nix [
+            ++ (lib.optionals luaSupport [ lua-language-server ])
+            ++ (lib.optionals nixSupport [
               nil
               nixfmt-rfc-style
             ])
-            ++ (lib.optionals languageSupport.rust [
+            ++ (lib.optionals rustSupport [
               rust-analyzer
               rustc
               rustfmt
             ])
-            ++ (lib.optionals languageSupport.shell [
+            ++ (lib.optionals shellSupport [
               shellcheck
               shfmt
             ])
-            ++ (lib.optionals languageSupport.toml [ taplo ])
-            ++ (lib.optionals languageSupport.zig [ zls ])
-            ++ (lib.optionals languageSupport.python [ ruff ])
+            ++ (lib.optionals tomlSupport [ taplo ])
+            ++ (lib.optionals zigSupport [ zls ])
+            ++ (lib.optionals pythonSupport [ ruff ])
           );
         in
         [
