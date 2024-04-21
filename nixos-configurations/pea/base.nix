@@ -78,5 +78,5 @@ in
     ${config.boot.loader.efi.efiSysMountPoint}/uboot.env    0x0000          0x10000
   '';
 
-  environment.systemPackages = with pkgs; [ ubootEnvTools ];
+  environment.systemPackages = with pkgs; [ uboot-env-tools ];
 }

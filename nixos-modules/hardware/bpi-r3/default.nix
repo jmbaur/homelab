@@ -70,7 +70,7 @@
 
     environment.systemPackages = with pkgs; [
       mtdutils
-      ubootEnvTools
+      uboot-env-tools
     ];
 
     boot.kernelModules = [ "ubi" ];

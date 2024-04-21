@@ -86,7 +86,7 @@
     };
 
     environment.systemPackages = with pkgs; [
-      ubootEnvTools
+      uboot-env-tools
       mtdutils
       (pkgs.writeShellScriptBin "update-firmware" ''
         ${lib.getExe' pkgs.mtdutils "flashcp"} \
@@ -136,8 +136,8 @@
     systemd.services.stable-mac-address = {
       path = with pkgs; [
         gnugrep
-        ubootEnvTools
         macgen
+        uboot-env-tools
       ];
       wantedBy = [ "multi-user.target" ];
       script = ''
