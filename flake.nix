@@ -20,7 +20,7 @@
     nix-sandbox-escape-hatch.url = "github:jmbaur/nix-sandbox-escape-hatch";
     nixos-router.inputs.nixpkgs.follows = "nixpkgs";
     nixos-router.url = "github:jmbaur/nixos-router";
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:jmbaur/nixpkgs/homelab";
     nur.url = "github:nix-community/NUR";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";

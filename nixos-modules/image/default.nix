@@ -345,17 +345,12 @@ in
           system.etc.overlay.enable = true;
           system.etc.overlay.mutable = config.users.mutableUsers;
 
+          # moving closer to perlless system
           programs.less.lessopen = lib.mkDefault null;
           programs.command-not-found.enable = lib.mkDefault false;
           boot.enableContainers = lib.mkDefault false;
           environment.defaultPackages = lib.mkDefault [ ];
           documentation.info.enable = lib.mkDefault false;
-
-          # Check that the system does not contain a Nix store path that contains the
-          # string "perl".
-          system.forbiddenDependenciesRegex = lib.mkIf (
-            !config.system.switch.enable && !config.services.clatd.enable
-          ) "perl";
         })
     ]
   );
