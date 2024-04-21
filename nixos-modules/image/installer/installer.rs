@@ -23,7 +23,7 @@ fn mount(
     fs_type: &str,
     read_only: bool,
     what: &std::ffi::OsStr,
-    mountpoint: &std::ffi::OsStr,
+    mountpoint: impl AsRef<std::ffi::OsStr>,
 ) -> Result<()> {
     let mut args = Vec::new();
 
@@ -35,7 +35,7 @@ fn mount(
         std::ffi::OsStr::new("-t"),
         std::ffi::OsStr::new(fs_type),
         what,
-        mountpoint,
+        mountpoint.as_ref(),
     ]);
 
     let status = std::process::Command::new("/bin/mount")
@@ -50,7 +50,7 @@ fn mount(
     }
 }
 
-fn unmount(mountpoint: &std::ffi::OsStr) -> Result<()> {
+fn unmount(mountpoint: impl AsRef<std::ffi::OsStr>) -> Result<()> {
     let status = std::process::Command::new("/bin/umount")
         .args(&[mountpoint])
         .spawn()?
@@ -154,13 +154,23 @@ fn real_main() -> Result<()> {
     eprintln!("installing from {}", source_disk.display());
     eprintln!("installing to {}", target_disk.display());
 
-    let mountpoint = std::ffi::OsStr::new("mnt");
+    let mountpoint = std::path::Path::new("/mnt");
     std::fs::create_dir_all(&mountpoint)?;
-    mount("ext4", true, source_disk.as_os_str(), &mountpoint)?;
+    mount(
+        "ext4",
+        true,
+        source_disk.as_os_str(),
+        &mountpoint,
+    )?;
 
-    let in_file = std::fs::OpenOptions::new().read(true).open("/mnt/image")?;
+    let in_file = std::fs::OpenOptions::new()
+        .read(true)
+        .open(mountpoint.join("image"))?;
 
-    let out_file = std::fs::OpenOptions::new().read(true).write(true).open(target_disk)?;
+    let out_file = std::fs::OpenOptions::new()
+        .read(true)
+        .write(true)
+        .open(target_disk)?;
 
     // TODO(jared): Make a custom Into<Stdio> implementation that prints progress of copying the
     // image to the target disk.
@@ -169,7 +179,8 @@ fn real_main() -> Result<()> {
         .arg("-d")
         .stdin(unsafe { std::process::Stdio::from_raw_fd(in_file.into_raw_fd()) })
         .stdout(unsafe { std::process::Stdio::from_raw_fd(out_file.into_raw_fd()) })
-        .spawn()?.wait()?;
+        .spawn()?
+        .wait()?;
 
     if !status.success() {
         return Err(Error::Decompress);
