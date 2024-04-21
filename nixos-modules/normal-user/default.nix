@@ -28,9 +28,9 @@ let
     "/"
   ];
 
-  backingBlockDevice = pkgs.writers.writeRustBin "backing-block-device" { } (
-    builtins.readFile ./backing-block-device.rs
-  );
+  backingBlockDevice =
+    config.fileSystems.${mountpoint}.device
+      or "/dev/disk/by-label/${config.fileSystems.${mountpoint}.label}";
 in
 {
   options.custom.normalUser.enable = lib.mkEnableOption "normal user";
@@ -64,14 +64,11 @@ in
       # won't work on NixOS.
       unitConfig.ConditionPathIsDirectory = [ "!/.fscrypt" ];
       # In nixpkgs, if sysusers is enabled, tmpfiles is used to create home
-      # directories.
+      # directories. See https://github.com/nixos/nixpkgs/blob/68165781ccbe4d2ff1d12b6e96ebe4a9f4a93d51/nixos/modules/system/boot/systemd/sysusers.nix#L100.
       after = lib.optionals config.systemd.sysusers.enable [ "systemd-tmpfiles-setup.service" ];
       path = [
         pkgs.e2fsprogs
         pkgs.fscrypt-experimental
-        pkgs.jq
-        pkgs.util-linux # findmnt
-        backingBlockDevice
       ];
       serviceConfig = {
         Type = "oneshot";
@@ -79,9 +76,7 @@ in
       };
       script = ''
         # setup filesystem to support fscrypt
-        tune2fs -O encrypt $(backing-block-device ${
-          config.users.users.${username}.home
-        } | jq --raw-output '.block_device')
+        tune2fs -O encrypt $(readlink -f ${backingBlockDevice})
 
         # setup fscrypt
         fscrypt setup --quiet --force --time=1ms
