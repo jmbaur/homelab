@@ -24,10 +24,52 @@ let
     }
     .${stdenv.hostPlatform.qemuArch};
 
+  unpackImage =
+    {
+      config,
+      envVar ? "NIX_DISK_IMAGE",
+    }:
+    ''
+      tmp_backing_file_image = tempfile.NamedTemporaryFile()
+      tmp_disk_image = tempfile.NamedTemporaryFile()
+
+      with open(tmp_backing_file_image.name, "w") as outfile:
+          subprocess.run([
+            "${lib.getExe' xz "xz"}",
+            "--force",
+            "--decompress",
+            "--stdout",
+            "${config.system.build.image}/image.raw.xz",
+          ], stdout=outfile)
+
+      subprocess.run([
+        "${config.virtualisation.qemu.package}/bin/qemu-img",
+        "create",
+        "-f",
+        "qcow2",
+        "-b",
+        tmp_backing_file_image.name,
+        "-F",
+        "raw",
+        tmp_disk_image.name,
+        "2G",
+      ])
+
+      # Set ${envVar} so that the qemu script finds the right disk image.
+      os.environ['${envVar}'] = tmp_disk_image.name
+    '';
+
   baseConfig =
-    { config, lib, ... }:
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
     {
       imports = [ inputs.self.nixosModules.default ];
+
+      boot.kernelPackages = pkgs.linuxPackages_latest;
 
       nix.settings.experimental-features = [ "nix-command" ];
 
@@ -36,6 +78,7 @@ let
 
       virtualisation.directBoot.enable = false;
       virtualisation.mountHostNixStore = false;
+      virtualisation.qemu.options = [ "-nographic" ];
 
       # enough space to store update images under /run
       virtualisation.memorySize = 2048;
@@ -162,33 +205,7 @@ in
               import tempfile
               import uuid
 
-              tmp_backing_file_image = tempfile.NamedTemporaryFile()
-              tmp_disk_image = tempfile.NamedTemporaryFile()
-
-              with open(tmp_backing_file_image.name, "w") as outfile:
-                  subprocess.run([
-                    "${lib.getExe' xz "xz"}",
-                    "--force",
-                    "--decompress",
-                    "--stdout",
-                    "${nodes.machine.system.build.image}/image.raw.xz",
-                  ], stdout=outfile)
-
-              subprocess.run([
-                "${nodes.machine.virtualisation.qemu.package}/bin/qemu-img",
-                "create",
-                "-f",
-                "qcow2",
-                "-b",
-                tmp_backing_file_image.name,
-                "-F",
-                "raw",
-                tmp_disk_image.name,
-                "2G",
-              ])
-
-              # Set NIX_DISK_IMAGE so that the qemu script finds the right disk image.
-              os.environ['NIX_DISK_IMAGE'] = tmp_disk_image.name
+              ${unpackImage { config = nodes.machine; }}
 
               def assert_boot_entry(filename: str):
                   booted_entry = machine.succeed("iconv -f UTF-16 -t UTF-8 /sys/firmware/efi/efivars/LoaderEntrySelected-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f").strip('\x06').strip('\x00')
@@ -284,7 +301,6 @@ in
 
         virtualisation.useDefaultFilesystems = false;
         virtualisation.diskSize = 4096;
-        virtualisation.qemu.options = [ "-nographic" ];
         virtualisation.qemu.drives = [
           {
             name = "installer";
@@ -304,39 +320,38 @@ in
           import subprocess
           import tempfile
 
-          tmp_backing_file_image = tempfile.NamedTemporaryFile()
-          tmp_disk_image = tempfile.NamedTemporaryFile()
-
-          with open(tmp_backing_file_image.name, "w") as outfile:
-              subprocess.run([
-                "${lib.getExe' xz "xz"}",
-                "--force",
-                "--decompress",
-                "--stdout",
-                "${nodes.machine.system.build.diskInstaller}/image.raw.xz",
-              ], stdout=outfile)
-
-          subprocess.run([
-            "${nodes.machine.virtualisation.qemu.package}/bin/qemu-img",
-            "create",
-            "-f",
-            "qcow2",
-            "-b",
-            tmp_backing_file_image.name,
-            "-F",
-            "raw",
-            tmp_disk_image.name,
-            "2G",
-          ])
-
-          # Set INSTALLER_DISK_IMAGE so that the qemu script finds the right disk image.
-          os.environ['INSTALLER_DISK_IMAGE'] = tmp_disk_image.name
+          ${unpackImage {
+            config = nodes.machine;
+            envVar = "INSTALLER_DISK_IMAGE";
+          }}
 
           machine.start(allow_reboot=True)
           machine.wait_for_console_text("installation finished")
           machine.send_monitor_command("device_del installer")
 
           machine.wait_for_unit("multi-user.target")
+        '';
+    };
+    image-normal-user = nixosTest {
+      name = "image-normal-user";
+      nodes.machine = {
+        imports = [
+          baseConfig
+          bootMethodConfig.uefi
+        ];
+
+        custom.normalUser.enable = true;
+      };
+      testScript =
+        { nodes, ... }:
+        ''
+          import os
+          import subprocess
+          import tempfile
+
+          ${unpackImage { config = nodes.machine; }}
+
+          machine.wait_for_unit("setup-home-encryption.service")
         '';
     };
   }

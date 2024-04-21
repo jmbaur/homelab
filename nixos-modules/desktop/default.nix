@@ -44,7 +44,11 @@ in
     # requires avahi to be enabled, so we want to make sure systemd-resolved's
     # mDNS capabilities are disabled when this is the case.
     services.automatic-timezoned.enable = true;
-    services.avahi.enable = config.services.geoclue2.enable;
+    services.avahi = {
+      enable = config.services.geoclue2.enable;
+      nssmdns4 = true;
+      nssmdns6 = true;
+    };
     services.resolved.extraConfig = lib.optionalString config.services.avahi.enable ''
       MulticastDNS=${lib.boolToString false}
     '';

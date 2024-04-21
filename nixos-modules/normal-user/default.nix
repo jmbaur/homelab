@@ -22,6 +22,12 @@ let
 
   shell = if config.programs.fish.enable then pkgs.fish else pkgs.bash;
 
+  mountpoint = lib.findFirst (path: config.fileSystems ? "${path}") (throw "mount not found") [
+    "/home/${username}"
+    "/home"
+    "/"
+  ];
+
   backingBlockDevice = pkgs.writers.writeRustBin "backing-block-device" { } (
     builtins.readFile ./backing-block-device.rs
   );
@@ -36,18 +42,10 @@ in
         message = "mutableUsers required to change initial password";
       }
       {
-        assertion =
-          let
-            mountpoint = lib.findFirst (path: config.fileSystems ? "${path}") (throw "mount not found") [
-              "/home/${username}"
-              "/home"
-              "/"
-            ];
-          in
-          lib.any (fstype: fstype == config.fileSystems.${mountpoint}.fsType) [
-            "ext4"
-            "f2fs"
-          ];
+        assertion = lib.any (fstype: fstype == config.fileSystems.${mountpoint}.fsType) [
+          "ext4"
+          "f2fs"
+        ];
         message = "fscrypt requires ext4 or f2fs";
       }
     ];
@@ -64,7 +62,10 @@ in
     systemd.services.setup-home-encryption = {
       # TODO(jared): We should use ConditionFirstBoot, but this probably
       # won't work on NixOS.
-      unitConfig.ConditionPathIsDirectory = "!/.fscrypt";
+      unitConfig.ConditionPathIsDirectory = [ "!/.fscrypt" ];
+      # In nixpkgs, if sysusers is enabled, tmpfiles is used to create home
+      # directories.
+      after = lib.optionals config.systemd.sysusers.enable [ "systemd-tmpfiles-setup.service" ];
       path = [
         pkgs.e2fsprogs
         pkgs.fscrypt-experimental
@@ -84,11 +85,14 @@ in
 
         # setup fscrypt
         fscrypt setup --quiet --force --time=1ms
+        ${lib.optionalString (mountpoint != "/") ''
+          fscrypt setup ${mountpoint} --quiet --force --time=1ms
+        ''}
 
         # encrypt initial user's home directory
         echo ${
           config.users.users.${username}.initialPassword
-        } | fscrypt encrypt --skip-unlock --source=pam_passphrase --user=${username} ${
+        } | fscrypt encrypt --skip-unlock --source=pam_passphrase --no-recovery --user=${username} ${
           config.users.users.${username}.home
         }
       '';

@@ -102,7 +102,6 @@ in
   config = lib.mkIf cfg.enable (
     lib.mkMerge [
       {
-
         assertions = [
           {
             assertion =
@@ -266,6 +265,7 @@ in
               "/nix/.rw-store/work"
             ]);
             Encrypt = wantLuksRoot;
+            Weight = 1;
           };
         };
 
@@ -321,6 +321,9 @@ in
           Type = "home";
           Label = "home";
           Format = "ext4";
+          # If /nix/store is mutable, make the home partition 3x as large as the root partition.
+          # If /nix/store is immutable, make the home partition 5x as large as the root partition.
+          Weight = if cfg.mutableNixStore then 3 else 5;
         };
 
         fileSystems."/home" = {
@@ -335,6 +338,23 @@ in
           ) "-Oencrypt";
         };
       })
+      (
+        # opt-in to systemd goodness
+        {
+          systemd.sysusers.enable = true;
+          system.etc.overlay.enable = true;
+          system.etc.overlay.mutable = config.users.mutableUsers;
+
+          programs.less.lessopen = lib.mkDefault null;
+          programs.command-not-found.enable = lib.mkDefault false;
+          boot.enableContainers = lib.mkDefault false;
+          environment.defaultPackages = lib.mkDefault [ ];
+          documentation.info.enable = lib.mkDefault false;
+
+          # Check that the system does not contain a Nix store path that contains the
+          # string "perl".
+          system.forbiddenDependenciesRegex = lib.mkIf config.system.switch.enable "perl";
+        })
     ]
   );
 }

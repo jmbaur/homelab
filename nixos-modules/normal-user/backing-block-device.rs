@@ -159,9 +159,10 @@ fn main() -> Result<(), Error> {
         }
 
         println!(
-            "{{\"block_device\":\"{}\",\"fs_type\":\"{}\"}}",
+            "{{\"block_device\":\"{}\",\"fs_type\":\"{}\",\"mount_point\":\"{}\"}}",
             block_device.display(),
-            closest.mount.fs_type
+            closest.mount.fs_type,
+            closest.mount.mountpoint.display(),
         );
 
         return Ok(());
