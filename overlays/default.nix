@@ -3,11 +3,13 @@ inputs: {
     inputs.gobar.overlays.default
     inputs.gosee.overlays.default # needed for plugin in overlayed neovim
     inputs.u-boot-nix.overlays.default
+    (
+      _: prev:
+      prev.lib.mapAttrs (name: _: prev.callPackage ./pkgs/${name}/package.nix { }) (
+        builtins.readDir ./pkgs
+      )
+    )
     (final: prev: {
-      nixos-kexec = prev.callPackage ./nixos-kexec { };
-
-      clatd = prev.callPackage ./clatd.nix { };
-
       libfido2 = prev.libfido2.override {
         withPcsclite = final.stdenv.hostPlatform == final.stdenv.buildPlatform;
       };
@@ -126,19 +128,11 @@ inputs: {
       });
 
       git-shell-commands = prev.callPackage ./git-shell-commands { libgit2 = final.libgit2_1_5; };
-      pb = prev.writeShellScriptBin "pb" "echo $(${final.curl}/bin/curl --silent --data-binary @- https://paste.rs/)";
-      tmux-jump = prev.callPackage ./tmux-jump.nix { };
-      kinesis-kint41-jmbaur = prev.callPackage ./kinesis-kint41-jmbaur.nix { };
-      macgen = prev.callPackage ./macgen.nix { };
-      pomo = prev.callPackage ./pomo { };
-      v4l-show = prev.callPackage ./v4l-show.nix { };
-      wip = prev.writeShellScriptBin "wip" (builtins.readFile ./wip.bash);
 
       jared-neovim = prev.callPackage ./neovim {
         neovim-unwrapped = inputs.neovim.packages.${prev.system}.neovim;
       };
       jared-neovim-all-languages = final.jared-neovim.override { supportAllLanguages = true; };
-      jared-emacs = prev.callPackage ./emacs { };
 
       bitwarden-wayland = prev.callPackage ./mk-wayland-variant.nix { package = final.bitwarden; };
       brave-wayland = prev.callPackage ./mk-wayland-variant.nix { package = final.brave; };
@@ -160,18 +154,12 @@ inputs: {
       spotify-webapp = final.mkWebApp "spotify" "https://open.spotify.com";
       teams-webapp = final.mkWebApp "teams" "https://teams.microsoft.com";
 
-      grafana-dashboards = prev.callPackage ./grafana-dashboards { };
-
-      ubootEnvTools = prev.callPackage ./uboot-env-tools.nix { };
-
       uboot-clearfog_uart = prev.uboot-clearfog.override {
         extraStructuredConfig = with final.lib.kernel; {
           MVEBU_SPL_BOOT_DEVICE_MMC = no;
           MVEBU_SPL_BOOT_DEVICE_UART = yes;
         };
       };
-
-      mrvlUart = prev.callPackage ./mrvl-uart.nix { };
 
       marvellBinaries = final.fetchFromGitHub {
         owner = "MarvellEmbeddedProcessors";
@@ -197,8 +185,6 @@ inputs: {
 
       cn9130CfProSdFirmware = prev.callPackage ./cn913x/firmware.nix { spi = false; };
       cn9130CfProSpiFirmware = prev.callPackage ./cn913x/firmware.nix { spi = true; };
-
-      mcbinFirmware = prev.callPackage ./mcbin-firmware { };
 
       jmbaur-keybase-pgp-keys = final.fetchurl {
         url = " https://keybase.io/jaredbaur/pgp_keys.asc ";
