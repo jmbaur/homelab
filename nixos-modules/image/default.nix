@@ -353,7 +353,9 @@ in
 
           # Check that the system does not contain a Nix store path that contains the
           # string "perl".
-          system.forbiddenDependenciesRegex = lib.mkIf config.system.switch.enable "perl";
+          system.forbiddenDependenciesRegex = lib.mkIf (
+            !config.system.switch.enable && !config.services.clatd.enable
+          ) "perl";
         })
     ]
   );
