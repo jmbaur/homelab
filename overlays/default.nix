@@ -40,29 +40,6 @@ inputs: {
         ];
       });
 
-      # Can be deleted when this PR is merged: https://github.com/NixOS/nixpkgs/pull/284160
-      greetd = prev.greetd // {
-        wlgreet = prev.greetd.wlgreet.overrideAttrs (
-          {
-            nativeBuildInputs ? [ ],
-            buildInputs ? [ ],
-            ...
-          }:
-          {
-            nativeBuildInputs = nativeBuildInputs ++ [ final.buildPackages.autoPatchelfHook ];
-            buildInputs = buildInputs ++ [ final.gcc-unwrapped ];
-            runtimeDependencies = map prev.lib.getLib (
-              with final;
-              [
-                gcc-unwrapped
-                wayland
-                libxkbcommon
-              ]
-            );
-          }
-        );
-      };
-
       labwc = prev.labwc.overrideAttrs (
         {
           patches ? [ ],
