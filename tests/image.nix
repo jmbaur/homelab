@@ -27,6 +27,7 @@ let
   unpackImage =
     {
       config,
+      imageAttr ? "image",
       envVar ? "NIX_DISK_IMAGE",
     }:
     ''
@@ -39,7 +40,7 @@ let
             "--force",
             "--decompress",
             "--stdout",
-            "${config.system.build.image}/image.raw.xz",
+            "${config.system.build.${imageAttr}}/image.raw.xz",
           ], stdout=outfile)
 
       subprocess.run([
@@ -322,6 +323,7 @@ in
 
           ${unpackImage {
             config = nodes.machine;
+            imageAttr = "diskInstaller";
             envVar = "INSTALLER_DISK_IMAGE";
           }}
 
