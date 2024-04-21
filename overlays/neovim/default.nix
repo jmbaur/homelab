@@ -18,7 +18,9 @@
   ormolu,
   ripgrep,
   ruff,
+  runCommand,
   rust-analyzer,
+  rustc,
   rustfmt,
   shellcheck,
   shfmt,
@@ -31,7 +33,6 @@
   wrapNeovimUnstable,
   writeText,
   zls,
-  runCommand,
   supportAllLanguages ? false,
   languageSupport ? lib.genAttrs [
     "c"
@@ -70,34 +71,41 @@ let
       ++ (
         with vimPlugins;
         # start
-        [
-          diffview-nvim
-          efmls-configs-nvim
-          gitsigns-nvim
-          gosee-nvim
-          iron-nvim
-          mini-nvim
-          nvim-lspconfig
-          nvim-treesitter-context
-          nvim-treesitter-refactor
-          nvim-treesitter-textobjects
-          nvim-treesitter.withAllGrammars
-          oil-nvim
-          snippets-nvim
-          telescope-nvim
-          telescope-ui-select-nvim
-          telescope-zf-native-nvim
-          vim-dispatch
-          vim-eunuch
-          vim-flog
-          vim-fugitive
-          vim-gist
-          vim-nix
-          vim-repeat
-          vim-rhubarb
-          vim-rsi
-          zen-mode-nvim
-        ]
+        (
+          [
+            diffview-nvim
+            efmls-configs-nvim
+            gitsigns-nvim
+            gosee-nvim
+            iron-nvim
+            mini-nvim
+            nvim-lspconfig
+            nvim-treesitter-context
+            nvim-treesitter-refactor
+            nvim-treesitter-textobjects
+            nvim-treesitter.withAllGrammars
+            oil-nvim
+            snippets-nvim
+            telescope-nvim
+            telescope-ui-select-nvim
+            telescope-zf-native-nvim
+            vim-dispatch
+            vim-eunuch
+            vim-flog
+            vim-fugitive
+            vim-gist
+            vim-nix
+            vim-repeat
+            vim-rhubarb
+            vim-rsi
+            zen-mode-nvim
+          ]
+          ++ lib.optionals languageSupport.rust [
+            # Use rustaceanvim for single-file support. See
+            # https://github.com/neovim/nvim-lspconfig/issues/1528.
+            rustaceanvim
+          ]
+        )
         # opt
         ++ (map (plugin: {
           inherit plugin;
@@ -148,6 +156,7 @@ wrapNeovimUnstable neovim-unwrapped (
             ])
             ++ (lib.optionals languageSupport.rust [
               rust-analyzer
+              rustc
               rustfmt
             ])
             ++ (lib.optionals languageSupport.shell [

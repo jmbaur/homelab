@@ -170,18 +170,6 @@ M.setup = function(config)
 			},
 		},
 		nil_ls = { enable = vim.g.lang_support_nix, config = { on_attach = on_attach } },
-		rust_analyzer = {
-			enable = vim.g.lang_support_rust,
-			config = {
-				on_attach = on_attach_format,
-				settings = {
-					["rust-analyzer"] = {
-						-- use cargo-clippy on save instead of cargo-check
-						check = { command = vim.fn.executable("cargo-clippy") == 1 and "clippy" or "check" },
-					},
-				},
-			},
-		},
 		lua_ls = {
 			enable = vim.g.lang_support_lua,
 			config = {
@@ -204,6 +192,26 @@ M.setup = function(config)
 			lspconfig[lsp].setup(settings.config)
 		end
 	end
+
+	vim.g.rustaceanvim = {
+		-- Plugin configuration
+		tools = {
+		},
+		-- LSP configuration
+		server = {
+			on_attach = on_attach_format,
+			default_settings = {
+				-- rust-analyzer language server configuration
+				['rust-analyzer'] = {
+					-- use cargo-clippy on save instead of cargo-check
+					check = { command = vim.fn.executable("cargo-clippy") == 1 and "clippy" or "check" },
+				},
+			},
+		},
+		-- DAP configuration
+		dap = {
+		},
+	}
 
 	vim.diagnostic.config({
 		underline = true,

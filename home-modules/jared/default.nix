@@ -143,6 +143,7 @@ in
         sd
         skopeo
         strace
+        systemctl-tui
         tcpdump
         tea
         tealdeer

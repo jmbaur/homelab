@@ -55,7 +55,7 @@ in
 
     custom.image = {
       bootFileCommands = ''
-        ${lib.getExe' pkgs.buildPackages.systemdUkify "ukify"} build \
+        ukify build \
           --no-sign-kernel \
           --efi-arch=${pkgs.stdenv.hostPlatform.efiArch} \
           --uname=${config.system.build.kernel.version} \

@@ -1,5 +1,4 @@
 {
-  closureInfo,
   dosfstools,
   dtc,
   erofs-utils,
@@ -10,19 +9,20 @@
   sbsigntool,
   stdenv,
   systemd,
+  systemdUkify,
   ubootTools,
   xz,
 
   # arguments
   bootFileCommands,
+  closure,
   id,
   imageName,
   partitions,
   postImageCommands,
-  toplevel,
+  sectorSize,
   usrFormat,
   version,
-  sectorSize,
 }:
 
 let
@@ -47,7 +47,6 @@ let
   };
 
   systemdArchitecture = builtins.replaceStrings [ "_" ] [ "-" ] stdenv.hostPlatform.linuxArch;
-  closure = closureInfo { rootPaths = [ toplevel ]; };
 
   bootPartitionConfig = iniFormat.generate "10-boot.conf" { Partition = bootPartition; };
   dataPartitionConfig = iniFormat.generate "20-usr-a.conf" { Partition = dataPartition; };
@@ -65,6 +64,7 @@ stdenv.mkDerivation {
     mtools
     sbsigntool
     systemd
+    systemdUkify
     ubootTools
     xz
   ];
@@ -85,13 +85,13 @@ stdenv.mkDerivation {
   env.SYSTEMD_REPART_MKFS_OPTIONS_EROFS = "-zlz4hc,12";
 
   buildCommand = ''
-    install -Dm0644 ${bootPartitionConfig} repart.d/10-boot.conf
-    install -Dm0644 ${dataPartitionConfig} repart.d/20-usr-a.conf
-    install -Dm0644 ${hashPartitionConfig} repart.d/20-usr-hash-a.conf
+    install -Dm0644 ${bootPartitionConfig} repart.d/${bootPartitionConfig.name}
+    install -Dm0644 ${dataPartitionConfig} repart.d/${dataPartitionConfig.name}
+    install -Dm0644 ${hashPartitionConfig} repart.d/${hashPartitionConfig.name}
 
-    echo "CopyFiles=${closure}/registration:/.nix-path-registration" >> repart.d/20-usr-a.conf
+    echo "CopyFiles=${closure}/registration:/.nix-path-registration" >> repart.d/${dataPartitionConfig.name}
     for path in $(cat ${closure}/store-paths); do
-      echo "CopyFiles=$path:''${path#/nix/store}" >> repart.d/20-usr-a.conf
+      echo "CopyFiles=$path:''${path#/nix/store}" >> repart.d/${dataPartitionConfig.name}
     done
 
     repart_args=(
@@ -119,7 +119,7 @@ stdenv.mkDerivation {
     bash "$bootFileCommandsPath"
     for line in $(cat $bootfiles); do
       echo "copying boot file $line"
-      echo "CopyFiles=$line" >> repart.d/10-boot.conf
+      echo "CopyFiles=$line" >> repart.d/${bootPartitionConfig.name}
     done
 
     fakeroot systemd-repart ''${repart_args[@]} \

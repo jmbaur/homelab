@@ -36,10 +36,18 @@ in
         message = "mutableUsers required to change initial password";
       }
       {
-        assertion = lib.any (fstype: fstype == config.fileSystems."/".fsType) [
-          "ext4"
-          "f2fs"
-        ];
+        assertion =
+          let
+            mountpoint = lib.findFirst (path: config.fileSystems ? "${path}") (throw "mount not found") [
+              "/home/${username}"
+              "/home"
+              "/"
+            ];
+          in
+          lib.any (fstype: fstype == config.fileSystems.${mountpoint}.fsType) [
+            "ext4"
+            "f2fs"
+          ];
         message = "fscrypt requires ext4 or f2fs";
       }
     ];

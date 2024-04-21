@@ -12,7 +12,6 @@ inputs: {
         ./dev.nix
         ./hardware
         ./image
-        ./installer
         ./mesh-network
         ./normal-user
         ./server.nix

@@ -1,3 +1,7 @@
+/// Given an arbitrary path, find the block device backing that path.
+///
+/// Usage: backing-block-device <path>
+///
 use std::str::FromStr;
 
 #[derive(Debug)]
@@ -148,6 +152,8 @@ fn main() -> Result<(), Error> {
         let block_device = std::path::PathBuf::from_str(closest.mount.what.as_str())
             .or_else(|_| Err(Error::InvalidPath))?;
 
+        // If the "what" is not an absolute path, we know it is not a block device. For example, a
+        // tmpfs mount's what is just "tmpfs".
         if !block_device.is_absolute() {
             return Err(Error::InvalidPath);
         }
