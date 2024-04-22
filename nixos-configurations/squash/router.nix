@@ -60,22 +60,6 @@
       ];
   };
 
-  custom.wg-mesh = {
-    enable = true;
-    peers.beetroot = { };
-    peers.carrot = { };
-    firewall = {
-      beetroot.allowAll = true;
-      carrot.allowedTCPPorts = [
-        19531 # systemd-journal-gatewayd
-        9153 # coredns
-        9430 # corerad
-        config.services.prometheus.exporters.blackbox.port
-        config.services.prometheus.exporters.node.port
-      ];
-    };
-  };
-
   # Use udev for giving wireless interfaces a static name. Udev is used over
   # systemd-networkd link units since hostapd needs to start before
   # systemd-networkd, thus rendering a rename useless.
