@@ -1,13 +1,22 @@
 use std::os::unix::io::{FromRawFd, IntoRawFd};
 
-type MyResult<T> = std::result::Result<T, String>;
+type Result<T> = std::result::Result<T, String>;
 
 trait Context<T> {
-    fn context(self, msg: impl Into<String>) -> MyResult<T>;
+    fn context(self, msg: impl Into<String>) -> Result<T>;
+}
+
+impl<T> Context<T> for Result<T> {
+    fn context(self, msg: impl Into<String>) -> Result<T> {
+        match self {
+            Err(err) => Err(format!("{}: {}", msg.into(), err)),
+            Ok(ok) => Ok(ok),
+        }
+    }
 }
 
 impl<T> Context<T> for std::io::Result<T> {
-    fn context(self, msg: impl Into<String>) -> MyResult<T> {
+    fn context(self, msg: impl Into<String>) -> Result<T> {
         match self {
             Err(err) => Err(format!("{}: {}", msg.into(), err)),
             Ok(ok) => Ok(ok),
@@ -26,7 +35,7 @@ fn mount(
     read_only: bool,
     what: impl AsRef<std::ffi::OsStr> + std::fmt::Debug,
     mountpoint: impl AsRef<std::ffi::OsStr> + std::fmt::Debug,
-) -> MyResult<()> {
+) -> Result<()> {
     let mut args = Vec::new();
 
     if read_only {
@@ -54,7 +63,7 @@ fn mount(
     Ok(())
 }
 
-fn unmount(mountpoint: impl AsRef<std::ffi::OsStr> + std::fmt::Debug) -> MyResult<()> {
+fn unmount(mountpoint: impl AsRef<std::ffi::OsStr> + std::fmt::Debug) -> Result<()> {
     let output = std::process::Command::new("/bin/umount")
         .args(&[&mountpoint])
         .spawn()
@@ -69,7 +78,7 @@ fn unmount(mountpoint: impl AsRef<std::ffi::OsStr> + std::fmt::Debug) -> MyResul
     Ok(())
 }
 
-fn udev_settle() -> MyResult<()> {
+fn udev_settle() -> Result<()> {
     std::process::Command::new("/opt/systemd/bin/udevadm")
         .args(&["trigger", "--action=add"])
         .spawn()
@@ -101,7 +110,7 @@ fn wait_until_gone(path: &std::path::Path) {
     }
 }
 
-fn reboot() -> MyResult<()> {
+fn reboot() -> Result<()> {
     std::process::Command::new("/bin/reboot")
         .spawn()
         .context("failed to spawn /bin/reboot")?
@@ -111,7 +120,7 @@ fn reboot() -> MyResult<()> {
     Ok(())
 }
 
-fn chvt(num: u8) -> MyResult<()> {
+fn chvt(num: u8) -> Result<()> {
     std::process::Command::new("/bin/chvt")
         .arg(num.to_string())
         .spawn()
@@ -122,7 +131,23 @@ fn chvt(num: u8) -> MyResult<()> {
     Ok(())
 }
 
-fn real_main(reboot_on_fail: &mut bool) -> MyResult<()> {
+fn wait_for_path(path: &str) -> Result<std::path::PathBuf> {
+    for _ in 0..10 {
+        match std::fs::canonicalize(path) {
+            Ok(path) => return Ok(path),
+            Err(err) => match err.kind() {
+                std::io::ErrorKind::NotFound => {
+                    std::thread::sleep(std::time::Duration::from_secs(1))
+                }
+                _ => return Err(err).context("failed to canonicalize path")?,
+            },
+        }
+    }
+
+    fail!("path {} not found", path);
+}
+
+fn real_main(reboot_on_fail: &mut bool) -> Result<()> {
     eprintln!("{0} INSTALLER {0}", "#".repeat(30));
 
     let proc_cmdline =
@@ -162,8 +187,8 @@ fn real_main(reboot_on_fail: &mut bool) -> MyResult<()> {
     eprintln!("waiting for devices to settle...");
     udev_settle()?;
 
-    let source_disk = std::fs::canonicalize(source_disk).context("no source disk found")?;
-    let target_disk = std::fs::canonicalize(target_disk).context("no target disk found")?;
+    let source_disk = wait_for_path(source_disk).context("failed to find source disk")?;
+    let target_disk = wait_for_path(target_disk).context("failed to find target disk")?;
 
     eprintln!("installing from {}", source_disk.display());
     eprintln!("installing to {}", target_disk.display());
