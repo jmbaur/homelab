@@ -9,6 +9,8 @@
 let
   cfg = config.custom.image;
 
+  installerCfg = config.custom.image.installer;
+
   # Make the installer work with lots of common hardware.
   installerSystem = extendModules { modules = [ "${modulesPath}/profiles/all-hardware.nix" ]; };
 
@@ -56,10 +58,13 @@ let
     mkdir -p /etc/systemd
   '';
 
-  installerKernelParams = installerSystem.config.boot.kernelParams ++ [
-    "installer.target_disk=${cfg.primaryDisk}"
-    "installer.source_disk=/dev/disk/by-partlabel/data"
-  ];
+  installerKernelParams =
+    installerSystem.config.boot.kernelParams
+    ++ [
+      "installer.target_disk=${cfg.primaryDisk}"
+      "installer.source_disk=/dev/disk/by-partlabel/data"
+    ]
+    ++ lib.optionals installerCfg.rebootOnFailure [ "installer.reboot_on_fail=1" ];
 
   installerInitialRamdisk = pkgs.makeInitrdNG {
     name = "installer-initrd-${kernel-name}";
@@ -128,6 +133,8 @@ let
   ) { };
 in
 {
+  options.custom.image.installer.rebootOnFailure = lib.mkEnableOption "reboot installer on failure";
+
   config = lib.mkIf cfg.enable {
     # The image to install is kept on an ext4 filesystem. TODO(jared): just
     # write the compressed raw image to the partition directly, no need for a

@@ -122,7 +122,7 @@ fn chvt(num: u8) -> MyResult<()> {
     Ok(())
 }
 
-fn real_main() -> MyResult<()> {
+fn real_main(reboot_on_fail: &mut bool) -> MyResult<()> {
     eprintln!("{0} INSTALLER {0}", "#".repeat(30));
 
     let proc_cmdline =
@@ -143,6 +143,9 @@ fn real_main() -> MyResult<()> {
             }
             Some(("installer", "target_disk")) => {
                 target_disk = Some(val);
+            }
+            Some(("installer", "reboot_on_fail")) => {
+                *reboot_on_fail = val != "0";
             }
             _ => {}
         }
@@ -212,12 +215,23 @@ fn real_main() -> MyResult<()> {
 }
 
 fn main() -> ! {
-    if let Err(err) = real_main() {
+    let mut reboot_on_fail = false;
+
+    if let Err(err) = real_main(&mut reboot_on_fail) {
         eprintln!("failed to perform installation: {:?}", err);
-        eprintln!("changing to /dev/tty2 in 10 seconds");
-        std::thread::sleep(std::time::Duration::from_secs(10));
-        if let Err(err) = chvt(2) {
-            eprintln!("failed to chvt: {}", err);
+
+        if reboot_on_fail {
+            eprintln!("rebooting in 10 seconds");
+            std::thread::sleep(std::time::Duration::from_secs(10));
+            if let Err(err) = reboot() {
+                eprintln!("failed to reboot: {}", err);
+            }
+        } else {
+            eprintln!("changing to /dev/tty2 in 10 seconds");
+            std::thread::sleep(std::time::Duration::from_secs(10));
+            if let Err(err) = chvt(2) {
+                eprintln!("failed to chvt: {}", err);
+            }
         }
     }
 

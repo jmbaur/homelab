@@ -300,6 +300,8 @@ in
           bootMethodConfig.uefi
         ];
 
+        custom.image.installer.rebootOnFailure = true;
+
         virtualisation.useDefaultFilesystems = false;
         virtualisation.diskSize = 4096;
         virtualisation.qemu.drives = [
