@@ -12,7 +12,6 @@ inputs: {
         ./dev.nix
         ./hardware
         ./image
-        ./mesh-network
         ./normal-user
         ./server.nix
         ./wireless.nix
