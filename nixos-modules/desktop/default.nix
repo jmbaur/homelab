@@ -6,6 +6,8 @@
 }:
 let
   cfg = config.custom.desktop;
+
+  startSway = "exec systemd-cat --identifier=sway sway";
 in
 {
   options.custom.desktop.enable = lib.mkEnableOption "desktop";
@@ -60,10 +62,22 @@ in
     services.udisks2.enable = true;
     services.upower.enable = true;
 
-    services.greetd = {
-      enable = true;
-      vt = 7;
-      settings.default_session.command = "''${pkgs.greetd.greetd}/bin/agreety --cmd sway";
-    };
+    programs.fish.loginShellInit = lib.mkAfter ''
+      if [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" -eq 1 ];
+        ${startSway}
+      end
+    '';
+
+    programs.bash.loginShellInit = lib.mkAfter ''
+      if [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" -eq 1 ]; then
+        ${startSway}
+      fi
+    '';
+
+    programs.zsh.loginShellInit = lib.mkAfter ''
+      if [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" -eq 1 ]; then
+        ${startSway}
+      fi
+    '';
   };
 }
