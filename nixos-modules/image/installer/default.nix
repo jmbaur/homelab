@@ -46,9 +46,10 @@ let
     touch /etc/udev/hwdb.bin # to shut up udev
     touch /etc/initrd-release
 
+    echo /opt/kmod/bin/modprobe > /proc/sys/kernel/modprobe
     for i in ${toString config.boot.initrd.kernelModules}; do
       echo "loading module $(basename $i)..."
-      modprobe $i
+      /opt/kmod/bin/modprobe $i
     done
 
     ln -sfn /proc/self/fd /dev/fd
@@ -99,6 +100,10 @@ let
       {
         object = pkgs.systemdMinimal;
         symlink = "/opt/systemd";
+      }
+      {
+        object = pkgs.kmod;
+        symlink = "/opt/kmod";
       }
       {
         object = ./inittab;
