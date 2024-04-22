@@ -106,6 +106,7 @@ in
 
         users.users.${username} = {
           isNormalUser = true;
+          uid = 1000;
           initialPassword = "NumberOne";
           inherit shell;
           extraGroups = groups;
