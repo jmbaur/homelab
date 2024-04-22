@@ -564,7 +564,21 @@ in
       wayland.windowManager.sway = {
         enable = true;
         package = null; # use sway from nixos configuration
-        systemd.enable = true;
+        systemd = {
+          enable = true;
+          xdgAutostart = true;
+          variables = [
+            "DISPLAY"
+            "WAYLAND_DISPLAY"
+            "SWAYSOCK"
+            "XDG_CURRENT_DESKTOP"
+            "XDG_SESSION_TYPE"
+            "NIXOS_OZONE_WL"
+            "XCURSOR_THEME"
+            "XCURSOR_SIZE"
+            "BEMENU_OPTS"
+          ];
+        };
         extraConfig = ''
           bindgesture swipe:right workspace prev
           bindgesture swipe:left workspace next
