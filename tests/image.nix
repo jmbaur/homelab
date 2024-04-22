@@ -353,7 +353,7 @@ in
 
           ${unpackImage { config = nodes.machine; }}
 
-          machine.wait_for_unit("setup-home-encryption.service")
+          machine.wait_for_unit("fscrypt-setup.service")
         '';
     };
   }

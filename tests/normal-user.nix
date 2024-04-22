@@ -37,23 +37,39 @@ nixosTest {
     machine.wait_for_unit("multi-user.target")
 
     with subtest("fscrypt setup successfully"):
-        machine.succeed("test -d /home/riker.homedir")
-        # assert "\"/home/riker\" is encrypted with fscrypt" in machine.succeed("fscrypt status /home/riker")
+        machine.succeed("test -d /home/riker")
+        assert "\"/home/riker\" is encrypted with fscrypt" in machine.succeed("fscrypt status /home/riker")
 
     with subtest("create file"):
         login_as_riker("NumberOne")
-        machine.succeed("touch foo")
-        machine.succeed("test -f foo")
+        machine.send_chars("touch foo\n")
+        machine.wait_until_succeeds("test -f /home/riker/foo")
+        logout()
+        machine.wait_until_fails("test -f /home/riker/foo")
+
+    with subtest("change password"):
+        login_as_riker("NumberOne")
+        machine.send_chars("passwd\n")
+        machine.wait_until_tty_matches("1", "Current password: ")
+        machine.send_chars("NumberOne\n")
+        machine.wait_until_tty_matches("1", "New password: ")
+        machine.send_chars("foobar\n")
+        machine.wait_until_tty_matches("1", "Retype new password: ")
+        machine.send_chars("foobar\n")
+        machine.wait_until_tty_matches("1", "password updated successfully")
+        protector_id = machine.succeed("ls /.fscrypt/protectors").strip()
+        machine.send_chars(f"fscrypt metadata change-passphrase --protector=/:{protector_id}\n")
+        machine.wait_until_tty_matches("1", "Enter old login passphrase for riker: ")
+        machine.send_chars("NumberOne\n")
+        machine.wait_until_tty_matches("1", "Enter new login passphrase for riker: ")
+        machine.send_chars("foobar\n")
+        machine.wait_until_tty_matches("1", "successfully changed")
         logout()
 
-    # with subtest("change password"):
-    #     machine.succeed("su - riker -c '(echo NumberOne; echo foobar; echo foobar) | passwd'")
-    #     protector_id = machine.succeed("ls /.fscrypt/protectors").strip()
-    #     machine.succeed(f"su - riker -c '(echo NumberOne; echo foobar) | fscrypt metadata change-passphrase --protector=/:{protector_id}'")
-
-    # with subtest("file created before password creation still exists"):
-    #     login_as_riker("foobar")
-    #     machine.succeed("test -f foo")
-    #     logout()
+    with subtest("file created before password creation still exists"):
+        login_as_riker("foobar")
+        machine.succeed("test -f /home/riker/foo")
+        logout()
+        machine.wait_until_fails("test -f /home/riker/foo")
   '';
 }

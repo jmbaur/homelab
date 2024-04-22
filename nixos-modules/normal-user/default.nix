@@ -23,7 +23,13 @@ let
     ++ (lib.optional config.programs.wireshark.enable "wireshark")
     ++ (lib.optional config.virtualisation.docker.enable "docker");
 
-  shell = if config.programs.fish.enable then pkgs.fish else pkgs.bash;
+  shell =
+    if config.programs.fish.enable then
+      pkgs.fish
+    else if config.programs.zsh.enable then
+      pkgs.zsh
+    else
+      pkgs.bash;
 
   mountpoint = lib.findFirst (path: config.fileSystems ? "${path}") (throw "mount not found") [
     "/home/${username}"
@@ -137,9 +143,13 @@ in
               fscrypt setup ${mountpoint} --all-users
             ''
             + ''
-              su - ${config.users.users.${username}.name} -c "echo ${
-                config.users.users.${username}.initialPassword
-              } | fscrypt encrypt --skip-unlock --source=pam_passphrase ${config.users.users.${username}.home}"
+              echo ${config.users.users.${username}.initialPassword} \
+                | fscrypt encrypt \
+                  --skip-unlock \
+                  --source=pam_passphrase \
+                  --no-recovery \
+                  --user=${config.users.users.${username}.name} \
+                  ${config.users.users.${username}.home}
             '';
           wantedBy = [ "multi-user.target" ];
         };
