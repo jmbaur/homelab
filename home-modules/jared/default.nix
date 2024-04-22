@@ -83,6 +83,8 @@ in
     }
 
     (lib.mkIf cfg.dev.enable {
+      services.ssh-agent.enable = true;
+
       home.packages = with pkgs; [
         ansifilter
         as-tree

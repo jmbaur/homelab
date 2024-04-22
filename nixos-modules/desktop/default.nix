@@ -23,9 +23,6 @@ in
     ];
     nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "teensy-udev-rules" ];
 
-    programs.gnupg.agent.enable = true;
-    programs.ssh.startAgent = true;
-    programs.wshowkeys.enable = true;
     programs.sway = {
       enable = true;
       wrapperFeatures = {

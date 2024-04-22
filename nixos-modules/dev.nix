@@ -15,7 +15,5 @@ in
     # enable some nicer interactive shells
     programs.fish.enable = true;
     programs.zsh.enable = true;
-
-    programs.ssh.startAgent = true;
   };
 }
