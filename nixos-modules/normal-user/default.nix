@@ -106,10 +106,13 @@ in
 
         users.users.${username} = {
           isNormalUser = true;
-          uid = 1000;
           initialPassword = "NumberOne";
           inherit shell;
           extraGroups = groups;
+
+          # The systemd-sysusers config in nixpkgs does not have a stable uid,
+          # so set it manually.
+          uid = 1000;
         };
 
         security.pam.enableFscrypt = true;
