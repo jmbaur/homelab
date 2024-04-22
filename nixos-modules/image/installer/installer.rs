@@ -1,30 +1,32 @@
 use std::os::unix::io::{FromRawFd, IntoRawFd};
 
-#[derive(Debug)]
-enum Error {
-    Decompress,
-    Mount,
-    NoSourceDisk,
-    NoTargetDisk,
-    Unmount,
+type MyResult<T> = std::result::Result<T, String>;
 
-    Io(#[allow(dead_code)] std::io::Error),
+trait Context<T> {
+    fn context(self, msg: impl Into<String>) -> MyResult<T>;
 }
 
-impl From<std::io::Error> for Error {
-    fn from(value: std::io::Error) -> Self {
-        Self::Io(value)
+impl<T> Context<T> for std::io::Result<T> {
+    fn context(self, msg: impl Into<String>) -> MyResult<T> {
+        match self {
+            Err(err) => Err(format!("{}: {}", msg.into(), err)),
+            Ok(ok) => Ok(ok),
+        }
     }
 }
 
-type Result<T> = std::result::Result<T, Error>;
+macro_rules! fail {
+    ($($args:tt),*) => {{
+        return Err((format!($($args),*)));
+    }};
+}
 
 fn mount(
     fs_type: &str,
     read_only: bool,
-    what: &std::ffi::OsStr,
-    mountpoint: impl AsRef<std::ffi::OsStr>,
-) -> Result<()> {
+    what: impl AsRef<std::ffi::OsStr> + std::fmt::Debug,
+    mountpoint: impl AsRef<std::ffi::OsStr> + std::fmt::Debug,
+) -> MyResult<()> {
     let mut args = Vec::new();
 
     if read_only {
@@ -34,45 +36,53 @@ fn mount(
     args.append(&mut vec![
         std::ffi::OsStr::new("-t"),
         std::ffi::OsStr::new(fs_type),
-        what,
+        what.as_ref(),
         mountpoint.as_ref(),
     ]);
 
-    let status = std::process::Command::new("/bin/mount")
+    let output = std::process::Command::new("/bin/mount")
         .args(&args)
-        .spawn()?
-        .wait()?;
+        .spawn()
+        .context("failed to spawn mount")?
+        .wait_with_output()
+        .context("failed to run mount")?;
 
-    if status.success() {
-        Ok(())
-    } else {
-        Err(Error::Mount)
+    if !output.status.success() {
+        fail!("failed to mount {:?} to {:?}", what, mountpoint);
     }
+
+    Ok(())
 }
 
-fn unmount(mountpoint: impl AsRef<std::ffi::OsStr>) -> Result<()> {
-    let status = std::process::Command::new("/bin/umount")
-        .args(&[mountpoint])
-        .spawn()?
-        .wait()?;
+fn unmount(mountpoint: impl AsRef<std::ffi::OsStr> + std::fmt::Debug) -> MyResult<()> {
+    let output = std::process::Command::new("/bin/umount")
+        .args(&[&mountpoint])
+        .spawn()
+        .context("failed to spawn umount")?
+        .wait_with_output()
+        .context("failed to run umount")?;
 
-    if status.success() {
-        Ok(())
-    } else {
-        Err(Error::Unmount)
+    if !output.status.success() {
+        fail!("failed to unmount {:?}", mountpoint);
     }
+
+    Ok(())
 }
 
-fn udev_settle() -> Result<()> {
+fn udev_settle() -> MyResult<()> {
     std::process::Command::new("/opt/systemd/bin/udevadm")
         .args(&["trigger", "--action=add"])
-        .spawn()?
-        .wait()?;
+        .spawn()
+        .context("failed to spawn udevadm trigger")?
+        .wait()
+        .context("failed to run udevadm trigger")?;
 
     std::process::Command::new("/opt/systemd/bin/udevadm")
         .args(&["settle"])
-        .spawn()?
-        .wait()?;
+        .spawn()
+        .context("failed to spawn udevadm settle")?
+        .wait()
+        .context("failed to run udevadm settle")?;
 
     Ok(())
 }
@@ -91,31 +101,21 @@ fn wait_until_gone(path: &std::path::Path) {
     }
 }
 
-fn reboot() -> Result<()> {
-    std::process::Command::new("/bin/reboot").spawn()?.wait()?;
+fn reboot() -> MyResult<()> {
+    std::process::Command::new("/bin/reboot")
+        .spawn()
+        .context("failed to spawn /bin/reboot")?
+        .wait()
+        .context("failed to run /bin/reboot")?;
 
     Ok(())
 }
 
-fn main() -> ! {
-    if let Err(err) = real_main() {
-        eprintln!("failed to perform installation: {:?}", err);
-    }
-
-    loop {
-        eprintln!("rebooting in 10 seconds");
-        std::thread::sleep(std::time::Duration::from_secs(10));
-
-        if let Err(err) = reboot() {
-            eprintln!("failed to reboot: {:?}", err);
-        }
-    }
-}
-
-fn real_main() -> Result<()> {
+fn real_main() -> MyResult<()> {
     eprintln!("{0} INSTALLER {0}", "#".repeat(30));
 
-    let proc_cmdline = std::fs::read_to_string("/proc/cmdline")?;
+    let proc_cmdline =
+        std::fs::read_to_string("/proc/cmdline").context("failed to read /proc/cmdline")?;
     let mut proc_cmdline_split = proc_cmdline.split_whitespace();
 
     let mut source_disk = None;
@@ -138,52 +138,51 @@ fn real_main() -> Result<()> {
     }
 
     let Some(source_disk) = source_disk else {
-        return Err(Error::NoSourceDisk);
+        fail!("no source disk specified");
     };
 
     let Some(target_disk) = target_disk else {
-        return Err(Error::NoTargetDisk);
+        fail!("no target disk specified");
     };
 
     eprintln!("waiting for devices to settle...");
     udev_settle()?;
 
-    let source_disk = std::fs::canonicalize(source_disk)?;
-    let target_disk = std::fs::canonicalize(target_disk)?;
+    let source_disk = std::fs::canonicalize(source_disk).context("no source disk found")?;
+    let target_disk = std::fs::canonicalize(target_disk).context("no target disk found")?;
 
     eprintln!("installing from {}", source_disk.display());
     eprintln!("installing to {}", target_disk.display());
 
     let mountpoint = std::path::Path::new("/mnt");
-    std::fs::create_dir_all(&mountpoint)?;
-    mount(
-        "ext4",
-        true,
-        source_disk.as_os_str(),
-        &mountpoint,
-    )?;
+    std::fs::create_dir_all(&mountpoint).context("failed to create mountpoint")?;
+    mount("ext4", true, &source_disk, &mountpoint)?;
 
     let in_file = std::fs::OpenOptions::new()
         .read(true)
-        .open(mountpoint.join("image"))?;
+        .open(mountpoint.join("image"))
+        .context("failed to open image to install")?;
 
     let out_file = std::fs::OpenOptions::new()
         .read(true)
         .write(true)
-        .open(target_disk)?;
+        .open(target_disk)
+        .context("failed to open target disk")?;
 
     // TODO(jared): Make a custom Into<Stdio> implementation that prints progress of copying the
     // image to the target disk.
     eprintln!("copying image...");
-    let status = std::process::Command::new("/bin/xz")
+    let output = std::process::Command::new("/bin/xz")
         .arg("-d")
         .stdin(unsafe { std::process::Stdio::from_raw_fd(in_file.into_raw_fd()) })
         .stdout(unsafe { std::process::Stdio::from_raw_fd(out_file.into_raw_fd()) })
-        .spawn()?
-        .wait()?;
+        .spawn()
+        .context("xz failed to spawn")?
+        .wait_with_output()
+        .context("xz failed to run")?;
 
-    if !status.success() {
-        return Err(Error::Decompress);
+    if !output.status.success() {
+        fail!("failed to decompress image");
     }
 
     eprintln!("installation finished");
@@ -199,4 +198,19 @@ fn real_main() -> Result<()> {
     reboot()?;
 
     Ok(())
+}
+
+fn main() -> ! {
+    if let Err(err) = real_main() {
+        eprintln!("failed to perform installation: {:?}", err);
+    }
+
+    loop {
+        eprintln!("rebooting in 10 seconds");
+        std::thread::sleep(std::time::Duration::from_secs(10));
+
+        if let Err(err) = reboot() {
+            eprintln!("failed to reboot: {:?}", err);
+        }
+    }
 }
