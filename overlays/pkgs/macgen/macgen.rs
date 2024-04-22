@@ -12,7 +12,7 @@ fn main() -> std::io::Result<()> {
     println!(
         "{}",
         mac_bytes
-            .into_iter()
+            .iter()
             .map(|byte| format!("{:02x}", byte))
             .collect::<Vec<String>>()
             .join(":")
