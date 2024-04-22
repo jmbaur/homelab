@@ -111,6 +111,17 @@ fn reboot() -> MyResult<()> {
     Ok(())
 }
 
+fn chvt(num: u8) -> MyResult<()> {
+    std::process::Command::new("/bin/chvt")
+        .arg(num.to_string())
+        .spawn()
+        .context("failed to spawn /bin/chvt")?
+        .wait()
+        .context("failed to run /bin/chvt")?;
+
+    Ok(())
+}
+
 fn real_main() -> MyResult<()> {
     eprintln!("{0} INSTALLER {0}", "#".repeat(30));
 
@@ -203,14 +214,16 @@ fn real_main() -> MyResult<()> {
 fn main() -> ! {
     if let Err(err) = real_main() {
         eprintln!("failed to perform installation: {:?}", err);
+        eprintln!("changing to /dev/tty2 in 10 seconds");
+        std::thread::sleep(std::time::Duration::from_secs(10));
+        if let Err(err) = chvt(2) {
+            eprintln!("failed to chvt: {}", err);
+        }
     }
 
     loop {
-        eprintln!("rebooting in 10 seconds");
-        std::thread::sleep(std::time::Duration::from_secs(10));
-
-        if let Err(err) = reboot() {
-            eprintln!("failed to reboot: {:?}", err);
-        }
+        use std::io::Read;
+        let mut buf = [0u8; 1];
+        _ = std::io::stdin().read(&mut buf);
     }
 }
