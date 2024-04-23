@@ -1,7 +1,7 @@
 inputs:
 inputs.nixpkgs.lib.mapAttrs (system: pkgs: {
   ci = pkgs.mkShell {
-    buildInputs = with pkgs; [
+    packages = with pkgs; [
       ansifilter
       just
       jq
@@ -10,7 +10,7 @@ inputs.nixpkgs.lib.mapAttrs (system: pkgs: {
     ];
   };
   default = pkgs.mkShell {
-    buildInputs = (
+    packages = (
       with pkgs;
       [
         bashInteractive
