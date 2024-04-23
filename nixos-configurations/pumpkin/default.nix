@@ -1,4 +1,9 @@
-{ pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   nixpkgs.hostPlatform = "x86_64-linux";
 
@@ -40,4 +45,16 @@
   boot.initrd.systemd.emergencyAccess = true;
   boot.initrd.systemd.managerEnvironment.SYSTEMD_LOG_LEVEL = "debug";
   boot.initrd.systemd.services.systemd-repart.environment.SYSTEMD_LOG_LEVEL = "debug";
+  boot.initrd.systemd.services.systemd-repart.serviceConfig = {
+    StandardOutput = "journal+console";
+    ExecStart = lib.mkForce [
+      " "
+      "${lib.getExe pkgs.strace} -y ${config.boot.initrd.systemd.package}/bin/systemd-repart --definitions=/etc/repart.d --dry-run=no ${
+        lib.optionalString (
+          config.boot.initrd.systemd.repart.device != null
+        ) config.boot.initrd.systemd.repart.device
+      }"
+    ];
+  };
+  boot.initrd.systemd.initrdBin = [ pkgs.strace ];
 }

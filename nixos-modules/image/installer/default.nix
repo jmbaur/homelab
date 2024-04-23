@@ -62,7 +62,7 @@ let
     installerSystem.config.boot.kernelParams
     ++ [
       "installer.target_disk=${installerCfg.targetDisk}"
-      "installer.source_disk=/dev/disk/by-partlabel/data"
+      "installer.source_disk=/dev/disk/by-partlabel/installer"
     ]
     ++ lib.optionals installerCfg.rebootOnFailure [ "installer.reboot_on_fail=1" ];
 

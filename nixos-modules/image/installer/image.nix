@@ -40,7 +40,7 @@ let
 
   imagePartition = {
     Type = "linux-generic";
-    Label = "data";
+    Label = "installer";
     Format = "ext4";
     CopyFiles = "${mainImage}:/image";
     Minimize = "guess";
