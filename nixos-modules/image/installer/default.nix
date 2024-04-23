@@ -48,7 +48,6 @@ let
 
     echo /opt/kmod/bin/modprobe > /proc/sys/kernel/modprobe
     for i in ${toString config.boot.initrd.kernelModules}; do
-      echo "loading module $(basename $i)..."
       /opt/kmod/bin/modprobe $i
     done
 

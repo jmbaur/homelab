@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  utils,
   modulesPath,
   ...
 }:
@@ -155,6 +154,7 @@ in
         boot.initrd = {
           systemd = {
             enable = true;
+            enableTpm2 = cfg.hasTpm2;
             repart.enable = true;
             additionalUpstreamUnits = [
               "remote-veritysetup.target"
@@ -205,17 +205,12 @@ in
               )
             ];
 
-            # Require that systemd-repart only starts after we have our dm-verity
-            # device. This prevents a race condition between systemd-repart and
-            # systemd-veritysetup.
-            services.systemd-repart.after = map (device: "${utils.escapeSystemdPath device}.device") [
-              "/dev/mapper/usr"
-            ];
-            services.systemd-repart.requires = config.boot.initrd.systemd.services.systemd-repart.after;
-
             # This needs to be set in order to create the root partition
-            # dynamically on first boot.
-            repart.device = cfg.primaryDisk;
+            # dynamically on first boot. Systemd will take this path and find
+            # the backing block device. Since the veritysetup generator runs
+            # early in the initrd, this path will exist before systemd-repart
+            # runs. See https://github.com/systemd/systemd/blob/6bd675a659a508cd1df987f90b633ed1c4b12cb3/src/partition/repart.c#L7705.
+            repart.device = "/dev/mapper/usr";
           };
 
           availableKernelModules = [ "dm_verity" ] ++ lib.optional cfg.mutableNixStore "overlay";
@@ -334,7 +329,7 @@ in
 
         # Allow for fscrypt to be used
         boot.initrd.systemd.services.systemd-repart.environment = {
-          "SYSTEMD_REPART_MKFS_OPTIONS_${config.systemd.repart.partitions."30-home".Format}" = lib.mkIf (
+          "SYSTEMD_REPART_MKFS_OPTIONS_${lib.toUpper config.fileSystems."/home".fsType}" = lib.mkIf (
             config.security.pam.enableFscrypt || config.services.homed.enable
           ) "-Oencrypt";
         };

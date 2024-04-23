@@ -4,9 +4,9 @@ tty3::askfirst:-/bin/sh
 tty4::askfirst:-/bin/sh
 tty5::askfirst:-/bin/sh
 ::restart:/sbin/init
-::ctrlaltdel:/sbin/reboot
-::shutdown:/bin/umount -a -r
-::shutdown:/sbin/swapoff -a
+null::ctrlaltdel:/sbin/reboot
+null::shutdown:/bin/umount -a -r
+null::shutdown:/sbin/swapoff -a
 
 # NOTE: Busybox will run these in order, so ensure that systemd-udevd is
 # started before the installer.

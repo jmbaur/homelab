@@ -33,4 +33,10 @@
     boot.uefi.enable = true;
     primaryDisk = "/dev/disk/by-path/pci-0000:03:00.0-nvme-1";
   };
+
+  # For debugging why systemd-repart doesn't seem to work well on this one
+  # device.
+  boot.initrd.systemd.emergencyAccess = true;
+  boot.initrd.systemd.managerEnvironment.SYSTEMD_LOG_LEVEL = "debug";
+  boot.initrd.systemd.services.systemd-repart.environment.SYSTEMD_LOG_LEVEL = "debug";
 }
