@@ -39,16 +39,25 @@ in
       pulse.enable = true;
     };
 
-    # Use automatic-timezoned for convenience. This enables geoclue2, which
-    # requires avahi to be enabled, so we want to make sure systemd-resolved's
-    # mDNS capabilities are disabled when this is the case.
+    # Use automatic-timezoned for convenience. This enables geoclue2.
     services.automatic-timezoned.enable = true;
+
+    # It would be uncommon for a desktop system to have an NMEA serial device,
+    # plus setting this to true means that geoclue will be dependent on avahi
+    # being enabled, since NMEA support in geoclue uses avahi.
+    services.geoclue2.enableNmea = lib.mkDefault false;
+
     services.avahi = {
-      enable = config.services.geoclue2.enable;
+      enable = config.services.geoclue2.enableNmea;
       nssmdns4 = true;
       nssmdns6 = true;
+      publish = {
+        enable = true;
+        addresses = true; # enable the use of <hostname>.local
+      };
     };
-    services.resolved.extraConfig = lib.optionalString config.services.avahi.enable ''
+
+    services.resolved.extraConfig = lib.mkIf config.services.avahi.enable ''
       MulticastDNS=${lib.boolToString false}
     '';
 
@@ -60,19 +69,19 @@ in
     services.upower.enable = true;
 
     programs.fish.loginShellInit = lib.mkAfter ''
-      if [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" -eq 1 ];
+      if test -z "$WAYLAND_DISPLAY" && test "$XDG_VTNR" -eq 1;
         ${startSway}
       end
     '';
 
     programs.bash.loginShellInit = lib.mkAfter ''
-      if [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" -eq 1 ]; then
+      if test -z "$WAYLAND_DISPLAY" && test "$XDG_VTNR" -eq 1; then
         ${startSway}
       fi
     '';
 
     programs.zsh.loginShellInit = lib.mkAfter ''
-      if [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" -eq 1 ]; then
+      if test -z "$WAYLAND_DISPLAY" && test "$XDG_VTNR" -eq 1; then
         ${startSway}
       fi
     '';

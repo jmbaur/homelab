@@ -12,17 +12,17 @@ clean: init
 # profiles to manage the system.
 #
 # run switch-to-configuration for a nixos system
-nixos type="switch":
-	nix shell --print-build-logs \
+nixos *ARGS:
+	nix shell --print-build-logs {{ARGS}} \
 		"{{justfile_directory()}}#nixosConfigurations.$(hostname).config.system.build.toplevel" \
-		--command sudo switch-to-configuration {{type}}
+		--command sudo switch-to-configuration switch
 
-# activate the latest home-manager configuration
-home:
+home *ARGS:
 	$(nix build \
 		--no-link \
 		--print-out-paths \
 		--print-build-logs \
+		{{ARGS}} \
 		"{{justfile_directory()}}#homeConfigurations.$(whoami)-$(hostname).activationPackage")/activate
 
 # update all managed packages, meant to be run in CI
