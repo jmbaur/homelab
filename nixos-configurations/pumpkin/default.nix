@@ -35,7 +35,8 @@
   };
 
   # For debugging why systemd-repart doesn't seem to work well on this one
-  # device.
+  # device. Seems related to https://github.com/systemd/systemd/issues/31142 or
+  # https://github.com/systemd/systemd/issues/31381.
   boot.initrd.systemd.emergencyAccess = true;
   boot.initrd.systemd.managerEnvironment.SYSTEMD_LOG_LEVEL = "debug";
   boot.initrd.systemd.services.systemd-repart.environment.SYSTEMD_LOG_LEVEL = "debug";
