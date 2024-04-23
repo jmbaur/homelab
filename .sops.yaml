@@ -8,7 +8,7 @@ keys:
   - &okra age17jejydtff70wy3ptdlpxm384dhf4xss7tnknuqrjhtv34w2yu53s5r5ec0
   - &squash age1k0cthp9dy5xngnpjc4cjwp86h3fxyrgtuk6h2lzn39dgx3ap894saredq7
   - &carrot age17kyw0e23mvu3usc4gj3d8qdhhzeyea7fvgqun5s9qgjmqwwnkc2s54rkme
-  - &celery age13q35qj0c7c86np8t28sea9rf6mef9g5yes0at2h9g7xdjw7zyscshqqmp6
+  - &celery age1qsxratlwc7cdrh6d0l7la0jf4dcnvmr6c28nneyegsx4czl3cu0sd9sg9y
   # TODO(jared): for when sops is compatible with age plugins
   # - &yubikey5cnfc age1yubikey1q20xxhpyk00m3ezajg3769jpmgwkvasq4dzutg75jq96fytnlcmxs9ltmga
   # - &yubikey5nfc age1yubikey1q0tf5gp52t3smx6zduwyjnurw4cgjlqdm58a9dj6430e8mtrfexfg586p8p
