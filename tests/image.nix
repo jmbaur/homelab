@@ -119,9 +119,9 @@ let
       system.image.version = version;
       custom.image = {
         enable = true;
-        primaryDisk = lib.mkDefault "/dev/vda";
         sectorSize = 512; # OVMF only supports 512B sector size?
         immutableMaxSize = 512 * 1024 * 1024; # 512M
+        installer.targetDisk = "/dev/vda";
       };
     };
 
@@ -215,7 +215,7 @@ in
 
               assert_boot_entry("nixos_${version}.efi")
 
-              partitions = json.loads(machine.succeed("sfdisk --json ${nodes.machine.custom.image.primaryDisk}"))["partitiontable"]["partitions"]
+              partitions = json.loads(machine.succeed("sfdisk --json ${nodes.machine.custom.image.installer.targetDisk}"))["partitiontable"]["partitions"]
 
               def equal_elements(xs):
                   return all([x == xs[0] for x in xs])

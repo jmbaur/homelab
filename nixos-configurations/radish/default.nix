@@ -10,7 +10,7 @@
 
   custom.image = {
     enable = true;
-    primaryDisk = "/dev/disk/by-path/TODO";
+    installer.targetDisk = "/dev/disk/by-path/TODO";
     boot.uboot.enable = true;
   };
 }

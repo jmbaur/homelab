@@ -21,7 +21,7 @@
     encrypt = false;
     hasTpm2 = false; # hyper-v for arm64 windows does not have tpm support
     boot.uefi.enable = true;
-    primaryDisk = "/dev/sda";
+    installer.targetDisk = "/dev/sda";
     postImageCommands = ''
       ${lib.getExe' pkgs.buildPackages.qemu-utils "qemu-img"} convert -f raw -o subformat=dynamic -O vhdx $out/image.raw $out/image.vhdx
       rm $out/image.raw

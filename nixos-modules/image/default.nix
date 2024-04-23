@@ -81,13 +81,6 @@ in
       '';
     };
 
-    primaryDisk = mkOption {
-      type = types.path;
-      description = ''
-        TODO
-      '';
-    };
-
     immutableMaxSize = mkOption {
       type = types.int;
       default = 2 * 1024 * 1024 * 1024; # 2G

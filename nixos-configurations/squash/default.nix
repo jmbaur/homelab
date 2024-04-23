@@ -21,7 +21,7 @@
       enable = true;
       encrypt = false;
       # TODO(jared): switched to mpcie card, need to obtain new disk path
-      primaryDisk = "/dev/disk/by-path/platform-f10a8000.sata-ata-1";
+      installer.targetDisk = "/dev/disk/by-path/platform-f10a8000.sata-ata-1";
       boot.uboot = {
         enable = true;
         bootMedium.type = "scsi";

@@ -29,7 +29,7 @@ in
   custom.server.enable = true;
   custom.image = {
     enable = true;
-    primaryDisk = "/dev/mmcblk0";
+    installer.targetDisk = "/dev/mmcblk0";
     bootFileCommands = ''
       echo ${uboot}/u-boot.bin:/kernel8.img >> $bootfiles
       echo ${configTxt}:/config.txt >> $bootfiles

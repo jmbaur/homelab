@@ -61,7 +61,7 @@ let
   installerKernelParams =
     installerSystem.config.boot.kernelParams
     ++ [
-      "installer.target_disk=${cfg.primaryDisk}"
+      "installer.target_disk=${installerCfg.targetDisk}"
       "installer.source_disk=/dev/disk/by-partlabel/data"
     ]
     ++ lib.optionals installerCfg.rebootOnFailure [ "installer.reboot_on_fail=1" ];
@@ -137,7 +137,15 @@ let
   ) { };
 in
 {
-  options.custom.image.installer.rebootOnFailure = lib.mkEnableOption "reboot installer on failure";
+  options.custom.image.installer = with lib; {
+    targetDisk = mkOption {
+      type = types.path;
+      description = ''
+        The path to the block device that the image will be installed on.
+      '';
+    };
+    rebootOnFailure = mkEnableOption "reboot installer on failure";
+  };
 
   config = lib.mkIf cfg.enable {
     # The image to install is kept on an ext4 filesystem. TODO(jared): just
