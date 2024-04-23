@@ -84,7 +84,14 @@ in
 
     (lib.mkIf cfg.dev.enable {
       services.ssh-agent.enable = true;
-      services.gpg-agent.enable = true;
+      services.gpg-agent = {
+        enable = true;
+        pinentryPackage =
+          if cfg.desktop.enable then
+            (pkgs.pinentry-bemenu.override { bemenu = config.programs.bemenu.package; })
+          else
+            pkgs.pinentry-tty;
+      };
 
       home.packages = with pkgs; [
         ansifilter
