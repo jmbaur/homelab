@@ -48,9 +48,9 @@ in
 
     mutableNixStore = mkEnableOption "TODO";
 
-    sectorSize = lib.mkOption {
+    sectorSize = mkOption {
       type =
-        with lib.types;
+        with types;
         enum [
           512
           1024
@@ -58,7 +58,7 @@ in
           4096
         ];
       default = 512;
-      example = lib.literalExpression "4096";
+      example = literalExpression "4096";
       description = ''
         The sector size of the disk image produced by systemd-repart. This
         value must be a power of 2 between 512 and 4096.

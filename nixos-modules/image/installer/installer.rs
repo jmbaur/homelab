@@ -190,6 +190,8 @@ fn real_main(reboot_on_fail: &mut bool) -> Result<()> {
     let source_disk = wait_for_path(source_disk).context("failed to find source disk")?;
     let target_disk = wait_for_path(target_disk).context("failed to find target disk")?;
 
+    // TODO(jared): make sure source_disk != target_disk
+
     eprintln!("installing from {}", source_disk.display());
     eprintln!("installing to {}", target_disk.display());
 

@@ -155,7 +155,6 @@ in
 
     system.build.networkInstaller = throw "TODO";
 
-    system.build.foo = installerInitialRamdisk;
     system.build.diskInstaller = pkgs.callPackage ./image.nix {
       imageName = config.networking.hostName;
       mainImage = "${config.system.build.image}/image.raw.xz";
