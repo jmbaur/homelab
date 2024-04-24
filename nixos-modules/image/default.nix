@@ -310,9 +310,9 @@ in
           Label = "home";
           Format = "ext4";
           FactoryReset = true;
-          # If /nix/store is mutable, make the home partition 3x as large as the root partition.
-          # If /nix/store is immutable, make the home partition 5x as large as the root partition.
-          Weight = if cfg.mutableNixStore then 3 else 5;
+          # If /nix/store is mutable, make the home partition 2x as large as the root partition.
+          # If /nix/store is immutable, make the home partition 4x as large as the root partition.
+          Weight = if cfg.mutableNixStore then 2 else 4;
         };
 
         fileSystems."/home" = {
