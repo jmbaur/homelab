@@ -1,13 +1,8 @@
 keys:
   - &jmbaur_pgp D4A0692874AA71B7F1281491BB8667EA7EB08143
-  - &artichoke age1n8w79x4tzq8ywhr8c6tx0ct2v032ndud2y65xqglhw56eazzvauqa8v37p
   - &beetroot age1wsy0k8zvvkt4rfcyfa3lqr8m3z4rx6y0snar78amm5604y0mr9aqyanlvf
-  - &kale age1smqw9zensjnzrsqdlc7avf2d5qcxrp3755030e5uvtvv4c3phfcq8dzr5e
   - &rhubarb age1gr6ezp2sytvwh4arpw8xwmezx59x9evdfr86sfr9kcayp500hskse7cksq
-  - &www age1y8n3ppl6pp9xy0pkuwjku7jc5xzje4nufy70hw526fs6re0czg9sapa3uq
-  - &okra age17jejydtff70wy3ptdlpxm384dhf4xss7tnknuqrjhtv34w2yu53s5r5ec0
   - &squash age1k0cthp9dy5xngnpjc4cjwp86h3fxyrgtuk6h2lzn39dgx3ap894saredq7
-  - &carrot age17kyw0e23mvu3usc4gj3d8qdhhzeyea7fvgqun5s9qgjmqwwnkc2s54rkme
   - &celery age1qsxratlwc7cdrh6d0l7la0jf4dcnvmr6c28nneyegsx4czl3cu0sd9sg9y
   # TODO(jared): for when sops is compatible with age plugins
   # - &yubikey5cnfc age1yubikey1q20xxhpyk00m3ezajg3769jpmgwkvasq4dzutg75jq96fytnlcmxs9ltmga
@@ -16,32 +11,16 @@ creation_rules:
   - path_regex: nixos-configurations/squash/secrets.yaml
     pgp: *jmbaur_pgp
     age: *squash
-  - path_regex: nixos-configurations/artichoke/secrets.yaml
-    pgp: *jmbaur_pgp
-    age: *artichoke
-  - path_regex: nixos-configurations/www/secrets.yaml
-    pgp: *jmbaur_pgp
-    age: *www
-  - path_regex: nixos-configurations/kale/secrets.yaml
-    pgp: *jmbaur_pgp
-    age: *kale
   - path_regex: nixos-configurations/rhubarb/secrets.yaml
     pgp: *jmbaur_pgp
     age: *rhubarb
-  - path_regex: nixos-configurations/okra/secrets.yaml
-    pgp: *jmbaur_pgp
-    age: *okra
   - path_regex: nixos-configurations/beetroot/secrets.yaml
     pgp: *jmbaur_pgp
     age: *beetroot
-  - path_regex: nixos-configurations/carrot/secrets.yaml
-    pgp: *jmbaur_pgp
-    age: *carrot
   - path_regex: nixos-configurations/celery/secrets.yaml
     pgp: *jmbaur_pgp
     age: *celery
-    # catch-all
-  - pgp: *jmbaur_pgp
+  - pgp: *jmbaur_pgp # catch-all
 # TODO(jared): for when sops is compatible with age plugins
 #     - age:
 #       - *yubikey5cnfc
