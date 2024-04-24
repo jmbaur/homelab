@@ -48,8 +48,8 @@
 
   sops.secrets = {
     ipwatch_env = { };
-    wlan0 = { };
-    wlan1 = { };
+    wlan0.reloadUnits = [ "hostapd.service" ];
+    wlan1.reloadUnits = [ "hostapd.service" ];
   };
 
   services.hostapd = {
