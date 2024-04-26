@@ -38,7 +38,7 @@ in
     console.useXkbConfig = true;
 
     nix = {
-      package = pkgs.nixVersions.nix_2_21;
+      package = pkgs.nixVersions.nix_2_22;
       channel.enable = false; # opt out of nix channels
       settings = {
         experimental-features = [
