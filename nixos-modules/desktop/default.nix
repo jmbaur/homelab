@@ -69,19 +69,20 @@ in
     services.upower.enable = true;
 
     programs.fish.loginShellInit = lib.mkAfter ''
+      set -q XDG_VTNR; or set XDG_VTNR 0
       if test -z "$WAYLAND_DISPLAY" && test "$XDG_VTNR" -eq 1;
         ${startSway}
       end
     '';
 
     programs.bash.loginShellInit = lib.mkAfter ''
-      if test -z "$WAYLAND_DISPLAY" && test "$XDG_VTNR" -eq 1; then
+      if test -z "$WAYLAND_DISPLAY" && test "''${XDG_VTNR:-0}" -eq 1; then
         ${startSway}
       fi
     '';
 
     programs.zsh.loginShellInit = lib.mkAfter ''
-      if test -z "$WAYLAND_DISPLAY" && test "$XDG_VTNR" -eq 1; then
+      if test -z "$WAYLAND_DISPLAY" && test "''${XDG_VTNR:-0}" -eq 1; then
         ${startSway}
       fi
     '';
