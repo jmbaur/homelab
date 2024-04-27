@@ -83,6 +83,8 @@ M.setup = function(config)
 
 	local get_on_attach = function(settings)
 		return function(client, bufnr)
+			vim.wo.signcolumn = "yes:1" -- always display sign column for LSP enabled windows
+
 			if settings.format and client.supports_method("textDocument/formatting") then
 				local lsp_formatting_augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 				vim.api.nvim_clear_autocmds({ group = lsp_formatting_augroup, buffer = bufnr })
@@ -216,8 +218,19 @@ M.setup = function(config)
 	vim.diagnostic.config({
 		underline = true,
 		virtual_text = false,
-		signs = false,
+		signs = true,
 	})
+
+	local sign_symbol = function(name, icon)
+		vim.fn.sign_define(
+			"DiagnosticSign" .. name,
+			{ text = icon, texthl = "DiagnosticSign" .. name }
+		)
+	end
+	sign_symbol("Error", "\xe2\x96\x8e")
+	sign_symbol("Hint", "\xe2\x96\x8e")
+	sign_symbol("Info", "\xe2\x96\x8e")
+	sign_symbol("Warning", "\xe2\x96\x8e")
 
 	vim.api.nvim_create_autocmd("DiagnosticChanged", {
 		callback = function(args)
