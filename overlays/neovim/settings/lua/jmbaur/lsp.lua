@@ -1,5 +1,7 @@
 local lspconfig = require("lspconfig")
 
+local left_aligned_line = "\xe2\x96\x8e"
+
 local M = {}
 
 local conditional_efm_languages = {
@@ -227,10 +229,11 @@ M.setup = function(config)
 			{ text = icon, texthl = "DiagnosticSign" .. name }
 		)
 	end
-	sign_symbol("Error", "\xe2\x96\x8e")
-	sign_symbol("Hint", "\xe2\x96\x8e")
-	sign_symbol("Info", "\xe2\x96\x8e")
-	sign_symbol("Warning", "\xe2\x96\x8e")
+	sign_symbol("Error", left_aligned_line)
+	sign_symbol("Hint", left_aligned_line)
+	sign_symbol("Info", left_aligned_line)
+	sign_symbol("Ok", left_aligned_line)
+	sign_symbol("Warn", left_aligned_line)
 
 	vim.api.nvim_create_autocmd("DiagnosticChanged", {
 		callback = function(args)
