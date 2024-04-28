@@ -64,6 +64,9 @@ in
       };
     };
 
+    # TODO(jared): remove when https://github.com/NixOS/nixpkgs/pull/305844 is finalized
+    systemd.services.clatd.wants = [ "network-online.target" ];
+
     services.clatd = {
       enable = true;
       settings = {
