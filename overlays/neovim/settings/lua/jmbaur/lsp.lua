@@ -218,9 +218,10 @@ M.setup = function(config)
 	}
 
 	vim.diagnostic.config({
+		severity_sort = true,
+		signs = true,
 		underline = true,
 		virtual_text = false,
-		signs = true,
 	})
 
 	local sign_symbol = function(name, icon)
