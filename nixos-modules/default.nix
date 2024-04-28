@@ -6,7 +6,6 @@ inputs: {
       imports = [
         ./basic-network.nix
         ./builder.nix
-        ./clatd.nix
         ./common.nix
         ./desktop
         ./dev.nix

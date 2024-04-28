@@ -1,8 +1,17 @@
-{ lib, config, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.custom.basicNetwork;
 
   hasWireless = with config.networking.wireless; enable || iwd.enable;
+
+  clatIfaceName = "clat0";
+
+  isNetworkd = config.networking.useNetworkd;
 in
 {
   options.custom.basicNetwork = {
@@ -10,8 +19,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    services.clatd.enable = true;
-
     services.resolved.enable = true;
 
     networking.useDHCP = false;
@@ -54,6 +61,47 @@ in
             MulticastDNS = true;
           };
         };
+      };
+    };
+
+    services.clatd = {
+      enable = true;
+      settings = {
+        clat-dev = clatIfaceName;
+        # NOTE: Perl's Net::DNS resolver does not seem to work well querying
+        # for AAAA records to systemd-resolved's default IPv4 bind address
+        # (127.0.0.53), so we add an IPv6 listener address to systemd-resolved
+        # and tell clatd to use that instead.
+        dns64-servers = lib.mkIf config.services.resolved.enable "::1";
+      };
+    };
+
+    # Allow clatd to find dns server
+    services.resolved.extraConfig = ''
+      DNSStubListenerExtra=::1
+    '';
+
+    services.networkd-dispatcher = {
+      enable = true;
+      rules.restart-clatd = {
+        onState = [
+          "routable"
+          "off"
+        ];
+        script = ''
+          #!${pkgs.runtimeShell}
+          if [[ $IFACE != "${clatIfaceName}" ]]; then
+            systemctl restart clatd
+          fi
+        '';
+      };
+    };
+
+    systemd.network.networks."50-clatd" = lib.mkIf isNetworkd {
+      matchConfig.Name = clatIfaceName;
+      linkConfig = {
+        Unmanaged = true;
+        ActivationPolicy = "manual";
       };
     };
   };
