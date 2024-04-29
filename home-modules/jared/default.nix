@@ -137,6 +137,7 @@ in
         nix-output-monitor
         nix-prefetch-scripts
         nix-tree
+        nixos-shell
         nload
         nurl
         patchelf
