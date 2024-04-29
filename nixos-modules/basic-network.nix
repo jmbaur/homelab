@@ -64,12 +64,6 @@ in
       };
     };
 
-    # TODO(jared): remove when https://github.com/NixOS/nixpkgs/pull/305844 is finalized
-    systemd.services.clatd = {
-      wants = [ "network-online.target" ];
-      startLimitIntervalSec = 0;
-    };
-
     services.clatd = {
       enable = true;
       settings = {
