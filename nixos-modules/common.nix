@@ -18,7 +18,7 @@ in
     system.stateVersion = lib.mkDefault "24.05";
 
     system.image.id = config.system.nixos.distroId;
-    system.image.version = lib.mkDefault "0.0.54";
+    system.image.version = lib.mkDefault "0.0.55";
 
     # We always build on x86_64-linux.
     #
@@ -48,6 +48,9 @@ in
         trusted-users = [ "@wheel" ];
       };
     };
+
+    # Use the dbus-broker dbus daemon implementation (more performance, yeah?)
+    services.dbus.implementation = "broker";
 
     services.openssh = lib.mkIf isNotContainer {
       enable = true;
