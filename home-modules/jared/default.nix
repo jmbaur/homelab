@@ -104,7 +104,6 @@ in
         dig
         dnsutils
         dt
-        entr
         fd
         file
         fsrx
@@ -163,6 +162,7 @@ in
         tokei
         traceroute
         usbutils
+        watchexec
         wip
         xsv
         ydiff
