@@ -18,6 +18,7 @@
   closure,
   id,
   imageName,
+  isUpdate ? false,
   partitions,
   postImageCommands,
   sectorSize,
@@ -69,11 +70,6 @@ stdenv.mkDerivation {
     xz
   ];
 
-  outputs = [
-    "out"
-    "update"
-  ];
-
   bootFileCommands =
     ''
       # source the setup file to get access to `substituteInPlace`
@@ -103,15 +99,14 @@ stdenv.mkDerivation {
       "--json=pretty"
     )
 
-    mkdir -p $out $update
+    mkdir -p $out
 
     fakeroot systemd-repart ''${repart_args[@]} \
       --defer-partitions=esp \
       --empty=create \
       --size=auto \
-      --split=yes \
-      $out/image.raw \
-      | tee $out/repart-output.json
+      --split=${if isUpdate then "yes" else "no"} \
+      $out/image.raw
 
     export usrhash=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}") | .roothash' <$out/repart-output.json)
 
@@ -138,6 +133,17 @@ stdenv.mkDerivation {
     mv "$data_orig_path" "$data_new_path"
     mv "$hash_orig_path" "$hash_new_path"
 
-    xz -3 --compress --verbose --threads=0 $out/*.{raw,vhdx} $update/*.raw
+    ${
+      if isUpdate then
+        ''
+          find $out -type f -name 'image.*' -exec rm {} \;
+        ''
+      else
+        ''
+          find $out -type f -not -name 'image.*' -exec rm {} \;
+        ''
+    }
+
+    xz -3 --compress --verbose --threads=0 $out/*.{raw,vhdx} $out/*.raw
   '';
 }

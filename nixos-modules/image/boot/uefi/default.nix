@@ -65,15 +65,15 @@ in
           --initrd=${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile} \
           --os-release=@${config.environment.etc."os-release".source} \
           ${lib.optionalString config.hardware.deviceTree.enable "--devicetree=${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name}"} \
-          --output=$update/${id}_${version}.efi
+          --output=$out/${id}_${version}.efi
 
-        ln -sf ${loaderConf} $update/loader.conf
-        ln -sf ${systemdBoot} $update/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI
+        ln -sf ${loaderConf} $out/loader.conf
+        ln -sf ${systemdBoot} $out/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI
 
-        echo "$update/loader.conf:/loader/loader.conf" >> $bootfiles
-        echo "$update/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI:/EFI/BOOT/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI" >> $bootfiles
+        echo "$out/loader.conf:/loader/loader.conf" >> $bootfiles
+        echo "$out/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI:/EFI/BOOT/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI" >> $bootfiles
 
-        echo "$update/${id}_${version}.efi:/EFI/Linux/${id}_${version}.efi" >> $bootfiles
+        echo $out/${id}_${version}.efi:/EFI/Linux/${id}_${version}.efi" >> $bootfiles
       '';
     };
   };
