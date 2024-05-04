@@ -102,8 +102,7 @@ stdenv.mkDerivation {
     fakeroot systemd-repart ''${repart_args[@]} \
       --empty=create \
       --size=auto \
-      $out/image.raw \
-      | tee $out/repart-output.json
+      $out/image.raw
 
     ${postImageCommands}
 

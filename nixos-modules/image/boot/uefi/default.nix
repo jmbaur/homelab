@@ -53,28 +53,26 @@ in
       };
     };
 
-    custom.image = {
-      bootFileCommands = ''
-        ukify build \
-          --no-sign-kernel \
-          --efi-arch=${pkgs.stdenv.hostPlatform.efiArch} \
-          --uname=${config.system.build.kernel.version} \
-          --stub=${config.systemd.package}/lib/systemd/boot/efi/linux${pkgs.stdenv.hostPlatform.efiArch}.efi.stub \
-          --linux=${config.system.build.kernel}/${config.system.boot.loader.kernelFile} \
-          --cmdline="init=${config.system.build.toplevel}/init usrhash=$usrhash ${toString config.boot.kernelParams}" \
-          --initrd=${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile} \
-          --os-release=@${config.environment.etc."os-release".source} \
-          ${lib.optionalString config.hardware.deviceTree.enable "--devicetree=${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name}"} \
-          --output=$out/${id}_${version}.efi
+    custom.image.bootFileCommands = ''
+      ukify build \
+        --no-sign-kernel \
+        --efi-arch=${pkgs.stdenv.hostPlatform.efiArch} \
+        --uname=${config.system.build.kernel.version} \
+        --stub=${config.systemd.package}/lib/systemd/boot/efi/linux${pkgs.stdenv.hostPlatform.efiArch}.efi.stub \
+        --linux=${config.system.build.kernel}/${config.system.boot.loader.kernelFile} \
+        --cmdline="init=${config.system.build.toplevel}/init usrhash=$usrhash ${toString config.boot.kernelParams}" \
+        --initrd=${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile} \
+        --os-release=@${config.environment.etc."os-release".source} \
+        ${lib.optionalString config.hardware.deviceTree.enable "--devicetree=${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name}"} \
+        --output=$out/${id}_${version}.efi
 
-        ln -sf ${loaderConf} $out/loader.conf
-        ln -sf ${systemdBoot} $out/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI
+      ln -sf ${loaderConf} $out/loader.conf
+      ln -sf ${systemdBoot} $out/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI
 
-        echo "$out/loader.conf:/loader/loader.conf" >> $bootfiles
-        echo "$out/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI:/EFI/BOOT/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI" >> $bootfiles
+      echo "$out/loader.conf:/loader/loader.conf" >> $bootfiles
+      echo "$out/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI:/EFI/BOOT/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI" >> $bootfiles
 
-        echo $out/${id}_${version}.efi:/EFI/Linux/${id}_${version}.efi" >> $bootfiles
-      '';
-    };
+      echo "$out/${id}_${version}.efi:/EFI/Linux/${id}_${version}.efi" >> $bootfiles
+    '';
   };
 }

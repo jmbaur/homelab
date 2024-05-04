@@ -119,26 +119,24 @@ in
       };
     };
 
-    custom.image = {
-      bootFileCommands =
-        ''
-          echo "${loaderConf}:/loader/loader.conf" >> $bootfiles
+    custom.image.bootFileCommands =
+      ''
+        echo "${loaderConf}:/loader/loader.conf" >> $bootfiles
 
-          bootentry=$out/${id}_${version}.conf
-          install -Dm0644 ${entryConf} $bootentry
-          substituteInPlace $bootentry --subst-var usrhash
+        bootentry=$out/${id}_${version}.conf
+        install -Dm0644 ${entryConf} $bootentry
+        substituteInPlace $bootentry --subst-var usrhash
 
-          ln -s ${config.system.build.kernel}/${config.system.boot.loader.kernelFile} $out/linux_${version}
-          ln -s ${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile} $out/initrd_${version}
+        ln -s ${config.system.build.kernel}/${config.system.boot.loader.kernelFile} $out/linux_${version}
+        ln -s ${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile} $out/initrd_${version}
 
-          echo "$bootentry:/loader/entries/${id}_${version}.conf" >> $bootfiles
-          echo "$out/linux_${version}:/EFI/${id}/linux_${version}" >> $bootfiles
-          echo "$out/initrd_${version}:/EFI/${id}/initrd_${version}" >> $bootfiles
-        ''
-        + lib.optionalString config.hardware.deviceTree.enable ''
-          ln -s ${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name} $out/devicetree_${version}.dtb
-          echo "${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name}:/EFI/${id}/devicetree_${version}.dtb" >> $bootfiles
-        '';
-    };
+        echo "$bootentry:/loader/entries/${id}_${version}.conf" >> $bootfiles
+        echo "$out/linux_${version}:/EFI/${id}/linux_${version}" >> $bootfiles
+        echo "$out/initrd_${version}:/EFI/${id}/initrd_${version}" >> $bootfiles
+      ''
+      + lib.optionalString config.hardware.deviceTree.enable ''
+        ln -s ${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name} $out/devicetree_${version}.dtb
+        echo "${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name}:/EFI/${id}/devicetree_${version}.dtb" >> $bootfiles
+      '';
   };
 }

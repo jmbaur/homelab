@@ -106,9 +106,9 @@ stdenv.mkDerivation {
       --empty=create \
       --size=auto \
       --split=${if isUpdate then "yes" else "no"} \
-      $out/image.raw
+      $out/image.raw | tee repart-output.json
 
-    export usrhash=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}") | .roothash' <$out/repart-output.json)
+    export usrhash=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}") | .roothash' <repart-output.json)
 
     export bootfiles=bootfiles
     bash "$bootFileCommandsPath"
@@ -117,25 +117,21 @@ stdenv.mkDerivation {
       echo "CopyFiles=$line" >> repart.d/${bootPartitionConfig.name}
     done
 
-    fakeroot systemd-repart ''${repart_args[@]} \
-      $out/image.raw
+    fakeroot systemd-repart ''${repart_args[@]} $out/image.raw
 
     ${postImageCommands}
-
-    data_uuid=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}") | .uuid' <$out/repart-output.json)
-    hash_uuid=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}-verity") | .uuid' <$out/repart-output.json)
-    data_orig_path=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}") | .split_path' <$out/repart-output.json)
-    hash_orig_path=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}-verity") | .split_path' <$out/repart-output.json)
-
-    data_new_path="''${update}/${id}_${version}_''${data_uuid}.usr.raw"
-    hash_new_path="''${update}/${id}_${version}_''${hash_uuid}.usr-hash.raw"
-
-    mv "$data_orig_path" "$data_new_path"
-    mv "$hash_orig_path" "$hash_new_path"
 
     ${
       if isUpdate then
         ''
+          data_uuid=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}") | .uuid' <repart-output.json)
+          hash_uuid=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}-verity") | .uuid' <repart-output.json)
+          data_orig_path=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}") | .split_path' <repart-output.json)
+          hash_orig_path=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}-verity") | .split_path' <repart-output.json)
+          data_new_path="''${out}/${id}_${version}_''${data_uuid}.usr.raw"
+          hash_new_path="''${out}/${id}_${version}_''${hash_uuid}.usr-hash.raw"
+          mv "$data_orig_path" "$data_new_path"
+          mv "$hash_orig_path" "$hash_new_path"
           find $out -type f -name 'image.*' -exec rm {} \;
         ''
       else
@@ -144,6 +140,6 @@ stdenv.mkDerivation {
         ''
     }
 
-    xz -3 --compress --verbose --threads=0 $out/*.{raw,vhdx} $out/*.raw
+    xz -3 --compress --verbose --threads=0 $out/*.{raw,vhdx}
   '';
 }
