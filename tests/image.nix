@@ -241,7 +241,7 @@ in
                 if nodes.machine.custom.image.mutableNixStore then "succeed" else "fail"
               }("touch foo && nix store add-file ./foo")
 
-              machine.copy_from_host("${nodes.machine.system.build.image.update}", "/run/tmp")
+              machine.copy_from_host("${nodes.machine.system.build.update}", "/run/tmp")
               machine.succeed("mv /run/tmp/* /run/update")
 
               current_usr = machine.succeed("ls /run/update/*${version}*.usr.raw.xz").strip()
