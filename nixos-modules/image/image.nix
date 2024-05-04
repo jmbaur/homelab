@@ -132,6 +132,7 @@ stdenv.mkDerivation {
           hash_new_path="''${out}/${id}_${version}_''${hash_uuid}.usr-hash.raw"
           mv "$data_orig_path" "$data_new_path"
           mv "$hash_orig_path" "$hash_new_path"
+
           find $out -name 'image.*' -exec rm -r {} \;
         ''
       else

@@ -25,6 +25,8 @@ in
     # "If it don't cross-compile, it don't go in the config!"
     nixpkgs.buildPlatform = "x86_64-linux";
 
+    environment.enableAllTerminfo = true;
+
     programs.less.lessopen = lib.mkIf (pkgs.stdenv.hostPlatform != pkgs.stdenv.buildPlatform) null;
 
     programs.command-not-found.enable = false;
