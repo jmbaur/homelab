@@ -157,6 +157,14 @@ in
             '';
           wantedBy = [ "multi-user.target" ];
         };
+
+        # Ensure home directory is unlocked if it isn't already (e.g. over SSH
+        # using public-key authentication).
+        environment.interactiveShellInit = ''
+          if ! fscrypt status --quiet $HOME; then
+            fscrypt unlock $HOME
+          fi
+        '';
       })
     ]
   );
