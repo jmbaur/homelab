@@ -200,9 +200,6 @@ in
         enable = true;
         controlMaster = "auto";
         controlPersist = "30m";
-        extraConfig = ''
-          SetEnv TERM=xterm-256color
-        '';
         matchBlocks = lib.optionalAttrs cfg.includePersonalConfigs {
           "*.home.arpa" = {
             forwardAgent = true;
