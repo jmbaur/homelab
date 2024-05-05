@@ -228,7 +228,7 @@ in
               if not equal_elements(usr_hash_partitions):
                   raise Exception(f"mismatching usr-hash disk sizes: {usr_hash_partitions}")
 
-              machine.succeed("test -f /usr/store/.nix-path-registration")
+              machine.succeed("test -f /usr/.nix-path-registration")
               ${lib.optionalString nodes.machine.custom.image.mutableNixStore ''
                 machine.succeed("test $(nix-store --dump-db | wc -l) -gt 0")
               ''}
