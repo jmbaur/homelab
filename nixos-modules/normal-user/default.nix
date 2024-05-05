@@ -57,7 +57,23 @@ in
             ];
             message = "fscrypt requires ext4 or f2fs";
           }
+          {
+            assertion = with config.users.users.root.openssh.authorizedKeys; keys == [ ] && keyFiles == [ ];
+            message = "root user must not have any authorized ssh keys configured";
+          }
         ];
+
+        # https://wiki.archlinux.org/title/systemd-homed#SSH_remote_unlocking
+        services.openssh.settings = {
+          PasswordAuthentication = true;
+          PubkeyAuthentication = true;
+          AuthenticationMethods = [
+            "publickey"
+            "password"
+          ];
+          AuthorizedKeysCommand = lib.mkIf USE_HOMED "${lib.getExe' config.systemd.package "userdbctl"} ssh-authorized-keys %u";
+          AuthorizedKeysCommandUser = lib.mkIf USE_HOMED "root";
+        };
       }
       (lib.mkIf USE_HOMED {
         users.mutableUsers = false;
@@ -157,16 +173,6 @@ in
             '';
           wantedBy = [ "multi-user.target" ];
         };
-
-        # Ensure home directory is unlocked if it isn't already (e.g. over SSH
-        # using public-key authentication).
-        environment.interactiveShellInit = ''
-          _status=$(fscrypt status "$HOME" 2>&1)
-          if grep --silent "\"$HOME\" is encrypted" <<<"$_status" && ! grep --silent "Unlocked: Yes" <<<"$_status"; then
-            fscrypt unlock "$HOME"
-          fi
-          unset _status
-        '';
       })
     ]
   );

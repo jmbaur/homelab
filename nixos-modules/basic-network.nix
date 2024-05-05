@@ -19,7 +19,10 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    services.resolved.enable = true;
+    services.resolved = {
+      enable = true;
+      llmnr = lib.mkDefault (lib.boolToString false);
+    };
 
     networking.useDHCP = false;
 

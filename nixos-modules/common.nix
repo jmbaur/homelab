@@ -54,13 +54,6 @@ in
     # Use the dbus-broker dbus daemon implementation (more performance, yeah?)
     services.dbus.implementation = "broker";
 
-    services.openssh = lib.mkIf isNotContainer {
-      enable = true;
-      settings = {
-        # use more secure defaults
-        PermitRootLogin = lib.mkDefault "prohibit-password";
-        PasswordAuthentication = lib.mkDefault false;
-      };
-    };
+    services.openssh = lib.mkDefault isNotContainer;
   };
 }
