@@ -161,7 +161,7 @@ in
         # Ensure home directory is unlocked if it isn't already (e.g. over SSH
         # using public-key authentication).
         environment.interactiveShellInit = ''
-          _status=$(fscrypt status "$HOME")
+          _status=$(fscrypt status "$HOME" 2>&1)
           if grep --silent "\"$HOME\" is encrypted" <<<"$_status" && ! grep --silent "Unlocked: Yes" <<<"$_status"; then
             fscrypt unlock "$HOME"
           fi
