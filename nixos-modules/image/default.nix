@@ -282,6 +282,10 @@ in
 
         systemd.services.initialize-nix-database = lib.mkIf config.nix.enable {
           unitConfig.ConditionPathExists = [ "/usr/.nix-path-registration" ];
+          serviceConfig = {
+            Type = "oneshot";
+            RemainAfterExit = true;
+          };
           path = [ config.nix.package ];
           script = "nix-store --load-db </usr/.nix-path-registration";
           wantedBy = [ "multi-user.target" ];

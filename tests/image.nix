@@ -230,7 +230,7 @@ in
 
               machine.succeed("test -f /usr/.nix-path-registration")
               ${lib.optionalString nodes.machine.custom.image.mutableNixStore ''
-                machine.succeed("test $(nix-store --dump-db | wc -l) -gt 0")
+                machine.wait_unit_succeeds("test $(nix-store --dump-db | wc -l) -gt 0")
               ''}
 
               machine.fail("command -v nixos-rebuild")
