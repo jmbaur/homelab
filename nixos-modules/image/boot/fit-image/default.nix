@@ -137,12 +137,12 @@ in
 
         bash ${./make-fit-image-its.bash} ${toString deviceTreeArgs} >image.its
 
-        mkimage --fit image.its "$out/${fixedFitImageName}"
+        mkimage --fit image.its "$update/${fixedFitImageName}"
 
         ln -sf ${globalBootScriptImage} $out/boot.scr
 
-        echo "$out/boot.scr:/boot.scr" >> $bootfiles
-        echo "$out/${fixedFitImageName}:/${fixedFitImageName}" >> $bootfiles
+        echo "$update/boot.scr:/boot.scr" >>$bootfiles
+        echo "$update/${fixedFitImageName}:/${fixedFitImageName}" >>$bootfiles
       '';
   };
 }

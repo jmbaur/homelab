@@ -121,22 +121,25 @@ in
 
     custom.image.bootFileCommands =
       ''
-        echo "${loaderConf}:/loader/loader.conf" >> $bootfiles
+        echo "${loaderConf}:/loader/loader.conf" >>$bootfiles
 
-        bootentry=$out/${id}_${version}.conf
+        bootentry=$update/${id}_${version}.conf
         install -Dm0644 ${entryConf} $bootentry
         substituteInPlace $bootentry --subst-var usrhash
 
-        ln -s ${config.system.build.kernel}/${config.system.boot.loader.kernelFile} $out/linux_${version}
-        ln -s ${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile} $out/initrd_${version}
+        linux=$update/linux_${version}
+        initrd=$update/initrd_${version}
+        ln -s ${config.system.build.kernel}/${config.system.boot.loader.kernelFile} $linux
+        ln -s ${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile} $initrd
 
-        echo "$bootentry:/loader/entries/${id}_${version}.conf" >> $bootfiles
-        echo "$out/linux_${version}:/EFI/${id}/linux_${version}" >> $bootfiles
-        echo "$out/initrd_${version}:/EFI/${id}/initrd_${version}" >> $bootfiles
+        echo "$bootentry:/loader/entries/$(basename $bootentry)" >>$bootfiles
+        echo "$linux:/EFI/${id}/$(basename $linux)" >>$bootfiles
+        echo "$initrd:/EFI/${id}/$(basename $initrd)" >>$bootfiles
       ''
       + lib.optionalString config.hardware.deviceTree.enable ''
-        ln -s ${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name} $out/devicetree_${version}.dtb
-        echo "${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name}:/EFI/${id}/devicetree_${version}.dtb" >> $bootfiles
+        dtb=$update/devicetree_${version}.dtb
+        ln -s ${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name} $dtb
+        echo "$dtb:/EFI/${id}/$(basename $dtb)" >>$bootfiles
       '';
   };
 }

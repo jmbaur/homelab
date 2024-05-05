@@ -18,7 +18,6 @@
   closure,
   id,
   imageName,
-  isUpdate ? false,
   partitions,
   postImageCommands,
   sectorSize,
@@ -80,6 +79,11 @@ stdenv.mkDerivation {
 
   env.SYSTEMD_REPART_MKFS_OPTIONS_EROFS = "-zlz4hc,12";
 
+  outputs = [
+    "out"
+    "update"
+  ];
+
   buildCommand = ''
     install -Dm0644 ${bootPartitionConfig} repart.d/${bootPartitionConfig.name}
     install -Dm0644 ${dataPartitionConfig} repart.d/${dataPartitionConfig.name}
@@ -99,13 +103,13 @@ stdenv.mkDerivation {
       "--json=pretty"
     )
 
-    mkdir -p $out
+    mkdir -p $out $update
 
     fakeroot systemd-repart ''${repart_args[@]} \
       --defer-partitions=esp \
       --empty=create \
       --size=auto \
-      --split=${if isUpdate then "yes" else "no"} \
+      --split=yes \
       $out/image.raw | tee repart-output.json
 
     export usrhash=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}") | .roothash' <repart-output.json)
@@ -119,28 +123,17 @@ stdenv.mkDerivation {
 
     fakeroot systemd-repart ''${repart_args[@]} $out/image.raw
 
+    data_uuid=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}") | .uuid' <repart-output.json)
+    hash_uuid=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}-verity") | .uuid' <repart-output.json)
+    data_orig_path=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}") | .split_path' <repart-output.json)
+    hash_orig_path=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}-verity") | .split_path' <repart-output.json)
+    data_new_path="''${update}/${id}_${version}_''${data_uuid}.usr.raw"
+    hash_new_path="''${update}/${id}_${version}_''${hash_uuid}.usr-hash.raw"
+    mv "$data_orig_path" "$data_new_path"
+    mv "$hash_orig_path" "$hash_new_path"
+
     ${postImageCommands}
 
-    ${
-      if isUpdate then
-        ''
-          data_uuid=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}") | .uuid' <repart-output.json)
-          hash_uuid=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}-verity") | .uuid' <repart-output.json)
-          data_orig_path=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}") | .split_path' <repart-output.json)
-          hash_orig_path=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}-verity") | .split_path' <repart-output.json)
-          data_new_path="''${out}/${id}_${version}_''${data_uuid}.usr.raw"
-          hash_new_path="''${out}/${id}_${version}_''${hash_uuid}.usr-hash.raw"
-          mv "$data_orig_path" "$data_new_path"
-          mv "$hash_orig_path" "$hash_new_path"
-
-          find $out -name 'image.*' -exec rm -r {} \;
-        ''
-      else
-        ''
-          find $out -not -name 'image.*' -exec rm -r {} \;
-        ''
-    }
-
-    xz -3 --compress --verbose --threads=0 $out/*.{raw,vhdx}
+    xz -3 --compress --verbose --threads=0 $out/*.{raw,vhdx} $update/*.raw
   '';
 }

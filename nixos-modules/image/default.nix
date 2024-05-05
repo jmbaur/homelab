@@ -303,8 +303,6 @@ in
           inherit (config.system.image) id version;
           inherit (config.systemd.repart) partitions;
         };
-
-        system.build.update = config.system.build.image.override { isUpdate = true; };
       }
       (lib.mkIf wantSeparateHome {
         systemd.repart.partitions."40-home" = {

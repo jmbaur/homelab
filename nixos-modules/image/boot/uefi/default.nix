@@ -54,6 +54,7 @@ in
     };
 
     custom.image.bootFileCommands = ''
+      uki=$update/${id}_${version}.efi
       ukify build \
         --no-sign-kernel \
         --efi-arch=${pkgs.stdenv.hostPlatform.efiArch} \
@@ -64,15 +65,15 @@ in
         --initrd=${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile} \
         --os-release=@${config.environment.etc."os-release".source} \
         ${lib.optionalString config.hardware.deviceTree.enable "--devicetree=${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name}"} \
-        --output=$out/${id}_${version}.efi
+        --output="$uki"
+      echo "$uki:/EFI/Linux/$(basename $uki)" >>$bootfiles
 
-      ln -sf ${loaderConf} $out/loader.conf
-      ln -sf ${systemdBoot} $out/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI
+      ln -sf ${loaderConf} $update/loader.conf
+      echo "$update/loader.conf:/loader/loader.conf" >>$bootfiles
 
-      echo "$out/loader.conf:/loader/loader.conf" >> $bootfiles
-      echo "$out/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI:/EFI/BOOT/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI" >> $bootfiles
-
-      echo "$out/${id}_${version}.efi:/EFI/Linux/${id}_${version}.efi" >> $bootfiles
+      systemd_boot=$update/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI
+      ln -sf ${systemdBoot} $systemd_boot
+      echo "$systemd_boot:/EFI/BOOT/$(basename $systemd_boot)" >>$bootfiles
     '';
   };
 }
