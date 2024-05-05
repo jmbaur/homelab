@@ -135,7 +135,10 @@ in
         boot.initrd.services.lvm.enable = true;
 
         # We have our own /usr/bin/env from the read-only partition
+        #
+        # See https://github.com/NixOS/nixpkgs/pull/309336
         environment.usrbinenv = null;
+        system.activationScripts.usrbinenv = lib.mkForce "";
 
         boot.initrd = {
           systemd = {
