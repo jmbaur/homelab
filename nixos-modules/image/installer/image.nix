@@ -58,7 +58,6 @@ stdenv.mkDerivation {
     dosfstools
     dtc
     e2fsprogs
-    erofs-utils
     fakeroot
     jq
     mtools

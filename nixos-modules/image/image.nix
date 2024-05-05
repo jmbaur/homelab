@@ -8,6 +8,7 @@
   jq,
   mtools,
   sbsigntool,
+  squashfsTools,
   stdenv,
   systemd,
   systemdUkify,
@@ -56,19 +57,26 @@ in
 stdenv.mkDerivation {
   name = "nixos-image-${imageName}";
 
-  depsBuildBuild = [
-    dosfstools
-    dtc
-    erofs-utils
-    fakeroot
-    jq
-    mtools
-    sbsigntool
-    systemd
-    systemdUkify
-    ubootTools
-    xz
-  ];
+  depsBuildBuild =
+    [
+      dosfstools
+      dtc
+      fakeroot
+      jq
+      mtools
+      sbsigntool
+      systemd
+      systemdUkify
+      ubootTools
+      xz
+    ]
+    ++ [
+      {
+        "erofs" = erofs-utils;
+        "squashfs" = squashfsTools;
+      }
+      .${usrFormat}
+    ];
 
   bootFileCommands =
     ''
@@ -78,7 +86,10 @@ stdenv.mkDerivation {
     + bootFileCommands;
   passAsFile = [ "bootFileCommands" ];
 
-  env.SYSTEMD_REPART_MKFS_OPTIONS_EROFS = "-zlz4hc,12";
+  env = {
+    SYSTEMD_REPART_MKFS_OPTIONS_EROFS = "-zlz4hc,12";
+    SYSTEMD_REPART_MKFS_OPTIONS_SQUASHFS = "-comp zstd";
+  };
 
   outputs = [
     "out"
