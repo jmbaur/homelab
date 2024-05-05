@@ -231,19 +231,19 @@ in
           };
 
           # The "B" update partition and root partition get created on first boot.
-          "20-usr-b" = {
+          "30-usr-b" = {
             Type = "usr";
             Label = "usr-0.0.0";
             SizeMinBytes = toString maxUsrSize;
             SizeMaxBytes = toString maxUsrSize;
           };
-          "20-usr-hash-b" = {
+          "30-usr-hash-b" = {
             Type = "usr-verity";
             Label = "usr-hash-0.0.0";
             SizeMinBytes = toString maxUsrHashSize;
             SizeMaxBytes = toString maxUsrHashSize;
           };
-          "30-root" = {
+          "40-root" = {
             Type = "root";
             Label = "root";
             Format = "btrfs";
@@ -253,12 +253,12 @@ in
               "/nix/.rw-store/work"
             ]);
             Encrypt = wantLuksRoot;
-            Weight = 1;
+            Weight = 1000;
           };
         };
 
         boot.initrd.luks.devices.root = lib.mkIf cfg.encrypt {
-          device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions."30-root".Label}";
+          device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions."40-root".Label}";
           crypttabExtraOpts = lib.optional cfg.hasTpm2 "tpm2-device=auto";
           tryEmptyPassphrase = !cfg.hasTpm2;
         };
@@ -267,7 +267,7 @@ in
         zramSwap.enable = lib.mkDefault true;
 
         fileSystems."/" = {
-          fsType = config.systemd.repart.partitions."30-root".Format;
+          fsType = config.systemd.repart.partitions."40-root".Format;
           options = [
             "compress=zstd"
             "noatime"
@@ -277,7 +277,7 @@ in
             if cfg.encrypt then
               "/dev/mapper/root"
             else
-              "/dev/disk/by-partlabel/${config.systemd.repart.partitions."30-root".Label}";
+              "/dev/disk/by-partlabel/${config.systemd.repart.partitions."40-root".Label}";
         };
         fileSystems."/nix/.ro-store" = {
           device = "/dev/mapper/usr";
@@ -307,19 +307,19 @@ in
         system.build.update = config.system.build.image.override { isUpdate = true; };
       }
       (lib.mkIf wantSeparateHome {
-        systemd.repart.partitions."30-home" = {
+        systemd.repart.partitions."40-home" = {
           Type = "home";
           Label = "home";
           Format = "ext4";
           FactoryReset = true;
           # If /nix/store is mutable, make the home partition 2x as large as the root partition.
           # If /nix/store is immutable, make the home partition 4x as large as the root partition.
-          Weight = if cfg.mutableNixStore then 2 else 4;
+          Weight = (if cfg.mutableNixStore then 2 else 4) * config.systemd.repart.partitions."40-root".Weight;
         };
 
         fileSystems."/home" = {
-          fsType = config.systemd.repart.partitions."30-home".Format;
-          device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions."30-home".Label}";
+          fsType = config.systemd.repart.partitions."40-home".Format;
+          device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions."40-home".Label}";
         };
 
         # Allow for fscrypt to be used
