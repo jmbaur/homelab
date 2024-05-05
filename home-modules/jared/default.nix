@@ -164,7 +164,6 @@ in
         watchexec
         wip
         xsv
-        ydiff
         yj
       ];
 
