@@ -79,7 +79,6 @@ let
 
       virtualisation.directBoot.enable = false;
       virtualisation.mountHostNixStore = false;
-      virtualisation.qemu.options = [ "-nographic" ];
 
       # enough space to store update images under /run
       virtualisation.memorySize = 2048;

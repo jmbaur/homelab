@@ -8,7 +8,6 @@ nixosTest {
     {
       imports = [ inputs.self.nixosModules.default ];
       custom.normalUser.enable = true;
-      virtualisation.qemu.options = [ "-nographic" ];
       virtualisation.emptyDiskImages = [ 1024 ];
       virtualisation.fileSystems."/home" = {
         device = "/dev/vdb";
