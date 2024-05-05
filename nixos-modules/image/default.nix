@@ -124,25 +124,18 @@ in
         nix.enable = cfg.mutableNixStore;
 
         boot.kernelParams = [
+          "mount.usr=/dev/mapper/usr"
+          "mount.usrflags=ro"
+          "mount.usrfstype=erofs"
           "systemd.verity_root_options=panic-on-corruption"
-
-          # Tell systemd to not automount anything on /usr. We don't
-          # actually have a /usr mount in our fstab...
-          #
-          # TODO(jared): we should be using the SD_GPT_FLAG_NO_AUTO partition flag
-          # to indicate that the partition should not be auto-mounted. See
-          # https://uapi-group.org/specifications/specs/discoverable_partitions_specification/#partition-attribute-flags
-          "mount.usr=fstab"
         ];
 
         # We do this because we need the udev rules and some binaries from the lvm2
         # package.
         boot.initrd.services.lvm.enable = true;
 
-        # NOTE: only needed if we are going to use CopyBlocks on the B partition
-        # systemd.package = pkgs.systemd.overrideAttrs (old: {
-        #   patches = old.patches ++ [ ./systemd-repart.patch ];
-        # });
+        # We have our own /usr/bin/env from the read-only partition
+        environment.usrbinenv = null;
 
         boot.initrd = {
           systemd = {
@@ -171,7 +164,7 @@ in
                   ];
                   unitConfig = {
                     DefaultDependencies = false;
-                    RequiresMountsFor = "/sysroot/nix/.ro-store";
+                    RequiresMountsFor = "/sysroot/usr";
                   };
                 }
                 (
@@ -183,14 +176,14 @@ in
                       what = "overlay";
                       type = "overlay";
                       options = lib.concatStringsSep "," [
-                        "lowerdir=/sysroot/nix/.ro-store"
+                        "lowerdir=/sysroot/usr/store"
                         "upperdir=/sysroot/nix/.rw-store/store"
                         "workdir=/sysroot/nix/.rw-store/work"
                       ];
                     }
                   else
                     {
-                      what = "/sysroot/nix/.ro-store";
+                      what = "/sysroot/usr/store";
                       type = "none";
                       options = "bind";
                     }
@@ -266,6 +259,8 @@ in
         # enable zram by default since we don't create any swap partitions
         zramSwap.enable = lib.mkDefault true;
 
+        boot.initrd.supportedFilesystems = [ "erofs" ];
+
         fileSystems."/" = {
           fsType = config.systemd.repart.partitions."40-root".Format;
           options = [
@@ -279,25 +274,27 @@ in
             else
               "/dev/disk/by-partlabel/${config.systemd.repart.partitions."40-root".Label}";
         };
-        fileSystems."/nix/.ro-store" = {
-          device = "/dev/mapper/usr";
-          fsType = "erofs";
-          options = [ "ro" ];
-          neededForBoot = true;
-        };
         fileSystems.${config.boot.loader.efi.efiSysMountPoint} = {
           device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions."10-boot".Label}";
           fsType = config.systemd.repart.partitions."10-boot".Format;
           options = [ "x-systemd.automount" ];
         };
 
-        boot.postBootCommands = lib.optionalString cfg.mutableNixStore ''
-          ${lib.getExe' config.nix.package "nix-store"} --load-db </nix/.ro-store/.nix-path-registration
-        '';
+        systemd.services.initialize-nix-database = lib.mkIf config.nix.enable {
+          unitConfig.ConditionPathExists = [ "/usr/.nix-path-registration" ];
+          path = [ config.nix.package ];
+          script = "nix-store --load-db </usr/.nix-path-registration";
+          wantedBy = [ "multi-user.target" ];
+        };
 
         system.build.image = pkgs.callPackage ./image.nix {
-          closure = pkgs.closureInfo { rootPaths = [ config.system.build.toplevel ]; };
-          usrFormat = config.fileSystems."/nix/.ro-store".fsType;
+          toplevelClosure = pkgs.closureInfo {
+            rootPaths = [
+              config.system.build.toplevel
+              pkgs.coreutils
+            ];
+          };
+          usrFormat = "erofs";
           imageName = config.networking.hostName;
           inherit (cfg) bootFileCommands postImageCommands sectorSize;
           inherit (config.system.image) id version;
