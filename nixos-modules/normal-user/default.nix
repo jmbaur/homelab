@@ -57,23 +57,19 @@ in
             ];
             message = "fscrypt requires ext4 or f2fs";
           }
-          {
-            assertion = with config.users.users.root.openssh.authorizedKeys; keys == [ ] && keyFiles == [ ];
-            message = "root user must not have any authorized ssh keys configured";
-          }
         ];
 
+        # TODO(jared): nixos doesn't have nice options for specifying match blocks
+        #
         # https://wiki.archlinux.org/title/systemd-homed#SSH_remote_unlocking
-        services.openssh.settings = {
-          PasswordAuthentication = true;
-          PubkeyAuthentication = true;
-          AuthenticationMethods = lib.concatStringsSep "," [
-            "publickey"
-            "password"
-          ];
-          AuthorizedKeysCommand = lib.mkIf USE_HOMED "${lib.getExe' config.systemd.package "userdbctl"} ssh-authorized-keys %u";
-          AuthorizedKeysCommandUser = lib.mkIf USE_HOMED "root";
-        };
+        services.openssh.extraConfig = ''
+          Match Group wheel
+            PasswordAuthentication yes
+            PubkeyAuthentication yes
+            AuthenticationMethods publickey,password
+            ${lib.optionalString USE_HOMED "AuthorizedKeysCommand ${lib.getExe' config.systemd.package "userdbctl"} ssh-authorized-keys %u"}
+            ${lib.optionalString USE_HOMED "AuthorizedKeysCommandUser root"}
+        '';
       }
       (lib.mkIf USE_HOMED {
         users.mutableUsers = false;

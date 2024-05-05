@@ -1,13 +1,6 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, ... }:
 let
   cfg = config.custom.desktop;
-
-  startSway = "exec systemd-cat --identifier=sway sway";
 in
 {
   options.custom.desktop.enable = lib.mkEnableOption "desktop";
@@ -16,19 +9,18 @@ in
     custom.normalUser.enable = true;
     custom.basicNetwork.enable = true;
 
-    hardware.keyboard.qmk.enable = true;
-    services.udev.packages = [
-      pkgs.yubikey-personalization
-      pkgs.teensy-udev-rules
-    ];
-    nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "teensy-udev-rules" ];
-
     programs.sway = {
       enable = true;
       wrapperFeatures = {
         base = true;
         gtk = true;
       };
+    };
+
+    services.greetd = {
+      enable = true;
+      vt = 1;
+      settings.default_session.command = "${lib.getExe' config.services.greetd.package "agreety"} --cmd sway";
     };
 
     hardware.pulseaudio.enable = lib.mkForce false;
@@ -64,14 +56,6 @@ in
     services.dbus.enable = true;
     services.pcscd.enable = true;
     services.power-profiles-daemon.enable = true;
-    services.printing.enable = true;
-    services.udisks2.enable = true;
     services.upower.enable = true;
-
-    environment.loginShellInit = lib.mkAfter ''
-      if test -z "$WAYLAND_DISPLAY" && test "''${XDG_VTNR:-0}" -eq 1; then
-        ${startSway}
-      fi
-    '';
   };
 }
