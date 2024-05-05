@@ -6,9 +6,6 @@
   ...
 }:
 let
-  # TODO(jared): get systemd-homed working
-  USE_HOMED = false;
-
   cfg = config.custom.normalUser;
 
   # William Riker, first officer to Captain Picard, as this user is to root.
@@ -37,139 +34,49 @@ let
     "/"
   ];
 
-  backingBlockDevice =
-    config.fileSystems.${mountpoint}.device
-      or "/dev/disk/by-label/${config.fileSystems.${mountpoint}.label}";
+  fileSystemConfig = config.fileSystems.${mountpoint};
 in
 {
   options.custom.normalUser = with lib; {
     enable = mkEnableOption "normal user";
   };
 
-  config = lib.mkIf cfg.enable (
-    lib.mkMerge [
-      {
-        assertions = [
-          {
-            assertion = lib.any (fstype: fstype == config.fileSystems.${mountpoint}.fsType) [
-              "ext4"
-              "f2fs"
-            ];
-            message = "fscrypt requires ext4 or f2fs";
-          }
-        ];
+  config = lib.mkIf cfg.enable {
+    services.homed.enable = true;
 
-        # TODO(jared): nixos doesn't have nice options for specifying match blocks
-        #
-        # https://wiki.archlinux.org/title/systemd-homed#SSH_remote_unlocking
-        services.openssh.extraConfig = ''
-          Match Group wheel
-            PasswordAuthentication yes
-            PubkeyAuthentication yes
-            AuthenticationMethods publickey,password
-            ${lib.optionalString USE_HOMED "AuthorizedKeysCommand ${lib.getExe' config.systemd.package "userdbctl"} ssh-authorized-keys %u"}
-            ${lib.optionalString USE_HOMED "AuthorizedKeysCommandUser root"}
-        '';
-      }
-      (lib.mkIf USE_HOMED {
-        users.mutableUsers = false;
-        services.homed.enable = true;
-        systemd.services.systemd-homed.environment.SYSTEMD_LOG_LEVEL = "debug";
+    systemd.services.initial-user-setup = {
+      # TODO(jared): We should use ConditionFirstBoot, but this probably
+      # won't work on NixOS.
+      unitConfig.ConditionPathIsDirectory = [ "!/home/${username}.homedir" ];
+      # In nixpkgs, if sysusers is enabled, tmpfiles is used to create home
+      # directories. See https://github.com/nixos/nixpkgs/blob/68165781ccbe4d2ff1d12b6e96ebe4a9f4a93d51/nixos/modules/system/boot/systemd/sysusers.nix#L100.
+      after = [ "systemd-homed.service" ];
+      path = [ config.systemd.package ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
+      script = ''
+        env NEWPASSWORD=NumberOne homectl create ${username} \
+          --member-of=${lib.concatStringsSep "," groups} \
+          --shell=${utils.toShellPath shell} \
+          --password-hint="Picard's nickname for Riker" \
+          --storage=${if fileSystemConfig.fsType == "btrfs" then "subvolume" else "directory"} \
+          --enforce-password-policy=no
+      '';
+      wantedBy = [ "multi-user.target" ];
+    };
 
-        systemd.services.initial-user-setup = {
-          # TODO(jared): We should use ConditionFirstBoot, but this probably
-          # won't work on NixOS.
-          unitConfig.ConditionPathIsDirectory = [ "!/home/${username}.homedir" ];
-          # In nixpkgs, if sysusers is enabled, tmpfiles is used to create home
-          # directories. See https://github.com/nixos/nixpkgs/blob/68165781ccbe4d2ff1d12b6e96ebe4a9f4a93d51/nixos/modules/system/boot/systemd/sysusers.nix#L100.
-          after = [
-            "systemd-homed.service"
-          ] ++ lib.optionals config.systemd.sysusers.enable [ "systemd-tmpfiles-setup.service" ];
-          path = [
-            pkgs.e2fsprogs
-            config.systemd.package
-          ];
-          serviceConfig = {
-            Type = "oneshot";
-            RemainAfterExit = true;
-          };
-          script = ''
-            # setup filesystem to support fscrypt
-            tune2fs -O encrypt $(readlink -f ${backingBlockDevice})
-
-            # setup user
-            env NEWPASSWORD=NumberOne homectl create ${username} \
-              --member-of=${lib.concatStringsSep "," groups} \
-              --shell=${utils.toShellPath shell} \
-              --password-hint="Picard's nickname for Riker" \
-              --storage=fscrypt \
-              --enforce-password-policy=no
-          '';
-          wantedBy = [ "multi-user.target" ];
-        };
-      })
-      (lib.mkIf (!USE_HOMED) {
-        assertions = [
-          {
-            assertion = config.users.mutableUsers;
-            message = "mutableUsers required to change initial password";
-          }
-        ];
-
-        users.users.${username} = {
-          isNormalUser = true;
-          initialPassword = "NumberOne";
-          inherit shell;
-          extraGroups = groups;
-
-          # The systemd-sysusers config in nixpkgs does not have a stable uid,
-          # so set it manually.
-          uid = 1000;
-        };
-
-        security.pam.enableFscrypt = true;
-
-        systemd.services.fscrypt-setup = {
-          # TODO(jared): We should use ConditionFirstBoot, but this probably
-          # won't work on NixOS.
-          unitConfig.ConditionPathIsDirectory = [ "!/.fscrypt" ];
-          # In nixpkgs, if sysusers is enabled, tmpfiles is used to create home
-          # directories. See https://github.com/nixos/nixpkgs/blob/68165781ccbe4d2ff1d12b6e96ebe4a9f4a93d51/nixos/modules/system/boot/systemd/sysusers.nix#L100.
-          after =
-            lib.optionals (mountpoint != "/") [ "${utils.escapeSystemdPath mountpoint}.mount" ]
-            ++ lib.optionals config.systemd.sysusers.enable [ "systemd-tmpfiles-setup.service" ];
-          path = [
-            pkgs.e2fsprogs
-            pkgs.fscrypt-experimental
-            "/run/wrappers" # su
-          ];
-          serviceConfig = {
-            Type = "oneshot";
-            RemainAfterExit = true;
-          };
-          script =
-            ''
-              # setup filesystem to support fscrypt
-              tune2fs -O encrypt $(readlink -f ${backingBlockDevice})
-
-              # setup fscrypt
-              fscrypt setup --all-users
-            ''
-            + lib.optionalString (mountpoint != "/") ''
-              fscrypt setup ${mountpoint} --all-users
-            ''
-            + ''
-              echo ${config.users.users.${username}.initialPassword} \
-                | fscrypt encrypt \
-                  --skip-unlock \
-                  --source=pam_passphrase \
-                  --no-recovery \
-                  --user=${config.users.users.${username}.name} \
-                  ${config.users.users.${username}.home}
-            '';
-          wantedBy = [ "multi-user.target" ];
-        };
-      })
-    ]
-  );
+    # TODO(jared): nixos doesn't have nice options for specifying match blocks
+    #
+    # https://wiki.archlinux.org/title/systemd-homed#SSH_remote_unlocking
+    services.openssh.extraConfig = ''
+      Match Group wheel
+        PasswordAuthentication yes
+        PubkeyAuthentication yes
+        AuthenticationMethods publickey,password
+        AuthorizedKeysCommand ${lib.getExe' config.systemd.package "userdbctl"} ssh-authorized-keys %u
+        AuthorizedKeysCommandUser root
+    '';
+  };
 }

@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  modulesPath,
   ...
 }:
 
@@ -15,22 +14,8 @@ let
   maxUsrHashSize = maxUsrSize / 8;
 
   wantLuksRoot = if cfg.encrypt then (if cfg.hasTpm2 then "tpm2" else "key-file") else "none";
-
-  wantSeparateHome = (lib.filterAttrs (_: user: user.isNormalUser) config.users.users) != { };
 in
 {
-  # TODO(jared): The upstream rpcbind module causes infinite recursion when we
-  # want to condition our fileSystem config on the contents of
-  # `config.users.users` since that module itself creates a user. See
-  # https://github.com/NixOS/nixpkgs/issues/305643.
-  disabledModules = [
-    "${modulesPath}/services/network-filesystems/glusterfs.nix"
-    "${modulesPath}/services/network-filesystems/nfsd.nix"
-    "${modulesPath}/services/networking/rpcbind.nix"
-    "${modulesPath}/services/x11/desktop-managers/cde.nix"
-    "${modulesPath}/tasks/filesystems/nfs.nix"
-  ];
-
   imports = [
     ./boot
     ./installer
@@ -308,43 +293,14 @@ in
           inherit (config.systemd.repart) partitions;
         };
       }
-      (lib.mkIf wantSeparateHome {
-        systemd.repart.partitions."40-home" = {
-          Type = "home";
-          Label = "home";
-          Format = "ext4";
-          FactoryReset = true;
-          # If /nix/store is mutable, make the home partition 2x as large as the root partition.
-          # If /nix/store is immutable, make the home partition 4x as large as the root partition.
-          Weight = (if cfg.mutableNixStore then 2 else 4) * config.systemd.repart.partitions."40-root".Weight;
-        };
-
-        fileSystems."/home" = {
-          fsType = config.systemd.repart.partitions."40-home".Format;
-          device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions."40-home".Label}";
-        };
-
-        # Allow for fscrypt to be used
-        boot.initrd.systemd.services.systemd-repart.environment = {
-          "SYSTEMD_REPART_MKFS_OPTIONS_${lib.toUpper config.fileSystems."/home".fsType}" = lib.mkIf (
-            config.security.pam.enableFscrypt || config.services.homed.enable
-          ) "-Oencrypt";
-        };
+      ({
+        # moving closer to perlless system
+        programs.less.lessopen = lib.mkDefault null;
+        programs.command-not-found.enable = lib.mkDefault false;
+        boot.enableContainers = lib.mkDefault false;
+        environment.defaultPackages = lib.mkDefault [ ];
+        documentation.info.enable = lib.mkDefault false;
       })
-      (
-        # opt-in to systemd goodness
-        {
-          systemd.sysusers.enable = true;
-          system.etc.overlay.enable = true;
-          system.etc.overlay.mutable = config.users.mutableUsers;
-
-          # moving closer to perlless system
-          programs.less.lessopen = lib.mkDefault null;
-          programs.command-not-found.enable = lib.mkDefault false;
-          boot.enableContainers = lib.mkDefault false;
-          environment.defaultPackages = lib.mkDefault [ ];
-          documentation.info.enable = lib.mkDefault false;
-        })
     ]
   );
 }
