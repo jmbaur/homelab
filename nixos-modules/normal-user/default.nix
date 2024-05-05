@@ -67,7 +67,7 @@ in
         services.openssh.settings = {
           PasswordAuthentication = true;
           PubkeyAuthentication = true;
-          AuthenticationMethods = [
+          AuthenticationMethods = lib.concatStringsSep "," [
             "publickey"
             "password"
           ];

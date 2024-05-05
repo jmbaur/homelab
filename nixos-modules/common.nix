@@ -54,6 +54,6 @@ in
     # Use the dbus-broker dbus daemon implementation (more performance, yeah?)
     services.dbus.implementation = "broker";
 
-    services.openssh = lib.mkDefault isNotContainer;
+    services.openssh.enable = lib.mkDefault isNotContainer;
   };
 }
