@@ -337,6 +337,9 @@ in
         jetbrains-mono
         wl-clipboard
         xdg-terminal-exec
+        (pkgs.writeShellScriptBin "copy" ''
+          printf "\033]52;c;$(printf "%s" "$(cat)" | base64)\07"
+        '')
         (pkgs.writeShellScriptBin "caffeine" ''
           time=''${1:-infinity}
           echo "inhibiting idle for $time"
