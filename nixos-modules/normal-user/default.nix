@@ -67,15 +67,25 @@ in
       wantedBy = [ "multi-user.target" ];
     };
 
+    # Ugly: sshd refuses to start if a store path is given because /nix/store
+    # is group-writable. So indirect by a symlink.
+    environment.etc."ssh/homed_authorized_keys_command" = {
+      mode = "0755";
+      text = ''
+        #!/bin/sh
+        exec ${lib.getExe' config.systemd.package "userdbctl"} ssh-authorized-keys "$@"
+      '';
+    };
+
     # TODO(jared): nixos doesn't have nice options for specifying match blocks
     #
     # https://wiki.archlinux.org/title/systemd-homed#SSH_remote_unlocking
     services.openssh.extraConfig = ''
-      Match Group wheel
+      Match User *,!root
         PasswordAuthentication yes
         PubkeyAuthentication yes
         AuthenticationMethods publickey,password
-        AuthorizedKeysCommand ${lib.getExe' config.systemd.package "userdbctl"} ssh-authorized-keys %u
+        AuthorizedKeysCommand /etc/ssh/homed_authorized_keys_command %u
         AuthorizedKeysCommandUser root
     '';
   };
