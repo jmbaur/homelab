@@ -5,7 +5,6 @@
   dosfstools,
   dtc,
   e2fsprogs,
-  erofs-utils,
   fakeroot,
   formats,
   jq,
