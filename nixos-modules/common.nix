@@ -27,8 +27,10 @@ in
 
     environment.enableAllTerminfo = true;
 
-    programs.less.lessopen = lib.mkIf (pkgs.stdenv.hostPlatform != pkgs.stdenv.buildPlatform) null;
-
+    # moving closer to perlless system
+    programs.less.lessopen = lib.mkDefault null;
+    environment.defaultPackages = lib.mkDefault [ ];
+    documentation.info.enable = lib.mkDefault false;
     programs.command-not-found.enable = false;
 
     networking.nftables.enable = lib.mkDefault true;

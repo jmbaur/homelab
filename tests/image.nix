@@ -75,7 +75,6 @@ let
       nix.settings.experimental-features = [ "nix-command" ];
 
       boot.loader.timeout = 0;
-      boot.initrd.systemd.emergencyAccess = true;
 
       virtualisation.directBoot.enable = false;
       virtualisation.mountHostNixStore = false;
@@ -333,28 +332,6 @@ in
           machine.send_monitor_command("device_del installer")
 
           machine.wait_for_unit("multi-user.target")
-        '';
-    };
-    image-normal-user = nixosTest {
-      name = "image-normal-user";
-      nodes.machine = {
-        imports = [
-          baseConfig
-          bootMethodConfig.uefi
-        ];
-
-        custom.normalUser.enable = true;
-      };
-      testScript =
-        { nodes, ... }:
-        ''
-          import os
-          import subprocess
-          import tempfile
-
-          ${unpackImage { config = nodes.machine; }}
-
-          machine.wait_for_unit("fscrypt-setup.service")
         '';
     };
   }

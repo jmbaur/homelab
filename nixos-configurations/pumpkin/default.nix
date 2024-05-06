@@ -33,9 +33,4 @@
     boot.uefi.enable = true;
     installer.targetDisk = "/dev/disk/by-path/pci-0000:03:00.0-nvme-1";
   };
-
-  # For debugging why systemd-repart doesn't seem to work well on this one
-  # device. Seems related to https://github.com/systemd/systemd/issues/31142 or
-  # https://github.com/systemd/systemd/issues/31381.
-  boot.initrd.systemd.emergencyAccess = true;
 }
