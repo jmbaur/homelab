@@ -25,6 +25,8 @@ in
     };
 
     networking.useDHCP = false;
+    networking.useNetworkd = true;
+    networking.firewall.allowedUDPPorts = [ 5353 ]; # mDNS
 
     systemd.network.wait-online.enable = !hasWireless;
     systemd.network = {
@@ -79,7 +81,7 @@ in
       };
     };
 
-    # Allow clatd to find dns server
+    # Allow clatd to find dns server. See comment above.
     services.resolved.extraConfig = ''
       DNSStubListenerExtra=::1
     '';
