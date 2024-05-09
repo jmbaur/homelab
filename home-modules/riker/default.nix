@@ -295,9 +295,10 @@ in
         ];
         extraConfig = ''
           set-option -as terminal-features ",alacritty:RGB"
-          set-option -as terminal-features ",xterm-kitty:RGB"
           set-option -as terminal-features ",rio:RGB"
+          set-option -as terminal-features ",wezterm:RGB"
           set-option -as terminal-features ",xterm-256color:RGB"
+          set-option -as terminal-features ",xterm-kitty:RGB"
           set-option -g allow-passthrough on
           set-option -g automatic-rename on
           set-option -g detach-on-destroy off
@@ -335,7 +336,7 @@ in
       fonts.fontconfig.enable = true;
 
       home.packages = with pkgs; [
-        jetbrains-mono
+        wezterm
         wl-clipboard
         xdg-terminal-exec
         (pkgs.writeShellScriptBin "caffeine" ''
@@ -346,8 +347,8 @@ in
       ];
 
       xdg.configFile."xdg-terminals.list".text = ''
-        kitty.desktop
-        Alacritty.desktop
+        org.wezfurlong.wezterm.desktop
+        org.codeberg.dnkl.foot.desktop
       '';
 
       programs.firefox = {
@@ -385,63 +386,7 @@ in
           ];
       };
 
-      programs.kitty = {
-        enable = true;
-        shellIntegration.mode = "no-cursor";
-        settings = {
-          background = "#000000";
-          clipboard_control = "write-clipboard write-primary read-clipboard read-primary";
-          copy_on_select = true;
-          enable_audio_bell = false;
-          font_family = "JetBrains Mono";
-          font_size = 14;
-          foreground = "#ffffff";
-          tab_bar_style = "powerline";
-          update_check_interval = 0;
-        };
-      };
-
-      programs.alacritty = {
-        enable = true;
-        settings = {
-          live_config_reload = false;
-          mouse.hide_when_typing = true;
-          selection.save_to_clipboard = true;
-          font = {
-            normal.family = "JetBrains Mono";
-            size = 14;
-          };
-          terminal.osc52 = "CopyPaste";
-          colors = lib.mapAttrsRecursive (_: color: "#${color}") {
-            primary = {
-              foreground = "ffffff";
-              background = "000000";
-            };
-          };
-        };
-      };
-
-      programs.foot = {
-        enable = true;
-        settings = {
-          main = {
-            font = "JetBrains Mono:size=16";
-            selection-target = "both";
-            notify-focus-inhibit = "no";
-          };
-          bell = {
-            urgent = "yes";
-            command-focused = "yes";
-          };
-          mouse.hide-when-typing = "yes";
-          scrollback.indicator-position = "none";
-          colors = {
-            alpha = 1.0;
-            foreground = "ffffff";
-            background = "000000";
-          };
-        };
-      };
+      xdg.configFile."wezterm/wezterm.lua".source = ./wezterm.lua;
 
       xdg.userDirs = {
         enable = true;
@@ -602,7 +547,7 @@ in
           in
           {
             modifier = "Mod4";
-            terminal = "kitty";
+            terminal = "wezterm";
             menu = "${bemenuRun} --prompt program";
             workspaceAutoBackAndForth = true;
             workspaceLayout = "stacking";

@@ -33,7 +33,7 @@ if #vim.api.nvim_list_uis() > 0 then
 	vim.opt.foldmethod = "marker"
 	vim.opt.laststatus = 2
 	vim.opt.list = true
-	vim.opt.listchars = { eol = "\xe2\x86\xb4", tab = "  \xe2\x87\xa5", nbsp = "\xc2\xb7" }
+	vim.opt.listchars = { tab = "  \xe2\x87\xa5", trail = "\xc2\xb7", nbsp = "\xc2\xb7" }
 	vim.opt.number = true
 	vim.opt.relativenumber = true
 	vim.opt.shell = "/run/current-system/sw/bin/bash"
