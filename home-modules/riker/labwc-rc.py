@@ -82,9 +82,7 @@ keyboard.appendChild(create_keybinding("Mod4-Tab", create_goto_desktop_action("r
 keyboard.appendChild(create_keybinding("Mod4-j", create_action("NextWindow")))
 keyboard.appendChild(create_keybinding("Mod4-k", create_action("PreviousWindow")))
 keyboard.appendChild(create_keybinding("Mod4-m", create_show_menu_action("root-menu")))
-keyboard.appendChild(
-    create_keybinding("Mod4-Return", create_execute_action("alacritty"))
-)
+keyboard.appendChild(create_keybinding("Mod4-Return", create_execute_action("wezterm")))
 keyboard.appendChild(
     create_keybinding("A-Space", create_show_menu_action("client-menu"))
 )

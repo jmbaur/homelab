@@ -38,7 +38,7 @@ root_menu = create_menu(
     "root-menu",
     [
         create_menu_item("Web browser", create_execute_action("firefox")),
-        create_menu_item("Terminal", create_execute_action("alacritty")),
+        create_menu_item("Terminal", create_execute_action("wezterm")),
         create_menu_item("Reconfigure", create_action("Reconfigure")),
         create_menu_item("Lock", create_execute_action("loginctl lock-session")),
         create_menu_item("Exit", create_action("Exit")),
