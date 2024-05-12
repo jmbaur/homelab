@@ -68,6 +68,7 @@ in
         age-plugin-yubikey
         croc
         librespeed-cli
+        ncspot
         nmap
         pwgen
         rage

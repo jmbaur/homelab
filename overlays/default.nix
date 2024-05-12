@@ -101,13 +101,11 @@ inputs: {
         package = final.signal-desktop;
       };
       slack-wayland = prev.callPackage ./mk-wayland-variant.nix { package = final.slack; };
-      spotify-wayland = prev.callPackage ./mk-wayland-variant.nix { package = final.spotify; };
 
       mkWebApp = prev.callPackage ./mk-web-app.nix { chromium = final.chromium-wayland; };
       discord-webapp = final.mkWebApp "discord" "https://discord.com/app";
       outlook-webapp = final.mkWebApp "outlook" "https://outlook.office365.com/mail";
       slack-webapp = final.mkWebApp "slack" "https://app.slack.com/client";
-      spotify-webapp = final.mkWebApp "spotify" "https://open.spotify.com";
       teams-webapp = final.mkWebApp "teams" "https://teams.microsoft.com";
 
       uboot-clearfog_uart = prev.uboot-clearfog.override {
