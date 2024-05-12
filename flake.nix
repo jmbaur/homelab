@@ -22,7 +22,7 @@
     nixos-router.url = "github:jmbaur/nixos-router";
     nixos-shell.inputs.nixpkgs.follows = "nixpkgs";
     nixos-shell.url = "github:Mic92/nixos-shell";
-    nixpkgs.url = "github:jmbaur/nixpkgs/homelab";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nur.url = "github:nix-community/NUR";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";
