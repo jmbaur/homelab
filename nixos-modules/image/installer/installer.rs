@@ -240,23 +240,58 @@ fn real_main(reboot_on_fail: &mut bool) -> Result<()> {
         .open(mountpoint.join("image"))
         .context("failed to open image to install")?;
 
-    let out_file = std::fs::OpenOptions::new()
+    let mut out_file = std::fs::OpenOptions::new()
         .read(true)
         .write(true)
         .open(target_disk)
         .context("failed to open target disk")?;
 
-    // TODO(jared): Make a custom Into<Stdio> implementation that prints progress of copying the
-    // image to the target disk.
     eprintln!("copying image...");
-    let output = std::process::Command::new("/bin/xz")
+    let mut child = std::process::Command::new("/bin/xz")
         .arg("-d")
         .stdin(unsafe { std::process::Stdio::from_raw_fd(in_file.into_raw_fd()) })
-        .stdout(unsafe { std::process::Stdio::from_raw_fd(out_file.into_raw_fd()) })
+        .stdout(std::process::Stdio::piped())
         .spawn()
-        .context("xz failed to spawn")?
-        .wait_with_output()
-        .context("xz failed to run")?;
+        .context("xz failed to spawn")?;
+
+    let mut stdout = child
+        .stdout
+        .take()
+        .context("failed to open stdout of child")?;
+
+    let handle = std::thread::spawn(move || {
+        let mut lock = std::io::stdout().lock();
+
+        let mut buf = [0u8; 4096];
+        let mut bytes_written: usize = 0;
+
+        loop {
+            use std::io::{Read, Write};
+
+            match stdout.read(&mut buf[..]) {
+                Ok(0) => break,
+                Ok(n) => {
+                    bytes_written += n;
+                    out_file.write_all(&buf[0..n]).unwrap();
+
+                    // Print progress after every 64MiB
+                    if bytes_written >= 1 << 26 {
+                        bytes_written = 0;
+                        write!(lock, "#").unwrap();
+                        lock.flush().unwrap();
+                    }
+                }
+                Err(err) => {
+                    eprintln!("write to disk failed: {}", err);
+                    panic!();
+                }
+            }
+        }
+    });
+
+    let output = child.wait_with_output().context("xz failed to run")?;
+
+    _ = handle.join();
 
     if !output.status.success() {
         fail!("failed to decompress image");
