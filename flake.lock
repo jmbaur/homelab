@@ -741,11 +741,11 @@
     },
     "nur": {
       "locked": {
-        "lastModified": 1715501569,
-        "narHash": "sha256-808RMmmRItpzCJHQWR1Laxr0k6qD8N6rlYYTPMe0l4E=",
+        "lastModified": 1715507090,
+        "narHash": "sha256-fCT9NBsFS7lrZ1gBMT4uEFToaGq2TZxCMqJwMiz59cI=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "e30a50bf719c2ed7ed313c1718611046d2b85eed",
+        "rev": "cc0353d1198068c356bf50f1b1d1baa2dde17f59",
         "type": "github"
       },
       "original": {
@@ -920,14 +920,15 @@
       "inputs": {
         "nixpkgs": [
           "nixpkgs"
-        ]
+        ],
+        "zig": "zig"
       },
       "locked": {
-        "lastModified": 1715480916,
-        "narHash": "sha256-YNJNG9P+j/aUWGs7nPRPRzijvvjHrp0dR5KO9yyV6dA=",
+        "lastModified": 1715510173,
+        "narHash": "sha256-btbIV0E/RYQdJjYvRTrgmG8tHWDkPZpHSorjlyzPnPI=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "7a703dc13644fd0ca26aed78cd7cb700bc595762",
+        "rev": "6d1252353c6b6f1ee390e25031c712fb5e4760c2",
         "type": "github"
       },
       "original": {
@@ -974,6 +975,23 @@
       "original": {
         "owner": "jmbaur",
         "repo": "webauthn-tiny",
+        "type": "github"
+      }
+    },
+    "zig": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1714590329,
+        "narHash": "sha256-jx1Bs1dWusU7hTN3WnEbYDrZDuvNumO8ZYLnBUY/lRA=",
+        "owner": "ziglang",
+        "repo": "zig",
+        "rev": "efe06c5f31fe1e9ff02da1082367302b0a188a63",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ziglang",
+        "ref": "0.12.x",
+        "repo": "zig",
         "type": "github"
       }
     }

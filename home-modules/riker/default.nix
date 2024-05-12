@@ -68,7 +68,6 @@ in
         age-plugin-yubikey
         croc
         librespeed-cli
-        ncspot
         nmap
         pwgen
         rage
@@ -337,6 +336,8 @@ in
       fonts.fontconfig.enable = true;
 
       home.packages = with pkgs; [
+        ncspot
+        pulsemixer
         wezterm
         wl-clipboard
         xdg-terminal-exec
