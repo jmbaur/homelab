@@ -15,6 +15,15 @@ impl<T> Context<T> for Result<T> {
     }
 }
 
+impl<T> Context<T> for Option<T> {
+    fn context(self, msg: impl Into<String>) -> Result<T> {
+        match self {
+            Some(some) => Ok(some),
+            None => Err(format!("{}: expected Some", msg.into())),
+        }
+    }
+}
+
 impl<T> Context<T> for std::io::Result<T> {
     fn context(self, msg: impl Into<String>) -> Result<T> {
         match self {
@@ -187,17 +196,44 @@ fn real_main(reboot_on_fail: &mut bool) -> Result<()> {
     eprintln!("waiting for devices to settle...");
     udev_settle()?;
 
-    let source_disk = wait_for_path(source_disk).context("failed to find source disk")?;
+    let source_disk_part = wait_for_path(source_disk).context("failed to find source disk")?;
     let target_disk = wait_for_path(target_disk).context("failed to find target disk")?;
 
-    // TODO(jared): make sure source_disk != target_disk
+    // Make sure source_disk != target_disk
+    {
+        let source_disk_part_sysfs = std::fs::canonicalize(
+            std::path::Path::new("/sys/class/block").join(
+                source_disk_part
+                    .file_name()
+                    .context("failed to get filename of source disk partition")?,
+            ),
+        )
+        .context("failed to get full path to source disk partition sysfs entry")?;
 
-    eprintln!("installing from {}", source_disk.display());
+        let target_disk_sysfs = std::fs::canonicalize(
+            std::path::Path::new("/sys/class/block").join(
+                target_disk
+                    .file_name()
+                    .context("failed to get filename of target disk")?,
+            ),
+        )
+        .context("failed to get full path to target disk sysfs entry")?;
+
+        if source_disk_part_sysfs
+            .parent()
+            .context("failed to get parent of source disk sysfs entry")?
+            == target_disk_sysfs.as_path()
+        {
+            fail!("source disk is the same as target disk, cannot install");
+        }
+    }
+
+    eprintln!("installing from {}", source_disk_part.display());
     eprintln!("installing to {}", target_disk.display());
 
     let mountpoint = std::path::Path::new("/mnt");
     std::fs::create_dir_all(&mountpoint).context("failed to create mountpoint")?;
-    mount("ext4", true, &source_disk, &mountpoint)?;
+    mount("ext4", true, &source_disk_part, &mountpoint)?;
 
     let in_file = std::fs::OpenOptions::new()
         .read(true)
@@ -232,9 +268,9 @@ fn real_main(reboot_on_fail: &mut bool) -> Result<()> {
 
     eprintln!(
         "system will reboot when {} is removed/unplugged",
-        source_disk.display()
+        source_disk_part.display()
     );
-    wait_until_gone(&source_disk);
+    wait_until_gone(&source_disk_part);
 
     reboot()?;
 
