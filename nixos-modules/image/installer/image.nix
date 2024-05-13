@@ -20,7 +20,7 @@
   mainImage,
   bootFileCommands,
   imageName,
-  postImageCommands,
+  postImageCommands ? "",
   sectorSize,
 }:
 

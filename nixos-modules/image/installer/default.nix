@@ -153,22 +153,24 @@ in
     # filesystem.
     boot.initrd.supportedFilesystems = [ "ext4" ];
 
-    system.build.networkInstaller = throw "TODO";
+    system.build = {
+      networkInstaller = throw "TODO";
 
-    system.build.diskInstaller = pkgs.callPackage ./image.nix {
-      imageName = config.networking.hostName;
-      mainImage = "${config.system.build.image}/image.raw.xz";
-      postImageCommands = '''';
+      diskInstaller = pkgs.callPackage ./image.nix {
+        imageName = config.networking.hostName;
+        mainImage = "${config.system.build.image}/image.raw.xz";
 
-      bootFileCommands =
-        assert lib.assertMsg cfg.boot.uefi.enable "TODO: installer only works on uefi bootflow as of now";
-        ''
-          echo "${installerUki}:/EFI/BOOT/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI" >> $bootfiles
-        '';
+        bootFileCommands =
+          assert lib.assertMsg (cfg.boot.uefi.enable or false
+          ) "TODO: installer only works on uefi bootflow as of now";
+          ''
+            echo "${installerUki}:/EFI/BOOT/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI" >> $bootfiles
+          '';
 
-      # TODO(jared): We cannot assume the sector size of the target device is
-      # the same as the installation device.
-      inherit (cfg) sectorSize;
+        # TODO(jared): We cannot assume the sector size of the target device is
+        # the same as the installation device.
+        inherit (cfg) sectorSize;
+      };
     };
   };
 }
