@@ -135,6 +135,21 @@ let
       '';
     }
   ) { };
+
+  installerBlsEntry = pkgs.writeText "entry.conf" (
+    ''
+      title Installer
+      linux /linux
+      initrd /initrd
+    ''
+    + lib.optionalString config.hardware.deviceTree.enable ''
+      devicetree /devicetree.dtb
+    ''
+    + ''
+      options ${toString installerKernelParams}
+      architecture ${pkgs.stdenv.hostPlatform.efiArch}
+    ''
+  );
 in
 {
   options.custom.image.installer = with lib; {
@@ -161,14 +176,26 @@ in
         mainImage = "${config.system.build.image}/image.raw.xz";
 
         bootFileCommands =
-          assert lib.assertMsg (cfg.boot.uefi.enable or false
-          ) "TODO: installer only works on uefi bootflow as of now";
-          ''
-            echo "${installerUki}:/EFI/BOOT/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI" >> $bootfiles
-          '';
+          {
+            "uefi" = ''
+              echo "${installerUki}:/EFI/BOOT/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI" >> $bootfiles
+            '';
+            "bootLoaderSpec" =
+              ''
+                echo ${installerBlsEntry}:/loader/entries/installer.conf >>$bootfiles
+                echo ${installerSystem.config.system.build.kernel}/${installerSystem.config.system.boot.loader.kernelFile}:/linux >>$bootfiles
+                echo ${installerInitialRamdisk}/${installerSystem.config.system.boot.loader.initrdFile}:/initrd >>$bootfiles
+              ''
+              + lib.optionalString config.hardware.deviceTree.enable ''
+                echo "${installerSystem.config.hardware.deviceTree.package}/${installerSystem.config.hardware.deviceTree.name}:/devicetree.dtb" >>$bootfiles
+              '';
+            "uboot" = throw "uboot not yet supported for disk installer";
+          }
+          ."${lib.head (lib.attrNames cfg.boot)}";
 
         # TODO(jared): We cannot assume the sector size of the target device is
-        # the same as the installation device.
+        # the same as the installation device (e.g. target device is an nvme
+        # drive but installation device is a USB drive).
         inherit (cfg) sectorSize;
       };
     };
