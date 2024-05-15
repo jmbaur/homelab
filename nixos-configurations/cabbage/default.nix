@@ -9,11 +9,11 @@
 
   boot.initrd.availableKernelModules = [
     "nvme"
-    "xhci_pci"
-    "usb_storage"
     "sd_mod"
+    "usb_storage"
+    "xhci_pci"
   ];
-  boot.initrd.kernelModules = [ ];
+  boot.initrd.kernelModules = [ "i915" ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
@@ -23,11 +23,5 @@
     mutableNixStore = true;
     boot.bootLoaderSpec.enable = true;
     installer.targetDisk = "/dev/disk/by-path/pci-0000:03:00.0-nvme-1";
-  };
-
-  ##############################################################################
-  boot.initrd.systemd = {
-    managerEnvironment.SYSTEMD_LOG_LEVEL = "debug";
-    services.systemd-repart.environment.SYSTEMD_LOG_LEVEL = "debug";
   };
 }
