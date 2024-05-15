@@ -51,7 +51,10 @@ in
       # In nixpkgs, if sysusers is enabled, tmpfiles is used to create home
       # directories. See https://github.com/nixos/nixpkgs/blob/68165781ccbe4d2ff1d12b6e96ebe4a9f4a93d51/nixos/modules/system/boot/systemd/sysusers.nix#L100.
       after = [ "systemd-homed.service" ];
-      path = [ config.systemd.package ];
+      path = [
+        config.systemd.package
+        pkgs.jq
+      ];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
@@ -60,9 +63,14 @@ in
         env NEWPASSWORD=NumberOne homectl create ${username} \
           --member-of=${lib.concatStringsSep "," groups} \
           --shell=${utils.toShellPath shell} \
-          --password-hint="Picard's nickname for Riker" \
           --storage=${if fileSystemConfig.fsType == "btrfs" then "subvolume" else "directory"} \
           --enforce-password-policy=no
+
+        eval "$(homectl --json=short | jq -r '.[] | select(.name=="${username}") | "uid=\(.uid); export uid; gid=\(.gid); export gid;"')"
+
+        # https://github.com/systemd/systemd/blob/477fdc5afed0457c43d01f3d7ace7209f81d3995/meson_options.txt#L246-L249
+        echo "$uid:$((0x80000)):$((0x10000))" >/etc/subuid
+        echo "$gid:$((0x80000)):$((0x10000))" >/etc/subgid
       '';
       wantedBy = [ "multi-user.target" ];
     };
