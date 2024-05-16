@@ -10,7 +10,9 @@
   };
 
   config = lib.mkIf config.hardware.bpi-r3.enable {
-    boot.kernelPackages = pkgs.linuxPackages_latest;
+    # Hold on 6.8 for now
+    # https://lore.kernel.org/linux-kernel/87zfsrcye9.fsf@kernel.org/T/
+    boot.kernelPackages = pkgs.linuxPackages_6_8;
     boot.kernelPatches = [
       {
         name = "mt7986a-enablement";
