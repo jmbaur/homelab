@@ -121,11 +121,11 @@
         "systems": "systems_3"
       },
       "locked": {
-        "lastModified": 1710146030,
-        "narHash": "sha256-SZ5L6eA7HJ/nmkzGG7/ISclqe6oZdOZTNoesiInkXPQ=",
+        "lastModified": 1705309234,
+        "narHash": "sha256-uNRRNRKmJyCRC/8y1RqBkqWBLM034y4qN7EprSdmgyA=",
         "owner": "numtide",
         "repo": "flake-utils",
-        "rev": "b1d9ab70662946ef0850d488da1c9019f3a9752a",
+        "rev": "1ef2e671c3b0c19053962c07dbda38332dcebf26",
         "type": "github"
       },
       "original": {
@@ -139,11 +139,11 @@
         "systems": "systems_4"
       },
       "locked": {
-        "lastModified": 1705309234,
-        "narHash": "sha256-uNRRNRKmJyCRC/8y1RqBkqWBLM034y4qN7EprSdmgyA=",
+        "lastModified": 1710146030,
+        "narHash": "sha256-SZ5L6eA7HJ/nmkzGG7/ISclqe6oZdOZTNoesiInkXPQ=",
         "owner": "numtide",
         "repo": "flake-utils",
-        "rev": "1ef2e671c3b0c19053962c07dbda38332dcebf26",
+        "rev": "b1d9ab70662946ef0850d488da1c9019f3a9752a",
         "type": "github"
       },
       "original": {
@@ -188,28 +188,9 @@
         "type": "github"
       }
     },
-    "flake-utils_7": {
-      "inputs": {
-        "systems": "systems_7"
-      },
-      "locked": {
-        "lastModified": 1710146030,
-        "narHash": "sha256-SZ5L6eA7HJ/nmkzGG7/ISclqe6oZdOZTNoesiInkXPQ=",
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "rev": "b1d9ab70662946ef0850d488da1c9019f3a9752a",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "type": "github"
-      }
-    },
     "git-hooks": {
       "inputs": {
         "flake-compat": "flake-compat",
-        "flake-utils": "flake-utils",
         "gitignore": "gitignore",
         "nixpkgs": [
           "nixpkgs"
@@ -217,11 +198,11 @@
         "nixpkgs-stable": "nixpkgs-stable"
       },
       "locked": {
-        "lastModified": 1715609711,
-        "narHash": "sha256-/5u29K0c+4jyQ8x7dUIEUWlz2BoTSZWUP2quPwFCE7M=",
+        "lastModified": 1715870890,
+        "narHash": "sha256-nacSOeXtUEM77Gn0G4bTdEOeFIrkCBXiyyFZtdGwuH0=",
         "owner": "cachix",
         "repo": "git-hooks.nix",
-        "rev": "c182c876690380f8d3b9557c4609472ebfa1b141",
+        "rev": "fa606cccd7b0ccebe2880051208e4a0f61bfc8c1",
         "type": "github"
       },
       "original": {
@@ -233,7 +214,7 @@
     "git-hooks_2": {
       "inputs": {
         "flake-compat": "flake-compat_2",
-        "flake-utils": "flake-utils_2",
+        "flake-utils": "flake-utils",
         "gitignore": "gitignore_2",
         "nixpkgs": [
           "gobar",
@@ -258,7 +239,7 @@
     "git-hooks_3": {
       "inputs": {
         "flake-compat": "flake-compat_3",
-        "flake-utils": "flake-utils_3",
+        "flake-utils": "flake-utils_2",
         "gitignore": "gitignore_3",
         "nixpkgs": [
           "ipwatch",
@@ -283,7 +264,7 @@
     "git-hooks_4": {
       "inputs": {
         "flake-compat": "flake-compat_4",
-        "flake-utils": "flake-utils_6",
+        "flake-utils": "flake-utils_5",
         "gitignore": "gitignore_4",
         "nixpkgs": [
           "nixos-router",
@@ -308,7 +289,7 @@
     "git-hooks_5": {
       "inputs": {
         "flake-compat": "flake-compat_5",
-        "flake-utils": "flake-utils_7",
+        "flake-utils": "flake-utils_6",
         "gitignore": "gitignore_5",
         "nixpkgs": [
           "webauthn-tiny",
@@ -523,7 +504,7 @@
     },
     "microvm": {
       "inputs": {
-        "flake-utils": "flake-utils_4",
+        "flake-utils": "flake-utils_3",
         "nixpkgs": [
           "nixpkgs"
         ],
@@ -545,23 +526,24 @@
     },
     "neovim": {
       "inputs": {
-        "flake-utils": "flake-utils_5",
+        "flake-utils": "flake-utils_4",
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
         "dir": "contrib",
-        "lastModified": 1715842865,
-        "narHash": "sha256-/DjcGIey7UT5O9zZ8Fo8bGW17mD+uPDj4TnossMWRUI=",
+        "lastModified": 1715862872,
+        "narHash": "sha256-FCOipXHkAbkuFw9JjEpOIJ8BkyMkjkI0Dp+SzZ4yZlw=",
         "owner": "neovim",
         "repo": "neovim",
-        "rev": "174da7fe687bd3bf2f6874620e708db24160c4d7",
+        "rev": "27fb62988e922c2739035f477f93cc052a4fee1e",
         "type": "github"
       },
       "original": {
         "dir": "contrib",
         "owner": "neovim",
+        "ref": "v0.10.0",
         "repo": "neovim",
         "type": "github"
       }
@@ -741,11 +723,11 @@
     },
     "nur": {
       "locked": {
-        "lastModified": 1715845070,
-        "narHash": "sha256-9Z0dcn3p1r/v+buzURfvKXYHceonVhN8k7Es5G5rtrk=",
+        "lastModified": 1715888814,
+        "narHash": "sha256-skpOwox7ueKzsuZi5pwkNNEdgXPPLridcZNH1txx4Q0=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "1af479b00c62b6dc202dad86d98289b1129c133e",
+        "rev": "abc7fbfd3d19fec91acf5c4a8689c3cf1fec2c01",
         "type": "github"
       },
       "original": {
@@ -901,21 +883,6 @@
         "type": "github"
       }
     },
-    "systems_7": {
-      "locked": {
-        "lastModified": 1681028828,
-        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
-        "owner": "nix-systems",
-        "repo": "default",
-        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-systems",
-        "repo": "default",
-        "type": "github"
-      }
-    },
     "tinyboot": {
       "inputs": {
         "nixpkgs": [
@@ -924,11 +891,11 @@
         "zig": "zig"
       },
       "locked": {
-        "lastModified": 1715786428,
-        "narHash": "sha256-NEhEKxyWLZ+CL3Bf88W+KM1uUgOZUhDdDjeQtjLIZE8=",
+        "lastModified": 1715894880,
+        "narHash": "sha256-+QFkk/YzZbWjvnvqsKAsYmRjN+cwsuDKDlqLsj4Foj8=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "3c2fdb9fb061e8084d3eafb37253120aa91085e9",
+        "rev": "41900968b14cc85801c1255071ed67c0c60ba8c1",
         "type": "github"
       },
       "original": {
