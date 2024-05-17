@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
   nixpkgs.hostPlatform = "x86_64-linux";
 
@@ -19,6 +19,8 @@
 
   custom.normalUser.enable = true;
   custom.desktop.enable = true;
+
+  boot.initrd.systemd.emergencyAccess = lib.mkForce true;
 
   custom.image = {
     enable = true;

@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.custom.desktop;
 in
@@ -8,6 +13,8 @@ in
   config = lib.mkIf cfg.enable {
     custom.normalUser.enable = true;
     custom.basicNetwork.enable = true;
+
+    environment.systemPackages = [ pkgs.firefox ];
 
     programs.sway = {
       enable = true;
