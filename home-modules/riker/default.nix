@@ -97,6 +97,7 @@ in
         ansifilter
         as-tree
         bc
+        binary-diff
         bintools
         bottom
         cachix

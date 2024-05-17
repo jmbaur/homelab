@@ -13,7 +13,7 @@ let
   maxUsrSize = cfg.immutableMaxSize;
   maxUsrHashSize = maxUsrSize / 8;
 
-  wantLuksRoot = if cfg.encrypt then (if cfg.hasTpm2 then "tpm2" else "key-file") else "none";
+  wantLuksRoot = if cfg.encrypt then (if cfg.hasTpm2 then "tpm2" else "key-file") else "off";
 in
 {
   imports = [
