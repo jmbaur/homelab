@@ -123,7 +123,7 @@ in
       ''
         echo "${loaderConf}:/loader/loader.conf" >>$bootfiles
 
-        bootentry=$update/${id}_${version}.conf
+        bootentry=$update/${id}_${version}+3-0.conf
         install -Dm0644 ${entryConf} $bootentry
         substituteInPlace $bootentry --subst-var usrhash
 
