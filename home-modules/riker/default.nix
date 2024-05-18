@@ -356,6 +356,7 @@ in
 
       programs.firefox = {
         enable = true;
+        package = null;
         profiles.default = {
           extensions =
             with pkgs.nur.repos.rycee.firefox-addons;
