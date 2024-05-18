@@ -14,8 +14,6 @@
     ipwatch.url = "github:jmbaur/ipwatch";
     microvm.inputs.nixpkgs.follows = "nixpkgs";
     microvm.url = "github:astro/microvm.nix";
-    neovim.inputs.nixpkgs.follows = "nixpkgs";
-    neovim.url = "github:neovim/neovim/v0.10.0?dir=contrib";
     nix-sandbox-escape-hatch.inputs.nixpkgs.follows = "nixpkgs";
     nix-sandbox-escape-hatch.url = "github:jmbaur/nix-sandbox-escape-hatch";
     nixos-router.inputs.nixpkgs.follows = "nixpkgs";

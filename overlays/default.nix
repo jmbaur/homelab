@@ -85,9 +85,7 @@ inputs: {
 
       git-shell-commands = prev.callPackage ./git-shell-commands { libgit2 = final.libgit2_1_5; };
 
-      jared-neovim = prev.callPackage ./neovim {
-        neovim-unwrapped = inputs.neovim.packages.${prev.system}.neovim;
-      };
+      jared-neovim = prev.callPackage ./neovim { };
       jared-neovim-all-languages = final.jared-neovim.override { supportAllLanguages = true; };
 
       bitwarden-wayland = prev.callPackage ./mk-wayland-variant.nix { package = final.bitwarden; };
