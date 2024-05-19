@@ -30,9 +30,20 @@ inputs: {
               ) "GPGRT_CONFIG=${prev.lib.getDev final.libgpg-error}/bin/gpgrt-config";
           });
 
+      # Add support for colorized output. Remove if/when
+      # https://github.com/NixOS/nixpkgs/pull/312762 is merged.
+      strace = prev.strace.overrideAttrs (old: {
+        patches = (old.patches or [ ]) ++ [
+          (final.fetchpatch {
+            url = "https://raw.githubusercontent.com/xfgusta/strace-with-colors/197c71f6f304f085e0c84151e6ccc6fcc2f29f7d/strace-with-colors.patch";
+            hash = "sha256-gcQldGsRgvGnrDX0zqcLTpEpchNEbCUFdKyii0wetEI=";
+          })
+        ];
+      });
+
+      # Add support for PREF64 NDP option.
       tcpdump = prev.tcpdump.overrideAttrs (old: {
         patches = (old.patches or [ ]) ++ [
-          # add support for pref64
           (final.fetchpatch {
             url = "https://github.com/the-tcpdump-group/tcpdump/commit/d879d9349ab7b3dffc4797b6a8ece758e93636c1.patch";
             hash = "sha256-Z1gHBYNUMdIkNT+miI3Iis183yJvc29OLAvg6kkvDGY=";
