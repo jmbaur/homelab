@@ -25,12 +25,16 @@
   toplevelClosure,
   usrFormat,
   version,
+  wiggleRoom,
 }:
 
 let
   iniFormat = formats.ini { };
 
   seed = "39c4020e-af73-434a-93e4-7e37fdcc7f96";
+
+  maxUsrPadding = wiggleRoom;
+  maxUsrHashPadding = maxUsrPadding / 8;
 
   bootPartition = partitions."10-boot" // { };
 
@@ -40,12 +44,17 @@ let
     Verity = "data";
     VerityMatchKey = "usr";
     SplitName = "usr";
+    PaddingMinBytes = toString maxUsrPadding;
+    PaddingMaxBytes = toString maxUsrPadding;
   };
 
   hashPartition = partitions."20-usr-hash-a" // {
+    Minimize = true;
     Verity = "hash";
     VerityMatchKey = "usr";
     SplitName = "usr-hash";
+    PaddingMinBytes = toString maxUsrHashPadding;
+    PaddingMaxBytes = toString maxUsrHashPadding;
   };
 
   systemdArchitecture = builtins.replaceStrings [ "_" ] [ "-" ] stdenv.hostPlatform.linuxArch;

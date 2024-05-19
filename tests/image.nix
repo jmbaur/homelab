@@ -118,7 +118,7 @@ let
       custom.image = {
         enable = true;
         sectorSize = 512; # OVMF only supports 512B sector size?
-        immutableMaxSize = 512 * 1024 * 1024; # 512M
+        wiggleRoom = 1024;
         installer.targetDisk = "/dev/vda";
       };
     };
@@ -211,7 +211,7 @@ in
                   if booted_entry != filename:
                       raise Exception(f"booted from the wrong entry, expected {filename}, got {booted_entry}")
 
-              assert_boot_entry("nixos_${version}.efi")
+              assert_boot_entry("nixos_${version}+3-0.efi")
 
               partitions = json.loads(machine.succeed("sfdisk --json ${nodes.machine.custom.image.installer.targetDisk}"))["partitiontable"]["partitions"]
 

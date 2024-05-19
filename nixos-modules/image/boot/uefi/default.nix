@@ -66,7 +66,7 @@ in
         --os-release=@${config.environment.etc."os-release".source} \
         ${lib.optionalString config.hardware.deviceTree.enable "--devicetree=${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name}"} \
         --output="$uki"
-      echo "$uki:/EFI/Linux/$(basename $uki)+3-0" >>$bootfiles
+      echo "$uki:/EFI/Linux/$(basename $uki | sed 's,\.efi,,')+3-0.efi" >>$bootfiles
 
       ln -sf ${loaderConf} $update/loader.conf
       echo "$update/loader.conf:/loader/loader.conf" >>$bootfiles

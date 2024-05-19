@@ -10,9 +10,6 @@ let
 
   inherit (config.system.image) version;
 
-  maxUsrSize = cfg.immutableMaxSize;
-  maxUsrHashSize = maxUsrSize / 8;
-
   wantLuksRoot = if cfg.encrypt then (if cfg.hasTpm2 then "tpm2" else "key-file") else "off";
 in
 {
@@ -66,12 +63,12 @@ in
       '';
     };
 
-    immutableMaxSize = mkOption {
+    wiggleRoom = mkOption {
       type = types.int;
-      default = 2 * 1024 * 1024 * 1024; # 2G
-      example = literalExpression "2 * 1024 * 1024 * 1024 /* 2G */";
+      default = 512 * 1024 * 1024; # 512MiB
+      example = literalExpression "512 * 1024 * 1024 /* 512MiB */";
       description = ''
-        Maximum size for immutable partitions.
+        Amount of wiggle room for future updates.
       '';
     };
   };
@@ -114,10 +111,6 @@ in
       "systemd.verity_root_options=panic-on-corruption"
     ];
 
-    # We do this because we need the udev rules and some binaries from the lvm2
-    # package.
-    boot.initrd.services.lvm.enable = true;
-
     # We have our own /usr/bin/env from the read-only partition
     #
     # See https://github.com/NixOS/nixpkgs/pull/309336
@@ -125,6 +118,10 @@ in
     system.activationScripts.usrbinenv = lib.mkForce "";
 
     boot.initrd = {
+      # We do this because we need the udev rules and some binaries from the lvm2
+      # package.
+      services.lvm.enable = true;
+
       systemd = {
         enable = true;
         enableTpm2 = cfg.hasTpm2;
@@ -184,6 +181,15 @@ in
         # early in the initrd, this path will exist before systemd-repart
         # runs. See https://github.com/systemd/systemd/blob/6bd675a659a508cd1df987f90b633ed1c4b12cb3/src/partition/repart.c#L7705.
         repart.device = "/dev/mapper/usr";
+
+        # systemd-repart doesn't seem to have a way to copy the size of a
+        # partition based on the size of another, so we use a small program to
+        # determine the size of A that we need to copy to B.
+        services.systemd-repart.serviceConfig.ExecStartPre = "/bin/ab-size";
+
+        extraBin.ab-size = lib.getExe (
+          pkgs.writers.writeRustBin "ab-size" { } (builtins.readFile ./ab-size.rs)
+        );
       };
 
       availableKernelModules = [ "dm_verity" ] ++ lib.optional cfg.mutableNixStore "overlay";
@@ -200,28 +206,20 @@ in
       "20-usr-a" = {
         Type = "usr";
         Label = "usr-${version}";
-        SizeMinBytes = toString maxUsrSize;
-        SizeMaxBytes = toString maxUsrSize;
       };
       "20-usr-hash-a" = {
         Type = "usr-verity";
         Label = "usr-hash-${version}";
-        SizeMinBytes = toString maxUsrHashSize;
-        SizeMaxBytes = toString maxUsrHashSize;
       };
 
       # The "B" update partition and root partition get created on first boot.
       "30-usr-b" = {
         Type = "usr";
         Label = "usr-0.0.0";
-        SizeMinBytes = toString maxUsrSize;
-        SizeMaxBytes = toString maxUsrSize;
       };
       "30-usr-hash-b" = {
         Type = "usr-verity";
         Label = "usr-hash-0.0.0";
-        SizeMinBytes = toString maxUsrHashSize;
-        SizeMaxBytes = toString maxUsrHashSize;
       };
       "40-root" = {
         Type = "root";
@@ -287,7 +285,12 @@ in
       };
       usrFormat = "squashfs";
       imageName = config.networking.hostName;
-      inherit (cfg) bootFileCommands postImageCommands sectorSize;
+      inherit (cfg)
+        bootFileCommands
+        postImageCommands
+        sectorSize
+        wiggleRoom
+        ;
       inherit (config.system.image) id version;
       inherit (config.systemd.repart) partitions;
     };
