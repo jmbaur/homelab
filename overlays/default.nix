@@ -32,7 +32,7 @@ inputs: {
 
       # Add support for colorized output. Remove if/when
       # https://github.com/NixOS/nixpkgs/pull/312762 is merged.
-      strace = prev.strace.overrideAttrs (old: {
+      strace-with-colors = prev.strace.overrideAttrs (old: {
         patches = (old.patches or [ ]) ++ [
           (final.fetchpatch {
             url = "https://raw.githubusercontent.com/xfgusta/strace-with-colors/197c71f6f304f085e0c84151e6ccc6fcc2f29f7d/strace-with-colors.patch";

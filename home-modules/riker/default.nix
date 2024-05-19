@@ -152,7 +152,7 @@ in
         rlwrap
         sd
         skopeo
-        strace
+        strace-with-colors
         systemctl-tui
         tcpdump
         tea
