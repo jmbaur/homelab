@@ -187,9 +187,7 @@ in
         # determine the size of A that we need to copy to B.
         services.systemd-repart.serviceConfig.ExecStartPre = "/bin/ab-size";
 
-        extraBin.ab-size = lib.getExe (
-          pkgs.writers.writeRustBin "ab-size" { } (builtins.readFile ./ab-size.rs)
-        );
+        extraBin.ab-size = lib.getExe (pkgs.buildSimpleRustPackage "ab-size" ./ab-size.rs);
       };
 
       availableKernelModules = [ "dm_verity" ] ++ lib.optional cfg.mutableNixStore "overlay";

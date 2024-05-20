@@ -93,7 +93,7 @@ let
         symlink = "/etc/init.d/rcS";
       }
       {
-        object = pkgs.writers.writeRustBin "installer" { } (builtins.readFile ./installer.rs);
+        object = pkgs.buildSimpleRustPackage "installer" ./installer.rs;
         symlink = "/opt/installer";
       }
       {

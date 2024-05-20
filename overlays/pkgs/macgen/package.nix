@@ -1,1 +1,1 @@
-{ writers }: writers.writeRustBin "macgen" { } (builtins.readFile ./macgen.rs)
+{ buildSimpleRustPackage }: buildSimpleRustPackage "macgen" ./macgen.rs

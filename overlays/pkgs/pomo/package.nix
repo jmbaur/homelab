@@ -1,1 +1,1 @@
-{ writers }: writers.writeRustBin "pomo" { } (builtins.readFile ./pomo.rs)
+{ buildSimpleRustPackage }: buildSimpleRustPackage "pomo" ./pomo.rs

@@ -4,12 +4,14 @@ inputs: {
     inputs.gosee.overlays.default # needed for plugin in overlayed neovim
     inputs.u-boot-nix.overlays.default
     (
+      # auto-added packages
       _: prev:
       prev.lib.mapAttrs (name: _: prev.callPackage ./pkgs/${name}/package.nix { }) (
         builtins.readDir ./pkgs
       )
     )
     (final: prev: {
+      # cross-compilation fixes
       libfido2 = prev.libfido2.override {
         withPcsclite = final.stdenv.hostPlatform == final.stdenv.buildPlatform;
       };
@@ -17,21 +19,11 @@ inputs: {
       wpa_supplicant = prev.wpa_supplicant.override {
         withPcsclite = final.stdenv.hostPlatform == final.stdenv.buildPlatform;
       };
+    })
+    (final: prev: {
+      # all other packages
 
-      gnupg =
-        (prev.gnupg.override { enableMinimal = final.stdenv.hostPlatform != final.stdenv.buildPlatform; })
-        .overrideAttrs
-          (old: {
-            # TODO(jared): can remove when https://github.com/NixOS/nixpkgs/pull/298001 is merged
-            configureFlags =
-              old.configureFlags
-              ++ final.lib.optional (
-                final.stdenv.hostPlatform != final.stdenv.buildPlatform
-              ) "GPGRT_CONFIG=${prev.lib.getDev final.libgpg-error}/bin/gpgrt-config";
-          });
-
-      # Add support for colorized output. Remove if/when
-      # https://github.com/NixOS/nixpkgs/pull/312762 is merged.
+      # Add support for colorized output.
       strace-with-colors = prev.strace.overrideAttrs (old: {
         patches = (old.patches or [ ]) ++ [
           (final.fetchpatch {
@@ -84,17 +76,17 @@ inputs: {
         }
       );
 
-      libgit2_1_5 = prev.libgit2.overrideAttrs (_: rec {
-        version = "1.5.2";
-        src = final.fetchFromGitHub {
-          owner = "libgit2";
-          repo = "libgit2";
-          rev = "v${version}";
-          hash = "sha256-zZetfuiSpiO0rRtZjBFOAqbdi+sCwl120utnXLtqMm0=";
-        };
-      });
-
-      git-shell-commands = prev.callPackage ./git-shell-commands { libgit2 = final.libgit2_1_5; };
+      git-shell-commands = prev.callPackage ./git-shell-commands {
+        libgit2 = prev.libgit2.overrideAttrs (_: rec {
+          version = "1.5.2";
+          src = final.fetchFromGitHub {
+            owner = "libgit2";
+            repo = "libgit2";
+            rev = "v${version}";
+            hash = "sha256-zZetfuiSpiO0rRtZjBFOAqbdi+sCwl120utnXLtqMm0=";
+          };
+        });
+      };
 
       jared-neovim = prev.callPackage ./neovim { };
       jared-neovim-all-languages = final.jared-neovim.override { supportAllLanguages = true; };

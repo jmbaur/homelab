@@ -12,9 +12,7 @@ let
   fontSize = 12.0;
   fontStyle = "Bold Semi-Condensed";
 
-  cliphistSelectionWrapper = pkgs.writers.writeRustBin "cliphist-selection-wrapper" { } (
-    builtins.readFile ./cliphist-selection-wrapper.rs
-  );
+  cliphistSelectionWrapper = pkgs.buildSimpleRustPackage "cliphist-selection-wrapper" ./cliphist-selection-wrapper.rs;
 in
 {
   options.jared = with lib; {
