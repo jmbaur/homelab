@@ -37,4 +37,6 @@ rustPlatform.buildRustPackage {
     ln -s ${cargoLock} $out/Cargo.lock
     ln -s ${source} $out/src/main.rs
   '';
+
+  meta.mainProgram = pname;
 }
