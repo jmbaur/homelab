@@ -17,7 +17,6 @@
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
-  custom.normalUser.enable = true;
   custom.desktop.enable = true;
 
   boot.initrd.systemd.emergencyAccess = lib.mkForce true;
