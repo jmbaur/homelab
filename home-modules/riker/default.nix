@@ -100,7 +100,6 @@ in
         htmlq
         htop-vim
         iputils
-        jared-emacs
         jared-neovim-all-languages
         jo
         jq
