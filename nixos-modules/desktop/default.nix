@@ -23,6 +23,8 @@ in
       pulse.enable = true;
     };
 
+    services.printing.enable = true;
+
     services.flatpak.enable = true;
 
     services.xserver.enable = true;
