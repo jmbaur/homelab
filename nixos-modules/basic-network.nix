@@ -120,8 +120,6 @@ in
               type = "basic";
               # Adapted from https://github.com/toreanderson/clatd/blob/04062b282dfa55ea123b94c6d354525fe6670324/scripts/clatd.networkmanager
               source = pkgs.writeShellScript "clatd-dispatch-script" ''
-                env
-                echo "$@"
                 [ "$DEVICE_IFACE" = "${clatIfaceName}" ] && exit 0
                 [ "$2" != "up" ] && [ "$2" != "down" ] && exit 0
                 ${lib.getExe' config.systemd.package "systemctl"} --no-block restart clatd.service
