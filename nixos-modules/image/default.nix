@@ -11,6 +11,9 @@ let
   inherit (config.system.image) version;
 
   wantLuksRoot = if cfg.encrypt then (if cfg.hasTpm2 then "tpm2" else "key-file") else "off";
+
+  maxUsrPadding = cfg.wiggleRoom;
+  maxUsrHashPadding = maxUsrPadding / 8;
 in
 {
   imports = [
@@ -204,20 +207,28 @@ in
       "20-usr-a" = {
         Type = "usr";
         Label = "usr-${version}";
+        PaddingMinBytes = toString maxUsrPadding;
+        PaddingMaxBytes = toString maxUsrPadding;
       };
       "20-usr-hash-a" = {
         Type = "usr-verity";
         Label = "usr-hash-${version}";
+        PaddingMinBytes = toString maxUsrHashPadding;
+        PaddingMaxBytes = toString maxUsrHashPadding;
       };
 
       # The "B" update partition and root partition get created on first boot.
       "30-usr-b" = {
         Type = "usr";
         Label = "usr-0.0.0";
+        PaddingMinBytes = toString maxUsrPadding;
+        PaddingMaxBytes = toString maxUsrPadding;
       };
       "30-usr-hash-b" = {
         Type = "usr-verity";
         Label = "usr-hash-0.0.0";
+        PaddingMinBytes = toString maxUsrHashPadding;
+        PaddingMaxBytes = toString maxUsrHashPadding;
       };
       "40-root" = {
         Type = "root";
@@ -260,7 +271,10 @@ in
     fileSystems.${config.boot.loader.efi.efiSysMountPoint} = {
       device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions."10-boot".Label}";
       fsType = config.systemd.repart.partitions."10-boot".Format;
-      options = [ "x-systemd.automount" ];
+      options = [
+        "x-systemd.automount"
+        "umask=0077"
+      ];
     };
 
     systemd.services.initialize-nix-database = lib.mkIf config.nix.enable {
@@ -283,12 +297,7 @@ in
       };
       usrFormat = "squashfs";
       imageName = config.networking.hostName;
-      inherit (cfg)
-        bootFileCommands
-        postImageCommands
-        sectorSize
-        wiggleRoom
-        ;
+      inherit (cfg) bootFileCommands postImageCommands sectorSize;
       inherit (config.system.image) id version;
       inherit (config.systemd.repart) partitions;
     };

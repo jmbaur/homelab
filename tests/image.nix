@@ -118,7 +118,7 @@ let
       custom.image = {
         enable = true;
         sectorSize = 512; # OVMF only supports 512B sector size?
-        wiggleRoom = 1024;
+        wiggleRoom = 4096 * 8; # smaller than the default, we don't need any for this test
         installer.targetDisk = "/dev/vda";
       };
     };
