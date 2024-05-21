@@ -69,7 +69,6 @@ in
     }
 
     (lib.mkIf cfg.dev.enable {
-      services.ssh-agent.enable = true;
       services.gpg-agent = {
         enable = true;
         pinentryPackage = if cfg.desktop.enable then pkgs.pinentry-gnome3 else pkgs.pinentry-tty;
