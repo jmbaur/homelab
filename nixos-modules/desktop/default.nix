@@ -1,9 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, ... }:
 let
   cfg = config.custom.desktop;
 in
@@ -12,8 +7,6 @@ in
 
   config = lib.mkIf cfg.enable {
     custom.normalUser.enable = true;
-
-    environment.systemPackages = [ pkgs.firefox ];
 
     hardware.pulseaudio.enable = lib.mkForce false;
     security.rtkit.enable = true;
