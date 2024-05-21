@@ -23,15 +23,15 @@ in
   ];
 
   options.custom.image = with lib; {
-    enable = mkEnableOption "TODO";
+    enable = mkEnableOption "image-based NixOS";
 
-    hasTpm2 = mkEnableOption "TODO";
+    hasTpm2 = mkEnableOption "system has a TPM2 device";
 
-    encrypt = mkEnableOption "TODO" // {
+    encrypt = mkEnableOption "encrypt the root partition" // {
       default = true;
     };
 
-    mutableNixStore = mkEnableOption "TODO";
+    mutableNixStore = mkEnableOption "read-write /nix/store";
 
     sectorSize = mkOption {
       type =
@@ -54,15 +54,16 @@ in
       type = types.lines;
       default = "";
       description = ''
-        TODO
+        Commands to run after the image has been created at $out/image.raw.
       '';
     };
 
+    # TODO(jared): This is a leaky-ass abstraction, I need to get rid of it.
     bootFileCommands = mkOption {
       type = types.lines;
       default = "";
       description = ''
-        TODO
+        Commands to run that setup the files that appear on the boot partition
       '';
     };
 
@@ -188,7 +189,11 @@ in
         # systemd-repart doesn't seem to have a way to copy the size of a
         # partition based on the size of another, so we use a small program to
         # determine the size of A that we need to copy to B.
-        services.systemd-repart.serviceConfig.ExecStartPre = "/bin/ab-size";
+        services.systemd-repart.serviceConfig.ExecStartPre = toString [
+          "/bin/ab-size"
+          (toString maxUsrPadding)
+          (toString maxUsrHashPadding)
+        ];
 
         extraBin.ab-size = lib.getExe (pkgs.buildSimpleRustPackage "ab-size" ./ab-size.rs);
       };
@@ -207,28 +212,20 @@ in
       "20-usr-a" = {
         Type = "usr";
         Label = "usr-${version}";
-        PaddingMinBytes = toString maxUsrPadding;
-        PaddingMaxBytes = toString maxUsrPadding;
       };
       "20-usr-hash-a" = {
         Type = "usr-verity";
         Label = "usr-hash-${version}";
-        PaddingMinBytes = toString maxUsrHashPadding;
-        PaddingMaxBytes = toString maxUsrHashPadding;
       };
 
       # The "B" update partition and root partition get created on first boot.
       "30-usr-b" = {
         Type = "usr";
         Label = "usr-0.0.0";
-        PaddingMinBytes = toString maxUsrPadding;
-        PaddingMaxBytes = toString maxUsrPadding;
       };
       "30-usr-hash-b" = {
         Type = "usr-verity";
         Label = "usr-hash-0.0.0";
-        PaddingMinBytes = toString maxUsrHashPadding;
-        PaddingMaxBytes = toString maxUsrHashPadding;
       };
       "40-root" = {
         Type = "root";
@@ -297,6 +294,7 @@ in
       };
       usrFormat = "squashfs";
       imageName = config.networking.hostName;
+      inherit maxUsrPadding maxUsrHashPadding;
       inherit (cfg) bootFileCommands postImageCommands sectorSize;
       inherit (config.system.image) id version;
       inherit (config.systemd.repart) partitions;

@@ -7,6 +7,7 @@ in
 
   config = lib.mkIf cfg.enable {
     custom.normalUser.enable = true;
+    custom.basicNetwork.enable = true;
 
     hardware.pulseaudio.enable = lib.mkForce false;
     security.rtkit.enable = true;
@@ -21,6 +22,7 @@ in
     services.flatpak.enable = true;
 
     services.xserver.enable = true;
+    services.xserver.desktopManager.xterm.enable = false;
     services.xserver.desktopManager.gnome.enable = true;
     services.xserver.displayManager.gdm.enable = true;
   };

@@ -1,36 +1,33 @@
 use std::io::Write;
 
 fn block_size(path: &std::path::Path) -> u64 {
-    let full_path = path.canonicalize().unwrap();
-    let sysfs_path = std::path::PathBuf::from(
-        format!(
-            "/sys/class/block/{}",
-            full_path.file_name().unwrap().to_str().unwrap()
-        )
-        .as_str(),
-    );
+    let full_path = path
+        .canonicalize()
+        .expect("couldn't get full path to block device");
+    let sysfs_path = std::path::PathBuf::from("/sys/class/block")
+        .join(full_path.file_name().expect("no filename"));
 
     u64::from_str_radix(
         std::fs::read_to_string(sysfs_path.join("size"))
-            .unwrap()
+            .expect("couldn't read size file")
             .trim(),
         10,
     )
-    .unwrap()
+    .expect("invalid contents in size file")
         * u64::from_str_radix(
             std::fs::read_to_string(
                 sysfs_path
                     .canonicalize()
-                    .unwrap()
+                    .expect("couldn't get full path from sysfs path")
                     .parent()
-                    .unwrap()
+                    .expect("couldn't get parent of sysfs symlink")
                     .join("queue/logical_block_size"),
             )
-            .unwrap()
+            .expect("failed to read logical_block_size file")
             .trim(),
             10,
         )
-        .unwrap()
+        .expect("invalid contents of logical_block_size file")
 }
 
 fn update_repart_file(size: u64, path: &std::path::Path) {
@@ -44,6 +41,17 @@ fn update_repart_file(size: u64, path: &std::path::Path) {
 }
 
 fn main() {
+    let mut args = std::env::args();
+    _ = args.next();
+    let max_usr_padding =
+        u64::from_str_radix(&args.next().expect("missing max_usr_padding argument"), 10)
+            .expect("invalid max_usr_padding argument");
+    let max_usr_hash_padding = u64::from_str_radix(
+        &args.next().expect("missing max_usr_hash_padding argument"),
+        10,
+    )
+    .expect("invalid max_usr_hash_padding argument");
+
     let mut partlabel_dir =
         std::fs::read_dir("/dev/disk/by-partlabel").expect("failed to read /dev/disk/by-partlabel");
 
@@ -75,19 +83,19 @@ fn main() {
     };
 
     update_repart_file(
-        usr_size,
+        usr_size + max_usr_padding,
         std::path::Path::new("/etc/repart.d/20-usr-a.conf"),
     );
     update_repart_file(
-        usr_hash_size,
+        usr_hash_size + max_usr_hash_padding,
         std::path::Path::new("/etc/repart.d/20-usr-hash-a.conf"),
     );
     update_repart_file(
-        usr_size,
+        usr_size + max_usr_padding,
         std::path::Path::new("/etc/repart.d/30-usr-b.conf"),
     );
     update_repart_file(
-        usr_hash_size,
+        usr_hash_size + max_usr_hash_padding,
         std::path::Path::new("/etc/repart.d/30-usr-hash-b.conf"),
     );
 }

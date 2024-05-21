@@ -26,6 +26,8 @@
   toplevelClosure,
   usrFormat,
   version,
+  maxUsrPadding,
+  maxUsrHashPadding,
 }:
 
 let
@@ -36,6 +38,8 @@ let
   bootPartition = partitions."10-boot" // { };
 
   dataPartition = partitions."20-usr-a" // {
+    PaddingMinBytes = toString maxUsrPadding;
+    PaddingMaxBytes = toString maxUsrPadding;
     Minimize = true;
     Format = usrFormat;
     Verity = "data";
@@ -44,6 +48,8 @@ let
   };
 
   hashPartition = partitions."20-usr-hash-a" // {
+    PaddingMinBytes = toString maxUsrHashPadding;
+    PaddingMaxBytes = toString maxUsrHashPadding;
     Minimize = true;
     Verity = "hash";
     VerityMatchKey = "usr";

@@ -169,7 +169,7 @@ in
     boot.initrd.supportedFilesystems = [ "ext4" ];
 
     system.build = {
-      networkInstaller = throw "TODO";
+      networkInstaller = throw "unimplemented";
 
       diskInstaller = pkgs.callPackage ./image.nix {
         imageName = config.networking.hostName;
