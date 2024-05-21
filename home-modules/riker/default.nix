@@ -316,5 +316,15 @@ in
         vim.opt.exrc = true
       '';
     })
+    (lib.mkIf cfg.desktop.enable {
+      xdg.configFile."alacritty/alacritty.toml".source =
+        (pkgs.formats.toml { }).generate "alacritty.toml"
+          {
+            colors.primary.background = "#000000";
+            font.size = 14;
+            selection.save_to_clipboard = true;
+            terminal.osc52 = "CopyPaste";
+          };
+    })
   ];
 }
