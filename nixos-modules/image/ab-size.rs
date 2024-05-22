@@ -55,32 +55,35 @@ fn main() {
     let mut partlabel_dir =
         std::fs::read_dir("/dev/disk/by-partlabel").expect("failed to read /dev/disk/by-partlabel");
 
-    let mut usr_size = None::<u64>;
-    let mut usr_hash_size = None::<u64>;
+    let mut usr_partitions = std::collections::HashMap::new();
 
     while let Some(Ok(entry)) = partlabel_dir.next() {
         let file_name = entry.file_name().into_string().expect("invalid UTF-8");
 
-        if file_name.starts_with("usr-hash") {
-            usr_hash_size = Some(block_size(entry.path().as_path()));
-        } else if file_name.starts_with("usr-") {
-            usr_size = Some(block_size(entry.path().as_path()));
-        }
-
-        if usr_size.is_some() && usr_hash_size.is_some() {
-            break;
+        if file_name.starts_with("usr-") {
+            usr_partitions.insert(file_name, block_size(entry.path().as_path()));
         }
     }
 
-    let Some(usr_size) = usr_size else {
-        eprintln!("couldn't find usr size");
-        std::process::exit(1);
+    let (usr_size, usr_hash_size, add_padding) = match usr_partitions.len() {
+        0..=1 => {
+            eprintln!("couldn't enough usr/usr-hash partitions");
+            std::process::exit(1);
+        }
+        2 => (
+            get_usr_size(&usr_partitions).expect("missing usr size"),
+            get_usr_hash_size(&usr_partitions).expect("missing usr-hash size"),
+            true,
+        ),
+        _ => (
+            get_usr_size(&usr_partitions).expect("missing usr size"),
+            get_usr_hash_size(&usr_partitions).expect("missing usr-hash size"),
+            true,
+        ),
     };
 
-    let Some(usr_hash_size) = usr_hash_size else {
-        eprintln!("couldn't find usr-hash size");
-        std::process::exit(1);
-    };
+    let max_usr_padding = if add_padding { max_usr_padding } else { 0 };
+    let max_usr_hash_padding = if add_padding { max_usr_hash_padding } else { 0 };
 
     update_repart_file(
         usr_size + max_usr_padding,
@@ -98,4 +101,26 @@ fn main() {
         usr_hash_size + max_usr_hash_padding,
         std::path::Path::new("/etc/repart.d/30-usr-hash-b.conf"),
     );
+}
+
+fn get_usr_hash_size(usr_partitions: &std::collections::HashMap<String, u64>) -> Option<u64> {
+    for (part, size) in usr_partitions {
+        if part.starts_with("usr-hash-") {
+            return Some(*size);
+        }
+    }
+
+    None
+}
+
+fn get_usr_size(usr_partitions: &std::collections::HashMap<String, u64>) -> Option<u64> {
+    for (part, size) in usr_partitions {
+        if part.starts_with("usr-hash-") {
+            continue;
+        } else if part.starts_with("usr-") {
+            return Some(*size);
+        }
+    }
+
+    None
 }
