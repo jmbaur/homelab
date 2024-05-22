@@ -44,7 +44,10 @@ in
       }
       (lib.mkIf (!isNetworkManager) {
         networking.useNetworkd = true;
-        networking.firewall.allowedUDPPorts = [ 5353 ]; # mDNS
+        networking.firewall.allowedUDPPorts = [
+          5353 # mDNS
+          5355 # LLMNR
+        ];
 
         systemd.network.wait-online.enable = !hasWireless;
         systemd.network = {
