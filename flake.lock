@@ -622,21 +622,6 @@
         "type": "github"
       }
     },
-    "nur": {
-      "locked": {
-        "lastModified": 1716458624,
-        "narHash": "sha256-/Nis98UXxeIsmgB1V6bF3qbyMLiTd3rz4aEm+n3US7I=",
-        "owner": "nix-community",
-        "repo": "NUR",
-        "rev": "ed78f86c4c6615cd0e34b44c5a836d309dcddad7",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "repo": "NUR",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "git-hooks": "git-hooks",
@@ -649,7 +634,6 @@
         "nixos-router": "nixos-router",
         "nixos-shell": "nixos-shell",
         "nixpkgs": "nixpkgs",
-        "nur": "nur",
         "sops-nix": "sops-nix",
         "tinyboot": "tinyboot",
         "u-boot-nix": "u-boot-nix",
