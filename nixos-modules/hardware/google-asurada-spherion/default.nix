@@ -7,7 +7,6 @@ with lib;
   config = mkIf config.hardware.asurada-spherion.enable {
     hardware.chromebook.enable = true;
     hardware.chromebook.mediatek = true;
-    hardware.bluetooth.enable = mkDefault true;
     hardware.enableRedistributableFirmware = true;
     hardware.deviceTree = {
       enable = true;

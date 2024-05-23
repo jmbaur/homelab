@@ -117,7 +117,6 @@ in
       (lib.mkIf isNetworkManager {
         networking.networkmanager = {
           dns = "systemd-resolved";
-          wifi.backend = "iwd";
           dispatcherScripts = [
             {
               type = "basic";

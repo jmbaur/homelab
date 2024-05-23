@@ -29,7 +29,6 @@ with lib;
 
     hardware.chromebook.enable = true;
     hardware.chromebook.mediatek = true;
-    hardware.bluetooth.enable = mkDefault true;
     hardware.enableRedistributableFirmware = true;
     hardware.deviceTree = {
       enable = true;

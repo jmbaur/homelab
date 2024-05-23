@@ -1,9 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, ... }:
 let
   cfg = config.custom.dev;
 in
@@ -14,8 +9,6 @@ in
     # enable some nicer interactive shells
     programs.fish.enable = true;
     programs.zsh.enable = true;
-
-    environment.systemPackages = lib.optional config.custom.desktop.enable pkgs.alacritty;
 
     # dev tooling often wants to watch lots of files
     boot.kernel.sysctl = {

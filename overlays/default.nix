@@ -23,6 +23,10 @@ inputs: {
     (final: prev: {
       # all other packages
 
+      konsole = prev.konsole.overrideAttrs (old: {
+        patches = (old.patches or [ ]) ++ [ ./konsole-osc52.patch ];
+      });
+
       # Add support for colorized output.
       strace-with-colors = prev.strace.overrideAttrs (old: {
         patches = (old.patches or [ ]) ++ [

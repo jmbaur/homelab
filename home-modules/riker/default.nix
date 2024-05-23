@@ -77,6 +77,7 @@ in
       home.packages = with pkgs; [
         ansifilter
         as-tree
+        bat
         bc
         binary-diff
         bintools

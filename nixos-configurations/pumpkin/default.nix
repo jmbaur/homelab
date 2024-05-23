@@ -16,21 +16,15 @@
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
-  hardware.bluetooth.enable = true;
-  networking.wireless.iwd.enable = true;
-
-  services.fwupd.enable = true;
-
   custom = {
     dev.enable = true;
     desktop.enable = true;
-  };
-
-  custom.image = {
-    enable = true;
-    hasTpm2 = true;
-    mutableNixStore = true;
-    boot.uefi.enable = true;
-    installer.targetDisk = "/dev/disk/by-path/pci-0000:03:00.0-nvme-1";
+    image = {
+      enable = true;
+      hasTpm2 = true;
+      mutableNixStore = true;
+      boot.uefi.enable = true;
+      installer.targetDisk = "/dev/disk/by-path/pci-0000:03:00.0-nvme-1";
+    };
   };
 }

@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.custom.desktop;
 in
@@ -9,21 +14,31 @@ in
     custom.normalUser.enable = true;
     custom.basicNetwork.enable = true;
 
-    hardware.pulseaudio.enable = lib.mkForce false;
+    networking.networkmanager = {
+      # TODO(jared): this should be enabled by plasma6 module?
+      enable = true;
+      wifi.backend = "iwd";
+    };
+    networking.wireless.iwd.enable = true;
+
+    # doesn't cross-compile
+    services.fwupd.enable = pkgs.stdenv.hostPlatform != pkgs.stdenv.buildPlatform;
+
+    hardware.bluetooth.enable = true;
+    hardware.pulseaudio.enable = false;
     security.rtkit.enable = true;
     services.pipewire = {
       enable = true;
       alsa.enable = true;
       pulse.enable = true;
     };
-
     services.printing.enable = true;
-
     services.flatpak.enable = true;
 
-    services.xserver.enable = true;
-    services.xserver.desktopManager.xterm.enable = false;
-    services.xserver.desktopManager.gnome.enable = true;
-    services.xserver.displayManager.gdm.enable = true;
+    services.displayManager.sddm = {
+      enable = true;
+      wayland.enable = true;
+    };
+    services.desktopManager.plasma6.enable = true;
   };
 }
