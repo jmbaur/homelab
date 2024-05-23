@@ -14,6 +14,9 @@ in
     custom.normalUser.enable = true;
     custom.basicNetwork.enable = true;
 
+    # Add a default browser to use
+    environment.systemPackages = [ pkgs.firefox ];
+
     networking.networkmanager = {
       # TODO(jared): this should be enabled by plasma6 module?
       enable = true;
@@ -21,7 +24,7 @@ in
     };
     networking.wireless.iwd.enable = true;
 
-    # doesn't cross-compile
+    # Doesn't cross-compile
     services.fwupd.enable = pkgs.stdenv.hostPlatform != pkgs.stdenv.buildPlatform;
 
     hardware.bluetooth.enable = true;
@@ -33,7 +36,6 @@ in
       pulse.enable = true;
     };
     services.printing.enable = true;
-    services.flatpak.enable = true;
 
     services.displayManager.sddm = {
       enable = true;
