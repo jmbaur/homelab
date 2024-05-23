@@ -731,11 +731,11 @@
         "zig": "zig"
       },
       "locked": {
-        "lastModified": 1716325254,
-        "narHash": "sha256-xh2v/CInoLHZ4j+EjtyO/DKFgAOCWNspUi08UrBmowY=",
+        "lastModified": 1716460440,
+        "narHash": "sha256-wm8xmoSZ8E/Ikk+G+3Jt01H7tXbICgOdCYtsBwcmoY0=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "3cf70f70bb092d35e27d6ae238b6b09f26b174b5",
+        "rev": "1bd7339d662c164e580c58206838d0ff506952ff",
         "type": "github"
       },
       "original": {
@@ -788,11 +788,11 @@
     "zig": {
       "flake": false,
       "locked": {
-        "lastModified": 1714590329,
-        "narHash": "sha256-jx1Bs1dWusU7hTN3WnEbYDrZDuvNumO8ZYLnBUY/lRA=",
+        "lastModified": 1716387494,
+        "narHash": "sha256-eLYGSO9TMv/Mp54170v1aXlbf9bg5Knpd0VZWcMR3IE=",
         "owner": "ziglang",
         "repo": "zig",
-        "rev": "efe06c5f31fe1e9ff02da1082367302b0a188a63",
+        "rev": "2d4b264527825feee15de3c2fdf625845e705e32",
         "type": "github"
       },
       "original": {
