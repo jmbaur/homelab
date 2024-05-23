@@ -25,7 +25,7 @@ in
     networking.wireless.iwd.enable = true;
 
     # Doesn't cross-compile
-    services.fwupd.enable = pkgs.stdenv.hostPlatform != pkgs.stdenv.buildPlatform;
+    services.fwupd.enable = pkgs.stdenv.hostPlatform == pkgs.stdenv.buildPlatform;
 
     hardware.bluetooth.enable = true;
     hardware.pulseaudio.enable = false;
