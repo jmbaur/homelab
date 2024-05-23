@@ -3,15 +3,15 @@ inputs: {
     inputs.gobar.overlays.default
     inputs.gosee.overlays.default # needed for plugin in overlayed neovim
     inputs.u-boot-nix.overlays.default
+    # auto-added packages
     (
-      # auto-added packages
       _: prev:
       prev.lib.mapAttrs (name: _: prev.callPackage ./pkgs/${name}/package.nix { }) (
         builtins.readDir ./pkgs
       )
     )
+    # cross-compilation fixes
     (final: prev: {
-      # cross-compilation fixes
       libfido2 = prev.libfido2.override {
         withPcsclite = final.stdenv.hostPlatform == final.stdenv.buildPlatform;
       };
@@ -20,12 +20,15 @@ inputs: {
         withPcsclite = final.stdenv.hostPlatform == final.stdenv.buildPlatform;
       };
     })
+    # all other packages
     (final: prev: {
-      # all other packages
-
-      konsole = prev.konsole.overrideAttrs (old: {
-        patches = (old.patches or [ ]) ++ [ ./konsole-osc52.patch ];
-      });
+      kdePackages = prev.kdePackages.overrideScope (
+        kFinal: kPrev: {
+          konsole = kPrev.konsole.overrideAttrs (old: {
+            patches = (old.patches or [ ]) ++ [ ./konsole-osc52.patch ];
+          });
+        }
+      );
 
       # Add support for colorized output.
       strace-with-colors = prev.strace.overrideAttrs (old: {
