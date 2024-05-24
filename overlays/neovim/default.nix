@@ -16,6 +16,7 @@
   nil,
   nixfmt-rfc-style,
   ormolu,
+  pyright,
   ripgrep,
   ruff,
   runCommand,
@@ -180,7 +181,10 @@ wrapNeovimUnstable neovim-unwrapped (
             ])
             ++ (lib.optionals tomlSupport [ taplo ])
             ++ (lib.optionals zigSupport [ zls ])
-            ++ (lib.optionals pythonSupport [ ruff ])
+            ++ (lib.optionals pythonSupport [
+              pyright
+              ruff
+            ])
           );
         in
         [

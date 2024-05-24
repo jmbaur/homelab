@@ -32,7 +32,7 @@ if #vim.api.nvim_list_uis() > 0 then
 	vim.opt.cursorline = false
 	vim.opt.foldmethod = "marker"
 	vim.opt.laststatus = 2
-	vim.opt.list = true
+	vim.opt.list = false
 	vim.opt.listchars = { tab = "  \xe2\x87\xa5", trail = "\xc2\xb7", nbsp = "\xc2\xb7" }
 	vim.opt.number = true
 	vim.opt.relativenumber = true

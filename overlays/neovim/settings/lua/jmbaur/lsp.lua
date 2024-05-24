@@ -9,13 +9,6 @@ local conditional_efm_languages = {
 		enable = vim.g.lang_support_nix,
 		tools = { { formatCommand = "nixfmt", formatStdin = true }, },
 	},
-	python = {
-		enable = vim.g.lang_support_python,
-		tools = {
-			require("efmls-configs.formatters.ruff"),
-			require("efmls-configs.linters.ruff"),
-		},
-	},
 	sh = {
 		enable = vim.g.lang_support_shell,
 		tools = {
@@ -146,8 +139,8 @@ M.setup = function(config)
 	end
 
 	local servers = {
-		clangd = { enable = vim.g.lang_support_c, config = { on_attach = on_attach_format } },
-		efm = {
+		clangd  = { enable = vim.g.lang_support_c, config = { on_attach = on_attach_format } },
+		efm     = {
 			enable = true,
 			config = {
 				on_attach = on_attach_format,
@@ -159,19 +152,19 @@ M.setup = function(config)
 				filetypes = efm_filetypes,
 			},
 		},
-		hls = {
+		hls     = {
 			enable = vim.g.lang_support_haskell,
 			config = { on_attach = on_attach_format },
 		},
-		gopls = {
+		gopls   = {
 			enable = vim.g.lang_support_go,
 			config = {
 				on_attach = on_attach_format_orgimports,
 				settings = { gopls = { gofumpt = true, staticcheck = true } },
 			},
 		},
-		nil_ls = { enable = vim.g.lang_support_nix, config = { on_attach = on_attach } },
-		lua_ls = {
+		nil_ls  = { enable = vim.g.lang_support_nix, config = { on_attach = on_attach } },
+		lua_ls  = {
 			enable = vim.g.lang_support_lua,
 			config = {
 				on_attach = on_attach_format,
@@ -185,7 +178,15 @@ M.setup = function(config)
 				},
 			},
 		},
-		zls = { enable = vim.g.lang_support_zig, config = { on_attach = on_attach_format } },
+		pyright = {
+			enable = vim.g.lang_support_python,
+			config = { on_attach = on_attach },
+		},
+		ruff    = {
+			enable = vim.g.lang_support_python,
+			config = { on_attach = on_attach_format, },
+		},
+		zls     = { enable = vim.g.lang_support_zig, config = { on_attach = on_attach_format } },
 	}
 
 	for lsp, settings in pairs(servers) do
