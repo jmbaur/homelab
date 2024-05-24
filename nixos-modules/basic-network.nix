@@ -41,13 +41,14 @@ in
         services.resolved.extraConfig = ''
           DNSStubListenerExtra=::1
         '';
-      }
-      (lib.mkIf (!isNetworkManager) {
-        networking.useNetworkd = true;
+
         networking.firewall.allowedUDPPorts = [
           5353 # mDNS
           5355 # LLMNR
         ];
+      }
+      (lib.mkIf (!isNetworkManager) {
+        networking.useNetworkd = true;
 
         systemd.network.wait-online.enable = !hasWireless;
         systemd.network = {
