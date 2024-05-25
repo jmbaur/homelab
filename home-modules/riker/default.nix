@@ -67,14 +67,10 @@ in
     }
 
     (lib.mkIf cfg.dev.enable {
-      services.gpg-agent = {
-        enable = true;
-        pinentryPackage = if cfg.desktop.enable then pkgs.pinentry-gnome3 else pkgs.pinentry-tty;
-      };
-
       home.packages = with pkgs; [
         ansifilter
         as-tree
+        bat
         bat
         bc
         binary-diff
@@ -313,15 +309,53 @@ in
         vim.opt.exrc = true
       '';
     })
-    (lib.mkIf cfg.desktop.enable {
-      xdg.configFile."alacritty/alacritty.toml".source =
-        (pkgs.formats.toml { }).generate "alacritty.toml"
-          {
-            colors.primary.background = "#000000";
-            font.size = 14;
-            selection.save_to_clipboard = true;
-            terminal.osc52 = "CopyPaste";
+    (lib.mkIf (cfg.desktop.enable && cfg.dev.enable) {
+      systemd.user.services.yubikey-touch-detector = {
+        Unit = {
+          Description = "YubiKey touch notifier";
+          Documentation = "https://github.com/maximbaz/yubikey-touch-detector";
+          PartOf = [ "graphical-session.target" ];
+        };
+        Service = {
+          Type = "simple";
+          Restart = "always";
+          ExecStart = "${lib.getExe pkgs.yubikey-touch-detector} --libnotify";
+        };
+        Install.WantedBy = [ "graphical-session.target" ];
+      };
+
+      programs.kitty = {
+        enable = true;
+        shellIntegration.mode = "no-cursor";
+        settings = {
+          background = "#000000";
+          clipboard_control = "write-clipboard write-primary read-clipboard read-primary";
+          copy_on_select = true;
+          enable_audio_bell = false;
+          font_family = "JetBrains Mono";
+          font_size = 12;
+          foreground = "#ffffff";
+          tab_bar_style = "powerline";
+          update_check_interval = 0;
+        };
+      };
+
+      programs.alacritty = {
+        enable = true;
+        settings = {
+          live_config_reload = false;
+          mouse.hide_when_typing = true;
+          selection.save_to_clipboard = true;
+          font.size = 12;
+          terminal.osc52 = "CopyPaste";
+          colors = lib.mapAttrsRecursive (_: color: "#${color}") {
+            primary = {
+              foreground = "ffffff";
+              background = "000000";
+            };
           };
+        };
+      };
     })
   ];
 }

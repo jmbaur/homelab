@@ -11,6 +11,7 @@ in
     programs.zsh.enable = true;
 
     programs.ssh.startAgent = lib.mkDefault true;
+    programs.gnupg.agent.enable = lib.mkDefault true;
 
     # dev tooling often wants to watch lots of files
     boot.kernel.sysctl = {
