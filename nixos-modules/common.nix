@@ -14,11 +14,10 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # NOTE: this should be set explicitly if it is actually needed
-    system.stateVersion = lib.mkDefault "24.05";
+    system.stateVersion = lib.mkDefault "24.11";
 
     system.image.id = config.system.nixos.distroId;
-    system.image.version = lib.mkDefault "0.0.73";
+    system.image.version = lib.mkDefault "0.0.74";
 
     # We always build on x86_64-linux.
     #

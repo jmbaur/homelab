@@ -4,8 +4,6 @@
   inputs = {
     git-hooks.inputs.nixpkgs.follows = "nixpkgs";
     git-hooks.url = "github:cachix/git-hooks.nix";
-    gobar.inputs.nixpkgs.follows = "nixpkgs";
-    gobar.url = "github:jmbaur/gobar";
     gosee.inputs.nixpkgs.follows = "nixpkgs";
     gosee.url = "github:jmbaur/gosee";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";

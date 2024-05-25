@@ -21,7 +21,7 @@ in
 
   config = lib.mkMerge [
     {
-      home.stateVersion = "24.05";
+      home.stateVersion = "24.11";
 
       nix = {
         package = pkgs.nix;
