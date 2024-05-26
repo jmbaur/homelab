@@ -51,17 +51,21 @@ in
 
   system.build.firmware = uboot;
 
-  nixpkgs.hostPlatform = lib.recursiveUpdate lib.systems.platforms.armv7l-hf-multiplatform (
-    lib.systems.examples.armv7l-hf-multiplatform
-    // {
-      linux-kernel = {
-        name = "sunxi";
-        baseConfig = "sunxi_defconfig";
-        autoModules = true;
-        preferBuiltin = true;
-      };
-    }
-  );
+  nixpkgs.hostPlatform = {
+    config = "armv7l-unknown-linux-gnueabihf";
+    gcc = {
+      arch = "armv7-a";
+      fpu = "vfpv3-d16";
+    };
+    linux-kernel = {
+      DTB = true;
+      target = "zImage";
+      name = "sunxi";
+      baseConfig = "sunxi_defconfig";
+      autoModules = true;
+      preferBuiltin = true;
+    };
+  };
 
   # {{{ TODO(jared): delete this
   users.users.root.password = lib.warn "EMPTY ROOT PASSWORD, DO NOT USE IN 'PRODUCTION'" "";

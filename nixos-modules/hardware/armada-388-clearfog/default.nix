@@ -10,15 +10,21 @@
   };
 
   config = lib.mkIf config.hardware.armada-388-clearfog.enable {
-    nixpkgs.hostPlatform = lib.recursiveUpdate lib.systems.platforms.armv7l-hf-multiplatform (
-      lib.systems.examples.armv7l-hf-multiplatform
-      // {
-        linux-kernel = {
-          name = "armada-388-clearfog";
-          baseConfig = "mvebu_v7_defconfig";
-        };
-      }
-    );
+    nixpkgs.hostPlatform = {
+      config = "armv7l-unknown-linux-gnueabihf";
+      gcc = {
+        arch = "armv7-a";
+        fpu = "vfpv3-d16";
+      };
+      linux-kernel = {
+        DTB = true;
+        autoModules = true;
+        preferBuiltin = true;
+        target = "zImage";
+        name = "armada-388-clearfog";
+        baseConfig = "mvebu_v7_defconfig";
+      };
+    };
 
     boot.kernelParams = [ "console=ttyS0,115200" ];
 
