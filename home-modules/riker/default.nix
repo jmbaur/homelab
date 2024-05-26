@@ -102,6 +102,7 @@ in
         killall
         libarchive
         lm_sensors
+        lrzsz
         lsof
         macgen
         man-pages
