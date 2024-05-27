@@ -15,7 +15,13 @@ in
     custom.basicNetwork.enable = true;
 
     # Add a default browser to use
-    environment.systemPackages = [ pkgs.firefox ];
+    programs.firefox = {
+      enable = true;
+      # Allow users to override preferences set here
+      preferencesStatus = "user";
+      # Looks better with KDE plasma
+      preferences."browser.tabs.inTitlebar" = 0;
+    };
 
     networking.networkmanager = {
       # TODO(jared): this should be enabled by plasma6 module?
