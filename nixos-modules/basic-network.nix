@@ -44,7 +44,6 @@ in
 
         networking.firewall.allowedUDPPorts = [
           5353 # mDNS
-          5355 # LLMNR
         ];
       }
       (lib.mkIf (!isNetworkManager) {
