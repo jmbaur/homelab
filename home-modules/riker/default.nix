@@ -48,7 +48,7 @@ in
       };
 
       home.packages = with pkgs; [
-        (pkgs.writeShellScriptBin "copy" ''printf "\033]52;c;$(base64 /dev/stdin)\07"'')
+        (pkgs.writeShellScriptBin "copy" ''printf "\033]52;c;$(base64)\07"'')
         age-plugin-yubikey
         croc
         librespeed-cli
