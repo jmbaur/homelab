@@ -21,6 +21,11 @@
 
   boot.initrd.systemd.emergencyAccess = lib.mkForce true;
 
+  tinyboot = {
+    enable = true;
+    board = "volteer-elemi";
+  };
+
   custom.image = {
     enable = true;
     encrypt = false;
