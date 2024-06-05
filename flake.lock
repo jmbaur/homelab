@@ -601,11 +601,11 @@
         "zig": "zig"
       },
       "locked": {
-        "lastModified": 1717562461,
-        "narHash": "sha256-3hBVoQ3l1dAUJZN6bnsoEhD6c7OZRSHr6b9ZfVYBUDE=",
+        "lastModified": 1717605141,
+        "narHash": "sha256-3OLXg4JEWrRD6yQCmY8aE8U57OeI4DnnsQkSe24GciM=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "4a53029944b109c64b1bf19c63cbcbdbc8f37a9e",
+        "rev": "55d0dc55ab064fa079f948dbbf130a3d0c953c0c",
         "type": "github"
       },
       "original": {

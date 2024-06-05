@@ -12,6 +12,8 @@ let
   clatIfaceName = "clat0";
 
   isNetworkManager = config.networking.networkmanager.enable;
+
+  isCross = pkgs.stdenv.hostPlatform != pkgs.stdenv.buildPlatform;
 in
 {
   options.custom.basicNetwork = {
@@ -26,7 +28,7 @@ in
         services.resolved.enable = true;
 
         services.clatd = {
-          enable = true;
+          enable = (lib.warnIf isCross "clatd does not cross-compile, disabling") (!isCross);
           settings = {
             clat-dev = clatIfaceName;
             # NOTE: Perl's Net::DNS resolver does not seem to work well querying
