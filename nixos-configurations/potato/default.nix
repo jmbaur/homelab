@@ -2,6 +2,8 @@
 {
   nixpkgs.hostPlatform = "x86_64-linux";
 
+  boot.kernelParams = [ "console=ttyS0,115200" ];
+
   tinyboot = {
     enable = true;
     board = "fizz-fizz";
