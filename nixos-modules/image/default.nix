@@ -92,8 +92,10 @@ in
 
     systemd.additionalUpstreamSystemUnits = [ "boot-complete.target" ];
 
-    boot.loader.external.enable = true;
-    boot.loader.external.installHook = lib.getExe' pkgs.coreutils "true"; # do nothing
+    boot.loader.external = lib.mkForce {
+      enable = true;
+      installHook = lib.getExe' pkgs.coreutils "true"; # do nothing
+    };
 
     # When we have a mutable nix-store, we can still do
     # switch-to-configuration, it just won't be persistent until the updated
