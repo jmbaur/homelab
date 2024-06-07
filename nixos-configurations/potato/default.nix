@@ -2,6 +2,16 @@
 {
   nixpkgs.hostPlatform = "x86_64-linux";
 
+  boot.initrd.availableKernelModules = [
+    "nvme"
+    "sd_mod"
+    "usb_storage"
+    "xhci_pci"
+  ];
+  boot.initrd.kernelModules = [ ];
+  boot.kernelModules = [ "kvm-intel" ];
+  boot.extraModulePackages = [ ];
+
   boot.kernelParams = [ "console=ttyS0,115200" ];
 
   tinyboot = {
