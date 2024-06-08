@@ -8,7 +8,12 @@
   boot.kernelParams = [ "cfg80211.ieee80211_regdom=US" ];
   hardware.wirelessRegulatoryDatabase = true;
 
-  router.enable = true;
+  router = {
+    enable = true;
+    ipv6UlaPrefix = "fd4c:ddfe:28e9::/64";
+    lanInterface = config.systemd.network.netdevs."10-br0".netdevConfig.Name;
+    wanInterface = "wan";
+  };
 
   systemd.network.netdevs."10-br0".netdevConfig = {
     Name = "br0";
@@ -34,9 +39,6 @@
         };
       })
   );
-
-  router.lanInterface = config.systemd.network.netdevs."10-br0".netdevConfig.Name;
-  router.wanInterface = "wan";
 
   services.openssh.openFirewall = false;
   networking.firewall.interfaces.${config.router.lanInterface}.allowedTCPPorts = [ 22 ];
