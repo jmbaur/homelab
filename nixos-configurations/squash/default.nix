@@ -1,7 +1,5 @@
 { pkgs, ... }:
 {
-  imports = [ ./router.nix ];
-
   # needed for mt7915 firmware
   hardware.firmware = [ pkgs.linux-firmware ];
 
@@ -9,9 +7,6 @@
 
   # TODO(jared): use FIT_BEST_MATCH feature in u-boot to choose this automatically
   hardware.deviceTree.name = "armada-388-clearfog-pro.dtb";
-
-  # TODO(jared): this will be the default soon
-  boot.kernelPackages = pkgs.linuxPackages_6_6;
 
   users.users.root.openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-ssh-keys ];
 

@@ -60,11 +60,11 @@ in
               matchConfig.Type = "wlan";
               dhcpV4Config = {
                 UseDomains = "route";
-                RouteMetric = 2048;
+                RouteMetric = 600;
               };
               ipv6AcceptRAConfig = {
                 UseDomains = "route";
-                RouteMetric = 2048;
+                RouteMetric = 600;
               };
               networkConfig = {
                 IPv6PrivacyExtensions = "kernel";
@@ -77,11 +77,11 @@ in
               matchConfig.Type = "ether";
               dhcpV4Config = {
                 UseDomains = "route";
-                RouteMetric = 1024;
+                RouteMetric = 100;
               };
               ipv6AcceptRAConfig = {
                 UseDomains = "route";
-                RouteMetric = 1024;
+                RouteMetric = 100;
               };
               networkConfig = {
                 IPv6PrivacyExtensions = "kernel";

@@ -394,11 +394,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1717831432,
-        "narHash": "sha256-A3o4DWAAIp83NxkMpaeT91jsNjI0nLk9shpTo1UIyeM=",
+        "lastModified": 1717872426,
+        "narHash": "sha256-o/8SsbDtAJETNzU7PD/GvtobSQyGwWWLtDzgoq7D16o=",
         "owner": "jmbaur",
         "repo": "nixos-router",
-        "rev": "5c13d02ea6d15b73a9a4add7ce29e65295a7b601",
+        "rev": "386411efe9d803965666b39ab2ad4999475f97fd",
         "type": "github"
       },
       "original": {
@@ -601,11 +601,11 @@
         "zig": "zig"
       },
       "locked": {
-        "lastModified": 1717738264,
-        "narHash": "sha256-aQYinzwcaEYJ9JDpV9L3+tqFyA9VKUbV8vvITLKEK+A=",
+        "lastModified": 1717832094,
+        "narHash": "sha256-LcflPNjYcfCWlvQlBxk8DWxsaUBItLWyUXJmpr2OcWY=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "e71699e3c9a7693edfb440c5208f61c6d2f9b829",
+        "rev": "862d0ec37f95e933d1033c4cd9ac222e9dc716ae",
         "type": "github"
       },
       "original": {

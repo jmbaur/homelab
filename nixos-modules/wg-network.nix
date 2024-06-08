@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.custom.wgNetwork;
@@ -91,6 +96,8 @@ in
         message = "host cannot have a wg peer with itself";
       }
     ];
+
+    environment.systemPackages = [ pkgs.wireguard-tools ];
 
     networking.firewall.extraInputRules = lib.concatLines (
       lib.flatten (
