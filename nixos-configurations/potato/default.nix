@@ -34,7 +34,7 @@
   services.navidrome = {
     enable = true;
     settings = {
-      Address = "[::]"; # config.custom.wgNetwork.wgInterface;
+      Address = "[::]";
       Port = 4533;
     };
   };
