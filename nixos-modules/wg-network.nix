@@ -107,7 +107,7 @@ in
     sops.secrets.wg = {
       mode = "0640";
       owner = "root";
-      group = "systemd-networkd";
+      inherit (config.users.users.systemd-network) group;
     };
 
     systemd.network.netdevs."10-wg-network" = {
