@@ -8,12 +8,9 @@
   boot.kernelParams = [ "cfg80211.ieee80211_regdom=US" ];
   hardware.wirelessRegulatoryDatabase = true;
 
-  router = {
-    enable = true;
-    ipv6UlaPrefix = "fd4c:ddfe:28e9::/64";
-  };
+  router.enable = true;
 
-  systemd.network.netdevs.br0.netdevConfig = {
+  systemd.network.netdevs."10-br0".netdevConfig = {
     Name = "br0";
     Kind = "bridge";
   };
@@ -28,9 +25,9 @@
         "wlan0"
         "wlan1"
       ]
-      (name: {
-        inherit name;
-        bridge = [ config.systemd.network.netdevs.br0.netdevConfig.Name ];
+      (iface: {
+        name = "10-${iface}";
+        bridge = [ config.systemd.network.netdevs."10-br0".netdevConfig.Name ];
         linkConfig = {
           ActivationPolicy = "always-up";
           RequiredForOnline = false;
@@ -38,7 +35,7 @@
       })
   );
 
-  router.lanInterface = config.systemd.network.netdevs.br0.netdevConfig.Name;
+  router.lanInterface = config.systemd.network.netdevs."10-br0".netdevConfig.Name;
   router.wanInterface = "wan";
 
   services.openssh.openFirewall = false;

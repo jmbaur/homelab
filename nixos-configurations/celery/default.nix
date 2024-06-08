@@ -1,6 +1,9 @@
 { pkgs, ... }:
 {
-  imports = [ ./router.nix ];
+  imports = [
+    ./router.nix
+    ./web.nix
+  ];
 
   nixpkgs.hostPlatform = "aarch64-linux";
 

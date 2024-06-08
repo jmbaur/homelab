@@ -12,6 +12,7 @@ in
 
     programs.ssh.startAgent = lib.mkDefault true;
     programs.gnupg.agent.enable = lib.mkDefault true;
+    services.pcscd.enable = config.custom.desktop.enable;
 
     # dev tooling often wants to watch lots of files
     boot.kernel.sysctl = {

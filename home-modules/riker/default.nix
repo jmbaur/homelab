@@ -180,11 +180,7 @@ in
         enable = true;
         controlMaster = "auto";
         controlPersist = "30m";
-        matchBlocks = lib.optionalAttrs cfg.includePersonalConfigs {
-          "*.home.arpa" = {
-            forwardAgent = true;
-          };
-        };
+        matchBlocks."*.local".forwardAgent = true;
       };
 
       programs.gh.enable = true;

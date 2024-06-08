@@ -65,5 +65,29 @@ in
     };
 
     services.openssh.settings.PasswordAuthentication = false;
+
+    # Simple networking setup
+    networking.useDHCP = false;
+    networking.useNetworkd = true;
+
+    systemd.network = {
+      enable = true;
+      # Rationale for choosing 50 is that nixpkgs will assign any interfaces
+      # configured with the traditional options at 40.
+      networks."50-wired" = {
+        DHCP = "yes";
+        matchConfig.Type = "ether";
+        dhcpV4Config.UseDomains = "route";
+        ipv6AcceptRAConfig.UseDomains = "route";
+        networkConfig = {
+          Domains = "~.";
+          MulticastDNS = true;
+        };
+      };
+    };
+
+    networking.firewall.allowedUDPPorts = [
+      5353 # mDNS
+    ];
   };
 }

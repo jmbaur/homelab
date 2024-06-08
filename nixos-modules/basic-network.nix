@@ -55,7 +55,7 @@ in
         systemd.network = {
           enable = true;
           networks = {
-            wireless = lib.mkIf hasWireless {
+            "50-wireless" = {
               DHCP = "yes";
               matchConfig.Type = "wlan";
               dhcpV4Config = {
@@ -72,7 +72,7 @@ in
                 MulticastDNS = true;
               };
             };
-            wired = {
+            "50-wired" = {
               DHCP = "yes";
               matchConfig.Type = "ether";
               dhcpV4Config = {

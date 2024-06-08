@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
   nixpkgs.hostPlatform = "x86_64-linux";
 
@@ -18,7 +18,7 @@
 
   boot.kernelParams = [
     "console=ttyS0,115200"
-    "console=tty0"
+    "console=tty0" # TODO(jared): this shouldn't be needed
   ];
 
   tinyboot = {
@@ -26,17 +26,20 @@
     board = "fizz-fizz";
   };
 
+  custom.wgNetwork.nodes.celery = {
+    enable = true;
+    allowedTCPPorts = [ config.services.navidrome.settings.Port ];
+  };
+
   services.navidrome = {
     enable = true;
     settings = {
-      Address = "[::]";
+      Address = "[::]"; # config.custom.wgNetwork.wgInterface;
       Port = 4533;
     };
   };
 
   users.users.root.openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-ssh-keys ];
-
-  custom.basicNetwork.enable = true;
 
   custom.server.enable = true;
 
@@ -44,6 +47,6 @@
     enable = true;
     mutableNixStore = true; # TODO(jared): make false
     boot.bootLoaderSpec.enable = true;
-    installer.targetDisk = "/dev/nvme0n1"; # TODO(jared): be more specific
+    installer.targetDisk = "/dev/disk/by-path/pci-0000:03:00.0-nvme-1";
   };
 }

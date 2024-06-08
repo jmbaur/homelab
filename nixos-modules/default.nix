@@ -13,7 +13,8 @@ inputs: {
         ./image
         ./normal-user
         ./server.nix
-        ./wireless.nix
+        ./wpa-supplicant.nix
+        ./wg-network.nix
         inputs.ipwatch.nixosModules.default
         inputs.nixos-router.nixosModules.default
         inputs.sops-nix.nixosModules.sops
