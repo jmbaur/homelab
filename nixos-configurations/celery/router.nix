@@ -46,7 +46,6 @@
   environment.systemPackages = [ pkgs.iw ];
 
   sops.secrets = {
-    ipwatch_env = { };
     wlan0.reloadUnits = [ config.systemd.services.hostapd.name ];
     wlan1.reloadUnits = [ config.systemd.services.hostapd.name ];
   };
