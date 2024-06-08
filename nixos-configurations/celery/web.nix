@@ -34,7 +34,7 @@
       "music.jmbaur.com" = {
         forceSSL = true;
         useACMEHost = "jmbaur.com";
-        locations."/".proxyPass = "potato.internal:4533";
+        locations."/".proxyPass = "http://potato.internal:4533";
       };
     };
   };
