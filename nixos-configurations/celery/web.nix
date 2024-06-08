@@ -61,6 +61,10 @@
   # TODO(jared): http2 broken?
   services.nginx = {
     enable = true;
+    commonHttpConfig = ''
+      error_log syslog:server=unix:/dev/log;
+      access_log syslog:server=unix:/dev/log combined;
+    '';
     virtualHosts = {
       "www.jmbaur.com" = {
         forceSSL = true;
