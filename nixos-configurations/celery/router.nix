@@ -20,7 +20,7 @@
     Kind = "bridge";
   };
 
-  systemd.network.networks = (
+  systemd.network.networks = lib.mapAttrs' (name: value: lib.nameValuePair "10-${name}" value) (
     lib.genAttrs
       [
         "lan1"
@@ -30,8 +30,8 @@
         "wlan0"
         "wlan1"
       ]
-      (iface: {
-        name = "10-${iface}";
+      (name: {
+        inherit name;
         bridge = [ config.systemd.network.netdevs."10-br0".netdevConfig.Name ];
         linkConfig = {
           ActivationPolicy = "always-up";
