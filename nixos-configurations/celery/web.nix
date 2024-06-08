@@ -8,10 +8,7 @@
   security.acme = {
     acceptTerms = true;
     defaults.email = "jaredbaur@fastmail.com";
-    certs."jmbaur.com".extraDomainNames = map (subdomain: "${subdomain}.jmbaur.com") [
-      "www"
-      "music"
-    ];
+    certs."www.jmbaur.com".extraDomainNames = map (subdomain: "${subdomain}.jmbaur.com") [ "music" ];
   };
 
   networking.firewall.allowedTCPPorts = [
@@ -64,12 +61,11 @@
   services.nginx = {
     enable = true;
     virtualHosts = {
-      "jmbaur.com" = {
+      "www.jmbaur.com" = {
         forceSSL = true;
-        # Only enable ACME on the root, all other subdomains should use
+        # Only enable ACME on this subdomain, all other subdomains should use
         # `useACMEHost`.
         enableACME = true;
-        serverAliases = [ "www.jmbaur.com" ];
         locations."/".root = pkgs.runCommand "www-root" { } ''
           mkdir -p $out
           echo "<h1>Under construction!</h1>" > $out/index.html
@@ -78,7 +74,7 @@
 
       "music.jmbaur.com" = {
         forceSSL = true;
-        useACMEHost = "jmbaur.com";
+        useACMEHost = "www.jmbaur.com";
         locations."/".proxyPass = "http://potato.internal:4533";
       };
     };
