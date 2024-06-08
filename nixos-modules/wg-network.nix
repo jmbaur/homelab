@@ -108,6 +108,7 @@ in
       mode = "0640";
       owner = "root";
       inherit (config.users.users.systemd-network) group;
+      reloadUnits = [ config.systemd.services.systemd-networkd.name ];
     };
 
     systemd.network.netdevs."10-wg-network" = {

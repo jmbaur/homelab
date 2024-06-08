@@ -45,8 +45,8 @@
 
   sops.secrets = {
     ipwatch_env = { };
-    wlan0.reloadUnits = [ "hostapd.service" ];
-    wlan1.reloadUnits = [ "hostapd.service" ];
+    wlan0.reloadUnits = [ config.systemd.services.hostapd.name ];
+    wlan1.reloadUnits = [ config.systemd.services.hostapd.name ];
   };
 
   services.hostapd = {

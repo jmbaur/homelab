@@ -50,7 +50,7 @@ in
       unitConfig.ConditionPathIsDirectory = [ "!/home/${username}.homedir" ];
       # In nixpkgs, if sysusers is enabled, tmpfiles is used to create home
       # directories. See https://github.com/nixos/nixpkgs/blob/68165781ccbe4d2ff1d12b6e96ebe4a9f4a93d51/nixos/modules/system/boot/systemd/sysusers.nix#L100.
-      after = [ "systemd-homed.service" ];
+      after = [ config.systemd.services.systemd-homed.name ];
       path = [
         config.systemd.package
         pkgs.jq
