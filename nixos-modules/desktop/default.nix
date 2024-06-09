@@ -59,8 +59,10 @@ in
       pulse.enable = true;
     };
     services.pipewire.wireplumber.enable = true;
-    services.printing.enable = true;
-    services.automatic-timezoned.enable = true;
+    services.printing.enable = lib.mkDefault true;
+    services.automatic-timezoned.enable = lib.mkDefault true;
+    services.power-profiles-daemon.enable = lib.mkDefault true;
+    services.upower.enable = lib.mkDefault true;
 
     services.greetd = {
       enable = true;
