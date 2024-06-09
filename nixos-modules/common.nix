@@ -24,6 +24,9 @@ in
     # "If it don't cross-compile, it don't go in the config!"
     nixpkgs.buildPlatform = "x86_64-linux";
 
+    # CapsLock is terrible
+    services.xserver.xkb.options = lib.mkDefault "ctrl:nocaps";
+
     environment.enableAllTerminfo = true;
 
     programs.nano.enable = false;
@@ -46,18 +49,15 @@ in
     nix = {
       package = pkgs.nixVersions.nix_2_22;
       channel.enable = false; # opt out of nix channels
-      settings = {
-        experimental-features = [
-          "nix-command"
-          "flakes"
-        ];
-        trusted-users = [ "@wheel" ];
-      };
+      settings.trusted-users = [ "@wheel" ];
     };
 
     # Use the dbus-broker dbus daemon implementation (more performance, yeah?)
     services.dbus.implementation = "broker";
 
-    services.openssh.enable = lib.mkDefault isNotContainer;
+    services.openssh = {
+      enable = lib.mkDefault isNotContainer;
+      settings.PasswordAuthentication = false;
+    };
   };
 }

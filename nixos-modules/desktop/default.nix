@@ -7,12 +7,32 @@
 let
   cfg = config.custom.desktop;
 
-  lockCmd = "${lib.getExe pkgs.swaylock} --daemonize --show-failed-attempts --color=000000";
+  xcursorSize = 24;
+  xcursorTheme = "DMZ-Black";
+  wallpaperPackage = pkgs.nixos-artwork.wallpapers.binary-white;
+  wallpaperPath =
+    let
+      names = lib.splitString "/" wallpaperPackage.kdeFilePath;
+    in
+    "/"
+    + lib.concatStringsSep "/" (
+      [
+        "run"
+        "current-system"
+        "sw"
+      ]
+      ++ lib.sublist 4 ((lib.length names) - 4) names
+    );
+
+  lockCmd = "${lib.getExe pkgs.swaylock} --daemonize --show-failed-attempts --image=${wallpaperPath} --scaling=fill";
 in
 {
   options.custom.desktop.enable = lib.mkEnableOption "desktop";
 
   config = lib.mkIf cfg.enable {
+    boot.kernelParams = [ "quiet" ];
+    boot.consoleLogLevel = lib.mkDefault 3;
+
     custom.normalUser.enable = true;
     custom.basicNetwork.enable = true;
 
@@ -38,48 +58,96 @@ in
       alsa.enable = true;
       pulse.enable = true;
     };
+    services.pipewire.wireplumber.enable = true;
     services.printing.enable = true;
     services.automatic-timezoned.enable = true;
 
     services.greetd = {
       enable = true;
-      settings.default_session.command = "${lib.getExe' pkgs.greetd.greetd "agreety"} --cmd labwc";
+      settings.default_session.command = "${lib.getExe' pkgs.greetd.greetd "agreety"} --cmd sway";
     };
 
-    programs.labwc.enable = true;
+    programs.sway = {
+      enable = true;
+      wrapperFeatures = {
+        base = true;
+        gtk = true;
+      };
+      extraPackages = [ ];
+    };
 
-    services.dbus.packages = [ pkgs.fnott ];
+    services.dbus.packages = [ pkgs.mako ];
 
+    environment.pathsToLink = [ "/share/wallpapers" ];
     environment.systemPackages = with pkgs; [
       alacritty
       brightnessctl
       cliphist
-      fnott
-      fuzzel
-      openbox
+      i3status # TODO(jared): remove this
+      libnotify
+      mako
       pamixer
+      rofi-wayland
       shotman
       vanilla-dmz
+      wallpaperPackage
+      wl-clipboard
+      (pkgs.writeShellScriptBin "caffeine" ''
+        time=''${1:-infinity}
+        echo "inhibiting idle for $time"
+        systemd-inhibit --what=idle --who=caffeine --why=Caffeine --mode=block sleep "$time"
+      '')
     ];
 
-    environment.etc."xdg/fnott/fnott.ini".source =
-      (pkgs.formats.iniWithGlobalSection { }).generate "fnott.ini"
+    system.userActivationScripts.xdg-user-dirs = lib.getExe' pkgs.xdg-user-dirs "xdg-user-dirs-update";
+
+    # Same fonts as KDE, they're nice
+    fonts.packages = [
+      pkgs.noto-fonts
+      pkgs.hack-font
+    ];
+    fonts.fontconfig.defaultFonts = {
+      monospace = [
+        "Hack"
+        "Noto Sans Mono"
+      ];
+      sansSerif = [ "Noto Sans" ];
+      serif = [ "Noto Serif" ];
+    };
+
+    programs.gnupg.agent.pinentryPackage = pkgs.pinentry-rofi.override { rofi = pkgs.rofi-wayland; };
+
+    # Override the upstream defaults
+    environment.etc."sway/config".source = lib.mkForce (
+      pkgs.substituteAll {
+        src = ./sway.conf.in;
+        inherit xcursorSize xcursorTheme wallpaperPath;
+        xkbLayout = config.services.xserver.xkb.layout;
+        xkbModel = config.services.xserver.xkb.model;
+        xkbOptions = config.services.xserver.xkb.options;
+        xkbVariant = config.services.xserver.xkb.variant;
+
+        postInstall = ''
+          if grep --silent \/nix\/store $target; then
+            echo "The default config should be able to be copied without any"
+            echo "reliance on nix store paths, since these paths may not"
+            echo "always exist (e.g. after garbage collection)."
+            exit 1;
+          fi
+        '';
+      }
+    );
+
+    environment.etc."xdg/alacritty/alacritty.toml".source =
+      (pkgs.formats.toml { }).generate "alacritty.toml"
         {
-          globalSection = {
-            background = "8cb0dcff"; # from clearlooks themerc
-            max-timeout = 10;
-            selection-helper = "fuzzel";
-          };
+          live_config_reload = false;
+          mouse.hide_when_typing = true;
+          selection.save_to_clipboard = true;
+          font.size = 12;
+          terminal.osc52 = "CopyPaste";
+          import = [ "${pkgs.alacritty-theme}/xterm.toml" ];
         };
-
-    environment.etc."xdg/labwc/autostart".text = ''
-      systemctl --user start labwc-session.target
-    '';
-
-    environment.etc."xdg/labwc/environment".text = ''
-      XCURSOR_SIZE=24
-      XCURSOR_THEME=DMZ-Black
-    '';
 
     programs.dconf = with lib.gvariant; {
       enable = true;
@@ -87,24 +155,16 @@ in
         {
           settings = {
             "org/gnome/desktop/interface" = {
-              cursor-size = mkInt32 24;
-              cursor-theme = "DMZ-Black";
+              cursor-size = mkInt32 xcursorSize;
+              cursor-theme = xcursorTheme;
             };
           };
         }
       ];
     };
 
-    environment.etc."xdg/labwc/rc.xml".source = pkgs.runCommand "labwc-rc.xml" { } ''
-      ${lib.getExe pkgs.buildPackages.python3} ${./labwc-rc.py} > $out
-    '';
-
-    environment.etc."xdg/labwc/menu.xml".source = pkgs.runCommand "labwc-rc.xml" { } ''
-      ${lib.getExe pkgs.buildPackages.python3} ${./labwc-menu.py} > $out
-    '';
-
-    systemd.user.targets.labwc-session = {
-      description = "labwc compositor session";
+    systemd.user.targets.sway-session = {
+      description = "Sway compositor session";
       documentation = [ "man:systemd.special(7)" ];
       bindsTo = [ "graphical-session.target" ];
       wants = [
@@ -117,7 +177,7 @@ in
       ];
     };
 
-    systemd.user.services.idle = {
+    systemd.user.services.swayidle = {
       description = "Idle manager for Wayland";
       documentation = [ "man:swayidle(1)" ];
       unitConfig.ConditionEnvironment = "WAYLAND_DISPLAY";
@@ -131,24 +191,41 @@ in
       serviceConfig = {
         Type = "simple";
         Restart = "always";
-        ExecStart = toString [
-          (lib.getExe pkgs.swayidle)
-          "-w"
-          "timeout"
-          "600"
-          (lib.escapeShellArg "loginctl lock-session")
-          "timeout"
-          "1200"
-          (lib.escapeShellArg "systemctl suspend")
-          "before-sleep"
-          (lib.escapeShellArg lockCmd)
-          "lock"
-          (lib.escapeShellArg lockCmd)
-        ];
+        ExecStart = toString (
+          lib.flatten [
+            (lib.getExe pkgs.swayidle)
+            "-w"
+            [
+              "timeout"
+              "600"
+              (lib.escapeShellArg "loginctl lock-session")
+            ]
+            [
+              "timeout"
+              "900"
+              (lib.escapeShellArg "swaymsg output * power toggle")
+              "resume"
+              (lib.escapeShellArg "swaymsg output * power toggle")
+            ]
+            [
+              "timeout"
+              "1200"
+              (lib.escapeShellArg "systemctl suspend")
+            ]
+            [
+              "before-sleep"
+              (lib.escapeShellArg lockCmd)
+            ]
+            [
+              "lock"
+              (lib.escapeShellArg lockCmd)
+            ]
+          ]
+        );
       };
     };
 
-    systemd.user.services.clipboard = {
+    systemd.user.services.cliphist = {
       description = "Clipboard management daemon";
       partOf = [ "graphical-session.target" ];
       wantedBy = [ "graphical-session.target" ];
@@ -167,7 +244,7 @@ in
       };
     };
 
-    systemd.user.services.nightlight = {
+    systemd.user.services.gammastep = {
       description = "Display colour temperature adjuster";
       documentation = [ "https://gitlab.com/chinstrap/gammastep" ];
       after = [
@@ -196,7 +273,25 @@ in
       serviceConfig = {
         Type = "simple";
         Restart = "always";
-        ExecStart = "${lib.getExe pkgs.yubikey-touch-detector} --libnotify";
+        ExecStart = toString [
+          (lib.getExe pkgs.yubikey-touch-detector)
+          "--libnotify"
+        ];
+      };
+    };
+
+    systemd.user.services.kanshi = {
+      description = "Dynamic output configuration";
+      documentation = [ "man:kanshi(1)" ];
+      partOf = [ "graphical-session.target" ];
+      requires = [ "graphical-session.target" ];
+      after = [ "graphical-session.target" ];
+      wantedBy = [ "graphical-session.target" ];
+      unitConfig.ConditionPathExists = "%h/.config/kanshi/config";
+      serviceConfig = {
+        Type = "simple";
+        Restart = "always";
+        ExecStart = lib.getExe pkgs.kanshi;
       };
     };
   };

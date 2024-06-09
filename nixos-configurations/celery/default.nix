@@ -33,6 +33,11 @@
     }
   ];
 
+  custom.wgNetwork.nodes.pumpkin = {
+    enable = true;
+    allowedTCPPorts = [ 22 ];
+  };
+
   custom.image = {
     enable = true;
     installer.targetDisk = "/dev/disk/by-path/platform-11230000.mmc";

@@ -64,8 +64,6 @@ in
       "net.ipv4.tcp_congestion_control" = "bbr";
     };
 
-    services.openssh.settings.PasswordAuthentication = false;
-
     # Simple networking setup
     networking.useDHCP = false;
     networking.useNetworkd = true;

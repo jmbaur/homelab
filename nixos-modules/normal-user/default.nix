@@ -8,9 +8,6 @@
 let
   cfg = config.custom.normalUser;
 
-  # William Riker, first officer to Captain Picard, as this user is to root.
-  username = "riker";
-
   groups =
     [ "wheel" ]
     ++ (lib.optional config.custom.dev.enable "dialout")
@@ -29,7 +26,6 @@ let
       pkgs.bash;
 
   mountpoint = lib.findFirst (path: config.fileSystems ? "${path}") (throw "mount not found") [
-    "/home/${username}"
     "/home"
     "/"
   ];
@@ -44,13 +40,19 @@ in
   config = lib.mkIf cfg.enable {
     services.homed.enable = true;
 
+    # TODO(jared): We should use systemd-homed-firstboot.service when systemd
+    # 256 is available. This depends on ConditionFirstBoot working in NixOS.
     systemd.services.initial-user-setup = {
-      # TODO(jared): We should use ConditionFirstBoot, but this probably
-      # won't work on NixOS.
-      unitConfig.ConditionPathIsDirectory = [ "!/home/${username}.homedir" ];
-      # In nixpkgs, if sysusers is enabled, tmpfiles is used to create home
-      # directories. See https://github.com/nixos/nixpkgs/blob/68165781ccbe4d2ff1d12b6e96ebe4a9f4a93d51/nixos/modules/system/boot/systemd/sysusers.nix#L100.
-      after = [ config.systemd.services.systemd-homed.name ];
+      unitConfig.ConditionPathExistsGlob = [ "!/home/*.homedir" ];
+      wantedBy = [ config.systemd.services.systemd-homed.name ];
+      after = [
+        "home.mount"
+        config.systemd.services.systemd-homed.name
+      ];
+      before = [
+        config.systemd.services.systemd-user-sessions.name
+        "first-boot-complete.target"
+      ];
       path = [
         config.systemd.package
         pkgs.jq
@@ -58,21 +60,33 @@ in
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
+        ImportCredential = "home.*";
+        StandardOutput = "tty";
+        StandardInput = "tty";
+        StandardError = "tty";
       };
       script = ''
-        env NEWPASSWORD=NumberOne homectl create ${username} \
+        stty sane
+
+        while true; do
+          read -r -p "Please enter user name to create (empty to skip): " username
+          if [[ -n "$username" ]]; then
+            break
+          fi
+        done
+
+        homectl create "$username" \
           --member-of=${lib.concatStringsSep "," groups} \
           --shell=${utils.toShellPath shell} \
           --storage=${if fileSystemConfig.fsType == "btrfs" then "subvolume" else "directory"} \
           --enforce-password-policy=no
 
-        eval "$(homectl --json=short | jq -r '.[] | select(.name=="${username}") | "uid=\(.uid); export uid; gid=\(.gid); export gid;"')"
+        eval "$(homectl --json=short | jq -r '.[] | select(.name=="$username") | "uid=\(.uid); export uid; gid=\(.gid); export gid;"')"
 
         # https://github.com/systemd/systemd/blob/477fdc5afed0457c43d01f3d7ace7209f81d3995/meson_options.txt#L246-L249
         echo "$uid:$((0x80000)):$((0x10000))" >/etc/subuid
         echo "$gid:$((0x80000)):$((0x10000))" >/etc/subgid
       '';
-      wantedBy = [ "multi-user.target" ];
     };
 
     # Ugly: sshd refuses to start if a store path is given because /nix/store

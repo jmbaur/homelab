@@ -28,9 +28,6 @@
 
     boot.kernelParams = [ "console=ttyS0,115200" ];
 
-    # get helpful kernel logs regarding device peripherals
-    boot.consoleLogLevel = 6;
-
     hardware.deviceTree = {
       enable = true;
       filter = "armada-388-clearfog*.dtb";

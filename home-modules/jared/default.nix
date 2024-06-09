@@ -15,16 +15,14 @@ in
     };
 
     dev.enable = mkEnableOption "dev";
-
-    desktop.enable = mkEnableOption "desktop";
   };
 
   config = lib.mkMerge [
     {
-      home.stateVersion = "24.11";
+      home.stateVersion = lib.mkDefault "24.11";
 
       nix = {
-        package = pkgs.nix;
+        package = pkgs.nixVersions.nix_2_22; # TODO(jared): should be in sync with globally installed nix
         registry.nixpkgs.flake = inputs.nixpkgs;
         settings = {
           nix-path = [ "nixpkgs=${inputs.nixpkgs}" ];
@@ -34,7 +32,7 @@ in
           ];
         };
       };
-      home.username = lib.mkDefault "riker";
+      home.username = lib.mkDefault "jared";
       home.homeDirectory = "/home/${config.home.username}";
 
       programs.home-manager.enable = true;
@@ -305,23 +303,6 @@ in
       xdg.configFile."nvim/init.lua".source = pkgs.writeText "init.lua" ''
         vim.opt.exrc = true
       '';
-    })
-    (lib.mkIf (cfg.desktop.enable && cfg.dev.enable) {
-      xdg.configFile."alacritty/alacritty.toml".source =
-        (pkgs.formats.toml { }).generate "alacritty.toml"
-          {
-            live_config_reload = false;
-            mouse.hide_when_typing = true;
-            selection.save_to_clipboard = true;
-            font.size = 12;
-            terminal.osc52 = "CopyPaste";
-            colors = lib.mapAttrsRecursive (_: color: "#${color}") {
-              primary = {
-                foreground = "ffffff";
-                background = "000000";
-              };
-            };
-          };
     })
   ];
 }

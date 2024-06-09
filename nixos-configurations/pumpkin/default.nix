@@ -19,6 +19,10 @@
   custom = {
     dev.enable = true;
     desktop.enable = true;
+    wgNetwork.nodes.celery = {
+      enable = true;
+      hostname = "celery.jmbaur.com";
+    };
     image = {
       enable = true;
       hasTpm2 = true;
