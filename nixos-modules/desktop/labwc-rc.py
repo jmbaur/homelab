@@ -79,24 +79,23 @@ keyboard.appendChild(create_keybinding("Mod4-S-2", create_sendto_desktop_action(
 keyboard.appendChild(create_keybinding("Mod4-S-q", create_action("Close")))
 keyboard.appendChild(create_keybinding("Mod4-S-s", create_action("ToggleOmnipresent")))
 keyboard.appendChild(create_keybinding("Mod4-Tab", create_goto_desktop_action("right")))
-keyboard.appendChild(create_keybinding("Mod4-j", create_action("NextWindow")))
-keyboard.appendChild(create_keybinding("Mod4-k", create_action("PreviousWindow")))
 keyboard.appendChild(create_keybinding("Mod4-m", create_show_menu_action("root-menu")))
-keyboard.appendChild(create_keybinding("Mod4-Return", create_execute_action("wezterm")))
+keyboard.appendChild(
+    create_keybinding("Mod4-Return", create_execute_action("alacritty"))
+)
 keyboard.appendChild(
     create_keybinding("A-Space", create_show_menu_action("client-menu"))
 )
 keyboard.appendChild(
-    create_keybinding("Mod4-p", create_execute_action("rofi -show drun -show-icons"))
+    create_keybinding(
+        "Mod4-Space", create_execute_action("fuzzel --terminal=alacritty")
+    )
 )
 keyboard.appendChild(
     create_keybinding("Mod4-l", create_execute_action("loginctl lock-session"))
 )
 keyboard.appendChild(
-    create_keybinding("Mod4-c", create_execute_action("rofi-cliphist-copy"))
-)
-keyboard.appendChild(
-    create_keybinding("Mod4-S-c", create_execute_action("hyprpicker --autocopy"))
+    create_keybinding("Mod4-v", create_execute_action("rofi-cliphist-copy"))
 )
 keyboard.appendChild(
     create_keybinding("Mod4-S-Print", create_execute_action("shotman --capture region"))
@@ -142,7 +141,7 @@ font.setAttribute("name", "sans")
 font.setAttribute("size", "12")
 
 gtk_theme = root.createElement("name")
-gtk_theme.appendChild(root.createTextNode("GTK"))
+gtk_theme.appendChild(root.createTextNode("Clearlooks"))
 
 theme = root.createElement("theme")
 theme.appendChild(font)

@@ -22,7 +22,7 @@ inputs: {
     # all other packages
     (final: prev: {
       kdePackages = prev.kdePackages.overrideScope (
-        kFinal: kPrev: {
+        _: kPrev: {
           konsole = kPrev.konsole.overrideAttrs (old: {
             patches = (old.patches or [ ]) ++ [ ./konsole-osc52.patch ];
           });
@@ -49,38 +49,27 @@ inputs: {
         ];
       });
 
-      fuzzel = prev.fuzzel.overrideAttrs (
-        {
-          patches ? [ ],
-          ...
-        }:
-        {
-          patches = patches ++ [
-            (final.fetchpatch2 {
-              name = "config-add-CTRL-to-default-keybindings";
-              url = "https://codeberg.org/jmbaur/fuzzel/commit/2ecdc51a4f9ed83e94741a80648429ff7b062a14.patch";
-              hash = "sha256-0cWbtc1O37zD8OCgufIurzCyuPzh5IRYPviRiOuhLpo=";
-            })
-          ];
-        }
-      );
+      fuzzel = prev.fuzzel.overrideAttrs (_: {
+        patches = [
+          (final.fetchpatch2 {
+            name = "config-add-CTRL-to-default-keybindings";
+            url = "https://codeberg.org/jmbaur/fuzzel/commit/2ecdc51a4f9ed83e94741a80648429ff7b062a14.patch";
+            hash = "sha256-0cWbtc1O37zD8OCgufIurzCyuPzh5IRYPviRiOuhLpo=";
+          })
+        ];
+      });
 
-      fnott = prev.fnott.overrideAttrs (
-        {
-          patches ? [ ],
-          ...
-        }:
-        {
-          patches = patches ++ [
-            (final.fetchpatch2 {
-              name = "add-dbus-service-file";
-              url = "https://codeberg.org/sewn/fnott/commit/6a092ba5fea58764cb56cfb037fcd334a8e3d67c.patch";
-              excludes = [ "README.md" ]; # fails to apply
-              hash = "sha256-ZwfVOHiPmd0JulWLOXyj2HOtyKsPHPmYcvl7jBMchUQ=";
-            })
-          ];
-        }
-      );
+      fnott = prev.fnott.overrideAttrs (_: rec {
+        version = "1.6";
+        src = prev.fetchFromGitea {
+          domain = "codeberg.org";
+          owner = "dnkl";
+          repo = "fnott";
+          rev = version;
+          hash = "sha256-out3OZCGZGIIHFZ4t2nN6/3UpsRH9zfw35emexVo4RE=";
+        };
+        PKG_CONFIG_DBUS_1_SESSION_BUS_SERVICES_DIR = "${placeholder "out"}/share/dbus-1/services";
+      });
 
       git-shell-commands = prev.callPackage ./git-shell-commands {
         libgit2 = prev.libgit2.overrideAttrs (_: rec {
