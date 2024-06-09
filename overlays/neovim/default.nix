@@ -91,6 +91,7 @@ let
           [
             diffview-nvim
             efmls-configs-nvim
+            fzf-lua
             gitsigns-nvim
             gosee-nvim
             iron-nvim
@@ -102,9 +103,6 @@ let
             nvim-treesitter.withAllGrammars
             oil-nvim
             snippets-nvim
-            telescope-nvim
-            telescope-ui-select-nvim
-            telescope-zf-native-nvim
             vim-dispatch
             vim-eunuch
             vim-flog
@@ -144,10 +142,10 @@ wrapNeovimUnstable neovim-unwrapped (
           binPath = lib.makeBinPath (
             [
               efm-langserver
-              fd # telescope
+              fd # picker
               fswatch # for faster LSP experience
               git # vim-fugitive
-              ripgrep # telescope
+              ripgrep # picker
               skim
               tree-sitter
             ]

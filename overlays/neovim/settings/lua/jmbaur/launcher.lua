@@ -1,26 +1,22 @@
-local telescope = require("telescope")
-local telescope_builtins = require("telescope.builtin")
-
-local document_diagnostics = function()
-	telescope_builtins.diagnostics({ bufnr = 0 })
-end
+local fzf_lua = require("fzf-lua")
 
 local M = {}
-M.setup = function()
-	telescope.load_extension("ui-select")
-	telescope.load_extension("zf-native")
 
-	vim.keymap.set("n", "<leader>?", telescope_builtins.help_tags, { desc = "Find help tags" })
-	vim.keymap.set("n", "<leader>_", telescope_builtins.registers, { desc = "Find registers" })
-	vim.keymap.set("n", "<leader>b", telescope_builtins.buffers, { desc = "Find buffers" })
-	vim.keymap.set("n", "<leader>d", document_diagnostics, { desc = "Find document diagnostics" })
-	vim.keymap.set("n", "<leader>f", telescope_builtins.find_files, { desc = "Find files" })
-	vim.keymap.set("n", "<leader>g", telescope_builtins.live_grep, { desc = "Find regexp pattern" })
-	vim.keymap.set("n", "<leader>h", telescope_builtins.command_history, { desc = "Find Ex-mode history" })
-	vim.keymap.set("n", "<leader>w", telescope_builtins.diagnostics, { desc = "Find workspace diagnostics" })
+M.setup = function()
+	fzf_lua.register_ui_select()
+
+	vim.keymap.set("n", "<leader>?", fzf_lua.helptags, { desc = "Find help tags" })
+	vim.keymap.set("n", "<leader>_", fzf_lua.registers, { desc = "Find registers" })
+	vim.keymap.set("n", "<leader>b", fzf_lua.buffers, { desc = "Find buffers" })
+	vim.keymap.set("n", "<leader>d", fzf_lua.diagnostics_document, { desc = "Find document diagnostics" })
+	vim.keymap.set("n", "<leader>f", fzf_lua.files, { desc = "Find files" })
+	vim.keymap.set("n", "<leader>g", fzf_lua.live_grep, { desc = "Find regexp pattern" })
+	vim.keymap.set("n", "<leader>h", fzf_lua.command_history, { desc = "Find Ex-mode history" })
+	vim.keymap.set("n", "<leader>w", fzf_lua.diagnostics_workspace, { desc = "Find workspace diagnostics" })
+	vim.keymap.set("n", "<leader>c", fzf_lua.resume, { desc = "Resume picker" })
 end
 
-M.lsp_implementations = telescope_builtins.lsp_implementations
-M.lsp_references = telescope_builtins.lsp_references
+M.lsp_implementations = fzf_lua.lsp_implementations
+M.lsp_references = fzf_lua.lsp_references
 
 return M
