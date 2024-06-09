@@ -17,6 +17,6 @@ nixosTest {
     custom.desktop.enable = true;
   };
   testScript = ''
-    raise NotImplementedError()
+    # Just for interactive usage with driverInteractive for now
   '';
 }
