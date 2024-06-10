@@ -21,14 +21,6 @@ inputs: {
     })
     # all other packages
     (final: prev: {
-      kdePackages = prev.kdePackages.overrideScope (
-        _: kPrev: {
-          konsole = kPrev.konsole.overrideAttrs (old: {
-            patches = (old.patches or [ ]) ++ [ ./konsole-osc52.patch ];
-          });
-        }
-      );
-
       # Add support for colorized output.
       strace-with-colors = prev.strace.overrideAttrs (old: {
         patches = (old.patches or [ ]) ++ [
@@ -47,28 +39,6 @@ inputs: {
             hash = "sha256-Z1gHBYNUMdIkNT+miI3Iis183yJvc29OLAvg6kkvDGY=";
           })
         ];
-      });
-
-      fuzzel = prev.fuzzel.overrideAttrs (_: {
-        patches = [
-          (final.fetchpatch2 {
-            name = "config-add-CTRL-to-default-keybindings";
-            url = "https://codeberg.org/jmbaur/fuzzel/commit/2ecdc51a4f9ed83e94741a80648429ff7b062a14.patch";
-            hash = "sha256-0cWbtc1O37zD8OCgufIurzCyuPzh5IRYPviRiOuhLpo=";
-          })
-        ];
-      });
-
-      fnott = prev.fnott.overrideAttrs (_: rec {
-        version = "1.6";
-        src = prev.fetchFromGitea {
-          domain = "codeberg.org";
-          owner = "dnkl";
-          repo = "fnott";
-          rev = version;
-          hash = "sha256-out3OZCGZGIIHFZ4t2nN6/3UpsRH9zfw35emexVo4RE=";
-        };
-        PKG_CONFIG_DBUS_1_SESSION_BUS_SERVICES_DIR = "${placeholder "out"}/share/dbus-1/services";
       });
 
       git-shell-commands = prev.callPackage ./git-shell-commands {
