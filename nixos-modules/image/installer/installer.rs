@@ -260,14 +260,14 @@ fn real_main(reboot_on_fail: &mut bool) -> Result<()> {
         .context("failed to open stdout of child")?;
 
     let handle = std::thread::spawn(move || {
+        use std::io::{Read, Write};
+
         let mut lock = std::io::stdout().lock();
 
         let mut buf = [0u8; 4096];
         let mut bytes_written: usize = 0;
 
         loop {
-            use std::io::{Read, Write};
-
             match stdout.read(&mut buf[..]) {
                 Ok(0) => break,
                 Ok(n) => {
@@ -287,6 +287,7 @@ fn real_main(reboot_on_fail: &mut bool) -> Result<()> {
                 }
             }
         }
+        write!(lock, "\n").unwrap();
     });
 
     let output = child.wait_with_output().context("xz failed to run")?;
