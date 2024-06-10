@@ -89,6 +89,7 @@ in
       libnotify
       mako
       pamixer
+      pulsemixer
       rofi-wayland
       shotman
       vanilla-dmz
