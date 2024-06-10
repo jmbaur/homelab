@@ -50,6 +50,10 @@ in
       package = pkgs.nixVersions.nix_2_22;
       channel.enable = false; # opt out of nix channels
       settings.trusted-users = [ "@wheel" ];
+      settings.experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
     };
 
     # Use the dbus-broker dbus daemon implementation (more performance, yeah?)
