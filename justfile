@@ -15,16 +15,7 @@ clean: init
 nixos *ARGS:
 	nix shell --extra-experimental-features "nix-command flakes" --print-build-logs {{ARGS}} \
 		"{{justfile_directory()}}#nixosConfigurations.$(hostname).config.system.build.toplevel" \
-		--command sudo switch-to-configuration switch
-
-home *ARGS:
-	$(nix build \
-		--extra-experimental-features "nix-command flakes" \
-		--no-link \
-		--print-out-paths \
-		--print-build-logs \
-		{{ARGS}} \
-		"{{justfile_directory()}}#homeConfigurations.$(whoami)-$(hostname).activationPackage")/activate
+		--command sudo switch-to-configuration test
 
 # update all managed packages, meant to be run in CI
 update:
