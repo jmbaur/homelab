@@ -118,7 +118,10 @@ in
       serif = [ "Noto Serif" ];
     };
 
-    programs.gnupg.agent.pinentryPackage = pkgs.pinentry-rofi.override { rofi = pkgs.rofi-wayland; };
+    programs.gnupg.agent.pinentryPackage =
+      # TODO(jared): Doesn't work, unknown reason.
+      # pkgs.pinentry-rofi.override { rofi = pkgs.rofi-wayland; };
+      pkgs.pinentry-tty;
 
     # Override the upstream defaults
     environment.etc."sway/config".source = lib.mkForce (

@@ -2,7 +2,7 @@ keys:
   - &jmbaur_pgp D4A0692874AA71B7F1281491BB8667EA7EB08143
   - &celery age1qsxratlwc7cdrh6d0l7la0jf4dcnvmr6c28nneyegsx4czl3cu0sd9sg9y
   - &potato age1dw6dmv5865tvc62hrtts79txka8ff2s7ju2ra7eu69pjtnqqgusqtfkg3g
-  - &pumpkin age1d78duu57djx5rxjkdkl3hpqg4vsfhn4z832e7aus9qdahgw3d3cqwhfw2l
+  - &pumpkin age1lrmfmzl5xvrz46tym70wg0kee0pvlejh4xr69lvge3z5zhqdjvlsdy55ry
   # TODO(jared): for when sops is compatible with age plugins
   # - &yubikey5cnfc age1yubikey1q20xxhpyk00m3ezajg3769jpmgwkvasq4dzutg75jq96fytnlcmxs9ltmga
   # - &yubikey5nfc age1yubikey1q0tf5gp52t3smx6zduwyjnurw4cgjlqdm58a9dj6430e8mtrfexfg586p8p
