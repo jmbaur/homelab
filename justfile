@@ -13,12 +13,13 @@ clean: init
 #
 # run switch-to-configuration for a nixos system
 nixos *ARGS:
-	nix shell --print-build-logs {{ARGS}} \
+	nix shell --extra-experimental-features "nix-command flakes" --print-build-logs {{ARGS}} \
 		"{{justfile_directory()}}#nixosConfigurations.$(hostname).config.system.build.toplevel" \
 		--command sudo switch-to-configuration switch
 
 home *ARGS:
 	$(nix build \
+		--extra-experimental-features "nix-command flakes" \
 		--no-link \
 		--print-out-paths \
 		--print-build-logs \
