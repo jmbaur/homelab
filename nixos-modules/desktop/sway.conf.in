@@ -75,12 +75,12 @@ bindsym Mod4+space focus mode_toggle
 bindsym Mod4+v splitv
 bindsym Mod4+w layout tabbed
 bindsym Print exec "shotman --capture output"
-bindsym XF86AudioLowerVolume exec "notify-send --transient --hint int:value:$(pamixer --decrease 5 --get-volume) --hint string:x-canonical-private-synchronous:volume volume"
-bindsym XF86AudioMicMute exec notify-send --transient --hint int:value:$(pamixer --default-source --toggle-mute --get-volume) --hint string:x-canonical-private-synchronous:mic mic "$(if [[ $(pamixer --default-source --get-mute) == true ]]; then echo muted; else echo unmuted; fi)"
-bindsym XF86AudioMute exec notify-send --transient --hint int:value:$(pamixer --toggle-mute --get-volume) --hint string:x-canonical-private-synchronous:volume volume "$(if [[ $(pamixer --get-mute) == true ]]; then echo muted; else echo unmuted; fi)"
-bindsym XF86AudioRaiseVolume exec "notify-send --transient --hint int:value:$(pamixer --increase 5 --get-volume) --hint string:x-canonical-private-synchronous:volume volume"
-bindsym XF86MonBrightnessDown exec notify-send --transient --hint int:value:$(brightnessctl set 5%- | sed -En "s/.*\(([0-9]+)%\).*/\1/p") --hint string:x-canonical-private-synchronous:brightness brightness
-bindsym XF86MonBrightnessUp exec notify-send --transient --hint int:value:$(brightnessctl set +5% | sed -En "s/.*\(([0-9]+)%\).*/\1/p") --hint string:x-canonical-private-synchronous:brightness brightness
+bindsym XF86AudioLowerVolume exec "notify-send --transient --expire-time=2500 --hint int:value:$(pamixer --decrease 5 --get-volume) --hint string:x-canonical-private-synchronous:volume volume"
+bindsym XF86AudioMicMute exec notify-send --transient --expire-time=2500 --hint int:value:$(pamixer --default-source --toggle-mute --get-volume) --hint string:x-canonical-private-synchronous:mic mic "$(if [[ $(pamixer --default-source --get-mute) == true ]]; then echo muted; else echo unmuted; fi)"
+bindsym XF86AudioMute exec notify-send --transient --expire-time=2500 --hint int:value:$(pamixer --toggle-mute --get-volume) --hint string:x-canonical-private-synchronous:volume volume "$(if [[ $(pamixer --get-mute) == true ]]; then echo muted; else echo unmuted; fi)"
+bindsym XF86AudioRaiseVolume exec "notify-send --transient --expire-time=2500 --hint int:value:$(pamixer --increase 5 --get-volume) --hint string:x-canonical-private-synchronous:volume volume"
+bindsym XF86MonBrightnessDown exec notify-send --transient --expire-time=2500 --hint int:value:$(brightnessctl set 5%- | sed -En "s/.*\(([0-9]+)%\).*/\1/p") --hint string:x-canonical-private-synchronous:brightness brightness
+bindsym XF86MonBrightnessUp exec notify-send --transient --expire-time=2500 --hint int:value:$(brightnessctl set +5% | sed -En "s/.*\(([0-9]+)%\).*/\1/p") --hint string:x-canonical-private-synchronous:brightness brightness
 
 input "1:1:AT_Translated_Set_2_keyboard" {
   xkb_layout "@xkbLayout@"

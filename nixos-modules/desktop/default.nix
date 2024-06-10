@@ -25,6 +25,18 @@ let
     );
 
   lockCmd = "${lib.getExe pkgs.swaylock} --daemonize --show-failed-attempts --image=${wallpaperPath} --scaling=fill";
+
+  # For xwayland applications
+  defaultIconTheme = pkgs.runCommand "default-icon-theme" { } ''
+    mkdir -p $out/share/icons/default
+    printf "[Icon Theme]\nInherits=${xcursorTheme}\n" >$out/share/icons/default/index.theme
+  '';
+
+  caffeineScript = pkgs.writeShellScriptBin "caffeine" ''
+    time=''${1:-infinity}
+    echo "inhibiting idle for $time"
+    systemd-inhibit --what=idle --who=caffeine --why=Caffeine --mode=block sleep "$time"
+  '';
 in
 {
   options.custom.desktop.enable = lib.mkEnableOption "desktop";
@@ -84,7 +96,9 @@ in
     environment.systemPackages = with pkgs; [
       alacritty
       brightnessctl
+      caffeineScript
       cliphist
+      defaultIconTheme
       home-manager
       libnotify
       mako
@@ -96,11 +110,6 @@ in
       vanilla-dmz
       wallpaperPackage
       wl-clipboard
-      (pkgs.writeShellScriptBin "caffeine" ''
-        time=''${1:-infinity}
-        echo "inhibiting idle for $time"
-        systemd-inhibit --what=idle --who=caffeine --why=Caffeine --mode=block sleep "$time"
-      '')
     ];
 
     system.userActivationScripts.xdg-user-dirs = lib.getExe' pkgs.xdg-user-dirs "xdg-user-dirs-update";
