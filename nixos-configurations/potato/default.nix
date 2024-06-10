@@ -36,6 +36,7 @@
     settings = {
       Address = "[::]";
       Port = 4533;
+      DefaultTheme = "Auto";
     };
   };
 
