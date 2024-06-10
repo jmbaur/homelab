@@ -43,7 +43,6 @@ in
         ansifilter
         as-tree
         bat
-        bat
         bc
         binary-diff
         bintools
@@ -110,7 +109,6 @@ in
         strace-with-colors
         systemctl-tui
         tcpdump
-        tcpdump
         tea
         tealdeer
         tig
@@ -120,7 +118,6 @@ in
         traceroute
         tree
         unzip
-        usbutils
         usbutils
         w3m
         watchexec
