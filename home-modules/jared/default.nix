@@ -34,38 +34,12 @@ in
       };
       home.username = lib.mkDefault "jared";
       home.homeDirectory = "/home/${config.home.username}";
-
-      programs.home-manager.enable = true;
-
-      programs.fish = {
-        enable = true;
-        interactiveShellInit = ''
-          set -U fish_greeting ""
-          complete --command nom --wraps nix
-        '';
-      };
-
-      home.packages = with pkgs; [
-        (pkgs.writeShellScriptBin "copy" ''printf "\033]52;c;$(base64)\07"'')
-        age-plugin-yubikey
-        croc
-        librespeed-cli
-        nmap
-        pwgen
-        rage
-        sl
-        tcpdump
-        tree
-        unzip
-        usbutils
-        w3m
-        wireguard-tools
-        zip
-      ];
     }
 
     (lib.mkIf cfg.dev.enable {
       home.packages = with pkgs; [
+        (pkgs.writeShellScriptBin "copy" ''printf "\033]52;c;$(base64)\07"'')
+        age-plugin-yubikey
         ansifilter
         as-tree
         bat
@@ -76,6 +50,7 @@ in
         bottom
         cachix
         cntr
+        croc
         curl
         dig
         dnsutils
@@ -99,6 +74,7 @@ in
         just
         killall
         libarchive
+        librespeed-cli
         lm_sensors
         lrzsz
         lsof
@@ -114,6 +90,7 @@ in
         nix-tree
         nixos-shell
         nload
+        nmap
         nurl
         patchelf
         pax-utils
@@ -122,13 +99,17 @@ in
         pomo
         procs
         pstree
+        pwgen
         qemu
+        rage
         ripgrep
         rlwrap
         sd
         skopeo
+        sl
         strace-with-colors
         systemctl-tui
+        tcpdump
         tcpdump
         tea
         tealdeer
@@ -137,11 +118,17 @@ in
         tmux-jump
         tokei
         traceroute
+        tree
+        unzip
         usbutils
+        usbutils
+        w3m
         watchexec
         wip
+        wireguard-tools
         xsv
         yj
+        zip
       ];
 
       home.sessionVariables = {
@@ -162,6 +149,14 @@ in
       xdg.configFile."fd/ignore".text = ''
         .git
       '';
+
+      programs.fish = {
+        enable = true;
+        interactiveShellInit = ''
+          set -U fish_greeting ""
+          complete --command nom --wraps nix
+        '';
+      };
 
       programs.zoxide.enable = true;
       programs.direnv = {

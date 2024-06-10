@@ -19,7 +19,7 @@ builtins.listToAttrs (
         let
           inherit (import ./${userName}/${hostName}) system modules;
         in
-        nameValuePair "${userName}-${hostName}" (
+        nameValuePair "${userName}@${hostName}" (
           inputs.home-manager.lib.homeManagerConfiguration {
             pkgs = import inputs.nixpkgs {
               inherit system;

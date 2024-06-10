@@ -85,6 +85,7 @@ in
       alacritty
       brightnessctl
       cliphist
+      home-manager
       libnotify
       mako
       pamixer
