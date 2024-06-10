@@ -1,6 +1,10 @@
 use std::{
     cell::{Ref, RefCell},
     rc::Rc,
+    sync::{
+        atomic::{AtomicBool, Ordering},
+        Arc,
+    },
     time::Duration,
 };
 
@@ -9,6 +13,10 @@ use chrono::{DateTime, Local};
 use dbus::{arg::RefArg, blocking::LocalConnection, Message};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
+use signal_hook::{
+    consts::{SIGUSR1, SIGUSR2},
+    iterator::Signals,
+};
 
 mod networkd_manager {
     #![allow(non_upper_case_globals)]
@@ -43,8 +51,8 @@ use crate::networkd_manager::OrgFreedesktopDBusPropertiesPropertiesChanged;
 #[derive(Serialize, Deserialize)]
 struct I3header {
     version: u8,
-    stop_signal: u8,
-    cont_signal: u8,
+    stop_signal: i32,
+    cont_signal: i32,
     click_events: bool,
 }
 
@@ -174,10 +182,16 @@ impl From<Ref<'_, PowerState>> for Block {
 fn main() -> anyhow::Result<()> {
     let header = I3header {
         version: 1,
-        stop_signal: 10,
-        cont_signal: 12,
+        stop_signal: SIGUSR1,
+        cont_signal: SIGUSR2,
         click_events: false,
     };
+
+    let stop = Arc::new(AtomicBool::new(false));
+    _ = signal_hook::flag::register(SIGUSR1, Arc::clone(&stop));
+
+    let mut cont = Signals::new([SIGUSR2]).context("Failed to make signals iterator")?;
+    let mut cont_iter = cont.forever();
 
     let conn = LocalConnection::new_system().context("Failed to open dbus connection")?;
 
@@ -296,6 +310,12 @@ fn main() -> anyhow::Result<()> {
     println!("{}", json!(header));
     println!("[");
     loop {
+        if stop.load(Ordering::Relaxed) {
+            // Block until we receive the indication we should continue.
+            _ = cont_iter.next().context("Failed to receive next signal")?;
+            stop.store(false, Ordering::SeqCst);
+        }
+
         _ = conn
             .process(Duration::from_millis(1000))
             .context("Failed to process dbus messsages")?;
