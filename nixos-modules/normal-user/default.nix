@@ -81,7 +81,7 @@ in
           --storage=${if fileSystemConfig.fsType == "btrfs" then "subvolume" else "directory"} \
           --enforce-password-policy=no
 
-        eval "$(homectl --json=short | jq -r '.[] | select(.name=="$username") | "uid=\(.uid); export uid; gid=\(.gid); export gid;"')"
+        eval "$(homectl --json=short | jq -r --arg u "$username" '.[] | select(.name==$u) | "uid=\(.uid); export uid; gid=\(.gid); export gid;"')"
 
         # https://github.com/systemd/systemd/blob/477fdc5afed0457c43d01f3d7ace7209f81d3995/meson_options.txt#L246-L249
         echo "$uid:$((0x80000)):$((0x10000))" >/etc/subuid
