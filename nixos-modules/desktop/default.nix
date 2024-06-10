@@ -85,13 +85,13 @@ in
       alacritty
       brightnessctl
       cliphist
-      i3status # TODO(jared): remove this
       libnotify
       mako
       pamixer
       pulsemixer
       rofi-wayland
       shotman
+      tinybar
       vanilla-dmz
       wallpaperPackage
       wl-clipboard
