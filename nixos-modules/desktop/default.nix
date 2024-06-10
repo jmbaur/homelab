@@ -162,7 +162,7 @@ in
           selection.save_to_clipboard = true;
           font.size = 12;
           terminal.osc52 = "CopyPaste";
-          import = [ "${pkgs.alacritty-theme}/xterm.toml" ];
+          import = [ "${pkgs.alacritty-theme}/tomorrow_night_bright.toml" ];
         };
 
     programs.dconf = with lib.gvariant; {

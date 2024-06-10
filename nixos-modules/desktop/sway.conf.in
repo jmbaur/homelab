@@ -61,6 +61,7 @@ bindsym Mod4+Up focus up
 bindsym Mod4+a focus parent
 bindsym Mod4+b splith
 bindsym Mod4+c exec "cliphist list | rofi -dmenu -display-columns 2 | cliphist decode | wl-copy"
+bindsym Mod4+d exec "makoctl dismiss"
 bindsym Mod4+e layout toggle split
 bindsym Mod4+f fullscreen toggle
 bindsym Mod4+h focus left
