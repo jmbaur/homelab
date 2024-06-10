@@ -296,6 +296,7 @@ in
       };
     };
 
+    # TODO(jared): replace with way-displays
     systemd.user.services.kanshi = {
       description = "Dynamic output configuration";
       documentation = [ "man:kanshi(1)" ];
