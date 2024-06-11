@@ -78,7 +78,7 @@ in
 
     services.greetd = {
       enable = true;
-      settings.default_session.command = "${lib.getExe' pkgs.greetd.greetd "agreety"} --cmd sway";
+      settings.default_session.command = ''${lib.getExe' pkgs.greetd.greetd "agreety"} --cmd "systemd-cat --identifier=sway sway"'';
     };
 
     programs.sway = {
