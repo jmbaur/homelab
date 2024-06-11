@@ -171,7 +171,7 @@ in
         enable = true;
         controlMaster = "auto";
         controlPersist = "30m";
-        controlPath = "~/.ssh/master-%C";
+        controlPath = "/run/user/%i/ssh-%C";
         matchBlocks."*.local".forwardAgent = true;
       };
 
