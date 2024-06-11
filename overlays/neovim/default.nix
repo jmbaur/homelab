@@ -3,6 +3,7 @@
   efm-langserver,
   fd,
   fswatch,
+  fzf,
   ghc,
   git,
   go-tools,
@@ -25,7 +26,6 @@
   rustfmt,
   shellcheck,
   shfmt,
-  skim,
   taplo,
   texlive,
   tree-sitter,
@@ -144,9 +144,9 @@ wrapNeovimUnstable neovim-unwrapped (
               efm-langserver
               fd # picker
               fswatch # for faster LSP experience
+              fzf # fzf-lua
               git # vim-fugitive
               ripgrep # picker
-              skim
               tree-sitter
             ]
             ++ (lib.optionals cSupport [ clang-tools ])
