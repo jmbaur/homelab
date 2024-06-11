@@ -108,7 +108,7 @@ impl Default for NetworkState {
 impl From<Ref<'_, NetworkState>> for Block {
     fn from(value: Ref<'_, NetworkState>) -> Self {
         Block {
-            full_text: format!("net: {}", value.online_state),
+            full_text: format!("network: {}", value.online_state),
             urgent: value.online_state == "offline",
             name: None,
             instance: None,
@@ -116,7 +116,7 @@ impl From<Ref<'_, NetworkState>> for Block {
     }
 }
 
-#[derive(Default)]
+#[derive(Default, PartialEq, Eq)]
 enum PowerStatus {
     #[default]
     Unknown,
@@ -129,10 +129,148 @@ enum PowerStatus {
 }
 
 #[derive(Default)]
+enum PowerDeviceType {
+    #[default]
+    Unknown,
+    LinePower,
+    Battery,
+    Ups,
+    Monitor,
+    Mouse,
+    Keyboard,
+    Pda,
+    Phone,
+    MediaPlayer,
+    Tablet,
+    Computer,
+    GamingInput,
+    Pen,
+    Touchpad,
+    Modem,
+    Network,
+    Headset,
+    Speakers,
+    Headphones,
+    Video,
+    OtherAudio,
+    RemoteControl,
+    Printer,
+    Scanner,
+    Camera,
+    Wearable,
+    Toy,
+    BluetoothGenreic,
+}
+
+impl From<u32> for PowerDeviceType {
+    fn from(value: u32) -> Self {
+        use PowerDeviceType::*;
+        match value {
+            1 => LinePower,
+            2 => Battery,
+            3 => Ups,
+            4 => Monitor,
+            5 => Mouse,
+            6 => Keyboard,
+            7 => Pda,
+            8 => Phone,
+            9 => MediaPlayer,
+            10 => Tablet,
+            11 => Computer,
+            12 => GamingInput,
+            13 => Pen,
+            14 => Touchpad,
+            15 => Modem,
+            16 => Network,
+            17 => Headset,
+            18 => Speakers,
+            19 => Headphones,
+            20 => Video,
+            21 => OtherAudio,
+            22 => RemoteControl,
+            23 => Printer,
+            24 => Scanner,
+            25 => Camera,
+            26 => Wearable,
+            27 => Toy,
+            28 => BluetoothGenreic,
+            _ => Unknown,
+        }
+    }
+}
+
+impl std::fmt::Display for PowerDeviceType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        use PowerDeviceType::*;
+        write!(
+            f,
+            "{}",
+            match self {
+                Unknown => "unknown",
+                LinePower => "line power",
+                Battery => "battery",
+                Ups => "ups",
+                Monitor => "monitor",
+                Mouse => "mouse",
+                Keyboard => "keyboard",
+                Pda => "pda",
+                Phone => "phone",
+                MediaPlayer => "media player",
+                Tablet => "tablet",
+                Computer => "computer",
+                GamingInput => "gaming input",
+                Pen => "pen",
+                Touchpad => "touchpad",
+                Modem => "modem",
+                Network => "network",
+                Headset => "headset",
+                Speakers => "speakers",
+                Headphones => "headphones",
+                Video => "video",
+                OtherAudio => "otheraudio",
+                RemoteControl => "remote control",
+                Printer => "printer",
+                Scanner => "scanner",
+                Camera => "camera",
+                Wearable => "wearable",
+                Toy => "toy",
+                BluetoothGenreic => "bluetooth genreic",
+            }
+        )
+    }
+}
+
+#[derive(Default, PartialEq, Eq)]
+enum PowerWarningLevel {
+    #[default]
+    Unknown,
+    None,
+    Discharging,
+    Low,
+    Critical,
+    Action,
+}
+
+impl From<u32> for PowerWarningLevel {
+    fn from(value: u32) -> Self {
+        use PowerWarningLevel::*;
+        match value {
+            1 => None,
+            2 => Discharging,
+            3 => Low,
+            4 => Critical,
+            5 => Action,
+            _ => Unknown,
+        }
+    }
+}
+
+#[derive(Default)]
 struct PowerState {
     battery_percentage: f64,
-    critical: bool,
+    warning_level: PowerWarningLevel,
     status: PowerStatus,
+    device_type: PowerDeviceType,
 }
 
 impl From<u32> for PowerStatus {
@@ -171,8 +309,21 @@ impl std::fmt::Display for PowerStatus {
 impl From<Ref<'_, PowerState>> for Block {
     fn from(value: Ref<'_, PowerState>) -> Self {
         Block {
-            full_text: format!("bat: {} {}%", value.status, value.battery_percentage),
-            urgent: value.critical,
+            full_text: if matches!(
+                value.status,
+                PowerStatus::Charging | PowerStatus::Discharging
+            ) {
+                format!(
+                    "{}: {} {}%",
+                    value.device_type, value.status, value.battery_percentage
+                )
+            } else {
+                format!("{}: {}%", value.device_type, value.battery_percentage)
+            },
+            urgent: matches!(
+                value.warning_level,
+                PowerWarningLevel::Critical | PowerWarningLevel::Action
+            ),
             name: None,
             instance: None,
         }
@@ -261,13 +412,17 @@ fn main() -> anyhow::Result<()> {
 
     let power_state = Rc::new(RefCell::new(PowerState::default()));
 
+    power_state.borrow_mut().device_type = upower_display_device
+        .type_()
+        .context("Failed to get display device type")?
+        .into();
     power_state.borrow_mut().battery_percentage = upower_display_device
         .percentage()
         .context("Failed to get display device percentage")?;
-    power_state.borrow_mut().critical = upower_display_device
+    power_state.borrow_mut().warning_level = upower_display_device
         .warning_level()
         .context("Failed to get display device warning level")?
-        == 4;
+        .into();
 
     power_state.borrow_mut().status = upower_display_device
         .state()
@@ -292,7 +447,7 @@ fn main() -> anyhow::Result<()> {
                 .remove("WarningLevel")
                 .map(|variant| variant.as_u64().map(u32::try_from))
             {
-                _power_state.borrow_mut().critical = warning_level == 4;
+                _power_state.borrow_mut().warning_level = warning_level.into();
             }
 
             if let Some(Some(Ok(state))) = signal
