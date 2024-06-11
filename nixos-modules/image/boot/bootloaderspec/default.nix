@@ -129,8 +129,8 @@ in
 
         linux=$update/linux_${version}
         initrd=$update/initrd_${version}
-        ln -s ${config.system.build.kernel}/${config.system.boot.loader.kernelFile} $linux
-        ln -s ${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile} $initrd
+        cp ${config.system.build.kernel}/${config.system.boot.loader.kernelFile} $linux
+        cp ${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile} $initrd
 
         echo "$bootentry:/loader/entries/$(basename $bootentry | sed 's,\.conf,,')+3-0.conf" >>$bootfiles
         echo "$linux:/EFI/${id}/$(basename $linux)" >>$bootfiles
@@ -138,7 +138,7 @@ in
       ''
       + lib.optionalString config.hardware.deviceTree.enable ''
         dtb=$update/devicetree_${version}.dtb
-        ln -s ${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name} $dtb
+        cp ${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name} $dtb
         echo "$dtb:/EFI/${id}/$(basename $dtb)" >>$bootfiles
       '';
   };
