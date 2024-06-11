@@ -123,7 +123,7 @@ in
       ''
         echo "${loaderConf}:/loader/loader.conf" >>$bootfiles
 
-        bootentry=$update/${id}_${version}+3-0.conf
+        bootentry=$update/${id}_${version}.conf
         install -Dm0644 ${entryConf} $bootentry
         substituteInPlace $bootentry --subst-var usrhash
 
@@ -132,7 +132,7 @@ in
         ln -s ${config.system.build.kernel}/${config.system.boot.loader.kernelFile} $linux
         ln -s ${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile} $initrd
 
-        echo "$bootentry:/loader/entries/$(basename $bootentry)" >>$bootfiles
+        echo "$bootentry:/loader/entries/$(basename $bootentry | sed 's,\.conf,,')+3-0.conf" >>$bootfiles
         echo "$linux:/EFI/${id}/$(basename $linux)" >>$bootfiles
         echo "$initrd:/EFI/${id}/$(basename $initrd)" >>$bootfiles
       ''
