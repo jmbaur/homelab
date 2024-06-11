@@ -20,6 +20,7 @@ in
   config = lib.mkMerge [
     {
       home.stateVersion = lib.mkDefault "24.11";
+      news.display = "silent";
 
       nix = {
         package = pkgs.nixVersions.nix_2_22; # TODO(jared): should be in sync with globally installed nix
@@ -170,6 +171,7 @@ in
         enable = true;
         controlMaster = "auto";
         controlPersist = "30m";
+        controlPath = "~/.ssh/master-%C";
         matchBlocks."*.local".forwardAgent = true;
       };
 
