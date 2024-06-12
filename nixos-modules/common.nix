@@ -46,6 +46,9 @@ in
     i18n.defaultLocale = "en_US.UTF-8";
     console.useXkbConfig = true;
 
+    # no need for mutable users
+    users.mutableUsers = lib.mkDefault false;
+
     nix = {
       package = pkgs.nixVersions.nix_2_22;
       channel.enable = false; # opt out of nix channels

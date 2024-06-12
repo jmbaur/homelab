@@ -40,6 +40,12 @@ in
   config = lib.mkIf cfg.enable {
     services.homed.enable = true;
 
+    # This is needed if mutableUsers is false since we don't configure our
+    # primary user through the traditional NixOS options. Since our primary
+    # user is wheel, they can freely administer the machine, thus no need for a
+    # root password or remote access (e.g. via ssh) to login as the root user.
+    users.allowNoPasswordLogin = !config.users.mutableUsers;
+
     # TODO(jared): We should use systemd-homed-firstboot.service when systemd
     # 256 is available. This depends on ConditionFirstBoot working in NixOS.
     systemd.services.initial-user-setup = {
