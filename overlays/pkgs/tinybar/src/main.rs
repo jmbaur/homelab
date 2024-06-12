@@ -10,8 +10,8 @@ use std::{
 
 use anyhow::Context;
 use chrono::{DateTime, Local};
-use dbus::{arg::RefArg, blocking::LocalConnection, Message};
-use serde::{Deserialize, Serialize};
+use dbus::{arg::RefArg, blocking::{stdintf::org_freedesktop_dbus::PropertiesPropertiesChanged, LocalConnection}, Message};
+use serde::Serialize;
 use serde_json::json;
 use signal_hook::{
     consts::{SIGUSR1, SIGUSR2},
@@ -46,9 +46,7 @@ use networkd_manager::OrgFreedesktopNetwork1Manager;
 use timedate::OrgFreedesktopTimedate1;
 use upower_device::OrgFreedesktopUPowerDevice;
 
-use crate::networkd_manager::OrgFreedesktopDBusPropertiesPropertiesChanged;
-
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize)]
 struct I3header {
     version: u8,
     stop_signal: i32,
@@ -56,10 +54,10 @@ struct I3header {
     click_events: bool,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize)]
 struct Bar(Vec<Block>);
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize)]
 struct Block {
     full_text: String,
     urgent: bool,
@@ -361,7 +359,7 @@ fn main() -> anyhow::Result<()> {
     let _network_state = network_state.clone();
     _ = networkd
         .match_signal(
-            move |mut signal: OrgFreedesktopDBusPropertiesPropertiesChanged,
+            move |mut signal: PropertiesPropertiesChanged,
                   _: &LocalConnection,
                   _: &Message| {
                 if let Some(Some(online_state)) = signal
@@ -389,7 +387,7 @@ fn main() -> anyhow::Result<()> {
     let _timedate_state = timedate_state.clone();
     _ = timedated
         .match_signal(
-            move |mut signal: OrgFreedesktopDBusPropertiesPropertiesChanged,
+            move |mut signal: PropertiesPropertiesChanged,
                   _: &LocalConnection,
                   _: &Message| {
                 if let Some(Some(timezone)) = signal
@@ -431,7 +429,7 @@ fn main() -> anyhow::Result<()> {
 
     let _power_state = power_state.clone();
     _ = upower_display_device.match_signal(
-        move |mut signal: OrgFreedesktopDBusPropertiesPropertiesChanged,
+        move |mut signal: PropertiesPropertiesChanged,
               _: &LocalConnection,
               _: &Message| {
             if let Some(Some(percentage)) = signal

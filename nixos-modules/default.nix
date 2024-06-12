@@ -4,7 +4,7 @@ inputs: {
     {
       nixpkgs.overlays = with inputs; [ self.overlays.default ];
       imports = [
-        ./basic-network.nix
+        ./basic-network
         ./builder.nix
         ./common.nix
         ./desktop

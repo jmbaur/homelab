@@ -75,6 +75,7 @@ in
         killall
         libarchive
         librespeed-cli
+        # linux-scripts
         lm_sensors
         lrzsz
         lsof

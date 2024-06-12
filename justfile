@@ -1,13 +1,6 @@
 help:
 	just --list
 
-init:
-	mkdir -p $out
-
-clean: init
-	rm -rf {{justfile_directory()}}/result*
-	rm -rf $out/*
-
 # We don't do `nix-env --set --profile ..` here since we aren't using nix
 # profiles to manage the system.
 #
@@ -30,6 +23,11 @@ update:
 		fi
 		args+=("$(jq -r ".url" < $source)")
 		nix-prefetch-git "${args[@]}" | tee "$source" | tee -a $tmp
+	done
+	for cargo_toml in $(find overlays/pkgs -type f -name "Cargo.toml"); do
+		pushd $(dirname $cargo_toml)
+		nix develop .#$(basename $(dirname $cargo_toml)) -c cargo update
+		popd
 	done
 	echo '```console' > /tmp/pr-body
 	ansifilter < $tmp >> /tmp/pr-body
