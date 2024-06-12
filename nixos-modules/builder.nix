@@ -16,17 +16,17 @@ let
           type = lib.types.str;
           default = "daily";
           description = ''
-            Any value systemd.time(7) value.
+            Any valid systemd.time(7) value.
           '';
         };
       };
     };
 
-  systemdConfigs = lib.mapAttrs' (
+  buildConfigs = lib.mapAttrsToList (
     name:
     { flakeUri, frequency }:
-    lib.nameValuePair "build@${name}" {
-      timer = {
+    {
+      timers."build@${name}" = {
         timerConfig = {
           OnCalendar = frequency;
           Persistent = true;
@@ -34,7 +34,7 @@ let
         wantedBy = [ "timers.target" ];
       };
 
-      service = {
+      services."build@${name}" = {
         description = "Build ${flakeUri}";
         path = [
           config.nix.package
@@ -60,20 +60,18 @@ let
         '';
       };
     }
-  ) cfg.build;
+  ) cfg.builds;
+
 in
 {
-  options.custom.builder = {
-    build = lib.mkOption {
-      type = lib.types.attrsOf (lib.types.submodule buildModule);
-      default = { };
-    };
+  options.custom.builder.builds = lib.mkOption {
+    type = lib.types.attrsOf (lib.types.submodule buildModule);
+    default = { };
   };
 
-  config = lib.mkIf (cfg.build != { }) {
+  config = lib.mkIf (cfg.builds != { }) {
     users.groups.builder = { };
     nix.settings.trusted-users = [ "@builder" ];
-    systemd.timers = lib.mapAttrs (_: { timer, ... }: timer) systemdConfigs;
-    systemd.services = lib.mapAttrs (_: { service, ... }: service) systemdConfigs;
+    systemd = lib.mkMerge buildConfigs;
   };
 }

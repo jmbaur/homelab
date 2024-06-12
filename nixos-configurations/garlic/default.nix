@@ -16,7 +16,6 @@
   hardware.deviceTree.enable = false;
 
   custom.image = {
-    enable = true;
     mutableNixStore = true;
     encrypt = false;
     hasTpm2 = false; # hyper-v for arm64 windows does not have tpm support

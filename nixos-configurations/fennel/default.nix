@@ -14,7 +14,6 @@
   custom.desktop.enable = true;
 
   custom.image = {
-    enable = true;
     mutableNixStore = true;
     boot.bootLoaderSpec.enable = true;
     installer.targetDisk = "/dev/mmcblk0"; # TODO(jared): be more specific

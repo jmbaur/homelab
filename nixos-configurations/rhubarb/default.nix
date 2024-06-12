@@ -28,7 +28,6 @@ in
 
   custom.server.enable = true;
   custom.image = {
-    enable = true;
     installer.targetDisk = "/dev/mmcblk0";
     bootFileCommands = ''
       echo ${uboot}/u-boot.bin:/kernel8.img >> $bootfiles

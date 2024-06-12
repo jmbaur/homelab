@@ -29,7 +29,6 @@
   };
 
   custom.image = {
-    enable = true;
     mutableNixStore = true;
     boot.uefi.enable = true;
     installer.targetDisk = "/dev/nvme0n1";

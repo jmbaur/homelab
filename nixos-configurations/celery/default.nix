@@ -39,7 +39,6 @@
   };
 
   custom.image = {
-    enable = true;
     installer.targetDisk = "/dev/disk/by-path/platform-11230000.mmc";
     boot.uboot = {
       enable = true;

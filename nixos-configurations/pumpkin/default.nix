@@ -24,7 +24,6 @@
       hostname = "celery.jmbaur.com";
     };
     image = {
-      enable = true;
       hasTpm2 = true;
       mutableNixStore = true;
       boot.uefi.enable = true;

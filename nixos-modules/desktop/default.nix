@@ -165,6 +165,15 @@ in
           import = [ "${pkgs.alacritty-theme}/tomorrow_night_bright.toml" ];
         };
 
+    # Looks the best with sway defaults
+    environment.etc."xdg/rofi.rasi".text = ''
+      configuration {
+        terminal: "alacritty";
+        font: "monospace 10";
+      }
+      @theme "Paper"
+    '';
+
     programs.dconf = with lib.gvariant; {
       enable = true;
       profiles.user.databases = [

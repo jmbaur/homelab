@@ -37,6 +37,7 @@ inputs.nixpkgs.lib.mapAttrs (
           ];
           networking.hostName = directory;
           sops.defaultSopsFile = ./${directory}/secrets.yaml;
+          custom.image.enable = true;
         }
       )
       inputs.self.nixosModules.default

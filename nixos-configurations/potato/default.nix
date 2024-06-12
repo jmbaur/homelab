@@ -45,9 +45,11 @@
   custom.server.enable = true;
 
   custom.image = {
-    enable = true;
     mutableNixStore = true; # TODO(jared): make false
     boot.bootLoaderSpec.enable = true;
     installer.targetDisk = "/dev/disk/by-path/pci-0000:03:00.0-nvme-1";
   };
+
+  # Smoke test to ensure builder module works
+  custom.builder.builds.macgen.flakeUri = "github:jmbaur/homelab#macgen";
 }

@@ -34,7 +34,6 @@ in
   ];
 
   custom.image = {
-    enable = true;
     installer.targetDisk = "/dev/mmcblk0";
     postImageCommands = ''
       dd if=${config.system.build.firmware}/u-boot-sunxi-with-spl.bin of=$out/image.raw bs=1K seek=${toString splOffsetKiB} conv=notrunc,sync

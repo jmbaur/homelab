@@ -9,7 +9,6 @@
   users.users.root.password = lib.warn "EMPTY ROOT PASSWORD, DO NOT USE IN 'PRODUCTION'" "";
 
   custom.image = {
-    enable = true;
     installer.targetDisk = "/dev/disk/by-path/TODO";
     boot.uboot.enable = true;
   };
