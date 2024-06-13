@@ -36,6 +36,7 @@ let
 
       services."build@${name}" = {
         description = "Build ${flakeUri}";
+        requiredBy = [ config.systemd.services.post-build.name ];
         path = [
           config.nix.package
           pkgs.git
