@@ -93,7 +93,7 @@ in
     custom.builder.postBuild = {
       description = "Post Build Hook";
       serviceConfig = {
-        StandardInput = "/run/post-build.stdin";
+        StandardInput = "file:/run/post-build.stdin";
         # # Ensure the post-build service can read the fifo
         # SupplementaryGroups = [ config.users.groups.builder.name ];
       };

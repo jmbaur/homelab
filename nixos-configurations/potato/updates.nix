@@ -30,6 +30,7 @@ in
       path = [ pkgs.gnupg ];
       environment.GNUPGHOME = "/root/.gnupg"; # TODO(jared): sops?
       script = ''
+        set -x
         while read line; do
           name=$(echo $line | cut -d' ' -f1)
           out=$(echo $line | cut -d' ' -f1)
