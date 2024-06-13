@@ -48,7 +48,6 @@ let
         };
         serviceConfig = {
           DynamicUser = true;
-          Type = "oneshot";
           SupplementaryGroups = [ "builder" ];
           CacheDirectory = "builder";
           StateDirectory = "builder";
