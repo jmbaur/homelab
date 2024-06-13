@@ -18,7 +18,6 @@
   custom.dev.enable = true;
   custom.image = {
     boot.uefi.enable = true;
-    mutableNixStore = true;
     installer.targetDisk = "/dev/disk/by-path/platform-a41000000.pcie-pci-0004:41:00.0-nvme-1";
   };
 

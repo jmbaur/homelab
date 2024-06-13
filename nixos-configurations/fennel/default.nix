@@ -12,9 +12,9 @@
   };
 
   custom.desktop.enable = true;
+  custom.dev.enable = true;
 
   custom.image = {
-    mutableNixStore = true;
     boot.bootLoaderSpec.enable = true;
     installer.targetDisk = "/dev/mmcblk0"; # TODO(jared): be more specific
   };

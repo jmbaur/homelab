@@ -99,7 +99,6 @@ in
       caffeineScript
       cliphist
       defaultIconTheme
-      home-manager
       libnotify
       mako
       pamixer
