@@ -45,7 +45,7 @@ in
       "70-boot-entry" = {
         Transfer.ProtectVersion = "%A";
         Source = {
-          Type = "regular-file";
+          Type = "url-file";
           Path = cfg.update.remoteUrl;
           MatchPattern = "${id}_@v.conf";
         };
@@ -69,7 +69,7 @@ in
       "70-linux" = {
         Transfer.ProtectVersion = "%A";
         Source = {
-          Type = "regular-file";
+          Type = "url-file";
           Path = cfg.update.remoteUrl;
           MatchPattern = "linux_@v";
         };
@@ -86,7 +86,7 @@ in
       "70-initrd" = {
         Transfer.ProtectVersion = "%A";
         Source = {
-          Type = "regular-file";
+          Type = "url-file";
           Path = cfg.update.remoteUrl;
           MatchPattern = "initrd_@v";
         };
@@ -103,7 +103,7 @@ in
       "70-devicetree" = lib.mkIf config.hardware.deviceTree.enable {
         Transfer.ProtectVersion = "%A";
         Source = {
-          Type = "regular-file";
+          Type = "url-file";
           Path = cfg.update.remoteUrl;
           MatchPattern = "devicetree_@v.dtb";
         };

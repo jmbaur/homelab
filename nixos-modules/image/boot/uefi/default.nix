@@ -32,7 +32,7 @@ in
     systemd.sysupdate.transfers."70-uki" = {
       Transfer.ProtectVersion = "%A";
       Source = {
-        Type = "regular-file";
+        Type = "url-file";
         Path = cfg.update.remoteUrl;
         MatchPattern = "${id}_@v.efi";
       };

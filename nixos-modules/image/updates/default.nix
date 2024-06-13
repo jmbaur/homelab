@@ -35,7 +35,7 @@ in
         "50-verity" = {
           Transfer.ProtectVersion = "%A";
           Source = {
-            Type = "regular-file";
+            Type = "url-file";
             Path = cfg.update.remoteUrl;
             MatchPattern = "%o_@v_@u.usr-hash.raw.xz";
           };
@@ -50,7 +50,7 @@ in
         "60-usr" = {
           Transfer.ProtectVersion = "%A";
           Source = {
-            Type = "regular-file";
+            Type = "url-file";
             Path = cfg.update.remoteUrl;
             MatchPattern = "%o_@v_@u.usr.raw.xz";
           };

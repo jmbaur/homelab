@@ -73,7 +73,7 @@ in
     systemd.sysupdate.transfers."70-fit-image" = {
       Transfer.ProtectVersion = "%A";
       Source = {
-        Type = "regular-file";
+        Type = "url-file";
         Path = cfg.update.remoteUrl;
         MatchPattern = "${id}_@v.uImage";
       };
