@@ -9,6 +9,8 @@ in
 {
   custom.wgNetwork.nodes.celery.allowedTCPPorts = [ swsPort ];
 
+  systemd.tmpfiles.settings."10-sws-root"."/var/lib/updates".d = { };
+
   services.static-web-server = {
     enable = true;
     listen = "[::]:${toString swsPort}";
@@ -36,15 +38,17 @@ in
           out=$(echo $line | cut -d' ' -f1)
           for host in ${toString allHosts}; do
             if [[ $name == "$host" ]]; then
-              mkdir -p /var/lib/updates/$name
-              cp $out/* /var/lib/updates/$name
-              gpg --batch --sign --detach-sign --output /var/lib/updates/$name/SHA256SUMS.gpg /var/lib/updates/$name/SHA256SUMS
+              update_dir=/var/lib/updates/$name
+              mkdir -p $update_dir
+              pushd $update_dir
+              cp $out/* .
+              sha256sum * >SHA256SUMS
+              gpg --batch --sign --detach-sign --output SHA256SUMS.gpg SHA256SUMS
+              popd
             fi
           done
         done < /dev/stdin
       '';
     };
   };
-
-  systemd.tmpfiles.settings."10-sws-root"."/var/lib/updates".d = { };
 }

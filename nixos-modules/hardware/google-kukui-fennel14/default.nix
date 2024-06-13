@@ -28,7 +28,6 @@ with lib;
     ];
 
     hardware.chromebook.enable = true;
-    hardware.chromebook.mediatek = true;
     hardware.enableRedistributableFirmware = true;
     hardware.deviceTree = {
       enable = true;

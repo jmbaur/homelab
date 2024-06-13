@@ -74,7 +74,7 @@ in
       Transfer.ProtectVersion = "%A";
       Source = {
         Type = "url-file";
-        Path = cfg.update.remoteUrl;
+        Path = cfg.update.source;
         MatchPattern = "${id}_@v.uImage";
       };
       Target = {
@@ -139,9 +139,7 @@ in
 
         mkimage --fit image.its "$update/${fixedFitImageName}"
 
-        ln -sf ${globalBootScriptImage} $out/boot.scr
-
-        echo "$update/boot.scr:/boot.scr" >>$bootfiles
+        echo "${globalBootScriptImage}:/boot.scr" >>$bootfiles
         echo "$update/${fixedFitImageName}:/${fixedFitImageName}" >>$bootfiles
       '';
   };

@@ -5,9 +5,7 @@
   ...
 }:
 {
-  options.hardware.armada-388-clearfog = {
-    enable = lib.mkEnableOption "armada-388-clearfog devices";
-  };
+  options.hardware.armada-388-clearfog.enable = lib.mkEnableOption "armada-388-clearfog devices";
 
   config = lib.mkIf config.hardware.armada-388-clearfog.enable {
     nixpkgs.hostPlatform = {

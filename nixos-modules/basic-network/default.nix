@@ -14,9 +14,7 @@ let
   isCross = pkgs.stdenv.hostPlatform != pkgs.stdenv.buildPlatform;
 in
 {
-  options.custom.basicNetwork = {
-    enable = lib.mkEnableOption "basic network setup";
-  };
+  options.custom.basicNetwork.enable = lib.mkEnableOption "basic network setup";
 
   config = lib.mkIf cfg.enable {
     networking.useDHCP = false;

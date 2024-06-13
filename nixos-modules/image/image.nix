@@ -156,6 +156,5 @@ stdenv.mkDerivation {
     ${postImageCommands}
 
     xz -3 --compress --verbose --threads=0 $out/*.{raw,vhdx} $update/*.raw
-    sha256sum $update/* > $update/SHA256SUMS
   '';
 }

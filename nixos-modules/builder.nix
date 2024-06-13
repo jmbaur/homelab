@@ -7,20 +7,24 @@
 let
   cfg = config.custom.builder;
 
-  buildModule =
-    { ... }:
-    {
-      options = {
-        flakeUri = lib.mkOption { type = lib.types.str; };
-        time = lib.mkOption {
-          type = lib.types.str;
-          default = "daily";
-          description = ''
-            Any valid systemd.time(7) value.
-          '';
-        };
+  buildModule = {
+    options = with lib; {
+      flakeUri = mkOption {
+        type = types.str;
+        description = ''
+          The flake URI to build. Currently, this must come from a public
+          source.
+        '';
+      };
+      time = mkOption {
+        type = types.str;
+        default = "daily";
+        description = ''
+          Any valid systemd.time(7) value.
+        '';
       };
     };
+  };
 
   buildConfigs = lib.mapAttrsToList (
     name:
@@ -91,12 +95,8 @@ in
     nix.settings.trusted-users = [ "@builder" ];
 
     custom.builder.postBuild = {
-      description = "Post Build Hook";
-      serviceConfig = {
-        StandardInput = "file:/run/post-build.stdin";
-        # # Ensure the post-build service can read the fifo
-        # SupplementaryGroups = [ config.users.groups.builder.name ];
-      };
+      description = "Post build hook";
+      serviceConfig.StandardInput = "file:/run/post-build.stdin";
     };
 
     systemd = lib.mkMerge (

@@ -46,7 +46,7 @@ in
         Transfer.ProtectVersion = "%A";
         Source = {
           Type = "url-file";
-          Path = cfg.update.remoteUrl;
+          Path = cfg.update.source;
           MatchPattern = "${id}_@v.conf";
         };
         Target = {
@@ -70,7 +70,7 @@ in
         Transfer.ProtectVersion = "%A";
         Source = {
           Type = "url-file";
-          Path = cfg.update.remoteUrl;
+          Path = cfg.update.source;
           MatchPattern = "linux_@v";
         };
         Target = {
@@ -87,7 +87,7 @@ in
         Transfer.ProtectVersion = "%A";
         Source = {
           Type = "url-file";
-          Path = cfg.update.remoteUrl;
+          Path = cfg.update.source;
           MatchPattern = "initrd_@v";
         };
         Target = {
@@ -104,7 +104,7 @@ in
         Transfer.ProtectVersion = "%A";
         Source = {
           Type = "url-file";
-          Path = cfg.update.remoteUrl;
+          Path = cfg.update.source;
           MatchPattern = "devicetree_@v.dtb";
         };
         Target = {

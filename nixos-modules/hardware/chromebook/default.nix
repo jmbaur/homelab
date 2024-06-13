@@ -5,12 +5,10 @@
   ...
 }:
 {
-  imports = [
-    ./mediatek.nix
-    ./qualcomm.nix
-  ];
+  imports = [ ./qualcomm.nix ];
 
   options.hardware.chromebook.enable = lib.mkEnableOption "chromebook";
+
   config = lib.mkIf config.hardware.chromebook.enable {
     services.xserver.xkb.options = "ctrl:swap_lwin_lctl";
     services.xserver.xkb.model = "chromebook";

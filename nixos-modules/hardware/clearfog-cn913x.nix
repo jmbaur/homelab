@@ -14,9 +14,7 @@ let
   cn913xLinuxPatchesPath = "${cn913xBuildRepo}/patches/linux";
 in
 {
-  options.hardware.clearfog-cn913x = {
-    enable = lib.mkEnableOption "clearfog-cn913x";
-  };
+  options.hardware.clearfog-cn913x.enable = lib.mkEnableOption "clearfog-cn913x";
 
   config = lib.mkIf config.hardware.clearfog-cn913x.enable {
     nixpkgs.hostPlatform = "aarch64-linux";

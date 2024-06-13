@@ -5,9 +5,7 @@
   ...
 }:
 {
-  options.hardware.bpi-r3 = {
-    enable = lib.mkEnableOption "bananapi r3";
-  };
+  options.hardware.bpi-r3.enable = lib.mkEnableOption "bananapi r3";
 
   config = lib.mkIf config.hardware.bpi-r3.enable {
     # Hold on 6.8 for now

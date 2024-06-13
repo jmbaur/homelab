@@ -5,7 +5,7 @@ let
 in
 {
   options.custom.image.update = with lib; {
-    remoteUrl = mkOption {
+    source = mkOption {
       type = types.str;
       description = ''
         The URL of the remote web server where updates will be fetched from.
@@ -36,7 +36,7 @@ in
           Transfer.ProtectVersion = "%A";
           Source = {
             Type = "url-file";
-            Path = cfg.update.remoteUrl;
+            Path = cfg.update.source;
             MatchPattern = "%o_@v_@u.usr-hash.raw.xz";
           };
           Target = {
@@ -51,7 +51,7 @@ in
           Transfer.ProtectVersion = "%A";
           Source = {
             Type = "url-file";
-            Path = cfg.update.remoteUrl;
+            Path = cfg.update.source;
             MatchPattern = "%o_@v_@u.usr.raw.xz";
           };
           Target = {

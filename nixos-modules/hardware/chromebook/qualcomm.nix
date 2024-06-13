@@ -6,6 +6,7 @@
 }:
 {
   options.hardware.chromebook.qualcomm = lib.mkEnableOption "qualcomm chromebook";
+
   config = lib.mkIf config.hardware.chromebook.qualcomm {
     boot.kernelPackages = pkgs.linuxPackages_latest;
     boot.kernelParams = [

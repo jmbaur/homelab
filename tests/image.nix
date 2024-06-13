@@ -4,11 +4,33 @@
   nixosTest,
   stdenv,
   xz,
+  gnupg,
+  runCommand,
 }:
 
 let
   version = "0.1.0";
   newerVersion = "0.1.1";
+
+  gpgKeyring = runCommand "gpg-keyring" { nativeBuildInputs = [ gnupg ]; } ''
+    mkdir -p $out
+    export GNUPGHOME=$out
+    cat >foo <<EOF
+      %echo Generating a basic OpenPGP key
+      %no-protection
+      Key-Type: EdDSA
+      Key-Curve: ed25519
+      Name-Real: Bob Foobar
+      Name-Email: bob@foo.bar
+      Expire-Date: 0
+      # Do a commit here, so that we can later print "done"
+      %commit
+      %echo done
+    EOF
+    gpg --batch --generate-key foo
+    rm $out/S.gpg-agent $out/S.gpg-agent.*
+    gpg --export bob@foo.bar -a >$out/pubkey.gpg
+  '';
 
   linuxUsrPartitionTypeUuid =
     {
@@ -120,6 +142,19 @@ let
         sectorSize = 512; # OVMF only supports 512B sector size?
         wiggleRoom = 4096 * 8; # smaller than the default, we don't need any for this test
         installer.targetDisk = "/dev/vda";
+        update = {
+          # For simplicity, we just host the updates from the machine itself.
+          source = "http://[::1]:8787/${config.networking.hostName}";
+          gpgPubkey = "${gpgKeyring}/pubkey.gpg";
+        };
+      };
+
+      environment.systemPackages = [ pkgs.gnupg ];
+      systemd.tmpfiles.settings."10-sws-root"."/run/update".d = { };
+      services.static-web-server = {
+        enable = true;
+        listen = "[::1]:8787";
+        root = "/run/update";
       };
     };
 
@@ -239,19 +274,26 @@ in
                 if nodes.machine.custom.image.mutableNixStore then "succeed" else "fail"
               }("touch foo && nix store add-file ./foo")
 
-              machine.copy_from_host("${nodes.machine.system.build.image.update}", "/run/tmp")
-              machine.succeed("mv /run/tmp/* /run/update")
+              with subtest("sysupdate"):
+                  update_dir = "/run/update/${nodes.machine.networking.hostName}"
+                  machine.copy_from_host("${nodes.machine.system.build.image.update}", update_dir)
 
-              current_usr = machine.succeed("ls /run/update/*${version}*.usr.raw.xz").strip()
-              current_usr_hash = machine.succeed("ls /run/update/*${version}*.usr-hash.raw.xz").strip()
-              current_uki = machine.succeed("ls /run/update/*${version}*.efi").strip()
+                  current_usr = machine.succeed(f"ls {update_dir}/*${version}*.usr.raw.xz").strip()
+                  current_usr_hash = machine.succeed(f"ls {update_dir}/*${version}*.usr-hash.raw.xz").strip()
+                  current_uki = machine.succeed(f"ls {update_dir}/*${version}*.efi").strip()
 
-              machine.succeed("mv {} {}".format(current_usr, current_usr.replace("${version}", "${newerVersion}", 1)))
-              machine.succeed("mv {} {}".format(current_usr_hash, current_usr_hash.replace("${version}", "${newerVersion}", 1)))
-              machine.succeed("mv {} {}".format(current_uki, current_uki.replace("${version}", "${newerVersion}", 1)))
+                  machine.succeed("mv {} {}".format(current_usr, current_usr.replace("${version}", "${newerVersion}", 1)))
+                  machine.succeed("mv {} {}".format(current_usr_hash, current_usr_hash.replace("${version}", "${newerVersion}", 1)))
+                  machine.succeed("mv {} {}".format(current_uki, current_uki.replace("${version}", "${newerVersion}", 1)))
 
-              machine.succeed("${nodes.machine.systemd.package}/lib/systemd/systemd-sysupdate update")
-              machine.wait_for_console_text("Successfully installed update '${newerVersion}'.")
+                  gnupghome = machine.succeed("mktemp -d").strip()
+                  machine.succeed(f"cp -R ${gpgKeyring}/* {gnupghome}")
+                  machine.succeed(f"(cd {update_dir}; sha256sum * >SHA256SUMS)")
+                  print(machine.succeed(f"cat {update_dir}/SHA256SUMS"))
+                  print(machine.succeed(f"env GNUPGHOME={gnupghome} gpg --batch --sign --detach-sign --output {update_dir}/SHA256SUMS.gpg {update_dir}/SHA256SUMS"))
+
+                  machine.succeed("${nodes.machine.systemd.package}/lib/systemd/systemd-sysupdate update")
+                  machine.wait_for_console_text("Successfully installed update '${newerVersion}'.")
 
               # Since the partition UUIDs are derived from the roothash of the
               # dm-verity device and we are writing the same dm-verity partitions to

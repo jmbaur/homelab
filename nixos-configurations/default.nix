@@ -43,7 +43,7 @@ inputs.nixpkgs.lib.mapAttrs (
           custom.image = {
             enable = true;
             update = {
-              remoteUrl = "https://update.jmbaur.com/${config.networking.hostName}";
+              source = "https://update.jmbaur.com/${config.networking.hostName}";
               gpgPubkey = ../data/sysupdate.gpg;
             };
           };

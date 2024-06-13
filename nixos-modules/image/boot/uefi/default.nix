@@ -33,7 +33,7 @@ in
       Transfer.ProtectVersion = "%A";
       Source = {
         Type = "url-file";
-        Path = cfg.update.remoteUrl;
+        Path = cfg.update.source;
         MatchPattern = "${id}_@v.efi";
       };
       Target = {
@@ -68,12 +68,8 @@ in
         --output="$uki"
       echo "$uki:/EFI/Linux/$(basename $uki | sed 's,\.efi,,')+3-0.efi" >>$bootfiles
 
-      ln -sf ${loaderConf} $update/loader.conf
-      echo "$update/loader.conf:/loader/loader.conf" >>$bootfiles
-
-      systemd_boot=$update/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI
-      ln -sf ${systemdBoot} $systemd_boot
-      echo "$systemd_boot:/EFI/BOOT/$(basename $systemd_boot)" >>$bootfiles
+      echo "${loaderConf}:/loader/loader.conf" >>$bootfiles
+      echo "${systemdBoot}:/EFI/boot/boot${pkgs.stdenv.hostPlatform.efiArch}.efi" >>$bootfiles
     '';
   };
 }
