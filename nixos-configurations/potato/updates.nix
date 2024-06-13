@@ -17,6 +17,13 @@ in
     root = "/var/lib/updates";
   };
 
+  # Limit the resources available for building, this isn't a super beefy
+  # machine :)
+  nix.settings = {
+    cores = 4;
+    max-jobs = 4;
+  };
+
   custom.builder = {
     builds = lib.listToAttrs (
       lib.imap0 (
