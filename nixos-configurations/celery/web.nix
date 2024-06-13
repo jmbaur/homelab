@@ -10,7 +10,7 @@
     defaults.email = "jaredbaur@fastmail.com";
     certs."www.jmbaur.com".extraDomainNames = map (subdomain: "${subdomain}.jmbaur.com") [
       "music"
-      "updates"
+      "update"
     ];
   };
 
