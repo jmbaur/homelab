@@ -11,8 +11,6 @@ if #vim.api.nvim_list_uis() > 0 then
 	local launcher = require("jmbaur.launcher")
 	launcher.setup()
 
-	require("diffview").setup({ use_icons = false })
-	require("gitsigns").setup({ signcolumn = false })
 	require("gosee").setup()
 	require("jmbaur.clipboard")
 	require("jmbaur.compile")
@@ -20,10 +18,11 @@ if #vim.api.nvim_list_uis() > 0 then
 	require("jmbaur.lsp").setup({ launcher = launcher })
 	require("jmbaur.repl")
 	require("jmbaur.run").setup()
+	require("jmbaur.sessions")
 	require("jmbaur.snippets")
 	require("jmbaur.statusline")
 	require("jmbaur.treesitter")
-	require("jmbaur.sessions")
+	require("mini.git").setup({})
 	require("mini.tabline").setup({ show_icons = false, set_vim_settings = false })
 	require("mini.trailspace").setup({})
 

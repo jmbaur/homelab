@@ -89,10 +89,8 @@ let
         # start
         (
           [
-            diffview-nvim
             efmls-configs-nvim
             fzf-lua
-            gitsigns-nvim
             gosee-nvim
             iron-nvim
             mini-nvim
