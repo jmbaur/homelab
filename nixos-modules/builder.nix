@@ -12,7 +12,7 @@ let
     {
       options = {
         flakeUri = lib.mkOption { type = lib.types.str; };
-        frequency = lib.mkOption {
+        time = lib.mkOption {
           type = lib.types.str;
           default = "daily";
           description = ''
@@ -24,11 +24,11 @@ let
 
   buildConfigs = lib.mapAttrsToList (
     name:
-    { flakeUri, frequency }:
+    { flakeUri, time }:
     {
       timers."build@${name}" = {
         timerConfig = {
-          OnCalendar = frequency;
+          OnCalendar = time;
           Persistent = true;
         };
         wantedBy = [ "timers.target" ];
@@ -39,6 +39,7 @@ let
         path = [
           config.nix.package
           pkgs.git
+          pkgs.mercurial
         ];
         environment = {
           XDG_CACHE_HOME = "%C/builder";
@@ -46,17 +47,20 @@ let
         };
         serviceConfig = {
           DynamicUser = true;
+          Type = "oneshot";
           SupplementaryGroups = [ "builder" ];
           CacheDirectory = "builder";
           StateDirectory = "builder";
         };
         script = ''
-          nix \
-            --accept-flake-config \
-            --extra-experimental-features "nix-command flakes" \
+          out_link=$STATE_DIRECTORY/result-${name}
+
+          nix --extra-experimental-features "nix-command flakes" \
             build --refresh --print-out-paths --print-build-logs \
-            --out-link $STATE_DIRECTORY/result-${name} \
+            --out-link "$out_link" \
             ${flakeUri}
+
+          echo "${name} $out_link" >/run/post-build.stdin
         '';
       };
     }
@@ -64,14 +68,49 @@ let
 
 in
 {
-  options.custom.builder.builds = lib.mkOption {
-    type = lib.types.attrsOf (lib.types.submodule buildModule);
-    default = { };
+  options.custom.builder = with lib; {
+    builds = mkOption {
+      type = types.attrsOf (types.submodule buildModule);
+      default = { };
+    };
+
+    # TODO(jared): this abstraction isn't nice...
+    postBuild = mkOption {
+      type = types.unspecified;
+      default = { };
+      description = ''
+        Systemd service definition that will be notified after each build. The
+        program ran within the service will receive on its stdin a single line
+        for each build of the format "<build-name> <output-path>".
+      '';
+    };
   };
 
   config = lib.mkIf (cfg.builds != { }) {
     users.groups.builder = { };
     nix.settings.trusted-users = [ "@builder" ];
-    systemd = lib.mkMerge buildConfigs;
+
+    custom.builder.postBuild = {
+      description = "Post Build Hook";
+      serviceConfig = {
+        StandardInput = "/run/post-build.stdin";
+        # # Ensure the post-build service can read the fifo
+        # SupplementaryGroups = [ config.users.groups.builder.name ];
+      };
+    };
+
+    systemd = lib.mkMerge (
+      buildConfigs
+      ++ [
+        {
+          tmpfiles.settings."10-post-build"."/run/post-build.stdin"."p+" = {
+            mode = "0460";
+            user = "root";
+            group = config.users.groups.builder.name;
+          };
+          services.post-build = cfg.postBuild;
+        }
+      ]
+    );
   };
 }

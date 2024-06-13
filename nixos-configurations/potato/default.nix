@@ -1,5 +1,10 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 {
+  imports = [
+    ./navidrome.nix
+    ./updates.nix
+  ];
+
   nixpkgs.hostPlatform = "x86_64-linux";
 
   hardware.enableRedistributableFirmware = true;
@@ -26,19 +31,7 @@
     board = "fizz-fizz";
   };
 
-  custom.wgNetwork.nodes.celery = {
-    enable = true;
-    allowedTCPPorts = [ config.services.navidrome.settings.Port ];
-  };
-
-  services.navidrome = {
-    enable = true;
-    settings = {
-      Address = "[::]";
-      Port = 4533;
-      DefaultTheme = "Auto";
-    };
-  };
+  custom.wgNetwork.nodes.celery.enable = true;
 
   users.users.root.openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-ssh-keys ];
 
@@ -49,7 +42,4 @@
     boot.bootLoaderSpec.enable = true;
     installer.targetDisk = "/dev/disk/by-path/pci-0000:03:00.0-nvme-1";
   };
-
-  # Smoke test to ensure builder module works
-  custom.builder.builds.macgen.flakeUri = "github:jmbaur/homelab#macgen";
 }

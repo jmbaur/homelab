@@ -8,7 +8,10 @@
   security.acme = {
     acceptTerms = true;
     defaults.email = "jaredbaur@fastmail.com";
-    certs."www.jmbaur.com".extraDomainNames = map (subdomain: "${subdomain}.jmbaur.com") [ "music" ];
+    certs."www.jmbaur.com".extraDomainNames = map (subdomain: "${subdomain}.jmbaur.com") [
+      "music"
+      "updates"
+    ];
   };
 
   networking.firewall.allowedTCPPorts = [
@@ -83,6 +86,13 @@
         useACMEHost = "www.jmbaur.com";
         http2 = false;
         locations."/".proxyPass = "http://potato.internal:4533";
+      };
+
+      "update.jmbaur.com" = {
+        forceSSL = true;
+        useACMEHost = "www.jmbaur.com";
+        http2 = false;
+        locations."/".proxyPass = "http://potato.internal:8787";
       };
     };
   };

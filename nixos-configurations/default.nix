@@ -27,6 +27,9 @@ inputs.nixpkgs.lib.mapAttrs (
   inputs.nixpkgs.lib.nixosSystem {
     modules = [
       (
+        # Configuration that we want to be globally applied to all machines
+        # _within_ this flake, but not necessarily exported for outside usage
+        # as a module.
         { config, ... }:
         {
           assertions = [
@@ -37,7 +40,13 @@ inputs.nixpkgs.lib.mapAttrs (
           ];
           networking.hostName = directory;
           sops.defaultSopsFile = ./${directory}/secrets.yaml;
-          custom.image.enable = true;
+          custom.image = {
+            enable = true;
+            update = {
+              remoteUrl = "https://update.jmbaur.com/${config.networking.hostName}";
+              gpgPubkey = ../data/sysupdate.gpg;
+            };
+          };
         }
       )
       inputs.self.nixosModules.default

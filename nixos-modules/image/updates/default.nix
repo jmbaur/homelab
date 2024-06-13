@@ -4,8 +4,25 @@ let
   cfg = config.custom.image;
 in
 {
+  options.custom.image.update = with lib; {
+    remoteUrl = mkOption {
+      type = types.str;
+      description = ''
+        The URL of the remote web server where updates will be fetched from.
+      '';
+    };
+
+    gpgPubkey = mkOption {
+      type = types.path;
+      description = ''
+        The GPG public key to use for verifying update files. This can be
+        generated with `gpg --export <key-name> -a`.
+      '';
+    };
+  };
+
   config = lib.mkIf cfg.enable {
-    systemd.tmpfiles.settings."10-update"."/run/update".d = { };
+    environment.etc."systemd/import-pubring.gpg".source = cfg.update.gpgPubkey;
 
     systemd.sysupdate = {
       enable = true;
@@ -19,7 +36,7 @@ in
           Transfer.ProtectVersion = "%A";
           Source = {
             Type = "regular-file";
-            Path = "/run/update";
+            Path = cfg.update.remoteUrl;
             MatchPattern = "%o_@v_@u.usr-hash.raw.xz";
           };
           Target = {
@@ -34,7 +51,7 @@ in
           Transfer.ProtectVersion = "%A";
           Source = {
             Type = "regular-file";
-            Path = "/run/update";
+            Path = cfg.update.remoteUrl;
             MatchPattern = "%o_@v_@u.usr.raw.xz";
           };
           Target = {

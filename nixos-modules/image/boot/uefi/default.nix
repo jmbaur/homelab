@@ -33,7 +33,7 @@ in
       Transfer.ProtectVersion = "%A";
       Source = {
         Type = "regular-file";
-        Path = "/run/update";
+        Path = cfg.update.remoteUrl;
         MatchPattern = "${id}_@v.efi";
       };
       Target = {
