@@ -42,7 +42,7 @@ in
         set -x
         while read line; do
           name=$(echo $line | cut -d' ' -f1)
-          out=$(echo $line | cut -d' ' -f1)
+          out=$(echo $line | cut -d' ' -f2)
           for host in ${toString allHosts}; do
             if [[ $name == "$host" ]]; then
               update_dir=/var/lib/updates/$name
