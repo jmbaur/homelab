@@ -94,17 +94,15 @@ stdenv.mkDerivation {
     + bootFileCommands;
   passAsFile = [ "bootFileCommands" ];
 
-  env = {
-    SYSTEMD_REPART_MKFS_OPTIONS_EROFS = "-zlz4hc,12";
-    SYSTEMD_REPART_MKFS_OPTIONS_SQUASHFS = "-comp zstd";
-  };
-
   outputs = [
     "out"
     "update"
   ];
 
   buildCommand = ''
+    export SYSTEMD_REPART_MKFS_OPTIONS_EROFS="-zlz4hc,12"
+    export SYSTEMD_REPART_MKFS_OPTIONS_SQUASHFS="-comp zstd -processors $NIX_BUILD_CORES"
+
     install -Dm0644 ${bootPartitionConfig} repart.d/${bootPartitionConfig.name}
     install -Dm0644 ${dataPartitionConfig} repart.d/${dataPartitionConfig.name}
     install -Dm0644 ${hashPartitionConfig} repart.d/${hashPartitionConfig.name}
