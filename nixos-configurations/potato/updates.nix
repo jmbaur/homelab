@@ -9,7 +9,9 @@ in
 {
   custom.wgNetwork.nodes.celery.allowedTCPPorts = [ swsPort ];
 
-  systemd.tmpfiles.settings."10-sws-root"."/var/lib/updates".d = { };
+  systemd.tmpfiles.settings."10-sws-root" = lib.listToAttrs (
+    map (host: lib.nameValuePair "/var/lib/updates/${host}" { d = { }; }) allHosts
+  );
 
   services.static-web-server = {
     enable = true;
@@ -39,9 +41,8 @@ in
         for host in ${toString allHosts}; do
           if [[ $name == "$host" ]]; then
             update_dir=/var/lib/updates/$name
-            mkdir -p $update_dir
+            cp $out/* $update_dir
             pushd $update_dir
-            cp $out/* .
             rm -f SHA256SUMS SHA256SUMS.gpg; sha256sum * >SHA256SUMS
             gpg --batch --yes --sign --detach-sign --output SHA256SUMS.gpg SHA256SUMS
             popd
@@ -56,6 +57,8 @@ in
       i: name:
       lib.nameValuePair name {
         flakeUri = "github:jmbaur/homelab#nixosConfigurations.${name}.config.system.build.image.update";
+        # Daily builds where each build is slated to run in a tiered fashion,
+        # one hour after each other.
         time = "*-*-* ${toString (lib.fixedWidthNumber 2 (i - 24 * (i / 24)))}:00:00";
       }
     ) allHosts
