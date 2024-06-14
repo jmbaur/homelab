@@ -33,8 +33,6 @@
 
   custom.wgNetwork.nodes.celery.enable = true;
 
-  users.users.root.openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-ssh-keys ];
-
   custom.server.enable = true;
 
   custom.image = {

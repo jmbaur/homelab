@@ -10,6 +10,10 @@
 
   custom.image = {
     installer.targetDisk = "/dev/disk/by-path/TODO";
-    boot.uboot.enable = true;
+    boot.uboot = {
+      enable = true;
+      bootMedium.type = "mmc";
+      kernelLoadAddress = "0x0";
+    };
   };
 }

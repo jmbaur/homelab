@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  utils,
   ...
 }:
 let
@@ -64,7 +65,7 @@ let
             --out-link "$out_link" \
             ${flakeUri}
 
-          echo "${name} $out_link" >/run/post-build.stdin
+          echo "${name} $(realpath $out_link)" >/run/post-build.stdin
         '';
       };
     }
@@ -78,7 +79,6 @@ in
       default = { };
     };
 
-    # TODO(jared): this abstraction isn't nice...
     postBuild = mkOption {
       type = types.unspecified;
       default = { };
@@ -94,11 +94,6 @@ in
     users.groups.builder = { };
     nix.settings.trusted-users = [ "@builder" ];
 
-    custom.builder.postBuild = {
-      description = "Post build hook";
-      serviceConfig.StandardInput = "file:/run/post-build.stdin";
-    };
-
     systemd = lib.mkMerge (
       buildConfigs
       ++ [
@@ -108,7 +103,13 @@ in
             user = "root";
             group = config.users.groups.builder.name;
           };
-          services.post-build = cfg.postBuild;
+          services.post-build = lib.mkMerge [
+            cfg.postBuild
+            {
+              description = "Post build hook";
+              serviceConfig.StandardInput = "file:/run/post-build.stdin";
+            }
+          ];
         }
       ]
     );

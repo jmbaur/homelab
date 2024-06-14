@@ -8,8 +8,6 @@
   # TODO(jared): use FIT_BEST_MATCH feature in u-boot to choose this automatically
   hardware.deviceTree.name = "armada-388-clearfog-pro.dtb";
 
-  users.users.root.openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-ssh-keys ];
-
   custom = {
     server.enable = true;
     image = {

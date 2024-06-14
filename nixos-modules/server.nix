@@ -1,4 +1,9 @@
-{ lib, config, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 let
   cfg = config.custom.server;
 
@@ -87,5 +92,7 @@ in
     networking.firewall.allowedUDPPorts = [
       5353 # mDNS
     ];
+
+    users.users.root.openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-ssh-keys ];
   };
 }
