@@ -41,7 +41,6 @@ let
 
       services."build@${name}" = {
         description = "Build ${flakeUri}";
-        requiredBy = [ config.systemd.services.post-build.name ];
         path = [
           config.nix.package
           pkgs.git
@@ -107,6 +106,7 @@ in
             cfg.postBuild
             {
               description = "Post build hook";
+              wantedBy = [ "multi-user.target" ];
               serviceConfig.StandardInput = "file:/run/post-build.stdin";
             }
           ];
