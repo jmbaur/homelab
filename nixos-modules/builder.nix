@@ -56,7 +56,7 @@ let
           StateDirectory = "builder";
         };
         script = ''
-          echo "${name} $(nix --extra-experimental-features "nix-command flakes" build --refresh --print-out-paths --print-build-logs ${flakeUri})" >/run/post-build.stdin
+          echo "${name} $(nix --extra-experimental-features "nix-command flakes" build --refresh --no-link --print-out-paths --print-build-logs ${flakeUri})" >/run/post-build.stdin
         '';
       };
     }
