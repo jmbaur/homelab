@@ -20,8 +20,8 @@ in
   # Limit the resources available for building, this isn't a super beefy
   # machine :)
   nix.settings = {
-    cores = 4;
-    max-jobs = 4;
+    cores = 2;
+    max-jobs = 1;
   };
 
   custom.builder = {
