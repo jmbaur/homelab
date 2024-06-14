@@ -39,7 +39,7 @@ in
             mkdir -p $update_dir
             pushd $update_dir
             cp $out/* .
-            sha256sum * >SHA256SUMS
+            rm -f SHA256SUMS SHA256SUMS.gpg; sha256sum * >SHA256SUMS
             gpg --batch --yes --sign --detach-sign --output SHA256SUMS.gpg SHA256SUMS
             popd
           fi
