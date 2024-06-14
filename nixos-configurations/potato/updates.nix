@@ -1,4 +1,9 @@
-{ lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   swsPort = 8787;
 
@@ -25,38 +30,41 @@ in
     cores = 2;
     max-jobs = 1;
   };
-  systemd.services.nix-daemon.serviceConfig = {
-    MemoryHigh = "8G";
-    MemoryMax = "10G";
-  };
 
-  systemd.services.post-build = {
-    path = [ pkgs.gnupg ];
-    environment.GNUPGHOME = "/root/.gnupg"; # TODO(jared): sops?
-    script = ''
-      while true; do
-        line=$(cat /dev/stdin)
-        name=$(echo $line | cut -d' ' -f1)
-        out=$(echo $line | cut -d' ' -f2)
-        for host in ${toString allHosts}; do
-          if [[ $name == "$host" ]]; then
-            update_dir=/var/lib/updates/$name
-            cp $out/* $update_dir
+  systemd.services = lib.mkMerge [
+    {
+      nix-daemon.serviceConfig = {
+        MemoryHigh = "8G";
+        MemoryMax = "10G";
+      };
+    }
+    (lib.listToAttrs (
+      map (
+        name:
+        lib.nameValuePair "post-build@${name}" {
+          path = [ pkgs.gnupg ];
+          environment.GNUPGHOME = "/root/.gnupg"; # TODO(jared): sops?
+          serviceConfig.StandardInput = "file:/run/build-${name}";
+          script = ''
+            output_path=$(cat /dev/stdin)
+            update_dir=/var/lib/updates/${name}
+            cp $output_path/* $update_dir
             pushd $update_dir
             rm -f SHA256SUMS SHA256SUMS.gpg; sha256sum * >SHA256SUMS
             gpg --batch --yes --sign --detach-sign --output SHA256SUMS.gpg SHA256SUMS
             popd
-          fi
-        done
-      done
-    '';
-  };
+          '';
+        }
+      ) allHosts
+    ))
+  ];
 
   custom.builder.builds = lib.listToAttrs (
     lib.imap0 (
       i: name:
       lib.nameValuePair name {
         flakeUri = "github:jmbaur/homelab#nixosConfigurations.${name}.config.system.build.image.update";
+        postBuild = config.systemd.services."post-build@${name}".name;
         # Daily builds where each build is slated to run in a tiered fashion,
         # one hour after each other.
         time = "*-*-* ${toString (lib.fixedWidthNumber 2 (i - 24 * (i / 24)))}:00:00";

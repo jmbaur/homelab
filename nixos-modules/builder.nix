@@ -23,12 +23,25 @@ let
           Any valid systemd.time(7) value.
         '';
       };
+      postBuild = mkOption {
+        type = types.str;
+        description = ''
+          The systemd service to activate after a successful build. There will
+          be a file at /run/build-''${name} whose contents will be the nix
+          output path for the last successful build that this service should
+          read from to condition its behavior.
+        '';
+      };
     };
   };
 
   buildConfigs = lib.mapAttrsToList (
     name:
-    { flakeUri, time }:
+    {
+      flakeUri,
+      time,
+      postBuild,
+    }:
     {
       timers."build@${name}" = {
         timerConfig = {
@@ -39,6 +52,7 @@ let
       };
 
       services."build@${name}" = {
+        onSuccess = [ postBuild ];
         description = "Build ${flakeUri}";
         path = [
           config.nix.package
@@ -50,12 +64,13 @@ let
         };
         serviceConfig = {
           DynamicUser = true;
+          StandardOutput = "truncate:/run/build-${name}";
           SupplementaryGroups = [ "builder" ];
           CacheDirectory = "builder";
           StateDirectory = "builder";
         };
         script = ''
-          echo "${name} $(nix --extra-experimental-features "nix-command flakes" build --refresh --no-link --print-out-paths --print-build-logs ${flakeUri})" >/run/post-build.stdin
+          echo "$(nix --extra-experimental-features "nix-command flakes" build --refresh --no-link --print-out-paths --print-build-logs ${flakeUri})"
         '';
       };
     }
