@@ -104,6 +104,6 @@ stdenv.mkDerivation {
 
     ${postImageCommands}
 
-    xz -3 --compress --verbose --threads=0 $out/*.{raw,vhdx}
+    xz -3 --compress --verbose --threads=$NIX_BUILD_CORES $out/*.{raw,vhdx}
   '';
 }
