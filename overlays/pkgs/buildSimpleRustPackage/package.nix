@@ -13,18 +13,6 @@
 pname: source:
 let
   version = "0.1.0"; # constant version
-  cargoToml = writeText "${pname}-Cargo.toml" ''
-    [package]
-    name = "${pname}"
-    version = "${version}"
-    edition = "2021"
-  '';
-  cargoLock = writeText "${pname}-Cargo.lock" ''
-    version = 3
-    [[package]]
-    name = "${pname}"
-    version = "${version}"
-  '';
 in
 rustPlatform.buildRustPackage {
   inherit pname version;
@@ -33,9 +21,22 @@ rustPlatform.buildRustPackage {
 
   src = runCommand "${pname}-src" { } ''
     mkdir -p $out/{vendor,src}
-    ln -s ${cargoToml} $out/Cargo.toml
-    ln -s ${cargoLock} $out/Cargo.lock
-    ln -s ${source} $out/src/main.rs
+
+    cp ${source} $out/src/main.rs
+
+    cat >$out/Cargo.toml <<EOF
+    [package]
+    name = "${pname}"
+    version = "${version}"
+    edition = "2021"
+    EOF
+
+    cat >$out/Cargo.lock <<EOF
+    version = 3
+    [[package]]
+    name = "${pname}"
+    version = "${version}"
+    EOF
   '';
 
   meta.mainProgram = pname;
