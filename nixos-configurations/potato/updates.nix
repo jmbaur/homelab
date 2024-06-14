@@ -40,7 +40,8 @@ in
       environment.GNUPGHOME = "/root/.gnupg"; # TODO(jared): sops?
       script = ''
         set -x
-        while read line; do
+        while true; do
+          line=$(cat /dev/stdin)
           name=$(echo $line | cut -d' ' -f1)
           out=$(echo $line | cut -d' ' -f2)
           for host in ${toString allHosts}; do
@@ -54,7 +55,7 @@ in
               popd
             fi
           done
-        done < /dev/stdin
+        done
       '';
     };
   };
