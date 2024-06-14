@@ -43,8 +43,7 @@ let
         description = "Build ${flakeUri}";
         path = [
           config.nix.package
-          pkgs.git
-          pkgs.mercurial
+          pkgs.gitMinimal
         ];
         environment = {
           XDG_CACHE_HOME = "%C/builder";
@@ -57,14 +56,7 @@ let
           StateDirectory = "builder";
         };
         script = ''
-          out_link=$STATE_DIRECTORY/result-${name}
-
-          nix --extra-experimental-features "nix-command flakes" \
-            build --refresh --print-out-paths --print-build-logs \
-            --out-link "$out_link" \
-            ${flakeUri}
-
-          echo "${name} $(realpath $out_link)" >/run/post-build.stdin
+          echo "${name} $(nix --extra-experimental-features "nix-command flakes" build --refresh --print-out-paths --print-build-logs ${flakeUri})" >/run/post-build.stdin
         '';
       };
     }
@@ -107,7 +99,10 @@ in
             {
               description = "Post build hook";
               wantedBy = [ "multi-user.target" ];
-              serviceConfig.StandardInput = "file:/run/post-build.stdin";
+              serviceConfig = {
+                StandardInput = "file:/run/post-build.stdin";
+                Restart = "always";
+              };
             }
           ];
         }
