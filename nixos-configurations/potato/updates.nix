@@ -23,6 +23,10 @@ in
     cores = 2;
     max-jobs = 1;
   };
+  systemd.services.nix-daemon.serviceConfig = {
+    MemoryHigh = "8G";
+    MemoryMax = "10G";
+  };
 
   systemd.services.post-build = {
     path = [ pkgs.gnupg ];
