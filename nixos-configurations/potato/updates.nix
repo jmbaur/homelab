@@ -24,39 +24,37 @@ in
     max-jobs = 1;
   };
 
-  custom.builder = {
-    builds = lib.listToAttrs (
-      lib.imap0 (
-        i: name:
-        lib.nameValuePair name {
-          flakeUri = "github:jmbaur/homelab#nixosConfigurations.${name}.config.system.build.image.update";
-          time = "*-*-* ${toString (lib.fixedWidthNumber 2 (i - 24 * (i / 24)))}:00:00";
-        }
-      ) allHosts
-    );
-
-    postBuild = {
-      path = [ pkgs.gnupg ];
-      environment.GNUPGHOME = "/root/.gnupg"; # TODO(jared): sops?
-      script = ''
-        set -x
-        while true; do
-          line=$(cat /dev/stdin)
-          name=$(echo $line | cut -d' ' -f1)
-          out=$(echo $line | cut -d' ' -f2)
-          for host in ${toString allHosts}; do
-            if [[ $name == "$host" ]]; then
-              update_dir=/var/lib/updates/$name
-              mkdir -p $update_dir
-              pushd $update_dir
-              cp $out/* .
-              sha256sum * >SHA256SUMS
-              gpg --batch --sign --detach-sign --output SHA256SUMS.gpg SHA256SUMS
-              popd
-            fi
-          done
+  systemd.services.post-build = {
+    path = [ pkgs.gnupg ];
+    environment.GNUPGHOME = "/root/.gnupg"; # TODO(jared): sops?
+    script = ''
+      set -x
+      while true; do
+        line=$(cat /dev/stdin)
+        name=$(echo $line | cut -d' ' -f1)
+        out=$(echo $line | cut -d' ' -f2)
+        for host in ${toString allHosts}; do
+          if [[ $name == "$host" ]]; then
+            update_dir=/var/lib/updates/$name
+            mkdir -p $update_dir
+            pushd $update_dir
+            cp $out/* .
+            sha256sum * >SHA256SUMS
+            gpg --batch --yes --sign --detach-sign --output SHA256SUMS.gpg SHA256SUMS
+            popd
+          fi
         done
-      '';
-    };
+      done
+    '';
   };
+
+  custom.builder.builds = lib.listToAttrs (
+    lib.imap0 (
+      i: name:
+      lib.nameValuePair name {
+        flakeUri = "github:jmbaur/homelab#nixosConfigurations.${name}.config.system.build.image.update";
+        time = "*-*-* ${toString (lib.fixedWidthNumber 2 (i - 24 * (i / 24)))}:00:00";
+      }
+    ) allHosts
+  );
 }

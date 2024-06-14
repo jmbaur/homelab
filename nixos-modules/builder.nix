@@ -69,16 +69,6 @@ in
       type = types.attrsOf (types.submodule buildModule);
       default = { };
     };
-
-    postBuild = mkOption {
-      type = types.unspecified;
-      default = { };
-      description = ''
-        Systemd service definition that will be notified after each build. The
-        program ran within the service will receive on its stdin a single line
-        for each build of the format "<build-name> <output-path>".
-      '';
-    };
   };
 
   config = lib.mkIf (cfg.builds != { }) {
@@ -94,17 +84,19 @@ in
             user = "root";
             group = config.users.groups.builder.name;
           };
-          services.post-build = lib.mkMerge [
-            cfg.postBuild
-            {
-              description = "Post build hook";
-              wantedBy = [ "multi-user.target" ];
-              serviceConfig = {
-                StandardInput = "file:/run/post-build.stdin";
-                Restart = "always";
-              };
-            }
-          ];
+          services.post-build = {
+            description = "Post build hook";
+            wantedBy = [ "multi-user.target" ];
+            serviceConfig = {
+              StandardInput = "file:/run/post-build.stdin";
+              Restart = "always";
+            };
+            script = lib.mkDefault ''
+              while true; do
+                echo $(cat /dev/stdin)
+              done
+            '';
+          };
         }
       ]
     );
