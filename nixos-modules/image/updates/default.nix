@@ -27,6 +27,8 @@ in
     systemd.sysupdate = {
       enable = true;
 
+      reboot.enable = lib.mkDefault true;
+
       # placeholder meanings:
       # %o -> operating system ID (e.g. "nixos")
       # @v -> version

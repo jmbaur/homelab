@@ -11,6 +11,9 @@
   hardware.cpu.intel.updateMicrocode = true;
   hardware.chromebook.enable = true;
 
+  # TODO(jared): be confident enough to enable this!
+  systemd.sysupdate.reboot.enable = false;
+
   boot.initrd.availableKernelModules = [
     "nvme"
     "sd_mod"
