@@ -6,6 +6,7 @@
   xz,
   gnupg,
   runCommand,
+  emptyFile,
 }:
 
 let
@@ -92,9 +93,11 @@ let
     {
       imports = [ inputs.self.nixosModules.default ];
 
-      boot.kernelPackages = pkgs.linuxPackages_latest;
+      assertions = [
+        { assertion = builtins.elem "nix-command" config.nix.settings.experimental-features; }
+      ];
 
-      nix.settings.experimental-features = [ "nix-command" ];
+      boot.kernelPackages = pkgs.linuxPackages_latest;
 
       boot.loader.timeout = 0;
 
@@ -135,6 +138,9 @@ let
           target = "/tmp/shared";
         };
       };
+
+      # To test local-overlay store
+      system.extraDependencies = [ emptyFile ];
 
       system.image.version = version;
       custom.image = {
@@ -263,13 +269,20 @@ in
               if not equal_elements(usr_hash_partitions):
                   raise Exception(f"mismatching usr-hash disk sizes: {usr_hash_partitions}")
 
-              machine.fail("command -v nixos-rebuild")
-              machine.${
-                if nodes.machine.custom.image.mutableNixStore then "succeed" else "fail"
-              }("test -f /run/current-system/bin/switch-to-configuration")
-              machine.${
-                if nodes.machine.custom.image.mutableNixStore then "succeed" else "fail"
-              }("touch foo && nix store add-file ./foo && test $(nix-store --dump-db | wc -l) -gt 0")
+              with subtest("mutability"):
+                  machine.fail("command -v nixos-rebuild")
+                  if ${toString nodes.machine.custom.image.mutableNixStore} == 1:
+                      print(machine.succeed("nix store info --store daemon"))
+                      machine.succeed("test -f /run/current-system/bin/switch-to-configuration")
+                      machine.succeed("nix store add-file --store daemon $(mktemp)")
+                      ro_paths = machine.succeed("ls /usr/nix/store | wc -l").strip()
+                      rw_paths = machine.succeed("ls /overlay/upper | wc -l").strip()
+                      merged_paths = machine.succeed("ls /nix/store | wc -l").strip()
+                      assert ro_paths + rw_paths == merged_paths
+                  else:
+                      machine.fail("test -f /run/current-system/bin/switch-to-configuration")
+                      machine.fail("nix store add-file --store daemon $(mktemp)")
+
 
               with subtest("sysupdate"):
                   update_dir = "/run/update/${nodes.machine.networking.hostName}"

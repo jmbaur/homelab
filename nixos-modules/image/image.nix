@@ -10,6 +10,7 @@
   mtools,
   nix,
   sbsigntool,
+  sqlite,
   squashfsTools,
   stdenv,
   systemd,
@@ -75,6 +76,7 @@ stdenv.mkDerivation {
       mtools
       nix
       sbsigntool
+      sqlite
       systemd
       systemdUkify
       ubootTools
@@ -110,7 +112,16 @@ stdenv.mkDerivation {
     install -Dm0644 ${hashPartitionConfig} repart.d/${hashPartitionConfig.name}
 
     tmp_store=$(mktemp -d)
-    nix-store --store $tmp_store --load-db <${toplevelClosure}/registration
+    (
+      export NIX_REMOTE=local?root=$tmp_store
+      # A user is required by nix
+      # https://github.com/NixOS/nix/blob/9348f9291e5d9e4ba3c4347ea1b235640f54fd79/src/libutil/util.cc#L478
+      export USER=nobody
+      nix-store --load-db <${toplevelClosure}/registration
+      # Reset registration times to make the image reproducible
+      sqlite3 "$tmp_store/nix/var/nix/db/db.sqlite" "UPDATE ValidPaths SET registrationTime = ''${SOURCE_DATE_EPOCH}"
+    )
+
 
     echo "CopyFiles=${coreutils-full}/bin/env:/bin/env" >> repart.d/${dataPartitionConfig.name}
     echo "CopyFiles=''${tmp_store}/nix:/nix" >> repart.d/${dataPartitionConfig.name}

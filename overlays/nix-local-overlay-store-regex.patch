@@ -1,0 +1,13 @@
+diff --git a/src/libstore/unix/local-overlay-store.cc b/src/libstore/unix/local-overlay-store.cc
+index 598415db8..6cb4413ea 100644
+--- a/src/libstore/unix/local-overlay-store.cc
++++ b/src/libstore/unix/local-overlay-store.cc
+@@ -42,7 +42,7 @@ LocalOverlayStore::LocalOverlayStore(const Params & params)
+         }
+ 
+         auto checkOption = [&](std::string option, std::string value) {
+-            return std::regex_search(mountInfo, std::regex("\\b" + option + "=" + value + "( |,)"));
++            return std::regex_search(mountInfo, std::regex("\\b" + option + R"(=(|/sysroot))" + value + "( |,)"));
+         };
+ 
+         auto expectedLowerDir = lowerStore->realStoreDir.get();

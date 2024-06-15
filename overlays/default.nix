@@ -19,11 +19,13 @@ inputs: {
     })
     # all other packages
     (final: prev: {
-      # TODO(jared): https://github.com/NixOS/nix/pull/10916
       nixVersions = prev.nixVersions.extend (
         _: nPrev: {
           nix_2_22 = nPrev.nix_2_22.overrideAttrs (old: {
-            patches = (old.patches or [ ]) ++ [ ./nix-read-only-local-store.patch ];
+            patches = (old.patches or [ ]) ++ [
+              ./nix-local-overlay-store-regex.patch
+              ./nix-read-only-local-store.patch # TODO(jared): https://github.com/NixOS/nix/pull/10916
+            ];
           });
         }
       );

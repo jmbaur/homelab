@@ -88,6 +88,16 @@ in
         assertion = config.system.image.id != null;
         message = "Image ID must be set";
       }
+      {
+        # TODO(jared): We can't set the local-overlay-store URI in nix.conf
+        # since this setting takes precedence over the NIX_REMOTE environment
+        # variable, meaning that users cannot just have things work OOTB by
+        # setting that variable. So instead, we set NIX_REMOTE in two places
+        # with two different values, the nix-daemon uses the
+        # local-overlay-store URI and all clients connect to the daemon.
+        assertion = config.nix.settings ? store == false;
+        message = "store must not be set in nix.conf";
+      }
     ];
 
     systemd.additionalUpstreamSystemUnits = [ "boot-complete.target" ];
@@ -110,18 +120,20 @@ in
       # Having nix available on a system with a read-only nix-store is
       # meaningless.
       enable = cfg.mutableNixStore;
-      # TODO(jared): regex [here](https://github.com/nixos/nix/blob/adba2f19a02eaa74336a06a026d3c37af8020559/src/libstore/unix/local-overlay-store.cc#L35)
-      # seems bad, but we want the warnings if the underlying overlay mount is
-      # bad, this should be fixed so we don't have to use `check-mount=false`.
-      #
-      # Issue seems to be our mountpoint has a /sysroot prefix, but the regex
-      # does not handle this.
-      settings.store = "local-overlay://?root=/&lower-store=/usr?read-only=true&upper-layer=/nix/.upper&check-mount=false";
-      settings.experimental-features = [
-        "local-overlay-store"
-        "read-only-local-store"
-      ];
+      settings = {
+        experimental-features = [
+          "local-overlay-store"
+          "read-only-local-store"
+        ];
+      };
     };
+
+    # So that users running nix commands are able to connect to the right
+    # store.
+    environment.variables.NIX_REMOTE = lib.mkIf cfg.mutableNixStore "daemon";
+
+    # Ensure the nix-daemon is configured to connect to the correct store.
+    systemd.services.nix-daemon.environment.NIX_REMOTE = lib.mkIf cfg.mutableNixStore "local-overlay://?root=/overlay/merged&lower-store=/usr?read-only=true&upper-layer=/overlay/upper";
 
     boot.kernelParams = [
       "mount.usr=/dev/mapper/usr"
@@ -209,8 +221,8 @@ in
         Format = "btrfs";
         FactoryReset = true;
         MakeDirectories = lib.mkIf cfg.mutableNixStore (toString [
-          "/nix/.upper"
-          "/nix/.work"
+          "/overlay/upper"
+          "/overlay/work"
         ]);
         Encrypt = wantLuksRoot;
         Weight = 1000;
@@ -251,19 +263,19 @@ in
       ];
     };
 
-    fileSystems."/nix/store" = lib.mkMerge [
-      (lib.mkIf cfg.mutableNixStore {
-        overlay = {
-          lowerdir = [ "/usr/nix/store" ];
-          upperdir = "/nix/.upper";
-          workdir = "/nix/.work";
-        };
-      })
-      (lib.mkIf (!cfg.mutableNixStore) {
-        options = [ "bind" ];
-        device = "/usr/nix/store";
-      })
-    ];
+    fileSystems."/overlay/merged/nix/store" = lib.mkIf cfg.mutableNixStore {
+      neededForBoot = true;
+      overlay = {
+        lowerdir = [ "/usr/nix/store" ];
+        upperdir = "/overlay/upper";
+        workdir = "/overlay/work";
+      };
+    };
+
+    fileSystems."/nix/store" = {
+      device = if cfg.mutableNixStore then "/overlay/merged/nix/store" else "/usr/nix/store";
+      options = [ "bind" ];
+    };
 
     system.build.image = pkgs.callPackage ./image.nix {
       toplevelClosure = pkgs.closureInfo { rootPaths = [ config.system.build.toplevel ]; };
