@@ -33,7 +33,7 @@
     }
   ];
 
-  custom.wgNetwork.nodes.pumpkin = {
+  custom.wgNetwork.nodes.cauliflower = {
     enable = true;
     allowedTCPPorts = [ 22 ];
   };

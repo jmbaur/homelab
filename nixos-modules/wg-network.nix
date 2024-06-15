@@ -36,7 +36,7 @@ let
       {
         celery = "ictBEFKAIAkf7Rw43pVZuSTRw6ihV0wu5//Hr4cdU18=";
         potato = "9jbT3pl/AokDRBpwMALhC8cPfFL3amNfd1bTcZgoLDA=";
-        pumpkin = "YqXBV4sX6haBhGVlPASrRuPlHI+AFymMcI9jupNB/xE=";
+        cauliflower = "YqXBV4sX6haBhGVlPASrRuPlHI+AFymMcI9jupNB/xE=";
       };
 
   firewallRule = name: ip6addr: l4proto: port: ''

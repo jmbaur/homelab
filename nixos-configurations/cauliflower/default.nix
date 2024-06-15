@@ -20,14 +20,17 @@
   # kernels.
   boot.kernelPackages = pkgs.linuxPackages_6_8;
 
-  custom.desktop.enable = true;
-  custom.dev.enable = true;
-
   tinyboot = {
     enable = false;
     board = "brya-banshee";
   };
 
+  custom.desktop.enable = true;
+  custom.dev.enable = true;
+  custom.wgNetwork.nodes.celery = {
+    enable = true;
+    hostname = "celery.jmbaur.com";
+  };
   custom.image = {
     boot.uefi.enable = true;
     installer.targetDisk = "/dev/nvme0n1";
