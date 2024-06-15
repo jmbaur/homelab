@@ -44,16 +44,12 @@ in
         ansifilter
         as-tree
         bat
-        bc
         binary-diff
         bintools
-        bottom
         cachix
         cntr
-        croc
         curl
         dig
-        dnsutils
         dt
         fd
         file
@@ -66,24 +62,19 @@ in
         gron
         htmlq
         htop-vim
-        iputils
         jared-neovim-all-languages
         jo
         jq
         just
         killall
         libarchive
-        librespeed-cli
-        # linux-scripts
-        lm_sensors
+        linux-scripts
         lrzsz
         lsof
         macgen
         man-pages
         man-pages-posix
         mdcat
-        mob
-        mosh
         nix-diff
         nix-output-monitor
         nix-prefetch-scripts
@@ -92,7 +83,6 @@ in
         nload
         nmap
         nurl
-        patchelf
         pax-utils
         pb
         pciutils
@@ -103,29 +93,18 @@ in
         qemu
         rage
         ripgrep
-        rlwrap
         sd
-        skopeo
-        sl
         strace-with-colors
         systemctl-tui
         tcpdump
         tea
-        tealdeer
-        tig
         tio
         tmux-jump
         tokei
-        traceroute
-        tree
         unzip
         usbutils
-        w3m
         watchexec
         wip
-        wireguard-tools
-        xsv
-        yj
         zip
       ];
 
