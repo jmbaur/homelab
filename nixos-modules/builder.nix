@@ -65,6 +65,7 @@ let
         serviceConfig = {
           DynamicUser = true;
           StandardOutput = "truncate:/run/build-${name}";
+          StandardError = "journal";
           SupplementaryGroups = [ "builder" ];
           CacheDirectory = "builder";
           StateDirectory = "builder";
