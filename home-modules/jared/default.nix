@@ -62,7 +62,6 @@ in
         git-extras
         git-gone
         gnumake
-        gosee
         grex
         gron
         htmlq

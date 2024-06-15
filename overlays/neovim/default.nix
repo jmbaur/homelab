@@ -91,7 +91,6 @@ let
           [
             efmls-configs-nvim
             fzf-lua
-            gosee-nvim
             iron-nvim
             mini-nvim
             nvim-lspconfig

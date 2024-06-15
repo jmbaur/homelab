@@ -1,7 +1,5 @@
 inputs: {
   default = inputs.nixpkgs.lib.composeManyExtensions [
-    inputs.gosee.overlays.default # needed for plugin in overlayed neovim
-    inputs.u-boot-nix.overlays.default
     # auto-added packages
     (
       _: prev:

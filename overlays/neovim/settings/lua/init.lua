@@ -11,7 +11,6 @@ if #vim.api.nvim_list_uis() > 0 then
 	local launcher = require("jmbaur.launcher")
 	launcher.setup()
 
-	require("gosee").setup()
 	require("jmbaur.clipboard")
 	require("jmbaur.compile")
 	require("jmbaur.filemanager")

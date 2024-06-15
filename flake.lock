@@ -83,24 +83,6 @@
         "type": "github"
       }
     },
-    "flake-utils": {
-      "inputs": {
-        "systems": "systems"
-      },
-      "locked": {
-        "lastModified": 1705309234,
-        "narHash": "sha256-uNRRNRKmJyCRC/8y1RqBkqWBLM034y4qN7EprSdmgyA=",
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "rev": "1ef2e671c3b0c19053962c07dbda38332dcebf26",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "type": "github"
-      }
-    },
     "git-hooks": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -283,26 +265,6 @@
         "type": "github"
       }
     },
-    "gosee": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1717899638,
-        "narHash": "sha256-V9vdepRFr04/T66wK9yjKb8IzEKcFx8CkI2DxOE4N3s=",
-        "owner": "jmbaur",
-        "repo": "gosee",
-        "rev": "a52fdec09bfd5b6b7d83af61584bf5fd2bb13601",
-        "type": "github"
-      },
-      "original": {
-        "owner": "jmbaur",
-        "repo": "gosee",
-        "type": "github"
-      }
-    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -344,48 +306,6 @@
         "type": "github"
       }
     },
-    "microvm": {
-      "inputs": {
-        "flake-utils": "flake-utils",
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "spectrum": "spectrum"
-      },
-      "locked": {
-        "lastModified": 1718198940,
-        "narHash": "sha256-TKfQP+TYWQ2LGhO4UySZyFscVOA2WZ+2Cqo8GwkIgXE=",
-        "owner": "astro",
-        "repo": "microvm.nix",
-        "rev": "02a1fe9237a6539ff83d15443d328e4b0b49a117",
-        "type": "github"
-      },
-      "original": {
-        "owner": "astro",
-        "repo": "microvm.nix",
-        "type": "github"
-      }
-    },
-    "nix-sandbox-escape-hatch": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1698447438,
-        "narHash": "sha256-xhTbsaj0LIJvRxqpZHjywvII0nEoZciRPERdoXJnM6o=",
-        "owner": "jmbaur",
-        "repo": "nix-sandbox-escape-hatch",
-        "rev": "d05c6ea343e7a049ee7060d430844590d93d7aa2",
-        "type": "github"
-      },
-      "original": {
-        "owner": "jmbaur",
-        "repo": "nix-sandbox-escape-hatch",
-        "type": "github"
-      }
-    },
     "nixos-router": {
       "inputs": {
         "git-hooks": "git-hooks_3",
@@ -404,26 +324,6 @@
       "original": {
         "owner": "jmbaur",
         "repo": "nixos-router",
-        "type": "github"
-      }
-    },
-    "nixos-shell": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1711263551,
-        "narHash": "sha256-lDaSa0yT0uzFXq1rB0DbD5MNi2TmG9DaTrZqZoPP/I4=",
-        "owner": "Mic92",
-        "repo": "nixos-shell",
-        "rev": "b7e8a0c75c99d81039d1ca7eaab227e4814de638",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Mic92",
-        "repo": "nixos-shell",
         "type": "github"
       }
     },
@@ -526,13 +426,9 @@
     "root": {
       "inputs": {
         "git-hooks": "git-hooks",
-        "gosee": "gosee",
         "home-manager": "home-manager",
         "ipwatch": "ipwatch",
-        "microvm": "microvm",
-        "nix-sandbox-escape-hatch": "nix-sandbox-escape-hatch",
         "nixos-router": "nixos-router",
-        "nixos-shell": "nixos-shell",
         "nixpkgs": "nixpkgs",
         "sops-nix": "sops-nix",
         "tinyboot": "tinyboot",
@@ -558,37 +454,6 @@
       "original": {
         "owner": "Mic92",
         "repo": "sops-nix",
-        "type": "github"
-      }
-    },
-    "spectrum": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1708358594,
-        "narHash": "sha256-e71YOotu2FYA67HoC/voJDTFsiPpZNRwmiQb4f94OxQ=",
-        "ref": "refs/heads/main",
-        "rev": "6d0e73864d28794cdbd26ab7b37259ab0e1e044c",
-        "revCount": 614,
-        "type": "git",
-        "url": "https://spectrum-os.org/git/spectrum"
-      },
-      "original": {
-        "type": "git",
-        "url": "https://spectrum-os.org/git/spectrum"
-      }
-    },
-    "systems": {
-      "locked": {
-        "lastModified": 1681028828,
-        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
-        "owner": "nix-systems",
-        "repo": "default",
-        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-systems",
-        "repo": "default",
         "type": "github"
       }
     },
