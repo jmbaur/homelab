@@ -1,13 +1,5 @@
 .direnv
-.pre-commit-config.yaml
-result*
-outputs
-
-# Provided by nix
-/.terraform.lock.hcl
-/.terraform
-config.tf.json
-
-terraform.tfstate*
-
 .nixos-test-history
+.pre-commit-config.yaml
+.sops.yaml
+result*

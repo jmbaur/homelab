@@ -12,7 +12,7 @@ jobs:
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
       - name: Update out of tree packages
-        run: nix develop .\#ci --command sh -c "just update"
+        run: nix develop --command just update
       - name: Create pull request
         uses: peter-evans/create-pull-request@v6
         with:

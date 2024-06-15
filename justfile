@@ -10,6 +10,12 @@ nixos *ARGS:
 		"{{justfile_directory()}}#nixosConfigurations.$(hostname).config.system.build.toplevel" \
 		--command sudo switch-to-configuration test
 
+new-machine name:
+	mkdir -p {{justfile_directory()}}/nixos-configurations/{{name}}
+	echo '{}' >{{justfile_directory()}}/nixos-configurations/{{name}}/default.nix
+	touch {{justfile_directory()}}/nixos-configurations/{{name}}/age.pubkey
+	touch flake.nix # trigger direnv to get new .sops.yaml
+
 # update all managed packages, meant to be run in CI
 update:
 	#!/usr/bin/env bash
@@ -26,7 +32,7 @@ update:
 	done
 	for cargo_toml in $(find overlays/pkgs -type f -name "Cargo.toml"); do
 		pushd $(dirname $cargo_toml)
-		nix develop .#$(basename $(dirname $cargo_toml)) -c cargo update
+		nix develop .#$(basename $(dirname $cargo_toml)) --command cargo update
 		popd
 	done
 	echo '```console' > /tmp/pr-body
