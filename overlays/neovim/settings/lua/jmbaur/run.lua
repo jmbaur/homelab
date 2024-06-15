@@ -46,6 +46,7 @@ M.builtins = {
 	["lua"] = make_nix_run_builtin("lua"),
 	["nix"] = nix_repl,
 	["nodejs"] = make_nix_run_builtin("node", "nodejs"),
+	["nushell"] = make_nix_shell_builtin("nushell"),
 	["ocaml"] = make_nix_run_builtin("ocaml"),
 	["oil"] = make_nix_run_builtin("oil"),
 	["python3"] = make_nix_run_builtin("python3"),
