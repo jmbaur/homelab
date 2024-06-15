@@ -15,7 +15,7 @@ inputs.nixpkgs.lib.mapAttrs (
         map
           (entry: {
             path_regex = "nixos-configurations/${entry}/secrets.yaml";
-            pgp = gpgFingerprint;
+            pgp = lib.concatStringsSep "," [ gpgFingerprint ];
             age = lib.concatStringsSep "," (
               lib.optionals sopsSupportsAgePlugins [
                 yubikey5cNfc
