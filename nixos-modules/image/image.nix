@@ -1,5 +1,5 @@
 {
-  coreutils,
+  coreutils-full,
   dosfstools,
   dtc,
   erofs-utils,
@@ -107,10 +107,9 @@ stdenv.mkDerivation {
     install -Dm0644 ${dataPartitionConfig} repart.d/${dataPartitionConfig.name}
     install -Dm0644 ${hashPartitionConfig} repart.d/${hashPartitionConfig.name}
 
-    echo "CopyFiles=${coreutils}/bin/env:/bin/env" >> repart.d/${dataPartitionConfig.name}
-    echo "CopyFiles=${toplevelClosure}/registration:/.nix-path-registration" >> repart.d/${dataPartitionConfig.name}
+    echo "CopyFiles=${coreutils-full}/bin/env:/bin/env" >> repart.d/${dataPartitionConfig.name}
     for path in $(cat ${toplevelClosure}/store-paths); do
-      echo "CopyFiles=$path:''${path#/nix}" >> repart.d/${dataPartitionConfig.name}
+      echo "CopyFiles=$path" >> repart.d/${dataPartitionConfig.name}
     done
 
     repart_args=(

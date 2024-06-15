@@ -241,6 +241,8 @@ in
 
               ${unpackImage { config = nodes.machine; }}
 
+              machine.wait_for_unit("multi-user.target")
+
               def assert_boot_entry(filename: str):
                   booted_entry = machine.succeed("iconv -f UTF-16 -t UTF-8 /sys/firmware/efi/efivars/LoaderEntrySelected-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f").strip('\x06').strip('\x00')
                   if booted_entry != filename:
@@ -261,18 +263,13 @@ in
               if not equal_elements(usr_hash_partitions):
                   raise Exception(f"mismatching usr-hash disk sizes: {usr_hash_partitions}")
 
-              machine.succeed("test -f /usr/.nix-path-registration")
-              ${lib.optionalString nodes.machine.custom.image.mutableNixStore ''
-                machine.wait_until_succeeds("test $(nix-store --dump-db | wc -l) -gt 0")
-              ''}
-
               machine.fail("command -v nixos-rebuild")
               machine.${
                 if nodes.machine.custom.image.mutableNixStore then "succeed" else "fail"
               }("test -f /run/current-system/bin/switch-to-configuration")
               machine.${
                 if nodes.machine.custom.image.mutableNixStore then "succeed" else "fail"
-              }("touch foo && nix store add-file ./foo")
+              }("touch foo && nix store add-file ./foo && test $(nix-store --dump-db | wc -l) -gt 0")
 
               with subtest("sysupdate"):
                   update_dir = "/run/update/${nodes.machine.networking.hostName}"

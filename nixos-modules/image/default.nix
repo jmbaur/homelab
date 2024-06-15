@@ -143,7 +143,7 @@ in
         ];
 
         mounts = [
-          (lib.recursiveUpdate
+          (lib.mkMerge [
             {
               where = "/sysroot/nix/store";
               wantedBy = [ "initrd-fs.target" ];
@@ -157,28 +157,24 @@ in
                 RequiresMountsFor = "/sysroot/usr";
               };
             }
-            (
-              # TODO(jared): Use local-overlay-store feature in
-              # https://github.com/NixOS/nix/pull/8397 for implementation
-              # of this.
-              if cfg.mutableNixStore then
-                {
-                  what = "overlay";
-                  type = "overlay";
-                  options = lib.concatStringsSep "," [
-                    "lowerdir=/sysroot/usr/store"
-                    "upperdir=/sysroot/nix/.rw-store/store"
-                    "workdir=/sysroot/nix/.rw-store/work"
-                  ];
-                }
-              else
-                {
-                  what = "/sysroot/usr/store";
-                  type = "none";
-                  options = "bind";
-                }
-            )
-          )
+            # TODO(jared): Use local-overlay-store feature in
+            # https://github.com/NixOS/nix/pull/8397 for implementation
+            # of this.
+            (lib.mkIf cfg.mutableNixStore {
+              what = "overlay";
+              type = "overlay";
+              options = lib.concatStringsSep "," [
+                "lowerdir=/sysroot/usr/nix/store"
+                "upperdir=/sysroot/nix/.rw-store/store"
+                "workdir=/sysroot/nix/.rw-store/work"
+              ];
+            })
+            (lib.mkIf (!cfg.mutableNixStore) {
+              what = "/sysroot/usr/nix/store";
+              type = "none";
+              options = "bind";
+            })
+          ])
         ];
 
         # This needs to be set in order to create the root partition
@@ -276,24 +272,8 @@ in
       ];
     };
 
-    systemd.services.initialize-nix-database = lib.mkIf config.nix.enable {
-      unitConfig.ConditionPathExists = [ "/usr/.nix-path-registration" ];
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-      };
-      path = [ config.nix.package ];
-      script = "nix-store --load-db </usr/.nix-path-registration";
-      wantedBy = [ "multi-user.target" ];
-    };
-
     system.build.image = pkgs.callPackage ./image.nix {
-      toplevelClosure = pkgs.closureInfo {
-        rootPaths = [
-          config.system.build.toplevel
-          pkgs.coreutils
-        ];
-      };
+      toplevelClosure = pkgs.closureInfo { rootPaths = [ config.system.build.toplevel ]; };
       usrFormat = "squashfs";
       imageName = config.networking.hostName;
       inherit maxUsrPadding maxUsrHashPadding;
