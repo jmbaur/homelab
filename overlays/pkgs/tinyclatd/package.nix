@@ -4,7 +4,7 @@
   lib,
   pkg-config,
   rustPlatform,
-  makeWrapper,
+  makeBinaryWrapper,
   tayga,
 }:
 
@@ -26,7 +26,7 @@ rustPlatform.buildRustPackage {
 
   nativeBuildInputs = [
     pkg-config
-    makeWrapper
+    makeBinaryWrapper
   ];
   buildInputs = [ dbus ];
 

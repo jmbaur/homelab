@@ -1,7 +1,7 @@
 {
   lib,
   symlinkJoin,
-  makeWrapper,
+  makeBinaryWrapper,
   forceDarkMode ? false,
   WebRTCPipeWireCapturer ? true,
   SystemNotifications ? true,
@@ -35,7 +35,7 @@ else
   symlinkJoin {
     name = "${mainProgram}-wayland";
     paths = [ package ];
-    buildInputs = [ makeWrapper ];
+    buildInputs = [ makeBinaryWrapper ];
     postBuild = ''
       wrapProgram $out/bin/${mainProgram} \
         --add-flags "--enable-features=${enableFeatures}" \
