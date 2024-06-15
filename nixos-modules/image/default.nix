@@ -113,7 +113,10 @@ in
       # TODO(jared): regex [here](https://github.com/nixos/nix/blob/adba2f19a02eaa74336a06a026d3c37af8020559/src/libstore/unix/local-overlay-store.cc#L35)
       # seems bad, but we want the warnings if the underlying overlay mount is
       # bad, this should be fixed so we don't have to use `check-mount=false`.
-      settings.store = "local-overlay://?root=/&lower-store=/usr?read-only=true&upper-layer=/nix/.rw-store&check-mount=false";
+      #
+      # Issue seems to be our mountpoint has a /sysroot prefix, but the regex
+      # does not handle this.
+      settings.store = "local-overlay://?root=/&lower-store=/usr?read-only=true&upper-layer=/nix/.upper&check-mount=false";
       settings.experimental-features = [
         "local-overlay-store"
         "read-only-local-store"
@@ -150,41 +153,6 @@ in
         storePaths = [
           "${config.boot.initrd.systemd.package}/lib/systemd/system-generators/systemd-veritysetup-generator"
           "${config.boot.initrd.systemd.package}/lib/systemd/systemd-veritysetup"
-        ];
-
-        mounts = [
-          (lib.mkMerge [
-            {
-              where = "/sysroot/nix/store";
-              wantedBy = [ "initrd-fs.target" ];
-              conflicts = [ "umount.target" ];
-              before = [
-                "initrd-fs.target"
-                "umount.target"
-              ];
-              unitConfig = {
-                DefaultDependencies = false;
-                RequiresMountsFor = "/sysroot/usr";
-              };
-            }
-            # TODO(jared): Use local-overlay-store feature in
-            # https://github.com/NixOS/nix/pull/8397 for implementation
-            # of this.
-            (lib.mkIf cfg.mutableNixStore {
-              what = "overlay";
-              type = "overlay";
-              options = lib.concatStringsSep "," [
-                "lowerdir=/sysroot/usr/nix/store"
-                "upperdir=/sysroot/nix/.rw-store/store"
-                "workdir=/sysroot/nix/.rw-store/work"
-              ];
-            })
-            (lib.mkIf (!cfg.mutableNixStore) {
-              what = "/sysroot/usr/nix/store";
-              type = "none";
-              options = "bind";
-            })
-          ])
         ];
 
         # This needs to be set in order to create the root partition
@@ -241,8 +209,8 @@ in
         Format = "btrfs";
         FactoryReset = true;
         MakeDirectories = lib.mkIf cfg.mutableNixStore (toString [
-          "/nix/.rw-store/store"
-          "/nix/.rw-store/work"
+          "/nix/.upper"
+          "/nix/.work"
         ]);
         Encrypt = wantLuksRoot;
         Weight = 1000;
@@ -273,6 +241,7 @@ in
         else
           "/dev/disk/by-partlabel/${config.systemd.repart.partitions."40-root".Label}";
     };
+
     fileSystems.${config.boot.loader.efi.efiSysMountPoint} = {
       device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions."10-boot".Label}";
       fsType = config.systemd.repart.partitions."10-boot".Format;
@@ -281,6 +250,20 @@ in
         "umask=0077"
       ];
     };
+
+    fileSystems."/nix/store" = lib.mkMerge [
+      (lib.mkIf cfg.mutableNixStore {
+        overlay = {
+          lowerdir = [ "/usr/nix/store" ];
+          upperdir = "/nix/.upper";
+          workdir = "/nix/.work";
+        };
+      })
+      (lib.mkIf (!cfg.mutableNixStore) {
+        options = [ "bind" ];
+        device = "/usr/nix/store";
+      })
+    ];
 
     system.build.image = pkgs.callPackage ./image.nix {
       toplevelClosure = pkgs.closureInfo { rootPaths = [ config.system.build.toplevel ]; };
