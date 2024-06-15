@@ -19,6 +19,15 @@ inputs: {
     })
     # all other packages
     (final: prev: {
+      # TODO(jared): https://github.com/NixOS/nix/pull/10916
+      nixVersions = prev.nixVersions.extend (
+        _: nPrev: {
+          nix_2_22 = nPrev.nix_2_22.overrideAttrs (old: {
+            patches = (old.patches or [ ]) ++ [ ./nix-read-only-local-store.patch ];
+          });
+        }
+      );
+
       tmux = prev.tmux.overrideAttrs (old: {
         patches = (old.patches or [ ]) ++ [
           (final.fetchpatch {

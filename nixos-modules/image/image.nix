@@ -8,6 +8,7 @@
   jq,
   lib,
   mtools,
+  nix,
   sbsigntool,
   squashfsTools,
   stdenv,
@@ -72,6 +73,7 @@ stdenv.mkDerivation {
       fakeroot
       jq
       mtools
+      nix
       sbsigntool
       systemd
       systemdUkify
@@ -107,10 +109,15 @@ stdenv.mkDerivation {
     install -Dm0644 ${dataPartitionConfig} repart.d/${dataPartitionConfig.name}
     install -Dm0644 ${hashPartitionConfig} repart.d/${hashPartitionConfig.name}
 
+    tmp_store=$(mktemp -d)
+    nix-store --store $tmp_store --load-db <${toplevelClosure}/registration
+
     echo "CopyFiles=${coreutils-full}/bin/env:/bin/env" >> repart.d/${dataPartitionConfig.name}
+    echo "CopyFiles=''${tmp_store}/nix:/nix" >> repart.d/${dataPartitionConfig.name}
     for path in $(cat ${toplevelClosure}/store-paths); do
       echo "CopyFiles=$path" >> repart.d/${dataPartitionConfig.name}
     done
+
 
     repart_args=(
       "--dry-run=no"
