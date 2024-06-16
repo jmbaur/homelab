@@ -129,13 +129,13 @@ fn reboot() -> Result<()> {
     Ok(())
 }
 
-fn chvt(num: u8) -> Result<()> {
-    std::process::Command::new("/bin/chvt")
-        .arg(num.to_string())
+fn shell() -> Result<()> {
+    std::process::Command::new("/bin/sh")
+        .arg("-l")
         .spawn()
-        .context("failed to spawn /bin/chvt")?
+        .context("failed to spawn /bin/sh")?
         .wait()
-        .context("failed to run /bin/chvt")?;
+        .context("failed to run /bin/sh")?;
 
     Ok(())
 }
@@ -156,7 +156,7 @@ fn wait_for_path(path: &str) -> Result<std::path::PathBuf> {
     fail!("path {} not found", path);
 }
 
-fn real_main(reboot_on_fail: &mut bool) -> Result<()> {
+fn real_main() -> Result<()> {
     eprintln!("{0} INSTALLER {0}", "#".repeat(30));
 
     let proc_cmdline =
@@ -178,9 +178,6 @@ fn real_main(reboot_on_fail: &mut bool) -> Result<()> {
             Some(("installer", "target_disk")) => {
                 target_disk = Some(val);
             }
-            Some(("installer", "reboot_on_fail")) => {
-                *reboot_on_fail = val != "0";
-            }
             _ => {}
         }
     }
@@ -195,6 +192,23 @@ fn real_main(reboot_on_fail: &mut bool) -> Result<()> {
 
     eprintln!("waiting for devices to settle...");
     udev_settle()?;
+
+    {
+        eprintln!("press ENTER to drop to a shell");
+        let (tx, rx) = std::sync::mpsc::channel::<()>();
+        let _thread_handle = std::thread::spawn(move || {
+            let mut input = String::new();
+            match std::io::stdin().read_line(&mut input) {
+                Ok(_) => _ = tx.send(()),
+                Err(_) => {}
+            }
+        });
+
+        match rx.recv_timeout(std::time::Duration::from_millis(2500)) {
+            Ok(_) => fail!("requested a shell"),
+            Err(_) => eprintln!("continuing with installation"),
+        }
+    }
 
     let source_disk_part = wait_for_path(source_disk).context("failed to find source disk")?;
     let target_disk = wait_for_path(target_disk).context("failed to find target disk")?;
@@ -314,26 +328,19 @@ fn real_main(reboot_on_fail: &mut bool) -> Result<()> {
 }
 
 fn main() -> ! {
-    let mut reboot_on_fail = false;
-
-    if let Err(err) = real_main(&mut reboot_on_fail) {
+    if let Err(err) = real_main() {
         eprintln!("failed to perform installation: {:?}", err);
 
-        if reboot_on_fail {
-            eprintln!("rebooting in 10 seconds");
-            std::thread::sleep(std::time::Duration::from_secs(10));
-            if let Err(err) = reboot() {
-                eprintln!("failed to reboot: {}", err);
-            }
-        } else {
-            eprintln!("changing to /dev/tty2 in 10 seconds");
-            std::thread::sleep(std::time::Duration::from_secs(10));
-            if let Err(err) = chvt(2) {
-                eprintln!("failed to chvt: {}", err);
+        eprintln!("dropping to a shell");
+        std::thread::sleep(std::time::Duration::from_millis(2500));
+        loop {
+            if let Err(err) = shell() {
+                eprintln!("failed to spawn shell: {}", err);
             }
         }
     }
 
+    // When reboot is called, we must wait here until the reboot takes place.
     loop {
         use std::io::Read;
         let mut buf = [0u8; 1];

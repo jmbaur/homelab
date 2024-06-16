@@ -58,13 +58,10 @@ let
     mkdir -p /etc/systemd
   '';
 
-  installerKernelParams =
-    installerSystem.config.boot.kernelParams
-    ++ [
-      "installer.target_disk=${installerCfg.targetDisk}"
-      "installer.source_disk=/dev/disk/by-partlabel/installer"
-    ]
-    ++ lib.optionals installerCfg.rebootOnFailure [ "installer.reboot_on_fail=1" ];
+  installerKernelParams = installerSystem.config.boot.kernelParams ++ [
+    "installer.target_disk=${installerCfg.targetDisk}"
+    "installer.source_disk=/dev/disk/by-partlabel/installer"
+  ];
 
   installerInitialRamdisk = pkgs.makeInitrdNG {
     name = "installer-initrd-${kernel-name}";
@@ -159,14 +156,16 @@ in
         The path to the block device that the image will be installed on.
       '';
     };
-    rebootOnFailure = mkEnableOption "reboot installer on failure";
   };
 
   config = lib.mkIf cfg.enable {
-    # The image to install is kept on an ext4 filesystem. TODO(jared): just
-    # write the compressed raw image to the partition directly, no need for a
-    # filesystem.
-    boot.initrd.supportedFilesystems = [ "ext4" ];
+    # The image to install is kept on an ext4 filesystem, we add support for
+    # other filesystems just for convenience. TODO(jared): just write the
+    # compressed raw image to the partition directly, no need for a filesystem.
+    boot.initrd.supportedFilesystems = [
+      "ext4"
+      "vfat"
+    ];
 
     system.build = {
       networkInstaller = throw "unimplemented";
@@ -178,7 +177,7 @@ in
         bootFileCommands =
           {
             "uefi" = ''
-              echo "${installerUki}:/EFI/BOOT/BOOT${lib.toUpper pkgs.stdenv.hostPlatform.efiArch}.EFI" >> $bootfiles
+              echo "${installerUki}:/EFI/boot/boot${pkgs.stdenv.hostPlatform.efiArch}.efi" >>$bootfiles
             '';
             "bootLoaderSpec" =
               ''
