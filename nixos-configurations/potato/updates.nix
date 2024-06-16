@@ -70,7 +70,7 @@ in
                 exit 0
               fi
 
-              if ! [[ $(semver compare "$latest_semver" $(cat "''${output_path}/version") -eq 0 ]]; then
+              if ! [[ $(semver compare "$latest_semver" $(cat "''${output_path}/version")) -eq 0 ]]; then
                 exit 0
               fi
 
