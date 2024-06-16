@@ -63,12 +63,14 @@ in
                 exit 0
               fi
 
+              output_version=$(cat "''${output_path}/version")
+
               # Don't update anything if we already have the latest
-              if [[ -f ''${update_dir}/version ]] && [[ $(semver compare $(cat "''${output_path}/version") $(cat "''${update_dir}/version")) -eq 0 ]]; then
+              if [[ -f ''${update_dir}/version ]] && [[ $(semver compare "$output_version" $(cat "''${update_dir}/version")) -eq 0 ]]; then
                 exit 0
               fi
 
-              echo "Placing update files for v''${latest_tag} using output from $output_path"
+              echo "Placing update files for v''${output_version} using output from $output_path"
 
               find "$update_dir" -mindepth 1 -delete
               cp -rT "$output_path" "$update_dir"
