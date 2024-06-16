@@ -38,3 +38,12 @@ update:
 	echo '```console' > /tmp/pr-body
 	ansifilter < $tmp >> /tmp/pr-body
 	echo '```' >> /tmp/pr-body
+
+git_is_clean:
+	git diff HEAD --quiet
+
+release bump_type="patch": git_is_clean
+	cat {{justfile_directory()}}/.version | xargs semver bump {{bump_type}} | tee {{justfile_directory()}}/.version
+	git add {{justfile_directory()}}/.version
+	git commit -m "Release $(cat {{justfile_directory()}}/.version)"
+	git tag "v$(cat {{justfile_directory()}}/.version)"

@@ -49,6 +49,7 @@ inputs.nixpkgs.lib.mapAttrs (
           just
           nix-prefetch-scripts
           nix-update
+          semver-tool
           sops
         ]
       );

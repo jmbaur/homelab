@@ -40,6 +40,7 @@ inputs.nixpkgs.lib.mapAttrs (
           ];
           networking.hostName = directory;
           sops.defaultSopsFile = ./${directory}/secrets.yaml;
+          system.image.version = builtins.replaceStrings [ "\n" ] [ "" ] (builtins.readFile ../.version);
           custom.image = {
             enable = true;
             update = {
