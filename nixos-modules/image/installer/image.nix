@@ -48,7 +48,7 @@ let
   systemdArchitecture = builtins.replaceStrings [ "_" ] [ "-" ] stdenv.hostPlatform.linuxArch;
 
   bootPartitionConfig = iniFormat.generate "10-boot.conf" { Partition = bootPartition; };
-  imagePartitionConfig = iniFormat.generate "20-image.conf" { Partition = imagePartition; };
+  imagePartitionConfig = iniFormat.generate "10-image.conf" { Partition = imagePartition; };
 in
 stdenv.mkDerivation {
   name = "nixos-image-${imageName}-installer";

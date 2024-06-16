@@ -17,6 +17,7 @@
   systemdUkify,
   ubootTools,
   xz,
+  runCommand,
 
   # arguments
   bootFileCommands,
@@ -39,7 +40,7 @@ let
 
   bootPartition = partitions."10-boot" // { };
 
-  dataPartition = partitions."20-usr-a" // {
+  dataPartition = partitions."10-usr-a" // {
     PaddingMinBytes = toString maxUsrPadding;
     PaddingMaxBytes = toString maxUsrPadding;
     Minimize = true;
@@ -49,7 +50,7 @@ let
     SplitName = "usr";
   };
 
-  hashPartition = partitions."20-usr-hash-a" // {
+  hashPartition = partitions."10-usr-hash-a" // {
     PaddingMinBytes = toString maxUsrHashPadding;
     PaddingMaxBytes = toString maxUsrHashPadding;
     Minimize = true;
@@ -61,11 +62,45 @@ let
   systemdArchitecture = lib.replaceStrings [ "_" ] [ "-" ] stdenv.hostPlatform.linuxArch;
 
   bootPartitionConfig = iniFormat.generate "10-boot.conf" { Partition = bootPartition; };
-  dataPartitionConfig = iniFormat.generate "20-usr-a.conf" { Partition = dataPartition; };
-  hashPartitionConfig = iniFormat.generate "20-usr-hash-a.conf" { Partition = hashPartition; };
+  dataPartitionConfig = iniFormat.generate "10-usr-a.conf" { Partition = dataPartition; };
+  hashPartitionConfig = iniFormat.generate "10-usr-hash-a.conf" { Partition = hashPartition; };
+
+  roNixState =
+    runCommand "read-only-nix-state"
+      {
+        nativeBuildInputs = [
+          sqlite
+          nix
+        ];
+      }
+      ''
+        export NIX_REMOTE=local?root=$out
+        # A user is required by nix
+        # https://github.com/NixOS/nix/blob/9348f9291e5d9e4ba3c4347ea1b235640f54fd79/src/libutil/util.cc#L478
+        export USER=nobody
+        nix-store --load-db <${toplevelClosure}/registration
+        # Reset registration times to make the image reproducible
+        sqlite3 "$out/nix/var/nix/db/db.sqlite" "UPDATE ValidPaths SET registrationTime = ''${SOURCE_DATE_EPOCH}"
+      '';
+
+  repartDefinitions = runCommand "repart-definitions" { } ''
+    install -Dm0644 ${bootPartitionConfig} $out/${bootPartitionConfig.name}
+    install -Dm0644 ${dataPartitionConfig} $out/${dataPartitionConfig.name}
+    install -Dm0644 ${hashPartitionConfig} $out/${hashPartitionConfig.name}
+
+    echo "CopyFiles=${coreutils-full}/bin/env:/bin/env" >> $out/${dataPartitionConfig.name}
+    echo "CopyFiles=${roNixState}/nix:/nix" >> $out/${dataPartitionConfig.name}
+    for path in $(cat ${toplevelClosure}/store-paths); do
+      echo "CopyFiles=$path" >> $out/${dataPartitionConfig.name}
+    done
+  '';
 in
 stdenv.mkDerivation {
   name = "nixos-image-${imageName}";
+
+  passthru = {
+    inherit repartDefinitions;
+  };
 
   depsBuildBuild =
     [
@@ -74,9 +109,7 @@ stdenv.mkDerivation {
       fakeroot
       jq
       mtools
-      nix
       sbsigntool
-      sqlite
       systemd
       systemdUkify
       ubootTools
@@ -107,35 +140,14 @@ stdenv.mkDerivation {
     export SYSTEMD_REPART_MKFS_OPTIONS_EROFS="-zlz4hc,12"
     export SYSTEMD_REPART_MKFS_OPTIONS_SQUASHFS="-comp zstd -processors $NIX_BUILD_CORES"
 
-    install -Dm0644 ${bootPartitionConfig} repart.d/${bootPartitionConfig.name}
-    install -Dm0644 ${dataPartitionConfig} repart.d/${dataPartitionConfig.name}
-    install -Dm0644 ${hashPartitionConfig} repart.d/${hashPartitionConfig.name}
-
-    tmp_store=$(mktemp -d)
-    (
-      export NIX_REMOTE=local?root=$tmp_store
-      # A user is required by nix
-      # https://github.com/NixOS/nix/blob/9348f9291e5d9e4ba3c4347ea1b235640f54fd79/src/libutil/util.cc#L478
-      export USER=nobody
-      nix-store --load-db <${toplevelClosure}/registration
-      # Reset registration times to make the image reproducible
-      sqlite3 "$tmp_store/nix/var/nix/db/db.sqlite" "UPDATE ValidPaths SET registrationTime = ''${SOURCE_DATE_EPOCH}"
-    )
-
-
-    echo "CopyFiles=${coreutils-full}/bin/env:/bin/env" >> repart.d/${dataPartitionConfig.name}
-    echo "CopyFiles=''${tmp_store}/nix:/nix" >> repart.d/${dataPartitionConfig.name}
-    for path in $(cat ${toplevelClosure}/store-paths); do
-      echo "CopyFiles=$path" >> repart.d/${dataPartitionConfig.name}
-    done
-
+    install -Dm0644 -t repart.d ${repartDefinitions}/*
 
     repart_args=(
       "--dry-run=no"
       "--architecture=${systemdArchitecture}"
       "--seed=${seed}"
       "--sector-size=${toString sectorSize}"
-      "--definitions=./repart.d"
+      "--definitions=repart.d"
       "--json=pretty"
     )
 

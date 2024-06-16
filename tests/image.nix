@@ -271,7 +271,7 @@ in
 
               with subtest("mutability"):
                   machine.fail("command -v nixos-rebuild")
-                  if ${toString nodes.machine.custom.image.mutableNixStore} == 1:
+                  if "${toString nodes.machine.custom.image.mutableNixStore}" == "1":
                       print(machine.succeed("nix store info --store daemon"))
                       machine.succeed("test -f /run/current-system/bin/switch-to-configuration")
                       machine.succeed("nix store add-file --store daemon $(mktemp)")

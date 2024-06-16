@@ -197,25 +197,25 @@ in
         SizeMinBytes = "256M";
         SizeMaxBytes = "256M";
       };
-      "20-usr-a" = {
+      "10-usr-a" = {
         Type = "usr";
         Label = "usr-${version}";
       };
-      "20-usr-hash-a" = {
+      "10-usr-hash-a" = {
         Type = "usr-verity";
         Label = "usr-hash-${version}";
       };
 
       # The "B" update partition and root partition get created on first boot.
-      "30-usr-b" = {
+      "10-usr-b" = {
         Type = "usr";
         Label = "usr-0.0.0";
       };
-      "30-usr-hash-b" = {
+      "10-usr-hash-b" = {
         Type = "usr-verity";
         Label = "usr-hash-0.0.0";
       };
-      "40-root" = {
+      "10-root" = {
         Type = "root";
         Label = "root";
         Format = "btrfs";
@@ -230,7 +230,7 @@ in
     };
 
     boot.initrd.luks.devices.root = lib.mkIf cfg.encrypt {
-      device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions."40-root".Label}";
+      device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions."10-root".Label}";
       crypttabExtraOpts = lib.optional cfg.hasTpm2 "tpm2-device=auto";
       tryEmptyPassphrase = !cfg.hasTpm2;
     };
@@ -241,7 +241,7 @@ in
     boot.initrd.supportedFilesystems = [ "squashfs" ];
 
     fileSystems."/" = {
-      fsType = config.systemd.repart.partitions."40-root".Format;
+      fsType = config.systemd.repart.partitions."10-root".Format;
       options = [
         "compress=zstd"
         "noatime"
@@ -251,7 +251,7 @@ in
         if cfg.encrypt then
           "/dev/mapper/root"
         else
-          "/dev/disk/by-partlabel/${config.systemd.repart.partitions."40-root".Label}";
+          "/dev/disk/by-partlabel/${config.systemd.repart.partitions."10-root".Label}";
     };
 
     fileSystems.${config.boot.loader.efi.efiSysMountPoint} = {

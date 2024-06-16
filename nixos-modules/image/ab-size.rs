@@ -87,19 +87,19 @@ fn main() {
 
     update_repart_file(
         usr_size + max_usr_padding,
-        std::path::Path::new("/etc/repart.d/20-usr-a.conf"),
+        std::path::Path::new("/etc/repart.d/10-usr-a.conf"),
     );
     update_repart_file(
         usr_hash_size + max_usr_hash_padding,
-        std::path::Path::new("/etc/repart.d/20-usr-hash-a.conf"),
+        std::path::Path::new("/etc/repart.d/10-usr-hash-a.conf"),
     );
     update_repart_file(
         usr_size + max_usr_padding,
-        std::path::Path::new("/etc/repart.d/30-usr-b.conf"),
+        std::path::Path::new("/etc/repart.d/10-usr-b.conf"),
     );
     update_repart_file(
         usr_hash_size + max_usr_hash_padding,
-        std::path::Path::new("/etc/repart.d/30-usr-hash-b.conf"),
+        std::path::Path::new("/etc/repart.d/10-usr-hash-b.conf"),
     );
 }
 
