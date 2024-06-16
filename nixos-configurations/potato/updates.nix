@@ -34,8 +34,8 @@ in
   systemd.services = lib.mkMerge [
     {
       nix-daemon.serviceConfig = {
-        MemoryHigh = "8G";
-        MemoryMax = "10G";
+        MemoryHigh = "50%";
+        MemoryMax = "75%";
       };
     }
     (lib.listToAttrs (
