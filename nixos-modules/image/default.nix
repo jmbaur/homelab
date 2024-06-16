@@ -270,12 +270,23 @@ in
         upperdir = "/overlay/upper";
         workdir = "/overlay/work";
       };
+      # Ensure systemd knows the ordering dependency between this mmount and
+      # the mount at /nix/store. This ensures they are unmounted in the correct
+      # order as well.
+      options = [ "x-systemd.before=nix-store.mount" ];
     };
 
     fileSystems."/nix/store" = {
       device = if cfg.mutableNixStore then "/overlay/merged/nix/store" else "/usr/nix/store";
-      options = [ "bind" ];
+      options = [
+        "ro"
+        "bind"
+      ];
     };
+
+    # We handle this ourselves, see above. Disabling this also avoids multiple
+    # bind mounts on /nix/store.
+    boot.readOnlyNixStore = false;
 
     system.build.image = pkgs.callPackage ./image.nix {
       toplevelClosure = pkgs.closureInfo { rootPaths = [ config.system.build.toplevel ]; };
