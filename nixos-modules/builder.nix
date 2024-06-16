@@ -90,7 +90,7 @@ let
             set -o nounset
             set -o pipefail
             latest_tag=$(curl --silent "https://api.github.com/repos/${flakeRef.owner}/${flakeRef.repo}/tags" | jq -r '.[0].name')
-            echo "$(nix --extra-experimental-features "nix-command flakes" build --refresh --no-link --print-out-paths --print-build-logs ${flakeUrl}?ref=''${latest_tag}#${outputAttr})"
+            echo "$(nix --extra-experimental-features "nix-command flakes" build --refresh --out-link "$STATE_DIRECTORY/build-${name}" --print-out-paths --print-build-logs ${flakeUrl}?ref=''${latest_tag}#${outputAttr})"
           '';
       };
     }
