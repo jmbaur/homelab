@@ -141,17 +141,18 @@
         uboot-env-tools
       ];
       wantedBy = [ "multi-user.target" ];
-      script = ''
-        if ! fw_printenv | grep --silent -e eth1addr -e eth2addr -e eth3addr; then
-          tmp=$(mktemp)
-          echo "eth1addr $(macgen)" | tee -a $tmp
-          echo "eth2addr $(macgen)" | tee -a $tmp
-          echo "eth3addr $(macgen)" | tee -a $tmp
-          fw_setenv --script $tmp
-          echo "wrote new macaddrs to uboot environment"
-          rm $tmp
-        fi
-      '';
+      script = # bash
+        ''
+          if ! fw_printenv | grep --silent -e eth1addr -e eth2addr -e eth3addr; then
+            tmp=$(mktemp)
+            echo "eth1addr $(macgen)" | tee -a $tmp
+            echo "eth2addr $(macgen)" | tee -a $tmp
+            echo "eth3addr $(macgen)" | tee -a $tmp
+            fw_setenv --script $tmp
+            echo "wrote new macaddrs to uboot environment"
+            rm $tmp
+          fi
+        '';
     };
   };
 }

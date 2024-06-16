@@ -9,12 +9,16 @@ let
 
   buildModule = {
     options = with lib; {
-      flakeUri = mkOption {
-        type = types.str;
+      flakeRef = mkOption {
+        type = types.attrs;
         description = ''
-          The flake URI to build. Currently, this must come from a public
-          source.
+          The flake reference to build from. Currently only GitHub is
+          supported.
         '';
+      };
+      outputAttr = mkOption {
+        type = types.str;
+        example = "nixosConfigurations.foo.config.system.build.toplevel";
       };
       time = mkOption {
         type = types.str;
@@ -38,10 +42,18 @@ let
   buildConfigs = lib.mapAttrsToList (
     name:
     {
-      flakeUri,
+      flakeRef,
+      outputAttr,
       time,
       postBuild,
     }:
+    let
+      flakeUrl =
+        assert flakeRef.type == "github";
+        assert !(flakeRef ? ref);
+        assert !(flakeRef ? rev);
+        builtins.flakeRefToString flakeRef;
+    in
     {
       timers."build@${name}" = {
         timerConfig = {
@@ -53,10 +65,12 @@ let
 
       services."build@${name}" = {
         onSuccess = [ postBuild ];
-        description = "Build ${flakeUri}";
+        description = "Build ${flakeUrl}";
         path = [
           config.nix.package
+          pkgs.curl
           pkgs.gitMinimal
+          pkgs.jq
         ];
         environment = {
           XDG_CACHE_HOME = "%C/builder";
@@ -70,12 +84,14 @@ let
           CacheDirectory = "builder";
           StateDirectory = "builder";
         };
-        script = ''
-          set -o errexit
-          set -o nounset
-          set -o pipefail
-          echo "$(nix --extra-experimental-features "nix-command flakes" build --refresh --no-link --print-out-paths --print-build-logs ${flakeUri})"
-        '';
+        script = # bash
+          ''
+            set -o errexit
+            set -o nounset
+            set -o pipefail
+            latest_tag=$(curl "https://api.github.com/repos/${flakeRef.owner}/${flakeRef.repo}/tags" | jq -r '.[0].name')
+            echo "$(nix --extra-experimental-features "nix-command flakes" build --refresh --no-link --print-out-paths --print-build-logs ${flakeUrl}?ref=''${latest_tag}#${outputAttr})"
+          '';
       };
     }
   ) cfg.builds;

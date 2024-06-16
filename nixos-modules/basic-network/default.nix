@@ -149,12 +149,13 @@ in
           "routable"
           "off"
         ];
-        script = ''
-          #!${pkgs.runtimeShell}
-          if [[ $IFACE != "${clatIfaceName}" ]]; then
-            systemctl restart clatd
-          fi
-        '';
+        script = # bash
+          ''
+            #!${pkgs.runtimeShell}
+            if [[ $IFACE != "${clatIfaceName}" ]]; then
+              systemctl restart clatd
+            fi
+          '';
       };
     };
 

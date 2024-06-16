@@ -63,14 +63,8 @@ in
                 exit 0
               fi
 
-              latest_tag=$(curl "https://api.github.com/repos/jmbaur/homelab/tags" | jq -r '.[0].name')
-              latest_semver=''${latest_tag#v}
-
-              if [[ -f ''${update_dir}/version ]] && [[ $(semver compare "$latest_semver" $(cat "''${update_dir}/version")) -eq 0 ]]; then
-                exit 0
-              fi
-
-              if ! [[ $(semver compare "$latest_semver" $(cat "''${output_path}/version")) -eq 0 ]]; then
+              # Don't update anything if we already have the latest
+              if [[ -f ''${update_dir}/version ]] && [[ $(semver compare $(cat "''${output_path}/version") $(cat "''${update_dir}/version")) -eq 0 ]]; then
                 exit 0
               fi
 
@@ -90,7 +84,12 @@ in
     lib.imap0 (
       i: name:
       lib.nameValuePair name {
-        flakeUri = "github:jmbaur/homelab#nixosConfigurations.${name}.config.system.build.image.update";
+        flakeRef = {
+          type = "github";
+          owner = "jmbaur";
+          repo = "homelab";
+        };
+        outputAttr = "nixosConfigurations.${name}.config.system.build.image.update";
         postBuild = config.systemd.services."post-build@${name}".name;
         # Daily builds where each build is slated to run in a tiered fashion,
         # one hour after each other.

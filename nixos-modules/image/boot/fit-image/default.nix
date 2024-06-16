@@ -76,12 +76,13 @@ in
     # status of what updates are pending, but the tooling isn't there yet.
     systemd.services.update-uboot-env = {
       path = [ pkgs.uboot-env-tools ];
-      script = ''
-        mapfile versions <<< $(find ${config.boot.loader.efi.efiSysMountPoint} -name "*uImage" | sort --version-sort | sed 's,.*\([0-9]\+\.[0-9]\+\.[0-9]\+\).*,\1,')
-        fw_setenv altversion ''${versions[0]}
-        fw_setenv version ''${versions[1]}
-        fw_printenv
-      '';
+      script = # bash
+        ''
+          mapfile versions <<< $(find ${config.boot.loader.efi.efiSysMountPoint} -name "*uImage" | sort --version-sort | sed 's,.*\([0-9]\+\.[0-9]\+\.[0-9]\+\).*,\1,')
+          fw_setenv altversion ''${versions[0]}
+          fw_setenv version ''${versions[1]}
+          fw_printenv
+        '';
     };
 
     systemd.sysupdate.transfers."70-fit-image" = {
