@@ -43,9 +43,7 @@ in
         name:
         lib.nameValuePair "post-build@${name}" {
           path = with pkgs; [
-            curl
             gnupg
-            jq
             semver-tool
           ];
           environment.GNUPGHOME = "/root/.gnupg"; # TODO(jared): sops?
