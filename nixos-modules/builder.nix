@@ -71,6 +71,9 @@ let
           StateDirectory = "builder";
         };
         script = ''
+          set -o errexit
+          set -o nounset
+          set -o pipefail
           echo "$(nix --extra-experimental-features "nix-command flakes" build --refresh --no-link --print-out-paths --print-build-logs ${flakeUri})"
         '';
       };
