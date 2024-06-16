@@ -75,13 +75,13 @@ in
     # TODO(jared): we should be using sysupdate tooling directly to query the
     # status of what updates are pending, but the tooling isn't there yet.
     systemd.services.update-uboot-env = {
+      unitConfig.ConditionPathExists = [ "/etc/fw_env.config" ];
       path = [ pkgs.uboot-env-tools ];
       script = # bash
         ''
           mapfile versions <<< $(find ${config.boot.loader.efi.efiSysMountPoint} -name "*uImage" | sort --version-sort | sed 's,.*\([0-9]\+\.[0-9]\+\.[0-9]\+\).*,\1,')
-          fw_setenv altversion ''${versions[0]}
-          fw_setenv version ''${versions[1]}
-          fw_printenv
+          fw_setenv --script <(echo -e "altversion ''${versions[0]}\nversion ''${versions[1]}")
+          fw_printenv version altversion
         '';
     };
 
