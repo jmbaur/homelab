@@ -42,20 +42,45 @@ in
       map (
         name:
         lib.nameValuePair "post-build@${name}" {
-          path = [ pkgs.gnupg ];
+          path = with pkgs; [
+            curl
+            gnupg
+            jq
+            semver-tool
+          ];
           environment.GNUPGHOME = "/root/.gnupg"; # TODO(jared): sops?
           serviceConfig.StandardInput = "file:/run/build-${name}";
-          script = ''
-            output_path=$(cat /dev/stdin)
-            if [[ -n "$output_path" ]]; then
+          script = # bash
+            ''
+              set -o errexit
+              set -o nounset
+              set -o pipefail
+
               update_dir=/var/lib/updates/${name}
-              cp $output_path/* $update_dir
-              pushd $update_dir
-              rm -f SHA256SUMS SHA256SUMS.gpg; sha256sum * >SHA256SUMS
-              gpg --batch --yes --sign --detach-sign --output SHA256SUMS.gpg SHA256SUMS
-              popd
-            fi
-          '';
+
+              output_path=$(cat /dev/stdin)
+              if [[ -z "$output_path" ]]; then
+                exit 0
+              fi
+
+              latest_tag=$(curl "https://api.github.com/repos/jmbaur/homelab/tags" | jq -r '.[0].name')
+              latest_semver=''${latest_tag#v}
+
+              if [[ -f ''${update_dir}/version ]] && [[ $(semver compare "$latest_semver" $(cat "''${update_dir}/version")) -eq 0 ]]; then
+                exit 0
+              fi
+
+              if ! [[ $(semver compare "$latest_semver" $(cat "''${output_path}/version") -eq 0 ]]; then
+                exit 0
+              fi
+
+              echo "Placing update files for v''${latest_tag} using output from $output_path"
+
+              find "$update_dir" -mindepth 1 -delete
+              cp -rT "$output_path" "$update_dir"
+              (cd "$update_dir"; sha256sum * >SHA256SUMS) # SHA256SUMS must be relative to $update_dir
+              gpg --batch --yes --sign --detach-sign --output "''${update_dir}/SHA256SUMS.gpg" "''${update_dir}/SHA256SUMS"
+            '';
         }
       ) allHosts
     ))

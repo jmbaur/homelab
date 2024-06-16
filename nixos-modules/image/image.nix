@@ -152,6 +152,7 @@ stdenv.mkDerivation {
     )
 
     mkdir -p $out $update
+    echo ${version} > $update/version
 
     fakeroot systemd-repart ''${repart_args[@]} \
       --defer-partitions=esp \
