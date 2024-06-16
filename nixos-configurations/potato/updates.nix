@@ -47,12 +47,14 @@ in
           serviceConfig.StandardInput = "file:/run/build-${name}";
           script = ''
             output_path=$(cat /dev/stdin)
-            update_dir=/var/lib/updates/${name}
-            cp $output_path/* $update_dir
-            pushd $update_dir
-            rm -f SHA256SUMS SHA256SUMS.gpg; sha256sum * >SHA256SUMS
-            gpg --batch --yes --sign --detach-sign --output SHA256SUMS.gpg SHA256SUMS
-            popd
+            if [[ -n "$output_path" ]]; then
+              update_dir=/var/lib/updates/${name}
+              cp $output_path/* $update_dir
+              pushd $update_dir
+              rm -f SHA256SUMS SHA256SUMS.gpg; sha256sum * >SHA256SUMS
+              gpg --batch --yes --sign --detach-sign --output SHA256SUMS.gpg SHA256SUMS
+              popd
+            fi
           '';
         }
       ) allHosts
