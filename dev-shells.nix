@@ -6,7 +6,7 @@ inputs.nixpkgs.lib.mapAttrs (
 
     gpgFingerprint = "D4A0692874AA71B7F1281491BB8667EA7EB08143";
 
-    sopsSupportsAgePlugins = false; # :/
+    sopsSupportsAgePlugins = false; # TODO(jared): soon! See https://github.com/getsops/sops/pull/1465
     yubikey5cNfc = "age1yubikey1q20xxhpyk00m3ezajg3769jpmgwkvasq4dzutg75jq96fytnlcmxs9ltmga";
     yubikey5Nfc = "age1yubikey1q0tf5gp52t3smx6zduwyjnurw4cgjlqdm58a9dj6430e8mtrfexfg586p8p";
 
