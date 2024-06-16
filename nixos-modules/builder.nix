@@ -90,30 +90,6 @@ in
     users.groups.builder = { };
     nix.settings.trusted-users = [ "@builder" ];
 
-    systemd = lib.mkMerge (
-      buildConfigs
-      ++ [
-        {
-          tmpfiles.settings."10-post-build"."/run/post-build.stdin"."p+" = {
-            mode = "0460";
-            user = "root";
-            group = config.users.groups.builder.name;
-          };
-          services.post-build = {
-            description = "Post build hook";
-            wantedBy = [ "multi-user.target" ];
-            serviceConfig = {
-              StandardInput = "file:/run/post-build.stdin";
-              Restart = "always";
-            };
-            script = lib.mkDefault ''
-              while true; do
-                echo $(cat /dev/stdin)
-              done
-            '';
-          };
-        }
-      ]
-    );
+    systemd = lib.mkMerge buildConfigs;
   };
 }
