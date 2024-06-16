@@ -275,9 +275,10 @@ in
                       print(machine.succeed("nix store info --store daemon"))
                       machine.succeed("test -f /run/current-system/bin/switch-to-configuration")
                       machine.succeed("nix store add-file --store daemon $(mktemp)")
-                      ro_paths = machine.succeed("ls /usr/nix/store | wc -l").strip()
-                      rw_paths = machine.succeed("ls /overlay/upper | wc -l").strip()
-                      merged_paths = machine.succeed("ls /nix/store | wc -l").strip()
+                      ro_paths = int(machine.succeed("ls /usr/nix/store | wc -l").strip())
+                      rw_paths = int(machine.succeed("ls /overlay/upper | wc -l").strip())
+                      merged_paths = int(machine.succeed("ls /nix/store | wc -l").strip())
+                      print(f"{ro_paths=}, {rw_paths=}, {merged_paths=}")
                       assert ro_paths + rw_paths == merged_paths
                   else:
                       machine.fail("test -f /run/current-system/bin/switch-to-configuration")
