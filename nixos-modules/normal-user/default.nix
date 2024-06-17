@@ -17,14 +17,6 @@ let
     ++ (lib.optional config.programs.wireshark.enable "wireshark")
     ++ (lib.optional config.virtualisation.docker.enable "docker");
 
-  shell =
-    if config.programs.fish.enable then
-      pkgs.fish
-    else if config.programs.zsh.enable then
-      pkgs.zsh
-    else
-      pkgs.bash;
-
   mountpoint = lib.findFirst (path: config.fileSystems ? "${path}") (throw "mount not found") [
     "/home"
     "/"
@@ -84,7 +76,7 @@ in
 
           homectl create "$username" \
             --member-of=${lib.concatStringsSep "," groups} \
-            --shell=${utils.toShellPath shell} \
+            --shell=${utils.toShellPath config.users.defaultUserShell} \
             --storage=${if fileSystemConfig.fsType == "btrfs" then "subvolume" else "directory"} \
             --enforce-password-policy=no
 

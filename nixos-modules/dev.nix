@@ -17,9 +17,7 @@ in
       pkgs.home-manager
     ];
 
-    # enable some nicer interactive shells
-    programs.fish.enable = true;
-    programs.zsh.enable = true;
+    users.defaultUserShell = pkgs.nushell;
 
     programs.ssh.startAgent = lib.mkDefault true;
     programs.gnupg.agent.enable = lib.mkDefault true;
