@@ -129,10 +129,14 @@ in
 
       programs.carapace.enable = true;
 
+      programs.starship = {
+        enable = true;
+        settings.format = "$directory$git_branch$git_state$character";
+      };
+
       programs.nushell = {
         enable = true;
         configFile.source = ./config.nu;
-        envFile.source = ./env.nu;
         extraConfig = lib.concatLines (
           map
             (plugin: ''
