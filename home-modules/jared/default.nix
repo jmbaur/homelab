@@ -131,7 +131,24 @@ in
 
       programs.starship = {
         enable = true;
-        settings.format = "$directory$git_branch$git_state$character";
+        settings = {
+          format = "$directory$git_branch$git_state$character";
+          # from https://starship.rs/presets/plain-text
+          character = {
+            success_symbol = "[>](bold green)";
+            error_symbol = "[x](bold red)";
+            vimcmd_symbol = "[<](bold green)";
+          };
+          git_status = {
+            ahead = ">";
+            behind = "<";
+            diverged = "<>";
+            renamed = "r";
+            deleted = "x";
+          };
+          directory.read_only = " ro";
+          git_branch.symbol = "git ";
+        };
       };
 
       programs.nushell = {
