@@ -94,7 +94,6 @@ let
           [
             efmls-configs-nvim
             fzf-lua
-            iron-nvim
             mini-nvim
             nvim-lspconfig
             nvim-treesitter-context
@@ -105,14 +104,8 @@ let
             snippets-nvim
             vim-dispatch
             vim-eunuch
-            vim-flog
-            vim-fugitive
-            vim-gist
-            vim-nix
             vim-repeat
-            vim-rhubarb
             vim-rsi
-            zen-mode-nvim
           ]
           ++ lib.optionals rustSupport [
             # Use rustaceanvim for single-file support. See
@@ -145,7 +138,7 @@ wrapNeovimUnstable neovim-unwrapped (
               fd # picker
               fswatch # for faster LSP experience
               fzf # fzf-lua
-              git # vim-fugitive
+              git # mini-git
               ripgrep # picker
               tree-sitter
             ]

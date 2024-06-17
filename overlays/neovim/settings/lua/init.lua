@@ -15,12 +15,12 @@ if #vim.api.nvim_list_uis() > 0 then
 	require("jmbaur.compile")
 	require("jmbaur.filemanager")
 	require("jmbaur.lsp").setup({ launcher = launcher })
-	require("jmbaur.repl")
 	require("jmbaur.run").setup()
 	require("jmbaur.sessions")
 	require("jmbaur.snippets")
 	require("jmbaur.statusline")
 	require("jmbaur.treesitter")
+	require("mini.diff").setup({})
 	require("mini.git").setup({})
 	require("mini.tabline").setup({ show_icons = false, set_vim_settings = false })
 	require("mini.trailspace").setup({})
@@ -37,6 +37,21 @@ if #vim.api.nvim_list_uis() > 0 then
 	vim.opt.shell = "/run/current-system/sw/bin/bash"
 	vim.opt.splitkeep = "screen"
 	vim.opt.title = true
+
+	-- Use BufNew since it is only called once on the creation of a new buffer,
+	-- unlike BufEnter, which is called everytime the buffer is entered
+	vim.api.nvim_create_autocmd({ "BufNew" }, {
+		desc = "Setup MiniDiff",
+		callback = function(args)
+			if not vim.api.nvim_buf_is_valid(args.buf) then return nil end
+			vim.b[args.buf or 0].minidiff_disable = true -- disabled by default, but toggleable
+
+			vim.api.nvim_buf_create_user_command(args.buf, "Diff", function()
+				vim.b[args.buf or 0].minidiff_disable = false
+				MiniDiff.toggle(args.buf)
+			end, { desc = "Toggle MiniDiff" })
+		end
+	})
 end
 
 require("mini.bracketed").setup({})
