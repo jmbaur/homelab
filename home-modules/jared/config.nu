@@ -6,6 +6,20 @@ $env.config = {
     }
 
     edit_mode: emacs
+
+    keybindings: [
+        {
+            name: insert_last_token
+            modifier: alt
+            keycode: char_.
+            mode: emacs
+            event: [
+                { edit: InsertString, value: "!$" }
+                { send: Enter }
+            ]
+        }
+    ]
+
     shell_integration: {
         # osc2 abbreviates the path if in the home_dir, sets the tab/window title, shows the running command in the tab/window title
         osc2: true
