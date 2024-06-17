@@ -127,10 +127,14 @@ in
         .git
       '';
 
-      programs.carapace.enable = true;
+      programs.carapace = {
+        enable = true;
+        enableNushellIntegration = false;
+      };
 
       programs.starship = {
         enable = true;
+        enableNushellIntegration = false;
         settings = {
           format = "$directory$git_branch$git_state$character";
           # from https://starship.rs/presets/plain-text
@@ -154,9 +158,22 @@ in
       programs.nushell = {
         enable = true;
         configFile.source = ./config.nu;
+        envFile.source =
+          let
+            emulator = pkgs.stdenv.hostPlatform.emulator pkgs.buildPackages;
+          in
+          pkgs.runCommand "env.nu" { HOME = config.home.homeDirectory; } ''
+            ${emulator} ${lib.getExe pkgs.carapace} _carapace nushell >>$out
+            ${emulator} ${lib.getExe pkgs.starship} init nu >>$out
+            ${emulator} ${lib.getExe pkgs.zoxide} init nushell >>$out
+          '';
       };
 
-      programs.zoxide.enable = true;
+      programs.zoxide = {
+        enable = true;
+        enableNushellIntegration = false;
+      };
+
       programs.direnv = {
         enable = true;
         nix-direnv = {
