@@ -140,7 +140,6 @@ in
               plugin use ${lib.getExe plugin}
             '')
             [
-              pkgs.nushellPlugins.gstat
               pkgs.nushellPlugins.query
               pkgs.nushellPlugins.formats
             ]
