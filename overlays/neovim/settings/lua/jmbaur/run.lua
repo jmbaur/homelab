@@ -28,18 +28,12 @@ local nix_repl = function()
 	return "nix repl --expr 'import <nixpkgs>{}'"
 end
 
-local current_shell = function()
-	return os.getenv("SHELL")
-end
-
 M.builtins = {
 	["bash"] = make_nix_run_builtin("bash"),
 	["bc"] = make_nix_run_builtin("bc"),
 	["clj"] = make_nix_run_builtin("clj", "clojure"),
-	["dash"] = make_nix_run_builtin("dash"),
 	["deno"] = make_nix_run_builtin("deno"),
 	["erl"] = make_nix_shell_builtin("erl", "erlang"),
-	["fish"] = make_nix_run_builtin("fish"),
 	["fsharpi"] = make_nix_shell_builtin("fsharpi", "fsharp"),
 	["ghci"] = make_nix_shell_builtin("ghci", "ghc"),
 	["guile"] = make_nix_run_builtin("guile"),
@@ -48,10 +42,7 @@ M.builtins = {
 	["nodejs"] = make_nix_run_builtin("node", "nodejs"),
 	["nushell"] = make_nix_shell_builtin("nushell"),
 	["ocaml"] = make_nix_run_builtin("ocaml"),
-	["oil"] = make_nix_run_builtin("oil"),
 	["python3"] = make_nix_run_builtin("python3"),
-	["shell"] = current_shell,
-	["zsh"] = make_nix_run_builtin("zsh"),
 }
 
 M.run = function(cmd)

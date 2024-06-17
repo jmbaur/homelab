@@ -129,8 +129,8 @@ in
 
       programs.nushell = {
         enable = true;
-        configFile = ./config.nu;
-        envFile = ./env.nu;
+        configFile.source = ./config.nu;
+        envFile.source = ./env.nu;
       };
 
       programs.zoxide.enable = true;
