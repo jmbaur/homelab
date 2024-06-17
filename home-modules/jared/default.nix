@@ -127,12 +127,10 @@ in
         .git
       '';
 
-      programs.fish = {
+      programs.nushell = {
         enable = true;
-        interactiveShellInit = ''
-          set -U fish_greeting ""
-          complete --command nom --wraps nix
-        '';
+        configFile = ./config.nu;
+        envFile = ./env.nu;
       };
 
       programs.zoxide.enable = true;
