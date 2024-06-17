@@ -15,6 +15,7 @@ nixosTest {
     virtualisation.qemu.consoles = [ "tty0" ];
 
     custom.desktop.enable = true;
+    custom.dev.enable = true;
   };
   testScript = ''
     # Just for interactive usage with driverInteractive for now
