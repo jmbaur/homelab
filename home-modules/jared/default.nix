@@ -137,17 +137,6 @@ in
       programs.nushell = {
         enable = true;
         configFile.source = ./config.nu;
-        extraConfig = lib.concatLines (
-          map
-            (plugin: ''
-              plugin add ${lib.getExe plugin}
-              plugin use ${lib.getExe plugin}
-            '')
-            [
-              pkgs.nushellPlugins.query
-              pkgs.nushellPlugins.formats
-            ]
-        );
       };
 
       programs.zoxide.enable = true;
