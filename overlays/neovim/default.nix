@@ -65,6 +65,7 @@ let
             latexSupport
             luaSupport
             nixSupport
+            nuSupport
             pythonSupport
             rustSupport
             shellSupport
