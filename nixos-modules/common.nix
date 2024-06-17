@@ -61,6 +61,12 @@ in
       ];
     };
 
+    # Provide a sane default value so that commands don't outright fail on an
+    # otherwise unconfigured machine.
+    environment.sessionVariables.NIX_PATH = lib.mkIf config.nix.enable (
+      lib.mkDefault "nixpkgs=https://github.com/nixos/nixpkgs/archive/nixos-unstable.tar.gz"
+    );
+
     # Use the dbus-broker dbus daemon implementation (more performance, yeah?)
     services.dbus.implementation = "broker";
 
