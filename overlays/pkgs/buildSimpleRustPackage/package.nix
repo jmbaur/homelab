@@ -4,11 +4,7 @@
 # features that Cargo and `rustPlatform.buildRustPackage` provides (such as
 # unit testing and cross-compilation support).
 
-{
-  rustPlatform,
-  writeText,
-  runCommand,
-}:
+{ rustPlatform, runCommand }:
 
 pname: source:
 let

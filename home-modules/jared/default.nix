@@ -306,7 +306,6 @@ in
           bind-key J command-prompt -p "join pane from:"  "join-pane -h -s '%%'"
           bind-key W run-shell -b "${pkgs.tmuxPlugins.tmux-fzf}/share/tmux-plugins/tmux-fzf/scripts/session.sh switch"
           bind-key j display-popup -E -h 75% -w 75% -b double -T "Jump to:" "tmux-jump"
-
         '';
       };
 
