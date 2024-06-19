@@ -2,7 +2,10 @@ inputs: {
   default =
     { ... }:
     {
-      nixpkgs.overlays = with inputs; [ self.overlays.default ];
+      nixpkgs.overlays = with inputs; [
+        inputs.u-boot-nix.overlays.default
+        self.overlays.default
+      ];
       imports = [
         ./basic-network
         ./builder.nix

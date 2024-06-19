@@ -92,11 +92,7 @@ in
     lib.imap0 (
       i: name:
       lib.nameValuePair name {
-        flakeRef = {
-          type = "github";
-          owner = "jmbaur";
-          repo = "homelab";
-        };
+        flakeRef = "github:jmbaur/homelab";
         outputAttr = "nixosConfigurations.${name}.config.system.build.image.update";
         postBuild = config.systemd.services."post-build@${name}".name;
         # Daily builds where each build is slated to run in a tiered fashion,

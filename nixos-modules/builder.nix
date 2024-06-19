@@ -10,15 +10,17 @@ let
   buildModule = {
     options = with lib; {
       flakeRef = mkOption {
-        type = types.attrs;
+        type = types.str;
+        example = "github:nixos/nixpkgs";
         description = ''
-          The flake reference to build from. Currently only GitHub is
-          supported.
+          The flake reference to build from.
+
+          Currently only GitHub is supported.
         '';
       };
       outputAttr = mkOption {
         type = types.str;
-        example = "nixosConfigurations.foo.config.system.build.toplevel";
+        example = "legacyPackages.x86_64-linux.hello";
       };
       time = mkOption {
         type = types.str;
@@ -29,11 +31,12 @@ let
       };
       postBuild = mkOption {
         type = types.str;
+        example = "my-post-build.service";
         description = ''
           The systemd service to activate after a successful build. There will
           be a file at /run/build-''${name} whose contents will be the nix
           output path for the last successful build that this service should
-          read from to condition its behavior.
+          read from in order to condition its behavior.
         '';
       };
     };
@@ -48,54 +51,61 @@ let
       postBuild,
     }:
     let
-      flakeUrl =
-        assert flakeRef.type == "github";
-        assert !(flakeRef ? ref);
-        assert !(flakeRef ? rev);
-        builtins.flakeRefToString flakeRef;
+      flakeRefAttr = builtins.parseFlakeRef flakeRef;
     in
-    {
-      timers."build@${name}" = {
-        timerConfig = {
-          OnCalendar = time;
-          Persistent = true;
+    assert flakeRefAttr.type == "github";
+    lib.warnIf (flakeRefAttr ? ref || flakeRefAttr ? rev)
+      "ignoring ref/rev set in ${flakeRef}, latest tag always built"
+      {
+        timers."build@${name}" = {
+          timerConfig = {
+            OnCalendar = time;
+            Persistent = true;
+          };
+          wantedBy = [ "timers.target" ];
         };
-        wantedBy = [ "timers.target" ];
-      };
 
-      services."build@${name}" = {
-        onSuccess = [ postBuild ];
-        description = "Build ${flakeUrl}";
-        after = [ "network-online.target" ];
-        wants = [ "network-online.target" ];
-        path = [
-          config.nix.package
-          pkgs.curl
-          pkgs.gitMinimal
-          pkgs.jq
-        ];
-        environment = {
-          XDG_CACHE_HOME = "%C/builder";
-          XDG_STATE_HOME = "%S/builder";
+        services."build@${name}" = {
+          onSuccess = [ postBuild ];
+          description = "Build ${flakeRef}";
+          after = [ "network-online.target" ];
+          wants = [ "network-online.target" ];
+          path = [
+            config.nix.package
+            pkgs.curl
+            pkgs.gitMinimal
+            pkgs.jq
+          ];
+          environment = {
+            XDG_CACHE_HOME = "%C/builder";
+            XDG_STATE_HOME = "%S/builder";
+          };
+          serviceConfig = {
+            DynamicUser = true;
+            StandardOutput = "truncate:/run/build-${name}";
+            StandardError = "journal";
+            SupplementaryGroups = [ "builder" ];
+            CacheDirectory = "builder";
+            StateDirectory = "builder";
+          };
+          script = # bash
+            ''
+              set -o errexit
+              set -o nounset
+              set -o pipefail
+
+              latest_tag=$(curl --silent "https://api.github.com/repos/${flakeRefAttr.owner}/${flakeRefAttr.repo}/tags" | jq -r '.[0].name')
+
+              nix --extra-experimental-features "nix-command flakes" \
+                build \
+                --refresh \
+                --out-link "$STATE_DIRECTORY/build-${name}" \
+                --print-out-paths \
+                --print-build-logs \
+                "${flakeRef}?ref=''${latest_tag}#${outputAttr}"
+            '';
         };
-        serviceConfig = {
-          DynamicUser = true;
-          StandardOutput = "truncate:/run/build-${name}";
-          StandardError = "journal";
-          SupplementaryGroups = [ "builder" ];
-          CacheDirectory = "builder";
-          StateDirectory = "builder";
-        };
-        script = # bash
-          ''
-            set -o errexit
-            set -o nounset
-            set -o pipefail
-            latest_tag=$(curl --silent "https://api.github.com/repos/${flakeRef.owner}/${flakeRef.repo}/tags" | jq -r '.[0].name')
-            echo "$(nix --extra-experimental-features "nix-command flakes" build --refresh --out-link "$STATE_DIRECTORY/build-${name}" --print-out-paths --print-build-logs ${flakeUrl}?ref=''${latest_tag}#${outputAttr})"
-          '';
-      };
-    }
+      }
   ) cfg.builds;
 
 in
