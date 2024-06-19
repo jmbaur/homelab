@@ -215,9 +215,9 @@ in
         extraConfig = {
           "difftool \"difftastic\"".cmd = "${lib.getExe' pkgs.difftastic "difft"}  \"$LOCAL\" \"$REMOTE\"";
           "git-extras \"get\"".clone-path = config.home.sessionVariables.PROJECTS_DIR;
-          "url \"git@codeberg.com:\"".pushInsteadOf = "https://codeberg.org/";
-          "url \"git@github.com:\"".pushInsteadOf = "https://github.com/";
-          "url \"git@gitlab.com:\"".pushInsteadOf = "https://gitlab.com/";
+          "url \"git+ssh://git@codeberg.com/\"".pushInsteadOf = "https://codeberg.org/";
+          "url \"git+ssh://git@github.com/\"".pushInsteadOf = "https://github.com/";
+          "url \"git+ssh://git@gitlab.com/\"".pushInsteadOf = "https://gitlab.com/";
           blame.ignoreRevsFile = ".git-blame-ignore-revs";
           blame.markIgnoredLines = true;
           blame.markUnblamableLines = true;
