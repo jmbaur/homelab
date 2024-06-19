@@ -93,11 +93,11 @@ in
 
     environment.pathsToLink = [ "/share/wallpapers" ];
     environment.systemPackages = with pkgs; [
-      alacritty
       brightnessctl
       caffeineScript
       cliphist
       defaultIconTheme
+      foot
       libnotify
       mako
       pamixer
@@ -152,21 +152,24 @@ in
       }
     );
 
-    environment.etc."xdg/alacritty/alacritty.toml".source =
-      (pkgs.formats.toml { }).generate "alacritty.toml"
-        {
-          live_config_reload = false;
-          mouse.hide_when_typing = true;
-          selection.save_to_clipboard = true;
-          font.size = 12;
-          terminal.osc52 = "CopyPaste";
-          import = [ "${pkgs.alacritty-theme}/tomorrow_night_bright.toml" ];
-        };
+    environment.etc."xdg/foot/foot.ini".source = (pkgs.formats.ini { }).generate "foot.ini" {
+      main = {
+        font = "monospace:size=12";
+        selection-target = "both";
+      };
+      mouse = {
+        hide-when-typing = "yes";
+      };
+      colors = {
+        background = "000000";
+        foreground = "ffffff";
+      };
+    };
 
     # Looks the best with sway defaults
     environment.etc."xdg/rofi.rasi".text = ''
       configuration {
-        terminal: "alacritty";
+        terminal: "foot";
         font: "monospace 10";
       }
       @theme "Paper"

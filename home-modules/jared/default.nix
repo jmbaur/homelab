@@ -259,6 +259,7 @@ in
         ];
         extraConfig = ''
           set-option -as terminal-features ",alacritty:RGB"
+          set-option -as terminal-features ",foot:RGB"
           set-option -as terminal-features ",rio:RGB"
           set-option -as terminal-features ",wezterm:RGB"
           set-option -as terminal-features ",xterm-256color:RGB"

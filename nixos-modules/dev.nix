@@ -17,6 +17,7 @@ in
       pkgs.home-manager
     ];
 
+    environment.shells = [ pkgs.nushell ];
     users.defaultUserShell = pkgs.nushell;
 
     programs.ssh.startAgent = lib.mkDefault true;
