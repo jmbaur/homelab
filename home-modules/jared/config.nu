@@ -5,6 +5,11 @@ $env.config = {
         emacs: block
     }
 
+    history: {
+        file_format: "sqlite"
+        isolation: true
+    }
+
     edit_mode: emacs
 
     keybindings: [
