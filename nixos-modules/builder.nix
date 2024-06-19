@@ -77,6 +77,7 @@ let
             pkgs.jq
           ];
           environment = {
+            NIX_REMOTE = "daemon";
             XDG_CACHE_HOME = "%C/builder";
             XDG_STATE_HOME = "%S/builder";
           };
