@@ -15,6 +15,7 @@ if #vim.api.nvim_list_uis() > 0 then
 	require("jmbaur.compile")
 	require("jmbaur.filemanager")
 	require("jmbaur.lsp").setup({ launcher = launcher })
+	require("jmbaur.readline")
 	require("jmbaur.run").setup()
 	require("jmbaur.sessions")
 	require("jmbaur.snippets")

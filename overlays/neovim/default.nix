@@ -95,6 +95,7 @@ let
             efmls-configs-nvim
             fzf-lua
             mini-nvim
+            nvim-genghis
             nvim-lspconfig
             nvim-treesitter-context
             nvim-treesitter-refactor
@@ -103,9 +104,6 @@ let
             oil-nvim
             snippets-nvim
             vim-dispatch
-            vim-eunuch
-            vim-repeat
-            vim-rsi
           ]
           ++ lib.optionals rustSupport [
             # Use rustaceanvim for single-file support. See
