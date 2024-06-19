@@ -66,6 +66,8 @@ let
       services."build@${name}" = {
         onSuccess = [ postBuild ];
         description = "Build ${flakeUrl}";
+        after = [ "network-online.target" ];
+        wants = [ "network-online.target" ];
         path = [
           config.nix.package
           pkgs.curl
