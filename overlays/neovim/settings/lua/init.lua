@@ -14,6 +14,7 @@ if #vim.api.nvim_list_uis() > 0 then
 	require("jmbaur.clipboard")
 	require("jmbaur.compile")
 	require("jmbaur.filemanager")
+	require("jmbaur.git")
 	require("jmbaur.lsp").setup({ launcher = launcher })
 	require("jmbaur.readline")
 	require("jmbaur.run").setup()
@@ -21,8 +22,6 @@ if #vim.api.nvim_list_uis() > 0 then
 	require("jmbaur.snippets")
 	require("jmbaur.statusline")
 	require("jmbaur.treesitter")
-	require("mini.diff").setup({})
-	require("mini.git").setup({})
 	require("mini.tabline").setup({ show_icons = false, set_vim_settings = false })
 	require("mini.trailspace").setup({})
 

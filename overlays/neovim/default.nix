@@ -6,6 +6,7 @@
   fzf,
   ghc,
   git,
+  git-extras,
   go-tools,
   gofumpt,
   gopls,
@@ -137,6 +138,7 @@ wrapNeovimUnstable neovim-unwrapped (
               fswatch # for faster LSP experience
               fzf # fzf-lua
               git # mini-git
+              git-extras # :Permalink
               ripgrep # picker
               tree-sitter
             ]
