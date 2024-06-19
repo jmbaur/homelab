@@ -132,29 +132,6 @@ in
         enableNushellIntegration = false;
       };
 
-      programs.starship = {
-        enable = true;
-        enableNushellIntegration = false;
-        settings = {
-          format = "$directory$git_branch$git_state$character";
-          # from https://starship.rs/presets/plain-text
-          character = {
-            success_symbol = "[>](bold green)";
-            error_symbol = "[x](bold red)";
-            vimcmd_symbol = "[<](bold green)";
-          };
-          git_status = {
-            ahead = ">";
-            behind = "<";
-            diverged = "<>";
-            renamed = "r";
-            deleted = "x";
-          };
-          directory.read_only = " ro";
-          git_branch.symbol = "git ";
-        };
-      };
-
       programs.nushell = {
         enable = true;
         configFile.source = ./config.nu;
@@ -163,8 +140,8 @@ in
             emulator = pkgs.stdenv.hostPlatform.emulator pkgs.buildPackages;
           in
           pkgs.runCommand "env.nu" { HOME = config.home.homeDirectory; } ''
+            cat ${./env.nu} >$out
             ${emulator} ${lib.getExe pkgs.carapace} _carapace nushell >>$out
-            ${emulator} ${lib.getExe pkgs.starship} init nu >>$out
             ${emulator} ${lib.getExe pkgs.zoxide} init nushell >>$out
           '';
       };
