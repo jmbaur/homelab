@@ -96,7 +96,6 @@ let
             efmls-configs-nvim
             fzf-lua
             mini-nvim
-            nvim-genghis
             nvim-lspconfig
             nvim-treesitter-context
             nvim-treesitter-refactor
