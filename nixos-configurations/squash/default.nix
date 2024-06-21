@@ -8,6 +8,9 @@
   # TODO(jared): use FIT_BEST_MATCH feature in u-boot to choose this automatically
   hardware.deviceTree.name = "armada-388-clearfog-pro.dtb";
 
+  # Not using UEFI here
+  systemd.package = pkgs.systemd.override { withEfi = false; };
+
   custom = {
     server.enable = true;
     image = {
