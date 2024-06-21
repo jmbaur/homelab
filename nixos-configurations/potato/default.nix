@@ -9,7 +9,10 @@
 
   hardware.enableRedistributableFirmware = true;
   hardware.cpu.intel.updateMicrocode = true;
-  hardware.chromebook.enable = true;
+  hardware.chromebook = {
+    enable = true;
+    laptop = false;
+  };
 
   # TODO(jared): be confident enough to enable this!
   systemd.sysupdate.reboot.enable = false;
@@ -24,10 +27,15 @@
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
-  boot.kernelParams = [
-    "console=ttyS0,115200"
-    "console=tty0" # TODO(jared): this shouldn't be needed
-  ];
+  # TODO(jared): This shouldn't be needed, getty-generator should generate this
+  # unit on bootup.
+  systemd.services."serial-getty@ttyS0" = {
+    enable = true;
+    wantedBy = [ "getty.target" ];
+    serviceConfig.Restart = "always"; # restart when session is closed
+  };
+
+  boot.kernelParams = [ "console=ttyS0,115200" ];
 
   tinyboot = {
     enable = true;
