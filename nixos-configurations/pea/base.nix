@@ -45,8 +45,11 @@ in
     };
   };
 
-  # tpm kernel modules aren't built in our defconfig
+  # TPM kernel modules aren't built in our defconfig
   boot.initrd.systemd.enableTpm2 = false;
+
+  # Not using UEFI here
+  systemd.package = pkgs.systemd.override { withEfi = false; };
 
   system.build.firmware = uboot;
 
