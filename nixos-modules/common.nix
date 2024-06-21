@@ -61,9 +61,6 @@ in
       ];
     };
 
-    # TODO(jared): remove when https://github.com/NixOS/nixpkgs/pull/321358 is merged
-    systemd.generators.systemd-getty-generator = lib.mkIf config.console.enable "${config.systemd.package}/lib/systemd/system-generators/systemd-getty-generator";
-
     # Provide a sane default value so that commands don't outright fail on an
     # otherwise unconfigured machine.
     environment.sessionVariables.NIX_PATH = lib.mkIf config.nix.enable (
