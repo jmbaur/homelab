@@ -23,7 +23,7 @@ in
       news.display = "silent";
 
       nix = {
-        package = pkgs.nixVersions.nix_2_22; # TODO(jared): should be in sync with globally installed nix
+        package = pkgs.nixVersions.nix_2_23; # TODO(jared): should be in sync with globally installed nix
         registry.nixpkgs.flake = inputs.nixpkgs;
         settings = {
           nix-path = [ "nixpkgs=${inputs.nixpkgs}" ];

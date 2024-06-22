@@ -49,7 +49,7 @@ in
     users.mutableUsers = lib.mkDefault false;
 
     nix = {
-      package = pkgs.nixVersions.nix_2_22;
+      package = pkgs.nixVersions.nix_2_23;
       channel.enable = false; # opt out of nix channels
       settings.trusted-users = [
         "root"

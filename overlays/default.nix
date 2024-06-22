@@ -21,10 +21,13 @@ inputs: {
     (final: prev: {
       nixVersions = prev.nixVersions.extend (
         _: nPrev: {
-          nix_2_22 = nPrev.nix_2_22.overrideAttrs (old: {
+          nix_2_23 = nPrev.nix_2_23.overrideAttrs (old: {
             patches = (old.patches or [ ]) ++ [
               ./nix-local-overlay-store-regex.patch
-              ./nix-read-only-local-store.patch # TODO(jared): https://github.com/NixOS/nix/pull/10916
+              (prev.fetchpatch {
+                url = "https://github.com/nixos/nix/commit/de639ceafe75ae25293f49f170ccad0c3e4a133f.patch";
+                hash = "sha256-BkRE61Kgdojhz1xWruArgCSriKop3kfCNyW46x1xc0o=";
+              })
             ];
           });
         }

@@ -1,7 +1,7 @@
-diff --git a/src/libstore/unix/local-overlay-store.cc b/src/libstore/unix/local-overlay-store.cc
+diff --git a/src/libstore/local-overlay-store.cc b/src/libstore/local-overlay-store.cc
 index 598415db8..6cb4413ea 100644
---- a/src/libstore/unix/local-overlay-store.cc
-+++ b/src/libstore/unix/local-overlay-store.cc
+--- a/src/libstore/local-overlay-store.cc
++++ b/src/libstore/local-overlay-store.cc
 @@ -42,7 +42,7 @@ LocalOverlayStore::LocalOverlayStore(const Params & params)
          }
  
