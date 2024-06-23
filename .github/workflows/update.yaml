@@ -20,4 +20,3 @@ jobs:
           delete-branch: true
           commit-message: Update dependencies
           title: Update Dependencies
-          body-path: /tmp/pr-body

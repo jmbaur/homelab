@@ -55,25 +55,24 @@ inputs.nixpkgs.lib.mapAttrs (
 
     updateRepoDependencies = mkApp (
       pkgs.writeShellScript "update-repo-dependencies" ''
-        tmp=$(mktemp)
         export NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"
-        nix flake update --accept-flake-config 2>&1 1>&- | tee -a $tmp
+
+        nix flake update --accept-flake-config
+
         for source in $(find -type f -name "*source.json"); do
           args=()
           if [[ $(jq -r ".fetchSubmodules" < "$source") == "true" ]]; then
             args+=("--fetch-submodules")
           fi
           args+=("$(jq -r ".url" < $source)")
-          nix-prefetch-git "''${args[@]}" | tee "$source" | tee -a $tmp
+          nix-prefetch-git "''${args[@]}" | tee "$source"
         done
+
         for cargo_toml in $(find overlays/pkgs -type f -name "Cargo.toml"); do
           pushd $(dirname $cargo_toml)
           nix develop .#$(basename $(dirname $cargo_toml)) --command cargo update
           popd
         done
-        echo '```console' > /tmp/pr-body
-        ansifilter < $tmp >> /tmp/pr-body
-        echo '```' >> /tmp/pr-body
       ''
     );
 
