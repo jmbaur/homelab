@@ -43,12 +43,10 @@ inputs.nixpkgs.lib.mapAttrs (
       packages = (
         with pkgs;
         [
-          ansifilter
           bashInteractive
           jq
           just
           nix-prefetch-scripts
-          nix-update
           semver-tool
           sops
         ]
