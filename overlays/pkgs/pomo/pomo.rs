@@ -19,10 +19,7 @@ macro_rules! notifyf {
             print!("\x1bPtmux;\x1b");
         }
 
-        // osc9: "\x1b]9;pomodoro: {}\x07"
-        // osc99: TODO
-        // osc777: "\x1b]777;notify;pomodoro;{}\x07"
-        print!("\x1b]777;notify;pomodoro;{}\x07", format!($($args),*));
+        print!("\x1b]777;notify;pomodoro;{}\x1b\x5c", format!($($args),*));
 
         if *in_tmux {
             print!("\x1b\\");
