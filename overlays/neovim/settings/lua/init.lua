@@ -20,7 +20,6 @@ if #vim.api.nvim_list_uis() > 0 then
 	require("jmbaur.run").setup()
 	require("jmbaur.sessions")
 	require("jmbaur.snippets")
-	require("jmbaur.statusline")
 	require("jmbaur.treesitter")
 	require("mini.tabline").setup({ show_icons = false, set_vim_settings = false })
 	require("mini.trailspace").setup({})
