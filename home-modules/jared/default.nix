@@ -127,29 +127,12 @@ in
         .git
       '';
 
-      programs.carapace = {
+      programs.bash = {
         enable = true;
-        enableNushellIntegration = false;
+        shellAliases.j = "tmux-jump";
       };
 
-      programs.nushell = {
-        enable = true;
-        configFile.source = ./config.nu;
-        envFile.source =
-          let
-            emulator = pkgs.stdenv.hostPlatform.emulator pkgs.buildPackages;
-          in
-          pkgs.runCommand "env.nu" { HOME = config.home.homeDirectory; } ''
-            cat ${./env.nu} >$out
-            ${emulator} ${lib.getExe pkgs.carapace} _carapace nushell >>$out
-            ${emulator} ${lib.getExe pkgs.zoxide} init nushell >>$out
-          '';
-      };
-
-      programs.zoxide = {
-        enable = true;
-        enableNushellIntegration = false;
-      };
+      programs.zoxide.enable = true;
 
       programs.direnv = {
         enable = true;

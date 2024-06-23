@@ -164,7 +164,6 @@ M.setup = function(config)
 			},
 		},
 		nil_ls  = { enable = vim.g.lang_support_nix, config = { on_attach = on_attach } },
-		nushell = { enable = vim.g.lang_support_nu, config = { on_attach = on_attach } },
 		lua_ls  = {
 			enable = vim.g.lang_support_lua,
 			config = {

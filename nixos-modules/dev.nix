@@ -17,9 +17,6 @@ in
       pkgs.home-manager
     ];
 
-    environment.shells = [ pkgs.nushell ];
-    users.defaultUserShell = pkgs.nushell;
-
     programs.ssh.startAgent = lib.mkDefault true;
     programs.gnupg.agent.enable = lib.mkDefault true;
     services.pcscd.enable = config.custom.desktop.enable;

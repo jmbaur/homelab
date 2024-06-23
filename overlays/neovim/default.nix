@@ -17,7 +17,6 @@
   neovimUtils,
   nil,
   nixfmt-rfc-style,
-  nushell,
   ormolu,
   pyright,
   ripgrep,
@@ -171,7 +170,6 @@ wrapNeovimUnstable neovim-unwrapped (
             ])
             ++ (lib.optionals tomlSupport [ taplo ])
             ++ (lib.optionals zigSupport [ zls ])
-            ++ (lib.optionals nuSupport [ nushell ])
             ++ (lib.optionals pythonSupport [
               pyright
               ruff
