@@ -129,7 +129,10 @@ in
 
       programs.bash = {
         enable = true;
-        shellAliases.j = "tmux-jump";
+        shellAliases = {
+          j = "tmux-jump";
+          remove-ssh-connections = "${lib.getExe pkgs.fd} --regex \"ssh-[a-f0-9]{40}\" $XDG_RUNTIME_DIR --exec rm {} \\;";
+        };
       };
 
       programs.zoxide.enable = true;
