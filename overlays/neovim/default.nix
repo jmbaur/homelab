@@ -103,6 +103,8 @@ let
             oil-nvim
             snippets-nvim
             vim-dispatch
+            vim-eunuch
+            vim-fugitive
           ]
           ++ lib.optionals rustSupport [
             # Use rustaceanvim for single-file support. See

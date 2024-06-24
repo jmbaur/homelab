@@ -5,7 +5,7 @@
       "locked": {
         "lastModified": 1715724830,
         "narHash": "sha256-PIxiLcirJESkm8gEj8BFWep40rO6F9iDHYIvoOhKajs=",
-        "ref": "24.05",
+        "ref": "refs/tags/24.05",
         "rev": "695a79fdb4627439c19eaa790fee6849cfec0abd",
         "revCount": 56550,
         "submodules": true,
@@ -13,7 +13,7 @@
         "url": "https://github.com/coreboot/coreboot"
       },
       "original": {
-        "ref": "24.05",
+        "ref": "refs/tags/24.05",
         "submodules": true,
         "type": "git",
         "url": "https://github.com/coreboot/coreboot"
@@ -93,11 +93,11 @@
         "nixpkgs-stable": "nixpkgs-stable"
       },
       "locked": {
-        "lastModified": 1718879355,
-        "narHash": "sha256-RTyqP4fBX2MdhNuMP+fnR3lIwbdtXhyj7w7fwtvgspc=",
+        "lastModified": 1719249328,
+        "narHash": "sha256-Bit5QIBnDuQyF+rXz5lGbm4EyOKAAkWpgh+htXzNOs0=",
         "owner": "cachix",
         "repo": "git-hooks.nix",
-        "rev": "8cd35b9496d21a6c55164d8547d9d5280162b07a",
+        "rev": "cfb96902abfdb986e68a8d09ffa5c363376c973e",
         "type": "github"
       },
       "original": {
@@ -465,11 +465,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1719090269,
-        "narHash": "sha256-QqKox0HZjMwwB1HS7eXnFeZwb+36GE4iStSWlUUW7yw=",
+        "lastModified": 1719214797,
+        "narHash": "sha256-Y4SMNwYVjKXG/Mxusw05cqI/MrV/wzh5gHXNMGq0lNw=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "91be37258532b2f34bc32bd643d70cdddf235025",
+        "rev": "9458a17158374af8095308ab5e20bdfa938adc29",
         "type": "github"
       },
       "original": {
