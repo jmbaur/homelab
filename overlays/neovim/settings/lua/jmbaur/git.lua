@@ -28,7 +28,7 @@ vim.api.nvim_create_user_command("Permalink", function(args)
 		table.insert(git_browse_args, args.line2)
 	end
 
-	vim.print(vim.trim(vim.system(git_browse_args, {
+	local url = vim.trim(vim.system(git_browse_args, {
 		-- "git browse" calls xdg-open, so ensure that xdg-open prints to
 		-- stdout by setting the following environment variables
 		env = {
@@ -36,5 +36,15 @@ vim.api.nvim_create_user_command("Permalink", function(args)
 			DISPLAY = "",
 			WAYLAND_DISPLAY = "",
 		}
-	}):wait().stdout))
-end, { range = true, desc = "Get a permalink to source at line under cursor or selected range" })
+	}):wait().stdout)
+
+	if args.bang then
+		vim.fn.setreg("+", url)
+	end
+
+	vim.print(url)
+end, {
+	range = true,
+	bang = true,
+	desc = "Get a permalink to source at line under cursor or selected range",
+})
