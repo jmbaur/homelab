@@ -69,7 +69,7 @@ bindsym Mod4+j focus down
 bindsym Mod4+k focus up
 bindsym Mod4+l focus right
 bindsym Mod4+minus scratchpad show
-bindsym Mod4+p exec "rofi -show-icons -modi ssh,filebrowser,window,drun -show drun"
+bindsym Mod4+p exec "rofi -show-icons -modes run,drun -show drun"
 bindsym Mod4+r mode resize
 bindsym Mod4+s layout stacking
 bindsym Mod4+space focus mode_toggle
