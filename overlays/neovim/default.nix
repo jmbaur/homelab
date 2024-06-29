@@ -42,7 +42,6 @@
   latexSupport ? supportAllLanguages,
   luaSupport ? supportAllLanguages,
   nixSupport ? supportAllLanguages,
-  nuSupport ? supportAllLanguages,
   pythonSupport ? supportAllLanguages,
   rustSupport ? supportAllLanguages,
   shellSupport ? supportAllLanguages,
@@ -65,7 +64,6 @@ let
             latexSupport
             luaSupport
             nixSupport
-            nuSupport
             pythonSupport
             rustSupport
             shellSupport

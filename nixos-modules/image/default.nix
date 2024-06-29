@@ -289,7 +289,7 @@ in
     boot.readOnlyNixStore = false;
 
     system.build.image = pkgs.callPackage ./image.nix {
-      toplevelClosure = pkgs.closureInfo { rootPaths = [ config.system.build.toplevel ]; };
+      rootPaths = [ config.system.build.toplevel ];
       usrFormat = "squashfs";
       imageName = config.networking.hostName;
       inherit maxUsrPadding maxUsrHashPadding;

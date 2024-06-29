@@ -1,4 +1,5 @@
 {
+  closureInfo,
   coreutils-full,
   dosfstools,
   dtc,
@@ -9,6 +10,7 @@
   lib,
   mtools,
   nix,
+  runCommand,
   sbsigntool,
   sqlite,
   squashfsTools,
@@ -17,7 +19,6 @@
   systemdUkify,
   ubootTools,
   xz,
-  runCommand,
 
   # arguments
   bootFileCommands,
@@ -26,7 +27,7 @@
   partitions,
   postImageCommands,
   sectorSize,
-  toplevelClosure,
+  rootPaths,
   usrFormat,
   version,
   maxUsrPadding,
@@ -65,6 +66,8 @@ let
   dataPartitionConfig = iniFormat.generate "10-usr-a.conf" { Partition = dataPartition; };
   hashPartitionConfig = iniFormat.generate "10-usr-hash-a.conf" { Partition = hashPartition; };
 
+  closure = closureInfo { inherit rootPaths; };
+
   roNixState =
     runCommand "read-only-nix-state"
       {
@@ -78,7 +81,7 @@ let
         # A user is required by nix
         # https://github.com/NixOS/nix/blob/9348f9291e5d9e4ba3c4347ea1b235640f54fd79/src/libutil/util.cc#L478
         export USER=nobody
-        nix-store --load-db <${toplevelClosure}/registration
+        nix-store --load-db <${closure}/registration
         # Reset registration times to make the image reproducible
         sqlite3 "$out/nix/var/nix/db/db.sqlite" "UPDATE ValidPaths SET registrationTime = ''${SOURCE_DATE_EPOCH}"
       '';
@@ -90,7 +93,7 @@ let
 
     echo "CopyFiles=${coreutils-full}/bin/env:/bin/env" >> $out/${dataPartitionConfig.name}
     echo "CopyFiles=${roNixState}/nix:/nix" >> $out/${dataPartitionConfig.name}
-    for path in $(cat ${toplevelClosure}/store-paths); do
+    for path in $(cat ${closure}/store-paths); do
       echo "CopyFiles=$path" >> $out/${dataPartitionConfig.name}
     done
   '';
