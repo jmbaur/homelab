@@ -35,7 +35,10 @@
     serviceConfig.Restart = "always"; # restart when session is closed
   };
 
-  boot.kernelParams = [ "console=ttyS0,115200" ];
+  boot.kernelParams = [
+    "console=ttyS0,115200"
+    "console=tty1" # TODO(jared): needed for some reason?
+  ];
 
   tinyboot = {
     enable = true;
