@@ -326,7 +326,7 @@ in
       (
         # TODO(jared): test with all boot methods, right now uefi is easiest
         lib.filter ({ bootMethod, ... }: bootMethod == "uefi") (
-          lib.cartesianProductOfSets {
+          lib.cartesianProduct {
             bootMethod = [
               "uefi"
               "uboot"

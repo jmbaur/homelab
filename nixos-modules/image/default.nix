@@ -116,17 +116,22 @@ in
     system.switch.enableNg = cfg.mutableNixStore;
     system.disableInstallerTools = true;
 
-    nix = {
-      # Having nix available on a system with a read-only nix-store is
-      # meaningless.
-      enable = cfg.mutableNixStore;
-      settings = {
-        experimental-features = [
+    nix = lib.mkMerge [
+      {
+        # Having nix available on a system with a read-only nix-store is
+        # meaningless.
+        enable = cfg.mutableNixStore;
+      }
+      (lib.mkIf cfg.mutableNixStore {
+        settings.experimental-features = [
           "local-overlay-store"
           "read-only-local-store"
         ];
-      };
-    };
+        # Make sure we use the nix-daemon so all store operations are applied
+        # properly with the local-overlay
+        gc.options = "--option store daemon";
+      })
+    ];
 
     # So that users running nix commands are able to connect to the right
     # store.

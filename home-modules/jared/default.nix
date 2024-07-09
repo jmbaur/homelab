@@ -129,6 +129,7 @@ in
 
       programs.bash = {
         enable = true;
+        historyControl = [ "ignoreboth" ];
         shellAliases = {
           j = "tmux-jump";
           remove-ssh-connections = "${lib.getExe pkgs.fd} --regex \"ssh-[a-f0-9]{40}\" $XDG_RUNTIME_DIR --exec rm {} \\;";

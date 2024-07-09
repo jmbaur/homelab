@@ -43,18 +43,10 @@ let
 
     echo "booting ${id}_''${version}.uImage"
     load ${cfg.boot.uboot.bootMedium.type} ${toString cfg.boot.uboot.bootMedium.index}:1 $loadaddr "${id}_''${version}.uImage"
-    source ''${loadaddr}:bootscript
+    source ''${loadaddr}
   '';
 
-  globalBootScriptImage = pkgs.runCommand "boot.scr" { } ''
-    ${lib.getExe' pkgs.buildPackages.ubootTools "mkimage"} \
-      -A ${pkgs.stdenv.hostPlatform.linuxArch} \
-      -O linux \
-      -T script \
-      -C none \
-      -d ${globalBootScript} \
-      $out
-  '';
+  globalBootScriptImage = pkgs.callPackage ./boot-scr-uimg.nix { inherit globalBootScript; };
 
   kernelPath = "${config.system.build.kernel}/${config.system.boot.loader.kernelFile}";
 
@@ -154,7 +146,7 @@ in
 
         mkimage --fit image.its "$update/${fixedFitImageName}"
 
-        echo "${globalBootScriptImage}:/boot.scr" >>$bootfiles
+        echo "${globalBootScriptImage}:/boot.scr.uimg" >>$bootfiles
         echo "$update/${fixedFitImageName}:/${fixedFitImageName}" >>$bootfiles
       '';
   };

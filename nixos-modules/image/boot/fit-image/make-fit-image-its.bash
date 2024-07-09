@@ -22,13 +22,14 @@ function top() {
 	#address-cells = <1>;
 
 	images {
+		default = "bootscript";
 		bootscript {
 			description = "bootscript";
 			data = /incbin/("$bootscript");
 			type = "script";
 			compression = "none";
 			hash-1 {
-				algo = "crc32";
+				algo = "sha256";
 			};
 		};
 		kernel {
@@ -41,7 +42,7 @@ function top() {
 			load = <$load_address>;
 			entry = <$load_address>;
 			hash-1 {
-				algo = "crc32";
+				algo = "sha256";
 			};
 		};
 		ramdisk {
@@ -52,7 +53,7 @@ function top() {
 			os = "linux";
 			compression = "none";
 			hash-1 {
-				algo = "crc32";
+				algo = "sha256";
 			};
 		};
 EOF
@@ -69,7 +70,7 @@ function fdt_definition() {
 			arch = "$arch";
 			compression = "none";
 			hash-1 {
-				algo = "crc32";
+				algo = "sha256";
 			};
 		};
 EOF
@@ -87,7 +88,7 @@ function x86_setup_node() {
 			load = <0x00090000>;
 			entry = <0x00090000>;
 			hash-1 {
-				algo = "crc32";
+				algo = "sha256";
 			};
 		};
 EOF
