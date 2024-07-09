@@ -22,7 +22,8 @@ vim.api.nvim_create_user_command("Permalink", function(args)
 	local branch = vim.trim(vim.system({ "git", "rev-parse", "--abbrev-ref", "HEAD" }):wait().stdout)
 	local remote = vim.trim(vim.system({ "git", "config", string.format("branch.%s.remote", branch) }):wait().stdout)
 
-	local git_browse_args = { "git", "browse", remote, vim.fn.expand("%"), args.line1 }
+	local git_file = vim.trim(vim.system({ "git", "ls-files", vim.fn.expand("%") }):wait().stdout)
+	local git_browse_args = { "git", "browse", remote, git_file, args.line1 }
 
 	if args.range > 0 then
 		table.insert(git_browse_args, args.line2)
