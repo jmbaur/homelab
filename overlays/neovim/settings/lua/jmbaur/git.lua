@@ -19,11 +19,16 @@
 
 -- depends on git-browse (in git-extras at https://github.com/tj/git-extras)
 vim.api.nvim_create_user_command("Permalink", function(args)
-	local branch = vim.trim(vim.system({ "git", "rev-parse", "--abbrev-ref", "HEAD" }):wait().stdout)
-	local remote = vim.trim(vim.system({ "git", "config", string.format("branch.%s.remote", branch) }):wait().stdout)
-
-	local git_file = vim.trim(vim.system({ "git", "ls-files", vim.fn.expand("%") }):wait().stdout)
-	local git_browse_args = { "git", "browse", remote, git_file, args.line1 }
+	local current_file = vim.fn.expand("%")
+	local repo_dir = vim.trim(vim.system({ "git", "-C", vim.fs.dirname(current_file), "rev-parse", "--show-toplevel" })
+		:wait().stdout)
+	local branch = vim.trim(vim.system({ "git", "-C", repo_dir, "rev-parse", "--abbrev-ref", "HEAD" }):wait().stdout)
+	local remote = vim.trim(vim.system({ "git", "-C", repo_dir, "config", string.format("branch.%s.remote", branch) })
+		:wait().stdout)
+	local git_file = vim.trim(vim.system({ "git", "-C", repo_dir, "ls-files", current_file }):wait()
+		.stdout)
+	local git_browse_args = { "git", "-C", repo_dir, "browse", remote, git_file, args.line1 }
+	vim.print(git_browse_args)
 
 	if args.range > 0 then
 		table.insert(git_browse_args, args.line2)
