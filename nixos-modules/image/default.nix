@@ -179,6 +179,8 @@ in
         # runs. See https://github.com/systemd/systemd/blob/6bd675a659a508cd1df987f90b633ed1c4b12cb3/src/partition/repart.c#L7705.
         repart.device = "/dev/mapper/usr";
 
+        # TODO(jared): Delete this when https://github.com/systemd/systemd/commit/468d09c3196a7a4c68b2c3f75b4dd8dcbed8650f is in nixpkgs systemd package.
+        #
         # systemd-repart doesn't seem to have a way to copy the size of a
         # partition based on the size of another, so we use a small program to
         # determine the size of A that we need to copy to B.
