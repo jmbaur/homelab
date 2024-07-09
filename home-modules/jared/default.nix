@@ -86,6 +86,7 @@ in
         pax-utils
         pb
         pciutils
+        poke
         pomo
         procs
         pstree
