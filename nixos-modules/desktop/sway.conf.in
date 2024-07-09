@@ -107,7 +107,7 @@ input "type:touchpad" {
 }
 
 output "*" {
-  background @wallpaperPath@ fill
+  background /etc/sway/wallpaper fill
 }
 
 seat "*" {

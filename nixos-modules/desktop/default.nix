@@ -9,22 +9,9 @@ let
 
   xcursorSize = 24;
   xcursorTheme = "DMZ-Black";
-  wallpaperPackage = pkgs.nixos-artwork.wallpapers.binary-white;
-  wallpaperPath =
-    let
-      names = lib.splitString "/" wallpaperPackage.kdeFilePath;
-    in
-    "/"
-    + lib.concatStringsSep "/" (
-      [
-        "run"
-        "current-system"
-        "sw"
-      ]
-      ++ lib.sublist 4 ((lib.length names) - 4) names
-    );
+  wallpaper = pkgs.nixos-artwork.wallpapers.binary-white.kdeFilePath;
 
-  lockCmd = "${lib.getExe pkgs.swaylock} --daemonize --show-failed-attempts --image=${wallpaperPath} --scaling=fill";
+  lockCmd = "${lib.getExe pkgs.swaylock} --daemonize --show-failed-attempts --image=/etc/sway/wallpaper --scaling=fill";
 
   # For xwayland applications
   defaultIconTheme = pkgs.runCommand "default-icon-theme" { } ''
@@ -106,7 +93,6 @@ in
       shotman
       tinybar
       vanilla-dmz
-      wallpaperPackage
       wl-clipboard
     ];
 
@@ -131,11 +117,14 @@ in
       # pkgs.pinentry-rofi.override { rofi = pkgs.rofi-wayland; };
       pkgs.pinentry-tty;
 
+    # Create a default wallpaper, but allow for changing it
+    systemd.tmpfiles.settings."10-sway-wallpaper"."/etc/sway/wallpaper".L.argument = wallpaper;
+
     # Override the upstream defaults
     environment.etc."sway/config".source = lib.mkForce (
       pkgs.substituteAll {
         src = ./sway.conf.in;
-        inherit xcursorSize xcursorTheme wallpaperPath;
+        inherit xcursorSize xcursorTheme;
         xkbLayout = config.services.xserver.xkb.layout;
         xkbModel = config.services.xserver.xkb.model;
         xkbOptions = config.services.xserver.xkb.options;
