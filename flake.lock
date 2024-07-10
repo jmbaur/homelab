@@ -272,11 +272,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1720470846,
-        "narHash": "sha256-7ftA4Bv5KfH4QdTRxqe8/Hz2YTKo+7IQ9n7vbNWgv28=",
+        "lastModified": 1720646128,
+        "narHash": "sha256-BivO5yIQukDlJL+1875Sqf3GuOPxZDdA48dYDi3PkL8=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "2fb5c1e0a17bc6059fa09dc411a43d75f35bb192",
+        "rev": "c085b984ff2808bf322f375b10fea5a415a9c43d",
         "type": "github"
       },
       "original": {
@@ -329,16 +329,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1720620225,
-        "narHash": "sha256-/Pxxqacln+lS9es4NnUER2xCKOWaZ4yPXADNvcZNdVk=",
-        "owner": "jmbaur",
+        "lastModified": 1720418205,
+        "narHash": "sha256-cPJoFPXU44GlhWg4pUk9oUPqurPlCFZ11ZQPk21GTPU=",
+        "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "149589af9738d543581487202febc290d1ae9bb4",
+        "rev": "655a58a72a6601292512670343087c2d75d859c1",
         "type": "github"
       },
       "original": {
-        "owner": "jmbaur",
-        "ref": "homelab",
+        "owner": "nixos",
+        "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }

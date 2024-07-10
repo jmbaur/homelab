@@ -8,7 +8,7 @@
       baseConfig = "defconfig";
       preferBuiltin = true;
       autoModules = true;
-      target = "vmlinuz.efi";
+      target = "Image";
     };
     gcc.arch = "armv8-a";
   };
