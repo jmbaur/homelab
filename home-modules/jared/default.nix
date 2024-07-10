@@ -22,17 +22,13 @@ in
       home.stateVersion = lib.mkDefault "24.11";
       news.display = "silent";
 
-      nix = {
-        package = pkgs.nixVersions.nix_2_23; # TODO(jared): should be in sync with globally installed nix
-        registry.nixpkgs.flake = inputs.nixpkgs;
-        settings = {
-          nix-path = [ "nixpkgs=${inputs.nixpkgs}" ];
-          experimental-features = [
-            "nix-command"
-            "flakes"
-          ];
-        };
-      };
+      # Prevent needing to specify nix package here by generating our own nix.conf
+      xdg.configFile."nix/nix.conf".source = pkgs.writeText "nix.conf" ''
+        experimental-features = nix-command flakes
+        nix-path = nixpkgs=${inputs.nixpkgs}
+      '';
+      nix.registry.nixpkgs.flake = inputs.nixpkgs;
+
       home.username = lib.mkDefault "jared";
       home.homeDirectory = "/home/${config.home.username}";
     }
