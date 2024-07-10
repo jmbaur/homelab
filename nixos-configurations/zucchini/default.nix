@@ -8,14 +8,13 @@
       baseConfig = "defconfig";
       preferBuiltin = true;
       autoModules = true;
-      # TODO(jared): requires https://github.com/NixOS/nixpkgs/pull/277975
-      target = "Image"; # "vmlinuz.efi"
+      target = "vmlinuz.efi";
     };
     gcc.arch = "armv8-a";
   };
 
   custom.dev.enable = true;
-  custom.desktop.enable = true;
+  custom.normalUser.enable = true;
   custom.image = {
     boot.uefi.enable = true;
     installer.targetDisk = "/dev/disk/by-path/platform-a41000000.pcie-pci-0004:41:00.0-nvme-1";
