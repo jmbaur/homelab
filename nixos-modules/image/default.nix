@@ -12,9 +12,6 @@ let
 
   wantLuksRoot = if cfg.encrypt then (if cfg.hasTpm2 then "tpm2" else "key-file") else "off";
 
-  # disabled for now as there are still some kinks to workout
-  useLocalOverlay = false;
-
   maxUsrPadding = cfg.wiggleRoom;
   maxUsrHashPadding = maxUsrPadding / 8;
 in
@@ -285,13 +282,11 @@ in
             "initrd emergency access enabled due to systemd-repart instabilities with filesystem encryption"
             cfg.encrypt;
       }
-      ({
+      {
         # Having nix available on a system with a read-only nix-store is
         # meaningless.
         nix.enable = cfg.mutableNixStore;
-      })
-      (lib.mkIf (!useLocalOverlay && cfg.mutableNixStore) { })
-      (lib.mkIf (useLocalOverlay && cfg.mutableNixStore) {
+
         assertions = [
           {
             # TODO(jared): We can't set the local-overlay-store URI in nix.conf
@@ -304,10 +299,12 @@ in
             message = "store must not be set in nix.conf";
           }
         ];
+
         nix.settings.experimental-features = [
           "local-overlay-store"
           "read-only-local-store"
         ];
+
         # Make sure we use the nix-daemon so all store operations are applied
         # properly with the local-overlay
         nix.gc.options = "--option store daemon";
@@ -318,7 +315,21 @@ in
 
         # Ensure the nix-daemon is configured to connect to the correct store.
         systemd.services.nix-daemon.environment.NIX_REMOTE = lib.mkIf cfg.mutableNixStore "local-overlay://?root=/overlay/merged&lower-store=/usr?read-only=true&upper-layer=/overlay/upper";
-      })
+
+        systemd.services.local-overlay-fixup-db = {
+          before = [ config.systemd.services.nix-daemon.name ];
+          requiredBy = [ config.systemd.services.nix-daemon.name ];
+          wantedBy = [ "multi-user.target" ];
+          serviceConfig = {
+            Type = "oneshot";
+            RemainAfterExit = true;
+            ExecStart = toString [
+              (lib.getExe pkgs.local-overlay-fixup-db)
+              "/overlay/merged/nix/var/nix/db/db.sqlite"
+            ];
+          };
+        };
+      }
     ]
   );
 }
