@@ -14,7 +14,6 @@ rustPlatform.buildRustPackage {
     fileset = lib.fileset.unions [
       ./Cargo.lock
       ./Cargo.toml
-      # ./build.rs
       ./src
     ];
   };
@@ -25,7 +24,7 @@ rustPlatform.buildRustPackage {
   buildInputs = [ sqlite ];
 
   meta = {
-    description = "Program to fixup nix db for local-overlay on A/B updated systems";
+    description = "Program to fixup the upper Nix DB for local-overlay on A/B updated systems";
     mainProgram = "local-overlay-fixup-db";
   };
 }

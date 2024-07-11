@@ -259,6 +259,14 @@ in
           ];
         };
 
+        # This is useful when using the local-overlay store, since the
+        # local-overlay store will write to the upper-layer directory, but all
+        # of nixpkgs expects "./nix/var" to exist under "/".
+        fileSystems."/nix/var" = {
+          device = if cfg.mutableNixStore then "/overlay/merged/nix/var" else "/usr/nix/var";
+          options = [ "bind" ];
+        };
+
         # We handle this ourselves, see above. Disabling this also avoids multiple
         # bind mounts on /nix/store.
         boot.readOnlyNixStore = false;
@@ -316,6 +324,14 @@ in
         # Ensure the nix-daemon is configured to connect to the correct store.
         systemd.services.nix-daemon.environment.NIX_REMOTE = lib.mkIf cfg.mutableNixStore "local-overlay://?root=/overlay/merged&lower-store=/usr?read-only=true&upper-layer=/overlay/upper";
 
+        # Since we are switching between A/B partitions during each update, and
+        # the contents of those partitions make up our lower-store part of the
+        # local-overlay nix store, every time we update the machine we are
+        # taking out the lower nix DB and replacing it with a different one.
+        # Since the local-overlay implementation currently works by adding
+        # entries to the upper nix DB anytime it finds a valid path in the
+        # lower nix DB, we must cleanup the upper nix DB with invalid paths
+        # that were potentially from an old side that we updated away from.
         systemd.services.local-overlay-fixup-db = {
           before = [ config.systemd.services.nix-daemon.name ];
           requiredBy = [ config.systemd.services.nix-daemon.name ];
@@ -323,10 +339,7 @@ in
           serviceConfig = {
             Type = "oneshot";
             RemainAfterExit = true;
-            ExecStart = toString [
-              (lib.getExe pkgs.local-overlay-fixup-db)
-              "/overlay/merged/nix/var/nix/db/db.sqlite"
-            ];
+            ExecStart = lib.getExe pkgs.local-overlay-fixup-db;
           };
         };
       }

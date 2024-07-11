@@ -280,6 +280,10 @@ in
                       merged_paths = int(machine.succeed("ls /nix/store | wc -l").strip())
                       print(f"{ro_paths=}, {rw_paths=}, {merged_paths=}")
                       assert ro_paths + rw_paths == merged_paths
+
+                      gc_roots = machine.succeed("nix-store --gc --print-roots")
+                      assert "/run/current-system" in gc_roots
+                      assert "/run/booted-system" in gc_roots
                   else:
                       machine.fail("test -f /run/current-system/bin/switch-to-configuration")
                       machine.fail("nix store add-file --store daemon $(mktemp)")

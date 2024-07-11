@@ -1,13 +1,13 @@
 use rusqlite::Connection;
 
-fn main() {
-    let db = std::env::args().nth(1).expect("missing db argument");
+const DB: &str = "/nix/var/nix/db/db.sqlite";
 
-    if std::fs::metadata(&db).is_err() {
+fn main() {
+    if std::fs::metadata(DB).is_err() {
         return;
     }
 
-    let conn = Connection::open(&db).expect("failed to open db");
+    let conn = Connection::open(DB).expect("failed to open db");
 
     let mut stmt = conn
         .prepare("select path from ValidPaths")
