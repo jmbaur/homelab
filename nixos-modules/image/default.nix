@@ -294,6 +294,8 @@ in
         # Having nix available on a system with a read-only nix-store is
         # meaningless.
         nix.enable = cfg.mutableNixStore;
+      }
+      (lib.mkIf cfg.mutableNixStore {
 
         assertions = [
           {
@@ -342,7 +344,7 @@ in
             ExecStart = lib.getExe pkgs.local-overlay-fixup-db;
           };
         };
-      }
+      })
     ]
   );
 }
