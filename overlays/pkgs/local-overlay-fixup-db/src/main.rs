@@ -36,4 +36,20 @@ fn main() {
             .expect("failed to delete path from valid paths");
         eprintln!("deleted {path} from valid_paths");
     }
+
+    conn.execute(
+        "delete from Refs where reference not in (select id from ValidPaths)",
+        [],
+    )
+    .expect("failed to delete references from Refs table");
+    conn.execute(
+        "delete from Refs where referrer not in (select id from ValidPaths)",
+        [],
+    )
+    .expect("failed to delete referrers from Refs table");
+    conn.execute(
+        "delete from DerivationOutputs where drv not in (select id from ValidPaths)",
+        [],
+    )
+    .expect("failed to delete drvs from DerivationOutputs table");
 }
