@@ -66,7 +66,7 @@ fn main() {
     // TODO(jared): https://stackoverflow.com/questions/10012695/sql-statement-using-where-clause-with-multiple-values
     for path in invalid_paths {
         conn.execute(
-            "delete from Refs r inner join ValidPaths v on r.referrer = v.id or r.reference = v.id where v.path = ?1",
+            "delete from Refs as r inner join ValidPaths as v on r.referrer = v.id or r.reference = v.id where v.path = ?1",
             [&path],
         )
         .expect("failed to delete dangling path from nix db");
