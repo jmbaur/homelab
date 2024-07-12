@@ -30,26 +30,46 @@ fn main() {
         })
         .collect::<Vec<String>>();
 
+    // As of 2024-07-12:
+    //
+    // sqlite> .schema Refs
+    // CREATE TABLE Refs (
+    //     referrer  integer not null,
+    //     reference integer not null,
+    //     primary key (referrer, reference),
+    //     foreign key (referrer) references ValidPaths(id) on delete cascade,
+    //     foreign key (reference) references ValidPaths(id) on delete restrict
+    // );
+    // CREATE INDEX IndexReferrer on Refs(referrer);
+    // CREATE INDEX IndexReference on Refs(reference);
+    //
+    // sqlite> .schema ValidPaths
+    // CREATE TABLE ValidPaths (
+    // id               integer primary key autoincrement not null,
+    // path             text unique not null,
+    // hash             text not null, -- base16 representation
+    // registrationTime integer not null,
+    // deriver          text,
+    // narSize          integer,
+    // ultimate         integer, -- null implies "false"
+    // sigs             text, -- space-separated
+    // ca               text -- if not null, an assertion that the path is content-addressed; see ValidPathInfo
+    // );
+    // CREATE TRIGGER DeleteSelfRefs before delete on ValidPaths
+    // begin
+    // delete from Refs where referrer = old.id and reference = old.id;
+    // end;
+
+    // The readonly nix database does not have any entries in the DerivationOutputs table, so we
+    // don't have to worry about deleting any rows from there.
+    //
     // TODO(jared): https://stackoverflow.com/questions/10012695/sql-statement-using-where-clause-with-multiple-values
     for path in invalid_paths {
-        conn.execute("delete from ValidPaths where path = ?1", [&path])
-            .expect("failed to delete path from valid paths");
-        eprintln!("deleted {path} from valid_paths");
+        conn.execute(
+            "delete from Refs r inner join ValidPaths v on r.referrer = v.id or r.reference = v.id where v.path = ?1",
+            [&path],
+        )
+        .expect("failed to delete dangling path from nix db");
+        eprintln!("deleted {path} from nix db");
     }
-
-    conn.execute(
-        "delete from Refs where reference not in (select id from ValidPaths)",
-        [],
-    )
-    .expect("failed to delete references from Refs table");
-    conn.execute(
-        "delete from Refs where referrer not in (select id from ValidPaths)",
-        [],
-    )
-    .expect("failed to delete referrers from Refs table");
-    conn.execute(
-        "delete from DerivationOutputs where drv not in (select id from ValidPaths)",
-        [],
-    )
-    .expect("failed to delete drvs from DerivationOutputs table");
 }
