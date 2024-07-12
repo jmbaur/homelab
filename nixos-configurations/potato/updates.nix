@@ -84,7 +84,7 @@ in
   # after each successful build, so we should never garbage collect the last
   # successful set of builds.
   nix.gc = {
-    automatic = false; # TODO(jared): get nix-collect-garbage working with local-overlay
+    automatic = true;
     dates = "weekly"; # Beginning of the week at midnight
   };
 
