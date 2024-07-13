@@ -27,7 +27,7 @@ let
       ++ installerSystem.config.boot.initrd.kernelModules;
     kernel = modulesTree;
     firmware = firmware;
-    allowMissing = false;
+    allowMissing = true;
   };
 
   startupScript = pkgs.writeScript "installer-startup-script" ''

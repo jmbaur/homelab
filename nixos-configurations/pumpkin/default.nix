@@ -18,14 +18,28 @@ let
     hash = "sha256-sD3quAMvZTYQxbk7gdtt2NAkj50gvrfHSR7rT0ptsVE=";
   };
 
-  asahiFirmware = pkgs.runCommand "asahi-firmware" { } ''
-    extracted=$(mktemp -d)
-    cp ${allFirmware} ${allFirmwareName}
-    cp ${kernelcache} ${kernelcacheName}
-    ${lib.getExe' pkgs.buildPackages.asahi-fwextract "asahi-fwextract"} . $extracted
-    cat $extracted/firmware.cpio | ${lib.getExe pkgs.buildPackages.cpio} -id --quiet --no-absolute-filenames
-    mkdir -p $out/lib/firmware
-  '';
+  asahiFirmware = pkgs.callPackage (
+    {
+      runCommand,
+      asahi-fwextract,
+      cpio,
+    }:
+    runCommand "asahi-firmware"
+      {
+        nativeBuildInputs = [
+          asahi-fwextract
+          cpio
+        ];
+      }
+      ''
+        extracted=$(mktemp -d)
+        cp ${allFirmware} ${allFirmwareName}
+        cp ${kernelcache} ${kernelcacheName}
+        asahi-fwextract . $extracted
+        cat $extracted/firmware.cpio | cpio -id --quiet --no-absolute-filenames
+        mkdir -p $out/lib/firmware
+      ''
+  ) { };
 
   bootBin = pkgs.runCommand "boot.bin" { } ''
     cat ${pkgs.m1n1}/build/m1n1.bin > $out
@@ -50,6 +64,7 @@ in
       custom.normalUser.enable = true;
       custom.dev.enable = true;
       custom.image = {
+        installer.targetDisk = "/dev/nvme0n1";
         boot.uefi.enable = true;
         bootFileCommands = ''
           echo ${bootBin}:/m1n1/boot.bin >> $bootfiles
