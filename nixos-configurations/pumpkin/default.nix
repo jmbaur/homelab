@@ -64,11 +64,57 @@ in
       custom.normalUser.enable = true;
       custom.dev.enable = true;
       custom.image = {
-        installer.targetDisk = "/dev/nvme0n1";
+        sectorSize = 4096;
+        installer.targetDisk = "/dev/disk/by-path/platform-27bcc0000.nvme-nvme-1";
         boot.uefi.enable = true;
         bootFileCommands = ''
           echo ${bootBin}:/m1n1/boot.bin >> $bootfiles
         '';
+      };
+
+      # These partitions already exist from the macOS installation, we just
+      # declare them in the systemd-repart config to be complete.
+      #
+      # $ sudo fdisk -l -o+UUID /dev/nvme0n1
+      # Disk /dev/nvme0n1: 233.76 GiB, 251000193024 bytes, 61279344 sectors
+      # Disk model: APPLE SSD AP0256Q
+      # Units: sectors of 1 * 4096 = 4096 bytes
+      # Sector size (logical/physical): 4096 bytes / 4096 bytes
+      # I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+      # Disklabel type: gpt
+      # Disk identifier: ...
+      #
+      # Device            Start      End  Sectors   Size Type                   UUID
+      # /dev/nvme0n1p1        6   128005   128000   500M Apple Silicon boot     B073AD4B-EB7D-4653-8B7C-F972ACD238D6
+      # /dev/nvme0n1p2   128006 30048517 29920512 114.1G Apple APFS             8FF532A2-34DB-4B6C-AD33-BDC5D58C98B5
+      # /dev/nvme0n1p3 30048518 30658821   610304   2.3G Apple APFS             D4F06C86-F965-473E-B536-E88AB8F9365F
+      # ...
+      # /dev/nvme0n1p6 59968630 61279338  1310709     5G Apple Silicon recovery 115B8828-2BE0-4818-9659-1223B367E77F
+      systemd.repart.partitions = {
+        "01-apple-silicon-boot" = {
+          Type = "69646961-6700-11AA-AA11-00306543ECAC";
+          Label = "iBootSystemContainer";
+          SizeMinBytes = "500M";
+          SizeMaxBytes = "500M";
+        };
+        "02-apfs-1" = {
+          Type = "7C3457EF-0000-11AA-AA11-00306543ECAC";
+          Label = "Container";
+          SizeMinBytes = "50G";
+          SizeMaxBytes = "50G";
+        };
+        "02-apfs-2" = {
+          Type = "7C3457EF-0000-11AA-AA11-00306543ECAC";
+          Label = "";
+          SizeMinBytes = "2GM";
+          SizeMaxBytes = "2GM";
+        };
+        "99-apple-silicon-recovery" = {
+          Type = "52637672-7900-11AA-AA11-00306543ECAC";
+          Label = "RecoveryOSContainer";
+          SizeMinBytes = "5G";
+          SizeMaxBytes = "5G";
+        };
       };
     }
 

@@ -41,7 +41,7 @@ let
 
   bootPartition = partitions."10-boot" // { };
 
-  dataPartition = partitions."10-usr-a" // {
+  dataPartition = partitions."11-usr-a" // {
     PaddingMinBytes = toString maxUsrPadding;
     PaddingMaxBytes = toString maxUsrPadding;
     Minimize = true;
@@ -51,7 +51,7 @@ let
     SplitName = "usr";
   };
 
-  hashPartition = partitions."10-usr-hash-a" // {
+  hashPartition = partitions."11-usr-hash-a" // {
     PaddingMinBytes = toString maxUsrHashPadding;
     PaddingMaxBytes = toString maxUsrHashPadding;
     Minimize = true;
@@ -63,8 +63,8 @@ let
   systemdArchitecture = lib.replaceStrings [ "_" ] [ "-" ] stdenv.hostPlatform.linuxArch;
 
   bootPartitionConfig = iniFormat.generate "10-boot.conf" { Partition = bootPartition; };
-  dataPartitionConfig = iniFormat.generate "10-usr-a.conf" { Partition = dataPartition; };
-  hashPartitionConfig = iniFormat.generate "10-usr-hash-a.conf" { Partition = hashPartition; };
+  dataPartitionConfig = iniFormat.generate "11-usr-a.conf" { Partition = dataPartition; };
+  hashPartitionConfig = iniFormat.generate "11-usr-hash-a.conf" { Partition = hashPartition; };
 
   closure = closureInfo { inherit rootPaths; };
 
