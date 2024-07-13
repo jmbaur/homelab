@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  extendModules,
   ...
 }:
 
@@ -14,6 +15,24 @@ let
 
   maxUsrPadding = cfg.wiggleRoom;
   maxUsrHashPadding = maxUsrPadding / 8;
+
+  nixConfForDaemon =
+    (extendModules {
+      modules = [
+        (
+          { lib, ... }:
+          {
+            nix.settings = {
+              store = lib.mkForce "local-overlay://?root=/overlay/merged&lower-store=/usr?read-only=true&upper-layer=/overlay/upper";
+              experimental-features = [
+                "local-overlay-store"
+                "read-only-local-store"
+              ];
+            };
+          }
+        )
+      ];
+    }).config.environment.etc."nix/nix.conf".source;
 in
 {
   imports = [
@@ -296,17 +315,9 @@ in
         nix.enable = cfg.mutableNixStore;
       }
       (lib.mkIf cfg.mutableNixStore {
-        nix.settings = {
-          # Ensure all nix clients go through the daemon, where the daemon is
-          # properly configured to use the local-overlay.
-          store = "daemon";
-
-          # Enable the right experimental features
-          experimental-features = [
-            "local-overlay-store"
-            "read-only-local-store"
-          ];
-        };
+        # Ensure all nix clients go through the daemon, where the daemon is
+        # properly configured to use the local-overlay.
+        nix.settings.store = "daemon";
 
         # Ensure the nix-daemon is configured to connect to the correct store.
         # This configures the daemon to have it's own nix.conf that is
@@ -315,14 +326,9 @@ in
         # daemon should be the only thing that needs to have the permissions to
         # able to write to the upper store), and clients don't even have to
         # know about it.
-        systemd.services.nix-daemon.serviceConfig.BindReadOnlyPaths =
-          let
-            daemonNixConf = pkgs.runCommand "daemon-nix.conf" { } ''
-              sed '/^store = .*/d' ${config.environment.etc."nix/nix.conf".source} >$out
-              echo "store = local-overlay://?root=/overlay/merged&lower-store=/usr?read-only=true&upper-layer=/overlay/upper" >>$out
-            '';
-          in
-          [ "${daemonNixConf}:/etc/nix/nix.conf" ];
+        systemd.services.nix-daemon.serviceConfig.BindReadOnlyPaths = [
+          "${nixConfForDaemon}:/etc/nix/nix.conf"
+        ];
 
         # Since we are switching between A/B partitions during each update, and
         # the contents of those partitions make up our lower-store part of the
