@@ -26,6 +26,12 @@ let
     cat $extracted/firmware.cpio | ${lib.getExe pkgs.buildPackages.cpio} -id --quiet --no-absolute-filenames
     mkdir -p $out/lib/firmware
   '';
+
+  bootBin = pkgs.runCommand "boot.bin" { } ''
+    cat ${pkgs.m1n1}/build/m1n1.bin > $out
+    cat ${config.boot.kernelPackages.kernel}/dtbs/apple/*.dtb >> $out
+    cat ${pkgs.uboot-asahi}/u-boot-nodtb.bin.gz >> $out
+  '';
 in
 
 {
@@ -33,7 +39,7 @@ in
     {
       nixpkgs.hostPlatform = "aarch64-linux";
 
-      # Presumably the full devicetree lives in uboot?
+      # The devicetree lives in m1n1 image
       hardware.deviceTree.enable = false;
 
       # For ` to < and ~ to > (for those with US keyboards)
@@ -42,10 +48,13 @@ in
       '';
 
       custom.normalUser.enable = true;
+      custom.dev.enable = true;
       custom.image = {
         boot.uefi.enable = true;
+        bootFileCommands = ''
+          echo ${bootBin}:/m1n1/boot.bin >> $bootfiles
+        '';
       };
-
     }
 
     # Mostly copied from tpwrules/nixos-apple-silicon
