@@ -296,35 +296,33 @@ in
         nix.enable = cfg.mutableNixStore;
       }
       (lib.mkIf cfg.mutableNixStore {
+        nix.settings = {
+          # Ensure all nix clients go through the daemon, where the daemon is
+          # properly configured to use the local-overlay.
+          store = "daemon";
 
-        assertions = [
-          {
-            # TODO(jared): We can't set the local-overlay-store URI in nix.conf
-            # since this setting takes precedence over the NIX_REMOTE environment
-            # variable, meaning that users cannot just have things work OOTB by
-            # setting that variable. So instead, we set NIX_REMOTE in two places
-            # with two different values, the nix-daemon uses the
-            # local-overlay-store URI and all clients connect to the daemon.
-            assertion = config.nix.settings ? store == false;
-            message = "store must not be set in nix.conf";
-          }
-        ];
-
-        nix.settings.experimental-features = [
-          "local-overlay-store"
-          "read-only-local-store"
-        ];
-
-        # Make sure we use the nix-daemon so all store operations are applied
-        # properly with the local-overlay
-        nix.gc.options = "--option store daemon";
-
-        # So that users running nix commands are able to connect to the right
-        # store.
-        environment.variables.NIX_REMOTE = lib.mkIf cfg.mutableNixStore "daemon";
+          # Enable the right experimental features
+          experimental-features = [
+            "local-overlay-store"
+            "read-only-local-store"
+          ];
+        };
 
         # Ensure the nix-daemon is configured to connect to the correct store.
-        systemd.services.nix-daemon.environment.NIX_REMOTE = lib.mkIf cfg.mutableNixStore "local-overlay://?root=/overlay/merged&lower-store=/usr?read-only=true&upper-layer=/overlay/upper";
+        # This configures the daemon to have it's own nix.conf that is
+        # different from the global nix.conf that all clients would see. This
+        # is needed so the daemon is able to use the local-overlay (where the
+        # daemon should be the only thing that needs to have the permissions to
+        # able to write to the upper store), and clients don't even have to
+        # know about it.
+        systemd.services.nix-daemon.serviceConfig.BindReadOnlyPaths =
+          let
+            daemonNixConf = pkgs.runCommand "daemon-nix.conf" { } ''
+              sed '/^store = .*/d' ${config.environment.etc."nix/nix.conf".source} >$out
+              echo "store = local-overlay://?root=/overlay/merged&lower-store=/usr?read-only=true&upper-layer=/overlay/upper" >>$out
+            '';
+          in
+          [ "${daemonNixConf}:/etc/nix/nix.conf" ];
 
         # Since we are switching between A/B partitions during each update, and
         # the contents of those partitions make up our lower-store part of the

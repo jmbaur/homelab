@@ -272,9 +272,9 @@ in
               with subtest("mutability"):
                   machine.fail("command -v nixos-rebuild")
                   if "${toString nodes.machine.custom.image.mutableNixStore}" == "1":
-                      print(machine.succeed("nix store info --store daemon"))
+                      print(machine.succeed("nix store info"))
                       machine.succeed("test -f /run/current-system/bin/switch-to-configuration")
-                      machine.succeed("nix store add-file --store daemon $(mktemp)")
+                      machine.succeed("nix store add-file $(mktemp)")
                       ro_paths = int(machine.succeed("ls /usr/nix/store | wc -l").strip())
                       rw_paths = int(machine.succeed("ls /overlay/upper | wc -l").strip())
                       merged_paths = int(machine.succeed("ls /nix/store | wc -l").strip())
@@ -286,7 +286,7 @@ in
                       assert "/run/booted-system" in gc_roots
                   else:
                       machine.fail("test -f /run/current-system/bin/switch-to-configuration")
-                      machine.fail("nix store add-file --store daemon $(mktemp)")
+                      machine.fail("nix store add-file $(mktemp)")
 
 
               with subtest("sysupdate"):
