@@ -61,13 +61,18 @@
       ];
   };
 
-  # TODO(jared): http2 broken?
   services.nginx = {
     enable = true;
+
     commonHttpConfig = ''
       error_log syslog:server=unix:/dev/log;
       access_log syslog:server=unix:/dev/log combined;
     '';
+
+    recommendedProxySettings = true;
+    recommendedGzipSettings = true;
+    recommendedTlsSettings = true;
+
     virtualHosts = {
       "www.jmbaur.com" = {
         default = true;
@@ -75,7 +80,6 @@
         # Only enable ACME on this subdomain, all other subdomains should use
         # `useACMEHost`.
         enableACME = true;
-        http2 = false;
         locations."/".root = pkgs.runCommand "www-root" { } ''
           mkdir -p $out
           echo "<h1>Under construction!</h1>" > $out/index.html
@@ -85,14 +89,12 @@
       "music.jmbaur.com" = {
         forceSSL = true;
         useACMEHost = "www.jmbaur.com";
-        http2 = false;
         locations."/".proxyPass = "http://potato.internal:4533";
       };
 
       "update.jmbaur.com" = {
         forceSSL = true;
         useACMEHost = "www.jmbaur.com";
-        http2 = false;
         locations."/".proxyPass = "http://potato.internal:8787";
       };
     };
