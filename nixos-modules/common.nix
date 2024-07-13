@@ -29,7 +29,10 @@ in
     environment.enableAllTerminfo = true;
 
     programs.nano.enable = false;
-    programs.vim.defaultEditor = true;
+    programs.vim = {
+      enable = true;
+      defaultEditor = true;
+    };
 
     # moving closer to perlless system
     programs.less.lessopen = lib.mkDefault null;
