@@ -85,6 +85,7 @@ in
       cliphist
       defaultIconTheme
       foot
+      gnome-themes-extra
       libnotify
       mako
       pamixer
