@@ -70,6 +70,7 @@
     '';
     virtualHosts = {
       "www.jmbaur.com" = {
+        default = true;
         forceSSL = true;
         # Only enable ACME on this subdomain, all other subdomains should use
         # `useACMEHost`.
