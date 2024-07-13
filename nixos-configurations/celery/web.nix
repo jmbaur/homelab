@@ -74,8 +74,12 @@
     recommendedTlsSettings = true;
 
     virtualHosts = {
-      "www.jmbaur.com" = {
+      _ = {
         default = true;
+        locations."/".return = 404;
+      };
+
+      "www.jmbaur.com" = {
         forceSSL = true;
         # Only enable ACME on this subdomain, all other subdomains should use
         # `useACMEHost`.
