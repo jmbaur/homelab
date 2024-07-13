@@ -3,6 +3,7 @@ inputs: {
     { ... }:
     {
       nixpkgs.overlays = with inputs; [
+        inputs.nixos-apple-silicon.overlays.default
         inputs.u-boot-nix.overlays.default
         self.overlays.default
       ];
