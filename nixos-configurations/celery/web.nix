@@ -5,15 +5,6 @@
   ...
 }:
 {
-  security.acme = {
-    acceptTerms = true;
-    defaults.email = "jaredbaur@fastmail.com";
-    certs."www.jmbaur.com".extraDomainNames = map (subdomain: "${subdomain}.jmbaur.com") [
-      "music"
-      "update"
-    ];
-  };
-
   networking.firewall.allowedTCPPorts = [
     80
     443
@@ -61,46 +52,16 @@
       ];
   };
 
-  services.nginx = {
+  services.caddy = {
     enable = true;
-
-    commonHttpConfig = ''
-      error_log syslog:server=unix:/dev/log;
-      access_log syslog:server=unix:/dev/log combined;
-    '';
-
-    recommendedProxySettings = true;
-    recommendedGzipSettings = true;
-    recommendedTlsSettings = true;
-
+    email = "jaredbaur@fastmail.com";
     virtualHosts = {
-      _ = {
-        default = true;
-        locations."/".return = 404;
-      };
-
-      "www.jmbaur.com" = {
-        forceSSL = true;
-        # Only enable ACME on this subdomain, all other subdomains should use
-        # `useACMEHost`.
-        enableACME = true;
-        locations."/".root = pkgs.runCommand "www-root" { } ''
-          mkdir -p $out
-          echo "<h1>Under construction!</h1>" > $out/index.html
-        '';
-      };
-
-      "music.jmbaur.com" = {
-        forceSSL = true;
-        useACMEHost = "www.jmbaur.com";
-        locations."/".proxyPass = "http://potato.internal:4533";
-      };
-
-      "update.jmbaur.com" = {
-        forceSSL = true;
-        useACMEHost = "www.jmbaur.com";
-        locations."/".proxyPass = "http://potato.internal:8787";
-      };
+      "update.jmbaur.com".extraConfig = ''
+        reverse_proxy http://potato.internal:8787
+      '';
+      "music.jmbaur.com".extraConfig = ''
+        reverse_proxy http://potato.internal:4533
+      '';
     };
   };
 }
