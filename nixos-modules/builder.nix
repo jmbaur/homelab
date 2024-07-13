@@ -67,15 +67,9 @@ let
 
         services."build@${name}" = {
           onSuccess = [ postBuild ];
-          description = "Build ${flakeRef}";
+          description = "Build ${flakeRef}#${outputAttr}";
           after = [ "network-online.target" ];
           wants = [ "network-online.target" ];
-          path = [
-            config.nix.package
-            pkgs.curl
-            pkgs.gitMinimal
-            pkgs.jq
-          ];
           environment = {
             XDG_CACHE_HOME = "%C/builder";
             XDG_STATE_HOME = "%S/builder";
@@ -87,23 +81,29 @@ let
             SupplementaryGroups = [ "builder" ];
             CacheDirectory = "builder";
             StateDirectory = "builder";
+            ExecStart = lib.getExe (
+              pkgs.writeShellApplication {
+                name = "build-${name}";
+                runtimeInputs = [
+                  config.nix.package
+                  pkgs.curl
+                  pkgs.gitMinimal
+                  pkgs.jq
+                ];
+                text = ''
+                  latest_tag=$(curl --silent "https://api.github.com/repos/${flakeRefAttr.owner}/${flakeRefAttr.repo}/tags" | jq -r '.[0].name')
+
+                  nix --extra-experimental-features "nix-command flakes" \
+                    build \
+                    --refresh \
+                    --out-link "$STATE_DIRECTORY/build-${name}" \
+                    --print-out-paths \
+                    --print-build-logs \
+                    "${flakeRef}?ref=''${latest_tag}#${outputAttr}"
+                '';
+              }
+            );
           };
-          script = # bash
-            ''
-              set -o errexit
-              set -o nounset
-              set -o pipefail
-
-              latest_tag=$(curl --silent "https://api.github.com/repos/${flakeRefAttr.owner}/${flakeRefAttr.repo}/tags" | jq -r '.[0].name')
-
-              nix --extra-experimental-features "nix-command flakes" \
-                build \
-                --refresh \
-                --out-link "$STATE_DIRECTORY/build-${name}" \
-                --print-out-paths \
-                --print-build-logs \
-                "${flakeRef}?ref=''${latest_tag}#${outputAttr}"
-            '';
         };
       }
   ) cfg.builds;
