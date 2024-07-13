@@ -19,6 +19,9 @@ in
   config = lib.mkIf cfg.enable {
     networking.useDHCP = false;
 
+    # Randomize wireless card's MAC address for each connected network.
+    networking.wireless.iwd.settings.General.AddressRandomization = "network";
+
     services.resolved.enable = true;
 
     # TODO(jared): This does not work on newer kernels due to using
