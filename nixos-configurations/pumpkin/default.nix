@@ -84,12 +84,12 @@ in
       # Disklabel type: gpt
       # Disk identifier: ...
       #
-      # Device            Start      End  Sectors   Size Type                   UUID
-      # /dev/nvme0n1p1        6   128005   128000   500M Apple Silicon boot     B073AD4B-EB7D-4653-8B7C-F972ACD238D6
-      # /dev/nvme0n1p2   128006 30048517 29920512 114.1G Apple APFS             8FF532A2-34DB-4B6C-AD33-BDC5D58C98B5
-      # /dev/nvme0n1p3 30048518 30658821   610304   2.3G Apple APFS             D4F06C86-F965-473E-B536-E88AB8F9365F
+      # Device            Start      End  Sectors   Size Type
+      # /dev/nvme0n1p1        6   128005   128000   500M Apple Silicon boot
+      # /dev/nvme0n1p2   128006 30048517 29920512 114.1G Apple APFS
+      # /dev/nvme0n1p3 30048518 30658821   610304   2.3G Apple APFS
       # ...
-      # /dev/nvme0n1p6 59968630 61279338  1310709     5G Apple Silicon recovery 115B8828-2BE0-4818-9659-1223B367E77F
+      # /dev/nvme0n1p6 59968630 61279338  1310709     5G Apple Silicon recovery
       systemd.repart.partitions = {
         "01-apple-silicon-boot" = {
           Type = "69646961-6700-11AA-AA11-00306543ECAC";
