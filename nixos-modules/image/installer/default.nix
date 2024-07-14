@@ -192,10 +192,9 @@ in
           }
           ."${lib.head (lib.attrNames cfg.boot)}";
 
-        # TODO(jared): We cannot assume the sector size of the target device is
-        # the same as the installation device (e.g. target device is an nvme
-        # drive but installation device is a USB drive).
-        inherit (cfg) sectorSize;
+        # TODO(jared): We assume the sector size of the installation media is
+        # 512, I have yet to see a USB stick with a different sector size...
+        sectorSize = 512;
       };
     };
   };
