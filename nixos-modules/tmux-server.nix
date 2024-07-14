@@ -9,6 +9,11 @@
   options.custom.tmuxServer.enable = lib.mkEnableOption "tmux-server";
 
   config = lib.mkIf config.custom.tmuxServer.enable {
+    programs.tmux = {
+      enable = true;
+      keyMode = if config.programs.vim.enable then "vi" else "emacs";
+    };
+
     systemd.user.sockets.tmux = {
       description = "Tmux server";
       socketConfig = {
