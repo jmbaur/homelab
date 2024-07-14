@@ -11,6 +11,8 @@ in
   options.custom.dev.enable = lib.mkEnableOption "dev setup";
 
   config = lib.mkIf cfg.enable {
+    custom.tmuxServer.enable = lib.mkDefault true;
+
     # presumably we'd be doing nix builds on a dev machine, so we need a mutable nix store
     custom.image.mutableNixStore = lib.mkDefault true;
     environment.systemPackages = lib.optionals config.custom.image.mutableNixStore [

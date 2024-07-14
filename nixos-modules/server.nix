@@ -4,28 +4,27 @@
   pkgs,
   ...
 }:
-let
-  cfg = config.custom.server;
 
-  inherit (lib) mkDefault mkEnableOption mkIf;
-in
 {
-  options.custom.server.enable = mkEnableOption "server";
-  config = mkIf cfg.enable {
-    documentation.enable = mkDefault false;
-    documentation.doc.enable = mkDefault false;
-    documentation.info.enable = mkDefault false;
-    documentation.man.enable = mkDefault false;
-    documentation.nixos.enable = mkDefault false;
+  options.custom.server.enable = lib.mkEnableOption "server";
 
-    programs.command-not-found.enable = mkDefault false;
+  config = lib.mkIf config.custom.server.enable {
+    custom.tmuxServer.enable = lib.mkDefault true;
 
-    services.udisks2.enable = mkDefault false;
+    documentation.enable = lib.mkDefault false;
+    documentation.doc.enable = lib.mkDefault false;
+    documentation.info.enable = lib.mkDefault false;
+    documentation.man.enable = lib.mkDefault false;
+    documentation.nixos.enable = lib.mkDefault false;
 
-    xdg.autostart.enable = mkDefault false;
-    xdg.icons.enable = mkDefault false;
-    xdg.mime.enable = mkDefault false;
-    xdg.sounds.enable = mkDefault false;
+    programs.command-not-found.enable = lib.mkDefault false;
+
+    services.udisks2.enable = lib.mkDefault false;
+
+    xdg.autostart.enable = lib.mkDefault false;
+    xdg.icons.enable = lib.mkDefault false;
+    xdg.mime.enable = lib.mkDefault false;
+    xdg.sounds.enable = lib.mkDefault false;
 
     environment.variables.BROWSER = "echo";
     fonts.fontconfig.enable = false;
@@ -34,7 +33,7 @@ in
     sound.enable = false;
 
     # UTC everywhere!
-    time.timeZone = mkDefault "UTC";
+    time.timeZone = lib.mkDefault "UTC";
 
     systemd = {
       # Given that our systems are headless, emergency mode is useless.

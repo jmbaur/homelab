@@ -140,6 +140,7 @@ in
 
       programs.bash = {
         enable = true;
+        initExtra = builtins.readFile ./bashrc;
         historyControl = [ "ignoreboth" ];
         shellAliases = {
           j = "tmux-jump";

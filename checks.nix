@@ -13,6 +13,7 @@ builtins.listToAttrs (
       (pkgs.callPackages ./tests/image.nix { inherit inputs; })
       // {
         desktop = pkgs.callPackage ./tests/desktop.nix { inherit inputs; };
+        wgNetwork = pkgs.callPackage ./tests/wg-network.nix { inherit inputs; };
       };
   }) (builtins.attrNames inputs.self.legacyPackages)
 )

@@ -17,6 +17,7 @@ inputs: {
         ./image
         ./normal-user
         ./server.nix
+        ./tmux-server.nix
         ./wg-network.nix
         inputs.ipwatch.nixosModules.default
         inputs.nixos-router.nixosModules.default
