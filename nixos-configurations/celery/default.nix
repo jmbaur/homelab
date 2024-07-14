@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ ... }:
 {
   imports = [
     ./router.nix
@@ -8,8 +8,6 @@
   nixpkgs.hostPlatform = "aarch64-linux";
 
   hardware.bpi-r3.enable = true;
-
-  users.users.root.openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-ssh-keys ];
 
   hardware.deviceTree.overlays = [
     {
@@ -37,6 +35,8 @@
     enable = true;
     allowedTCPPorts = [ 22 ];
   };
+
+  custom.server.enable = true;
 
   custom.image = {
     installer.targetDisk = "/dev/disk/by-path/platform-11230000.mmc";

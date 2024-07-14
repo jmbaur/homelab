@@ -3,6 +3,7 @@
   imports = [ ./base.nix ];
 
   custom.server.enable = true;
+  custom.basicNetwork.enable = true;
 
   networking.wireless.iwd.enable = true;
 

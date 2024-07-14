@@ -39,7 +39,6 @@ in
 
     (lib.mkIf cfg.dev.enable {
       home.packages = with pkgs; [
-        (pkgs.writeShellScriptBin "copy" ''printf "\033]52;c;$(base64)\07"'')
         age-plugin-yubikey
         ansifilter
         as-tree
@@ -48,6 +47,7 @@ in
         bintools
         cachix
         cntr
+        copy
         curl
         dig
         dt
@@ -95,6 +95,7 @@ in
         rage
         ripgrep
         sd
+        shpool
         strace-with-colors
         systemctl-tui
         tcpdump
@@ -127,6 +128,15 @@ in
       xdg.configFile."fd/ignore".text = ''
         .git
       '';
+
+      xdg.configFile."shpool/config.toml".source = (pkgs.formats.toml { }).generate "shpool-config.toml" {
+        keybinding = [
+          {
+            action = "detach";
+            binding = "Ctrl-s d";
+          }
+        ];
+      };
 
       programs.bash = {
         enable = true;

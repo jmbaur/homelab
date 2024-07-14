@@ -45,6 +45,7 @@
   custom.wgNetwork.nodes.celery.enable = true;
 
   custom.server.enable = true;
+  custom.basicNetwork.enable = true;
 
   custom.image = {
     mutableNixStore = true; # TODO(jared): make false

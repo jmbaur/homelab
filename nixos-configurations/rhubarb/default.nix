@@ -27,6 +27,7 @@ in
   nixpkgs.hostPlatform = "aarch64-linux";
 
   custom.server.enable = true;
+  custom.basicNetwork.enable = true;
   custom.image = {
     installer.targetDisk = "/dev/mmcblk0";
     bootFileCommands = ''

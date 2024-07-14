@@ -45,6 +45,8 @@ in
     boot.enableContainers = lib.mkDefault false;
     boot.tmp.cleanOnBoot = lib.mkDefault isNotContainer;
 
+    environment.stub-ld.enable = false;
+
     i18n.defaultLocale = "en_US.UTF-8";
     console.useXkbConfig = true;
 

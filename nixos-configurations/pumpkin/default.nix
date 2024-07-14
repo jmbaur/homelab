@@ -62,6 +62,7 @@ in
       '';
 
       custom.normalUser.enable = true;
+      custom.basicNetwork.enable = true;
       custom.dev.enable = true;
       custom.image = {
         sectorSize = 4096;

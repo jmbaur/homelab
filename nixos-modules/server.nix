@@ -69,28 +69,10 @@ in
       "net.ipv4.tcp_congestion_control" = "bbr";
     };
 
-    # Simple networking setup
-    networking.useDHCP = false;
-    networking.useNetworkd = true;
-
-    systemd.network = {
-      enable = true;
-      # Rationale for choosing 50 is that nixpkgs will assign any interfaces
-      # configured with the traditional options at 40.
-      networks."50-wired" = {
-        DHCP = "yes";
-        matchConfig.Type = "ether";
-        dhcpV4Config.UseDomains = "route";
-        ipv6AcceptRAConfig.UseDomains = "route";
-        networkConfig = {
-          Domains = "~.";
-          MulticastDNS = true;
-        };
-      };
-    };
-
-    networking.firewall.allowedUDPPorts = [
-      5353 # mDNS
+    # Since we can't manually respond to a panic, just reboot.
+    boot.kernelParams = [
+      "panic=1"
+      "boot.panic_on_fail"
     ];
 
     users.users.root.openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-ssh-keys ];
