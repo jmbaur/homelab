@@ -17,6 +17,12 @@ in
       pkgs.home-manager
     ];
 
+    documentation.enable = true;
+    documentation.doc.enable = true;
+    documentation.info.enable = true;
+    documentation.man.enable = true;
+    documentation.nixos.enable = true;
+
     programs.ssh.startAgent = lib.mkDefault true;
     programs.gnupg.agent.enable = lib.mkDefault true;
     services.pcscd.enable = config.custom.desktop.enable;

@@ -14,7 +14,8 @@ new-machine name:
 	mkdir -p {{justfile_directory()}}/nixos-configurations/{{name}}
 	touch {{justfile_directory()}}/nixos-configurations/{{name}}/default.nix
 	touch {{justfile_directory()}}/nixos-configurations/{{name}}/age.pubkey
-	touch flake.nix # trigger direnv to get new .sops.yaml
+	touch {{justfile_directory()}}/nixos-configurations/{{name}}/wg.pubkey
+	touch {{justfile_directory()}}/flake.nix # trigger direnv to get new .sops.yaml
 
 git_is_clean:
 	git diff HEAD --quiet

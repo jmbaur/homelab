@@ -13,8 +13,8 @@ inputs.nixpkgs.lib.mapAttrs (
     sopsConfig = (pkgs.formats.yaml { }).generate "sops.yaml" {
       creation_rules =
         map
-          (entry: {
-            path_regex = "nixos-configurations/${entry}/secrets.yaml";
+          (host: {
+            path_regex = "nixos-configurations/${host}/secrets.yaml";
             pgp = lib.concatStringsSep "," [ gpgFingerprint ];
             age = lib.concatStringsSep "," (
               lib.optionals sopsSupportsAgePlugins [
@@ -24,7 +24,7 @@ inputs.nixpkgs.lib.mapAttrs (
               ++ (
                 let
                   machinePubkey = lib.replaceStrings [ "\n" ] [ "" ] (
-                    builtins.readFile ./nixos-configurations/${entry}/age.pubkey
+                    builtins.readFile ./nixos-configurations/${host}/age.pubkey
                   );
                 in
                 lib.optionals (machinePubkey != "") [ machinePubkey ]
@@ -32,8 +32,10 @@ inputs.nixpkgs.lib.mapAttrs (
             );
           })
           (
-            builtins.attrNames (
-              lib.filterAttrs (_: entryType: entryType == "directory") (builtins.readDir ./nixos-configurations)
+            lib.filter (host: builtins.pathExists ./nixos-configurations/${host}/age.pubkey) (
+              builtins.attrNames (
+                lib.filterAttrs (_: entryType: entryType == "directory") (builtins.readDir ./nixos-configurations)
+              )
             )
           );
     };
