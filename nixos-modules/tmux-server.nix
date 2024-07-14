@@ -22,11 +22,7 @@
       description = "Tmux server";
       requires = [ config.systemd.user.sockets.tmux.name ];
       after = [ config.systemd.user.sockets.tmux.name ];
-
-      serviceConfig = {
-        Type = "forking";
-        ExecStart = "${lib.getExe pkgs.tmux} start-server\; new-session -d";
-      };
+      serviceConfig.ExecStart = "${lib.getExe pkgs.tmux} -D";
     };
   };
 }

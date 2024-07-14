@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 
-# https://codeberg.org/dnkl/foot/wiki#shell-integrationhttps://codeberg.org/dnkl/foot/wiki#shell-integration
+# https://codeberg.org/dnkl/foot/wiki#shell-integration
 
 clear-screen-keep-sb() {
 	printf '\e[%dS' $((LINES - 1))
