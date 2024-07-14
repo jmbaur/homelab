@@ -10,7 +10,11 @@ use std::{
 
 use anyhow::Context;
 use chrono::{DateTime, Local};
-use dbus::{arg::RefArg, blocking::{stdintf::org_freedesktop_dbus::PropertiesPropertiesChanged, LocalConnection}, Message};
+use dbus::{
+    arg::RefArg,
+    blocking::{stdintf::org_freedesktop_dbus::PropertiesPropertiesChanged, LocalConnection},
+    Message,
+};
 use serde::Serialize;
 use serde_json::json;
 use signal_hook::{
@@ -126,7 +130,7 @@ enum PowerStatus {
     PendingDischarge,
 }
 
-#[derive(Default)]
+#[derive(Default, PartialEq)]
 enum PowerDeviceType {
     #[default]
     Unknown,
@@ -359,9 +363,7 @@ fn main() -> anyhow::Result<()> {
     let _network_state = network_state.clone();
     _ = networkd
         .match_signal(
-            move |mut signal: PropertiesPropertiesChanged,
-                  _: &LocalConnection,
-                  _: &Message| {
+            move |mut signal: PropertiesPropertiesChanged, _: &LocalConnection, _: &Message| {
                 if let Some(Some(online_state)) = signal
                     .changed_properties
                     .remove("OnlineState")
@@ -387,9 +389,7 @@ fn main() -> anyhow::Result<()> {
     let _timedate_state = timedate_state.clone();
     _ = timedated
         .match_signal(
-            move |mut signal: PropertiesPropertiesChanged,
-                  _: &LocalConnection,
-                  _: &Message| {
+            move |mut signal: PropertiesPropertiesChanged, _: &LocalConnection, _: &Message| {
                 if let Some(Some(timezone)) = signal
                     .changed_properties
                     .remove("Timezone")
@@ -408,57 +408,59 @@ fn main() -> anyhow::Result<()> {
         Duration::from_millis(5000),
     );
 
-    let power_state = Rc::new(RefCell::new(PowerState::default()));
+    let mut power_state = None::<Rc<RefCell<PowerState>>>;
 
-    power_state.borrow_mut().device_type = upower_display_device
-        .type_()
-        .context("Failed to get display device type")?
-        .into();
-    power_state.borrow_mut().battery_percentage = upower_display_device
-        .percentage()
-        .context("Failed to get display device percentage")?;
-    power_state.borrow_mut().warning_level = upower_display_device
-        .warning_level()
-        .context("Failed to get display device warning level")?
-        .into();
+    if let Ok(device_type) = upower_display_device.type_().map(PowerDeviceType::from) {
+        if device_type != PowerDeviceType::Unknown {
+            power_state = Some(Rc::new(RefCell::new(PowerState {
+                device_type,
+                battery_percentage: upower_display_device
+                    .percentage()
+                    .context("Failed to get display device percentage")?,
+                warning_level: upower_display_device
+                    .warning_level()
+                    .context("Failed to get display device warning level")?
+                    .into(),
+                status: upower_display_device
+                    .state()
+                    .context("Failed to get display device power state")?
+                    .into(),
+            })));
+        }
+    }
 
-    power_state.borrow_mut().status = upower_display_device
-        .state()
-        .context("Failed to get display device power state")?
-        .into();
+    if let Some(ref power_state) = power_state {
+        let _power_state = power_state.clone();
+        _ = upower_display_device.match_signal(
+            move |mut signal: PropertiesPropertiesChanged, _: &LocalConnection, _: &Message| {
+                if let Some(Some(percentage)) = signal
+                    .changed_properties
+                    .remove("Percentage")
+                    .map(|variant| variant.as_f64())
+                {
+                    _power_state.borrow_mut().battery_percentage = percentage;
+                }
 
-    let _power_state = power_state.clone();
-    _ = upower_display_device.match_signal(
-        move |mut signal: PropertiesPropertiesChanged,
-              _: &LocalConnection,
-              _: &Message| {
-            if let Some(Some(percentage)) = signal
-                .changed_properties
-                .remove("Percentage")
-                .map(|variant| variant.as_f64())
-            {
-                _power_state.borrow_mut().battery_percentage = percentage;
-            }
+                if let Some(Some(Ok(warning_level))) = signal
+                    .changed_properties
+                    .remove("WarningLevel")
+                    .map(|variant| variant.as_u64().map(u32::try_from))
+                {
+                    _power_state.borrow_mut().warning_level = warning_level.into();
+                }
 
-            if let Some(Some(Ok(warning_level))) = signal
-                .changed_properties
-                .remove("WarningLevel")
-                .map(|variant| variant.as_u64().map(u32::try_from))
-            {
-                _power_state.borrow_mut().warning_level = warning_level.into();
-            }
+                if let Some(Some(Ok(state))) = signal
+                    .changed_properties
+                    .remove("State")
+                    .map(|variant| variant.as_u64().map(u32::try_from))
+                {
+                    _power_state.borrow_mut().status = state.into();
+                }
 
-            if let Some(Some(Ok(state))) = signal
-                .changed_properties
-                .remove("State")
-                .map(|variant| variant.as_u64().map(u32::try_from))
-            {
-                _power_state.borrow_mut().status = state.into();
-            }
-
-            true
-        },
-    );
+                true
+            },
+        );
+    }
 
     println!("{}", json!(header));
     println!("[");
@@ -474,7 +476,10 @@ fn main() -> anyhow::Result<()> {
             .context("Failed to process dbus messsages")?;
 
         let mut blocks = Vec::new();
-        blocks.push(power_state.borrow().into());
+
+        if let Some(ref power_state) = power_state {
+            blocks.push(power_state.borrow().into());
+        }
         blocks.push(network_state.borrow().into());
         blocks.push(timedate_state.borrow().into());
 
