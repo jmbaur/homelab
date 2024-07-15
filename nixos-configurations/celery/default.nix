@@ -32,7 +32,7 @@
   ];
 
   custom.wgNetwork.nodes.cauliflower = {
-    enable = true;
+    peer = true;
     allowedTCPPorts = [ 22 ];
   };
 

@@ -10,7 +10,11 @@
     443
   ];
 
-  custom.wgNetwork.nodes.potato.enable = true;
+  custom.wgNetwork.nodes.potato = {
+    peer = true;
+    initiate = true;
+    endpointHost = "potato.local";
+  };
 
   sops.secrets.ipwatch_env = { };
 

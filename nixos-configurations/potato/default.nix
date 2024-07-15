@@ -42,7 +42,7 @@
     board = "fizz-fizz";
   };
 
-  custom.wgNetwork.nodes.celery.enable = true;
+  custom.wgNetwork.nodes.celery.peer = true;
 
   custom.server.enable = true;
   custom.basicNetwork.enable = true;

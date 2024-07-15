@@ -28,8 +28,9 @@
   custom.desktop.enable = true;
   custom.dev.enable = true;
   custom.wgNetwork.nodes.celery = {
-    enable = true;
-    hostname = "celery.jmbaur.com";
+    peer = true;
+    initiate = true;
+    endpointHost = "celery.jmbaur.com";
   };
   custom.image = {
     boot.uefi.enable = true;

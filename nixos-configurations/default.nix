@@ -62,28 +62,27 @@ inputs.nixpkgs.lib.genAttrs allHosts (
 
           system.image.version = readFile "/.version does not exist" ../.version;
 
-          sops.secrets.wg = lib.mkIf config.custom.wgNetwork.isEnabled {
-            mode = "0640";
-            owner = "root";
-            inherit (config.users.users.systemd-network) group;
-            reloadUnits = [ config.systemd.services.systemd-networkd.name ];
-          };
+          sops.secrets = lib.mapAttrs' (name: nodeConfig: {
+            name = "wg-${name}";
+            value = lib.mkIf nodeConfig.peer {
+              mode = "0640";
+              owner = "root";
+              inherit (config.users.users.systemd-network) group;
+              reloadUnits = [ config.systemd.services.systemd-networkd.name ];
+            };
+          }) config.custom.wgNetwork.nodes;
 
           custom.wgNetwork = {
-            privateKey = lib.mkIf config.custom.wgNetwork.isEnabled { file = config.sops.secrets.wg.path; };
             ulaHextets = [
               64779
               57458
               54680
             ];
-            nodes = lib.genAttrs allHosts (host: {
-              pubkey = readFile "wg.pubkey does not exist for ${host}" ./${host}/wg.pubkey;
-
-              # NOTE: This is dependent on perspective of the peer initiating the
-              # connection. We default to the scenario where peers are on the
-              # same LAN and can communicate via mDNS, however this can be
-              # modified with the per-node `hostname` NixOS option.
-              hostname = lib.mkDefault "${host}.local";
+            nodes = lib.genAttrs allHosts (name: {
+              # These are only used if `peer = true`, so we can set some values
+              # here that enforce structure in the repo.
+              publicKey = readFile "wg-${host}.pubkey does not exist for ${name}" ./${name}/wg-${host}.pubkey;
+              privateKey.file = config.sops.secrets."wg-${name}".path;
             });
           };
 

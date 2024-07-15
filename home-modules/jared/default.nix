@@ -148,6 +148,8 @@ in
         };
       };
 
+      programs.nix-index.enable = true;
+
       programs.zoxide.enable = true;
 
       programs.direnv = {

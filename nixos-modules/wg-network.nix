@@ -8,11 +8,10 @@
 let
   cfg = config.custom.wgNetwork;
 
-  wgListenPort = config.systemd.network.netdevs."10-wg-network".wireguardConfig.ListenPort;
+  inherit (config.networking) hostName;
 
   firewallRule =
     {
-      name,
       ip6addr ? null,
       iifname ? null,
       l4proto,
@@ -25,12 +24,16 @@ let
         ++ [ "${l4proto} dport { ${lib.concatMapStringsSep ", " toString ports} }" ];
     in
     lib.optionalString (ports != [ ]) ''
-      ${toString filters} accept comment "allow from ${name}"
+      ${toString filters} accept
     '';
 
-  peeredNodes = lib.filterAttrs (_: { enable, ... }: enable) cfg.nodes;
+  peeredNodes = lib.filterAttrs (_: { peer, ... }: peer) cfg.nodes;
 
-  babelEnabled = lib.length (lib.attrNames peeredNodes) > 1;
+  firstPeeredNode = lib.elemAt (lib.attrNames peeredNodes) 0;
+
+  hextetOffsets = lib.genList (x: x * 4) 4;
+
+  linkLocalNetworkSegments = [ "fe80" ] ++ lib.genList (_: "0000") 3;
 
   ulaNetworkSegments =
     map (hextet: lib.toLower (lib.toHexString hextet)) cfg.ulaHextets
@@ -39,6 +42,12 @@ let
   ulaNetwork = "${lib.concatStringsSep ":" ulaNetworkSegments}::/64";
 
   babeldPort = 6696;
+
+  wgPort = 51820;
+
+  wireguardNetdevs = lib.filterAttrs (
+    _: netdev: netdev.netdevConfig.Kind == "wireguard"
+  ) config.systemd.network.netdevs;
 in
 {
   options.custom.wgNetwork = with lib; {
@@ -57,33 +66,22 @@ in
       ];
     };
 
-    wgInterface = mkOption {
-      type = types.str;
-      default = "wg0";
-    };
-
-    privateKey = mkOption {
-      type = types.attrTag {
-        value = mkOption { type = types.str; };
-        file = mkOption { type = types.path; };
-      };
-    };
-
     nodes = mkOption {
       default = { };
       type = types.attrsOf (
         types.submodule (
           { name, config, ... }:
           let
-            hash = (builtins.hashString "sha256" name);
-            genHextetOffset = lib.genList (x: x * 4);
-            ulaHostSegments = map (x: lib.substring x 4 hash) (genHextetOffset 4);
-            linkLocalNetworkSegments = [ "fe80" ] ++ lib.genList (_: "0000") 3;
-            linkLocalHostSegments = map (x: lib.substring x 4 hash) (genHextetOffset 4);
+            hostHash = builtins.hashString "sha256" name;
+            hostSegments = map (x: lib.substring x 4 hostHash) hextetOffsets;
+            hostPeerHash = builtins.hashString "sha256" (hostName + name);
+            hostPeerSegments = map (x: lib.substring x 4 hostPeerHash) hextetOffsets;
           in
           {
             options = {
-              enable = mkEnableOption "wg peer ${node}";
+              peer = mkEnableOption "p2p wireguard peer";
+
+              initiate = mkEnableOption "initiate the peer connection";
 
               allowedTCPPorts = mkOption {
                 type = types.listOf types.ints.positive;
@@ -95,30 +93,48 @@ in
                 default = [ ];
               };
 
-              ip6addr = mkOption {
+              ulaAddr = mkOption {
                 internal = true;
                 readOnly = true;
                 type = types.str;
               };
 
-              ip6lladdr = mkOption {
+              linkLocalAddr = mkOption {
                 internal = true;
                 readOnly = true;
                 type = types.str;
               };
 
-              pubkey = mkOption {
+              publicKey = mkOption {
                 internal = true;
                 readOnly = true;
                 type = types.str;
+                description = ''
+                  The public wireguard key of this node for the host.
+                '';
               };
 
-              hostname = mkOption { type = types.str; };
+              privateKey = mkOption {
+                type = types.attrTag {
+                  value = mkOption { type = types.str; };
+                  file = mkOption { type = types.path; };
+                };
+                description = ''
+                  The private key of the host to for this node.
+                '';
+              };
+
+              endpointHost = mkOption {
+                type = types.str;
+                description = ''
+                  The host portion of the endpoint address for this node.
+                '';
+              };
             };
 
             config = {
-              ip6addr = lib.concatStringsSep ":" (ulaNetworkSegments ++ ulaHostSegments);
-              ip6lladdr = lib.concatStringsSep ":" (linkLocalNetworkSegments ++ linkLocalHostSegments);
+              ulaAddr = lib.concatStringsSep ":" (ulaNetworkSegments ++ hostSegments);
+              linkLocalAddr = lib.concatStringsSep ":" (linkLocalNetworkSegments ++ hostPeerSegments);
             };
           }
         )
@@ -139,7 +155,7 @@ in
         message = "nftables must be enabled to use wg-network";
       }
       {
-        assertion = !cfg.nodes.${config.networking.hostName}.enable;
+        assertion = !cfg.nodes.${config.networking.hostName}.peer;
         message = "host cannot have a wg peer with itself";
       }
       {
@@ -147,92 +163,114 @@ in
         assertion = lib.length cfg.ulaHextets >= 1 && lib.length cfg.ulaHextets <= 4;
         message = "ULA network prefix must have at least 1 and at most than 4 hextets ";
       }
+      {
+        assertion =
+          lib.length (
+            lib.attrNames (lib.filterAttrs (_: netdev: netdev.wireguardConfig ? ListenPort) wireguardNetdevs)
+          ) < 2;
+        message = "duplicate ListenPorts configured";
+      }
     ];
 
     environment.systemPackages = [ pkgs.wireguard-tools ];
 
     networking.firewall.extraInputRules = lib.concatLines (
       lib.flatten (
-        lib.mapAttrsToList (node: nodeConfig: [
-          (firewallRule {
-            name = node;
-            ip6addr = nodeConfig.ip6addr;
-            l4proto = "tcp";
-            ports = nodeConfig.allowedTCPPorts;
-          })
-          (firewallRule {
-            name = node;
-            ip6addr = nodeConfig.ip6addr;
-            l4proto = "udp";
-            ports = nodeConfig.allowedUDPPorts;
-          })
-          (firewallRule {
-            name = node;
-            l4proto = "udp";
-            iifname = cfg.wgInterface;
-            ports = [ babeldPort ];
-          })
-        ]) cfg.nodes
+        lib.mapAttrsToList (
+          name: nodeConfig:
+          [
+            (firewallRule {
+              ip6addr = nodeConfig.ulaAddr;
+              l4proto = "tcp";
+              ports = nodeConfig.allowedTCPPorts;
+            })
+            (firewallRule {
+              ip6addr = nodeConfig.ulaAddr;
+              l4proto = "udp";
+              ports = nodeConfig.allowedUDPPorts;
+            })
+          ]
+          ++ lib.optionals nodeConfig.peer [
+            (firewallRule {
+              l4proto = "udp";
+              iifname = "wg-${name}";
+              ports = [ babeldPort ];
+            })
+          ]
+        ) cfg.nodes
       )
     );
 
-    networking.firewall.allowedUDPPorts = [ wgListenPort ];
+    networking.firewall.allowedUDPPorts = lib.optionals (
+      lib.filterAttrs (_: netdev: netdev.wireguardConfig ? ListenPort) wireguardNetdevs != { }
+    ) [ wgPort ];
 
-    systemd.network.netdevs."10-wg-network" = {
-      netdevConfig = {
-        Name = cfg.wgInterface;
-        Kind = "wireguard";
-      };
-      wireguardConfig = lib.mkMerge [
-        {
-          ListenPort = 51820;
-          RouteTable = lib.mkIf babelEnabled "off";
-        }
-        (lib.mkIf (cfg.privateKey ? file) { PrivateKeyFile = cfg.privateKey.file; })
-        (lib.mkIf (cfg.privateKey ? value) {
-          PrivateKey = lib.warn "Insecure wireguard private key set in nixos config, this value will be in /nix/store" cfg.privateKey.value;
-        })
-      ];
-      wireguardPeers = lib.mapAttrsToList (_: nodeConfig: {
-        AllowedIPs = [
-          "${nodeConfig.ip6addr}/128"
-          "fe80::/64"
-          "ff02::1:6/128"
+    systemd.network.netdevs = lib.mapAttrs' (name: nodeConfig: {
+      name = "10-wg-${name}";
+      value = {
+        netdevConfig = {
+          Name = "wg-${name}";
+          Kind = "wireguard";
+        };
+        wireguardConfig = lib.mkMerge [
+          {
+            ListenPort = lib.mkIf (!nodeConfig.initiate) wgPort;
+            RouteTable = "off";
+          }
+          (lib.mkIf (nodeConfig.privateKey ? file) { PrivateKeyFile = nodeConfig.privateKey.file; })
+          (lib.mkIf (nodeConfig.privateKey ? value) {
+            PrivateKey = lib.warn "Insecure wireguard private key set in nixos config, this value will be in /nix/store" nodeConfig.privateKey.value;
+          })
         ];
-        PublicKey = nodeConfig.pubkey;
+        wireguardPeers = [
+          {
+            AllowedIPs = [ "::/0" ];
+            PublicKey = nodeConfig.publicKey;
 
-        # Keep stateful firewall's connection tracking alive. 25 seconds should
-        # work with most firewalls.
-        PersistentKeepalive = 25;
+            # Keep stateful firewall's connection tracking alive. 25 seconds should
+            # work with most firewalls.
+            PersistentKeepalive = 25;
 
-        # TODO(jared): Not all nodes are necessarily directly available via
-        # hostname (e.g. behind NAT). We shouldn't assume that a node initates
-        # a connection to all of its peers.
-        Endpoint = "${nodeConfig.hostname}:${toString wgListenPort}";
-      }) peeredNodes;
-    };
+            # TODO(jared): Not all nodes are necessarily directly available via
+            # hostname (e.g. behind NAT). We shouldn't assume that a node initates
+            # a connection to all of its peers.
+            Endpoint = lib.mkIf nodeConfig.initiate "${nodeConfig.endpointHost}:${toString wgPort}";
+          }
+        ];
+      };
+    }) peeredNodes;
 
-    systemd.network.networks."10-wg-network" = {
-      name = cfg.wgInterface;
-      routes = lib.optionals babelEnabled (
-        lib.mapAttrsToList (_: nodeConfig: { Destination = "${nodeConfig.ip6addr}/128"; }) peeredNodes
-      );
-      addresses = [
-        {
-          Address = "${cfg.nodes.${config.networking.hostName}.ip6addr}/64";
-          AddPrefixRoute = !babelEnabled;
-        }
-        { Address = "${cfg.nodes.${config.networking.hostName}.ip6lladdr}/64"; }
-      ];
-    };
+    systemd.network.networks = lib.mapAttrs' (name: nodeConfig: {
+      name = "10-wg-${name}";
+      value = {
+        name = "wg-${name}";
+        linkConfig.Multicast = true;
+        routes = [ { Destination = "${nodeConfig.ulaAddr}/128"; } ];
+        addresses =
+          [ { Address = "${nodeConfig.linkLocalAddr}/64"; } ]
+          ++
+          # make sure only one unique local address is added on the host
+          lib.optionals (name == firstPeeredNode) [
+            {
+              Address = "${cfg.nodes.${hostName}.ulaAddr}/64";
+              AddPrefixRoute = false;
+            }
+          ];
+      };
+    }) peeredNodes;
 
     networking.extraHosts = lib.concatLines (
-      lib.mapAttrsToList (node: nodeConfig: "${nodeConfig.ip6addr} ${node}.internal") cfg.nodes
+      lib.mapAttrsToList (node: nodeConfig: "${nodeConfig.ulaAddr} ${node}.internal") cfg.nodes
     );
 
     services.babeld = {
-      enable = babelEnabled;
-      interfaces.${cfg.wgInterface}.type = "tunnel";
+      enable = true;
+
+      interfaces = lib.mapAttrs' (name: _: {
+        name = "wg-${name}";
+        value.type = "tunnel";
+      }) peeredNodes;
+
       extraConfig = ''
         local-port 33123
 
@@ -242,12 +280,11 @@ in
         import-table 254 # main
         export-table 254 # main
 
-        # in ip ${ulaNetwork} eq 128 allow
-        in allow
+        in ip ${ulaNetwork} eq 128 allow
+        in deny
 
-        # redistribute ip ${ulaNetwork} eq 128 allow
-        # redistribute local deny
-        redistribute local allow
+        redistribute ip ${ulaNetwork} eq 128 allow
+        redistribute local deny
       '';
     };
   };

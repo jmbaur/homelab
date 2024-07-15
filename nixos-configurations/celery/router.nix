@@ -8,6 +8,10 @@
   boot.kernelParams = [ "cfg80211.ieee80211_regdom=US" ];
   hardware.wirelessRegulatoryDatabase = true;
 
+  # TODO(jared): resolving babeld and nixos-router conflicts
+  boot.kernel.sysctl."net.ipv4.conf.all.forwarding" = lib.mkForce 1;
+  boot.kernel.sysctl."net.ipv6.conf.all.forwarding" = lib.mkForce 1;
+
   router = {
     enable = true;
     ipv6UlaPrefix = "fd4c:ddfe:28e9::/64";
