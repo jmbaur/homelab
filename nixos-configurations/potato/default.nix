@@ -43,6 +43,7 @@
   };
 
   custom.wgNetwork.nodes.celery.peer = true;
+  custom.wgNetwork.nodes.cauliflower.allowedTCPPorts = [ 22 ];
 
   custom.server.enable = true;
   custom.basicNetwork.enable = true;

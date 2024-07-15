@@ -66,6 +66,22 @@ in
       ];
     };
 
+    allowedTCPPorts = mkOption {
+      type = types.listOf types.ints.positive;
+      default = [ ];
+      description = ''
+        Allowed TCP ports for the entire overlay network to the host.
+      '';
+    };
+
+    allowedUDPPorts = mkOption {
+      type = types.listOf types.ints.positive;
+      default = [ ];
+      description = ''
+        Allowed UDP ports for the entire overlay network to the host.
+      '';
+    };
+
     nodes = mkOption {
       default = { };
       type = types.attrsOf (
@@ -86,11 +102,17 @@ in
               allowedTCPPorts = mkOption {
                 type = types.listOf types.ints.positive;
                 default = [ ];
+                description = ''
+                  Allowed TCP ports for this node to the host.
+                '';
               };
 
               allowedUDPPorts = mkOption {
                 type = types.listOf types.ints.positive;
                 default = [ ];
+                description = ''
+                  Allowed UDP ports for this node to the host.
+                '';
               };
 
               ulaAddr = mkOption {
@@ -175,7 +197,19 @@ in
     environment.systemPackages = [ pkgs.wireguard-tools ];
 
     networking.firewall.extraInputRules = lib.concatLines (
-      lib.flatten (
+      [
+        (firewallRule {
+          l4proto = "tcp";
+          ip6addr = ulaNetwork;
+          ports = cfg.allowedTCPPorts;
+        })
+        (firewallRule {
+          l4proto = "udp";
+          ip6addr = ulaNetwork;
+          ports = cfg.allowedUDPPorts;
+        })
+      ]
+      ++ lib.flatten (
         lib.mapAttrsToList (
           name: nodeConfig:
           [

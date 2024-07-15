@@ -78,6 +78,7 @@ inputs.nixpkgs.lib.genAttrs allHosts (
               57458
               54680
             ];
+
             nodes = lib.genAttrs allHosts (name: {
               # These are only used if `peer = true`, so we can set some values
               # here that enforce structure in the repo.
