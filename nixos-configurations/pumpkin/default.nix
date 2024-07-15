@@ -221,15 +221,13 @@ in
       nixpkgs.overlays = lib.mkAfter [ (final: _: { mesa = final.mesa-asahi-edge; }) ];
 
       hardware.firmware = [ asahiFirmware ];
-    }
 
-    (lib.mkIf config.sound.enable {
       # enable pipewire to run real-time and avoid audible glitches
-      security.rtkit.enable = true;
+      security.rtkit.enable = config.services.pipewire.enable;
+
       # set up pipewire with the supported capabilities (instead of pulseaudio)
       # and asahi-audio configs and plugins
       services.pipewire = {
-        enable = true;
         alsa.enable = true;
         pulse.enable = true;
 
@@ -240,8 +238,6 @@ in
         ];
 
         wireplumber = {
-          enable = true;
-
           configPackages = [ pkgs.asahi-audio ];
           extraLv2Packages = [
             pkgs.lsp-plugins
@@ -275,6 +271,6 @@ in
           message = "wireplumber >= 0.5.2 is required for sound with nixos-apple-silicon.";
         }
       ];
-    })
+    }
   ];
 }

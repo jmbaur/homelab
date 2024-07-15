@@ -29,9 +29,6 @@
     environment.variables.BROWSER = "echo";
     fonts.fontconfig.enable = false;
 
-    # No need for sound on a server
-    sound.enable = false;
-
     # UTC everywhere!
     time.timeZone = lib.mkDefault "UTC";
 
