@@ -72,20 +72,26 @@ inputs.nixpkgs.lib.genAttrs allHosts (
             };
           }) config.custom.wgNetwork.nodes;
 
-          custom.wgNetwork = {
-            ulaHextets = [
-              64779
-              57458
-              54680
-            ];
+          custom.wgNetwork = lib.mkMerge [
+            {
+              ulaHextets = [
+                64779
+                57458
+                54680
+              ];
 
-            nodes = lib.genAttrs allHosts (name: {
-              # These are only used if `peer = true`, so we can set some values
-              # here that enforce structure in the repo.
-              publicKey = readFile "wg-${host}.pubkey does not exist for ${name}" ./${name}/wg-${host}.pubkey;
-              privateKey.file = config.sops.secrets."wg-${name}".path;
-            });
-          };
+              nodes = lib.genAttrs allHosts (name: {
+                # These are only used if `peer = true`, so we can set some values
+                # here that enforce structure in the repo.
+                publicKey = readFile "wg-${host}.pubkey does not exist for ${name}" ./${name}/wg-${host}.pubkey;
+                privateKey.file = config.sops.secrets."wg-${name}".path;
+              });
+            }
+            {
+              # Allow cauliflower to SSH to any hosts in the overlay network
+              nodes.cauliflower.allowedTCPPorts = [ 22 ];
+            }
+          ];
 
           custom.image = {
             enable = true;
