@@ -285,6 +285,27 @@ in
       wants = [ config.systemd.user.services.geoclue-agent.name ];
       partOf = [ "graphical-session.target" ];
       wantedBy = [ "graphical-session.target" ];
+      # gammastep doesn't know how to read global config, see
+      # https://gitlab.com/chinstrap/gammastep/-/blob/master/src/hooks.c?ref_type=heads#L32
+      environment.XDG_CONFIG_HOME = pkgs.linkFarm "gammastep-config" [
+        {
+          name = "gammastep/hooks/gtk-theme";
+          path = pkgs.writeShellScript "toggle-gtk-theme" ''
+            theme=Adwaita
+            case $1 in
+            period-changed)
+              case $3 in
+              night)
+                theme=Adwaita-dark
+                ;;
+              esac
+
+              ${pkgs.glib}/bin/gsettings set org.gnome.desktop.interface gtk-theme "$theme"
+              ;;
+            esac
+          '';
+        }
+      ];
       serviceConfig = {
         ExecStart = toString [
           (lib.getExe pkgs.gammastep)
