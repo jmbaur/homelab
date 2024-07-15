@@ -19,6 +19,7 @@
       socketConfig = {
         ListenStream = "%t/tmux-%U/default";
         SocketMode = "0600";
+        DirectoryMode = "0700";
       };
       wantedBy = [ "sockets.target" ];
     };
