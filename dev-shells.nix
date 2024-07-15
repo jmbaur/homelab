@@ -46,9 +46,7 @@ inputs.nixpkgs.lib.mapAttrs (
         with pkgs;
         [
           bashInteractive
-          jq
           just
-          nix-prefetch-scripts
           semver-tool
           sops
         ]

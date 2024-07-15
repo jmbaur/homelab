@@ -54,26 +54,39 @@ inputs.nixpkgs.lib.mapAttrs (
     );
 
     updateRepoDependencies = mkApp (
-      pkgs.writeShellScript "update-repo-dependencies" ''
-        export NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"
+      lib.getExe (
+        pkgs.writeShellApplication {
+          name = "update-repo-dependencies";
+          runtimeInputs = with pkgs; [
+            jq
+            nix-prefetch-scripts
+          ];
+          text = ''
+            NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"
+            export NIX_PATH
 
-        nix flake update --accept-flake-config
+            nix flake update --accept-flake-config
 
-        for source in $(find -type f -name "*source.json"); do
-          args=()
-          if [[ $(jq -r ".fetchSubmodules" < "$source") == "true" ]]; then
-            args+=("--fetch-submodules")
-          fi
-          args+=("$(jq -r ".url" < $source)")
-          nix-prefetch-git "''${args[@]}" | tee "$source"
-        done
+            readarray -t sources < <(find . -type f -name "*source.json")
+            for source in "''${sources[@]}"; do
+              args=()
+              if [[ $(jq -r ".fetchSubmodules" < "$source") == "true" ]]; then
+                args+=("--fetch-submodules")
+              fi
+              args+=("$(jq -r ".url" < "$source")")
+              nix-prefetch-git "''${args[@]}" | tee "$source"
+            done
 
-        for cargo_toml in $(find overlays/pkgs -type f -name "Cargo.toml"); do
-          pushd $(dirname $cargo_toml)
-          nix develop .#$(basename $(dirname $cargo_toml)) --command cargo update
-          popd
-        done
-      ''
+            # shellcheck disable=SC2185,SC2044
+            readarray -t cargo_tomls < <(find ./overlays/pkgs -type f -name "Cargo.toml")
+            for cargo_toml in "''${cargo_tomls[@]}"; do
+              pushd "$(dirname "$cargo_toml")"
+              nix develop ".#$(basename "$(dirname "$cargo_toml")")" --command cargo update
+              popd
+            done
+          '';
+        }
+      )
     );
 
   }
