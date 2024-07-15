@@ -51,12 +51,6 @@ let
 in
 {
   options.custom.wgNetwork = with lib; {
-    isEnabled = mkOption {
-      type = types.bool;
-      internal = true;
-      default = false;
-    };
-
     ulaHextets = mkOption {
       type = types.listOf types.ints.positive;
       example = [
@@ -165,8 +159,6 @@ in
   };
 
   config = lib.mkIf (peeredNodes != { }) {
-    custom.wgNetwork.isEnabled = true;
-
     assertions = [
       {
         assertion = config.systemd.network.enable;
