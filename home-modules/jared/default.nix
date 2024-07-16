@@ -290,6 +290,7 @@ in
           set-option -as terminal-features ",xterm-kitty:RGB"
           set-option -g allow-passthrough on
           set-option -g automatic-rename on
+          set-option -g default-shell $SHELL
           set-option -g detach-on-destroy off
           set-option -g focus-events on
           set-option -g renumber-windows on
