@@ -308,7 +308,7 @@ in
           bind-key ESCAPE copy-mode
           bind-key J command-prompt -p "join pane from:"  "join-pane -h -s '%%'"
           bind-key W run-shell -b "${pkgs.tmuxPlugins.tmux-fzf}/share/tmux-plugins/tmux-fzf/scripts/session.sh switch"
-          bind-key j display-popup -E ${lib.getExe pkgs.tmux-jump}
+          bind-key j display-popup -E tmux-jump
         '';
       };
 

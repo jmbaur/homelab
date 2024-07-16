@@ -9,8 +9,6 @@
   options.custom.server.enable = lib.mkEnableOption "server";
 
   config = lib.mkIf config.custom.server.enable {
-    custom.tmuxServer.enable = lib.mkDefault true;
-
     documentation.enable = lib.mkDefault false;
     documentation.doc.enable = lib.mkDefault false;
     documentation.info.enable = lib.mkDefault false;

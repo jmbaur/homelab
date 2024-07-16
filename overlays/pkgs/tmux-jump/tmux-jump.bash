@@ -47,9 +47,9 @@ function escape_basename() {
 
 tmux_session_name="$(escape_basename "$tmux_session_path")"
 
-clients_attached=$(tmux list-sessions \
+clients_attached=$(list-sessions \
 	-f "#{==:#{session_name},$tmux_session_name}" \
-	-F "#{session_attached}" 2>/dev/null)
+	-F "#{session_attached}" 2>/dev/null || echo)
 if [[ -z $clients_attached ]]; then
 	tmux new-session -d \
 		-s "$tmux_session_name" \

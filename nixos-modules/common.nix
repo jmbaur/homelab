@@ -54,8 +54,21 @@ in
     users.mutableUsers = lib.mkDefault false;
 
     # Make zsh the default interactive shell
-    programs.zsh.enable = true;
+    programs.zsh = {
+      enable = true;
+      interactiveShellInit = ''
+        bindkey -e
+      '';
+      promptInit = ''
+        autoload -U promptinit && promptinit && prompt redhat && setopt prompt_sp
+      '';
+    };
     users.defaultUserShell = pkgs.zsh;
+
+    programs.tmux = {
+      enable = true;
+      keyMode = if config.programs.vim.enable then "vi" else "emacs";
+    };
 
     nix = {
       package = pkgs.nixVersions.nix_2_23;
