@@ -188,6 +188,12 @@ in
 
     environment.systemPackages = [ pkgs.wireguard-tools ];
 
+    # Allow forwarding for any peers in the network.
+    networking.firewall.filterForward = true;
+    networking.firewall.extraForwardRules = ''
+      ip6 saddr ${ulaNetwork} accept
+    '';
+
     networking.firewall.extraInputRules = lib.concatLines (
       [
         (firewallRule {
