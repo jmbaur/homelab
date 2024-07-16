@@ -62,6 +62,11 @@ in
     services.power-profiles-daemon.enable = lib.mkDefault true;
     services.upower.enable = lib.mkDefault true;
 
+    # It would be uncommon for a desktop system to have an NMEA serial device,
+    # plus setting this to true means that geoclue will be dependent on avahi
+    # being enabled, since NMEA support in geoclue uses avahi.
+    services.geoclue2.enableNmea = lib.mkDefault false;
+
     services.greetd = {
       enable = true;
       settings.default_session.command = ''${lib.getExe' pkgs.greetd.greetd "agreety"} --cmd "systemd-cat --identifier=sway sway"'';
