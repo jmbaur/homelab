@@ -22,6 +22,12 @@
   systemd.network.netdevs."10-br0".netdevConfig = {
     Name = "br0";
     Kind = "bridge";
+    # Allow multicast traffic to be sent to all ports without clients
+    # registering themselves.
+    #
+    # TODO(jared): `bridge mdb` shows registerations,
+    # but it seems disabling snooping still fixes the issue.
+    bridgeConfig.MulticastSnooping = false;
   };
 
   systemd.network.networks = lib.mapAttrs' (name: value: lib.nameValuePair "10-${name}" value) (
