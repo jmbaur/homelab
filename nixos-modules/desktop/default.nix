@@ -320,8 +320,14 @@ in
     systemd.user.services.yubikey-touch-detector = {
       description = "YubiKey touch notifier";
       documentation = [ "https://github.com/maximbaz/yubikey-touch-detector" ];
-      partOf = [ "graphical-session.target" ];
-      wantedBy = [ "graphical-session.target" ];
+      partOf = [
+        "graphical-session.target"
+        "smartcard.target"
+      ];
+      wantedBy = [
+        "graphical-session.target"
+        "smartcard.target"
+      ];
       serviceConfig = {
         Type = "simple";
         Restart = "always";
@@ -340,6 +346,7 @@ in
       requires = [ "graphical-session.target" ];
       after = [ "graphical-session.target" ];
       wantedBy = [ "graphical-session.target" ];
+      # crashes without this file
       unitConfig.ConditionPathExists = "%h/.config/kanshi/config";
       serviceConfig = {
         Type = "simple";
