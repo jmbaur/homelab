@@ -41,7 +41,7 @@ in
         systemd.network = {
           enable = true;
           networks = {
-            "50-wireless" = {
+            "50-wireless" = lib.mkIf hasWireless {
               DHCP = "yes";
               matchConfig.Type = "wlan";
               dhcpV4Config = {
