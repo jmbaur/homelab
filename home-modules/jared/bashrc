@@ -2,12 +2,6 @@
 
 # https://codeberg.org/dnkl/foot/wiki#shell-integration
 
-clear-screen-keep-sb() {
-	printf '\e[%dS' $((LINES - 1))
-	tput -x clear
-}
-bind -x '"\C-l":"clear-screen-keep-sb"'
-
 osc7_cwd() {
 	local strlen=${#PWD}
 	local encoded=""
