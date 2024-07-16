@@ -67,6 +67,12 @@ in
     # being enabled, since NMEA support in geoclue uses avahi.
     services.geoclue2.enableNmea = lib.mkDefault false;
 
+    # MLS is deprecated: https://github.com/NixOS/nixpkgs/issues/321121
+    #
+    # NOTE: This is for personal usage only, be a good person and get your own
+    # API key.
+    services.geoclue2.geoProviderUrl = "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyA_WjR84LSrJrtRLaSIjG-QfnscNcv3PyY";
+
     services.greetd = {
       enable = true;
       settings.default_session.command = ''${lib.getExe' pkgs.greetd.greetd "agreety"} --cmd "systemd-cat --identifier=sway sway"'';

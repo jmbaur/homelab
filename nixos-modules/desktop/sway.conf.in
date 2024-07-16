@@ -1,4 +1,5 @@
 # vim: ft=swayconfig
+
 font pango:monospace 10
 floating_modifier Mod4
 default_border normal 2
@@ -10,138 +11,150 @@ focus_on_window_activation smart
 mouse_warping output
 workspace_layout stacking
 workspace_auto_back_and_forth yes
-# client.focused #4c7899 #285577 #ffffff #2e9ef4 #285577
-# client.focused_inactive #333333 #5f676a #ffffff #484e50 #5f676a
-# client.unfocused #333333 #222222 #888888 #292d2e #222222
-# client.urgent #2f343a #900000 #ffffff #900000 #900000
-# client.placeholder #000000 #0c0c0c #ffffff #000000 #0c0c0c
-# client.background #ffffff
-bindsym Mod4+1 workspace number 1
-bindsym Mod4+2 workspace number 2
-bindsym Mod4+3 workspace number 3
-bindsym Mod4+4 workspace number 4
-bindsym Mod4+5 workspace number 5
-bindsym Mod4+6 workspace number 6
-bindsym Mod4+7 workspace number 7
-bindsym Mod4+8 workspace number 8
-bindsym Mod4+9 workspace number 9
-bindsym Mod4+Control+l exec "loginctl lock-session"
-bindsym Mod4+Down focus down
-bindsym Mod4+F12 mode passthru
-bindsym Mod4+Left focus left
-bindsym Mod4+Print exec "shotman --capture window"
-bindsym Mod4+Return exec "foot"
-bindsym Mod4+Right focus right
-bindsym Mod4+Shift+1 move container to workspace number 1
-bindsym Mod4+Shift+2 move container to workspace number 2
-bindsym Mod4+Shift+3 move container to workspace number 3
-bindsym Mod4+Shift+4 move container to workspace number 4
-bindsym Mod4+Shift+5 move container to workspace number 5
-bindsym Mod4+Shift+6 move container to workspace number 6
-bindsym Mod4+Shift+7 move container to workspace number 7
-bindsym Mod4+Shift+8 move container to workspace number 8
-bindsym Mod4+Shift+9 move container to workspace number 9
-bindsym Mod4+Shift+Down move down
-bindsym Mod4+Shift+Left move left
-bindsym Mod4+Shift+Print exec "shotman --capture region"
-bindsym Mod4+Shift+Right move right
-bindsym Mod4+Shift+Up move up
-bindsym Mod4+Shift+b bar mode toggle
-bindsym Mod4+Shift+e exec "swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'"
-bindsym Mod4+Shift+h move left
-bindsym Mod4+Shift+j move down
-bindsym Mod4+Shift+k move up
-bindsym Mod4+Shift+l move right
-bindsym Mod4+Shift+minus move scratchpad
-bindsym Mod4+Shift+q kill
-bindsym Mod4+Shift+s sticky toggle
-bindsym Mod4+Shift+space floating toggle
-bindsym Mod4+Tab workspace back_and_forth
-bindsym Mod4+Up focus up
-bindsym Mod4+a focus parent
-bindsym Mod4+b splith
-bindsym Mod4+c exec "cliphist list | rofi -p clipboard -dmenu -display-columns 2 | cliphist decode | wl-copy"
-bindsym Mod4+d exec "makoctl dismiss"
-bindsym Mod4+e layout toggle split
-bindsym Mod4+f fullscreen toggle
-bindsym Mod4+h focus left
-bindsym Mod4+j focus down
-bindsym Mod4+k focus up
-bindsym Mod4+l focus right
-bindsym Mod4+minus scratchpad show
-bindsym Mod4+p exec "rofi -show-icons -modes run,drun -show drun"
-bindsym Mod4+r mode resize
-bindsym Mod4+s layout stacking
-bindsym Mod4+space focus mode_toggle
-bindsym Mod4+v splitv
-bindsym Mod4+w layout tabbed
-bindsym Print exec "shotman --capture output"
-bindsym XF86AudioLowerVolume exec "notify-send --transient --expire-time=2500 --hint int:value:$(pamixer --decrease 5 --get-volume) --hint string:x-canonical-private-synchronous:volume volume"
-bindsym XF86AudioMicMute exec notify-send --transient --expire-time=2500 --hint int:value:$(pamixer --default-source --toggle-mute --get-volume) --hint string:x-canonical-private-synchronous:mic mic "$(if [[ $(pamixer --default-source --get-mute) == true ]]; then echo muted; else echo unmuted; fi)"
-bindsym XF86AudioMute exec notify-send --transient --expire-time=2500 --hint int:value:$(pamixer --toggle-mute --get-volume) --hint string:x-canonical-private-synchronous:volume volume "$(if [[ $(pamixer --get-mute) == true ]]; then echo muted; else echo unmuted; fi)"
-bindsym XF86AudioRaiseVolume exec "notify-send --transient --expire-time=2500 --hint int:value:$(pamixer --increase 5 --get-volume) --hint string:x-canonical-private-synchronous:volume volume"
-bindsym XF86MonBrightnessDown exec notify-send --transient --expire-time=2500 --hint int:value:$(brightnessctl set 5%- | sed -En "s/.*\(([0-9]+)%\).*/\1/p") --hint string:x-canonical-private-synchronous:brightness brightness
-bindsym XF86MonBrightnessUp exec notify-send --transient --expire-time=2500 --hint int:value:$(brightnessctl set +5% | sed -En "s/.*\(([0-9]+)%\).*/\1/p") --hint string:x-canonical-private-synchronous:brightness brightness
+
+client.focused #4c7899 #285577 #ffffff #2e9ef4 #285577
+client.focused_inactive #333333 #5f676a #ffffff #484e50 #5f676a
+client.unfocused #333333 #222222 #888888 #292d2e #222222
+client.urgent #2f343a #900000 #ffffff #900000 #900000
+client.placeholder #000000 #0c0c0c #ffffff #000000 #0c0c0c
+client.background #ffffff
+
+bindsym {
+	Mod4+1 workspace number 1
+	Mod4+2 workspace number 2
+	Mod4+3 workspace number 3
+	Mod4+4 workspace number 4
+	Mod4+5 workspace number 5
+	Mod4+6 workspace number 6
+	Mod4+7 workspace number 7
+	Mod4+8 workspace number 8
+	Mod4+9 workspace number 9
+	Mod4+Control+l exec "loginctl lock-session"
+	Mod4+Down focus down
+	Mod4+F12 mode passthru
+	Mod4+Left focus left
+	Mod4+Print exec "shotman --capture window"
+	Mod4+Return exec "foot"
+	Mod4+Right focus right
+	Mod4+Shift+1 move container to workspace number 1
+	Mod4+Shift+2 move container to workspace number 2
+	Mod4+Shift+3 move container to workspace number 3
+	Mod4+Shift+4 move container to workspace number 4
+	Mod4+Shift+5 move container to workspace number 5
+	Mod4+Shift+6 move container to workspace number 6
+	Mod4+Shift+7 move container to workspace number 7
+	Mod4+Shift+8 move container to workspace number 8
+	Mod4+Shift+9 move container to workspace number 9
+	Mod4+Shift+Down move down
+	Mod4+Shift+Left move left
+	Mod4+Shift+Print exec "shotman --capture region"
+	Mod4+Shift+Right move right
+	Mod4+Shift+Up move up
+	Mod4+Shift+b bar mode toggle
+	Mod4+Shift+e exec "swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'"
+	Mod4+Shift+h move left
+	Mod4+Shift+j move down
+	Mod4+Shift+k move up
+	Mod4+Shift+l move right
+	Mod4+Shift+minus move scratchpad
+	Mod4+Shift+q kill
+	Mod4+Shift+s sticky toggle
+	Mod4+Shift+space floating toggle
+	Mod4+Tab workspace back_and_forth
+	Mod4+Up focus up
+	Mod4+a focus parent
+	Mod4+b splith
+	Mod4+c exec "cliphist list | rofi -p clipboard -dmenu -display-columns 2 | cliphist decode | wl-copy"
+	Mod4+d exec "makoctl dismiss"
+	Mod4+e layout toggle split
+	Mod4+f fullscreen toggle
+	Mod4+h focus left
+	Mod4+j focus down
+	Mod4+k focus up
+	Mod4+l focus right
+	Mod4+minus scratchpad show
+	Mod4+p exec "rofi -show-icons -modes run,drun -show drun"
+	Mod4+r mode resize
+	Mod4+s layout stacking
+	Mod4+space focus mode_toggle
+	Mod4+v splitv
+	Mod4+w layout tabbed
+	Print exec "shotman --capture output"
+	XF86AudioLowerVolume exec "notify-send --transient --expire-time=2500 --hint int:value:$(pamixer --decrease 5 --get-volume) --hint string:x-canonical-private-synchronous:volume volume"
+	XF86AudioMicMute exec notify-send --transient --expire-time=2500 --hint int:value:$(pamixer --default-source --toggle-mute --get-volume) --hint string:x-canonical-private-synchronous:mic mic "$(if [[ $(pamixer --default-source --get-mute) == true ]]; then echo muted; else echo unmuted; fi)"
+	XF86AudioMute exec notify-send --transient --expire-time=2500 --hint int:value:$(pamixer --toggle-mute --get-volume) --hint string:x-canonical-private-synchronous:volume volume "$(if [[ $(pamixer --get-mute) == true ]]; then echo muted; else echo unmuted; fi)"
+	XF86AudioRaiseVolume exec "notify-send --transient --expire-time=2500 --hint int:value:$(pamixer --increase 5 --get-volume) --hint string:x-canonical-private-synchronous:volume volume"
+	XF86MonBrightnessDown exec notify-send --transient --expire-time=2500 --hint int:value:$(brightnessctl set 5%- | sed -En "s/.*\(([0-9]+)%\).*/\1/p") --hint string:x-canonical-private-synchronous:brightness brightness
+	XF86MonBrightnessUp exec notify-send --transient --expire-time=2500 --hint int:value:$(brightnessctl set +5% | sed -En "s/.*\(([0-9]+)%\).*/\1/p") --hint string:x-canonical-private-synchronous:brightness brightness
+}
 
 input "1:1:AT_Translated_Set_2_keyboard" {
-  xkb_layout "@xkbLayout@"
-  xkb_model "@xkbModel@"
-  xkb_options "@xkbOptions@"
-  xkb_variant "@xkbVariant@"
+	xkb_layout "@xkbLayout@"
+	xkb_model "@xkbModel@"
+	xkb_options "@xkbOptions@"
+	xkb_variant "@xkbVariant@"
 }
 
 input "type:keyboard" {
-  repeat_delay 300
-  repeat_rate 50
+	repeat_delay 300
+	repeat_rate 50
 }
 
 input "type:pointer" {
-  accel_profile flat
+	accel_profile flat
 }
 
 input "type:touchpad" {
-  dwt enabled
-  middle_emulation enabled
-  natural_scroll enabled
-  tap enabled
+	dwt enabled
+	middle_emulation enabled
+	natural_scroll enabled
+	tap enabled
 }
 
 output "*" {
-  background /etc/sway/wallpaper fill
+	background /etc/sway/wallpaper fill
 }
 
 seat "*" {
-  xcursor_theme @xcursorTheme@ @xcursorSize@
+	xcursor_theme @xcursorTheme@ @xcursorSize@
 }
 
 mode "passthru" {
-  bindsym Mod4+F12 mode default
+	bindsym Mod4+F12 mode default
 }
 
 mode "resize" {
-  bindsym Down resize grow height 10 px
-  bindsym Escape mode default
-  bindsym Left resize shrink width 10 px
-  bindsym Return mode default
-  bindsym Right resize grow width 10 px
-  bindsym Up resize shrink height 10 px
-  bindsym h resize shrink width 10 px
-  bindsym j resize grow height 10 px
-  bindsym k resize shrink height 10 px
-  bindsym l resize grow width 10 px
+	bindsym {
+		Down resize grow height 10 px
+		Escape mode default
+		Left resize shrink width 10 px
+		Return mode default
+		Right resize grow width 10 px
+		Up resize shrink height 10 px
+		h resize shrink width 10 px
+		j resize grow height 10 px
+		k resize shrink height 10 px
+		l resize grow width 10 px
+	}
 }
 
-bindgesture swipe:right workspace prev
-bindgesture swipe:left workspace next
+bindgesture {
+	swipe:right workspace prev
+	swipe:left workspace next
+}
 
 bar {
-  font pango:monospace 10
-  position top
-  status_command tinybar
-  tray_output *
-  status_padding 4
+	font pango:monospace 10
+	position top
+	status_command tinybar
+	tray_output *
+	status_padding 4
 }
 
+# fix for sway keybindings with chromium PWAs
 for_window [app_id="^chrome-.*__.*"] shortcuts_inhibitor disable
+
+# make it obvious when we are running xwayland clients
 for_window [shell="xwayland"] title_format "%title (%shell)"
-exec "dbus-update-activation-environment --systemd --all; systemctl --user reset-failed; systemctl --user start sway-session.target; swaymsg -mt subscribe [\"shutdown\"]; systemctl --user stop sway-session.target"
+
+exec "dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP XDG_SESSION_TYPE NIXOS_OZONE_WL XCURSOR_THEME XCURSOR_SIZE; systemctl --user reset-failed; systemctl --user start sway-session.target; swaymsg -mt subscribe [\"shutdown\"]; systemctl --user stop sway-session.target"
