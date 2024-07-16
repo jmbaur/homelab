@@ -49,7 +49,7 @@ in
                 RouteMetric = 600;
               };
               networkConfig = {
-                IPv6PrivacyExtensions = "kernel";
+                IPv6PrivacyExtensions = lib.mkIf (!config.custom.server.enable) "kernel";
                 Domains = "~.";
                 MulticastDNS = true;
               };
@@ -67,7 +67,7 @@ in
                 RouteMetric = 100;
               };
               networkConfig = {
-                IPv6PrivacyExtensions = "kernel";
+                IPv6PrivacyExtensions = lib.mkIf (!config.custom.server.enable) "kernel";
                 Domains = "~.";
                 MulticastDNS = true;
               };
