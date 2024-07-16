@@ -10,7 +10,7 @@ let
 
   inherit (config.networking) hostName;
 
-  firewallRule =
+  inputFirewallRule =
     {
       ip6addr ? null,
       iifname ? null,
@@ -196,12 +196,12 @@ in
 
     networking.firewall.extraInputRules = lib.concatLines (
       [
-        (firewallRule {
+        (inputFirewallRule {
           l4proto = "tcp";
           ip6addr = ulaNetwork;
           ports = cfg.allowedTCPPorts;
         })
-        (firewallRule {
+        (inputFirewallRule {
           l4proto = "udp";
           ip6addr = ulaNetwork;
           ports = cfg.allowedUDPPorts;
@@ -211,19 +211,19 @@ in
         lib.mapAttrsToList (
           name: nodeConfig:
           [
-            (firewallRule {
+            (inputFirewallRule {
               ip6addr = nodeConfig.ulaAddr;
               l4proto = "tcp";
               ports = nodeConfig.allowedTCPPorts;
             })
-            (firewallRule {
+            (inputFirewallRule {
               ip6addr = nodeConfig.ulaAddr;
               l4proto = "udp";
               ports = nodeConfig.allowedUDPPorts;
             })
           ]
           ++ lib.optionals nodeConfig.peer [
-            (firewallRule {
+            (inputFirewallRule {
               l4proto = "udp";
               iifname = "wg-${name}";
               ports = [ babeldPort ];
