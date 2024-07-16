@@ -40,6 +40,7 @@ in
 
     # TODO(jared): We should use systemd-homed-firstboot.service when systemd
     # 256 is available. This depends on ConditionFirstBoot working in NixOS.
+    # See https://github.com/NixOS/nixpkgs/pull/327552
     systemd.services.initial-user-setup = {
       unitConfig.ConditionPathExistsGlob = [ "!/home/*.homedir" ];
       wantedBy = [ config.systemd.services.systemd-homed.name ];
