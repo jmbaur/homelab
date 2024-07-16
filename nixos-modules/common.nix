@@ -53,6 +53,10 @@ in
     # no need for mutable users
     users.mutableUsers = lib.mkDefault false;
 
+    # Make zsh the default interactive shell
+    programs.zsh.enable = true;
+    users.defaultUserShell = pkgs.zsh;
+
     nix = {
       package = pkgs.nixVersions.nix_2_23;
       channel.enable = false; # opt out of nix channels
