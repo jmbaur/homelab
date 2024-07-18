@@ -160,12 +160,14 @@ in
             psvar=()
           fi
           autoload -Uz vcs_info
-          set_window_title() { print -Pn "\e]0;[%m] %~\a" }
+          set_window_title() { print -Pn "\e]0;%n@%m: %~\a" }
           precmd_functions+=(vcs_info set_window_title)
           zstyle ':vcs_info:*' actionformats '%F{magenta}(%b|%a)%f'
           zstyle ':vcs_info:git:*' formats '%F{cyan}(%b)%f'
           zstyle ':vcs_info:*' enable git
-          PROMPT='%F{%(0V.yellow.green)}[%m]%f%F{white}%2~%f$vcs_info_msg_0_%(?..%F{red}[%?]%f)%(!.#.%#) '
+          PROMPT='%F{%(0V.yellow.green)}[%n@%m:%2~]%f$vcs_info_msg_0_%(?..%F{red}%?%f)%(!.#.%#) '
+
+          WORDCHARS='_'
 
           bindkey \^U backward-kill-line
         '';
