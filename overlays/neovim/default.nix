@@ -34,6 +34,7 @@
   vimUtils,
   wrapNeovimUnstable,
   writeText,
+  xdg-utils,
   zls,
   supportAllLanguages ? false,
   cSupport ? supportAllLanguages,
@@ -139,6 +140,7 @@ wrapNeovimUnstable neovim-unwrapped (
               git-extras # :Permalink
               ripgrep # picker
               tree-sitter
+              xdg-utils # :Permalink
             ]
             ++ (lib.optionals cSupport [ clang-tools ])
             ++ (lib.optionals goSupport [
