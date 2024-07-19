@@ -118,7 +118,7 @@ in
 
       home.shellAliases = {
         j = "tmux-jump";
-        remove-ssh-connections = "${lib.getExe pkgs.fd} --regex \"ssh-[a-f0-9]{40}\" $XDG_RUNTIME_DIR --exec rm {} \\;";
+        remove-ssh-connections = ''${lib.getExe pkgs.fd} --regex "ssh-[a-f0-9]{40}" $XDG_RUNTIME_DIR --exec sh -c 'kill $(${lib.getExe' pkgs.util-linux "lsfd"} --filter "NAME =~ \"state=listen path={}\"" --output PID --noheadings)' \;'';
       };
 
       home.file.".sqliterc".text = ''
