@@ -131,11 +131,11 @@ in
 
     environment.pathsToLink = [ "/share/wallpapers" ];
     environment.systemPackages = with pkgs; [
+      alacritty
       brightnessctl
       caffeineScript
       cliphist
       defaultIconTheme
-      foot
       gnome-themes-extra
       libnotify
       mako
@@ -193,6 +193,23 @@ in
       }
     );
 
+    # From https://raw.githubusercontent.com/anhsirk0/alacritty-themes/97e2cf7151f7eaf61d0f9d973bdd9dc74e403f52/themes/modus-vivendi-deuteranopia.toml
+    environment.etc."xdg/alacritty/alacritty.toml".source =
+      (pkgs.formats.toml { }).generate "alacritty.toml"
+        {
+          import = [
+            (pkgs.fetchurl {
+              url = "https://raw.githubusercontent.com/anhsirk0/alacritty-themes/97e2cf7151f7eaf61d0f9d973bdd9dc74e403f52/themes/modus-vivendi-deuteranopia.toml";
+              hash = "sha256-6pc12Jy+B6i8dzauEOemy1Mipo/kHhSlVvX2HX9NsVU=";
+            })
+          ];
+          live_config_reload = false;
+          mouse.hide_when_typing = true;
+          selection.save_to_clipboard = true;
+          terminal.osc52 = "CopyPaste";
+          font.size = 12;
+        };
+
     environment.etc."xdg/foot/foot.ini".source = (pkgs.formats.ini { }).generate "foot.ini" {
       main = {
         font = "monospace:size=12";
@@ -225,7 +242,7 @@ in
     # Looks the best with sway defaults
     environment.etc."xdg/rofi.rasi".text = ''
       configuration {
-        terminal: "foot";
+        terminal: "alacritty";
         font: "monospace 10";
       }
       @theme "Paper"
