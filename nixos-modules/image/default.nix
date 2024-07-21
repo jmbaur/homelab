@@ -115,7 +115,9 @@ in
 
         boot.loader.external = lib.mkForce {
           enable = true;
-          installHook = lib.getExe' pkgs.coreutils "true"; # do nothing
+          installHook = pkgs.writeShellScript "bootloader-warning" ''
+            printf "\033[0;33m%s\n\033[0m" "WARNING: The bootloader for image-based system is not installed via switch-to-configuration, this configuration will not be persisted across reboots."
+          '';
         };
 
         # When we have a mutable nix-store, we can still do
