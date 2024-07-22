@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, ... }:
 {
   imports = [
     ./router.nix
@@ -28,6 +28,16 @@
           };
         };
       '';
+    }
+  ];
+
+  # Make the pcf8523 driver builtin so we dont' run into issues such as this:
+  # https://github.com/systemd/systemd/issues/17737
+  boot.kernelPatches = [
+    {
+      name = "mt7986a-enablement";
+      patch = null;
+      extraStructuredConfig.RTC_DRV_PCF8523 = lib.kernel.yes;
     }
   ];
 
