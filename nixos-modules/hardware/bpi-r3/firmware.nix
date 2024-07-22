@@ -19,8 +19,8 @@ let
     src = fetchFromGitHub {
       owner = "mtk-openwrt";
       repo = "arm-trusted-firmware";
-      rev = "0ea67d76ae8be127c91caa3fcdf449b1fe533175";
-      hash = "sha256-mlAzGRcqpLgWO3TmkrFvdFFmun+KiE+8FxGuqz+TKtI=";
+      rev = "bacca82a8cac369470df052a9d801a0ceb9b74ca";
+      hash = "sha256-n5D3styntdoKpVH+vpAfDkCciRJjCZf9ivrI9eEdyqw=";
     };
     nativeBuildInputs = [
       dtc

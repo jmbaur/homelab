@@ -8,9 +8,7 @@
   options.hardware.bpi-r3.enable = lib.mkEnableOption "bananapi r3";
 
   config = lib.mkIf config.hardware.bpi-r3.enable {
-    # Hold on 6.8 for now
-    # https://lore.kernel.org/linux-kernel/87zfsrcye9.fsf@kernel.org/T/
-    boot.kernelPackages = pkgs.linuxPackages_6_8;
+    boot.kernelPackages = pkgs.linuxPackages_6_9;
     boot.kernelPatches = [
       {
         name = "mt7986a-enablement";
@@ -38,7 +36,7 @@
       {
         name = "mt7986a-wifi";
         patch = pkgs.fetchpatch {
-          url = "https://raw.githubusercontent.com/openwrt/openwrt/dfc1e8cfeea51106b988cd2a924644976ad01fe7/target/linux/mediatek/patches-6.1/195-dts-mt7986a-bpi-r3-leds-port-names-and-wifi-eeprom.patch";
+          url = "https://raw.githubusercontent.com/openwrt/openwrt/06b37a5856ac7d0a2ddc2c0745ac1da3a01688d6/target/linux/mediatek/patches-6.6/195-dts-mt7986a-bpi-r3-leds-port-names-and-wifi-eeprom.patch";
           hash = "sha256-MsbWYPITxLvjAGRLIXC0j0+xAJdmMocic3N47DZ+GUs=";
         };
       }

@@ -16,9 +16,7 @@
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
-  # TODO(jared): trackpad is wonky, doesn't detect touch very well, try newer
-  # kernels.
-  boot.kernelPackages = pkgs.linuxPackages_6_8;
+  boot.kernelPackages = pkgs.linuxPackages_6_9;
 
   tinyboot = {
     enable = false;
