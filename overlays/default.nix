@@ -33,6 +33,7 @@ inputs: {
         }
       );
 
+      # Fix for search not working on latest release
       tmux = prev.tmux.overrideAttrs (old: {
         patches = (old.patches or [ ]) ++ [
           (final.fetchpatch {
@@ -62,6 +63,24 @@ inputs: {
           })
         ];
       });
+
+      # TODO(jared): remove when https://github.com/NixOS/nixpkgs/pull/320079 is merged.
+      zls =
+        prev.lib.throwIf (prev.lib.versionAtLeast prev.zls.version "0.13.0") "need to remove zls overrides"
+          (prev.zls.overrideAttrs (_: {
+            version = "0.13.0";
+            src = prev.fetchFromGitHub {
+              owner = "zigtools";
+              repo = "zls";
+              rev = "0.13.0";
+              fetchSubmodules = true;
+              hash = "sha256-vkFGoKCYUk6B40XW2T/pdhir2wzN1kpFmlLcoLwJx1U=";
+            };
+            postPatch = ''
+              ln -s ${prev.callPackage ./zls-deps.nix { }} $ZIG_GLOBAL_CACHE_DIR/p
+            '';
+          })).override
+          { zig_0_12 = prev.buildPackages.zig_0_13; };
 
       git-shell-commands = prev.callPackage ./git-shell-commands {
         libgit2 = prev.libgit2.overrideAttrs (_: rec {
