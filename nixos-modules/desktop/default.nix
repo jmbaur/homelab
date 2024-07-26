@@ -46,7 +46,7 @@ in
 
     networking.wireless.iwd.enable = true;
 
-    # Doesn't cross-compile
+    # TODO(jared): Doesn't cross compile
     services.fwupd.enable = pkgs.stdenv.hostPlatform == pkgs.stdenv.buildPlatform;
 
     hardware.bluetooth.enable = true;
@@ -59,8 +59,12 @@ in
     };
     services.pipewire.wireplumber.enable = true;
     services.automatic-timezoned.enable = lib.mkDefault true;
-    services.power-profiles-daemon.enable = lib.mkDefault true;
     services.upower.enable = lib.mkDefault true;
+
+    # TODO(jared): Doesn't cross compile
+    services.power-profiles-daemon.enable = lib.mkDefault (
+      pkgs.stdenv.hostPlatform == pkgs.stdenv.buildPlatform
+    );
 
     # It would be uncommon for a desktop system to have an NMEA serial device,
     # plus setting this to true means that geoclue will be dependent on avahi
