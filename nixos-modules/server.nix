@@ -70,5 +70,13 @@
     ];
 
     users.users.root.openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-ssh-keys ];
+
+    services.prometheus.exporters.node = {
+      enable = true;
+      enabledCollectors = [
+        "logind"
+        "systemd"
+      ];
+    };
   };
 }
