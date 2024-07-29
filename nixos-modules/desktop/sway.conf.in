@@ -64,7 +64,7 @@ bindsym {
 	Mod4+Up focus up
 	Mod4+a focus parent
 	Mod4+b splith
-	Mod4+c exec "cliphist list | rofi -p clipboard -dmenu -display-columns 2 | cliphist decode | wl-copy"
+	Mod4+c exec "cliphist list | rofi -i -p clipboard -dmenu -display-columns 2 | cliphist decode | wl-copy"
 	Mod4+d exec "makoctl dismiss"
 	Mod4+e layout toggle split
 	Mod4+f fullscreen toggle
@@ -73,7 +73,7 @@ bindsym {
 	Mod4+k focus up
 	Mod4+l focus right
 	Mod4+minus scratchpad show
-	Mod4+p exec "rofi -show-icons -modes run,drun -show drun"
+	Mod4+p exec "rofi -i -show-icons -modes run,drun -show drun"
 	Mod4+r mode resize
 	Mod4+s layout stacking
 	Mod4+space focus mode_toggle
