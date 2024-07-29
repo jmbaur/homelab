@@ -11,6 +11,7 @@
   gofumpt,
   gopls,
   haskell-language-server,
+  inotify-tools,
   lib,
   lua-language-server,
   neovim-unwrapped,
@@ -134,7 +135,8 @@ wrapNeovimUnstable neovim-unwrapped (
             [
               efm-langserver
               fd # picker
-              fswatch # for faster LSP experience
+              fswatch # TODO(jared): remove when the following is released: https://github.com/neovim/neovim/commit/55e4301036bb938474fc9768c41e28df867d9286
+              inotify-tools # for faster LSP experience
               fzf # fzf-lua
               git # mini-git
               git-extras # :Permalink
