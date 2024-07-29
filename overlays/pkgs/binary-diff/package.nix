@@ -10,17 +10,22 @@ writeShellApplication {
     vim
   ];
   text = ''
+    file1=$(realpath "$1")
+    file2=$(realpath "$2")
+
     tmp=$(mktemp -d)
     trap 'rm -rf $tmp' EXIT
-    pushd "$tmp" 2>/dev/null || exit 1
-    file1=$(basename "$1").hex
-    file2=$(basename "$2").hex
+    pushd "$tmp" >/dev/null || exit 1
+
+    hex1=$(basename "$file1").hex
+    hex2=$(basename "$file2").hex
+
     echo "$file1 $file2"
-    xxd -R never "$1" >"$file1"
-    xxd -R never "$2" >"$file2"
+    xxd -R never "$file1" >"$hex1"
+    xxd -R never "$file2" >"$hex2"
 
-    vimdiff "$file1" "$file2"
+    vimdiff "$hex1" "$hex2"
 
-    popd 2>/dev/null || exit 1
+    popd >/dev/null || exit 1
   '';
 }
