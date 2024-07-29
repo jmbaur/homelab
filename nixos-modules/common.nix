@@ -58,6 +58,8 @@ in
       enable = true;
       interactiveShellInit = ''
         bindkey -e
+        set_window_title() { print -Pn "\e]0;%n@%m: %~\a" }
+        precmd_functions+=(set_window_title)
       '';
       promptInit = ''
         autoload -U promptinit && promptinit && prompt redhat && setopt prompt_sp
