@@ -111,8 +111,6 @@ in
           }
         ];
 
-        systemd.additionalUpstreamSystemUnits = [ "boot-complete.target" ];
-
         boot.loader.external = lib.mkForce {
           enable = true;
           installHook = pkgs.writeShellScript "bootloader-warning" ''

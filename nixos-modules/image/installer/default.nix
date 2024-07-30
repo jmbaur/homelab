@@ -70,40 +70,40 @@ let
 
     contents = [
       {
-        object = "${modulesClosure}/lib";
-        symlink = "/lib";
+        source = "${modulesClosure}/lib";
+        target = "/lib";
       }
       {
-        object = "${pkgs.busybox}/bin/busybox";
-        symlink = "/init";
+        source = "${pkgs.busybox}/bin/busybox";
+        target = "/init";
       }
       {
-        object = "${pkgs.busybox}/bin";
-        symlink = "/bin";
+        source = "${pkgs.busybox}/bin";
+        target = "/bin";
       }
       {
-        object = "${pkgs.busybox}/sbin";
-        symlink = "/sbin";
+        source = "${pkgs.busybox}/sbin";
+        target = "/sbin";
       }
       {
-        object = startupScript;
-        symlink = "/etc/init.d/rcS";
+        source = startupScript;
+        target = "/etc/init.d/rcS";
       }
       {
-        object = pkgs.buildSimpleRustPackage "installer" ./installer.rs;
-        symlink = "/opt/installer";
+        source = pkgs.buildSimpleRustPackage "installer" ./installer.rs;
+        target = "/opt/installer";
       }
       {
-        object = pkgs.systemdMinimal;
-        symlink = "/opt/systemd";
+        source = pkgs.systemdMinimal;
+        target = "/opt/systemd";
       }
       {
-        object = pkgs.kmod;
-        symlink = "/opt/kmod";
+        source = pkgs.kmod;
+        target = "/opt/kmod";
       }
       {
-        object = ./inittab;
-        symlink = "/etc/inittab";
+        source = ./inittab;
+        target = "/etc/inittab";
       }
     ];
   };
