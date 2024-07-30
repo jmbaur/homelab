@@ -34,7 +34,7 @@ let
     #!/bin/sh
 
     mkdir -p /proc && mount -t proc proc /proc
-    mkdir -p /sys && mount -t sysfs sysfs /sys
+    mkdir -p /sys && mount -t sysfs sysfs /sys && mount -t configfs configfs /sys/kernel/config
     mkdir -p /dev && mount -t devtmpfs devtmpfs /dev
     mkdir -p /dev/pts && mount -t devpts devpts /dev/pts
     mkdir -p /run && mount -t tmpfs tmpfs /run
