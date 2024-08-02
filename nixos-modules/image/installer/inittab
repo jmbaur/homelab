@@ -3,7 +3,7 @@ tty2::askfirst:-/bin/sh
 tty3::askfirst:-/bin/sh
 tty4::askfirst:-/bin/sh
 tty5::askfirst:-/bin/sh
-::restart:/sbin/busybox init
+::restart:/init
 null::ctrlaltdel:/sbin/busybox reboot
 null::shutdown:/bin/umount -a -r
 null::shutdown:/sbin/swapoff -a
