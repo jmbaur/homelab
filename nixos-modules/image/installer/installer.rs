@@ -88,14 +88,14 @@ fn unmount(mountpoint: impl AsRef<std::ffi::OsStr> + std::fmt::Debug) -> Result<
 }
 
 fn udev_settle() -> Result<()> {
-    std::process::Command::new("/opt/systemd/bin/udevadm")
+    std::process::Command::new("/bin/udevadm")
         .args(&["trigger", "--action=add"])
         .spawn()
         .context("failed to spawn udevadm trigger")?
         .wait()
         .context("failed to run udevadm trigger")?;
 
-    std::process::Command::new("/opt/systemd/bin/udevadm")
+    std::process::Command::new("/bin/udevadm")
         .args(&["settle"])
         .spawn()
         .context("failed to spawn udevadm settle")?
@@ -119,12 +119,16 @@ fn wait_until_gone(path: &std::path::Path) {
     }
 }
 
+extern "C" {
+    pub fn kill(pid: std::ffi::c_int, signal: std::ffi::c_int) -> std::ffi::c_int;
+}
+
+const SIGTERM: std::ffi::c_int = 15;
+
 fn reboot() -> Result<()> {
-    std::process::Command::new("/bin/reboot")
-        .spawn()
-        .context("failed to spawn /bin/reboot")?
-        .wait()
-        .context("failed to run /bin/reboot")?;
+    _ = unsafe {
+        kill(1, SIGTERM);
+    };
 
     Ok(())
 }

@@ -9,32 +9,55 @@
 let
   cfg = config.custom.image;
 
-  installerCfg = config.custom.image.installer;
-
   # Make the installer work with lots of common hardware.
   installerSystem = extendModules { modules = [ "${modulesPath}/profiles/all-hardware.nix" ]; };
 
-  kernel-name = installerSystem.config.boot.kernelPackages.kernel.name or "kernel";
-  modulesTree = installerSystem.config.system.modulesTree.override {
-    name = kernel-name + "-modules";
-  };
-  firmware = installerSystem.config.hardware.firmware;
-
   # Determine the set of modules that we need to mount the root FS.
   modulesClosure = pkgs.makeModulesClosure {
-    rootModules =
+    rootModules = lib.traceValFn toString (
       installerSystem.config.boot.initrd.availableKernelModules
-      ++ installerSystem.config.boot.initrd.kernelModules;
-    kernel = modulesTree;
-    firmware = firmware;
+      ++ installerSystem.config.boot.initrd.kernelModules
+    );
+    kernel = installerSystem.config.system.modulesTree;
+    inherit (installerSystem.config.hardware) firmware;
+
+    # If we stop importing all-harware.nix, we could remove this.
     allowMissing = true;
   };
+
+  installerEnv = pkgs.buildEnv {
+    name = "installer-bin-env";
+    paths = [
+      (pkgs.busybox.override {
+        # module utilities provided by kmod
+        extraConfig = ''
+          CONFIG_INSMOD n
+          CONFIG_LSMOD n
+          CONFIG_MODINFO n
+          CONFIG_MODPROBE n
+          CONFIG_RMMOD n
+        '';
+      })
+      modulesClosure
+      pkgs.systemdMinimal
+      pkgs.systemdMinimal.kmod
+      pkgs.systemdMinimal.kmod.lib
+      (pkgs.buildSimpleRustPackage "installer" ./installer.rs)
+    ];
+    pathsToLink = [
+      "/bin"
+      "/sbin"
+      "/lib"
+    ];
+  };
+
+  installerCfg = config.custom.image.installer;
 
   startupScript = pkgs.writeScript "installer-startup-script" ''
     #!/bin/sh
 
     mkdir -p /proc && mount -t proc proc /proc
-    mkdir -p /sys && mount -t sysfs sysfs /sys && mount -t configfs configfs /sys/kernel/config
+    mkdir -p /sys && mount -t sysfs sysfs /sys
     mkdir -p /dev && mount -t devtmpfs devtmpfs /dev
     mkdir -p /dev/pts && mount -t devpts devpts /dev/pts
     mkdir -p /run && mount -t tmpfs tmpfs /run
@@ -46,9 +69,8 @@ let
     touch /etc/udev/hwdb.bin # to shut up udev
     touch /etc/initrd-release
 
-    echo /opt/kmod/bin/modprobe > /proc/sys/kernel/modprobe
-    for i in ${toString config.boot.initrd.kernelModules}; do
-      /opt/kmod/bin/modprobe $i
+    for i in ${toString installerSystem.config.boot.initrd.kernelModules}; do
+      /sbin/modprobe $i
     done
 
     ln -sfn /proc/self/fd /dev/fd
@@ -64,42 +86,34 @@ let
   ];
 
   installerInitialRamdisk = pkgs.makeInitrdNG {
-    name = "installer-initrd-${kernel-name}";
+    name = "installer-initrd";
     inherit (config.boot.initrd) compressor compressorArgs prepend;
     strip = true;
 
     contents = [
       {
-        source = "${modulesClosure}/lib";
-        target = "/lib";
-      }
-      {
-        source = "${pkgs.busybox}/bin/busybox";
+        source = "${installerEnv}/bin/busybox";
         target = "/init";
       }
       {
-        source = "${pkgs.busybox}/bin";
+        source = installerEnv;
+        target = "/usr";
+      }
+      {
+        source = "${installerEnv}/lib";
+        target = "/lib";
+      }
+      {
+        source = "${installerEnv}/bin";
         target = "/bin";
       }
       {
-        source = "${pkgs.busybox}/sbin";
+        source = "${installerEnv}/sbin";
         target = "/sbin";
       }
       {
         source = startupScript;
         target = "/etc/init.d/rcS";
-      }
-      {
-        source = pkgs.buildSimpleRustPackage "installer" ./installer.rs;
-        target = "/opt/installer";
-      }
-      {
-        source = pkgs.systemdMinimal;
-        target = "/opt/systemd";
-      }
-      {
-        source = pkgs.kmod;
-        target = "/opt/kmod";
       }
       {
         source = ./inittab;

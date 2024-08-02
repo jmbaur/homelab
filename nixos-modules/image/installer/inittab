@@ -3,12 +3,12 @@ tty2::askfirst:-/bin/sh
 tty3::askfirst:-/bin/sh
 tty4::askfirst:-/bin/sh
 tty5::askfirst:-/bin/sh
-::restart:/sbin/init
-null::ctrlaltdel:/sbin/reboot
+::restart:/sbin/busybox init
+null::ctrlaltdel:/sbin/busybox reboot
 null::shutdown:/bin/umount -a -r
 null::shutdown:/sbin/swapoff -a
 
 # NOTE: Busybox will run these in order, so ensure that systemd-udevd is
 # started before the installer.
-null::respawn:/opt/systemd/lib/systemd/systemd-udevd
-::respawn:/opt/installer/bin/installer
+null::respawn:/usr/lib/systemd/systemd-udevd
+::respawn:/bin/installer
