@@ -287,11 +287,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1722462338,
-        "narHash": "sha256-ss0G8t8RJVDewA3MyqgAlV951cWRK6EtVhVKEZ7J5LU=",
+        "lastModified": 1722630065,
+        "narHash": "sha256-QfM/9BMRkCmgWzrPDK+KbgJOUlSJnfX4OvsUupEUZvA=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "6e090576c4824b16e8759ebca3958c5b09659ee8",
+        "rev": "afc892db74d65042031a093adb6010c4c3378422",
         "type": "github"
       },
       "original": {
@@ -561,11 +561,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1722128083,
-        "narHash": "sha256-AqHEo0iwopfkXtSeogRKlgx0mGouH1bcrFVO8ZkUxfU=",
+        "lastModified": 1722734068,
+        "narHash": "sha256-QE5ks8rU81A76/Swpf1gNS8575Ka2Ox4cgKUpzst6m0=",
         "owner": "jmbaur",
         "repo": "webauthn-tiny",
-        "rev": "5c368ea4afd6779a07307fc53c9f91a63ddc3060",
+        "rev": "e796708f776228fbefbefce14099a69c81a89c8a",
         "type": "github"
       },
       "original": {
