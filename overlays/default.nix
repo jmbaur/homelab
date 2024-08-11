@@ -21,14 +21,8 @@ inputs: {
     (final: prev: {
       nixVersions = prev.nixVersions.extend (
         _: nPrev: {
-          nix_2_23 = nPrev.nix_2_23.overrideAttrs (old: {
-            patches = (old.patches or [ ]) ++ [
-              ./nix-local-overlay-store-regex.patch
-              (prev.fetchpatch {
-                url = "https://github.com/nixos/nix/commit/de639ceafe75ae25293f49f170ccad0c3e4a133f.patch";
-                hash = "sha256-BkRE61Kgdojhz1xWruArgCSriKop3kfCNyW46x1xc0o=";
-              })
-            ];
+          nix_2_24 = nPrev.nix_2_24.overrideAttrs (old: {
+            patches = (old.patches or [ ]) ++ [ ./nix-local-overlay-store-regex.patch ];
           });
         }
       );

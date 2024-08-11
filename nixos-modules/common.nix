@@ -73,7 +73,7 @@ in
     };
 
     nix = {
-      package = pkgs.nixVersions.nix_2_23;
+      package = pkgs.nixVersions.nix_2_24;
       channel.enable = false; # opt out of nix channels
       settings.trusted-users = [
         "root"

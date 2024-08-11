@@ -14,10 +14,9 @@ let
 
   # Determine the set of modules that we need to mount the root FS.
   modulesClosure = pkgs.makeModulesClosure {
-    rootModules = lib.traceValFn toString (
+    rootModules =
       installerSystem.config.boot.initrd.availableKernelModules
-      ++ installerSystem.config.boot.initrd.kernelModules
-    );
+      ++ installerSystem.config.boot.initrd.kernelModules;
     kernel = installerSystem.config.system.modulesTree;
     inherit (installerSystem.config.hardware) firmware;
 
