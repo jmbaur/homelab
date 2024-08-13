@@ -107,9 +107,10 @@ let
             vim-fugitive
           ]
           ++ lib.optionals rustSupport [
-            # Use rustaceanvim for single-file support. See
-            # https://github.com/neovim/nvim-lspconfig/issues/1528.
-            rustaceanvim
+            # currently broken: https://github.com/NixOS/nixpkgs/issues/333761
+            # # Use rustaceanvim for single-file support. See
+            # # https://github.com/neovim/nvim-lspconfig/issues/1528.
+            # rustaceanvim
           ]
         )
         # opt
