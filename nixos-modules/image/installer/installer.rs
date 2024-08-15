@@ -39,72 +39,6 @@ macro_rules! fail {
     }};
 }
 
-fn mount(
-    fs_type: &str,
-    read_only: bool,
-    what: impl AsRef<std::ffi::OsStr> + std::fmt::Debug,
-    mountpoint: impl AsRef<std::ffi::OsStr> + std::fmt::Debug,
-) -> Result<()> {
-    let mut args = Vec::new();
-
-    if read_only {
-        args.push(std::ffi::OsStr::new("-r"));
-    }
-
-    args.append(&mut vec![
-        std::ffi::OsStr::new("-t"),
-        std::ffi::OsStr::new(fs_type),
-        what.as_ref(),
-        mountpoint.as_ref(),
-    ]);
-
-    let output = std::process::Command::new("/bin/mount")
-        .args(&args)
-        .spawn()
-        .context("failed to spawn mount")?
-        .wait_with_output()
-        .context("failed to run mount")?;
-
-    if !output.status.success() {
-        fail!("failed to mount {:?} to {:?}", what, mountpoint);
-    }
-
-    Ok(())
-}
-
-fn unmount(mountpoint: impl AsRef<std::ffi::OsStr> + std::fmt::Debug) -> Result<()> {
-    let output = std::process::Command::new("/bin/umount")
-        .args(&[&mountpoint])
-        .spawn()
-        .context("failed to spawn umount")?
-        .wait_with_output()
-        .context("failed to run umount")?;
-
-    if !output.status.success() {
-        fail!("failed to unmount {:?}", mountpoint);
-    }
-
-    Ok(())
-}
-
-fn udev_settle() -> Result<()> {
-    std::process::Command::new("/bin/udevadm")
-        .args(&["trigger", "--action=add"])
-        .spawn()
-        .context("failed to spawn udevadm trigger")?
-        .wait()
-        .context("failed to run udevadm trigger")?;
-
-    std::process::Command::new("/bin/udevadm")
-        .args(&["settle"])
-        .spawn()
-        .context("failed to spawn udevadm settle")?
-        .wait()
-        .context("failed to run udevadm settle")?;
-
-    Ok(())
-}
-
 fn wait_until_gone(path: &std::path::Path) {
     loop {
         match std::fs::metadata(path) {
@@ -119,38 +53,14 @@ fn wait_until_gone(path: &std::path::Path) {
     }
 }
 
-extern "C" {
-    pub fn kill(pid: std::ffi::c_int, signal: std::ffi::c_int) -> std::ffi::c_int;
-}
-
-const SIGTERM: std::ffi::c_int = 15;
-
-fn reboot() -> Result<()> {
-    _ = unsafe {
-        kill(1, SIGTERM);
-    };
-
-    Ok(())
-}
-
-fn shell() -> Result<()> {
-    std::process::Command::new("/bin/sh")
-        .arg("-l")
-        .spawn()
-        .context("failed to spawn /bin/sh")?
-        .wait()
-        .context("failed to run /bin/sh")?;
-
-    Ok(())
-}
-
 fn wait_for_path(path: &str) -> Result<std::path::PathBuf> {
     for _ in 0..10 {
         match std::fs::canonicalize(path) {
             Ok(path) => return Ok(path),
             Err(err) => match err.kind() {
                 std::io::ErrorKind::NotFound => {
-                    std::thread::sleep(std::time::Duration::from_secs(1))
+                    std::thread::sleep(std::time::Duration::from_secs(1));
+                    eprintln!("waiting for {:?}", path);
                 }
                 _ => return Err(err).context("failed to canonicalize path")?,
             },
@@ -161,8 +71,6 @@ fn wait_for_path(path: &str) -> Result<std::path::PathBuf> {
 }
 
 fn real_main() -> Result<()> {
-    eprintln!("{0} INSTALLER {0}", "#".repeat(30));
-
     let proc_cmdline =
         std::fs::read_to_string("/proc/cmdline").context("failed to read /proc/cmdline")?;
     let mut proc_cmdline_split = proc_cmdline.split_whitespace();
@@ -193,26 +101,6 @@ fn real_main() -> Result<()> {
     let Some(target_disk) = target_disk else {
         fail!("no target disk specified");
     };
-
-    eprintln!("waiting for devices to settle...");
-    udev_settle()?;
-
-    {
-        eprintln!("press ENTER to drop to a shell");
-        let (tx, rx) = std::sync::mpsc::channel::<()>();
-        let _thread_handle = std::thread::spawn(move || {
-            let mut input = String::new();
-            match std::io::stdin().read_line(&mut input) {
-                Ok(_) => _ = tx.send(()),
-                Err(_) => {}
-            }
-        });
-
-        match rx.recv_timeout(std::time::Duration::from_millis(2500)) {
-            Ok(_) => fail!("requested a shell"),
-            Err(_) => eprintln!("continuing with installation"),
-        }
-    }
 
     let source_disk_part = wait_for_path(source_disk).context("failed to find source disk")?;
     let target_disk = wait_for_path(target_disk).context("failed to find target disk")?;
@@ -249,13 +137,9 @@ fn real_main() -> Result<()> {
     eprintln!("installing from {}", source_disk_part.display());
     eprintln!("installing to {}", target_disk.display());
 
-    let mountpoint = std::path::Path::new("/mnt");
-    std::fs::create_dir_all(&mountpoint).context("failed to create mountpoint")?;
-    mount("ext4", true, &source_disk_part, &mountpoint)?;
-
     let in_file = std::fs::OpenOptions::new()
         .read(true)
-        .open(mountpoint.join("image"))
+        .open("/mnt/image")
         .context("failed to open image to install")?;
 
     let mut out_file = std::fs::OpenOptions::new()
@@ -318,36 +202,16 @@ fn real_main() -> Result<()> {
 
     eprintln!("installation finished");
 
-    unmount(&mountpoint)?;
-
     eprintln!(
         "system will reboot when {} is removed/unplugged",
         source_disk_part.display()
     );
     wait_until_gone(&source_disk_part);
 
-    reboot()?;
-
     Ok(())
 }
 
-fn main() -> ! {
-    if let Err(err) = real_main() {
-        eprintln!("failed to perform installation: {:?}", err);
-
-        eprintln!("dropping to a shell");
-        std::thread::sleep(std::time::Duration::from_millis(2500));
-        loop {
-            if let Err(err) = shell() {
-                eprintln!("failed to spawn shell: {}", err);
-            }
-        }
-    }
-
-    // When reboot is called, we must wait here until the reboot takes place.
-    loop {
-        use std::io::Read;
-        let mut buf = [0u8; 1];
-        _ = std::io::stdin().read(&mut buf);
-    }
+fn main() -> Result<()> {
+    eprintln!("{0} INSTALLER {0}", "#".repeat(30));
+    real_main().context("failed to perform installation")
 }

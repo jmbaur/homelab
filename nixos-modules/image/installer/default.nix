@@ -1,164 +1,166 @@
 {
+  options,
   config,
   lib,
   pkgs,
-  extendModules,
   modulesPath,
+  utils,
   ...
 }:
 let
   cfg = config.custom.image;
 
+  installerCfg = cfg.installer;
+
+  baseConfig = config;
+
+  targetDeviceUnit = "${utils.escapeSystemdPath installerCfg.targetDisk}.device";
+  sourceDeviceMount = "mnt.mount";
+
+  noopService = {
+    serviceConfig.ExecStart = [
+      ""
+      "/bin/true"
+    ];
+  };
+
   # Make the installer work with lots of common hardware.
-  installerSystem = extendModules { modules = [ "${modulesPath}/profiles/all-hardware.nix" ]; };
-
-  # Determine the set of modules that we need to mount the root FS.
-  modulesClosure = pkgs.makeModulesClosure {
-    rootModules =
-      installerSystem.config.boot.initrd.availableKernelModules
-      ++ installerSystem.config.boot.initrd.kernelModules;
-    kernel = installerSystem.config.system.modulesTree;
-    inherit (installerSystem.config.hardware) firmware;
-
-    # If we stop importing all-harware.nix, we could remove this.
-    allowMissing = true;
-  };
-
-  installerEnv = pkgs.buildEnv {
-    name = "installer-bin-env";
-    paths = [
-      (pkgs.busybox.override {
-        # module utilities provided by kmod
-        extraConfig = ''
-          CONFIG_INSMOD n
-          CONFIG_LSMOD n
-          CONFIG_MODINFO n
-          CONFIG_MODPROBE n
-          CONFIG_RMMOD n
-        '';
-      })
-      modulesClosure
-      pkgs.systemdMinimal
-      pkgs.systemdMinimal.kmod
-      pkgs.systemdMinimal.kmod.lib
-      (pkgs.buildSimpleRustPackage "installer" ./installer.rs)
-    ];
-    pathsToLink = [
-      "/bin"
-      "/sbin"
-      "/lib"
-    ];
-  };
-
-  installerCfg = config.custom.image.installer;
-
-  startupScript = pkgs.writeScript "installer-startup-script" ''
-    #!/bin/sh
-
-    mkdir -p /proc && mount -t proc proc /proc
-    mkdir -p /sys && mount -t sysfs sysfs /sys
-    mkdir -p /dev && mount -t devtmpfs devtmpfs /dev
-    mkdir -p /dev/pts && mount -t devpts devpts /dev/pts
-    mkdir -p /run && mount -t tmpfs tmpfs /run
-
-    # copied from NixOS stage-1-init.sh
-    mkdir -p /etc/udev
-    touch /etc/fstab # to shut up mount
-    ln -s /proc/mounts /etc/mtab # to shut up mke2fs
-    touch /etc/udev/hwdb.bin # to shut up udev
-    touch /etc/initrd-release
-
-    for i in ${toString installerSystem.config.boot.initrd.kernelModules}; do
-      /sbin/modprobe $i
-    done
-
-    ln -sfn /proc/self/fd /dev/fd
-    ln -sfn /proc/self/fd/0 /dev/stdin
-    ln -sfn /proc/self/fd/1 /dev/stdout
-    ln -sfn /proc/self/fd/2 /dev/stderr
-    mkdir -p /etc/systemd
-  '';
-
-  installerKernelParams = installerSystem.config.boot.kernelParams ++ [
-    "installer.target_disk=${installerCfg.targetDisk}"
-    "installer.source_disk=/dev/disk/by-partlabel/installer"
-  ];
-
-  installerInitialRamdisk = pkgs.makeInitrdNG {
-    name = "installer-initrd";
-    inherit (config.boot.initrd) compressor compressorArgs prepend;
-    strip = true;
-
-    contents = [
+  installerSystem = (
+    pkgs.nixos (
+      { config, ... }:
+      let
+        installer = pkgs.buildSimpleRustPackage "installer" ./installer.rs;
+      in
       {
-        source = "${installerEnv}/bin/busybox";
-        target = "/init";
-      }
-      {
-        source = installerEnv;
-        target = "/usr";
-      }
-      {
-        source = "${installerEnv}/lib";
-        target = "/lib";
-      }
-      {
-        source = "${installerEnv}/bin";
-        target = "/bin";
-      }
-      {
-        source = "${installerEnv}/sbin";
-        target = "/sbin";
-      }
-      {
-        source = startupScript;
-        target = "/etc/init.d/rcS";
-      }
-      {
-        source = ./inittab;
-        target = "/etc/inittab";
-      }
-    ];
-  };
+        imports = [ "${modulesPath}/profiles/all-hardware.nix" ];
 
-  installerUki = pkgs.callPackage (
-    {
-      lib,
-      stdenv,
-      systemdUkify,
-    }:
-    stdenv.mkDerivation {
-      name = "installer-uki";
-      nativeBuildInputs = [ systemdUkify ];
-      buildCommand = ''
-        ukify build \
-          --no-sign-kernel \
-          --efi-arch=${pkgs.stdenv.hostPlatform.efiArch} \
-          --uname=${installerSystem.config.system.build.kernel.version} \
-          --stub=${installerSystem.config.systemd.package}/lib/systemd/boot/efi/linux${pkgs.stdenv.hostPlatform.efiArch}.efi.stub \
-          --linux=${installerSystem.config.system.build.kernel}/${installerSystem.config.system.boot.loader.kernelFile} \
-          --cmdline="${toString installerKernelParams}" \
-          --initrd=${installerInitialRamdisk}/${installerSystem.config.system.boot.loader.initrdFile} \
-          --os-release=@${installerSystem.config.environment.etc."os-release".source} \
-          ${lib.optionalString installerSystem.config.hardware.deviceTree.enable "--devicetree=${installerSystem.config.hardware.deviceTree.package}/${installerSystem.config.hardware.deviceTree.name}"} \
-          --output=$out
-      '';
-    }
-  ) { };
+        boot.kernelParams =
+          let
+            allowList = [ "^console=.*$" ];
+          in
+          lib.filter (
+            param: lib.filter (allowRegex: lib.match allowRegex param != null) allowList != [ ]
+          ) baseConfig.boot.kernelParams
+          ++ [
+            "installer.target_disk=${installerCfg.targetDisk}"
+            "installer.source_disk=/dev/disk/by-partlabel/installer"
+          ];
 
-  installerBlsEntry = pkgs.writeText "entry.conf" (
-    ''
-      title Installer
-      linux /linux
-      initrd /initrd
-    ''
-    + lib.optionalString config.hardware.deviceTree.enable ''
-      devicetree /devicetree.dtb
-    ''
-    + ''
-      options ${toString installerKernelParams}
-      architecture ${pkgs.stdenv.hostPlatform.efiArch}
-    ''
+        # Firmware is used in the initrd when modules require it.
+        hardware.firmware = lib.flatten options.hardware.firmware.definitions;
+
+        boot.initrd = {
+          # The image to install is kept on an ext4 filesystem, we add support
+          # for other filesystems just for convenience.
+          #
+          # TODO(jared): Just write the compressed raw image to the partition
+          # directly, no need for a filesystem.
+          supportedFilesystems = [
+            "ext4"
+            "vfat"
+          ];
+
+          availableKernelModules = baseConfig.boot.initrd.availableKernelModules;
+          kernelModules = baseConfig.boot.initrd.kernelModules;
+          systemd = {
+            enable = true;
+
+            emergencyAccess = true;
+
+            storePaths = [ installer ];
+            initrdBin = [ pkgs.xz ];
+
+            mounts = [
+              {
+                what = "/dev/disk/by-partlabel/installer";
+                where = "/mnt";
+                options = "ro";
+
+                # Allow the installation medium to be unplugged prior to
+                # unmount.
+                mountConfig.ForceUnmount = true;
+              }
+            ];
+
+            services = {
+              # We aren't a full-blown nixos system, don't do nixos activation or
+              # switch-root.
+              initrd-nixos-activation = noopService;
+              initrd-switch-root = noopService;
+              initrd-cleanup = noopService;
+
+              install-nixos = {
+                requiredBy = [ "initrd.target" ];
+                description = "NixOS Installation";
+                unitConfig = {
+                  OnFailure = [ "rescue.target" ];
+                  OnSuccess = [ "reboot.target" ];
+                };
+                after = [
+                  "initrd-fs.target"
+                  "network.target"
+                  targetDeviceUnit
+                  sourceDeviceMount
+                ];
+                requires = [ targetDeviceUnit ];
+                # systemd will kill this service when the device for this mount
+                # is removed if we Require= this unit, so instead we put it in
+                # wants.
+                wants = [ sourceDeviceMount ];
+                serviceConfig = {
+                  Type = "oneshot";
+                  StandardError = "tty";
+                  StandardOutput = "tty";
+                  ExecStart = toString [ (lib.getExe installer) ];
+                };
+              };
+            };
+          };
+        };
+
+        system.build = {
+          installerUki = pkgs.callPackage (
+            {
+              lib,
+              stdenv,
+              systemdUkify,
+            }:
+            stdenv.mkDerivation {
+              name = "installer-uki";
+              nativeBuildInputs = [ systemdUkify ];
+              buildCommand = ''
+                ukify build \
+                  --no-sign-kernel \
+                  --efi-arch=${pkgs.stdenv.hostPlatform.efiArch} \
+                  --uname=${installerSystem.config.system.build.kernel.version} \
+                  --stub=${installerSystem.config.systemd.package}/lib/systemd/boot/efi/linux${pkgs.stdenv.hostPlatform.efiArch}.efi.stub \
+                  --linux=${installerSystem.config.system.build.kernel}/${installerSystem.config.system.boot.loader.kernelFile} \
+                  --cmdline="${toString config.boot.kernelParams}" \
+                  --initrd=${config.system.build.initialRamdisk}/${installerSystem.config.system.boot.loader.initrdFile} \
+                  --os-release=@${installerSystem.config.environment.etc."os-release".source} \
+                  ${lib.optionalString installerSystem.config.hardware.deviceTree.enable "--devicetree=${installerSystem.config.hardware.deviceTree.package}/${installerSystem.config.hardware.deviceTree.name}"} \
+                  --output=$out
+              '';
+            }
+          ) { };
+
+          blsEntry = pkgs.writeText "entry.conf" (
+            ''
+              title Installer
+              linux /linux
+              initrd /initrd
+            ''
+            + lib.optionalString config.hardware.deviceTree.enable ''
+              devicetree /devicetree.dtb
+            ''
+            + ''
+              options ${toString config.boot.kernelParams}
+              architecture ${pkgs.stdenv.hostPlatform.efiArch}
+            ''
+          );
+        };
+      }
+    )
   );
 in
 {
@@ -172,15 +174,9 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # The image to install is kept on an ext4 filesystem, we add support for
-    # other filesystems just for convenience. TODO(jared): just write the
-    # compressed raw image to the partition directly, no need for a filesystem.
-    boot.initrd.supportedFilesystems = [
-      "ext4"
-      "vfat"
-    ];
-
     system.build = {
+      installerInitrd = installerSystem.config.system.build.initialRamdisk;
+
       networkInstaller = throw "unimplemented";
 
       diskInstaller = pkgs.callPackage ./image.nix {
@@ -190,13 +186,13 @@ in
         bootFileCommands =
           {
             "uefi" = ''
-              echo "${installerUki}:/EFI/boot/boot${pkgs.stdenv.hostPlatform.efiArch}.efi" >>$bootfiles
+              echo "${installerSystem.config.system.build.installerUki}:/EFI/boot/boot${pkgs.stdenv.hostPlatform.efiArch}.efi" >>$bootfiles
             '';
             "bootLoaderSpec" =
               ''
-                echo ${installerBlsEntry}:/loader/entries/installer.conf >>$bootfiles
+                echo ${installerSystem.config.system.build.blsEntry}:/loader/entries/installer.conf >>$bootfiles
                 echo ${installerSystem.config.system.build.kernel}/${installerSystem.config.system.boot.loader.kernelFile}:/linux >>$bootfiles
-                echo ${installerInitialRamdisk}/${installerSystem.config.system.boot.loader.initrdFile}:/initrd >>$bootfiles
+                echo ${installerSystem.config.system.build.initialRamdisk}/${installerSystem.config.system.boot.loader.initrdFile}:/initrd >>$bootfiles
               ''
               + lib.optionalString config.hardware.deviceTree.enable ''
                 echo "${installerSystem.config.hardware.deviceTree.package}/${installerSystem.config.hardware.deviceTree.name}:/devicetree.dtb" >>$bootfiles
