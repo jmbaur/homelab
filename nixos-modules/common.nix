@@ -45,6 +45,18 @@ in
     boot.enableContainers = lib.mkDefault false;
     boot.tmp.cleanOnBoot = lib.mkDefault isNotContainer;
 
+    # The initrd doesn't have a fully-functioning terminal, prevent systemd
+    # from using pager for services that launch a shell
+    boot.initrd.systemd.services =
+      lib.genAttrs
+        [
+          "emergency"
+          "rescue"
+        ]
+        (_: {
+          environment.SYSTEMD_PAGER = "cat";
+        });
+
     environment.stub-ld.enable = false;
 
     i18n.defaultLocale = "en_US.UTF-8";
