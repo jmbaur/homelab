@@ -140,7 +140,7 @@ stdenv.mkDerivation {
   ];
 
   buildCommand = ''
-    export SYSTEMD_REPART_MKFS_OPTIONS_EROFS="-zlz4hc,12"
+    export SYSTEMD_REPART_MKFS_OPTIONS_EROFS="-zlz4hc,12 -T0"
     export SYSTEMD_REPART_MKFS_OPTIONS_SQUASHFS="-comp zstd -processors $NIX_BUILD_CORES"
 
     install -Dm0644 -t repart.d ${repartDefinitions}/*
