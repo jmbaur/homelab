@@ -27,6 +27,11 @@ inputs: {
         }
       );
 
+      # Enable experimental multithreading support in mkfs.erofs
+      erofs-utils = prev.erofs-utils.overrideAttrs (old: {
+        configureFlags = (old.configureFlags or [ ]) ++ [ "--enable-multithreading" ];
+      });
+
       # Fix for search not working on latest release
       tmux = prev.tmux.overrideAttrs (old: {
         patches = (old.patches or [ ]) ++ [

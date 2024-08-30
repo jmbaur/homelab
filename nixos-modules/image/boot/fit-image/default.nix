@@ -69,12 +69,11 @@ in
     systemd.services.update-uboot-env = {
       unitConfig.ConditionPathExists = [ "/etc/fw_env.config" ];
       path = [ pkgs.uboot-env-tools ];
-      script = # bash
-        ''
-          mapfile versions <<< $(find ${config.boot.loader.efi.efiSysMountPoint} -name "*uImage" | sort --version-sort | sed 's,.*\([0-9]\+\.[0-9]\+\.[0-9]\+\).*,\1,')
-          fw_setenv --script <(echo -e "altversion ''${versions[0]}\nversion ''${versions[1]}")
-          fw_printenv version altversion
-        '';
+      script = ''
+        mapfile versions <<< $(find ${config.boot.loader.efi.efiSysMountPoint} -name "*uImage" | sort --version-sort | sed 's,.*\([0-9]\+\.[0-9]\+\.[0-9]\+\).*,\1,')
+        fw_setenv --script <(echo -e "altversion ''${versions[0]}\nversion ''${versions[1]}")
+        fw_printenv version altversion
+      '';
     };
 
     systemd.sysupdate.transfers."70-fit-image" = {

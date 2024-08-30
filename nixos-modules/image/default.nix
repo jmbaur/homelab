@@ -132,7 +132,7 @@ in
         boot.kernelParams = [
           "mount.usr=/dev/mapper/usr"
           "mount.usrflags=ro"
-          "mount.usrfstype=squashfs"
+          "mount.usrfstype=erofs"
           "systemd.verity_root_options=panic-on-corruption"
         ];
 
@@ -234,7 +234,7 @@ in
         # enable zram by default since we don't create any swap partitions
         zramSwap.enable = lib.mkDefault true;
 
-        boot.initrd.supportedFilesystems = [ "squashfs" ];
+        boot.initrd.supportedFilesystems = [ "erofs" ];
 
         fileSystems."/" = {
           fsType = config.systemd.repart.partitions."12-root".Format;
@@ -294,7 +294,7 @@ in
 
         system.build.image = pkgs.callPackage ./image.nix {
           rootPaths = [ config.system.build.toplevel ];
-          usrFormat = "squashfs";
+          usrFormat = "erofs";
           imageName = config.networking.hostName;
           inherit maxUsrPadding maxUsrHashPadding;
           inherit (cfg) bootFileCommands postImageCommands sectorSize;

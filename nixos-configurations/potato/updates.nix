@@ -48,33 +48,32 @@ in
           ];
           environment.GNUPGHOME = "/root/.gnupg"; # TODO(jared): sops?
           serviceConfig.StandardInput = "file:/run/build-${name}";
-          script = # bash
-            ''
-              set -o errexit
-              set -o nounset
-              set -o pipefail
+          script = ''
+            set -o errexit
+            set -o nounset
+            set -o pipefail
 
-              update_dir=/var/lib/updates/${name}
+            update_dir=/var/lib/updates/${name}
 
-              output_path=$(cat /dev/stdin)
-              if [[ -z "$output_path" ]]; then
-                exit 0
-              fi
+            output_path=$(cat /dev/stdin)
+            if [[ -z "$output_path" ]]; then
+              exit 0
+            fi
 
-              output_version=$(cat "''${output_path}/version")
+            output_version=$(cat "''${output_path}/version")
 
-              # Don't update anything if we already have the latest
-              if [[ -f ''${update_dir}/version ]] && [[ $(semver compare "$output_version" $(cat "''${update_dir}/version")) -eq 0 ]]; then
-                exit 0
-              fi
+            # Don't update anything if we already have the latest
+            if [[ -f ''${update_dir}/version ]] && [[ $(semver compare "$output_version" $(cat "''${update_dir}/version")) -eq 0 ]]; then
+              exit 0
+            fi
 
-              echo "Placing update files for v''${output_version} using output from $output_path"
+            echo "Placing update files for v''${output_version} using output from $output_path"
 
-              find "$update_dir" -mindepth 1 -delete
-              cp -rT "$output_path" "$update_dir"
-              (cd "$update_dir"; sha256sum * >SHA256SUMS) # SHA256SUMS must be relative to $update_dir
-              gpg --batch --yes --sign --detach-sign --output "''${update_dir}/SHA256SUMS.gpg" "''${update_dir}/SHA256SUMS"
-            '';
+            find "$update_dir" -mindepth 1 -delete
+            cp -rT "$output_path" "$update_dir"
+            (cd "$update_dir"; sha256sum * >SHA256SUMS) # SHA256SUMS must be relative to $update_dir
+            gpg --batch --yes --sign --detach-sign --output "''${update_dir}/SHA256SUMS.gpg" "''${update_dir}/SHA256SUMS"
+          '';
         }
       ) allHosts
     ))
