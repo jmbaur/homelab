@@ -11,6 +11,9 @@ let
 
   clatIfaceName = "clat0";
 
+  # Set by some desktop modules (e.g. gnome)
+  isNetworkManager = config.networking.networkmanager.enable;
+
   isCross = pkgs.stdenv.hostPlatform != pkgs.stdenv.buildPlatform;
 in
 {
@@ -26,13 +29,19 @@ in
 
         services.resolved.enable = true;
 
-        # TODO(jared): This does not work on newer kernels due to using
-        # dev_base_lock.
-        # boot.extraModulePackages = [ (config.boot.kernelPackages.callPackage ./nat46.nix { }) ];
+        # Allow clatd to find dns server. See comment above.
+        services.resolved.extraConfig = ''
+          DNSStubListenerExtra=::1
+        '';
 
         networking.firewall.allowedUDPPorts = [
           5353 # mDNS
         ];
+      }
+      (lib.mkIf (!isNetworkManager) {
+        # TODO(jared): This does not work on newer kernels due to using
+        # dev_base_lock.
+        # boot.extraModulePackages = [ (config.boot.kernelPackages.callPackage ./nat46.nix { }) ];
 
         networking.useNetworkd = true;
 
@@ -79,27 +88,9 @@ in
             };
           };
         };
-      }
-      (lib.mkIf (!config.custom.server.enable) {
-        services.clatd = {
-          enable = (lib.warnIf isCross "clatd does not cross-compile, disabling") (!isCross);
-          settings = {
-            clat-dev = clatIfaceName;
-            # NOTE: Perl's Net::DNS resolver does not seem to work well querying
-            # for AAAA records to systemd-resolved's default IPv4 bind address
-            # (127.0.0.53), so we add an IPv6 listener address to systemd-resolved
-            # and tell clatd to use that instead.
-            dns64-servers = lib.mkIf config.services.resolved.enable "::1";
-          };
-        };
-
-        # Allow clatd to find dns server. See comment above.
-        services.resolved.extraConfig = ''
-          DNSStubListenerExtra=::1
-        '';
 
         services.networkd-dispatcher = {
-          enable = true;
+          enable = config.services.clatd.enable;
           rules.restart-clatd = {
             onState = [
               "routable"
@@ -157,6 +148,35 @@ in
               "~@privileged"
               "~@resources"
             ];
+          };
+        };
+      })
+      (lib.mkIf isNetworkManager {
+        networking.networkmanager = {
+          dns = "systemd-resolved";
+          dispatcherScripts = [
+            {
+              type = "basic";
+              # Adapted from https://github.com/toreanderson/clatd/blob/04062b282dfa55ea123b94c6d354525fe6670324/scripts/clatd.networkmanager
+              source = pkgs.writeShellScript "clatd-dispatch-script" ''
+                [ "$DEVICE_IFACE" = "${clatIfaceName}" ] && exit 0
+                [ "$2" != "up" ] && [ "$2" != "down" ] && exit 0
+                ${lib.getExe' config.systemd.package "systemctl"} --no-block restart clatd.service
+              '';
+            }
+          ];
+        };
+      })
+      (lib.mkIf (!config.custom.server.enable) {
+        services.clatd = {
+          enable = (lib.warnIf isCross "clatd does not cross-compile, disabling") (!isCross);
+          settings = {
+            clat-dev = clatIfaceName;
+            # NOTE: Perl's Net::DNS resolver does not seem to work well querying
+            # for AAAA records to systemd-resolved's default IPv4 bind address
+            # (127.0.0.53), so we add an IPv6 listener address to systemd-resolved
+            # and tell clatd to use that instead.
+            dns64-servers = lib.mkIf config.services.resolved.enable "::1";
           };
         };
 
