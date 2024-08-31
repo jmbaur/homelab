@@ -26,7 +26,6 @@ in
     environment.gnome.excludePackages = [ pkgs.gnome-console ];
 
     programs.yubikey-touch-detector.enable = true;
-    programs.gnome-terminal.enable = true;
 
     services.xserver = {
       enable = true;
@@ -37,7 +36,7 @@ in
         enable = true;
         favoriteAppsOverride = ''
           [org.gnome.shell]
-          favorite-apps=[ 'firefox.desktop', 'org.gnome.Terminal.desktop', 'org.gnome.Nautilus.desktop' ]
+          favorite-apps=[ 'firefox.desktop', 'org.gnome.Ptyxis.desktop', 'org.gnome.Nautilus.desktop' ]
         '';
       };
     };
@@ -123,7 +122,7 @@ in
       + "y"
       + "Y";
 
-    environment.systemPackages = enabledGnomeExtensions;
+    environment.systemPackages = enabledGnomeExtensions ++ [ pkgs.ptyxis ];
 
     systemd.user.services.yubikey-touch-detector.serviceConfig.ExecStart = [
       "" # clear previous ExecStart
