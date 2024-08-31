@@ -4,6 +4,14 @@
   pkgs,
   ...
 }:
+
+let
+  caddyErrorHandling = ''
+    handle_errors {
+      respond "{err.status_code} {err.status_text}"
+    }
+  '';
+in
 {
   networking.firewall.allowedTCPPorts = [
     80
@@ -62,9 +70,11 @@
     virtualHosts = {
       "update.jmbaur.com".extraConfig = ''
         reverse_proxy http://potato.internal:8787
+        ${caddyErrorHandling}
       '';
       "music.jmbaur.com".extraConfig = ''
         reverse_proxy http://potato.internal:4533
+        ${caddyErrorHandling}
       '';
     };
   };
