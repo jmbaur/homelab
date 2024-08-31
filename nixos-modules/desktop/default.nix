@@ -125,6 +125,11 @@ in
 
     environment.systemPackages = enabledGnomeExtensions;
 
+    systemd.user.services.yubikey-touch-detector.serviceConfig.ExecStart = [
+      "" # clear previous ExecStart
+      "${lib.getExe pkgs.yubikey-touch-detector} -libnotify"
+    ];
+
     programs.dconf = with lib.gvariant; {
       enable = true;
       profiles = with lib.gvariant; {

@@ -25,11 +25,6 @@
 
   custom.desktop.enable = true;
   custom.dev.enable = true;
-  custom.wgNetwork.nodes.celery = {
-    peer = true;
-    initiate = true;
-    endpointHost = "celery.jmbaur.com";
-  };
   custom.image = {
     boot.uefi.enable = true;
     installer.targetDisk = "/dev/nvme0n1";
