@@ -34,6 +34,8 @@ let
       {
         imports = [ "${modulesPath}/profiles/all-hardware.nix" ];
 
+        system.stateVersion = baseConfig.system.stateVersion;
+
         boot.kernelParams =
           let
             allowList = [ "^console=.*$" ];
