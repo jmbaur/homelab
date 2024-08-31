@@ -54,6 +54,7 @@ in
     };
 
     networking.wireless.iwd.enable = true;
+    networking.networkmanager.wifi.backend = "iwd";
 
     # TODO(jared): Doesn't cross compile
     services.fwupd.enable = pkgs.stdenv.hostPlatform == pkgs.stdenv.buildPlatform;
