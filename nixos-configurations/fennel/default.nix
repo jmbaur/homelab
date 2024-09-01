@@ -16,6 +16,6 @@
 
   custom.image = {
     boot.bootLoaderSpec.enable = true;
-    installer.targetDisk = "/dev/mmcblk0"; # TODO(jared): be more specific
+    installer.targetDisk = "/dev/disk/by-path/platform-11230000.mmc";
   };
 }
