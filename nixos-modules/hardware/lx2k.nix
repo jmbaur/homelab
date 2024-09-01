@@ -23,23 +23,17 @@ with lib;
 
     boot.kernelModules = [ "amc6821" ];
 
-    boot.kernelPackages = pkgs.linuxPackages_6_1;
-
-    # Setup SFP+ network interfaces early so systemd can pick everything up.
-    boot.initrd.extraUtilsCommands = ''
-      copy_bin_and_libs ${pkgs.restool}/bin/restool
-      copy_bin_and_libs ${pkgs.restool}/bin/ls-main
-      copy_bin_and_libs ${pkgs.restool}/bin/ls-addni
-
-      # Patch paths
-      sed -i "1i #!$out/bin/sh" $out/bin/ls-main
-    '';
-    boot.initrd.postDeviceCommands = ''
-      ls-addni dpmac.7
-      ls-addni dpmac.8
-      ls-addni dpmac.9
-      ls-addni dpmac.10
-    '';
+    systemd.services.setup-sfp-interfaces = {
+      # Setup SFP+ interfaces early so systemd can pick everything up.
+      wantedBy = [ "network-pre.target" ];
+      path = [ pkgs.restool ];
+      script = ''
+        ls-addni dpmac.7
+        ls-addni dpmac.8
+        ls-addni dpmac.9
+        ls-addni dpmac.10
+      '';
+    };
 
     boot.kernelPatches = [
       rec {
@@ -51,6 +45,7 @@ with lib;
         };
       }
     ];
+
     nix.settings.extra-platforms = "armv7l-linux";
   };
 }
