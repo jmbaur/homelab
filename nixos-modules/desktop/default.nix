@@ -25,8 +25,6 @@ in
 
     environment.gnome.excludePackages = [ pkgs.gnome-console ];
 
-    programs.yubikey-touch-detector.enable = true;
-
     services.xserver = {
       enable = true;
       excludePackages = [ pkgs.xterm ];
@@ -124,6 +122,11 @@ in
 
     environment.systemPackages = enabledGnomeExtensions ++ [ pkgs.ptyxis ];
 
+    systemd.packages = [ pkgs.yubikey-touch-detector ];
+    systemd.user.services.yubikey-touch-detector = {
+      path = [ config.programs.gnupg.package ];
+      wantedBy = [ "graphical-session.target" ];
+    };
     systemd.user.services.yubikey-touch-detector.serviceConfig.ExecStart = [
       "" # clear previous ExecStart
       "${lib.getExe pkgs.yubikey-touch-detector} -libnotify"
