@@ -68,13 +68,21 @@ in
         stty sane
 
         while true; do
-          read -r -p "Please enter user name to create (empty to skip): " username
+          read -r -p "Please enter user name to create for admin user: " username
           if [[ -n "$username" ]]; then
             break
           fi
         done
 
+        while true; do
+          read -r -p "Real name for $username: " real_name
+          if [[ -n "$real_name" ]]; then
+            break
+          fi
+        done
+
         homectl create "$username" \
+          --real-name="$real_name" \
           --member-of=${lib.concatStringsSep "," groups} \
           --shell=${utils.toShellPath config.users.defaultUserShell} \
           --storage=${if fileSystemConfig.fsType == "btrfs" then "subvolume" else "directory"} \
