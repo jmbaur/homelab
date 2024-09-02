@@ -34,7 +34,7 @@ in
         enable = true;
         favoriteAppsOverride = ''
           [org.gnome.shell]
-          favorite-apps=[ 'firefox.desktop', 'org.gnome.Ptyxis.desktop', 'org.gnome.Nautilus.desktop' ]
+          favorite-apps=[ 'firefox.desktop', 'Alacritty.desktop', 'org.gnome.Nautilus.desktop' ]
         '';
       };
     };
@@ -120,7 +120,22 @@ in
       + "y"
       + "Y";
 
-    environment.systemPackages = enabledGnomeExtensions ++ [ pkgs.ptyxis ];
+    environment.systemPackages = enabledGnomeExtensions ++ [ pkgs.alacritty ];
+    environment.etc."xdg/alacritty/alacritty.toml".source =
+      (pkgs.formats.toml { }).generate "alacritty.toml"
+        {
+          import = [
+            (pkgs.fetchurl {
+              url = "https://raw.githubusercontent.com/anhsirk0/alacritty-themes/97e2cf7151f7eaf61d0f9d973bdd9dc74e403f52/themes/modus-vivendi-deuteranopia.toml";
+              hash = "sha256-6pc12Jy+B6i8dzauEOemy1Mipo/kHhSlVvX2HX9NsVU=";
+            })
+          ];
+          live_config_reload = false;
+          mouse.hide_when_typing = true;
+          selection.save_to_clipboard = true;
+          terminal.osc52 = "CopyPaste";
+          font.size = 12;
+        };
 
     systemd.packages = [ pkgs.yubikey-touch-detector ];
     systemd.user.services.yubikey-touch-detector = {
