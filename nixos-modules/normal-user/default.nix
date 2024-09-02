@@ -30,6 +30,13 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = config.systemd.sysusers.enable;
+        message = "sysusers needs to be enabled";
+      }
+    ];
+
     services.homed.enable = true;
 
     # This is needed if mutableUsers is false since we don't configure our

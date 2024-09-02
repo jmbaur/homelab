@@ -165,7 +165,7 @@ in
           zstyle ':vcs_info:*' actionformats '%F{magenta}(%b|%a)%f'
           zstyle ':vcs_info:git:*' formats '%F{cyan}(%b)%f'
           zstyle ':vcs_info:*' enable git
-          PROMPT='%F{%(0V.yellow.green)}[%n@%m:%2~]%f$vcs_info_msg_0_%(?..%F{red}%?%f)%(!.#.%#) '
+          PROMPT='%B%F{%(0V.yellow.green)}[%n@%m:%2~]%f%b$vcs_info_msg_0_%(?..%F{red}[%?]%f)%(!.#.%#) '
 
           WORDCHARS='_'
 

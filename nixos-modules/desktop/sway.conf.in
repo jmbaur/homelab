@@ -146,7 +146,7 @@ bindgesture {
 
 bar {
 	font pango:monospace 10
-	position top
+	position bottom
 	status_command tinybar
 	tray_output *
 	status_padding 4

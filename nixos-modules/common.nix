@@ -64,6 +64,7 @@ in
 
     # no need for mutable users
     users.mutableUsers = lib.mkDefault false;
+    systemd.sysusers.enable = lib.mkDefault true;
 
     # Make zsh the default interactive shell
     programs.zsh = {
