@@ -188,7 +188,7 @@ in
         bootFileCommands =
           {
             "uefi" = ''
-              echo "${installerSystem.config.system.build.installerUki}:/EFI/boot/boot${pkgs.stdenv.hostPlatform.efiArch}.efi" >>$bootfiles
+              echo ${installerSystem.config.system.build.installerUki}:/EFI/boot/boot${pkgs.stdenv.hostPlatform.efiArch}.efi >>$bootfiles
             '';
             "bootLoaderSpec" =
               ''
@@ -197,7 +197,7 @@ in
                 echo ${installerSystem.config.system.build.initialRamdisk}/${installerSystem.config.system.boot.loader.initrdFile}:/initrd >>$bootfiles
               ''
               + lib.optionalString config.hardware.deviceTree.enable ''
-                echo "${installerSystem.config.hardware.deviceTree.package}/${installerSystem.config.hardware.deviceTree.name}:/devicetree.dtb" >>$bootfiles
+                echo ${installerSystem.config.hardware.deviceTree.package}/${installerSystem.config.hardware.deviceTree.name}:/devicetree.dtb >>$bootfiles
               '';
             "uboot" = throw "uboot not yet supported for disk installer";
           }

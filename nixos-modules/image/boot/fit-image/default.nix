@@ -112,7 +112,7 @@ in
       + {
         "Image" = ''
           kernel_compression=lzma
-          lzma --threads 0 <${kernelPath} >$linux_kernel
+          lzma --threads $NIX_BUILD_CORES <${kernelPath} >$linux_kernel
         '';
         "zImage" = ''
           kernel_compression=none
@@ -124,7 +124,7 @@ in
           objcopy -O binary ${lib.getDev config.system.build.kernel}/vmlinux $tmp
           du -sh $tmp
           exit 3
-          lzma --threads 0 <$tmp >$linux_kernel
+          lzma --threads $NIX_BUILD_CORES <$tmp >$linux_kernel
 
           # The bzImage is (in simplified form) a concatenation of some setup
           # code (setup.bin) with a compressed vmlinux. The setup.bin _should_ be
