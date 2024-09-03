@@ -167,7 +167,7 @@ in
           zstyle ':vcs_info:*' enable git
           PROMPT='%B%F{%(0V.yellow.green)}[%n@%m:%2~]%f%b$vcs_info_msg_0_%(?..%F{red}[%?]%f)%(!.#.%#) '
 
-          WORDCHARS='_'
+          WORDCHARS='_-'
 
           bindkey \^U backward-kill-line
         '';
