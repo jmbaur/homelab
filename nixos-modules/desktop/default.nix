@@ -309,9 +309,9 @@ in
             [
               "timeout"
               "900"
-              (lib.escapeShellArg "swaymsg output * power toggle")
+              (lib.escapeShellArg "swaymsg output * power off")
               "resume"
-              (lib.escapeShellArg "swaymsg output * power toggle")
+              (lib.escapeShellArg "swaymsg output * power on")
             ]
             [
               "timeout"
