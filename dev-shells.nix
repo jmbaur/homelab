@@ -58,7 +58,6 @@ inputs.nixpkgs.lib.mapAttrs (
             deadnix.enable = true;
             nixfmt.enable = true;
             nixfmt.package = pkgs.nixfmt-rfc-style;
-            revive.enable = true;
             shellcheck.enable = true;
             shfmt.enable = true;
           };
