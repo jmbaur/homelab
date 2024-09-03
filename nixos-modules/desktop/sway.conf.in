@@ -144,6 +144,11 @@ bindgesture {
 	swipe:left workspace next
 }
 
+bindswitch {
+	lid:on output eDP-1 disable
+	lid:off output eDP-1 enable
+}
+
 bar {
 	font pango:monospace 10
 	position bottom
