@@ -36,7 +36,7 @@ in
   custom.image = {
     installer.targetDisk = "/dev/mmcblk0";
     postImageCommands = ''
-      dd if=${config.system.build.firmware}/u-boot-sunxi-with-spl.bin of=$out/image.raw bs=1K seek=${toString splOffsetKiB} conv=notrunc,sync
+      dd status=none if=${config.system.build.firmware}/u-boot-sunxi-with-spl.bin of=$out/image.raw bs=1K seek=${toString splOffsetKiB} conv=notrunc,sync
     '';
     boot.uboot = {
       enable = true;

@@ -25,7 +25,7 @@
 
   hardware.deviceTree.overlays = [
     {
-      name = "usb-host-mode";
+      name = "csi-enable";
       dtsText = ''
         /dts-v1/;
         /plugin/;
@@ -34,9 +34,19 @@
           compatible = "sinovoip,bpi-m2-zero";
         };
 
-        &usb_otg {
-          dr_mode = "host";
+        &csi {
           status = "okay";
+
+          // port {
+          //   csi_ep: endpoint {
+          //     remote-endpoint = <&ov2640_ep>;
+          //     bus-width = <8>;
+          //     hsync-active = <1>; /* Active high */
+          //     vsync-active = <0>; /* Active low */
+          //     data-active = <1>;  /* Active high */
+          //     pclk-sample = <1>;  /* Rising */
+          //   };
+          // };
         };
       '';
     }
@@ -45,7 +55,7 @@
   systemd.services.camera-stream = {
     path = [ pkgs.ffmpeg-headless ];
     serviceConfig = {
-      ExecStart = "ffmpeg -f v4l2 -i /dev/video1 -pix_fmt yuv420p -preset ultrafast -b:v 600k -f rtsp rtsp://localhost:8554/stream";
+      ExecStart = "ffmpeg -f v4l2 -i /dev/video1 -pix_fmt yuv420p -preset ultrafast -b:v 600k -f rtsp rtsp://[::1]:8554/stream";
       DynamicUser = true;
       ProtectSystem = "strict";
       ProtectHome = true;
