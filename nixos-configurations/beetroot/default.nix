@@ -6,7 +6,7 @@
   hardware.deviceTree.name = "allwinner/sun50i-h618-orangepi-zero2w.dtb";
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  users.users.root.password = lib.warn "EMPTY ROOT PASSWORD, DO NOT USE IN 'PRODUCTION'" "";
+  users.users.root.initialPassword = lib.warn "EMPTY ROOT PASSWORD, DO NOT USE IN 'PRODUCTION'" "";
 
   custom.image = {
     installer.targetDisk = "/dev/disk/by-path/TODO";

@@ -70,7 +70,7 @@ in
   };
 
   # {{{ TODO(jared): delete this
-  users.users.root.password = lib.warn "EMPTY ROOT PASSWORD, DO NOT USE IN 'PRODUCTION'" "";
+  users.users.root.initialPassword = lib.warn "EMPTY ROOT PASSWORD, DO NOT USE IN 'PRODUCTION'" "";
   # }}}
 
   hardware.deviceTree.enable = true;

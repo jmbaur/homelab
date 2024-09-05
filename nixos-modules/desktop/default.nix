@@ -35,6 +35,8 @@ in
     custom.normalUser.enable = true;
     custom.basicNetwork.enable = true;
 
+    services.graphical-desktop.enable = true;
+
     # Add a default browser to use
     programs.firefox = {
       enable = true;
@@ -53,13 +55,7 @@ in
     services.fwupd.enable = pkgs.stdenv.hostPlatform == pkgs.stdenv.buildPlatform;
 
     hardware.bluetooth.enable = true;
-    hardware.pulseaudio.enable = false;
     security.rtkit.enable = true;
-    services.pipewire = {
-      enable = true;
-      alsa.enable = true;
-      pulse.enable = true;
-    };
     services.pipewire.wireplumber.enable = true;
 
     services.automatic-timezoned.enable = lib.mkDefault true;

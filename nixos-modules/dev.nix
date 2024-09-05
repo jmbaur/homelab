@@ -26,13 +26,5 @@ in
     programs.ssh.startAgent = lib.mkDefault true;
     programs.gnupg.agent.enable = lib.mkDefault true;
     services.pcscd.enable = config.custom.desktop.enable;
-
-    # dev tooling often wants to watch lots of files
-    boot.kernel.sysctl = {
-      # "fs.inotify.max_user_watches" = 494462;
-      # TODO(jared): remove when the following is released: https://github.com/neovim/neovim/commit/55e4301036bb938474fc9768c41e28df867d9286
-      "fs.inotify.max_user_watches" = 100000;
-      "fs.inotify.max_queued_events" = 100000;
-    };
   };
 }
