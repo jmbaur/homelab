@@ -46,6 +46,14 @@ in
       preferences."browser.tabs.inTitlebar" = lib.mkIf (
         !config.services.xserver.desktopManager.gnome.enable
       ) 0;
+      policies = {
+        DisablePocket = true;
+        FirefoxHome = {
+          TopSites = false;
+          SponsoredTopSites = false;
+          SponsoredPocket = false;
+        };
+      };
     };
 
     networking.wireless.iwd.enable = true;
