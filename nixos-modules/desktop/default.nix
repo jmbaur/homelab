@@ -265,20 +265,6 @@ in
       ];
     };
 
-    systemd.user.targets.sway-session = {
-      description = "Sway compositor session";
-      documentation = [ "man:systemd.special(7)" ];
-      bindsTo = [ "graphical-session.target" ];
-      wants = [
-        "graphical-session-pre.target"
-        "xdg-desktop-autostart.target"
-      ];
-      after = [
-        "graphical-session-pre.target"
-        "xdg-desktop-autostart.target"
-      ];
-    };
-
     systemd.user.services.swayidle = {
       description = "Idle manager for Wayland";
       documentation = [ "man:swayidle(1)" ];
