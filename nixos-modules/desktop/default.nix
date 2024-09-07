@@ -290,13 +290,6 @@ in
             ]
             [
               "timeout"
-              "900"
-              (lib.escapeShellArg "swaymsg output * power off")
-              "resume"
-              (lib.escapeShellArg "swaymsg output * power on")
-            ]
-            [
-              "timeout"
               "1200"
               (lib.escapeShellArg "systemctl suspend")
             ]
