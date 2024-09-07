@@ -144,7 +144,7 @@ bindgesture {
 	swipe:left workspace next
 }
 
-bindswitch {
+bindswitch --locked {
 	lid:on output eDP-1 disable
 	lid:off output eDP-1 enable
 }
