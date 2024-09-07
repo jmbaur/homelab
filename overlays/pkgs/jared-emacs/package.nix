@@ -1,5 +1,5 @@
 {
-  emacs-nox,
+  emacs29-pgtk,
   emacsPackagesFor,
   gopls,
   lib,
@@ -10,7 +10,7 @@
   zls,
 }:
 let
-  emacs = (emacsPackagesFor emacs-nox).withPackages (
+  emacs = (emacsPackagesFor emacs29-pgtk).withPackages (
     epkgs: with epkgs; [
       clipetty
       company
@@ -22,8 +22,10 @@ let
       go-mode
       magit
       markdown-mode
+      meson-mode
       nix-mode
       projectile
+      python-mode
       rg
       rust-mode
       zig-mode
@@ -32,6 +34,7 @@ let
 in
 symlinkJoin {
   name = lib.appendToName "with-tools" emacs;
+  meta.mainProgram = "emacs";
   paths =
     [ emacs ]
     ++ [
