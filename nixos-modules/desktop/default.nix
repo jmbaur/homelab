@@ -139,6 +139,16 @@ in
       extraPackages = [ ];
     };
 
+    # TODO: delete after https://github.com/NixOS/nixpkgs/pull/323670 is in nixos-unstable
+    systemd.user.targets.sway-session = {
+      description = "sway compositor session";
+      documentation = [ "man:systemd.special(7)" ];
+      bindsTo = [ "graphical-session.target" ];
+      wants = [ "graphical-session-pre.target" ];
+      after = [ "graphical-session-pre.target" ];
+    };
+    #
+
     services.dbus.packages = [ pkgs.mako ];
 
     environment.pathsToLink = [ "/share/wallpapers" ];
