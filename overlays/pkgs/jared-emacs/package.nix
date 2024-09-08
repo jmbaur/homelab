@@ -23,10 +23,12 @@ let
       markdown-mode
       meson-mode
       nix-mode
+      orderless
       projectile
       python-mode
       rg
       rust-mode
+      vertico
       vterm
       zig-mode
     ]

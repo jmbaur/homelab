@@ -27,10 +27,10 @@
 (evil-surround-mode 1)
 (evil-set-undo-system 'undo-redo)
 
-;; completion
-(setq ido-enable-flex-matching t)
-(setq ido-everywhere t)
-(ido-mode 1)
+;; completion (requires orderless and vertico)
+(setq completion-styles '(orderless basic)
+      completion-category-overrides '((file (styles basic partial-completion))))
+(vertico-mode 1)
 
 ;; project integration
 (projectile-mode 1)
