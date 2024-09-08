@@ -12,7 +12,6 @@
 let
   emacs = (emacsPackagesFor emacs29-pgtk).withPackages (
     epkgs: with epkgs; [
-      clipetty
       company
       envrc
       evil
@@ -28,6 +27,7 @@ let
       python-mode
       rg
       rust-mode
+      vterm
       zig-mode
     ]
   );

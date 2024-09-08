@@ -10,8 +10,12 @@
 (setq ring-bell-function 'ignore)
 (setq initial-buffer-choice t)
 
-;; clipboard
-(global-clipetty-mode 1)
+;; tramp
+(require 'tramp)
+(add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+
+;; auto-reload dired when there are filesystem changes
+(add-hook 'dired-mode-hook 'auto-revert-mode)
 
 ;; evil
 (setq evil-want-C-u-scroll t)
@@ -38,9 +42,20 @@
 ;; completions
 (add-hook 'after-init-hook 'global-company-mode)
 
-;; lsp
 (setq eldoc-echo-area-use-multiline-p nil)
+
+(setq eglot-workspace-configuration
+      '(:nil (:formatting (:command ["nixfmt"]))))
+
+(defun nix-setup ()
+  (add-hook 'before-save-hook 'eglot-format-buffer nil t)
+  (eglot-ensure))
+(add-hook 'nix-mode-hook 'nix-setup)
+
+(defun zig-setup ()
+  (add-hook 'before-save-hook 'eglot-format-buffer nil t)
+  (eglot-ensure))
+(add-hook 'zig-mode-hook 'zig-setup)
+
 (add-hook 'go-mode-hook 'eglot-ensure)
-(add-hook 'nix-mode-hook 'eglot-ensure)
 (add-hook 'rust-mode-hook 'eglot-ensure)
-(add-hook 'zig-mode-hook 'eglot-ensure)

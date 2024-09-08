@@ -5,6 +5,7 @@
   inputs,
   ...
 }:
+
 let
   cfg = config.jared;
 in
@@ -315,13 +316,26 @@ in
         '';
       };
 
-      xdg.configFile."emacs/init.el".source = ./emacs.el;
-
       # Enabling exrc support _must_ be done in the user's init.lua, it cannot
       # be done in a plugin.
       xdg.configFile."nvim/init.lua".source = pkgs.writeText "init.lua" ''
         vim.opt.exrc = true
       '';
+
+      xdg.configFile."emacs" = {
+        recursive = true;
+        source =
+          pkgs.runCommand "jared-emacs-config"
+            {
+              nativeBuildInputs = [ pkgs.buildPackages.jared-emacs ];
+            }
+            ''
+              cp ${./emacs/early-init.el} early-init.el
+              cp ${./emacs/init.el} init.el
+              emacs -L . --batch -f batch-byte-compile *.el
+              install -Dt $out *.el *.elc
+            '';
+      };
     })
   ];
 }

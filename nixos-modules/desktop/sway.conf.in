@@ -34,7 +34,7 @@ bindsym {
 	Mod4+F12 mode passthru
 	Mod4+Left focus left
 	Mod4+Print exec "shotman --capture window"
-	Mod4+Return exec "alacritty"
+	Mod4+Return exec "foot"
 	Mod4+Right focus right
 	Mod4+Shift+1 move container to workspace number 1
 	Mod4+Shift+2 move container to workspace number 2
