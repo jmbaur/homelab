@@ -1,5 +1,5 @@
 ;; basics
-(load-theme 'modus-vivendi)
+(load-theme 'modus-operandi)
 (global-display-line-numbers-mode 1)
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
@@ -7,6 +7,7 @@
 (set-default 'truncate-lines t)
 (global-set-key "\C-h" 'delete-backward-char)
 (global-set-key "\C-xh" 'help-command) ;; overrides mark-whole-buffer
+(setq ring-bell-function 'ignore)
 
 ;; clipboard
 (global-clipetty-mode 1)

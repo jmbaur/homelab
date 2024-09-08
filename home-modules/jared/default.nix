@@ -62,6 +62,7 @@ in
         gron
         htmlq
         htop-vim
+        jared-emacs
         jared-neovim-all-languages
         jo
         jq
