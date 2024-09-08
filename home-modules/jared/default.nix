@@ -333,7 +333,7 @@ in
               cp ${./emacs/early-init.el} early-init.el
               cp ${./emacs/init.el} init.el
               emacs -L . --batch -f batch-byte-compile *.el
-              install -Dt $out *.el *.elc
+              install -Dt $out *.elc
             '';
       };
     })
