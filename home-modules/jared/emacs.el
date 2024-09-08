@@ -8,6 +8,7 @@
 (global-set-key "\C-h" 'delete-backward-char)
 (global-set-key "\C-xh" 'help-command) ;; overrides mark-whole-buffer
 (setq ring-bell-function 'ignore)
+(setq initial-buffer-choice t)
 
 ;; clipboard
 (global-clipetty-mode 1)
