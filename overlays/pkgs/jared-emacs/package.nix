@@ -5,6 +5,7 @@
   lib,
   nil,
   nixfmt-rfc-style,
+  pyright,
   rust-analyzer,
   symlinkJoin,
   zls,
@@ -40,10 +41,11 @@ symlinkJoin {
   paths =
     [ emacs ]
     ++ [
-      zls
-      rust-analyzer
       gopls
       nil
       nixfmt-rfc-style
+      pyright
+      rust-analyzer
+      zls
     ];
 }

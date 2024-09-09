@@ -24,7 +24,8 @@
 (evil-mode 1)
 (evil-collection-init)
 (evil-commentary-mode 1)
-(evil-surround-mode 1)
+(global-evil-surround-mode 1)
+(global-evil-collection-unimpaired-mode 1)
 (evil-set-undo-system 'undo-redo)
 
 ;; completion (requires orderless and vertico)
@@ -32,7 +33,7 @@
       completion-category-overrides '((file (styles basic partial-completion))))
 (vertico-mode 1)
 
-;; project integration
+;; project integration (requires projectile)
 (projectile-mode 1)
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 
@@ -47,15 +48,12 @@
 (setq eglot-workspace-configuration
       '(:nil (:formatting (:command ["nixfmt"]))))
 
-(defun nix-setup ()
+(defun lsp-setup ()
   (add-hook 'before-save-hook 'eglot-format-buffer nil t)
   (eglot-ensure))
-(add-hook 'nix-mode-hook 'nix-setup)
 
-(defun zig-setup ()
-  (add-hook 'before-save-hook 'eglot-format-buffer nil t)
-  (eglot-ensure))
-(add-hook 'zig-mode-hook 'zig-setup)
-
-(add-hook 'go-mode-hook 'eglot-ensure)
-(add-hook 'rust-mode-hook 'eglot-ensure)
+(add-hook 'go-mode-hook 'lsp-setup)
+(add-hook 'nix-mode-hook 'lsp-setup)
+(add-hook 'python-mode-hook 'lsp-setup)
+(add-hook 'rust-mode-hook 'lsp-setup)
+(add-hook 'zig-mode-hook 'lsp-setup)
