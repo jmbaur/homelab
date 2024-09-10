@@ -10,6 +10,11 @@
 (setq ring-bell-function 'ignore)
 (setq initial-buffer-choice t)
 
+;; ;; have "M-x term" just launch shell
+;; (defun term-wrapper (term-fn)
+;;   (funcall term-fn (getenv "SHELL")))
+;; (advice-add 'term :around 'term-wrapper)
+
 ;; tramp
 (require 'tramp)
 (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
