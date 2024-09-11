@@ -32,6 +32,10 @@
 (global-evil-surround-mode 1)
 (global-evil-collection-unimpaired-mode 1)
 (evil-set-undo-system 'undo-redo)
+(define-key evil-normal-state-map (kbd "C-c +") 'evil-numbers/inc-at-pt)
+(define-key evil-visual-state-map (kbd "C-c +") 'evil-numbers/inc-at-pt)
+(define-key evil-normal-state-map (kbd "C-c -") 'evil-numbers/dec-at-pt)
+(define-key evil-visual-state-map (kbd "C-c -") 'evil-numbers/dec-at-pt)
 
 ;; completion (requires orderless and vertico)
 (setq completion-styles '(orderless basic)

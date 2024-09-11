@@ -18,6 +18,7 @@ let
       evil
       evil-collection
       evil-commentary
+      evil-numbers
       evil-surround
       go-mode
       magit
