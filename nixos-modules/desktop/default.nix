@@ -32,9 +32,7 @@ in
       };
     };
 
-    environment.gnome.excludePackages = lib.optionals (
-      config.programs.firefox.enable || config.programs.chromium.enable
-    ) [ pkgs.epiphany ];
+    environment.gnome.excludePackages = [ pkgs.epiphany ];
 
     environment.systemPackages = [ pkgs.chromium ];
 
