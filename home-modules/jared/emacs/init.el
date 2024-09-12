@@ -1,5 +1,5 @@
 ;; basics
-(load-theme 'modus-operandi)
+(load-theme 'modus-vivendi)
 (global-display-line-numbers-mode 1)
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
@@ -9,11 +9,6 @@
 (global-set-key "\C-xh" 'help-command) ;; overrides mark-whole-buffer
 (setq ring-bell-function 'ignore)
 (setq initial-buffer-choice t)
-
-;; ;; have "M-x term" just launch shell
-;; (defun term-wrapper (term-fn)
-;;   (funcall term-fn (getenv "SHELL")))
-;; (advice-add 'term :around 'term-wrapper)
 
 ;; tramp
 (require 'tramp)
