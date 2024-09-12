@@ -168,16 +168,26 @@ in
             # runs. See https://github.com/systemd/systemd/blob/6bd675a659a508cd1df987f90b633ed1c4b12cb3/src/partition/repart.c#L7705.
             repart.device = "/dev/mapper/usr";
 
-            # TODO(jared): Delete this when https://github.com/systemd/systemd/commit/468d09c3196a7a4c68b2c3f75b4dd8dcbed8650f is in nixpkgs systemd package.
-            #
-            # systemd-repart doesn't seem to have a way to copy the size of a
-            # partition based on the size of another, so we use a small program to
-            # determine the size of A that we need to copy to B.
-            services.systemd-repart.serviceConfig.ExecStartPre = toString [
-              "/bin/ab-size"
-              (toString maxUsrPadding)
-              (toString maxUsrHashPadding)
-            ];
+            services.systemd-repart = {
+              # TODO(jared): consider using systemd-repart's
+              # --discard=no flag, this makes it generic over
+              # filesystems.
+              #
+              # Prevents timeout of repart service during filesystem creation on many disks.
+              environment.SYSTEMD_REPART_MKFS_OPTIONS_BTRFS = "--nodiscard";
+
+              # TODO(jared): Delete this when https://github.com/systemd/systemd/commit/468d09c3196a7a4c68b2c3f75b4dd8dcbed8650f is in nixpkgs systemd package.
+              #
+              # systemd-repart doesn't seem to have a way to copy the
+              # size of a partition based on the size of another, so
+              # we use a small program to determine the size of A that
+              # we need to copy to B.
+              serviceConfig.ExecStartPre = toString [
+                "/bin/ab-size"
+                (toString maxUsrPadding)
+                (toString maxUsrHashPadding)
+              ];
+            };
 
             extraBin.ab-size = lib.getExe (pkgs.buildSimpleRustPackage "ab-size" ./ab-size.rs);
           };
