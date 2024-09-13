@@ -311,15 +311,6 @@ in
           inherit (config.system.image) id version;
           inherit (config.systemd.repart) partitions;
         };
-
-        # Repart seems to need to be started twice when encrypting. Seems related
-        # to https://github.com/systemd/systemd/issues/31142,
-        # https://github.com/systemd/systemd/issues/31381, and
-        # https://lists.freedesktop.org/archives/systemd-devel/2023-June/049165.html.
-        boot.initrd.systemd.emergencyAccess =
-          lib.warnIf cfg.encrypt
-            "initrd emergency access enabled due to systemd-repart instabilities with filesystem encryption"
-            cfg.encrypt;
       }
       {
         # Having nix available on a system with a read-only nix-store is
