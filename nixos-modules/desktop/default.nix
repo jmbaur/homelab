@@ -19,32 +19,42 @@ in
 
     services.flatpak.enable = true;
 
-    services.xserver = {
+    services.displayManager.sddm = {
       enable = true;
-      excludePackages = [ pkgs.xterm ];
-      displayManager.gdm.enable = true;
-      desktopManager.gnome = {
-        enable = true;
-        favoriteAppsOverride = ''
-          [org.gnome.shell]
-          favorite-apps=[ 'chromium-browser.desktop', 'org.gnome.Calendar.desktop', 'org.gnome.Nautilus.desktop' ]
-        '';
+      wayland.enable = true;
+    };
+    services.desktopManager.plasma6.enable = true;
+
+    programs.firefox = {
+      enable = true;
+      # Allow users to override preferences set here
+      preferencesStatus = "user";
+      # Default value only looks good in GNOME
+      preferences."browser.tabs.inTitlebar" = lib.mkIf (
+        !config.services.xserver.desktopManager.gnome.enable
+      ) 0;
+      policies = {
+        DisablePocket = true;
+        FirefoxHome = {
+          TopSites = false;
+          SponsoredTopSites = false;
+          SponsoredPocket = false;
+        };
       };
     };
 
-    environment.gnome.excludePackages = [ pkgs.epiphany ];
-
-    environment.systemPackages = [ pkgs.chromium ];
-
     networking.wireless.iwd.enable = true;
-    networking.networkmanager.wifi.backend = "iwd";
+    networking.networkmanager = {
+      enable = lib.mkDefault true;
+      wifi.backend = "iwd";
+    };
 
     # TODO(jared): Doesn't cross compile
     services.fwupd.enable = pkgs.stdenv.hostPlatform == pkgs.stdenv.buildPlatform;
 
-    hardware.bluetooth.enable = true;
-    security.rtkit.enable = true;
-    services.pipewire.wireplumber.enable = true;
+    hardware.bluetooth.enable = lib.mkDefault true;
+    security.rtkit.enable = lib.mkDefault true;
+    services.pipewire.wireplumber.enable = lib.mkDefault true;
 
     # We use systemd-resolved
     services.avahi.enable = false;

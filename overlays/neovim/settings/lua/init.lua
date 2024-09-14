@@ -6,12 +6,6 @@ vim.g.mapleader = " "
 
 -- If not using nvim's remote UI
 if #vim.api.nvim_list_uis() > 0 then
-	vim.cmd.colorscheme("lunaperche")
-
-	-- Ensure terminal doesn't have miscolored padding on sides
-	local mini_misc = require("mini.misc")
-	mini_misc.setup_termbg_sync()
-
 	local launcher = require("jmbaur.launcher")
 	launcher.setup()
 
@@ -26,6 +20,12 @@ if #vim.api.nvim_list_uis() > 0 then
 	require("jmbaur.snippets")
 	require("jmbaur.treesitter")
 	require("mini.trailspace").setup({})
+
+	vim.cmd.colorscheme("lunaperche")
+
+	-- Ensure terminal doesn't have miscolored padding on sides
+	local mini_misc = require("mini.misc")
+	mini_misc.setup_termbg_sync()
 
 	vim.opt.belloff = "all"
 	vim.opt.colorcolumn = "80"
