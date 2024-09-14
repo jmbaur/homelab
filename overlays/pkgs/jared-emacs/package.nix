@@ -13,6 +13,7 @@
 let
   emacs = (emacsPackagesFor emacs29-pgtk).withPackages (
     epkgs: with epkgs; [
+      cmake-mode
       company
       envrc
       evil
