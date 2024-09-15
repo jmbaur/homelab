@@ -88,7 +88,6 @@ inputs: {
         });
       };
 
-      jared-neovim = prev.callPackage ./neovim { };
       jared-neovim-all-languages = final.jared-neovim.override { supportAllLanguages = true; };
 
       bitwarden-wayland = prev.callPackage ./mk-wayland-variant.nix { package = final.bitwarden; };
