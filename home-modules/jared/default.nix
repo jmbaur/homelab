@@ -63,7 +63,7 @@ in
         gron
         htmlq
         htop-vim
-        jared-emacs
+        # jared-emacs
         jared-neovim-all-languages
         jo
         jq
@@ -323,6 +323,7 @@ in
       '';
 
       xdg.configFile."emacs" = {
+        enable = false;
         recursive = true;
         source =
           pkgs.runCommand "jared-emacs-config"
