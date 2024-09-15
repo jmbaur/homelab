@@ -90,24 +90,6 @@ inputs: {
 
       jared-neovim-all-languages = final.jared-neovim.override { supportAllLanguages = true; };
 
-      bitwarden-wayland = prev.callPackage ./mk-wayland-variant.nix { package = final.bitwarden; };
-      brave-wayland = prev.callPackage ./mk-wayland-variant.nix { package = final.brave; };
-      chromium-wayland = prev.callPackage ./mk-wayland-variant.nix { package = final.chromium; };
-      discord-wayland = prev.callPackage ./mk-wayland-variant.nix { package = final.discord; };
-      google-chrome-wayland = prev.callPackage ./mk-wayland-variant.nix {
-        package = final.google-chrome;
-      };
-      signal-desktop-wayland = prev.callPackage ./mk-wayland-variant.nix {
-        package = final.signal-desktop;
-      };
-      slack-wayland = prev.callPackage ./mk-wayland-variant.nix { package = final.slack; };
-
-      mkWebApp = prev.callPackage ./mk-web-app.nix { chromium = final.chromium-wayland; };
-      discord-webapp = final.mkWebApp "discord" "https://discord.com/app";
-      outlook-webapp = final.mkWebApp "outlook" "https://outlook.office365.com/mail";
-      slack-webapp = final.mkWebApp "slack" "https://app.slack.com/client";
-      teams-webapp = final.mkWebApp "teams" "https://teams.microsoft.com";
-
       uboot-clearfog_uart = prev.uboot-clearfog.override {
         extraStructuredConfig = with final.lib.kernel; {
           MVEBU_SPL_BOOT_DEVICE_MMC = no;
