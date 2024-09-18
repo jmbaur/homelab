@@ -38,6 +38,7 @@ if #vim.api.nvim_list_uis() > 0 then
 	vim.opt.relativenumber = true
 	vim.opt.shell = "/run/current-system/sw/bin/bash"
 	vim.opt.splitkeep = "screen"
+	vim.opt.termguicolors = true
 	vim.opt.title = true
 end
 

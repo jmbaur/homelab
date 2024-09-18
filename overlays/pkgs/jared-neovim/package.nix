@@ -1,9 +1,9 @@
 {
+  bat,
   clang-tools,
   efm-langserver,
   fd,
   fswatch,
-  fzf,
   ghc,
   git,
   git-extras,
@@ -28,6 +28,7 @@
   rustfmt,
   shellcheck,
   shfmt,
+  skim,
   taplo,
   texlive,
   tree-sitter,
@@ -133,14 +134,15 @@ wrapNeovimUnstable neovim-unwrapped (
         let
           binPath = lib.makeBinPath (
             [
+              bat # fzf-lua
               efm-langserver
               fd # picker
               fswatch # TODO(jared): remove when the following is released: https://github.com/neovim/neovim/commit/55e4301036bb938474fc9768c41e28df867d9286
-              inotify-tools # for faster LSP experience
-              fzf # fzf-lua
               git # mini-git
               git-extras # :Permalink
+              inotify-tools # for faster LSP experience
               ripgrep # picker
+              skim # fzf-lua
               tree-sitter
               xdg-utils # :Permalink
             ]

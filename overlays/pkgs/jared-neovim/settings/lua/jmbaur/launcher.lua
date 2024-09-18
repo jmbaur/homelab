@@ -1,5 +1,7 @@
 local fzf_lua = require("fzf-lua")
 
+fzf_lua.setup({ "skim" })
+
 local M = {}
 
 M.setup = function()

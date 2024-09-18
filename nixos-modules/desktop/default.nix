@@ -27,6 +27,8 @@ in
 
     environment.plasma6.excludePackages = [ pkgs.kdePackages.kate ];
 
+    programs.yubikey-touch-detector.enable = true;
+
     programs.firefox = {
       enable = true;
       # Allow users to override preferences set here
@@ -111,15 +113,5 @@ in
       + "P"
       + "y"
       + "Y";
-
-    systemd.packages = [ pkgs.yubikey-touch-detector ];
-    systemd.user.services.yubikey-touch-detector = {
-      path = [ config.programs.gnupg.package ];
-      wantedBy = [ "graphical-session.target" ];
-    };
-    systemd.user.services.yubikey-touch-detector.serviceConfig.ExecStart = [
-      "" # clear previous ExecStart
-      "${lib.getExe pkgs.yubikey-touch-detector} -libnotify"
-    ];
   };
 }
