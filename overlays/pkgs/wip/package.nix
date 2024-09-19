@@ -1,6 +1,7 @@
-{ writeShellApplication }:
+{ writeShellApplication, gitMinimal }:
 writeShellApplication {
   name = "wip";
+  runtimeInputs = [ gitMinimal ];
   text = ''
     remote=origin
 

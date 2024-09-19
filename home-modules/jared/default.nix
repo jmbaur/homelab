@@ -203,6 +203,7 @@ in
       programs.gh.enable = true;
       programs.git = {
         enable = true;
+        package = pkgs.gitMinimal;
         userName = "Jared Baur";
         ignores = [
           "*~"
@@ -311,7 +312,6 @@ in
           bind-key -T copy-mode-vi y send-keys -X copy-selection
           bind-key ESCAPE copy-mode
           bind-key J command-prompt -p "join pane from:"  "join-pane -h -s '%%'"
-          bind-key W run-shell -b "${pkgs.tmuxPlugins.tmux-fzf}/share/tmux-plugins/tmux-fzf/scripts/session.sh switch"
           bind-key j display-popup -E tmux-jump
         '';
       };
