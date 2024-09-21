@@ -66,6 +66,7 @@
     enable = true;
     radios.wlan0 = {
       countryCode = "US";
+      channel = 6;
       networks.wlan0 = {
         ssid = "Silence of the LANs";
         authentication.saePasswordsFile = config.sops.secrets.wlan0.path;
