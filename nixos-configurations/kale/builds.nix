@@ -1,36 +1,11 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
-let
-  swsPort = 8787;
+{ lib, pkgs, ... }:
 
+let
   allHosts = builtins.attrNames (
     lib.filterAttrs (_: type: type == "directory") (builtins.readDir ../.)
   );
 in
 {
-  custom.wgNetwork.nodes.celery.allowedTCPPorts = [ swsPort ];
-
-  systemd.tmpfiles.settings."10-sws-root" = lib.listToAttrs (
-    map (host: lib.nameValuePair "/var/lib/updates/${host}" { d = { }; }) allHosts
-  );
-
-  services.static-web-server = {
-    enable = true;
-    listen = "[::]:${toString swsPort}";
-    root = "/var/lib/updates";
-  };
-
-  # Limit the resources available for building, this isn't a super beefy
-  # machine :)
-  nix.settings = {
-    cores = 2;
-    max-jobs = 1;
-  };
-
   systemd.services = lib.mkMerge [
     {
       nix-daemon.serviceConfig = {
@@ -42,6 +17,8 @@ in
       map (
         name:
         lib.nameValuePair "post-build@${name}" {
+          # TODO(jared): enable this and push updates to a static file server
+          enable = false;
           path = with pkgs; [
             gnupg
             semver-tool
@@ -93,7 +70,7 @@ in
       lib.nameValuePair name {
         flakeRef = "github:jmbaur/homelab";
         outputAttr = "nixosConfigurations.${name}.config.system.build.image.update";
-        postBuild = config.systemd.services."post-build@${name}".name;
+        postBuild = null; # config.systemd.services."post-build@${name}".name;
         # Daily builds where each build is slated to run in a tiered fashion,
         # one hour after each other.
         #

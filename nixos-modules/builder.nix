@@ -30,7 +30,7 @@ let
         '';
       };
       postBuild = mkOption {
-        type = types.str;
+        type = types.nullOr types.str;
         example = "my-post-build.service";
         description = ''
           The systemd service to activate after a successful build. There will
@@ -66,7 +66,7 @@ let
         };
 
         services."build@${name}" = {
-          onSuccess = [ postBuild ];
+          onSuccess = lib.optionals (postBuild != null) [ postBuild ];
           description = "Build ${flakeRef}#${outputAttr}";
           after = [ "network-online.target" ];
           wants = [ "network-online.target" ];

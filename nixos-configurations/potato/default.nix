@@ -1,9 +1,6 @@
 { ... }:
 {
-  imports = [
-    ./navidrome.nix
-    ./updates.nix
-  ];
+  imports = [ ./navidrome.nix ];
 
   nixpkgs.hostPlatform = "x86_64-linux";
 
@@ -48,7 +45,6 @@
   custom.basicNetwork.enable = true;
 
   custom.image = {
-    mutableNixStore = true; # TODO(jared): make false
     boot.bootLoaderSpec.enable = true;
     installer.targetDisk = "/dev/disk/by-path/pci-0000:03:00.0-nvme-1";
   };
