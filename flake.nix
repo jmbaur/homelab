@@ -8,8 +8,6 @@
     home-manager.url = "github:nix-community/home-manager";
     ipwatch.inputs.nixpkgs.follows = "nixpkgs";
     ipwatch.url = "github:jmbaur/ipwatch";
-    nixos-apple-silicon.inputs.nixpkgs.follows = "nixpkgs";
-    nixos-apple-silicon.url = "github:jmbaur/nixos-apple-silicon/mesa-fixups";
     nixos-router.inputs.nixpkgs.follows = "nixpkgs";
     nixos-router.url = "github:jmbaur/nixos-router";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
