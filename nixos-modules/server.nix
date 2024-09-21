@@ -1,10 +1,4 @@
-{
-  lib,
-  config,
-  pkgs,
-  ...
-}:
-
+{ lib, config, ... }:
 {
   options.custom.server.enable = lib.mkEnableOption "server";
 
@@ -68,8 +62,6 @@
       "panic=1"
       "boot.panic_on_fail"
     ];
-
-    users.users.root.openssh.authorizedKeys.keyFiles = [ pkgs.jmbaur-ssh-keys ];
 
     services.prometheus.exporters.node = {
       enable = true;
