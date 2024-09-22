@@ -1,11 +1,23 @@
-{ lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   allHosts = builtins.attrNames (
     lib.filterAttrs (_: type: type == "directory") (builtins.readDir ../.)
   );
+
+  bucket = "s3://blob9629";
 in
 {
+  sops.secrets = {
+    bucket_access_key_id = { };
+    bucket_secret_access_key = { };
+  };
+
   systemd.services = lib.mkMerge [
     {
       nix-daemon.serviceConfig = {
@@ -17,39 +29,55 @@ in
       map (
         name:
         lib.nameValuePair "post-build@${name}" {
-          # TODO(jared): enable this and push updates to a static file server
-          enable = false;
           path = with pkgs; [
+            awscli2
             gnupg
             semver-tool
           ];
-          environment.GNUPGHOME = "/root/.gnupg"; # TODO(jared): sops?
-          serviceConfig.StandardInput = "file:/run/build-${name}";
+          environment.GNUPGHOME = "%S/gnupg"; # TODO(jared): use hardware-backed gpg key
+          serviceConfig = {
+            DynamicUser = true;
+            StandardInput = "file:/run/build-${name}";
+            StateDirectory = "post-builder";
+            LoadCredential = [
+              "bucket_access_key_id:${config.sops.secrets.bucket_access_key_id.path}"
+              "bucket_secret_access_key:${config.sops.secrets.bucket_secret_access_key.path}"
+            ];
+          };
           script = ''
             set -o errexit
             set -o nounset
             set -o pipefail
 
-            update_dir=/var/lib/updates/${name}
-
             output_path=$(cat /dev/stdin)
             if [[ -z "$output_path" ]]; then
+              echo "No output path found on stdin, nothing to do"
               exit 0
             fi
 
+
+            export AWS_ACCESS_KEY_ID=$(cat $CREDENTIALS_DIRECTORY/bucket_access_key_id)
+            export AWS_SECRET_ACCESS_KEY=$(cat $CREDENTIALS_DIRECTORY/bucket_secret_access_key)
+
             output_version=$(cat "''${output_path}/version")
+            current_version_file=$(mktemp)
 
             # Don't update anything if we already have the latest
-            if [[ -f ''${update_dir}/version ]] && [[ $(semver compare "$output_version" $(cat "''${update_dir}/version")) -eq 0 ]]; then
-              exit 0
+            if aws s3 cp ${bucket}/${name}/version "$current_version_file"; then
+              if [[ -f ''${update_dir}/version ]] && [[ $(semver compare "$output_version" $(cat "$current_version_file")) -eq 0 ]]; then
+                exit 0
+              fi
             fi
 
             echo "Placing update files for v''${output_version} using output from $output_path"
 
-            find "$update_dir" -mindepth 1 -delete
-            cp -rT "$output_path" "$update_dir"
-            (cd "$update_dir"; sha256sum * >SHA256SUMS) # SHA256SUMS must be relative to $update_dir
-            gpg --batch --yes --sign --detach-sign --output "''${update_dir}/SHA256SUMS.gpg" "''${update_dir}/SHA256SUMS"
+            pushd $(mktemp -d)
+            cp -rT "$output_path" .
+            sha256sum * >SHA256SUMS
+            gpg --batch --yes --sign --detach-sign --output SHA256SUMS.gpg SHA256SUMS
+
+            aws s3 rm --recursive ${bucket}/${name}
+            aws s3 cp --recursive . ${bucket}/${name}
           '';
         }
       ) allHosts

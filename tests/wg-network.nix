@@ -45,7 +45,6 @@ let
       networking = {
         useNetworkd = true;
         useDHCP = false;
-        # firewall.enable = false;
         interfaces = lib.mkForce (
           lib.listToAttrs (
             lib.imap1 (i: vlan: {
