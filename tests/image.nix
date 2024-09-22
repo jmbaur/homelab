@@ -101,6 +101,8 @@ let
 
       boot.loader.timeout = 0;
 
+      virtualisation.vlans = [ 1 ];
+
       virtualisation.directBoot.enable = false;
       virtualisation.mountHostNixStore = false;
 
@@ -149,18 +151,9 @@ let
         wiggleRoom = 4096 * 8; # smaller than the default, we don't need any for this test
         installer.targetDisk = "/dev/vda";
         update = {
-          # For simplicity, we just host the updates from the machine itself.
-          source = "http://[::1]:8787/${config.networking.hostName}";
+          source = "http://updateServer/${config.networking.hostName}";
           gpgPubkey = "${gpgKeyring}/pubkey.gpg";
         };
-      };
-
-      environment.systemPackages = [ pkgs.gnupg ];
-      systemd.tmpfiles.settings."10-sws-root"."/run/update".d = { };
-      services.static-web-server = {
-        enable = true;
-        listen = "[::1]:8787";
-        root = "/run/update";
       };
     };
 
@@ -216,6 +209,20 @@ let
       custom.image.hasTpm2 = true;
     };
   };
+
+  updateServer =
+    { pkgs, ... }:
+    {
+      virtualisation.vlans = [ 1 ];
+      environment.systemPackages = [ pkgs.gnupg ];
+      systemd.tmpfiles.settings."10-sws-root"."/var/lib/updates".d = { };
+      networking.firewall.allowedTCPPorts = [ 80 ];
+      services.static-web-server = {
+        enable = true;
+        listen = "[::]:80";
+        root = "/var/lib/updates";
+      };
+    };
 in
 (
   builtins.listToAttrs (
@@ -228,12 +235,16 @@ in
         lib.nameValuePair name (nixosTest {
           inherit name;
 
-          nodes.machine = {
-            imports = [
-              baseConfig
-              bootMethodConfig.${bootMethod}
-              imageTypeConfig.${imageType}
-            ];
+          nodes = {
+            inherit updateServer;
+
+            machine = {
+              imports = [
+                baseConfig
+                bootMethodConfig.${bootMethod}
+                imageTypeConfig.${imageType}
+              ];
+            };
           };
 
           testScript =
@@ -244,6 +255,8 @@ in
               import subprocess
               import tempfile
               import uuid
+
+              updateServer.wait_for_unit("multi-user.target")
 
               ${unpackImage { config = nodes.machine; }}
 
@@ -290,22 +303,23 @@ in
 
 
               with subtest("sysupdate"):
-                  update_dir = "/run/update/${nodes.machine.networking.hostName}"
-                  machine.copy_from_host("${nodes.machine.system.build.image.update}", update_dir)
+                  update_dir = "/var/lib/updates/${nodes.machine.networking.hostName}"
+                  updateServer.copy_from_host("${nodes.machine.system.build.image}", update_dir)
 
-                  current_usr = machine.succeed(f"ls {update_dir}/*${version}*.usr.raw.xz").strip()
-                  current_usr_hash = machine.succeed(f"ls {update_dir}/*${version}*.usr-hash.raw.xz").strip()
-                  current_uki = machine.succeed(f"ls {update_dir}/*${version}*.efi").strip()
+                  print(updateServer.succeed(f"ls {update_dir}"))
+                  current_usr = updateServer.succeed(f"ls {update_dir}/*${version}*.usr.raw.xz").strip()
+                  current_usr_hash = updateServer.succeed(f"ls {update_dir}/*${version}*.usr-hash.raw.xz").strip()
+                  current_uki = updateServer.succeed(f"ls {update_dir}/*${version}*.efi.xz").strip()
 
-                  machine.succeed("mv {} {}".format(current_usr, current_usr.replace("${version}", "${newerVersion}", 1)))
-                  machine.succeed("mv {} {}".format(current_usr_hash, current_usr_hash.replace("${version}", "${newerVersion}", 1)))
-                  machine.succeed("mv {} {}".format(current_uki, current_uki.replace("${version}", "${newerVersion}", 1)))
+                  updateServer.succeed("mv {} {}".format(current_usr, current_usr.replace("${version}", "${newerVersion}", 1)))
+                  updateServer.succeed("mv {} {}".format(current_usr_hash, current_usr_hash.replace("${version}", "${newerVersion}", 1)))
+                  updateServer.succeed("mv {} {}".format(current_uki, current_uki.replace("${version}", "${newerVersion}", 1)))
 
-                  gnupghome = machine.succeed("mktemp -d").strip()
-                  machine.succeed(f"cp -R ${gpgKeyring}/* {gnupghome}")
-                  machine.succeed(f"(cd {update_dir}; sha256sum * >SHA256SUMS)")
-                  print(machine.succeed(f"cat {update_dir}/SHA256SUMS"))
-                  print(machine.succeed(f"env GNUPGHOME={gnupghome} gpg --batch --sign --detach-sign --output {update_dir}/SHA256SUMS.gpg {update_dir}/SHA256SUMS"))
+                  gnupghome = updateServer.succeed("mktemp -d").strip()
+                  updateServer.succeed(f"cp -R ${gpgKeyring}/* {gnupghome}")
+                  updateServer.succeed(f"(cd {update_dir}; sha256sum * >SHA256SUMS)")
+                  print(updateServer.succeed(f"cat {update_dir}/SHA256SUMS"))
+                  print(updateServer.succeed(f"env GNUPGHOME={gnupghome} gpg --batch --sign --detach-sign --output {update_dir}/SHA256SUMS.gpg {update_dir}/SHA256SUMS"))
 
                   machine.succeed("${nodes.machine.systemd.package}/lib/systemd/systemd-sysupdate update")
                   machine.wait_for_console_text("Successfully installed update '${newerVersion}'.")
@@ -349,25 +363,29 @@ in
   // {
     image-installer = nixosTest {
       name = "image-installer";
-      nodes.machine = {
-        imports = [
-          baseConfig
-          bootMethodConfig.uefi
-        ];
+      nodes = {
+        inherit updateServer;
 
-        virtualisation.useDefaultFilesystems = false;
-        virtualisation.diskSize = 4096;
-        virtualisation.qemu.drives = [
-          {
-            name = "installer";
-            file = ''"$INSTALLER_DISK_IMAGE"'';
-            driveExtraOpts.cache = "writeback";
-            driveExtraOpts.werror = "report";
-            deviceExtraOpts.bootindex = "2";
-            deviceExtraOpts.serial = "installer";
-            deviceExtraOpts.id = "installer";
-          }
-        ];
+        machine = {
+          imports = [
+            baseConfig
+            bootMethodConfig.uefi
+          ];
+
+          virtualisation.useDefaultFilesystems = false;
+          virtualisation.diskSize = 4096;
+          virtualisation.qemu.drives = [
+            {
+              name = "installer";
+              file = ''"$INSTALLER_DISK_IMAGE"'';
+              driveExtraOpts.cache = "writeback";
+              driveExtraOpts.werror = "report";
+              deviceExtraOpts.bootindex = "2";
+              deviceExtraOpts.serial = "installer";
+              deviceExtraOpts.id = "installer";
+            }
+          ];
+        };
       };
       testScript =
         { nodes, ... }:
@@ -382,8 +400,12 @@ in
             envVar = "INSTALLER_DISK_IMAGE";
           }}
 
+          updateServer.wait_for_unit("multi-user.target")
+          update_dir = "/var/lib/updates/${nodes.machine.networking.hostName}"
+          updateServer.copy_from_host("${nodes.machine.system.build.image}", update_dir)
+
           machine.start(allow_reboot=True)
-          machine.wait_for_console_text("installation finished")
+          machine.wait_for_console_text("reboot: Restarting system")
           machine.send_monitor_command("device_del installer")
 
           machine.wait_for_unit("multi-user.target")

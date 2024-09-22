@@ -17,7 +17,6 @@
   xz,
 
   # arguments
-  mainImage,
   bootFileCommands,
   imageName,
   postImageCommands ? "",
@@ -37,18 +36,9 @@ let
     SizeMaxBytes = "256M";
   };
 
-  imagePartition = {
-    Type = "linux-generic";
-    Label = "installer";
-    Format = "ext4";
-    CopyFiles = "${mainImage}:/image";
-    Minimize = "guess";
-  };
-
   systemdArchitecture = builtins.replaceStrings [ "_" ] [ "-" ] stdenv.hostPlatform.linuxArch;
 
   bootPartitionConfig = iniFormat.generate "10-boot.conf" { Partition = bootPartition; };
-  imagePartitionConfig = iniFormat.generate "10-image.conf" { Partition = imagePartition; };
 in
 stdenv.mkDerivation {
   name = "nixos-image-${imageName}-installer";
@@ -77,7 +67,6 @@ stdenv.mkDerivation {
 
   buildCommand = ''
     install -Dm0644 ${bootPartitionConfig} repart.d/${bootPartitionConfig.name}
-    install -Dm0644 ${imagePartitionConfig} repart.d/${imagePartitionConfig.name}
 
     repart_args=(
       "--dry-run=no"
@@ -104,6 +93,6 @@ stdenv.mkDerivation {
 
     ${postImageCommands}
 
-    xz -3 --compress --verbose --threads=$NIX_BUILD_CORES $out/*.{raw,vhdx}
+    xz -3 --compress --verbose --threads=$NIX_BUILD_CORES $out/*
   '';
 }

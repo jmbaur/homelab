@@ -134,11 +134,6 @@ stdenv.mkDerivation {
     + bootFileCommands;
   passAsFile = [ "bootFileCommands" ];
 
-  outputs = [
-    "out"
-    "update"
-  ];
-
   buildCommand = ''
     export SYSTEMD_REPART_MKFS_OPTIONS_EROFS="-zlz4hc,12 -T0"
     export SYSTEMD_REPART_MKFS_OPTIONS_SQUASHFS="-comp zstd -processors $NIX_BUILD_CORES"
@@ -154,8 +149,7 @@ stdenv.mkDerivation {
       "--json=pretty"
     )
 
-    mkdir -p $out $update
-    echo ${version} > $update/version
+    mkdir -p $out
 
     fakeroot systemd-repart ''${repart_args[@]} \
       --defer-partitions=esp \
@@ -179,13 +173,15 @@ stdenv.mkDerivation {
     hash_uuid=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}-verity") | .uuid' <repart-output.json)
     data_orig_path=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}") | .split_path' <repart-output.json)
     hash_orig_path=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}-verity") | .split_path' <repart-output.json)
-    data_new_path="''${update}/${id}_${version}_''${data_uuid}.usr.raw"
-    hash_new_path="''${update}/${id}_${version}_''${hash_uuid}.usr-hash.raw"
+    data_new_path="''${out}/${id}_${version}_''${data_uuid}.usr.raw"
+    hash_new_path="''${out}/${id}_${version}_''${hash_uuid}.usr-hash.raw"
     mv "$data_orig_path" "$data_new_path"
     mv "$hash_orig_path" "$hash_new_path"
 
     ${postImageCommands}
 
-    xz -3 --compress --verbose --threads=$NIX_BUILD_CORES $out/*.{raw,vhdx} $update/*.raw
+    xz -3 --compress --verbose --threads=$NIX_BUILD_CORES $out/*
+
+    echo ${version} > $out/version
   '';
 }

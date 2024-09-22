@@ -122,12 +122,12 @@ in
       ''
         echo "${loaderConf}:/loader/loader.conf" >>$bootfiles
 
-        bootentry=$update/${id}_${version}.conf
+        bootentry=$out/${id}_${version}.conf
         install -Dm0644 ${entryConf} $bootentry
         substituteInPlace $bootentry --subst-var usrhash
 
-        linux=$update/linux_${version}
-        initrd=$update/initrd_${version}
+        linux=$out/linux_${version}
+        initrd=$out/initrd_${version}
         cp ${config.system.build.kernel}/${config.system.boot.loader.kernelFile} $linux
         cp ${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile} $initrd
 
@@ -136,7 +136,7 @@ in
         echo "$initrd:/EFI/${id}/$(basename $initrd)" >>$bootfiles
       ''
       + lib.optionalString config.hardware.deviceTree.enable ''
-        dtb=$update/devicetree_${version}.dtb
+        dtb=$out/devicetree_${version}.dtb
         cp ${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name} $dtb
         echo "$dtb:/EFI/${id}/$(basename $dtb)" >>$bootfiles
       '';

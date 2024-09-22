@@ -97,8 +97,15 @@ in
       i: name:
       lib.nameValuePair name {
         flakeRef = "github:jmbaur/homelab";
-        outputAttr = "nixosConfigurations.${name}.config.system.build.image.update";
-        postBuild = null; # config.systemd.services."post-build@${name}".name;
+        attrPath = [
+          "nixosConfigurations"
+          name
+          "config"
+          "system"
+          "build"
+          "image"
+        ];
+        postBuild = config.systemd.services."post-build@${name}".name;
         # Daily builds where each build is slated to run in a tiered fashion,
         # one hour after each other.
         #

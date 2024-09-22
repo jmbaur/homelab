@@ -54,7 +54,7 @@ in
     };
 
     custom.image.bootFileCommands = ''
-      uki=$update/${id}_${version}.efi
+      uki=$out/${id}_${version}.efi
       ukify build \
         --no-sign-kernel \
         --efi-arch=${pkgs.stdenv.hostPlatform.efiArch} \

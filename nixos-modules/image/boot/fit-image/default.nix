@@ -143,10 +143,10 @@ in
 
         bash ${./make-fit-image-its.bash} ${toString deviceTreeArgs} >image.its
 
-        mkimage --fit image.its "$update/${fixedFitImageName}"
+        mkimage --fit image.its "$out/${fixedFitImageName}"
 
         echo "${globalBootScriptImage}:/boot.scr.uimg" >>$bootfiles
-        echo "$update/${fixedFitImageName}:/${fixedFitImageName}" >>$bootfiles
+        echo "$out/${fixedFitImageName}:/${fixedFitImageName}" >>$bootfiles
       '';
   };
 }

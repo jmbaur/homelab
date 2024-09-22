@@ -4,11 +4,23 @@
   lib,
   ...
 }:
+
 let
+  inherit (lib)
+    concatStringsSep
+    getExe
+    mapAttrsToList
+    mkIf
+    mkMerge
+    mkOption
+    types
+    warnIf
+    ;
+
   cfg = config.custom.builder;
 
   buildModule = {
-    options = with lib; {
+    options = {
       flakeRef = mkOption {
         type = types.str;
         example = "github:nixos/nixpkgs";
@@ -18,9 +30,13 @@ let
           Currently only GitHub is supported.
         '';
       };
-      outputAttr = mkOption {
-        type = types.str;
-        example = "legacyPackages.x86_64-linux.hello";
+      attrPath = mkOption {
+        type = types.listOf types.str;
+        example = [
+          "legacyPackages"
+          "x86_64-linux"
+          "hello"
+        ];
       };
       time = mkOption {
         type = types.str;
@@ -42,19 +58,20 @@ let
     };
   };
 
-  buildConfigs = lib.mapAttrsToList (
+  buildConfigs = mapAttrsToList (
     name:
     {
       flakeRef,
-      outputAttr,
+      attrPath,
       time,
       postBuild,
     }:
     let
       flakeRefAttr = builtins.parseFlakeRef flakeRef;
+      buildAttr = concatStringsSep "." attrPath;
     in
     assert flakeRefAttr.type == "github";
-    lib.warnIf (flakeRefAttr ? ref || flakeRefAttr ? rev)
+    warnIf (flakeRefAttr ? ref || flakeRefAttr ? rev)
       "ignoring ref/rev set in ${flakeRef}, latest tag always built"
       {
         timers."build@${name}" = {
@@ -67,7 +84,7 @@ let
 
         services."build@${name}" = {
           onSuccess = lib.optionals (postBuild != null) [ postBuild ];
-          description = "Build ${flakeRef}#${outputAttr}";
+          description = "Build ${flakeRef}#${buildAttr}";
           after = [ "network-online.target" ];
           wants = [ "network-online.target" ];
           environment = {
@@ -81,7 +98,7 @@ let
             SupplementaryGroups = [ "builder" ];
             CacheDirectory = "builder";
             StateDirectory = "builder";
-            ExecStart = lib.getExe (
+            ExecStart = getExe (
               pkgs.writeShellApplication {
                 name = "build-${name}";
                 runtimeInputs = [
@@ -99,7 +116,7 @@ let
                     --out-link "$STATE_DIRECTORY/build-${name}" \
                     --print-out-paths \
                     --print-build-logs \
-                    "${flakeRef}?ref=''${latest_tag}#${outputAttr}"
+                    "${flakeRef}?ref=''${latest_tag}#${buildAttr}"
                 '';
               }
             );
@@ -110,17 +127,17 @@ let
 
 in
 {
-  options.custom.builder = with lib; {
+  options.custom.builder = {
     builds = mkOption {
       type = types.attrsOf (types.submodule buildModule);
       default = { };
     };
   };
 
-  config = lib.mkIf (cfg.builds != { }) {
+  config = mkIf (cfg.builds != { }) {
     users.groups.builder = { };
     nix.settings.trusted-users = [ "@builder" ];
 
-    systemd = lib.mkMerge buildConfigs;
+    systemd = mkMerge buildConfigs;
   };
 }
