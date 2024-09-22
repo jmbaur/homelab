@@ -88,10 +88,7 @@ in
     nix = {
       package = pkgs.nixVersions.nix_2_24;
       channel.enable = false; # opt out of nix channels
-      settings.trusted-users = [
-        "root"
-        "@wheel"
-      ];
+      settings.trusted-users = [ "@wheel" ];
       settings.experimental-features = [
         "nix-command"
         "flakes"
