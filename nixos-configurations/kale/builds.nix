@@ -34,7 +34,7 @@ in
             gnupg
             semver-tool
           ];
-          environment.GNUPGHOME = "%S/gnupg"; # TODO(jared): use hardware-backed gpg key
+          environment.GNUPGHOME = "%S/post-builder/gnupg"; # TODO(jared): use hardware-backed gpg key
           serviceConfig = {
             DynamicUser = true;
             StandardInput = "file:/run/build-${name}";
@@ -71,7 +71,7 @@ in
 
             echo "Placing update files for v''${output_version} using output from $output_path"
 
-            pushd $(mktemp -d)
+            cd $(mktemp -d)
             cp -rT "$output_path" .
             sha256sum * >SHA256SUMS
             gpg --batch --yes --sign --detach-sign --output SHA256SUMS.gpg SHA256SUMS
