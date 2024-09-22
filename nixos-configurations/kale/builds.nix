@@ -64,7 +64,7 @@ in
 
             # Don't update anything if we already have the latest
             if aws s3 cp ${bucket}/${name}/version "$current_version_file"; then
-              if [[ -f ''${update_dir}/version ]] && [[ $(semver compare "$output_version" $(cat "$current_version_file")) -eq 0 ]]; then
+              if [[ $(semver compare "$output_version" $(cat "$current_version_file")) -eq 0 ]]; then
                 exit 0
               fi
             fi
