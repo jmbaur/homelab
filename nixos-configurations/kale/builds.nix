@@ -9,14 +9,9 @@ let
   allHosts = builtins.attrNames (
     lib.filterAttrs (_: type: type == "directory") (builtins.readDir ../.)
   );
-
-  bucket = "s3://blob9629";
 in
 {
-  sops.secrets = {
-    bucket_access_key_id = { };
-    bucket_secret_access_key = { };
-  };
+  sops.secrets.rclone_config = { };
 
   systemd.services = lib.mkMerge [
     {
@@ -30,8 +25,8 @@ in
         name:
         lib.nameValuePair "post-build@${name}" {
           path = with pkgs; [
-            awscli2
             gnupg
+            rclone
             semver-tool
           ];
           environment.GNUPGHOME = "%S/post-builder/gnupg"; # TODO(jared): use hardware-backed gpg key
@@ -39,10 +34,7 @@ in
             DynamicUser = true;
             StandardInput = "file:/run/build-${name}";
             StateDirectory = "post-builder";
-            LoadCredential = [
-              "bucket_access_key_id:${config.sops.secrets.bucket_access_key_id.path}"
-              "bucket_secret_access_key:${config.sops.secrets.bucket_secret_access_key.path}"
-            ];
+            LoadCredential = [ "rclone_config:${config.sops.secrets.rclone_config.path}" ];
           };
           script = ''
             set -o errexit
@@ -55,18 +47,12 @@ in
               exit 0
             fi
 
-
-            export AWS_ACCESS_KEY_ID=$(cat $CREDENTIALS_DIRECTORY/bucket_access_key_id)
-            export AWS_SECRET_ACCESS_KEY=$(cat $CREDENTIALS_DIRECTORY/bucket_secret_access_key)
-
             output_version=$(cat "''${output_path}/version")
-            current_version_file=$(mktemp)
+            current_version=$(rclone --config $CREDENTIALS_DIRECTORY/rclone_config cat r2:update/${name}/version || echo 0.0.0)
 
-            # Don't update anything if we already have the latest
-            if aws s3 cp ${bucket}/${name}/version "$current_version_file"; then
-              if [[ $(semver compare "$output_version" $(cat "$current_version_file")) -eq 0 ]]; then
-                exit 0
-              fi
+            if [[ $(semver compare "$output_version" "$current_version") -eq 0 ]]; then
+              echo "Don't have anything to update, we already have to latest"
+              exit 0
             fi
 
             echo "Placing update files for v''${output_version} using output from $output_path"
@@ -76,8 +62,8 @@ in
             sha256sum * >SHA256SUMS
             gpg --batch --yes --sign --detach-sign --output SHA256SUMS.gpg SHA256SUMS
 
-            aws s3 rm --recursive ${bucket}/${name}
-            aws s3 cp --recursive . ${bucket}/${name}
+            rclone --config $CREDENTIALS_DIRECTORY/rclone_config delete r2:update/${name}
+            rclone --config $CREDENTIALS_DIRECTORY/rclone_config copy . r2:update/${name}
           '';
         }
       ) allHosts
