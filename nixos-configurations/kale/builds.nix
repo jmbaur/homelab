@@ -50,7 +50,7 @@ in
             output_version=$(cat "''${output_path}/version")
             current_version=$(rclone --config $CREDENTIALS_DIRECTORY/rclone_config cat r2:update/${name}/version || echo 0.0.0)
 
-            if [[ $(semver compare "$output_version" "$current_version") -eq 0 ]]; then
+            if [[ -n "$current_version" ]] && [[ $(semver compare "$output_version" "$current_version") -eq 0 ]]; then
               echo "Don't have anything to update, we already have to latest"
               exit 0
             fi
