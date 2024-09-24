@@ -30,5 +30,8 @@
         originalsPath = "/data/photos";
       };
     }
+    {
+      services.jellyfin.enable = false;
+    }
   ];
 }

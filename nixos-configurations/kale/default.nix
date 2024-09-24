@@ -10,6 +10,9 @@
       hardware.cpu.amd.updateMicrocode = true;
       hardware.enableRedistributableFirmware = true;
 
+      # latest stable
+      boot.kernelPackages = pkgs.linuxPackages_6_10;
+
       boot.initrd.availableKernelModules = [
         "nvme"
         "sd_mod"
