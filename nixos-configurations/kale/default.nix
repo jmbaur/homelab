@@ -27,20 +27,22 @@
 
       hardware.firmware = [ pkgs.linux-firmware ];
 
-      boot.kernelParams = [
-        "console=ttyS0,115200"
-        "console=tty1" # TODO(jared): remove this when server is headless
-      ];
+      boot.kernelParams = [ "console=ttyS0,115200" ];
     }
     {
       services.fwupd.enable = true;
       custom.server.enable = true;
       custom.basicNetwork.enable = true;
       custom.image = {
-        mutableNixStore = true; # TODO(jared): make false
+        mutableNixStore = true;
         boot.uefi.enable = true;
         installer.targetDisk = "/dev/disk/by-path/pci-0000:01:00.0-nvme-1";
         hasTpm2 = true;
+      };
+      custom.nestedBuilder = {
+        enable = false;
+        memory = 4;
+        cpus = 4;
       };
     }
   ];

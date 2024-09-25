@@ -12,6 +12,7 @@ inputs: {
       ./normal-user
       ./server.nix
       ./wg-network.nix
+      ./nested-builder.nix
       inputs.ipwatch.nixosModules.default
       inputs.nixos-router.nixosModules.default
       inputs.sops-nix.nixosModules.sops
