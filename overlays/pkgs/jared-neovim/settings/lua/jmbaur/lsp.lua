@@ -22,7 +22,10 @@ local conditional_efm_languages = {
 	},
 	latex = {
 		enable = vim.g.lang_support_latex,
-		tools = { require("efmls-configs.formatters.latexindent") },
+		tools = {
+			require("efmls-configs.formatters.latexindent"),
+			-- { formatCommand = "tex-fmt --stdin", formatStdin = true },
+		},
 	},
 }
 
