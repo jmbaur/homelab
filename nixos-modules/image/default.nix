@@ -149,7 +149,7 @@ in
 
           systemd = {
             enable = true;
-            enableTpm2 = cfg.hasTpm2;
+            tpm2.enable = cfg.hasTpm2;
             repart.enable = true;
             additionalUpstreamUnits = [
               "remote-veritysetup.target"
@@ -192,7 +192,7 @@ in
             extraBin.ab-size = lib.getExe (pkgs.buildSimpleRustPackage "ab-size" ./ab-size.rs);
           };
 
-          availableKernelModules = [ "dm_verity" ] ++ lib.optional cfg.mutableNixStore "overlay";
+          availableKernelModules = [ "dm_verity" ];
         };
 
         systemd.repart.partitions = {

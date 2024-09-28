@@ -46,7 +46,7 @@ in
   };
 
   # TPM kernel modules aren't built in our defconfig
-  boot.initrd.systemd.enableTpm2 = false;
+  boot.initrd.systemd.tpm2.enable = false;
 
   # Not using UEFI here
   systemd.package = pkgs.systemd.override { withEfi = false; };

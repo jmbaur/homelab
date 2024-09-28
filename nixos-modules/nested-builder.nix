@@ -8,12 +8,21 @@
 let
   cfg = config.custom.nestedBuilder;
 
+  outerConfig = config;
+
   nestedBuilder = pkgs.pkgsCross.aarch64-multiplatform.nixos (
-    { pkgs, modulesPath, ... }:
+    {
+      lib,
+      pkgs,
+      modulesPath,
+      ...
+    }:
     {
       imports = [ "${modulesPath}/profiles/minimal.nix" ];
       config = lib.mkMerge [
         {
+          system.stateVersion = outerConfig.system.stateVersion;
+
           services.qemuGuest = {
             enable = true;
             package =
@@ -48,8 +57,6 @@ let
           boot.kernelParams = [ "console=ttyAMA0,115200" ];
         }
         {
-          system.stateVersion = config.system.stateVersion;
-
           boot.loader.external = {
             enable = true;
             installHook = lib.getExe' pkgs.coreutils "true";
@@ -59,22 +66,65 @@ let
             fsType = "tmpfs";
             options = [ "mode=0755" ];
           };
-          fileSystems."/nix/store" = {
+          fileSystems."/overlay/lower/nix" = {
+            neededForBoot = true;
             fsType = "9p";
             device = "nix-store";
             options = [
+              "cache=loose"
+              "msize=16384"
+              "ro"
               "trans=virtio"
               "version=9p2000.L"
-              "msize=16384"
-              "cache=loose"
             ];
           };
+          fileSystems."/overlay/merged/nix/store" = {
+            neededForBoot = true;
+            overlay = {
+              lowerdir = [ "/overlay/lower/nix/store" ];
+              upperdir = "/overlay/upper";
+              workdir = "/overlay/work";
+            };
+            # Ensure systemd knows the ordering dependency between this mmount and
+            # the mount at /nix/store. This ensures they are unmounted in the correct
+            # order as well.
+            options = [ "x-systemd.before=nix-store.mount" ];
+          };
+          fileSystems."/nix/store" = {
+            device = "/overlay/merged/nix/store";
+            options = [
+              # "ro"
+              "bind"
+            ];
+          };
+
+          boot.readOnlyNixStore = false;
 
           system.switch.enable = false;
 
           boot.initrd.systemd.enable = true;
 
-          users.users.root.password = "";
+          users.users.root.password = builtins.warn "TODO: don't set root password" "";
+
+          nix.package = pkgs.nixVersions.nix_2_24;
+          nix.settings = {
+            store = "local-overlay://?root=/overlay/merged&lower-store=/overlay/lower?read-only=true&upper-layer=/overlay/upper&check-mount=false";
+            experimental-features = [
+              "local-overlay-store"
+              "read-only-local-store"
+              "daemon-trust-override"
+            ];
+          };
+
+          systemd.sockets.nix-daemon.socketConfig.ListenStream = [
+            ""
+            "vsock:3:1024"
+          ];
+
+          systemd.services.nix-daemon.serviceConfig.ExecStart = [
+            ""
+            "@${lib.getExe' config.nix.package "nix-daemon"} nix-daemon --daemon --force-trusted"
+          ];
         }
       ];
     }
@@ -84,10 +134,11 @@ let
     name = "qemu-builder";
     runtimeInputs = [ pkgs.qemu ];
     text =
-      # bash
+      #bash
       ''
         qemu-system-aarch64 -machine virt -cpu cortex-a53 -m ${toString cfg.memory}G -smp ${toString cfg.cpus} -nographic \
-          -virtfs local,path=/nix/store,security_model=none,multidevs=remap,mount_tag=nix-store \
+          -device vhost-vsock-pci,guest-cid=3 \
+          -virtfs local,path=/nix,readonly,security_model=none,multidevs=remap,mount_tag=nix-store \
           -kernel ${nestedBuilder.config.system.build.kernel}/${nestedBuilder.config.system.boot.loader.kernelFile} \
           -initrd ${nestedBuilder.config.system.build.initialRamdisk}/${nestedBuilder.config.system.boot.loader.initrdFile} \
           -append "init=${nestedBuilder.config.system.build.toplevel}/init ${toString nestedBuilder.config.boot.kernelParams}"
