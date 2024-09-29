@@ -135,7 +135,7 @@ let
     name = "qemu-builder";
     runtimeInputs = [ pkgs.qemu ];
     text =
-      #bash
+      # bash
       ''
         qemu-system-aarch64 -machine virt -cpu cortex-a53 -m ${toString cfg.memory}G -smp ${toString cfg.cpus} -nographic \
           -device vhost-vsock-pci,guest-cid=3 \

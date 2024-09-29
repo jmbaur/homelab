@@ -18,8 +18,9 @@
       boot.kernelPackages = pkgs.linuxPackages_testing;
 
       boot.initrd.availableKernelModules = [
-        "phy-rockchip-naneng-combphy"
+        "dwmac_rk"
         "nvme"
+        "phy-rockchip-naneng-combphy"
       ];
 
       hardware.deviceTree = {
@@ -57,6 +58,7 @@
     }
     {
       custom.server.enable = true;
+      custom.basicNetwork.enable = true;
       custom.image = {
         mutableNixStore = true;
         boot.uefi.enable = true;
