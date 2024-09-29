@@ -12,6 +12,7 @@ let
 
   nestedBuilder = pkgs.pkgsCross.aarch64-multiplatform.nixos (
     {
+      config,
       lib,
       pkgs,
       modulesPath,
@@ -138,7 +139,7 @@ let
       ''
         qemu-system-aarch64 -machine virt -cpu cortex-a53 -m ${toString cfg.memory}G -smp ${toString cfg.cpus} -nographic \
           -device vhost-vsock-pci,guest-cid=3 \
-          -virtfs local,path=/nix,readonly,security_model=none,multidevs=remap,mount_tag=nix-store \
+          -virtfs local,path=/nix,readonly=on,security_model=none,multidevs=remap,mount_tag=nix-store \
           -kernel ${nestedBuilder.config.system.build.kernel}/${nestedBuilder.config.system.boot.loader.kernelFile} \
           -initrd ${nestedBuilder.config.system.build.initialRamdisk}/${nestedBuilder.config.system.boot.loader.initrdFile} \
           -append "init=${nestedBuilder.config.system.build.toplevel}/init ${toString nestedBuilder.config.boot.kernelParams}"
