@@ -55,6 +55,10 @@
           PREBOOT = freeform "pci enum; usb start; nvme scan";
         };
       };
+
+      hardware.firmware = [
+        (pkgs.extractLinuxFirmware "mali-firmware" [ "arm/mali/arch10.8/mali_csffw.bin" ])
+      ];
     }
     {
       custom.server.enable = true;
