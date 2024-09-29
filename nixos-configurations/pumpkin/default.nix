@@ -25,13 +25,13 @@
     }
     {
       services.photoprism = {
-        enable = false;
+        enable = true;
         address = "[::]";
         originalsPath = "/data/photos";
       };
     }
     {
-      services.jellyfin.enable = false;
+      services.jellyfin.enable = true;
     }
   ];
 }
