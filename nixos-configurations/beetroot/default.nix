@@ -11,6 +11,8 @@
     {
       custom.server.enable = true;
 
+      custom.nativeBuild = true;
+
       custom.image = {
         installer.targetDisk = "/dev/disk/by-path/TODO";
         boot.uboot = {

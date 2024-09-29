@@ -13,6 +13,9 @@ in
     default = true;
   };
 
+  # Add a way to opt-out of cross-compiled nixos machines :/
+  options.custom.nativeBuild = lib.mkEnableOption "enable native building";
+
   config = lib.mkIf cfg.enable {
     system.stateVersion = lib.mkDefault "24.11";
 
@@ -21,7 +24,7 @@ in
     # We always build on x86_64-linux.
     #
     # "If it don't cross-compile, it don't go in the config!"
-    nixpkgs.buildPlatform = "x86_64-linux";
+    nixpkgs.buildPlatform = lib.mkIf (!config.custom.nativeBuild) "x86_64-linux";
 
     # CapsLock is terrible
     services.xserver.xkb.options = lib.mkDefault "ctrl:nocaps";

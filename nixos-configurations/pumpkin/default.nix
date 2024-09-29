@@ -12,6 +12,7 @@
       };
       custom.server.enable = true;
       custom.basicNetwork.enable = true;
+      custom.nativeBuild = true;
     }
     {
       services.navidrome = {
