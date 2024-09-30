@@ -1,9 +1,10 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 {
   config = lib.mkMerge [
     {
       nixpkgs.hostPlatform = "aarch64-linux";
       hardware.deviceTree.name = "marvell/armada-8040-mcbin.dtb";
+      system.build.firmware = pkgs.mcbin-firmware;
     }
     {
       custom.image = {
