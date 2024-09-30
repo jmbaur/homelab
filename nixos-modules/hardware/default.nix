@@ -1,5 +1,6 @@
 {
   imports = [
+    ./macchiatobin
     ./armada-388-clearfog
     ./bpi-r3
     ./chromebook
