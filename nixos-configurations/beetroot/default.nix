@@ -29,7 +29,7 @@
           sambaSupport = false; # deps don't cross-compile
           x11Support = false;
           waylandSupport = true;
-          pipewireSupport = false; # TODO(jared): get this working
+          pipewireSupport = true;
         };
       };
     }
