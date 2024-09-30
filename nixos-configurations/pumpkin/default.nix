@@ -4,7 +4,20 @@
     {
       nixpkgs.hostPlatform = "aarch64-linux";
       hardware.deviceTree.name = "marvell/armada-8040-mcbin.dtb";
-      system.build.firmware = pkgs.mcbin-firmware;
+      system.build.firmware = pkgs.mcbin-firmware.override {
+        uboot-mvebu_mcbin-88f8040 = pkgs.uboot-mvebu_mcbin-88f8040.override {
+          extraStructuredConfig = with lib.kernel; {
+            DISTRO_DEFAULTS = unset;
+            BOOTSTD_DEFAULTS = yes;
+
+            # Allow for using u-boot scripts.
+            BOOTSTD_FULL = yes;
+
+            # Allow for larger than the default 8MiB kernel size
+            SYS_BOOTM_LEN = freeform "0x${lib.toHexString (12 * 1024 * 1024)}"; # 12MiB
+          };
+        };
+      };
     }
     {
       custom.image = {
