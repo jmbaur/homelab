@@ -91,6 +91,7 @@ in
     nix = {
       package = pkgs.nixVersions.nix_2_24;
       channel.enable = false; # opt out of nix channels
+      distributedBuilds = true;
       settings.trusted-users = [ "@wheel" ];
       settings.experimental-features = [
         "nix-command"
