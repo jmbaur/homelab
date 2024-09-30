@@ -76,11 +76,9 @@
       options ubi mtd=ubi
     '';
 
-    # for fw_printenv and fw_setenv
     environment.etc."fw_env.config".text = ''
-      # UBI volume            Device offset   Env. size       Flash sector size       Number of sectors
-      /dev/ubi0:ubootenv      0x0             0x1f000         0x1f000
-      /dev/ubi0:ubootenvred   0x0             0x1f000         0x1f000
+      /dev/ubi0:ubootenv    0x0 0x1f000 0x1f000
+      /dev/ubi0:ubootenvred 0x0 0x1f000 0x1f000
     '';
 
     # https://github.com/torvalds/linux/blob/841c35169323cd833294798e58b9bf63fa4fa1de/include/uapi/linux/input-event-codes.h#L481

@@ -78,10 +78,8 @@ in
 
   boot.initrd.includeDefaultModules = false;
 
-  # for fw_printenv and fw_setenv
   environment.etc."fw_env.config".text = ''
-    # VFAT file                                             Device offset   Env. size       Flash sector size       Number of sectors
-    ${config.boot.loader.efi.efiSysMountPoint}/uboot.env    0x0000          0x10000
+    ${config.boot.loader.efi.efiSysMountPoint}/uboot.env 0x0000 0x10000
   '';
 
   environment.systemPackages = [ pkgs.uboot-env-tools ];
