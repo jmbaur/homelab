@@ -69,5 +69,3 @@ stty -F "$port" raw ignbrk time 5 $default_baudrate
 
 # shellcheck disable=SC2094
 sx -vv "$file" >"$port" <"$port"
-
-tio "$port"

@@ -1,13 +1,7 @@
-{
-  writeShellApplication,
-  lrzsz,
-  tio,
-}:
+{ writeShellApplication, lrzsz }:
+
 writeShellApplication {
   name = "mrvl-uart";
-  runtimeInputs = [
-    lrzsz
-    tio
-  ];
+  runtimeInputs = [ lrzsz ];
   text = builtins.readFile ./mrvl-uart.bash;
 }
