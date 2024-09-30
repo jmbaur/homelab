@@ -18,6 +18,21 @@
           };
         };
       };
+
+      hardware.firmware = [
+        (pkgs.extractLinuxFirmware "inside-secure-firmware" [
+          "inside-secure/eip197_minifw/ifpp.bin"
+          "inside-secure/eip197_minifw/ipue.bin"
+        ])
+      ];
+
+      environment.systemPackages = [ pkgs.uboot-env-tools ];
+
+      # for fw_printenv and fw_setenv
+      environment.etc."fw_env.config".text = ''
+        # MTD device name       Device offset   Env. size       Flash sector size       Number of sectors
+        /dev/mtd1               0x180000        0x10000         0x10000
+      '';
     }
     {
       custom.image = {
