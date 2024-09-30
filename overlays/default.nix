@@ -47,17 +47,6 @@ inputs: {
         configureFlags = (old.configureFlags or [ ]) ++ [ "--enable-multithreading" ];
       });
 
-      # Fix for search not working on latest release
-      tmux = prev.tmux.overrideAttrs (old: {
-        patches = (old.patches or [ ]) ++ [
-          (final.fetchpatch {
-            name = "fix-searching";
-            url = "https://github.com/jmbaur/tmux/commit/9538433064e34997089f26f379740d850dde32ed.patch";
-            hash = "sha256-ykPRo3gOUy6UomNDC+vi/DaW3jUZdXt0Hyvgp7Pdp0k=";
-          })
-        ];
-      });
-
       # Add support for colorized output.
       strace-with-colors = prev.strace.overrideAttrs (old: {
         patches = (old.patches or [ ]) ++ [
