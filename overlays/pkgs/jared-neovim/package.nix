@@ -30,8 +30,7 @@
   shfmt,
   skim,
   taplo,
-  # tex-fmt,
-  texlive,
+  tex-fmt,
   tree-sitter,
   vimPlugins,
   vimUtils,
@@ -158,10 +157,7 @@ wrapNeovimUnstable neovim-unwrapped (
               haskell-language-server
               ormolu
             ])
-            ++ (lib.optionals latexSupport [
-              # tex-fmt
-              (texlive.combine { inherit (texlive) scheme-minimal latexindent; })
-            ])
+            ++ (lib.optionals latexSupport [ tex-fmt ])
             ++ (lib.optionals luaSupport [ lua-language-server ])
             ++ (lib.optionals nixSupport [
               nil
