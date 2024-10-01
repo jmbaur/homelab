@@ -255,7 +255,7 @@ in
           ];
           device =
             if cfg.encrypt then
-              "/dev/mapper/root"
+              "/dev/mapper/${config.systemd.repart.partitions."12-root".Label}"
             else
               "/dev/disk/by-partlabel/${config.systemd.repart.partitions."12-root".Label}";
         };

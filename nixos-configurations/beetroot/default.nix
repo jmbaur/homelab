@@ -11,25 +11,12 @@
     {
       custom.server.enable = true;
 
-      custom.nativeBuild = true;
-
       custom.image = {
-        installer.targetDisk = "/dev/disk/by-path/TODO";
+        installer.targetDisk = "/dev/disk/by-path/platform-4020000.mmc";
         boot.uboot = {
           enable = true;
           bootMedium.type = "mmc";
-          kernelLoadAddress = "0x0"; # TODO
-        };
-      };
-    }
-    {
-      services.xserver.desktopManager.kodi = {
-        enable = true;
-        package = pkgs.kodi.override {
-          sambaSupport = false; # deps don't cross-compile
-          x11Support = false;
-          waylandSupport = true;
-          pipewireSupport = true;
+          kernelLoadAddress = "0x42000000";
         };
       };
     }
