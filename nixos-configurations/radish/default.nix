@@ -17,7 +17,7 @@
         boot.uboot = {
           enable = true;
           bootMedium.type = "mmc";
-          kernelLoadAddress = "0x42000000";
+          kernelLoadAddress = "0x46000000";
         };
       };
     }
