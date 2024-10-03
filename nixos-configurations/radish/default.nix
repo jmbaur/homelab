@@ -23,10 +23,17 @@
           BOOTSTD_FULL = yes;
 
           # Allow for larger than the default 8MiB kernel size
-          SYS_BOOTM_LEN = freeform "0x${lib.toHexString (12 * 1024 * 1024)}"; # 12MiB
+          SYS_BOOTM_LEN = freeform "0x${lib.toHexString (64 * 1024 * 1024)}"; # 64MiB
 
           BOOTCOUNT_LIMIT = yes;
           BOOTCOUNT_ENV = yes;
+
+          # Some settings only enabled if we use DISTRO_DEFAULTS that we must
+          # enable manually. See https://github.com/u-boot/u-boot/blob/9cfe0cab3bf135a505e1e163ca442a4e4064d58e/arch/arm/Kconfig#L1150
+          CMD_USB = yes;
+          USB = yes;
+          USB_KEYBOARD = yes;
+          USB_STORAGE = yes;
         };
       };
 
@@ -41,10 +48,9 @@
         '')
       ];
 
-      # NOTE: The default env offset is 0xf0000, which only leaves 0xf0000
-      # bytes for the uboot build to fit on SPI flash. As of 2024-10-03, the
-      # uboot build is only ~765KiB, but this is something to keep track of
-      # over time.
+      # NOTE: The default env offset is 0xf0000, which only leaves 960KiB for
+      # the uboot build to fit on SPI flash. As of 2024-10-03, the uboot build
+      # is only ~884KiB, but this is something to keep track of over time.
       environment.etc."fw_env.config".text = ''
         /dev/mtd0 0xf0000 0x10000
       '';

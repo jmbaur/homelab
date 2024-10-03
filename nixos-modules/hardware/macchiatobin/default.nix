@@ -27,7 +27,7 @@ in
           BOOTSTD_FULL = yes;
 
           # Allow for larger than the default 8MiB kernel size
-          SYS_BOOTM_LEN = freeform "0x${lib.toHexString (12 * 1024 * 1024)}"; # 12MiB
+          SYS_BOOTM_LEN = freeform "0x${lib.toHexString (64 * 1024 * 1024)}"; # 64MiB
 
           ENV_OFFSET = freeform envOffset;
 
