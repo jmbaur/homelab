@@ -63,7 +63,7 @@ in
             gpg --batch --yes --sign --detach-sign --output SHA256SUMS.gpg SHA256SUMS
 
             rclone --config $CREDENTIALS_DIRECTORY/rclone_config delete r2:update/${name}
-            rclone --config $CREDENTIALS_DIRECTORY/rclone_config copy . r2:update/${name}
+            rclone --config $CREDENTIALS_DIRECTORY/rclone_config copy . r2:update/${name} --progress
           '';
         }
       ) allHosts
