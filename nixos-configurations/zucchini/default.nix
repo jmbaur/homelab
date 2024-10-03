@@ -15,7 +15,7 @@
         gcc.arch = "armv8-a";
       };
 
-      boot.kernelPackages = pkgs.linuxPackages_testing;
+      boot.kernelPackages = pkgs.linuxPackages_latest;
 
       boot.initrd.availableKernelModules = [
         "dwmac_rk"
