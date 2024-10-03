@@ -1,4 +1,9 @@
-{ lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   config = lib.mkMerge [
     {
@@ -24,6 +29,25 @@
           BOOTCOUNT_ENV = yes;
         };
       };
+
+      environment.systemPackages = [
+        pkgs.uboot-env-tools
+        pkgs.mtdutils
+        (pkgs.writeShellScriptBin "update-firmware" ''
+          ${lib.getExe' pkgs.mtdutils "flashcp"} \
+            --verbose \
+            ${config.system.build.firmware}/u-boot-sunxi-with-spl.bin \
+            /dev/mtd0
+        '')
+      ];
+
+      # NOTE: The default env offset is 0xf0000, which only leaves 0xf0000
+      # bytes for the uboot build to fit on SPI flash. As of 2024-10-03, the
+      # uboot build is only ~765KiB, but this is something to keep track of
+      # over time.
+      environment.etc."fw_env.config".text = ''
+        /dev/mtd0 0xf0000 0x10000
+      '';
     }
     {
       custom.server.enable = true;
