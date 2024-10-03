@@ -9,7 +9,7 @@
     {
       nixpkgs.hostPlatform = "aarch64-linux";
 
-      # requires linux >= 6.8
+      # See https://linux-sunxi.org/H616#missing_Linux_kernel_driver_support
       hardware.deviceTree.name = "allwinner/sun50i-h618-orangepi-zero3.dtb";
       boot.kernelPackages = pkgs.linuxPackages_latest;
 
