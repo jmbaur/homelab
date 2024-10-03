@@ -21,6 +21,7 @@
         "dwmac_rk"
         "nvme"
         "phy-rockchip-naneng-combphy"
+        "rtc_hym8563"
       ];
 
       hardware.deviceTree = {
