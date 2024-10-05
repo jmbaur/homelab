@@ -14,7 +14,6 @@
 
   router = {
     enable = true;
-    ipv6UlaPrefix = "fd4c:ddfe:28e9::/64";
     lanInterface = config.systemd.network.netdevs."10-br0".netdevConfig.Name;
     wanInterface = "wan";
   };
