@@ -2,7 +2,7 @@
 {
   imports = [
     ./uefi
-    ./fit-image
+    ./uboot
     ./bootloaderspec
   ];
 
