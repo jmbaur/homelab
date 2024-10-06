@@ -160,7 +160,7 @@ stdenv.mkDerivation {
 
     export usrhash=$(jq --raw-output '.[] | select(.type == "usr-${systemdArchitecture}") | .roothash' <repart-output.json)
 
-    export bootfiles=bootfiles
+    export bootfiles=$(mktemp)
     bash "$bootFileCommandsPath"
     for line in $(cat $bootfiles); do
       echo "copying boot file $line"

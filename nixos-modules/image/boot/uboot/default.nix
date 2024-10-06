@@ -122,8 +122,6 @@ in
           kernel_compression=lzma
           tmp=$(mktemp)
           objcopy -O binary ${lib.getDev config.system.build.kernel}/vmlinux $tmp
-          du -sh $tmp
-          exit 3
           lzma --threads $NIX_BUILD_CORES <$tmp >$linux_kernel
 
           # The bzImage is (in simplified form) a concatenation of some setup
