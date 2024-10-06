@@ -1,9 +1,19 @@
-{ lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+
 let
   uboot = pkgs.uboot-rpi_4.override {
     extraStructuredConfig = with lib.kernel; {
-      # Not enabled by default for RPI 4
+      DISTRO_DEFAULTS = unset;
+      BOOTSTD_DEFAULTS = yes;
       FIT = yes;
+
+      # Allow for larger than the default 8MiB kernel size
+      SYS_BOOTM_LEN = freeform "0x${lib.toHexString (64 * 1024 * 1024)}"; # 64MiB
 
       # Allow for using u-boot scripts.
       BOOTSTD_FULL = yes;
@@ -12,6 +22,7 @@ let
       BOOTCOUNT_ENV = yes;
     };
   };
+
   configTxt = pkgs.writeText "config.txt" ''
     [all]
     arm_64bit=1
@@ -24,40 +35,60 @@ let
   '';
 in
 {
-  nixpkgs.hostPlatform = "aarch64-linux";
+  config = lib.mkMerge [
+    {
+      nixpkgs.hostPlatform = "aarch64-linux";
 
-  custom.server.enable = true;
-  custom.basicNetwork.enable = true;
-  custom.image = {
-    installer.targetDisk = "/dev/mmcblk0";
-    bootFileCommands = ''
-      echo ${uboot}/u-boot.bin:/kernel8.img >> $bootfiles
-      echo ${configTxt}:/config.txt >> $bootfiles
-      echo ${pkgs.raspberrypi-armstubs}/armstub8-gic.bin:/armstub8-gic.bin >> $bootfiles
-      echo ${pkgs.raspberrypifw}/share/raspberrypi/boot/bcm2711-rpi-4-b.dtb:/bcm2711-rpi-4-b.dtb >> $bootfiles
-      find ${pkgs.raspberrypifw}/share/raspberrypi/boot -name "fixup*" \
-        -exec sh -c 'echo {}:/$(basename {})' \; >> $bootfiles
-      find ${pkgs.raspberrypifw}/share/raspberrypi/boot -name "start*" \
-        -exec sh -c 'echo {}:/$(basename {})' \; >> $bootfiles
-    '';
-    boot.uboot = {
-      enable = true;
-      bootMedium.type = "mmc";
-      kernelLoadAddress = "0x3000000";
-    };
-  };
+      custom.image.bootFileCommands = ''
+        echo ${config.system.build.firmware}/u-boot.bin:/kernel8.img >> $bootfiles
+        echo ${configTxt}:/config.txt >> $bootfiles
+        echo ${pkgs.raspberrypi-armstubs}/armstub8-gic.bin:/armstub8-gic.bin >> $bootfiles
+        echo ${pkgs.raspberrypifw}/share/raspberrypi/boot/bcm2711-rpi-4-b.dtb:/bcm2711-rpi-4-b.dtb >> $bootfiles
+        find ${pkgs.raspberrypifw}/share/raspberrypi/boot -name "fixup*" \
+          -exec sh -c 'echo {}:/$(basename {})' \; >> $bootfiles
+        find ${pkgs.raspberrypifw}/share/raspberrypi/boot -name "start*" \
+          -exec sh -c 'echo {}:/$(basename {})' \; >> $bootfiles
+      '';
 
-  # https://forums.raspberrypi.com/viewtopic.php?t=319435
-  systemd.repart.partitions."10-boot".Type = lib.mkForce "EBD0A0A2-B9E5-4433-87C0-68B6B72699C7";
+      # https://forums.raspberrypi.com/viewtopic.php?t=319435
+      systemd.repart.partitions."10-boot".Type = lib.mkForce "EBD0A0A2-B9E5-4433-87C0-68B6B72699C7";
 
-  system.build.firmware = uboot;
+      system.build.firmware = uboot;
 
-  hardware.deviceTree.enable = true;
-  hardware.deviceTree.name = "broadcom/bcm2711-rpi-4-b.dtb";
+      hardware.deviceTree.enable = true;
+      hardware.deviceTree.name = "broadcom/bcm2711-rpi-4-b.dtb";
 
-  boot.kernelParams = [ "console=ttyS0,115200" ];
+      boot.kernelParams = [ "console=ttyS0,115200" ];
 
-  # {{{ TODO(jared): delete this
-  users.users.root.initialPassword = lib.warn "EMPTY ROOT PASSWORD, DO NOT USE IN 'PRODUCTION'" "";
-  # }}}
+      environment.etc."fw_env.config".text = ''
+        ${config.boot.loader.efi.efiSysMountPoint}/uboot.env 0x0000 0x10000
+      '';
+
+      environment.systemPackages = [ pkgs.uboot-env-tools ];
+    }
+    {
+      custom.server.enable = true;
+      custom.basicNetwork.enable = true;
+      custom.nativeBuild = true;
+      custom.image = {
+        installer.targetDisk = "/dev/mmcblk0";
+        boot.uboot = {
+          enable = true;
+          bootMedium.type = "mmc";
+          kernelLoadAddress = "0x3000000";
+        };
+      };
+    }
+    {
+      services.xserver.desktopManager.kodi = {
+        enable = true;
+        package = pkgs.kodi.override {
+          sambaSupport = false; # deps don't cross-compile
+          x11Support = false;
+          waylandSupport = true;
+          pipewireSupport = true;
+        };
+      };
+    }
+  ];
 }

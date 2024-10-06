@@ -33,6 +33,7 @@ in
     "${modulesPath}/profiles/all-hardware.nix"
   ];
 
+  custom.server.enable = true;
   custom.image = {
     installer.targetDisk = "/dev/mmcblk0";
     postImageCommands = ''
@@ -68,10 +69,6 @@ in
       preferBuiltin = true;
     };
   };
-
-  # {{{ TODO(jared): delete this
-  users.users.root.initialPassword = lib.warn "EMPTY ROOT PASSWORD, DO NOT USE IN 'PRODUCTION'" "";
-  # }}}
 
   hardware.deviceTree.enable = true;
   hardware.deviceTree.filter = "sun8i-h2-plus-bananapi-m2-zero.dtb";
