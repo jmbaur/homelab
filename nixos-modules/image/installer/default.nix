@@ -230,10 +230,14 @@ in
         imageName = config.networking.hostName;
 
         bootFileCommands =
-          {
-            "uefi" = ''
+          let
+            ukiCommands = ''
               echo ${installerSystem.config.system.build.installerUki}:/EFI/boot/boot${pkgs.stdenv.hostPlatform.efiArch}.efi >>$bootfiles
             '';
+          in
+          {
+            "uefi" = ukiCommands;
+            "uboot" = ukiCommands; # TODO(jared): do non-UEFI setup
             "bootLoaderSpec" =
               ''
                 echo ${installerSystem.config.system.build.blsEntry}:/loader/entries/installer.conf >>$bootfiles
@@ -243,7 +247,6 @@ in
               + optionalString config.hardware.deviceTree.enable ''
                 echo ${installerSystem.config.hardware.deviceTree.package}/${installerSystem.config.hardware.deviceTree.name}:/devicetree.dtb >>$bootfiles
               '';
-            "uboot" = throw "uboot not yet supported for disk installer";
           }
           ."${head (attrNames cfg.boot)}";
 
