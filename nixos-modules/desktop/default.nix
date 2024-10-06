@@ -67,51 +67,5 @@ in
     # plus setting this to true means that geoclue will be dependent on avahi
     # being enabled, since NMEA support in geoclue uses avahi.
     services.geoclue2.enableNmea = lib.mkDefault false;
-
-    # MLS is deprecated: https://github.com/NixOS/nixpkgs/issues/321121
-    #
-    # NOTE: This is for personal usage only (and has very low limits), be a
-    # good person and get your own API key.
-    services.geoclue2.geoProviderUrl =
-      "https://www.googleapis.com/geolocation/v1/geolocate?key="
-      + "A"
-      + "I"
-      + "z"
-      + "a"
-      + "S"
-      + "y"
-      + "A"
-      + "_"
-      + "W"
-      + "j"
-      + "R"
-      + "8"
-      + "4"
-      + "L"
-      + "S"
-      + "r"
-      + "J"
-      + "r"
-      + "t"
-      + "R"
-      + "L"
-      + "a"
-      + "S"
-      + "I"
-      + "j"
-      + "G"
-      + "-"
-      + "Q"
-      + "f"
-      + "n"
-      + "s"
-      + "c"
-      + "N"
-      + "c"
-      + "v"
-      + "3"
-      + "P"
-      + "y"
-      + "Y";
   };
 }
