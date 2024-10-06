@@ -75,7 +75,7 @@ in
       hardware.deviceTree.enable = true;
       hardware.deviceTree.name = "broadcom/bcm2711-rpi-4-b.dtb";
 
-      boot.kernelParams = [ "console=ttyS0,115200" ];
+      boot.kernelParams = [ "console=ttyS1,115200" ];
 
       environment.etc."fw_env.config".text = ''
         ${config.boot.loader.efi.efiSysMountPoint}/uboot.env 0x0000 0x10000
