@@ -114,7 +114,10 @@ let
               ];
 
               network = mkMerge [
-                { enable = true; }
+                {
+                  enable = true;
+                  wait-online.anyInterface = true;
+                }
                 {
                   units = mapAttrs' (
                     n: v: nameValuePair "${n}.link" (mkUnit linkToUnit v)
