@@ -113,23 +113,11 @@ in
       hardware.bluetooth.enable = true;
 
       services.xserver.desktopManager.kodi.package = pkgs.kodi.override {
-        sambaSupport = false; # deps don't cross-compile
-        x11Support = false;
-        waylandSupport = true;
-        pipewireSupport = true;
         gbmSupport = true;
-      };
-
-      systemd.tmpfiles.settings."10-kodi" = {
-        d."/var/lib/kodi" = {
-          user = "kodi";
-          group = "kodi";
-          mode = "0750";
-        };
-        Z."/var/lib/kodi" = {
-          user = "kodi";
-          group = "kodi";
-        };
+        pipewireSupport = true;
+        sambaSupport = false; # deps don't cross-compile
+        waylandSupport = true;
+        x11Support = false;
       };
 
       users.users.kodi = {
@@ -200,8 +188,7 @@ in
           StandardInput = "tty";
           StandardOutput = "journal";
           TTYPath = "/dev/tty1";
-          ExecStop = "${lib.getExe' pkgs.psmisc "killall"} --exact --wait kodi.bin";
-          ExecStart = "${lib.getExe config.services.xserver.desktopManager.kodi.package} --standalone";
+          ExecStart = "${lib.getExe config.services.xserver.desktopManager.kodi.package} --standalone --windowing=gbm";
         };
       };
 
