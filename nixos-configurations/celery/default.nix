@@ -47,10 +47,6 @@
 
   custom.image = {
     installer.targetDisk = "/dev/disk/by-path/platform-11230000.mmc";
-    boot.uboot = {
-      enable = true;
-      kernelLoadAddress = "0x50000000";
-      bootMedium.type = "mmc";
-    };
+    boot.uefi.enable = true;
   };
 }
