@@ -81,7 +81,10 @@ in
         ${config.boot.loader.efi.efiSysMountPoint}/uboot.env 0x0000 0x10000
       '';
 
-      environment.systemPackages = [ pkgs.uboot-env-tools ];
+      environment.systemPackages = [
+        pkgs.uboot-env-tools
+        pkgs.raspberrypi-eeprom
+      ];
     }
     {
       custom.server.enable = true;
