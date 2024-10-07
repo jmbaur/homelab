@@ -121,10 +121,6 @@
       };
     };
 
-    # The default load address is 0x800000, so let's leave up to 32MiB for
-    # the fit-image.
-    custom.image.boot.uboot.kernelLoadAddress = "0x2800000";
-
     environment.etc."fw_env.config".text = ''
       /dev/mtd2 0x0 0x20000 0x10000
       /dev/mtd1 0x0 0x20000 0x10000

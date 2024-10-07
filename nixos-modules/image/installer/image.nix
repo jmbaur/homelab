@@ -13,7 +13,6 @@
   stdenv,
   systemd,
   systemdUkify,
-  ubootTools,
   xz,
 
   # arguments
@@ -53,7 +52,6 @@ stdenv.mkDerivation {
     sbsigntool
     systemd
     systemdUkify
-    ubootTools
     xz
   ];
 

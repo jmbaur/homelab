@@ -162,35 +162,6 @@ let
       custom.image.boot.uefi.enable = true;
       virtualisation.useEFIBoot = true;
     };
-    uboot =
-      { pkgs, ... }:
-      {
-        custom.image.boot.uboot.enable = true;
-        custom.image.boot.uboot.bootMedium.type = "virtio";
-        custom.image.boot.uboot.kernelLoadAddress =
-          if pkgs.stdenv.hostPlatform.isx86_64 then
-            "0x01000000"
-          else
-            throw "don't know what load address should be";
-        virtualisation.bios = pkgs.linkFarm "u-boot-nixos-vm-bios" [
-          {
-            name = "bios.bin";
-            path =
-              {
-                x86_64 = "${
-                  pkgs.uboot-qemu-x86_64.override {
-                    extraStructuredConfig = with lib.kernel; {
-                      CMD_LZMADEC = yes;
-                      SYS_LOAD_ADDR = freeform "0x04000000"; # allow for larger than 16MiB kernel size
-                    };
-                  }
-                }/u-boot.rom";
-                aarch64 = "${pkgs.uboot-qemu_arm64}/u-boot.bin";
-              }
-              .${pkgs.stdenv.hostPlatform.qemuArch};
-          }
-        ];
-      };
     bootloaderspec = {
       custom.image.boot.bootLoaderSpec.enable = true;
     };
@@ -347,7 +318,6 @@ in
           lib.cartesianProduct {
             bootMethod = [
               "uefi"
-              "uboot"
               "bootloaderspec"
             ];
             imageType = [

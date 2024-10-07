@@ -243,7 +243,6 @@ in
           in
           {
             "uefi" = ukiCommands;
-            "uboot" = ukiCommands; # TODO(jared): do non-UEFI setup
             "bootLoaderSpec" =
               ''
                 echo ${installerSystem.config.system.build.blsEntry}:/loader/entries/installer.conf >>$bootfiles

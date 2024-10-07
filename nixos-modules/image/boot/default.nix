@@ -2,7 +2,6 @@
 {
   imports = [
     ./uefi
-    ./uboot
     ./bootloaderspec
   ];
 
@@ -14,42 +13,6 @@
           type = types.submodule {
             options = {
               enable = mkEnableOption "booting via UEFI";
-            };
-          };
-        };
-        uboot = mkOption {
-          type = types.submodule {
-            options = {
-              enable = mkEnableOption "booting via U-Boot FIT image";
-
-              kernelLoadAddress = mkOption {
-                type = types.str;
-                description = ''
-                  TODO
-                '';
-              };
-
-              bootMedium = {
-                type = mkOption {
-                  type = types.enum [
-                    "mmc"
-                    "scsi"
-                    "nvme"
-                    "usb"
-                    "virtio"
-                  ];
-                  description = ''
-                    TODO
-                  '';
-                };
-                index = mkOption {
-                  type = types.int;
-                  default = 0;
-                  description = ''
-                    TODO
-                  '';
-                };
-              };
             };
           };
         };
