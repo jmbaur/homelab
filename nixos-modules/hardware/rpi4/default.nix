@@ -91,8 +91,8 @@ in
     '';
 
     environment.systemPackages = [
-      pkgs.uboot-env-tools
       pkgs.raspberrypi-eeprom
+      pkgs.uboot-env-tools
     ];
 
     boot.initrd.availableKernelModules = [
@@ -149,5 +149,14 @@ in
         '';
       }
     ];
+
+    nixpkgs.overlays = [
+      (_: prev: { libcec = prev.libcec.override { withLibraspberrypi = true; }; })
+    ];
+
+    services.udev.extraRules = ''
+      # allow access to raspi cec device for video group (and optionally register it as a systemd device, used below)
+      KERNEL=="vchiq", GROUP="video", MODE="0660", TAG+="systemd", ENV{SYSTEMD_ALIAS}="/dev/vchiq"
+    '';
   };
 }
