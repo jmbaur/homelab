@@ -67,7 +67,7 @@ in
   };
 
   hardware.deviceTree.enable = true;
-  hardware.deviceTree.filter = "sun8i-h2-plus-bananapi-m2-zero.dtb";
+  hardware.deviceTree.name = "allwinner/sun8i-h2-plus-bananapi-m2-zero.dtb";
 
   boot.initrd.includeDefaultModules = false;
 
