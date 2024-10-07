@@ -85,6 +85,8 @@ in
         pkgs.uboot-env-tools
         pkgs.raspberrypi-eeprom
       ];
+
+      hardware.firmware = [ pkgs.raspberrypiWirelessFirmware ];
     }
     {
       custom.server.enable = true;
