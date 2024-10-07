@@ -118,6 +118,12 @@
         user = config.users.users.kodi.name;
         program = lib.getExe' config.services.xserver.desktopManager.kodi.package "kodi-standalone";
       };
+
+      services.pipewire = {
+        enable = true;
+        alsa.enable = true;
+        pulse.enable = true;
+      };
     }
   ];
 }
