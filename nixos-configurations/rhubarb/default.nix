@@ -92,11 +92,7 @@ in
       custom.nativeBuild = true;
       custom.image = {
         installer.targetDisk = "/dev/mmcblk0";
-        boot.uboot = {
-          enable = true;
-          bootMedium.type = "mmc";
-          kernelLoadAddress = "0x${lib.toHexString kernelLoadAddress}";
-        };
+        boot.uefi.enable = true;
       };
     }
     {

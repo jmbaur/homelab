@@ -39,11 +39,7 @@ in
     postImageCommands = ''
       dd status=none if=${config.system.build.firmware}/u-boot-sunxi-with-spl.bin of=$out/image.raw bs=1K seek=${toString splOffsetKiB} conv=notrunc,sync
     '';
-    boot.uboot = {
-      enable = true;
-      bootMedium.type = "mmc";
-      kernelLoadAddress = "0x44000000";
-    };
+    boot.uefi.enable = true;
   };
 
   # TPM kernel modules aren't built in our defconfig
