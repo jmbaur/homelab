@@ -29,23 +29,7 @@ in
     # CapsLock is terrible
     services.xserver.xkb.options = lib.mkDefault "ctrl:nocaps";
 
-    environment.systemPackages = (
-      map (x: x.terminfo) (
-        with pkgs.pkgsBuildBuild;
-        [
-          alacritty
-          foot
-          kitty
-          rio
-          rxvt-unicode-unwrapped
-          rxvt-unicode-unwrapped-emoji
-          st
-          termite
-          tmux
-          wezterm
-        ]
-      )
-    );
+    environment.enableAllTerminfo = true;
 
     programs.nano.enable = false;
     programs.vim = {
