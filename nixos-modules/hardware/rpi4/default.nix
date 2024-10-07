@@ -106,50 +106,6 @@ in
     # Required for the Wireless firmware
     hardware.enableRedistributableFirmware = true;
 
-    hardware.deviceTree.overlays = [
-      {
-        name = "rpi4-cpu-revision";
-        dtsText = ''
-          /dts-v1/;
-          /plugin/;
-
-          / {
-            compatible = "raspberrypi,4-model-b";
-
-            fragment@0 {
-              target-path = "/";
-              __overlay__ {
-                system {
-                  linux,revision = <0x00d03114>;
-                };
-              };
-            };
-          };
-        '';
-      }
-      # Equivalent to:
-      # https://github.com/raspberrypi/linux/blob/rpi-6.1.y/arch/arm/boot/dts/overlays/cma-overlay.dts
-      {
-        name = "rpi4-cma-overlay";
-        dtsText = ''
-          // SPDX-License-Identifier: GPL-2.0
-          /dts-v1/;
-          /plugin/;
-
-          / {
-            compatible = "brcm,bcm2711";
-
-            fragment@0 {
-              target = <&cma>;
-              __overlay__ {
-                size = <(${toString 512} * 1024 * 1024)>;
-              };
-            };
-          };
-        '';
-      }
-    ];
-
     nixpkgs.overlays = [
       (_: prev: { libcec = prev.libcec.override { withLibraspberrypi = true; }; })
     ];
