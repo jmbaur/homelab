@@ -1,6 +1,5 @@
 {
   imports = [
-    ./macchiatobin
     ./armada-388-clearfog
     ./bpi-r3
     ./chromebook
@@ -8,5 +7,7 @@
     ./google-asurada-spherion
     ./google-kukui-fennel14
     ./lx2k.nix
+    ./macchiatobin
+    ./rpi4
   ];
 }
