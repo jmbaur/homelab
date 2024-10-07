@@ -106,8 +106,6 @@ in
       };
     }
     {
-      systemd.defaultUnit = "graphical.target";
-
       time.timeZone = null;
       services.automatic-timezoned.enable = true;
       hardware.bluetooth.enable = true;
@@ -161,40 +159,47 @@ in
         SUBSYSTEM=="dma_heap",KERNEL=="system",GROUP="video",MODE="0660"
       '';
 
-      systemd.services.kodi = {
-        description = "Description=Kodi standalone (GBM)";
-        aliases = [ "display-manager.service" ];
-        conflicts = [ "getty@tty1.service" ];
-        wants = [
-          "polkit.service"
-          "upower.service"
-        ];
-        after = [
-          "remote-fs.target"
-          "systemd-user-sessions.service"
-          "nss-lookup.target"
-          "sound.target"
-          "bluetooth.target"
-          "polkit.service"
-          "upower.service"
-          "mysqld.service"
-          "lircd.service"
-        ];
-        serviceConfig = {
-          User = "kodi";
-          Group = "kodi";
-          PAMName = "login";
-          Restart = "on-abort";
-          StandardInput = "tty";
-          StandardOutput = "journal";
-          TTYPath = "/dev/tty1";
-          ExecStart = "${lib.getExe config.services.xserver.desktopManager.kodi.package} --standalone --windowing=gbm";
-        };
-      };
+      # systemd.defaultUnit = "graphical.target";
+      # systemd.services.kodi = {
+      #   description = "Description=Kodi standalone (GBM)";
+      #   aliases = [ "display-manager.service" ];
+      #   conflicts = [ "getty@tty1.service" ];
+      #   wants = [
+      #     "polkit.service"
+      #     "upower.service"
+      #   ];
+      #   after = [
+      #     "remote-fs.target"
+      #     "systemd-user-sessions.service"
+      #     "nss-lookup.target"
+      #     "sound.target"
+      #     "bluetooth.target"
+      #     "polkit.service"
+      #     "upower.service"
+      #     "mysqld.service"
+      #     "lircd.service"
+      #   ];
+      #   serviceConfig = {
+      #     User = "kodi";
+      #     Group = "kodi";
+      #     PAMName = "login";
+      #     Restart = "on-abort";
+      #     StandardInput = "tty";
+      #     StandardOutput = "journal";
+      #     TTYPath = "/dev/tty1";
+      #     ExecStart = "${lib.getExe config.services.xserver.desktopManager.kodi.package} --standalone --windowing=gbm";
+      #   };
+      # };
 
       networking.firewall = {
         allowedTCPPorts = [ 8080 ];
         allowedUDPPorts = [ 8080 ];
+      };
+
+      services.cage = {
+        enable = true;
+        user = config.users.users.kodi.name;
+        program = lib.getExe' config.services.xserver.desktopManager.kodi.package "kodi-standalone";
       };
     }
   ];
