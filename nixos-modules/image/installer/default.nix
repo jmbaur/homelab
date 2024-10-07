@@ -96,6 +96,12 @@ let
               ]
             );
 
+            boot.initrd.supportedFilesystems = [
+              "btrfs"
+              "ext4"
+              "vfat"
+            ];
+
             boot.initrd.systemd = {
               enable = true;
 
