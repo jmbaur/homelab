@@ -35,7 +35,7 @@
   # https://github.com/systemd/systemd/issues/17737
   boot.kernelPatches = [
     {
-      name = "mt7986a-enablement";
+      name = "rtc";
       patch = null;
       extraStructuredConfig.RTC_DRV_PCF8523 = lib.kernel.yes;
     }
