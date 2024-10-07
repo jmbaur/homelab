@@ -109,13 +109,17 @@ in
       services.automatic-timezoned.enable = true;
       hardware.bluetooth.enable = true;
 
-      services.xserver.desktopManager.kodi.package = pkgs.kodi.override {
-        gbmSupport = true;
-        pipewireSupport = true;
-        sambaSupport = false; # deps don't cross-compile
-        waylandSupport = true;
-        x11Support = false;
-      };
+      services.xserver.desktopManager.kodi.package =
+        (pkgs.kodi.override {
+          gbmSupport = true;
+          pipewireSupport = true;
+          sambaSupport = false; # deps don't cross-compile
+          waylandSupport = true;
+          x11Support = false;
+        }).withPackages
+          (p: [
+            p.joystick
+          ]);
 
       users.users.kodi = {
         isSystemUser = true;
