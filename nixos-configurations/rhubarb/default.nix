@@ -9,6 +9,7 @@
   config = lib.mkMerge [
     {
       hardware.rpi4.enable = true;
+      boot.kernelPackages = pkgs.linuxPackages_6_11;
 
       custom.server.enable = true;
       custom.basicNetwork.enable = true;
