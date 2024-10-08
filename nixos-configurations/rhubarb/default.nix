@@ -12,7 +12,7 @@
 
       custom.server.enable = true;
       custom.basicNetwork.enable = true;
-      custom.nativeBuild = true;
+      # custom.nativeBuild = true;
       custom.image = {
         installer.targetDisk = "/dev/mmcblk0";
         boot.uefi.enable = true;
@@ -124,6 +124,8 @@
         alsa.enable = true;
         pulse.enable = true;
       };
+
+      services.upower.enable = true;
     }
   ];
 }
