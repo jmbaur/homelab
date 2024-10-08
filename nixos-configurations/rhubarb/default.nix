@@ -57,6 +57,7 @@
           TTYPath = "/dev/tty1";
           StandardInput = "tty";
           StandardOutput = "journal";
+          PAMName = "login";
           ExecStart = lib.getExe' config.services.xserver.desktopManager.kodi.package "kodi-standalone";
         };
       };
