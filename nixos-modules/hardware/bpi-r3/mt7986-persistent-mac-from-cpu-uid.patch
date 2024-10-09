@@ -1,12 +1,11 @@
 diff --git a/board/mediatek/mt7986/mt7986_rfb.c b/board/mediatek/mt7986/mt7986_rfb.c
-index 846c715ca0..66ae94bc46 100644
+index 846c715ca0..9f1f0bc6a6 100644
 --- a/board/mediatek/mt7986/mt7986_rfb.c
 +++ b/board/mediatek/mt7986/mt7986_rfb.c
-@@ -4,6 +4,55 @@
+@@ -4,6 +4,54 @@
   * Author: Sam Shih <sam.shih@mediatek.com>
   */
  
-+#include <common.h>
 +#include <mapmem.h>
 +#include <hash.h>
 +#include <u-boot/sha1.h>
