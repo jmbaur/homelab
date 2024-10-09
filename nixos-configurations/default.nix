@@ -56,9 +56,15 @@ inputs.nixpkgs.lib.genAttrs allHosts (
 
           networking.hostName = host;
 
-          # Not actually used unless `config.sops.secrets != { }`, so it's fine
-          # if this file doesn't exist.
-          sops.defaultSopsFile = ./${host}/secrets.yaml;
+          # NOTE: We opt out of baking the sops file into the nixos closure so
+          # that we don't have to incur the cost of a rebuild if we need to do
+          # something as simple as rolling the value of a secret.
+          #
+          # TODO(jared): we should write something that actually performs
+          # validation of the sops contents, since we don't get to take
+          # advantage of it here.
+          sops.defaultSopsFile = "/etc/sops.yaml";
+          sops.validateSopsFile = false;
 
           system.image.version = readFile "/.version does not exist" ../.version;
 
