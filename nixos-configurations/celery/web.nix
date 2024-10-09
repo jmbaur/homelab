@@ -68,10 +68,6 @@ in
     enable = true;
     email = "jaredbaur@fastmail.com";
     virtualHosts = {
-      "update.jmbaur.com".extraConfig = ''
-        reverse_proxy http://potato.internal:8787
-        ${caddyErrorHandling}
-      '';
       "music.jmbaur.com".extraConfig = ''
         reverse_proxy http://potato.internal:4533
         ${caddyErrorHandling}
