@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ config, lib, ... }:
 {
   config = lib.mkMerge [
     {
@@ -11,8 +11,11 @@
       custom.server.enable = true;
       custom.basicNetwork.enable = true;
       custom.nativeBuild = true;
+      custom.wgNetwork.nodes.celery.peer = true;
     }
     {
+      custom.wgNetwork.nodes.celery.allowedTCPPorts = [ config.services.navidrome.settings.Port ];
+
       services.navidrome = {
         enable = true;
         settings = {

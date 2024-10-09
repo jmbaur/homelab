@@ -81,8 +81,8 @@ inputs.nixpkgs.lib.genAttrs allHosts (
               ];
 
               nodes = lib.genAttrs allHosts (name: {
-                # These are only used if `peer = true`, so we can set some values
-                # here that enforce structure in the repo.
+                # These are only used if `peer = true`, so we can set some
+                # values here that enforce structure in the repo.
                 publicKey = readFile "wg-${host}.pubkey does not exist for ${name}" ./${name}/wg-${host}.pubkey;
                 privateKey.file = config.sops.secrets."wg-${name}".path;
               });

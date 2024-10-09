@@ -41,8 +41,6 @@
     }
   ];
 
-  custom.wgNetwork.nodes.cauliflower.peer = true;
-
   custom.server.enable = true;
 
   custom.image = {

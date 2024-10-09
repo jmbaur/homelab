@@ -18,10 +18,10 @@ in
     443
   ];
 
-  custom.wgNetwork.nodes.potato = {
+  custom.wgNetwork.nodes.pumpkin = {
     peer = true;
     initiate = true;
-    endpointHost = "potato.local";
+    endpointHost = "pumpkin.local";
   };
 
   sops.secrets.ipwatch_env = { };

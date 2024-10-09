@@ -1,7 +1,5 @@
 { ... }:
 {
-  imports = [ ./navidrome.nix ];
-
   nixpkgs.hostPlatform = "x86_64-linux";
 
   hardware.enableRedistributableFirmware = true;
@@ -29,17 +27,12 @@
     serviceConfig.Restart = "always"; # restart when session is closed
   };
 
-  boot.kernelParams = [
-    "console=ttyS0,115200"
-    "console=tty1" # TODO(jared): needed for some reason?
-  ];
+  boot.kernelParams = [ "console=ttyS0,115200" ];
 
   tinyboot = {
     enable = true;
     board = "fizz-fizz";
   };
-
-  custom.wgNetwork.nodes.celery.peer = true;
 
   custom.server.enable = true;
   custom.basicNetwork.enable = true;
