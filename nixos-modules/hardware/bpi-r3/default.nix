@@ -107,10 +107,13 @@
               AHCI = yes;
               AHCI_PCI = yes;
               AUTOBOOT = yes;
+              BLK = yes;
               BOOTCOUNT_ENV = yes;
               BOOTCOUNT_LIMIT = yes;
+              BOOTMETH_EFI_BOOTMGR = yes;
               BOOTSTD_DEFAULTS = yes;
               BOOTSTD_FULL = yes;
+              CMD_BOOTEFI = yes;
               CMD_MTD = yes;
               CMD_SCSI = yes;
               CMD_UBI = yes;
@@ -119,6 +122,8 @@
               DM_SCSI = yes;
               DM_SPI = yes;
               DM_USB = yes;
+              EFI_BOOTMGR = yes;
+              EFI_LOADER = yes;
               ENV_IS_IN_MMC = unset;
               ENV_IS_IN_UBI = yes;
               ENV_OFFSET = unset;
@@ -133,6 +138,7 @@
               MTD_SPI_NAND = yes;
               MTK_AHCI = yes;
               MTK_SPIM = yes;
+              PARTITIONS = yes;
               PCI = yes;
               PCIE_MEDIATEK = yes;
               PHY = yes;
