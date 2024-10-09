@@ -69,7 +69,7 @@ in
     email = "jaredbaur@fastmail.com";
     virtualHosts = {
       "music.jmbaur.com".extraConfig = ''
-        reverse_proxy http://potato.internal:4533
+        reverse_proxy http://pumpkin.internal:4533
         ${caddyErrorHandling}
       '';
     };
