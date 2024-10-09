@@ -64,7 +64,7 @@ inputs.nixpkgs.lib.genAttrs allHosts (
           # validation of the sops contents, since we don't get to take
           # advantage of it here.
           sops.defaultSopsFile = "/etc/sops.yaml";
-          sops.validateSopsFile = false;
+          sops.validateSopsFiles = false;
 
           system.image.version = readFile "/.version does not exist" ../.version;
 
