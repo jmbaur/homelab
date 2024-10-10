@@ -14,7 +14,7 @@ inputs.nixpkgs.lib.mapAttrs (
       creation_rules =
         map
           (host: {
-            path_regex = "nixos-configurations/${host}/secrets.yaml";
+            path_regex = "nixos-configurations/${host}/*";
             pgp = lib.concatStringsSep "," [ gpgFingerprint ];
             age = lib.concatStringsSep "," (
               lib.optionals sopsSupportsAgePlugins [
