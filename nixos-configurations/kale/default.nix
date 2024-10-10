@@ -20,6 +20,7 @@
         "xhci_pci"
         "ahci"
         "usbhid"
+        "r8169" # ethernet controller on motherboard
       ];
       boot.initrd.kernelModules = [ ];
       boot.kernelModules = [ "kvm-amd" ];
