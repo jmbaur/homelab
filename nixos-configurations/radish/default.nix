@@ -64,16 +64,5 @@
         boot.uefi.enable = true;
       };
     }
-    {
-      services.xserver.desktopManager.kodi = {
-        enable = true;
-        package = pkgs.kodi.override {
-          sambaSupport = false; # deps don't cross-compile
-          x11Support = false;
-          waylandSupport = true;
-          pipewireSupport = true;
-        };
-      };
-    }
   ];
 }
