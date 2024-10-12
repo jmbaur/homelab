@@ -27,23 +27,15 @@
       boot.kernelModules = [ "kvm-intel" ];
       boot.extraModulePackages = [ ];
 
-      # TODO(jared): This shouldn't be needed, getty-generator should generate this
-      # unit on bootup.
-      systemd.services."serial-getty@ttyS0" = {
-        enable = true;
-        wantedBy = [ "getty.target" ];
-        serviceConfig.Restart = "always"; # restart when session is closed
-      };
-
-      boot.kernelParams = [
-        "console=tty1"
-        "console=ttyS0,115200"
-      ];
-
       tinyboot = {
         enable = true;
         board = "fizz-fizz";
       };
+
+      hardware.graphics.extraPackages = with pkgs; [
+        (intel-vaapi-driver.override { enableHybridCodec = true; })
+        intel-media-driver
+      ];
     }
     {
       custom.server.enable = true;
@@ -52,18 +44,31 @@
       custom.image = {
         boot.bootLoaderSpec.enable = true;
         installer.targetDisk = "/dev/disk/by-path/pci-0000:03:00.0-nvme-1";
+        mutableNixStore = true; # TODO(jared): set to false
+      };
+
+      boot.kernelParams = [ "console=ttyS0,115200" ];
+      systemd.services."serial-getty@ttyS0" = {
+        enable = true;
+        wantedBy = [ "getty.target" ];
+        serviceConfig.Restart = "always"; # restart when session is closed
       };
     }
     {
+      boot.kernelParams = [ "quiet" ];
+
       time.timeZone = null;
       services.automatic-timezoned.enable = true;
       hardware.bluetooth.enable = true;
+
+      hardware.graphics.enable = true;
 
       services.xserver.desktopManager.kodi.package =
         (pkgs.kodi-gbm.override {
           sambaSupport = false; # deps don't cross-compile
         }).withPackages
           (p: [
+            p.inputstream-adaptive
             p.jellyfin
             p.joystick
           ]);
