@@ -17,6 +17,8 @@
         installer.targetDisk = "/dev/mmcblk0";
         boot.uefi.enable = true;
       };
+
+      services.kodi.enable = true;
     }
   ];
 }
