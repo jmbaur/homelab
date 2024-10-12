@@ -12,6 +12,10 @@ let
 in
 {
   sops.secrets.rclone_config = { };
+  sops.secrets.sysupdate_gnupg = {
+    sopsFile = "/etc/sysupdate-gnupg.json";
+    format = "binary";
+  };
 
   systemd.services = lib.mkMerge [
     {
@@ -28,18 +32,24 @@ in
             gnupg
             rclone
             semver-tool
+            unzip
           ];
-          environment.GNUPGHOME = "%S/post-builder/gnupg"; # TODO(jared): use hardware-backed gpg key
           serviceConfig = {
             DynamicUser = true;
             StandardInput = "file:/run/build-${name}";
             StateDirectory = "post-builder";
-            LoadCredential = [ "rclone_config:${config.sops.secrets.rclone_config.path}" ];
+            LoadCredential = [
+              "rclone_config:${config.sops.secrets.rclone_config.path}"
+              "signing_key_zip:${config.sops.secrets.sysupdate_gnupg.path}"
+            ];
           };
           script = ''
             set -o errexit
             set -o nounset
             set -o pipefail
+
+            export GNUPGHOME=$(mktemp -d)
+            unzip $CREDENTIALS_DIRECTORY/signing_key_zip -d "$GNUPGHOME"
 
             output_path=$(cat /dev/stdin)
             if [[ -z "$output_path" ]]; then
