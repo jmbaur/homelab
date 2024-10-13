@@ -67,6 +67,8 @@
       pulse.enable = true;
     };
 
+    security.rtkit.enable = lib.mkDefault true;
+
     services.upower.enable = true;
   };
 }

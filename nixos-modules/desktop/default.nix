@@ -58,7 +58,6 @@ in
 
     hardware.bluetooth.enable = lib.mkDefault true;
     security.rtkit.enable = lib.mkDefault true;
-    services.pipewire.wireplumber.enable = lib.mkDefault true;
 
     # We use systemd-resolved
     services.avahi.enable = false;

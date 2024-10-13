@@ -3,10 +3,6 @@
   pkgs,
   ...
 }:
-
-let
-  avsFirmware = pkgs.callPackage ./avs-topology-firmware.nix { };
-in
 {
   config = lib.mkMerge [
     {
@@ -29,7 +25,7 @@ in
       boot.extraModulePackages = [ ];
 
       tinyboot = {
-        enable = true;
+        enable = false; # TODO
         board = "fizz-fizz";
       };
 
@@ -40,7 +36,7 @@ in
 
       hardware.firmware = [
         pkgs.linux-firmware
-        avsFirmware
+        pkgs.sof-firmware
       ];
 
       # Force AVS driver since the kernel will use the SKL driver by default.
@@ -49,15 +45,38 @@ in
         options snd-intel-dspcfg dsp_driver=4
         options snd-soc-avs ignore_fw_version=1
       '';
+
+      services.pipewire.wireplumber.configPackages = [
+        (pkgs.writeTextDir "share/wireplumber/wireplumber.conf.d/10-hdmi-output.conf" ''
+          wireplumber.settings = {
+            device.restore-profile = false
+          }
+          monitor.alsa.rules = [
+            {
+              matches = [
+                {
+                  device.name = "alsa_card.platform-avs_hdaudio.2"
+                }
+              ]
+              actions = {
+                update-props = {
+                  device.profile = "pro-audio"
+                  device.description = "HDMI Output"
+                  priority.session = 600
+                }
+              }
+            }
+          ]
+        '')
+      ];
     }
     {
       custom.server.enable = true;
       custom.basicNetwork.enable = true;
 
       custom.image = {
-        boot.bootLoaderSpec.enable = true;
+        boot.uefi.enable = true;
         installer.targetDisk = "/dev/disk/by-path/pci-0000:03:00.0-nvme-1";
-        mutableNixStore = true; # TODO(jared): set to false
       };
 
       boot.kernelParams = [ "console=ttyS0,115200" ];
