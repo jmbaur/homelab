@@ -4,6 +4,9 @@
   ...
 }:
 
+let
+  avsFirmware = pkgs.callPackage ./avs-topology-firmware.nix { };
+in
 {
   config = lib.mkMerge [
     {
@@ -35,7 +38,10 @@
         intel-media-driver
       ];
 
-      hardware.firmware = [ pkgs.linux-firmware ];
+      hardware.firmware = [
+        pkgs.linux-firmware
+        avsFirmware
+      ];
 
       # Force AVS driver since the kernel will use the SKL driver by default.
       # https://github.com/WeirdTreeThing/chromebook-linux-audio/blob/99eef5cc3d2f82f451c34764f230f3d5d22239cf/setup-audio#L113
