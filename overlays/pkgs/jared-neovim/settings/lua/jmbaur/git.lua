@@ -34,12 +34,14 @@ vim.api.nvim_create_user_command("Permalink", function(args)
 	end
 
 	local url = vim.trim(vim.system(git_browse_args, {
+		text = true,
+		clear_env = true,
 		-- "git browse" calls xdg-open, so ensure that xdg-open prints to
 		-- stdout by setting the following environment variables
 		env = {
+			PATH = vim.env.PATH,
+			HOME = vim.env.HOME,
 			BROWSER = "echo",
-			DISPLAY = "",
-			WAYLAND_DISPLAY = "",
 		}
 	}):wait().stdout)
 

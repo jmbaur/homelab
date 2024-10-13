@@ -1,5 +1,4 @@
 {
-  config,
   lib,
   pkgs,
   ...
@@ -10,7 +9,6 @@
     {
       nixpkgs.hostPlatform = "x86_64-linux";
 
-      hardware.enableRedistributableFirmware = true;
       hardware.cpu.intel.updateMicrocode = true;
       hardware.chromebook = {
         enable = true;
@@ -36,6 +34,15 @@
         (intel-vaapi-driver.override { enableHybridCodec = true; })
         intel-media-driver
       ];
+
+      hardware.firmware = [ pkgs.linux-firmware ];
+
+      # Force AVS driver since the kernel will use the SKL driver by default.
+      # https://github.com/WeirdTreeThing/chromebook-linux-audio/blob/99eef5cc3d2f82f451c34764f230f3d5d22239cf/setup-audio#L113
+      boot.extraModprobeConfig = ''
+        options snd-intel-dspcfg dsp_driver=4
+        options snd-soc-avs ignore_fw_version=1
+      '';
     }
     {
       custom.server.enable = true;
