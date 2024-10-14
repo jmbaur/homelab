@@ -74,6 +74,8 @@ in
       enable = true;
       interactiveShellInit = ''
         bindkey -e
+        bindkey \^U backward-kill-line
+        WORDCHARS='_-'
         set_window_title() { print -Pn "\e]0;%n@%m: %~\a" }
         precmd_functions+=(set_window_title)
       '';
