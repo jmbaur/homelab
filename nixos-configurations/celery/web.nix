@@ -72,6 +72,14 @@ in
         reverse_proxy http://pumpkin.internal:4533
         ${caddyErrorHandling}
       '';
+      "jellyfin.jmbaur.com".extraConfig = ''
+        reverse_proxy http://pumpkin.internal:8096
+        ${caddyErrorHandling}
+      '';
+      "photos.jmbaur.com".extraConfig = ''
+        reverse_proxy http://pumpkin.internal:2342
+        ${caddyErrorHandling}
+      '';
     };
   };
 }

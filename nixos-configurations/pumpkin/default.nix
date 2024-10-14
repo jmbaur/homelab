@@ -26,6 +26,8 @@
       };
     }
     {
+      custom.wgNetwork.nodes.celery.allowedTCPPorts = [ config.services.photoprism.port ];
+
       services.photoprism = {
         enable = true;
         address = "[::]";
@@ -33,6 +35,8 @@
       };
     }
     {
+      custom.wgNetwork.nodes.celery.allowedTCPPorts = [ 8096 ];
+
       services.jellyfin.enable = true;
     }
   ];
