@@ -18,38 +18,105 @@
 -- })
 
 -- depends on git-browse (in git-extras at https://github.com/tj/git-extras)
+
+local stdout_or_bail = function(system_call)
+	local res = system_call:wait()
+	if res.code > 0 then
+		error(vim.trim(res.stderr), vim.log.levels.ERROR)
+	end
+
+	return vim.trim(res.stdout)
+end
+
+-- https://gitlab.com/<user_or_group>/<repo>/-/blob/<commit_or_branch>/<filename>#L<line1>-<line2>
+local construct_gitlab_url = function(args, remote_url, rev, git_file)
+	local url = string.format("%s/-/blob/%s/%s#L%s", remote_url, rev, git_file, args.line1)
+	if args.range > 0 then
+		url = string.format("%s-%s", url, args.line2)
+	end
+	return url
+end
+
+-- https://github.com/<user_or_org>/<repo>/blob/<commit_or_branch>/<filename>#L<line1>-L<line2>
+local construct_github_url = function(args, remote_url, rev, git_file)
+	local url = string.format("%s/blob/%s/%s#L%s", remote_url, rev, git_file, args.line1)
+	if args.range > 0 then
+		url = string.format("%s-L%s", url, args.line2)
+	end
+	return url
+end
+
+local set_forge_type = function(repo_dir, forge_type_config, forge_type)
+	local res = vim.system({ "git", "-C", repo_dir, "config", "set", forge_type_config, forge_type }):wait()
+	if res.code > 0 then
+		vim.notify(res.stderr, vim.log.levels.ERROR)
+	end
+end
+
 vim.api.nvim_create_user_command("Permalink", function(args)
 	local current_file = vim.fn.expand("%")
-	local repo_dir = vim.trim(vim.system({ "git", "-C", vim.fs.dirname(current_file), "rev-parse", "--show-toplevel" })
-		:wait().stdout)
-	local branch = vim.trim(vim.system({ "git", "-C", repo_dir, "rev-parse", "--abbrev-ref", "HEAD" }):wait().stdout)
-	local remote = vim.trim(vim.system({ "git", "-C", repo_dir, "config", string.format("branch.%s.remote", branch) })
-		:wait().stdout)
-	local git_file = vim.trim(vim.system({ "git", "-C", repo_dir, "ls-files", current_file }):wait()
-		.stdout)
-	local git_browse_args = { "git", "-C", repo_dir, "browse", remote, git_file, args.line1 }
 
-	if args.range > 0 then
-		table.insert(git_browse_args, args.line2)
+	local repo_dir = stdout_or_bail(vim.system({ "git", "-C", vim.fs.dirname(current_file), "rev-parse",
+		"--show-toplevel" }))
+
+	local branch = stdout_or_bail(vim.system({ "git", "-C", repo_dir, "rev-parse", "--abbrev-ref", "HEAD" }))
+
+	local remote = stdout_or_bail(vim.system({ "git", "-C", repo_dir, "config", string.format("branch.%s.remote", branch) }))
+
+	local git_file = stdout_or_bail(vim.system({ "git", "-C", repo_dir, "ls-files", current_file }))
+
+	local remote_url = stdout_or_bail(vim.system({ "git", "-C", repo_dir, "remote", "get-url", remote }))
+	remote_url = string.gsub(remote_url, "git%+ssh://.*@", "https://")
+
+	local rev = stdout_or_bail(vim.system({ "git", "-C", repo_dir, "rev-parse", "HEAD" }))
+
+	local url = nil
+
+	if string.match(remote_url, "^https?://github.com/.*") then
+		url = construct_github_url(args, remote_url, rev, git_file)
+	elseif string.match(remote_url, "^https?://gitlab.com/.*") then
+		url = construct_gitlab_url(args, remote_url, rev, git_file)
+	else
+		local forge_type_config = string.format("remote.%s.forge-type", remote)
+		local git_config_res = vim.system({ "git", "-C", repo_dir, "config", "get", forge_type_config }):wait()
+		if git_config_res.code == 0 then
+			local forge_type = vim.trim(git_config_res.stdout)
+			if forge_type == "github" then
+				url = construct_github_url(args, remote_url, rev, git_file)
+			elseif forge_type == "gitlab" then
+				url = construct_gitlab_url(args, remote_url, rev, git_file)
+			else
+				-- We got a forge type we don't know about, unset it
+				vim.system({ "git", "-C", repo_dir, "config", "unset", forge_type_config }):wait()
+			end
+		else
+			local github_header_regex = vim.regex("^x-github-request-id: .*$")
+			local gitlab_header_regex = vim.regex("^x-gitlab-meta: .*$")
+
+			local headers = vim.split(stdout_or_bail(vim.system({ "curl", "--head", remote_url })), "\r\n")
+
+			for _, header in ipairs(headers) do
+				if github_header_regex:match_str(header) then
+					url = construct_github_url(args, remote_url, rev, git_file)
+					set_forge_type(repo_dir, forge_type_config, "github")
+					break
+				elseif gitlab_header_regex:match_str(header) then
+					url = construct_gitlab_url(args, remote_url, rev, git_file)
+					set_forge_type(repo_dir, forge_type_config, "gitlab")
+					break
+				end
+			end
+		end
 	end
 
-	local url = vim.trim(vim.system(git_browse_args, {
-		text = true,
-		clear_env = true,
-		-- "git browse" calls xdg-open, so ensure that xdg-open prints to
-		-- stdout by setting the following environment variables
-		env = {
-			PATH = vim.env.PATH,
-			HOME = vim.env.HOME,
-			BROWSER = "echo",
-		}
-	}):wait().stdout)
-
-	if args.bang then
-		vim.fn.setreg("+", url)
+	if url then
+		if args.bang then
+			vim.fn.setreg("+", url)
+		end
+		vim.print(url)
+	else
+		vim.notify("Could not detect git forge", vim.log.levels.ERROR)
 	end
-
-	vim.print(url)
 end, {
 	range = true,
 	bang = true,

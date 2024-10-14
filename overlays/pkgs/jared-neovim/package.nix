@@ -1,12 +1,12 @@
 {
   bat,
   clang-tools,
+  curl,
   efm-langserver,
   fd,
   fswatch,
   ghc,
   git,
-  git-extras,
   go-tools,
   gofumpt,
   gopls,
@@ -138,8 +138,8 @@ wrapNeovimUnstable neovim-unwrapped (
               efm-langserver
               fd # picker
               fswatch # TODO(jared): remove when the following is released: https://github.com/neovim/neovim/commit/55e4301036bb938474fc9768c41e28df867d9286
-              git # mini-git
-              git-extras # :Permalink
+              git # fugitive, mini-git
+              curl # :Permalink
               inotify-tools # for faster LSP experience
               ripgrep # picker
               skim # fzf-lua
