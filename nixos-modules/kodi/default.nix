@@ -23,6 +23,26 @@
           p.inputstream-adaptive
           p.jellyfin
           p.joystick
+          (p.buildKodiAddon {
+            name = "subsonic-plugin";
+            namespace = "plugin.audio.subsonic";
+            src = pkgs.fetchFromGitHub {
+              owner = "warwickh";
+              repo = "plugin.audio.subsonic";
+              rev = "4fffcd143e24852ac5d7ab11df2323fd8e504cbc";
+              hash = "sha256-RklVMm+CX1jWeJn3d1WtMGrlLTGyIllBZql/iol82Eo=";
+            };
+          })
+          (p.buildKodiAddon {
+            name = "spotify-plugin";
+            namespace = "plugin.audio.spotify";
+            src = pkgs.fetchFromGitHub {
+              owner = "glk1001";
+              repo = "plugin.audio.spotify";
+              rev = "377e73f3eb74c2f7693581cd6d63a4eb908d5e94";
+              hash = "sha256-2vwzVS7Sxr/Ubq3sNFsfZgsjctBfSeMWrJJAvSULj+k=";
+            };
+          })
         ]);
 
     users.users.kodi = {
