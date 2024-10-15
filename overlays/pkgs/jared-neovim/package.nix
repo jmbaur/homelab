@@ -36,7 +36,6 @@
   vimUtils,
   wrapNeovimUnstable,
   writeText,
-  xdg-utils,
   zls,
   supportAllLanguages ? false,
   cSupport ? supportAllLanguages,
@@ -135,16 +134,15 @@ wrapNeovimUnstable neovim-unwrapped (
           binPath = lib.makeBinPath (
             [
               bat # fzf-lua
+              curl # :Permalink
               efm-langserver
               fd # picker
               fswatch # TODO(jared): remove when the following is released: https://github.com/neovim/neovim/commit/55e4301036bb938474fc9768c41e28df867d9286
               git # fugitive, mini-git
-              curl # :Permalink
               inotify-tools # for faster LSP experience
               ripgrep # picker
               skim # fzf-lua
               tree-sitter
-              xdg-utils # :Permalink
             ]
             ++ (lib.optionals cSupport [ clang-tools ])
             ++ (lib.optionals goSupport [

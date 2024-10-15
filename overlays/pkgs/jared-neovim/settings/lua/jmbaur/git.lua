@@ -28,7 +28,14 @@ local stdout_or_bail = function(system_call)
 	return vim.trim(res.stdout)
 end
 
--- https://gitlab.com/<user_or_group>/<repo>/-/blob/<commit_or_branch>/<filename>#L<line1>-<line2>
+local construct_sourcehut_url = function(args, remote_url, rev, git_file)
+	local url = string.format("%s/tree/%s/item/%s#L%s", remote_url, rev, git_file, args.line1)
+	if args.range > 0 then
+		url = string.format("%s-%s", url, args.line2)
+	end
+	return url
+end
+
 local construct_gitlab_url = function(args, remote_url, rev, git_file)
 	local url = string.format("%s/-/blob/%s/%s#L%s", remote_url, rev, git_file, args.line1)
 	if args.range > 0 then
@@ -37,9 +44,16 @@ local construct_gitlab_url = function(args, remote_url, rev, git_file)
 	return url
 end
 
--- https://github.com/<user_or_org>/<repo>/blob/<commit_or_branch>/<filename>#L<line1>-L<line2>
 local construct_github_url = function(args, remote_url, rev, git_file)
 	local url = string.format("%s/blob/%s/%s#L%s", remote_url, rev, git_file, args.line1)
+	if args.range > 0 then
+		url = string.format("%s-L%s", url, args.line2)
+	end
+	return url
+end
+
+local construct_gitea_url = function(args, remote_url, rev, git_file)
+	local url = string.format("%s/src/commit/%s/%s#L%s", remote_url, rev, git_file, args.line1)
 	if args.range > 0 then
 		url = string.format("%s-L%s", url, args.line2)
 	end
@@ -76,6 +90,8 @@ vim.api.nvim_create_user_command("Permalink", function(args)
 		url = construct_github_url(args, remote_url, rev, git_file)
 	elseif string.match(remote_url, "^https?://gitlab.com/.*") then
 		url = construct_gitlab_url(args, remote_url, rev, git_file)
+	elseif string.match(remote_url, "^https://git.sr.ht/.*") then
+		url = construct_sourcehut_url(args, remote_url, rev, git_file)
 	else
 		local forge_type_config = string.format("remote.%s.forge-type", remote)
 		local git_config_res = vim.system({ "git", "-C", repo_dir, "config", "get", forge_type_config }):wait()
@@ -85,6 +101,8 @@ vim.api.nvim_create_user_command("Permalink", function(args)
 				url = construct_github_url(args, remote_url, rev, git_file)
 			elseif forge_type == "gitlab" then
 				url = construct_gitlab_url(args, remote_url, rev, git_file)
+			elseif forge_type == "gitea" then
+				url = construct_gitea_url(args, remote_url, rev, git_file)
 			else
 				-- We got a forge type we don't know about, unset it
 				vim.system({ "git", "-C", repo_dir, "config", "unset", forge_type_config }):wait()
@@ -92,6 +110,7 @@ vim.api.nvim_create_user_command("Permalink", function(args)
 		else
 			local github_header_regex = vim.regex("^x-github-request-id: .*$")
 			local gitlab_header_regex = vim.regex("^x-gitlab-meta: .*$")
+			local gitea_header_regex = vim.regex("^set-cookie: .*i_like_gitea.*$")
 
 			local headers = vim.split(stdout_or_bail(vim.system({ "curl", "--head", remote_url })), "\r\n")
 
@@ -103,6 +122,10 @@ vim.api.nvim_create_user_command("Permalink", function(args)
 				elseif gitlab_header_regex:match_str(header) then
 					url = construct_gitlab_url(args, remote_url, rev, git_file)
 					set_forge_type(repo_dir, forge_type_config, "gitlab")
+					break
+				elseif gitea_header_regex:match_str(header) then
+					url = construct_gitea_url(args, remote_url, rev, git_file)
+					set_forge_type(repo_dir, forge_type_config, "gitea")
 					break
 				end
 			end
