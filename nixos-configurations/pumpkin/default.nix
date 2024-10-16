@@ -12,6 +12,10 @@
       custom.basicNetwork.enable = true;
       custom.nativeBuild = true;
       custom.wgNetwork.nodes.celery.peer = true;
+
+      # This machine has many interfaces, and we currently only care that one
+      # has an "online" status.
+      systemd.network.wait-online.anyInterface = true;
     }
     {
       custom.wgNetwork.nodes.celery.allowedTCPPorts = [ config.services.navidrome.settings.Port ];

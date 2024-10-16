@@ -60,7 +60,6 @@
       name = "lan";
       linkConfig.RequiredForOnline = false;
       networkConfig = {
-        LinkLocalAddressing = "no";
         BindCarrier = map (i: "lan${toString i}") [
           1
           2

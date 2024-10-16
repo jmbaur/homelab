@@ -44,10 +44,7 @@
       (name: {
         inherit name;
         bridge = [ config.systemd.network.netdevs."10-br0".netdevConfig.Name ];
-        linkConfig = {
-          ActivationPolicy = "always-up";
-          RequiredForOnline = false;
-        };
+        linkConfig.RequiredForOnline = false;
       })
   );
 
