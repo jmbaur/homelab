@@ -37,7 +37,6 @@ in
           serviceConfig = {
             DynamicUser = true;
             StandardInput = "file:/run/build-${name}";
-            StateDirectory = "post-builder";
             LoadCredential = [
               "rclone_config:${config.sops.secrets.rclone_config.path}"
               "signing_key_zip:${config.sops.secrets.sysupdate_gnupg.path}"
