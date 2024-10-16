@@ -29,7 +29,7 @@ in
   services.ipwatch = {
     enable = true;
     interfaces = [ config.router.wanInterface ];
-    hookEnvironmentFile = config.sops.secrets.ipwatch_env.path;
+    environmentFile = config.sops.secrets.ipwatch_env.path;
     filters = [
       "IsGlobalUnicast"
       "!IsPrivate"
@@ -46,21 +46,21 @@ in
             --header "Content-Type: application/json" \
             --header "Authorization: Bearer ''${CF_API_TOKEN}" \
             --data '{"type":"${recordType}","name":"${name}","content":"'"''${ADDR}"'","proxied":false}' \
-            "https://api.cloudflare.com/client/v4/zones/''${CF_ZONE_ID}/dns_records/''${CF_RECORD_ID_${recordType}}" | ${pkgs.jq}/bin/jq
-        '';
-        script = pkgs.writeShellScript "update-cloudflare" ''
-          if [[ "$IS_IP6" == "1" ]]; then
-            ${updateCloudflare "${config.networking.hostName}.jmbaur.com" "AAAA"}
-          elif [[ "$IS_IP4" == "1" ]]; then
-            ${updateCloudflare "${config.networking.hostName}.jmbaur.com" "A"}
-          else
-            echo nothing to update
-          fi
+            "https://api.cloudflare.com/client/v4/zones/''${CF_ZONE_ID}/dns_records/''${CF_RECORD_ID_${recordType}}" | ${lib.getExe pkgs.jq}
         '';
       in
       [
-        "internal:echo"
-        "executable:${script}"
+        (lib.getExe (
+          pkgs.writeShellScriptBin "update-cloudflare" ''
+            if [[ "$IS_IP6" == "1" ]]; then
+              ${updateCloudflare "${config.networking.hostName}.jmbaur.com" "AAAA"}
+            elif [[ "$IS_IP4" == "1" ]]; then
+              ${updateCloudflare "${config.networking.hostName}.jmbaur.com" "A"}
+            else
+              echo nothing to update
+            fi
+          ''
+        ))
       ];
   };
 
