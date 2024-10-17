@@ -29,6 +29,15 @@ inputs: {
         }
       );
 
+      git-extras = prev.git-extras.overrideAttrs (old: {
+        patches = (old.patches or [ ]) ++ [
+          (final.fetchpatch {
+            url = "https://github.com/tj/git-extras/commit/5feb349f64443d98d51ed2eab28d2648950623df.patch";
+            hash = "sha256-IFxTvwskbWIqrwW560wDSAdTFMlNmN77xpDfModnHM8=";
+          })
+        ];
+      });
+
       kdePackages = prev.kdePackages.overrideScope (
         _: kPrev: {
           konsole = kPrev.konsole.overrideAttrs (old: {
