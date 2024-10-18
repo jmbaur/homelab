@@ -50,7 +50,11 @@ in
     };
   };
 
-  systemd.paths.update-cloudflare.pathConfig.PathChanged = "/run/update-cloudflare";
+  systemd.paths.update-cloudflare = {
+    pathConfig.PathChanged = "/run/update-cloudflare";
+    wantedBy = [ "paths.target" ];
+  };
+
   systemd.services.update-cloudflare = {
     after = [ "network-online.target" ];
     requires = [ "network-online.target" ];
@@ -78,12 +82,12 @@ in
               '';
             in
             ''
-              if [[ "$IS_IP6" == "1" ]]; then
+              if [[ 1 == "''${IS_IP6:-}" ]]; then
                 ${updateCloudflare "${config.networking.hostName}.jmbaur.com" "AAAA"}
-              elif [[ "$IS_IP4" == "1" ]]; then
+              elif [[ 1 == "''${IS_IP4:-}" ]]; then
                 ${updateCloudflare "${config.networking.hostName}.jmbaur.com" "A"}
               else
-                echo nothing to update
+                echo "nothing to update"
               fi
             '';
         })
