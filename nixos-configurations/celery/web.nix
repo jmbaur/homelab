@@ -26,6 +26,9 @@ in
 
   sops.secrets.ipwatch_env = { };
 
+  systemd.tmpfiles.settings."10-update-cloudflare".${config.systemd.paths.update-cloudflare.pathConfig.PathChanged}.f =
+    { };
+
   systemd.services.ipwatch.serviceConfig.BindPaths = [
     config.systemd.paths.update-cloudflare.pathConfig.PathChanged
   ];
