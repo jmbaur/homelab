@@ -52,6 +52,7 @@ in
     after = [ "network-online.target" ];
     requires = [ "network-online.target" ];
     serviceConfig = {
+      DynamicUser = true;
       EnvironmentFile = [
         config.sops.secrets.ipwatch_env.path
         config.systemd.paths.update-cloudflare.pathConfig.PathChanged
