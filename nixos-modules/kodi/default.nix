@@ -71,7 +71,6 @@
         StandardOutput = "journal";
         PAMName = "login";
         Restart = "always";
-        ExecStop = "${lib.getExe' pkgs.psmisc "killall"} --exact --wait kodi.bin";
         ExecStart = toString [
           (lib.getExe' config.services.xserver.desktopManager.kodi.package "kodi-standalone")
         ];
