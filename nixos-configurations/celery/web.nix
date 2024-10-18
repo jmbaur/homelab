@@ -26,16 +26,16 @@ in
 
   sops.secrets.ipwatch_env = { };
 
-  users.groups.update-cloudflare = { };
+  users.groups.cloudflare = { };
   systemd.tmpfiles.settings."10-update-cloudflare".${config.systemd.paths.update-cloudflare.pathConfig.PathChanged} = {
-    f.group = config.users.groups.update-cloudflare.name;
+    f.group = config.users.groups.cloudflare.name;
     f.mode = "0660";
-    z.group = config.users.groups.update-cloudflare.name;
+    z.group = config.users.groups.cloudflare.name;
     z.mode = "0660";
   };
 
   systemd.services.ipwatch.serviceConfig = {
-    SupplementaryGroups = [ config.users.groups.update-cloudflare.name ];
+    SupplementaryGroups = [ config.users.groups.cloudflare.name ];
     BindPaths = [
       config.systemd.paths.update-cloudflare.pathConfig.PathChanged
     ];
