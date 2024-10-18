@@ -150,11 +150,6 @@ in
       programs.zsh = {
         enable = true;
         defaultKeymap = "emacs";
-        initExtraFirst = ''
-          setopt interactivecomments
-          setopt nonomatch
-          setopt prompt_subst
-        '';
         initExtra = ''
           if [[ -n "$SSH_CONNECTION" ]]; then
             psvar=("ssh")
