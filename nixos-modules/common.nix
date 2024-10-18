@@ -75,7 +75,6 @@ in
       interactiveShellInit = ''
         setopt interactivecomments
         setopt nonomatch
-        setopt prompt_subst
         bindkey -e
         bindkey \^U backward-kill-line
         WORDCHARS='_-'
