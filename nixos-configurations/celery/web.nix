@@ -26,42 +26,65 @@ in
 
   sops.secrets.ipwatch_env = { };
 
+  systemd.services.ipwatch.serviceConfig.BindPaths = [
+    config.systemd.paths.update-cloudflare.pathConfig.PathChanged
+  ];
+
   services.ipwatch = {
     enable = true;
-    interfaces = [ config.router.wanInterface ];
-    environmentFile = config.sops.secrets.ipwatch_env.path;
-    filters = [
-      "IsGlobalUnicast"
-      "!IsPrivate"
-      "!IsLoopback"
-      "!Is4In6"
-    ];
-    hooks =
-      let
-        updateCloudflare = name: recordType: ''
-          ${lib.getExe pkgs.curl} \
-            --silent \
-            --show-error \
-            --request PUT \
-            --header "Content-Type: application/json" \
-            --header "Authorization: Bearer ''${CF_API_TOKEN}" \
-            --data '{"type":"${recordType}","name":"${name}","content":"'"''${ADDR}"'","proxied":false}' \
-            "https://api.cloudflare.com/client/v4/zones/''${CF_ZONE_ID}/dns_records/''${CF_RECORD_ID_${recordType}}" | ${lib.getExe pkgs.jq}
-        '';
-      in
-      [
-        (lib.getExe (
-          pkgs.writeShellScriptBin "update-cloudflare" ''
-            if [[ "$IS_IP6" == "1" ]]; then
-              ${updateCloudflare "${config.networking.hostName}.jmbaur.com" "AAAA"}
-            elif [[ "$IS_IP4" == "1" ]]; then
-              ${updateCloudflare "${config.networking.hostName}.jmbaur.com" "A"}
-            else
-              echo nothing to update
-            fi
-          ''
-        ))
+    hooks.${config.router.wanInterface} = {
+      filters = [
+        "IsGlobalUnicast"
+        "!IsPrivate"
+        "!IsLoopback"
+        "!Is4In6"
       ];
+      program = lib.getExe (
+        pkgs.writeShellScriptBin "start-update-cloudflare" ''
+          env | grep -e ^IS_IP6= -e ^IS_IP4= -e ^ADDR= >${config.systemd.paths.update-cloudflare.pathConfig.PathChanged}
+        ''
+      );
+    };
+  };
+
+  systemd.paths.update-cloudflare.pathConfig.PathChanged = "/run/update-cloudflare";
+  systemd.services.update-cloudflare = {
+    after = [ "network-online.target" ];
+    requires = [ "network-online.target" ];
+    serviceConfig = {
+      EnvironmentFile = [
+        config.sops.secrets.ipwatch_env.path
+        config.systemd.paths.update-cloudflare.pathConfig.PathChanged
+      ];
+      Type = "oneshot";
+      ExecStart = lib.getExe (
+        (pkgs.writeShellApplication {
+          name = "update-cloudflare";
+          text =
+            let
+              updateCloudflare = name: recordType: ''
+                ${lib.getExe pkgs.curl} \
+                  --silent \
+                  --show-error \
+                  --request PUT \
+                  --header "Content-Type: application/json" \
+                  --header "Authorization: Bearer ''${CF_API_TOKEN}" \
+                  --data '{"type":"${recordType}","name":"${name}","content":"'"''${ADDR}"'","proxied":false}' \
+                  "https://api.cloudflare.com/client/v4/zones/''${CF_ZONE_ID}/dns_records/''${CF_RECORD_ID_${recordType}}" | ${lib.getExe pkgs.jq}
+              '';
+            in
+            ''
+              if [[ "$IS_IP6" == "1" ]]; then
+                ${updateCloudflare "${config.networking.hostName}.jmbaur.com" "AAAA"}
+              elif [[ "$IS_IP4" == "1" ]]; then
+                ${updateCloudflare "${config.networking.hostName}.jmbaur.com" "A"}
+              else
+                echo nothing to update
+              fi
+            '';
+        })
+      );
+    };
   };
 
   services.caddy = {
