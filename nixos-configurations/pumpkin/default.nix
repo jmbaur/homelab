@@ -13,6 +13,13 @@
       custom.nativeBuild = true;
       custom.wgNetwork.nodes.celery.peer = true;
 
+      custom.ddns = {
+        enable = true;
+        interface = "eth1";
+        ipv4.enable = false;
+        domain = "jmbaur.com";
+      };
+
       # This machine has many interfaces, and we currently only care that one
       # has an "online" status.
       systemd.network.wait-online.anyInterface = true;

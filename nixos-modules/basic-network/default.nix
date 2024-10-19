@@ -64,6 +64,7 @@ in
                 MulticastDNS = true;
               };
               ipv6AcceptRAConfig = {
+                Token = "prefixstable";
                 UseDomains = "route";
                 RouteMetric = 100;
                 UsePREF64 = true;
@@ -83,6 +84,7 @@ in
                 MulticastDNS = true;
               };
               ipv6AcceptRAConfig = {
+                Token = "prefixstable";
                 UseDomains = "route";
                 RouteMetric = 100;
                 UsePREF64 = true;

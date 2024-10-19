@@ -11,6 +11,7 @@ inputs: {
       ./image
       ./kodi
       ./nested-builder.nix
+      ./dynamic-dns
       ./normal-user
       ./server.nix
       ./wg-network.nix
