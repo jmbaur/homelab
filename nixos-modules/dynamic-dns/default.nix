@@ -95,6 +95,7 @@ in
           config.systemd.paths.update-cloudflare.pathConfig.PathChanged
         ];
         Type = "oneshot";
+        Restart = "on-failure";
         ExecStart = lib.getExe (
           (pkgs.writeShellApplication {
             name = "update-cloudflare";
