@@ -90,7 +90,6 @@
       # make sure evsieve button identifiers are escaped
       serviceConfig.ExecStart = lib.replaceStrings [ "%" ] [ "%%" ] (toString [
         (lib.getExe' pkgs.evsieve "evsieve")
-        # TODO(jared): confirm this path
         "--input /dev/input/by-path/platform-gpio-keys-event"
         "--hook btn:%408 exec-shell=\"systemctl reboot\""
       ]);
