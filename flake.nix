@@ -10,7 +10,7 @@
     ipwatch.url = "github:jmbaur/ipwatch";
     nixos-router.inputs.nixpkgs.follows = "nixpkgs";
     nixos-router.url = "github:jmbaur/nixos-router";
-    nixpkgs.url = "github:jmbaur/nixpkgs/jmbaur-nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";
     tinyboot.inputs.nixpkgs.follows = "nixpkgs";
