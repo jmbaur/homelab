@@ -196,7 +196,6 @@ in
       programs.gh.enable = true;
       programs.git = {
         enable = true;
-        package = pkgs.gitMinimal;
         userName = "Jared Baur";
         ignores = [
           "*~"
