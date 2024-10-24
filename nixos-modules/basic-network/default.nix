@@ -13,8 +13,6 @@ let
 
   # Set by some desktop modules (e.g. gnome)
   isNetworkManager = config.networking.networkmanager.enable;
-
-  isCross = pkgs.stdenv.hostPlatform != pkgs.stdenv.buildPlatform;
 in
 {
   options.custom.basicNetwork.enable = lib.mkEnableOption "basic network setup";
@@ -173,7 +171,7 @@ in
       })
       (lib.mkIf (!config.custom.server.enable) {
         services.clatd = {
-          enable = (lib.warnIf isCross "clatd does not cross-compile, disabling") (!isCross);
+          enable = true;
           settings = {
             clat-dev = clatIfaceName;
             # NOTE: Perl's Net::DNS resolver does not seem to work well querying
