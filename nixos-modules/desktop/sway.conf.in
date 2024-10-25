@@ -96,7 +96,7 @@ bindsym {
 	$mod+Up focus up
 	$mod+a focus parent
 	$mod+b splith
-	$mod+c exec "cliphist list | wmenu -l 10 | cliphist decode | wl-copy"
+	$mod+c exec "clipman pick --tool=CUSTOM --tool-args='wmenu -l 10 -i'"
 	$mod+d exec "makoctl dismiss"
 	$mod+e layout toggle split
 	$mod+f fullscreen

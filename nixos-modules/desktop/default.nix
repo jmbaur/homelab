@@ -60,7 +60,7 @@ in
       defaultIconTheme
       pkgs.alacritty
       pkgs.brightnessctl
-      pkgs.cliphist
+      pkgs.clipman
       pkgs.grim
       pkgs.libnotify
       pkgs.mako
@@ -88,12 +88,12 @@ in
 
     programs.gnupg.agent.pinentryPackage = pkgs.wayprompt;
 
-    systemd.user.services.cliphist = {
+    systemd.user.services.clipman = {
       description = "Clipboard management daemon";
       partOf = [ "graphical-session.target" ];
       wantedBy = [ "graphical-session.target" ];
       serviceConfig = {
-        ExecStart = "${lib.getExe' pkgs.wl-clipboard "wl-paste"} --watch ${lib.getExe pkgs.cliphist} store";
+        ExecStart = "${lib.getExe' pkgs.wl-clipboard "wl-paste"} --type text --watch ${lib.getExe pkgs.clipman} store";
         Restart = "on-failure";
       };
     };
