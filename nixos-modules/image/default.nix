@@ -125,8 +125,7 @@ in
         # image is written to one of the update partitions. This can be useful
         # since it still allows us to have runtime updates of systemd services and
         # other things done through the activation script.
-        system.switch.enable = false;
-        system.switch.enableNg = cfg.mutableNixStore;
+        system.switch.enable = cfg.mutableNixStore;
         system.disableInstallerTools = true;
 
         boot.kernelParams = [
