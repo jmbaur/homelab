@@ -73,7 +73,13 @@ vim.api.nvim_create_user_command("Permalink", function(args)
 	local repo_dir = stdout_or_bail(vim.system({ "git", "-C", vim.fs.dirname(current_file), "rev-parse",
 		"--show-toplevel" }))
 
-	local branch = stdout_or_bail(vim.system({ "git", "-C", repo_dir, "rev-parse", "--abbrev-ref", "HEAD" }))
+	local branch = stdout_or_bail(vim.system({ "git", "-C", repo_dir, "branch", "--show-current" }))
+
+	-- If HEAD is detached, nothing is printed
+	if branch == "" then
+		vim.notify("detached HEAD, cannot get permalink", vim.log.levels.ERROR)
+		return
+	end
 
 	local remote = stdout_or_bail(vim.system({ "git", "-C", repo_dir, "config", string.format("branch.%s.remote", branch) }))
 
