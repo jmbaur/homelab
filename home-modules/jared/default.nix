@@ -99,7 +99,6 @@ in
         sd
         shpool
         strace-with-colors
-        systemctl-tui
         tcpdump
         tea
         tio
