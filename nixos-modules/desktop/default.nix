@@ -196,7 +196,7 @@ in
               hash = "sha256-6pc12Jy+B6i8dzauEOemy1Mipo/kHhSlVvX2HX9NsVU=";
             })
           ];
-          live_config_reload = false;
+          general.live_config_reload = false;
           mouse.hide_when_typing = true;
           selection.save_to_clipboard = true;
           terminal.osc52 = "CopyPaste";
