@@ -189,7 +189,7 @@ in
     environment.etc."xdg/alacritty/alacritty.toml".source =
       (pkgs.formats.toml { }).generate "alacritty.toml"
         {
-          import = [
+          general.import = [
             (pkgs.fetchurl {
               url = "https://raw.githubusercontent.com/anhsirk0/alacritty-themes/97e2cf7151f7eaf61d0f9d973bdd9dc74e403f52/themes/modus-vivendi-deuteranopia.toml";
               hash = "sha256-6pc12Jy+B6i8dzauEOemy1Mipo/kHhSlVvX2HX9NsVU=";
