@@ -61,6 +61,7 @@ in
       pkgs.alacritty
       pkgs.brightnessctl
       pkgs.clipman
+      pkgs.desktop-file-utils
       pkgs.grim
       pkgs.libnotify
       pkgs.mako
