@@ -29,7 +29,7 @@ let
 
   bootPartition = {
     Type = "esp";
-    Label = "BOOT";
+    Label = "INSTALLER";
     Format = "vfat";
     SizeMinBytes = "256M";
     SizeMaxBytes = "256M";
