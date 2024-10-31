@@ -61,8 +61,18 @@
   services.hostapd = {
     enable = true;
     radios.wlan0 = {
+      band = "2g";
       countryCode = "US";
-      channel = 6;
+      wifi4.enable = true;
+      wifi5.enable = false;
+      wifi6.enable = false;
+      wifi7.enable = false;
+      wifi4.capabilities = [
+        "HT40"
+        # "HT40-" # doesn't work with ACS (channel=0)
+        "SHORT-GI-20"
+        "SHORT-GI-40"
+      ];
       networks.wlan0 = {
         ssid = "Silence of the LANs";
         authentication.saePasswordsFile = config.sops.secrets.wlan0.path;
@@ -71,10 +81,11 @@
     };
     radios.wlan1 = {
       band = "5g";
-      channel = 0;
       countryCode = "US";
       wifi4.enable = false;
+      wifi5.enable = false;
       wifi6.enable = true;
+      wifi7.enable = false;
       networks.wlan1 = {
         ssid = "SpiderLAN";
         authentication.saePasswordsFile = config.sops.secrets.wlan1.path;
