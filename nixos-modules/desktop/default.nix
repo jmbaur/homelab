@@ -63,6 +63,7 @@ in
       pkgs.clipman
       pkgs.desktop-file-utils
       pkgs.grim
+      pkgs.kanshi
       pkgs.libnotify
       pkgs.mako
       pkgs.swayidle
