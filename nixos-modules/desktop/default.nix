@@ -120,6 +120,29 @@ in
       };
     };
 
+    systemd.user.services.kanshi = {
+      description = "Dynamic display management";
+      documentation = [ "man:kanshi(1)" ];
+      unitConfig.ConditionEnvironment = "WAYLAND_DISPLAY";
+      partOf = [ "graphical-session.target" ];
+      wantedBy = [ "graphical-session.target" ];
+      environment.XDG_CONFIG_HOME = pkgs.writeTextDir "kanshi/config" ''
+        profile docked {
+          output eDP-1 disable
+          output * enable
+        }
+
+        profile undocked {
+          output * enable
+        }
+      '';
+      serviceConfig = {
+        Type = "simple";
+        Restart = "always";
+        ExecStart = lib.getExe pkgs.kanshi;
+      };
+    };
+
     systemd.user.services.swayidle = {
       description = "Idle manager for Wayland";
       documentation = [ "man:swayidle(1)" ];
