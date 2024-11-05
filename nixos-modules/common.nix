@@ -38,14 +38,13 @@ in
     };
 
     # moving closer to perlless system
-    programs.less.lessopen = lib.mkDefault null;
     environment.defaultPackages = lib.mkDefault [ ];
     documentation.info.enable = lib.mkDefault false;
     programs.command-not-found.enable = false;
+    boot.enableContainers = lib.mkDefault false;
 
     networking.nftables.enable = lib.mkDefault true;
 
-    boot.enableContainers = lib.mkDefault false;
     boot.tmp.cleanOnBoot = lib.mkDefault isNotContainer;
 
     # The initrd doesn't have a fully-functioning terminal, prevent systemd
