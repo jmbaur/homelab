@@ -238,6 +238,7 @@ in
           "url \"git+ssh://git@codeberg.com/\"".pushInsteadOf = "https://codeberg.org/";
           "url \"git+ssh://git@github.com/\"".pushInsteadOf = "https://github.com/";
           "url \"git+ssh://git@gitlab.com/\"".pushInsteadOf = "https://gitlab.com/";
+          "url \"git+ssh://git@ssh.gitlab.gnome.org/\"".pushInsteadOf = "https://gitlab.gnome.org/";
           blame.ignoreRevsFile = ".git-blame-ignore-revs";
           blame.markIgnoredLines = true;
           blame.markUnblamableLines = true;
