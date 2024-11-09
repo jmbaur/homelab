@@ -3,11 +3,14 @@ vim.loader.enable()
 vim.cmd.source("@langSupportLua@")
 
 vim.g.mapleader = " "
+vim.g.transparent_enabled = true
 
 -- If not using nvim's remote UI
 if #vim.api.nvim_list_uis() > 0 then
 	local launcher = require("jmbaur.launcher")
 	launcher.setup()
+
+	vim.cmd.colorscheme("lunaperche")
 
 	require("jmbaur.clipboard")
 	require("jmbaur.compile")
@@ -20,9 +23,6 @@ if #vim.api.nvim_list_uis() > 0 then
 	require("jmbaur.snippets")
 	require("jmbaur.treesitter")
 	require("mini.trailspace").setup({})
-	require("transparent").setup({})
-
-	vim.cmd.colorscheme("lunaperche")
 
 	vim.opt.belloff = "all"
 	vim.opt.colorcolumn = "80"
