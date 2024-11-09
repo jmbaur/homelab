@@ -99,11 +99,15 @@ in
       package = pkgs.nixVersions.nix_2_24;
       channel.enable = false; # opt out of nix channels
       distributedBuilds = true;
-      settings.trusted-users = [ "@wheel" ];
-      settings.experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
+      settings = {
+        auto-allocate-uids = true;
+        trusted-users = [ "@wheel" ];
+        experimental-features = [
+          "auto-allocate-uids"
+          "flakes"
+          "nix-command"
+        ];
+      };
     };
 
     # Provide a sane default value so that commands don't outright fail on an

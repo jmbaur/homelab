@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   utils,
   ...
 }:
@@ -35,21 +34,37 @@ in
         assertion = config.systemd.sysusers.enable;
         message = "sysusers needs to be enabled";
       }
+      {
+        assertion = config.nix.enable -> config.nix.settings.auto-allocate-uids;
+        message = "systemd-homed-firstboot does not work when auto-allocate-uids is not true because nixbld* users are considered 'regular' users";
+      }
     ];
 
-    services.homed.enable = true;
+    # systemd.additionalUpstreamSystemUnits = [ "systemd-homed-firstboot.service" ];
 
-    # This is needed if mutableUsers is false since we don't configure our
-    # primary user through the traditional NixOS options. Since our primary
-    # user is wheel, they can freely administer the machine, thus no need for a
-    # root password or remote access (e.g. via ssh) to login as the root user.
-    users.allowNoPasswordLogin = !config.users.mutableUsers;
+    # # TODO(jared): would be nice to have this done automatically
+    # # https://github.com/systemd/systemd/blob/477fdc5afed0457c43d01f3d7ace7209f81d3995/meson_options.txt#L246-L249
+    # # echo "$uid:$((0x80000)):$((0x10000))" >/etc/subuid
+    # # echo "$gid:$((0x80000)):$((0x10000))" >/etc/subgid
+    # systemd.services.systemd-homed-firstboot = {
+    #   serviceConfig.ExecStart = [
+    #     "" # clear upstream default
+    #     (toString [
+    #       "homectl"
+    #       "firstboot"
+    #       "--prompt-new-user"
+    #       # above is default, custom stuff below
+    #       "--enforce-password-policy=no"
+    #       "--member-of=${lib.concatStringsSep "," groups}"
+    #       "--shell=${utils.toShellPath config.users.defaultUserShell}" # upstream default is /bin/bash
+    #       "--storage=${if fileSystemConfig.fsType == "btrfs" then "subvolume" else "directory"}"
+    #     ])
+    #   ];
+    # };
 
-    # TODO(jared): We should use systemd-homed-firstboot.service when systemd
-    # 256 is available. This depends on ConditionFirstBoot working in NixOS.
-    # See https://github.com/NixOS/nixpkgs/pull/327552
+    # TODO(jared): We should be using systemd-homed-firstboot.service.
     systemd.services.initial-user-setup = {
-      unitConfig.ConditionPathExistsGlob = [ "!/home/*.homedir" ];
+      unitConfig.ConditionFirstBoot = true;
       wantedBy = [ config.systemd.services.systemd-homed.name ];
       after = [
         "home.mount"
@@ -59,10 +74,6 @@ in
         config.systemd.services.systemd-user-sessions.name
         "first-boot-complete.target"
       ];
-      path = [
-        config.systemd.package
-        pkgs.jq
-      ];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
@@ -70,38 +81,25 @@ in
         StandardOutput = "tty";
         StandardInput = "tty";
         StandardError = "tty";
+        ExecStart = toString [
+          "homectl"
+          "firstboot"
+          "--prompt-new-user"
+          "--enforce-password-policy=no"
+          "--member-of=${lib.concatStringsSep "," groups}"
+          "--shell=${utils.toShellPath config.users.defaultUserShell}"
+          "--storage=${if fileSystemConfig.fsType == "btrfs" then "subvolume" else "directory"}"
+        ];
       };
-      script = ''
-        stty sane
-
-        while true; do
-          read -r -p "Please enter user name to create for admin user: " username
-          if [[ -n "$username" ]]; then
-            break
-          fi
-        done
-
-        while true; do
-          read -r -p "Real name for $username: " real_name
-          if [[ -n "$real_name" ]]; then
-            break
-          fi
-        done
-
-        homectl create "$username" \
-          --real-name="$real_name" \
-          --member-of=${lib.concatStringsSep "," groups} \
-          --shell=${utils.toShellPath config.users.defaultUserShell} \
-          --storage=${if fileSystemConfig.fsType == "btrfs" then "subvolume" else "directory"} \
-          --enforce-password-policy=no
-
-        eval "$(homectl list --no-legend --json=short | jq -r --arg u "$username" '.[] | select(.name==$u) | "uid=\(.uid); export uid; gid=\(.gid); export gid;"')"
-
-        # https://github.com/systemd/systemd/blob/477fdc5afed0457c43d01f3d7ace7209f81d3995/meson_options.txt#L246-L249
-        echo "$uid:$((0x80000)):$((0x10000))" >/etc/subuid
-        echo "$gid:$((0x80000)):$((0x10000))" >/etc/subgid
-      '';
     };
+
+    services.homed.enable = true;
+
+    # This is needed if mutableUsers is false since we don't configure our
+    # primary user through the traditional NixOS options. Since our primary
+    # user is wheel, they can freely administer the machine, thus no need for a
+    # root password or remote access (e.g. via ssh) to login as the root user.
+    users.allowNoPasswordLogin = !config.users.mutableUsers;
 
     # Ugly: sshd refuses to start if a store path is given because /nix/store
     # is group-writable. So indirect by a symlink.
