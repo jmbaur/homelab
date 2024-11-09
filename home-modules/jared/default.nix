@@ -23,17 +23,28 @@ in
       home.stateVersion = lib.mkDefault "24.11";
       news.display = "silent";
 
-      nix = {
-        package = pkgs.nixVersions.nix_2_24; # TODO(jared): should be in sync with globally installed nix
-        registry.nixpkgs.flake = inputs.nixpkgs;
-        settings = {
-          nix-path = [ "nixpkgs=${inputs.nixpkgs}" ];
-          experimental-features = [
-            "nix-command"
-            "flakes"
-          ];
-        };
+      xdg.configFile."nix/nix.conf".text = ''
+        nix-path = nixpkgs=${inputs.nixpkgs}
+        experimental-features = nix-command flakes
+      '';
+      xdg.configFile."nix/registry.json".source = (pkgs.formats.json { }).generate "registry.json" {
+        version = 2;
+        flakes = [
+          {
+            exact = true;
+            from = {
+              id = "nixpkgs";
+              type = "indirect";
+            };
+            to = {
+              type = "path";
+              path = inputs.nixpkgs.outPath;
+              inherit (inputs.nixpkgs) lastModified rev narHash;
+            };
+          }
+        ];
       };
+
       home.username = lib.mkDefault "jared";
       home.homeDirectory = "/home/${config.home.username}";
     }
@@ -173,10 +184,7 @@ in
 
       programs.direnv = {
         enable = true;
-        nix-direnv = {
-          enable = true;
-          package = pkgs.nix-direnv.override { nix = config.nix.package; };
-        };
+        nix-direnv.enable = true;
       };
 
       programs.gpg = {

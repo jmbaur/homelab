@@ -96,7 +96,7 @@ in
     };
 
     nix = {
-      package = pkgs.nixVersions.nix_2_24;
+      package = pkgs.nixVersions.nix_2_24_sysroot;
       channel.enable = false; # opt out of nix channels
       distributedBuilds = true;
       settings = {
