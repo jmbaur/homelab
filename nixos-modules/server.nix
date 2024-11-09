@@ -18,7 +18,13 @@
     xdg.mime.enable = lib.mkDefault false;
     xdg.sounds.enable = lib.mkDefault false;
 
-    environment.variables.BROWSER = "echo";
+    environment.variables.BROWSER = lib.getExe (
+      pkgs.w3m.override {
+        x11Support = false;
+        graphicsSupport = false;
+      }
+    );
+
     fonts.fontconfig.enable = false;
 
     # UTC everywhere!

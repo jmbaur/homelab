@@ -35,6 +35,10 @@ in
     programs.vim = {
       enable = true;
       defaultEditor = true;
+      package = pkgs.vim.customize {
+        vimrcFile = pkgs.emptyFile;
+        standalone = true;
+      };
     };
 
     # moving closer to perlless system
