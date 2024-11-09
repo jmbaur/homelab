@@ -102,6 +102,7 @@ let
             nvim-treesitter.withAllGrammars
             oil-nvim
             snippets-nvim
+            transparent-nvim
             vim-dispatch
             vim-eunuch
             vim-fugitive

@@ -20,12 +20,9 @@ if #vim.api.nvim_list_uis() > 0 then
 	require("jmbaur.snippets")
 	require("jmbaur.treesitter")
 	require("mini.trailspace").setup({})
+	require("transparent").setup({})
 
 	vim.cmd.colorscheme("lunaperche")
-
-	-- Ensure terminal doesn't have miscolored padding on sides
-	local mini_misc = require("mini.misc")
-	mini_misc.setup_termbg_sync()
 
 	vim.opt.belloff = "all"
 	vim.opt.colorcolumn = "80"
