@@ -42,6 +42,22 @@ inputs: {
         }
       );
 
+      gnome-console =
+        (prev.gnome-console.overrideAttrs (old: {
+          patches = (old.patches or [ ]) ++ [ ./gnome-console-osc52.patch ];
+        })).override
+          {
+            vte-gtk4 = final.vte-gtk4.overrideAttrs (old: {
+              patches = (old.patches or [ ]) ++ [
+                (final.fetchpatch {
+                  name = "vte-osc52.patch";
+                  url = "https://raw.githubusercontent.com/realh/roxterm/7706647daed0df4e95add44406e1ad48ce7954b7/vte-osc52.diff";
+                  hash = "sha256-7ub973lHv7dL6za3M+kP8B7JO43CLKJZbZm/GreggJs=";
+                })
+              ];
+            });
+          };
+
       # Enable experimental multithreading support in mkfs.erofs
       erofs-utils = prev.erofs-utils.overrideAttrs (old: {
         configureFlags = (old.configureFlags or [ ]) ++ [ "--enable-multithreading" ];

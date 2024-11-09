@@ -1,0 +1,56 @@
+diff --git a/src/kgx-terminal.c b/src/kgx-terminal.c
+index 17dcda2..38f788b 100644
+--- a/src/kgx-terminal.c
++++ b/src/kgx-terminal.c
+@@ -26,7 +26,9 @@
+  */
+ 
+ #include "kgx-config.h"
++#include "kgx-application.h"
+ 
++#include <glib-object.h>
+ #include <glib/gi18n.h>
+ 
+ #include <vte/vte.h>
+@@ -635,6 +637,30 @@ scroll (GtkEventControllerScroll *scroll,
+ }
+ 
+ 
++static void
++kgx_osc52_handler (VteTerminal *vte, const char *clipboards,
++                   const guchar *text, gsize text_len, gpointer user_data)
++{
++  gboolean is_primary;
++  gboolean is_clipboard;
++  GdkClipboard *clipboard;
++
++  KgxTerminal *self = KGX_TERMINAL (user_data);
++
++  if (!gtk_widget_has_focus(&vte->widget)) return;
++  if (vte_terminal_get_has_selection(vte)) return;
++
++  is_primary = strchr(clipboards, 'p') != NULL;
++  is_clipboard = strchr(clipboards, 'c') != NULL;
++  if (!is_primary && !is_clipboard) return;
++
++  if (text_len) {
++    clipboard = is_primary ? gtk_widget_get_primary_clipboard(GTK_WIDGET (self)) : gtk_widget_get_clipboard(GTK_WIDGET (self));
++    gdk_clipboard_set_text(clipboard, (const char *) text);
++  }
++}
++
++
+ static void
+ kgx_terminal_class_init (KgxTerminalClass *klass)
+ {
+@@ -750,6 +776,10 @@ kgx_terminal_init (KgxTerminal *self)
+   vte_terminal_set_mouse_autohide (VTE_TERMINAL (self), TRUE);
+   vte_terminal_search_set_wrap_around (VTE_TERMINAL (self), TRUE);
+ 
++  g_signal_connect (&self->parent_instance,
++                    "write-clipboard", G_CALLBACK (kgx_osc52_handler),
++                    self);
++
+   for (int i = 0; i < KGX_TERMINAL_N_LINK_REGEX; i++) {
+     g_autoptr (VteRegex) regex = NULL;
+     g_autoptr (GError) error = NULL;

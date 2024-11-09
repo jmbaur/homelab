@@ -1,4 +1,10 @@
-{ lib, config, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+
 {
   options.custom.server.enable = lib.mkEnableOption "server";
 
