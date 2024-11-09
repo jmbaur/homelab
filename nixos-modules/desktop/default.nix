@@ -30,6 +30,7 @@ in
         enable = true;
         sessionPath = with pkgs.gnomeExtensions; [
           appindicator
+          caffeine
           clipboard-history
         ];
       };
