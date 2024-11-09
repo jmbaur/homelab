@@ -51,12 +51,14 @@ in
 
     (lib.mkIf cfg.dev.enable {
       home.packages = with pkgs; [
+        # jared-emacs
         age-plugin-yubikey
         ansifilter
         as-tree
         bat
         binary-diff
         bintools
+        bottom
         cachix
         cntr
         copy
@@ -73,8 +75,6 @@ in
         grex
         gron
         htmlq
-        htop-vim
-        # jared-emacs
         jared-neovim-all-languages
         jo
         jq
