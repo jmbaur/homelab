@@ -57,8 +57,6 @@ in
         as-tree
         bat
         binary-diff
-        bintools
-        bottom
         cachix
         cntr
         copy
