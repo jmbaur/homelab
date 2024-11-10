@@ -52,6 +52,7 @@ in
     (lib.mkIf cfg.dev.enable {
       home.packages = with pkgs; [
         # jared-emacs
+        _caffeine
         age-plugin-yubikey
         ansifilter
         as-tree
