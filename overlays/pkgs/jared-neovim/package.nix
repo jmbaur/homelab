@@ -36,6 +36,7 @@
   vimUtils,
   wrapNeovimUnstable,
   writeText,
+  yaml-language-server,
   zls,
   supportAllLanguages ? false,
   cSupport ? supportAllLanguages,
@@ -48,6 +49,7 @@
   rustSupport ? supportAllLanguages,
   shellSupport ? supportAllLanguages,
   tomlSupport ? supportAllLanguages,
+  yamlSupport ? supportAllLanguages,
   zigSupport ? supportAllLanguages,
 }:
 let
@@ -70,6 +72,7 @@ let
             rustSupport
             shellSupport
             tomlSupport
+            yamlSupport
             zigSupport
             ;
         }
@@ -161,6 +164,7 @@ let
       shfmt
     ])
     ++ (lib.optionals tomlSupport [ taplo ])
+    ++ (lib.optionals yamlSupport [ yaml-language-server ])
     ++ (lib.optionals zigSupport [ zls ])
     ++ (lib.optionals pythonSupport [
       pyright

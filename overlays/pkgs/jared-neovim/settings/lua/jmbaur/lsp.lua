@@ -186,6 +186,7 @@ M.setup = function(config)
 			enable = vim.g.lang_support_python,
 			config = { on_attach = on_attach_format, },
 		},
+		yamlls  = { enable = vim.g.lang_support_yaml, config = { on_attach = on_attach_format }, },
 		zls     = { enable = vim.g.lang_support_zig, config = { on_attach = on_attach_format } },
 	}
 
