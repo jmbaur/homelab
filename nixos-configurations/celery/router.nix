@@ -75,8 +75,8 @@
       ];
       networks.wlan0 = {
         ssid = "Silence of the LANs";
-        authentication.saePasswordsFile = config.sops.secrets.wlan0.path;
         settings.ieee80211w = 2;
+        settings.sae_password_file = config.sops.secrets.wlan0.path;
       };
     };
     radios.wlan1 = {
@@ -88,8 +88,8 @@
       wifi7.enable = false;
       networks.wlan1 = {
         ssid = "SpiderLAN";
-        authentication.saePasswordsFile = config.sops.secrets.wlan1.path;
         settings.ieee80211w = 2;
+        settings.sae_password_file = config.sops.secrets.wlan1.path;
       };
     };
   };
