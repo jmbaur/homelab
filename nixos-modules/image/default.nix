@@ -238,6 +238,7 @@ in
           device = "/dev/disk/by-partlabel/${config.systemd.repart.partitions."12-root".Label}";
           crypttabExtraOpts = lib.optional cfg.hasTpm2 "tpm2-device=auto";
           tryEmptyPassphrase = !cfg.hasTpm2;
+          allowDiscards = config.services.fstrim.enable;
         };
 
         # enable zram by default since we don't create any swap partitions
