@@ -28,34 +28,62 @@ local stdout_or_bail = function(system_call)
 	return vim.trim(res.stdout)
 end
 
+local get_range = function(args)
+	if args.range == 0 then
+		return { nil, nil }
+	end
+
+	if args.line1 == args.line2 then
+		return { args.line1, nil }
+	end
+
+	return { args.line1, args.line2 }
+end
+
 local construct_sourcehut_url = function(args, remote_url, rev, git_file)
-	local url = string.format("%s/tree/%s/item/%s#L%s", remote_url, rev, git_file, args.line1)
-	if args.range > 0 then
-		url = string.format("%s-%s", url, args.line2)
+	local line1, line2 = unpack(get_range(args))
+	local url = string.format("%s/tree/%s/item/%s", remote_url, rev, git_file)
+	if line1 ~= nil then
+		url = string.format("%s#L%s", url, line1)
+	end
+	if line2 ~= nil then
+		url = string.format("%s-%s", url, line2)
 	end
 	return url
 end
 
 local construct_gitlab_url = function(args, remote_url, rev, git_file)
-	local url = string.format("%s/-/blob/%s/%s#L%s", remote_url, rev, git_file, args.line1)
-	if args.range > 0 then
-		url = string.format("%s-%s", url, args.line2)
+	local line1, line2 = unpack(get_range(args))
+	local url = string.format("%s/-/blob/%s/%s", remote_url, rev, git_file)
+	if line1 ~= nil then
+		url = string.format("%s#L%s", url, line1)
+	end
+	if line2 ~= nil then
+		url = string.format("%s-%s", url, line2)
 	end
 	return url
 end
 
 local construct_github_url = function(args, remote_url, rev, git_file)
-	local url = string.format("%s/blob/%s/%s#L%s", remote_url, rev, git_file, args.line1)
-	if args.range > 0 then
-		url = string.format("%s-L%s", url, args.line2)
+	local line1, line2 = unpack(get_range(args))
+	local url = string.format("%s/blob/%s/%s", remote_url, rev, git_file)
+	if line1 ~= nil then
+		url = string.format("%s#L%s", url, line1)
+	end
+	if line2 ~= nil then
+		url = string.format("%s-L%s", url, line2)
 	end
 	return url
 end
 
 local construct_gitea_url = function(args, remote_url, rev, git_file)
-	local url = string.format("%s/src/commit/%s/%s#L%s", remote_url, rev, git_file, args.line1)
-	if args.range > 0 then
-		url = string.format("%s-L%s", url, args.line2)
+	local line1, line2 = unpack(get_range(args))
+	local url = string.format("%s/src/commit/%s/%s", remote_url, rev, git_file)
+	if line1 ~= nil then
+		url = string.format("%s#L%s", url, line1)
+	end
+	if line2 ~= nil then
+		url = string.format("%s-L%s", url, line2)
 	end
 	return url
 end
