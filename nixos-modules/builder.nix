@@ -92,9 +92,9 @@ let
             XDG_STATE_HOME = "%S/builder";
           };
           serviceConfig = {
-            DynamicUser = true;
             StandardOutput = "truncate:/run/build-${name}";
             StandardError = "journal";
+            DynamicUser = true;
             SupplementaryGroups = [ "builder" ];
             CacheDirectory = "builder";
             StateDirectory = "builder";
@@ -113,6 +113,7 @@ let
                   nix --extra-experimental-features "nix-command flakes" \
                     build \
                     --refresh \
+                    --store "local://$STATE_DIRECTORY" \
                     --out-link "$STATE_DIRECTORY/build-${name}" \
                     --print-out-paths \
                     --print-build-logs \
@@ -138,6 +139,32 @@ in
     users.groups.builder = { };
     nix.settings.trusted-users = [ "@builder" ];
 
-    systemd = mkMerge buildConfigs;
+    systemd = mkMerge (
+      buildConfigs
+      ++ [
+        {
+          # Mostly copied from https://github.com/nixos/nixpkgs/blob/6a70100fb702712aa13f630c833e2c33c6e21ee2/nixos/modules/services/misc/nix-gc.nix,
+          # since that module doesn't work when nix itself is not enabled.
+          services.builder-nix-gc = lib.mkIf config.nix.enable {
+            description = "Nix Garbage Collector";
+            startAt = lib.optional cfg.automatic cfg.dates;
+            script = ''exec ${lib.getExe' config.nix.package "nix-collect-garbage"} --store "local://$STATE_DIRECTORY"'';
+            environment = {
+              XDG_CACHE_HOME = "%C/builder";
+              XDG_STATE_HOME = "%S/builder";
+            };
+            serviceConfig = {
+              Type = "oneshot";
+              DynamicUser = true;
+              SupplementaryGroups = [ "builder" ];
+              CacheDirectory = "builder";
+              StateDirectory = "builder";
+            };
+          };
+
+          timers.builder-nix-gc.timerConfig.Persistent = true;
+        }
+      ]
+    );
   };
 }

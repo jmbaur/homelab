@@ -79,14 +79,6 @@ in
     ))
   ];
 
-  # Ensure disk usage doesn't explode. The builder services create symlinks
-  # after each successful build, so we should never garbage collect the last
-  # successful set of builds.
-  nix.gc = {
-    automatic = true;
-    dates = "weekly"; # Beginning of the week at midnight
-  };
-
   custom.builder.builds = lib.listToAttrs (
     lib.imap0 (
       i: name:
@@ -103,10 +95,7 @@ in
         postBuild = config.systemd.services."post-build@${name}".name;
         # Daily builds where each build is slated to run in a tiered fashion,
         # one hour after each other.
-        #
-        # Offset the builds by half-an-hour to ensure they don't collide with
-        # nix garbage collection.
-        time = "*-*-* ${toString (lib.fixedWidthNumber 2 (i - 24 * (i / 24)))}:30:00";
+        time = "*-*-* ${toString (lib.fixedWidthNumber 2 (i - 24 * (i / 24)))}:00:00";
       }
     ) allHosts
   );
