@@ -17,7 +17,7 @@ in
   options.custom.nativeBuild = lib.mkEnableOption "enable native building";
 
   config = lib.mkIf cfg.enable {
-    system.stateVersion = lib.mkDefault "24.11";
+    system.stateVersion = lib.mkDefault "25.05";
 
     system.image.id = config.system.nixos.distroId;
 

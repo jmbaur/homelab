@@ -20,7 +20,7 @@ in
 
   config = lib.mkMerge [
     {
-      home.stateVersion = lib.mkDefault "24.11";
+      home.stateVersion = lib.mkDefault "25.05";
       news.display = "silent";
 
       xdg.configFile."nix/nix.conf".text = ''

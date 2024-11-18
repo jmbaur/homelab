@@ -7,8 +7,10 @@
 
 let
   inherit (lib)
+    attrNames
     concatStringsSep
     getExe
+    head
     mapAttrsToList
     mkIf
     mkMerge
@@ -20,59 +22,78 @@ let
   cfg = config.custom.builder;
 
   buildModule = {
-    options = {
-      flakeRef = mkOption {
-        type = types.str;
-        example = "github:nixos/nixpkgs";
-        description = ''
-          The flake reference to build from.
+    options.build = mkOption {
+      type = types.attrTag {
+        drvPath = mkOption {
+          type = types.str;
+          description = ''
+            The drv path to build. Only really useful for testing this module.
+          '';
+        };
 
-          Currently only GitHub is supported.
-        '';
+        flake = mkOption {
+          type = types.submodule {
+            options = {
+              flakeRef = mkOption {
+                type = types.str;
+                example = "github:nixos/nixpkgs";
+                description = ''
+                  The flake reference to build from.
+
+                  Currently only GitHub is supported.
+                '';
+              };
+              attrPath = mkOption {
+                type = types.listOf types.str;
+                example = [
+                  "legacyPackages"
+                  "x86_64-linux"
+                  "hello"
+                ];
+              };
+            };
+          };
+        };
       };
-      attrPath = mkOption {
-        type = types.listOf types.str;
-        example = [
-          "legacyPackages"
-          "x86_64-linux"
-          "hello"
-        ];
-      };
-      time = mkOption {
-        type = types.str;
-        default = "daily";
-        description = ''
-          Any valid systemd.time(7) value.
-        '';
-      };
-      postBuild = mkOption {
-        type = types.nullOr types.str;
-        example = "my-post-build.service";
-        description = ''
-          The systemd service to activate after a successful build. There will
-          be a file at /run/build-''${name} whose contents will be the nix
-          output path for the last successful build that this service should
-          read from in order to condition its behavior.
-        '';
-      };
+    };
+
+    options.time = mkOption {
+      type = types.str;
+      default = "daily";
+      description = ''
+        Any valid systemd.time(7) value.
+      '';
+    };
+
+    options.postBuild = mkOption {
+      type = types.nullOr types.str;
+      example = "my-post-build.service";
+      default = null;
+      description = ''
+        The systemd service to activate after a successful build. There will
+        be a file at /run/build-''${name} whose contents will be the nix
+        output path for the last successful build that this service should
+        read from in order to condition its behavior.
+      '';
     };
   };
 
   buildConfigs = mapAttrsToList (
     name:
     {
-      flakeRef,
-      attrPath,
+      build,
       time,
       postBuild,
     }:
     let
-      flakeRefAttr = builtins.parseFlakeRef flakeRef;
-      buildAttr = concatStringsSep "." attrPath;
+      buildType = head (attrNames build);
+      build' = build.${buildType};
+      flakeRefAttr = builtins.parseFlakeRef build'.flakeRef;
+      buildAttr = concatStringsSep "." build'.attrPath;
     in
-    assert flakeRefAttr.type == "github";
-    warnIf (flakeRefAttr ? ref || flakeRefAttr ? rev)
-      "ignoring ref/rev set in ${flakeRef}, latest tag always built"
+    assert buildType == "flake" -> flakeRefAttr.type == "github";
+    warnIf (buildType == "flake" && (flakeRefAttr ? ref || flakeRefAttr ? rev))
+      "ignoring ref/rev set in ${build'.flakeRef}, latest tag always built"
       {
         timers."build@${name}" = {
           timerConfig = {
@@ -84,7 +105,13 @@ let
 
         services."build@${name}" = {
           onSuccess = lib.optionals (postBuild != null) [ postBuild ];
-          description = "Build ${flakeRef}#${buildAttr}";
+          description = "Build ${
+            {
+              flake = "${build'.flakeRef}#${buildAttr}";
+              drvPath = build';
+            }
+            .${buildType}
+          }";
           after = [ "network-online.target" ];
           wants = [ "network-online.target" ];
           environment = {
@@ -107,18 +134,27 @@ let
                   pkgs.gitMinimal
                   pkgs.jq
                 ];
-                text = ''
-                  latest_tag=$(curl --silent "https://api.github.com/repos/${flakeRefAttr.owner}/${flakeRefAttr.repo}/tags" | jq -r '.[0].name')
+                text =
+                  lib.optionalString (buildType == "flake") ''
+                    latest_tag=$(curl --silent "https://api.github.com/repos/${flakeRefAttr.owner}/${flakeRefAttr.repo}/tags" | jq -r '.[0].name')
+                  ''
+                  + ''
 
-                  nix --extra-experimental-features "nix-command flakes" \
-                    build \
-                    --refresh \
-                    --store "local://$STATE_DIRECTORY" \
-                    --out-link "$STATE_DIRECTORY/build-${name}" \
-                    --print-out-paths \
-                    --print-build-logs \
-                    "${flakeRef}?ref=''${latest_tag}#${buildAttr}"
-                '';
+                    nix --extra-experimental-features "nix-command flakes" \
+                      build \
+                      --refresh \
+                      --store "local://$STATE_DIRECTORY" \
+                      --out-link "$STATE_DIRECTORY/build-${name}" \
+                      --print-out-paths \
+                      --print-build-logs \
+                      ${
+                        {
+                          drvPath = "${build'}^*";
+                          flake = ''${build'.flakeRef}?ref=''${latest_tag}#${buildAttr}'';
+                        }
+                        .${buildType}
+                      }
+                  '';
               }
             );
           };
@@ -147,7 +183,7 @@ in
           # since that module doesn't work when nix itself is not enabled.
           services.builder-nix-gc = lib.mkIf config.nix.enable {
             description = "Nix Garbage Collector";
-            startAt = lib.optional cfg.automatic cfg.dates;
+            startAt = "weekly";
             script = ''exec ${lib.getExe' config.nix.package "nix-collect-garbage"} --store "local://$STATE_DIRECTORY"'';
             environment = {
               XDG_CACHE_HOME = "%C/builder";
