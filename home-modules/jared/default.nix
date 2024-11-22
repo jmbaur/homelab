@@ -123,8 +123,7 @@ in
 
       home.sessionVariables = {
         EDITOR = "nvim";
-        GOPATH = "${config.home.homeDirectory}/.go";
-        PROJECTS_DIR = "${config.home.homeDirectory}/projects";
+        GOPATH = "${config.xdg.dataHome}/go";
       };
 
       home.shellAliases = {
@@ -241,7 +240,7 @@ in
         };
         extraConfig = {
           "difftool \"difftastic\"".cmd = "${lib.getExe' pkgs.difftastic "difft"}  \"$LOCAL\" \"$REMOTE\"";
-          "git-extras \"get\"".clone-path = config.home.sessionVariables.PROJECTS_DIR;
+          "git-extras \"get\"".clone-path = "${config.xdg.stateHome}/projects";
           "url \"git+ssh://git@codeberg.com/\"".pushInsteadOf = "https://codeberg.org/";
           "url \"git+ssh://git@github.com/\"".pushInsteadOf = "https://github.com/";
           "url \"git+ssh://git@gitlab.com/\"".pushInsteadOf = "https://gitlab.com/";

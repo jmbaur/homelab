@@ -1,5 +1,7 @@
 # shellcheck shell=bash
 
+default_base_directory=${XDG_STATE_HOME:-${HOME}/.local/state}/projects
+
 function usage() {
 	if [[ -n ${1-} ]]; then
 		echo "$1"
@@ -7,21 +9,21 @@ function usage() {
 	fi
 	echo "Usage: $(basename "$0") [PROJECT NAME]"
 	echo
-	echo "The default projects directory is $HOME/projects. This can be"
+	echo "The default projects directory is $default_base_directory. This can be"
 	echo "overridden by setting the $PROJECTS_DIR environment variable."
 }
 
-base_directory=${PROJECTS_DIR:-${HOME}/projects}
+base_directory=${PROJECTS_DIR:-$default_base_directory}
+
 if ! test -d "$base_directory"; then
 	usage "Cannot find projects directory"
 	exit 1
 fi
 
-cd "$base_directory" || exit
-
 tmux_session_path=
 if ! tmux_session_path=$(
 	fd "^\.git$" \
+		--base-directory "$base_directory" \
 		--hidden \
 		--type directory \
 		--max-depth 2 \
