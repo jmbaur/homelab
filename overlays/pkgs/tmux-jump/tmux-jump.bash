@@ -34,7 +34,7 @@ if ! tmux_session_path=$(
 			--exit-0 \
 			--select-1 \
 			--preview-window=down \
-			--preview="git -C {} remote -v"
+			--preview="git -C $base_directory/{} remote --verbose"
 ); then
 	echo "No matches"
 	exit 2
