@@ -60,6 +60,7 @@
         Group = "kodi";
         SupplementaryGroups = [
           "audio"
+          "dialout" # needed for pulse-eight CEC adapter
           "disk"
           "input"
           "tty"
