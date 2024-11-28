@@ -58,7 +58,7 @@ let
     };
 
     options.time = mkOption {
-      type = types.str;
+      type = types.nonEmptyStr;
       default = "daily";
       description = ''
         Any valid systemd.time(7) value.
@@ -66,7 +66,7 @@ let
     };
 
     options.postBuild = mkOption {
-      type = types.nullOr types.str;
+      type = types.nullOr types.nonEmptyStr;
       example = "my-post-build.service";
       default = null;
       description = ''

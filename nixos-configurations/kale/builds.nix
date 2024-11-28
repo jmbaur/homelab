@@ -83,19 +83,23 @@ in
     lib.imap0 (
       i: name:
       lib.nameValuePair name {
-        flakeRef = "github:jmbaur/homelab";
-        attrPath = [
-          "nixosConfigurations"
-          name
-          "config"
-          "system"
-          "build"
-          "image"
-        ];
         postBuild = config.systemd.services."post-build@${name}".name;
         # Daily builds where each build is slated to run in a tiered fashion,
         # one hour after each other.
         time = "*-*-* ${toString (lib.fixedWidthNumber 2 (i - 24 * (i / 24)))}:00:00";
+        build = {
+          flake = {
+            flakeRef = "github:jmbaur/homelab";
+            attrPath = [
+              "nixosConfigurations"
+              name
+              "config"
+              "system"
+              "build"
+              "image"
+            ];
+          };
+        };
       }
     ) allHosts
   );
