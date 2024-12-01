@@ -147,13 +147,13 @@ let
                       --out-link "$STATE_DIRECTORY/build-${name}" \
                       --print-out-paths \
                       --print-build-logs \
-                      ${
+                      "${
                         {
                           drvPath = "${build'}^*";
                           flake = ''${build'.flakeRef}?ref=''${latest_tag}#${buildAttr}'';
                         }
                         .${buildType}
-                      }
+                      }"
                   '';
               }
             );
