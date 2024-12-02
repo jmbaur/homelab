@@ -246,6 +246,10 @@ in
 
         boot.initrd.supportedFilesystems = [ "erofs" ];
 
+        # Not applicable for our image-based systems since the root filesystem
+        # isn't created until first boot.
+        systemd.services.systemd-growfs-root.enable = false;
+
         fileSystems."/" = {
           fsType = config.systemd.repart.partitions."12-root".Format;
           options = [
