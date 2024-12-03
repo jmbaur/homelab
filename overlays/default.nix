@@ -23,23 +23,9 @@ inputs: {
     (final: prev: {
       nixVersions = prev.nixVersions.extend (
         _: nPrev: {
-          nix_2_24_sysroot =
-            (nPrev.nix_2_24.overrideAttrs (old: {
-              patches = (old.patches or [ ]) ++ [
-                ./nix-local-overlay-store-regex.patch
-              ];
-            })).override
-              {
-                # TODO(jared): delete when https://github.com/NixOS/nixpkgs/pull/356133 is on nixos-unstable
-                curl = final.curl.overrideAttrs (old: {
-                  patches = (old.patches or [ ]) ++ [
-                    (final.fetchpatch {
-                      url = "https://raw.githubusercontent.com/NixOS/nixpkgs/d508b59825a6c86aa0ba5eedc72042bfbe97e791/pkgs/by-name/cu/curlMinimal/fix-netrc-regression.patch";
-                      hash = "sha256-/0MnDxsurz9BGhuf+57XXdWH0WKfexeRuKRD8deRl4Q=";
-                    })
-                  ];
-                });
-              };
+          nix_2_24_sysroot = nPrev.nix_2_24.overrideAttrs (old: {
+            patches = (old.patches or [ ]) ++ [ ./nix-local-overlay-store-regex.patch ];
+          });
         }
       );
 
