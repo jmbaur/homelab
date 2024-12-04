@@ -107,7 +107,7 @@ let
 
           users.users.root.password = builtins.warn "TODO: don't set root password" "";
 
-          nix.package = pkgs.nixVersions.nix_2_24_sysroot;
+          nix.package = pkgs.nixVersions.nix_2_25_sysroot;
           nix.settings = {
             store = "local-overlay://?root=/overlay/merged&lower-store=/overlay/lower?read-only=true&upper-layer=/overlay/upper&check-mount=false";
             experimental-features = [

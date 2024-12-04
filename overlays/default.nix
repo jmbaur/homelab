@@ -5,9 +5,10 @@ inputs: {
     # auto-added packages
     (
       _: prev:
-      prev.lib.mapAttrs (name: _: prev.callPackage ./pkgs/${name}/package.nix { }) (
-        builtins.readDir ./pkgs
-      )
+      prev.lib.packagesFromDirectoryRecursive {
+        inherit (prev) callPackage;
+        directory = ./pkgs;
+      }
     )
     # cross-compilation fixes
     (final: prev: {
@@ -23,7 +24,7 @@ inputs: {
     (final: prev: {
       nixVersions = prev.nixVersions.extend (
         _: nPrev: {
-          nix_2_24_sysroot = nPrev.nix_2_24.overrideAttrs (old: {
+          nix_2_25_sysroot = nPrev.nix_2_25.overrideAttrs (old: {
             patches = (old.patches or [ ]) ++ [ ./nix-local-overlay-store-regex.patch ];
           });
         }
