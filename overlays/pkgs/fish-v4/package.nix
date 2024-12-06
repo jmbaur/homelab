@@ -45,4 +45,5 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   meta.mainProgram = "fish";
+  passthru.shellPath = "/bin/fish";
 })
