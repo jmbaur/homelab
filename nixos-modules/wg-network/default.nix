@@ -6,6 +6,31 @@
 }:
 
 let
+  inherit (lib)
+    attrNames
+    concatLines
+    concatMapStringsSep
+    concatStringsSep
+    elemAt
+    filterAttrs
+    flatten
+    genList
+    length
+    mapAttrs'
+    mapAttrsToList
+    mkEnableOption
+    mkIf
+    mkMerge
+    mkOption
+    optionalString
+    optionals
+    options
+    substring
+    toHexString
+    toLower
+    types
+    ;
+
   cfg = config.custom.wgNetwork;
 
   inherit (config.networking) hostName;
@@ -19,40 +44,46 @@ let
     }:
     let
       filters =
-        lib.optionals (ip6addr != null) [ "ip6 saddr ${ip6addr}" ]
-        ++ lib.optionals (iifname != null) [ "iifname ${iifname}" ]
-        ++ [ "${l4proto} dport { ${lib.concatMapStringsSep ", " toString ports} }" ];
+        optionals (ip6addr != null) [ "ip6 saddr ${ip6addr}" ]
+        ++ optionals (iifname != null) [ "iifname ${iifname}" ]
+        ++ [ "${l4proto} dport { ${concatMapStringsSep ", " toString ports} }" ];
     in
-    lib.optionalString (ports != [ ]) ''
+    optionalString (ports != [ ]) ''
       ${toString filters} accept
     '';
 
-  peeredNodes = lib.filterAttrs (_: { peer, ... }: peer) cfg.nodes;
+  peeredNodes = filterAttrs (_: { peer, ... }: peer) cfg.nodes;
 
-  firstPeeredNode = lib.elemAt (lib.attrNames peeredNodes) 0;
+  firstPeeredNode = elemAt (attrNames peeredNodes) 0;
 
-  hextetOffsets = lib.genList (x: x * 4) 4;
+  hextetOffsets = genList (x: x * 4) 4;
 
-  linkLocalNetworkSegments = [ "fe80" ] ++ lib.genList (_: "0000") 3;
+  linkLocalNetworkSegments = [ "fe80" ] ++ genList (_: "0000") 3;
 
   ulaNetworkSegments =
-    map (hextet: lib.toLower (lib.toHexString hextet)) cfg.ulaHextets
-    ++ lib.genList (_: "0000") (4 - (lib.length cfg.ulaHextets));
+    map (hextet: toLower (toHexString hextet)) cfg.ulaHextets
+    ++ genList (_: "0000") (4 - (length cfg.ulaHextets));
 
-  ulaNetwork = "${lib.concatStringsSep ":" ulaNetworkSegments}::/64";
+  ulaNetwork = "${concatStringsSep ":" ulaNetworkSegments}::/64";
 
   babeldPort = 6696;
 
   wgPort = 51820;
 
-  wireguardNetdevs = lib.filterAttrs (
+  wireguardNetdevs = filterAttrs (
     _: netdev: netdev.netdevConfig.Kind == "wireguard"
   ) config.systemd.network.netdevs;
+
 in
 {
-  options.custom.wgNetwork = with lib; {
+  options.custom.wgNetwork = {
     ulaHextets = mkOption {
-      type = types.listOf types.ints.positive;
+      type = (types.nonEmptyListOf types.ints.positive) // {
+        # It doesn't make sense to allow for merging various values across
+        # modules, as the ordering of the hextets are important and they should
+        # all be defined in a single module.
+        merge = options.mergeEqualOption;
+      };
       example = [
         64789
         49711
@@ -83,9 +114,9 @@ in
           { name, config, ... }:
           let
             hostHash = builtins.hashString "sha256" name;
-            hostSegments = map (x: lib.substring x 4 hostHash) hextetOffsets;
+            hostSegments = map (x: substring x 4 hostHash) hextetOffsets;
             hostPeerHash = builtins.hashString "sha256" (hostName + name);
-            hostPeerSegments = map (x: lib.substring x 4 hostPeerHash) hextetOffsets;
+            hostPeerSegments = map (x: substring x 4 hostPeerHash) hextetOffsets;
           in
           {
             options = {
@@ -149,8 +180,8 @@ in
             };
 
             config = {
-              ulaAddr = lib.concatStringsSep ":" (ulaNetworkSegments ++ hostSegments);
-              linkLocalAddr = lib.concatStringsSep ":" (linkLocalNetworkSegments ++ hostPeerSegments);
+              ulaAddr = concatStringsSep ":" (ulaNetworkSegments ++ hostSegments);
+              linkLocalAddr = concatStringsSep ":" (linkLocalNetworkSegments ++ hostPeerSegments);
             };
           }
         )
@@ -158,7 +189,7 @@ in
     };
   };
 
-  config = lib.mkIf (peeredNodes != { }) {
+  config = mkIf (peeredNodes != { }) {
     assertions = [
       {
         assertion = config.systemd.network.enable;
@@ -174,14 +205,13 @@ in
       }
       {
         # TODO(jared): this is an arbitrary limitation?
-        assertion = lib.length cfg.ulaHextets >= 1 && lib.length cfg.ulaHextets <= 4;
+        assertion = length cfg.ulaHextets >= 1 && length cfg.ulaHextets <= 4;
         message = "ULA network prefix must have at least 1 and at most than 4 hextets ";
       }
       {
         assertion =
-          lib.length (
-            lib.attrNames (lib.filterAttrs (_: netdev: netdev.wireguardConfig ? ListenPort) wireguardNetdevs)
-          ) < 2;
+          length (attrNames (filterAttrs (_: netdev: netdev.wireguardConfig ? ListenPort) wireguardNetdevs))
+          < 2;
         message = "duplicate ListenPorts configured";
       }
     ];
@@ -194,7 +224,7 @@ in
       ip6 saddr ${ulaNetwork} accept
     '';
 
-    networking.firewall.extraInputRules = lib.concatLines (
+    networking.firewall.extraInputRules = concatLines (
       [
         (inputFirewallRule {
           l4proto = "tcp";
@@ -207,8 +237,8 @@ in
           ports = cfg.allowedUDPPorts;
         })
       ]
-      ++ lib.flatten (
-        lib.mapAttrsToList (
+      ++ flatten (
+        mapAttrsToList (
           name: nodeConfig:
           [
             (inputFirewallRule {
@@ -222,7 +252,7 @@ in
               ports = nodeConfig.allowedUDPPorts;
             })
           ]
-          ++ lib.optionals nodeConfig.peer [
+          ++ optionals nodeConfig.peer [
             (inputFirewallRule {
               l4proto = "udp";
               iifname = "wg-${name}";
@@ -233,25 +263,25 @@ in
       )
     );
 
-    networking.firewall.allowedUDPPorts = lib.optionals (
-      lib.filterAttrs (_: netdev: netdev.wireguardConfig ? ListenPort) wireguardNetdevs != { }
+    networking.firewall.allowedUDPPorts = optionals (
+      filterAttrs (_: netdev: netdev.wireguardConfig ? ListenPort) wireguardNetdevs != { }
     ) [ wgPort ];
 
-    systemd.network.netdevs = lib.mapAttrs' (name: nodeConfig: {
+    systemd.network.netdevs = mapAttrs' (name: nodeConfig: {
       name = "10-wg-${name}";
       value = {
         netdevConfig = {
           Name = "wg-${name}";
           Kind = "wireguard";
         };
-        wireguardConfig = lib.mkMerge [
+        wireguardConfig = mkMerge [
           {
-            ListenPort = lib.mkIf (!nodeConfig.initiate) wgPort;
+            ListenPort = mkIf (!nodeConfig.initiate) wgPort;
             RouteTable = "off";
           }
-          (lib.mkIf (nodeConfig.privateKey ? file) { PrivateKeyFile = nodeConfig.privateKey.file; })
-          (lib.mkIf (nodeConfig.privateKey ? value) {
-            PrivateKey = lib.warn "Insecure wireguard private key set in nixos config, this value will be in /nix/store" nodeConfig.privateKey.value;
+          (mkIf (nodeConfig.privateKey ? file) { PrivateKeyFile = nodeConfig.privateKey.file; })
+          (mkIf (nodeConfig.privateKey ? value) {
+            PrivateKey = builtins.warn "Insecure wireguard private key set in nixos config, this value will be in /nix/store" nodeConfig.privateKey.value;
           })
         ];
         wireguardPeers = [
@@ -266,13 +296,13 @@ in
             # TODO(jared): Not all nodes are necessarily directly available via
             # hostname (e.g. behind NAT). We shouldn't assume that a node initates
             # a connection to all of its peers.
-            Endpoint = lib.mkIf nodeConfig.initiate "${nodeConfig.endpointHost}:${toString wgPort}";
+            Endpoint = mkIf nodeConfig.initiate "${nodeConfig.endpointHost}:${toString wgPort}";
           }
         ];
       };
     }) peeredNodes;
 
-    systemd.network.networks = lib.mapAttrs' (name: nodeConfig: {
+    systemd.network.networks = mapAttrs' (name: nodeConfig: {
       name = "10-wg-${name}";
       value = {
         name = "wg-${name}";
@@ -282,7 +312,7 @@ in
           [ { Address = "${nodeConfig.linkLocalAddr}/64"; } ]
           ++
           # make sure only one unique local address is added on the host
-          lib.optionals (name == firstPeeredNode) [
+          optionals (name == firstPeeredNode) [
             {
               Address = "${cfg.nodes.${hostName}.ulaAddr}/64";
               AddPrefixRoute = false;
@@ -291,14 +321,14 @@ in
       };
     }) peeredNodes;
 
-    networking.extraHosts = lib.concatLines (
-      lib.mapAttrsToList (node: nodeConfig: "${nodeConfig.ulaAddr} ${node}.internal") cfg.nodes
+    networking.extraHosts = concatLines (
+      mapAttrsToList (node: nodeConfig: "${nodeConfig.ulaAddr} ${node}.internal") cfg.nodes
     );
 
     services.babeld = {
       enable = true;
 
-      interfaces = lib.mapAttrs' (name: _: {
+      interfaces = mapAttrs' (name: _: {
         name = "wg-${name}";
         value.type = "tunnel";
       }) peeredNodes;

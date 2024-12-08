@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   utils,
   ...
 }:
@@ -56,7 +57,7 @@ in
     #       # above is default, custom stuff below
     #       "--enforce-password-policy=no"
     #       "--member-of=${lib.concatStringsSep "," groups}"
-    #       "--shell=${utils.toShellPath config.users.defaultUserShell}" # upstream default is /bin/bash
+    #       "--shell=${utils.toShellPath config.programs.fish.package}" # upstream default is /bin/bash
     #       "--storage=${if fileSystemConfig.fsType == "btrfs" then "subvolume" else "directory"}"
     #     ])
     #   ];
@@ -87,10 +88,15 @@ in
           "--prompt-new-user"
           "--enforce-password-policy=no"
           "--member-of=${lib.concatStringsSep "," groups}"
-          "--shell=${utils.toShellPath config.users.defaultUserShell}"
+          "--shell=${utils.toShellPath config.programs.fish.package}"
           "--storage=${if fileSystemConfig.fsType == "btrfs" then "subvolume" else "directory"}"
         ];
       };
+    };
+
+    programs.fish = {
+      enable = true;
+      package = pkgs.fish-v4;
     };
 
     services.homed.enable = true;

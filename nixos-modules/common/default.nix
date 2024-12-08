@@ -72,24 +72,6 @@ in
     users.mutableUsers = lib.mkDefault false;
     systemd.sysusers.enable = lib.mkDefault true;
 
-    # Make zsh the default interactive shell
-    programs.zsh = {
-      enable = true;
-      interactiveShellInit = ''
-        setopt interactivecomments
-        setopt nonomatch
-        bindkey -e
-        bindkey \^U backward-kill-line
-        WORDCHARS='_-'
-        set_window_title() { print -Pn "\e]0;%n@%m: %~\a" }
-        precmd_functions+=(set_window_title)
-      '';
-      promptInit = ''
-        autoload -U promptinit && promptinit && prompt redhat && setopt prompt_sp
-      '';
-    };
-    users.defaultUserShell = pkgs.zsh;
-
     programs.tmux = {
       enable = true;
       keyMode = if config.programs.vim.enable then "vi" else "emacs";
