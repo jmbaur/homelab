@@ -149,33 +149,6 @@ in
         ];
       };
 
-      programs.bash = {
-        enable = true;
-        initExtra = builtins.readFile ./bashrc;
-        historyControl = [ "ignoreboth" ];
-      };
-
-      programs.zsh = {
-        enable = true;
-        defaultKeymap = "emacs";
-        initExtraFirst = ''
-          setopt prompt_subst
-        '';
-        initExtra = ''
-          if [[ -n "$SSH_CONNECTION" ]]; then
-            psvar=("ssh")
-          else
-            psvar=()
-          fi
-          autoload -Uz vcs_info
-          precmd_functions+=(vcs_info)
-          zstyle ':vcs_info:*' actionformats '%F{magenta}(%b|%a)%f'
-          zstyle ':vcs_info:git:*' formats '%F{cyan}(%b)%f'
-          zstyle ':vcs_info:*' enable git
-          PROMPT='%B%F{%(0V.yellow.green)}[%n@%m:%2~]%f%b$vcs_info_msg_0_%(?..%F{red}[%?]%f)%(!.#.%#) '
-        '';
-      };
-
       programs.nix-index.enable = true;
 
       programs.zoxide.enable = true;
@@ -199,6 +172,7 @@ in
       };
 
       programs.gh.enable = true;
+
       programs.git = {
         enable = true;
         userName = "Jared Baur";

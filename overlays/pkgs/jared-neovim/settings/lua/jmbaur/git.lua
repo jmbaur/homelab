@@ -1,24 +1,3 @@
--- TODO(jared): get these dialed in
--- require("mini.diff").setup({})
--- require("mini.git").setup({})
-
--- -- Use BufNew since it is only called once on the creation of a new buffer,
--- -- unlike BufEnter, which is called everytime the buffer is entered
--- vim.api.nvim_create_autocmd({ "BufNew" }, {
--- 	desc = "Setup MiniDiff",
--- 	callback = function(args)
--- 		if not vim.api.nvim_buf_is_valid(args.buf) then return nil end
--- 		vim.b[args.buf or 0].minidiff_disable = true -- disabled by default, but toggleable
---
--- 		vim.api.nvim_buf_create_user_command(args.buf, "Diff", function()
--- 			vim.b[args.buf or 0].minidiff_disable = false
--- 			MiniDiff.toggle(args.buf)
--- 		end, { desc = "Toggle MiniDiff" })
--- 	end
--- })
-
--- depends on git-browse (in git-extras at https://github.com/tj/git-extras)
-
 local stdout_or_bail = function(system_call)
 	local res = system_call:wait()
 	if res.code > 0 then
@@ -40,41 +19,26 @@ local get_range = function(args)
 	return { args.line1, args.line2 }
 end
 
-local construct_sourcehut_url = function(args, remote_url, rev, git_file)
-	local line1, line2 = unpack(get_range(args))
-	local url = string.format("%s/tree/%s/item/%s", remote_url, rev, git_file)
-	if line1 ~= nil then
-		url = string.format("%s#L%s", url, line1)
+-- base_url_fmt: accepts 3 args (base url, git revision, & file path)
+-- line1_fmt: accepts 1 arg (line 1)
+-- line2_fmt: accepts 1 arg (line 2)
+local construct_url = function(base_url_fmt, line1_fmt, line2_fmt)
+	return function(args, remote_url, rev, git_file)
+		local line1, line2 = unpack(get_range(args))
+		local url = string.format(base_url_fmt, remote_url, rev, git_file)
+		if line1 ~= nil then
+			url = url .. string.format(line1_fmt, line1)
+		end
+		if line2 ~= nil then
+			url = url .. string.format(line2_fmt, line2)
+		end
+		return url
 	end
-	if line2 ~= nil then
-		url = string.format("%s-%s", url, line2)
-	end
-	return url
 end
 
-local construct_gitlab_url = function(args, remote_url, rev, git_file)
-	local line1, line2 = unpack(get_range(args))
-	local url = string.format("%s/-/blob/%s/%s", remote_url, rev, git_file)
-	if line1 ~= nil then
-		url = string.format("%s#L%s", url, line1)
-	end
-	if line2 ~= nil then
-		url = string.format("%s-%s", url, line2)
-	end
-	return url
-end
-
-local construct_github_url = function(args, remote_url, rev, git_file)
-	local line1, line2 = unpack(get_range(args))
-	local url = string.format("%s/blob/%s/%s", remote_url, rev, git_file)
-	if line1 ~= nil then
-		url = string.format("%s#L%s", url, line1)
-	end
-	if line2 ~= nil then
-		url = string.format("%s-L%s", url, line2)
-	end
-	return url
-end
+local construct_sourcehut_url = construct_url("%s/tree/%s/item/%s", "#L%s", "-%s")
+local construct_gitlab_url = construct_url("%s/-/blob/%s/%s", "#L%s", "-%s")
+local construct_github_url = construct_url("%s/blob/%s/%s", "#L%s", "-L%s")
 
 local construct_gitea_url = function(args, remote_url, rev, git_file)
 	local line1, line2 = unpack(get_range(args))
@@ -98,8 +62,8 @@ end
 vim.api.nvim_create_user_command("Permalink", function(args)
 	local current_file = vim.fn.expand("%")
 
-	local repo_dir = stdout_or_bail(vim.system({ "git", "-C", vim.fs.dirname(current_file), "rev-parse",
-		"--show-toplevel" }))
+	local repo_dir =
+		stdout_or_bail(vim.system({ "git", "-C", vim.fs.dirname(current_file), "rev-parse", "--show-toplevel" }))
 
 	local branch = stdout_or_bail(vim.system({ "git", "-C", repo_dir, "branch", "--show-current" }))
 
@@ -109,7 +73,8 @@ vim.api.nvim_create_user_command("Permalink", function(args)
 		return
 	end
 
-	local remote = stdout_or_bail(vim.system({ "git", "-C", repo_dir, "config", string.format("branch.%s.remote", branch) }))
+	local remote =
+		stdout_or_bail(vim.system({ "git", "-C", repo_dir, "config", string.format("branch.%s.remote", branch) }))
 
 	local git_file = stdout_or_bail(vim.system({ "git", "-C", repo_dir, "ls-files", current_file }))
 

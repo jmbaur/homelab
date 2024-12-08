@@ -59,6 +59,7 @@ inputs.nixpkgs.lib.mapAttrs (
             nixfmt-rfc-style.enable = true;
             shellcheck.enable = true;
             shfmt.enable = true;
+            stylua.enable = true;
           };
         }).shellHook
         + ''

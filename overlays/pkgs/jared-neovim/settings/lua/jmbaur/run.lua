@@ -1,47 +1,47 @@
 local M = {}
 
-local make_builtin = function(executable_name, fallback)
+local run_command = function(executable_name, fallback_command)
 	return function()
-		if executable_name ~= nil and vim.fn.executable(executable_name) == 1 then
+		if vim.fn.executable(executable_name) == 1 then
 			return executable_name
-		elseif fallback ~= nil then
-			return fallback
 		else
-			return os.getenv("SHELL")
+			return fallback_command
 		end
 	end
 end
 
-local make_nix_shell_builtin = function(executable_name, nix_package_name)
-	local fallback = nil
-	if nix_package_name ~= nil then
-		fallback = string.format("nix shell nixpkgs\\#%s --command %s", nix_package_name, executable_name)
-	end
-	return make_builtin(executable_name, fallback)
-end
+-- Ensures that if a command is not executable and in PATH, `nix shell` can be
+-- used as a fallback to obtain the correct executable to run.
+local run_command_nix_shell_wrapper = function(executable_name, nix_package_name)
+	local fallback =
+		string.format("nix shell nixpkgs\\#%s --command %s", nix_package_name or executable_name, executable_name)
 
-local make_nix_run_builtin = function(executable_name, nix_run_fallback)
-	return make_builtin(executable_name, string.format("nix run nixpkgs\\#%s", nix_run_fallback or executable_name))
+	return run_command(executable_name, fallback)
 end
 
 local nix_repl = function()
-	return "nix repl --expr 'import <nixpkgs>{}'"
+	return "nix repl --expr 'import <nixpkgs> { }'"
+end
+
+local shell = function()
+	return os.getenv("SHELL") or "/bin/sh"
 end
 
 M.builtins = {
-	["bash"] = make_nix_run_builtin("bash"),
-	["bc"] = make_nix_run_builtin("bc"),
-	["clj"] = make_nix_run_builtin("clj", "clojure"),
-	["deno"] = make_nix_run_builtin("deno"),
-	["erl"] = make_nix_shell_builtin("erl", "erlang"),
-	["fsharpi"] = make_nix_shell_builtin("fsharpi", "fsharp"),
-	["ghci"] = make_nix_shell_builtin("ghci", "ghc"),
-	["guile"] = make_nix_run_builtin("guile"),
-	["lua"] = make_nix_run_builtin("lua"),
+	["bash"] = run_command_nix_shell_wrapper("bash", nil),
+	["bc"] = run_command_nix_shell_wrapper("bc", nil),
+	["clj"] = run_command_nix_shell_wrapper("clj", "clojure"),
+	["deno"] = run_command_nix_shell_wrapper("deno", nil),
+	["erl"] = run_command_nix_shell_wrapper("erl", "erlang"),
+	["fsharpi"] = run_command_nix_shell_wrapper("fsharpi", "fsharp"),
+	["ghci"] = run_command_nix_shell_wrapper("ghci", "ghc"),
+	["guile"] = run_command_nix_shell_wrapper("guile", nil),
+	["lua"] = run_command_nix_shell_wrapper("lua", nil),
 	["nix"] = nix_repl,
-	["nodejs"] = make_nix_run_builtin("node", "nodejs"),
-	["ocaml"] = make_nix_run_builtin("ocaml"),
-	["python3"] = make_nix_run_builtin("python3"),
+	["nodejs"] = run_command_nix_shell_wrapper("node", "nodejs"),
+	["ocaml"] = run_command_nix_shell_wrapper("ocaml", nil),
+	["python3"] = run_command_nix_shell_wrapper("python3", nil),
+	["shell"] = shell,
 }
 
 M.run = function(cmd)
@@ -79,7 +79,9 @@ M.setup = function()
 	end, {
 		nargs = "*",
 		desc = "Run a REPL",
-		complete = function(arg_lead, _cmd_line, _cursor_pos)
+		complete = function(arg_lead, cmd_line, cursor_pos)
+			_, _ = cmd_line, cursor_pos
+
 			local completions = {}
 			for k in pairs(M.builtins) do
 				local i, _ = string.find(k, arg_lead)

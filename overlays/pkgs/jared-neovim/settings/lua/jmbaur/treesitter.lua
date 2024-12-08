@@ -5,6 +5,7 @@ install.compilers = { "echo" } -- we don't install parsers from nvim-treesitter
 
 configs.setup({
 	auto_install = false,
+	modules = {},
 	ignore_install = {},
 	ensure_installed = {},
 	sync_install = false,
@@ -57,4 +58,4 @@ configs.setup({
 	},
 })
 
-require("treesitter-context").setup { max_lines = 3 }
+require("treesitter-context").setup({ max_lines = 3 })

@@ -29,4 +29,11 @@
     boot.uefi.enable = true;
     installer.targetDisk = "/dev/nvme0n1";
   };
+
+  services.ttyd = {
+    enable = true;
+    enableIPv6 = true;
+    writeable = true;
+    clientOptions.theme = builtins.toJSON { background = "black"; };
+  };
 }
