@@ -2,7 +2,7 @@ vim.opt.clipboard = "unnamedplus"
 
 -- Not all terminals support osc52 paste, and there are security concerns for enabling it
 local function paste()
-	return { vim.fn.split(vim.fn.getreg(''), '\n'), vim.fn.getregtype('') }
+	return { vim.fn.split(vim.fn.getreg(""), "\n"), vim.fn.getregtype("") }
 end
 
 -- if not on a tty, setup the clipboard to use osc52

@@ -7,7 +7,7 @@ local M = {}
 local conditional_efm_languages = {
 	nix = {
 		enable = vim.g.lang_support_nix,
-		tools = { { formatCommand = "nixfmt", formatStdin = true }, },
+		tools = { { formatCommand = "nixfmt", formatStdin = true } },
 	},
 	sh = {
 		enable = vim.g.lang_support_shell,
@@ -23,6 +23,10 @@ local conditional_efm_languages = {
 	latex = {
 		enable = vim.g.lang_support_latex,
 		tools = { { formatCommand = "tex-fmt --stdin", formatStdin = true } },
+	},
+	lua = {
+		enable = vim.g.lang_support_lua,
+		tools = { require("efmls-configs.formatters.stylua") },
 	},
 }
 
@@ -52,6 +56,10 @@ M.format_on_save = function()
 	return vim.g.format_on_save
 end
 
+local keymap_opts = function(bufnr, desc)
+	return { buffer = bufnr, desc = desc }
+end
+
 M.setup = function(config)
 	local lsp_implementations = config.launcher.lsp_implementations
 	local lsp_references = config.launcher.lsp_references
@@ -74,7 +82,6 @@ M.setup = function(config)
 			end
 		end
 	end
-
 
 	local get_on_attach = function(settings)
 		return function(client, bufnr)
@@ -107,17 +114,14 @@ M.setup = function(config)
 			-- Prevent LSP preview window from opening on omnifunc
 			vim.opt.completeopt:remove({ "preview" })
 
-			local opts = function(desc)
-				return { buffer = bufnr, desc = desc }
-			end
-			vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts("Signature help"))
-			vim.keymap.set("n", "<leader>D", vim.lsp.buf.type_definition, opts("Type definition"))
-			vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, opts("Code action"))
-			vim.keymap.set("n", "<leader>i", lsp_implementations, opts("LSP implementations"))
-			vim.keymap.set("n", "<leader>n", vim.lsp.buf.rename, opts("Rename"))
-			vim.keymap.set("n", "<leader>r", lsp_references, opts("LSP references"))
-			vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts("Go to declaration"))
-			vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts("Go to definition"))
+			vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, keymap_opts(bufnr, "Signature help"))
+			vim.keymap.set("n", "<leader>D", vim.lsp.buf.type_definition, keymap_opts(bufnr, "Type definition"))
+			vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, keymap_opts(bufnr, "Code action"))
+			vim.keymap.set("n", "<leader>i", lsp_implementations, keymap_opts(bufnr, "LSP implementations"))
+			vim.keymap.set("n", "<leader>n", vim.lsp.buf.rename, keymap_opts(bufnr, "Rename"))
+			vim.keymap.set("n", "<leader>r", lsp_references, keymap_opts(bufnr, "LSP references"))
+			vim.keymap.set("n", "gD", vim.lsp.buf.declaration, keymap_opts(bufnr, "Go to declaration"))
+			vim.keymap.set("n", "gd", vim.lsp.buf.definition, keymap_opts(bufnr, "Go to definition"))
 		end
 	end
 
@@ -139,8 +143,8 @@ M.setup = function(config)
 	end
 
 	local servers = {
-		clangd  = { enable = vim.g.lang_support_c, config = { on_attach = on_attach_format } },
-		efm     = {
+		clangd = { enable = vim.g.lang_support_c, config = { on_attach = on_attach_format } },
+		efm = {
 			enable = true,
 			config = {
 				on_attach = on_attach_format,
@@ -152,22 +156,22 @@ M.setup = function(config)
 				filetypes = efm_filetypes,
 			},
 		},
-		hls     = {
+		hls = {
 			enable = vim.g.lang_support_haskell,
 			config = { on_attach = on_attach_format },
 		},
-		gopls   = {
+		gopls = {
 			enable = vim.g.lang_support_go,
 			config = {
 				on_attach = on_attach_format_orgimports,
 				settings = { gopls = { gofumpt = true, staticcheck = true } },
 			},
 		},
-		nil_ls  = { enable = vim.g.lang_support_nix, config = { on_attach = on_attach } },
-		lua_ls  = {
+		nil_ls = { enable = vim.g.lang_support_nix, config = { on_attach = on_attach } },
+		lua_ls = {
 			enable = vim.g.lang_support_lua,
 			config = {
-				on_attach = on_attach_format,
+				on_attach = on_attach,
 				settings = {
 					Lua = {
 						runtime = { version = "LuaJIT" },
@@ -182,12 +186,12 @@ M.setup = function(config)
 			enable = vim.g.lang_support_python,
 			config = { on_attach = on_attach },
 		},
-		ruff    = {
+		ruff = {
 			enable = vim.g.lang_support_python,
-			config = { on_attach = on_attach_format, },
+			config = { on_attach = on_attach_format },
 		},
-		yamlls  = { enable = vim.g.lang_support_yaml, config = { on_attach = on_attach_format }, },
-		zls     = { enable = vim.g.lang_support_zig, config = { on_attach = on_attach_format } },
+		yamlls = { enable = vim.g.lang_support_yaml, config = { on_attach = on_attach_format } },
+		zls = { enable = vim.g.lang_support_zig, config = { on_attach = on_attach_format } },
 	}
 
 	for lsp, settings in pairs(servers) do
@@ -198,22 +202,20 @@ M.setup = function(config)
 
 	vim.g.rustaceanvim = {
 		-- Plugin configuration
-		tools = {
-		},
+		tools = {},
 		-- LSP configuration
 		server = {
 			on_attach = on_attach_format,
 			default_settings = {
 				-- rust-analyzer language server configuration
-				['rust-analyzer'] = {
+				["rust-analyzer"] = {
 					-- use cargo-clippy on save instead of cargo-check
 					check = { command = vim.fn.executable("cargo-clippy") == 1 and "clippy" or "check" },
 				},
 			},
 		},
 		-- DAP configuration
-		dap = {
-		},
+		dap = {},
 	}
 
 	vim.diagnostic.config({
@@ -224,10 +226,7 @@ M.setup = function(config)
 	})
 
 	local sign_symbol = function(name, icon)
-		vim.fn.sign_define(
-			"DiagnosticSign" .. name,
-			{ text = icon, texthl = "DiagnosticSign" .. name }
-		)
+		vim.fn.sign_define("DiagnosticSign" .. name, { text = icon, texthl = "DiagnosticSign" .. name })
 	end
 	sign_symbol("Error", left_aligned_line)
 	sign_symbol("Hint", left_aligned_line)
