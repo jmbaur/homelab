@@ -79,6 +79,9 @@ in
     ))
   ];
 
+  # TODO(jared): this is needed for now with the builder module
+  custom.image.mutableNixStore = true;
+
   custom.builder.builds = lib.listToAttrs (
     lib.imap0 (
       i: name:

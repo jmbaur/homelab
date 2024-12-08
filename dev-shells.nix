@@ -56,6 +56,7 @@ inputs.nixpkgs.lib.mapAttrs (
           src = ./.;
           hooks = {
             deadnix.enable = true;
+            lua-ls.enable = true;
             nixfmt-rfc-style.enable = true;
             shellcheck.enable = true;
             shfmt.enable = true;

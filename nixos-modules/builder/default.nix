@@ -138,23 +138,24 @@ let
                   lib.optionalString (buildType == "flake") ''
                     latest_tag=$(curl --silent "https://api.github.com/repos/${flakeRefAttr.owner}/${flakeRefAttr.repo}/tags" | jq -r '.[0].name')
                   ''
-                  + ''
+                  +
+                    # TODO(jared): use --store "local://$STATE_DIRECTORY"
+                    ''
 
-                    nix --extra-experimental-features "nix-command flakes" \
-                      build \
-                      --refresh \
-                      --store "local://$STATE_DIRECTORY" \
-                      --out-link "$STATE_DIRECTORY/build-${name}" \
-                      --print-out-paths \
-                      --print-build-logs \
-                      "${
-                        {
-                          drvPath = "${build'}^*";
-                          flake = ''${build'.flakeRef}?ref=''${latest_tag}#${buildAttr}'';
-                        }
-                        .${buildType}
-                      }"
-                  '';
+                      nix --extra-experimental-features "nix-command flakes" \
+                        build \
+                        --refresh \
+                        --out-link "$STATE_DIRECTORY/build-${name}" \
+                        --print-out-paths \
+                        --print-build-logs \
+                        "${
+                          {
+                            drvPath = "${build'}^*";
+                            flake = ''${build'.flakeRef}?ref=''${latest_tag}#${buildAttr}'';
+                          }
+                          .${buildType}
+                        }"
+                    '';
               }
             );
           };
@@ -181,7 +182,8 @@ in
         {
           # Mostly copied from https://github.com/nixos/nixpkgs/blob/6a70100fb702712aa13f630c833e2c33c6e21ee2/nixos/modules/services/misc/nix-gc.nix,
           # since that module doesn't work when nix itself is not enabled.
-          services.builder-nix-gc = lib.mkIf config.nix.enable {
+          services.builder-nix-gc = {
+            enable = false;
             description = "Nix Garbage Collector";
             startAt = "weekly";
             script = ''exec ${lib.getExe' config.nix.package "nix-collect-garbage"} --store "local://$STATE_DIRECTORY"'';
@@ -198,7 +200,10 @@ in
             };
           };
 
-          timers.builder-nix-gc.timerConfig.Persistent = true;
+          timers.builder-nix-gc = {
+            enable = false;
+            timerConfig.Persistent = true;
+          };
         }
       ]
     );

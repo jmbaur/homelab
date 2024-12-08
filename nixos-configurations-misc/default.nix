@@ -12,7 +12,7 @@ inputs: {
           networking.hostName = "DESKTOP-FA8MC26";
           users.users.${config.wsl.defaultUser} = {
             password = "";
-            shell = pkgs.fish-v4;
+            shell = pkgs.fish;
           };
           networking.nftables.enable = false; # https://github.com/microsoft/WSL/issues/6044
           systemd.sysusers.enable = false;

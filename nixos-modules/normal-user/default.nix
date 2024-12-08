@@ -96,7 +96,11 @@ in
 
     programs.fish = {
       enable = true;
-      package = pkgs.fish-v4;
+      package = pkgs.fish;
+      interactiveShellInit = ''
+        function fish_greeting
+        end
+      '';
     };
 
     services.homed.enable = true;
