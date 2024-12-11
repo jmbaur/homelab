@@ -33,18 +33,18 @@ local conditional_efm_languages = {
 local toggle_format_on_save = function()
 	local ignoring_buf_write_pre = false
 
-	for _, event in pairs(vim.opt.eventignore:get()) do
+	for _, event in pairs(vim.opt_local.eventignore:get()) do
 		if event == "BufWritePre" then
 			ignoring_buf_write_pre = true
 		end
 	end
 
 	if ignoring_buf_write_pre then
-		vim.opt.eventignore:remove({ "BufWritePre" })
-		vim.print("enabled format on save")
+		vim.opt_local.eventignore:remove({ "BufWritePre" })
+		vim.print("enabled format on save for current buffer")
 	else
-		vim.opt.eventignore:append({ "BufWritePre" })
-		vim.print("disabled format on save")
+		vim.opt_local.eventignore:append({ "BufWritePre" })
+		vim.print("disabled format on save for current buffer")
 	end
 end
 
@@ -192,6 +192,18 @@ M.setup = function(config)
 		},
 		yamlls = { enable = vim.g.lang_support_yaml, config = { on_attach = on_attach_format } },
 		zls = { enable = vim.g.lang_support_zig, config = { on_attach = on_attach_format } },
+		rust_analyzer = {
+			enable = vim.g.lang_support_rust,
+			config = {
+				on_attach = on_attach_format,
+				settings = {
+					["rust-analyzer"] = {
+						-- use cargo-clippy if available
+						check = { command = vim.fn.executable("cargo-clippy") == 1 and "clippy" or "check" },
+					},
+				},
+			},
+		},
 	}
 
 	for lsp, settings in pairs(servers) do
@@ -199,24 +211,6 @@ M.setup = function(config)
 			lspconfig[lsp].setup(settings.config)
 		end
 	end
-
-	vim.g.rustaceanvim = {
-		-- Plugin configuration
-		tools = {},
-		-- LSP configuration
-		server = {
-			on_attach = on_attach_format,
-			default_settings = {
-				-- rust-analyzer language server configuration
-				["rust-analyzer"] = {
-					-- use cargo-clippy on save instead of cargo-check
-					check = { command = vim.fn.executable("cargo-clippy") == 1 and "clippy" or "check" },
-				},
-			},
-		},
-		-- DAP configuration
-		dap = {},
-	}
 
 	vim.diagnostic.config({
 		severity_sort = true,

@@ -24,7 +24,6 @@
   ruff,
   runCommand,
   rust-analyzer,
-  rustc,
   rustfmt,
   shellcheck,
   shfmt,
@@ -93,29 +92,22 @@ let
       ++ (
         with vimPlugins;
         # start
-        (
-          [
-            efmls-configs-nvim
-            fzf-lua
-            mini-nvim
-            nvim-lspconfig
-            nvim-treesitter-context
-            nvim-treesitter-refactor
-            nvim-treesitter-textobjects
-            nvim-treesitter.withAllGrammars
-            oil-nvim
-            snippets-nvim
-            transparent-nvim
-            vim-dispatch
-            vim-eunuch
-            vim-fugitive
-          ]
-          ++ lib.optionals rustSupport [
-            # Use rustaceanvim for single-file support. See
-            # https://github.com/neovim/nvim-lspconfig/issues/1528.
-            rustaceanvim
-          ]
-        )
+        ([
+          efmls-configs-nvim
+          fzf-lua
+          mini-nvim
+          nvim-lspconfig
+          nvim-treesitter-context
+          nvim-treesitter-refactor
+          nvim-treesitter-textobjects
+          nvim-treesitter.withAllGrammars
+          oil-nvim
+          snippets-nvim
+          transparent-nvim
+          vim-dispatch
+          vim-eunuch
+          vim-fugitive
+        ])
         # opt
         ++ (map (plugin: {
           inherit plugin;
@@ -156,7 +148,6 @@ let
     ])
     ++ (lib.optionals rustSupport [
       rust-analyzer
-      rustc
       rustfmt
     ])
     ++ (lib.optionals shellSupport [
