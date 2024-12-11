@@ -40,3 +40,4 @@ require("mini.basics").setup({
 
 vim.opt.shell = "/bin/sh"
 vim.opt.showmatch = true
+vim.opt.cursorline = false -- undo what is done in mini.basics
