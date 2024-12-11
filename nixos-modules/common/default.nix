@@ -36,8 +36,15 @@ in
       enable = true;
       defaultEditor = true;
       package = pkgs.vim.customize {
-        vimrcFile = pkgs.emptyFile;
-        standalone = true;
+        # from https://raw.githubusercontent.com/archlinux/svntogit-packages/68f6d131750aa778807119e03eed70286a17b1cb/trunk/archlinux.vim
+        vimrcConfig.customRC = ''
+          syntax on
+          set nocompatible
+          set backspace=indent,eol,start
+          set history=50
+          set ruler
+        '';
+        standalone = true; # prevents desktop entries from showing up
       };
     };
 
