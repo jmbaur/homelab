@@ -50,6 +50,12 @@ use networkd_manager::OrgFreedesktopNetwork1Manager;
 use timedate::OrgFreedesktopTimedate1;
 use upower_device::OrgFreedesktopUPowerDevice;
 
+#[derive(PartialEq)]
+enum Mode {
+    Yambar,
+    I3,
+}
+
 #[derive(Serialize)]
 struct I3header {
     version: u8,
@@ -63,10 +69,9 @@ struct Bar(Vec<Block>);
 
 #[derive(Serialize)]
 struct Block {
-    full_text: String,
     urgent: bool,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    name: Option<String>,
+    full_text: String,
+    name: &'static str,
     #[serde(skip_serializing_if = "Option::is_none")]
     instance: Option<String>,
 }
@@ -89,7 +94,7 @@ impl From<Ref<'_, TimedateState>> for Block {
         Block {
             full_text: format!("{} {}", local.format("%Y-%m-%d %H:%M:%S"), value.timezone),
             urgent: false,
-            name: None,
+            name: "timedate",
             instance: None,
         }
     }
@@ -112,7 +117,7 @@ impl From<Ref<'_, NetworkState>> for Block {
         Block {
             full_text: format!("network: {}", value.online_state),
             urgent: value.online_state == "offline",
-            name: None,
+            name: "network",
             instance: None,
         }
     }
@@ -326,13 +331,25 @@ impl From<Ref<'_, PowerState>> for Block {
                 value.warning_level,
                 PowerWarningLevel::Critical | PowerWarningLevel::Action
             ),
-            name: None,
+            name: "power",
             instance: None,
         }
     }
 }
 
 fn main() -> anyhow::Result<()> {
+    let mut args = std::env::args();
+    args.next(); // argv[0]
+
+    let mode = match args.next().as_deref() {
+        Some("--yambar") => Mode::Yambar,
+        Some("--i3bar") | None => Mode::I3,
+        other => {
+            eprintln!("unknown arg {:?}", other);
+            std::process::exit(1)
+        }
+    };
+
     let header = I3header {
         version: 1,
         stop_signal: SIGUSR1,
@@ -462,8 +479,10 @@ fn main() -> anyhow::Result<()> {
         );
     }
 
-    println!("{}", json!(header));
-    println!("[");
+    if mode == Mode::I3 {
+        println!("{}\n[", json!(header));
+    }
+
     loop {
         if stop.load(Ordering::Relaxed) {
             // Block until we receive the indication we should continue.
@@ -483,6 +502,19 @@ fn main() -> anyhow::Result<()> {
         blocks.push(network_state.borrow().into());
         blocks.push(timedate_state.borrow().into());
 
-        println!("{},", json!(Bar(blocks)));
+        match mode {
+            Mode::I3 => println!("{},", json!(Bar(blocks))),
+            Mode::Yambar => {
+                println!(
+                    "all_output|string|{}",
+                    blocks
+                        .iter()
+                        .map(|block| block.full_text.clone())
+                        .collect::<Vec<String>>()
+                        .join(" | ")
+                );
+                println!("");
+            }
+        }
     }
 }

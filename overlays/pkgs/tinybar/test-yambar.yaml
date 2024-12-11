@@ -1,0 +1,9 @@
+bar:
+  background: 000000ff
+  height: 26
+  location: top
+  right:
+    - script:
+        path: ./target/debug/tinybar
+        args: ["--yambar"]
+        content: {string: {text: "{all_output}"}}
