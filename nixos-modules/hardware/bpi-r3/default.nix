@@ -41,6 +41,13 @@
           hash = "sha256-saqnN7A8nUYPLl7JtC6BEljmb+rmuUcgDIXTb3s55UE=";
         };
       }
+      {
+        name = "watchdog-mediatek-Make-sure-system-reset-gets-asserted-in-mtk_wdt_restart";
+        patch = pkgs.fetchpatch {
+          url = "https://github.com/torvalds/linux/commit/a1495a21e0b8aad92132dfcf9c6fffc1bde9d5b2.patch";
+          hash = "sha256-REnaNAUhOeov/5BcqFbwBT3dXzZ1e3cxVrKSxnnIYyc=";
+        };
+      }
     ];
 
     # needed for mediatek firmware
