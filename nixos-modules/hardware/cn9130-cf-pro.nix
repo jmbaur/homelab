@@ -19,7 +19,7 @@
     ];
 
     hardware.deviceTree.name = "marvell/cn9130-cf-pro.dtb";
-    boot.kernelPackages = pkgs.linuxPackages_6_11; # board first introduced here
+    boot.kernelPackages = pkgs.linuxPackages_6_12; # board introduced in linux 6.11
 
     systemd.network.links = {
       "10-wan" = {
