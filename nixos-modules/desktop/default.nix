@@ -105,8 +105,8 @@ in
       # a shell.
       path = [ pkgs.bash ];
       serviceConfig = {
-        Type = "simple";
-        Restart = "always";
+        Restart = "on-failure";
+        RestartSec = 3;
         ExecStart = toString (
           lib.flatten [
             (lib.getExe pkgs.swayidle)
@@ -146,8 +146,9 @@ in
       partOf = [ "graphical-session.target" ];
       wantedBy = [ "graphical-session.target" ];
       serviceConfig = {
-        ExecStart = "${lib.getExe' pkgs.wl-clipboard "wl-paste"} --type text --watch ${lib.getExe pkgs.clipman} store";
         Restart = "on-failure";
+        RestartSec = 3;
+        ExecStart = "${lib.getExe' pkgs.wl-clipboard "wl-paste"} --type text --watch ${lib.getExe pkgs.clipman} store";
       };
     };
 
@@ -162,8 +163,8 @@ in
       partOf = [ "graphical-session.target" ];
       wantedBy = [ "graphical-session.target" ];
       serviceConfig = {
-        RestartSec = 3;
         Restart = "on-failure";
+        RestartSec = 3;
         ExecStart = toString [
           (lib.getExe pkgs.gammastep)
           "-l"
@@ -189,8 +190,8 @@ in
         }
       '';
       serviceConfig = {
-        Type = "simple";
-        Restart = "always";
+        Restart = "on-failure";
+        RestartSec = 3;
         ExecStart = lib.getExe pkgs.kanshi;
       };
     };
