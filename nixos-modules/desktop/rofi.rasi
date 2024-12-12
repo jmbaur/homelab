@@ -1,26 +1,29 @@
 * {
-    red:                         rgba ( 90, 0, 0, 100 % );
+    red:                         rgba ( 144, 0, 0, 100 % );
+    ebonyclay:                   rgba ( 47, 52, 58, 100 % );
     selected-active-foreground:  var(background);
-    separatorcolor:              rgba ( 66, 66, 66, 100 % );
+    separatorcolor:              rgba ( 102, 102, 102, 100 % );
     urgent-foreground:           var(red);
     alternate-urgent-background: var(lightbg);
-    lightbg:                     rgba ( 33, 33, 33, 100 % );
+    lightbg:                     rgba ( 51, 51, 51, 100 % );
     background-color:            transparent;
     border-color:                var(foreground);
     normal-background:           var(background);
     selected-urgent-background:  var(red);
     alternate-active-background: var(lightbg);
     spacing:                     2;
-    blue:                        rgba ( 28, 55, 77, 100 % );
+    blue:                        rgba ( 40, 85, 119, 100 % );
+    lightblue:                   rgba ( 76, 120, 153, 100 % );
     white:                       rgba ( 255, 255, 255, 100 % );
     alternate-normal-foreground: var(foreground);
     urgent-background:           var(background);
     selected-normal-foreground:  var(white);
     active-foreground:           var(white);
-    background:                  rgba ( 22, 22, 22, 100 % );
+    background:                  rgba ( 34, 34, 34, 100 % );
     selected-active-background:  var(blue);
     active-background:           var(background);
     selected-normal-background:  var(blue);
+    selected-normal-border:      var(lightblue);
     alternate-normal-background: var(lightbg);
     foreground:                  var(white);
     selected-urgent-foreground:  var(background);
@@ -49,6 +52,8 @@ element normal.active {
 element selected.normal {
     background-color: var(selected-normal-background);
     text-color:       var(selected-normal-foreground);
+    border-color:     var(selected-normal-border);
+    border:           1;
 }
 element selected.urgent {
     background-color: var(selected-urgent-background);
