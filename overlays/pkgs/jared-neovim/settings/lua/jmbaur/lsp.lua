@@ -31,29 +31,23 @@ local conditional_efm_languages = {
 }
 
 local toggle_format_on_save = function()
-	local ignoring_buf_write_pre = false
-
-	for _, event in pairs(vim.opt_local.eventignore:get()) do
-		if event == "BufWritePre" then
-			ignoring_buf_write_pre = true
-		end
-	end
-
-	if ignoring_buf_write_pre then
-		vim.opt_local.eventignore:remove({ "BufWritePre" })
-		vim.print("enabled format on save for current buffer")
-	else
-		vim.opt_local.eventignore:append({ "BufWritePre" })
+	if vim.b.format_on_save == nil or vim.b.format_on_save == true then
 		vim.print("disabled format on save for current buffer")
+		vim.b.format_on_save = false
+	else
+		vim.print("enabled format on save for current buffer")
+		vim.b.format_on_save = true
 	end
 end
 
-M.format_on_save = function()
-	if vim.g.format_on_save == nil then
-		vim.g.format_on_save = true
+local format_on_save = function()
+	for _, val in pairs({ vim.b.format_on_save, vim.g.format_on_save }) do
+		if val == false then
+			return false
+		end
 	end
 
-	return vim.g.format_on_save
+	return true
 end
 
 local keymap_opts = function(bufnr, desc)
@@ -65,7 +59,7 @@ M.setup = function(config)
 	local lsp_references = config.launcher.lsp_references
 
 	local org_imports = function()
-		if not (M.format_on_save()) then
+		if not (format_on_save()) then
 			return
 		end
 
@@ -94,7 +88,7 @@ M.setup = function(config)
 					group = lsp_formatting_augroup,
 					buffer = bufnr,
 					callback = function()
-						if M.format_on_save() then
+						if format_on_save() then
 							vim.lsp.buf.format()
 						end
 					end,
@@ -244,7 +238,6 @@ M.setup = function(config)
 	})
 
 	vim.api.nvim_create_user_command("ToggleFormatOnSave", toggle_format_on_save, { desc = "Toggle format on save" })
-	vim.keymap.set("n", "<leader>t", toggle_format_on_save, { desc = "Toggle format on save" })
 end
 
 return M
