@@ -196,6 +196,24 @@ in
       };
     };
 
+    # Fixup orering of some portals to be after graphical-session.target is met.
+    systemd.user.services.xdg-desktop-portal = {
+      after = [ "graphical-session.target" ];
+      partOf = [ "graphical-session.target" ];
+      serviceConfig = {
+        Restart = "on-failure";
+        RestartSec = 3;
+      };
+    };
+    systemd.user.services.xdg-desktop-portal-gtk = {
+      after = [ "graphical-session.target" ];
+      partOf = [ "graphical-session.target" ];
+      serviceConfig = {
+        Restart = "on-failure";
+        RestartSec = 3;
+      };
+    };
+
     system.userActivationScripts.xdg-user-dirs = lib.getExe' pkgs.xdg-user-dirs "xdg-user-dirs-update";
 
     programs.dconf = {
