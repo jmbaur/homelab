@@ -36,6 +36,7 @@
   wrapNeovimUnstable,
   writeText,
   yaml-language-server,
+  zf,
   zls,
   supportAllLanguages ? false,
   cSupport ? supportAllLanguages,
@@ -94,7 +95,6 @@ let
         # start
         ([
           efmls-configs-nvim
-          fzf-lua
           mini-nvim
           nvim-lspconfig
           nvim-treesitter-context
@@ -103,6 +103,9 @@ let
           nvim-treesitter.withAllGrammars
           oil-nvim
           snippets-nvim
+          telescope-nvim
+          telescope-ui-select-nvim
+          telescope-zf-native-nvim
           transparent-nvim
           vim-dispatch
           vim-eunuch
@@ -112,13 +115,13 @@ let
         ++ (map (plugin: {
           inherit plugin;
           optional = true;
-        }) [ ])
+        }) [ fzf-lua ])
       );
   };
 
   binPath = lib.makeBinPath (
     [
-      bat # fzf-lua
+      bat # fzf-lua/telescope
       curl # :Permalink
       efm-langserver
       fd # picker
@@ -127,6 +130,7 @@ let
       inotify-tools # for faster LSP experience
       ripgrep # picker
       skim # fzf-lua
+      zf # telescope
       tree-sitter
     ]
     ++ (lib.optionals cSupport [ clang-tools ])

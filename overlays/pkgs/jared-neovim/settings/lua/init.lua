@@ -8,16 +8,14 @@ vim.g.mapleader = " "
 if #vim.api.nvim_list_uis() > 0 then
 	vim.g.transparent_enabled = true
 
-	local launcher = require("jmbaur.launcher")
-	launcher.setup()
-
 	vim.cmd.colorscheme("lunaperche")
 
 	require("jmbaur.clipboard")
 	require("jmbaur.compile")
 	require("jmbaur.filemanager")
 	require("jmbaur.git")
-	require("jmbaur.lsp").setup({ launcher = launcher })
+	require("jmbaur.launcher")
+	require("jmbaur.lsp")
 	require("jmbaur.readline")
 	require("jmbaur.run").setup()
 	require("jmbaur.sessions")
