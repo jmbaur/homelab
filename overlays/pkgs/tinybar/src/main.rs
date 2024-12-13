@@ -329,7 +329,7 @@ impl From<Ref<'_, PowerState>> for Block {
             },
             urgent: matches!(
                 value.warning_level,
-                PowerWarningLevel::Critical | PowerWarningLevel::Action
+                PowerWarningLevel::Low | PowerWarningLevel::Critical | PowerWarningLevel::Action
             ),
             name: "power",
             instance: None,
