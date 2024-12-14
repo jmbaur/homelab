@@ -59,7 +59,6 @@ in
 
     boot.initrd.availableKernelModules = [
       "phy_qcom_qmp_pcie"
-      "pcie_qcom"
       "phy_qcom"
       "qmp_pcie"
       "phy_qcom_qmp_combo"
