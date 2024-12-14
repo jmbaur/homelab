@@ -1,6 +1,7 @@
 {
   imports = [
     ./armada-388-clearfog
+    ./blackrock
     ./bpi-r3
     ./chromebook
     ./cn9130-cf-pro.nix
