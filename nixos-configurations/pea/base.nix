@@ -30,7 +30,7 @@ in
 {
   disabledModules = [
     "${modulesPath}/profiles/base.nix"
-    "${modulesPath}/profiles/all-hardware.nix"
+    "${modulesPath}/profiles/all-hardware.nix" # TODO(jared): replace with https://github.com/nixos/nixpkgs/commit/08783a39b0fcf8d257fb2c3a708f29d5e3fad04f
   ];
 
   custom.server.enable = true;
