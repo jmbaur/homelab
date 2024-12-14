@@ -39,5 +39,52 @@ in
       enable = true;
       name = "qcom/sc8280xp-microsoft-blackrock.dtb";
     };
+
+    hardware.firmware = [
+      pkgs.linux-firmware
+      (pkgs.fetchurl {
+        name = "wdk2023-firmware";
+        url = "https://github.com/armbian/firmware/archive/8dbb28d2ee8fa3d5f67a9d9dbc64c3d2b3b0adac.tar.gz";
+        downloadToTemp = true;
+        recursiveHash = true;
+        postFetch = ''
+          tmp=$(mktemp -d)
+          tar -C $tmp -xvf $downloadedFile
+          mkdir -p $out/lib/firmware/qcom/sc8280xp/MICROSOFT
+          cp -r $tmp/*/qcom/sc8280xp/MICROSOFT/DEVKIT23 $out/lib/firmware/qcom/sc8280xp/MICROSOFT
+        '';
+        hash = "sha256-jkTaIh3hI5KSOlhGS/xzoxnYfzU8t2VXqq5Yv0NqOpw=";
+      })
+    ];
+
+    boot.initrd.availableKernelModules = [
+      "phy_qcom_qmp_pcie"
+      "pcie_qcom"
+      "phy_qcom"
+      "qmp_pcie"
+      "phy_qcom_qmp_combo"
+      "qrtr"
+      "phy_qcom_edp"
+      "gpio_sbu_mux"
+      "i2c_hid_of"
+      "i2c_qcom_geni"
+      "pmic_glink_altmode"
+      "leds_qcom_lpg"
+      "qcom_q6v5_pas" # This module loads a lot of FW blobs
+      "msm"
+      "nvme"
+      "usb_storage"
+      "uas"
+    ];
+
+    boot.kernelParams = [
+      "efi=noruntime"
+      "clk_ignore_unused"
+      "pd_ignore_unused"
+      "arm64.nopauth"
+      "iommu.passthrough=0"
+      "iommu.strict=0"
+      "pcie_aspm.policy=powersupersave"
+    ];
   };
 }
