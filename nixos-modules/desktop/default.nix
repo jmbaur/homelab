@@ -95,6 +95,12 @@ in
 
     services.dbus.packages = [ pkgs.mako ];
 
+    # Make pinentry-rofi work with gpg-agent
+    systemd.user.services.gpg-agent.path = [
+      pkgs.coreutils # https://github.com/plattfot/pinentry-rofi/blob/fde8e32b8380512e2ba02961ccc99765575e2c89/pinentry-rofi.scm#L338
+      pkgs.rofi-wayland
+    ];
+
     systemd.user.services.swayidle = {
       description = "Idle manager for Wayland";
       documentation = [ "man:swayidle(1)" ];
