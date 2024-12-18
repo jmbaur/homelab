@@ -95,11 +95,9 @@ in
 
     services.dbus.packages = [ pkgs.mako ];
 
-    # Make pinentry-rofi work with gpg-agent
-    systemd.user.services.gpg-agent.path = [
-      pkgs.coreutils # https://github.com/plattfot/pinentry-rofi/blob/fde8e32b8380512e2ba02961ccc99765575e2c89/pinentry-rofi.scm#L338
-      pkgs.rofi-wayland
-    ];
+    # Make pinentry-rofi work with gpg-agent, remove if/when
+    # https://github.com/NixOS/nixpkgs/pull/366240 is merged.
+    systemd.user.services.gpg-agent.path = [ pkgs.rofi-wayland ];
 
     systemd.user.services.swayidle = {
       description = "Idle manager for Wayland";
