@@ -5,6 +5,9 @@
   `cryptsetup luksAddKey --token-id 0 --token-type systemd-tpm2 /path/to/device`.
 - add a recovery boot option
 
+# wireguard
+- systemd-networkd does not auto-update endpoint addresses as DNS resolutions change
+
 # misc
 - multicast on celery: see https://forum.turris.cz/t/solved-mdns-avahi-zeroconf-on-bridges-e-g-br-lan/1150
 
