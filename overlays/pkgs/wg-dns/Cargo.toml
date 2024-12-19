@@ -1,0 +1,10 @@
+[package]
+name = "wg-dns"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.94"
+base64 = "0.22.1"
+defguard_wireguard_rs = "0.4.2"
+hickory-resolver = "0.24.2"
