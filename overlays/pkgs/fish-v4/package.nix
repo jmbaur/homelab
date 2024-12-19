@@ -12,13 +12,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "fish";
-  version = "v4.0.0-alpha1-${builtins.substring 0 7 finalAttrs.src.rev}";
+  version = "4.0b1";
 
   src = fetchFromGitHub {
     owner = "fish-shell";
     repo = "fish-shell";
-    rev = "210d687b2b2780b1862b7c2ed64cd4c0d84acbde";
-    hash = "sha256-mnzA9i/Rt8QvqK0IAyGKVDhg1j4Chg22N1hqABoGmeQ=";
+    rev = finalAttrs.version;
+    hash = "sha256-O5xZHXNrJMpjTA2mrTqzMtU/55UArwoc2adc0R6pVl0=";
   };
 
   cargoDeps = rustPlatform.fetchCargoVendor {
