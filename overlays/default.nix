@@ -84,6 +84,16 @@ inputs: {
         ];
       });
 
+      # Make dbus service file start the systemd service
+      mako = prev.mako.overrideAttrs (old: {
+        postInstall =
+          (old.postInstall or "")
+          + ''
+            substituteInPlace $out/share/dbus-1/services/fr.emersion.mako.service \
+              --replace-fail "Exec=$out/bin/mako" "SystemdService=mako.service"
+          '';
+      });
+
       git-shell-commands = prev.callPackage ./git-shell-commands {
         libgit2 = prev.libgit2.overrideAttrs (_: rec {
           version = "1.5.2";

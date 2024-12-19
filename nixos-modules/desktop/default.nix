@@ -93,7 +93,12 @@ in
       serif = [ "Noto Serif" ];
     };
 
-    services.dbus.packages = [ pkgs.mako ];
+    systemd.packages = [ pkgs.mako ];
+    systemd.user.services.mako.environment.XDG_CONFIG_HOME = pkgs.writeTextDir "mako/config" ''
+      default-timeout=${
+        toString (10 * 1000) # milliseconds
+      }
+    '';
 
     # Make pinentry-rofi work with gpg-agent, remove if/when
     # https://github.com/NixOS/nixpkgs/pull/366240 is merged.
@@ -103,6 +108,7 @@ in
       description = "Idle manager for Wayland";
       documentation = [ "man:swayidle(1)" ];
       unitConfig.ConditionEnvironment = "WAYLAND_DISPLAY";
+      after = [ "graphical-session.target" ];
       partOf = [ "graphical-session.target" ];
       wantedBy = [ "graphical-session.target" ];
       # swayidle executes commands using "sh -c", so the PATH needs to contain
@@ -147,6 +153,7 @@ in
 
     systemd.user.services.clipman = {
       description = "Clipboard management daemon";
+      after = [ "graphical-session.target" ];
       partOf = [ "graphical-session.target" ];
       wantedBy = [ "graphical-session.target" ];
       serviceConfig = {
@@ -181,6 +188,7 @@ in
       description = "Dynamic display management";
       documentation = [ "man:kanshi(1)" ];
       unitConfig.ConditionEnvironment = "WAYLAND_DISPLAY";
+      after = [ "graphical-session.target" ];
       partOf = [ "graphical-session.target" ];
       wantedBy = [ "graphical-session.target" ];
       environment.XDG_CONFIG_HOME = pkgs.writeTextDir "kanshi/config" ''
@@ -248,7 +256,6 @@ in
       pkgs.kanshi
       pkgs.libnotify
       pkgs.mako
-      pkgs.openbox-menu
       pkgs.rofi-wayland
       pkgs.swayidle
       pkgs.swaylock
