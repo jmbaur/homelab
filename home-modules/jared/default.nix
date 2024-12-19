@@ -51,7 +51,6 @@ in
 
     (lib.mkIf cfg.dev.enable {
       home.packages = with pkgs; [
-        # jared-emacs
         _caffeine
         age-plugin-yubikey
         ansifilter
@@ -293,22 +292,6 @@ in
       xdg.configFile."nvim/init.lua".source = pkgs.writeText "init.lua" ''
         vim.opt.exrc = true
       '';
-
-      xdg.configFile."emacs" = {
-        enable = false;
-        recursive = true;
-        source =
-          pkgs.runCommand "jared-emacs-config"
-            {
-              nativeBuildInputs = [ pkgs.buildPackages.jared-emacs ];
-            }
-            ''
-              cp ${./emacs/early-init.el} early-init.el
-              cp ${./emacs/init.el} init.el
-              emacs -L . --batch -f batch-byte-compile *.el
-              install -Dt $out *.elc
-            '';
-      };
     })
   ];
 }

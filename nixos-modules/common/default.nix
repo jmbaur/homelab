@@ -36,14 +36,10 @@ in
       enable = true;
       defaultEditor = true;
       package = pkgs.vim.customize {
-        # from https://raw.githubusercontent.com/archlinux/svntogit-packages/68f6d131750aa778807119e03eed70286a17b1cb/trunk/archlinux.vim
-        vimrcConfig.customRC = ''
-          syntax on
-          set nocompatible
-          set backspace=indent,eol,start
-          set history=50
-          set ruler
-        '';
+        vimrcFile = pkgs.fetchurl {
+          url = "https://raw.githubusercontent.com/archlinux/svntogit-packages/68f6d131750aa778807119e03eed70286a17b1cb/trunk/archlinux.vim";
+          hash = "sha256-DPi0JzIRHQxmw5CKdtgyc26PjcOr74HLCS3fhMuGLqI=";
+        };
         standalone = true; # prevents desktop entries from showing up
       };
     };
@@ -81,7 +77,7 @@ in
 
     programs.tmux = {
       enable = true;
-      keyMode = if config.programs.vim.enable then "vi" else "emacs";
+      keyMode = lib.mkIf (config.programs.vim.enable || config.programs.neovim.enable) "vi";
     };
 
     nix = {
