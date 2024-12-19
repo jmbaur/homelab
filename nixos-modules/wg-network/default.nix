@@ -267,6 +267,34 @@ in
       filterAttrs (_: netdev: netdev.wireguardConfig ? ListenPort) wireguardNetdevs != { }
     ) [ wgPort ];
 
+    systemd.services = mapAttrs' (
+      name: nodeConfig:
+      let
+        interfaceName = config.systemd.network.netdevs."10-wg-${name}".netdevConfig.Name;
+      in
+      {
+        name = "wg-dns@${interfaceName}";
+        value = {
+          wants = [ "network-online.target" ];
+          after = [
+            "network-online.target"
+            "systemd-networkd.service"
+          ];
+          wantedBy = [ "multi-user.target" ];
+          serviceConfig = {
+            Restart = "on-failure";
+            RestartSec = 3;
+            ExecStart = toString [
+              (lib.getExe pkgs.wg-dns)
+              interfaceName
+              nodeConfig.publicKey
+              nodeConfig.endpointHost
+            ];
+          };
+        };
+      }
+    ) peeredNodes;
+
     systemd.network.netdevs = mapAttrs' (name: nodeConfig: {
       name = "10-wg-${name}";
       value = {
