@@ -217,6 +217,9 @@ in
         RestartSec = 3;
       };
     };
+
+    # Can remove when https://github.com/flatpak/xdg-desktop-portal-gtk/commit/473713973cad5d4fb650940850bc4d2e546fdf5b
+    # is released.
     systemd.user.services.xdg-desktop-portal-gtk = {
       after = [ "graphical-session.target" ];
       partOf = [ "graphical-session.target" ];
