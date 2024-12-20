@@ -1,0 +1,17 @@
+diff -Naur a/Makefile.PL b/Makefile.PL
+--- a/Makefile.PL	2024-11-08 05:21:04.000000000 -0800
++++ b/Makefile.PL	2024-12-20 13:24:41.313870050 -0800
+@@ -147,10 +147,10 @@
+ #
+ # Enable tests if we have internet connection	(code lifted from LWP)
+ #
+-use constant USE_SOCKET_IP => defined eval 'use IO::Socket::IP 0.38; 1;';    ## no critic
+-require IO::Socket::INET unless USE_SOCKET_IP;
+-
+ if ($online_tests) {
++	use constant USE_SOCKET_IP => defined eval 'use IO::Socket::IP 0.38; 1;';    ## no critic
++	require IO::Socket::INET unless USE_SOCKET_IP;
++
+ 	my $class = USE_SOCKET_IP ? 'IO::Socket::IP' : 'IO::Socket::INET';
+ 
+ 	my $socket = $class->new(

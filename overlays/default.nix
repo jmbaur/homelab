@@ -19,6 +19,14 @@ inputs: {
       wpa_supplicant = prev.wpa_supplicant.override {
         withPcsclite = final.stdenv.hostPlatform == final.stdenv.buildPlatform;
       };
+
+      perlPackages = prev.perlPackages.overrideScope (
+        _: perlPackagesPrev: {
+          NetDNS = perlPackagesPrev.NetDNS.overrideAttrs (old: {
+            patches = (old.patches or [ ]) ++ [ ./perl-netdns-fix-cross.patch ];
+          });
+        }
+      );
     })
     # all other packages
     (final: prev: {
