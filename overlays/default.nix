@@ -38,19 +38,6 @@ inputs: {
         }
       );
 
-      kdePackages = prev.kdePackages.overrideScope (
-        _: kPrev: {
-          konsole = kPrev.konsole.overrideAttrs (old: {
-            patches = (old.patches or [ ]) ++ [
-              (final.fetchpatch {
-                url = "https://invent.kde.org/utilities/konsole/-/commit/9f7a2b846afbf3d34d10c224a9f3b32ce7aa1379.patch";
-                hash = "sha256-tVGQctr1T8ozSr11jUPuQJdbTIZEqNMHjzBgg7vkvMM=";
-              })
-            ];
-          });
-        }
-      );
-
       gnome-console =
         (prev.gnome-console.overrideAttrs (old: {
           patches = (old.patches or [ ]) ++ [ ./gnome-console-osc52.patch ];
