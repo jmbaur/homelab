@@ -108,12 +108,9 @@ config.key_tables = {
 }
 
 config.keys = {
+	-- { key = "l", mods = "LEADER|SHIFT", action = switch_to_last_active_tab }, -- TODO(jared): implement this
 	{ key = "$", mods = "LEADER|SHIFT", action = rename_workspace },
-	{
-		key = "%",
-		mods = "LEADER|SHIFT",
-		action = action.SplitHorizontal({ domain = "CurrentPaneDomain" }),
-	},
+	{ key = "%", mods = "LEADER|SHIFT", action = action.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
 	{ key = "&", mods = "LEADER|SHIFT", action = action.CloseCurrentTab({ confirm = true }) },
 	{ key = "(", mods = "LEADER|SHIFT", action = action.SwitchWorkspaceRelative(-1) },
 	{ key = ")", mods = "LEADER|SHIFT", action = action.SwitchWorkspaceRelative(1) },
