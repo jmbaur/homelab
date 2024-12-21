@@ -38,8 +38,8 @@
             src = pkgs.fetchFromGitHub {
               owner = "glk1001";
               repo = "plugin.audio.spotify";
-              rev = "377e73f3eb74c2f7693581cd6d63a4eb908d5e94";
-              hash = "sha256-2vwzVS7Sxr/Ubq3sNFsfZgsjctBfSeMWrJJAvSULj+k=";
+              rev = "v1.3.11";
+              hash = "sha256-qztV5+sqWzkXMn3MVNSSTMlvW4eCreBmkXH8wi+1TNc=";
             };
           })
         ]);
