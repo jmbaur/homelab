@@ -293,7 +293,7 @@ in
           };
         };
       }
-    ) peeredNodes;
+    ) (filterAttrs (_: nodeConfig: nodeConfig.initiate) peeredNodes);
 
     systemd.network.netdevs = mapAttrs' (name: nodeConfig: {
       name = "10-wg-${name}";
