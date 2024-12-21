@@ -292,6 +292,8 @@ in
       xdg.configFile."nvim/init.lua".source = pkgs.writeText "init.lua" ''
         vim.opt.exrc = true
       '';
+
+      xdg.configFile."wezterm/wezterm.lua".source = ./wezterm.lua;
     })
   ];
 }

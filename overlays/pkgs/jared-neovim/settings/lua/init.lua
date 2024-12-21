@@ -36,6 +36,6 @@ require("mini.basics").setup({
 	autocommands = { relnum_in_visual_mode = true },
 })
 
-vim.opt.shell = "/bin/sh"
+vim.opt.shell = "/bin/sh" -- should exist everywhere
 vim.opt.showmatch = true
 vim.opt.cursorline = false -- undo what is done in mini.basics

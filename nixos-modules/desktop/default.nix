@@ -251,7 +251,6 @@ in
 
     environment.systemPackages = [
       defaultIconTheme
-      pkgs.alacritty
       pkgs.brightnessctl
       pkgs.clipman
       pkgs.desktop-file-utils
@@ -264,6 +263,7 @@ in
       pkgs.swaylock
       pkgs.tinybar
       pkgs.vanilla-dmz
+      pkgs.wezterm
       pkgs.wl-clipboard
     ];
 
