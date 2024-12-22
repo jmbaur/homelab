@@ -6,8 +6,10 @@ local action = wezterm.action
 local config = wezterm.config_builder()
 
 config.automatically_reload_config = false
+config.check_for_updates = false
 config.color_scheme = "Modus-Vivendi"
 config.default_domain = "local"
+config.default_workspace = "default"
 config.enable_scroll_bar = true
 config.font = wezterm.font("monospace")
 config.front_end = "WebGpu"
@@ -19,7 +21,6 @@ config.unix_domains = { { name = "unix" } }
 config.use_dead_keys = false
 config.use_fancy_tab_bar = false
 config.window_padding = { left = 0, right = 0, top = 0, bottom = 0 }
-config.default_workspace = "default"
 
 local last_active_workspace = { config.default_workspace, config.default_workspace }
 
