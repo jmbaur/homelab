@@ -52,6 +52,7 @@ in
               [
                 "qcadsp8280.mbn"
                 "qccdsp8280.mbn"
+                "qcdxkmsuc8280.mbn"
               ];
         })
         + "/initrd"
