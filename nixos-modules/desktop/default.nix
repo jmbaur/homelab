@@ -9,7 +9,7 @@ let
   cfg = config.custom.desktop;
 
   xcursorSize = 24;
-  xcursorTheme = "DMZ-Black";
+  xcursorTheme = "Adwaita";
 
   lockCmd = "${lib.getExe pkgs.swaylock} --daemonize --show-failed-attempts --color=222222";
 
@@ -237,8 +237,9 @@ in
         {
           settings = {
             "org/gnome/desktop/interface" = {
-              cursor-size = lib.gvariant.mkInt32 24;
-              cursor-theme = "DMZ-Black";
+              cursor-size = lib.gvariant.mkInt32 xcursorSize;
+              cursor-theme = xcursorTheme;
+              gtk-theme = "Adwaita-dark";
             };
           };
         }
@@ -254,6 +255,7 @@ in
       pkgs.brightnessctl
       pkgs.clipman
       pkgs.desktop-file-utils
+      pkgs.gnome-themes-extra
       pkgs.grim
       pkgs.kanshi
       pkgs.libnotify
@@ -262,7 +264,6 @@ in
       pkgs.swayidle
       pkgs.swaylock
       pkgs.tinybar
-      pkgs.vanilla-dmz
       pkgs.wezterm
       pkgs.wl-clipboard
     ];
