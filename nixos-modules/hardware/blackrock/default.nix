@@ -35,6 +35,29 @@ in
       }
     ];
 
+    # TODO(jared): The initrd doesn't include these only because modinfo is not
+    # capable of knowing these are needed.
+    boot.initrd.prepend = [
+      (
+        (pkgs.makeInitrdNG {
+          name = "initrd-extra-firmware";
+          inherit (config.boot.initrd) compressor compressorArgs;
+          inherit (config.boot.initrd.systemd) strip;
+          contents =
+            map
+              (file: {
+                target = "/lib/firmware/qcom/sc8280xp/MICROSOFT/DEVKIT23/${file}";
+                source = "${config.hardware.firmware}/lib/firmware/qcom/sc8280xp/MICROSOFT/DEVKIT23/${file}";
+              })
+              [
+                "qcadsp8280.mbn"
+                "qccdsp8280.mbn"
+              ];
+        })
+        + "/initrd"
+      )
+    ];
+
     hardware.deviceTree = {
       enable = true;
       name = "qcom/sc8280xp-microsoft-blackrock.dtb";
