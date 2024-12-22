@@ -47,8 +47,7 @@ local switch_to_last_active_workspace = wezterm.action_callback(function(window,
 	local current_workspace = wezterm.mux.get_active_workspace()
 
 	local last_active_found = false
-	local workspaces = wezterm.mux.get_workspace_names()
-	for _, workspace in ipairs(workspaces) do
+	for _, workspace in ipairs(wezterm.mux.get_workspace_names()) do
 		if workspace == last_active_workspace[2] then
 			last_active_found = true
 			break
@@ -89,6 +88,89 @@ local rename_workspace = action.PromptInputLine({
 		end
 	end),
 })
+
+-- Equivalent to POSIX basename(3)
+-- Given "/foo/bar" returns "bar"
+-- Given "c:\\foo\\bar" returns "bar"
+function basename(s)
+	return string.gsub(s, "(.*[/\\])(.*)", "%2")
+end
+
+local select_project = wezterm.action_callback(function(outer_window, outer_pane)
+	-- TODO(jared): replace this with something like wezterm.read_dir()
+	local success, stdout, stderr = wezterm.run_child_process({
+		"fd",
+		"^\\.git$",
+		"--hidden",
+		"--type",
+		"directory",
+		"--max-depth",
+		"2",
+		"--no-ignore",
+		"/home/jared/.local/state/projects",
+	})
+	if not success then
+		wezterm.log_error(stderr)
+		return
+	end
+
+	local choices = {}
+
+	for _, line in ipairs(wezterm.split_by_newlines(stdout)) do
+		line = line:gsub("/.git/$", "")
+		table.insert(choices, { id = line, label = basename(line) })
+	end
+
+	outer_window:perform_action(
+		action.InputSelector({
+			action = wezterm.action_callback(function(window, pane, id, label)
+				if not id and not label then
+					return -- cancelled
+				end
+
+				for _, workspace in ipairs(wezterm.mux.get_workspace_names()) do
+					if workspace == label then
+						wezterm.mux.set_active_workspace(label)
+						return
+					end
+				end
+
+				window:perform_action(
+					action.SwitchToWorkspace({
+						name = label,
+						spawn = { cwd = id },
+					}),
+					pane
+				)
+			end),
+			fuzzy = true,
+			title = "Launch a project",
+			choices = choices,
+			alphabet = "123456789",
+			description = "Choose the project you want to launch in a workspace.",
+		}),
+		outer_pane
+	)
+end)
+
+local activate_resize = action.ActivateKeyTable({
+	name = "resize_pane",
+	one_shot = false,
+	prevent_fallback = false,
+	replace_current = false,
+	until_unknown = false,
+})
+
+local activate_passthru = action.ActivateKeyTable({
+	name = "passthru_mode",
+	one_shot = false,
+	prevent_fallback = false,
+	replace_current = false,
+	until_unknown = false,
+})
+
+local show_workspaces = action.ShowLauncherArgs({ flags = "WORKSPACES", title = "workspaces" })
+local show_tabs = action.ShowLauncherArgs({ flags = "TABS", title = "tabs" })
 
 config.key_tables = {
 	copy_mode = {
@@ -193,84 +275,61 @@ config.key_tables = {
 
 config.keys = {
 	-- { key = "l", mods = "LEADER|SHIFT", action = switch_to_last_active_tab }, -- TODO(jared): implement this
-	{ key = "Insert", mods = "SHIFT", action = action.PasteFrom("PrimarySelection") },
-	{ key = "Insert", mods = "CTRL", action = action.CopyTo("PrimarySelection") },
-	{ key = "Copy", mods = "NONE", action = action.CopyTo("Clipboard") },
-	{ key = "Paste", mods = "NONE", action = action.PasteFrom("Clipboard") },
 	{ key = "$", mods = "LEADER|SHIFT", action = rename_workspace },
-	{ key = "%", mods = "LEADER|SHIFT", action = action.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
+	{
+		key = "%",
+		mods = "LEADER|SHIFT",
+		action = action.SplitHorizontal({ domain = "CurrentPaneDomain" }),
+	},
 	{ key = "&", mods = "LEADER|SHIFT", action = action.CloseCurrentTab({ confirm = true }) },
 	{ key = "(", mods = "LEADER|SHIFT", action = action.SwitchWorkspaceRelative(-1) },
+	{ key = ")", mods = "CTRL", action = action.ResetFontSize },
 	{ key = ")", mods = "LEADER|SHIFT", action = action.SwitchWorkspaceRelative(1) },
+	{ key = ")", mods = "SHIFT|CTRL", action = action.ResetFontSize },
+	{ key = "+", mods = "CTRL", action = action.IncreaseFontSize },
+	{ key = "+", mods = "SHIFT|CTRL", action = action.IncreaseFontSize },
 	{ key = ",", mods = "LEADER", action = rename_tab },
-	{ key = ";", mods = "LEADER", action = action.ActivatePaneDirection("Prev") },
-	{ key = "?", mods = "LEADER|SHIFT", action = action.ShowLauncher },
-	{ key = "L", mods = "LEADER|SHIFT", action = switch_to_last_active_workspace },
-	{ key = "[", mods = "LEADER", action = wezterm.action.ActivateCopyMode },
-	{ key = '"', mods = "LEADER|SHIFT", action = action.SplitVertical({ domain = "CurrentPaneDomain" }) },
-	{ key = "]", mods = "LEADER", action = action.PasteFrom("Clipboard") },
-	{ key = "c", mods = "LEADER", action = action.SpawnTab("CurrentPaneDomain") },
-	{ key = "d", mods = "LEADER", action = action.DetachDomain({ DomainName = "unix" }) },
-	{ key = "n", mods = "LEADER", action = action.ActivateTabRelative(1) },
-	{ key = "o", mods = "LEADER", action = action.ActivatePaneDirection("Next") },
-	{ key = "p", mods = "LEADER", action = action.ActivateTabRelative(-1) },
 	{ key = "-", mods = "CTRL", action = action.DecreaseFontSize },
 	{ key = "-", mods = "SHIFT|CTRL", action = action.DecreaseFontSize },
 	{ key = "-", mods = "SUPER", action = action.DecreaseFontSize },
-	{ key = "_", mods = "CTRL", action = action.DecreaseFontSize },
-	{ key = "_", mods = "SHIFT|CTRL", action = action.DecreaseFontSize },
-	{ key = "=", mods = "CTRL", action = action.IncreaseFontSize },
-	{ key = "=", mods = "SHIFT|CTRL", action = action.IncreaseFontSize },
-	{ key = "=", mods = "SUPER", action = action.IncreaseFontSize },
-	{ key = "+", mods = "CTRL", action = action.IncreaseFontSize },
-	{ key = "+", mods = "SHIFT|CTRL", action = action.IncreaseFontSize },
 	{ key = "0", mods = "CTRL", action = action.ResetFontSize },
 	{ key = "0", mods = "SHIFT|CTRL", action = action.ResetFontSize },
 	{ key = "0", mods = "SUPER", action = action.ResetFontSize },
-	{ key = ")", mods = "CTRL", action = action.ResetFontSize },
-	{ key = ")", mods = "SHIFT|CTRL", action = action.ResetFontSize },
+	{ key = ";", mods = "LEADER", action = action.ActivatePaneDirection("Prev") },
+	{ key = "=", mods = "CTRL", action = action.IncreaseFontSize },
+	{ key = "=", mods = "SHIFT|CTRL", action = action.IncreaseFontSize },
+	{ key = "=", mods = "SUPER", action = action.IncreaseFontSize },
+	{ key = "?", mods = "LEADER|SHIFT", action = action.ShowLauncher },
 	{ key = "C", mods = "CTRL", action = action.CopyTo("Clipboard") },
 	{ key = "C", mods = "SHIFT|CTRL", action = action.CopyTo("Clipboard") },
-	{ key = "c", mods = "SHIFT|CTRL", action = action.CopyTo("Clipboard") },
-	{ key = "c", mods = "SUPER", action = action.CopyTo("Clipboard") },
+	{ key = "Copy", mods = "NONE", action = action.CopyTo("Clipboard") },
+	{ key = "Insert", mods = "CTRL", action = action.CopyTo("PrimarySelection") },
+	{ key = "Insert", mods = "SHIFT", action = action.PasteFrom("PrimarySelection") },
+	{ key = "L", mods = "LEADER|SHIFT", action = switch_to_last_active_workspace },
+	{ key = "P", mods = "LEADER|SHIFT", action = activate_passthru },
+	{ key = "Paste", mods = "NONE", action = action.PasteFrom("Clipboard") },
 	{ key = "V", mods = "CTRL", action = action.PasteFrom("Clipboard") },
 	{ key = "V", mods = "SHIFT|CTRL", action = action.PasteFrom("Clipboard") },
+	{ key = "[", mods = "LEADER", action = wezterm.action.ActivateCopyMode },
+	{ key = "]", mods = "LEADER", action = action.PasteFrom("Clipboard") },
+	{ key = "_", mods = "CTRL", action = action.DecreaseFontSize },
+	{ key = "_", mods = "SHIFT|CTRL", action = action.DecreaseFontSize },
+	{ key = "c", mods = "LEADER", action = action.SpawnTab("CurrentPaneDomain") },
+	{ key = "c", mods = "SHIFT|CTRL", action = action.CopyTo("Clipboard") },
+	{ key = "c", mods = "SUPER", action = action.CopyTo("Clipboard") },
+	{ key = "d", mods = "LEADER", action = action.DetachDomain({ DomainName = "unix" }) },
+	{ key = "j", mods = "LEADER", action = select_project },
+	{ key = "n", mods = "LEADER", action = action.ActivateTabRelative(1) },
+	{ key = "o", mods = "LEADER", action = action.ActivatePaneDirection("Next") },
+	{ key = "p", mods = "LEADER", action = action.ActivateTabRelative(-1) },
+	{ key = "r", mods = "LEADER", action = activate_resize },
+	{ key = "s", mods = "LEADER", action = show_workspaces },
 	{ key = "v", mods = "SHIFT|CTRL", action = action.PasteFrom("Clipboard") },
 	{ key = "v", mods = "SUPER", action = action.PasteFrom("Clipboard") },
-	{
-		key = "P",
-		mods = "LEADER|SHIFT",
-		action = action.ActivateKeyTable({
-			name = "passthru_mode",
-			one_shot = false,
-			prevent_fallback = false,
-			replace_current = false,
-			until_unknown = false,
-		}),
-	},
-	{
-		key = "r",
-		mods = "LEADER",
-		action = action.ActivateKeyTable({
-			name = "resize_pane",
-			one_shot = false,
-			prevent_fallback = false,
-			replace_current = false,
-			until_unknown = false,
-		}),
-	},
-	{
-		key = "s",
-		mods = "LEADER",
-		action = action.ShowLauncherArgs({ flags = "WORKSPACES", title = "workspaces" }),
-	},
-	{
-		key = "w",
-		mods = "LEADER",
-		action = action.ShowLauncherArgs({ flags = "TABS", title = "tabs" }),
-	},
+	{ key = "w", mods = "LEADER", action = show_tabs },
 	{ key = "x", mods = "LEADER", action = action.CloseCurrentPane({ confirm = true }) },
 	{ key = "z", mods = "LEADER", action = action.TogglePaneZoomState },
+	{ key = '"', mods = "LEADER|SHIFT", action = action.SplitVertical({ domain = "CurrentPaneDomain" }) },
 	{ key = config.leader.key, mods = "LEADER|CTRL", action = action.SendKey(config.leader) },
 
 	--
