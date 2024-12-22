@@ -2,7 +2,6 @@
   config,
   extendModules,
   lib,
-  modulesPath,
   pkgs,
   utils,
   ...
@@ -77,7 +76,7 @@ let
           {
             _file = "<homelab/nixos-modules/image/installer/default.nix>";
 
-            imports = [ "${modulesPath}/profiles/all-hardware.nix" ]; # TODO(jared): replace with https://github.com/nixos/nixpkgs/commit/08783a39b0fcf8d257fb2c3a708f29d5e3fad04f
+            hardware.enableAllHardware = true;
 
             fileSystems = lib.mkForce { };
             boot.initrd.luks.devices = lib.mkForce { };
