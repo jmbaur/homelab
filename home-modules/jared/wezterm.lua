@@ -47,8 +47,10 @@ local switch_to_last_active_workspace = wezterm.action_callback(function(window,
 
   local current_workspace = wezterm.mux.get_active_workspace()
 
+  local all_workspaces = wezterm.mux.get_workspace_names()
+
   local last_active_found = false
-  for _, workspace in ipairs(wezterm.mux.get_workspace_names()) do
+  for _, workspace in ipairs(all_workspaces) do
     if workspace == last_active_workspace[2] then
       last_active_found = true
       break
@@ -56,7 +58,12 @@ local switch_to_last_active_workspace = wezterm.action_callback(function(window,
   end
 
   if not last_active_found then
-    wezterm.log_warn(string.format('workspace "%s" not found', last_active_workspace[2]))
+    if #all_workspaces == 1 then
+      last_active_workspace[2] = current_workspace
+    else
+      wezterm.log_warn(string.format('workspace "%s" not found', last_active_workspace[2]))
+    end
+
     return
   end
 
@@ -255,7 +262,6 @@ config.key_tables = {
 }
 
 config.keys = {
-  -- { key = "l", mods = "LEADER", action = switch_to_last_active_tab }, -- TODO(jared): implement this
   { key = '"', mods = 'LEADER|SHIFT', action = action.SplitVertical({ domain = 'CurrentPaneDomain' }) },
   { key = '$', mods = 'LEADER|SHIFT', action = rename_workspace },
   { key = '%', mods = 'LEADER|SHIFT', action = action.SplitHorizontal({ domain = 'CurrentPaneDomain' }) },
@@ -297,9 +303,11 @@ config.keys = {
   { key = 'd', mods = 'LEADER', action = action.DetachDomain({ DomainName = 'unix' }) },
   { key = 'd', mods = 'LEADER|SHIFT', action = action.ShowDebugOverlay },
   { key = 'j', mods = 'LEADER', action = select_project },
+  { key = 'l', mods = 'LEADER', action = action.ActivateLastTab },
   { key = 'l', mods = 'LEADER|SHIFT', action = switch_to_last_active_workspace },
   { key = 'n', mods = 'LEADER', action = action.ActivateTabRelative(1) },
   { key = 'o', mods = 'LEADER', action = action.ActivatePaneDirection('Next') },
+  { key = 'o', mods = 'LEADER|CTRL', action = action.RotatePanes('Clockwise') },
   { key = 'p', mods = 'LEADER', action = action.ActivateTabRelative(-1) },
   { key = 'p', mods = 'LEADER|SHIFT', action = activate_passthru },
   { key = 'r', mods = 'LEADER|SHIFT', action = activate_resize },
