@@ -23,7 +23,7 @@ config.use_fancy_tab_bar = false
 config.window_padding = { left = 0, right = 0, top = 0, bottom = 0 }
 config.disable_default_key_bindings = true
 
-local last_active_workspace = { config.default_workspace, config.default_workspace }
+local last_active_workspace = config.default_workspace
 
 wezterm.on('update-status', function(window, _)
   local status = {}
@@ -32,58 +32,59 @@ wezterm.on('update-status', function(window, _)
   local active_key_table = window:active_key_table()
   if active_key_table ~= nil then table.insert(status, { Text = '[' .. active_key_table .. '] ' }) end
 
-  local active_workspace = window:active_workspace()
-  table.insert(status, { Text = active_workspace })
+  table.insert(status, { Text = window:active_workspace() })
   window:set_right_status(wezterm.format(status))
-
-  if last_active_workspace[1] ~= active_workspace then
-    last_active_workspace[2] = last_active_workspace[1]
-    last_active_workspace[1] = active_workspace
-  end
 end)
 
 local switch_to_last_active_workspace = wezterm.action_callback(function(window, pane)
-  _, _ = window, pane
+  _ = pane
 
-  local current_workspace = wezterm.mux.get_active_workspace()
+  local current_workspace = window:active_workspace()
 
   local all_workspaces = wezterm.mux.get_workspace_names()
 
   local last_active_found = false
   for _, workspace in ipairs(all_workspaces) do
-    if workspace == last_active_workspace[2] then
+    if workspace == last_active_workspace then
       last_active_found = true
       break
     end
   end
 
+  -- If the last active workspace we know of no longer exists, look for one
+  -- to activate.
   if not last_active_found then
-    if #all_workspaces == 1 then
-      last_active_workspace[2] = current_workspace
-    else
-      wezterm.log_warn(string.format('workspace "%s" not found', last_active_workspace[2]))
-    end
+    wezterm.log_warn(string.format('workspace "%s" not found', last_active_workspace))
 
-    return
+    -- Fallback to the current workspace.
+    last_active_workspace = current_workspace
+
+    -- Use the first workspace that isn't the same as the current one.
+    for _, workspace in ipairs(all_workspaces) do
+      if workspace ~= current_workspace then
+        last_active_workspace = workspace
+        break
+      end
+    end
   end
 
-  if last_active_workspace[2] == current_workspace then
+  if last_active_workspace == current_workspace then
     wezterm.log_info(string.format('workspace "%s" already active', current_workspace))
     return
   end
 
-  wezterm.mux.set_active_workspace(last_active_workspace[2])
+  wezterm.mux.set_active_workspace(last_active_workspace)
 
-  last_active_workspace[2] = last_active_workspace[1]
-  last_active_workspace[1] = current_workspace
+  last_active_workspace = current_workspace
 end)
 
 local rename_tab = action.PromptInputLine({
   description = 'Rename tab',
   action = wezterm.action_callback(function(window, _, line)
-    if line then -- line is nil if user input is cancelled
-      window:active_tab():set_title(line)
-    end
+    -- Input was cancelled.
+    if line == nil then return end
+
+    window:active_tab():set_title(line)
   end),
 })
 
@@ -91,9 +92,10 @@ local rename_workspace = action.PromptInputLine({
   description = 'Rename workspace',
   action = wezterm.action_callback(function(window, pane, line)
     _, _ = window, pane
-    if line then -- line is nil if user input is cancelled
-      wezterm.mux.rename_workspace(wezterm.mux.get_active_workspace(), line)
-    end
+    -- Input was cancelled.
+    if line == nil then return end
+
+    wezterm.mux.rename_workspace(wezterm.mux.get_active_workspace(), line)
   end),
 })
 
@@ -113,9 +115,10 @@ local select_project = wezterm.action_callback(function(outer_window, outer_pane
   outer_window:perform_action(
     action.InputSelector({
       action = wezterm.action_callback(function(window, pane, id, label)
-        if not id and not label then
-          return -- cancelled
-        end
+        -- Input was cancelled.
+        if not id and not label then return end
+
+        local current_workspace = window:active_workspace()
 
         for _, workspace in ipairs(wezterm.mux.get_workspace_names()) do
           if workspace == label then
@@ -131,6 +134,8 @@ local select_project = wezterm.action_callback(function(outer_window, outer_pane
           }),
           pane
         )
+
+        last_active_workspace = current_workspace
       end),
       fuzzy = true,
       title = 'Launch a project',
@@ -148,15 +153,29 @@ local activate_resize = action.ActivateKeyTable({
 })
 
 local activate_passthru = action.Multiple({
-  action.ClearKeyTableStack, -- ensure there are no other key tables in the stack
+  -- Ensure there are no other key tables in the stack prior to
+  -- switching to passthru mode.
+  action.ClearKeyTableStack,
   action.ActivateKeyTable({
     name = 'passthru_mode',
     one_shot = false,
   }),
 })
 
-local show_workspaces = action.ShowLauncherArgs({ flags = 'WORKSPACES', title = 'workspaces' })
+-- TODO(jared): Need to create custom launcher because this doesn't allow us to
+-- update the last_active_workspace only if the new one is different.
+local show_workspaces = action.Multiple({
+  -- Update the last active workspace.
+  wezterm.action_callback(function(window, pane)
+    _ = pane
+
+    last_active_workspace = window:active_workspace()
+  end),
+  action.ShowLauncherArgs({ flags = 'WORKSPACES', title = 'workspaces' }),
+})
+
 local clear_selection = action.Multiple({ action.ClearSelection, { CopyMode = 'ClearSelectionMode' } })
+
 local copy_and_clear_selection = action.Multiple({
   { CopyTo = 'ClipboardAndPrimarySelection' },
   action.ClearSelection,
