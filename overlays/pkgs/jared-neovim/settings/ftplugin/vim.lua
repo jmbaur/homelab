@@ -1,1 +1,1 @@
-vim.opt_local.keywordprg = ":help"
+vim.opt_local.keywordprg = ':help'

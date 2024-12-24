@@ -1,1 +1,1 @@
-vim.cmd.compiler("tsc")
+vim.cmd.compiler('tsc')
