@@ -149,19 +149,27 @@ local activate_passthru = action.Multiple({
 })
 
 local show_workspaces = action.ShowLauncherArgs({ flags = 'WORKSPACES', title = 'workspaces' })
-local show_tabs = action.ShowLauncherArgs({ flags = 'TABS', title = 'tabs' })
+local clear_selection = action.Multiple({ action.ClearSelection, { CopyMode = 'ClearSelectionMode' } })
+local copy_and_clear_selection = action.Multiple({
+  { CopyTo = 'ClipboardAndPrimarySelection' },
+  action.ClearSelection,
+  { CopyMode = 'ClearSelectionMode' },
+})
 
 config.key_tables = {
   copy_mode = {
-    { key = '/', mods = 'NONE', action = action.CopyMode('EditPattern') },
+    -- { key = 'e', mods = 'CTRL', action = 'scroll viewport down' }, -- TODO(jared): implement this
+    -- { key = 'y', mods = 'CTRL', action = 'scroll viewport up' }, -- TODO(jared): implement this
     { key = '$', mods = 'NONE', action = action.CopyMode('MoveToEndOfLineContent') },
     { key = '$', mods = 'SHIFT', action = action.CopyMode('MoveToEndOfLineContent') },
     { key = ',', mods = 'NONE', action = action.CopyMode('JumpReverse') },
+    { key = '/', mods = 'NONE', action = action.CopyMode('EditPattern') },
     { key = '0', mods = 'NONE', action = action.CopyMode('MoveToStartOfLine') },
     { key = ';', mods = 'NONE', action = action.CopyMode('JumpAgain') },
     { key = 'DownArrow', mods = 'NONE', action = action.CopyMode('MoveDown') },
     { key = 'End', mods = 'NONE', action = action.CopyMode('MoveToEndOfLineContent') },
     { key = 'Enter', mods = 'NONE', action = action.CopyMode('MoveToStartOfNextLine') },
+    { key = 'Escape', mods = 'NONE', action = clear_selection },
     { key = 'F', mods = 'NONE', action = action.CopyMode({ JumpBackward = { prev_char = false } }) },
     { key = 'F', mods = 'SHIFT', action = action.CopyMode({ JumpBackward = { prev_char = false } }) },
     { key = 'G', mods = 'NONE', action = action.CopyMode('MoveToScrollbackBottom') },
@@ -189,6 +197,7 @@ config.key_tables = {
     { key = 'UpArrow', mods = 'NONE', action = action.CopyMode('MoveUp') },
     { key = 'V', mods = 'NONE', action = action.CopyMode({ SetSelectionMode = 'Line' }) },
     { key = 'V', mods = 'SHIFT', action = action.CopyMode({ SetSelectionMode = 'Line' }) },
+    { key = '[', mods = 'CTRL', action = clear_selection },
     { key = '^', mods = 'NONE', action = action.CopyMode('MoveToStartOfLineContent') },
     { key = '^', mods = 'SHIFT', action = action.CopyMode('MoveToStartOfLineContent') },
     { key = 'b', mods = 'ALT', action = action.CopyMode('MoveBackwardWord') },
@@ -214,27 +223,7 @@ config.key_tables = {
     { key = 'v', mods = 'CTRL', action = action.CopyMode({ SetSelectionMode = 'Block' }) },
     { key = 'v', mods = 'NONE', action = action.CopyMode({ SetSelectionMode = 'Cell' }) },
     { key = 'w', mods = 'NONE', action = action.CopyMode('MoveForwardWord') },
-    {
-      key = '[',
-      mods = 'CTRL',
-      action = action.Multiple({ action.ClearSelection, { CopyMode = 'ClearSelectionMode' } }),
-    },
-    {
-      key = 'Escape',
-      mods = 'NONE',
-      action = action.Multiple({ action.ClearSelection, { CopyMode = 'ClearSelectionMode' } }),
-    },
-    -- { key = 'e', mods = 'CTRL', action = 'scroll viewport down' }, -- TODO(jared): implement this
-    -- { key = 'y', mods = 'CTRL', action = 'scroll viewport up' }, -- TODO(jared): implement this
-    {
-      key = 'y',
-      mods = 'NONE',
-      action = action.Multiple({
-        { CopyTo = 'ClipboardAndPrimarySelection' },
-        action.ClearSelection,
-        { CopyMode = 'ClearSelectionMode' },
-      }),
-    },
+    { key = 'y', mods = 'NONE', action = copy_and_clear_selection },
   },
 
   resize_pane = {
@@ -295,7 +284,6 @@ config.keys = {
   { key = 'Copy', mods = 'NONE', action = action.CopyTo('Clipboard') },
   { key = 'Insert', mods = 'CTRL', action = action.CopyTo('PrimarySelection') },
   { key = 'Insert', mods = 'SHIFT', action = action.PasteFrom('PrimarySelection') },
-  { key = 'l', mods = 'LEADER|SHIFT', action = switch_to_last_active_workspace },
   { key = 'Paste', mods = 'NONE', action = action.PasteFrom('Clipboard') },
   { key = 'V', mods = 'CTRL', action = action.PasteFrom('Clipboard') },
   { key = 'V', mods = 'SHIFT|CTRL', action = action.PasteFrom('Clipboard') },
@@ -309,15 +297,15 @@ config.keys = {
   { key = 'd', mods = 'LEADER', action = action.DetachDomain({ DomainName = 'unix' }) },
   { key = 'd', mods = 'LEADER|SHIFT', action = action.ShowDebugOverlay },
   { key = 'j', mods = 'LEADER', action = select_project },
+  { key = 'l', mods = 'LEADER|SHIFT', action = switch_to_last_active_workspace },
   { key = 'n', mods = 'LEADER', action = action.ActivateTabRelative(1) },
   { key = 'o', mods = 'LEADER', action = action.ActivatePaneDirection('Next') },
   { key = 'p', mods = 'LEADER', action = action.ActivateTabRelative(-1) },
   { key = 'p', mods = 'LEADER|SHIFT', action = activate_passthru },
   { key = 'r', mods = 'LEADER|SHIFT', action = activate_resize },
-  { key = 's', mods = 'LEADER', action = show_workspaces },
   { key = 'v', mods = 'SHIFT|CTRL', action = action.PasteFrom('Clipboard') },
   { key = 'v', mods = 'SUPER', action = action.PasteFrom('Clipboard') },
-  { key = 'w', mods = 'LEADER', action = show_tabs },
+  { key = 'w', mods = 'LEADER', action = show_workspaces },
   { key = 'x', mods = 'LEADER', action = action.CloseCurrentPane({ confirm = true }) },
   { key = 'z', mods = 'LEADER', action = action.TogglePaneZoomState },
   { key = config.leader.key, mods = 'LEADER|CTRL', action = action.SendKey(config.leader) },
