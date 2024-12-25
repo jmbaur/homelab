@@ -178,6 +178,9 @@ local show_workspaces = wezterm.action_callback(function(window, pane)
 
         local current_workspace = inner_window:active_workspace()
 
+        -- Nothing to do.
+        if label == current_workspace then return end
+
         if last_active_workspace ~= current_workspace then
           wezterm.mux.set_active_workspace(label)
           last_active_workspace = current_workspace
