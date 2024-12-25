@@ -114,11 +114,11 @@ local select_project = wezterm.action_callback(function(outer_window, outer_pane
 
   outer_window:perform_action(
     action.InputSelector({
-      action = wezterm.action_callback(function(window, pane, id, label)
+      action = wezterm.action_callback(function(inner_window, inner_pane, id, label)
         -- Input was cancelled.
         if not id and not label then return end
 
-        local current_workspace = window:active_workspace()
+        local current_workspace = inner_window:active_workspace()
 
         for _, workspace in ipairs(wezterm.mux.get_workspace_names()) do
           if workspace == label then
@@ -127,12 +127,12 @@ local select_project = wezterm.action_callback(function(outer_window, outer_pane
           end
         end
 
-        window:perform_action(
+        inner_window:perform_action(
           action.SwitchToWorkspace({
             name = label,
             spawn = { cwd = id },
           }),
-          pane
+          inner_pane
         )
 
         last_active_workspace = current_workspace
@@ -140,7 +140,6 @@ local select_project = wezterm.action_callback(function(outer_window, outer_pane
       fuzzy = true,
       title = 'Launch a project',
       choices = choices,
-      alphabet = '123456789',
       description = 'Choose the project you want to launch in a workspace.',
     }),
     outer_pane
@@ -162,17 +161,36 @@ local activate_passthru = action.Multiple({
   }),
 })
 
--- TODO(jared): Need to create custom launcher because this doesn't allow us to
--- update the last_active_workspace only if the new one is different.
-local show_workspaces = action.Multiple({
-  -- Update the last active workspace.
-  wezterm.action_callback(function(window, pane)
-    _ = pane
+local show_workspaces = wezterm.action_callback(function(window, pane)
+  local choices = {}
 
-    last_active_workspace = window:active_workspace()
-  end),
-  action.ShowLauncherArgs({ flags = 'WORKSPACES', title = 'workspaces' }),
-})
+  for _, workspace in ipairs(wezterm.mux.get_workspace_names()) do
+    table.insert(choices, { label = workspace })
+  end
+
+  window:perform_action(
+    action.InputSelector({
+      action = wezterm.action_callback(function(inner_window, inner_pane, id, label)
+        _ = inner_pane
+
+        -- Input was cancelled.
+        if not id and not label then return end
+
+        local current_workspace = inner_window:active_workspace()
+
+        if last_active_workspace ~= current_workspace then
+          wezterm.mux.set_active_workspace(label)
+          last_active_workspace = current_workspace
+        end
+      end),
+      fuzzy = true,
+      title = 'Switch to workspace',
+      choices = choices,
+      description = 'Choose the workspace you want to switch to.',
+    }),
+    pane
+  )
+end)
 
 local clear_selection = action.Multiple({ action.ClearSelection, { CopyMode = 'ClearSelectionMode' } })
 
