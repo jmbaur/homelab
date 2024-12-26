@@ -1,16 +1,14 @@
 {
+  bash-language-server,
   bat,
   clang-tools,
   curl,
-  efm-langserver,
   fd,
   fswatch,
-  ghc,
   git,
   go-tools,
   gofumpt,
   gopls,
-  haskell-language-server,
   inotify-tools,
   lib,
   lua-language-server,
@@ -18,7 +16,6 @@
   neovimUtils,
   nil,
   nixfmt-rfc-style,
-  ormolu,
   pyright,
   ripgrep,
   ruff,
@@ -28,8 +25,7 @@
   shellcheck,
   shfmt,
   skim,
-  taplo,
-  tex-fmt,
+  stylua,
   tree-sitter,
   vimPlugins,
   vimUtils,
@@ -41,14 +37,11 @@
   supportAllLanguages ? false,
   cSupport ? supportAllLanguages,
   goSupport ? supportAllLanguages,
-  haskellSupport ? supportAllLanguages,
-  latexSupport ? supportAllLanguages,
   luaSupport ? supportAllLanguages,
   nixSupport ? supportAllLanguages,
   pythonSupport ? supportAllLanguages,
   rustSupport ? supportAllLanguages,
   shellSupport ? supportAllLanguages,
-  tomlSupport ? supportAllLanguages,
   yamlSupport ? supportAllLanguages,
   zigSupport ? supportAllLanguages,
 }:
@@ -64,14 +57,11 @@ let
           inherit
             cSupport
             goSupport
-            haskellSupport
-            latexSupport
             luaSupport
             nixSupport
             pythonSupport
             rustSupport
             shellSupport
-            tomlSupport
             yamlSupport
             zigSupport
             ;
@@ -94,8 +84,8 @@ let
         with vimPlugins;
         # start
         ([
-          efmls-configs-nvim
           mini-nvim
+          none-ls-nvim
           nvim-lspconfig
           nvim-treesitter-context
           nvim-treesitter-refactor
@@ -123,7 +113,6 @@ let
     [
       bat # fzf-lua/telescope
       curl # :Permalink
-      efm-langserver
       fd # picker
       fswatch # TODO(jared): remove when the following is released: https://github.com/neovim/neovim/commit/55e4301036bb938474fc9768c41e28df867d9286
       git # fugitive, mini-git
@@ -139,13 +128,10 @@ let
       gofumpt
       gopls
     ])
-    ++ (lib.optionals haskellSupport [
-      ghc
-      haskell-language-server
-      ormolu
+    ++ (lib.optionals luaSupport [
+      lua-language-server
+      stylua
     ])
-    ++ (lib.optionals latexSupport [ tex-fmt ])
-    ++ (lib.optionals luaSupport [ lua-language-server ])
     ++ (lib.optionals nixSupport [
       nil
       nixfmt-rfc-style
@@ -155,10 +141,10 @@ let
       rustfmt
     ])
     ++ (lib.optionals shellSupport [
+      bash-language-server
       shellcheck
       shfmt
     ])
-    ++ (lib.optionals tomlSupport [ taplo ])
     ++ (lib.optionals yamlSupport [ yaml-language-server ])
     ++ (lib.optionals zigSupport [ zls ])
     ++ (lib.optionals pythonSupport [
@@ -166,7 +152,6 @@ let
       ruff
     ])
   );
-
 in
 (wrapNeovimUnstable neovim-unwrapped (
   config

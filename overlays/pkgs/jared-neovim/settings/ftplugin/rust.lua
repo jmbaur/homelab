@@ -1,8 +1,9 @@
 vim.g.cargo_makeprg_params = 'build'
 
+local group = vim.api.nvim_create_augroup('RustCompiler', {})
 vim.api.nvim_create_autocmd({ 'BufEnter' }, {
   pattern = { '*.rs' },
-  group = vim.api.nvim_create_augroup('RustCompiler', {}),
+  group = group,
   desc = 'Set Rust compiler',
   once = true,
   callback = function()

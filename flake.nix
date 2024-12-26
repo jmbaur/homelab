@@ -10,8 +10,6 @@
     ipwatch.url = "github:jmbaur/ipwatch";
     nixos-router.inputs.nixpkgs.follows = "nixpkgs";
     nixos-router.url = "github:jmbaur/nixos-router";
-    nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
-    nixos-wsl.url = "github:nix-community/nixos-wsl";
     nixpkgs.url = "github:jmbaur/nixpkgs/jmbaur-nixos-unstable";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";
@@ -31,9 +29,7 @@
     homeConfigurations = import ./home-configurations inputs;
     homeModules = import ./home-modules inputs;
     legacyPackages = import ./legacy-packages.nix inputs;
-    nixosConfigurations =
-      import ./nixos-configurations inputs
-      // import ./nixos-configurations-misc inputs;
+    nixosConfigurations = import ./nixos-configurations inputs;
     nixosModules = import ./nixos-modules inputs;
     overlays = import ./overlays inputs;
   };

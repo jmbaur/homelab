@@ -2,8 +2,9 @@ local sessions = require('mini.sessions')
 
 sessions.setup({})
 
+local group = vim.api.nvim_create_augroup('AutoSessions', {})
 vim.api.nvim_create_autocmd('VimEnter', {
-  group = vim.api.nvim_create_augroup('AutoSessions', {}),
+  group = group,
   nested = true,
   once = true,
   desc = 'Autoread latest session',

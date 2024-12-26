@@ -9,19 +9,23 @@ config.automatically_reload_config = false
 config.check_for_updates = false
 config.color_scheme = 'Modus-Vivendi'
 config.default_domain = 'local'
+config.default_domain = 'local'
+config.default_mux_server_domain = 'unix'
 config.default_workspace = 'default'
-config.enable_scroll_bar = true
+config.disable_default_key_bindings = true
+config.enable_scroll_bar = false
 config.font = wezterm.font('monospace')
 config.front_end = 'WebGpu'
 config.inactive_pane_hsb = { saturation = 0.7, brightness = 0.7 }
 config.leader = { key = 's', mods = 'CTRL' }
 config.switch_to_last_active_tab_when_closing_tab = true
 config.tab_bar_at_bottom = true
+config.tab_max_width = 32 -- twice the default
+config.term = 'wezterm'
 config.unix_domains = { { name = 'unix' } }
 config.use_dead_keys = false
 config.use_fancy_tab_bar = false
 config.window_padding = { left = 0, right = 0, top = 0, bottom = 0 }
-config.disable_default_key_bindings = true
 
 local last_active_workspace = config.default_workspace
 
@@ -320,7 +324,7 @@ config.keys = {
   { key = '0', mods = 'CTRL', action = action.ResetFontSize },
   { key = '0', mods = 'SHIFT|CTRL', action = action.ResetFontSize },
   { key = '0', mods = 'SUPER', action = action.ResetFontSize },
-  { key = ';', mods = 'LEADER', action = action.ActivatePaneDirection('Prev') },
+  { key = ';', mods = 'LEADER', action = action.ActivatePaneDirection('Prev') }, -- TODO(jared): not entirely true, this is supposed to go to the last active pane
   { key = '=', mods = 'CTRL', action = action.IncreaseFontSize },
   { key = '=', mods = 'SHIFT|CTRL', action = action.IncreaseFontSize },
   { key = '=', mods = 'SUPER', action = action.IncreaseFontSize },
@@ -342,6 +346,7 @@ config.keys = {
   { key = 'c', mods = 'SUPER', action = action.CopyTo('Clipboard') },
   { key = 'd', mods = 'LEADER', action = action.DetachDomain({ DomainName = 'unix' }) },
   { key = 'd', mods = 'LEADER|SHIFT', action = action.ShowDebugOverlay },
+  { key = 'f', mods = 'LEADER|SHIFT', action = action.QuickSelect },
   { key = 'j', mods = 'LEADER', action = select_project },
   { key = 'l', mods = 'LEADER', action = action.ActivateLastTab },
   { key = 'l', mods = 'LEADER|SHIFT', action = switch_to_last_active_workspace },
