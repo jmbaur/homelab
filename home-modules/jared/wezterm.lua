@@ -284,11 +284,13 @@ config.key_tables = {
     { key = 'RightArrow', mods = 'NONE', action = action.AdjustPaneSize({ 'Right', 1 }) },
     { key = 'UpArrow', mods = 'NONE', action = action.AdjustPaneSize({ 'Up', 1 }) },
     { key = '[', mods = 'CTRL', action = action.PopKeyTable },
+    { key = 'c', mods = 'CTRL', action = action.PopKeyTable },
+    { key = 'g', mods = 'CTRL', action = action.PopKeyTable },
     { key = 'h', mods = 'NONE', action = action.AdjustPaneSize({ 'Left', 1 }) },
     { key = 'j', mods = 'NONE', action = action.AdjustPaneSize({ 'Down', 1 }) },
     { key = 'k', mods = 'NONE', action = action.AdjustPaneSize({ 'Up', 1 }) },
     { key = 'l', mods = 'NONE', action = action.AdjustPaneSize({ 'Right', 1 }) },
-    { key = 'r', mods = 'LEADER', action = action.PopKeyTable },
+    { key = 'r', mods = 'LEADER|SHIFT', action = action.PopKeyTable },
   },
 
   search_mode = {
