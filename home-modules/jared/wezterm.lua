@@ -165,7 +165,7 @@ local activate_passthru = action.Multiple({
   }),
 })
 
-local show_workspaces = wezterm.action_callback(function(window, pane)
+local switch_workspaces = wezterm.action_callback(function(window, pane)
   local choices = {}
 
   for _, workspace in ipairs(wezterm.mux.get_workspace_names()) do
@@ -185,10 +185,7 @@ local show_workspaces = wezterm.action_callback(function(window, pane)
         -- Nothing to do.
         if label == current_workspace then return end
 
-        if last_active_workspace ~= current_workspace then
-          wezterm.mux.set_active_workspace(label)
-          last_active_workspace = current_workspace
-        end
+        wezterm.mux.set_active_workspace(label)
       end),
       fuzzy = true,
       title = 'Switch to workspace',
@@ -360,7 +357,7 @@ config.keys = {
   { key = 'r', mods = 'LEADER|SHIFT', action = activate_resize },
   { key = 'v', mods = 'SHIFT|CTRL', action = action.PasteFrom('Clipboard') },
   { key = 'v', mods = 'SUPER', action = action.PasteFrom('Clipboard') },
-  { key = 'w', mods = 'LEADER', action = show_workspaces },
+  { key = 'w', mods = 'LEADER', action = switch_workspaces },
   { key = 'x', mods = 'LEADER', action = action.CloseCurrentPane({ confirm = true }) },
   { key = 'z', mods = 'LEADER', action = action.TogglePaneZoomState },
   { key = config.leader.key, mods = 'LEADER|CTRL', action = action.SendKey(config.leader) },

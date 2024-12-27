@@ -32,12 +32,6 @@ in
     networking.wireless.iwd.enable = true;
     networking.networkmanager.wifi.backend = "iwd";
 
-    services.displayManager.sddm = {
-      enable = true;
-      wayland.enable = true;
-    };
-    services.desktopManager.plasma6.enable = true;
-
     services.flatpak.enable = true;
 
     programs.sway = {
@@ -275,7 +269,7 @@ in
     ];
 
     services.greetd = {
-      enable = false;
+      enable = true;
       settings.default_session.command = "${lib.getExe' pkgs.greetd.greetd "agreety"} --cmd \"systemd-cat --identifier=sway sway\"";
     };
 
