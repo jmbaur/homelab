@@ -71,6 +71,25 @@ let
 
   jmbaur-config = vimUtils.buildVimPlugin {
     name = "jmbaur-nvim-config";
+    dependencies = with vimPlugins; [
+      mini-nvim
+      none-ls-nvim
+      nvim-lspconfig
+      nvim-treesitter-context
+      nvim-treesitter-refactor
+      nvim-treesitter-textobjects
+      nvim-treesitter.withAllGrammars
+      oil-nvim
+      plenary-nvim
+      snippets-nvim
+      telescope-nvim
+      telescope-ui-select-nvim
+      telescope-zf-native-nvim
+      transparent-nvim
+      vim-dispatch
+      vim-eunuch
+      vim-fugitive
+    ];
     src = runCommand "jmbaur-nvim-config-src" { inherit langSupportLua; } ''
       cp -r ${./settings} $out
       substituteInPlace $out/lua/init.lua --subst-var langSupportLua
@@ -78,35 +97,7 @@ let
   };
 
   config = neovimUtils.makeNeovimConfig {
-    plugins =
-      [ jmbaur-config ]
-      ++ (
-        with vimPlugins;
-        # start
-        ([
-          mini-nvim
-          none-ls-nvim
-          nvim-lspconfig
-          nvim-treesitter-context
-          nvim-treesitter-refactor
-          nvim-treesitter-textobjects
-          nvim-treesitter.withAllGrammars
-          oil-nvim
-          snippets-nvim
-          telescope-nvim
-          telescope-ui-select-nvim
-          telescope-zf-native-nvim
-          transparent-nvim
-          vim-dispatch
-          vim-eunuch
-          vim-fugitive
-        ])
-        # opt
-        ++ (map (plugin: {
-          inherit plugin;
-          optional = true;
-        }) [ fzf-lua ])
-      );
+    plugins = [ jmbaur-config ];
   };
 
   binPath = lib.makeBinPath (
