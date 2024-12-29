@@ -204,6 +204,13 @@ local copy_and_clear_selection = action.Multiple({
   { CopyMode = 'ClearSelectionMode' },
 })
 
+local move_pane_to_new_tab = wezterm.action_callback(function(_, pane)
+  local tab, window = pane:move_to_new_tab()
+  _ = window
+
+  tab:activate()
+end)
+
 config.key_tables = {
   copy_mode = {
     -- { key = 'e', mods = 'CTRL', action = 'scroll viewport down' }, -- TODO(jared): implement this
@@ -305,6 +312,7 @@ config.key_tables = {
 }
 
 config.keys = {
+  { key = '!', mods = 'LEADER|SHIFT', action = move_pane_to_new_tab },
   { key = '"', mods = 'LEADER|SHIFT', action = action.SplitVertical({ domain = 'CurrentPaneDomain' }) },
   { key = '$', mods = 'LEADER|SHIFT', action = rename_workspace },
   { key = '%', mods = 'LEADER|SHIFT', action = action.SplitHorizontal({ domain = 'CurrentPaneDomain' }) },
