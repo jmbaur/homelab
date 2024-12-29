@@ -29,5 +29,4 @@
     boot.uefi.enable = true;
     installer.targetDisk = "/dev/nvme0n1";
   };
-
 }
