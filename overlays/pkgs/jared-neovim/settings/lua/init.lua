@@ -6,10 +6,6 @@ vim.g.mapleader = ' '
 
 -- If not using nvim's remote UI
 if #vim.api.nvim_list_uis() > 0 then
-  vim.g.transparent_enabled = true
-
-  vim.cmd.colorscheme('lunaperche')
-
   require('jmbaur.clipboard')
   require('jmbaur.compile')
   require('jmbaur.filemanager')

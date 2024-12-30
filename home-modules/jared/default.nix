@@ -108,7 +108,6 @@ in
         rage
         ripgrep
         sd
-        shpool
         strace-with-colors
         tcpdump
         tea
@@ -141,15 +140,6 @@ in
         .git
       '';
 
-      xdg.configFile."shpool/config.toml".source = (pkgs.formats.toml { }).generate "shpool-config.toml" {
-        keybinding = [
-          {
-            action = "detach";
-            binding = "Ctrl-s d";
-          }
-        ];
-      };
-
       programs.nix-index.enable = true;
 
       programs.zoxide.enable = true;
@@ -171,6 +161,8 @@ in
         controlPath = "/run/user/%i/ssh-%C";
         matchBlocks."*.local".forwardAgent = true;
       };
+
+      programs.fish.enable = true;
 
       programs.gh.enable = true;
 

@@ -32,7 +32,6 @@
   wrapNeovimUnstable,
   writeText,
   yaml-language-server,
-  zf,
   zls,
   supportAllLanguages ? false,
   cSupport ? supportAllLanguages,
@@ -81,11 +80,9 @@ let
       nvim-treesitter.withAllGrammars
       oil-nvim
       plenary-nvim
-      snippets-nvim
       telescope-nvim
       telescope-ui-select-nvim
       telescope-zf-native-nvim
-      transparent-nvim
       vim-dispatch
       vim-eunuch
       vim-fugitive
@@ -110,7 +107,6 @@ let
       inotify-tools # for faster LSP experience
       ripgrep # picker
       skim # fzf-lua
-      zf # telescope
       tree-sitter
     ]
     ++ (lib.optionals cSupport [ clang-tools ])

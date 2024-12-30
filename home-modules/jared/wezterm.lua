@@ -5,16 +5,21 @@ local action = wezterm.action
 
 local config = wezterm.config_builder()
 
+-- modus vivendi adapted to fit with default neovim colorscheme
+local modus_vivendi_modified = wezterm.color.get_builtin_schemes()['Modus-Vivendi']
+modus_vivendi_modified.background = '#14161b' -- https://github.com/neovim/neovim/blob/259573db831755ba55276f49f963679164dcb1b0/src/nvim/highlight_group.c#L2933
+modus_vivendi_modified.foreground = '#e0e2ea' -- https://github.com/neovim/neovim/blob/259573db831755ba55276f49f963679164dcb1b0/src/nvim/highlight_group.c#L2947
+
 config.automatically_reload_config = false
 config.check_for_updates = false
-config.color_scheme = 'Modus-Vivendi'
+config.color_scheme = 'jared'
+config.color_schemes = { jared = modus_vivendi_modified }
 config.default_domain = 'local'
 config.default_domain = 'local'
 config.default_mux_server_domain = 'unix'
 config.default_workspace = 'default'
 config.disable_default_key_bindings = true
 config.enable_scroll_bar = false
-config.font = wezterm.font('monospace')
 config.front_end = 'WebGpu'
 config.inactive_pane_hsb = { saturation = 0.7, brightness = 0.7 }
 config.leader = { key = 's', mods = 'CTRL' }
