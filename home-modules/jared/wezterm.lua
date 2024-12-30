@@ -218,6 +218,10 @@ local move_pane_to_new_tab = wezterm.action_callback(function(_, pane)
   tab:activate()
 end)
 
+local move_tab_to_last = wezterm.action_callback(
+  function(window, pane) window:perform_action(action.MoveTab(#window:mux_window():tabs() - 1), pane) end
+)
+
 config.key_tables = {
   copy_mode = {
     -- { key = 'e', mods = 'CTRL', action = 'scroll viewport down' }, -- TODO(jared): implement this
@@ -334,6 +338,7 @@ config.keys = {
   { key = '-', mods = 'CTRL', action = action.DecreaseFontSize },
   { key = '-', mods = 'SHIFT|CTRL', action = action.DecreaseFontSize },
   { key = '-', mods = 'SUPER', action = action.DecreaseFontSize },
+  { key = '.', mods = 'LEADER', action = move_tab_to_last },
   { key = '/', mods = 'LEADER', action = action.Search('CurrentSelectionOrEmptyString') },
   { key = '0', mods = 'CTRL', action = action.ResetFontSize },
   { key = '0', mods = 'SHIFT|CTRL', action = action.ResetFontSize },
