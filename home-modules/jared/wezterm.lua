@@ -186,6 +186,8 @@ local switch_workspaces = wezterm.action_callback(function(window, pane)
         if label == current_workspace then return end
 
         wezterm.mux.set_active_workspace(label)
+
+        last_active_workspace = current_workspace
       end),
       fuzzy = true,
       title = 'Switch to workspace',

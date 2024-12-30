@@ -16,6 +16,8 @@ in
     };
 
     dev.enable = mkEnableOption "dev";
+
+    gui.enable = mkEnableOption "gui";
   };
 
   config = lib.mkMerge [
@@ -51,6 +53,7 @@ in
 
     (lib.mkIf cfg.dev.enable {
       home.packages = with pkgs; [
+        (if cfg.gui.enable then wezterm else wezterm.headless)
         _caffeine
         age-plugin-yubikey
         ansifilter
@@ -62,7 +65,6 @@ in
         copy
         curl
         dig
-        dt
         fd
         file
         fsrx

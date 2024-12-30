@@ -1,1 +1,7 @@
-../x86_64-dev.nix
+{
+  system = "x86_64-linux";
+  modules = [
+    ../dev.nix
+    ../gui.nix
+  ];
+}
