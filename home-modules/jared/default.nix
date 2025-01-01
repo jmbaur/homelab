@@ -163,6 +163,7 @@ in
       };
 
       programs.fish.enable = true;
+      programs.nushell.enable = true;
 
       programs.gh.enable = true;
 

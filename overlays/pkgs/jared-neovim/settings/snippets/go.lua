@@ -1,3 +1,3 @@
 return {
-  iferr = { prefix = 'iferr', body = 'if err != nil { $1 }' },
+	iferr = { prefix = "iferr", body = "if err != nil { $1 }" },
 }

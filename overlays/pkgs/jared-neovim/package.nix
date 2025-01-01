@@ -1,6 +1,5 @@
 {
   bash-language-server,
-  bat,
   clang-tools,
   curl,
   fd,
@@ -16,6 +15,7 @@
   neovimUtils,
   nil,
   nixfmt-rfc-style,
+  nushell,
   pyright,
   ripgrep,
   ruff,
@@ -24,9 +24,7 @@
   rustfmt,
   shellcheck,
   shfmt,
-  skim,
   stylua,
-  tree-sitter,
   vimPlugins,
   vimUtils,
   wrapNeovimUnstable,
@@ -38,6 +36,7 @@
   goSupport ? supportAllLanguages,
   luaSupport ? supportAllLanguages,
   nixSupport ? supportAllLanguages,
+  nushellSupport ? supportAllLanguages,
   pythonSupport ? supportAllLanguages,
   rustSupport ? supportAllLanguages,
   shellSupport ? supportAllLanguages,
@@ -58,6 +57,7 @@ let
             goSupport
             luaSupport
             nixSupport
+            nushellSupport
             pythonSupport
             rustSupport
             shellSupport
@@ -99,15 +99,12 @@ let
 
   binPath = lib.makeBinPath (
     [
-      bat # fzf-lua/telescope
       curl # :Permalink
       fd # picker
       fswatch # TODO(jared): remove when the following is released: https://github.com/neovim/neovim/commit/55e4301036bb938474fc9768c41e28df867d9286
       git # fugitive, mini-git
       inotify-tools # for faster LSP experience
       ripgrep # picker
-      skim # fzf-lua
-      tree-sitter
     ]
     ++ (lib.optionals cSupport [ clang-tools ])
     ++ (lib.optionals goSupport [
@@ -123,6 +120,7 @@ let
       nil
       nixfmt-rfc-style
     ])
+    ++ (lib.optionals nushellSupport [ nushell ])
     ++ (lib.optionals rustSupport [
       rust-analyzer
       rustfmt

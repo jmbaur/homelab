@@ -89,18 +89,6 @@ inputs: {
           '';
       });
 
-      git-shell-commands = prev.callPackage ./git-shell-commands {
-        libgit2 = prev.libgit2.overrideAttrs (_: rec {
-          version = "1.5.2";
-          src = final.fetchFromGitHub {
-            owner = "libgit2";
-            repo = "libgit2";
-            rev = "v${version}";
-            hash = "sha256-zZetfuiSpiO0rRtZjBFOAqbdi+sCwl120utnXLtqMm0=";
-          };
-        });
-      };
-
       jared-neovim-all-languages = final.jared-neovim.override { supportAllLanguages = true; };
 
       uboot-clearfog_uart = prev.uboot-clearfog.override {
