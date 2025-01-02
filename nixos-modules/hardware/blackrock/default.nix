@@ -1,3 +1,5 @@
+# TODO(jared): wifi: https://bugzilla.kernel.org/show_bug.cgi?id=219454
+
 {
   config,
   lib,
@@ -6,7 +8,15 @@
 }:
 
 let
-  inherit (lib) mkDefault mkEnableOption mkIf;
+  inherit (lib)
+    mkDefault
+    mkEnableOption
+    mkIf
+    replaceStrings
+    ;
+
+  patchName =
+    name: (replaceStrings [ " " "[" "]" "," "/" ":" ] [ "-" "" "" "_" "_" "" ] name) + ".patch";
 in
 {
   options.hardware.blackrock.enable = mkEnableOption "microsoft,blackrock";
@@ -14,23 +24,31 @@ in
   config = mkIf config.hardware.blackrock.enable {
     nixpkgs.hostPlatform = mkDefault "aarch64-linux";
 
-    boot.kernelPackages = pkgs.linuxPackages_6_12;
+    boot.kernelPackages = pkgs.linuxPackages_testing;
 
     boot.kernelPatches = [
-      {
-        name = "WDK2023-dt-definition";
+      rec {
+        name = patchName "[v7,1/3] dt-bindings: arm: qcom: Add Microsoft Windows Dev Kit 2023";
         patch = pkgs.fetchpatch {
-          name = "arm64-dts-qcom-sc8280xp-wdk2023-dt-definition-for-WDK2023";
-          url = "https://lore.kernel.org/lkml/20240920-jg-blackrock-for-upstream-v2-1-9bf2f1b2191c@oldschoolsolutions.biz/raw";
-          hash = "sha256-vntEigchJDzCvR9hapKe7CrhKo1y442NZ/q8+dvUayc=";
+          inherit name;
+          url = "https://patches.linaro.org/project/linux-arm-msm/patch/20241101-jg-blackrock-for-upstream-v7-1-8295e9f545d9@oldschoolsolutions.biz/raw";
+          hash = "sha256-oNj8qFL7gaiTBHe0gDmIaJnqCasICeB2hdXSCsqFDL4=";
         };
       }
-      {
-        name = "WDK2023-dt-bindings";
+      rec {
+        name = patchName "[v7,2/3] firmware: qcom: scm: Allow QSEECOM for Windows Dev Kit 2023";
         patch = pkgs.fetchpatch {
-          name = "dt-bindings-arm-qcom-Add-Microsoft-Windows-Dev-Kit-2023";
-          url = "https://lore.kernel.org/lkml/20240920-jg-blackrock-for-upstream-v2-2-9bf2f1b2191c@oldschoolsolutions.biz/raw";
-          hash = "sha256-gXGCGUVLch8HjbdUUoL/ga2tbzRLydVKa7hlUeAGB7E=";
+          inherit name;
+          url = "https://patches.linaro.org/project/linux-arm-msm/patch/20241101-jg-blackrock-for-upstream-v7-2-8295e9f545d9@oldschoolsolutions.biz/raw";
+          hash = "sha256-HXGhcugd3QUcZXP5UhVhzRPSy6goFHgy9gqWqK3jvsg=";
+        };
+      }
+      rec {
+        name = patchName "[v7,3/3] arm64: dts: qcom: sc8280xp-blackrock: dt definition for WDK2023";
+        patch = pkgs.fetchpatch {
+          inherit name;
+          url = "https://patches.linaro.org/project/linux-arm-msm/patch/20241101-jg-blackrock-for-upstream-v7-3-8295e9f545d9@oldschoolsolutions.biz/raw";
+          hash = "sha256-o2v3zOb3hj9KKvQj4yjdEydorH/KOx2acA+YHHWsRQ8=";
         };
       }
     ];
