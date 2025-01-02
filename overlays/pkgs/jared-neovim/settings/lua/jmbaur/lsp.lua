@@ -207,35 +207,35 @@ sign_symbol("Info", left_aligned_line)
 sign_symbol("Ok", left_aligned_line)
 sign_symbol("Warn", left_aligned_line)
 
-local group = vim.api.nvim_create_augroup("DiagnostickQuickfix", { clear = true })
+-- local group = vim.api.nvim_create_augroup("DiagnostickQuickfix", { clear = true })
 
-local insert_leave_auto_cmds = { "InsertLeave", "CursorHoldI" }
-vim.api.nvim_create_autocmd(insert_leave_auto_cmds, {
-	group = group,
-	callback = function()
-		local all_errors = vim.diagnostic.get(nil, { severity = vim.diagnostic.severity.ERROR })
+-- local insert_leave_auto_cmds = { "InsertLeave", "CursorHoldI" }
+-- vim.api.nvim_create_autocmd(insert_leave_auto_cmds, {
+-- 	group = group,
+-- 	callback = function()
+-- 		local all_errors = vim.diagnostic.get(nil, { severity = vim.diagnostic.severity.ERROR })
+--
+-- 		if #all_errors > 0 then
+-- 			vim.api.nvim_command(string.format("botright copen %d", math.min(#all_errors, 10)))
+-- 			vim.api.nvim_command("wincmd p")
+-- 		end
+-- 	end,
+-- })
 
-		if #all_errors > 0 then
-			vim.api.nvim_command(string.format("botright copen %d", math.min(#all_errors, 10)))
-			vim.api.nvim_command("wincmd p")
-		end
-	end,
-})
-
-vim.api.nvim_create_autocmd("DiagnosticChanged", {
-	group = group,
-	callback = function(event)
-		local all_errors = vim.tbl_filter(function(diagnostic)
-			return diagnostic.severity == vim.diagnostic.severity.ERROR
-		end, event.data.diagnostics)
-
-		vim.fn.setqflist({}, " ", { title = "Errors", items = vim.diagnostic.toqflist(all_errors) })
-
-		if #all_errors == 0 then
-			vim.api.nvim_command("cclose")
-		end
-	end,
-})
+-- vim.api.nvim_create_autocmd("DiagnosticChanged", {
+-- 	group = group,
+-- 	callback = function(event)
+-- 		local all_errors = vim.tbl_filter(function(diagnostic)
+-- 			return diagnostic.severity == vim.diagnostic.severity.ERROR
+-- 		end, event.data.diagnostics)
+--
+-- 		vim.fn.setqflist({}, " ", { title = "Errors", items = vim.diagnostic.toqflist(all_errors) })
+--
+-- 		if #all_errors == 0 then
+-- 			vim.api.nvim_command("cclose")
+-- 		end
+-- 	end,
+-- })
 
 -- Don't use `vim.lsp.formatexpr` for lsp attached buffers. This allows
 -- for reflowing comments with 'gq'.
