@@ -17,6 +17,13 @@ let
 
   patchName =
     name: (replaceStrings [ " " "[" "]" "," "/" ":" ] [ "-" "" "" "_" "_" "" ] name) + ".patch";
+
+  wdk2023_syshacks = pkgs.fetchFromGitHub {
+    owner = "jglathe";
+    repo = "wdk2023_syshacks";
+    rev = "359b6c2304516f5ea3f754214625a720cc976ef6";
+    hash = "sha256-84QB1jGQwQWEq3gZ3I1vG3DKAxXCC5eKbkZo2egmFuU=";
+  };
 in
 {
   options.hardware.blackrock.enable = mkEnableOption "microsoft,blackrock";
@@ -83,7 +90,15 @@ in
     };
 
     hardware.firmware = [
-      pkgs.linux-firmware
+      (pkgs.linux-firmware.overrideAttrs (old: {
+        postInstall =
+          (old.postInstall or "")
+          # bash
+          + ''
+            pushd ${wdk2023_syshacks}/usr/lib/firmware/updates
+            find . ! -name '*zst' -type f -exec sh -c 'cp -vf {} $out/lib/firmware/{}' \;
+          '';
+      }))
       (pkgs.fetchurl {
         name = "wdk2023-firmware";
         url = "https://github.com/armbian/firmware/archive/8dbb28d2ee8fa3d5f67a9d9dbc64c3d2b3b0adac.tar.gz";
