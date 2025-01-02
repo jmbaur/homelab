@@ -87,6 +87,10 @@ end
 
 local open_project = function(projects_dir)
 	return function(selection)
+		if selection == "" then
+			return
+		end
+
 		vim.api.nvim_command("$tabnew")
 		vim.api.nvim_command(string.format("tcd %s", vim.fs.joinpath(projects_dir, selection)))
 	end
