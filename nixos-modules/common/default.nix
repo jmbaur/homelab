@@ -86,6 +86,7 @@ in
       distributedBuilds = true;
       settings = {
         auto-allocate-uids = true;
+        sync-before-registering = true;
         trusted-users = [ "@wheel" ];
         experimental-features = [
           "auto-allocate-uids"
