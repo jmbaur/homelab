@@ -20,6 +20,7 @@ if #vim.api.nvim_list_uis() > 0 then
 	require("jmbaur.run")
 	require("jmbaur.sessions")
 	require("jmbaur.snippets")
+	require("jmbaur.terminal")
 	require("jmbaur.treesitter")
 	require("mini.trailspace").setup({})
 

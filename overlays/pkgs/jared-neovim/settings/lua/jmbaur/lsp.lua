@@ -64,7 +64,7 @@ local get_on_attach = function(settings)
 
 	return function(client, bufnr)
 		-- Always display sign column for LSP enabled windows.
-		vim.wo.signcolumn = "yes:1"
+		vim.opt_local.signcolumn = "yes:1"
 
 		local client_supports_formatting = client.supports_method("textDocument/formatting")
 
