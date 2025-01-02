@@ -33,7 +33,16 @@ in
 
     boot.kernelPackages = pkgs.linuxPackages_testing;
 
+    boot.consoleLogLevel = 7;
+
     boot.kernelPatches = [
+      # {
+      #   name = "wdk2023-enablement";
+      #   patch = null;
+      #   extraStructuredConfig = {
+      #     ARM_SMMU_QCOM_DEBUG = lib.kernel.yes;
+      #   };
+      # }
       rec {
         name = patchName "[v7,1/3] dt-bindings: arm: qcom: Add Microsoft Windows Dev Kit 2023";
         patch = pkgs.fetchpatch {
@@ -71,6 +80,8 @@ in
       name = "qcom/sc8280xp-microsoft-blackrock.dtb";
     };
 
+    hardware.enableAllHardware = true;
+
     hardware.firmware = [
       (pkgs.linux-firmware.overrideAttrs (old: {
         postInstall =
@@ -104,20 +115,49 @@ in
     ];
 
     boot.initrd.availableKernelModules = [
-      "phy_qcom_qmp_pcie"
-      "phy_qcom_qmp_combo"
-      "qrtr"
-      "phy_qcom_edp"
+      "camcc_sc8280xp"
+      "dispcc_sc8280xp"
       "gpio_sbu_mux"
+      "gpucc_sc8280xp"
       "i2c_hid_of"
       "i2c_qcom_geni"
-      "pmic_glink_altmode"
+      "icc_bwmon"
       "leds_qcom_lpg"
-      "qcom_q6v5_pas" # This module loads a lot of FW blobs
+      "lpasscc_sc8280xp"
       "msm"
       "nvme"
-      "usb_storage"
+      "phy_qcom_apq8064_sata"
+      "phy_qcom_edp"
+      "phy_qcom_eusb2_repeater"
+      "phy_qcom_ipq4019_usb"
+      "phy_qcom_ipq806x_sata"
+      "phy_qcom_ipq806x_usb"
+      "phy_qcom_m31"
+      "phy_qcom_pcie2"
+      "phy_qcom_qmp_combo"
+      "phy_qcom_qmp_pcie"
+      "phy_qcom_qmp_pcie_msm8996"
+      "phy_qcom_qmp_ufs"
+      "phy_qcom_qmp_usb"
+      "phy_qcom_qmp_usb_legacy"
+      "phy_qcom_qmp_usbc"
+      "phy_qcom_qusb2"
+      "phy_qcom_sgmii_eth"
+      "phy_qcom_snps_eusb2"
+      "phy_qcom_snps_femto_v2"
+      "phy_qcom_usb_hs"
+      "phy_qcom_usb_hs_28nm"
+      "phy_qcom_usb_hsic"
+      "phy_qcom_usb_ss"
+      "pmic_glink"
+      "pmic_glink_altmode"
+      "qcom_glink_smem"
+      "qcom_q6v5_pas" # This module loads a lot of FW blobs
+      "qcom_rpm"
+      "qrtr"
       "uas"
+      "ucsi_glink"
+      "usb_storage"
     ];
 
     boot.kernelParams = [
