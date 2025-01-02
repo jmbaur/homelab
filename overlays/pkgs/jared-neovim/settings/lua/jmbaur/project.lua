@@ -12,7 +12,7 @@ function _G.project_tabline()
 	local s = ""
 	for index = 1, vim.fn.tabpagenr("$") do
 		local winnr = vim.fn.tabpagewinnr(index)
-		local directory = vim.fs.basename(vim.fn.getcwd(winnr, index))
+		local cwd_name = vim.fs.basename(vim.fn.getcwd(winnr, index))
 		local buflist = vim.fn.tabpagebuflist(index)
 		local bufnr = buflist[winnr]
 		local bufname = vim.fn.bufname(bufnr)
@@ -30,8 +30,11 @@ function _G.project_tabline()
 		if tabline_options.show_index then
 			s = s .. index .. ":"
 		end
+		-- cwd name
+		if cwd_name ~= "" then
+			s = s .. cwd_name .. ":"
+		end
 		-- buf name
-		s = s .. directory .. ":"
 		s = s .. tabline_options.brackets[1]
 		local pre_title_s_len = string.len(s)
 		if bufname ~= "" then

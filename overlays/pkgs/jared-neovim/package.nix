@@ -2,6 +2,7 @@
   bash-language-server,
   clang-tools,
   curl,
+  dtc,
   fd,
   fswatch,
   git,
@@ -28,6 +29,7 @@
   vimPlugins,
   vimUtils,
   wrapNeovimUnstable,
+  writeShellScriptBin,
   writeText,
   yaml-language-server,
   zls,
@@ -44,6 +46,23 @@
   zigSupport ? supportAllLanguages,
 }:
 let
+  dtc_vim = writeShellScriptBin "dtc_vim" ''
+    # Use getopts to dismiss '--' args
+    while getopts "" _; do
+      true
+    done
+
+    file="''${@:$OPTIND:1}"
+
+    if [[ "$file" == *.dtb ]]; then
+      ${lib.getExe dtc} -I dtb -O dts -o "''${file//.dtb}" "$file"
+    else
+      ${lib.getExe dtc} -I dts -O dtb -o "''${file}.dtb" "$file"
+    fi
+
+    rm -f "$file"
+  '';
+
   langSupportLua = writeText "lang-support.lua" (
     lib.concatLines (
       lib.mapAttrsToList
@@ -101,6 +120,7 @@ let
   binPath = lib.makeBinPath (
     [
       curl # :Permalink
+      dtc_vim # gzip#read("dtc_vim"), gzip#write("dtc_vim")
       fd # picker
       fswatch # TODO(jared): remove when the following is released: https://github.com/neovim/neovim/commit/55e4301036bb938474fc9768c41e28df867d9286
       git # fugitive, mini-git

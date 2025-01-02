@@ -14,6 +14,7 @@ if #vim.api.nvim_list_uis() > 0 then
 	require("jmbaur.compile")
 	require("jmbaur.filemanager")
 	require("jmbaur.git")
+	require("jmbaur.gzip")
 	require("jmbaur.launcher")
 	require("jmbaur.lsp")
 	require("jmbaur.project")
