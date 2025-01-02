@@ -95,7 +95,7 @@ local rename_tab = action.PromptInputLine({
 	description = "Rename tab",
 	action = wezterm.action_callback(function(window, _, line)
 		-- Input was cancelled.
-		if line == nil then
+		if not line then
 			return
 		end
 
@@ -108,7 +108,7 @@ local rename_workspace = action.PromptInputLine({
 	action = wezterm.action_callback(function(window, pane, line)
 		_, _ = window, pane
 		-- Input was cancelled.
-		if line == nil then
+		if not line then
 			return
 		end
 

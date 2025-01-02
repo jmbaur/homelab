@@ -13,7 +13,7 @@ end
 null_ls.setup({ sources = null_ls_sources })
 
 local toggle_format_on_save = function()
-	if vim.b.format_on_save == nil or vim.b.format_on_save == true then
+	if not vim.b.format_on_save or vim.b.format_on_save == true then
 		vim.print("disabled format on save for current buffer")
 		vim.b.format_on_save = false
 	else

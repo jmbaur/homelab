@@ -44,7 +44,7 @@ local builtins = {
 }
 
 local run = function(cmd)
-	if cmd == nil then
+	if not cmd then
 		return
 	end
 
