@@ -71,6 +71,7 @@ let
   jmbaur-config = vimUtils.buildVimPlugin {
     name = "jmbaur-nvim-config";
     dependencies = with vimPlugins; [
+      direnv-vim
       mini-nvim
       none-ls-nvim
       nvim-lspconfig

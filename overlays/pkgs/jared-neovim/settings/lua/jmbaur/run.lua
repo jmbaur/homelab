@@ -81,10 +81,10 @@ end, {
 		_, _ = cmd_line, cursor_pos
 
 		local completions = {}
-		for k in pairs(builtins) do
-			local i, _ = string.find(k, arg_lead)
+		for key in pairs(builtins) do
+			local i, _ = string.find(key, arg_lead)
 			if i == 1 then
-				table.insert(completions, k)
+				table.insert(completions, key)
 			end
 		end
 		return completions
