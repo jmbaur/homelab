@@ -60,28 +60,10 @@ in
       }
     ];
 
-    # TODO(jared): The initrd doesn't include these only because modinfo is not
-    # capable of knowing these are needed.
-    boot.initrd.prepend = [
-      (
-        (pkgs.makeInitrdNG {
-          name = "initrd-extra-firmware";
-          inherit (config.boot.initrd) compressor compressorArgs;
-          inherit (config.boot.initrd.systemd) strip;
-          contents =
-            map
-              (file: rec {
-                target = "/lib/firmware/qcom/sc8280xp/microsoft/blackrock/${file}";
-                source = "${config.hardware.firmware}${target}";
-              })
-              [
-                "qcadsp8280.mbn"
-                "qccdsp8280.mbn"
-                "qcdxkmsuc8280.mbn"
-              ];
-        })
-        + "/initrd"
-      )
+    boot.initrd.extraFirmwarePaths = map (file: "qcom/sc8280xp/microsoft/blackrock/${file}") [
+      "qcadsp8280.mbn"
+      "qccdsp8280.mbn"
+      "qcdxkmsuc8280.mbn"
     ];
 
     hardware.deviceTree = {
