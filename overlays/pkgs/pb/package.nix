@@ -1,2 +1,7 @@
-{ writeShellScriptBin, curl }:
-writeShellScriptBin "pb" "echo $(${curl}/bin/curl --silent --data-binary @- https://paste.rs/)"
+{ writeShellApplication, curl }:
+
+writeShellApplication {
+  name = "pb";
+  runtimeInputs = [ curl ];
+  text = builtins.readFile ./pb.bash;
+}
