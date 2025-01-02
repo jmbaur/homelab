@@ -164,6 +164,7 @@ nixosTest {
   };
   testScript =
     { nodes, ... }:
+    # python
     ''
       start_all()
 

@@ -16,7 +16,8 @@ nixosTest {
 
     custom.desktop.enable = true;
   };
-  testScript = ''
-    # Just for interactive usage with driverInteractive for now
-  '';
+  testScript = # python
+    ''
+      # Just for interactive usage with driverInteractive for now
+    '';
 }

@@ -73,6 +73,9 @@ vim.api.nvim_create_user_command("Permalink", function(args)
 		return
 	end
 
+	-- TODO(jared): This requires the current branch to be associated with
+	-- a remote, which might not be the case. We should handle this gracefully
+	-- if it is not.
 	local remote =
 		stdout_or_bail(vim.system({ "git", "-C", repo_dir, "config", string.format("branch.%s.remote", branch) }))
 

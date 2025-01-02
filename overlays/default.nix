@@ -83,6 +83,7 @@ inputs: {
       mako = prev.mako.overrideAttrs (old: {
         postInstall =
           (old.postInstall or "")
+          # bash
           + ''
             substituteInPlace $out/share/dbus-1/services/fr.emersion.mako.service \
               --replace-fail "Exec=$out/bin/mako" "SystemdService=mako.service"
@@ -124,8 +125,8 @@ inputs: {
       cn9130CfProSpiFirmware = prev.callPackage ./cn913x/firmware.nix { spi = true; };
 
       jmbaur-keybase-pgp-keys = final.fetchurl {
-        url = " https://keybase.io/jaredbaur/pgp_keys.asc ";
-        sha256 = " sha256-R2a+bF7E6Zogl5XWsjrK5dkCAvK6K2h/bje37aYSgGc=";
+        url = "https://keybase.io/jaredbaur/pgp_keys.asc";
+        sha256 = "sha256-R2a+bF7E6Zogl5XWsjrK5dkCAvK6K2h/bje37aYSgGc=";
       };
 
       extractLinuxFirmware =
@@ -134,15 +135,18 @@ inputs: {
           final.lib.concatLines (
             map
               # all files in linux-firmware are read-only
-              (firmwarePath: ''
-                if [[ -f $(realpath ${final.linux-firmware}/lib/firmware/${firmwarePath}) ]]; then
-                  install -Dm0444 \
-                    --target-directory=$(dirname $out/lib/firmware/${firmwarePath}) \
-                    ${final.linux-firmware}/lib/firmware/${firmwarePath}
-                else
-                  echo "WARNING: lib/firmware/${firmwarePath} does not exist in linux-firmware ${final.linux-firmware.version}"
-                fi
-              '')
+              (
+                firmwarePath:
+                # bash
+                ''
+                  if [[ -f $(realpath ${final.linux-firmware}/lib/firmware/${firmwarePath}) ]]; then
+                    install -Dm0444 \
+                      --target-directory=$(dirname $out/lib/firmware/${firmwarePath}) \
+                      ${final.linux-firmware}/lib/firmware/${firmwarePath}
+                  else
+                    echo "WARNING: lib/firmware/${firmwarePath} does not exist in linux-firmware ${final.linux-firmware.version}"
+                  fi
+                '')
               paths
           )
         ));

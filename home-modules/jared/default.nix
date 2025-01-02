@@ -162,8 +162,20 @@ in
         matchBlocks."*.local".forwardAgent = true;
       };
 
+      programs.starship = {
+        enable = true;
+        settings = {
+          add_newline = false;
+          format = "$directory$git_branch$git_commit$git_state$git_metrics$git_status$status$character";
+        };
+      };
+
       programs.fish.enable = true;
-      programs.nushell.enable = true;
+
+      programs.nushell = {
+        enable = true;
+        configFile.source = ./config.nu;
+      };
 
       programs.gh.enable = true;
 
@@ -284,9 +296,11 @@ in
 
       # Enabling exrc support _must_ be done in the user's init.lua, it cannot
       # be done in a plugin.
-      xdg.configFile."nvim/init.lua".source = pkgs.writeText "init.lua" ''
-        vim.opt.exrc = true
-      '';
+      xdg.configFile."nvim/init.lua".source =
+        pkgs.writeText "init.lua" # lua
+          ''
+            vim.opt.exrc = true
+          '';
 
       xdg.configFile."wezterm/wezterm.lua".source = ./wezterm.lua;
     })

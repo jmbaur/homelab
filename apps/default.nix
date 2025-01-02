@@ -43,27 +43,29 @@ inputs.nixpkgs.lib.mapAttrs (
 
     # TODO(jared): Set an expiration date
     generateSysupdateKey = mkApp (
-      pkgs.writeShellScript "generate-sysupdate-key" ''
-        key_dir=$(mktemp -d)
-        pushd "$key_dir"
-        export GNUPGHOME=$(pwd)
-        cat > sysupdate <<EOF
-          %echo Generating a sysupdate OpenPGP key
-          %no-protection
-          Key-Type: EdDSA
-          Key-Curve: ed25519
-          Name-Real: Jared Baur
-          Name-Email: jared@update.jmbaur.com
-          Expire-Date: 0
-          # Do a commit here, so that we can later print "done"
-          %commit
-          %echo done
-        EOF
-        ${lib.getExe' pkgs.gnupg "gpg"} --batch --generate-key sysupdate
-        ${lib.getExe' pkgs.gnupg "gpg"} --export jared@update.jmbaur.com -a >pubkey.gpg
-        popd
-        echo "key generated at $key_dir"
-      ''
+      pkgs.writeShellScript "generate-sysupdate-key"
+        # bash
+        ''
+          key_dir=$(mktemp -d)
+          pushd "$key_dir"
+          export GNUPGHOME=$(pwd)
+          cat > sysupdate <<EOF
+            %echo Generating a sysupdate OpenPGP key
+            %no-protection
+            Key-Type: EdDSA
+            Key-Curve: ed25519
+            Name-Real: Jared Baur
+            Name-Email: jared@update.jmbaur.com
+            Expire-Date: 0
+            # Do a commit here, so that we can later print "done"
+            %commit
+            %echo done
+          EOF
+          ${lib.getExe' pkgs.gnupg "gpg"} --batch --generate-key sysupdate
+          ${lib.getExe' pkgs.gnupg "gpg"} --export jared@update.jmbaur.com -a >pubkey.gpg
+          popd
+          echo "key generated at $key_dir"
+        ''
     );
 
     updateRepoDependencies = mkApp (
@@ -74,30 +76,31 @@ inputs.nixpkgs.lib.mapAttrs (
             jq
             nix-prefetch-scripts
           ];
-          text = ''
-            NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"
-            export NIX_PATH
+          text = # bash
+            ''
+              NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"
+              export NIX_PATH
 
-            nix flake update --accept-flake-config
+              nix flake update --accept-flake-config
 
-            readarray -t sources < <(find . -type f -name "*source.json")
-            for source in "''${sources[@]}"; do
-              args=()
-              if [[ $(jq -r ".fetchSubmodules" < "$source") == "true" ]]; then
-                args+=("--fetch-submodules")
-              fi
-              args+=("$(jq -r ".url" < "$source")")
-              nix-prefetch-git "''${args[@]}" | tee "$source"
-            done
+              readarray -t sources < <(find . -type f -name "*source.json")
+              for source in "''${sources[@]}"; do
+                args=()
+                if [[ $(jq -r ".fetchSubmodules" < "$source") == "true" ]]; then
+                  args+=("--fetch-submodules")
+                fi
+                args+=("$(jq -r ".url" < "$source")")
+                nix-prefetch-git "''${args[@]}" | tee "$source"
+              done
 
-            # shellcheck disable=SC2185,SC2044
-            readarray -t cargo_tomls < <(find ./overlays/pkgs -type f -name "Cargo.toml")
-            for cargo_toml in "''${cargo_tomls[@]}"; do
-              pushd "$(dirname "$cargo_toml")"
-              nix develop ".#$(basename "$(dirname "$cargo_toml")")" --command cargo update
-              popd
-            done
-          '';
+              # shellcheck disable=SC2185,SC2044
+              readarray -t cargo_tomls < <(find ./overlays/pkgs -type f -name "Cargo.toml")
+              for cargo_toml in "''${cargo_tomls[@]}"; do
+                pushd "$(dirname "$cargo_toml")"
+                nix develop ".#$(basename "$(dirname "$cargo_toml")")" --command cargo update
+                popd
+              done
+            '';
         }
       )
     );
