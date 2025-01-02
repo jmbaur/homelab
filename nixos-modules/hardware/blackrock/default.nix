@@ -70,9 +70,9 @@ in
           inherit (config.boot.initrd.systemd) strip;
           contents =
             map
-              (file: {
-                target = "/lib/firmware/qcom/sc8280xp/MICROSOFT/DEVKIT23/${file}";
-                source = "${config.hardware.firmware}/lib/firmware/qcom/sc8280xp/MICROSOFT/DEVKIT23/${file}";
+              (file: rec {
+                target = "/lib/firmware/qcom/sc8280xp/microsoft/blackrock/${file}";
+                source = "${config.hardware.firmware}${target}";
               })
               [
                 "qcadsp8280.mbn"
@@ -95,8 +95,15 @@ in
           (old.postInstall or "")
           # bash
           + ''
+            # symlink exists in armbian/firmware
+            pushd $out/lib/firmware/qcom
+            ln -sf {a660_gmu.bin,a690_gmu.bin}
+            popd
+
+            # copy in updated ath11k wireless firmware
             pushd ${wdk2023_syshacks}/usr/lib/firmware/updates
             find . ! -name '*zst' -type f -exec sh -c 'cp -vf {} $out/lib/firmware/{}' \;
+            popd
           '';
       }))
       (pkgs.fetchurl {
@@ -107,10 +114,10 @@ in
         postFetch = ''
           tmp=$(mktemp -d)
           tar -C $tmp -xvf $downloadedFile
-          mkdir -p $out/lib/firmware/qcom/sc8280xp/MICROSOFT
-          cp -r $tmp/*/qcom/sc8280xp/MICROSOFT/DEVKIT23 $out/lib/firmware/qcom/sc8280xp/MICROSOFT
+          mkdir -p $out/lib/firmware/qcom/sc8280xp/microsoft/blackrock
+          cp $tmp/*/qcom/sc8280xp/MICROSOFT/DEVKIT23/* $out/lib/firmware/qcom/sc8280xp/microsoft/blackrock
         '';
-        hash = "sha256-jkTaIh3hI5KSOlhGS/xzoxnYfzU8t2VXqq5Yv0NqOpw=";
+        hash = "sha256-b8ohFD3IkS0HFqpSmVg9zN/xofmplgiRgihlJPIaugU";
       })
     ];
 
