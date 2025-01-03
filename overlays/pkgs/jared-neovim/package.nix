@@ -4,7 +4,6 @@
   curl,
   dtc,
   fd,
-  fswatch,
   git,
   go-tools,
   gofumpt,
@@ -107,9 +106,9 @@ let
       vim-eunuch
       vim-fugitive
     ];
-    src = runCommand "jmbaur-nvim-config-src" { inherit langSupportLua; } ''
-      cp -r ${./settings} $out
-      substituteInPlace $out/lua/init.lua --subst-var langSupportLua
+    src = runCommand "jmbaur-nvim-config-src" { } ''
+      cp -r --no-preserve=mode ${./settings} $out
+      sed -i "3ivim.cmd.source(\"${langSupportLua}\")\n" $out/lua/init.lua
     '';
   };
 
@@ -122,7 +121,6 @@ let
       curl # :Permalink
       dtc_vim # gzip#read("dtc_vim"), gzip#write("dtc_vim")
       fd # picker
-      fswatch # TODO(jared): remove when the following is released: https://github.com/neovim/neovim/commit/55e4301036bb938474fc9768c41e28df867d9286
       git # fugitive, mini-git
       inotify-tools # for faster LSP experience
       ripgrep # picker

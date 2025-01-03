@@ -1,6 +1,6 @@
 local sessions = require("mini.sessions")
 
-sessions.setup({})
+sessions.setup()
 
 local group = vim.api.nvim_create_augroup("AutoSessions", { clear = true })
 vim.api.nvim_create_autocmd("VimEnter", {

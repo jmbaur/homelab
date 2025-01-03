@@ -38,6 +38,36 @@ inputs: {
         }
       );
 
+      neovim-unwrapped = prev.neovim-unwrapped.overrideAttrs (old: {
+        version = "0.11.0-dev";
+        src = final.fetchFromGitHub {
+          owner = "neovim";
+          repo = "neovim";
+          rev = "43d552c56648bc3125c7509b3d708b6bf6c0c09c";
+          hash = "sha256-RBqip1qdPaFnDdFoFqNw64Fdpn27uJd2ZAzrlPPDvOs=";
+        };
+        buildInputs = (old.buildInputs or [ ]) ++ [
+          (final.utf8proc.overrideAttrs (_: rec {
+            version = "2.10.0";
+            src = final.fetchFromGitHub {
+              owner = "JuliaStrings";
+              repo = "utf8proc";
+              rev = "v${version}";
+              hash = "sha256-wmtMo6eBK/xxxkIeJfh5Yb293po9cKK+7WjqNPoxM9g=";
+            };
+          }))
+        ];
+        patches = (old.patches or [ ]) ++ [
+          # TODO(jared): This allows neovim to detach from the controlling
+          # terminal, similar to tmux. This work is still WIP.
+          #
+          # (final.fetchpatch {
+          #   url = "https://github.com/neovim/neovim/commit/e6932c8a7858d3a49e82ab6bae49b96f8803fdc3.patch";
+          #   hash = "sha256-XtM4Dgd+ywLUih67DqacBXPvFkz94Nyp+qXVOMATqBo=";
+          # })
+        ];
+      });
+
       gnome-console =
         (prev.gnome-console.overrideAttrs (old: {
           patches = (old.patches or [ ]) ++ [ ./gnome-console-osc52.patch ];

@@ -1,15 +1,10 @@
 vim.loader.enable()
 
--- This is substituted in <homelab/overlays/pkgs/jared-neovim/package.nix>.
-vim.cmd.source("@langSupportLua@")
-
 vim.g.mapleader = vim.api.nvim_replace_termcodes("<Space>", true, true, true)
 
 -- If not using nvim's remote UI, this means we are using neovim in such a way
 -- that we can take advantage of neovim front-end related features.
 if #vim.api.nvim_list_uis() > 0 then
-	vim.cmd.colorscheme("habamax")
-
 	require("jmbaur.clipboard")
 	require("jmbaur.compile")
 	require("jmbaur.filemanager")
@@ -17,6 +12,7 @@ if #vim.api.nvim_list_uis() > 0 then
 	require("jmbaur.gzip")
 	require("jmbaur.launcher")
 	require("jmbaur.lsp")
+	require("jmbaur.notify")
 	require("jmbaur.project")
 	require("jmbaur.readline")
 	require("jmbaur.run")
@@ -24,7 +20,7 @@ if #vim.api.nvim_list_uis() > 0 then
 	require("jmbaur.snippets")
 	require("jmbaur.terminal")
 	require("jmbaur.treesitter")
-	require("mini.trailspace").setup({})
+	require("mini.trailspace").setup()
 
 	vim.opt.belloff = "all"
 	vim.opt.colorcolumn = "80"
@@ -32,8 +28,8 @@ if #vim.api.nvim_list_uis() > 0 then
 	vim.opt.title = true
 end
 
-require("mini.bracketed").setup({})
-require("mini.surround").setup({})
+require("mini.bracketed").setup()
+require("mini.surround").setup()
 require("mini.basics").setup({
 	mappings = { basic = false },
 	autocommands = { relnum_in_visual_mode = true },

@@ -36,20 +36,22 @@ local keymap_opts = function(bufnr, desc)
 	return { buffer = bufnr, desc = desc }
 end
 
-local org_imports = function()
-	if not (format_on_save()) then
-		return
-	end
+local get_organize_imports = function(client)
+	return function()
+		if not format_on_save() then
+			return
+		end
 
-	local params = vim.lsp.util.make_range_params()
-	params.context = { only = { "source.organizeImports" } }
-	local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, 1000)
-	for _, res in pairs(result or {}) do
-		for _, r in pairs(res.result or {}) do
-			if r.edit then
-				vim.lsp.util.apply_workspace_edit(r.edit, "UTF-8")
-			else
-				vim.lsp.buf.execute_command(r.command)
+		local params = vim.lsp.util.make_range_params(0, "utf-8")
+		params["context"] = { only = { "source.organizeImports" } }
+		local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, 1000)
+		for _, res in pairs(result or {}) do
+			for _, r in pairs(res.result or {}) do
+				if r.edit then
+					vim.lsp.util.apply_workspace_edit(r.edit, "utf-8")
+				else
+					client:exec_cmd(r.command)
+				end
 			end
 		end
 	end
@@ -57,46 +59,66 @@ end
 
 local lsp_formatting_augroup = vim.api.nvim_create_augroup("LspFormatting", { clear = true })
 
+vim.api.nvim_create_autocmd("LspDetach", {
+	group = lsp_formatting_augroup,
+	callback = function(args)
+		-- Get the detaching client.
+		local client = vim.lsp.get_client_by_id(args.data.client_id)
+
+		if not client then
+			return
+		end
+
+		-- Remove the autocommand to format the buffer on save, if it exists.
+		if client:supports_method("textDocument/formatting") then
+			vim.api.nvim_clear_autocmds({
+				event = "BufWritePre",
+				buffer = args.buf,
+			})
+		end
+	end,
+})
+
 local get_on_attach = function(settings)
 	local format = settings.format or false
 	local null_ls_format = settings.null_ls_format or false
-	local organize_imports = settings.org_imports or false
+	local organize_imports = settings.organize_imports or false
 
 	return function(client, bufnr)
 		-- Always display sign column for LSP enabled windows.
 		vim.opt_local.signcolumn = "yes:1"
 
-		local client_supports_formatting = client.supports_method("textDocument/formatting")
-
 		vim.api.nvim_clear_autocmds({ group = lsp_formatting_augroup, buffer = bufnr })
 
-		if (format and client_supports_formatting) or null_ls_format then
+		if (format and client:supports_method("textDocument/formatting")) or null_ls_format then
 			vim.api.nvim_create_autocmd("BufWritePre", {
 				group = lsp_formatting_augroup,
 				buffer = bufnr,
 				callback = function()
-					if format_on_save() then
-						vim.lsp.buf.format({
-							-- Make sure there aren't any conflicts between
-							-- null_ls and LSP's formatter.
-							filter = function(lsp_client)
-								if null_ls_format then
-									return lsp_client.name == "null-ls"
-								else
-									return true
-								end
-							end,
-						})
+					if not format_on_save() then
+						return
 					end
+
+					vim.lsp.buf.format({
+						-- Make sure there aren't any conflicts between
+						-- null_ls and LSP's formatter.
+						filter = function(lsp_client)
+							if null_ls_format then
+								return lsp_client.name == "null-ls"
+							else
+								return true
+							end
+						end,
+					})
 				end,
 			})
 		end
 
-		if organize_imports and client.supports_method("textDocument/codeAction") then
+		if organize_imports and client:supports_method("textDocument/codeAction") then
 			vim.api.nvim_create_autocmd("BufWritePre", {
 				group = lsp_formatting_augroup,
 				buffer = bufnr,
-				callback = org_imports,
+				callback = get_organize_imports(client),
 			})
 		end
 
