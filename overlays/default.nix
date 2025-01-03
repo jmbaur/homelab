@@ -54,6 +54,9 @@ inputs: {
             });
           };
 
+      # TODO(jared): remove when new release happens. Fixes wayland issues.
+      wezterm = inputs.wezterm.packages.${final.stdenv.hostPlatform.system}.default;
+
       # Enable experimental multithreading support in mkfs.erofs
       erofs-utils = prev.erofs-utils.overrideAttrs (old: {
         configureFlags = (old.configureFlags or [ ]) ++ [ "--enable-multithreading" ];

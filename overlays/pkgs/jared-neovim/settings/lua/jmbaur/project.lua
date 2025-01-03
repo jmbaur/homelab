@@ -37,14 +37,18 @@ function _G.project_tabline()
 		-- buf name
 		s = s .. tabline_options.brackets[1]
 		local pre_title_s_len = string.len(s)
-		if bufname ~= "" then
-			if type(tabline_options.fnamemodify) == "function" then
-				s = s .. tabline_options.fnamemodify(bufname)
-			else
-				s = s .. vim.fn.fnamemodify(bufname, tabline_options.fnamemodify)
-			end
+		if vim.fn.getbufvar(bufnr, "&filetype") == "fugitive" then
+			s = s .. "fugitive"
 		else
-			s = s .. tabline_options.no_name
+			if bufname ~= "" then
+				if type(tabline_options.fnamemodify) == "function" then
+					s = s .. tabline_options.fnamemodify(bufname)
+				else
+					s = s .. vim.fn.fnamemodify(bufname, tabline_options.fnamemodify)
+				end
+			else
+				s = s .. tabline_options.no_name
+			end
 		end
 		if
 			tabline_options.inactive_tab_max_length

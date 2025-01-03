@@ -20,7 +20,6 @@ config.default_mux_server_domain = "unix"
 config.default_workspace = "default"
 config.disable_default_key_bindings = true
 config.enable_scroll_bar = false
-config.front_end = "WebGpu"
 config.inactive_pane_hsb = { saturation = 0.8, brightness = 0.8 }
 config.leader = { key = "s", mods = "CTRL" }
 config.switch_to_last_active_tab_when_closing_tab = true
