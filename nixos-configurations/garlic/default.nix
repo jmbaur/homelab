@@ -43,6 +43,8 @@
           }
       );
 
+      boot.consoleLogLevel = 7;
+
       boot.kernelParams = [
         "regulator_ignore_unused"
         "clk_ignore_unused"
@@ -52,6 +54,18 @@
         "pcie_aspm.policy=powersupersave"
         "iommu.strict=0"
         "iommu.passthrough=0"
+      ];
+
+      boot.initrd.availableKernelModules = [
+        # storage
+        "nvme"
+        "tcsrcc_x1e80100"
+        "phy_qcom_qmp_pcie"
+        "pcie_qcom"
+
+        # keyboard
+        "i2c_hid_of"
+        "i2c_qcom_geni"
       ];
     }
     {

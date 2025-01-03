@@ -33,7 +33,34 @@ in
 
     hardware.qualcomm.enable = true;
 
-    boot.kernelPackages = pkgs.linuxPackages_testing;
+    boot.kernelPackages = pkgs.linuxPackagesFor (
+      pkgs.callPackage
+        (
+          { buildLinux, ... }@args:
+          buildLinux (
+            args
+            // {
+              version = "6.13.0";
+              modDirVersion = "6.13.0-rc4";
+
+              src = pkgs.fetchFromGitHub {
+                owner = "jhovold";
+                repo = "linux";
+                # wip/sc8280xp-6.13-rc4
+                rev = "2f0b291243ef93a37f93608d373e21a322af41a2";
+                hash = "sha256-m1O1PLTDYrpt62+aj850I/xBLKbAulx+JlXj99KWjfw=";
+              };
+              kernelPatches = (args.kernelPatches or [ ]);
+
+              extraMeta.branch = "6.13";
+            }
+            // (args.argsOverride or { })
+          )
+        )
+        {
+          defconfig = "johan_defconfig";
+        }
+    );
 
     boot.consoleLogLevel = 7;
 
