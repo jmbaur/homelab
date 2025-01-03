@@ -9,6 +9,7 @@
     ./google-kukui-fennel14
     ./lx2k.nix
     ./macchiatobin
+    ./qualcomm
     ./rpi4
   ];
 }

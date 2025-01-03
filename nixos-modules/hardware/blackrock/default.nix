@@ -31,6 +31,8 @@ in
   config = mkIf config.hardware.blackrock.enable {
     nixpkgs.hostPlatform = mkDefault "aarch64-linux";
 
+    hardware.qualcomm.enable = true;
+
     boot.kernelPackages = pkgs.linuxPackages_testing;
 
     boot.consoleLogLevel = 7;
@@ -109,7 +111,6 @@ in
 
     # TODO(jared): pare these down
     boot.initrd.availableKernelModules = [
-      "camcc_sc8280xp"
       "dispcc_sc8280xp"
       "gpio_sbu_mux"
       "gpucc_sc8280xp"
@@ -152,6 +153,30 @@ in
       "uas"
       "ucsi_glink"
       "usb_storage"
+
+      # NOTE: See https://github.com/jhovold/linux/commit/f8ef0dcee4a61f686655f9be82d0576b99612dec
+
+      # storage
+      "nvme"
+      "pcie_qcom"
+      "phy_qcom_qmp_pcie"
+
+      # keyboard
+      "i2c_hid_of"
+      "i2c_qcom_geni"
+
+      # display
+      "dispcc_sc8280xp"
+      "gpio_sbu_mux"
+      "gpucc_sc8280xp"
+      "leds_qcom_lpg"
+      "msm"
+      "panel_edp"
+      "phy_qcom_edp"
+      "phy_qcom_qmp_combo"
+      "pmic_glink_altmode"
+      "pwm_bl"
+      "qrtr"
     ];
 
     boot.kernelParams = [
