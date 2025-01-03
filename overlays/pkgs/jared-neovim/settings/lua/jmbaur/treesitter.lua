@@ -30,7 +30,7 @@ treesitter_configs.setup({
 			},
 		},
 	},
-	indent = { enable = false },
+	indent = { enable = true },
 	textobjects = {
 		select = {
 			enable = true,

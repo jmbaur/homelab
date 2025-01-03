@@ -37,4 +37,8 @@ require("mini.basics").setup({
 
 vim.opt.shell = "/bin/sh" -- should exist everywhere
 vim.opt.showmatch = true
-vim.opt.cursorline = false -- undo what is done in mini.basics
+
+-- Undo what is done in mini.basics.
+-- NOTE: This must come after setup for `mini.basics`.
+vim.opt.cursorline = false
+vim.opt.smartindent = false

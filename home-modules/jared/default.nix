@@ -189,12 +189,13 @@ in
         enable = true;
         userName = "Jared Baur";
         ignores = [
-          "*~"
           "*.swp"
-          "Session.vim"
+          "*~"
+          ".exrc"
           ".nvim.lua"
           ".nvimrc"
-          ".exrc"
+          "Session.vim"
+          "tags"
         ];
         aliases = {
           br = "branch";

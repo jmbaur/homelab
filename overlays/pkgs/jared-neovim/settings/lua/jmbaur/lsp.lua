@@ -150,6 +150,7 @@ local servers = {
 		},
 	},
 	nil_ls = { enable = vim.g.lang_support_nix, config = { on_attach = on_attach_format_null_ls } },
+	ttags = { enable = true, config = { filetypes = { "javascript", "haskell", "ruby" } } },
 	lua_ls = {
 		enable = vim.g.lang_support_lua,
 		config = {

@@ -36,13 +36,6 @@ in
     boot.consoleLogLevel = 7;
 
     boot.kernelPatches = [
-      # {
-      #   name = "wdk2023-enablement";
-      #   patch = null;
-      #   extraStructuredConfig = {
-      #     ARM_SMMU_QCOM_DEBUG = lib.kernel.yes;
-      #   };
-      # }
       rec {
         name = patchName "[v7,1/3] dt-bindings: arm: qcom: Add Microsoft Windows Dev Kit 2023";
         patch = pkgs.fetchpatch {
@@ -114,6 +107,7 @@ in
       })
     ];
 
+    # TODO(jared): pare these down
     boot.initrd.availableKernelModules = [
       "camcc_sc8280xp"
       "dispcc_sc8280xp"

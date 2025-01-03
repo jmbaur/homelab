@@ -43,20 +43,10 @@ inputs: {
         src = final.fetchFromGitHub {
           owner = "neovim";
           repo = "neovim";
-          rev = "43d552c56648bc3125c7509b3d708b6bf6c0c09c";
-          hash = "sha256-RBqip1qdPaFnDdFoFqNw64Fdpn27uJd2ZAzrlPPDvOs=";
+          rev = "b52531a9cbbd1843490333452cd124e8be070690";
+          hash = "sha256-EUmRxLMvKjunWe/mOpCxtNQlwqYsJXEJnBUQnO8triM=";
         };
-        buildInputs = (old.buildInputs or [ ]) ++ [
-          (final.utf8proc.overrideAttrs (_: rec {
-            version = "2.10.0";
-            src = final.fetchFromGitHub {
-              owner = "JuliaStrings";
-              repo = "utf8proc";
-              rev = "v${version}";
-              hash = "sha256-wmtMo6eBK/xxxkIeJfh5Yb293po9cKK+7WjqNPoxM9g=";
-            };
-          }))
-        ];
+        buildInputs = (old.buildInputs or [ ]) ++ [ final.utf8proc ];
         patches = (old.patches or [ ]) ++ [
           # TODO(jared): This allows neovim to detach from the controlling
           # terminal, similar to tmux. This work is still WIP.
@@ -85,7 +75,14 @@ inputs: {
           };
 
       # TODO(jared): remove when new release happens. Fixes wayland issues.
-      wezterm = inputs.wezterm.packages.${final.stdenv.hostPlatform.system}.default;
+      wezterm = inputs.wezterm.packages.${final.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
+        patches = (old.patches or [ ]) ++ [
+          (final.fetchpatch {
+            url = "https://github.com/wez/wezterm/commit/676a8c0ef7fba6dfcd7c6b52fc9c801255eec6d4.patch";
+            hash = "sha256-zW4LF/9Z8m1/QdV4g+X5WW/g8aFEI8+qBy31lzePxFY=";
+          })
+        ];
+      });
 
       # Enable experimental multithreading support in mkfs.erofs
       erofs-utils = prev.erofs-utils.overrideAttrs (old: {

@@ -25,6 +25,7 @@
   shellcheck,
   shfmt,
   stylua,
+  ttags,
   vimPlugins,
   vimUtils,
   wrapNeovimUnstable,
@@ -124,6 +125,7 @@ let
       git # fugitive, mini-git
       inotify-tools # for faster LSP experience
       ripgrep # picker
+      ttags
     ]
     ++ (lib.optionals cSupport [ clang-tools ])
     ++ (lib.optionals goSupport [

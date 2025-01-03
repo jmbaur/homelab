@@ -16,16 +16,12 @@ config.automatically_reload_config = false
 config.check_for_updates = false
 config.color_scheme = "jared"
 config.color_schemes = { jared = modus_vivendi_modified }
-config.default_domain = "local"
-config.default_domain = "local"
-config.default_mux_server_domain = "unix"
 config.default_workspace = "default"
 config.enable_scroll_bar = false
 config.inactive_pane_hsb = { saturation = 0.8, brightness = 0.8 }
 config.switch_to_last_active_tab_when_closing_tab = true
 config.tab_max_width = 32 -- twice the default
 config.term = "wezterm"
-config.unix_domains = { { name = "unix" } }
 config.use_dead_keys = false
 config.window_padding = { left = 0, right = 0, top = 0, bottom = 0 }
 

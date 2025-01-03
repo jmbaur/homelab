@@ -16,6 +16,7 @@
     {
       users.users.root.initialPassword = "root";
       services.homed.enable = true;
+      networking.wireless.iwd.enable = true;
     }
   ];
 }
