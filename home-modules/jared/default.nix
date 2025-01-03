@@ -61,6 +61,7 @@ in
         ]
         ++ [
           _caffeine
+          abduco
           age-plugin-yubikey
           ansifilter
           as-tree
