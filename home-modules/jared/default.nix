@@ -192,6 +192,8 @@ in
         ignores = [
           "*.swp"
           "*~"
+          ".direnv"
+          ".envrc"
           ".exrc"
           ".nvim.lua"
           ".nvimrc"
