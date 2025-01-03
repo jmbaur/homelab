@@ -134,6 +134,8 @@ in
       })
     ];
 
+    boot.initrd.includeDefaultModules = false;
+
     # TODO(jared): pare these down
     boot.initrd.availableKernelModules = [
       "icc_bwmon"
