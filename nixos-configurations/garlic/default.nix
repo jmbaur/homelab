@@ -46,15 +46,11 @@
       boot.consoleLogLevel = 7;
 
       boot.kernelParams = [
-        "regulator_ignore_unused"
         "clk_ignore_unused"
         "pd_ignore_unused"
-        "arm64.nopauth"
-        "efi=novamap"
-        "pcie_aspm.policy=powersupersave"
-        "iommu.strict=0"
-        "iommu.passthrough=0"
       ];
+
+      boot.initrd.includeDefaultModules = false;
 
       boot.initrd.availableKernelModules = [
         # storage

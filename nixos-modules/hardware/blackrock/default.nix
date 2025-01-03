@@ -102,8 +102,6 @@ in
       name = "qcom/sc8280xp-microsoft-blackrock.dtb";
     };
 
-    hardware.enableAllHardware = true;
-
     hardware.firmware = [
       (pkgs.linux-firmware.overrideAttrs (old: {
         postInstall =
@@ -207,13 +205,10 @@ in
     ];
 
     boot.kernelParams = [
-      "efi=noruntime"
       "clk_ignore_unused"
       "pd_ignore_unused"
       "arm64.nopauth"
-      "iommu.passthrough=0"
-      "iommu.strict=0"
-      "pcie_aspm.policy=powersupersave"
+      "efi=noruntime"
     ];
   };
 }
