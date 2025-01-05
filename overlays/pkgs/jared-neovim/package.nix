@@ -1,4 +1,5 @@
 {
+  direnv,
   bash-language-server,
   clang-tools,
   curl,
@@ -120,12 +121,13 @@ let
   binPath = lib.makeBinPath (
     [
       curl # :Permalink
+      direnv # direnv-vim
       dtc_vim # gzip#read("dtc_vim"), gzip#write("dtc_vim")
       fd # picker
       git # fugitive, mini-git
       inotify-tools # for faster LSP experience
       ripgrep # picker
-      ttags
+      ttags # LSP to create tags for a few different languages
     ]
     ++ (lib.optionals cSupport [ clang-tools ])
     ++ (lib.optionals goSupport [

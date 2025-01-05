@@ -43,8 +43,8 @@ inputs: {
         src = final.fetchFromGitHub {
           owner = "neovim";
           repo = "neovim";
-          rev = "b52531a9cbbd1843490333452cd124e8be070690";
-          hash = "sha256-EUmRxLMvKjunWe/mOpCxtNQlwqYsJXEJnBUQnO8triM=";
+          rev = "570a8da01b55c3aad1f057be236f55ccf82ed8af";
+          hash = "sha256-ZgJKoADcfkMnEgJJh6ylOwnkR8V203xRvfezEHCtIrs=";
         };
         buildInputs = (old.buildInputs or [ ]) ++ [ final.utf8proc ];
         patches = (old.patches or [ ]) ++ [
@@ -52,8 +52,8 @@ inputs: {
           # terminal, similar to tmux. This work is still WIP.
           #
           # (final.fetchpatch {
-          #   url = "https://github.com/neovim/neovim/commit/e6932c8a7858d3a49e82ab6bae49b96f8803fdc3.patch";
-          #   hash = "sha256-XtM4Dgd+ywLUih67DqacBXPvFkz94Nyp+qXVOMATqBo=";
+          #   url = "https://github.com/neovim/neovim/commit/6c208f2170b9cb5de96735540e556f074a5e3324.patch";
+          #   hash = "sha256-Fj7G2RfEsnc4IfSsHZ2Y6OUtKvUmKIlbMDvLiJg/6BA=";
           # })
         ];
       });
@@ -74,8 +74,8 @@ inputs: {
             });
           };
 
-      # TODO(jared): remove when new release happens. Fixes wayland issues.
-      wezterm = inputs.wezterm.packages.${final.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
+      # https://github.com/wez/wezterm/pull/6548
+      wezterm = prev.wezterm.overrideAttrs (old: {
         patches = (old.patches or [ ]) ++ [
           (final.fetchpatch {
             url = "https://github.com/wez/wezterm/commit/676a8c0ef7fba6dfcd7c6b52fc9c801255eec6d4.patch";

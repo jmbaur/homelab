@@ -19,8 +19,6 @@
     u-boot-nix.url = "github:jmbaur/u-boot.nix";
     webauthn-tiny.inputs.nixpkgs.follows = "nixpkgs";
     webauthn-tiny.url = "github:jmbaur/webauthn-tiny";
-    wezterm.inputs.nixpkgs.follows = "nixpkgs";
-    wezterm.url = "github:wez/wezterm?dir=nix";
   };
 
   outputs = inputs: {
