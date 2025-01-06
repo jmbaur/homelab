@@ -14,4 +14,4 @@ signal-hook = "0.3.17"
 sysctl = "0.5.5"
 
 [build-dependencies]
-dbus-codegen = "0.11.0"
+dbus-codegen = "0.12"
