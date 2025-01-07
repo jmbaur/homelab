@@ -6,6 +6,7 @@ vim.g.mapleader = vim.api.nvim_replace_termcodes("<Space>", true, true, true)
 -- that we can take advantage of neovim front-end related features.
 if #vim.api.nvim_list_uis() > 0 then
 	require("jmbaur.clipboard")
+	require("jmbaur.color")
 	require("jmbaur.compile")
 	require("jmbaur.filemanager")
 	require("jmbaur.git")
