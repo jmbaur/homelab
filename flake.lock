@@ -414,11 +414,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1733891508,
-        "narHash": "sha256-vLlUofN2mRxHI4RJ2LMqjEqBEnhpinqhBD1+ZlXSi2g=",
+        "lastModified": 1736263890,
+        "narHash": "sha256-PpWepAMxp6eEeN12GJXbfbksXXT0ex9yxOet6ahY8PQ=",
         "owner": "jmbaur",
         "repo": "u-boot.nix",
-        "rev": "fa89021e74caa9e69414637f342543868ffd2bd2",
+        "rev": "264eca89a2ab1fbb9b1cc2bfe87f4cc62f030bd5",
         "type": "github"
       },
       "original": {
