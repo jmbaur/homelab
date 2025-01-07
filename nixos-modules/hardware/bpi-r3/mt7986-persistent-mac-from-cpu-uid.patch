@@ -1,5 +1,5 @@
 diff --git a/board/mediatek/mt7986/mt7986_rfb.c b/board/mediatek/mt7986/mt7986_rfb.c
-index 846c715ca0..9f1f0bc6a6 100644
+index 846c715ca05..810591de4fc 100644
 --- a/board/mediatek/mt7986/mt7986_rfb.c
 +++ b/board/mediatek/mt7986/mt7986_rfb.c
 @@ -4,6 +4,54 @@
@@ -28,7 +28,7 @@ index 846c715ca0..9f1f0bc6a6 100644
 +	memcpy(cpu_uid, buf, 8);
 +	unmap_sysmem(buf);
 +
-+	sha1_csum(cpu_uid, 8, cpuid_digest);
++	sha1_csum_wd(cpu_uid, 8, cpuid_digest, SHA1_DEF_CHUNK_SZ);
 +
 +	memcpy(ethaddr0, cpuid_digest, 6);
 +	memcpy(ethaddr1, cpuid_digest, 6);
@@ -58,7 +58,7 @@ index 846c715ca0..9f1f0bc6a6 100644
  {
  	return 0;
 diff --git a/include/configs/mt7986.h b/include/configs/mt7986.h
-index 090b4c6833..22013259b6 100644
+index 090b4c6833e..22013259b6b 100644
 --- a/include/configs/mt7986.h
 +++ b/include/configs/mt7986.h
 @@ -9,4 +9,6 @@
