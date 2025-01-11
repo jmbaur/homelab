@@ -18,6 +18,10 @@ stdenv.mkDerivation {
     sha256 = "sha256-gTUpltbY5439IEEvnxnt8WOFUgfpQUJWr5f+OB12W8A=";
   };
 
+  postPatch = ''
+    substituteInPlace pd-mapper.c --replace "/lib/firmware" "/run/current-system/firmware"
+  '';
+
   nativeBuildInputs = [
     pkg-config
   ];
