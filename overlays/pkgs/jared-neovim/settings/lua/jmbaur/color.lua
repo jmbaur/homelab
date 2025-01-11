@@ -13,8 +13,10 @@ vim.api.nvim_create_autocmd({ "ColorScheme" }, {
 
 			---@diagnostic disable-next-line: param-type-mismatch
 			vim.api.nvim_set_hl(0, "TablineSel", tabline_sel)
+		elseif colorscheme == "lunaperche" then
+			vim.api.nvim_set_hl(0, "WinSeparator", {})
 		end
 	end,
 })
 
-vim.cmd.colorscheme("default")
+vim.cmd.colorscheme("lunaperche")

@@ -299,12 +299,14 @@ in
       # Enabling exrc support _must_ be done in the user's init.lua, it cannot
       # be done in a plugin.
       xdg.configFile."nvim/init.lua".source =
-        pkgs.writeText "init.lua" # lua
+        pkgs.writeText "init.lua"
+          # lua
           ''
             vim.opt.exrc = true
           '';
 
       xdg.configFile."wezterm/wezterm.lua".source = ./wezterm.lua;
+      xdg.configFile."kitty/kitty.conf".source = ./kitty.conf;
     })
   ];
 }

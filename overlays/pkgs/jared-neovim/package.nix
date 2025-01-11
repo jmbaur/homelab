@@ -5,6 +5,7 @@
   curl,
   dtc,
   fd,
+  fzf,
   git,
   go-tools,
   gofumpt,
@@ -92,6 +93,7 @@ let
     name = "jmbaur-nvim-config";
     dependencies = with vimPlugins; [
       direnv-vim
+      fzf-lua
       mini-nvim
       none-ls-nvim
       nvim-lspconfig
@@ -100,10 +102,6 @@ let
       nvim-treesitter-textobjects
       nvim-treesitter.withAllGrammars
       oil-nvim
-      plenary-nvim
-      telescope-nvim
-      telescope-ui-select-nvim
-      telescope-zf-native-nvim
       vim-dispatch
       vim-eunuch
       vim-fugitive
@@ -123,7 +121,8 @@ let
       curl # :Permalink
       direnv # direnv-vim
       dtc_vim # gzip#read("dtc_vim"), gzip#write("dtc_vim")
-      fd # picker
+      fd # fzf-lua
+      fzf # fzf-lua
       git # fugitive, mini-git
       inotify-tools # for faster LSP experience
       ripgrep # picker

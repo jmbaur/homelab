@@ -7,15 +7,9 @@ local action = wezterm.action
 
 local config = wezterm.config_builder()
 
--- modus vivendi adapted to fit with neovim default colorscheme
-local modus_vivendi_modified = wezterm.color.get_builtin_schemes()["Modus-Vivendi"]
-modus_vivendi_modified.background = "#14161b" -- https://github.com/neovim/neovim/blob/43d552c56648bc3125c7509b3d708b6bf6c0c09c/src/nvim/highlight_group.c#L2928
-modus_vivendi_modified.foreground = "#e0e2ea" -- https://github.com/neovim/neovim/blob/43d552c56648bc3125c7509b3d708b6bf6c0c09c/src/nvim/highlight_group.c#L2947
-
 config.automatically_reload_config = false
 config.check_for_updates = false
-config.color_scheme = "jared"
-config.color_schemes = { jared = modus_vivendi_modified }
+config.color_scheme = "Modus-Vivendi"
 config.default_workspace = "default"
 config.enable_scroll_bar = false
 config.inactive_pane_hsb = { saturation = 0.8, brightness = 0.8 }

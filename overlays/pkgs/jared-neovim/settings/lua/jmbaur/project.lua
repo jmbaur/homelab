@@ -10,6 +10,7 @@ local tabline_options = {
 
 function _G.project_tabline()
 	local s = ""
+
 	for index = 1, vim.fn.tabpagenr("$") do
 		local winnr = vim.fn.tabpagewinnr(index)
 		local cwd_name = vim.fs.basename(vim.fn.getcwd(winnr, index))
@@ -18,27 +19,34 @@ function _G.project_tabline()
 		local bufname = vim.fn.bufname(bufnr)
 		local bufmodified = vim.fn.getbufvar(bufnr, "&mod")
 
-		s = s .. "%" .. index .. "T"
 		if index == vim.fn.tabpagenr() then
 			s = s .. "%#TabLineSel#"
 		else
 			s = s .. "%#TabLine#"
 		end
-		-- tab index
+
+		-- tab index so mouse clicks work
+		s = s .. "%" .. index .. "T"
+
 		s = s .. " "
+
 		-- index
 		if tabline_options.show_index then
 			s = s .. index .. ":"
 		end
+
 		-- cwd name
 		if cwd_name ~= "" then
 			s = s .. cwd_name .. ":"
 		end
+
 		-- buf name
 		s = s .. tabline_options.brackets[1]
 		local pre_title_s_len = string.len(s)
-		if vim.fn.getbufvar(bufnr, "&filetype") == "fugitive" then
-			s = s .. "fugitive"
+
+		local filetype = vim.fn.getbufvar(bufnr, "&filetype")
+		if filetype == "fugitive" or filetype == "oil" then
+			s = s .. filetype
 		else
 			if bufname ~= "" then
 				if type(tabline_options.fnamemodify) == "function" then
@@ -58,15 +66,24 @@ function _G.project_tabline()
 			s = string.sub(s, 1, pre_title_s_len + tabline_options.inactive_tab_max_length)
 		end
 		s = s .. tabline_options.brackets[2]
+
 		-- modify indicator
 		if bufmodified == 1 and tabline_options.show_modify and tabline_options.modify_indicator ~= nil then
 			s = s .. tabline_options.modify_indicator
 		end
+
 		-- additional space at the end of each tab segment
 		s = s .. " "
 	end
 
-	s = s .. "%#TabLineFill#"
+	-- after the last tab fill with TabLineFill and reset tab page nr
+	s = s .. "%#TabLineFill#%T"
+
+	-- right-align the label to close the current tab page
+	if vim.fn.tabpagenr("$") > 1 then
+		s = s .. "%=%#TabLine#%999Xclose"
+	end
+
 	return s
 end
 

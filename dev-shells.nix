@@ -42,15 +42,16 @@ inputs.nixpkgs.lib.mapAttrs (
   in
   {
     default = pkgs.mkShell {
-      packages = (
-        with pkgs;
-        [
-          bashInteractive
-          just
-          semver-tool
-          sops
-        ]
-      );
+      inputsFrom = [
+        pkgs.local-overlay-fixup-db
+        pkgs.wg-dns
+      ];
+      packages = [
+        pkgs.bashInteractive
+        pkgs.just
+        pkgs.semver-tool
+        pkgs.sops
+      ];
       shellHook =
         (inputs.git-hooks.lib.${system}.run {
           src = ./.;
