@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  utils,
   ...
 }:
 
@@ -275,10 +276,13 @@ in
       {
         name = "wg-dns@${interfaceName}";
         value = {
-          wants = [ "network-online.target" ];
+          wants = [
+            "network-online.target"
+            "sys-subsystem-net-devices-${utils.escapeSystemdPath interfaceName}.device"
+          ];
           after = [
             "network-online.target"
-            "systemd-networkd.service"
+            "sys-subsystem-net-devices-${utils.escapeSystemdPath interfaceName}.device"
           ];
           wantedBy = [ "multi-user.target" ];
           serviceConfig = {
