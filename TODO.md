@@ -14,6 +14,23 @@
 # misc
 - multicast on celery: see https://forum.turris.cz/t/solved-mdns-avahi-zeroconf-on-bridges-e-g-br-lan/1150
 
+# celery
+solve issues at early boot
+```
+[    1.040264] mtk-socinfo mtk-socinfo.0.auto: error -ENOENT: Failed to get socinfo data
+[    1.040283] mtk-socinfo mtk-socinfo.0.auto: probe with driver mtk-socinfo failed with error -2
+[    1.621437] mtk_soc_eth 15100000.ethernet: generated random MAC address a2:2e:66:56:42:6b
+[    1.926205] mtk-pcie-gen3 11280000.pcie: PCIe link down, current LTSSM state: detect.quiet (0x1)
+[    1.935009] mtk-pcie-gen3 11280000.pcie: probe with driver mtk-pcie-gen3 failed with error -110
+```
+
+```
+Jan 12 02:12:48 celery kernel: mtdblock: MTD device 'reserved' is NAND, please consider using UBI block devices instead.
+Jan 12 02:12:48 celery kernel: mtdblock: MTD device 'bl2' is NAND, please consider using UBI block devices instead.
+Jan 12 02:12:48 celery kernel: mtdblock: MTD device 'ubi' is NAND, please consider using UBI block devices instead.
+Jan 12 02:12:48 celery kernel: mtdblock: MTD device 'fip' is NAND, please consider using UBI block devices instead.
+```
+
 # radish
 solve panic on early boot
 ```
