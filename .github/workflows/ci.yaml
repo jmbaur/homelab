@@ -1,0 +1,15 @@
+name: ci
+on:
+  workflow_dispatch: # allows manual triggering
+  pull_request:
+    branches:
+      - main
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+      - run: nix build --print-build-logs .#nixosConfigurations.celery.config.system.build.toplevel
