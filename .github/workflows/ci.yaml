@@ -12,4 +12,15 @@ jobs:
         uses: actions/checkout@v4
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
-      - run: nix build --print-build-logs .#nixosConfigurations.celery.config.system.build.toplevel
+        with:
+          extra-conf: |
+            extra-substituters = https://cache.jmbaur.com
+            extra-trusted-public-keys = cache.jmbaur.com:C3ku8BNDXgfTO7dNHK+eojm4uy7Gvotwga+EV0cfhPQ=
+      - name: build
+        env:
+          CACHE_SIGNING_KEY: ${{ secrets.CACHE_SIGNING_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: |
+          echo -n "$CACHE_SIGNING_KEY" >signing-key.pem
+          nix run .#ci -- signing-key.pem
