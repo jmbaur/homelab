@@ -27,4 +27,4 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
         run: |
           echo -n "$CACHE_SIGNING_KEY" >signing-key.pem
-          nix run .#ci -- signing-key.pem
+          nix run "$PWD#ci" -- signing-key.pem

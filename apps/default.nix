@@ -137,12 +137,13 @@ inputs.nixpkgs.lib.mapAttrs (
                   let
                     substituter = "s3://cache?region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com";
                   in
-                  #bash
+                  # bash
                   ''
                     toplevel=$(nix build --print-build-logs --no-link --print-out-paths .#nixosConfigurations.${name}.config.system.build.toplevel)
                     nix-store --query --requisites "$toplevel" >requisites
-                    nix store sign --key-file "$signing_key" --verbose <requisites
+                    nix store sign --key-file "$signing_key" --stdin --verbose <requisites
                     nix copy --to "${substituter}" --stdin --verbose <requisites
+                    rm requisites
                   ''
                 )
                 (
