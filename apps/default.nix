@@ -7,11 +7,10 @@ inputs.nixpkgs.lib.mapAttrs (
     inherit (pkgs) lib;
 
     inherit (lib)
-      attrNames
-      concatLines
       filterAttrs
       getExe
       getExe'
+      mapAttrs'
       ;
 
     mkApp = script: {
@@ -116,49 +115,132 @@ inputs.nixpkgs.lib.mapAttrs (
       )
     );
 
-    ci = mkApp (
-      getExe (
-        pkgs.writeShellApplication {
-          name = "homelab-ci";
-          runtimeInputs = [ ];
-          text =
-            ''
-              signing_key=''${1:-}
+    updateGithubWorkflows =
+      let
+        ci = (pkgs.formats.yaml { }).generate "ci.yaml" {
+          name = "ci";
+          on = {
+            workflow_dispatch = { }; # allows manual triggering
+            push.branches = [ "main" ];
+          };
+          # We split out each NixOS machine to being built in its own job so we
+          # don't run into the 6-hour max job execution time limit.
+          # Anecdotally, one build of the 'celery' machine takes ~3.5
+          # hours. The max workflow execution time is 72 hours, which we
+          # should definitely be able to fit all our jobs within.
+          #
+          # TODO(jared): Look into concurrent jobs.
+          # TODO(jared): `pkgs.formats.yaml` doesn't handle long lines well.
+          jobs =
+            mapAttrs'
+              (name: _: {
+                name = "build-${name}";
+                value = {
+                  runs-on = "ubuntu-latest";
+                  steps = [
+                    {
+                      name = "Checkout repository";
+                      uses = "actions/checkout@v4";
+                    }
+                    {
+                      name = "Free Disk Space (Ubuntu)";
+                      uses = "jlumbroso/free-disk-space@main";
+                      "with".tool-cache = true;
+                    }
+                    {
+                      name = "Install Nix";
+                      uses = "DeterminateSystems/nix-installer-action@main";
+                      "with".extra-conf = ''
+                        extra-substituters = https://cache.jmbaur.com
+                        extra-trusted-public-keys = cache.jmbaur.com:C3ku8BNDXgfTO7dNHK+eojm4uy7Gvotwga+EV0cfhPQ=
+                      '';
+                    }
+                    {
+                      name = "Build ${name}";
+                      env = {
+                        CACHE_SIGNING_KEY = "\${{ secrets.CACHE_SIGNING_KEY }}";
+                        AWS_ACCESS_KEY_ID = "\${{ secrets.AWS_ACCESS_KEY_ID }}";
+                        AWS_SECRET_ACCESS_KEY = "\${{ secrets.AWS_SECRET_ACCESS_KEY }}";
+                      };
+                      run = ''
+                        substituter="s3://cache?region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com"
 
-              if [[ -z $signing_key ]]; then
-                echo "no signing key"
-                exit 1
-              fi
-            ''
-            + concatLines (
-              map
-                (
-                  name:
-                  let
-                    substituter = "s3://cache?region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com";
-                  in
-                  # bash
-                  ''
-                    toplevel=$(nix build --print-build-logs --no-link --print-out-paths .#nixosConfigurations.${name}.config.system.build.toplevel)
-                    nix-store --query --requisites "$toplevel" >requisites
-                    nix store sign --key-file "$signing_key" --stdin --verbose <requisites
-                    nix copy --to "${substituter}" --stdin --verbose <requisites
-                    rm requisites
-                  ''
-                )
-                (
-                  attrNames (
-                    filterAttrs (
-                      name: _:
-                      # Allow-list for machines we want to build in CI.
-                      # TODO(jared): Build _all_ of them.
-                      (builtins.elem name [ "celery" ])
-                    ) inputs.self.nixosConfigurations
-                  )
-                )
-            );
-        }
-      )
-    );
+                        echo -n "$CACHE_SIGNING_KEY" >signing-key.pem
+
+                        toplevel=$(nix build --print-build-logs --no-link --print-out-paths "$PWD#nixosConfigurations.${name}.config.system.build.toplevel")
+                        nix-store --query --requisites "$toplevel" >requisites
+                        nix store sign --key-file signing-key.pem --stdin --verbose <requisites
+                        nix copy --to "$substituter" --stdin --verbose <requisites
+                      '';
+                    }
+                  ];
+                };
+              })
+              (
+                filterAttrs (
+                  name: _:
+                  # Allow-list for machines we want to build in CI.
+                  # TODO(jared): Build _all_ of them.
+                  builtins.elem name [
+                    "celery"
+                    "squash"
+                  ]
+                ) inputs.self.nixosConfigurations
+              );
+        };
+
+        update = (pkgs.formats.yaml { }).generate "update.yaml" {
+          name = "update";
+          on = {
+            workflow_dispatch = { }; # allows manual triggering
+            schedule = [ { cron = "0 3 * * 0"; } ]; # runs weekly on Sunday at 03:00
+          };
+          jobs.update = {
+            runs-on = "ubuntu-latest";
+            steps = [
+              {
+                name = "Checkout repository";
+                uses = "actions/checkout@v4";
+              }
+              {
+                name = "Install Nix";
+                uses = "DeterminateSystems/nix-installer-action@main";
+              }
+              {
+                name = "Update out of tree packages";
+                run = ''nix run "$PWD#updateRepoDependencies"'';
+              }
+              {
+                name = "Update github action workflows";
+                run = ''nix run "$PWD#updateGithubWorkflows"'';
+              }
+              {
+                name = "Create pull request";
+                uses = "peter-evans/create-pull-request@v6";
+                "with" = {
+                  branch = "update-dependencies";
+                  delete-branch = "true";
+                  commit-message = "Update dependencies";
+                  title = "Update Dependencies";
+                };
+              }
+            ];
+          };
+        };
+      in
+      mkApp (
+        getExe (
+          pkgs.writeShellApplication {
+            name = "update-github-workflows";
+            runtimeInputs = [ ];
+            text = ''
+              echo "# Do not manually edit this file, it is automatically generated" >"$PWD/.github/workflows/ci.yaml"
+              tee --append "$PWD/.github/workflows/ci.yaml" <${ci}
+              echo "# Do not manually edit this file, it is automatically generated" >"$PWD/.github/workflows/update.yaml"
+              tee --append "$PWD/.github/workflows/update.yaml" <${update}
+            '';
+          }
+        )
+      );
   }
 ) inputs.self.legacyPackages

@@ -43,8 +43,8 @@ inputs: {
         src = final.fetchFromGitHub {
           owner = "neovim";
           repo = "neovim";
-          rev = "e8a6c1b02122852da83dc52184e78369598d8240";
-          hash = "sha256-QEbgudJG4M9kVmuhGDEG2EP397zAbPmnZ5DX2GFwZCI=";
+          rev = "bbf36ef8ef86534e317e4e0153730a40ae4c936e";
+          hash = "sha256-mN1sOs6i48C0U6cw5eoykB5i2nsSA9CG5Oba0P5e+ls=";
         };
         buildInputs = (old.buildInputs or [ ]) ++ [ final.utf8proc ];
         patches = (old.patches or [ ]) ++ [
