@@ -45,7 +45,7 @@ function _G.project_tabline()
 		local pre_title_s_len = string.len(s)
 
 		local filetype = vim.fn.getbufvar(bufnr, "&filetype")
-		if filetype == "fugitive" or filetype == "oil" then
+		if vim.tbl_contains({ "fugitive", "oil", "checkhealth" }, filetype) then
 			s = s .. filetype
 		else
 			if bufname ~= "" then
