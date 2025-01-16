@@ -168,9 +168,8 @@ inputs.nixpkgs.lib.mapAttrs (
                         echo -n "$CACHE_SIGNING_KEY" >signing-key.pem
 
                         toplevel=$(nix build --print-build-logs --no-link --print-out-paths "$PWD#nixosConfigurations.${name}.config.system.build.toplevel")
-                        nix-store --query --requisites "$toplevel" >requisites
-                        nix store sign --key-file signing-key.pem --stdin --verbose <requisites
-                        nix copy --debug --to "$substituter" --stdin --verbose <requisites
+                        nix-store --query --requisites "$toplevel" | nix store sign --key-file signing-key.pem --stdin --verbose
+                        nix copy --debug --to "$substituter" --verbose "$toplevel"
                       '';
                     }
                   ];
