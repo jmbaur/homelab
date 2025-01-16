@@ -26,6 +26,17 @@
 
     boot.kernelParams = [ "console=ttyS0,115200" ];
 
+    boot.kernelPatches = [
+      {
+        name = "efi-support";
+        patch = null;
+        extraStructuredConfig = {
+          EFI = lib.kernel.yes;
+          EFI_STUB = lib.kernel.yes;
+        };
+      }
+    ];
+
     hardware.deviceTree = {
       enable = true;
       filter = "armada-388-clearfog*.dtb";

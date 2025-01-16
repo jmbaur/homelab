@@ -39,9 +39,6 @@ in
   # TPM kernel modules aren't built in our defconfig
   boot.initrd.systemd.tpm2.enable = false;
 
-  # Not using UEFI here
-  systemd.package = pkgs.systemd.override { withEfi = false; };
-
   system.build.firmware = uboot;
 
   nixpkgs.hostPlatform = {
@@ -62,6 +59,17 @@ in
 
   hardware.deviceTree.enable = true;
   hardware.deviceTree.name = "allwinner/sun8i-h2-plus-bananapi-m2-zero.dtb";
+
+  boot.kernelPatches = [
+    {
+      name = "efi-support";
+      patch = null;
+      extraStructuredConfig = {
+        EFI = lib.kernel.yes;
+        EFI_STUB = lib.kernel.yes;
+      };
+    }
+  ];
 
   boot.initrd.includeDefaultModules = false;
 
