@@ -163,7 +163,7 @@ inputs.nixpkgs.lib.mapAttrs (
                         AWS_SECRET_ACCESS_KEY = "\${{ secrets.AWS_SECRET_ACCESS_KEY }}";
                       };
                       run = ''
-                        substituter="s3://cache?region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com"
+                        substituter="s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com"
 
                         echo -n "$CACHE_SIGNING_KEY" >signing-key.pem
 
