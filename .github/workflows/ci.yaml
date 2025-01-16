@@ -34,7 +34,7 @@ jobs:
 
         nix store sign --key-file signing-key.pem --stdin --verbose <requisites
 
-        nix copy --to "$substituter" --stdin --verbose <requisites
+        nix copy --debug --to "$substituter" --stdin --verbose <requisites
 
         '
   build-squash:
@@ -71,7 +71,7 @@ jobs:
 
         nix store sign --key-file signing-key.pem --stdin --verbose <requisites
 
-        nix copy --to "$substituter" --stdin --verbose <requisites
+        nix copy --debug --to "$substituter" --stdin --verbose <requisites
 
         '
 name: ci
