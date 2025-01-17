@@ -163,13 +163,10 @@ inputs.nixpkgs.lib.mapAttrs (
                         AWS_SECRET_ACCESS_KEY = "\${{ secrets.AWS_SECRET_ACCESS_KEY }}";
                       };
                       run = ''
-                        substituter="s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com"
-
                         echo -n "$CACHE_SIGNING_KEY" >signing-key.pem
-
                         toplevel=$(nix build --print-build-logs --no-link --print-out-paths "$PWD#nixosConfigurations.${name}.config.system.build.toplevel")
-                        nix-store --query --requisites "$toplevel" | nix store sign --key-file signing-key.pem --stdin --verbose
-                        nix copy --debug --to "$substituter" --verbose "$toplevel"
+                        nix path-info --recursive "$toplevel" | nix store sign --stdin --verbose --key-file signing-key.pem
+                        nix copy --verbose --to "s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com" "$toplevel"
                       '';
                     }
                   ];
