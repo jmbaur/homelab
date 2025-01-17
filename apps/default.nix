@@ -215,7 +215,7 @@ inputs.nixpkgs.lib.mapAttrs (
                 uses = "peter-evans/create-pull-request@v6";
                 "with" = {
                   branch = "update-dependencies";
-                  delete-branch = "true";
+                  delete-branch = true;
                   commit-message = "Update dependencies";
                   title = "Update Dependencies";
                 };

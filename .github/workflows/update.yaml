@@ -16,7 +16,7 @@ jobs:
       with:
         branch: update-dependencies
         commit-message: Update dependencies
-        delete-branch: 'true'
+        delete-branch: true
         title: Update Dependencies
 name: update
 'on':
