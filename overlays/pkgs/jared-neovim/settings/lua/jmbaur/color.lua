@@ -9,7 +9,18 @@ vim.api.nvim_create_autocmd({ "ColorScheme" }, {
 			-- The default colorscheme doesn't have great highlights for the
 			-- selected tabline, make it stand out more here.
 			local tabline_sel = vim.api.nvim_get_hl(0, { name = "TablineSel" })
-			tabline_sel["link"] = "Normal"
+
+			if vim.opt.background:get() == "dark" then
+				---@diagnostic disable-next-line: assign-type-mismatch
+				tabline_sel["bg"] = "NvimDarkGrey2"
+				---@diagnostic disable-next-line: assign-type-mismatch
+				tabline_sel["fg"] = "NvimLightGrey2"
+			else
+				---@diagnostic disable-next-line: assign-type-mismatch
+				tabline_sel["bg"] = "NvimLightGrey2"
+				---@diagnostic disable-next-line: assign-type-mismatch
+				tabline_sel["fg"] = "NvimDarkGrey2"
+			end
 
 			---@diagnostic disable-next-line: param-type-mismatch
 			vim.api.nvim_set_hl(0, "TablineSel", tabline_sel)
