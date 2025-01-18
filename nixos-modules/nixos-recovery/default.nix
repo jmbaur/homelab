@@ -65,6 +65,8 @@ let
     # looking way of inheriting what is set in the parent configuration.
     hardware.firmware = flatten options.hardware.firmware.definitions;
 
+    hardware.deviceTree = removeAttrs config.hardware.deviceTree [ "base" ];
+
     boot.kernelPackages = config.boot.kernelPackages;
     boot.kernelModules = config.boot.kernelModules;
     boot.initrd.kernelModules = config.boot.initrd.kernelModules;
