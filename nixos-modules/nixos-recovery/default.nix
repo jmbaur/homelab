@@ -142,12 +142,6 @@ let
         options = [ "mode=0755" ];
       };
 
-      fileSystems.${config.boot.loader.efi.efiSysMountPoint} = {
-        fsType = "vfat";
-        device = "/dev/disk/by-partlabel/BOOT";
-        options = [ "umask=0077" ];
-      };
-
       fileSystems."/nix/.ro-store" = {
         fsType = "squashfs";
         device = "/dev/disk/by-partlabel/recovery";
