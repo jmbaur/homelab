@@ -8,6 +8,12 @@ local transpose = function()
 		return
 	end
 
+	-- Shells don't perform transposition when the cursor is all the way to the
+	-- left.
+	if pos == 1 then
+		return
+	end
+
 	-- TODO(jared): vim-rsi has this condition that honestly feels like a bug.
 	-- We want to always do the transposition when in command mode.
 	-- local cmdtype = vim.fn.getcmdtype()
