@@ -130,6 +130,7 @@ in
 
       home.sessionVariables = {
         EDITOR = "nvim";
+        MANPAGER = "nvim +Man!";
         GOPATH = "${config.xdg.dataHome}/go";
       };
 
