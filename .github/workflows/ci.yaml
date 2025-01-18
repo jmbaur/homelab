@@ -29,9 +29,10 @@ jobs:
         \ ]]; then\n  echo \"NixOS configuration for cauliflower already cached, nothing\
         \ to do!\"\nelse\n  toplevel=$(nix build --print-build-logs --no-link --print-out-paths\
         \ \"${toplevel_drv}^out\")\n  echo -n \"$CACHE_SIGNING_KEY\" >signing-key.pem\n\
-        \  nix path-info --recursive \"$toplevel\" | nix store sign --stdin --verbose\
-        \ --key-file signing-key.pem\n  nix copy --verbose --to \"s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
-        \ \"$toplevel\"\n  echo \"$toplevel\" | aws s3 cp - \"s3://update/cauliflower\"\
+        \  nix path-info --recursive \"$toplevel_drv\" \"$toplevel\" | nix store sign\
+        \ --stdin --verbose --key-file signing-key.pem\n  nix copy --verbose --to\
+        \ \"s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
+        \ \"$toplevel_drv\" \"$toplevel\"\n  echo \"$toplevel\" | aws s3 cp - \"s3://update/cauliflower\"\
         \ --endpoint-url=\"https://34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
         \nfi\n"
   build-celery:
@@ -63,9 +64,10 @@ jobs:
         \ ]]; then\n  echo \"NixOS configuration for celery already cached, nothing\
         \ to do!\"\nelse\n  toplevel=$(nix build --print-build-logs --no-link --print-out-paths\
         \ \"${toplevel_drv}^out\")\n  echo -n \"$CACHE_SIGNING_KEY\" >signing-key.pem\n\
-        \  nix path-info --recursive \"$toplevel\" | nix store sign --stdin --verbose\
-        \ --key-file signing-key.pem\n  nix copy --verbose --to \"s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
-        \ \"$toplevel\"\n  echo \"$toplevel\" | aws s3 cp - \"s3://update/celery\"\
+        \  nix path-info --recursive \"$toplevel_drv\" \"$toplevel\" | nix store sign\
+        \ --stdin --verbose --key-file signing-key.pem\n  nix copy --verbose --to\
+        \ \"s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
+        \ \"$toplevel_drv\" \"$toplevel\"\n  echo \"$toplevel\" | aws s3 cp - \"s3://update/celery\"\
         \ --endpoint-url=\"https://34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
         \nfi\n"
   build-squash:
@@ -97,9 +99,10 @@ jobs:
         \ ]]; then\n  echo \"NixOS configuration for squash already cached, nothing\
         \ to do!\"\nelse\n  toplevel=$(nix build --print-build-logs --no-link --print-out-paths\
         \ \"${toplevel_drv}^out\")\n  echo -n \"$CACHE_SIGNING_KEY\" >signing-key.pem\n\
-        \  nix path-info --recursive \"$toplevel\" | nix store sign --stdin --verbose\
-        \ --key-file signing-key.pem\n  nix copy --verbose --to \"s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
-        \ \"$toplevel\"\n  echo \"$toplevel\" | aws s3 cp - \"s3://update/squash\"\
+        \  nix path-info --recursive \"$toplevel_drv\" \"$toplevel\" | nix store sign\
+        \ --stdin --verbose --key-file signing-key.pem\n  nix copy --verbose --to\
+        \ \"s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
+        \ \"$toplevel_drv\" \"$toplevel\"\n  echo \"$toplevel\" | aws s3 cp - \"s3://update/squash\"\
         \ --endpoint-url=\"https://34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
         \nfi\n"
 name: ci

@@ -172,8 +172,8 @@ inputs.nixpkgs.lib.mapAttrs (
                         else
                           toplevel=$(nix build --print-build-logs --no-link --print-out-paths "''${toplevel_drv}^out")
                           echo -n "$CACHE_SIGNING_KEY" >signing-key.pem
-                          nix path-info --recursive "$toplevel" | nix store sign --stdin --verbose --key-file signing-key.pem
-                          nix copy --verbose --to "s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com" "$toplevel"
+                          nix path-info --recursive "$toplevel_drv" "$toplevel" | nix store sign --stdin --verbose --key-file signing-key.pem
+                          nix copy --verbose --to "s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com" "$toplevel_drv" "$toplevel"
                           echo "$toplevel" | aws s3 cp - "s3://update/${name}" --endpoint-url="https://34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com"
                         fi
                       '';
