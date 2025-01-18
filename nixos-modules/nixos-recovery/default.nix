@@ -1,4 +1,5 @@
 {
+  options,
   config,
   lib,
   noUserModules,
@@ -8,6 +9,7 @@
 
 let
   inherit (lib)
+    flatten
     getExe
     mkEnableOption
     mkIf
@@ -58,6 +60,10 @@ let
       trusted-public-keys = config.nix.settings.trusted-public-keys or [ ];
       extra-trusted-public-keys = config.nix.settings.extra-trusted-public-keys or [ ];
     };
+
+    # An apply function on this option means that we end up having this strange
+    # looking way of inheriting what is set in the parent configuration.
+    hardware.firmware = flatten options.hardware.firmware.definitions;
 
     boot.kernelPackages = config.boot.kernelPackages;
     boot.kernelModules = config.boot.kernelModules;
