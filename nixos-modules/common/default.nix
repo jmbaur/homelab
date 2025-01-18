@@ -5,35 +5,44 @@
   ...
 }:
 let
+  inherit (lib)
+    genAttrs
+    mkDefault
+    mkEnableOption
+    mkIf
+    ;
+
   cfg = config.custom.common;
+
   isNotContainer = !config.boot.isContainer;
 in
 {
-  options.custom.common.enable = lib.mkEnableOption "common config" // {
-    default = true;
+  options.custom.common = {
+    enable = mkEnableOption "common config";
+
+    # Add a way to opt-out of cross-compiled nixos machines :/
+    nativeBuild = mkEnableOption "enable native building";
   };
 
-  # Add a way to opt-out of cross-compiled nixos machines :/
-  options.custom.nativeBuild = lib.mkEnableOption "enable native building";
-
-  config = lib.mkIf cfg.enable {
-    system.stateVersion = lib.mkDefault "25.05";
-
-    system.image.id = config.system.nixos.distroId;
+  config = mkIf cfg.enable {
+    system.stateVersion = mkDefault "25.05";
 
     # We always build on x86_64-linux.
     #
     # "If it don't cross-compile, it don't go in the config!"
-    nixpkgs.buildPlatform = lib.mkIf (!config.custom.nativeBuild) "x86_64-linux";
+    nixpkgs.buildPlatform = mkIf (!cfg.nativeBuild) "x86_64-linux";
 
     # CapsLock is terrible
-    services.xserver.xkb.options = lib.mkDefault "ctrl:nocaps";
+    services.xserver.xkb.options = mkDefault "ctrl:nocaps";
 
-    environment.enableAllTerminfo = true;
+    boot.initrd.systemd.enable = mkDefault true;
+    system.etc.overlay.enable = mkDefault true;
 
-    programs.nano.enable = false;
+    environment.enableAllTerminfo = mkDefault true;
+
+    programs.nano.enable = mkDefault false;
     programs.vim = {
-      enable = true;
+      enable = mkDefault true;
       defaultEditor = true;
       package = pkgs.vim.customize {
         vimrcFile = pkgs.fetchurl {
@@ -45,19 +54,19 @@ in
     };
 
     # moving closer to perlless system
-    environment.defaultPackages = lib.mkDefault [ ];
-    documentation.info.enable = lib.mkDefault false;
-    programs.command-not-found.enable = false;
-    boot.enableContainers = lib.mkDefault false;
+    environment.defaultPackages = mkDefault [ ];
+    documentation.info.enable = mkDefault false;
+    programs.command-not-found.enable = mkDefault false;
+    boot.enableContainers = mkDefault false;
 
-    networking.nftables.enable = lib.mkDefault true;
+    networking.nftables.enable = mkDefault true;
 
-    boot.tmp.cleanOnBoot = lib.mkDefault isNotContainer;
+    boot.tmp.cleanOnBoot = mkDefault isNotContainer;
 
     # The initrd doesn't have a fully-functioning terminal, prevent systemd
     # from using pager for services that launch a shell
     boot.initrd.systemd.services =
-      lib.genAttrs
+      genAttrs
         [
           "emergency"
           "rescue"
@@ -72,12 +81,12 @@ in
     console.useXkbConfig = true;
 
     # no need for mutable users
-    users.mutableUsers = lib.mkDefault false;
-    systemd.sysusers.enable = lib.mkDefault true;
+    users.mutableUsers = mkDefault false;
+    systemd.sysusers.enable = mkDefault true;
 
     programs.tmux = {
-      enable = true;
-      keyMode = lib.mkIf (config.programs.vim.enable || config.programs.neovim.enable) "vi";
+      enable = mkDefault true;
+      keyMode = mkIf (config.programs.vim.enable || config.programs.neovim.enable) "vi";
     };
 
     nix = {
@@ -96,17 +105,17 @@ in
       };
     };
 
-    # Provide a sane default value so that commands don't outright fail on an
-    # otherwise unconfigured machine.
-    environment.sessionVariables.NIX_PATH = lib.mkIf config.nix.enable (
-      lib.mkDefault "nixpkgs=https://github.com/nixos/nixpkgs/archive/nixos-unstable.tar.gz"
+    # Provide a sane default value so that nix commands don't outright fail on
+    # an otherwise unconfigured machine.
+    environment.sessionVariables.NIX_PATH = mkIf config.nix.enable (
+      mkDefault "nixpkgs=https://github.com/nixos/nixpkgs/archive/nixos-unstable.tar.gz"
     );
 
     # Use the dbus-broker dbus daemon implementation (more performance, yeah?)
     services.dbus.implementation = "broker";
 
     services.openssh = {
-      enable = lib.mkDefault isNotContainer;
+      enable = mkDefault isNotContainer;
       settings.PasswordAuthentication = false;
     };
 

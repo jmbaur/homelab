@@ -25,8 +25,8 @@
 
   custom.desktop.enable = true;
   custom.dev.enable = true;
-  custom.image = {
-    boot.uefi.enable = true;
-    installer.targetDisk = "/dev/nvme0n1";
+  custom.recovery = {
+    targetDisk = "/dev/nvme0n1";
+    updateEndpoint = "https://update.jmbaur.com/cauliflower";
   };
 }

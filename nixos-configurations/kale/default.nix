@@ -34,11 +34,7 @@
       services.fwupd.enable = true;
       custom.server.enable = true;
       custom.basicNetwork.enable = true;
-      custom.image = {
-        boot.uefi.enable = true;
-        installer.targetDisk = "/dev/disk/by-path/pci-0000:01:00.0-nvme-1";
-        hasTpm2 = true;
-      };
+      custom.recovery.targetDisk = "/dev/disk/by-path/pci-0000:01:00.0-nvme-1";
       custom.nestedBuilder = {
         enable = false;
         memory = 4;

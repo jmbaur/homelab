@@ -10,10 +10,10 @@ builtins.listToAttrs (
       let
         pkgs = inputs.nixpkgs.legacyPackages.${system};
       in
-      (pkgs.callPackages ./tests/image.nix { inherit inputs; })
-      // {
-        desktop = pkgs.callPackage ./tests/desktop.nix { inherit inputs; };
+      {
         builder = pkgs.callPackage ./tests/builder.nix { inherit inputs; };
+        desktop = pkgs.callPackage ./tests/desktop.nix { inherit inputs; };
+        installationLifecycle = pkgs.callPackage ./tests/installation-lifecycle.nix { inherit inputs; };
         wgNetwork = pkgs.callPackage ./tests/wg-network.nix { inherit inputs; };
       };
   }) (builtins.attrNames inputs.self.legacyPackages)

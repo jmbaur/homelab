@@ -39,14 +39,18 @@ in
 inputs.nixpkgs.lib.genAttrs allHosts (
   host:
   inputs.nixpkgs.lib.nixosSystem {
+    # extraModules are included in any usage of `noUserModules`, which means all of our custom options will still exist.
+    extraModules = [ inputs.self.nixosModules.default ];
+
     modules = [
-      inputs.self.nixosModules.default
       (
         # Opinionated configuration that we want to be applied to all machines
         # _within_ this flake, but not necessarily exported for outside usage
         # as a module.
         { config, lib, ... }:
         {
+          _file = "<homelab/nixos-configurations/default.nix>";
+
           assertions = [
             {
               assertion = builtins.elem config.networking.hostName knownVegetables;
@@ -65,8 +69,6 @@ inputs.nixpkgs.lib.genAttrs allHosts (
           # advantage of it here.
           sops.defaultSopsFile = "/etc/sops.yaml";
           sops.validateSopsFiles = false;
-
-          system.image.version = readFile "/.version does not exist" ../.version;
 
           sops.secrets = lib.mapAttrs' (name: nodeConfig: {
             name = "wg-${name}";
@@ -110,12 +112,10 @@ inputs.nixpkgs.lib.genAttrs allHosts (
             "cache.jmbaur.com:C3ku8BNDXgfTO7dNHK+eojm4uy7Gvotwga+EV0cfhPQ="
           ];
 
-          custom.image = {
-            enable = true;
-            update = {
-              source = "https://update.jmbaur.com/${config.networking.hostName}";
-              gpgPubkey = ../data/sysupdate.gpg;
-            };
+          custom.common.enable = true;
+          custom.recovery = {
+            enable = lib.mkDefault true;
+            updateEndpoint = lib.mkDefault "https://update.jmbaur.com/${config.networking.hostName}";
           };
         }
       )

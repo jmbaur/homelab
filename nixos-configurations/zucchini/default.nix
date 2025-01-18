@@ -64,11 +64,7 @@
     {
       custom.server.enable = true;
       custom.basicNetwork.enable = true;
-      custom.image = {
-        mutableNixStore = true;
-        boot.uefi.enable = true;
-        installer.targetDisk = "/dev/disk/by-path/platform-a41000000.pcie-pci-0004:41:00.0-nvme-1";
-      };
+      custom.recovery.targetDisk = "/dev/disk/by-path/platform-a41000000.pcie-pci-0004:41:00.0-nvme-1";
     }
   ];
 }

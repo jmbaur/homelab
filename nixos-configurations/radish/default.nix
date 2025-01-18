@@ -58,11 +58,8 @@
     {
       custom.server.enable = true;
       custom.basicNetwork.enable = true;
-      custom.nativeBuild = true;
-      custom.image = {
-        installer.targetDisk = "/dev/disk/by-path/platform-4020000.mmc";
-        boot.uefi.enable = true;
-      };
+      custom.common.nativeBuild = true;
+      custom.recovery.targetDisk = "/dev/disk/by-path/platform-4020000.mmc";
     }
   ];
 }

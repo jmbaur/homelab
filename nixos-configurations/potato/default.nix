@@ -74,10 +74,7 @@
       custom.server.enable = true;
       custom.basicNetwork.enable = true;
 
-      custom.image = {
-        boot.uefi.enable = true;
-        installer.targetDisk = "/dev/disk/by-path/pci-0000:03:00.0-nvme-1";
-      };
+      custom.recovery.targetDisk = "/dev/disk/by-path/pci-0000:03:00.0-nvme-1";
 
       boot.kernelParams = [ "console=ttyS0,115200" ];
       systemd.services."serial-getty@ttyS0" = {
