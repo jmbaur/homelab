@@ -1,5 +1,38 @@
 # Do not manually edit this file, it is automatically generated
 jobs:
+  build-cauliflower:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@main
+      with:
+        tool-cache: true
+    - name: Install Nix
+      uses: DeterminateSystems/nix-installer-action@main
+      with:
+        extra-conf: 'extra-substituters = https://cache.jmbaur.com
+
+          extra-trusted-public-keys = cache.jmbaur.com:C3ku8BNDXgfTO7dNHK+eojm4uy7Gvotwga+EV0cfhPQ=
+
+          '
+    - env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        CACHE_SIGNING_KEY: ${{ secrets.CACHE_SIGNING_KEY }}
+      name: Build cauliflower
+      run: 'echo -n "$CACHE_SIGNING_KEY" >signing-key.pem
+
+        toplevel=$(nix build --print-build-logs --no-link --print-out-paths "$PWD#nixosConfigurations.cauliflower.config.system.build.toplevel")
+
+        nix path-info --recursive "$toplevel" | nix store sign --stdin --verbose --key-file
+        signing-key.pem
+
+        nix copy --verbose --to "s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com"
+        "$toplevel"
+
+        '
   build-celery:
     runs-on: ubuntu-latest
     steps:

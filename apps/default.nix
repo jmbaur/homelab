@@ -178,6 +178,7 @@ inputs.nixpkgs.lib.mapAttrs (
                   # Allow-list for machines we want to build in CI.
                   # TODO(jared): Build _all_ of them.
                   builtins.elem name [
+                    "cauliflower"
                     "celery"
                     "squash"
                   ]
