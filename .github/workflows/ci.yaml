@@ -23,7 +23,7 @@ jobs:
         CACHE_SIGNING_KEY: ${{ secrets.CACHE_SIGNING_KEY }}
       name: Build cauliflower
       run: "existing_toplevel=$(curl --silent --fail https://update.jmbaur.com/cauliflower\
-        \ || true)\ntoplevel_drv=$(nix eval --raw \"$PWD#nixosConfigurations.cauliflower.config.system.build.toplevel\"\
+        \ || true)\ntoplevel_drv=$(nix eval --raw \"$PWD#nixosConfigurations.cauliflower.config.system.build.toplevel.drvPath\"\
         )\nnew_toplevel=$(nix derivation show \"$toplevel_drv\" | jq --raw-output\
         \ 'to_entries[0].value.outputs.out.path')\n\nif [[ $new_toplevel == \"$existing_toplevel\"\
         \ ]]; then\n  echo \"NixOS configuration for cauliflower already cached, nothing\
@@ -57,7 +57,7 @@ jobs:
         CACHE_SIGNING_KEY: ${{ secrets.CACHE_SIGNING_KEY }}
       name: Build celery
       run: "existing_toplevel=$(curl --silent --fail https://update.jmbaur.com/celery\
-        \ || true)\ntoplevel_drv=$(nix eval --raw \"$PWD#nixosConfigurations.celery.config.system.build.toplevel\"\
+        \ || true)\ntoplevel_drv=$(nix eval --raw \"$PWD#nixosConfigurations.celery.config.system.build.toplevel.drvPath\"\
         )\nnew_toplevel=$(nix derivation show \"$toplevel_drv\" | jq --raw-output\
         \ 'to_entries[0].value.outputs.out.path')\n\nif [[ $new_toplevel == \"$existing_toplevel\"\
         \ ]]; then\n  echo \"NixOS configuration for celery already cached, nothing\
@@ -91,7 +91,7 @@ jobs:
         CACHE_SIGNING_KEY: ${{ secrets.CACHE_SIGNING_KEY }}
       name: Build squash
       run: "existing_toplevel=$(curl --silent --fail https://update.jmbaur.com/squash\
-        \ || true)\ntoplevel_drv=$(nix eval --raw \"$PWD#nixosConfigurations.squash.config.system.build.toplevel\"\
+        \ || true)\ntoplevel_drv=$(nix eval --raw \"$PWD#nixosConfigurations.squash.config.system.build.toplevel.drvPath\"\
         )\nnew_toplevel=$(nix derivation show \"$toplevel_drv\" | jq --raw-output\
         \ 'to_entries[0].value.outputs.out.path')\n\nif [[ $new_toplevel == \"$existing_toplevel\"\
         \ ]]; then\n  echo \"NixOS configuration for squash already cached, nothing\

@@ -164,7 +164,7 @@ inputs.nixpkgs.lib.mapAttrs (
                       };
                       run = ''
                         existing_toplevel=$(curl --silent --fail https://update.jmbaur.com/${name} || true)
-                        toplevel_drv=$(nix eval --raw "$PWD#nixosConfigurations.${name}.config.system.build.toplevel")
+                        toplevel_drv=$(nix eval --raw "$PWD#nixosConfigurations.${name}.config.system.build.toplevel.drvPath")
                         new_toplevel=$(nix derivation show "$toplevel_drv" | jq --raw-output 'to_entries[0].value.outputs.out.path')
 
                         if [[ $new_toplevel == "$existing_toplevel" ]]; then
