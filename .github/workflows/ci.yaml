@@ -70,6 +70,41 @@ jobs:
         \ \"$toplevel_drv\" \"$toplevel\"\n  echo \"$toplevel\" | aws s3 cp - \"s3://update/celery\"\
         \ --endpoint-url=\"https://34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
         \nfi\n"
+  build-pumpkin:
+    runs-on: ubuntu-24.04-arm
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@main
+      with:
+        tool-cache: true
+    - name: Install Nix
+      uses: DeterminateSystems/nix-installer-action@main
+      with:
+        extra-conf: 'extra-substituters = https://cache.jmbaur.com
+
+          extra-trusted-public-keys = cache.jmbaur.com:C3ku8BNDXgfTO7dNHK+eojm4uy7Gvotwga+EV0cfhPQ=
+
+          '
+    - env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        CACHE_SIGNING_KEY: ${{ secrets.CACHE_SIGNING_KEY }}
+      name: Build pumpkin
+      run: "existing_toplevel=$(curl --silent --fail https://update.jmbaur.com/pumpkin\
+        \ || true)\ntoplevel_drv=$(nix eval --raw \"$PWD#nixosConfigurations.pumpkin.config.system.build.toplevel.drvPath\"\
+        )\nnew_toplevel=$(nix derivation show \"$toplevel_drv\" | jq --raw-output\
+        \ 'to_entries[0].value.outputs.out.path')\n\nif [[ $new_toplevel == \"$existing_toplevel\"\
+        \ ]]; then\n  echo \"NixOS configuration for pumpkin already cached, nothing\
+        \ to do!\"\nelse\n  toplevel=$(nix build --print-build-logs --no-link --print-out-paths\
+        \ \"${toplevel_drv}^out\")\n  echo -n \"$CACHE_SIGNING_KEY\" >signing-key.pem\n\
+        \  nix path-info --recursive \"$toplevel_drv\" \"$toplevel\" | nix store sign\
+        \ --stdin --verbose --key-file signing-key.pem\n  nix copy --verbose --to\
+        \ \"s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
+        \ \"$toplevel_drv\" \"$toplevel\"\n  echo \"$toplevel\" | aws s3 cp - \"s3://update/pumpkin\"\
+        \ --endpoint-url=\"https://34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
+        \nfi\n"
   build-squash:
     runs-on: ubuntu-latest
     steps:

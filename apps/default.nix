@@ -133,10 +133,15 @@ inputs.nixpkgs.lib.mapAttrs (
           # TODO(jared): `pkgs.formats.yaml` doesn't handle long lines well.
           jobs =
             mapAttrs'
-              (name: _: {
+              (name: nixosConfig: {
                 name = "build-${name}";
                 value = {
-                  runs-on = "ubuntu-latest";
+                  runs-on =
+                    {
+                      x86_64 = "ubuntu-latest";
+                      aarch64 = "ubuntu-24.04-arm";
+                    }
+                    .${nixosConfig._module.args.pkgs.stdenv.buildPlatform.qemuArch};
                   steps = [
                     {
                       name = "Checkout repository";
@@ -189,6 +194,7 @@ inputs.nixpkgs.lib.mapAttrs (
                   builtins.elem name [
                     "cauliflower"
                     "celery"
+                    "pumpkin"
                     "squash"
                   ]
                 ) inputs.self.nixosConfigurations
