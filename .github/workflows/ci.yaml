@@ -32,6 +32,8 @@ jobs:
         nix copy --verbose --to "s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com"
         "$toplevel"
 
+        echo "$toplevel" | aws s3 cp - "s3://update/cauliflower" --endpoint-url="https://34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com"
+
         '
   build-celery:
     runs-on: ubuntu-latest
@@ -65,6 +67,8 @@ jobs:
         nix copy --verbose --to "s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com"
         "$toplevel"
 
+        echo "$toplevel" | aws s3 cp - "s3://update/celery" --endpoint-url="https://34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com"
+
         '
   build-squash:
     runs-on: ubuntu-latest
@@ -97,6 +101,8 @@ jobs:
 
         nix copy --verbose --to "s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com"
         "$toplevel"
+
+        echo "$toplevel" | aws s3 cp - "s3://update/squash" --endpoint-url="https://34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com"
 
         '
 name: ci
