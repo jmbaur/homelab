@@ -83,7 +83,7 @@ in
     nix = {
       package = pkgs.nixVersions.nix_2_25_sysroot;
       channel.enable = false; # opt out of nix channels
-      distributedBuilds = true;
+      distributedBuilds = true; # allow for populating /etc/nix/machines for remote building
       settings = {
         auto-allocate-uids = true;
         sync-before-registering = true;
