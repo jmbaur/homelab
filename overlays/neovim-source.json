@@ -1,0 +1,12 @@
+{
+  "url": "https://github.com/neovim/neovim",
+  "rev": "6696ea7f103814d3d5700107546280bf50a4004a",
+  "date": "2025-01-19T15:53:17+01:00",
+  "path": "/nix/store/v2iy6d5hrxl6mhmazaw9mwr939pc29d6-neovim",
+  "sha256": "02hbxhslgbya9z9ssppwrdm05jww5w9v6l3bz94hw8bwzpyxann1",
+  "hash": "sha256-wVrV/f18IQ5J+mtQsxMvnMsCasv8Xq3TT8qvRzXsCwo=",
+  "fetchLFS": false,
+  "fetchSubmodules": false,
+  "deepClone": false,
+  "leaveDotGit": false
+}

@@ -40,11 +40,15 @@ inputs: {
 
       neovim-unwrapped = prev.neovim-unwrapped.overrideAttrs (old: {
         version = "0.11.0-dev";
-        src = final.fetchFromGitHub {
-          owner = "neovim";
-          repo = "neovim";
-          rev = "71507281fb86deaaa7f47460e8c7a503b46663f6";
-          hash = "sha256-D1yMK1Eb9jyIKPLdpiITxQUdnOqY0UN/nTmDWIpvuRk=";
+        src = final.fetchgit {
+          inherit (final.lib.importJSON ./neovim-source.json)
+            url
+            hash
+            fetchSubmodules
+            fetchLFS
+            deepClone
+            leaveDotGit
+            ;
         };
         buildInputs = (old.buildInputs or [ ]) ++ [ final.utf8proc ];
         patches = (old.patches or [ ]) ++ [
