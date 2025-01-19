@@ -1,9 +1,5 @@
 { lib, pkgs, ... }:
 {
-  imports = [
-    ./builds.nix
-  ];
-
   config = lib.mkMerge [
     {
       nixpkgs.hostPlatform = "x86_64-linux";
