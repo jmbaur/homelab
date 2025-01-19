@@ -171,7 +171,7 @@ nixosTest {
 
       for n in [n1, n2, n3, n4]:
           n.succeed("echo module wireguard +p > /sys/kernel/debug/dynamic_debug/control")
-          n.wait_for_unit("network-online.target")
+          n.wait_for_unit("network.target")
           print(n.succeed("wg"))
 
       # n1 can only reach n2
