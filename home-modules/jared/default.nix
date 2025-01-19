@@ -16,8 +16,6 @@ in
     };
 
     dev.enable = mkEnableOption "dev";
-
-    gui.enable = mkEnableOption "gui";
   };
 
   config = lib.mkMerge [
@@ -52,81 +50,74 @@ in
     }
 
     (lib.mkIf cfg.dev.enable {
-      home.packages =
-        with pkgs;
-        lib.optionals cfg.gui.enable [
-          alacritty
-          kitty
-          wezterm
-        ]
-        ++ [
-          _caffeine
-          abduco
-          age-plugin-yubikey
-          ansifilter
-          as-tree
-          bat
-          binary-diff
-          cachix
-          cntr
-          copy
-          curl
-          dig
-          fd
-          file
-          fsrx
-          gh
-          git-extras
-          git-gone
-          gnumake
-          grex
-          gron
-          htmlq
-          jared-neovim-all-languages
-          jo
-          jq
-          just
-          killall
-          libarchive
-          linux-scripts
-          lrzsz
-          lsof
-          macgen
-          man-pages
-          man-pages-posix
-          mdcat
-          nix-diff
-          nix-output-monitor
-          nix-prefetch-scripts
-          nix-tree
-          nixos-shell
-          nload
-          nmap
-          nurl
-          pax-utils
-          pb
-          pciutils
-          poke
-          pomo
-          procs
-          pstree
-          pwgen
-          qemu
-          rage
-          ripgrep
-          sd
-          strace-with-colors
-          tcpdump
-          tea
-          tio
-          tmux-jump
-          tokei
-          unzip
-          usbutils
-          watchexec
-          wip
-          zip
-        ];
+      home.packages = with pkgs; [
+        _caffeine
+        abduco
+        age-plugin-yubikey
+        ansifilter
+        as-tree
+        bat
+        binary-diff
+        cachix
+        cntr
+        copy
+        curl
+        dig
+        fd
+        file
+        fsrx
+        gh
+        git-extras
+        git-gone
+        gnumake
+        grex
+        gron
+        htmlq
+        jared-neovim-all-languages
+        jo
+        jq
+        just
+        killall
+        libarchive
+        linux-scripts
+        lrzsz
+        lsof
+        macgen
+        man-pages
+        man-pages-posix
+        mdcat
+        nix-diff
+        nix-output-monitor
+        nix-prefetch-scripts
+        nix-tree
+        nixos-shell
+        nload
+        nmap
+        nurl
+        pax-utils
+        pb
+        pciutils
+        poke
+        pomo
+        procs
+        pstree
+        pwgen
+        qemu
+        rage
+        ripgrep
+        sd
+        strace-with-colors
+        tcpdump
+        tea
+        tio
+        tmux-jump
+        tokei
+        unzip
+        usbutils
+        watchexec
+        wip
+        zip
+      ];
 
       home.sessionVariables = {
         EDITOR = "nvim";
