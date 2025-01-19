@@ -2,8 +2,8 @@
 
 declare -r root_partition="/dev/disk/by-partlabel/root"
 
-updateEndpoint=$1
-targetDisk=$(realpath "$2")
+update_endpoint=$1
+target_disk=$(realpath "$2")
 fstab=$(realpath "$3")
 
 function error_handler() {
@@ -15,16 +15,17 @@ trap error_handler ERR
 # TODO(jared): wait for network to be up
 
 # get the nix output path to our toplevel, used at the end
-toplevel=$(curl --silent --fail "$updateEndpoint")
+toplevel=$(curl --silent --fail "$update_endpoint")
 
 # systemd-repart requires a GPT to exist on disk, but we should only touch the
 # disk if it isn't already what we are using.
-if [[ $(findmnt /nix/.ro-store --output source --noheadings) != "$targetDisk"* ]]; then
-	echo "label: gpt" | sfdisk --wipe=always "$targetDisk"
+if [[ $(findmnt /nix/.ro-store --output source --noheadings) != "$target_disk"* ]]; then
+	echo "label: gpt" | sfdisk --wipe=always "$target_disk"
 fi
 
 # partition disks
-systemd-repart --dry-run=no --factory-reset=yes "$targetDisk"
+sector_size=$(blockdev --getss "$target_disk")
+systemd-repart --dry-run=no --factory-reset=yes --sector-size="$sector_size" "$target_disk"
 
 udevadm wait --timeout=10 "$root_partition"
 sleep 2 # TODO(jared): don't do this, though it does appear to be necessary
