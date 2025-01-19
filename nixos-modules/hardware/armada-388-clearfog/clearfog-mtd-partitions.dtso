@@ -27,7 +27,7 @@
 		};
 
 		partition@240000 {
-			label = "empty";
+			label = "ubi";
 			reg = <0x240000 0x1c0000>;
 		};
 	};
