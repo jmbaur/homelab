@@ -14,6 +14,7 @@ nixosTest {
     # So we can do user creation
     virtualisation.qemu.consoles = [ "tty0" ];
 
+    custom.common.enable = true;
     custom.desktop.enable = true;
   };
   testScript = # python

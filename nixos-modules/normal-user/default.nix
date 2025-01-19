@@ -36,7 +36,7 @@ in
         message = "sysusers needs to be enabled";
       }
       {
-        assertion = config.nix.enable -> config.nix.settings.auto-allocate-uids;
+        assertion = config.nix.enable -> config.nix.settings.auto-allocate-uids or false;
         message = "systemd-homed-firstboot does not work when auto-allocate-uids is not true because nixbld* users are considered 'regular' users";
       }
     ];
