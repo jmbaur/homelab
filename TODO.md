@@ -1,7 +1,5 @@
 # image based systems
-- using systemd-tpm2 cryptsetup token-type doesn't have a nice way to enroll a
-  recovery key. Currently it is a manual process of ensuring
-  libcryptsetup-token-systemd-tpm2.so is in LD_LIBRARY_PATH and doing
+- using systemd-tpm2 cryptsetup token-type doesn't have a nice way to enroll a recovery key. Currently it is a manual process of ensuring libcryptsetup-token-systemd-tpm2.so is in LD_LIBRARY_PATH and doing
   `cryptsetup luksAddKey --token-id 0 --token-type systemd-tpm2 /path/to/device`.
 - add a recovery boot option
 
@@ -45,3 +43,6 @@ solve panic on early boot
 [    3.314332] dw-apb-uart 5000000.serial: Error applying setting, reverse things back
 [    3.324627] sun6i-spi 5010000.spi: Error applying setting, reverse things back
 ```
+# pumpkin
+
+Recovery image doesn't work without kernel modules that allow for USB mass storage access into initrd, meaning we must put the recovery image on an sdcard or something similar.
