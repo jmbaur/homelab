@@ -7,7 +7,6 @@ inputs.nixpkgs.lib.mapAttrs (
     inherit (pkgs) lib;
 
     inherit (lib)
-      filterAttrs
       getExe
       getExe'
       mapAttrs'
@@ -137,79 +136,65 @@ inputs.nixpkgs.lib.mapAttrs (
                 ];
               };
             }
-            // mapAttrs'
-              (name: nixosConfig: {
-                name = "build-${name}";
-                value = {
-                  needs = [ "test" ];
-                  runs-on =
-                    {
-                      x86_64 = "ubuntu-latest";
-                      aarch64 = "ubuntu-24.04-arm";
-                    }
-                    .${nixosConfig._module.args.pkgs.stdenv.buildPlatform.qemuArch};
-                  # needed for magic-nix-cache-action
-                  permissions = {
-                    contents = "read";
-                    id-token = "write";
-                  };
-                  steps = [
-                    {
-                      name = "Checkout repository";
-                      uses = "actions/checkout@v4";
-                    }
-                    {
-                      name = "Free Disk Space (Ubuntu)";
-                      uses = "jlumbroso/free-disk-space@main";
-                      "with".tool-cache = true;
-                    }
-                    {
-                      uses = "DeterminateSystems/nix-installer-action@main";
-                      "with".extra-conf = ''
-                        extra-substituters = https://cache.jmbaur.com
-                        extra-trusted-public-keys = cache.jmbaur.com:C3ku8BNDXgfTO7dNHK+eojm4uy7Gvotwga+EV0cfhPQ=
-                      '';
-                    }
-                    { uses = "DeterminateSystems/magic-nix-cache-action@main"; }
-                    {
-                      name = "Build ${name}";
-                      env = {
-                        CACHE_SIGNING_KEY = "\${{ secrets.CACHE_SIGNING_KEY }}";
-                        AWS_ACCESS_KEY_ID = "\${{ secrets.AWS_ACCESS_KEY_ID }}";
-                        AWS_SECRET_ACCESS_KEY = "\${{ secrets.AWS_SECRET_ACCESS_KEY }}";
-                      };
-                      run = ''
-                        existing_toplevel=$(curl --silent --fail https://update.jmbaur.com/${name} || true)
-                        toplevel_drv=$(nix eval --raw "$PWD#nixosConfigurations.${name}.config.system.build.toplevel.drvPath")
-                        new_toplevel=$(nix derivation show "$toplevel_drv" | jq --raw-output 'to_entries[0].value.outputs.out.path')
-
-                        if [[ $new_toplevel == "$existing_toplevel" ]]; then
-                          echo "NixOS configuration for ${name} already cached, nothing to do!"
-                        else
-                          toplevel=$(nix build --print-build-logs --no-link --print-out-paths "''${toplevel_drv}^out")
-                          echo -n "$CACHE_SIGNING_KEY" >signing-key.pem
-                          nix path-info --recursive "$toplevel" | nix store sign --stdin --verbose --key-file signing-key.pem
-                          nix copy --verbose --to "s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com" "$toplevel"
-                          echo "$toplevel" | aws s3 cp - "s3://update/${name}" --endpoint-url="https://34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com"
-                        fi
-                      '';
-                    }
-                  ];
+            // mapAttrs' (name: nixosConfig: {
+              name = "build-${name}";
+              value = {
+                needs = [ "test" ];
+                runs-on =
+                  {
+                    x86_64 = "ubuntu-latest";
+                    aarch64 = "ubuntu-24.04-arm";
+                  }
+                  .${nixosConfig._module.args.pkgs.stdenv.buildPlatform.qemuArch};
+                # needed for magic-nix-cache-action
+                permissions = {
+                  contents = "read";
+                  id-token = "write";
                 };
-              })
-              (
-                filterAttrs (
-                  name: _:
-                  # Allow-list for machines we want to build in CI.
-                  # TODO(jared): Build _all_ of them.
-                  builtins.elem name [
-                    "cauliflower"
-                    "celery"
-                    "pumpkin"
-                    "squash"
-                  ]
-                ) inputs.self.nixosConfigurations
-              );
+                steps = [
+                  {
+                    name = "Checkout repository";
+                    uses = "actions/checkout@v4";
+                  }
+                  {
+                    name = "Free Disk Space (Ubuntu)";
+                    uses = "jlumbroso/free-disk-space@main";
+                    "with".tool-cache = true;
+                  }
+                  {
+                    uses = "DeterminateSystems/nix-installer-action@main";
+                    "with".extra-conf = ''
+                      extra-substituters = https://cache.jmbaur.com
+                      extra-trusted-public-keys = cache.jmbaur.com:C3ku8BNDXgfTO7dNHK+eojm4uy7Gvotwga+EV0cfhPQ=
+                    '';
+                  }
+                  { uses = "DeterminateSystems/magic-nix-cache-action@main"; }
+                  {
+                    name = "Build ${name}";
+                    env = {
+                      CACHE_SIGNING_KEY = "\${{ secrets.CACHE_SIGNING_KEY }}";
+                      AWS_ACCESS_KEY_ID = "\${{ secrets.AWS_ACCESS_KEY_ID }}";
+                      AWS_SECRET_ACCESS_KEY = "\${{ secrets.AWS_SECRET_ACCESS_KEY }}";
+                    };
+                    run = ''
+                      existing_toplevel=$(curl --silent --fail https://update.jmbaur.com/${name} || true)
+                      toplevel_drv=$(nix eval --raw "$PWD#nixosConfigurations.${name}.config.system.build.toplevel.drvPath")
+                      new_toplevel=$(nix derivation show "$toplevel_drv" | jq --raw-output 'to_entries[0].value.outputs.out.path')
+
+                      if [[ $new_toplevel == "$existing_toplevel" ]]; then
+                        echo "NixOS configuration for ${name} already cached, nothing to do!"
+                      else
+                        toplevel=$(nix build --print-build-logs --no-link --print-out-paths "''${toplevel_drv}^out")
+                        echo -n "$CACHE_SIGNING_KEY" >signing-key.pem
+                        nix path-info --recursive "$toplevel" | nix store sign --stdin --verbose --key-file signing-key.pem
+                        nix copy --verbose --to "s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com" "$toplevel"
+                        echo "$toplevel" | aws s3 cp - "s3://update/${name}" --endpoint-url="https://34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com"
+                      fi
+                    '';
+                  }
+                ];
+              };
+            }) inputs.self.nixosConfigurations;
         };
 
         update = (pkgs.formats.yaml { }).generate "update.yaml" {

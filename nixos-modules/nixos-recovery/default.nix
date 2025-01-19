@@ -243,7 +243,7 @@ in
     boot.loader.systemd-boot.enable = true;
 
     fileSystems.${config.boot.loader.efi.efiSysMountPoint} = {
-      device = "/dev/disk/by-partlabel/BOOT";
+      device = "/dev/disk/by-partlabel/boot";
       fsType = "vfat";
       options = [
         "x-systemd.automount"
