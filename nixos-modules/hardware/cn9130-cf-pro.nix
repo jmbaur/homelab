@@ -39,18 +39,10 @@
 
     # Ensure the DSA master interface is bound to being up by it's slave
     # interfaces.
-    systemd.network.networks.lan-master = {
+    systemd.network.networks."10-lan-master" = {
       name = "lan";
       linkConfig.RequiredForOnline = false;
-      networkConfig = {
-        BindCarrier = map (i: "lan${toString i}") [
-          1
-          2
-          3
-          4
-          5
-        ];
-      };
+      networkConfig.BindCarrier = map (i: "lan${toString i}") (lib.genList (i: i + 1) 6);
     };
   };
 }
