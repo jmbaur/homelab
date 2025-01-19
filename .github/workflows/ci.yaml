@@ -3,6 +3,9 @@ jobs:
   build-cauliflower:
     needs:
     - test
+    permissions:
+      contents: read
+      id-token: write
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -39,6 +42,9 @@ jobs:
   build-celery:
     needs:
     - test
+    permissions:
+      contents: read
+      id-token: write
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -75,6 +81,9 @@ jobs:
   build-pumpkin:
     needs:
     - test
+    permissions:
+      contents: read
+      id-token: write
     runs-on: ubuntu-24.04-arm
     steps:
     - name: Checkout repository
@@ -111,6 +120,9 @@ jobs:
   build-squash:
     needs:
     - test
+    permissions:
+      contents: read
+      id-token: write
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -145,6 +157,9 @@ jobs:
         \ --endpoint-url=\"https://34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
         \nfi\n"
   test:
+    permissions:
+      contents: read
+      id-token: write
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository

@@ -135,6 +135,11 @@ inputs.nixpkgs.lib.mapAttrs (
             {
               test = {
                 runs-on = "ubuntu-latest";
+                # needed for magic-nix-cache-action
+                permissions = {
+                  contents = "read";
+                  id-token = "write";
+                };
                 steps = [
                   {
                     name = "Checkout repository";
@@ -160,6 +165,11 @@ inputs.nixpkgs.lib.mapAttrs (
                       aarch64 = "ubuntu-24.04-arm";
                     }
                     .${nixosConfig._module.args.pkgs.stdenv.buildPlatform.qemuArch};
+                  # needed for magic-nix-cache-action
+                  permissions = {
+                    contents = "read";
+                    id-token = "write";
+                  };
                   steps = [
                     {
                       name = "Checkout repository";
