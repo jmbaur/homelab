@@ -96,9 +96,9 @@
       wantedBy = [ "multi-user.target" ];
     };
 
-    environment.systemPackages = with pkgs; [
-      uboot-env-tools
-      mtdutils
+    environment.systemPackages = [
+      pkgs.uboot-env-tools
+      pkgs.mtdutils
       (pkgs.writeShellScriptBin "update-firmware" ''
         ${lib.getExe' pkgs.mtdutils "flashcp"} \
           --verbose \
