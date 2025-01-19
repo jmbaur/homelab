@@ -70,7 +70,8 @@ nixosTest {
         nix.settings.substituters = lib.mkForce [ "http://updateServer:5000?trusted=1" ];
 
         virtualisation.qemu.options = [
-          "-drive index=1,if=virtio,id=nixos,format=qcow2,file=$NIXOS"
+          "-drive index=1,if=none,id=nixos,format=qcow2,file=$NIXOS"
+          "-device virtio-blk-pci,drive=nixos,serial=nixos" # serial name allows us to use udev symlink
         ];
 
         custom.update = {
@@ -80,7 +81,7 @@ nixosTest {
 
         custom.recovery = {
           enable = true;
-          targetDisk = "/dev/vda";
+          targetDisk = "/dev/disk/by-id/virtio-nixos";
           modules = [
             # TODO(jared): For some reason, this isn't propagated to the recovery
             # system configuration with `noUserModules.extendModules`.
