@@ -132,10 +132,28 @@ inputs.nixpkgs.lib.mapAttrs (
           # TODO(jared): Look into concurrent jobs.
           # TODO(jared): `pkgs.formats.yaml` doesn't handle long lines well.
           jobs =
-            mapAttrs'
+            {
+              test = {
+                runs-on = "ubuntu-latest";
+                steps = [
+                  {
+                    name = "Checkout repository";
+                    uses = "actions/checkout@v4";
+                  }
+                  { uses = "DeterminateSystems/nix-installer-action@main"; }
+                  { uses = "DeterminateSystems/magic-nix-cache-action@main"; }
+                  {
+                    name = "Nix flake check";
+                    run = ''nix flake check --print-build-logs'';
+                  }
+                ];
+              };
+            }
+            // mapAttrs'
               (name: nixosConfig: {
                 name = "build-${name}";
                 value = {
+                  needs = [ "test" ];
                   runs-on =
                     {
                       x86_64 = "ubuntu-latest";
@@ -153,13 +171,13 @@ inputs.nixpkgs.lib.mapAttrs (
                       "with".tool-cache = true;
                     }
                     {
-                      name = "Install Nix";
                       uses = "DeterminateSystems/nix-installer-action@main";
                       "with".extra-conf = ''
                         extra-substituters = https://cache.jmbaur.com
                         extra-trusted-public-keys = cache.jmbaur.com:C3ku8BNDXgfTO7dNHK+eojm4uy7Gvotwga+EV0cfhPQ=
                       '';
                     }
+                    { uses = "DeterminateSystems/magic-nix-cache-action@main"; }
                     {
                       name = "Build ${name}";
                       env = {
@@ -177,8 +195,8 @@ inputs.nixpkgs.lib.mapAttrs (
                         else
                           toplevel=$(nix build --print-build-logs --no-link --print-out-paths "''${toplevel_drv}^out")
                           echo -n "$CACHE_SIGNING_KEY" >signing-key.pem
-                          nix path-info --recursive "$toplevel_drv" "$toplevel" | nix store sign --stdin --verbose --key-file signing-key.pem
-                          nix copy --verbose --to "s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com" "$toplevel_drv" "$toplevel"
+                          nix path-info --recursive "$toplevel" | nix store sign --stdin --verbose --key-file signing-key.pem
+                          nix copy --verbose --to "s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com" "$toplevel"
                           echo "$toplevel" | aws s3 cp - "s3://update/${name}" --endpoint-url="https://34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com"
                         fi
                       '';
