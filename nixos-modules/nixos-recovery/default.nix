@@ -74,6 +74,7 @@ let
     boot.kernelModules = config.boot.kernelModules;
     boot.initrd.kernelModules = config.boot.initrd.kernelModules;
     boot.initrd.availableKernelModules = config.boot.initrd.availableKernelModules;
+    boot.initrd.extraFirmwarePaths = config.boot.initrd.extraFirmwarePaths;
   };
 
   recoveryConfig =
