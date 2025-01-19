@@ -19,7 +19,7 @@ toplevel=$(curl --silent --fail "$updateEndpoint")
 
 # systemd-repart requires a GPT to exist on disk, but we should only touch the
 # disk if it isn't already what we are using.
-if [[ $(findmnt /nix/store --output source --noheadings) != "$targetDisk"* ]]; then
+if [[ $(findmnt /nix/.ro-store --output source --noheadings) != "$targetDisk"* ]]; then
 	echo "label: gpt" | sfdisk --wipe=always "$targetDisk"
 fi
 
@@ -43,5 +43,3 @@ done
 #
 # TODO(jared): why do we need $HOME set?
 env HOME="$(mktemp -d)" nixos-install --closure "$toplevel" --root /mnt --no-root-password --no-channel-copy
-
-systemctl reboot

@@ -67,6 +67,8 @@ let
 
     hardware.deviceTree = removeAttrs config.hardware.deviceTree [ "base" ];
 
+    boot.kernelParams = config.boot.kernelParams;
+    # boot.kernelPatches = config.boot.kernelPatches; # TODO(jared): causes rebuilds
     boot.kernelPackages = config.boot.kernelPackages;
     boot.kernelModules = config.boot.kernelModules;
     boot.initrd.kernelModules = config.boot.initrd.kernelModules;
@@ -92,10 +94,6 @@ let
         "${modulesPath}/profiles/minimal.nix"
         "${modulesPath}/image/repart.nix"
       ];
-
-      system.nixos.variant_id = "recovery";
-      system.nixos.variantName = "NixOS Recovery";
-      system.image.id = "recovery";
 
       image.repart = {
         name = "recovery";
@@ -173,6 +171,10 @@ let
       systemd.services."getty@".enable = false;
       systemd.services."serial-getty@".enable = false;
 
+      # Allow "rescue.target" to work
+      users.users.root.hashedPasswordFile = "${pkgs.writeText "hashed-password.root" ""}";
+      users.mutableUsers = false;
+
       systemd.services.nixos-recovery = {
         wantedBy = [ "multi-user.target" ];
         after = [
@@ -183,9 +185,12 @@ let
           "network-online.target"
           "${utils.escapeSystemdPath cfg.targetDisk}.device"
         ];
+        onSuccess = [ "reboot.target" ];
+        onFailure = [ "rescue.target" ];
         serviceConfig = {
-          StandardOutput = "tty";
           StandardError = "tty";
+          StandardInput = "tty";
+          StandardOutput = "tty";
           ExecStart = toString [
             (getExe nixosRecovery)
             cfg.updateEndpoint
@@ -196,7 +201,7 @@ let
       };
     };
 
-  recoverySystem = (
+  recovery = (
     noUserModules.extendModules {
       modules = [
         inheritFromBaseConfig
@@ -270,6 +275,6 @@ in
     # isn't created at build-time.
     systemd.services.systemd-growfs-root.enable = false;
 
-    system.build.recoveryImage = recoverySystem.config.system.build.image;
+    system.build = { inherit recovery; };
   };
 }

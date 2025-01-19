@@ -79,9 +79,9 @@ in
         Type = "oneshot";
         RemainAfterExit = true;
         ImportCredential = "home.*";
-        StandardOutput = "tty";
-        StandardInput = "tty";
         StandardError = "tty";
+        StandardInput = "tty";
+        StandardOutput = "tty";
         ExecStart = toString [
           "homectl"
           "firstboot"

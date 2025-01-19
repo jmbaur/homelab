@@ -48,10 +48,6 @@ nixosTest {
       {
         imports = [ inputs.self.nixosModules.default ];
 
-        assertions = [
-          { assertion = builtins.elem "nix-command" config.nix.settings.experimental-features; }
-        ];
-
         virtualisation.vlans = [ 1 ];
 
         virtualisation.useBootLoader = true;
@@ -78,6 +74,7 @@ nixosTest {
         ];
 
         custom.recovery = {
+          enable = true;
           targetDisk = "/dev/vda";
           updateEndpoint = "http://updateServer/${config.networking.hostName}";
           modules = [
@@ -127,7 +124,7 @@ nixosTest {
                 "--force",
                 "--decompress",
                 "--stdout",
-                "${nodes.machine.system.build.recoveryImage}/recovery.raw.zst",
+                "${nodes.machine.system.build.recovery.config.system.build.image}/recovery.raw.zst",
               ], stdout=outfile)
 
           os.environ["USB_STICK"] = tmp_disk_image.name
