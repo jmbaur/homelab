@@ -139,21 +139,18 @@
     # If no variables for these mac addresses exist, we need to generate them
     # so the device has persistent mac addresses across reboots.
     systemd.services.stable-mac-address = {
-      path = with pkgs; [
-        gnugrep
-        macgen
-        uboot-env-tools
-      ];
+      unitConfig.ConditionFirstBoot = true;
       wantedBy = [ "multi-user.target" ];
+      path = [
+        pkgs.macgen
+        pkgs.uboot-env-tools
+      ];
       script = ''
-        if ! fw_printenv | grep --silent -e eth1addr -e eth2addr -e eth3addr; then
-          tmp=$(mktemp)
-          echo "eth1addr $(macgen)" | tee -a $tmp
-          echo "eth2addr $(macgen)" | tee -a $tmp
-          echo "eth3addr $(macgen)" | tee -a $tmp
-          fw_setenv --script $tmp
-          echo "wrote new macaddrs to uboot environment"
-          rm $tmp
+        if ! fw_printenv | grep --silent 'eth[1-3]addr'; then
+          for index in 1 2 3; do
+            echo "eth''${index}addr $(macgen)"
+          done | fw_setenv --script
+          echo "Wrote new MAC addresses to uboot environment, reboot to take effect."
         fi
       '';
     };
