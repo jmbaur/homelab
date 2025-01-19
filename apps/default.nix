@@ -105,6 +105,10 @@ inputs.nixpkgs.lib.mapAttrs (
             workflow_dispatch = { }; # allows manual triggering
             push.branches = [ "main" ];
           };
+          concurrency = {
+            group = "ci-\${{ github.ref }}";
+            cancel-in-progress = true; # ensure new jobs take precedence
+          };
           # We split out each NixOS machine to being built in its own job so we
           # don't run into the 6-hour max job execution time limit.
           # Anecdotally, one build of the 'celery' machine takes ~3.5

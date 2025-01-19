@@ -1,4 +1,7 @@
 # Do not manually edit this file, it is automatically generated
+concurrency:
+  cancel-in-progress: true
+  group: ci-${{ github.ref }}
 jobs:
   build-broccoli:
     needs:
