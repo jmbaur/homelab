@@ -70,15 +70,7 @@
     systemd.network.networks.lan-master = {
       name = "lan";
       linkConfig.RequiredForOnline = false;
-      networkConfig = {
-        BindCarrier = map (i: "lan${toString i}") [
-          1
-          2
-          3
-          4
-          5
-        ];
-      };
+      networkConfig.BindCarrier = map (i: "lan${toString i}") (lib.genList (i: i + 1) 6);
     };
 
     # https://github.com/torvalds/linux/blob/815fb87b753055df2d9e50f6cd80eb10235fe3e9/include/uapi/linux/input-event-codes.h#L344
