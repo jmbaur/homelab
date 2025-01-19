@@ -43,6 +43,7 @@ let
     {
       imports = [ inputs.self.nixosModules.default ];
       networking = {
+        nftables.enable = true;
         useNetworkd = true;
         useDHCP = false;
         interfaces = lib.mkForce (
