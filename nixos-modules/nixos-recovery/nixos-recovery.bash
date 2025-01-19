@@ -3,8 +3,8 @@
 declare -r root_partition="/dev/disk/by-partlabel/root"
 
 update_endpoint=$1
-target_disk=$(realpath "$2")
-fstab=$(realpath "$3")
+target_disk=$(readlink --canonicalize "$2")
+fstab=$(readlink --canonicalize "$3")
 
 function error_handler() {
 	umount --recursive /mnt 2>/dev/null || true

@@ -19,6 +19,7 @@ let
 
   cfg = config.custom.recovery;
   fstab = config.environment.etc.fstab.source;
+  updateEndpoint = config.custom.update.endpoint;
 
   nixosRecovery = pkgs.writeShellApplication {
     name = "nixos-recovery";
@@ -118,7 +119,7 @@ let
             };
             repartConfig = {
               Type = "esp";
-              Label = "BOOT";
+              Label = "recovery-boot";
               Format = "vfat";
               SizeMaxBytes = "128M";
               SizeMinBytes = "128M";
@@ -130,7 +131,7 @@ let
             repartConfig = {
               Type = "linux-generic";
               Format = "squashfs";
-              Label = "recovery";
+              Label = "recovery-root";
               Minimize = "best";
             };
           };
@@ -150,7 +151,7 @@ let
 
       fileSystems."/nix/.ro-store" = {
         fsType = "squashfs";
-        device = "/dev/disk/by-partlabel/recovery";
+        device = "/dev/disk/by-partlabel/recovery-root";
         neededForBoot = true;
       };
 
@@ -193,7 +194,7 @@ let
           StandardOutput = "tty";
           ExecStart = toString [
             (getExe nixosRecovery)
-            cfg.updateEndpoint
+            updateEndpoint
             cfg.targetDisk
             fstab
           ];
@@ -214,13 +215,6 @@ in
   options.custom.recovery = {
     enable = mkEnableOption "recovery";
 
-    updateEndpoint = mkOption {
-      type = types.str;
-      description = ''
-        The HTTP endpoint to use when pulling updates.
-      '';
-    };
-
     targetDisk = mkOption {
       type = types.path;
       description = ''
@@ -240,6 +234,13 @@ in
   };
 
   config = mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = config.custom.update.enable;
+        message = "nixos-recovery (`config.custom.recovery`) does not work without also enabling nixos-update (`config.custom.update`)";
+      }
+    ];
+
     boot.loader.systemd-boot.enable = true;
 
     fileSystems.${config.boot.loader.efi.efiSysMountPoint} = {

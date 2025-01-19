@@ -73,10 +73,14 @@ nixosTest {
           "-drive index=1,if=virtio,id=nixos,format=qcow2,file=$NIXOS"
         ];
 
+        custom.update = {
+          enable = true;
+          endpoint = "http://updateServer/${config.networking.hostName}";
+        };
+
         custom.recovery = {
           enable = true;
           targetDisk = "/dev/vda";
-          updateEndpoint = "http://updateServer/${config.networking.hostName}";
           modules = [
             # TODO(jared): For some reason, this isn't propagated to the recovery
             # system configuration with `noUserModules.extendModules`.
@@ -144,14 +148,12 @@ nixosTest {
           machine.start(allow_reboot=True)
           machine.wait_for_unit("multi-user.target")
           assert_boot_entry("nixos-generation-1.conf")
-          assert "${nodes.machine.system.build.toplevel}" == machine.succeed("realpath /run/current-system").strip()
+          assert "${nodes.machine.system.build.toplevel}" == machine.succeed("readlink --canonicalize /run/current-system").strip()
 
       with subtest("update"):
-          # TODO(jared): automate this
           updateServer.succeed("echo ${nodes.machine.system.build.foo-update.config.system.build.toplevel} >/var/lib/updates/${nodes.machine.networking.hostName}")
-          next = machine.succeed("curl --silent --fail http://updateServer/${nodes.machine.networking.hostName}").strip()
-          machine.succeed(f"nix-store --realise {next}")
-          machine.succeed(f"{next}/bin/switch-to-configuration switch")
+          machine.succeed("systemctl start nixos-update.service")
+          machine.reboot()
           assert "foo" == machine.succeed("cat /etc/foo").strip()
     '';
 }

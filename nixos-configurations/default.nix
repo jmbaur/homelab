@@ -112,11 +112,12 @@ inputs.nixpkgs.lib.genAttrs allHosts (
             "cache.jmbaur.com:C3ku8BNDXgfTO7dNHK+eojm4uy7Gvotwga+EV0cfhPQ="
           ];
 
-          custom.common.enable = true;
-          custom.recovery = {
+          custom.common.enable = lib.mkDefault true;
+          custom.update = {
             enable = lib.mkDefault true;
-            updateEndpoint = lib.mkDefault "https://update.jmbaur.com/${config.networking.hostName}";
+            endpoint = lib.mkDefault "https://update.jmbaur.com/${config.networking.hostName}";
           };
+          custom.recovery.enable = lib.mkDefault true;
         }
       )
       # Host-specific configuration

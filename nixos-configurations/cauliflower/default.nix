@@ -25,8 +25,5 @@
 
   custom.desktop.enable = true;
   custom.dev.enable = true;
-  custom.recovery = {
-    targetDisk = "/dev/nvme0n1";
-    updateEndpoint = "https://update.jmbaur.com/cauliflower";
-  };
+  custom.recovery.targetDisk = "/dev/disk/by-path/pci-0000:01:00.0-nvme-1";
 }

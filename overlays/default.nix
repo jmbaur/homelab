@@ -173,7 +173,7 @@ inputs: {
                 firmwarePath:
                 # bash
                 ''
-                  if [[ -f $(realpath ${final.linux-firmware}/lib/firmware/${firmwarePath}) ]]; then
+                  if [[ -f $(readlink --canonicalize ${final.linux-firmware}/lib/firmware/${firmwarePath}) ]]; then
                     install -Dm0444 \
                       --target-directory=$(dirname $out/lib/firmware/${firmwarePath}) \
                       ${final.linux-firmware}/lib/firmware/${firmwarePath}
