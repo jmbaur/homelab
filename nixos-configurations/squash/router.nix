@@ -38,6 +38,8 @@
         "lan2"
         "lan3"
         "lan4"
+        "lan5"
+        "lan6"
         "wlp1s0"
         "wlan1"
       ]
