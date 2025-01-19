@@ -253,13 +253,13 @@ in
 
     fileSystems."/" = {
       fsType = "btrfs";
+      device = "/dev/mapper/root";
       options = [
         "compress=zstd"
         "defaults"
         "noatime"
         "subvol=/root"
       ];
-      device = "/dev/mapper/root";
     };
 
     boot.initrd.luks.devices.root = {

@@ -4,11 +4,22 @@
     {
       hardware.macchiatobin.enable = true;
 
-      custom.recovery.targetDisk = "/dev/disk/by-path/platform-f2600000.pcie-pci-0000:01:00.0-nvme-1";
+      custom.recovery.targetDisk = "/dev/disk/by-path/platform-f06e0000.mmc";
       custom.server.enable = true;
       custom.basicNetwork.enable = true;
       custom.common.nativeBuild = true;
       custom.wgNetwork.nodes.celery.peer = true;
+
+      fileSystems."/var" = {
+        fsType = "btrfs";
+        device = "/dev/disk/by-partlabel/data";
+        options = [
+          "compress=zstd"
+          "defaults"
+          "noatime"
+          "subvol=/data"
+        ];
+      };
 
       custom.ddns = {
         enable = true;
