@@ -43,10 +43,9 @@
       }
     ];
 
-    # TODO(jared): narrow down and only use what's needed
     hardware.firmware = [
-      pkgs.linux-firmware
-      # pkgs.mt7915-firmware
+      pkgs.wireless-regdb
+      pkgs.mt7915-firmware
     ];
 
     boot.kernelParams = [ "console=ttyS0,115200" ];
