@@ -118,8 +118,16 @@
         ENV_SIZE = freeform "0x20000";
         FIT = yes;
         FIT_BEST_MATCH = yes; # TODO(jared): seems to not work
-        SYS_BOOTM_LEN = freeform "0x${lib.toHexString (12 * 1024 * 1024)}"; # 12MiB
+        SYS_BOOTM_LEN = freeform "0x${lib.toHexString (50 * 1024 * 1024)}"; # 50MiB
         SYS_REDUNDAND_ENVIRONMENT = yes;
+      };
+    };
+
+    # usage: kwboot -b u-boot-with-spl.kwb /dev/ttyUSB0 && tio /dev/ttyUSB0
+    system.build.uartFirmware = pkgs.uboot-clearfog.override {
+      extraStructuredConfig = with lib.kernel; {
+        MVEBU_SPL_BOOT_DEVICE_MMC = unset;
+        MVEBU_SPL_BOOT_DEVICE_UART = yes;
       };
     };
 
