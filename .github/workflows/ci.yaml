@@ -1,6 +1,8 @@
 # Do not manually edit this file, it is automatically generated
 jobs:
   build-cauliflower:
+    needs:
+    - test
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -9,14 +11,14 @@ jobs:
       uses: jlumbroso/free-disk-space@main
       with:
         tool-cache: true
-    - name: Install Nix
-      uses: DeterminateSystems/nix-installer-action@main
+    - uses: DeterminateSystems/nix-installer-action@main
       with:
         extra-conf: 'extra-substituters = https://cache.jmbaur.com
 
           extra-trusted-public-keys = cache.jmbaur.com:C3ku8BNDXgfTO7dNHK+eojm4uy7Gvotwga+EV0cfhPQ=
 
           '
+    - uses: DeterminateSystems/magic-nix-cache-action@main
     - env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -29,13 +31,14 @@ jobs:
         \ ]]; then\n  echo \"NixOS configuration for cauliflower already cached, nothing\
         \ to do!\"\nelse\n  toplevel=$(nix build --print-build-logs --no-link --print-out-paths\
         \ \"${toplevel_drv}^out\")\n  echo -n \"$CACHE_SIGNING_KEY\" >signing-key.pem\n\
-        \  nix path-info --recursive \"$toplevel_drv\" \"$toplevel\" | nix store sign\
-        \ --stdin --verbose --key-file signing-key.pem\n  nix copy --verbose --to\
-        \ \"s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
-        \ \"$toplevel_drv\" \"$toplevel\"\n  echo \"$toplevel\" | aws s3 cp - \"s3://update/cauliflower\"\
+        \  nix path-info --recursive \"$toplevel\" | nix store sign --stdin --verbose\
+        \ --key-file signing-key.pem\n  nix copy --verbose --to \"s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
+        \ \"$toplevel\"\n  echo \"$toplevel\" | aws s3 cp - \"s3://update/cauliflower\"\
         \ --endpoint-url=\"https://34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
         \nfi\n"
   build-celery:
+    needs:
+    - test
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -44,14 +47,14 @@ jobs:
       uses: jlumbroso/free-disk-space@main
       with:
         tool-cache: true
-    - name: Install Nix
-      uses: DeterminateSystems/nix-installer-action@main
+    - uses: DeterminateSystems/nix-installer-action@main
       with:
         extra-conf: 'extra-substituters = https://cache.jmbaur.com
 
           extra-trusted-public-keys = cache.jmbaur.com:C3ku8BNDXgfTO7dNHK+eojm4uy7Gvotwga+EV0cfhPQ=
 
           '
+    - uses: DeterminateSystems/magic-nix-cache-action@main
     - env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -64,13 +67,14 @@ jobs:
         \ ]]; then\n  echo \"NixOS configuration for celery already cached, nothing\
         \ to do!\"\nelse\n  toplevel=$(nix build --print-build-logs --no-link --print-out-paths\
         \ \"${toplevel_drv}^out\")\n  echo -n \"$CACHE_SIGNING_KEY\" >signing-key.pem\n\
-        \  nix path-info --recursive \"$toplevel_drv\" \"$toplevel\" | nix store sign\
-        \ --stdin --verbose --key-file signing-key.pem\n  nix copy --verbose --to\
-        \ \"s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
-        \ \"$toplevel_drv\" \"$toplevel\"\n  echo \"$toplevel\" | aws s3 cp - \"s3://update/celery\"\
+        \  nix path-info --recursive \"$toplevel\" | nix store sign --stdin --verbose\
+        \ --key-file signing-key.pem\n  nix copy --verbose --to \"s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
+        \ \"$toplevel\"\n  echo \"$toplevel\" | aws s3 cp - \"s3://update/celery\"\
         \ --endpoint-url=\"https://34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
         \nfi\n"
   build-pumpkin:
+    needs:
+    - test
     runs-on: ubuntu-24.04-arm
     steps:
     - name: Checkout repository
@@ -79,14 +83,14 @@ jobs:
       uses: jlumbroso/free-disk-space@main
       with:
         tool-cache: true
-    - name: Install Nix
-      uses: DeterminateSystems/nix-installer-action@main
+    - uses: DeterminateSystems/nix-installer-action@main
       with:
         extra-conf: 'extra-substituters = https://cache.jmbaur.com
 
           extra-trusted-public-keys = cache.jmbaur.com:C3ku8BNDXgfTO7dNHK+eojm4uy7Gvotwga+EV0cfhPQ=
 
           '
+    - uses: DeterminateSystems/magic-nix-cache-action@main
     - env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -99,13 +103,14 @@ jobs:
         \ ]]; then\n  echo \"NixOS configuration for pumpkin already cached, nothing\
         \ to do!\"\nelse\n  toplevel=$(nix build --print-build-logs --no-link --print-out-paths\
         \ \"${toplevel_drv}^out\")\n  echo -n \"$CACHE_SIGNING_KEY\" >signing-key.pem\n\
-        \  nix path-info --recursive \"$toplevel_drv\" \"$toplevel\" | nix store sign\
-        \ --stdin --verbose --key-file signing-key.pem\n  nix copy --verbose --to\
-        \ \"s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
-        \ \"$toplevel_drv\" \"$toplevel\"\n  echo \"$toplevel\" | aws s3 cp - \"s3://update/pumpkin\"\
+        \  nix path-info --recursive \"$toplevel\" | nix store sign --stdin --verbose\
+        \ --key-file signing-key.pem\n  nix copy --verbose --to \"s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
+        \ \"$toplevel\"\n  echo \"$toplevel\" | aws s3 cp - \"s3://update/pumpkin\"\
         \ --endpoint-url=\"https://34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
         \nfi\n"
   build-squash:
+    needs:
+    - test
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -114,14 +119,14 @@ jobs:
       uses: jlumbroso/free-disk-space@main
       with:
         tool-cache: true
-    - name: Install Nix
-      uses: DeterminateSystems/nix-installer-action@main
+    - uses: DeterminateSystems/nix-installer-action@main
       with:
         extra-conf: 'extra-substituters = https://cache.jmbaur.com
 
           extra-trusted-public-keys = cache.jmbaur.com:C3ku8BNDXgfTO7dNHK+eojm4uy7Gvotwga+EV0cfhPQ=
 
           '
+    - uses: DeterminateSystems/magic-nix-cache-action@main
     - env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -134,12 +139,20 @@ jobs:
         \ ]]; then\n  echo \"NixOS configuration for squash already cached, nothing\
         \ to do!\"\nelse\n  toplevel=$(nix build --print-build-logs --no-link --print-out-paths\
         \ \"${toplevel_drv}^out\")\n  echo -n \"$CACHE_SIGNING_KEY\" >signing-key.pem\n\
-        \  nix path-info --recursive \"$toplevel_drv\" \"$toplevel\" | nix store sign\
-        \ --stdin --verbose --key-file signing-key.pem\n  nix copy --verbose --to\
-        \ \"s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
-        \ \"$toplevel_drv\" \"$toplevel\"\n  echo \"$toplevel\" | aws s3 cp - \"s3://update/squash\"\
+        \  nix path-info --recursive \"$toplevel\" | nix store sign --stdin --verbose\
+        \ --key-file signing-key.pem\n  nix copy --verbose --to \"s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
+        \ \"$toplevel\"\n  echo \"$toplevel\" | aws s3 cp - \"s3://update/squash\"\
         \ --endpoint-url=\"https://34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
         \nfi\n"
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - uses: DeterminateSystems/nix-installer-action@main
+    - uses: DeterminateSystems/magic-nix-cache-action@main
+    - name: Nix flake check
+      run: nix flake check --print-build-logs
 name: ci
 'on':
   push:
