@@ -9,6 +9,7 @@ let
     genAttrs
     mkDefault
     mkEnableOption
+    mkForce
     mkIf
     ;
 
@@ -105,11 +106,14 @@ in
       };
     };
 
+    # Prevent copying in nixpkgs source eagerly
+    nixpkgs.flake.source = mkForce null;
+
     # Provide a sane default value so that nix commands don't outright fail on
     # an otherwise unconfigured machine.
-    environment.sessionVariables.NIX_PATH = mkIf config.nix.enable (
-      mkDefault "nixpkgs=https://github.com/nixos/nixpkgs/archive/nixos-unstable.tar.gz"
-    );
+    nix.nixPath = mkDefault [
+      "nixpkgs=https://github.com/nixos/nixpkgs/archive/nixos-unstable.tar.gz"
+    ];
 
     # Use the dbus-broker dbus daemon implementation (more performance, yeah?)
     services.dbus.implementation = "broker";
