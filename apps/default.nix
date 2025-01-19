@@ -111,7 +111,6 @@ inputs.nixpkgs.lib.mapAttrs (
           # hours. The max workflow execution time is 72 hours, which we
           # should definitely be able to fit all our jobs within.
           #
-          # TODO(jared): Look into concurrent jobs.
           # TODO(jared): `pkgs.formats.yaml` doesn't handle long lines well.
           jobs =
             {
