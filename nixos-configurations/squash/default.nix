@@ -3,6 +3,7 @@
   # https://github.com/torvalds/linux/blob/fda5e3f284002ea55dac1c98c1498d6dd684046e/drivers/net/wireless/mediatek/mt76/mt7915/mt7915.h#L29
   hardware.firmware = [
     (pkgs.extractLinuxFirmware "mt7915-firmware" [
+      "regulatory.db"
       "mediatek/mt7915_wa.bin"
       "mediatek/mt7915_wm.bin"
       "mediatek/mt7915_rom_patch.bin"
