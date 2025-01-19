@@ -126,8 +126,11 @@
     # usage: kwboot -b u-boot-with-spl.kwb /dev/ttyUSB0 && tio /dev/ttyUSB0
     system.build.uartFirmware = pkgs.uboot-clearfog.override {
       extraStructuredConfig = with lib.kernel; {
+        ENV_IS_IN_MMC = unset;
+        ENV_IS_NOWHERE = yes;
         MVEBU_SPL_BOOT_DEVICE_MMC = unset;
         MVEBU_SPL_BOOT_DEVICE_UART = yes;
+        SPL_MMC = unset;
       };
     };
 
