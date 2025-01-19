@@ -16,6 +16,7 @@ stdenv.mkDerivation {
   src = fetchgit {
     inherit (source)
       url
+      rev
       hash
       fetchSubmodules
       fetchLFS

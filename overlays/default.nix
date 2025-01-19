@@ -43,6 +43,7 @@ inputs: {
         src = final.fetchgit {
           inherit (final.lib.importJSON ./neovim-source.json)
             url
+            rev
             hash
             fetchSubmodules
             fetchLFS
