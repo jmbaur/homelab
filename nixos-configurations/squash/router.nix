@@ -38,7 +38,7 @@
         "lan2"
         "lan3"
         "lan4"
-        "wlan0"
+        "wlp1s0"
         "wlan1"
       ]
       (name: {
@@ -54,13 +54,13 @@
   environment.systemPackages = [ pkgs.iw ];
 
   sops.secrets = {
-    wlan0.reloadUnits = [ config.systemd.services.hostapd.name ];
+    wlp1s0.reloadUnits = [ config.systemd.services.hostapd.name ];
     wlan1.reloadUnits = [ config.systemd.services.hostapd.name ];
   };
 
   services.hostapd = {
     enable = true;
-    radios.wlan0 = {
+    radios.wlp1s0 = {
       band = "2g";
       countryCode = "US";
       wifi4.enable = true;
@@ -73,12 +73,12 @@
         "SHORT-GI-20"
         "SHORT-GI-40"
       ];
-      networks.wlan0 = {
+      networks.wlp1s0 = {
         ssid = "Silence of the LANs";
         authentication = {
           mode = "wpa3-sae-transition";
-          wpaPasswordFile = config.sops.secrets.wlan0.path;
-          saePasswordsFile = config.sops.secrets.wlan0.path;
+          wpaPasswordFile = config.sops.secrets.wlp1s0.path;
+          saePasswordsFile = config.sops.secrets.wlp1s0.path;
         };
       };
     };
