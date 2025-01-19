@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
   imports = [
     ./web.nix
@@ -20,6 +20,7 @@
 
   custom = {
     server.enable = true;
+    basicNetwork.enable = !config.router.enable;
     recovery.targetDisk = "/dev/disk/by-path/platform-f10a8000.sata-ata-1.0";
   };
 }

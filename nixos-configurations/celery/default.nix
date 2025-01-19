@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ config, lib, ... }:
 {
   nixpkgs.hostPlatform = "aarch64-linux";
 
@@ -37,5 +37,6 @@
   ];
 
   custom.server.enable = true;
+  custom.basicNetwork.enable = !config.router.enable;
   custom.recovery.targetDisk = "/dev/disk/by-path/platform-11230000.mmc";
 }
