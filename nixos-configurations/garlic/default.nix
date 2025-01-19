@@ -63,10 +63,21 @@
         "i2c_hid_of"
         "i2c_qcom_geni"
       ];
+
+      # TODO(jared): ACPI not enabled in johan_defconfig, needed by tpm-crb
+      # kernel module.
+      boot.initrd.systemd.tpm2.enable = false;
+      custom.recovery.modules = [
+        {
+          boot.initrd.includeDefaultModules = false;
+          boot.initrd.systemd.tpm2.enable = false;
+        }
+      ];
     }
     {
       custom.dev.enable = true;
       custom.desktop.enable = false;
+      custom.common.nativeBuild = true;
       custom.recovery.targetDisk = "/dev/nvme0n1";
     }
   ];
