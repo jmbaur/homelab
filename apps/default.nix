@@ -1,7 +1,7 @@
 inputs:
 
 inputs.nixpkgs.lib.mapAttrs (
-  _: pkgs:
+  system: pkgs:
 
   let
     inherit (pkgs) lib;
@@ -50,31 +50,14 @@ inputs.nixpkgs.lib.mapAttrs (
       ''
     );
 
-    # TODO(jared): Set an expiration date
-    generateSysupdateKey = mkApp (
-      pkgs.writeShellScript "generate-sysupdate-key"
-        # bash
-        ''
-          key_dir=$(mktemp -d)
-          pushd "$key_dir"
-          export GNUPGHOME=$(pwd)
-          cat > sysupdate <<EOF
-            %echo Generating a sysupdate OpenPGP key
-            %no-protection
-            Key-Type: EdDSA
-            Key-Curve: ed25519
-            Name-Real: Jared Baur
-            Name-Email: jared@update.jmbaur.com
-            Expire-Date: 0
-            # Do a commit here, so that we can later print "done"
-            %commit
-            %echo done
-          EOF
-          ${getExe' pkgs.gnupg "gpg"} --batch --generate-key sysupdate
-          ${getExe' pkgs.gnupg "gpg"} --export jared@update.jmbaur.com -a >pubkey.gpg
-          popd
-          echo "key generated at $key_dir"
-        ''
+    testDesktop = mkApp (
+      getExe (
+        (inputs.nixpkgs.legacyPackages.${system}.nixos {
+          imports = [ inputs.self.nixosModules.default ];
+          custom.common.enable = true;
+          custom.desktop.enable = true;
+        }).config.system.build.vm
+      )
     );
 
     updateRepoDependencies = mkApp (
