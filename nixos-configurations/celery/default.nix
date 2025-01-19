@@ -1,10 +1,5 @@
 { lib, ... }:
 {
-  imports = [
-    ./router.nix
-    ./web.nix
-  ];
-
   nixpkgs.hostPlatform = "aarch64-linux";
 
   hardware.bpi-r3.enable = true;

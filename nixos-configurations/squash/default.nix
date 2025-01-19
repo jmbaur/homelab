@@ -1,5 +1,10 @@
 { pkgs, ... }:
 {
+  imports = [
+    ./web.nix
+    ./router.nix
+  ];
+
   # better support for mt7915 wifi card
   boot.kernelPackages = pkgs.linuxPackages_6_12;
 

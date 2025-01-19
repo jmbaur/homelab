@@ -8,7 +8,7 @@
       custom.server.enable = true;
       custom.basicNetwork.enable = true;
       custom.common.nativeBuild = true;
-      custom.wgNetwork.nodes.celery.peer = true;
+      custom.wgNetwork.nodes.squash.peer = true;
 
       fileSystems."/var" = {
         fsType = "btrfs";
@@ -33,7 +33,7 @@
       systemd.network.wait-online.anyInterface = true;
     }
     {
-      custom.wgNetwork.nodes.celery.allowedTCPPorts = [ config.services.navidrome.settings.Port ];
+      custom.wgNetwork.nodes.squash.allowedTCPPorts = [ config.services.navidrome.settings.Port ];
 
       services.navidrome = {
         enable = true;
@@ -45,16 +45,16 @@
       };
     }
     {
-      custom.wgNetwork.nodes.celery.allowedTCPPorts = [ config.services.photoprism.port ];
+      custom.wgNetwork.nodes.squash.allowedTCPPorts = [ config.services.photoprism.port ];
 
       services.photoprism = {
         enable = true;
         address = "[::]";
-        originalsPath = "/data/photos";
+        originalsPath = "/var/lib/photoprism-photos";
       };
     }
     {
-      custom.wgNetwork.nodes.celery.allowedTCPPorts = [ 8096 ];
+      custom.wgNetwork.nodes.squash.allowedTCPPorts = [ 8096 ];
 
       services.jellyfin.enable = true;
     }
