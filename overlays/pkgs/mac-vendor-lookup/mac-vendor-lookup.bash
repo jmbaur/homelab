@@ -38,4 +38,7 @@ while IFS=' ' read -r _addr _dev_literal dev maybe_status mac _foo _bar; do
 	fi
 
 	echo "${mac^^} -> $vendor via $dev"
-done < <(ip -6 neighbour show)
+done < <(
+	# TODO(jared): Use `-json` output from iproute2
+	ip -6 neighbour show
+)
