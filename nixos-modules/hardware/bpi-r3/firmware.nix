@@ -1,14 +1,15 @@
 {
-  fetchFromGitHub,
   buildArmTrustedFirmware,
   buildPackages,
   dtc,
+  fetchFromGitHub,
+  formats,
+  mtdutils,
   openssl,
+  runCommand,
   symlinkJoin,
   uboot-mt7986a_bpir3_emmc,
-  runCommand,
-  mtdutils,
-  formats,
+  writeTextDir,
 }:
 
 let
@@ -38,8 +39,7 @@ let
       }"
       "BL33=${uboot-mt7986a_bpir3_emmc}/u-boot.bin"
       "DRAM_USE_DDR4=1"
-      # defines where the FIP image lives
-      "BOOT_DEVICE=spim-nand"
+      "BOOT_DEVICE=spim-nand" # defines where the FIP image lives
       "all"
       "fip"
     ];
@@ -70,6 +70,7 @@ in
 symlinkJoin {
   name = "bpi-r3-firmware";
   paths = [
+    (writeTextDir "README.md" (builtins.readFile ./README.md))
     atf
     ubiImage
   ];
