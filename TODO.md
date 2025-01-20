@@ -1,10 +1,5 @@
-# image based systems
-- using systemd-tpm2 cryptsetup token-type doesn't have a nice way to enroll a recovery key. Currently it is a manual process of ensuring libcryptsetup-token-systemd-tpm2.so is in LD_LIBRARY_PATH and doing
-  `cryptsetup luksAddKey --token-id 0 --token-type systemd-tpm2 /path/to/device`.
-- add a recovery boot option
-
-# wireguard
-- systemd-networkd does not auto-update endpoint addresses as DNS resolutions change
+# general
+- recovery key enrollment
 
 # desktop
 - use https://github.com/ylxdzsw/dssd for org.freedesktop.secrets implementation
@@ -46,3 +41,8 @@ solve panic on early boot
 # pumpkin
 
 Recovery image doesn't work without kernel modules that allow for USB mass storage access into initrd, meaning we must put the recovery image on an sdcard or something similar.
+
+# bootloader installer
+
+On some systems, the only python dependency is the `systemd-boot-builder.py` script.
+If we implement this ourselves, we can get rid of this dependency as well as implement some features that have yet to be implemented upstream (e.g. boot counting).

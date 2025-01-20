@@ -54,7 +54,10 @@
   services.openssh.openFirewall = false;
   networking.firewall.interfaces.${config.router.lanInterface}.allowedTCPPorts = [ 22 ];
 
-  environment.systemPackages = [ pkgs.iw ];
+  environment.systemPackages = [
+    pkgs.iw
+    pkgs.mac-vendor-lookup
+  ];
 
   sops.secrets = {
     wlp1s0.reloadUnits = [ config.systemd.services.hostapd.name ];
