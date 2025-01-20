@@ -55,13 +55,13 @@
       name = "mediatek/mt7986a-bananapi-bpi-r3.dtb";
       overlays =
         map
-          (dtboFile: {
-            inherit dtboFile;
-            name = builtins.baseNameOf dtboFile;
+          (dtsFile: {
+            inherit dtsFile;
+            name = builtins.baseNameOf dtsFile;
           })
           [
-            "${config.boot.kernelPackages.kernel}/dtbs/mediatek/mt7986a-bananapi-bpi-r3-nand.dtbo"
-            "${config.boot.kernelPackages.kernel}/dtbs/mediatek/mt7986a-bananapi-bpi-r3-emmc.dtbo"
+            ./nand.dtso
+            ./emmc.dtso
           ];
     };
 
