@@ -51,14 +51,14 @@ in
             args
             // {
               version = "6.13.0";
-              modDirVersion = "6.13.0-rc6";
+              modDirVersion = "6.13.0-rc7";
 
               src = pkgs.fetchFromGitHub {
                 owner = "jhovold";
                 repo = "linux";
-                # wip/sc8280xp-6.13-rc6
-                rev = "d0c349e623dce916cf6834af540d6fb06d1f9afa";
-                hash = "sha256-y02ET78V93MvOWffuu4fRxWkNR6mcwczGUJWYardgtg=";
+                # wip/sc8280xp-6.13-rc7
+                rev = "1ca98ace316a107b488b33959ce012b5875edbef";
+                hash = "sha256-cNqR3H797YcCsHutwNGdV+u6T0AUh17TGev/LCqNCy8=";
               };
               kernelPatches = (args.kernelPatches or [ ]);
 
