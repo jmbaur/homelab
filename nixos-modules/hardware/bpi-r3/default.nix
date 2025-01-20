@@ -65,9 +65,13 @@
           ];
     };
 
-    environment.systemPackages = with pkgs; [
-      mtdutils
-      uboot-env-tools
+    environment.systemPackages = [
+      pkgs.mtdutils
+      pkgs.uboot-env-tools
+      (pkgs.writeShellScriptBin "update-firmware" ''
+        ${lib.getExe' pkgs.mtdutils "flashcp"} --verbose ${config.system.build.firmware}/bl2.img mtd:bl2
+        ${lib.getExe' pkgs.mtdutils "flashcp"} --verbose ${config.system.build.firmware}/fip.bin mtd:fip
+      '')
     ];
 
     boot.kernelModules = [ "ubi" ];
