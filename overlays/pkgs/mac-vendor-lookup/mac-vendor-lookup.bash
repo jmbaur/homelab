@@ -27,7 +27,9 @@ while IFS=' ' read -r oui description; do
 	vendors[$oui]=$description
 done < <(gzip --decompress <"$manuf_location" | grep '^[^#]' | awk '{$2 = ""; print $0;}')
 
-while IFS=' ' read -r _addr _dev_literal dev _mac_literal mac _maybe_type _maybe_status; do
+while IFS=' ' read -r _addr _dev_literal dev maybe_status mac _foo _bar; do
+	if [[ $maybe_status == "FAILED" ]]; then continue; fi
+
 	# shellcheck disable=SC2001
 	oui=$(sed 's,\([0-9A-F]\{2\}:[0-9A-F]\{2\}:[0-9A-F]\{2\}\).*,\1,' <<<"${mac^^}")
 	vendor=${vendors[$oui]:-}
