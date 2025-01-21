@@ -45,8 +45,9 @@ in
             pkgs.writeShellApplication {
               name = "nixos-update";
               runtimeInputs = [
-                pkgs.curl
                 config.nix.package
+                pkgs.curl
+                pkgs.nix-key
               ];
               text = builtins.readFile ./nixos-update.bash;
             }

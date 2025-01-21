@@ -180,6 +180,9 @@ inputs.nixpkgs.lib.mapAttrs (
                       AWS_SECRET_ACCESS_KEY = "\${{ secrets.AWS_SECRET_ACCESS_KEY }}";
                     };
                     run = ''
+                      declare -r endpoint="34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com"
+                      declare -r endpoint_url="https://''${endpoint}"
+
                       existing_toplevel=$(curl --silent --fail https://update.jmbaur.com/${name} || true)
                       toplevel_drv=$(nix eval --raw "$PWD#nixosConfigurations.${name}.config.system.build.toplevel.drvPath")
                       new_toplevel=$(nix derivation show "$toplevel_drv" | jq --raw-output 'to_entries[0].value.outputs.out.path')
@@ -190,8 +193,9 @@ inputs.nixpkgs.lib.mapAttrs (
                         toplevel=$(nix build --print-build-logs --no-link --print-out-paths "''${toplevel_drv}^out")
                         echo -n "$CACHE_SIGNING_KEY" >signing-key.pem
                         nix path-info --recursive "$toplevel" | nix store sign --stdin --verbose --key-file signing-key.pem
-                        nix copy --verbose --to "s3://cache?compression=zstd&region=auto&scheme=https&endpoint=34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com" "$toplevel"
-                        echo "$toplevel" | aws s3 cp - "s3://update/${name}" --endpoint-url="https://34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com"
+                        nix copy --verbose --to "s3://cache?compression=zstd&region=auto&scheme=https&endpoint=''${endpoint}" "$toplevel"
+                        echo "$toplevel" | aws s3 cp - "s3://update/${name}" --endpoint-url="$endpoint_url"
+                        nix run .#nix-key -- sign <(echo -n "$toplevel") signing-key.pem | aws s3 cp - "s3://update/${name}.sig" --endpoint-url="$endpoint_url"
                       fi
                     '';
                   }

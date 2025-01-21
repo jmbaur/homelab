@@ -6,7 +6,7 @@
 }:
 
 rustPlatform.buildRustPackage {
-  pname = "nix-sign";
+  pname = "nix-key";
   version = "0.1.0";
 
   src = lib.fileset.toSource {
@@ -25,6 +25,6 @@ rustPlatform.buildRustPackage {
 
   meta = {
     description = "Program to use nix-store signing keys to sign arbitrary data";
-    mainProgram = "nix-sign";
+    mainProgram = "nix-key";
   };
 }

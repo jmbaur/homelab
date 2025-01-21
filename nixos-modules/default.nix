@@ -4,7 +4,7 @@ let
 in
 {
   default = {
-    nixpkgs.overlays = with inputs; [ self.overlays.default ];
+    nixpkgs.overlays = [ inputs.self.overlays.default ];
     imports =
       [
         inputs.ipwatch.nixosModules.default

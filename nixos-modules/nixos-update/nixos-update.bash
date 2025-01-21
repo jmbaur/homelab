@@ -1,13 +1,12 @@
 # shellcheck shell=bash
 
-update_endpoint=${1:-}
+update_endpoint=$1
 
-if [[ -z $update_endpoint ]]; then
-	echo "No update endpoint specified"
-	exit 1
-fi
+read -ra keys < <(nix --experimental-features nix-command config show trusted-public-keys)
 
 new_toplevel=$(curl --silent --fail "$update_endpoint")
+new_toplevel_sig=$(curl --silent --fail "${update_endpoint}.sig")
+nix-key verify <(echo -n "$new_toplevel") <(echo -n "$new_toplevel_sig") "${keys[@]}"
 
 if [[ $(readlink --canonicalize /run/current-system) != "$new_toplevel" ]]; then
 	nix-store --realise "$new_toplevel"
