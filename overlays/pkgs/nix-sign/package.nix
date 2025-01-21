@@ -1,12 +1,12 @@
 {
   lib,
+  libsodium,
   pkg-config,
   rustPlatform,
-  sqlite,
 }:
 
 rustPlatform.buildRustPackage {
-  pname = "local-overlay-fixup-db";
+  pname = "nix-sign";
   version = "0.1.0";
 
   src = lib.fileset.toSource {
@@ -21,10 +21,10 @@ rustPlatform.buildRustPackage {
   cargoLock.lockFile = ./Cargo.lock;
 
   nativeBuildInputs = [ pkg-config ];
-  buildInputs = [ sqlite ];
+  buildInputs = [ libsodium ];
 
   meta = {
-    description = "Program to fixup the upper Nix DB for local-overlay on A/B updated systems";
-    mainProgram = "local-overlay-fixup-db";
+    description = "Program to use nix-store signing keys to sign arbitrary data";
+    mainProgram = "nix-sign";
   };
 }

@@ -1,0 +1,8 @@
+[package]
+name = "nix-sign"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+base64 = "0.22.1"
+sodium-sys = "0.0.4"

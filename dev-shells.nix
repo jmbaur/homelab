@@ -44,6 +44,7 @@ inputs.nixpkgs.lib.mapAttrs (
     default = pkgs.mkShell {
       inputsFrom = [
         pkgs.local-overlay-fixup-db
+        pkgs.nix-sign
         pkgs.wg-dns
       ];
       packages = [
