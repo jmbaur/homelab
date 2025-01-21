@@ -10,7 +10,10 @@ pub fn main() {
     match action.as_str() {
         "sign" => sign(),
         "verify" => verify(),
-        _ => eprintln!("unknown action {}", action),
+        _ => {
+            eprintln!("unknown action {}", action);
+            std::process::exit(1);
+        }
     }
 }
 
@@ -42,9 +45,12 @@ fn verify() {
     let (_signature_key_name, signature_base64) = signature.split_once(":").unwrap();
     let signature_data = BASE64_STANDARD.decode(signature_base64).unwrap();
 
-    std::process::exit(open_detached(
-        data.as_bytes(),
-        signature_data.as_slice(),
-        key_data.as_slice(),
-    ));
+    std::process::exit(
+        open_detached(
+            data.as_bytes(),
+            signature_data.as_slice(),
+            key_data.as_slice(),
+        )
+        .abs(),
+    );
 }
