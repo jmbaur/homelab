@@ -3,6 +3,48 @@ concurrency:
   cancel-in-progress: true
   group: ci-${{ github.ref }}
 jobs:
+  build-artichoke:
+    needs:
+    - test
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@main
+      with:
+        tool-cache: true
+    - uses: DeterminateSystems/nix-installer-action@main
+      with:
+        extra-conf: 'extra-substituters = https://cache.jmbaur.com
+
+          extra-trusted-public-keys = cache.jmbaur.com:C3ku8BNDXgfTO7dNHK+eojm4uy7Gvotwga+EV0cfhPQ=
+
+          '
+    - uses: DeterminateSystems/magic-nix-cache-action@main
+    - env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        CACHE_SIGNING_KEY: ${{ secrets.CACHE_SIGNING_KEY }}
+      name: Build artichoke
+      run: "declare -r endpoint=\"34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com\"\
+        \ndeclare -r endpoint_url=\"https://${endpoint}\"\n\nexisting_toplevel=$(curl\
+        \ --silent --fail https://update.jmbaur.com/artichoke || true)\ntoplevel_drv=$(nix\
+        \ eval --raw \"$PWD#nixosConfigurations.artichoke.config.system.build.toplevel.drvPath\"\
+        )\nnew_toplevel=$(nix derivation show \"$toplevel_drv\" | jq --raw-output\
+        \ 'to_entries[0].value.outputs.out.path')\n\nif [[ $new_toplevel == \"$existing_toplevel\"\
+        \ ]]; then\n  echo \"NixOS configuration for artichoke already cached, nothing\
+        \ to do!\"\nelse\n  toplevel=$(nix build --print-build-logs --no-link --print-out-paths\
+        \ \"${toplevel_drv}^out\")\n  echo -n \"$CACHE_SIGNING_KEY\" >signing-key.pem\n\
+        \  nix path-info --recursive \"$toplevel\" | nix store sign --stdin --verbose\
+        \ --key-file signing-key.pem\n  nix copy --verbose --to \"s3://cache?compression=zstd&region=auto&scheme=https&endpoint=${endpoint}\"\
+        \ \"$toplevel\"\n  echo \"$toplevel\" | aws s3 cp - \"s3://update/artichoke\"\
+        \ --endpoint-url=\"$endpoint_url\"\n  nix run .#nix-key -- sign <(echo -n\
+        \ \"$toplevel\") signing-key.pem | aws s3 cp - \"s3://update/artichoke.sig\"\
+        \ --endpoint-url=\"$endpoint_url\"\nfi\n"
   build-broccoli:
     needs:
     - test
