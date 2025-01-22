@@ -1,7 +1,11 @@
-{ writeShellApplication, curl }:
+{
+  curl,
+  lib,
+  writeShellApplication,
+}:
 
 writeShellApplication {
   name = "pb";
   runtimeInputs = [ curl ];
-  text = builtins.readFile ./pb.bash;
+  text = lib.readFile ./pb.bash;
 }

@@ -11,9 +11,11 @@ let
   inherit (lib)
     flatten
     getExe
+    mkDefault
     mkEnableOption
     mkIf
     mkOption
+    readFile
     types
     ;
 
@@ -37,7 +39,7 @@ let
       pkgs.util-linux # sfdisk
     ];
 
-    text = builtins.readFile ./nixos-recovery.bash;
+    text = readFile ./nixos-recovery.bash;
   };
 
   # TODO(jared): This should be an option that can be extended on a per-machine
@@ -243,7 +245,7 @@ in
       }
     ];
 
-    boot.loader.systemd-boot.enable = true;
+    boot.loader.systemd-boot.enable = mkDefault true;
 
     fileSystems.${config.boot.loader.efi.efiSysMountPoint} = {
       device = "/dev/disk/by-partlabel/boot";
@@ -272,7 +274,7 @@ in
     };
 
     # enable zram by default since we don't create any swap partitions
-    zramSwap.enable = lib.mkDefault true;
+    zramSwap.enable = mkDefault true;
 
     # Not applicable for our image-based systems since the root filesystem
     # isn't created at build-time.

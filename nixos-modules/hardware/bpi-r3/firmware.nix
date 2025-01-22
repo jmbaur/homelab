@@ -10,6 +10,7 @@
   symlinkJoin,
   uboot-mt7986a_bpir3_emmc,
   writeTextDir,
+  lib,
 }:
 
 let
@@ -70,7 +71,7 @@ in
 symlinkJoin {
   name = "bpi-r3-firmware";
   paths = [
-    (writeTextDir "README.md" (builtins.readFile ./README.md))
+    (writeTextDir "README.md" (lib.readFile ./README.md))
     atf
     ubiImage
   ];

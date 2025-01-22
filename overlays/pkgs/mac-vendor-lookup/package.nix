@@ -5,6 +5,7 @@
   gnused,
   gzip,
   iproute2,
+  lib,
   writeShellApplication,
 }:
 
@@ -18,5 +19,5 @@ writeShellApplication {
     gzip
     iproute2
   ];
-  text = builtins.readFile ./mac-vendor-lookup.bash;
+  text = lib.readFile ./mac-vendor-lookup.bash;
 }

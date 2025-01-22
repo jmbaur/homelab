@@ -1,6 +1,7 @@
 {
   fd,
   gitMinimal,
+  lib,
   skim,
   tmux,
   writeShellApplication,
@@ -13,5 +14,5 @@ writeShellApplication {
     skim
     tmux
   ];
-  text = builtins.readFile ./tmux-jump.bash;
+  text = lib.readFile ./tmux-jump.bash;
 }

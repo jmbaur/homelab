@@ -11,6 +11,7 @@ let
     mkEnableOption
     mkIf
     mkOption
+    readFile
     types
     ;
 
@@ -49,7 +50,7 @@ in
                 pkgs.curl
                 pkgs.nix-key
               ];
-              text = builtins.readFile ./nixos-update.bash;
+              text = readFile ./nixos-update.bash;
             }
           ))
           cfg.endpoint

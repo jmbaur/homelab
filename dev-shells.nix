@@ -24,7 +24,7 @@ inputs.nixpkgs.lib.mapAttrs (
               ++ (
                 let
                   machinePubkey = lib.replaceStrings [ "\n" ] [ "" ] (
-                    builtins.readFile ./nixos-configurations/${host}/age.pubkey
+                    lib.readFile ./nixos-configurations/${host}/age.pubkey
                   );
                 in
                 lib.optionals (machinePubkey != "") [ machinePubkey ]

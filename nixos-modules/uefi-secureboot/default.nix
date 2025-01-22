@@ -1,0 +1,66 @@
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+
+let
+  inherit (lib)
+    getExe
+    mkEnableOption
+    mkIf
+    optionalString
+    readFile
+    ;
+
+  cfg = config.custom.ukiBootloader;
+in
+{
+  options.custom.ukiBootloader = {
+    enable = mkEnableOption "UKI/systemd-boot/systemd-stub bootloaders";
+  };
+
+  config = mkIf cfg.enable {
+    boot.bootspec.extensions."custom.ukify.v1" = {
+      inherit (pkgs.stdenv.hostPlatform) efiArch;
+      osRelease = config.environment.etc."os-release".source;
+      stub = "${config.systemd.package}/lib/systemd/boot/efi/linux${pkgs.stdenv.hostPlatform.efiArch}.efi.stub";
+      uname = config.system.build.kernel.version;
+      devicetree =
+        if (with config.hardware.deviceTree; enable && name != null) then
+          "${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name}"
+        else
+          null;
+    };
+
+    environment.systemPackages = [ pkgs.sbctl ];
+
+    boot.loader.systemd-boot.enable = false;
+
+    boot.loader.external = {
+      enable = true;
+      installHook = getExe (
+        pkgs.writeShellApplication {
+          name = "uki-installer";
+          runtimeInputs = [
+            config.nix.package
+            pkgs.coreutils-full
+            pkgs.findutils
+            pkgs.jq
+            pkgs.sbctl
+            pkgs.systemdUkify
+          ];
+          text = ''
+            declare -r boot_loader_timeout=${toString config.boot.loader.timeout}
+            declare -r can_touch_efi_variables=${toString config.boot.loader.efi.canTouchEfiVariables}
+            declare -r efi_sys_mount_point=${config.boot.loader.efi.efiSysMountPoint}
+            declare -r fwupd_efi=${optionalString config.services.fwupd.enable "${pkgs.fwupd-efi}/libexec/fwupd/efi/fwupd${pkgs.stdenv.hostPlatform.efiArch}.efi"}
+            declare -r ukify_jq=${./ukify.jq}
+            ${readFile ./uki-installer.bash}
+          '';
+        }
+      );
+    };
+  };
+}
