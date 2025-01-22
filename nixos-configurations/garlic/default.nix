@@ -22,14 +22,14 @@
               args
               // {
                 version = "6.13.0";
-                modDirVersion = "6.13.0-rc7";
+                modDirVersion = "6.13.0";
 
                 src = pkgs.fetchFromGitHub {
                   owner = "jhovold";
                   repo = "linux";
-                  # wip/x1e80100-6.13-rc7
-                  rev = "a99c4f26cb7c7568967d30ae8aacb397732327e7";
-                  hash = "sha256-R6+PZjL1UD2w5aWBty+sSzoO61l4gzqhjgTj7sfL1oE=";
+                  # wip/x1e80100-6.13
+                  rev = "0df45c8ef99147234f541062be775907b28ad768";
+                  hash = "sha256-IwZ/pOwiHV2d2OiTzI/eSLuEwNJhV/1Ud7QvBkMRyDs=";
                 };
                 kernelPatches = (args.kernelPatches or [ ]);
 
