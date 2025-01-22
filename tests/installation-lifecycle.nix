@@ -31,12 +31,12 @@ nixosTest {
           root = "/var/lib/updates";
         };
 
-        environment.etc."nix/signing-key.pem".source =
+        environment.etc."nix/signing-key".source =
           pkgs.writeText "harmonia.secret" "snakeoil:W46kfFxg/nmU1e0BUROxafCqLAJ1humEFuO4jUSRtovM25YhZE+eLA1PyEC86+TH50JwlSAbXVz9wgNzYsv7jw==";
 
         services.harmonia = {
           enable = true;
-          signKeyPaths = [ "/etc/nix/signing-key.pem" ];
+          signKeyPaths = [ "/etc/nix/signing-key" ];
           settings.bind = "[::]:5000";
         };
 
@@ -147,7 +147,7 @@ nixosTest {
 
           updateServer.wait_for_unit("multi-user.target")
           updateServer.succeed("echo -n ${nodes.machine.system.build.toplevel} >/var/lib/updates/${nodes.machine.networking.hostName}")
-          updateServer.succeed("nix-key sign <(echo -n ${nodes.machine.system.build.toplevel}) /etc/nix/signing-key.pem >/var/lib/updates/${nodes.machine.networking.hostName}.sig")
+          updateServer.succeed("nix-key sign <(echo -n ${nodes.machine.system.build.toplevel}) /etc/nix/signing-key >/var/lib/updates/${nodes.machine.networking.hostName}.sig")
 
           os.environ["QEMU_OPTS"] = f"-drive index=2,if=virtio,id=installer,format=raw,file={tmp_disk_image.name}"
 
@@ -165,7 +165,7 @@ nixosTest {
 
       with subtest("update"):
           updateServer.succeed("echo -n ${nodes.machine.system.build.foo-update.config.system.build.toplevel} >/var/lib/updates/${nodes.machine.networking.hostName}")
-          updateServer.succeed("nix-key sign <(echo -n ${nodes.machine.system.build.foo-update.config.system.build.toplevel}) /etc/nix/signing-key.pem >/var/lib/updates/${nodes.machine.networking.hostName}.sig")
+          updateServer.succeed("nix-key sign <(echo -n ${nodes.machine.system.build.foo-update.config.system.build.toplevel}) /etc/nix/signing-key >/var/lib/updates/${nodes.machine.networking.hostName}.sig")
           machine.succeed("systemctl start nixos-update.service")
           machine.reboot()
           assert "foo" == machine.succeed("cat /etc/foo").strip()
