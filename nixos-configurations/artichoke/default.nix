@@ -22,8 +22,9 @@
       boot.extraModulePackages = [ ];
 
       hardware.firmware = [
-        (pkgs.extractLinuxFirmware "i915-firmware" [
+        (pkgs.extractLinuxFirmware "artichoke-firmware" [
           "i915/bxt_dmc_ver1_07.bin"
+          "rtl_nic/rtl8125b-2.fw"
         ])
       ];
     }
