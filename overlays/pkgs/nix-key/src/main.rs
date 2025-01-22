@@ -5,11 +5,17 @@ use libsodium_sys::{
 
 pub fn main() {
     let mut args = std::env::args();
-    let action = args.nth(1).unwrap();
+
+    let argv0 = args.next().unwrap_or_else(|| String::from("nix-key"));
+
+    let Some(action) = args.next() else {
+        usage(&argv0);
+        std::process::exit(1);
+    };
 
     match action.as_str() {
-        "sign" => sign(args),
-        "verify" => verify(args),
+        "sign" => sign(&argv0, args),
+        "verify" => verify(&argv0, args),
         _ => {
             eprintln!("unknown action {}", action);
             std::process::exit(1);
@@ -17,18 +23,40 @@ pub fn main() {
     }
 }
 
-fn sign(mut args: std::env::Args) {
+fn usage(argv0: &str) {
+    let argv0 = std::fs::canonicalize(argv0).unwrap_or_else(|_| std::path::PathBuf::from(argv0));
+    let argv0 = argv0
+        .file_name()
+        .unwrap_or_else(|| argv0.as_os_str())
+        .to_string_lossy();
+
+    eprintln!(
+        r#"usage:
+    {0} sign <data-file> <signing-key-file>
+    {0} verify <data-file> <detached-signature-file> <verifying-key-file>...
+        "#,
+        argv0
+    );
+}
+
+fn sign(argv0: &str, mut args: std::env::Args) {
     _ = unsafe { sodium_init() };
 
-    let data_file = args.next().unwrap();
-    let key_file = args.next().unwrap();
-    let key = std::fs::read_to_string(key_file).unwrap();
-    let (key_name, key_base64) = key.split_once(":").unwrap();
-    let key_data = BASE64_STANDARD.decode(key_base64).unwrap();
-    let data = std::fs::read_to_string(data_file).unwrap();
+    let Some(data_file) = args.next() else {
+        usage(argv0);
+        std::process::exit(1);
+    };
+    let Some(key_file) = args.next() else {
+        usage(argv0);
+        std::process::exit(1);
+    };
+    let key = std::fs::read_to_string(key_file).expect("failed to read signing key file");
+    let (key_name, key_base64) = key.split_once(":").expect("invalid signing key");
+    let key_data = BASE64_STANDARD
+        .decode(key_base64)
+        .expect("failed to decode signing key");
+    let data = std::fs::read_to_string(data_file).expect("failed to read data file");
     let data_ = data.as_bytes();
-
-    // let signature = sign_detached(data.as_bytes(), key_data.as_slice()).unwrap();
 
     let mut signature: [u8; crypto_sign_BYTES as _] = unsafe { std::mem::zeroed() };
 
@@ -54,24 +82,35 @@ fn sign(mut args: std::env::Args) {
     print!("{}:{}", key_name, BASE64_STANDARD.encode(signature));
 }
 
-fn verify(mut args: std::env::Args) {
+fn verify(argv0: &str, mut args: std::env::Args) {
     _ = unsafe { sodium_init() };
 
-    let data_file = args.next().unwrap();
-    let signature_file = args.next().unwrap();
+    let Some(data_file) = args.next() else {
+        usage(argv0);
+        std::process::exit(1);
+    };
+    let Some(signature_file) = args.next() else {
+        usage(argv0);
+        std::process::exit(1);
+    };
 
     let mut keys = Vec::new();
     while let Some(key) = args.next() {
-        let (key_name, key_base64) = key.split_once(":").unwrap();
-        let key_data = BASE64_STANDARD.decode(key_base64).unwrap();
+        let (key_name, key_base64) = key.split_once(":").expect("invalid verifying key");
+        let key_data = BASE64_STANDARD
+            .decode(key_base64)
+            .expect("failed to decode verifying key");
         keys.push((key_name.to_string(), key_data));
     }
 
-    let data = std::fs::read_to_string(data_file).unwrap();
+    let data = std::fs::read_to_string(data_file).expect("failed to read data file");
     let data_ = data.as_bytes();
-    let signature = std::fs::read_to_string(signature_file).unwrap();
-    let (signature_key_name, signature_base64) = signature.split_once(":").unwrap();
-    let signature_data = BASE64_STANDARD.decode(signature_base64).unwrap();
+    let signature = std::fs::read_to_string(signature_file).expect("failed to read signature file");
+    let (signature_key_name, signature_base64) =
+        signature.split_once(":").expect("invalid signature");
+    let signature_data = BASE64_STANDARD
+        .decode(signature_base64)
+        .expect("failed to decode signature");
 
     let key_data = keys
         .iter()
@@ -82,7 +121,7 @@ fn verify(mut args: std::env::Args) {
                 None
             }
         })
-        .unwrap();
+        .expect("could not find verifying key for signature");
 
     std::process::exit(
         unsafe {
