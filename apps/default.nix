@@ -97,6 +97,41 @@ inputs.nixpkgs.lib.mapAttrs (
       )
     );
 
+    buildNixosConfigCI = mkApp (
+      getExe (
+        pkgs.writeShellApplication {
+          name = "build-nixos-config-ci";
+          runtimeInputs = [
+            pkgs.awscli2
+            pkgs.curl
+            pkgs.nix-key
+          ];
+          text = ''
+            name=$1
+
+            declare -r endpoint="34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com"
+            declare -r endpoint_url="https://''${endpoint}"
+
+            existing_toplevel=$(curl --silent --fail "https://update.jmbaur.com/''${name}" || true)
+            toplevel_drv=$(nix eval --raw "$PWD#nixosConfigurations.''${name}.config.system.build.toplevel.drvPath")
+            new_toplevel=$(nix derivation show "$toplevel_drv" | jq --raw-output 'to_entries[0].value.outputs.out.path')
+
+            if [[ $new_toplevel == "$existing_toplevel" ]]; then
+              echo "NixOS configuration for ''${name} already cached, nothing to do!"
+            else
+              toplevel=$(nix build --print-build-logs --no-link --print-out-paths "''${toplevel_drv}^out")
+              echo -n "$CACHE_SIGNING_KEY" >signing-key
+              nix path-info --recursive "$toplevel" | nix store sign --stdin --verbose --key-file signing-key
+              nix copy --verbose --to "s3://cache?compression=zstd&region=auto&scheme=https&endpoint=''${endpoint}" "$toplevel"
+              echo "$toplevel" | aws s3 cp - "s3://update/''${name}" --endpoint-url="$endpoint_url"
+              nix-key sign <(echo -n "$toplevel") signing-key | aws s3 cp - "s3://update/''${name}.sig" --endpoint-url="$endpoint_url"
+            fi
+
+          '';
+        }
+      )
+    );
+
     updateGithubWorkflows =
       let
         ci = (pkgs.formats.yaml { }).generate "ci.yaml" {
@@ -179,25 +214,7 @@ inputs.nixpkgs.lib.mapAttrs (
                       AWS_ACCESS_KEY_ID = "\${{ secrets.AWS_ACCESS_KEY_ID }}";
                       AWS_SECRET_ACCESS_KEY = "\${{ secrets.AWS_SECRET_ACCESS_KEY }}";
                     };
-                    run = ''
-                      declare -r endpoint="34455c79130a7a7a9495dc2123622e59.r2.cloudflarestorage.com"
-                      declare -r endpoint_url="https://''${endpoint}"
-
-                      existing_toplevel=$(curl --silent --fail https://update.jmbaur.com/${name} || true)
-                      toplevel_drv=$(nix eval --raw "$PWD#nixosConfigurations.${name}.config.system.build.toplevel.drvPath")
-                      new_toplevel=$(nix derivation show "$toplevel_drv" | jq --raw-output 'to_entries[0].value.outputs.out.path')
-
-                      if [[ $new_toplevel == "$existing_toplevel" ]]; then
-                        echo "NixOS configuration for ${name} already cached, nothing to do!"
-                      else
-                        toplevel=$(nix build --print-build-logs --no-link --print-out-paths "''${toplevel_drv}^out")
-                        echo -n "$CACHE_SIGNING_KEY" >signing-key
-                        nix path-info --recursive "$toplevel" | nix store sign --stdin --verbose --key-file signing-key
-                        nix copy --verbose --to "s3://cache?compression=zstd&region=auto&scheme=https&endpoint=''${endpoint}" "$toplevel"
-                        echo "$toplevel" | aws s3 cp - "s3://update/${name}" --endpoint-url="$endpoint_url"
-                        nix run .#nix-key -- sign <(echo -n "$toplevel") signing-key | aws s3 cp - "s3://update/${name}.sig" --endpoint-url="$endpoint_url"
-                      fi
-                    '';
+                    run = "nix run .#buildNixosConfigCI -- ${name}";
                   }
                 ];
               };
