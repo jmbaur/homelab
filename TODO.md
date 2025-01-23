@@ -46,3 +46,7 @@ Recovery image doesn't work without kernel modules that allow for USB mass stora
 
 On some systems, the only python dependency is the `systemd-boot-builder.py` script.
 If we implement this ourselves, we can get rid of this dependency as well as implement some features that have yet to be implemented upstream (e.g. boot counting).
+
+# wg-dns
+
+We have an issue where systemd-networkd will not configure a peer if the configured peer is not up. This means that in our program, we exit early (see https://github.com/jmbaur/homelab/blob/dbc9c860b35cec796d9314100c220265d7e6e4c4/overlays/pkgs/wg-dns/src/main.rs#L107). We should instead continue on and just not do any peer updating until there is a peer. We should still continue to resolve DNS RRs and when a peer shows up, we will have up-to-date information to use.
