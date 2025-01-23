@@ -53,6 +53,9 @@ in
               version = "6.13.0";
               modDirVersion = "6.13.0";
 
+              # TODO(jared): remove this
+              ignoreConfigErrors = true;
+
               src = pkgs.fetchFromGitHub {
                 owner = "jhovold";
                 repo = "linux";
