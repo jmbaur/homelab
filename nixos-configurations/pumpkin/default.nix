@@ -23,7 +23,7 @@
 
       custom.ddns = {
         enable = true;
-        interface = "eth1";
+        interface = "end1";
         ipv4.enable = false;
         domain = "jmbaur.com";
       };
