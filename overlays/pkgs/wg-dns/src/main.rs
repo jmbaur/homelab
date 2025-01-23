@@ -1,5 +1,6 @@
 use std::{
     cmp::Ordering,
+    net::SocketAddr,
     thread::sleep,
     time::{Duration, Instant},
 };
@@ -66,10 +67,6 @@ fn main() -> anyhow::Result<()> {
 
     let wg_host = get_host(&wg_interface)?;
     for (_, peer) in wg_host.peers {
-        if peer.endpoint.is_none() {
-            continue;
-        }
-
         if let Some((dns_name, _)) = peers_to_update.find(|(_, public_key)| {
             BASE64_STANDARD
                 .decode(public_key)
@@ -108,10 +105,6 @@ fn main() -> anyhow::Result<()> {
             break;
         };
 
-        let mut endpoint = peer
-            .endpoint
-            .expect("already filtered out peers without endpoints");
-
         if let Some(valid_util) = valid_until {
             let time_to_wait = valid_util - Instant::now();
             eprintln!(
@@ -130,9 +123,9 @@ fn main() -> anyhow::Result<()> {
                 // TODO(jared): don't just use first address
                 match response.iter().next() {
                     Some(address) => {
-                        if address != endpoint.ip() {
-                            endpoint.set_ip(address);
-                            peer.endpoint = Some(endpoint);
+                        let new_endpoint = SocketAddr::new(address, 0);
+                        if Some(address) != peer.endpoint.map(|endpoint| endpoint.ip()) {
+                            peer.endpoint = Some(new_endpoint);
                             if let Err(err) = set_peer(&wg_interface, &peer) {
                                 eprintln!("failed to set peer '{}': {err}", peer.public_key);
                             }
