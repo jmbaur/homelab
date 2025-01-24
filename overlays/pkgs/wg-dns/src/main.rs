@@ -1,6 +1,6 @@
 use std::{
     cmp::Ordering,
-    net::{SocketAddr, ToSocketAddrs},
+    net::SocketAddr,
     thread::sleep,
     time::{Duration, Instant},
 };
@@ -60,8 +60,6 @@ fn collect_peers(mut args: std::env::Args) -> anyhow::Result<Vec<(Endpoint, Publ
 }
 
 fn main() -> anyhow::Result<()> {
-    eprintln!("{:?}", "foo.com:51820".to_socket_addrs());
-
     let mut args = std::env::args();
 
     let argv0 = args.next().context("missing argv[0]")?; // argv[0]
