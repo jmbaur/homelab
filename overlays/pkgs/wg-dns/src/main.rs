@@ -1,6 +1,6 @@
 use std::{
     cmp::Ordering,
-    net::SocketAddr,
+    net::{SocketAddr, ToSocketAddrs},
     thread::sleep,
     time::{Duration, Instant},
 };
@@ -21,7 +21,26 @@ fn usage(argv0: &str) -> ! {
     std::process::exit(1);
 }
 
-fn collect_peers(mut args: std::env::Args) -> anyhow::Result<Vec<(String, String)>> {
+fn parse_hostname_port(value: &str) -> anyhow::Result<(String, u16)> {
+    let Some((hostname, port)) = value.split_once(":") else {
+        anyhow::bail!("invalid hostname/port");
+    };
+
+    let Ok(port) = u16::from_str_radix(port, 10) else {
+        anyhow::bail!("invalid hostname/port");
+    };
+
+    if !hostname_validator::is_valid(hostname) {
+        anyhow::bail!("invalid hostname/port");
+    }
+
+    Ok((hostname.to_string(), port))
+}
+
+type Endpoint = (String, u16);
+type PublicKey = String;
+
+fn collect_peers(mut args: std::env::Args) -> anyhow::Result<Vec<(Endpoint, PublicKey)>> {
     let mut peers = Vec::new();
 
     loop {
@@ -29,18 +48,20 @@ fn collect_peers(mut args: std::env::Args) -> anyhow::Result<Vec<(String, String
             break;
         };
 
-        let dns_name = args.next().ok_or(anyhow::anyhow!(
+        let endpoint = args.next().ok_or(anyhow::anyhow!(
             "missing dns name for wg peer with public key '{}'",
             public_key
         ))?;
 
-        peers.push((dns_name, public_key));
+        peers.push((parse_hostname_port(&endpoint)?, public_key));
     }
 
     Ok(peers)
 }
 
 fn main() -> anyhow::Result<()> {
+    eprintln!("{:?}", "foo.com:51820".to_socket_addrs());
+
     let mut args = std::env::args();
 
     let argv0 = args.next().context("missing argv[0]")?; // argv[0]
@@ -100,7 +121,7 @@ fn main() -> anyhow::Result<()> {
             sleep(Duration::from_secs(30));
         }
 
-        let Some((dns_name, valid_until, mut peer)) = peers.pop() else {
+        let Some(((hostname, port), valid_until, mut peer)) = peers.pop() else {
             // Nothing to do.
             break;
         };
@@ -109,7 +130,7 @@ fn main() -> anyhow::Result<()> {
             let time_to_wait = valid_util - Instant::now();
             eprintln!(
                 "waiting {:?} until DNS name '{}' is no longer valid",
-                time_to_wait, dns_name
+                time_to_wait, hostname
             );
             sleep(time_to_wait);
         }
@@ -118,12 +139,12 @@ fn main() -> anyhow::Result<()> {
             peers_seen += 1;
         }
 
-        let valid_until = match resolver.lookup_ip(&dns_name) {
+        let valid_until = match resolver.lookup_ip(&hostname) {
             Ok(response) => {
                 // TODO(jared): don't just use first address
                 match response.iter().next() {
                     Some(address) => {
-                        let new_endpoint = SocketAddr::new(address, 0);
+                        let new_endpoint = SocketAddr::new(address, port);
                         if Some(address) != peer.endpoint.map(|endpoint| endpoint.ip()) {
                             peer.endpoint = Some(new_endpoint);
                             if let Err(err) = set_peer(&wg_interface, &peer) {
@@ -137,19 +158,19 @@ fn main() -> anyhow::Result<()> {
                         }
                     }
                     None => {
-                        eprintln!("no addresses found for '{dns_name}'");
+                        eprintln!("no addresses found for '{hostname}'");
                     }
                 };
 
                 Some(response.valid_until())
             }
             Err(err) => {
-                eprintln!("failed to resolve '{dns_name}': {err}");
+                eprintln!("failed to resolve '{hostname}': {err}");
                 None
             }
         };
 
-        peers.push((dns_name, valid_until, peer));
+        peers.push(((hostname, port), valid_until, peer));
     }
 
     Ok(())

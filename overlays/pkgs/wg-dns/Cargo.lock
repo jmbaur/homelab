@@ -275,6 +275,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "hostname-validator"
+version = "1.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f558a64ac9af88b5ba400d99b579451af0d39c6d360980045b91aac966d705e2"
+
+[[package]]
 name = "icu_collections"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -964,6 +970,7 @@ dependencies = [
  "base64 0.22.1",
  "defguard_wireguard_rs",
  "hickory-resolver",
+ "hostname-validator",
 ]
 
 [[package]]

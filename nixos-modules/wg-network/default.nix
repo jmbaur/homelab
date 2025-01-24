@@ -292,7 +292,7 @@ in
               (lib.getExe pkgs.wg-dns)
               interfaceName
               nodeConfig.publicKey
-              nodeConfig.endpointHost
+              "${nodeConfig.endpointHost}:${toString wgPort}"
             ];
           };
         };
