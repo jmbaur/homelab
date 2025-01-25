@@ -75,13 +75,25 @@ inputs.nixpkgs.lib.genAttrs allHosts (
         }
       )
       (
-        { lib, ... }:
+        { config, lib, ... }:
         {
           services.yggdrasil = {
             enable = true;
             persistentKeys = lib.mkDefault true;
             openMulticastPort = lib.mkDefault true;
+            settings.MulticastInterfaces = lib.mkDefault [
+              {
+                Regex = ".*";
+                Beacon = true;
+                Listen = true;
+                Port = 9001;
+              }
+            ];
           };
+
+          networking.firewall.allowedTCPPorts = lib.mkIf (lib.any (
+            iface: (iface.Regex or "") == ".*"
+          ) config.services.yggdrasil.settings.MulticastInterfaces or [ ]) [ 9001 ];
 
           custom.yggdrasil.nodes.cauliflower.allowAll = true;
         }

@@ -27,15 +27,19 @@
     domain = "jmbaur.com";
   };
 
-  networking.firewall.allowedTCPPorts = [ 443 ];
+  networking.firewall = {
+    allowedTCPPorts = [ 443 ];
+    interfaces.${config.router.lanInterface}.allowedTCPPorts = [ 9001 ];
+  };
 
   services.yggdrasil.settings = {
     Listen = [ "tls://[::]:443" ];
     MulticastInterfaces = [
       {
-        Regex = "[^${config.router.wanInterface}]";
+        Regex = config.router.lanInterface;
         Beacon = true;
         Listen = true;
+        Port = 9001;
       }
     ];
   };
