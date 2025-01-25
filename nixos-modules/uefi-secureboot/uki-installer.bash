@@ -37,7 +37,6 @@ done < <(nix-env --list-generations --profile /nix/var/nix/profiles/system | tac
 declare -a loader_conf_lines
 
 loader_conf_lines+=("timeout ${boot_loader_timeout}")
-loader_conf_lines+=("editor yes")
 
 for generation_number in "${!generations[@]}"; do
 	generation=${generations["$generation_number"]}
