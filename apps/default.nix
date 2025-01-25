@@ -102,9 +102,9 @@ inputs.nixpkgs.lib.mapAttrs (
         pkgs.writeShellApplication {
           name = "build-nixos-config-ci";
           runtimeInputs = [
-            pkgs.awscli2
             pkgs.curl
             pkgs.nix-key
+            pkgs.s5cmd
           ];
           text = ''
             name=$1
@@ -123,10 +123,9 @@ inputs.nixpkgs.lib.mapAttrs (
               echo -n "$CACHE_SIGNING_KEY" >signing-key
               nix path-info --recursive "$toplevel" | nix store sign --stdin --verbose --key-file signing-key
               nix copy --verbose --to "s3://cache?compression=zstd&region=auto&scheme=https&endpoint=''${endpoint}" "$toplevel"
-              echo "$toplevel" | aws s3 cp - "s3://update/''${name}" --endpoint-url="$endpoint_url"
-              nix-key sign <(echo -n "$toplevel") signing-key | aws s3 cp - "s3://update/''${name}.sig" --endpoint-url="$endpoint_url"
+              echo -n "$toplevel" | s5cmd --endpoint-url="$endpoint_url" pipe "s3://update/''${name}"
+              nix-key sign <(echo -n "$toplevel") signing-key | s5cmd --endpoint-url="$endpoint_url" pipe "s3://update/''${name}.sig"
             fi
-
           '';
         }
       )
