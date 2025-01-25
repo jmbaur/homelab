@@ -60,6 +60,7 @@ nixosTest {
 
         virtualisation.useBootLoader = true;
         virtualisation.useEFIBoot = true;
+        virtualisation.useSecureBoot = true;
         virtualisation.efi.keepVariables = false;
         virtualisation.directBoot.enable = false;
         virtualisation.mountHostNixStore = false;
@@ -108,6 +109,8 @@ nixosTest {
           ];
         };
 
+        custom.ukiInstaller.enable = true;
+
         # Provide something to update to.
         system.build.foo-update = extendModules {
           modules = [
@@ -145,7 +148,7 @@ nixosTest {
 
           os.environ["USB_STICK"] = tmp_disk_image.name
 
-          updateServer.wait_for_unit("multi-user.target")
+          updateServer.wait_for_unit("default.target")
           updateServer.succeed("echo -n ${nodes.machine.system.build.toplevel} >/var/lib/updates/${nodes.machine.networking.hostName}")
           updateServer.succeed("nix-key sign <(echo -n ${nodes.machine.system.build.toplevel}) /etc/nix/signing-key >/var/lib/updates/${nodes.machine.networking.hostName}.sig")
 
@@ -159,8 +162,10 @@ nixosTest {
           os.environ["QEMU_OPTS"] = ""
 
           machine.start(allow_reboot=True)
-          machine.wait_for_unit("multi-user.target")
-          assert_boot_entry("nixos-generation-1.conf")
+          machine.wait_for_unit("default.target")
+          assert 1 == int(machine.succeed("od --skip-bytes 4 --read-bytes 1 --output-duplicates --format dI --address-radix n /sys/firmware/efi/efivars/SecureBoot-8be4df61-93ca-11d2-aa0d-00e098032b8c").strip())
+          machine.succeed("! grep --silent secure-boot-enroll ${nodes.machine.boot.loader.efi.efiSysMountPoint}/loader/loader.conf")
+          assert_boot_entry("nixos-1.efi")
           assert "${nodes.machine.system.build.toplevel}" == machine.succeed("readlink --canonicalize /run/current-system").strip()
 
       with subtest("update"):
