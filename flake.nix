@@ -8,6 +8,8 @@
     home-manager.url = "github:nix-community/home-manager";
     ipwatch.inputs.nixpkgs.follows = "nixpkgs";
     ipwatch.url = "github:jmbaur/ipwatch";
+    nix-filter-copy.inputs.nixpkgs.follows = "nixpkgs";
+    nix-filter-copy.url = "github:ConnorBaker/nix-filter-copy";
     nixos-router.inputs.nixpkgs.follows = "nixpkgs";
     nixos-router.url = "github:jmbaur/nixos-router";
     nixpkgs.url = "github:jmbaur/nixpkgs/jmbaur-nixos-unstable";
