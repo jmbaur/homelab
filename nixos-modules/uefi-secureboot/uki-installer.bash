@@ -21,7 +21,7 @@ else
 fi
 
 if [[ -n $fwupd_efi ]]; then
-	install -D "$fwupd_efi" "${efi_sys_mount_point}/EFI/nixos/$(basename "$fwupd_efi")"
+	install -D "$fwupd_efi" "${workdir}/${efi_sys_mount_point}/EFI/nixos/$(basename "$fwupd_efi")"
 fi
 
 new_toplevel=$1
@@ -51,8 +51,6 @@ for generation_number in "${!generations[@]}"; do
 	fi
 done
 
-rm -rf "${efi_sys_mount_point}"/EFI/Linux/*
-
 # If no keys exist, create them and enroll them so that the machine can enroll
 # them on next boot. The idea is that we will have unique per-device keys that
 # will be enrolled during the installation process.
@@ -63,12 +61,14 @@ if [[ ! -d /var/lib/sbctl ]]; then
 	loader_conf_lines+=("secure-boot-enroll force")
 fi
 
+printf "%s\n" "${loader_conf_lines[@]}" >"${workdir}/${efi_sys_mount_point}/loader/loader.conf"
+
+find "${workdir}/$efi_sys_mount_point" -type f -iname '*.efi' -exec sbctl sign {} \;
+
+rm -rf "${efi_sys_mount_point}"/EFI/Linux/*
+
 pushd "$workdir" >/dev/null || exit
 while read -r boot_file; do
 	install -D "${workdir}/${boot_file}" "/${boot_file}"
 done < <(find . -type f -printf "%P\n")
 popd >/dev/null || exit
-
-printf "%s\n" "${loader_conf_lines[@]}" >"${efi_sys_mount_point}/loader/loader.conf"
-
-find "$efi_sys_mount_point" -type f -iname '*.efi' -exec sbctl sign {} \;
