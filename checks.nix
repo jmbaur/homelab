@@ -12,6 +12,7 @@ builtins.listToAttrs (
       in
       {
         installationLifecycle = pkgs.callPackage ./tests/installation-lifecycle.nix { inherit inputs; };
+        ukiInstaller = pkgs.callPackage ./tests/uki-installer.nix { inherit inputs; };
       };
   }) (builtins.attrNames inputs.self.legacyPackages)
 )
