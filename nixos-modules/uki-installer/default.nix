@@ -14,12 +14,10 @@ let
     optionalString
     ;
 
-  cfg = config.custom.ukiBootloader;
+  cfg = config.custom.ukiInstaller;
 in
 {
-  options.custom.ukiBootloader = {
-    enable = mkEnableOption "UKI/systemd-boot/systemd-stub bootloaders";
-  };
+  options.custom.ukiInstaller.enable = mkEnableOption "UKI/systemd-boot/systemd-stub bootloader installer";
 
   config = mkIf cfg.enable {
     boot.bootspec.extensions."custom.ukify.v1" = {
@@ -37,6 +35,17 @@ in
     environment.systemPackages = [ pkgs.sbctl ];
 
     boot.loader.systemd-boot.enable = false;
+
+    systemd.services.reset-loader-conf = {
+      wantedBy = [ "default.target" ];
+      unitConfig.ConditionDirectoryNotEmpty = "${config.boot.loader.efi.efiSysMountPoint}/loader/keys/auto";
+      script = ''
+        if [[ $(od --skip-bytes 4 --read-bytes 1 --output-duplicates --format dI --address-radix n /sys/firmware/efi/efivars/SecureBoot-8be4df61-93ca-11d2-aa0d-00e098032b8c) -eq 1 ]]; then
+          rm -rf ${config.boot.loader.efi.efiSysMountPoint}/loader/keys
+          sed -i '/secure-boot-enroll force/d' ${config.boot.loader.efi.efiSysMountPoint}/loader/loader.conf
+        fi
+      '';
+    };
 
     boot.loader.external = {
       enable = true;

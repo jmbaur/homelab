@@ -1,9 +1,6 @@
 { config, pkgs, ... }:
 {
-  imports = [
-    ./web.nix
-    ./router.nix
-  ];
+  imports = [ ./router.nix ];
 
   # better support for mt7915 wifi card
   boot.kernelPackages = pkgs.linuxPackages_6_12;
@@ -24,9 +21,22 @@
     recovery.targetDisk = "/dev/disk/by-path/platform-f10a8000.sata-ata-1.0";
   };
 
-  # tinc network
-  networking.firewall = {
-    allowedTCPPorts = [ 655 ];
-    allowedUDPPorts = [ 655 ];
+  custom.ddns = {
+    enable = true;
+    interface = config.router.wanInterface;
+    domain = "jmbaur.com";
+  };
+
+  networking.firewall.allowedTCPPorts = [ 443 ];
+
+  services.yggdrasil.settings = {
+    Listen = [ "tls://[::]:443" ];
+    MulticastInterfaces = [
+      {
+        Regex = "[^${config.router.wanInterface}]";
+        Beacon = true;
+        Listen = true;
+      }
+    ];
   };
 }

@@ -56,12 +56,13 @@ done
 if [[ ! -d /var/lib/sbctl ]]; then
 	sbctl create-keys
 	sbctl enroll-keys --export auth --yes-this-might-brick-my-machine
-	install -D --target-directory="${workdir}/${efi_sys_mount_point}/loader/keys/secureboot-keys" ./*.auth
+	install -D --target-directory="${workdir}/${efi_sys_mount_point}/loader/keys/auto" ./*.auth
 	loader_conf_lines+=("secure-boot-enroll force")
 fi
 
 printf "%s\n" "${loader_conf_lines[@]}" >"${workdir}/${efi_sys_mount_point}/loader/loader.conf"
 
+find "$efi_sys_mount_point" -type f -iname '*.efi' -exec sbctl sign {} \;
 find "${workdir}/$efi_sys_mount_point" -type f -iname '*.efi' -exec sbctl sign {} \;
 
 rm -rf "${efi_sys_mount_point}"/EFI/Linux/*

@@ -1,4 +1,5 @@
 { config, lib, ... }:
+
 {
   config = lib.mkMerge [
     {
@@ -25,9 +26,9 @@
       systemd.network.wait-online.anyInterface = true;
     }
     {
-      # networking.firewall.interfaces."tinc.jmbaur".allowedTCPPorts = [
-      #   config.services.navidrome.settings.Port
-      # ];
+      custom.yggdrasil.nodes.potato.allowedTCPPorts = [
+        config.services.navidrome.settings.Port
+      ];
 
       services.navidrome = {
         enable = true;
@@ -39,10 +40,6 @@
       };
     }
     {
-      # networking.firewall.interfaces."tinc.jmbaur".allowedTCPPorts = [
-      #   config.services.photoprism.port
-      # ];
-
       services.photoprism = {
         enable = true;
         address = "[::]";
@@ -50,9 +47,9 @@
       };
     }
     {
-      # networking.firewall.interfaces."tinc.jmbaur".allowedTCPPorts = [
-      #   8096
-      # ];
+      custom.yggdrasil.nodes.potato.allowedTCPPorts = [
+        8096
+      ];
 
       services.jellyfin.enable = true;
     }

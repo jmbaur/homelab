@@ -23,13 +23,9 @@
     board = "brya-banshee";
   };
 
+  services.yggdrasil.settings.Peers = [ "tls://squash.jmbaur.com:443" ];
+
   custom.desktop.enable = true;
   custom.dev.enable = true;
   custom.recovery.targetDisk = "/dev/disk/by-path/pci-0000:01:00.0-nvme-1";
-
-  services.tinc.networks.jmbaur = {
-    settings = {
-      ConnectTo = "squash";
-    };
-  };
 }

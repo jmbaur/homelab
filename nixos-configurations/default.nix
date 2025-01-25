@@ -75,88 +75,21 @@ inputs.nixpkgs.lib.genAttrs allHosts (
         }
       )
       (
-        { config, lib, ... }:
-
-        let
-          ulaHextets = [
-            64779
-            57458
-            54680
-          ];
-
-          ulaNetworkSegments =
-            map (hextet: lib.toLower (lib.toHexString hextet)) ulaHextets
-            ++ lib.genList (_: "0000") (4 - (lib.length ulaHextets));
-
-          hextetOffsets = lib.genList (x: x * 4) 4;
-
-          tincHostSubnet =
-            hostName:
-            let
-              hostHash = builtins.hashString "sha256" hostName;
-              hostSegments = map (x: lib.substring x 4 hostHash) hextetOffsets;
-            in
-            {
-              address = lib.concatStringsSep ":" (ulaNetworkSegments ++ hostSegments);
-              prefixLength = 128;
-            };
-
-          useTinc = builtins.pathExists ./${config.networking.hostName}/tinc.ed25519;
-        in
-        (lib.mkIf useTinc {
-          sops.secrets = {
-            tinc.owner = config.users.users.tinc-jmbaur.name;
-          };
-
-          systemd.network = {
+        { lib, ... }:
+        {
+          services.yggdrasil = {
             enable = true;
-            networks."10-tinc-jmbaur" = {
-              matchConfig.Name = "tinc.jmbaur";
-              address =
-                let
-                  inherit (tincHostSubnet config.networking.hostName) address;
-                in
-                [ "${address}/64" ];
-            };
+            persistentKeys = lib.mkDefault true;
+            openMulticastPort = lib.mkDefault true;
           };
 
-          networking.extraHosts = lib.concatLines (
-            lib.flatten (
-              lib.mapAttrsToList (
-                host: hostSettings: map (subnet: "${subnet.address} ${host}.internal") hostSettings.subnets
-              ) config.services.tinc.networks.jmbaur.hostSettings
-            )
-          );
-
-          # TODO(jared): more finegrained rules
-          networking.firewall = {
-            extraInputRules = ''
-              iifname tinc.jmbaur accept
-            '';
-            extraForwardRules = ''
-              iifname tinc.jmbaur accept
-            '';
-          };
-
-          # We manage our tinc keys with sops, prevent ExecStartPre script from
-          # generating keys on startup.
-          systemd.services."tinc.jmbaur".preStart = lib.mkForce "";
-
-          services.tinc.networks.jmbaur = {
-            ed25519PrivateKeyFile = config.sops.secrets.tinc.path;
-            settings.ConnectTo = lib.mkIf (config.networking.hostName != "squash") "squash";
-            hostSettings = lib.mkMerge [
-              { squash.addresses = [ { address = "squash.jmbaur.com"; } ]; }
-              (lib.genAttrs (lib.filter (host: builtins.pathExists ./${host}/tinc.ed25519) allHosts) (host: {
-                settings.Ed25519PublicKey = lib.fileContents ./${host}/tinc.ed25519;
-                subnets = [
-                  (tincHostSubnet host)
-                ];
-              }))
-            ];
-          };
-        })
+          custom.yggdrasil.nodes.cauliflower.allowAll = true;
+        }
       )
+
+      # The entire homelab network
+      ./network.nix
+
       # Host-specific configuration
       ./${host}
     ];
