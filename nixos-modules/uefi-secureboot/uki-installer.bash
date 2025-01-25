@@ -53,10 +53,19 @@ done
 
 rm -rf "${efi_sys_mount_point}"/EFI/Linux/*
 
+# If no keys exist, create them and enroll them so that the machine can enroll
+# them on next boot. The idea is that we will have unique per-device keys that
+# will be enrolled during the installation process.
+if [[ ! -d /var/lib/sbctl ]]; then
+	sbctl create-keys
+	sbctl enroll-keys --export auth --yes-this-might-brick-my-machine
+	install -D --target-directory="${workdir}/${efi_sys_mount_point}/loader/keys/secureboot-keys" ./*.auth
+	loader_conf_lines+=("secure-boot-enroll force")
+fi
+
 pushd "$workdir" >/dev/null || exit
 while read -r boot_file; do
-	mkdir -p "$(dirname "$boot_file")"
-	install "${workdir}/${boot_file}" "/${boot_file}"
+	install -D "${workdir}/${boot_file}" "/${boot_file}"
 done < <(find . -type f -printf "%P\n")
 popd >/dev/null || exit
 
