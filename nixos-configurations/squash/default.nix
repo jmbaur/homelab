@@ -23,4 +23,10 @@
     basicNetwork.enable = !config.router.enable;
     recovery.targetDisk = "/dev/disk/by-path/platform-f10a8000.sata-ata-1.0";
   };
+
+  # tinc network
+  networking.firewall = {
+    allowedTCPPorts = [ 655 ];
+    allowedUDPPorts = [ 655 ];
+  };
 }

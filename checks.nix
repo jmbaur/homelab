@@ -12,7 +12,6 @@ builtins.listToAttrs (
       in
       {
         installationLifecycle = pkgs.callPackage ./tests/installation-lifecycle.nix { inherit inputs; };
-        wgNetwork = pkgs.callPackage ./tests/wg-network.nix { inherit inputs; };
       };
   }) (builtins.attrNames inputs.self.legacyPackages)
 )

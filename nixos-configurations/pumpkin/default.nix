@@ -8,7 +8,6 @@
       custom.server.enable = true;
       custom.basicNetwork.enable = true;
       custom.common.nativeBuild = true;
-      custom.wgNetwork.nodes.squash.peer = true;
 
       fileSystems."/var" = {
         fsType = "btrfs";
@@ -21,19 +20,14 @@
         ];
       };
 
-      custom.ddns = {
-        enable = true;
-        interface = "end1";
-        ipv4.enable = false;
-        domain = "jmbaur.com";
-      };
-
       # This machine has many interfaces, and we currently only care that one
       # has an "online" status.
       systemd.network.wait-online.anyInterface = true;
     }
     {
-      custom.wgNetwork.nodes.squash.allowedTCPPorts = [ config.services.navidrome.settings.Port ];
+      # networking.firewall.interfaces."tinc.jmbaur".allowedTCPPorts = [
+      #   config.services.navidrome.settings.Port
+      # ];
 
       services.navidrome = {
         enable = true;
@@ -45,7 +39,9 @@
       };
     }
     {
-      custom.wgNetwork.nodes.squash.allowedTCPPorts = [ config.services.photoprism.port ];
+      # networking.firewall.interfaces."tinc.jmbaur".allowedTCPPorts = [
+      #   config.services.photoprism.port
+      # ];
 
       services.photoprism = {
         enable = true;
@@ -54,7 +50,9 @@
       };
     }
     {
-      custom.wgNetwork.nodes.squash.allowedTCPPorts = [ 8096 ];
+      # networking.firewall.interfaces."tinc.jmbaur".allowedTCPPorts = [
+      #   8096
+      # ];
 
       services.jellyfin.enable = true;
     }

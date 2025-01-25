@@ -24,13 +24,6 @@ in
 inputs:
 
 let
-  readFile =
-    msg: file:
-    if !(builtins.pathExists file) then
-      builtins.throw msg
-    else
-      builtins.replaceStrings [ "\n" ] [ "" ] (builtins.readFile file);
-
   allHosts = builtins.attrNames (
     inputs.nixpkgs.lib.filterAttrs (_: entryType: entryType == "directory") (builtins.readDir ./.)
   );
@@ -60,46 +53,7 @@ inputs.nixpkgs.lib.genAttrs allHosts (
 
           networking.hostName = host;
 
-          # NOTE: We opt out of baking the sops file into the nixos closure so
-          # that we don't have to incur the cost of a rebuild if we need to do
-          # something as simple as rolling the value of a secret.
-          #
-          # TODO(jared): we should write something that actually performs
-          # validation of the sops contents, since we don't get to take
-          # advantage of it here.
-          sops.defaultSopsFile = "/etc/sops.yaml";
-          sops.validateSopsFiles = false;
-
-          sops.secrets = lib.mapAttrs' (name: nodeConfig: {
-            name = "wg-${name}";
-            value = lib.mkIf nodeConfig.peer {
-              mode = "0640";
-              owner = "root";
-              inherit (config.users.users.systemd-network) group;
-              reloadUnits = [ config.systemd.services.systemd-networkd.name ];
-            };
-          }) config.custom.wgNetwork.nodes;
-
-          custom.wgNetwork = lib.mkMerge [
-            {
-              ulaHextets = [
-                64779
-                57458
-                54680
-              ];
-
-              nodes = lib.genAttrs allHosts (name: {
-                # These are only used if `peer = true`, so we can set some
-                # values here that enforce structure in the repo.
-                publicKey = readFile "wg-${host}.pubkey does not exist for ${name}" ./${name}/wg-${host}.pubkey;
-                privateKey.file = config.sops.secrets."wg-${name}".path;
-              });
-            }
-            {
-              # Allow cauliflower to SSH to any hosts in the overlay network
-              nodes.cauliflower.allowedTCPPorts = [ 22 ];
-            }
-          ];
+          sops.defaultSopsFile = ./${host}/secrets.yaml;
 
           users.users.root.openssh.authorizedKeys.keys = [
             "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIBhCHaXn5ghEJQVpVZr4hOajD6Zp/0PO4wlymwfrg/S5AAAABHNzaDo="
@@ -119,6 +73,85 @@ inputs.nixpkgs.lib.genAttrs allHosts (
           };
           custom.recovery.enable = lib.mkDefault true;
         }
+      )
+      (
+        { config, lib, ... }:
+
+        let
+          ulaHextets = [
+            64779
+            57458
+            54680
+          ];
+
+          ulaNetworkSegments =
+            map (hextet: lib.toLower (lib.toHexString hextet)) ulaHextets
+            ++ lib.genList (_: "0000") (4 - (lib.length ulaHextets));
+
+          hextetOffsets = lib.genList (x: x * 4) 4;
+
+          tincHostSubnet =
+            hostName:
+            let
+              hostHash = builtins.hashString "sha256" hostName;
+              hostSegments = map (x: lib.substring x 4 hostHash) hextetOffsets;
+            in
+            {
+              address = lib.concatStringsSep ":" (ulaNetworkSegments ++ hostSegments);
+              prefixLength = 128;
+            };
+
+          useTinc = builtins.pathExists ./${config.networking.hostName}/tinc.ed25519;
+        in
+        (lib.mkIf useTinc {
+          sops.secrets = {
+            tinc.owner = config.users.users.tinc-jmbaur.name;
+          };
+
+          systemd.network = {
+            enable = true;
+            networks."10-tinc-jmbaur" = {
+              matchConfig.Name = "tinc.jmbaur";
+              address =
+                let
+                  inherit (tincHostSubnet config.networking.hostName) address;
+                in
+                [ "${address}/64" ];
+            };
+          };
+
+          networking.extraHosts = lib.concatLines (
+            lib.flatten (
+              lib.mapAttrsToList (
+                host: hostSettings: map (subnet: "${subnet.address} ${host}.internal") hostSettings.subnets
+              ) config.services.tinc.networks.jmbaur.hostSettings
+            )
+          );
+
+          # TODO(jared): more finegrained rules
+          networking.firewall = {
+            extraInputRules = ''
+              iifname tinc.jmbaur accept
+            '';
+            extraForwardRules = ''
+              iifname tinc.jmbaur accept
+            '';
+          };
+
+          services.tinc.networks.jmbaur = {
+            ed25519PrivateKeyFile = config.sops.secrets.tinc.path;
+            settings.ConnectTo = lib.mkIf (config.networking.hostName != "squash") "squash";
+            hostSettings = lib.mkMerge [
+              { squash.addresses = [ { address = "squash.jmbaur.com"; } ]; }
+              (lib.genAttrs (lib.filter (host: builtins.pathExists ./${host}/tinc.ed25519) allHosts) (host: {
+                settings.Ed25519PublicKey = lib.fileContents ./${host}/tinc.ed25519;
+                subnets = [
+                  (tincHostSubnet host)
+                ];
+              }))
+            ];
+          };
+        })
       )
       # Host-specific configuration
       ./${host}

@@ -13,12 +13,6 @@ in
     443
   ];
 
-  custom.wgNetwork.nodes.pumpkin = {
-    peer = true;
-    initiate = true;
-    endpointHost = "pumpkin.jmbaur.com";
-  };
-
   custom.ddns = {
     enable = true;
     interface = config.router.wanInterface;

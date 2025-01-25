@@ -23,9 +23,7 @@ inputs.nixpkgs.lib.mapAttrs (
               ]
               ++ (
                 let
-                  machinePubkey = lib.replaceStrings [ "\n" ] [ "" ] (
-                    lib.readFile ./nixos-configurations/${host}/age.pubkey
-                  );
+                  machinePubkey = lib.fileContents ./nixos-configurations/${host}/age.pubkey;
                 in
                 lib.optionals (machinePubkey != "") [ machinePubkey ]
               )
