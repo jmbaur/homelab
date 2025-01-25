@@ -14,11 +14,7 @@ if [[ -n $can_touch_efi_variables ]]; then
 	bootctl_flags+=("--no-variables")
 fi
 
-if bootctl is-installed >/dev/null; then
-	bootctl update "${bootctl_flags[@]}"
-else
-	bootctl install "${bootctl_flags[@]}"
-fi
+bootctl install "${bootctl_flags[@]}"
 
 if [[ -n $fwupd_efi ]]; then
 	install -D "$fwupd_efi" "${workdir}/${efi_sys_mount_point}/EFI/nixos/$(basename "$fwupd_efi")"
