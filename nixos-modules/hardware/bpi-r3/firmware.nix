@@ -71,7 +71,7 @@ in
 symlinkJoin {
   name = "bpi-r3-firmware";
   paths = [
-    (writeTextDir "README.md" (lib.readFile ./README.md))
+    (writeTextDir "README.md" (lib.fileContents ./README.md))
     atf
     ubiImage
   ];

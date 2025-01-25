@@ -7,5 +7,5 @@
 writeShellApplication {
   name = "pb";
   runtimeInputs = [ curl ];
-  text = lib.readFile ./pb.bash;
+  text = lib.fileContents ./pb.bash;
 }

@@ -14,5 +14,5 @@ writeShellApplication {
     skim
     tmux
   ];
-  text = lib.readFile ./tmux-jump.bash;
+  text = lib.fileContents ./tmux-jump.bash;
 }

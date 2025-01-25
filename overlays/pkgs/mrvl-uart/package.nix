@@ -7,5 +7,5 @@
 writeShellApplication {
   name = "mrvl-uart";
   runtimeInputs = [ lrzsz ];
-  text = lib.readFile ./mrvl-uart.bash;
+  text = lib.fileContents ./mrvl-uart.bash;
 }

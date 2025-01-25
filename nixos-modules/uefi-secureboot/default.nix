@@ -7,11 +7,11 @@
 
 let
   inherit (lib)
+    fileContents
     getExe
     mkEnableOption
     mkIf
     optionalString
-    readFile
     ;
 
   cfg = config.custom.ukiBootloader;
@@ -57,7 +57,7 @@ in
             declare -r efi_sys_mount_point=${config.boot.loader.efi.efiSysMountPoint}
             declare -r fwupd_efi=${optionalString config.services.fwupd.enable "${pkgs.fwupd-efi}/libexec/fwupd/efi/fwupd${pkgs.stdenv.hostPlatform.efiArch}.efi"}
             declare -r ukify_jq=${./ukify.jq}
-            ${readFile ./uki-installer.bash}
+            ${fileContents ./uki-installer.bash}
           '';
         }
       );

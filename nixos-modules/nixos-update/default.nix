@@ -7,11 +7,11 @@
 
 let
   inherit (lib)
+    fileContents
     getExe
     mkEnableOption
     mkIf
     mkOption
-    readFile
     types
     ;
 
@@ -50,7 +50,7 @@ in
                 pkgs.curl
                 pkgs.nix-key
               ];
-              text = readFile ./nixos-update.bash;
+              text = fileContents ./nixos-update.bash;
             }
           ))
           cfg.endpoint

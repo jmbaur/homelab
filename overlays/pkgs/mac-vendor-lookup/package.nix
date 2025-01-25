@@ -19,5 +19,5 @@ writeShellApplication {
     gzip
     iproute2
   ];
-  text = lib.readFile ./mac-vendor-lookup.bash;
+  text = lib.fileContents ./mac-vendor-lookup.bash;
 }

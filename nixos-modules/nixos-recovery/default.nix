@@ -9,13 +9,13 @@
 
 let
   inherit (lib)
+    fileContents
     flatten
     getExe
     mkDefault
     mkEnableOption
     mkIf
     mkOption
-    readFile
     types
     ;
 
@@ -39,7 +39,7 @@ let
       pkgs.util-linux # sfdisk
     ];
 
-    text = readFile ./nixos-recovery.bash;
+    text = fileContents ./nixos-recovery.bash;
   };
 
   # TODO(jared): This should be an option that can be extended on a per-machine
