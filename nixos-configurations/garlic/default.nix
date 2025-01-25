@@ -58,58 +58,13 @@
       boot.initrd.availableKernelModules = [
         # storage
         "nvme"
-        "pcie_qcom"
-        "phy_qcom_qmp_pcie"
         "tcsrcc_x1e80100"
-        "usb_storage"
-        "phy_qcom_snps_eusb2"
-        "phy_qcom_qmp_combo"
+        "phy_qcom_qmp_pcie"
+        "pcie_qcom"
 
         # keyboard
         "i2c_hid_of"
         "i2c_qcom_geni"
-
-        "icc_bwmon"
-        "lpasscc_sc8280xp"
-        "phy_qcom_apq8064_sata"
-        "phy_qcom_eusb2_repeater"
-        "phy_qcom_ipq4019_usb"
-        "phy_qcom_ipq806x_sata"
-        "phy_qcom_ipq806x_usb"
-        "phy_qcom_m31"
-        "phy_qcom_pcie2"
-        "phy_qcom_qmp_pcie_msm8996"
-        "phy_qcom_qmp_ufs"
-        "phy_qcom_qmp_usb"
-        "phy_qcom_qmp_usb_legacy"
-        "phy_qcom_qmp_usbc"
-        "phy_qcom_qusb2"
-        "phy_qcom_sgmii_eth"
-        "phy_qcom_snps_eusb2"
-        "phy_qcom_snps_femto_v2"
-        "phy_qcom_usb_hs"
-        "phy_qcom_usb_hs_28nm"
-        "phy_qcom_usb_hsic"
-        "phy_qcom_usb_ss"
-        "pmic_glink"
-        "qcom_glink_smem"
-        "qcom_q6v5_pas" # This module loads a lot of FW blobs
-        "qcom_rpm"
-        "uas"
-        "ucsi_glink"
-        "usb_storage"
-
-        "dispcc_sc8280xp"
-        "gpio_sbu_mux"
-        "gpucc_sc8280xp"
-        "leds_qcom_lpg"
-        "msm"
-        "panel_edp"
-        "phy_qcom_edp"
-        "phy_qcom_qmp_combo"
-        "pmic_glink_altmode"
-        "pwm_bl"
-        "qrtr"
       ];
 
       # TODO(jared): ACPI not enabled in johan_defconfig, needed by tpm-crb
@@ -123,11 +78,10 @@
       ];
     }
     {
-      # custom.dev.enable = true;
-      # custom.desktop.enable = false;
-      # custom.common.nativeBuild = true;
+      custom.dev.enable = true;
+      custom.desktop.enable = false;
+      custom.common.nativeBuild = true;
       custom.recovery.targetDisk = "/dev/nvme0n1";
-      boot.loader.efi.canTouchEfiVariables = false;
     }
   ];
 }
