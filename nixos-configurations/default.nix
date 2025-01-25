@@ -138,6 +138,10 @@ inputs.nixpkgs.lib.genAttrs allHosts (
             '';
           };
 
+          # We manage our tinc keys with sops, prevent ExecStartPre script from
+          # generating keys on startup.
+          systemd.services."tinc.jmbaur".preStart = lib.mkForce "";
+
           services.tinc.networks.jmbaur = {
             ed25519PrivateKeyFile = config.sops.secrets.tinc.path;
             settings.ConnectTo = lib.mkIf (config.networking.hostName != "squash") "squash";
