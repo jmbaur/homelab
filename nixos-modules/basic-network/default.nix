@@ -51,7 +51,7 @@ in
             networks = {
               "50-wireless" = lib.mkIf hasWireless {
                 DHCP = "yes";
-                matchConfig.Type = "wlan";
+                matchConfig.WLANInterfaceType = "station";
                 dhcpV4Config = {
                   UseDomains = "route";
                   RouteMetric = 600;
@@ -71,7 +71,10 @@ in
               };
               "50-wired" = {
                 DHCP = "yes";
-                matchConfig.Type = "ether";
+                matchConfig = {
+                  Type = "ether";
+                  Kind = "!*"; # physical interfaces have no kind
+                };
                 dhcpV4Config = {
                   UseDomains = "route";
                   RouteMetric = 100;
