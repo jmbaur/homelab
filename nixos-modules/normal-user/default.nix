@@ -2,20 +2,10 @@
   config,
   lib,
   pkgs,
-  utils,
   ...
 }:
 let
   cfg = config.custom.normalUser;
-
-  groups =
-    [ "wheel" ]
-    ++ (lib.optional config.custom.dev.enable "dialout")
-    ++ (lib.optional config.networking.networkmanager.enable "networkmanager")
-    ++ (lib.optional config.programs.adb.enable "adbusers")
-    ++ (lib.optional config.programs.flashrom.enable "plugdev")
-    ++ (lib.optional config.programs.wireshark.enable "wireshark")
-    ++ (lib.optional config.virtualisation.docker.enable "docker");
 
   mountpoint = lib.findFirst (path: config.fileSystems ? "${path}") (throw "mount not found") [
     "/home"
@@ -41,55 +31,31 @@ in
       }
     ];
 
-    # systemd.additionalUpstreamSystemUnits = [ "systemd-homed-firstboot.service" ];
+    systemd.additionalUpstreamSystemUnits = [ "systemd-homed-firstboot.service" ];
 
-    # # TODO(jared): would be nice to have this done automatically
-    # # https://github.com/systemd/systemd/blob/477fdc5afed0457c43d01f3d7ace7209f81d3995/meson_options.txt#L246-L249
-    # # echo "$uid:$((0x80000)):$((0x10000))" >/etc/subuid
-    # # echo "$gid:$((0x80000)):$((0x10000))" >/etc/subgid
-    # systemd.services.systemd-homed-firstboot = {
-    #   serviceConfig.ExecStart = [
-    #     "" # clear upstream default
-    #     (toString [
-    #       "homectl"
-    #       "firstboot"
-    #       "--prompt-new-user"
-    #       # above is default, custom stuff below
-    #       "--enforce-password-policy=no"
-    #       "--member-of=${lib.concatStringsSep "," groups}"
-    #       "--shell=${utils.toShellPath config.programs.fish.package}" # upstream default is /bin/bash
-    #       "--storage=${if fileSystemConfig.fsType == "btrfs" then "subvolume" else "directory"}"
-    #     ])
-    #   ];
-    # };
+    systemd.services.systemd-homed-firstboot = {
+      # TODO(jared): systemd-homed-firstboot won't run without this
+      wantedBy = [ "first-boot-complete.target" ];
 
-    # TODO(jared): We should be using systemd-homed-firstboot.service.
-    systemd.services.initial-user-setup = {
-      unitConfig.ConditionFirstBoot = true;
-      wantedBy = [ config.systemd.services.systemd-homed.name ];
-      after = [
-        "home.mount"
-        config.systemd.services.systemd-homed.name
-      ];
-      before = [
-        config.systemd.services.systemd-user-sessions.name
-        "first-boot-complete.target"
-      ];
       serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-        ImportCredential = "home.*";
-        StandardError = "tty";
-        StandardInput = "tty";
-        StandardOutput = "tty";
-        ExecStart = toString [
-          "homectl"
-          "firstboot"
-          "--prompt-new-user"
-          "--enforce-password-policy=no"
-          "--member-of=${lib.concatStringsSep "," groups}"
-          "--shell=${utils.toShellPath config.programs.fish.package}"
-          "--storage=${if fileSystemConfig.fsType == "btrfs" then "subvolume" else "directory"}"
+        ExecStart = [
+          "" # clear upstream default
+          (toString [
+            "homectl"
+            "firstboot"
+            "--prompt-new-user"
+            # above is default, custom stuff below
+            "--enforce-password-policy=no"
+            "--storage=${if fileSystemConfig.fsType == "btrfs" then "subvolume" else "directory"}"
+          ])
+        ];
+        ExecStartPost = [
+          # https://github.com/systemd/systemd/blob/477fdc5afed0457c43d01f3d7ace7209f81d3995/meson_options.txt#L246-L249
+          (pkgs.writeShellScript "setup-subuid-and-subgid" ''
+            eval $(homectl list --json=short | ${lib.getExe pkgs.jq} -r '"uid=\(.[0].uid)\ngid=\(.[0].gid)"')
+            echo "$uid:$((0x80000)):$((0x10000))" >/etc/subuid
+            echo "$gid:$((0x80000)):$((0x10000))" >/etc/subgid
+          '')
         ];
       };
     };
