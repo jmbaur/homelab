@@ -104,7 +104,6 @@ inputs.nixpkgs.lib.mapAttrs (
           runtimeInputs = [
             pkgs.curl
             pkgs.nix-key
-            pkgs.python3Packages.nix-filter-copy
             pkgs.s5cmd
           ];
           text = ''
@@ -122,9 +121,8 @@ inputs.nixpkgs.lib.mapAttrs (
             else
               toplevel=$(nix build --print-build-logs --no-link --print-out-paths "''${toplevel_drv}^out")
               echo -n "$CACHE_SIGNING_KEY" >signing-key
-              nix path-info --recursive "$toplevel" >requisites
-              nix store sign --stdin --verbose --key-file signing-key <requisites
-              nix-filter-copy <requisites | nix copy --verbose --no-recursive --stdin --to "s3://cache?compression=zstd&region=auto&scheme=https&endpoint=''${endpoint}"
+              nix path-info --recursive "$toplevel" | nix store sign --stdin --verbose --key-file signing-key
+              nix copy --verbose --to "s3://cache?compression=zstd&region=auto&scheme=https&endpoint=''${endpoint}" "$toplevel"
               echo -n "$toplevel" | s5cmd --endpoint-url="$endpoint_url" pipe "s3://update/''${name}"
               nix-key sign <(echo -n "$toplevel") signing-key | s5cmd --endpoint-url="$endpoint_url" pipe "s3://update/''${name}.sig"
             fi
