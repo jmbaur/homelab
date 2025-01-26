@@ -14,8 +14,6 @@ if ! nix-key verify <(echo -n "$new_toplevel") <(echo -n "$new_toplevel_sig") "$
 fi
 
 if [[ $(readlink --canonicalize /run/current-system) != "$new_toplevel" ]]; then
-	nix-store --realise "$new_toplevel"
-
 	nix-env --set --profile /nix/var/nix/profiles/system "$new_toplevel"
 
 	# TODO(jared): We need to determine if the right thing to do is stc
