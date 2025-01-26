@@ -47,9 +47,6 @@
       })
   );
 
-  services.openssh.openFirewall = false;
-  networking.firewall.interfaces.${config.router.lanInterface}.allowedTCPPorts = [ 22 ];
-
   environment.systemPackages = [
     pkgs.iw
     pkgs.mac-vendor-lookup

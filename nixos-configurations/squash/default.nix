@@ -27,9 +27,14 @@
     domain = "jmbaur.com";
   };
 
+  services.openssh.openFirewall = false;
+
   networking.firewall = {
     allowedTCPPorts = [ 443 ];
     interfaces.${config.router.lanInterface}.allowedTCPPorts = [ 9001 ];
+    extraInputRules = ''
+      iifname ${config.router.wanInterface} tcp dport ssh drop
+    '';
   };
 
   services.yggdrasil.settings = {

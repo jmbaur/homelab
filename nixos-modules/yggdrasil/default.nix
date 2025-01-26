@@ -56,20 +56,17 @@ in
       mapAttrsToList (
         nodeName: nodeSettings:
         if nodeSettings.allowAll then
-          ''
-            ip6 saddr ${nodeSettings.ip} accept comment "accept all traffic from ${nodeName}"
-          ''
+          ''ip6 saddr ${nodeSettings.ip} accept comment "accept all traffic from ${nodeName}"''
         else
-          lib.optionalString (nodeSettings.allowedTCPPorts != [ ]) ''
-            ip6 saddr ${nodeSettings.ip} tcp dport { ${
+          lib.optionalString (nodeSettings.allowedTCPPorts != [ ])
+            ''ip6 saddr ${nodeSettings.ip} tcp dport { ${
               concatMapStringsSep ", " toString nodeSettings.allowedTCPPorts
-            } } accept comment "accepted TCP ports from ${nodeName}"
-          ''
-          + lib.optionalString (nodeSettings.allowedUDPPorts != [ ]) ''
-            ip6 saddr ${nodeSettings.ip} udp dport { ${
-              concatMapStringsSep ", " toString nodeSettings.allowedUDPPorts
-            } } accept comment "accepted UDP ports from ${nodeName}"
-          ''
+            } } accept comment "accepted TCP ports from ${nodeName}"''
+          +
+            lib.optionalString (nodeSettings.allowedUDPPorts != [ ])
+              ''ip6 saddr ${nodeSettings.ip} udp dport { ${
+                concatMapStringsSep ", " toString nodeSettings.allowedUDPPorts
+              } } accept comment "accepted UDP ports from ${nodeName}"''
       ) cfg.nodes
     );
   };
