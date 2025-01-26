@@ -13,6 +13,7 @@
     enable = true;
     lanInterface = config.systemd.network.netdevs."10-br0".netdevConfig.Name;
     wanInterface = "wan";
+    dns.upstreamProvider = "quad9";
   };
 
   systemd.network.netdevs."10-br0" = {
@@ -42,7 +43,7 @@
       ]
       (name: {
         inherit name;
-        bridge = [ config.systemd.network.netdevs."10-br0".netdevConfig.Name ];
+        bridge = [ config.router.lanInterface ];
         linkConfig.RequiredForOnline = false;
       })
   );
