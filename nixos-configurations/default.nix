@@ -99,11 +99,19 @@ inputs.nixpkgs.lib.genAttrs allHosts (
             cauliflower.allowAll = true;
             broccoli.allowAll = true;
           };
+
+          custom.backup.sender = {
+            enable = lib.mkDefault true;
+            receiver = "artichoke.internal 4000";
+          };
         }
       )
 
       # The entire homelab network
       ./network.nix
+
+      # Backup strategy
+      ./backup.nix
 
       # Host-specific configuration
       ./${host}

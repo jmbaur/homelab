@@ -1,0 +1,6 @@
+[package]
+name = "homelab-backup-recv"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

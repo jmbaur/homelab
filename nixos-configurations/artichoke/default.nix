@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   pkgs,
   ...
@@ -35,6 +36,15 @@
       custom.basicNetwork.enable = true;
 
       custom.recovery.targetDisk = "/dev/disk/by-path/pci-0000:00:15.0-usb-0:4:1.0-scsi-0:0:0:0";
+
+      custom.backup.receiver.enable = true;
+      custom.backup.sender.enable = false;
+
+      networking.firewall.extraInputRules = lib.concatLines (
+        lib.mapAttrsToList (nodeName: nodeSettings: ''
+          ip6 saddr ${nodeSettings.ip} tcp dport ${toString config.custom.backup.receiver.port} accept comment "backup from ${nodeName}"
+        '') config.custom.yggdrasil.nodes
+      );
 
       # fileSystems."/var" = {
       #   fsType = "btrfs";
