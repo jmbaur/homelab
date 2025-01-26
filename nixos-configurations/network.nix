@@ -1,6 +1,6 @@
 {
   custom.yggdrasil.nodes = {
-    artichoke.ip = "200::"; # TODO
+    artichoke.ip = "200:c8fb:abb9:a82:a0ab:f6d2:6e5:4ca5";
     broccoli.ip = "200:b07:f009:2954:83bc:1ac4:c497:5b3f";
     cauliflower.ip = "200:3fd3:128f:89ae:7509:a3a1:ec3c:f5b8";
     celery.ip = "206:db73:272c:557c:37de:4c83:beb6:8478";
