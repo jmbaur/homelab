@@ -47,6 +47,14 @@ in
       '';
     };
 
+    systemd.services.fwupd = mkIf config.services.fwupd.enable {
+      environment.FWUPD_EFIAPPDIR = "${config.boot.loader.efi.efiSysMountPoint}/EFI/nixos";
+    };
+
+    services.fwupd.uefiCapsuleSettings = mkIf config.services.fwupd.enable {
+      DisableShimForSecureBoot = true;
+    };
+
     boot.loader.external = {
       enable = true;
       installHook = getExe (

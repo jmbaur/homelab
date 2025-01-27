@@ -17,7 +17,7 @@ fi
 bootctl install "${bootctl_flags[@]}"
 
 if [[ -n $fwupd_efi ]]; then
-	install -D "$fwupd_efi" "${workdir}/${efi_sys_mount_point}/EFI/nixos/$(basename "$fwupd_efi")"
+	install -D "$fwupd_efi" "${workdir}/${efi_sys_mount_point}/EFI/nixos/$(basename "$fwupd_efi").signed"
 fi
 
 new_toplevel=$1
@@ -58,7 +58,7 @@ fi
 
 printf "%s\n" "${loader_conf_lines[@]}" >"${workdir}/${efi_sys_mount_point}/loader/loader.conf"
 
-find "$efi_sys_mount_point" -type f -iname '*.efi' -exec sbctl sign {} \;
+find "$efi_sys_mount_point" -type f -iname '*.efi*' -exec sbctl sign {} \;
 find "${workdir}/$efi_sys_mount_point" -type f -iname '*.efi' -exec sbctl sign {} \;
 
 rm -rf "${efi_sys_mount_point}"/EFI/Linux/*
