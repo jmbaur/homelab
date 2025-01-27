@@ -90,11 +90,6 @@ inputs: {
         ];
       });
 
-      # Enable experimental multithreading support in mkfs.erofs
-      erofs-utils = prev.erofs-utils.overrideAttrs (old: {
-        configureFlags = (old.configureFlags or [ ]) ++ [ "--enable-multithreading" ];
-      });
-
       # Add support for colorized output.
       strace-with-colors = prev.strace.overrideAttrs (old: {
         patches = (old.patches or [ ]) ++ [
