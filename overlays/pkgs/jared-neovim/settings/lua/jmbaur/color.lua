@@ -1,6 +1,5 @@
-local group = vim.api.nvim_create_augroup("ColorScheme", { clear = true })
 vim.api.nvim_create_autocmd({ "ColorScheme" }, {
-	group = group,
+	group = vim.api.nvim_create_augroup("ColorScheme", { clear = true }),
 	callback = function(args)
 		_ = args
 

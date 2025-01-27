@@ -148,3 +148,16 @@ end, {
 		return completions
 	end,
 })
+
+-- Ensure that when we do `:tabnew` outside of spawning a new project tab, we
+-- start from the default working directory ($HOME).
+vim.api.nvim_create_autocmd("TabNewEntered", {
+	group = vim.api.nvim_create_augroup("ProjectChangeDirectory", { clear = true }),
+	callback = function(args)
+		_ = args
+
+		if vim.t.project == nil then
+			vim.cmd.tcd()
+		end
+	end,
+})
