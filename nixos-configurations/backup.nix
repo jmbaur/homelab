@@ -65,7 +65,7 @@ in
             concatLines (
               mapAttrsToList (
                 nodeName: nodeSettings: "${nodeName} ${nodeSettings.ip}"
-              ) config.custom.yygdrasil.nodes
+              ) config.custom.yggdrasil.nodes
             )
           ))
           cfg.receiver.snapshotRoot
@@ -75,13 +75,6 @@ in
     })
 
     (mkIf cfg.sender.enable {
-      assertions = [
-        {
-          assertion = config.custom.yggdrasil.nodes ? config.networking.hostName;
-          message = "hostname ${config.networking.hostName} not in yggdrasil nodes";
-        }
-      ];
-
       systemd.tmpfiles.settings."10-backup"."/snapshots".v.age = "1M";
 
       systemd.services.backup-send = {
