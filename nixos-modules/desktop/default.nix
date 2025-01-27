@@ -67,8 +67,9 @@ in
     environment.etc."xdg/alacritty/alacritty.toml".source =
       (pkgs.formats.toml { }).generate "alacritty.toml"
         {
-          colors.primary.background = "#14161b"; # NvimDarkGrey2
-          colors.primary.foreground = "#e0e2ea"; # NvimLightGrey2
+          general.import = [
+            (pkgs.runCommand "gruvbox_dark.toml" { } "cat ${pkgs.alacritty-theme}/gruvbox_dark.toml >$out")
+          ];
           font.size = 12.0;
           general.live_config_reload = false;
           mouse.hide_when_typing = true;

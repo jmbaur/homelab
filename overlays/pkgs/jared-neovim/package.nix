@@ -94,6 +94,7 @@ let
     dependencies = with vimPlugins; [
       direnv-vim
       fzf-lua
+      gruvbox-nvim
       mini-nvim
       none-ls-nvim
       nvim-lspconfig
