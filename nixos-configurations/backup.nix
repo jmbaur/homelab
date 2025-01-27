@@ -85,14 +85,15 @@ in
             name = "backup-send";
 
             runtimeInputs = [
-              pkgs.libressl.nc
               pkgs.btrfs-progs
+              pkgs.libressl.nc
+              pkgs.pv
             ];
 
             text = ''
               snapshot=/snapshots/$(date --rfc-3339=date)
               btrfs subvolume snapshot -r / "$snapshot"
-              btrfs send "$snapshot" | nc -Nv ${cfg.sender.receiver}
+              btrfs send "$snapshot" | pv --numeric --bytes | nc -Nv ${cfg.sender.receiver}
             '';
           }
         );
