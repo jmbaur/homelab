@@ -67,10 +67,9 @@ in
     environment.etc."xdg/alacritty/alacritty.toml".source =
       (pkgs.formats.toml { }).generate "alacritty.toml"
         {
-          colors.primary = {
-            foreground = "#e0e2ea"; # NvimLightGrey2
-            background = "#14161b"; # NvimDarkGrey2
-          };
+          colors.primary.background = "#14161b"; # NvimDarkGrey2
+          colors.primary.foreground = "#e0e2ea"; # NvimLightGrey2
+          font.size = 12.0;
           general.live_config_reload = false;
           mouse.hide_when_typing = true;
           selection.save_to_clipboard = true;
