@@ -13,7 +13,6 @@ function _G.project_tabline()
 
 	for index = 1, vim.fn.tabpagenr("$") do
 		local winnr = vim.fn.tabpagewinnr(index)
-		local cwd_name = vim.fs.basename(vim.fn.getcwd(winnr, index))
 		local buflist = vim.fn.tabpagebuflist(index)
 		local bufnr = buflist[winnr]
 		local bufname = vim.fn.bufname(bufnr)
@@ -35,9 +34,14 @@ function _G.project_tabline()
 			s = s .. index .. ":"
 		end
 
-		-- cwd name
-		if cwd_name ~= "" then
-			s = s .. cwd_name .. ":"
+		-- project name
+		local project = nil
+		if pcall(function()
+			project = vim.api.nvim_tabpage_get_var(index, "project")
+		end) then
+			if project ~= nil then
+				s = s .. project .. ":"
+			end
 		end
 
 		-- buf name
@@ -116,6 +120,7 @@ local open_project = function(projects_dir)
 		if vim.fn.isdirectory(project_path) ~= 0 then
 			vim.api.nvim_command("$tabnew")
 			vim.api.nvim_command(string.format("tcd %s", project_path))
+			vim.api.nvim_tabpage_set_var(0, "project", vim.fs.basename(project_path))
 		else
 			error("Project '" .. selection .. "' does not exist", vim.log.levels.ERROR)
 		end
