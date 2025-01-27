@@ -2,6 +2,7 @@
 
 let
   inherit (lib)
+    attrValues
     concatLines
     concatMapStringsSep
     mapAttrsToList
@@ -13,6 +14,22 @@ let
 
   cfg = config.custom.yggdrasil;
 
+  allowedTCPPortsOption = mkOption {
+    type = types.listOf types.ints.positive;
+    default = [ ];
+    description = ''
+      Allowed TCP ports from this node
+    '';
+  };
+
+  allowedUDPPortsOption = mkOption {
+    type = types.listOf types.ints.positive;
+    default = [ ];
+    description = ''
+      Allowed UDP ports from this node
+    '';
+  };
+
   nodeSubmodule =
     { ... }:
     {
@@ -21,31 +38,27 @@ let
 
         allowAll = mkEnableOption "allow all traffic from this node";
 
-        allowedTCPPorts = mkOption {
-          type = types.listOf types.ints.positive;
-          default = [ ];
-          description = ''
-            Allowed TCP ports from this node
-          '';
-        };
+        allowedTCPPorts = allowedTCPPortsOption;
 
-        allowedUDPPorts = mkOption {
-          type = types.listOf types.ints.positive;
-          default = [ ];
-          description = ''
-            Allowed UDP ports from this node
-          '';
-        };
+        allowedUDPPorts = allowedUDPPortsOption;
       };
     };
 in
 {
-  options.custom.yggdrasil.nodes = mkOption {
-    type = types.attrsOf (types.submodule nodeSubmodule);
-    default = { };
+  options.custom.yggdrasil = {
+    all = {
+      allowedTCPPorts = allowedTCPPortsOption;
+
+      allowedUDPPorts = allowedUDPPortsOption;
+    };
+
+    nodes = mkOption {
+      type = types.attrsOf (types.submodule nodeSubmodule);
+      default = { };
+    };
   };
 
-  config = mkIf config.services.yggdrasil.enable {
+  config = mkIf (config.services.yggdrasil.enable && cfg.nodes != { }) {
     networking.extraHosts = concatLines (
       mapAttrsToList (nodeName: nodeSettings: ''
         ${nodeSettings.ip} ${nodeName}.internal
@@ -53,7 +66,7 @@ in
     );
 
     networking.firewall.extraInputRules = concatLines (
-      mapAttrsToList (
+      (mapAttrsToList (
         nodeName: nodeSettings:
         if nodeSettings.allowAll then
           ''ip6 saddr ${nodeSettings.ip} accept comment "accept all traffic from ${nodeName}"''
@@ -67,7 +80,21 @@ in
               ''ip6 saddr ${nodeSettings.ip} udp dport { ${
                 concatMapStringsSep ", " toString nodeSettings.allowedUDPPorts
               } } accept comment "accepted UDP ports from ${nodeName}"''
-      ) cfg.nodes
+      ) cfg.nodes)
+      ++ lib.optionals (cfg.all.allowedTCPPorts != [ ]) (
+        let
+          ips = concatMapStringsSep ", " (node: node.ip) attrValues cfg.nodes;
+          ports = concatMapStringsSep ", " toString attrValues cfg.all.allowedTCPPorts;
+        in
+        ''ip6 saddr { ${ips} } tcp dport { ${ports} } accept''
+      )
+      ++ lib.optionals (cfg.all.allowedUDPPorts != [ ]) (
+        let
+          ips = concatMapStringsSep ", " (node: node.ip) attrValues cfg.nodes;
+          ports = concatMapStringsSep ", " toString attrValues cfg.all.allowedUDPPorts;
+        in
+        ''ip6 saddr { ${ips} } udp dport { ${ports} } accept''
+      )
     );
   };
 }

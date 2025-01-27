@@ -40,11 +40,7 @@
       custom.backup.receiver.enable = true;
       custom.backup.sender.enable = false;
 
-      networking.firewall.extraInputRules = lib.concatLines (
-        lib.mapAttrsToList (nodeName: nodeSettings: ''
-          ip6 saddr ${nodeSettings.ip} tcp dport ${toString config.custom.backup.receiver.port} accept comment "backup from ${nodeName}"
-        '') config.custom.yggdrasil.nodes
-      );
+      custom.yggdrasil.all.allowedTCPPorts = [ config.custom.backup.receiver.port ];
 
       # fileSystems."/var" = {
       #   fsType = "btrfs";
