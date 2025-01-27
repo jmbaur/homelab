@@ -37,6 +37,8 @@ fn handle_connection(mut stream: TcpStream, peers: Peers, snapshot_root: PathBuf
                     .spawn()
                     .unwrap();
 
+                eprintln!("started backup for peer {}", name);
+
                 let mut stdin = child.stdin.take().unwrap();
 
                 std::io::copy(&mut stream, &mut stdin).unwrap();
@@ -44,7 +46,7 @@ fn handle_connection(mut stream: TcpStream, peers: Peers, snapshot_root: PathBuf
                 let status = child.wait().unwrap();
 
                 if status.success() {
-                    eprintln!("{} successfully backed up", name);
+                    eprintln!("finished backup for peer {}", name);
                 }
             }
         }

@@ -41,6 +41,7 @@ inputs.nixpkgs.lib.mapAttrs (
   {
     default = pkgs.mkShell {
       inputsFrom = [
+        pkgs.homelab-backup-recv
         pkgs.local-overlay-fixup-db
         pkgs.nix-key
         pkgs.wg-dns
