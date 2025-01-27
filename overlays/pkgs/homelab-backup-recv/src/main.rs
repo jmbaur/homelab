@@ -8,7 +8,7 @@ use std::{
 type Peers = HashMap<Ipv6Addr, String>;
 
 fn handle_connection(mut stream: TcpStream, peers: Peers, snapshot_root: PathBuf) {
-    let peer = stream.peer_addr().unwrap();
+    let peer = stream.peer_addr().expect("failed to get peer address");
 
     let mut ip = peer.ip();
 
@@ -33,20 +33,28 @@ fn handle_connection(mut stream: TcpStream, peers: Peers, snapshot_root: PathBuf
                     .stdout(Stdio::null())
                     .stderr(Stdio::null())
                     .arg("receive")
+                    .arg("-e") // make btrfs-receive terminate after the stream is done being read
                     .arg(snapshot_root.join(name))
                     .spawn()
-                    .unwrap();
+                    .expect("failed to spawn btrfs");
 
                 eprintln!("started backup for peer {}", name);
 
-                let mut stdin = child.stdin.take().unwrap();
+                let mut stdin = child
+                    .stdin
+                    .take()
+                    .expect("failed to obtain stdin for child process");
 
-                std::io::copy(&mut stream, &mut stdin).unwrap();
+                let bytes_copied =
+                    std::io::copy(&mut stream, &mut stdin).expect("copy to child process failed");
 
-                let status = child.wait().unwrap();
+                let status = child.wait().expect("failed to wait for child process");
 
                 if status.success() {
-                    eprintln!("finished backup for peer {}", name);
+                    eprintln!(
+                        "finished backup for peer {} (received {} bytes)",
+                        name, bytes_copied
+                    );
                 }
             }
         }
