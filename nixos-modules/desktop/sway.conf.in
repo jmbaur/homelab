@@ -15,9 +15,9 @@ titlebar_padding 4
 workspace_auto_back_and_forth yes
 workspace_layout stacking
 
-seat "*" xcursor_theme @xcursorTheme@ @xcursorSize@
+seat "*" xcursor_theme "@xcursorTheme@" "@xcursorSize@"
 
-output "*" background #222222 solid_color
+output "*" background "#@backgroundColor@" solid_color
 
 input "1:1:AT_Translated_Set_2_keyboard" {
 	xkb_layout "@xkbLayout@"

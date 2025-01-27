@@ -11,7 +11,9 @@ let
   xcursorSize = 24;
   xcursorTheme = "Adwaita";
 
-  lockCmd = "${lib.getExe pkgs.swaylock} --daemonize --show-failed-attempts --color=222222";
+  backgroundColor = "1f3023";
+
+  lockCmd = "${lib.getExe pkgs.swaylock} --daemonize --show-failed-attempts --color=${backgroundColor}";
 
   # For xwayland applications
   defaultIconTheme = pkgs.runCommand "default-icon-theme" { } ''
@@ -46,8 +48,9 @@ in
     # Override the upstream defaults
     environment.etc."sway/config".source = lib.mkForce (
       pkgs.substituteAll {
+        name = "sway.conf";
         src = ./sway.conf.in;
-        inherit xcursorSize xcursorTheme;
+        inherit xcursorSize xcursorTheme backgroundColor;
         xkbLayout = config.services.xserver.xkb.layout;
         xkbModel = config.services.xserver.xkb.model;
         xkbOptions = config.services.xserver.xkb.options;
