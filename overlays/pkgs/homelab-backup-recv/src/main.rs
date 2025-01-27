@@ -41,7 +41,11 @@ fn handle_connection(mut stream: TcpStream, peers: Peers, snapshot_root: PathBuf
 
                 std::io::copy(&mut stream, &mut stdin).unwrap();
 
-                eprintln!("{} successfully backed up", name);
+                let status = child.wait().unwrap();
+
+                if status.success() {
+                    eprintln!("{} successfully backed up", name);
+                }
             }
         }
 
