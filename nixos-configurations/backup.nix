@@ -76,7 +76,10 @@ in
 
     (mkIf cfg.sender.enable {
       assertions = [
-        { assertion = config.custom.yggdrasil.nodes ? config.networking.hostName; }
+        {
+          assertion = config.custom.yggdrasil.nodes ? config.networking.hostName;
+          message = "hostname ${config.networking.hostName} not in yggdrasil nodes";
+        }
       ];
 
       systemd.tmpfiles.settings."10-backup"."/snapshots".v.age = "1M";
