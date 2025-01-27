@@ -58,7 +58,7 @@ in
 
       systemd.services.backup-recv = {
         path = [ pkgs.btrfs-progs ];
-        serviceConfig.Type = "oneshot";
+        wantedBy = [ "multi-user.target" ];
         serviceConfig.ExecStart = toString [
           (getExe pkgs.homelab-backup-recv)
           (pkgs.writeText "peer-file.txt" (
