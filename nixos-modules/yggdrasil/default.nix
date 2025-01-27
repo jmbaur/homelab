@@ -81,20 +81,24 @@ in
                 concatMapStringsSep ", " toString nodeSettings.allowedUDPPorts
               } } accept comment "accepted UDP ports from ${nodeName}"''
       ) cfg.nodes)
-      ++ lib.optionals (cfg.all.allowedTCPPorts != [ ]) (
-        let
-          ips = concatMapStringsSep ", " (node: node.ip) (attrValues cfg.nodes);
-          ports = concatMapStringsSep ", " toString cfg.all.allowedTCPPorts;
-        in
-        ''ip6 saddr { ${ips} } tcp dport { ${ports} } accept''
-      )
-      ++ lib.optionals (cfg.all.allowedUDPPorts != [ ]) (
-        let
-          ips = concatMapStringsSep ", " (node: node.ip) (attrValues cfg.nodes);
-          ports = concatMapStringsSep ", " toString cfg.all.allowedUDPPorts;
-        in
-        ''ip6 saddr { ${ips} } udp dport { ${ports} } accept''
-      )
+      ++ lib.optionals (cfg.all.allowedTCPPorts != [ ]) [
+        (
+          let
+            ips = concatMapStringsSep ", " (node: node.ip) (attrValues cfg.nodes);
+            ports = concatMapStringsSep ", " toString cfg.all.allowedTCPPorts;
+          in
+          ''ip6 saddr { ${ips} } tcp dport { ${ports} } accept''
+        )
+      ]
+      ++ lib.optionals (cfg.all.allowedUDPPorts != [ ]) [
+        (
+          let
+            ips = concatMapStringsSep ", " (node: node.ip) (attrValues cfg.nodes);
+            ports = concatMapStringsSep ", " toString cfg.all.allowedUDPPorts;
+          in
+          ''ip6 saddr { ${ips} } udp dport { ${ports} } accept''
+        )
+      ]
     );
   };
 }
