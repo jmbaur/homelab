@@ -42,18 +42,29 @@
 
       custom.yggdrasil.all.allowedTCPPorts = [ config.custom.backup.receiver.port ];
 
-      # fileSystems."/var" = {
-      #   fsType = "btrfs";
-      #   device = "/dev/disk/by-partlabel/data";
-      #   options = [
-      #     "compress=zstd"
-      #     "defaults"
-      #     "noatime"
-      #     "subvol=/data"
-      #   ];
-      # };
-      # /dev/disk/b-path/pci-0000:00:12.0-ata-1.0
-      # /dev/disk/b-path/pci-0000:00:12.0-ata-2.0
+      boot.initrd.luks.devices = {
+        bigdisk1 = {
+          device = "/dev/disk/by-path/pci-0000:00:12.0-ata-1.0";
+          tryEmptyPassphrase = true;
+          allowDiscards = config.services.fstrim.enable;
+        };
+        bigdisk2 = {
+          device = "/dev/disk/by-path/pci-0000:00:12.0-ata-2.0";
+          tryEmptyPassphrase = true;
+          allowDiscards = config.services.fstrim.enable;
+        };
+      };
+
+      fileSystems."/var" = {
+        fsType = "btrfs";
+        device = "/dev/mapper/bigdisk1";
+        options = [
+          "compress=zstd"
+          "defaults"
+          "noatime"
+          "subvol=/data"
+        ];
+      };
     }
   ];
 }
