@@ -92,7 +92,7 @@ in
             text = ''
               snapshot=/snapshots/$(date --rfc-3339=date)
               btrfs subvolume snapshot -r / "$snapshot"
-              btrfs send "$snapshot" | nc -N ${cfg.sender.receiver}
+              btrfs send "$snapshot" | nc -Nv ${cfg.sender.receiver}
             '';
           }
         );
