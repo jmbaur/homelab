@@ -37,6 +37,13 @@ in
     # in order to ensure rolling back is even possible.
     nix.gc.automatic = mkIf cfg.automatic true;
 
+    systemd.timers.nixos-update = mkIf cfg.automatic {
+      timerConfig = {
+        RandomizedDelaySec = "30m";
+        Persistent = true;
+      };
+    };
+
     systemd.services.nixos-update = {
       startAt = mkIf cfg.automatic [ "daily" ];
       serviceConfig = {
