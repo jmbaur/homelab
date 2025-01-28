@@ -17,6 +17,7 @@ let
     mkIf
     mkOption
     types
+    unique
     ;
 
   cfg = config.custom.recovery;
@@ -59,10 +60,10 @@ let
     # Reuse the substituters and trusted public keys from the parent config so
     # that nixos-install works.
     nix.settings = {
-      substituters = config.nix.settings.substituters or [ ];
-      extra-substituters = config.nix.settings.extra-substituters or [ ];
-      trusted-public-keys = config.nix.settings.trusted-public-keys or [ ];
-      extra-trusted-public-keys = config.nix.settings.extra-trusted-public-keys or [ ];
+      substituters = unique config.nix.settings.substituters or [ ];
+      trusted-public-keys = unique config.nix.settings.trusted-public-keys or [ ];
+      extra-substituters = unique config.nix.settings.extra-substituters or [ ];
+      extra-trusted-public-keys = unique config.nix.settings.extra-trusted-public-keys or [ ];
     };
 
     # An apply function on this option means that we end up having this strange
