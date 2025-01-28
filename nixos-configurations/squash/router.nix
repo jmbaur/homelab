@@ -91,12 +91,6 @@
       wifi5.enable = false;
       wifi6.enable = false;
       wifi7.enable = false;
-      wifi4.capabilities = [
-        "HT40"
-        # "HT40-" # doesn't work with ACS (channel=0)
-        "SHORT-GI-20"
-        "SHORT-GI-40"
-      ];
       settings.bridge = config.router.lanInterface;
       networks.wlp1s0 = {
         ssid = "Silence of the LANs";
