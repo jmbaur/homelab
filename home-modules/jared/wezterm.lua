@@ -9,19 +9,19 @@ local config = wezterm.config_builder()
 
 config.automatically_reload_config = false
 config.check_for_updates = false
-config.color_scheme = "Modus-Vivendi"
+config.color_scheme = "GruvboxDark"
 config.default_workspace = "default"
 config.enable_scroll_bar = false
 config.inactive_pane_hsb = { saturation = 0.8, brightness = 0.8 }
 config.switch_to_last_active_tab_when_closing_tab = true
+config.tab_bar_at_bottom = true
 config.tab_max_width = 32 -- twice the default
 config.term = "wezterm"
 config.use_dead_keys = false
+config.use_fancy_tab_bar = false
 config.window_padding = { left = 0, right = 0, top = 0, bottom = 0 }
 
 if cool_shit then
-	config.use_fancy_tab_bar = false
-	config.tab_bar_at_bottom = true
 	config.leader = { key = "s", mods = "CTRL" }
 	config.disable_default_key_bindings = true
 
