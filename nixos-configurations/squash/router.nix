@@ -45,8 +45,6 @@
         "lan4"
         "lan5"
         "lan6"
-        "wlp1s0"
-        "wlan1"
       ]
       (name: {
         inherit name;
@@ -99,6 +97,7 @@
         "SHORT-GI-20"
         "SHORT-GI-40"
       ];
+      settings.bridge = config.router.lanInterface;
       networks.wlp1s0 = {
         ssid = "Silence of the LANs";
         authentication = {
@@ -115,6 +114,7 @@
       wifi5.enable = false;
       wifi6.enable = true;
       wifi7.enable = false;
+      settings.bridge = config.router.lanInterface;
       networks.wlan1 = {
         ssid = "SpiderLAN";
         authentication = {
