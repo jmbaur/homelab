@@ -58,9 +58,6 @@ fi
 
 printf "%s\n" "${loader_conf_lines[@]}" >"${workdir}/${efi_sys_mount_point}/loader/loader.conf"
 
-find "$efi_sys_mount_point" -type f -iname '*.efi*' -exec sbctl sign {} \;
-find "${workdir}/$efi_sys_mount_point" -type f -iname '*.efi' -exec sbctl sign {} \;
-
 rm -rf "${efi_sys_mount_point}"/EFI/Linux/*
 
 pushd "$workdir" >/dev/null || exit
@@ -68,3 +65,5 @@ while read -r boot_file; do
 	install -D "${workdir}/${boot_file}" "/${boot_file}"
 done < <(find . -type f -printf "%P\n")
 popd >/dev/null || exit
+
+find "$efi_sys_mount_point" -type f -iname '*.efi*' -exec sbctl sign {} \;
