@@ -9,6 +9,13 @@
   boot.kernelParams = [ "cfg80211.ieee80211_regdom=US" ];
   hardware.wirelessRegulatoryDatabase = true;
 
+  services.iperf3 = {
+    enable = true;
+    openFirewall = false;
+  };
+
+  custom.yggdrasil.all.allowedTCPPorts = [ config.services.iperf3.port ];
+
   router = {
     enable = true;
     lanInterface = config.systemd.network.netdevs."10-br0".netdevConfig.Name;
