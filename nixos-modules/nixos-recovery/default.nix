@@ -57,6 +57,8 @@ let
 
     networking.hostName = "${config.networking.hostName}-recovery";
 
+    networking.wireless.iwd = config.networking.wireless.iwd;
+
     # Reuse the substituters and trusted public keys from the parent config so
     # that nixos-install works.
     nix.settings = {

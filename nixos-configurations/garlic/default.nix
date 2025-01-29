@@ -95,7 +95,7 @@
     }
     {
       custom.dev.enable = true;
-      custom.desktop.enable = false;
+      custom.desktop.enable = true;
       custom.common.nativeBuild = true;
       custom.recovery.targetDisk = "/dev/nvme0n1";
     }
