@@ -69,6 +69,11 @@
     {
       services.woodpecker-server = {
         enable = true;
+        environment = {
+          WOODPECKER_SERVER_ADDR = "[::]:8000";
+          WOODPECKER_GRPC_ADDR = "[::]:9000";
+          WOODPECKER_METRICS_SERVER_ADDR = "[::]:9001";
+        };
       };
 
       services.woodpecker-agents.agents.exec = {
