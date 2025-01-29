@@ -85,8 +85,8 @@ in
 
     environment.etc."xdg/rofi.rasi".source = ./rofi.rasi;
 
-    fonts.packages = [ pkgs.monaspace ];
-    fonts.fontconfig.defaultFonts.monospace = [ "Monaspace Neon" ];
+    fonts.packages = [ pkgs.commit-mono ];
+    fonts.fontconfig.defaultFonts.monospace = [ "CommitMono" ];
 
     systemd.packages = [ pkgs.mako ];
     systemd.user.services.mako.environment.XDG_CONFIG_HOME = pkgs.writeTextDir "mako/config" ''
