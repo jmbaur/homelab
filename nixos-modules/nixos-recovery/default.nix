@@ -183,6 +183,8 @@ let
       users.users.root.hashedPasswordFile = "${pkgs.writeText "hashed-password.root" ""}";
       users.mutableUsers = false;
 
+      custom.basicNetwork.enable = true;
+
       systemd.services.nixos-recovery = {
         wantedBy = [ "multi-user.target" ];
         after = [
