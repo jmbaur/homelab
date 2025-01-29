@@ -25,7 +25,7 @@
 
   outputs = inputs: {
     apps = import ./apps inputs;
-    checks = import ./checks.nix inputs;
+    checks = import ./checks inputs;
     devShells = import ./dev-shells.nix inputs;
     formatter = import ./formatter.nix inputs;
     homeConfigurations = import ./home-configurations inputs;

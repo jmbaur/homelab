@@ -1,19 +1,22 @@
 {
   inputs,
   lib,
-  nixosTest,
   qemu,
+  testers,
   zstd,
 }:
 
-nixosTest {
+testers.runNixOSTest {
   name = "installation-lifecycle";
+
+  extraBaseModules.imports = [ inputs.self.nixosModules.default ];
+
+  node.pkgs = lib.mkForce null;
+
   nodes = {
     updateServer =
       { pkgs, nodes, ... }:
       {
-        imports = [ inputs.self.nixosModules.default ];
-
         virtualisation.vlans = [ 1 ];
 
         environment.systemPackages = [ pkgs.nix-key ];
@@ -54,8 +57,6 @@ nixosTest {
         ...
       }:
       {
-        imports = [ inputs.self.nixosModules.default ];
-
         virtualisation.vlans = [ 1 ];
 
         virtualisation.useBootLoader = true;

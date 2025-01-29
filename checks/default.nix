@@ -11,7 +11,7 @@ builtins.listToAttrs (
         pkgs = inputs.nixpkgs.legacyPackages.${system};
       in
       {
-        installationLifecycle = pkgs.callPackage ./tests/installation-lifecycle.nix { inherit inputs; };
+        installationLifecycle = pkgs.callPackage ./installation-lifecycle.nix { inherit inputs; };
       };
   }) (builtins.attrNames inputs.self.legacyPackages)
 )
