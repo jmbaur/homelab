@@ -227,6 +227,34 @@ jobs:
         CACHE_SIGNING_KEY: ${{ secrets.CACHE_SIGNING_KEY }}
       name: Build squash
       run: nix run .#buildNixosConfigCI -- squash
+  build-zucchini:
+    needs:
+    - test
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@main
+      with:
+        tool-cache: true
+    - uses: DeterminateSystems/nix-installer-action@main
+      with:
+        extra-conf: 'extra-substituters = https://cache.jmbaur.com
+
+          extra-trusted-public-keys = cache.jmbaur.com:C3ku8BNDXgfTO7dNHK+eojm4uy7Gvotwga+EV0cfhPQ=
+
+          '
+    - uses: DeterminateSystems/magic-nix-cache-action@main
+    - env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        CACHE_SIGNING_KEY: ${{ secrets.CACHE_SIGNING_KEY }}
+      name: Build zucchini
+      run: nix run .#buildNixosConfigCI -- zucchini
   test:
     permissions:
       contents: read
@@ -238,7 +266,8 @@ jobs:
     - uses: DeterminateSystems/nix-installer-action@main
     - uses: DeterminateSystems/magic-nix-cache-action@main
     - name: Nix flake check
-      run: nix flake check --print-build-logs
+      run: nix build --print-build-logs .#checks.$(nix eval --raw --impure --expr
+        "builtins.currentSystem").installation-lifecycle
 name: ci
 'on':
   push:
