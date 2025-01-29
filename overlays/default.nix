@@ -28,6 +28,15 @@ inputs: {
           });
         }
       );
+
+      userborn = prev.userborn.overrideAttrs (old: rec {
+        patches = (old.patches or [ ]) ++ [ ./userborn-32bit.patch ];
+        cargoDeps = final.rustPlatform.fetchCargoVendor ({
+          inherit (old) src sourceRoot;
+          inherit patches;
+          hash = "sha256-0FAfAJT8//wto+/ZTeZp1Nu0Hn8Tt3Ewn3u6cO0dOCk=";
+        });
+      });
     })
     # all other packages
     (final: prev: {
