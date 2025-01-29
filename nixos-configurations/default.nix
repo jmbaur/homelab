@@ -66,6 +66,8 @@ inputs.nixpkgs.lib.genAttrs allHosts (
             "cache.jmbaur.com:C3ku8BNDXgfTO7dNHK+eojm4uy7Gvotwga+EV0cfhPQ="
           ];
 
+          custom.normalUser.username = lib.mkDefault "jared";
+
           custom.common.enable = lib.mkDefault true;
           custom.update = {
             enable = lib.mkDefault true;

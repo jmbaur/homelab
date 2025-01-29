@@ -55,6 +55,7 @@ inputs.nixpkgs.lib.mapAttrs (
           imports = [ inputs.self.nixosModules.default ];
           custom.common.enable = true;
           custom.desktop.enable = true;
+          custom.normalUser.username = "waldo";
         }).config.system.build.vm
       )
     );
