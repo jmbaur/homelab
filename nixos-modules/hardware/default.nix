@@ -1,5 +1,6 @@
 {
   imports = [
+    ./thinkpad-t14s-gen6
     ./armada-388-clearfog
     ./blackrock
     ./bpi-r3

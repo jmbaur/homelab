@@ -66,5 +66,30 @@
       custom.basicNetwork.enable = true;
       custom.recovery.targetDisk = "/dev/disk/by-path/platform-a41000000.pcie-pci-0004:41:00.0-nvme-1";
     }
+    {
+      services.woodpecker-server = {
+        enable = true;
+      };
+
+      services.woodpecker-agents.agents.exec = {
+        enable = true;
+
+        environment = {
+          WOODPECKER_SERVER = "[::1]:9000";
+          WOODPECKER_BACKEND = "local";
+        };
+
+        path = [
+          # Needed to clone repos
+          pkgs.git
+          pkgs.git-lfs
+          pkgs.woodpecker-plugin-git
+          # Used by the runner as the default shell
+          pkgs.bash
+          # Most likely to be used in pipeline definitions
+          pkgs.coreutils
+        ];
+      };
+    }
   ];
 }
