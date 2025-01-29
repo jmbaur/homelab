@@ -7,8 +7,6 @@
 {
   options.services.kodi.enable = lib.mkEnableOption "kodi";
   config = lib.mkIf config.services.kodi.enable {
-    boot.kernelParams = [ "quiet" ];
-
     services.automatic-timezoned.enable = true;
     hardware.bluetooth.enable = true;
 

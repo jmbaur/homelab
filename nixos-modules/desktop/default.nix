@@ -32,9 +32,6 @@ in
   options.custom.desktop.enable = lib.mkEnableOption "desktop";
 
   config = lib.mkIf cfg.enable {
-    boot.kernelParams = [ "quiet" ];
-    boot.consoleLogLevel = lib.mkDefault 3;
-
     custom.normalUser.enable = true;
     custom.basicNetwork.enable = true;
 
