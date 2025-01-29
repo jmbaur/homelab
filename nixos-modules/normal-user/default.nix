@@ -99,13 +99,6 @@ in
                   fi
                 done
 
-                while true; do
-                  read -s -r -p "Password for user $username: " password
-                  if [[ -n "$password" ]]; then
-                    break
-                  fi
-                done
-
                 touch /etc/sub{u,g}id
 
                 gid=${toString config.users.groups.users.gid}
@@ -122,11 +115,11 @@ in
                 umask 077 # set the umask prior to home directory creation so $HOME has the right mode
                 useradd "''${useradd_args[@]}"
 
+                passwd "$username"
+
                 uid=$(id -u "$username")
                 echo "$uid:$((0x80000)):$((0x10000))" >/etc/subuid
                 echo "$gid:$((0x80000)):$((0x10000))" >/etc/subgid
-
-                echo "''${username}:''${password}" | chpasswd
               ); then
                 echo "ERROR: failed to create admin user"
                 sleep 20 # give the user some time to read any error output
