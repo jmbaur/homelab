@@ -14,6 +14,7 @@ let
     getExe
     mkDefault
     mkEnableOption
+    mkForce
     mkIf
     mkOption
     types
@@ -51,9 +52,14 @@ let
 
     system.stateVersion = config.system.stateVersion;
 
-    # Inherit the finalized package-set from the parent config, prevents
-    # a re-import of nixpkgs.
+    # Inherit the finalized package-set from the parent config,
+    # prevents a re-import of nixpkgs. Since we already have
+    # a finalized package-set, prevent a re-import by removing all
+    # overlays in the extended config. The downside to this is that
+    # we remove the ability to apply overlays only for the recovery
+    # system, though we shouldn't need to do that.
     nixpkgs.pkgs = pkgs;
+    nixpkgs.overlays = mkForce [ ];
 
     networking.hostName = "${config.networking.hostName}-recovery";
 
