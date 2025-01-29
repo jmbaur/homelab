@@ -4,7 +4,10 @@
   pkgs,
   ...
 }:
-with lib;
+
+let
+  inherit (lib) mkEnableOption mkIf;
+in
 {
   options.hardware.lx2k = {
     enable = mkEnableOption "layerscape lx2k";

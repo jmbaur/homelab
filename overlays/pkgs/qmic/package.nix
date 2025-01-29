@@ -17,10 +17,10 @@ stdenv.mkDerivation {
 
   installFlags = [ "prefix=$(out)" ];
 
-  meta = with lib; {
+  meta = {
     description = "QMI IDL compiler";
     homepage = "https://github.com/linux-msm/qmic";
-    license = licenses.bsd3;
-    platforms = platforms.aarch64;
+    license = lib.licenses.bsd3;
+    platforms = lib.platforms.aarch64;
   };
 }

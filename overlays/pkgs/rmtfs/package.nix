@@ -26,10 +26,10 @@ stdenv.mkDerivation {
 
   installFlags = [ "prefix=$(out)" ];
 
-  meta = with lib; {
+  meta = {
     description = "Qualcomm Remote Filesystem Service";
     homepage = "https://github.com/linux-msm/rmtfs";
-    license = licenses.bsd3;
-    platforms = platforms.aarch64;
+    license = lib.licenses.bsd3;
+    platforms = lib.platforms.aarch64;
   };
 }

@@ -28,9 +28,9 @@ stdenvNoCC.mkDerivation {
     find -L $out -type f -exec chmod 444 {} \;
   '';
 
-  meta = with lib; {
+  meta = {
     description = "Firmware files for ThinkPad T14s Gen 6";
-    license = licenses.unfreeRedistributableFirmware;
-    platforms = platforms.linux;
+    license = lib.licenses.unfreeRedistributableFirmware;
+    platforms = lib.platforms.linux;
   };
 }

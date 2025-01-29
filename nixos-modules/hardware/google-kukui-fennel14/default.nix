@@ -4,7 +4,10 @@
   pkgs,
   ...
 }:
-with lib;
+
+let
+  inherit (lib) mkEnableOption mkIf;
+in
 {
   options.hardware.kukui-fennel14 = {
     enable = mkEnableOption "google kukui-fennel14 board";

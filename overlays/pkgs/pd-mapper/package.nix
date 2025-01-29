@@ -33,11 +33,11 @@ stdenv.mkDerivation {
 
   installFlags = [ "prefix=$(out)" ];
 
-  meta = with lib; {
+  meta = {
     mainProgram = "pd-mapper";
     description = "pd mapper";
     homepage = "https://github.com/linux-msm/pd-mapper";
-    license = licenses.bsd3;
-    platforms = platforms.linux;
+    license = lib.licenses.bsd3;
+    platforms = lib.platforms.linux;
   };
 }

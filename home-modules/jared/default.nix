@@ -7,10 +7,19 @@
 }:
 
 let
+  inherit (lib)
+    getExe
+    getExe'
+    mkDefault
+    mkEnableOption
+    mkIf
+    mkMerge
+    ;
+
   cfg = config.jared;
 in
 {
-  options.jared = with lib; {
+  options.jared = {
     includePersonalConfigs = mkEnableOption "personal configs" // {
       default = true;
     };
@@ -18,9 +27,9 @@ in
     dev.enable = mkEnableOption "dev";
   };
 
-  config = lib.mkMerge [
+  config = mkMerge [
     {
-      home.stateVersion = lib.mkDefault "25.05";
+      home.stateVersion = mkDefault "25.05";
       news.display = "silent";
 
       xdg.configFile."nix/nix.conf".text = ''
@@ -45,11 +54,11 @@ in
         ];
       };
 
-      home.username = lib.mkDefault "jared";
+      home.username = mkDefault "jared";
       home.homeDirectory = "/home/${config.home.username}";
     }
 
-    (lib.mkIf cfg.dev.enable {
+    (mkIf cfg.dev.enable {
       home.packages = with pkgs; [
         _caffeine
         abduco
@@ -127,7 +136,7 @@ in
 
       home.shellAliases = {
         j = "tmux-jump";
-        remove-ssh-connections = ''${lib.getExe pkgs.fd} --regex "ssh-[a-f0-9]{40}" $XDG_RUNTIME_DIR --exec sh -c 'kill $(${lib.getExe' pkgs.util-linux "lsfd"} --filter "NAME =~ \"state=listen path={}\"" --output PID --noheadings)' \;'';
+        remove-ssh-connections = ''${getExe pkgs.fd} --regex "ssh-[a-f0-9]{40}" $XDG_RUNTIME_DIR --exec sh -c 'kill $(${getExe' pkgs.util-linux "lsfd"} --filter "NAME =~ \"state=listen path={}\"" --output PID --noheadings)' \;'';
       };
 
       home.file.".sqliterc".text = ''
@@ -192,7 +201,7 @@ in
           lg = "log --graph --decorate --pretty=oneline --abbrev-commit --all";
           st = "status --short --branch";
         };
-        includes = lib.optional cfg.includePersonalConfigs {
+        includes = mkIf cfg.includePersonalConfigs {
           contents =
             let
               primaryKey = "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIBhCHaXn5ghEJQVpVZr4hOajD6Zp/0PO4wlymwfrg/S5AAAABHNzaDo=";
@@ -213,7 +222,7 @@ in
             };
         };
         extraConfig = {
-          "difftool \"difftastic\"".cmd = "${lib.getExe' pkgs.difftastic "difft"}  \"$LOCAL\" \"$REMOTE\"";
+          "difftool \"difftastic\"".cmd = "${getExe' pkgs.difftastic "difft"}  \"$LOCAL\" \"$REMOTE\"";
           "git-extras \"get\"".clone-path = "${config.xdg.stateHome}/projects";
           "url \"git+ssh://git@codeberg.com/\"".pushInsteadOf = "https://codeberg.org/";
           "url \"git+ssh://git@github.com/\"".pushInsteadOf = "https://github.com/";

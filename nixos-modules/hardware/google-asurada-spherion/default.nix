@@ -1,5 +1,8 @@
 { config, lib, ... }:
-with lib;
+
+let
+  inherit (lib) mkEnableOption mkIf;
+in
 {
   options.hardware.asurada-spherion = {
     enable = mkEnableOption "google asurada-spherion board";

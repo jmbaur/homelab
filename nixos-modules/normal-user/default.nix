@@ -5,9 +5,17 @@
   ...
 }:
 let
+  inherit (lib)
+    findFirst
+    getExe
+    getExe'
+    mkEnableOption
+    mkIf
+    ;
+
   cfg = config.custom.normalUser;
 
-  mountpoint = lib.findFirst (path: config.fileSystems ? "${path}") (throw "mount not found") [
+  mountpoint = findFirst (path: config.fileSystems ? "${path}") (throw "mount not found") [
     "/home"
     "/"
   ];
@@ -15,11 +23,11 @@ let
   fileSystemConfig = config.fileSystems.${mountpoint};
 in
 {
-  options.custom.normalUser = with lib; {
+  options.custom.normalUser = {
     enable = mkEnableOption "normal user";
   };
 
-  config = lib.mkIf cfg.enable {
+  config = mkIf cfg.enable {
     assertions = [
       {
         assertion = config.systemd.sysusers.enable;
@@ -52,7 +60,7 @@ in
         ExecStartPost = [
           # https://github.com/systemd/systemd/blob/477fdc5afed0457c43d01f3d7ace7209f81d3995/meson_options.txt#L246-L249
           (pkgs.writeShellScript "setup-subuid-and-subgid" ''
-            eval $(homectl list --json=short | ${lib.getExe pkgs.jq} -r '"uid=\(.[0].uid)\ngid=\(.[0].gid)"')
+            eval $(homectl list --json=short | ${getExe pkgs.jq} -r '"uid=\(.[0].uid)\ngid=\(.[0].gid)"')
             echo "$uid:$((0x80000)):$((0x10000))" >/etc/subuid
             echo "$gid:$((0x80000)):$((0x10000))" >/etc/subgid
           '')
@@ -83,7 +91,7 @@ in
       mode = "0755";
       text = ''
         #!/bin/sh
-        exec ${lib.getExe' config.systemd.package "userdbctl"} ssh-authorized-keys "$@"
+        exec ${getExe' config.systemd.package "userdbctl"} ssh-authorized-keys "$@"
       '';
     };
 
