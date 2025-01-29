@@ -84,9 +84,9 @@ in
       i18n.defaultLocale = "en_US.UTF-8";
       console.useXkbConfig = true;
 
-      # no need for mutable users
+      # No need for mutable users in most use cases
       users.mutableUsers = mkDefault false;
-      systemd.sysusers.enable = mkDefault true;
+      services.userborn.enable = mkDefault true;
 
       programs.tmux = {
         enable = mkDefault true;

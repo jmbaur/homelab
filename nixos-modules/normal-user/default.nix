@@ -4,107 +4,137 @@
   pkgs,
   ...
 }:
+
 let
   inherit (lib)
-    findFirst
+    concatStringsSep
     getExe
     getExe'
     mkEnableOption
     mkIf
+    optional
     ;
 
   cfg = config.custom.normalUser;
 
-  mountpoint = findFirst (path: config.fileSystems ? "${path}") (throw "mount not found") [
-    "/home"
-    "/"
-  ];
+  groups =
+    [ "wheel" ]
+    ++ optional config.custom.dev.enable "dialout" # serial consoles
+    ++ optional config.networking.networkmanager.enable "networkmanager"
+    ++ optional config.programs.adb.enable "adbusers"
+    ++ optional config.programs.wireshark.enable "wireshark"
+    ++ optional config.virtualisation.docker.enable "docker";
 
-  fileSystemConfig = config.fileSystems.${mountpoint};
 in
 {
-  options.custom.normalUser = {
-    enable = mkEnableOption "normal user";
-  };
+  options.custom.normalUser.enable = mkEnableOption "normal user";
 
   config = mkIf cfg.enable {
-    assertions = [
-      {
-        assertion = config.systemd.sysusers.enable;
-        message = "sysusers needs to be enabled";
-      }
-      {
-        assertion = config.nix.enable -> config.nix.settings.auto-allocate-uids or false;
-        message = "systemd-homed-firstboot does not work when auto-allocate-uids is not true because nixbld* users are considered 'regular' users";
-      }
-    ];
-
-    systemd.additionalUpstreamSystemUnits = [ "systemd-homed-firstboot.service" ];
-
-    systemd.services.systemd-homed-firstboot = {
-      # TODO(jared): systemd-homed-firstboot won't run without this
-      wantedBy = [ "first-boot-complete.target" ];
-
-      serviceConfig = {
-        ExecStart = [
-          "" # clear upstream default
-          (toString [
-            "homectl"
-            "firstboot"
-            "--prompt-new-user"
-            # above is default, custom stuff below
-            "--enforce-password-policy=no"
-            "--storage=${if fileSystemConfig.fsType == "btrfs" then "subvolume" else "directory"}"
-          ])
-        ];
-        ExecStartPost = [
-          # https://github.com/systemd/systemd/blob/477fdc5afed0457c43d01f3d7ace7209f81d3995/meson_options.txt#L246-L249
-          (pkgs.writeShellScript "setup-subuid-and-subgid" ''
-            eval $(homectl list --json=short | ${getExe pkgs.jq} -r '"uid=\(.[0].uid)\ngid=\(.[0].gid)"')
-            echo "$uid:$((0x80000)):$((0x10000))" >/etc/subuid
-            echo "$gid:$((0x80000)):$((0x10000))" >/etc/subgid
-          '')
-        ];
-      };
-    };
-
     programs.fish = {
       enable = true;
-      package = pkgs.fish;
       interactiveShellInit = ''
         function fish_greeting
         end
       '';
     };
 
-    services.homed.enable = true;
+    users.mutableUsers = true;
 
-    # This is needed if mutableUsers is false since we don't configure our
-    # primary user through the traditional NixOS options. Since our primary
-    # user is wheel, they can freely administer the machine, thus no need for a
-    # root password or remote access (e.g. via ssh) to login as the root user.
-    users.allowNoPasswordLogin = !config.users.mutableUsers;
+    systemd.services.configure-admin-user = {
+      unitConfig.ConditionFirstBoot = true;
 
-    # Ugly: sshd refuses to start if a store path is given because /nix/store
-    # is group-writable. So indirect by a symlink.
-    environment.etc."ssh/homed_authorized_keys_command" = {
-      mode = "0755";
-      text = ''
-        #!/bin/sh
-        exec ${getExe' config.systemd.package "userdbctl"} ssh-authorized-keys "$@"
-      '';
+      wantedBy = [ "multi-user.target" ];
+
+      after = [ "home.mount" ];
+      before = [
+        "systemd-user-sessions.service"
+        "first-boot-complete.target"
+      ];
+
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+
+        StandardInput = "tty";
+        StandardOutput = "tty";
+        StandardError = "tty";
+
+        ExecStart = getExe (
+          pkgs.writeShellApplication {
+            name = "configure-admin-user";
+
+            runtimeInputs = [
+              pkgs.util-linux # findmnt
+              # TODO(jared): should go upstream
+              (pkgs.shadow.overrideAttrs (old: {
+                postPatch =
+                  (old.postPatch or "")
+                  + ''
+                    substituteInPlace lib/btrfs.c \
+                      --replace-fail /usr/bin/btrfs ${getExe' pkgs.btrfs-progs "btrfs"}
+                  '';
+              }))
+            ];
+
+            text = ''
+              trap "" INT # prevent CTRL-C
+
+              stty sane
+
+              printf "=%.0s" {1..80}
+              printf "\n"
+
+              if ! (
+                while true; do
+                  read -r -p "Please enter a username: " username
+                  if [[ -n "$username" ]]; then
+                    break
+                  fi
+                done
+
+                while true; do
+                  read -r -p "Real name for $username: " real_name
+                  if [[ -n "$real_name" ]]; then
+                    break
+                  fi
+                done
+
+                while true; do
+                  read -s -r -p "Password for user $username: " password
+                  if [[ -n "$password" ]]; then
+                    break
+                  fi
+                done
+
+                touch /etc/sub{u,g}id
+
+                gid=${toString config.users.groups.users.gid}
+
+                declare -a useradd_args=("--create-home")
+
+                if [[ $(findmnt --noheadings --output=FSTYPE --target=/home --direction=backward) == "btrfs" ]]; then
+                  useradd_args+=("--btrfs-subvolume-home")
+                fi
+
+                useradd_args+=("--comment=$real_name" "--gid=$gid" "--groups=${concatStringsSep "," groups}")
+                useradd_args+=("$username")
+
+                umask 077 # set the umask prior to home directory creation so $HOME has the right mode
+                useradd "''${useradd_args[@]}"
+
+                uid=$(id -u "$username")
+                echo "$uid:$((0x80000)):$((0x10000))" >/etc/subuid
+                echo "$gid:$((0x80000)):$((0x10000))" >/etc/subgid
+
+                echo "''${username}:''${password}" | chpasswd
+              ); then
+                echo "ERROR: failed to create admin user"
+                sleep 20 # give the user some time to read any error output
+              fi
+            '';
+          }
+        );
+      };
     };
-
-    # TODO(jared): nixos doesn't have nice options for specifying match blocks
-    #
-    # https://wiki.archlinux.org/title/systemd-homed#SSH_remote_unlocking
-    services.openssh.extraConfig = ''
-      Match User *,!root
-        PasswordAuthentication yes
-        PubkeyAuthentication yes
-        AuthenticationMethods publickey,password
-        AuthorizedKeysCommand /etc/ssh/homed_authorized_keys_command %u
-        AuthorizedKeysCommandUser root
-    '';
   };
 }
