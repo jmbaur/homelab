@@ -266,7 +266,8 @@ jobs:
     - uses: DeterminateSystems/nix-installer-action@main
     - uses: DeterminateSystems/magic-nix-cache-action@main
     - name: Nix flake check
-      run: nix flake check --print-build-logs
+      run: nix build --print-build-logs .#checks.$(nix eval --raw --impure --expr
+        "builtins.currentSystem").installation-lifecycle
 name: ci
 'on':
   push:
