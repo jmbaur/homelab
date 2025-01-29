@@ -20,6 +20,13 @@ let
     mkdir -p $out/share/icons/default
     printf "[Icon Theme]\nInherits=${xcursorTheme}\n" >$out/share/icons/default/index.theme
   '';
+
+  setupFlathub = pkgs.writeShellApplication {
+    name = "setup-flathub";
+    text = ''
+      flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+    '';
+  };
 in
 {
   options.custom.desktop.enable = lib.mkEnableOption "desktop";
@@ -236,7 +243,7 @@ in
       pkgs.swaylock
       pkgs.tinybar
       pkgs.wl-clipboard
-    ];
+    ] ++ lib.optionals config.services.flatpak.enable [ setupFlathub ];
 
     programs.uwsm = {
       enable = true;
