@@ -168,8 +168,7 @@ inputs.nixpkgs.lib.mapAttrs (
                   { uses = "DeterminateSystems/magic-nix-cache-action@main"; }
                   {
                     name = "Nix flake check";
-                    # TODO(jared): GH actions runners don't have enough RAM to just run `nix flake check`
-                    run = ''nix build --print-build-logs .#checks.$(nix eval --raw --impure --expr "builtins.currentSystem").installation-lifecycle'';
+                    run = ''nix flake check --print-build-logs'';
                   }
                 ];
               };
