@@ -201,26 +201,28 @@ in
           lg = "log --graph --decorate --pretty=oneline --abbrev-commit --all";
           st = "status --short --branch";
         };
-        includes = mkIf cfg.includePersonalConfigs {
-          contents =
-            let
-              primaryKey = "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIBhCHaXn5ghEJQVpVZr4hOajD6Zp/0PO4wlymwfrg/S5AAAABHNzaDo=";
-              backupKey = "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIHRlxBSW3BzX33FG7444p/M5lb9jYR5OkjS2jPpnuXozAAAABHNzaDo=";
-            in
-            rec {
-              user.email = "jaredbaur@fastmail.com";
-              user.signingKey = "key::${primaryKey}";
-              commit.gpgSign = true;
-              gpg.format = "ssh";
-              "gpg \"ssh\"" = {
-                defaultKeyCommand = "ssh-add -L";
-                allowedSignersFile = pkgs.writeText "allowed-signers-file.txt" ''
-                  ${user.email} ${primaryKey}
-                  ${user.email} ${backupKey}
-                '';
+        includes = mkIf cfg.includePersonalConfigs [
+          {
+            contents =
+              let
+                primaryKey = "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIBhCHaXn5ghEJQVpVZr4hOajD6Zp/0PO4wlymwfrg/S5AAAABHNzaDo=";
+                backupKey = "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIHRlxBSW3BzX33FG7444p/M5lb9jYR5OkjS2jPpnuXozAAAABHNzaDo=";
+              in
+              rec {
+                user.email = "jaredbaur@fastmail.com";
+                user.signingKey = "key::${primaryKey}";
+                commit.gpgSign = true;
+                gpg.format = "ssh";
+                "gpg \"ssh\"" = {
+                  defaultKeyCommand = "ssh-add -L";
+                  allowedSignersFile = pkgs.writeText "allowed-signers-file.txt" ''
+                    ${user.email} ${primaryKey}
+                    ${user.email} ${backupKey}
+                  '';
+                };
               };
-            };
-        };
+          }
+        ];
         extraConfig = {
           "difftool \"difftastic\"".cmd = "${getExe' pkgs.difftastic "difft"}  \"$LOCAL\" \"$REMOTE\"";
           "git-extras \"get\"".clone-path = "${config.xdg.stateHome}/projects";
