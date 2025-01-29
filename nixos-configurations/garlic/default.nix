@@ -53,6 +53,11 @@
         "pd_ignore_unused"
       ];
 
+      boot.initrd.extraFirmwarePaths = map (file: "qcom/${file}") [
+        "gen70500_sqe.fw"
+        "gen70500_gmu.bin"
+      ];
+
       boot.initrd.includeDefaultModules = false;
 
       boot.initrd.availableKernelModules = [
@@ -92,6 +97,8 @@
           boot.initrd.systemd.tpm2.enable = false;
         }
       ];
+
+      boot.loader.efi.canTouchEfiVariables = false;
     }
     {
       custom.dev.enable = true;
