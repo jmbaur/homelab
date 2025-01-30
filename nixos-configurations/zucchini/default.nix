@@ -1,4 +1,10 @@
-{ pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+
 {
   config = lib.mkMerge [
     {
@@ -70,9 +76,10 @@
       services.woodpecker-server = {
         enable = true;
         environment = {
-          WOODPECKER_SERVER_ADDR = "[::]:8000";
           WOODPECKER_GRPC_ADDR = "[::]:9000";
-          WOODPECKER_METRICS_SERVER_ADDR = "[::]:9001";
+          WOODPECKER_HOST = "${config.networking.hostName}.internal";
+          WOODPECKER_METRICS_SERVER_ADDR = "[::]:9090";
+          WOODPECKER_SERVER_ADDR = "[::]:8000";
         };
       };
 
