@@ -68,6 +68,7 @@ in
         bat
         binary-diff
         cachix
+        carapace
         cntr
         copy
         curl
