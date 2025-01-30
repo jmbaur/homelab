@@ -57,7 +57,6 @@
         artifacts = [ "u-boot-rockchip-spi.bin" ];
         extraStructuredConfig = with lib.kernel; {
           BAUDRATE = freeform 115200; # c'mon rockchip
-          ROCKCHIP_SPI_IMAGE = yes;
           USE_PREBOOT = yes;
           PREBOOT = freeform "pci enum; usb start; nvme scan";
         };
