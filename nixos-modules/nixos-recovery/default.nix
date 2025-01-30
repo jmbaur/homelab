@@ -80,8 +80,9 @@ let
 
     hardware.deviceTree = removeAttrs config.hardware.deviceTree [ "base" ];
 
+    # NOTE: We don't inherit config.boot.kernelPatches because we already
+    # get them by inheriting config.boot.kernelPackages (see https://github.com/nixos/nixpkgs/blob/80ddc2ca0a4ee96b330bffb4d8ec4dbf9bd16fe8/nixos/modules/system/boot/kernel.nix#L46).
     boot.kernelParams = config.boot.kernelParams;
-    # boot.kernelPatches = config.boot.kernelPatches; # TODO(jared): causes rebuilds
     boot.kernelPackages = config.boot.kernelPackages;
     boot.kernelModules = config.boot.kernelModules;
     boot.initrd.kernelModules = config.boot.initrd.kernelModules;
