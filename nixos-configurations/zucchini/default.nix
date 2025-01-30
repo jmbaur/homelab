@@ -63,6 +63,17 @@
         };
       };
 
+      environment.systemPackages = [
+        pkgs.uboot-env-tools
+        pkgs.mtdutils
+        (pkgs.writeShellScriptBin "update-firmware" ''
+          ${lib.getExe' pkgs.mtdutils "flashcp"} \
+            --verbose \
+            ${config.system.build.firmware}/u-boot-rockchip-spi.bin \
+            /dev/mtd0
+        '')
+      ];
+
       hardware.firmware = [
         (pkgs.extractLinuxFirmware "mali-firmware" [ "arm/mali/arch10.8/mali_csffw.bin" ])
       ];
