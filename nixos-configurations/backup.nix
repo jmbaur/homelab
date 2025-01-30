@@ -86,7 +86,7 @@ in
 
             runtimeInputs = [
               pkgs.btrfs-progs
-              pkgs.libressl.nc
+              pkgs.netcat
               pkgs.pv
             ];
 

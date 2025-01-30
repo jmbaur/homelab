@@ -168,7 +168,10 @@ in
         controlMaster = "auto";
         controlPersist = "30m";
         controlPath = "/run/user/%i/ssh-%C";
-        matchBlocks."*.local".forwardAgent = true;
+        matchBlocks."*.local" = {
+          forwardAgent = true;
+          proxyCommand = "${lib.getExe pkgs.ipv6-link-local-ssh-proxy-command} %h %p";
+        };
       };
 
       programs.fish.enable = true;
