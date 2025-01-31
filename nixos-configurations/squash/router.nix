@@ -87,10 +87,22 @@
     radios.wlp1s0 = {
       band = "2g";
       countryCode = "US";
-      wifi4.enable = true;
       wifi5.enable = false;
       wifi6.enable = false;
       wifi7.enable = false;
+      wifi4 = {
+        enable = true;
+        capabilities = [
+          "RXLDPC"
+          "HT40+"
+          # "HT40-"
+          "SHORT-GI-20"
+          "SHORT-GI-40"
+          "TX-STBC"
+          "RX-STBC1"
+          "MAX-AMSDU-7935"
+        ];
+      };
       settings.bridge = config.router.lanInterface;
       networks.wlp1s0 = {
         ssid = "Silence of the LANs";
@@ -104,10 +116,42 @@
     radios.wlan1 = {
       band = "5g";
       countryCode = "US";
-      wifi4.enable = false;
-      wifi5.enable = false;
-      wifi6.enable = true;
       wifi7.enable = false;
+      wifi4 = {
+        enable = true;
+        capabilities = [
+          "RXLDPC"
+          "HT40+"
+          # "HT40-"
+          "SHORT-GI-20"
+          "SHORT-GI-40"
+          "TX-STBC"
+          "RX-STBC1"
+          "MAX-AMSDU-7935"
+        ];
+      };
+      wifi5 = {
+        enable = true;
+        capabilities = [
+          "MAX-MPDU-7991"
+          "RXLDPC"
+          "SHORT-GI-80"
+          "TX-STBC-2BY1"
+          "SU-BEAMFORMER"
+          "SU-BEAMFORMEE"
+          "MU-BEAMFORMER"
+          "MU-BEAMFORMEE"
+          "RX-ANTENNA-PATTERN"
+          "TX-ANTENNA-PATTERN"
+        ];
+      };
+      wifi6 = {
+        enable = true;
+        operatingChannelWidth = "80";
+        singleUserBeamformer = true;
+        singleUserBeamformee = true;
+        multiUserBeamformer = true;
+      };
       settings.bridge = config.router.lanInterface;
       networks.wlan1 = {
         ssid = "SpiderLAN";
