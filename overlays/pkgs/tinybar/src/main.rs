@@ -322,10 +322,16 @@ impl From<Ref<'_, PowerState>> for Block {
             ) {
                 format!(
                     "{}: {} {}%",
-                    value.device_type, value.status, value.battery_percentage
+                    value.device_type,
+                    value.status,
+                    value.battery_percentage.round()
                 )
             } else {
-                format!("{}: {}%", value.device_type, value.battery_percentage)
+                format!(
+                    "{}: {}%",
+                    value.device_type,
+                    value.battery_percentage.round()
+                )
             },
             urgent: matches!(
                 value.warning_level,
