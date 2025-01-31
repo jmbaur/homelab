@@ -31,6 +31,8 @@ in
     {
       system.stateVersion = mkDefault "25.05";
 
+      environment.systemPackages = [ pkgs.nixos-kexec ];
+
       # We always build on x86_64-linux.
       #
       # "If it don't cross-compile, it don't go in the config!"

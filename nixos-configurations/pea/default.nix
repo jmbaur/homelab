@@ -7,6 +7,8 @@
 
 let
   inherit (lib)
+    getExe'
+    makeBinPath
     mkMerge
     ;
 in
@@ -15,51 +17,61 @@ in
     {
       hardware.chromebook.asurada-spherion.enable = true;
 
+      system.extraSystemBuilderCmds = ''
+        export PATH=$PATH:${
+          makeBinPath (
+            with pkgs.buildPackages;
+            [
+              dtc
+              ubootTools
+              vboot_reference
+              xz
+            ]
+          )
+        }
+
+        lzma --threads $NIX_BUILD_CORES <${config.system.build.kernel}/${config.system.boot.loader.kernelFile} >kernel.lzma
+        cp ${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile} initrd
+        cp ${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name} fdt
+
+        cp ${./fitimage.its} fitimage.its # needs to be in the same directory
+        mkimage -D "-I dts -O dtb -p 2048" -f fitimage.its vmlinux.uimg
+
+        dd status=none if=/dev/zero of=bootloader.bin bs=512 count=1
+
+        echo "init=$out/init ${toString config.boot.kernelParams}" >kernel-params
+
+        futility vbutil_kernel \
+          --pack $out/kpart \
+          --version 1 \
+          --vmlinuz vmlinux.uimg \
+          --arch aarch64 \
+          --keyblock ${pkgs.vboot_reference}/share/vboot/devkeys/kernel.keyblock \
+          --signprivate ${pkgs.vboot_reference}/share/vboot/devkeys/kernel_data_key.vbprivk \
+          --config kernel-params \
+          --bootloader bootloader.bin
+      '';
+
       system.build.testImage = pkgs.callPackage (
         {
-          dtc,
           runCommand,
-          ubootTools,
           util-linux,
           vboot_reference,
-          xz,
           zstd,
         }:
 
         runCommand "test-image"
           {
             nativeBuildInputs = [
-              dtc
-              ubootTools
               util-linux
               vboot_reference
-              xz
               zstd
             ];
           }
           ''
             mkdir -p $out
 
-            lzma --threads $NIX_BUILD_CORES <${config.system.build.kernel}/${config.system.boot.loader.kernelFile} >kernel.lzma
-            cp ${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile} initrd
-            cp ${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name} fdt
-
-            cp ${./fitimage.its} fitimage.its # needs to be in the same directory
-            mkimage -D "-I dts -O dtb -p 2048" -f fitimage.its vmlinux.uimg
-
-            dd status=none if=/dev/zero of=bootloader.bin bs=512 count=1
-
-            echo "init=${config.system.build.toplevel}/init ${toString config.boot.kernelParams}" >kernel-params
-
-            futility vbutil_kernel \
-              --pack $out/kpart \
-              --version 1 \
-              --vmlinuz vmlinux.uimg \
-              --arch aarch64 \
-              --keyblock ${vboot_reference}/share/vboot/devkeys/kernel.keyblock \
-              --signprivate ${vboot_reference}/share/vboot/devkeys/kernel_data_key.vbprivk \
-              --config kernel-params \
-              --bootloader bootloader.bin
+            ${config.system.build.toplevel}/kpart
 
             dd if=/dev/zero of=$out/image bs=4M count=20
             sfdisk --no-reread --no-tell-kernel $out/image <<EOF
@@ -73,6 +85,10 @@ in
             zstd -T$NIX_BUILD_CORES --rm $out/image
           ''
       ) { };
+
+      boot.loader.systemd-boot.extraInstallCommands = ''
+        ${getExe' pkgs.coreutils "dd"} bs=4M if=$1/kpart of=/dev/disk/by-partlabel/kernel
+      '';
     }
     {
       custom.desktop.enable = true;

@@ -101,6 +101,7 @@ in
         nix-output-monitor
         nix-prefetch-scripts
         nix-tree
+        nixos-kexec
         nixos-shell
         nload
         nmap

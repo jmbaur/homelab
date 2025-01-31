@@ -13,6 +13,9 @@
 			compression = "lzma";
 			load = <0>;
 			entry = <0>;
+			hash-1 {
+				algo = "sha256";
+			};
 		};
 
 		ramdisk-1 {
