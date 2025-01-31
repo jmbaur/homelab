@@ -143,6 +143,34 @@ jobs:
         CACHE_SIGNING_KEY: ${{ secrets.CACHE_SIGNING_KEY }}
       name: Build garlic
       run: nix run .#buildNixosConfigCI -- garlic
+  build-pea:
+    needs:
+    - test
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-24.04-arm
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@main
+      with:
+        tool-cache: true
+    - uses: DeterminateSystems/nix-installer-action@main
+      with:
+        extra-conf: 'extra-substituters = https://cache.jmbaur.com
+
+          extra-trusted-public-keys = cache.jmbaur.com:C3ku8BNDXgfTO7dNHK+eojm4uy7Gvotwga+EV0cfhPQ=
+
+          '
+    - uses: DeterminateSystems/magic-nix-cache-action@main
+    - env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        CACHE_SIGNING_KEY: ${{ secrets.CACHE_SIGNING_KEY }}
+      name: Build pea
+      run: nix run .#buildNixosConfigCI -- pea
   build-potato:
     needs:
     - test
