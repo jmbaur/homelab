@@ -70,6 +70,7 @@ in
         cachix
         carapace
         cntr
+        comma
         copy
         curl
         dig
