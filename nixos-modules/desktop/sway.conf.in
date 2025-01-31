@@ -27,9 +27,11 @@ input "1:1:AT_Translated_Set_2_keyboard" {
 	xkb_variant "@xkbVariant@"
 }
 
-input "type:keyboard" {
-	repeat_delay 300
-	repeat_rate 50
+input "0:0:cros_ec" {
+	xkb_layout "@xkbLayout@"
+	xkb_model "@xkbModel@"
+	xkb_options "@xkbOptions@"
+	xkb_variant "@xkbVariant@"
 }
 
 input "type:keyboard" {

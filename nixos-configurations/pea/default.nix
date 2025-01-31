@@ -75,11 +75,9 @@ in
       ) { };
     }
     {
-      # programs.sway.enable = true;
-
-      networking.wireless.iwd.enable = true;
-      custom.normalUser.enable = true;
-      custom.basicNetwork.enable = true;
+      custom.desktop.enable = true;
+      custom.common.nativeBuild = true;
+      custom.dev.enable = true;
     }
   ];
 }
