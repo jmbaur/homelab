@@ -5,13 +5,7 @@ declare kexec_jq
 choice=${1:-}
 
 if [[ -z $choice ]]; then
-	declare -a choices
-
-	while read -r system_closure; do
-		choices+=("$system_closure")
-	done < <(find /nix/var/nix/profiles -name 'system-*')
-
-	choice=$(echo "${choices[@]}" | zf)
+	choice=$(find /nix/var/nix/profiles -name 'system-*' | zf)
 fi
 
 if [[ -z $choice ]]; then
