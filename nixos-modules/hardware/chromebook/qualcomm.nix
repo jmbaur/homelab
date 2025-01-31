@@ -9,11 +9,13 @@
 
   config = lib.mkIf config.hardware.chromebook.qualcomm {
     boot.kernelPackages = pkgs.linuxPackages_latest;
+
     boot.kernelParams = [
       "pd_ignore_unused"
       "clk_ignore_unused"
       "console=ttyMSM0,115200"
     ];
+
     boot.kernelPatches = [
       {
         name = "qcom-enablement";
@@ -60,6 +62,7 @@
         };
       }
     ];
+
     boot.initrd.availableKernelModules = [
       "dispcc-sc7180"
       "extcon-qcom-spmi-misc"
