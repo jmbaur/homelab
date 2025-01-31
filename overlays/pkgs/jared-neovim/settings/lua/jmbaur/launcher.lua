@@ -1,7 +1,7 @@
 local fzf_lua = require("fzf-lua")
 
 fzf_lua.setup({
-	files = { previewer = false },
+	files = { previewer = false, git_icons = false },
 	winopts = {
 		split = "botright 15new",
 		border = "single",
