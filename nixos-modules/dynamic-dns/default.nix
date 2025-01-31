@@ -42,12 +42,13 @@ in
     sops.secrets.ipwatch_env = { };
 
     users.groups.cloudflare = { };
-    systemd.tmpfiles.settings."10-update-cloudflare".${config.systemd.paths.update-cloudflare.pathConfig.PathChanged} = {
-      f.group = config.users.groups.cloudflare.name;
-      f.mode = "0660";
-      z.group = config.users.groups.cloudflare.name;
-      z.mode = "0660";
-    };
+    systemd.tmpfiles.settings."10-update-cloudflare".${config.systemd.paths.update-cloudflare.pathConfig.PathChanged} =
+      {
+        f.group = config.users.groups.cloudflare.name;
+        f.mode = "0660";
+        z.group = config.users.groups.cloudflare.name;
+        z.mode = "0660";
+      };
 
     systemd.services.ipwatch.serviceConfig = {
       SupplementaryGroups = [ config.users.groups.cloudflare.name ];
