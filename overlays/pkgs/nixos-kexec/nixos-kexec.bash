@@ -5,7 +5,7 @@ declare kexec_jq
 choice=${1:-}
 
 if [[ -z $choice ]]; then
-	choice=$(find /nix/var/nix/profiles -name 'system-*' | zf)
+	choice=$(find /nix/var/nix/profiles -name 'system-*' | tac | zf)
 fi
 
 if [[ -z $choice ]]; then

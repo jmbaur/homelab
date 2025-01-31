@@ -1,4 +1,5 @@
 {
+  coreutils-full,
   jq,
   lib,
   writeShellApplication,
@@ -9,6 +10,7 @@ writeShellApplication {
   name = "nixos-kexec";
 
   runtimeInputs = [
+    coreutils-full
     jq
     zf
   ];
