@@ -8,18 +8,7 @@
 {
   config = lib.mkMerge [
     {
-      nixpkgs.hostPlatform = {
-        config = "aarch64-unknown-linux-gnu";
-        linux-kernel = {
-          name = "aarch64-multiplatform";
-          DTB = true;
-          baseConfig = "defconfig";
-          preferBuiltin = true;
-          autoModules = true;
-          target = "Image";
-        };
-        gcc.arch = "armv8-a";
-      };
+      nixpkgs.hostPlatform = "aarch64-linux";
 
       boot.kernelPackages = pkgs.linuxPackages_latest;
 
@@ -81,37 +70,77 @@
       custom.server.enable = true;
       custom.basicNetwork.enable = true;
       custom.recovery.targetDisk = "/dev/disk/by-path/platform-a41000000.pcie-pci-0004:41:00.0-nvme-1";
+      custom.common.nativeBuild = true;
     }
-    {
-      services.woodpecker-server = {
-        enable = true;
-        environment = {
-          WOODPECKER_GRPC_ADDR = "[::]:9000";
-          WOODPECKER_HOST = "${config.networking.hostName}.internal";
-          WOODPECKER_METRICS_SERVER_ADDR = "[::]:9090";
-          WOODPECKER_SERVER_ADDR = "[::]:8000";
+    (
+      let
+        gitUser = config.users.users.git;
+      in
+      {
+        users.groups.git = { };
+        users.users.git = {
+          isSystemUser = true;
+          home = "/var/lib/git";
+          createHome = false;
+          group = config.users.groups.git.name;
+          shell = lib.getExe' pkgs.git "git-shell";
+          openssh.authorizedKeys.keys = [
+            "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIBhCHaXn5ghEJQVpVZr4hOajD6Zp/0PO4wlymwfrg/S5AAAABHNzaDo="
+            "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIHRlxBSW3BzX33FG7444p/M5lb9jYR5OkjS2jPpnuXozAAAABHNzaDo="
+          ];
         };
-      };
 
-      services.woodpecker-agents.agents.exec = {
-        enable = true;
-
-        environment = {
-          WOODPECKER_SERVER = "[::1]:9000";
-          WOODPECKER_BACKEND = "local";
+        systemd.tmpfiles.settings.git-home = {
+          ${gitUser.home}.d = {
+            mode = "700";
+            user = gitUser.name;
+            group = gitUser.group;
+          };
+          "${gitUser.home}/git-shell-commands"."L+".argument =
+            "${pkgs.homelab-git-shell-commands}/git-shell-commands";
         };
 
-        path = [
-          # Needed to clone repos
-          pkgs.git
-          pkgs.git-lfs
-          pkgs.woodpecker-plugin-git
-          # Used by the runner as the default shell
-          pkgs.bash
-          # Most likely to be used in pipeline definitions
-          pkgs.coreutils
-        ];
-      };
-    }
+        services.static-web-server = {
+          enable = true;
+          listen = "[::]:80";
+          root = "/var/lib/git-html";
+          configuration.general = {
+            directory-listing = true;
+          };
+        };
+
+        custom.yggdrasil.all.allowedTCPPorts = [ 80 ];
+
+        systemd.services.update-repository-html = {
+          startAt = [ "daily" ];
+          serviceConfig = {
+            User = gitUser.name;
+            Group = gitUser.group;
+            StateDirectory = "git-html";
+          };
+
+          path = [
+            pkgs.imagemagick
+            pkgs.stagit
+          ];
+
+          script = ''
+            logo="''${STATE_DIRECTORY}/logo.png"
+            magick -size 100x100 xc:#1f3023 "$logo"
+
+            while read -r repo_dir; do
+              repo_name=$(basename "$repo_dir")
+              html_dir="''${STATE_DIRECTORY}/''${repo_name}"
+              mkdir -p "$html_dir"
+              pushd "$html_dir"
+              stagit "$repo_dir"
+              ln -sf "''${html_dir}/files.html" "''${html_dir}/index.html"
+              ln -sf "$logo" "''${html_dir}/logo.png"
+              popd
+            done < <(find ${gitUser.home} -maxdepth 1 -mindepth 1 -type d)
+          '';
+        };
+      }
+    )
   ];
 }
