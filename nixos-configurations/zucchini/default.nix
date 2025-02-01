@@ -104,9 +104,6 @@
           enable = true;
           listen = "[::]:80";
           root = "/var/lib/git-html";
-          configuration.general = {
-            directory-listing = true;
-          };
         };
 
         custom.yggdrasil.all.allowedTCPPorts = [ 80 ];
@@ -128,7 +125,9 @@
             logo="''${STATE_DIRECTORY}/logo.png"
             magick -size 100x100 xc:#1f3023 "$logo"
 
+            declare -a repos
             while read -r repo_dir; do
+              repos+=("$repo_dir")
               repo_name=$(basename "$repo_dir")
               html_dir="''${STATE_DIRECTORY}/''${repo_name}"
               mkdir -p "$html_dir"
@@ -138,6 +137,8 @@
               ln -sf "$logo" "''${html_dir}/logo.png"
               popd
             done < <(find ${gitUser.home} -maxdepth 1 -mindepth 1 -type d)
+
+            stagit-index "''${repos[@]}" >"''${STATE_DIRECTORY}/index.html"
           '';
         };
       }
