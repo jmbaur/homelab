@@ -1,8 +1,14 @@
 {
   lib,
+  libgit2,
+  openssl,
+  pkg-config,
   rustPlatform,
 }:
 
+let
+  commands = [ "clone" ];
+in
 rustPlatform.buildRustPackage rec {
   pname = "homelab-git-shell-commands";
   version = "0.1.0";
@@ -18,9 +24,15 @@ rustPlatform.buildRustPackage rec {
 
   cargoLock.lockFile = ./Cargo.lock;
 
+  nativeBuildInputs = [ pkg-config ];
+  buildInputs = [
+    libgit2
+    openssl
+  ];
+
   postInstall = ''
     mkdir -p $out/git-shell-commands
-    for command in foo bar; do
+    for command in ${toString commands}; do
       ln -sf $out/bin/${pname} $out/git-shell-commands/$command
     done
   '';
