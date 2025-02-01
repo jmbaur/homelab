@@ -100,6 +100,7 @@ inputs.nixpkgs.lib.genAttrs allHosts (
           custom.yggdrasil.nodes = {
             cauliflower.allowAll = true;
             broccoli.allowAll = true;
+            pea.allowAll = true;
           };
 
           custom.backup.sender = {
