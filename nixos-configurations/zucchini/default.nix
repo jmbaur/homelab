@@ -106,7 +106,18 @@
           root = "/var/lib/git-html";
         };
 
-        custom.yggdrasil.all.allowedTCPPorts = [ 80 ];
+        sops.secrets.nix = { };
+
+        services.harmonia = {
+          enable = true;
+          signKeyPaths = [ config.sops.secrets.nix.path ];
+          settings.bind = "[::]:5000";
+        };
+
+        custom.yggdrasil.all.allowedTCPPorts = [
+          80
+          5000
+        ];
 
         systemd.services.update-repository-html = {
           startAt = [ "daily" ];
