@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   inherit (lib)
@@ -20,6 +25,8 @@ in
     hardware.enableRedistributableFirmware = true;
 
     hardware.deviceTree.name = "mediatek/mt8192-asurada-spherion-r0.dtb";
+
+    boot.kernelPackages = pkgs.linuxPackages_latest;
 
     boot.kernelParams = [
       "console=ttyS0,115200"
