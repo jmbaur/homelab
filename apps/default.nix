@@ -90,7 +90,7 @@ inputs.nixpkgs.lib.mapAttrs (
               readarray -t cargo_tomls < <(find ./overlays/pkgs -type f -name "Cargo.toml")
               for cargo_toml in "''${cargo_tomls[@]}"; do
                 pushd "$(dirname "$cargo_toml")"
-                nix develop ".#$(basename "$(dirname "$cargo_toml")")" --command cargo update
+                nix develop ".#$(basename "$(dirname "$cargo_toml")")" --command cargo update --verbose
                 popd
               done
             '';
