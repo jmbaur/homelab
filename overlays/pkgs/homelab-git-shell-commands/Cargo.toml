@@ -6,4 +6,3 @@ edition = "2021"
 [dependencies]
 git2 = "0.20.0"
 rprompt = "2.1.1"
-url = "2.5.4"

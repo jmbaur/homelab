@@ -106,7 +106,10 @@
           root = "/var/lib/git-html";
         };
 
-        sops.secrets.nix = { };
+        sops.secrets = {
+          nix = { };
+          mirror = { };
+        };
 
         services.harmonia = {
           enable = true;

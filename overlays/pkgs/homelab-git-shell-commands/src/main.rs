@@ -1,7 +1,81 @@
-use std::path::PathBuf;
+use std::{env::Args, path::PathBuf};
 
-use git2::build::RepoBuilder;
-use url::Url;
+use git2::{Repository, RepositoryInitOptions};
+
+const CARGO_PKG_NAME: &str = env!("CARGO_PKG_NAME");
+static COMMANDS: &[(&str, fn(Args))] = &[("help", help), ("create", create), ("list", list)];
+
+fn help(mut _args: Args) {
+    eprintln!("Possible commands:");
+
+    for (command, _) in COMMANDS {
+        eprintln!("\t{command}");
+    }
+}
+
+fn create(mut args: Args) {
+    let repo_dir = PathBuf::from(std::env::var("HOME").expect("failed to get $HOME"));
+
+    let name = match args.next() {
+        Some(name) => name,
+        None => rprompt::prompt_reply("name: ").expect("failed to get repository name"),
+    };
+
+    let description =
+        rprompt::prompt_reply("description: ").expect("failed to get repository description");
+
+    let mut init_opts = RepositoryInitOptions::new();
+
+    init_opts
+        .bare(true)
+        .description(&description)
+        .mkpath(true)
+        .no_reinit(true)
+        .no_dotgit_dir(true);
+
+    let repo =
+        Repository::init_opts(repo_dir.join(name), &init_opts).expect("failed to init repository");
+
+    let setup_mirror = rprompt::prompt_reply("setup mirror [y/N]: ")
+        .expect("")
+        .to_uppercase()
+        .starts_with("Y");
+
+    if setup_mirror {
+        let _remote = repo
+            .remote(
+                "mirror",
+                rprompt::prompt_reply("mirror url: ")
+                    .expect("failed to get mirror url")
+                    .as_str(),
+            )
+            .expect("failed to add remote");
+
+        let mut config = repo.config().expect("failed to get repo config");
+
+        config
+            .set_bool("remote.mirror.mirror", true)
+            .expect("failed to update repo config");
+    }
+}
+
+fn list(mut _args: Args) {
+    let read_dir = std::fs::read_dir(std::env::var("HOME").expect("failed to get $HOME"))
+        .expect("failed to open repo directory");
+
+    for entry in read_dir {
+        let entry = entry.expect("failed to get entry");
+        if let Ok(_repo) = Repository::open(entry.path()) {
+            println!(
+                "{}",
+                entry
+                    .file_name()
+                    .to_str()
+                    .expect("failed to convert OsStr to &str")
+            );
+        }
+    }
+}
 
 fn main() {
     let mut args = std::env::args();
@@ -13,51 +87,20 @@ fn main() {
         let command = argv0_path.file_name().expect("missing argv0");
 
         match command.to_str().expect("failed to convert OsStr to str") {
-            "homelab-git-shell-commands" => {
+            CARGO_PKG_NAME => {
                 argv0 = args.next().expect("missing argv0");
                 continue;
             }
-            "clone" => clone(args),
             command => {
-                eprintln!("unknown command {}", command);
+                for (cmd, function) in COMMANDS {
+                    if cmd == &command {
+                        return function(args);
+                    }
+                }
+
+                eprintln!("unknown command");
                 std::process::exit(1);
             }
         }
-
-        break;
     }
-}
-
-fn clone(mut args: std::env::Args) {
-    let home = PathBuf::from(std::env::var("HOME").expect("$HOME not set"));
-
-    let repo_url = args.next().expect("missing repository URL argument");
-
-    let url = Url::parse(&repo_url).expect("invalid repository URL");
-
-    let description =
-        rprompt::prompt_reply("description: ").expect("failed to get repository description");
-
-    let basename = url
-        .path_segments()
-        .expect("failed to get path segments for repository URL")
-        .last()
-        .expect("failed to create name for repository clone");
-
-    let destination = home.join(&basename);
-
-    let mut _repo = RepoBuilder::new()
-        .bare(true)
-        .clone(&repo_url, destination.as_path())
-        .expect("failed to clone");
-
-    std::fs::write(
-        destination.join("description"),
-        if !description.is_empty() {
-            description.as_str()
-        } else {
-            basename
-        },
-    )
-    .expect("failed to write description");
 }

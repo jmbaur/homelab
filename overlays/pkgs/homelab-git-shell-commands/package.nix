@@ -7,7 +7,11 @@
 }:
 
 let
-  commands = [ "clone" ];
+  commands = [
+    "help"
+    "create"
+    "list"
+  ];
 in
 rustPlatform.buildRustPackage rec {
   pname = "homelab-git-shell-commands";
