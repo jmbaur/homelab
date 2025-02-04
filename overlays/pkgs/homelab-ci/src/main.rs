@@ -26,14 +26,16 @@ async fn main() -> Result<(), async_nats::Error> {
     let mut subscriber = client.subscribe("ci").await?;
 
     while let Some(message) = subscriber.next().await {
-        println!("Received message {:?}", message);
-
         let Ok(git_archive_path) = String::from_utf8(message.payload.to_vec()) else {
+            eprintln!("invalid UTF8");
             continue;
         };
+        println!("Received archive {}", &git_archive_path);
+
         let git_archive_path = PathBuf::from(git_archive_path);
 
         let Some(git_archive_name) = git_archive_path.file_name() else {
+            eprintln!("no filename on git archive path");
             continue;
         };
 
@@ -53,10 +55,16 @@ async fn main() -> Result<(), async_nats::Error> {
         git_archive_name.set_extension(timestamp.to_string());
         let unpack_path = state_directory.join(git_archive_name);
 
-        let tar_gz = std::fs::File::open(git_archive_path.as_path())?;
+        let Ok(tar_gz) = std::fs::File::open(git_archive_path.as_path()) else {
+            eprintln!("failed to open git archive");
+            continue;
+        };
         let tar = GzDecoder::new(tar_gz);
         let mut archive = Archive::new(tar);
-        archive.unpack(&unpack_path)?;
+        if let Err(err) = archive.unpack(&unpack_path) {
+            eprintln!("failed to unpack git archive: {}", err);
+            continue;
+        };
 
         let mut command = tokio::process::Command::new(&ci_program);
         command.current_dir(&unpack_path);
