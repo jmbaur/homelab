@@ -84,13 +84,17 @@
           createHome = false;
           group = config.users.groups.git.name;
           shell = lib.getExe' pkgs.git "git-shell";
+          packages = [
+            pkgs.git
+            pkgs.natscli # for `nats pub`
+          ];
           openssh.authorizedKeys.keys = [
             "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIBhCHaXn5ghEJQVpVZr4hOajD6Zp/0PO4wlymwfrg/S5AAAABHNzaDo="
             "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIHRlxBSW3BzX33FG7444p/M5lb9jYR5OkjS2jPpnuXozAAAABHNzaDo="
           ];
         };
 
-        systemd.tmpfiles.settings.git-home = {
+        systemd.tmpfiles.settings."10-git-home" = {
           ${gitUser.home}.d = {
             mode = "700";
             user = gitUser.name;
@@ -117,9 +121,12 @@
           settings.bind = "[::]:5000";
         };
 
+        services.nats.enable = true;
+
         custom.yggdrasil.all.allowedTCPPorts = [
-          80
           5000
+          80
+          config.services.nats.port
         ];
 
         systemd.services.update-repository-html = {
@@ -128,6 +135,7 @@
             User = gitUser.name;
             Group = gitUser.group;
             StateDirectory = "git-html";
+            RuntimeDirectory = "git-html";
           };
 
           path = [
@@ -137,27 +145,32 @@
           ];
 
           script = ''
-            logo="''${STATE_DIRECTORY}/logo.png"
-            magick -size 100x100 xc:#1f3023 "$logo"
+            new_html_dir=$(mktemp --directory --tmpdir="$RUNTIME_DIRECTORY")
+            trap 'rm -rf $new_html_dir' EXIT
+
+            magick -size 100x100 xc:#1f3023 "''${new_html_dir}/logo.png"
 
             declare -a repos
             while read -r repo_dir; do
-              if [[ $(git -C "$repo_dir" rev-parse --is-bare-repository) != "true" ]]; then
+              if [[ $(git -C "$repo_dir" rev-parse --is-bare-repository 2>/dev/null) != "true" ]]; then
                 continue
               fi
 
               repos+=("$repo_dir")
               repo_name=$(basename "$repo_dir")
-              html_dir="''${STATE_DIRECTORY}/''${repo_name}"
-              mkdir -p "$html_dir"
-              pushd "$html_dir"
+              repo_html_dir="''${new_html_dir}/''${repo_name}"
+              echo "Creating HTML for repository $repo_name"
+              mkdir -p "$repo_html_dir"
+              pushd "$repo_html_dir" >/dev/null || exit
               stagit "$repo_dir"
-              ln -sf "''${html_dir}/files.html" "''${html_dir}/index.html"
-              ln -sf "$logo" "''${html_dir}/logo.png"
-              popd
+              ln -sf "''${STATE_DIRECTORY}/logo.png" "''${repo_html_dir}/logo.png"
+              popd >/dev/null || exit
             done < <(find ${gitUser.home} -maxdepth 1 -mindepth 1 -type d)
 
-            stagit-index "''${repos[@]}" >"''${STATE_DIRECTORY}/index.html"
+            stagit-index "''${repos[@]}" >"''${new_html_dir}/index.html"
+
+            rm -rf $STATE_DIRECTORY/*
+            mv $new_html_dir/* "$STATE_DIRECTORY"
           '';
         };
       }

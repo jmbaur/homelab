@@ -1,4 +1,5 @@
-use std::{env::Args, path::PathBuf};
+use std::os::unix::fs::PermissionsExt;
+use std::{env::Args, fs::Permissions, path::PathBuf};
 
 use git2::{Repository, RepositoryInitOptions};
 
@@ -14,7 +15,7 @@ fn help(mut _args: Args) {
 }
 
 fn create(mut args: Args) {
-    let repo_dir = PathBuf::from(std::env::var("HOME").expect("failed to get $HOME"));
+    let all_repo_dir = PathBuf::from(std::env::var("HOME").expect("failed to get $HOME"));
 
     let name = match args.next() {
         Some(name) => name,
@@ -34,8 +35,23 @@ fn create(mut args: Args) {
         .description(&description)
         .initial_head("refs/heads/main");
 
+    let repo_dir = all_repo_dir.join(name);
+
     let repo =
-        Repository::init_opts(repo_dir.join(name), &init_opts).expect("failed to init repository");
+        Repository::init_opts(repo_dir.as_path(), &init_opts).expect("failed to init repository");
+
+    let post_receive = repo_dir.join("hooks/post-receive");
+    std::fs::write(
+        post_receive.as_path(),
+        "#!/bin/sh\nnats pub ci \"$(cat /dev/stdin)\"",
+    )
+    .expect("failed to write post-receive hook");
+    let post_receive_file = std::fs::OpenOptions::new()
+        .open(post_receive.as_path())
+        .expect("failed to open post-receive file");
+    post_receive_file
+        .set_permissions(Permissions::from_mode(0o700))
+        .expect("failed to mark post-receive as executable");
 
     let setup_mirror = rprompt::prompt_reply("setup mirror [y/N]: ")
         .expect("")
