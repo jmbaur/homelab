@@ -28,10 +28,11 @@ fn create(mut args: Args) {
 
     init_opts
         .bare(true)
-        .description(&description)
         .mkpath(true)
         .no_reinit(true)
-        .no_dotgit_dir(true);
+        .no_dotgit_dir(true)
+        .description(&description)
+        .initial_head("refs/heads/main");
 
     let repo =
         Repository::init_opts(repo_dir.join(name), &init_opts).expect("failed to init repository");
