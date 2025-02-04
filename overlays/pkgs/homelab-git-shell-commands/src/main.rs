@@ -40,18 +40,10 @@ fn create(mut args: Args) {
     let repo =
         Repository::init_opts(repo_dir.as_path(), &init_opts).expect("failed to init repository");
 
+    let generic_post_receive = all_repo_dir.join("post-receive");
     let post_receive = repo_dir.join("hooks/post-receive");
-    std::fs::write(
-        post_receive.as_path(),
-        "#!/bin/sh\nnats pub ci \"$(readlink --canonicalize $GIT_DIR) $(cat /dev/stdin)\"",
-    )
-    .expect("failed to write post-receive hook");
-    let post_receive_file = std::fs::OpenOptions::new()
-        .open(post_receive.as_path())
-        .expect("failed to open post-receive file");
-    post_receive_file
-        .set_permissions(Permissions::from_mode(0o700))
-        .expect("failed to mark post-receive as executable");
+    std::os::unix::fs::symlink(generic_post_receive, post_receive)
+        .expect("failed to setup post-receive hook");
 
     let setup_mirror = rprompt::prompt_reply("setup mirror [y/N]: ")
         .expect("")

@@ -84,10 +84,6 @@
           createHome = false;
           group = config.users.groups.git.name;
           shell = lib.getExe' pkgs.git "git-shell";
-          packages = [
-            pkgs.git
-            pkgs.natscli # for `nats pub`
-          ];
           openssh.authorizedKeys.keys = [
             "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIBhCHaXn5ghEJQVpVZr4hOajD6Zp/0PO4wlymwfrg/S5AAAABHNzaDo="
             "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIHRlxBSW3BzX33FG7444p/M5lb9jYR5OkjS2jPpnuXozAAAABHNzaDo="
@@ -100,8 +96,28 @@
             user = gitUser.name;
             group = gitUser.group;
           };
+          "${gitUser.home}/archives"."d" = {
+            mode = "700";
+            user = gitUser.name;
+            group = gitUser.group;
+            age = "10d";
+          };
           "${gitUser.home}/git-shell-commands"."L+".argument =
             "${pkgs.homelab-git-shell-commands}/git-shell-commands";
+          "${gitUser.home}/post-receive"."L+".argument = lib.getExe (
+            pkgs.writeShellApplication {
+              name = "generic-post-receive";
+              runtimeInputs = [
+                pkgs.natscli
+                pkgs.git
+              ];
+              text = ''
+                repo=$(basename $(readlink --canonicalize $GIT_DIR))
+                rev=$(cat /dev/stdin | cut -d' ' -f2)
+                git archive --output ${gitUser.home}/archives/"$repo-$rev".tar.gz $rev
+              '';
+            }
+          );
         };
 
         services.static-web-server = {
@@ -127,6 +143,28 @@
           5000
           80
         ];
+
+        systemd.services.ci = {
+          serviceConfig = {
+            User = gitUser.name;
+            Group = gitUser.group;
+            ExecStart = toString [
+              (lib.getExe pkgs.homelab-ci)
+              (lib.getExe pkgs.writeShellApplication {
+                name = "nix-flake-ci";
+                runtimeInputs = [ config.nix.package ];
+                text = ''
+                  nix flake check --print-build-logs
+                  echo $@
+                '';
+              })
+            ];
+            StateDirectory = "ci";
+            RuntimeDirectory = "ci";
+            CacheDirectory = "ci";
+          };
+          wantedBy = [ "multi-user.target" ];
+        };
 
         systemd.services.update-repository-html = {
           startAt = [ "daily" ];
