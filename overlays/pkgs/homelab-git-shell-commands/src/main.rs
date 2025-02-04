@@ -43,7 +43,7 @@ fn create(mut args: Args) {
     let post_receive = repo_dir.join("hooks/post-receive");
     std::fs::write(
         post_receive.as_path(),
-        "#!/bin/sh\nnats pub ci \"$(cat /dev/stdin)\"",
+        "#!/bin/sh\nnats pub ci \"$(readlink --canonicalize $GIT_DIR) $(cat /dev/stdin)\"",
     )
     .expect("failed to write post-receive hook");
     let post_receive_file = std::fs::OpenOptions::new()
