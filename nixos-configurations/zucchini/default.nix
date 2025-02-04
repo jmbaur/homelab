@@ -126,7 +126,6 @@
         custom.yggdrasil.all.allowedTCPPorts = [
           5000
           80
-          config.services.nats.port
         ];
 
         systemd.services.update-repository-html = {
