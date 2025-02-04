@@ -131,6 +131,7 @@
           };
 
           path = [
+            pkgs.git
             pkgs.imagemagick
             pkgs.stagit
           ];
@@ -141,6 +142,10 @@
 
             declare -a repos
             while read -r repo_dir; do
+              if [[ $(git -C "$repo_dir" rev-parse --is-bare-repository) != "true" ]]; then
+                continue
+              fi
+
               repos+=("$repo_dir")
               repo_name=$(basename "$repo_dir")
               html_dir="''${STATE_DIRECTORY}/''${repo_name}"
