@@ -18,5 +18,8 @@ rustPlatform.buildRustPackage {
 
   cargoLock.lockFile = ./Cargo.lock;
 
-  meta.description = "Poor man's CI";
+  meta = {
+    description = "Poor man's CI";
+    mainProgram = "homelab-ci";
+  };
 }

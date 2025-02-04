@@ -112,9 +112,11 @@
                 pkgs.git
               ];
               text = ''
-                repo=$(basename $(readlink --canonicalize $GIT_DIR))
-                rev=$(cat /dev/stdin | cut -d' ' -f2)
-                git archive --output ${gitUser.home}/archives/"$repo-$rev".tar.gz $rev
+                repo=$(basename "$(readlink --canonicalize "$GIT_DIR")")
+                rev=$(cut -d' ' -f2 </dev/stdin)
+                output=${gitUser.home}/archives/"$repo-$rev".tar.gz
+                git archive --output="$output" "$rev"
+                nats pub ci "$output"
               '';
             }
           );
@@ -145,25 +147,27 @@
         ];
 
         systemd.services.ci = {
+          wantedBy = [ "multi-user.target" ];
           serviceConfig = {
             User = gitUser.name;
             Group = gitUser.group;
-            ExecStart = toString [
-              (lib.getExe pkgs.homelab-ci)
-              (lib.getExe pkgs.writeShellApplication {
-                name = "nix-flake-ci";
-                runtimeInputs = [ config.nix.package ];
-                text = ''
-                  nix flake check --print-build-logs
-                  echo $@
-                '';
-              })
-            ];
             StateDirectory = "ci";
             RuntimeDirectory = "ci";
             CacheDirectory = "ci";
+            ExecStart = toString [
+              (lib.getExe pkgs.homelab-ci)
+              "[::1]:${toString config.services.nats.port}"
+              (lib.getExe (
+                pkgs.writeShellApplication {
+                  name = "nix-flake-ci";
+                  runtimeInputs = [ config.nix.package ];
+                  text = ''
+                    nix flake check --print-build-logs
+                  '';
+                }
+              ))
+            ];
           };
-          wantedBy = [ "multi-user.target" ];
         };
 
         systemd.services.update-repository-html = {
