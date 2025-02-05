@@ -43,6 +43,9 @@ async fn main() -> Result<(), async_nats::Error> {
             let mut new_name = PathBuf::from(git_archive_name);
             while let Some(name) = new_name.file_stem() {
                 new_name = PathBuf::from(name);
+                if new_name.extension().is_none() {
+                    break;
+                }
             }
             new_name
         };
@@ -66,6 +69,7 @@ async fn main() -> Result<(), async_nats::Error> {
             continue;
         };
 
+        eprintln!("running {}", ci_program);
         let mut command = tokio::process::Command::new(&ci_program);
         command.current_dir(&unpack_path);
 
