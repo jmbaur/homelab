@@ -122,10 +122,17 @@
           );
         };
 
+        systemd.tmpfiles.settings."10-sws" = {
+          "/var/lib/sws/git"."L+".argument = "/var/lib/git-html";
+          "/var/lib/sws/ci"."L+".argument = "/var/lib/ci";
+          "/var/lib/sws".d = { };
+        };
+
         services.static-web-server = {
           enable = true;
           listen = "[::]:80";
-          root = "/var/lib/git-html";
+          root = "/var/lib/sws";
+          configuration.general.directory-listing = true;
         };
 
         sops.secrets = {
@@ -156,7 +163,7 @@
             CacheDirectory = "ci";
             ExecStart = toString [
               (lib.getExe pkgs.homelab-ci)
-              "[::1]:${toString config.services.nats.port}"
+              "nats:[::1]:${toString config.services.nats.port}"
               (lib.getExe (
                 pkgs.writeShellApplication {
                   name = "nix-flake-ci";

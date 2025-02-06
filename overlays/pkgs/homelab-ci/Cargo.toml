@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+anyhow = "1.0.95"
 async-nats = "0.38.0"
 flate2 = "1.0.35"
 futures = "0.3.31"
