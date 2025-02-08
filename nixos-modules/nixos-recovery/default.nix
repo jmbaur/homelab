@@ -79,6 +79,7 @@ let
     # get them by inheriting config.boot.kernelPackages (see https://github.com/nixos/nixpkgs/blob/80ddc2ca0a4ee96b330bffb4d8ec4dbf9bd16fe8/nixos/modules/system/boot/kernel.nix#L46).
     boot.kernelParams = config.boot.kernelParams;
     boot.kernelPackages = config.boot.kernelPackages;
+    boot.kernelPatches = mkForce [ ];
     boot.kernelModules = config.boot.kernelModules;
     boot.initrd.kernelModules = config.boot.initrd.kernelModules;
     boot.initrd.availableKernelModules = config.boot.initrd.availableKernelModules;
