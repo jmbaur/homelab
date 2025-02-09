@@ -1,9 +1,9 @@
 {
   coreutils-full,
+  fzf,
   jq,
   lib,
   writeShellApplication,
-  zf,
 }:
 
 writeShellApplication {
@@ -12,7 +12,7 @@ writeShellApplication {
   runtimeInputs = [
     coreutils-full
     jq
-    zf
+    fzf
   ];
 
   text =
