@@ -30,6 +30,7 @@
     formatter = import ./formatter.nix inputs;
     homeConfigurations = import ./home-configurations inputs;
     homeModules = import ./home-modules inputs;
+    hydraJobs = import ./hydra-jobs inputs;
     legacyPackages = import ./legacy-packages.nix inputs;
     nixosConfigurations = import ./nixos-configurations inputs;
     nixosModules = import ./nixos-modules inputs;

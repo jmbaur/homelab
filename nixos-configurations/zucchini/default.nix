@@ -72,156 +72,19 @@
       custom.recovery.targetDisk = "/dev/disk/by-path/platform-a41000000.pcie-pci-0004:41:00.0-nvme-1";
       custom.common.nativeBuild = true;
     }
-    (
-      let
-        gitUser = config.users.users.git;
-      in
-      {
-        users.groups.git = { };
-        users.users.git = {
-          isSystemUser = true;
-          home = "/var/lib/git";
-          createHome = false;
-          group = config.users.groups.git.name;
-          shell = lib.getExe' pkgs.git "git-shell";
-          openssh.authorizedKeys.keys = [
-            "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIBhCHaXn5ghEJQVpVZr4hOajD6Zp/0PO4wlymwfrg/S5AAAABHNzaDo="
-            "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIHRlxBSW3BzX33FG7444p/M5lb9jYR5OkjS2jPpnuXozAAAABHNzaDo="
-          ];
-        };
+    {
+      nix.settings.allowed-uris = [
+        "https://"
+        "github:"
+      ];
 
-        systemd.tmpfiles.settings."10-git-home" = {
-          ${gitUser.home}.d = {
-            mode = "700";
-            user = gitUser.name;
-            group = gitUser.group;
-          };
-          "${gitUser.home}/archives"."d" = {
-            mode = "700";
-            user = gitUser.name;
-            group = gitUser.group;
-            age = "10d";
-          };
-          "${gitUser.home}/git-shell-commands"."L+".argument =
-            "${pkgs.homelab-git-shell-commands}/git-shell-commands";
-          "${gitUser.home}/post-receive"."L+".argument = lib.getExe (
-            pkgs.writeShellApplication {
-              name = "generic-post-receive";
-              runtimeInputs = [
-                pkgs.natscli
-                pkgs.git
-              ];
-              text = ''
-                repo=$(basename "$(readlink --canonicalize "$GIT_DIR")")
-                rev=$(cut -d' ' -f2 </dev/stdin)
-                output=${gitUser.home}/archives/"$repo-$rev".tar.gz
-                git archive --output="$output" "$rev"
-                nats pub ci "$output"
-              '';
-            }
-          );
-        };
-
-        systemd.tmpfiles.settings."10-sws" = {
-          "/var/lib/sws/git"."L+".argument = "/var/lib/git-html";
-          "/var/lib/sws/ci"."L+".argument = "/var/lib/ci";
-          "/var/lib/sws".d = { };
-        };
-
-        services.static-web-server = {
-          enable = true;
-          listen = "[::]:80";
-          root = "/var/lib/sws";
-          configuration.general.directory-listing = true;
-        };
-
-        sops.secrets = {
-          nix = { };
-          mirror = { };
-        };
-
-        services.harmonia = {
-          enable = true;
-          signKeyPaths = [ config.sops.secrets.nix.path ];
-          settings.bind = "[::]:5000";
-        };
-
-        services.nats.enable = true;
-
-        custom.yggdrasil.all.allowedTCPPorts = [
-          5000
-          80
-        ];
-
-        systemd.services.ci = {
-          wantedBy = [ "multi-user.target" ];
-          serviceConfig = {
-            User = gitUser.name;
-            Group = gitUser.group;
-            StateDirectory = "ci";
-            RuntimeDirectory = "ci";
-            CacheDirectory = "ci";
-            ExecStart = toString [
-              (lib.getExe pkgs.homelab-ci)
-              "nats:[::1]:${toString config.services.nats.port}"
-              (lib.getExe (
-                pkgs.writeShellApplication {
-                  name = "nix-flake-ci";
-                  runtimeInputs = [ config.nix.package ];
-                  text = ''
-                    nix flake check --print-build-logs
-                  '';
-                }
-              ))
-            ];
-          };
-        };
-
-        systemd.services.update-repository-html = {
-          startAt = [ "daily" ];
-          serviceConfig = {
-            User = gitUser.name;
-            Group = gitUser.group;
-            StateDirectory = "git-html";
-            RuntimeDirectory = "git-html";
-          };
-
-          path = [
-            pkgs.git
-            pkgs.imagemagick
-            pkgs.stagit
-          ];
-
-          script = ''
-            new_html_dir=$(mktemp --directory --tmpdir="$RUNTIME_DIRECTORY")
-            trap 'rm -rf $new_html_dir' EXIT
-
-            magick -size 100x100 xc:#1f3023 "''${new_html_dir}/logo.png"
-
-            declare -a repos
-            while read -r repo_dir; do
-              if [[ $(git -C "$repo_dir" rev-parse --is-bare-repository 2>/dev/null) != "true" ]]; then
-                continue
-              fi
-
-              repos+=("$repo_dir")
-              repo_name=$(basename "$repo_dir")
-              repo_html_dir="''${new_html_dir}/''${repo_name}"
-              echo "Creating HTML for repository $repo_name"
-              mkdir -p "$repo_html_dir"
-              pushd "$repo_html_dir" >/dev/null || exit
-              stagit "$repo_dir"
-              ln -sf "''${STATE_DIRECTORY}/logo.png" "''${repo_html_dir}/logo.png"
-              popd >/dev/null || exit
-            done < <(find ${gitUser.home} -maxdepth 1 -mindepth 1 -type d)
-
-            stagit-index "''${repos[@]}" >"''${new_html_dir}/index.html"
-
-            rm -rf $STATE_DIRECTORY/*
-            mv $new_html_dir/* "$STATE_DIRECTORY"
-          '';
-        };
-      }
-    )
+      services.hydra = {
+        enable = true;
+        hydraURL = "http://localhost:3000";
+        notificationSender = "hydra@localhost";
+        buildMachinesFiles = [ ];
+        useSubstitutes = true;
+      };
+    }
   ];
 }
