@@ -93,6 +93,8 @@
 
       zramSwap.memoryPercent = 200;
 
+      systemd.services.hydra-evaluator.environment.GC_DONT_GC = "1"; # https://github.com/NixOS/nix/issues/4178#issuecomment-738886808
+
       services.hydra = {
         enable = true;
         hydraURL = "http://localhost:3000";
