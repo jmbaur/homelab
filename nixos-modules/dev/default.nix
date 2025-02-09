@@ -37,10 +37,11 @@ in
 
       emulatedSystems =
         lib.optionals pkgs.stdenv.hostPlatform.isAarch64 [
-          "riscv32-linux"
-          "riscv64-linux"
-          "i686-linux"
-          "x86_64-linux"
+          # TODO(jared): pkgsStatic.qemu-user doesn't build right now
+          # "riscv32-linux"
+          # "riscv64-linux"
+          # "i686-linux"
+          # "x86_64-linux"
         ]
         ++ lib.optionals pkgs.stdenv.hostPlatform.isx86_64 [
           "riscv32-linux"
