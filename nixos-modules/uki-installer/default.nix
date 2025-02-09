@@ -17,7 +17,10 @@ let
   cfg = config.custom.ukiInstaller;
 in
 {
-  options.custom.ukiInstaller.enable = mkEnableOption "UKI/systemd-boot/systemd-stub bootloader installer";
+  options.custom.ukiInstaller = {
+    enable = mkEnableOption "UKI/systemd-boot/systemd-stub bootloader installer";
+    enrollMicrosoft = mkEnableOption "include microsoft keys in key enrollment";
+  };
 
   config = mkIf cfg.enable {
     boot.bootspec.extensions."custom.ukify.v1" = {
@@ -74,6 +77,7 @@ in
             declare -r efi_sys_mount_point=${config.boot.loader.efi.efiSysMountPoint}
             declare -r fwupd_efi=${optionalString config.services.fwupd.enable "${pkgs.fwupd-efi}/libexec/fwupd/efi/fwupd${pkgs.stdenv.hostPlatform.efiArch}.efi"}
             declare -r ukify_jq=${./ukify.jq}
+            declare -r enroll_microsoft=${toString cfg.enrollMicrosoft}
             ${fileContents ./uki-installer.bash}
           '';
         }
