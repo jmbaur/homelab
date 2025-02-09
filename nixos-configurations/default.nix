@@ -68,12 +68,12 @@ inputs.nixpkgs.lib.genAttrs allHosts (
 
           nix.settings.substituters = [
             "https://cache.jmbaur.com"
-            "http://zucchini.internal:5000"
+            "http://broccoli.internal:5000"
           ];
 
           nix.settings.trusted-public-keys = [
             "cache.jmbaur.com:C3ku8BNDXgfTO7dNHK+eojm4uy7Gvotwga+EV0cfhPQ="
-            "zucchini-1:hrEYpvF3goDzYpcghBVeab+eqRQxmg3e+SFcSQilzKA="
+            "zucchini-1:hrEYpvF3goDzYpcghBVeab+eqRQxmg3e+SFcSQilzKA=" # TODO(jared): re-key & rename
           ];
 
           custom.normalUser.username = lib.mkDefault "jared";
@@ -81,7 +81,7 @@ inputs.nixpkgs.lib.genAttrs allHosts (
           custom.common.enable = lib.mkDefault true;
           custom.update = {
             enable = lib.mkDefault true;
-            endpoint = lib.mkDefault "http://zucchini.internal:3000/job/homelab/main/${pkgs.stdenv.buildPlatform.system}.${config.networking.hostName}/latest";
+            endpoint = lib.mkDefault "http://broccoli.internal:3000/job/homelab/main/${pkgs.stdenv.buildPlatform.system}.${config.networking.hostName}/latest";
           };
           custom.recovery.enable = lib.mkDefault true;
 
