@@ -80,6 +80,8 @@
         "github:"
       ];
 
+      zramSwap.memoryPercent = 200;
+
       services.hydra = {
         enable = true;
         hydraURL = "http://localhost:3000";
