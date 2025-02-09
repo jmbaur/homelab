@@ -73,6 +73,8 @@
       custom.common.nativeBuild = true;
     }
     {
+      nix.settings.allow-import-from-derivation = false;
+
       nix.settings.allowed-uris = [
         "https://"
         "github:"
