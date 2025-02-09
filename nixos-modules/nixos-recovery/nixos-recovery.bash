@@ -12,12 +12,14 @@ function error_handler() {
 }
 trap error_handler ERR
 
-read -ra keys < <(nix --experimental-features nix-command config show trusted-public-keys)
-
 # get the nix output path to our toplevel, used at the end
-toplevel=$(curl --silent --fail "$update_endpoint")
-toplevel_sig=$(curl --silent --fail "${update_endpoint}.sig")
-nix-key verify <(echo -n "$toplevel") <(echo -n "$toplevel_sig") "${keys[@]}"
+toplevel=$(curl \
+	--location \
+	--silent \
+	--fail \
+	--write-out "%{stderr}request for toplevel path returned with status %{http_code}\n" \
+	--header "Accept: application/json" \
+	"$update_endpoint" | jq --raw-output ".buildoutputs.out.path")
 
 # systemd-repart requires a GPT to exist on disk, but we should only touch the
 # disk if it isn't already what we are using.

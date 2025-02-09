@@ -55,7 +55,7 @@ in
               runtimeInputs = [
                 config.nix.package
                 pkgs.curl
-                pkgs.nix-key
+                pkgs.jq
               ];
               text = fileContents ./nixos-update.bash;
             }

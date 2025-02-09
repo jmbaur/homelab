@@ -8,7 +8,6 @@
       custom.recovery.targetDisk = "/dev/disk/by-path/platform-f06e0000.mmc";
       custom.server.enable = true;
       custom.basicNetwork.enable = true;
-      custom.common.nativeBuild = true;
 
       fileSystems."/var" = {
         fsType = "btrfs";

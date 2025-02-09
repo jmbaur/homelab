@@ -30,6 +30,7 @@
       ];
     }
     {
+      custom.common.nativeBuild = true;
       custom.server.enable = true;
 
       # TODO(jared): bonding

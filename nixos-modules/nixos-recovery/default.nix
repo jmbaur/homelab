@@ -36,6 +36,7 @@ let
       pkgs.cryptsetup
       pkgs.curl
       pkgs.dosfstools # mkfs.vfat
+      pkgs.jq
       pkgs.nix-key
       pkgs.util-linux # sfdisk
     ];

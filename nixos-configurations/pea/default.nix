@@ -92,7 +92,6 @@ in
     }
     {
       custom.desktop.enable = true;
-      custom.common.nativeBuild = true;
       custom.dev.enable = true;
     }
   ];

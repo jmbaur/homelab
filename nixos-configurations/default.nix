@@ -40,7 +40,12 @@ inputs.nixpkgs.lib.genAttrs allHosts (
         # Opinionated configuration that we want to be applied to all machines
         # _within_ this flake, but not necessarily exported for outside usage
         # as a module.
-        { config, lib, ... }:
+        {
+          config,
+          lib,
+          pkgs,
+          ...
+        }:
         {
           _file = "<homelab/nixos-configurations/default.nix>";
 
@@ -76,14 +81,10 @@ inputs.nixpkgs.lib.genAttrs allHosts (
           custom.common.enable = lib.mkDefault true;
           custom.update = {
             enable = lib.mkDefault true;
-            endpoint = lib.mkDefault "https://update.jmbaur.com/${config.networking.hostName}";
+            endpoint = lib.mkDefault "http://zucchini.internal:3000/job/homelab/main/${pkgs.stdenv.buildPlatform.system}.${config.networking.hostName}/latest";
           };
           custom.recovery.enable = lib.mkDefault true;
-        }
-      )
-      (
-        { config, lib, ... }:
-        {
+
           services.yggdrasil = {
             enable = true;
             persistentKeys = lib.mkDefault true;

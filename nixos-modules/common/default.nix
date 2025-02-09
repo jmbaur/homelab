@@ -33,10 +33,8 @@ in
 
       environment.systemPackages = [ pkgs.nixos-kexec ];
 
-      # We always build on x86_64-linux.
-      #
-      # "If it don't cross-compile, it don't go in the config!"
-      nixpkgs.buildPlatform = mkIf (!cfg.nativeBuild) "x86_64-linux";
+      # Default to the same build platform as our build server.
+      nixpkgs.buildPlatform = mkIf (!cfg.nativeBuild) "aarch64-linux";
 
       # CapsLock is terrible
       services.xserver.xkb.options = mkDefault "ctrl:nocaps";

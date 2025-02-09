@@ -27,5 +27,6 @@
 
   custom.desktop.enable = true;
   custom.dev.enable = true;
+  custom.common.nativeBuild = true;
   custom.recovery.targetDisk = "/dev/disk/by-path/pci-0000:01:00.0-nvme-1";
 }
