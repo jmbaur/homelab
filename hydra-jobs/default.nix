@@ -21,4 +21,10 @@ let
     ) inputs.self.nixosConfigurations
   );
 in
-mapAttrs (system: _: listToAttrs nixosConfigurations.${system}) inputs.self.legacyPackages
+mapAttrs (
+  system: _:
+  listToAttrs nixosConfigurations.${system}
+  //
+    # TODO(jared): use _hydraAggregate to gate nixosConfigurations on checks
+    inputs.self.checks.${system}
+) inputs.self.legacyPackages
