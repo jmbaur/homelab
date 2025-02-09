@@ -73,6 +73,17 @@
       custom.common.nativeBuild = true;
     }
     {
+      sops.secrets = {
+        nix = { };
+        mirror = { };
+      };
+
+      services.harmonia = {
+        enable = true;
+        signKeyPaths = [ config.sops.secrets.nix.path ];
+        settings.bind = "[::]:5000";
+      };
+
       nix.settings.allow-import-from-derivation = false;
 
       nix.settings.allowed-uris = [
