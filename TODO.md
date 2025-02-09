@@ -46,3 +46,7 @@ Recovery image doesn't work without kernel modules that allow for USB mass stora
 
 On some systems, the only python dependency is the `systemd-boot-builder.py` script.
 If we implement this ourselves, we can get rid of this dependency as well as implement some features that have yet to be implemented upstream (e.g. boot counting).
+
+# updating
+
+Take inspiration from https://determinate.systems/posts/hydra-deployment-source-of-truth/
