@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
   nixpkgs.hostPlatform = "x86_64-linux";
 
@@ -27,6 +27,6 @@
 
   custom.desktop.enable = true;
   custom.dev.enable = true;
-  custom.common.nativeBuild = true;
+  nixpkgs.buildPlatform = config.nixpkgs.hostPlatform;
   custom.recovery.targetDisk = "/dev/disk/by-path/pci-0000:01:00.0-nvme-1";
 }

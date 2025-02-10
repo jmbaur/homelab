@@ -56,6 +56,9 @@ inputs.nixpkgs.lib.genAttrs allHosts (
             }
           ];
 
+          # Default to the same build platform as our build server.
+          nixpkgs.buildPlatform = lib.mkDefault "aarch64-linux";
+
           networking.hostName = host;
 
           sops.defaultSopsFile = ./${host}/secrets.yaml;

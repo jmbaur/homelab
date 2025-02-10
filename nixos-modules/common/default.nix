@@ -20,21 +20,13 @@ let
   isNotContainer = !config.boot.isContainer;
 in
 {
-  options.custom.common = {
-    enable = mkEnableOption "common config";
-
-    # Add a way to opt-out of cross-compiled nixos machines :/
-    nativeBuild = mkEnableOption "enable native building";
-  };
+  options.custom.common.enable = mkEnableOption "common config";
 
   config = mkIf cfg.enable (mkMerge [
     {
       system.stateVersion = mkDefault "25.05";
 
       environment.systemPackages = [ pkgs.nixos-kexec ];
-
-      # Default to the same build platform as our build server.
-      nixpkgs.buildPlatform = mkIf (!cfg.nativeBuild) "aarch64-linux";
 
       # CapsLock is terrible
       services.xserver.xkb.options = mkDefault "ctrl:nocaps";
