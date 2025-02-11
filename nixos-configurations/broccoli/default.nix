@@ -37,9 +37,22 @@
         enable = true;
         hydraURL = "http://localhost:3000";
         notificationSender = "hydra@localhost";
-        buildMachinesFiles = [ ];
         useSubstitutes = true;
       };
+
+      nix.buildMachines = [
+        {
+          hostName = "localhost";
+          systems = [ "builtin" ];
+          supportedFeatures = [
+            "nixos-test"
+            "benchmark"
+            "big-parallel"
+            "kvm"
+            "gccarch-armv8-a"
+          ];
+        }
+      ];
     }
   ];
 }
