@@ -1,4 +1,10 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+
 {
   config = lib.mkMerge [
     {
@@ -43,13 +49,15 @@
       nix.buildMachines = [
         {
           hostName = "localhost";
-          systems = [ "builtin" ];
+          systems = [
+            "builtin"
+            pkgs.stdenv.hostPlatform.system
+          ];
           supportedFeatures = [
             "nixos-test"
             "benchmark"
             "big-parallel"
             "kvm"
-            "gccarch-armv8-a"
           ];
         }
       ];
