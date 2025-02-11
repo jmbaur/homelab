@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 
@@ -46,21 +45,7 @@
         useSubstitutes = true;
       };
 
-      nix.buildMachines = [
-        {
-          hostName = "localhost";
-          systems = [
-            "builtin"
-            pkgs.stdenv.hostPlatform.system
-          ];
-          supportedFeatures = [
-            "nixos-test"
-            "benchmark"
-            "big-parallel"
-            "kvm"
-          ];
-        }
-      ];
+      nix.distributedBuilds = false;
     }
   ];
 }
