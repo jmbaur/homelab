@@ -516,11 +516,11 @@
         "zig-overlay": "zig-overlay"
       },
       "locked": {
-        "lastModified": 1739294081,
-        "narHash": "sha256-HQCa5Zuo+CABvQMY/GHMvfHu48klCRO3f6BvwEQXZ5o=",
+        "lastModified": 1739338868,
+        "narHash": "sha256-D6DJVB+mkvtwsrUOWYB49I3983lZ+z/fYi6U2ZoWffg=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "75ef9cf5aa20af043a100d5954cf9e02674b0514",
+        "rev": "d9344200fb0381fd2b42e66992a88b246e0f713b",
         "type": "github"
       },
       "original": {
@@ -601,11 +601,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1739275930,
-        "narHash": "sha256-Tc8LiHKWpO0VHwoUb3aLf6Fp1exjGbqK0RdbUmCYw58=",
+        "lastModified": 1739320185,
+        "narHash": "sha256-PkKANseOVBpxdaWSWFgvyC8VXmGuMoYpGTjjNZy0tVU=",
         "owner": "mitchellh",
         "repo": "zig-overlay",
-        "rev": "163ae88f737f998b272e19c98ca6ce9a2aa02441",
+        "rev": "e24790ca464357d7286d62f3558228dfb8d81aee",
         "type": "github"
       },
       "original": {
