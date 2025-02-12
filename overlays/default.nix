@@ -42,7 +42,7 @@ inputs: {
     (final: prev: {
       nixVersions = prev.nixVersions.extend (
         _: nPrev: {
-          nix_2_25_sysroot = nPrev.nix_2_25.overrideAttrs (old: {
+          nix_2_26_sysroot = nPrev.nix_2_26.overrideAttrs (old: {
             patches = (old.patches or [ ]) ++ [ ./nix-local-overlay-store-regex.patch ];
           });
         }
