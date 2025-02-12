@@ -92,11 +92,15 @@ in
         settings = {
           auto-allocate-uids = true;
           sync-before-registering = true;
+          use-cgroups = true;
           trusted-users = [ "@wheel" ];
+          system-features = [ "uid-range" ];
           experimental-features = [
             "auto-allocate-uids"
+            "cgroups"
             "flakes"
             "nix-command"
+            "no-url-literals"
           ];
         };
       };

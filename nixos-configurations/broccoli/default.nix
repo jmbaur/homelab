@@ -1,8 +1,4 @@
-{
-  config,
-  lib,
-  ...
-}:
+{ config, lib, ... }:
 
 {
   config = lib.mkMerge [
@@ -46,6 +42,8 @@
       };
 
       nix.distributedBuilds = false;
+
+      boot.tmp.useTmpfs = true;
     }
   ];
 }
