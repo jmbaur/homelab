@@ -15,7 +15,7 @@
       custom.recovery.targetDisk = "/dev/sda"; # TODO(jared): refine this
     }
     {
-      services.kodi.enable = false;
+      services.kodi.enable = true;
     }
   ];
 }
