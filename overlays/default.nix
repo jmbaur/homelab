@@ -40,6 +40,10 @@ inputs: {
     })
     # all other packages
     (final: prev: {
+      patchNameFromSubject =
+        name:
+        (final.lib.replaceStrings [ " " "[" "]" "," "/" ":" ] [ "-" "" "" "_" "_" "" ] name) + ".patch";
+
       nixVersions = prev.nixVersions.extend (
         _: nPrev: {
           nix_2_25_sysroot = nPrev.nix_2_25.overrideAttrs (old: {

@@ -30,8 +30,8 @@ in
           buildLinux (
             args
             // {
-              version = "6.13.0";
-              modDirVersion = "6.13.0";
+              version = "6.14.0-rc2";
+              extraMeta.branch = "6.14";
 
               # TODO(jared): remove this
               ignoreConfigErrors = true;
@@ -39,13 +39,11 @@ in
               src = pkgs.fetchFromGitHub {
                 owner = "jhovold";
                 repo = "linux";
-                # wip/x1e80100-6.13
-                rev = "0df45c8ef99147234f541062be775907b28ad768";
-                hash = "sha256-IwZ/pOwiHV2d2OiTzI/eSLuEwNJhV/1Ud7QvBkMRyDs=";
+                # wip/x1e80100-6.14-rc2
+                rev = "0537e56aaca869dc6e27c16a7105864c769a0345";
+                hash = "sha256-3LaUsqRElMley3OAK1v0/MV8m7QTep/Q678Kd7/c47g=";
               };
               kernelPatches = (args.kernelPatches or [ ]);
-
-              extraMeta.branch = "6.13";
             }
             // (args.argsOverride or { })
           )

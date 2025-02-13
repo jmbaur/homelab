@@ -11,6 +11,60 @@
     boot.kernelPackages = pkgs.linuxPackages_6_12;
     boot.kernelPatches = [
       {
+        name = "mt7986a-wifi";
+        patch = pkgs.fetchpatch {
+          url = "https://raw.githubusercontent.com/openwrt/openwrt/06b37a5856ac7d0a2ddc2c0745ac1da3a01688d6/target/linux/mediatek/patches-6.6/195-dts-mt7986a-bpi-r3-leds-port-names-and-wifi-eeprom.patch";
+          excludes = [ "arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-nor.dtso" ]; # doesn't apply cleanly
+          hash = "sha256-saqnN7A8nUYPLl7JtC6BEljmb+rmuUcgDIXTb3s55UE=";
+        };
+      }
+
+      rec {
+        name = pkgs.patchNameFromSubject "PCI: mediatek-gen3: handle PERST after reset";
+        patch = pkgs.fetchpatch {
+          inherit name;
+          url = "https://lore.kernel.org/lkml/20230402131119.98805-1-linux@fw-web.de/raw";
+          hash = "sha256-qyxc9DSfyO7kB52JR4rWY36ugzvEvTHCXPwhyrcV5fc=";
+        };
+      }
+
+      rec {
+        name = pkgs.patchNameFromSubject "arm64: dts: mediatek: mt7986: fix the switch reset line on BPI-R3";
+        patch = pkgs.fetchpatch {
+          inherit name;
+          url = "https://lore.kernel.org/linux-arm-kernel/20240627075856.2314804-2-leith@bade.nz/raw";
+          hash = "sha256-3kAnvJO/R7nTaahAimMQascL9mY9K375EKsbpDRVE3E=";
+        };
+      }
+
+      rec {
+        name = pkgs.patchNameFromSubject "arm64: dts: mediatek: mt7986: add gpio-hog for boot mode switch on BPI-R3";
+        patch = pkgs.fetchpatch {
+          inherit name;
+          url = "https://lore.kernel.org/linux-arm-kernel/20240627075856.2314804-3-leith@bade.nz/raw";
+          hash = "sha256-7FQLAWYtilj+MH34UAO80mztO9igYRJy5oPGc1ts5MQ=";
+        };
+      }
+
+      rec {
+        name = pkgs.patchNameFromSubject "arm64: dts: mediatek: mt7986: add missing pin groups to BPI-R3";
+        patch = pkgs.fetchpatch {
+          inherit name;
+          url = "https://lore.kernel.org/linux-arm-kernel/20240627075856.2314804-4-leith@bade.nz/raw";
+          hash = "sha256-YibxuXNlvGrLlbfqev2aiOdprzJcXwBRpq9yOik/gjc=";
+        };
+      }
+
+      rec {
+        name = pkgs.patchNameFromSubject "arm64: dts: mediatek: mt7986: add missing UART1 CTS/RTS pins in BPI-R3";
+        patch = pkgs.fetchpatch {
+          inherit name;
+          url = "https://lore.kernel.org/linux-arm-kernel/20240627075856.2314804-5-leith@bade.nz/raw";
+          hash = "sha256-Na7r1DxEkwJg0biDlzfjK8YxZu9Bi8i0MxygORdr3Wg=";
+        };
+      }
+
+      {
         name = "mt7986a-enablement";
         patch = null;
         extraStructuredConfig = with lib.kernel; {
@@ -31,14 +85,6 @@
           PCIE_MEDIATEK_GEN3 = yes;
           PCS_MTK_LYNXI = yes;
           REGULATOR_MT6380 = yes;
-        };
-      }
-      {
-        name = "mt7986a-wifi";
-        patch = pkgs.fetchpatch {
-          url = "https://raw.githubusercontent.com/openwrt/openwrt/06b37a5856ac7d0a2ddc2c0745ac1da3a01688d6/target/linux/mediatek/patches-6.6/195-dts-mt7986a-bpi-r3-leds-port-names-and-wifi-eeprom.patch";
-          excludes = [ "arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-nor.dtso" ]; # doesn't apply cleanly
-          hash = "sha256-saqnN7A8nUYPLl7JtC6BEljmb+rmuUcgDIXTb3s55UE=";
         };
       }
     ];
