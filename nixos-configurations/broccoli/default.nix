@@ -36,6 +36,7 @@
 
       services.hydra = {
         enable = true;
+        package = pkgs.hydra.override { nix = config.nix.package; };
         hydraURL = "http://localhost:3000";
         notificationSender = "hydra@localhost";
         useSubstitutes = true;
