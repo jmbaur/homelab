@@ -4,13 +4,15 @@
   dtc,
   fetchFromGitHub,
   formats,
+  lib,
   mtdutils,
   openssl,
+  pkgsCross,
   runCommand,
+  stdenv,
   symlinkJoin,
   uboot-mt7986a_bpir3_emmc,
   writeTextDir,
-  lib,
 }:
 
 let
@@ -28,6 +30,12 @@ let
       dtc
       openssl
     ];
+    # bromimage is a pre-built binary for x86_64-linux
+    postPatch = ''
+      echo -e '#!/bin/sh\n${pkgsCross.gnu64.stdenv.hostPlatform.emulator buildPackages} tools/mediatek/bromimage/bromimage-linux-x86_64 "$@"' >tools/mediatek/bromimage/bromimage
+      chmod +x tools/mediatek/bromimage/bromimage
+    '';
+    enableParallelBuilding = true;
     extraMakeFlags = [
       "OPENSSL_DIR=${
         symlinkJoin {

@@ -93,9 +93,9 @@ in
           auto-allocate-uids = true;
           sync-before-registering = true;
           use-cgroups = true;
-          trusted-users = [ "@wheel" ];
-          system-features = [ "uid-range" ];
-          experimental-features = [
+          extra-trusted-users = [ "@wheel" ];
+          extra-system-features = [ "uid-range" ];
+          extra-experimental-features = [
             "auto-allocate-uids"
             "cgroups"
             "flakes"
