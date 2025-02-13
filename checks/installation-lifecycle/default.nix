@@ -1,4 +1,5 @@
 {
+  formats,
   inputs,
   lib,
   qemu,
@@ -26,12 +27,12 @@ testers.runNixOSTest {
           5000
         ];
 
-        systemd.tmpfiles.settings."10-sws-root"."/var/lib/updates".d = { };
+        systemd.tmpfiles.settings."10-sws-root"."/var/lib/fake-hydra".d = { };
 
         services.static-web-server = {
           enable = true;
           listen = "[::]:80";
-          root = "/var/lib/updates";
+          root = "/var/lib/fake-hydra";
         };
 
         environment.etc."nix/signing-key".source =
@@ -147,8 +148,12 @@ testers.runNixOSTest {
           os.environ["USB_STICK"] = tmp_disk_image.name
 
           updateServer.wait_for_unit("multi-user.target")
-          updateServer.succeed("echo -n ${nodes.machine.system.build.toplevel} >/var/lib/updates/${nodes.machine.networking.hostName}")
-          updateServer.succeed("nix-key sign <(echo -n ${nodes.machine.system.build.toplevel}) /etc/nix/signing-key >/var/lib/updates/${nodes.machine.networking.hostName}.sig")
+          updateServer.succeed("cat ${
+            # mock the hydra json endpoint
+            (formats.json { }).generate "toplevel" {
+              buildoutputs.out.path = nodes.machine.system.build.toplevel;
+            }
+          } >/var/lib/fake-hydra/${nodes.machine.networking.hostName}")
 
           os.environ["QEMU_OPTS"] = f"-drive index=2,if=virtio,id=installer,format=raw,file={tmp_disk_image.name}"
 
@@ -165,8 +170,12 @@ testers.runNixOSTest {
           assert "${nodes.machine.system.build.toplevel}" == machine.succeed("readlink --canonicalize /run/current-system").strip()
 
       with subtest("update"):
-          updateServer.succeed("echo -n ${nodes.machine.system.build.foo-update.config.system.build.toplevel} >/var/lib/updates/${nodes.machine.networking.hostName}")
-          updateServer.succeed("nix-key sign <(echo -n ${nodes.machine.system.build.foo-update.config.system.build.toplevel}) /etc/nix/signing-key >/var/lib/updates/${nodes.machine.networking.hostName}.sig")
+          updateServer.succeed("cat ${
+            # mock the hydra json endpoint
+            (formats.json { }).generate "foo-update-toplevel" {
+              buildoutputs.out.path = nodes.machine.system.build.foo-update.config.system.build.toplevel;
+            }
+          } >/var/lib/fake-hydra/${nodes.machine.networking.hostName}")
           machine.succeed("systemctl start nixos-update.service")
           machine.reboot()
           assert "foo" == machine.succeed("cat /etc/foo").strip()
