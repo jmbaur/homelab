@@ -539,11 +539,11 @@
         "zls": "zls"
       },
       "locked": {
-        "lastModified": 1739404546,
-        "narHash": "sha256-JLclI4UJ5ooPlu11JJneGvPTSFnSvuZG61Ly3B7nO+c=",
+        "lastModified": 1739406940,
+        "narHash": "sha256-OV1HtEoN8ymmhZz27eRm5hWpovvEugq3nWVBqh3mooI=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "7ded4afb4ff50a7d2b327bc7c372ac4327ca2ad9",
+        "rev": "85486720e07aed6a00a4285728e8c304414a7287",
         "type": "github"
       },
       "original": {
