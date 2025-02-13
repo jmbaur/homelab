@@ -15,8 +15,9 @@ in
     nixpkgs.hostPlatform = "aarch64-linux";
 
     # Undo the settings we set in <homelab/nixos-modules/server.nix>, they
-    # doesn't work on the RPI4. TODO(jared): figure out how to get rid of
-    # this.
+    # doesn't work on the RPI4.
+    #
+    # TODO(jared): figure out how to get rid of this.
     systemd.watchdog = {
       runtimeTime = null;
       rebootTime = null;
@@ -36,6 +37,16 @@ in
     environment.systemPackages = [
       pkgs.raspberrypi-eeprom
       pkgs.uboot-env-tools
+      (pkgs.writeShellApplication {
+        name = "update-firmware";
+        runtimeInputs = [
+          pkgs.xz
+          pkgs.coreutils
+        ];
+        text = ''
+          xz -d <${firmwareImage} | dd bs=4M status=progress oflag=sync of=/dev/disk/by-label/${firmwareImage.label}
+        '';
+      })
     ];
 
     boot.initrd.availableKernelModules = [
@@ -46,6 +57,7 @@ in
       "reset-raspberrypi" # required for vl805 firmware to load
     ];
 
+    # TODO(jared): filter this down to only the files we need
     # Required for the Wireless firmware
     hardware.enableRedistributableFirmware = true;
 

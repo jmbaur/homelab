@@ -12,10 +12,10 @@
 
       custom.server.enable = true;
       custom.basicNetwork.enable = true;
-      custom.common.nativeBuild = true;
-      custom.recovery.targetDisk = "/dev/mmcblk0";
-
-      services.kodi.enable = true;
+      custom.recovery.targetDisk = "/dev/sda"; # TODO(jared): refine this
+    }
+    {
+      services.kodi.enable = false;
     }
   ];
 }

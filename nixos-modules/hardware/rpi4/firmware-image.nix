@@ -16,7 +16,10 @@
 
 let
   firmwarePartitionID = "0x2178694e";
-  firmwareSize = 128;
+
+  # Last I checked, all the RPI4 firmware we are using is about 23MiB, so using
+  # 32MiB image size should give us enough space.
+  firmwareSize = 32 * 1024 * 1024; # 32MiB
 
   configTxt = writeText "config.txt" ''
     [all]
@@ -50,6 +53,8 @@ let
       BOOTCOUNT_ENV = yes;
     };
   };
+
+  label = "FIRMWARE";
 in
 runCommand "rpi4-firmware-image"
   {
@@ -59,25 +64,23 @@ runCommand "rpi4-firmware-image"
       util-linux
     ];
     passthru = {
-      inherit uboot;
+      inherit uboot label;
     };
   }
   ''
-    mkdir -p $out
+    img=$(mktemp)
 
-    img=$out/firmware
-
-    truncate -s $((${toString firmwareSize} * 512 * 1024)) $img
+    truncate -s ${toString firmwareSize} $img
 
     sfdisk --no-reread --no-tell-kernel $img <<EOF
       label: dos
       label-id: ${firmwarePartitionID}
-      size=$firmwareSizeBlocks, type=b
+      type=b
     EOF
 
     eval $(partx $img -o START,SECTORS --nr 1 --pairs)
     truncate -s $((SECTORS * 512)) fs.img
-    mkfs.vfat --invariant -i ${firmwarePartitionID} -n FIRMWARE fs.img
+    mkfs.vfat --invariant -i ${firmwarePartitionID} -n ${label} fs.img
 
     mkdir firmware
     cp ${uboot}/u-boot.bin firmware/kernel8.img
@@ -87,17 +90,17 @@ runCommand "rpi4-firmware-image"
     find ${raspberrypifw}/share/raspberrypi/boot \( -name "fixup*" -o -name "start*" \) \
       -exec sh -c 'cp {} firmware/$(basename {})' \;
 
-    cd firmware
+    pushd firmware
     for d in $(find . -type d -mindepth 1 | sort); do
       faketime "2000-01-01 00:00:00" mmd -i ../fs.img "::/$d"
     done
     for f in $(find . -type f | sort); do
       mcopy -pvm -i ../fs.img "$f" "::/$f"
     done
-    cd ..
+    popd
 
     fsck.vfat -vn fs.img
     dd conv=notrunc if=fs.img of=$img seek=$START count=$SECTORS
 
-    xz -3 --compress --verbose --threads=$NIX_BUILD_CORES $img
+    xz -3 --compress --verbose --threads=$NIX_BUILD_CORES <$img >$out
   ''
