@@ -9,7 +9,6 @@
   openssl,
   pkgsCross,
   runCommand,
-  stdenv,
   symlinkJoin,
   uboot-mt7986a_bpir3_emmc,
   writeTextDir,
