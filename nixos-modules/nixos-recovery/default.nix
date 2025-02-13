@@ -21,8 +21,10 @@ let
     ;
 
   cfg = config.custom.recovery;
-  fstab = config.environment.etc.fstab.source;
-  updateEndpoint = config.custom.update.endpoint;
+
+  baseConfig = config;
+  fstab = baseConfig.environment.etc.fstab.source;
+  updateEndpoint = baseConfig.custom.update.endpoint;
 
   nixosRecovery = pkgs.writeShellApplication {
     name = "nixos-recovery";
@@ -107,6 +109,13 @@ let
         "${modulesPath}/image/repart.nix"
       ];
 
+      # The recovery system is not persistent, no need to enable
+      # switch-to-configuration.
+      system.switch.enable = false;
+
+      # We don't do bootloader installs for the recovery system.
+      boot.loader.grub.enable = false;
+
       image.repart = {
         name = "recovery";
 
@@ -121,7 +130,7 @@ let
         };
 
         partitions = {
-          "10-boot" = {
+          "10-boot" = mkIf baseConfig.boot.loader.systemd-boot.enable {
             contents = {
               "/EFI/boot/boot${efiArch}.efi".source =
                 "${config.systemd.package}/lib/systemd/boot/efi/systemd-boot${efiArch}.efi";
@@ -150,9 +159,6 @@ let
       };
 
       environment.etc."repart.d".source = ./repart.d;
-
-      # We don't do bootloader installs for the recovery system.
-      boot.loader.grub.enable = false;
 
       fileSystems."/" = {
         fsType = "tmpfs";

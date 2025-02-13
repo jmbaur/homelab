@@ -89,6 +89,14 @@ in
       boot.loader.systemd-boot.extraInstallCommands = ''
         ${getExe' pkgs.coreutils "dd"} bs=4M if=$1/kpart of=/dev/disk/by-partlabel/kernel
       '';
+
+      # TODO(jared): resolve conflict between systemd-boot and tinyboot.
+      boot.loader.systemd-boot.enable = false;
+
+      tinyboot = {
+        enable = true;
+        board = "asurada-spherion";
+      };
     }
     {
       custom.desktop.enable = true;
