@@ -126,35 +126,43 @@ in
       serviceConfig = {
         Restart = "on-failure";
         RestartSec = 3;
-        ExecStart = toString (flatten [
-          (getExe pkgs.swayidle)
-          "-w"
-          [
-            "timeout"
-            "600"
-            (escapeShellArg "loginctl lock-session")
-          ]
-          [
-            "timeout"
-            "900"
-            (escapeShellArg "swaymsg 'output * power off'")
-            "resume"
-            (escapeShellArg "swaymsg 'output * power on'")
-          ]
-          [
-            "timeout"
-            "1200"
-            (escapeShellArg "systemctl suspend")
-          ]
-          [
-            "before-sleep"
-            (escapeShellArg lockCmd)
-          ]
-          [
-            "lock"
-            (escapeShellArg lockCmd)
-          ]
-        ]);
+        ExecStart = toString (
+          flatten (
+            [
+              (getExe pkgs.swayidle)
+              "-w"
+              [
+                "timeout"
+                "600"
+                (escapeShellArg "loginctl lock-session")
+              ]
+              [
+                "timeout"
+                "900"
+                (escapeShellArg "swaymsg 'output * power off'")
+                "resume"
+                (escapeShellArg "swaymsg 'output * power on'")
+              ]
+            ]
+            ++ lib.optionals (!config.custom.server.enable) ([
+              [
+                "timeout"
+                "1200"
+                (escapeShellArg "systemctl suspend")
+              ]
+            ])
+            ++ [
+              [
+                "before-sleep"
+                (escapeShellArg lockCmd)
+              ]
+              [
+                "lock"
+                (escapeShellArg lockCmd)
+              ]
+            ]
+          )
+        );
       };
     };
 
@@ -241,7 +249,6 @@ in
       pkgs.alacritty
       pkgs.brightnessctl
       pkgs.clipman
-      pkgs.desktop-file-utils
       pkgs.gnome-themes-extra
       pkgs.grim
       pkgs.kanshi

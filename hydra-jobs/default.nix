@@ -23,7 +23,7 @@ let
 in
 mapAttrs (
   system: _:
-  listToAttrs nixosConfigurations.${system}
+  listToAttrs (nixosConfigurations.${system} or [ ])
   //
     # TODO(jared): use _hydraAggregate to gate nixosConfigurations on checks
     inputs.self.checks.${system}

@@ -31,7 +31,7 @@
       }
     );
 
-    fonts.fontconfig.enable = false;
+    fonts.fontconfig.enable = lib.mkDefault false;
 
     # UTC everywhere!
     time.timeZone = lib.mkDefault "UTC";
