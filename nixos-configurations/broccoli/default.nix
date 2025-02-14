@@ -62,8 +62,6 @@
       ];
 
       nix.distributedBuilds = false;
-
-      boot.tmp.useTmpfs = true;
     }
   ];
 }
