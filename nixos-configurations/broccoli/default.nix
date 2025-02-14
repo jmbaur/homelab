@@ -54,12 +54,7 @@
           hostName = "localhost";
           protocol = null; # only works with "localhost" builder
           system = pkgs.stdenv.hostPlatform.system;
-          supportedFeatures = [
-            "kvm"
-            "nixos-test"
-            "big-parallel"
-            "benchmark"
-          ];
+          supportedFeatures = config.nix.settings.system-features or [ ];
           maxJobs = 4;
         }
       ];
