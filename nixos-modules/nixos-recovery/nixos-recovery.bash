@@ -23,9 +23,12 @@ toplevel=$(curl \
 
 # systemd-repart requires a GPT to exist on disk, but we should only touch the
 # disk if it isn't already what we are using.
-if [[ $(findmnt /nix/.ro-store --output source --noheadings) != "$target_disk"* ]]; then
-	echo "label: gpt" | sfdisk --wipe=always "$target_disk"
+if [[ $(findmnt /nix/.ro-store --output source --noheadings) == "$target_disk"* ]]; then
+	echo "Installation media is the same as the target disk, refusing to install"
+	exit 1
 fi
+
+echo "label: gpt" | sfdisk --wipe=always "$target_disk"
 
 # partition disks
 sector_size=$(blockdev --getss "$target_disk")
