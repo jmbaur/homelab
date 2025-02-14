@@ -46,6 +46,9 @@
         useSubstitutes = true;
       };
 
+      # Allow all nodes to reach hydra
+      custom.yggdrasil.all.allowedTCPPorts = [ 3000 ];
+
       nix.buildMachines = [
         {
           hostName = "localhost";
