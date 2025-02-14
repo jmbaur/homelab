@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 
@@ -44,6 +45,21 @@
         notificationSender = "hydra@localhost";
         useSubstitutes = true;
       };
+
+      nix.buildMachines = [
+        {
+          hostName = "localhost";
+          protocol = null; # only works with "localhost" builder
+          system = pkgs.stdenv.hostPlatform.system;
+          supportedFeatures = [
+            "kvm"
+            "nixos-test"
+            "big-parallel"
+            "benchmark"
+          ];
+          maxJobs = 4;
+        }
+      ];
 
       nix.distributedBuilds = false;
 
