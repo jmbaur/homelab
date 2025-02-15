@@ -72,7 +72,6 @@
       "icc-osm-l3"
       "icc-smd-rpm"
       "lpasscorecc-sc7180"
-      "mss-sc7180"
       "onboard_usb_hub"
       "pcie-qcom-ep"
       "phy-qcom-apq8064-sata"
