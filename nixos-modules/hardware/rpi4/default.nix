@@ -163,7 +163,7 @@ in
         system.build.firmwareImage = firmwareImage;
 
         hardware.deviceTree = {
-          name = "bcm2711-rpi-4-b.dtb";
+          name = "broadcom/bcm2711-rpi-4-b.dtb";
 
           # Add a filter so that we only attempt to apply the devicetree
           # overlays to the right dtb.
