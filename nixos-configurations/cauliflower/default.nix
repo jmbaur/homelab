@@ -18,6 +18,9 @@
 
   boot.kernelPackages = pkgs.linuxPackages_6_12;
 
+  # TODO(jared): fix this
+  boot.initrd.systemd.tpm2.enable = false;
+
   tinyboot = {
     enable = false;
     board = "brya-banshee";
