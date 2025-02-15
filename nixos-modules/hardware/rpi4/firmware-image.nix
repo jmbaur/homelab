@@ -64,7 +64,10 @@ runCommand "rpi4-firmware-image"
       util-linux
     ];
     passthru = {
-      inherit uboot label;
+      inherit uboot;
+      partitionPath = "/dev/disk/by-partuuid/${
+        lib.replaceStrings [ "0x" ] [ "" ] firmwarePartitionID
+      }-01";
     };
   }
   ''

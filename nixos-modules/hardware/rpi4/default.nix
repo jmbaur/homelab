@@ -195,7 +195,7 @@ in
               pkgs.coreutils
             ];
             text = ''
-              xz -d <${firmwareImage} | dd bs=4M status=progress oflag=sync of=/dev/disk/by-label/${firmwareImage.label}
+              xz -d <${firmwareImage} | dd bs=4M status=progress oflag=sync of=${firmwareImage.partitionPath}
             '';
           })
         ];
