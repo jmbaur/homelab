@@ -186,7 +186,6 @@ in
         system.build.firmwareImage = firmwareImage;
 
         hardware.deviceTree.name = "broadcom/bcm2711-rpi-4-b.dtb";
-        # hardware.deviceTree.filter = lib.mkDefault "bcm2711-rpi-*.dtb";
 
         boot.kernelParams = [ "console=ttyS1,115200" ];
 
