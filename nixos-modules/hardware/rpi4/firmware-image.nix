@@ -30,6 +30,7 @@ let
     disable_overscan=1
     enable_gic=1
     enable_uart=1
+    dtparam=audio=on
     kernel=kernel8.img
   '';
 
