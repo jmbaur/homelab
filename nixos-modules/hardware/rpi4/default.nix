@@ -14,29 +14,6 @@ in
   config = lib.mkIf config.hardware.rpi4.enable (
     lib.mkMerge [
       {
-        hardware.deviceTree = {
-          overlays = [
-            # Equivalent to dtparam=audio=on
-            {
-              name = "audio-on-overlay";
-              dtsText = ''
-                /dts-v1/;
-                /plugin/;
-                / {
-                  compatible = "brcm,bcm2711";
-                  fragment@0 {
-                    target = <&audio>;
-
-                    __overlay__ {
-                      status = "okay";
-                    };
-                  };
-                };
-              '';
-            }
-          ];
-        };
-
         # set tsched=0 in pulseaudio config to avoid audio glitches
         # see https://wiki.archlinux.org/title/PulseAudio/Troubleshooting#Glitches,_skips_or_crackling
         services.pulseaudio.configFile = lib.mkOverride 990 (
