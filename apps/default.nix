@@ -51,12 +51,21 @@ inputs.nixpkgs.lib.mapAttrs (
 
     testDesktop = mkApp (
       getExe (
-        (inputs.nixpkgs.legacyPackages.${system}.nixos {
-          imports = [ inputs.self.nixosModules.default ];
-          custom.common.enable = true;
-          custom.desktop.enable = true;
-          custom.normalUser.username = "waldo";
-        }).config.system.build.vm
+        (inputs.nixpkgs.legacyPackages.${system}.nixos (
+          { modulesPath, ... }:
+          {
+            imports = [
+              "${modulesPath}/virtualisation/qemu-vm.nix"
+              inputs.self.nixosModules.default
+            ];
+            custom.common.enable = true;
+            custom.desktop.enable = true;
+            custom.normalUser.username = "waldo";
+            virtualisation.cores = 4;
+            virtualisation.memorySize = 4096;
+            virtualisation.diskSize = 4096;
+          }
+        )).config.system.build.vm
       )
     );
 
