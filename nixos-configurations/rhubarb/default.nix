@@ -14,7 +14,6 @@
     }
     {
       services.kodi.enable = true;
-      services.kodi.backend = "wayland";
     }
   ];
 }
