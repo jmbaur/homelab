@@ -188,6 +188,7 @@ in
       programs.git = {
         enable = true;
         userName = "Jared Baur";
+        signing.format = lib.mkDefault "ssh";
         ignores = [
           "*.swp"
           "*~"
