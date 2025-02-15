@@ -104,12 +104,12 @@ inputs: {
           inputs.neovim-nightly-overlay.packages.${final.stdenv.hostPlatform.system}.default.overrideAttrs
             (old: {
               patches = (old.patches or [ ]) ++ [
-                # TODO(jared): This allows neovim to detach from the
-                # controlling terminal, similar to tmux. This work is still WIP.
-                (final.fetchpatch {
-                  url = "https://github.com/neovim/neovim/commit/103b47d42afb217bd58d9add7750b81469f02177.patch";
-                  hash = "sha256-yn1fqhtf5jMJQp5o+QHU5dlm4PiSMh5cc9IZfJAHmW0=";
-                })
+                # # TODO(jared): This allows neovim to detach from the
+                # # controlling terminal, similar to tmux. This work is still WIP.
+                # (final.fetchpatch {
+                #   url = "https://github.com/neovim/neovim/commit/103b47d42afb217bd58d9add7750b81469f02177.patch";
+                #   hash = "sha256-yn1fqhtf5jMJQp5o+QHU5dlm4PiSMh5cc9IZfJAHmW0=";
+                # })
               ];
             });
       };
