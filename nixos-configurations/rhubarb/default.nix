@@ -18,7 +18,12 @@
       custom.recovery.targetDisk = "/dev/disk/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:2:1.0-scsi-0:0:0:0";
     }
     {
-      services.kodi.enable = true;
+      services.kodi = {
+        enable = true;
+
+        # TODO(jared): get gbm working
+        backend = "wayland";
+      };
     }
   ];
 }
