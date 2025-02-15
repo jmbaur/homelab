@@ -8,6 +8,8 @@
     home-manager.url = "github:nix-community/home-manager";
     ipwatch.inputs.nixpkgs.follows = "nixpkgs";
     ipwatch.url = "github:jmbaur/ipwatch";
+    neovim-nightly-overlay.inputs.nixpkgs.follows = "nixpkgs";
+    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     nix-filter-copy.inputs.nixpkgs.follows = "nixpkgs";
     nix-filter-copy.url = "github:ConnorBaker/nix-filter-copy";
     nixos-router.inputs.nixpkgs.follows = "nixpkgs";

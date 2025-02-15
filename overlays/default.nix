@@ -52,26 +52,6 @@ inputs: {
         }
       );
 
-      neovim-unwrapped = prev.neovim-unwrapped.overrideAttrs (old: {
-        version = "0.11.0-dev";
-        src = final.fetchFromGitHub {
-          owner = "neovim";
-          repo = "neovim";
-          rev = "b288fa8d62c3f129d333d3ea6abc3234039cad37"; # last good rev without treesitter bump
-          hash = "sha256-rqV1cLoapZ7ZUYMEU2JAZnz4cD7wq/D66Oj0BOoAhwU=";
-        };
-        buildInputs = (old.buildInputs or [ ]) ++ [ final.utf8proc ];
-        patches = (old.patches or [ ]) ++ [
-          # TODO(jared): This allows neovim to detach from the controlling
-          # terminal, similar to tmux. This work is still WIP.
-          #
-          # (final.fetchpatch {
-          #   url = "https://github.com/neovim/neovim/commit/6c208f2170b9cb5de96735540e556f074a5e3324.patch";
-          #   hash = "sha256-Fj7G2RfEsnc4IfSsHZ2Y6OUtKvUmKIlbMDvLiJg/6BA=";
-          # })
-        ];
-      });
-
       gnome-console =
         (prev.gnome-console.overrideAttrs (old: {
           patches = (old.patches or [ ]) ++ [ ./gnome-console-osc52.patch ];
@@ -119,6 +99,20 @@ inputs: {
           '';
       });
 
+      jared-neovim = prev.jared-neovim.override {
+        neovim-unwrapped =
+          inputs.neovim-nightly-overlay.packages.${final.stdenv.hostPlatform.system}.default.overrideAttrs
+            (old: {
+              patches = (old.patches or [ ]) ++ [
+                # TODO(jared): This allows neovim to detach from the
+                # controlling terminal, similar to tmux. This work is still WIP.
+                (final.fetchpatch {
+                  url = "https://github.com/neovim/neovim/commit/103b47d42afb217bd58d9add7750b81469f02177.patch";
+                  hash = "sha256-yn1fqhtf5jMJQp5o+QHU5dlm4PiSMh5cc9IZfJAHmW0=";
+                })
+              ];
+            });
+      };
       jared-neovim-all-languages = final.jared-neovim.override { supportAllLanguages = true; };
 
       uboot-clearfog_uart = prev.uboot-clearfog.override {
