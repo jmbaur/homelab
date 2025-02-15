@@ -188,6 +188,7 @@ in
           # set pi as active source: `echo 'as' | cec-client -s -d 1`
           pkgs.libcec
 
+          pkgs.libraspberrypi
           pkgs.raspberrypi-eeprom
           pkgs.uboot-env-tools
           (pkgs.writeShellApplication {
