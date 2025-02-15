@@ -185,7 +185,13 @@ in
 
         system.build.firmwareImage = firmwareImage;
 
-        hardware.deviceTree.name = "broadcom/bcm2711-rpi-4-b.dtb";
+        hardware.deviceTree = {
+          name = "bcm2711-rpi-4-b.dtb";
+
+          # Add a filter so that we only attempt to apply the devicetree
+          # overlays to the right dtb.
+          filter = "bcm2711-rpi-4-b.dtb";
+        };
 
         boot.kernelParams = [ "console=ttyS1,115200" ];
 
