@@ -219,6 +219,8 @@ in
 
         boot.kernelPackages = pkgs.linuxKernel.packages.linux_rpi4;
 
+        boot.initrd.systemd.tpm2.enable = lib.mkDefault false;
+
         boot.initrd.availableKernelModules = [
           "usbhid"
           "usb_storage"
