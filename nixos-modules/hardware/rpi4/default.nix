@@ -6,7 +6,9 @@
 }:
 
 let
-  firmwareImage = pkgs.callPackage ./firmware-image.nix { };
+  firmwareImage = pkgs.callPackage ./firmware-image.nix {
+    deviceTreeFile = "${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name}";
+  };
 in
 {
   options.hardware.rpi4.enable = lib.mkEnableOption "rpi4 hardware support";

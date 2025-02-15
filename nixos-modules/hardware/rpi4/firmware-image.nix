@@ -12,6 +12,9 @@
   uboot-rpi_4,
   util-linux,
   writeText,
+
+  # TODO(jared): how should we go about updating this??
+  deviceTreeFile,
 }:
 
 let
@@ -89,7 +92,7 @@ runCommand "rpi4-firmware-image"
     cp ${uboot}/u-boot.bin firmware/kernel8.img
     cp ${configTxt} firmware/config.txt
     cp ${raspberrypi-armstubs}/armstub8-gic.bin firmware/armstub8-gic.bin
-    cp ${raspberrypifw}/share/raspberrypi/boot/bcm2711-rpi-4-b.dtb firmware/bcm2711-rpi-4-b.dtb
+    cp ${deviceTreeFile} firmware/bcm2711-rpi-4-b.dtb
     find ${raspberrypifw}/share/raspberrypi/boot \( -name "fixup*" -o -name "start*" \) \
       -exec sh -c 'cp {} firmware/$(basename {})' \;
 
