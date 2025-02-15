@@ -107,7 +107,10 @@
       networks.wlp1s0 = {
         ssid = "Silence of the LANs";
         authentication = {
-          mode = "wpa3-sae-transition";
+          # TODO(jared): investigate using wpa3-sae-transition
+          #
+          # Allow older devices that only support wpa2 to connect.
+          mode = "wpa2-sha256";
           wpaPasswordFile = config.sops.secrets.wlp1s0.path;
           saePasswordsFile = config.sops.secrets.wlp1s0.path;
         };
