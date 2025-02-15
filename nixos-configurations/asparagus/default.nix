@@ -1,12 +1,11 @@
-{
-  lib,
-  ...
-}:
-
+{ lib, ... }:
 {
   config = lib.mkMerge [
     {
-      hardware.chromebook.asurada-spherion.enable = true;
+      nixpkgs.hostPlatform = "aarch64-linux";
+      hardware.deviceTree.name = "qcom/sc7180-trogdor-wormdingler-rev1-boe.dtb";
+
+      hardware.chromebook.qualcomm = true;
 
       custom.dont-use-me-chromeos-partition.enable = true;
 
@@ -15,12 +14,11 @@
 
       tinyboot = {
         enable = true;
-        board = "asurada-spherion";
+        board = "trogdor-wormdingler";
       };
     }
     {
       custom.desktop.enable = true;
-      custom.dev.enable = true;
     }
   ];
 }
