@@ -56,7 +56,6 @@
           SC_LPASSCC_7280 = yes;
           SC_LPASS_CORECC_7180 = yes;
           SC_LPASS_CORECC_7280 = yes;
-          SC_MSS_7180 = yes;
           SC_VIDEOCC_7180 = yes;
           SC_VIDEOCC_7280 = yes;
         };
