@@ -18,7 +18,7 @@ in
         # see https://wiki.archlinux.org/title/PulseAudio/Troubleshooting#Glitches,_skips_or_crackling
         services.pulseaudio.configFile = lib.mkOverride 990 (
           pkgs.runCommand "default.pa" { } ''
-            sed 's/module-udev-detect$/module-udev-detect tsched=0/' ${config.hardware.pulseaudio.package}/etc/pulse/default.pa > $out
+            sed 's/module-udev-detect$/module-udev-detect tsched=0/' ${config.services.pulseaudio.package}/etc/pulse/default.pa > $out
           ''
         );
       }
