@@ -88,16 +88,6 @@ inputs: {
             });
           };
 
-      # https://github.com/wez/wezterm/pull/6548
-      wezterm = prev.wezterm.overrideAttrs (old: {
-        patches = (old.patches or [ ]) ++ [
-          (final.fetchpatch {
-            url = "https://github.com/wez/wezterm/commit/676a8c0ef7fba6dfcd7c6b52fc9c801255eec6d4.patch";
-            hash = "sha256-zW4LF/9Z8m1/QdV4g+X5WW/g8aFEI8+qBy31lzePxFY=";
-          })
-        ];
-      });
-
       # Add support for colorized output.
       strace-with-colors = prev.strace.overrideAttrs (old: {
         patches = (old.patches or [ ]) ++ [
