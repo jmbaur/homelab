@@ -25,7 +25,7 @@
       systemd.network.wait-online.anyInterface = true;
     }
     {
-      custom.yggdrasil.nodes.potato.allowedTCPPorts = [
+      custom.yggdrasil.nodes.rhubarb.allowedTCPPorts = [
         config.services.navidrome.settings.Port
       ];
 
@@ -46,7 +46,7 @@
       };
     }
     {
-      custom.yggdrasil.nodes.potato.allowedTCPPorts = [
+      custom.yggdrasil.nodes.rhubarb.allowedTCPPorts = [
         8096
       ];
 
