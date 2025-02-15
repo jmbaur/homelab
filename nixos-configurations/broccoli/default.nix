@@ -46,8 +46,11 @@
         useSubstitutes = true;
       };
 
-      # Allow all nodes to reach hydra
-      custom.yggdrasil.all.allowedTCPPorts = [ 3000 ];
+      # Allow all nodes to reach hydra and harmonia
+      custom.yggdrasil.all.allowedTCPPorts = [
+        5000
+        3000
+      ];
 
       nix.buildMachines = [
         {
