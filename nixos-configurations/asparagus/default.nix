@@ -19,6 +19,7 @@
     }
     {
       custom.desktop.enable = true;
+      custom.recovery.targetDisk = "/dev/mmcblk0"; # TODO(jared): refine this
     }
   ];
 }

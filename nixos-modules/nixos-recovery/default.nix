@@ -117,7 +117,9 @@ let
       boot.loader.grub.enable = false;
 
       image.repart = {
-        name = "recovery";
+        name =
+          builtins.replaceStrings [ "nixos-system" ] [ "nixos-recovery" ]
+            baseConfig.system.build.toplevel.name;
 
         compression.enable = true;
 

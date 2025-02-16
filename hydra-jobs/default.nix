@@ -2,8 +2,9 @@ inputs:
 
 let
   inherit (inputs.nixpkgs.lib)
-    mapAttrs
+    flatten
     listToAttrs
+    mapAttrs
     mapAttrsToList
     zipAttrs
     ;
@@ -13,17 +14,23 @@ let
       name:
       { config, ... }:
       {
-        "${config.nixpkgs.buildPlatform.system}" = {
-          inherit name;
-          value = config.system.build.toplevel;
-        };
+        "${config.nixpkgs.buildPlatform.system}" = [
+          {
+            name = "${name}-toplevel";
+            value = config.system.build.toplevel;
+          }
+          {
+            name = "${name}-recovery";
+            value = config.system.build.recovery.config.system.build.image;
+          }
+        ];
       }
     ) inputs.self.nixosConfigurations
   );
 in
 mapAttrs (
   system: _:
-  listToAttrs (nixosConfigurations.${system} or [ ])
+  listToAttrs (flatten (nixosConfigurations.${system} or [ ]))
   //
     # TODO(jared): use _hydraAggregate to gate nixosConfigurations on checks
     inputs.self.checks.${system}
