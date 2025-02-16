@@ -18,6 +18,8 @@ let
   cfg = config.custom.common;
 
   isNotContainer = !config.boot.isContainer;
+
+  inherit (config.system.nixos) revision;
 in
 {
   options.custom.common.enable = mkEnableOption "common config";
@@ -111,7 +113,9 @@ in
       # Provide a sane default value so that nix commands don't outright fail on
       # an otherwise unconfigured machine.
       nix.nixPath = mkDefault [
-        "nixpkgs=https://github.com/nixos/nixpkgs/archive/nixos-unstable.tar.gz"
+        "nixpkgs=https://github.com/nixos/nixpkgs/archive/${
+          if (revision != null) then revision else "nixos-unstable"
+        }.tar.gz"
       ];
 
       # Use the dbus-broker dbus daemon implementation (more performance, yeah?)
