@@ -16,64 +16,6 @@ in
   config = lib.mkIf config.hardware.rpi4.enable (
     lib.mkMerge [
       {
-        # set tsched=0 in pulseaudio config to avoid audio glitches
-        # see https://wiki.archlinux.org/title/PulseAudio/Troubleshooting#Glitches,_skips_or_crackling
-        services.pulseaudio.configFile = lib.mkOverride 990 (
-          pkgs.runCommand "default.pa" { } ''
-            sed 's/module-udev-detect$/module-udev-detect tsched=0/' ${config.services.pulseaudio.package}/etc/pulse/default.pa > $out
-          ''
-        );
-      }
-      {
-        hardware.deviceTree = {
-          overlays = [
-            {
-              name = "bluetooth-overlay";
-              dtsText = ''
-                /dts-v1/;
-                /plugin/;
-
-                / {
-                    compatible = "brcm,bcm2711";
-
-                    fragment@0 {
-                        target = <&uart0_pins>;
-                        __overlay__ {
-                                brcm,pins = <30 31 32 33>;
-                                brcm,pull = <2 0 0 2>;
-                        };
-                    };
-                };
-              '';
-            }
-          ];
-        };
-      }
-      {
-        hardware.deviceTree.overlays = [
-          {
-            name = "rpi4-cpu-revision";
-            dtsText = ''
-              /dts-v1/;
-              /plugin/;
-
-              / {
-                compatible = "raspberrypi,4-model-b";
-
-                fragment@0 {
-                  target-path = "/";
-                  __overlay__ {
-                    system {
-                      linux,revision = <0x00d03114>;
-                    };
-                  };
-                };
-              };
-            '';
-          }
-        ];
-      }
-      {
         # Configure for modesetting in the device tree
         hardware.deviceTree = {
           overlays = [
@@ -82,7 +24,6 @@ in
             {
               name = "rpi4-cma-overlay";
               dtsText = ''
-                // SPDX-License-Identifier: GPL-2.0
                 /dts-v1/;
                 /plugin/;
 
@@ -98,57 +39,8 @@ in
                 };
               '';
             }
-            # Equivalent to:
-            # https://github.com/raspberrypi/linux/blob/rpi-6.1.y/arch/arm/boot/dts/overlays/vc4-fkms-v3d-overlay.dts
-            {
-              name = "rpi4-vc4-fkms-v3d-overlay";
-              dtsText = ''
-                // SPDX-License-Identifier: GPL-2.0
-                /dts-v1/;
-                /plugin/;
-
-                / {
-                  compatible = "brcm,bcm2711";
-
-                  fragment@1 {
-                    target = <&fb>;
-                    __overlay__ {
-                      status = "disabled";
-                    };
-                  };
-
-                  fragment@2 {
-                    target = <&firmwarekms>;
-                    __overlay__ {
-                      status = "okay";
-                    };
-                  };
-
-                  fragment@3 {
-                    target = <&v3d>;
-                    __overlay__ {
-                      status = "okay";
-                    };
-                  };
-
-                  fragment@4 {
-                    target = <&vc4>;
-                    __overlay__ {
-                      status = "okay";
-                    };
-                  };
-                };
-              '';
-            }
           ];
         };
-
-        # Also configure the system for modesetting.
-
-        services.xserver.videoDrivers = lib.mkBefore [
-          "modesetting" # Prefer the modesetting driver in X11
-          "fbdev" # Fallback to fbdev
-        ];
       }
       {
         nixpkgs.hostPlatform = "aarch64-linux";
@@ -164,13 +56,7 @@ in
 
         system.build.firmwareImage = firmwareImage;
 
-        hardware.deviceTree = {
-          name = "broadcom/bcm2711-rpi-4-b.dtb";
-
-          # Add a filter so that we only attempt to apply the devicetree
-          # overlays to the right dtb.
-          filter = "bcm2711-rpi-4-b.dtb";
-        };
+        hardware.deviceTree.name = "broadcom/bcm2711-rpi-4-b.dtb";
 
         boot.kernelParams = [ "console=ttyS1,115200" ];
 
@@ -202,8 +88,6 @@ in
             '';
           })
         ];
-
-        boot.kernelPackages = pkgs.linuxKernel.packages.linux_rpi4;
 
         boot.initrd.systemd.tpm2.enable = lib.mkDefault false;
         custom.recovery.modules = [
