@@ -9,11 +9,14 @@
   raspberrypi-armstubs,
   raspberrypifw,
   runCommand,
-  uboot-rpi_4,
+  uboot-rpi_arm64,
   util-linux,
   writeText,
 
   # TODO(jared): how should we go about updating this??
+  #
+  # U-Boot copies some properties from the FDT on the firmware partition (see https://github.com/u-boot/u-boot/blob/274dc5291cfbcb54cf54c337d2123adea075e299/board/raspberrypi/rpi/rpi.c#L554).
+  # In order for us to get the proper set of changes we apply in hardware.deviceTree.overlays, we must use our own FDT.
   deviceTreeFile,
 }:
 
@@ -39,7 +42,7 @@ let
   kernelLoadAddress = 524288;
   bootmLen = 80 * 1024 * 1024; # 80MiB
 
-  uboot = uboot-rpi_4.override {
+  uboot = uboot-rpi_arm64.override {
     extraStructuredConfig = with lib.kernel; {
       DISTRO_DEFAULTS = unset;
       BOOTSTD_DEFAULTS = yes;
@@ -48,6 +51,12 @@ let
       # Allow for larger than the default 8MiB kernel size
       SYS_BOOTM_LEN = freeform "0x${lib.toHexString bootmLen}";
       SYS_LOAD_ADDR = freeform "0x${lib.toHexString (bootmLen + kernelLoadAddress)}";
+
+      # We don't install OS to SD card, we install it to a SATA device that
+      # will have a different FAT partition, so use that one for storing the
+      # environment and allow for userspace changes using fw_setenv without
+      # having to mount the FAT partition on the SD card.
+      ENV_FAT_DEVICE_AND_PART = "1:1";
 
       # Allow for using u-boot scripts.
       BOOTSTD_FULL = yes;
