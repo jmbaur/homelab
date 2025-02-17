@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 
 {
   config = lib.mkMerge [
@@ -14,6 +14,28 @@
     }
     {
       services.kodi.enable = true;
+
+      services.pipewire.wireplumber.configPackages = [
+        (pkgs.writeTextDir "share/wireplumber/wireplumber.conf.d/10-hdmi-output.conf" ''
+          wireplumber.settings = {
+            device.restore-profile = false
+          }
+          monitor.alsa.rules = [
+            {
+              matches = [
+                {
+                  node.name = "alsa_output.platform-fef00700.hdmi.hdmi-stereo"
+                }
+              ]
+              actions = {
+                update-props = {
+                  priority.session = 600
+                }
+              }
+            }
+          ]
+        '')
+      ];
     }
   ];
 }
