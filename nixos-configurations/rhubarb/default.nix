@@ -19,6 +19,7 @@
         (pkgs.writeTextDir "share/wireplumber/wireplumber.conf.d/10-hdmi-output.conf" ''
           wireplumber.settings = {
             device.restore-profile = false
+            device.routes.default-sink-volume = 1.0 ^ 3
           }
           monitor.alsa.rules = [
             {
