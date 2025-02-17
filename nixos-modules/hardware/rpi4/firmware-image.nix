@@ -56,7 +56,7 @@ let
       # will have a different FAT partition, so use that one for storing the
       # environment and allow for userspace changes using fw_setenv without
       # having to mount the FAT partition on the SD card.
-      ENV_FAT_DEVICE_AND_PART = "1:1";
+      ENV_FAT_DEVICE_AND_PART = freeform "1:1";
 
       # Allow for using u-boot scripts.
       BOOTSTD_FULL = yes;
