@@ -42,7 +42,7 @@ in
               fragment@0 {
                 target = <&cma>;
                 __overlay__ {
-                  size = <(512 * 1024 * 1024)>;
+                  size = <(320 * 1024 * 1024)>;
                 };
               };
             };
