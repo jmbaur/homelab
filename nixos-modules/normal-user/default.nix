@@ -33,27 +33,18 @@ in
   };
 
   config = mkIf cfg.enable {
-    programs.fish = {
-      enable = true;
-      interactiveShellInit = ''
-        function fish_greeting
-        end
-      '';
-    };
-
     users.mutableUsers = true;
 
     users.users.${cfg.username} = {
       isNormalUser = true;
       createHome = false; # we do this ourselves below
-      shell = config.programs.fish.package;
+      shell = pkgs.oils-for-unix;
       extraGroups =
         [ "wheel" ]
         ++ optional config.custom.dev.enable "dialout" # serial consoles
         ++ optional config.networking.networkmanager.enable "networkmanager"
         ++ optional config.programs.adb.enable "adbusers"
         ++ optional config.programs.wireshark.enable "wireshark"
-        ++ optional config.services.yggdrasil.enable "yggdrasil"
         ++ optional config.virtualisation.docker.enable "docker";
     };
 
@@ -100,15 +91,6 @@ in
               printf "\n"
 
               if ! (
-                while true; do
-                  read -r -p "Please enter the real name for user ${cfg.username}: " real_name
-                  if [[ -n "$real_name" ]]; then
-                    break
-                  fi
-                done
-
-                usermod --comment="$real_name" ${cfg.username}
-
                 passwd "${cfg.username}"
 
                 uid=$(id -u ${cfg.username})

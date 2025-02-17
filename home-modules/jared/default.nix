@@ -176,13 +176,6 @@ in
         };
       };
 
-      programs.fish.enable = true;
-
-      programs.nushell = {
-        enable = true;
-        configFile.source = ./config.nu;
-      };
-
       programs.gh.enable = true;
 
       programs.git = {
