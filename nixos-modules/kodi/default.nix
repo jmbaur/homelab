@@ -106,6 +106,7 @@ in
         isSystemUser = true;
         home = "/var/lib/kodi";
         createHome = true;
+        useDefaultShell = true;
         group = config.users.groups.kodi.name;
       };
       users.groups.kodi = { };
