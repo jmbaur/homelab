@@ -158,11 +158,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1736143030,
-        "narHash": "sha256-+hu54pAoLDEZT9pjHlqL9DNzWz0NbUn8NEAHP7PQPzU=",
+        "lastModified": 1738453229,
+        "narHash": "sha256-7H9XgNiGLKN1G1CgRh0vUL4AheZSYzPm+zmZ7vxbJdo=",
         "owner": "hercules-ci",
         "repo": "flake-parts",
-        "rev": "b905f6fc23a9051a6e1b741e1438dbfc0634c6de",
+        "rev": "32ea77a06711b758da0ad9bd6a844c5740a87abd",
         "type": "github"
       },
       "original": {
@@ -508,11 +508,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1738237977,
-        "narHash": "sha256-oJN/yvRL7G0WlR/hTkQIjFbPkzCV+sFnNB/38Tb9RL4=",
+        "lastModified": 1739595404,
+        "narHash": "sha256-0CjCfbq0yHWexOrpO06e2WU1r5JAqR6ffy1zgM3NksI=",
         "owner": "hercules-ci",
         "repo": "hercules-ci-effects",
-        "rev": "6d1b6d5d59758b4f5f05745f774fc13cdc59da43",
+        "rev": "06519cec8fb32d219006da6eacd255504a9996af",
         "type": "github"
       },
       "original": {
@@ -528,11 +528,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1739571712,
-        "narHash": "sha256-0UdSDV/TBY+GuxXLbrLq3l2Fq02ciyKCIMy4qmnfJXQ=",
+        "lastModified": 1739815344,
+        "narHash": "sha256-onBUUObtFXauBU42IlCMtvVUv8vmluEFfCSxNG6guKM=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "6d3163aea47fdb1fe19744e91306a2ea4f602292",
+        "rev": "f4f6dd26985f1e44721325cb6d783d0cf4cd4dbc",
         "type": "github"
       },
       "original": {
@@ -575,11 +575,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1739578374,
-        "narHash": "sha256-ipXtyL3JbBsJA+Axr5FGVcP28vfrIyOisVCSyjud4vA=",
+        "lastModified": 1739773567,
+        "narHash": "sha256-jdzk+4r3xzHF6FvsPjGaxzQMNBYtrBOg9daTdCiLz7A=",
         "owner": "nix-community",
         "repo": "neovim-nightly-overlay",
-        "rev": "431a128acf3048670ff80048dde2a172045a062f",
+        "rev": "aff85a1e85e3e17845b7babb72dbe92fedc2945e",
         "type": "github"
       },
       "original": {
@@ -591,11 +591,11 @@
     "neovim-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1739576536,
-        "narHash": "sha256-4gqndlNmaA0h2gm/y7rW/Jg3CSpyAgGm3O3ox8dWLxE=",
+        "lastModified": 1739741636,
+        "narHash": "sha256-mPvdnIPFbEDe5Zqv6g6+ccSSW77CnpqcGpqwUWo4Pjk=",
         "owner": "neovim",
         "repo": "neovim",
-        "rev": "10a3a854736895783aac9fd5dd86156f7ae25df1",
+        "rev": "a75b09019f51d740f0890d881c90e140581f13e8",
         "type": "github"
       },
       "original": {
@@ -650,11 +650,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1739500531,
-        "narHash": "sha256-kmO7Ot6qeBCn2wtKCu/7VDRqkVSx72UjbNfTk4p23bA=",
+        "lastModified": 1739815502,
+        "narHash": "sha256-+tPICMsr+ECK1N3izuxfoLMBfqtw4nCB80G3cG0+iq0=",
         "owner": "jmbaur",
         "repo": "nixpkgs",
-        "rev": "2699d7683443609e4f759caec2bacad5c79962d2",
+        "rev": "32d8c488249045c30ba459dda55466c1e19f9a28",
         "type": "github"
       },
       "original": {
@@ -723,11 +723,11 @@
         "zls": "zls"
       },
       "locked": {
-        "lastModified": 1739605051,
-        "narHash": "sha256-AOqPXA17sO4i56HWYCi6aM3YHsHd5NQpTDY8avvmOtY=",
+        "lastModified": 1739644432,
+        "narHash": "sha256-UZprXUMha6RrF6nukHghLyY4QiFmz7SBtC/t10/MYCA=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "cf9be40022baafa007700cdc9ee2dd2b904c9af0",
+        "rev": "77243a8bf87969a8064c737be9239b39cca5b3d1",
         "type": "github"
       },
       "original": {
@@ -829,11 +829,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1739579370,
-        "narHash": "sha256-5lTSBX+G1W0p5D+wWlNL97xqnoUNkxlc7NI92kNCvdQ=",
+        "lastModified": 1739621410,
+        "narHash": "sha256-UqwGRa1NZYI4cYeWvjXaOp0yRb5aTv3upPZ3N/yslRk=",
         "owner": "mitchellh",
         "repo": "zig-overlay",
-        "rev": "afaae6f3da8839e881c5ae2f8fc09595589c31cc",
+        "rev": "c2a774d2abf727381a9da6fe92b48259f5f425e2",
         "type": "github"
       },
       "original": {
