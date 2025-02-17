@@ -206,6 +206,11 @@ in
         boot.kernelPackages = pkgs.linuxKernel.packages.linux_rpi4;
 
         boot.initrd.systemd.tpm2.enable = lib.mkDefault false;
+        custom.recovery.modules = [
+          {
+            boot.initrd.systemd.tpm2.enable = false;
+          }
+        ];
 
         boot.initrd.availableKernelModules = [
           "usbhid"
