@@ -30,6 +30,7 @@
               actions = {
                 update-props = {
                   priority.session = 600
+                  priority.driver = 600
                 }
               }
             }

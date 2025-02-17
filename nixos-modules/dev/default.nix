@@ -25,6 +25,8 @@ in
     programs.gnupg.agent.enable = lib.mkDefault true;
     services.pcscd.enable = config.custom.desktop.enable;
 
+    programs.adb.enable = lib.mkDefault true;
+
     boot.binfmt = {
       # Make sure builder isn't masquerading as being
       # able to do native builds for non-native

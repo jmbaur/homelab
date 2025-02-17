@@ -64,6 +64,7 @@
                   device.profile = "pro-audio"
                   device.description = "HDMI Output"
                   priority.session = 600
+                  priority.driver = 600
                 }
               }
             }
