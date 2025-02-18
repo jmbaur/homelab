@@ -5,7 +5,7 @@
       nixpkgs.hostPlatform = "aarch64-linux";
       hardware.deviceTree.name = "qcom/sc7180-trogdor-wormdingler-rev1-boe.dtb";
 
-      hardware.chromebook.qualcomm = true;
+      hardware.chromebook.trogdor.enable = true;
 
       custom.dont-use-me-chromeos-partition.enable = true;
 

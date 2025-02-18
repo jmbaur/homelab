@@ -9,7 +9,7 @@ let
   cfg = config.hardware.chromebook;
 in
 {
-  imports = [ ./qualcomm.nix ];
+  imports = [ ./trogdor.nix ];
 
   options.hardware.chromebook = {
     enable = lib.mkEnableOption "chromebook";
@@ -31,6 +31,13 @@ in
           ${config.systemd.package.src}/tools/chromiumos/gen_autosuspend_rules.py \
           >$out/lib/udev/rules.d/01-chromium-autosuspend.rules
       '')
+    ];
+
+    boot.kernelPatches = [
+      {
+        name = "google-firmware";
+        extraStructuredConfig.GOOGLE_FIRMWARE = lib.kernel.yes;
+      }
     ];
 
     # allow for CR50 TPM usage in initrd
