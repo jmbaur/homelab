@@ -9,6 +9,8 @@
   options.hardware.chromebook.trogdor.enable = lib.mkEnableOption "trogdor";
 
   config = lib.mkIf config.hardware.chromebook.trogdor.enable {
+    hardware.qualcomm.enable = true;
+
     boot.kernelParams = [ "deferred_probe_timeout=30" ];
 
     boot.kernelPackages = pkgs.linuxPackages_6_12;

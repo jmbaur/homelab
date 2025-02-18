@@ -36,6 +36,7 @@ in
     boot.kernelPatches = [
       {
         name = "google-firmware";
+        patch = null;
         extraStructuredConfig.GOOGLE_FIRMWARE = lib.kernel.yes;
       }
     ];
