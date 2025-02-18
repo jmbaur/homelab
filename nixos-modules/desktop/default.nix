@@ -41,12 +41,24 @@ in
     fonts.packages = [ pkgs.commit-mono ];
     fonts.fontconfig.defaultFonts.monospace = [ "CommitMono" ];
 
-    environment.systemPackages = [
-      pkgs.ghostty
-      pkgs.gnomeExtensions.appindicator
-      pkgs.gnomeExtensions.caffeine
-      pkgs.gnomeExtensions.clipboard-history
-    ] ++ optionals config.services.flatpak.enable [ setupFlathub ];
+    environment.systemPackages =
+      [
+        pkgs.ghostty
+        pkgs.gnome-calculator
+        pkgs.gnome-calendar
+        pkgs.gnome-clocks
+        pkgs.gnome-weather
+        pkgs.gnomeExtensions.appindicator
+        pkgs.gnomeExtensions.caffeine
+        pkgs.gnomeExtensions.clipboard-history
+        pkgs.loupe
+        pkgs.nautilus
+        pkgs.papers
+      ]
+      ++ optionals config.services.flatpak.enable [
+        setupFlathub
+        pkgs.gnome-software
+      ];
 
     programs.yubikey-touch-detector.enable = true;
 
