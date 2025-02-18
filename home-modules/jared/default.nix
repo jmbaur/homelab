@@ -106,6 +106,7 @@ in
         nload
         nmap
         nurl
+        oils-for-unix
         pax-utils
         pb
         pciutils
@@ -150,6 +151,13 @@ in
       xdg.configFile."fd/ignore".text = ''
         .git
       '';
+
+      xdg.configFile."oils/oshrc".text = ''
+        eval "$(direnv hook bash)"
+        eval "$(zoxide init posix --hook prompt)"
+      '';
+
+      programs.fish.enable = true;
 
       programs.nix-index.enable = true;
 
