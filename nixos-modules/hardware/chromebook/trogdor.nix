@@ -11,6 +11,19 @@
   config = lib.mkIf config.hardware.chromebook.trogdor.enable {
     hardware.qualcomm.enable = true;
 
+    hardware.firmware = [
+      (pkgs.fetchFromGitLab {
+        owner = "jenneron";
+        repo = "firmware-google-trogdor";
+        rev = "bae7f2275cd7ccd73111662e25b124c082f296ea";
+        postFetch = ''
+          mkdir -p $out/lib/firmware
+          mv $out/qcom $out/lib/firmware
+        '';
+        hash = "sha256-WAGAweY1u2r9n/wDaFavjq6ju0E7P6HC07+wO9BnigU=";
+      })
+    ];
+
     boot.kernelParams = [ "deferred_probe_timeout=30" ];
 
     boot.kernelPackages = pkgs.linuxPackages_6_12;
