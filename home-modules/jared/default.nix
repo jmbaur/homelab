@@ -318,6 +318,13 @@ in
 
       xdg.configFile."wezterm/wezterm.lua".source = ./wezterm.lua;
       xdg.configFile."kitty/kitty.conf".source = ./kitty.conf;
+      xdg.configFile."ghostty/config".text = ''
+        app-notifications = no-clipboard-copy
+        copy-on-select = clipboard
+        keybind = ctrl+enter=unbind
+        mouse-hide-while-typing = true
+        theme = GruvboxDark
+      '';
     })
   ];
 }

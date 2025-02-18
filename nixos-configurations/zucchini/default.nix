@@ -9,8 +9,32 @@
   config = lib.mkMerge [
     {
       nixpkgs.hostPlatform = "aarch64-linux";
+      nixpkgs.buildPlatform = "x86_64-linux";
 
-      boot.kernelPackages = pkgs.linuxPackages_latest;
+      boot.kernelPackages = pkgs.linuxPackagesFor (
+        pkgs.callPackage
+          (
+            { buildLinux, ... }@args:
+            buildLinux (
+              args
+              // {
+                version = "6.13.0";
+                extraMeta.branch = "6.13";
+
+                src = pkgs.fetchgit {
+                  url = "https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linux";
+                  # rk3588 branch
+                  rev = "8af493584632ee57446659e26eae58192e8a80d7";
+                  hash = "sha256-rqhRdaHM1aHMg2F5GK+Hd9NZ6Q5Bp9+QGK16kWGTGjE=";
+                };
+                kernelPatches = (args.kernelPatches or [ ]);
+              }
+              // (args.argsOverride or { })
+            )
+          )
+          {
+          }
+      );
 
       boot.initrd.availableKernelModules = [
         "dwmac_rk"
@@ -20,7 +44,6 @@
       ];
 
       hardware.deviceTree = {
-        enable = true;
         name = "rockchip/rk3588s-orangepi-5.dtb";
         overlays = [
           {
