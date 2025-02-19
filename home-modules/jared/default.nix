@@ -322,6 +322,7 @@ in
         app-notifications = no-clipboard-copy
         copy-on-select = clipboard
         keybind = ctrl+enter=unbind
+        keybind = alt+two=unbind
         mouse-hide-while-typing = true
         theme = GruvboxDark
       '';
