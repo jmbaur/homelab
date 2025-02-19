@@ -3,14 +3,11 @@
 out=$(mktemp)
 trap 'rm $out' EXIT
 
-status=$(curl --silent --output "$out" --write-out "%{http_code}" --data-binary @- https://paste.rs/)
+status=$(curl --silent --output "$out" --write-out "%{http_code}" --form "content=<-" https://dpaste.com/api/v2/)
 
 case $status in
 201)
-	printf "%s\n" "$(cat "$out")"
-	;;
-206)
-	printf "Failed to upload all content.\n%s\n" "$(cat "$out")"
+	echo "$(cat "$out").txt" # append .txt to get URL we can curl later
 	;;
 *)
 	printf "Failed to upload content\nStatus: %s\n" "$status"
