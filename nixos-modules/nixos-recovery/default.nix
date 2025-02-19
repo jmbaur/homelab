@@ -117,9 +117,7 @@ let
       boot.loader.grub.enable = false;
 
       image.repart = {
-        name =
-          builtins.replaceStrings [ "nixos-system" ] [ "nixos-recovery" ]
-            baseConfig.system.build.toplevel.name;
+        name = "recovery";
 
         compression.enable = true;
 
@@ -297,6 +295,19 @@ in
     # isn't created at build-time.
     systemd.services.systemd-growfs-root.enable = false;
 
-    system.build = { inherit recovery; };
+    system.build = {
+      inherit recovery;
+
+      # Add hydra-build-products so that the recovery images can be downloaded
+      # from the web UI.
+      recoveryImage = recovery.config.system.build.image.overrideAttrs (old: {
+        postInstall =
+          (old.postInstall or "")
+          + ''
+            mkdir -p $out/nix-support
+            echo "file recovery-image $out/recovery.raw.zst" >> $out/nix-support/hydra-build-products
+          '';
+      });
+    };
   };
 }

@@ -142,7 +142,7 @@ testers.runNixOSTest {
                 "--force",
                 "--decompress",
                 "--stdout",
-                "${nodes.machine.system.build.recovery.config.system.build.image}/recovery.raw.zst",
+                "${nodes.machine.system.build.recoveryImage}/recovery.raw.zst",
               ], stdout=outfile)
 
           os.environ["USB_STICK"] = tmp_disk_image.name

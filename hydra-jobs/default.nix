@@ -21,7 +21,7 @@ let
           }
           {
             name = "${name}-recovery";
-            value = config.system.build.recovery.config.system.build.image;
+            value = config.system.build.recoveryImage;
           }
         ];
       }
