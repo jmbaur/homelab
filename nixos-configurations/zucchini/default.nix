@@ -9,7 +9,6 @@
   config = lib.mkMerge [
     {
       nixpkgs.hostPlatform = "aarch64-linux";
-      nixpkgs.buildPlatform = "x86_64-linux";
 
       boot.kernelPackages = pkgs.linuxPackagesFor (
         pkgs.callPackage
