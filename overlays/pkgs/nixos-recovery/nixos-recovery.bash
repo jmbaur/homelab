@@ -2,9 +2,17 @@
 
 declare -r root_partition="/dev/disk/by-partlabel/root"
 
-update_endpoint=$1
-target_disk=$(readlink --canonicalize "$2")
-fstab=$(readlink --canonicalize "$3")
+declare argc_update_endpoint argc_closure argc_target_disk argc_fstab
+
+# @option --update-endpoint
+# @option --closure
+# @option --target-disk
+# @option --fstab
+
+eval "$(argc --argc-eval "$0" "$@")"
+
+target_disk=$(readlink --canonicalize "$argc_target_disk")
+fstab=$(readlink --canonicalize "$argc_fstab")
 
 function error_handler() {
 	umount --recursive /mnt 2>/dev/null || true
@@ -12,14 +20,18 @@ function error_handler() {
 }
 trap error_handler ERR
 
-# get the nix output path to our toplevel, used at the end
-toplevel=$(curl \
-	--location \
-	--silent \
-	--fail \
-	--write-out "%{stderr}request for toplevel path returned with status %{http_code}\n" \
-	--header "Accept: application/json" \
-	"$update_endpoint" | jq --raw-output ".buildoutputs.out.path")
+if [[ -z ${argc_closure:-} ]]; then
+	# get the nix output path to our toplevel, used at the end
+	toplevel=$(curl \
+		--location \
+		--silent \
+		--fail \
+		--write-out "%{stderr}request for toplevel path returned with status %{http_code}\n" \
+		--header "Accept: application/json" \
+		"$argc_update_endpoint" | jq --raw-output ".buildoutputs.out.path")
+else
+	toplevel=$argc_closure
+fi
 
 # systemd-repart requires a GPT to exist on disk, but we should only touch the
 # disk if it isn't already what we are using.

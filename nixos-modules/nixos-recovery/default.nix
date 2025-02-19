@@ -9,7 +9,6 @@
 
 let
   inherit (lib)
-    fileContents
     flatten
     getExe
     mkDefault
@@ -26,24 +25,10 @@ let
   fstab = baseConfig.environment.etc.fstab.source;
   updateEndpoint = baseConfig.custom.update.endpoint;
 
-  nixosRecovery = pkgs.writeShellApplication {
-    name = "nixos-recovery";
-
-    runtimeInputs = [
-      "/run/wrappers" # mount
-      config.nix.package # nix-env
-      config.system.build.nixos-install
-      config.systemd.package # systemd-repart
-      pkgs.btrfs-progs # mkfs.btrfs
-      pkgs.cryptsetup
-      pkgs.curl
-      pkgs.dosfstools # mkfs.vfat
-      pkgs.jq
-      pkgs.nix-key
-      pkgs.util-linux # sfdisk
-    ];
-
-    text = fileContents ./nixos-recovery.bash;
+  nixosRecovery = pkgs.nixos-recovery.override {
+    nix = config.nix.package;
+    nixos-install = config.system.build.nixos-install;
+    systemd = config.systemd.package;
   };
 
   # TODO(jared): This should be an option that can be extended on a per-machine
@@ -213,9 +198,9 @@ let
           StandardOutput = "tty";
           ExecStart = toString [
             (getExe nixosRecovery)
-            updateEndpoint
-            cfg.targetDisk
-            fstab
+            "--update-endpoint=${updateEndpoint}"
+            "--target-disk=${cfg.targetDisk}"
+            "--fstab=${fstab}"
           ];
         };
       };

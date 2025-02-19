@@ -3,6 +3,7 @@
   coreutils-full,
   fzf,
   jq,
+  kexec-tools,
   lib,
   writeShellApplication,
 }:
@@ -15,6 +16,7 @@ writeShellApplication {
     coreutils-full
     jq
     fzf
+    kexec-tools
   ];
 
   text =
