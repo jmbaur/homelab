@@ -38,9 +38,6 @@ in
     services.flatpak.enable = true;
     services.fwupd.enable = mkDefault true;
 
-    fonts.packages = [ pkgs.commit-mono ];
-    fonts.fontconfig.defaultFonts.monospace = [ "CommitMono" ];
-
     environment.systemPackages =
       [
         pkgs.ghostty
