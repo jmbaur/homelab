@@ -30,7 +30,7 @@ in
           buildLinux (
             args
             // {
-              version = "6.14.0-rc2";
+              version = "6.14.0-rc3";
               extraMeta.branch = "6.14";
 
               # TODO(jared): remove this
@@ -39,9 +39,9 @@ in
               src = pkgs.fetchFromGitHub {
                 owner = "jhovold";
                 repo = "linux";
-                # wip/x1e80100-6.14-rc2
-                rev = "0537e56aaca869dc6e27c16a7105864c769a0345";
-                hash = "sha256-3LaUsqRElMley3OAK1v0/MV8m7QTep/Q678Kd7/c47g=";
+                # wip/x1e80100-6.14-rc3
+                rev = "487f114b1e59497ca042670202f6bf7d751cf64d";
+                hash = "sha256-I8dQagaGYjOktn5KAkNApP/7XFgKQSg39aJuH4k6vBo=";
               };
               kernelPatches = (args.kernelPatches or [ ]);
             }
