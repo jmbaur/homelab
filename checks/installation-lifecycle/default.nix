@@ -60,11 +60,12 @@ testers.runNixOSTest {
       {
         virtualisation.vlans = [ 1 ];
 
+        virtualisation.directBoot.enable = false;
+        virtualisation.efi.keepVariables = false;
+        virtualisation.graphics = false;
+        virtualisation.mountHostNixStore = false;
         virtualisation.useBootLoader = true;
         virtualisation.useEFIBoot = true;
-        virtualisation.efi.keepVariables = false;
-        virtualisation.directBoot.enable = false;
-        virtualisation.mountHostNixStore = false;
 
         # Make the qemu-vm.nix module use what is found under
         # `config.fileSystems`.

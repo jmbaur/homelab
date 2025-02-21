@@ -13,11 +13,13 @@ new_toplevel=$(curl \
 if [[ $(readlink --canonicalize /run/current-system) != "$new_toplevel" ]]; then
 	nix-env --set --profile /nix/var/nix/profiles/system "$new_toplevel"
 
-	new_kernel_version=$(nix derivation show "${new_toplevel}/kernel" | jq --raw-output 'to_entries[0].value.env.version')
-	current_kernel_version=$(nix derivation show "/run/current-system/kernel" | jq --raw-output 'to_entries[0].value.env.version')
+	booted_toplevel_kernel="$(readlink --canonicalize-existing /run/booted-system/{initrd,kernel,kernel-modules})"
+	booted_toplevel_params="$(cat /run/booted-system/kernel-params)"
+	new_toplevel_kernel="$(readlink --canonicalize-existing "${new_toplevel}"/{initrd,kernel,kernel-modules})"
+	new_toplevel_params="$(cat "${new_toplevel}"/kernel-params)"
 
 	action=switch
-	if [[ $new_kernel_version != "$current_kernel_version" ]]; then
+	if [[ $booted_toplevel_kernel != "$new_toplevel_kernel" ]] || [[ $booted_toplevel_params != "$new_toplevel_params" ]]; then
 		action=boot
 	fi
 
