@@ -13,7 +13,17 @@ new_toplevel=$(curl \
 if [[ $(readlink --canonicalize /run/current-system) != "$new_toplevel" ]]; then
 	nix-env --set --profile /nix/var/nix/profiles/system "$new_toplevel"
 
-	# TODO(jared): We need to determine if the right thing to do is stc
-	# "switch" or "boot".
-	"${new_toplevel}/bin/switch-to-configuration" boot
+	new_kernel_version=$(nix derivation show "${new_toplevel}/kernel" | jq --raw-output 'to_entries[0].value.env.version')
+	current_kernel_version=$(nix derivation show "/run/current-system/kernel" | jq --raw-output 'to_entries[0].value.env.version')
+
+	action=switch
+	if [[ $new_kernel_version != "$current_kernel_version" ]]; then
+		action=boot
+	fi
+
+	"${new_toplevel}/bin/switch-to-configuration" $action
+
+	if [[ $action == "boot" ]]; then
+		systemctl reboot
+	fi
 fi

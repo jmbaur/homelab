@@ -54,6 +54,7 @@ in
               name = "nixos-update";
               runtimeInputs = [
                 config.nix.package
+                config.systemd.package
                 pkgs.curl
                 pkgs.jq
               ];
