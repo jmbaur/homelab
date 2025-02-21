@@ -9,6 +9,8 @@
   options.hardware.chromebook.trogdor.enable = lib.mkEnableOption "trogdor";
 
   config = lib.mkIf config.hardware.chromebook.trogdor.enable {
+    hardware.chromebook.enable = true;
+
     hardware.qualcomm.enable = true;
 
     hardware.firmware = [
