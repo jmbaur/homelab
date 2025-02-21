@@ -44,6 +44,8 @@ in
         pkgs.gnome-calculator
         pkgs.gnome-calendar
         pkgs.gnome-clocks
+        pkgs.gnome-logs
+        pkgs.gnome-text-editor
         pkgs.gnome-weather
         pkgs.gnomeExtensions.appindicator
         pkgs.gnomeExtensions.caffeine
@@ -51,11 +53,14 @@ in
         pkgs.loupe
         pkgs.nautilus
         pkgs.papers
+        pkgs.snapshot
       ]
       ++ optionals config.services.flatpak.enable [
         setupFlathub
         pkgs.gnome-software
       ];
+
+    programs.seahorse.enable = true;
 
     programs.yubikey-touch-detector.enable = true;
 
