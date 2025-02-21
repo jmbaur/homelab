@@ -23,6 +23,10 @@
         hash = "sha256-WAGAweY1u2r9n/wDaFavjq6ju0E7P6HC07+wO9BnigU=";
       })
       (pkgs.extractLinuxFirmware "trogdor-firmware" [
+        "qca/crbtfw32.tlv" # bluetooth
+        "qcom/venus-5.4/venus.mbn" # video-codec
+
+        # drm-msm
         "qcom/a300_pfp.fw"
         "qcom/a300_pm4.fw"
         "qcom/a330_pfp.fw"
