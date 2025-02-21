@@ -82,8 +82,6 @@ in
         ''
           mkdir -p $out
 
-          ${config.system.build.toplevel}/kpart
-
           dd if=/dev/zero of=$out/image bs=4M count=20
           sfdisk --no-reread --no-tell-kernel $out/image <<EOF
               label: gpt
@@ -92,7 +90,7 @@ in
           EOF
           cgpt add -i 1 -S 1 -T 5 -P 10 $out/image
           eval "$(partx $out/image -o START,SECTORS --nr 1 --pairs)"
-          dd conv=notrunc if=$out/kpart of=$out/image seek="$START" count="$SECTORS"
+          dd conv=notrunc if=${config.system.build.toplevel}/kpart of=$out/image seek="$START" count="$SECTORS"
           zstd -T$NIX_BUILD_CORES --rm $out/image
         ''
     ) { };
