@@ -91,6 +91,9 @@ in
             "org/gnome/desktop/wm/preferences" = {
               resize-with-right-button = gvariant.mkBoolean true;
             };
+            "org/gnome/mutter".experimental-features = gvariant.mkArray [
+              "scale-monitor-framebuffer"
+            ];
             "org/gnome/desktop/background" = {
               picture-uri = gvariant.mkString ""; # "file:///run/current-system/sw/share/backgrounds/gnome/vnc-l.png";
               picture-uri-dark = gvariant.mkString ""; # "file:///run/current-system/sw/share/backgrounds/gnome/vnc-d.png";
