@@ -84,6 +84,7 @@ inputs.nixpkgs.lib.genAttrs allHosts (
           custom.common.enable = lib.mkDefault true;
           custom.update = {
             enable = lib.mkDefault true;
+            automatic = lib.mkDefault true;
             endpoint = lib.mkDefault "http://broccoli.internal:3000/job/homelab/main/${pkgs.stdenv.buildPlatform.system}.${config.networking.hostName}-toplevel/latest";
           };
           custom.recovery.enable = lib.mkDefault true;
