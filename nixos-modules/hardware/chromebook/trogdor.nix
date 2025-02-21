@@ -22,6 +22,36 @@
         '';
         hash = "sha256-WAGAweY1u2r9n/wDaFavjq6ju0E7P6HC07+wO9BnigU=";
       })
+      (pkgs.extractLinuxFirmware "trogdor-firmware" [
+        "qcom/a300_pfp.fw"
+        "qcom/a300_pm4.fw"
+        "qcom/a330_pfp.fw"
+        "qcom/a330_pm4.fw"
+        "qcom/a420_pfp.fw"
+        "qcom/a420_pm4.fw"
+        "qcom/a530_pfp.fw"
+        "qcom/a530_pm4.fw"
+        "qcom/a530_zap.b00"
+        "qcom/a530_zap.b01"
+        "qcom/a530_zap.b02"
+        "qcom/a530_zap.mdt"
+        "qcom/a530v3_gpmu.fw2"
+        "qcom/a540_gpmu.fw2"
+        "qcom/a615_zap.mbn"
+        "qcom/a619_gmu.bin"
+        "qcom/a630_gmu.bin"
+        "qcom/a630_sqe.fw"
+        "qcom/a630_zap.mbn"
+        "qcom/a640_gmu.bin"
+        "qcom/a650_gmu.bin"
+        "qcom/a650_sqe.fw"
+        "qcom/a660_gmu.bin"
+        "qcom/a660_sqe.fw"
+        "qcom/leia_pfp_470.fw"
+        "qcom/leia_pm4_470.fw"
+        "qcom/yamato_pfp.fw"
+        "qcom/yamato_pm4.fw"
+      ])
     ];
 
     boot.kernelParams = [ "deferred_probe_timeout=30" ];
@@ -51,6 +81,79 @@
       "elants-i2c"
       "cros-ec-keyb"
       "sbs-battery"
+
+      # TODO(jared): filter this down
+      "icc_bwmon"
+      "lpasscc_sc8280xp"
+      "phy_qcom_apq8064_sata"
+      "phy_qcom_eusb2_repeater"
+      "phy_qcom_ipq4019_usb"
+      "phy_qcom_ipq806x_sata"
+      "phy_qcom_ipq806x_usb"
+      "phy_qcom_m31"
+      "phy_qcom_pcie2"
+      "phy_qcom_qmp_pcie_msm8996"
+      "phy_qcom_qmp_ufs"
+      "phy_qcom_qmp_usb"
+      "phy_qcom_qmp_usb_legacy"
+      "phy_qcom_qmp_usbc"
+      "phy_qcom_qusb2"
+      "phy_qcom_sgmii_eth"
+      "phy_qcom_snps_eusb2"
+      "phy_qcom_snps_femto_v2"
+      "phy_qcom_usb_hs"
+      "phy_qcom_usb_hs_28nm"
+      "phy_qcom_usb_hsic"
+      "phy_qcom_usb_ss"
+      "pmic_glink"
+      "qcom_glink_smem"
+      "qcom_q6v5_pas" # This module loads a lot of FW blobs
+      "qcom_rpm"
+      "uas"
+      "ucsi_glink"
+      "usb_storage"
+
+      # storage
+      "nvme"
+      # "pcie_qcom"
+      "phy_qcom_qmp_pcie"
+
+      # keyboard
+      "i2c_hid_of"
+      "i2c_qcom_geni"
+
+      # display
+      "dispcc_sc8280xp"
+      "gpio_sbu_mux"
+      "gpucc_sc8280xp"
+      "leds_qcom_lpg"
+      "msm"
+      "panel_edp"
+      "phy_qcom_edp"
+      "phy_qcom_qmp_combo"
+      "pmic_glink_altmode"
+      "pwm_bl"
+      "qrtr"
+
+      "phy-qcom-eusb2-repeater"
+      "phy-qcom-qmp-pcie"
+      "phy-qcom-qmp-pcie-msm8996"
+      "phy-qcom-qmp-ufs"
+      "phy-qcom-qmp-usb"
+      "phy-qcom-qmp-usb-legacy"
+      "phy-qcom-qmp-usbc"
+      "phy-qcom-qusb2"
+      "phy-qcom-snps-eusb2"
+      "phy-qcom-usb-hs"
+      "phy-qcom-usb-hs-28nm"
+      "phy-qcom-usb-hsic"
+      "phy-qcom-usb-ss"
+      "qcom_pmic_tcpm"
+      "qcom_usb_vbus-regulator"
+      "spi-geni-qcom"
+      "videocc-sc7180"
+      "dispcc-sc7180"
+      "onboard_usb_dev" # crucial
     ];
 
     boot.initrd.systemd.services.adjust-storage-iommu = {
