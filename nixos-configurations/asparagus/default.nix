@@ -19,7 +19,7 @@
     }
     {
       custom.desktop.enable = true;
-      custom.recovery.targetDisk = "/dev/mmcblk0"; # TODO(jared): refine this
+      custom.recovery.targetDisk = "/dev/disk/by-path/platform-7c4000.mmc";
     }
   ];
 }
