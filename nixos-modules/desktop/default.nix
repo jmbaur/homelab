@@ -93,9 +93,9 @@ in
       profiles.user.databases = [
         {
           settings = {
-            "org/gnome/desktop/wm/preferences" = {
-              resize-with-right-button = gvariant.mkBoolean true;
-            };
+            "org/gnome/desktop/wm/preferences".resize-with-right-button = gvariant.mkBoolean true;
+            "org/gnome/system/location".enabled = gvariant.mkBoolean true;
+            "org/gnome/desktop/datetime".automatic-timezone = gvariant.mkBoolean true;
             "org/gnome/mutter".experimental-features = gvariant.mkArray [
               "scale-monitor-framebuffer"
             ];
