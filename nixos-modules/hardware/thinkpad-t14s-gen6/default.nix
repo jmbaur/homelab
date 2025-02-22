@@ -18,10 +18,7 @@ in
 
     hardware.deviceTree.name = "qcom/x1e78100-lenovo-thinkpad-t14s.dtb";
 
-    hardware.firmware = [
-      pkgs.linux-firmware
-      pkgs.t14s-firmware
-    ];
+    hardware.firmware = [ pkgs.linux-firmware ];
 
     boot.kernelPackages = pkgs.linuxPackagesFor (
       pkgs.callPackage
@@ -106,6 +103,5 @@ in
     ];
 
     boot.loader.efi.canTouchEfiVariables = false;
-
   };
 }
