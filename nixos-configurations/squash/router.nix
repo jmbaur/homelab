@@ -51,25 +51,25 @@
   ];
 
   sops.secrets = {
+    wlan0.reloadUnits = [ config.systemd.services.hostapd.name ];
     wlp1s0.reloadUnits = [ config.systemd.services.hostapd.name ];
-    wlan1.reloadUnits = [ config.systemd.services.hostapd.name ];
   };
 
   # Override the `after` and `bindsTo` for hostapd since the MT7915 wireless
   # card we are using here seems to have some special bringup where the second
   # wireless phy is bound to the first one in such a way that systemd doesn't
   # recognize it as a unique device. This prevents hostapd from failing to
-  # start due to sys-subsystem-net-devices-wlan1.device no longer timing out.
+  # start due to sys-subsystem-net-devices-wlan0.device no longer timing out.
   # See https://github.com/nixos/nixpkgs/blob/22bd84a21bd7c4ca569e5bc4db9fd9177d9b4606/nixos/modules/services/networking/hostapd.nix#L1206
   systemd.services.hostapd = {
     after = lib.mkForce (
       map (radio: "sys-subsystem-net-devices-${utils.escapeSystemdPath radio}.device") (
-        lib.filter (radio: radio != "wlan1") (lib.attrNames config.services.hostapd.radios)
+        lib.filter (radio: radio != "wlan0") (lib.attrNames config.services.hostapd.radios)
       )
     );
     bindsTo = lib.mkForce (
       map (radio: "sys-subsystem-net-devices-${utils.escapeSystemdPath radio}.device") (
-        lib.filter (radio: radio != "wlan1") (lib.attrNames config.services.hostapd.radios)
+        lib.filter (radio: radio != "wlan0") (lib.attrNames config.services.hostapd.radios)
       )
     );
   };
@@ -108,7 +108,7 @@
         };
       };
     };
-    radios.wlan1 = {
+    radios.wlan0 = {
       band = "5g";
       countryCode = "US";
       wifi7.enable = false;
@@ -148,12 +148,12 @@
         multiUserBeamformer = true;
       };
       settings.bridge = config.router.lanInterface;
-      networks.wlan1 = {
+      networks.wlan0 = {
         ssid = "SpiderLAN";
         authentication = {
           mode = "wpa3-sae-transition";
-          wpaPasswordFile = config.sops.secrets.wlan1.path;
-          saePasswordsFile = config.sops.secrets.wlan1.path;
+          wpaPasswordFile = config.sops.secrets.wlan0.path;
+          saePasswordsFile = config.sops.secrets.wlan0.path;
         };
       };
     };
