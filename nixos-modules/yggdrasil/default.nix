@@ -22,7 +22,7 @@ let
     type = types.listOf types.ints.positive;
     default = [ ];
     description = ''
-      Allowed TCP ports from this node
+      Allowed TCP ports from this peer
     '';
   };
 
@@ -30,17 +30,17 @@ let
     type = types.listOf types.ints.positive;
     default = [ ];
     description = ''
-      Allowed UDP ports from this node
+      Allowed UDP ports from this peer
     '';
   };
 
-  nodeSubmodule =
+  peerSubmodule =
     { ... }:
     {
       options = {
         ip = mkOption { type = types.nonEmptyStr; };
 
-        allowAll = mkEnableOption "allow all traffic from this node";
+        allowAll = mkEnableOption "allow all traffic from this peer";
 
         allowedTCPPorts = allowedTCPPortsOption;
 
@@ -61,7 +61,7 @@ in
     };
 
     peers = mkOption {
-      type = types.attrsOf (types.submodule nodeSubmodule);
+      type = types.attrsOf (types.submodule peerSubmodule);
       default = { };
     };
   };
@@ -80,8 +80,8 @@ in
     }
     (mkIf (cfg.peers != { }) {
       networking.extraHosts = concatLines (
-        mapAttrsToList (nodeName: nodeSettings: ''
-          ${nodeSettings.ip} ${nodeName}.internal
+        mapAttrsToList (peerName: peerSettings: ''
+          ${peerSettings.ip} ${peerName}.internal
         '') cfg.peers
       );
 
@@ -110,24 +110,24 @@ in
 
       networking.firewall.extraInputRules = concatLines (
         (mapAttrsToList (
-          nodeName: nodeSettings:
-          if nodeSettings.allowAll then
-            ''ip6 saddr ${nodeSettings.ip} accept comment "accept all traffic from ${nodeName}"''
+          peerName: peerSettings:
+          if peerSettings.allowAll then
+            ''ip6 saddr ${peerSettings.ip} accept comment "accept all traffic from ${peerName}"''
           else
-            optionalString (nodeSettings.allowedTCPPorts != [ ])
-              ''ip6 saddr ${nodeSettings.ip} tcp dport { ${
-                concatMapStringsSep ", " toString nodeSettings.allowedTCPPorts
-              } } accept comment "accepted TCP ports from ${nodeName}"''
+            optionalString (peerSettings.allowedTCPPorts != [ ])
+              ''ip6 saddr ${peerSettings.ip} tcp dport { ${
+                concatMapStringsSep ", " toString peerSettings.allowedTCPPorts
+              } } accept comment "accepted TCP ports from ${peerName}"''
             +
-              optionalString (nodeSettings.allowedUDPPorts != [ ])
-                ''ip6 saddr ${nodeSettings.ip} udp dport { ${
-                  concatMapStringsSep ", " toString nodeSettings.allowedUDPPorts
-                } } accept comment "accepted UDP ports from ${nodeName}"''
+              optionalString (peerSettings.allowedUDPPorts != [ ])
+                ''ip6 saddr ${peerSettings.ip} udp dport { ${
+                  concatMapStringsSep ", " toString peerSettings.allowedUDPPorts
+                } } accept comment "accepted UDP ports from ${peerName}"''
         ) cfg.peers)
         ++ [
           (
             let
-              ips = concatMapStringsSep ", " (node: node.ip) (attrValues cfg.peers);
+              ips = concatMapStringsSep ", " (peer: peer.ip) (attrValues cfg.peers);
             in
             ''
               ${optionalString (ips != [ ]) ''ip6 saddr { ${ips} } goto yggdrasil-known-peers''}
