@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  utils,
   ...
 }:
 {
@@ -21,6 +20,12 @@
     lanInterface = config.systemd.network.netdevs."10-br0".netdevConfig.Name;
     wanInterface = "wan";
     dns.upstreamProvider = "quad9";
+  };
+
+  # Keep "wlan*" names for mt7915e card
+  systemd.network.links."10-mt7915" = {
+    matchConfig.Path = "platform-soc:pcie-pci-0000:01:00.0";
+    linkConfig.NamePolicy = "kernel";
   };
 
   systemd.network.netdevs."10-br0".netdevConfig = {
@@ -52,31 +57,12 @@
 
   sops.secrets = {
     wlan0.reloadUnits = [ config.systemd.services.hostapd.name ];
-    wlp1s0.reloadUnits = [ config.systemd.services.hostapd.name ];
-  };
-
-  # Override the `after` and `bindsTo` for hostapd since the MT7915 wireless
-  # card we are using here seems to have some special bringup where the second
-  # wireless phy is bound to the first one in such a way that systemd doesn't
-  # recognize it as a unique device. This prevents hostapd from failing to
-  # start due to sys-subsystem-net-devices-wlan0.device no longer timing out.
-  # See https://github.com/nixos/nixpkgs/blob/22bd84a21bd7c4ca569e5bc4db9fd9177d9b4606/nixos/modules/services/networking/hostapd.nix#L1206
-  systemd.services.hostapd = {
-    after = lib.mkForce (
-      map (radio: "sys-subsystem-net-devices-${utils.escapeSystemdPath radio}.device") (
-        lib.filter (radio: radio != "wlan0") (lib.attrNames config.services.hostapd.radios)
-      )
-    );
-    bindsTo = lib.mkForce (
-      map (radio: "sys-subsystem-net-devices-${utils.escapeSystemdPath radio}.device") (
-        lib.filter (radio: radio != "wlan0") (lib.attrNames config.services.hostapd.radios)
-      )
-    );
+    wlan1.reloadUnits = [ config.systemd.services.hostapd.name ];
   };
 
   services.hostapd = {
     enable = true;
-    radios.wlp1s0 = {
+    radios.wlan1 = {
       band = "2g";
       countryCode = "US";
       wifi5.enable = false;
@@ -96,15 +82,15 @@
         ];
       };
       settings.bridge = config.router.lanInterface;
-      networks.wlp1s0 = {
+      networks.wlan1 = {
         ssid = "Silence of the LANs";
         authentication = {
           # TODO(jared): investigate using wpa3-sae-transition
           #
           # Allow older devices that only support wpa2 to connect.
           mode = "wpa2-sha256";
-          wpaPasswordFile = config.sops.secrets.wlp1s0.path;
-          saePasswordsFile = config.sops.secrets.wlp1s0.path;
+          wpaPasswordFile = config.sops.secrets.wlan1.path;
+          saePasswordsFile = config.sops.secrets.wlan1.path;
         };
       };
     };
