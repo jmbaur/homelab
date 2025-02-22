@@ -54,7 +54,7 @@ in
       systemd.tmpfiles.settings."10-backup" = mapAttrs' (nodeName: _: {
         name = "${cfg.receiver.snapshotRoot}/${nodeName}";
         value.v.age = "1M";
-      }) config.custom.yggdrasil.nodes;
+      }) config.custom.yggdrasil.peers;
 
       systemd.services.backup-recv = {
         path = [ pkgs.btrfs-progs ];
@@ -64,8 +64,8 @@ in
           (pkgs.writeText "peer-file.txt" (
             concatLines (
               mapAttrsToList (
-                nodeName: nodeSettings: "${nodeName} ${nodeSettings.ip}"
-              ) config.custom.yggdrasil.nodes
+                nodeName: peerSettings: "${nodeName} ${peerSettings.ip}"
+              ) config.custom.yggdrasil.peers
             )
           ))
           cfg.receiver.snapshotRoot
