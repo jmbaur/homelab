@@ -14,7 +14,7 @@
     openFirewall = false;
   };
 
-  custom.yggdrasil.all.allowedTCPPorts = [ config.services.iperf3.port ];
+  custom.yggdrasil.allKnownPeers.allowedTCPPorts = [ config.services.iperf3.port ];
 
   router = {
     enable = true;

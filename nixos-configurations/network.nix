@@ -1,5 +1,5 @@
 {
-  custom.yggdrasil.nodes = {
+  custom.yggdrasil.peers = {
     artichoke.ip = "200:4021:796d:4326:2b74:6c25:8f02:19c9";
     asparagus.ip = "200:ee75:b067:6c5e:3d78:48fa:83d2:8c7e";
     broccoli.ip = "200:b07:f009:2954:83bc:1ac4:c497:5b3f";

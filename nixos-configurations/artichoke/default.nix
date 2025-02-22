@@ -40,7 +40,7 @@
       custom.backup.receiver.enable = true;
       custom.backup.sender.enable = false;
 
-      custom.yggdrasil.all.allowedTCPPorts = [ config.custom.backup.receiver.port ];
+      custom.yggdrasil.allKnownPeers.allowedTCPPorts = [ config.custom.backup.receiver.port ];
 
       boot.initrd.luks.devices = {
         bigdisk1 = {

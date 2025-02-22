@@ -46,7 +46,7 @@
         useSubstitutes = true;
       };
 
-      # Allow all nodes to reach hydra and harmonia
+      # Allow all yggdrasil to reach hydra and harmonia
       custom.yggdrasil.all.allowedTCPPorts = [
         5000
         3000

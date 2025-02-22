@@ -107,7 +107,7 @@ inputs.nixpkgs.lib.genAttrs allHosts (
             iface: (iface.Regex or "") == ".*"
           ) config.services.yggdrasil.settings.MulticastInterfaces or [ ]) [ 9001 ];
 
-          custom.yggdrasil.nodes = {
+          custom.yggdrasil.peers = {
             cauliflower.allowAll = true;
             broccoli.allowAll = true;
             pea.allowAll = true;
