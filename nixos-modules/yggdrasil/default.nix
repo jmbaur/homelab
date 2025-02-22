@@ -96,15 +96,15 @@ in
           chain yggdrasil-global {
             ${optionalString (
               cfg.allKnownPeers.allowedTCPPorts != [ ]
-            ) ''tcp dport { ${allPeersTcpPorts} } accept''}
+            ) ''tcp dport { ${knownPeersTcpPorts} } accept''}
             ${optionalString (
               cfg.allKnownPeers.allowedUDPPorts != [ ]
-            ) ''udp dport { ${allPeersUdpPorts} } accept''}
+            ) ''udp dport { ${knownPeersUdpPorts} } accept''}
           }
 
           chain yggdrasil-known-peers {
-            ${optionalString (cfg.all.allowedTCPPorts != [ ]) ''tcp dport { ${knownPeersTcpPorts} } accept''}
-            ${optionalString (cfg.all.allowedUDPPorts != [ ]) ''udp dport { ${knownPeersUdpPorts} } accept''}
+            ${optionalString (cfg.all.allowedTCPPorts != [ ]) ''tcp dport { ${allPeersTcpPorts} } accept''}
+            ${optionalString (cfg.all.allowedUDPPorts != [ ]) ''udp dport { ${allPeersUdpPorts} } accept''}
           }
         '';
 
