@@ -5,7 +5,6 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
 	pattern = { "*.rs", "Cargo.toml", "Cargo.lock" },
 	group = group,
 	desc = "Set Rust compiler",
-	once = true,
 	callback = function()
 		if vim.fn.executable("cargo") == 1 then
 			vim.cmd.compiler("cargo")
