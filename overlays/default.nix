@@ -130,20 +130,6 @@ inputs: {
         hash = "sha256-m8NdvFSVo5+TPtpiGevyzXIMR1YcSQu5Xi5ewUX983Y=";
       };
 
-      mvDdrMarvell = final.applyPatches rec {
-        src = final.fetchgit {
-          url = "https://github.com/MarvellEmbeddedProcessors/mv-ddr-marvell";
-          rev = "bfcf62051be835f725005bb5137928f7c27b792e";
-          hash = "sha256-a6Hjx4/4uxQqNZRRa331B7aOtsyaUNhGh3izOSBrL3c=";
-        };
-        patches = [
-          (final.substituteAll {
-            src = ./mv-ddr-marvell-version.patch;
-            shortRev = builtins.substring 0 7 src.rev;
-          })
-        ];
-      };
-
       jmbaur-keybase-pgp-keys = final.fetchurl {
         url = "https://keybase.io/jaredbaur/pgp_keys.asc";
         sha256 = "sha256-R2a+bF7E6Zogl5XWsjrK5dkCAvK6K2h/bje37aYSgGc=";

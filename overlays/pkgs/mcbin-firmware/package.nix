@@ -3,7 +3,7 @@
   marvellBinaries,
   buildPackages,
   uboot-mvebu_mcbin-88f8040,
-  mvDdrMarvell,
+  mv-ddr-marvell,
 }:
 
 let
@@ -12,7 +12,7 @@ let
       platform = "a80x0_mcbin";
 
       preBuild = ''
-        cp -r ${mvDdrMarvell} /tmp/mv_ddr_marvell
+        cp -r ${mv-ddr-marvell} /tmp/mv_ddr_marvell
         chmod -R +w /tmp/mv_ddr_marvell
       '';
 

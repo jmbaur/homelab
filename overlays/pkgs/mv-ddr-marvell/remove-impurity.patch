@@ -1,0 +1,36 @@
+diff --git a/scripts/localversion.sh b/scripts/localversion.sh
+index 7d5fa35..eb4124c 100755
+--- a/scripts/localversion.sh
++++ b/scripts/localversion.sh
+@@ -102,14 +102,7 @@ MV_DDR_ROOT=$1
+ # get mv_ddr build message and version string c-file name
+ MV_DDR_VER_CSRC=$2
+ 
+-# get mv_ddr git commit id
+-MV_DDR_COMMIT_ID=`git -C $MV_DDR_ROOT rev-parse --verify --quiet --short HEAD 2> /dev/null`
+-
+-# check for uncommitted changes in mv_ddr git
+-MV_DDR_DIRTY_CHK=`git -C $MV_DDR_ROOT diff-index --name-only HEAD 2> /dev/null`
+-if [ "$MV_DDR_DIRTY_CHK" != "" ]; then
+-	MV_DDR_COMMIT_ID="${MV_DDR_COMMIT_ID}-dirty"
+-fi
++MV_DDR_COMMIT_ID=@shortRev@
+ 
+ # get mv_ddr version from localversion file in mv_ddr directory
+ MV_DDR_VERSION=`awk '{$1=$1;print}' $MV_DDR_ROOT/localversion 2> /dev/null`
+@@ -125,11 +118,11 @@ MV_DDR_VERSION_STRING="mv_ddr: ${MV_DDR_VERSION}-g${MV_DDR_COMMIT_ID}"
+ fi
+ 
+ # get date and time to set mv_ddr build message
+-MONTH=`LC_TIME=en_US date +%b`
+-DAY=`LC_TIME=en_US date +%d`
+-YEAR=`LC_TIME=en_US date +%Y`
++MONTH=`date -d@$SOURCE_DATE_EPOCH +%b`
++DAY=`date -d@$SOURCE_DATE_EPOCH +%d`
++YEAR=`date -d@$SOURCE_DATE_EPOCH +%Y`
+ DATE="$MONTH $DAY $YEAR"
+-TIME=`LC_TIME=en_US date +%X`
++TIME=`date -d@$SOURCE_DATE_EPOCH +%X`
+ 
+ # write mv_ddr build message and version string to c-file
+ echo "const char mv_ddr_build_message[] = \"($DATE - $TIME)\"; \

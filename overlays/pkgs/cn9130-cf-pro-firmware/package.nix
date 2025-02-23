@@ -6,7 +6,7 @@
   fetchFromGitHub,
   lib,
   marvellBinaries,
-  mvDdrMarvell,
+  mv-ddr-marvell,
   openssl,
   symlinkJoin,
 }:
@@ -144,7 +144,7 @@ buildArmTrustedFirmware rec {
   ];
 
   preBuild = ''
-    cp -r ${mvDdrMarvell} mv_ddr_marvell
+    cp -r ${mv-ddr-marvell} mv_ddr_marvell
     chmod -R +w mv_ddr_marvell
   '';
 

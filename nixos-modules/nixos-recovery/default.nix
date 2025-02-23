@@ -180,6 +180,10 @@ let
 
       custom.basicNetwork.enable = true;
 
+      # We don't care which interface gives us network connectivity in the
+      # recovery system.
+      systemd.network.wait-online.anyInterface = true;
+
       systemd.services.nixos-recovery = {
         wantedBy = [ "multi-user.target" ];
         after = [
