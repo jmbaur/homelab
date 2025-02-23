@@ -13,7 +13,33 @@
     openFirewall = false;
   };
 
+  custom.ddns = {
+    enable = true;
+    interface = config.router.wanInterface;
+    domain = "jmbaur.com";
+  };
+
   custom.yggdrasil.allKnownPeers.allowedTCPPorts = [ config.services.iperf3.port ];
+
+  networking.firewall = {
+    allowedTCPPorts = [ 443 ];
+    interfaces.${config.router.lanInterface}.allowedTCPPorts = [ 9001 ];
+    extraInputRules = ''
+      iifname ${config.router.wanInterface} tcp dport ssh drop
+    '';
+  };
+
+  services.yggdrasil.settings = {
+    Listen = [ "tls://[::]:443" ];
+    MulticastInterfaces = [
+      {
+        Regex = config.router.lanInterface;
+        Beacon = true;
+        Listen = true;
+        Port = 9001;
+      }
+    ];
+  };
 
   router = {
     enable = true;

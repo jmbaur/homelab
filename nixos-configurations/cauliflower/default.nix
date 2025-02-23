@@ -26,7 +26,7 @@
     board = "brya-banshee";
   };
 
-  services.yggdrasil.settings.Peers = [ "tls://squash.jmbaur.com:443" ];
+  services.yggdrasil.settings.Peers = [ "tls://celery.jmbaur.com:443" ];
 
   custom.desktop.enable = true;
   custom.dev.enable = true;
