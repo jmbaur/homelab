@@ -1,0 +1,108 @@
+From fb9a4133549f617df34aaf15cbae91d62128a3d5 Mon Sep 17 00:00:00 2001
+From: Jared Baur <jaredbaur@fastmail.com>
+Date: Sun, 23 Feb 2025 13:12:20 -0800
+Subject: [PATCH] Fix compiler warnings
+
+What the hell dude, what's up with this poor vendor fork quality??
+---
+ arch/arm/mach-mvebu/cpu_armada.c       | 8 ++++----
+ board/Marvell/common/cfg_eeprom.c      | 2 ++
+ board/Marvell/octeontx2_cn913x/board.c | 1 +
+ cmd/mvebu/hw_info.c                    | 2 +-
+ cmd/tlv_eeprom.c                       | 2 +-
+ 5 files changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/mach-mvebu/cpu_armada.c b/arch/arm/mach-mvebu/cpu_armada.c
+index 449678288f4..8dab3c54557 100644
+--- a/arch/arm/mach-mvebu/cpu_armada.c
++++ b/arch/arm/mach-mvebu/cpu_armada.c
+@@ -67,7 +67,7 @@ int cpu_armada_bind(struct udevice *dev)
+ 	return 0;
+ }
+ 
+-int cpu_armada_get_desc(struct udevice *dev, char *buf, int size)
++int cpu_armada_get_desc(const struct udevice *dev, char *buf, int size)
+ {
+ 	struct cpu_plat *plat = dev_get_parent_plat(dev);
+ 
+@@ -75,7 +75,7 @@ int cpu_armada_get_desc(struct udevice *dev, char *buf, int size)
+ 	return 0;
+ }
+ 
+-int cpu_armada_get_info(struct udevice *dev, struct cpu_info *info)
++int cpu_armada_get_info(const struct udevice *dev, struct cpu_info *info)
+ {
+ 	struct cpu_plat *plat = dev_get_parent_plat(dev);
+ 
+@@ -84,7 +84,7 @@ int cpu_armada_get_info(struct udevice *dev, struct cpu_info *info)
+ 	return 0;
+ }
+ 
+-int cpu_armada_get_count(struct udevice *dev)
++int cpu_armada_get_count(const struct udevice *dev)
+ {
+ 	struct cpu_plat *plat = dev_get_parent_plat(dev);
+ 
+@@ -92,7 +92,7 @@ int cpu_armada_get_count(struct udevice *dev)
+ 	return plat->core_count;
+ }
+ 
+-int cpu_armada_get_vendor(struct udevice *dev, char *buf, int size)
++int cpu_armada_get_vendor(const struct udevice *dev, char *buf, int size)
+ {
+ 	snprintf(buf, size, "Marvell");
+ 
+diff --git a/board/Marvell/common/cfg_eeprom.c b/board/Marvell/common/cfg_eeprom.c
+index a8b0593424b..52d06383c0f 100644
+--- a/board/Marvell/common/cfg_eeprom.c
++++ b/board/Marvell/common/cfg_eeprom.c
+@@ -5,6 +5,8 @@
+ 
+ #include <common.h>
+ #include <mvebu/cfg_eeprom.h>
++#include <env.h>
++#include <linux/delay.h>
+ 
+ struct eeprom_struct board_config_val = CFG_DEFAULT_VALUE;
+ struct config_types_info config_types_info[] = MV_EEPROM_CONFIG_INFO;
+diff --git a/board/Marvell/octeontx2_cn913x/board.c b/board/Marvell/octeontx2_cn913x/board.c
+index 9e117436e5a..55e3d4d6893 100644
+--- a/board/Marvell/octeontx2_cn913x/board.c
++++ b/board/Marvell/octeontx2_cn913x/board.c
+@@ -9,6 +9,7 @@
+ #include <common.h>
+ #include <console.h>
+ #include <dm.h>
++#include <init.h>
+ #include <i2c.h>
+ #include <asm/io.h>
+ #include <asm/arch/cpu.h>
+diff --git a/cmd/mvebu/hw_info.c b/cmd/mvebu/hw_info.c
+index 1a6fe4907c7..94346bb8c71 100644
+--- a/cmd/mvebu/hw_info.c
++++ b/cmd/mvebu/hw_info.c
+@@ -246,7 +246,7 @@ static int cmd_hw_info_store(char *name)
+ 	return 0;
+ }
+ 
+-int do_hw_info(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
++int do_hw_info(struct cmd_tbl *cmdtp, int flag, int argc, char * const argv[])
+ {
+ 	const char *cmd = argv[1];
+ 
+diff --git a/cmd/tlv_eeprom.c b/cmd/tlv_eeprom.c
+index 833ad55d1b8..c351a847fa5 100644
+--- a/cmd/tlv_eeprom.c
++++ b/cmd/tlv_eeprom.c
+@@ -905,7 +905,7 @@ static int find_tlv_devices(struct udevice **tlv_devices_p)
+ 	struct udevice *dev;
+ 
+ 	/* find by alias */
+-	for (int i = 0; i < MAX_TLV_DEVICES; i++) {
++	for (i = 0; i < MAX_TLV_DEVICES; i++) {
+ 		snprintf(alias_name, sizeof(alias_name), "tlv%d", i);
+ 		node = ofnode_get_aliases_node(alias_name);
+ 		if (!ofnode_valid(node))
+-- 
+2.47.2
+

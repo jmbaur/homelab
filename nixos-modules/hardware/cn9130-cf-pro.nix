@@ -11,7 +11,7 @@
   config = lib.mkIf config.hardware.cn9130-cf-pro.enable {
     nixpkgs.hostPlatform = "aarch64-linux";
 
-    system.build.firmware = pkgs.cn9130CfProSpiFirmware;
+    system.build.firmware = pkgs.cn9130-cf-pro-firmware;
 
     boot.kernelParams = [
       "console=ttyS0,115200"
@@ -19,7 +19,7 @@
     ];
 
     hardware.deviceTree.name = "marvell/cn9130-cf-pro.dtb";
-    boot.kernelPackages = pkgs.linuxPackages_6_12; # board introduced in linux 6.11
+    boot.kernelPackages = pkgs.linuxPackages_6_12;
 
     systemd.network.links = {
       "10-wan" = {

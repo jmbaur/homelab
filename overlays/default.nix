@@ -144,9 +144,6 @@ inputs: {
         ];
       };
 
-      cn9130CfProSdFirmware = prev.callPackage ./cn913x/firmware.nix { spi = false; };
-      cn9130CfProSpiFirmware = prev.callPackage ./cn913x/firmware.nix { spi = true; };
-
       jmbaur-keybase-pgp-keys = final.fetchurl {
         url = "https://keybase.io/jaredbaur/pgp_keys.asc";
         sha256 = "sha256-R2a+bF7E6Zogl5XWsjrK5dkCAvK6K2h/bje37aYSgGc=";
