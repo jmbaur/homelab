@@ -54,7 +54,6 @@ let
 
     # Reuse the substituters and trusted public keys from the parent config so
     # that nixos-install works.
-    nix.package = config.nix.package;
     nix.settings = mkForce config.nix.settings;
 
     # An apply function on this option means that we end up having this strange

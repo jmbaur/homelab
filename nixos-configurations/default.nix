@@ -87,7 +87,32 @@ inputs.nixpkgs.lib.genAttrs allHosts (
             automatic = lib.mkDefault true;
             endpoint = lib.mkDefault "http://broccoli.internal:3000/job/homelab/main/${pkgs.stdenv.buildPlatform.system}.${config.networking.hostName}-toplevel/latest";
           };
-          custom.recovery.enable = lib.mkDefault true;
+
+          custom.recovery = {
+            enable = lib.mkDefault true;
+            modules = [
+              ./network.nix
+              {
+                custom.common.enable = true;
+
+                # We set the update endpoint to be a host on the yggdrasil
+                # network, so we must enable this in the recovery system as
+                # well.
+                services.yggdrasil = {
+                  enable = true;
+                  openMulticastPort = true;
+                  settings.MulticastInterfaces = [
+                    {
+                      Regex = ".*";
+                      Beacon = true;
+                      Listen = true;
+                      Port = 9001;
+                    }
+                  ];
+                };
+              }
+            ];
+          };
 
           services.yggdrasil = {
             enable = true;

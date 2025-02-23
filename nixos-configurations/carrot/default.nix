@@ -4,8 +4,10 @@
     {
       hardware.cn9130-cf-pro.enable = true;
 
-      # qualcom wifi card
-      hardware.firmware = [ (pkgs.extractLinuxFirmwareDirectory "ath10k") ];
+      hardware.firmware = [
+        (pkgs.extractLinuxFirmwareDirectory "ath10k")
+        (pkgs.extractLinuxFirmwareDirectory "inside-secure")
+      ];
     }
 
     {
