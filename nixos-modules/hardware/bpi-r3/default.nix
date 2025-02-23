@@ -94,8 +94,6 @@
       pkgs.mt7915-firmware
     ];
 
-    boot.kernelParams = [ "console=ttyS0,115200" ];
-
     hardware.deviceTree = {
       enable = true;
       name = "mediatek/mt7986a-bananapi-bpi-r3.dtb";
