@@ -10,11 +10,13 @@
 # celery
 solve issues at early boot
 ```
-[    1.040264] mtk-socinfo mtk-socinfo.0.auto: error -ENOENT: Failed to get socinfo data
-[    1.040283] mtk-socinfo mtk-socinfo.0.auto: probe with driver mtk-socinfo failed with error -2
-[    1.621437] mtk_soc_eth 15100000.ethernet: generated random MAC address a2:2e:66:56:42:6b
-[    1.926205] mtk-pcie-gen3 11280000.pcie: PCIe link down, current LTSSM state: detect.quiet (0x1)
-[    1.935009] mtk-pcie-gen3 11280000.pcie: probe with driver mtk-pcie-gen3 failed with error -110
+[    0.527711] mtk-socinfo mtk-socinfo.0.auto: error -ENOENT: Failed to get socinfo data
+[    0.527816] mtk-socinfo mtk-socinfo.0.auto: probe with driver mtk-socinfo failed with error -2
+[    1.266381] mtk_soc_eth 15100000.ethernet: generated random MAC address ba:1c:62:2c:c5:c5
+[    1.781750] mt7986a-pinctrl 1001f000.pinctrl: pin GPIO_4 already requested by 11280000.pcie; cannot claim for pinctrl_moore:521
+[    1.793267] mt7986a-pinctrl 1001f000.pinctrl: error -EINVAL: pin-9 (pinctrl_moore:521)
+[    1.801186] gpio-keys gpio-keys: error -EINVAL: failed to get gpio
+[    1.807369] gpio-keys gpio-keys: probe with driver gpio-keys failed with error -22
 ```
 
 ```
@@ -24,7 +26,7 @@ Jan 12 02:12:48 celery kernel: mtdblock: MTD device 'ubi' is NAND, please consid
 Jan 12 02:12:48 celery kernel: mtdblock: MTD device 'fip' is NAND, please consider using UBI block devices instead.
 ```
 
-solve reboot issues (hangs indefinitely)
+solve reboot issues (hangs indefinitely) https://freedesktop.org/wiki/Software/systemd/Debugging/#diagnosingshutdownproblems
 ```
 [  OK  ] Removed slice Slice /system/systemd-zram-setup.
 [  OK  ] Reached target System Shutdown.
