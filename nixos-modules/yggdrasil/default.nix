@@ -129,8 +129,13 @@ in
             let
               ips = concatMapStringsSep ", " (peer: peer.ip) (attrValues cfg.peers);
             in
+            # Use jump for yggdrasil-known-peers and goto for yggdrasil-global
+            # so that we don't have to duplicate the allowed ports in both
+            # chains. Since our known peers are a subset of the entire
+            # yggdrasil network, the allowed ports for the entire network
+            # also apply to our known peers.
             ''
-              ${optionalString (ips != [ ]) ''ip6 saddr { ${ips} } goto yggdrasil-known-peers''}
+              ${optionalString (ips != [ ]) ''ip6 saddr { ${ips} } jump yggdrasil-known-peers''}
               ip6 saddr 200::/7 goto yggdrasil-global
             ''
           )
