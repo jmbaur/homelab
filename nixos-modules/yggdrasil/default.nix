@@ -93,7 +93,7 @@ in
           allPeersUdpPorts = concatMapStringsSep ", " toString cfg.all.allowedUDPPorts;
         in
         mkAfter ''
-          chain yggdrasil-global {
+          chain yggdrasil-known-peers {
             ${optionalString (
               cfg.allKnownPeers.allowedTCPPorts != [ ]
             ) ''tcp dport { ${knownPeersTcpPorts} } accept''}
@@ -102,7 +102,7 @@ in
             ) ''udp dport { ${knownPeersUdpPorts} } accept''}
           }
 
-          chain yggdrasil-known-peers {
+          chain yggdrasil-global {
             ${optionalString (cfg.all.allowedTCPPorts != [ ]) ''tcp dport { ${allPeersTcpPorts} } accept''}
             ${optionalString (cfg.all.allowedUDPPorts != [ ]) ''udp dport { ${allPeersUdpPorts} } accept''}
           }
