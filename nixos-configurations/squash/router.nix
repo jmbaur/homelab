@@ -62,7 +62,7 @@
 
   services.hostapd = {
     enable = true;
-    radios.wlan1 = {
+    radios.wlan0 = {
       band = "2g";
       countryCode = "US";
       wifi5.enable = false;
@@ -82,19 +82,19 @@
         ];
       };
       settings.bridge = config.router.lanInterface;
-      networks.wlan1 = {
+      networks.wlan0 = {
         ssid = "Silence of the LANs";
         authentication = {
           # TODO(jared): investigate using wpa3-sae-transition
           #
           # Allow older devices that only support wpa2 to connect.
           mode = "wpa2-sha256";
-          wpaPasswordFile = config.sops.secrets.wlan1.path;
-          saePasswordsFile = config.sops.secrets.wlan1.path;
+          wpaPasswordFile = config.sops.secrets.wlan0.path;
+          saePasswordsFile = config.sops.secrets.wlan0.path;
         };
       };
     };
-    radios.wlan0 = {
+    radios.wlan1 = {
       band = "5g";
       countryCode = "US";
       wifi7.enable = false;
@@ -134,12 +134,12 @@
         multiUserBeamformer = true;
       };
       settings.bridge = config.router.lanInterface;
-      networks.wlan0 = {
+      networks.wlan1 = {
         ssid = "SpiderLAN";
         authentication = {
           mode = "wpa3-sae-transition";
-          wpaPasswordFile = config.sops.secrets.wlan0.path;
-          saePasswordsFile = config.sops.secrets.wlan0.path;
+          wpaPasswordFile = config.sops.secrets.wlan1.path;
+          saePasswordsFile = config.sops.secrets.wlan1.path;
         };
       };
     };
