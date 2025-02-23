@@ -119,8 +119,10 @@
     ];
 
     boot.kernelModules = [ "ubi" ];
+
     boot.extraModprobeConfig = ''
       options ubi mtd=ubi
+      options mt7915e wed_enable=Y
     '';
 
     environment.etc."fw_env.config".text = ''

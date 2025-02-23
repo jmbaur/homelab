@@ -24,6 +24,19 @@ Jan 12 02:12:48 celery kernel: mtdblock: MTD device 'ubi' is NAND, please consid
 Jan 12 02:12:48 celery kernel: mtdblock: MTD device 'fip' is NAND, please consider using UBI block devices instead.
 ```
 
+solve reboot issues (hangs indefinitely)
+```
+[  OK  ] Removed slice Slice /system/systemd-zram-setup.
+[  OK  ] Reached target System Shutdown.
+[  OK  ] Reached target Late Shutdown Services.
+[  OK  ] Finished System Reboot.
+[  OK  ] Reached target System Reboot.
+[   36.395811] watchdog: watchdog0: watchdog did not stop!
+[   36.640219] watchdog: watchdog0: watchdog did not stop!
+[   37.056180] watchdog: watchdog0: watchdog did not stop!
+[   37.084829] reboot: Restarting system
+```
+
 # radish
 solve panic on early boot
 ```
