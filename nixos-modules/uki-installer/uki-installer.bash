@@ -26,7 +26,7 @@ mkdir -p "${workdir}/${efi_sys_mount_point}/EFI/Linux" "${workdir}/${efi_sys_mou
 
 declare -A generations
 while read -r number _generation; do
-	toplevel_path=$(readlink --canonicalize "/nix/var/nix/profiles/system-${number}-link")
+	toplevel_path=$(readlink --canonicalize-existing "/nix/var/nix/profiles/system-${number}-link")
 	generations["$number"]=$toplevel_path
 done < <(nix-env --list-generations --profile /nix/var/nix/profiles/system | tac)
 

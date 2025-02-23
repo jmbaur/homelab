@@ -11,8 +11,8 @@ declare argc_update_endpoint argc_closure argc_target_disk argc_fstab
 
 eval "$(argc --argc-eval "$0" "$@")"
 
-target_disk=$(readlink --canonicalize "$argc_target_disk")
-fstab=$(readlink --canonicalize "$argc_fstab")
+target_disk=$(readlink --canonicalize-existing "$argc_target_disk")
+fstab=$(readlink --canonicalize-existing "$argc_fstab")
 
 function error_handler() {
 	umount --recursive /mnt 2>/dev/null || true

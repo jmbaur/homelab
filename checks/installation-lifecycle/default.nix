@@ -168,7 +168,7 @@ testers.runNixOSTest {
           machine.start(allow_reboot=True)
           machine.wait_for_unit("multi-user.target")
           assert_boot_entry("nixos-generation-1.conf")
-          assert "${nodes.machine.system.build.toplevel}" == machine.succeed("readlink --canonicalize /run/current-system").strip()
+          assert "${nodes.machine.system.build.toplevel}" == machine.succeed("readlink --canonicalize-existing /run/current-system").strip()
 
       with subtest("update"):
           updateServer.succeed("cat ${

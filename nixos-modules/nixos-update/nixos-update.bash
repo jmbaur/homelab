@@ -10,7 +10,7 @@ new_toplevel=$(curl \
 	--header "Accept: application/json" \
 	"$update_endpoint" | jq --raw-output ".buildoutputs.out.path")
 
-if [[ $(readlink --canonicalize /run/current-system) != "$new_toplevel" ]]; then
+if [[ $(readlink --canonicalize-existing /run/current-system) != "$new_toplevel" ]]; then
 	nix-env --set --profile /nix/var/nix/profiles/system "$new_toplevel"
 
 	booted_toplevel_kernel="$(readlink --canonicalize-existing /run/booted-system/{initrd,kernel,kernel-modules})"
