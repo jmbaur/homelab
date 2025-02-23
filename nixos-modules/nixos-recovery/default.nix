@@ -184,6 +184,8 @@ let
       # recovery system.
       systemd.network.wait-online.anyInterface = true;
 
+      environment.systemPackages = [ nixosRecovery ];
+
       systemd.services.nixos-recovery = {
         wantedBy = [ "multi-user.target" ];
         after = [
