@@ -204,6 +204,8 @@
               USB_XHCI_HCD = yes;
               USB_XHCI_MTK = yes;
               USE_BOOTCOMMAND = yes;
+              WDT = yes;
+              WDT_MTK = yes;
             };
           };
 
