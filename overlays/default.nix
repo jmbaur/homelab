@@ -148,58 +148,6 @@ inputs: {
         url = "https://keybase.io/jaredbaur/pgp_keys.asc";
         sha256 = "sha256-R2a+bF7E6Zogl5XWsjrK5dkCAvK6K2h/bje37aYSgGc=";
       };
-
-      extractLinuxFirmware =
-        name: paths:
-        (final.runCommand name { } (
-          final.lib.concatLines (
-            map
-              # all files in linux-firmware are read-only
-              (
-                firmwarePath:
-                # bash
-                ''
-                  if [[ -f $(readlink --canonicalize-existing ${final.linux-firmware}/lib/firmware/${firmwarePath}) ]]; then
-                    install -Dm0444 \
-                      --target-directory=$(dirname $out/lib/firmware/${firmwarePath}) \
-                      ${final.linux-firmware}/lib/firmware/${firmwarePath}
-                  else
-                    echo "WARNING: lib/firmware/${firmwarePath} does not exist in linux-firmware ${final.linux-firmware.version}"
-                  fi
-                '')
-              paths
-          )
-        ));
-
-      mt7915-firmware =
-        final.extractLinuxFirmware "mt7915-firmware"
-          # https://github.com/torvalds/linux/blob/fda5e3f284002ea55dac1c98c1498d6dd684046e/drivers/net/wireless/mediatek/mt76/mt7915/mt7915.h#L29
-          [
-            "mediatek/mt7915_eeprom.bin"
-            "mediatek/mt7915_eeprom_dbdc.bin"
-            "mediatek/mt7915_rom_patch.bin"
-            "mediatek/mt7915_wa.bin"
-            "mediatek/mt7915_wm.bin"
-            "mediatek/mt7916_eeprom.bin"
-            "mediatek/mt7916_rom_patch.bin"
-            "mediatek/mt7916_wa.bin"
-            "mediatek/mt7916_wm.bin"
-            "mediatek/mt7981_eeprom_mt7976_dbdc.bin"
-            "mediatek/mt7981_rom_patch.bin"
-            "mediatek/mt7981_wa.bin"
-            "mediatek/mt7981_wm.bin"
-            "mediatek/mt7986_eeprom_mt7975.bin"
-            "mediatek/mt7986_eeprom_mt7975_dual.bin"
-            "mediatek/mt7986_eeprom_mt7976.bin"
-            "mediatek/mt7986_eeprom_mt7976_dbdc.bin"
-            "mediatek/mt7986_eeprom_mt7976_dual.bin"
-            "mediatek/mt7986_rom_patch.bin"
-            "mediatek/mt7986_rom_patch_mt7975.bin"
-            "mediatek/mt7986_wa.bin"
-            "mediatek/mt7986_wm.bin"
-            "mediatek/mt7986_wm_mt7975.bin"
-            "mediatek/mt7986_wo_0.bin"
-          ];
     })
   ];
 }

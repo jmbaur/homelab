@@ -23,7 +23,7 @@
 
     hardware.firmware = [
       pkgs.wireless-regdb
-      pkgs.mt7915-firmware
+      (pkgs.extractLinuxFirmwareDirectory "mediatek")
     ];
 
     hardware.deviceTree = {

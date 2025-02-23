@@ -5,7 +5,7 @@
 
   hardware.firmware = [
     pkgs.wireless-regdb
-    pkgs.mt7915-firmware
+    (pkgs.extractLinuxFirmwareDirectory "mediatek")
   ];
 
   hardware.armada-388-clearfog.enable = true;

@@ -37,12 +37,7 @@ in
       };
     };
 
-    hardware.firmware = [
-      (pkgs.extractLinuxFirmware "inside-secure-firmware" [
-        "inside-secure/eip197_minifw/ifpp.bin"
-        "inside-secure/eip197_minifw/ipue.bin"
-      ])
-    ];
+    hardware.firmware = [ (pkgs.extractLinuxFirmwareDirectory "inside-secure") ];
 
     environment.systemPackages = [
       pkgs.uboot-env-tools

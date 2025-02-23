@@ -85,7 +85,7 @@
       ];
 
       hardware.firmware = [
-        (pkgs.extractLinuxFirmware "mali-firmware" [ "arm/mali/arch10.8/mali_csffw.bin" ])
+        (pkgs.extractLinuxFirmwareDirectory "arm/mali")
       ];
     }
     {

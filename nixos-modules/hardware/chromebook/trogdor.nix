@@ -24,40 +24,8 @@
         '';
         hash = "sha256-WAGAweY1u2r9n/wDaFavjq6ju0E7P6HC07+wO9BnigU=";
       })
-      (pkgs.extractLinuxFirmware "trogdor-firmware" [
-        "qca/crbtfw32.tlv" # bluetooth
-        "qcom/venus-5.4/venus.mbn" # video-codec
-
-        # drm-msm
-        "qcom/a300_pfp.fw"
-        "qcom/a300_pm4.fw"
-        "qcom/a330_pfp.fw"
-        "qcom/a330_pm4.fw"
-        "qcom/a420_pfp.fw"
-        "qcom/a420_pm4.fw"
-        "qcom/a530_pfp.fw"
-        "qcom/a530_pm4.fw"
-        "qcom/a530_zap.b00"
-        "qcom/a530_zap.b01"
-        "qcom/a530_zap.b02"
-        "qcom/a530_zap.mdt"
-        "qcom/a530v3_gpmu.fw2"
-        "qcom/a540_gpmu.fw2"
-        "qcom/a615_zap.mbn"
-        "qcom/a619_gmu.bin"
-        "qcom/a630_gmu.bin"
-        "qcom/a630_sqe.fw"
-        "qcom/a630_zap.mbn"
-        "qcom/a640_gmu.bin"
-        "qcom/a650_gmu.bin"
-        "qcom/a650_sqe.fw"
-        "qcom/a660_gmu.bin"
-        "qcom/a660_sqe.fw"
-        "qcom/leia_pfp_470.fw"
-        "qcom/leia_pm4_470.fw"
-        "qcom/yamato_pfp.fw"
-        "qcom/yamato_pm4.fw"
-      ])
+      (pkgs.extractLinuxFirmwareDirectory "qca")
+      (pkgs.extractLinuxFirmwareDirectory "qcom")
     ];
 
     boot.kernelParams = [ "deferred_probe_timeout=30" ];
