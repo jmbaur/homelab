@@ -36,7 +36,7 @@
             name = builtins.baseNameOf dtsFile;
           })
           [
-            ./nor.dtso
+            ./nand.dtso
             ./emmc.dtso
           ];
     };
