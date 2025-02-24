@@ -62,7 +62,7 @@ let
       }"
       "BL33=${uboot-mt7986a_bpir3_emmc}/u-boot.bin"
       "DRAM_USE_DDR4=1"
-      "BOOT_DEVICE=nor" # defines where the FIP image lives
+      "BOOT_DEVICE=spim-nand" # defines where the FIP image lives
       "OD=$(OBJDUMP)"
       "OC=$(OBJCOPY)"
       # GNU's assembler doesn't recognize the `-x` option, so instead,

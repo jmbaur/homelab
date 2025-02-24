@@ -9,6 +9,9 @@ uboot> mtd write bl2 $loadaddr
 uboot> load usb 0:1 $loadaddr fip.bin
 uboot> mtd erase fip
 uboot> mtd write fip $loadaddr
+uboot> load usb 0:1 $loadaddr ubi.img
+uboot> mtd erase ubi
+uboot> mtd write ubi $loadaddr
 ```
 
 # dip switches
