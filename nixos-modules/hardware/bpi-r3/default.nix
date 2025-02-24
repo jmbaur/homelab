@@ -154,9 +154,14 @@
               EFI_BOOTMGR = yes;
               EFI_LOADER = yes;
               ENV_IS_IN_MMC = unset;
-              ENV_IS_IN_SPI_FLASH = yes;
-              ENV_OFFSET = freeform "0x40000";
-              ENV_SIZE = freeform "0x40000";
+              ENV_IS_IN_UBI = yes;
+              ENV_OFFSET = unset;
+              ENV_SIZE = freeform "0x1f000";
+              ENV_SIZE_REDUND = freeform "0x1f000";
+              ENV_UBI_PART = freeform "ubi";
+              ENV_UBI_VOLUME = freeform "ubootenv";
+              ENV_UBI_VOLUME_REDUND = freeform "ubootenvred";
+              ENV_VARS_UBOOT_RUNTIME_CONFIG = yes;
               FIT = yes;
               MTD = yes;
               MTD_SPI_NAND = yes;
