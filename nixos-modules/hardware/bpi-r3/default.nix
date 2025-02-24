@@ -96,6 +96,12 @@
       '')
     ];
 
+    # TODO(jared): There is an issue where uboot advertises the ability to
+    # perform a reset via the EFI runtime services, however the linux kernel
+    # hangs indefinitely when it attempts to use it, so in the meantime, don't
+    # use it!
+    boot.kernelParams = [ "efi=noruntime" ];
+
     boot.kernelModules = [ "ubi" ];
 
     boot.extraModprobeConfig = ''
