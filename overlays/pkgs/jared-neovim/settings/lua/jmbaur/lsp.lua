@@ -1,16 +1,6 @@
 local lspconfig = require("lspconfig")
-local null_ls = require("null-ls")
 
 local left_aligned_line = "\xe2\x96\x8e"
-
-local null_ls_sources = {}
-if vim.g.lang_support_lua then
-	table.insert(null_ls_sources, null_ls.builtins.formatting.stylua)
-end
-if vim.g.lang_support_nix then
-	table.insert(null_ls_sources, null_ls.builtins.formatting.nixfmt)
-end
-null_ls.setup({ sources = null_ls_sources })
 
 local toggle_format_on_save = function()
 	if not vim.b.format_on_save or vim.b.format_on_save == true then
@@ -136,7 +126,6 @@ end
 
 local on_attach_format_orgimports = get_on_attach({ format = true, organize_imports = true })
 local on_attach_format = get_on_attach({ format = true })
-local on_attach_format_null_ls = get_on_attach({ format = true, null_ls_format = true })
 local on_attach = get_on_attach({})
 
 local servers = {
@@ -149,12 +138,18 @@ local servers = {
 			settings = { gopls = { gofumpt = true, staticcheck = true } },
 		},
 	},
-	nil_ls = { enable = vim.g.lang_support_nix, config = { on_attach = on_attach_format_null_ls } },
+	nil_ls = {
+		enable = vim.g.lang_support_nix,
+		config = {
+			on_attach = on_attach_format,
+			settings = { ["nil"] = { formatting = { command = { "nixfmt" } } } },
+		},
+	},
 	ttags = { enable = true, config = { filetypes = { "javascript", "haskell", "ruby" } } },
 	lua_ls = {
 		enable = vim.g.lang_support_lua,
 		config = {
-			on_attach = on_attach_format_null_ls,
+			on_attach = on_attach_format,
 			on_init = function(client)
 				-- If lua-language-server is configured for a given project,
 				-- don't assume it is lua for neovim.
@@ -213,22 +208,18 @@ for lsp, settings in pairs(servers) do
 	end
 end
 
+local diagnostic_signs = { text = {} }
+for _, name in ipairs({ "ERROR", "HINT", "INFO", "WARN" }) do
+	diagnostic_signs["text"][vim.diagnostic.severity[name]] = left_aligned_line
+end
+
 vim.diagnostic.config({
 	severity_sort = true,
-	signs = true,
+	signs = diagnostic_signs,
 	underline = true,
 	update_in_insert = false,
 	virtual_text = false,
 })
-
-local sign_symbol = function(name, icon)
-	vim.fn.sign_define("DiagnosticSign" .. name, { text = icon, texthl = "DiagnosticSign" .. name })
-end
-sign_symbol("Error", left_aligned_line)
-sign_symbol("Hint", left_aligned_line)
-sign_symbol("Info", left_aligned_line)
-sign_symbol("Ok", left_aligned_line)
-sign_symbol("Warn", left_aligned_line)
 
 -- local group = vim.api.nvim_create_augroup("DiagnostickQuickfix", { clear = true })
 

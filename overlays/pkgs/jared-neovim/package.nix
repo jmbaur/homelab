@@ -96,7 +96,6 @@ let
       fzf-lua
       gruvbox-nvim
       mini-nvim
-      none-ls-nvim
       nvim-lspconfig
       nvim-treesitter-context
       nvim-treesitter-refactor
