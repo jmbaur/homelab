@@ -29,42 +29,29 @@
         };
       }
 
-      rec {
-        name = pkgs.patchNameFromSubject "arm64: dts: mediatek: mt7986: fix the switch reset line on BPI-R3";
-        patch = pkgs.fetchpatch {
-          inherit name;
-          url = "https://lore.kernel.org/linux-arm-kernel/20240627075856.2314804-2-leith@bade.nz/raw";
-          hash = "sha256-3kAnvJO/R7nTaahAimMQascL9mY9K375EKsbpDRVE3E=";
+      {
+        name = "bpi-r3-enablement";
+        patch = null;
+        extraStructuredConfig = {
+          BRIDGE = lib.kernel.yes;
+          HSR = lib.kernel.yes;
+          MEDIATEK_GE_PHY = lib.kernel.yes;
+          MTD_NAND_ECC_MEDIATEK = lib.kernel.yes;
+          MTD_SPI_NAND = lib.kernel.yes;
+          MTK_LVTS_THERMAL = lib.kernel.yes;
+          MTK_SOC_THERMAL = lib.kernel.yes;
+          MTK_THERMAL = lib.kernel.yes;
+          NET_DSA = lib.kernel.yes;
+          NET_DSA_MT7530 = lib.kernel.yes;
+          NET_DSA_TAG_MTK = lib.kernel.yes;
+          NET_MEDIATEK_SOC = lib.kernel.yes;
+          NET_MEDIATEK_STAR_EMAC = lib.kernel.yes;
+          PCIE_MEDIATEK = lib.kernel.yes;
+          PCIE_MEDIATEK_GEN3 = lib.kernel.yes;
+          PCS_MTK_LYNXI = lib.kernel.yes;
+          REGULATOR_MT6380 = lib.kernel.yes;
         };
       }
-
-      rec {
-        name = pkgs.patchNameFromSubject "arm64: dts: mediatek: mt7986: add gpio-hog for boot mode switch on BPI-R3";
-        patch = pkgs.fetchpatch {
-          inherit name;
-          url = "https://lore.kernel.org/linux-arm-kernel/20240627075856.2314804-3-leith@bade.nz/raw";
-          hash = "sha256-7FQLAWYtilj+MH34UAO80mztO9igYRJy5oPGc1ts5MQ=";
-        };
-      }
-
-      rec {
-        name = pkgs.patchNameFromSubject "arm64: dts: mediatek: mt7986: add missing pin groups to BPI-R3";
-        patch = pkgs.fetchpatch {
-          inherit name;
-          url = "https://lore.kernel.org/linux-arm-kernel/20240627075856.2314804-4-leith@bade.nz/raw";
-          hash = "sha256-YibxuXNlvGrLlbfqev2aiOdprzJcXwBRpq9yOik/gjc=";
-        };
-      }
-
-      rec {
-        name = pkgs.patchNameFromSubject "arm64: dts: mediatek: mt7986: add missing UART1 CTS/RTS pins in BPI-R3";
-        patch = pkgs.fetchpatch {
-          inherit name;
-          url = "https://lore.kernel.org/linux-arm-kernel/20240627075856.2314804-5-leith@bade.nz/raw";
-          hash = "sha256-Na7r1DxEkwJg0biDlzfjK8YxZu9Bi8i0MxygORdr3Wg=";
-        };
-      }
-
     ];
 
     hardware.firmware = [
