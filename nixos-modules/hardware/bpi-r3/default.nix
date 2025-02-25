@@ -20,15 +20,6 @@
         };
       }
 
-      rec {
-        name = pkgs.patchNameFromSubject "PCI: mediatek-gen3: handle PERST after reset";
-        patch = pkgs.fetchpatch {
-          inherit name;
-          url = "https://lore.kernel.org/lkml/20230402131119.98805-1-linux@fw-web.de/raw";
-          hash = "sha256-qyxc9DSfyO7kB52JR4rWY36ugzvEvTHCXPwhyrcV5fc=";
-        };
-      }
-
       {
         name = "bpi-r3-enablement";
         patch = null;
