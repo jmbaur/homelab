@@ -18,6 +18,12 @@ let
 
   backgroundColor = "1f3023";
 
+  enabledExtensions = [
+    pkgs.gnomeExtensions.appindicator
+    pkgs.gnomeExtensions.caffeine
+    pkgs.gnomeExtensions.clipboard-history
+  ];
+
   setupFlathub = pkgs.writeShellApplication {
     name = "setup-flathub";
     text = ''
@@ -47,14 +53,12 @@ in
         pkgs.gnome-logs
         pkgs.gnome-text-editor
         pkgs.gnome-weather
-        pkgs.gnomeExtensions.appindicator
-        pkgs.gnomeExtensions.caffeine
-        pkgs.gnomeExtensions.clipboard-history
         pkgs.loupe
         pkgs.nautilus
         pkgs.papers
         pkgs.snapshot
       ]
+      ++ enabledExtensions
       ++ optionals config.services.flatpak.enable [
         setupFlathub
         pkgs.gnome-software
@@ -99,6 +103,13 @@ in
             "org/gnome/mutter".experimental-features = gvariant.mkArray [
               "scale-monitor-framebuffer"
             ];
+            "org/gnome/shell" = {
+              enabled-extensions = gvariant.mkArray (map (extension: extension.extensionUuid) enabledExtensions);
+              favorite-apps = gvariant.mkArray [
+                "com.mitchellh.ghostty.desktop"
+                "firefox.desktop"
+              ];
+            };
             "org/gnome/desktop/background" = {
               picture-uri = gvariant.mkString ""; # "file:///run/current-system/sw/share/backgrounds/gnome/vnc-l.png";
               picture-uri-dark = gvariant.mkString ""; # "file:///run/current-system/sw/share/backgrounds/gnome/vnc-d.png";
