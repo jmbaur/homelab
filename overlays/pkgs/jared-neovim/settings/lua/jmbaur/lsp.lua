@@ -192,9 +192,16 @@ local servers = {
 			on_attach = on_attach_format,
 			settings = {
 				["rust-analyzer"] = {
-					-- use cargo-clippy if available
+					-- Prevent `cannot find proc-macro server in sysroot` errors
 					--
-					-- TODO(jared): It would be nice to detect this in on_attach
+					-- TODO(jared): Resolve this, likely an issue in the
+					-- environment rust_analyzer is running in.
+					diagnostics = { disabled = { "unresolved-proc-macro" } },
+
+					-- Use cargo-clippy if available
+					--
+					-- TODO(jared): It would be nice to detect this in
+					-- `on_attach`.
 					check = { command = vim.fn.executable("cargo-clippy") == 1 and "clippy" or "check" },
 				},
 			},
