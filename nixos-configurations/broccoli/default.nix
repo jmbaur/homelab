@@ -18,17 +18,24 @@
     }
     {
       sops.secrets = {
-        nix = { };
-        mirror = { };
+        nix_signing_key = { };
+        hydra_netrc.owner = config.users.users.hydra.name;
       };
 
       services.harmonia = {
         enable = true;
-        signKeyPaths = [ config.sops.secrets.nix.path ];
+        signKeyPaths = [ config.sops.secrets.nix_signing_key.path ];
         settings.bind = "[::]:5000";
       };
 
       nix.settings.allow-import-from-derivation = false;
+
+      systemd.tmpfiles.settings."10-hydra" = {
+        "${config.users.users.hydra.home}/.config/nix".d = { };
+        "${config.users.users.hydra.home}/.config/nix/nix.conf"."L+".argument = toString (
+          pkgs.writeText "hydra-nix.conf" ''netrc-file = ${config.sops.secrets.hydra_netrc.path}''
+        );
+      };
 
       nix.settings.allowed-uris = [
         "https://"
