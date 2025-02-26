@@ -28,7 +28,13 @@
         settings.bind = "[::]:5000";
       };
 
-      nix.settings.allow-import-from-derivation = false;
+      nix.settings = {
+        # IFD bad
+        allow-import-from-derivation = false;
+
+        # Allow hydra user to set netrc-file
+        extra-trusted-users = [ config.users.users.hydra.name ];
+      };
 
       systemd.tmpfiles.settings."10-hydra" = {
         "${config.users.users.hydra.home}/.config/nix".d = { };
