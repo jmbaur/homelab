@@ -87,12 +87,13 @@
       custom.basicNetwork.enable = true;
       custom.recovery.targetDisk = "/dev/disk/by-path/pci-0000:03:00.0-nvme-1";
 
-      users.users.builder.isNormalUser = true;
       nix.settings.extra-trusted-users = [ config.users.users.builder.name ];
-
-      users.users.root.openssh.authorizedKeys.keys = [
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPdvoVe/aTHTNPIg5xtq4XEKo6PyEa0HkOWoWzvYBoQI broccoli-hydra"
-      ];
+      users.users.builder = {
+        isNormalUser = true;
+        openssh.authorizedKeys.keys = [
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPdvoVe/aTHTNPIg5xtq4XEKo6PyEa0HkOWoWzvYBoQI broccoli-hydra"
+        ];
+      };
 
       custom.yggdrasil.peers.broccoli.allowedTCPPorts = [ 22 ];
     }
