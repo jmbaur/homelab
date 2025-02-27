@@ -1,28 +1,31 @@
 {
-  lib,
-  stdenv,
   fetchFromGitHub,
-  udev,
-  qrtr,
+  lib,
+  pkg-config,
   qmic,
+  qrtr,
+  stdenv,
+  udev,
 }:
 
-stdenv.mkDerivation {
+stdenv.mkDerivation (finalAttrs: {
   pname = "rmtfs";
-  version = "2024-03-18";
+  version = "1.1";
+
+  src = fetchFromGitHub {
+    owner = "linux-msm";
+    repo = "rmtfs";
+    rev = "v${finalAttrs.version}";
+    hash = "sha256-iyTIPuzZofs2n0aoiA/06edDXWoZE3/NY1vsy6KuUiw=";
+  };
+
+  nativeBuildInputs = [ pkg-config ];
 
   buildInputs = [
     udev
     qrtr
     qmic
   ];
-
-  src = fetchFromGitHub {
-    owner = "linux-msm";
-    repo = "rmtfs";
-    rev = "33e1e40615efc59b17a515afe857c51b8b8c1ad1";
-    hash = "sha256-AxFuDmfLTcnnwm+nezwLc8yaHcX+pFkX5qSIO38T/BM=";
-  };
 
   installFlags = [ "prefix=$(out)" ];
 
@@ -32,4 +35,4 @@ stdenv.mkDerivation {
     license = lib.licenses.bsd3;
     platforms = lib.platforms.aarch64;
   };
-}
+})

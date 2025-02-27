@@ -1,28 +1,31 @@
 {
-  stdenv,
-  lib,
   fetchFromGitHub,
+  lib,
   meson,
   ninja,
+  pkg-config,
+  stdenv,
+  systemdLibs,
 }:
 
-stdenv.mkDerivation {
+stdenv.mkDerivation (finalAttrs: {
   pname = "qrtr";
-  version = "unstable-2024-05-21";
+  version = "1.1";
 
   src = fetchFromGitHub {
     owner = "linux-msm";
     repo = "qrtr";
-    rev = "daf7f4cc326a5036dcce2bd7deaf2c32841b0336";
-    hash = "sha256-OGx5fxxtrNN9EJJxxH4MTDRFGsyu4LNo+ks46zbJqF0=";
+    rev = "v${finalAttrs.version}";
+    hash = "sha256-cPd7bd+S2uVILrFF797FwumPWBOJFDI4NvtoZ9HiWKM=";
   };
 
   nativeBuildInputs = [
     meson
     ninja
+    pkg-config
   ];
 
-  mesonFlags = [ "-Dsystemd-service=disabled" ];
+  buildInputs = [ systemdLibs ];
 
   installFlags = [ "prefix=$(out)" ];
 
@@ -32,4 +35,4 @@ stdenv.mkDerivation {
     license = lib.licenses.bsd3;
     platforms = lib.platforms.aarch64;
   };
-}
+})

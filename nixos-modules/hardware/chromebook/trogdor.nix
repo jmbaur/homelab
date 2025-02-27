@@ -26,6 +26,7 @@
       })
       (pkgs.extractLinuxFirmwareDirectory "qca")
       (pkgs.extractLinuxFirmwareDirectory "qcom")
+      (pkgs.extractLinuxFirmwareDirectory "ath10k")
     ];
 
     boot.kernelParams = [ "deferred_probe_timeout=30" ];
