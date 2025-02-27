@@ -63,8 +63,7 @@
         3000
       ];
 
-      nix.distributedBuilds = false;
-
+      nix.distributedBuilds = true;
       nix.buildMachines = [
         {
           hostName = "localhost";
