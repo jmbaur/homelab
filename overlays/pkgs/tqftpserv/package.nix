@@ -2,36 +2,42 @@
   fetchFromGitHub,
   lib,
   pkg-config,
-  qmic,
+  ninja,
+  meson,
   qrtr,
   stdenv,
+  zstd,
   systemdLibs,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
-  pname = "rmtfs";
+  pname = "tqftpserv";
   version = "1.1";
 
   src = fetchFromGitHub {
     owner = "linux-msm";
-    repo = "rmtfs";
+    repo = "tqftpserv";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-iyTIPuzZofs2n0aoiA/06edDXWoZE3/NY1vsy6KuUiw=";
+    hash = "sha256-Djw2rx1FXYYPXs6Htq7jWcgeXFvfCUoeidKtYUvTqZU=";
   };
 
-  nativeBuildInputs = [ pkg-config ];
+  nativeBuildInputs = [
+    meson
+    ninja
+    pkg-config
+  ];
 
   buildInputs = [
-    qmic
     qrtr
     systemdLibs
+    zstd
   ];
 
   installFlags = [ "prefix=$(out)" ];
 
   meta = {
-    description = "Qualcomm Remote Filesystem Service";
-    homepage = "https://github.com/linux-msm/rmtfs";
+    description = "Trivial File Transfer Protocol server over AF_QIPCRTR";
+    homepage = "https://github.com/linux-msm/tqftpserv";
     license = lib.licenses.bsd3;
     platforms = lib.platforms.aarch64;
   };

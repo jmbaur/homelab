@@ -50,6 +50,8 @@
     ];
 
     boot.initrd.availableKernelModules = [
+      "rtc_cros_ec"
+
       "i2c-hid-of"
       "i2c-hid-of-goodix"
       "elan-i2c"
