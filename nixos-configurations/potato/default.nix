@@ -30,6 +30,13 @@
         board = "fizz-fizz";
       };
 
+      boot.kernelParams = [ "console=ttyS0,115200" ];
+      systemd.services."serial-getty@ttyS0" = {
+        enable = true;
+        wantedBy = [ "getty.target" ];
+        serviceConfig.Restart = "always"; # restart when session is closed
+      };
+
       hardware.graphics.extraPackages = with pkgs; [
         (intel-vaapi-driver.override { enableHybridCodec = true; })
         intel-media-driver
@@ -71,22 +78,18 @@
           ]
         '')
       ];
+
     }
     {
-      custom.server.enable = true;
-      custom.basicNetwork.enable = true;
       nixpkgs.buildPlatform = config.nixpkgs.hostPlatform;
 
+      custom.server.enable = true;
+      custom.basicNetwork.enable = true;
       custom.recovery.targetDisk = "/dev/disk/by-path/pci-0000:03:00.0-nvme-1";
 
-      boot.kernelParams = [ "console=ttyS0,115200" ];
-      systemd.services."serial-getty@ttyS0" = {
-        enable = true;
-        wantedBy = [ "getty.target" ];
-        serviceConfig.Restart = "always"; # restart when session is closed
-      };
-
-      services.kodi.enable = true;
+      users.users.root.openssh.authorizedKeys.keys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPdvoVe/aTHTNPIg5xtq4XEKo6PyEa0HkOWoWzvYBoQI broccoli-hydra"
+      ];
     }
   ];
 }

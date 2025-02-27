@@ -12,13 +12,11 @@
       custom.basicNetwork.enable = true;
       hardware.blackrock.enable = true;
       custom.recovery.targetDisk = "/dev/disk/by-path/platform-1c20000.pcie-pci-0002:01:00.0-nvme-1";
-
-      # TODO(jared): doesn't work on wdk2023?
-      systemd.services.pd-mapper.enable = false;
     }
     {
       sops.secrets = {
         nix_signing_key = { };
+        ssh_remote_build = { };
         hydra_netrc.owner = config.users.users.hydra.name;
       };
 
@@ -65,6 +63,8 @@
         3000
       ];
 
+      nix.distributedBuilds = false;
+
       nix.buildMachines = [
         {
           hostName = "localhost";
@@ -73,9 +73,22 @@
           supportedFeatures = config.nix.settings.system-features or [ ];
           maxJobs = 4;
         }
+        {
+          hostName = "potato.internal";
+          protocol = "ssh-ng";
+          sshUser = "builder";
+          sshKey = config.sops.secrets.ssh_remote_build.path;
+          system = "x86_64-linux";
+          publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUFXS3ZpUXVXak90M0N3TDFKdURuVGM4M2tDbUdmZE52akxKMWVaa2I1MVEgcm9vdEBwb3RhdG8K";
+          maxJobs = 4;
+          supportedFeatures = [
+            "nixos-test"
+            "benchmark"
+            "big-parallel"
+            "kvm"
+          ];
+        }
       ];
-
-      nix.distributedBuilds = false;
     }
   ];
 }
