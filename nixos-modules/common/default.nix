@@ -107,6 +107,10 @@ in
         };
       };
 
+      # Entirely unhelpful tool when the nixos config is not shipped on the
+      # device.
+      system.tools.nixos-option.enable = mkDefault false;
+
       # Prevent copying in nixpkgs source eagerly
       nixpkgs.flake.source = mkForce null;
 
