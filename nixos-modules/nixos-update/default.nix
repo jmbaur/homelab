@@ -41,13 +41,18 @@ in
     # in order to ensure rolling back is even possible.
     nix.gc.automatic = mkIf cfg.automatic true;
 
-    systemd.services.nixos-update.serviceConfig = {
-      Type = "oneshot";
-      ExecStart = toString [
-        (getExe nixosUpdate)
-        "update"
-        "--update-endpoint=${cfg.endpoint}"
-      ];
+    systemd.services.nixos-update = {
+      stopIfChanged = false;
+      restartIfChanged = false;
+      reloadIfChanged = false;
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = toString [
+          (getExe nixosUpdate)
+          "update"
+          "--update-endpoint=${cfg.endpoint}"
+        ];
+      };
     };
 
     systemd.timers.nixos-update = mkIf cfg.automatic {
