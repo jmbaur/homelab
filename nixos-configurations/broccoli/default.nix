@@ -74,7 +74,7 @@
         }
         {
           hostName = "potato.internal";
-          protocol = "ssh-ng";
+          protocol = "ssh"; # ssh-ng not supported by hydra (see https://github.com/NixOS/hydra/blob/18c0d762109549351ecf622cde34514351a72492/src/hydra-queue-runner/build-remote.cc#L375)
           sshUser = "builder";
           sshKey = config.sops.secrets.ssh_remote_build.path;
           system = "x86_64-linux";
