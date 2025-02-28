@@ -93,8 +93,8 @@ in
         distributedBuilds = mkDefault true; # allow for populating /etc/nix/machines for remote building
         settings = {
           auto-allocate-uids = true;
-          sync-before-registering = true;
           use-cgroups = true;
+          fsync-store-paths = true;
           extra-trusted-users = [ "@wheel" ];
           extra-system-features = [ "uid-range" ];
           extra-experimental-features = [
