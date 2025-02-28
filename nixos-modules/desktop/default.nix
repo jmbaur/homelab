@@ -41,8 +41,9 @@ in
     networking.wireless.iwd.enable = true;
     networking.networkmanager.wifi.backend = "iwd";
 
-    services.flatpak.enable = true;
+    services.flatpak.enable = mkDefault true;
     services.fwupd.enable = mkDefault true;
+    services.printing.enable = mkDefault true;
 
     environment.systemPackages =
       [
@@ -64,13 +65,12 @@ in
         pkgs.gnome-software
       ];
 
-    programs.seahorse.enable = true;
-
-    programs.yubikey-touch-detector.enable = true;
+    programs.seahorse.enable = mkDefault true;
+    programs.yubikey-touch-detector.enable = mkDefault true;
 
     # Add a default browser to use
     programs.firefox = {
-      enable = true;
+      enable = mkDefault true;
       # Allow users to override preferences set here
       preferencesStatus = "user";
       # Default value only looks good in GNOME
