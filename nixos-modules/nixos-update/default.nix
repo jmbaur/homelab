@@ -7,7 +7,6 @@
 
 let
   inherit (lib)
-    fileContents
     getExe
     mkEnableOption
     mkIf
@@ -16,6 +15,11 @@ let
     ;
 
   cfg = config.custom.update;
+
+  nixosUpdate = pkgs.nixos-update.override {
+    nix = config.nix.package;
+    systemd = config.systemd.package;
+  };
 in
 {
   options.custom.update = {
@@ -26,7 +30,7 @@ in
     endpoint = mkOption {
       type = types.str;
       description = ''
-        The HTTP endpoint to use when pulling updates.
+        The Hydra HTTP endpoint to use when pulling updates.
       '';
     };
   };
@@ -37,32 +41,44 @@ in
     # in order to ensure rolling back is even possible.
     nix.gc.automatic = mkIf cfg.automatic true;
 
+    systemd.services.nixos-update.serviceConfig = {
+      Type = "oneshot";
+      ExecStart = toString [
+        (getExe nixosUpdate)
+        "update"
+        "--update-endpoint=${cfg.endpoint}"
+      ];
+    };
+
     systemd.timers.nixos-update = mkIf cfg.automatic {
       timerConfig = {
-        RandomizedDelaySec = "30m";
+        # Trigger the update 15min after boot, and then – on average – every
+        # 6h, but randomly distributed in a 2h…6h interval. In addition trigger
+        # things persistently once on each Saturday, to ensure that even on
+        # systems that are never booted up for long we have a chance to do the
+        # update.
+        OnBootSec = "15min";
+        OnUnitActiveSec = "2h";
+        OnCalendar = "Sat";
+        RandomizedDelaySec = "4h";
         Persistent = true;
       };
     };
 
-    systemd.services.nixos-update = {
-      startAt = mkIf cfg.automatic [ "daily" ];
+    systemd.services.nixos-update-reboot = mkIf cfg.automatic {
       serviceConfig = {
         Type = "oneshot";
         ExecStart = toString [
-          (getExe (
-            pkgs.writeShellApplication {
-              name = "nixos-update";
-              runtimeInputs = [
-                config.nix.package
-                config.systemd.package
-                pkgs.curl
-                pkgs.jq
-              ];
-              text = fileContents ./nixos-update.bash;
-            }
-          ))
-          cfg.endpoint
+          (getExe nixosUpdate)
+          "reboot"
         ];
+      };
+    };
+
+    systemd.timers.nixos-update-reboot = mkIf cfg.automatic {
+      timerConfig = {
+        OnCalendar = "4:10";
+        RandomizedDelaySec = "30min";
       };
     };
   };
