@@ -51,6 +51,7 @@ in
     };
 
     systemd.timers.nixos-update = mkIf cfg.automatic {
+      wantedBy = [ "timers.target" ];
       timerConfig = {
         # Trigger the update 15min after boot, and then – on average – every
         # 6h, but randomly distributed in a 2h…6h interval. In addition trigger
@@ -76,6 +77,7 @@ in
     };
 
     systemd.timers.nixos-update-reboot = mkIf cfg.automatic {
+      wantedBy = [ "timers.target" ];
       timerConfig = {
         OnCalendar = "4:10";
         RandomizedDelaySec = "30min";
