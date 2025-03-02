@@ -9,7 +9,6 @@ inputs.nixpkgs.lib.mapAttrs (
     inherit (lib)
       getExe
       getExe'
-      mapAttrs'
       ;
 
     mkApp = script: {
@@ -143,94 +142,6 @@ inputs.nixpkgs.lib.mapAttrs (
 
     updateGithubWorkflows =
       let
-        ci = (pkgs.formats.yaml { }).generate "ci.yaml" {
-          name = "ci";
-          on = {
-            workflow_dispatch = { }; # allows manual triggering
-            push.branches = [ "main" ];
-          };
-          concurrency = {
-            group = "ci-\${{ github.ref }}";
-            cancel-in-progress = true; # ensure new jobs take precedence
-          };
-          # We split out each NixOS machine to being built in its own job so we
-          # don't run into the 6-hour max job execution time limit.
-          # Anecdotally, one build of the 'celery' machine takes ~3.5
-          # hours. The max workflow execution time is 72 hours, which we
-          # should definitely be able to fit all our jobs within.
-          #
-          # TODO(jared): `pkgs.formats.yaml` doesn't handle long lines well.
-          jobs =
-            {
-              test = {
-                runs-on = "ubuntu-latest";
-                # needed for magic-nix-cache-action
-                permissions = {
-                  contents = "read";
-                  id-token = "write";
-                };
-                steps = [
-                  {
-                    name = "Checkout repository";
-                    uses = "actions/checkout@v4";
-                  }
-                  { uses = "DeterminateSystems/nix-installer-action@main"; }
-                  { uses = "DeterminateSystems/magic-nix-cache-action@main"; }
-                  {
-                    name = "Nix flake check";
-                    # TODO(jared): GH actions runners don't have enough RAM to run `nix flake check`
-                    run = ''nix build --print-build-logs .#checks.$(nix eval --raw --impure --expr "builtins.currentSystem").installation-lifecycle'';
-                  }
-                ];
-              };
-            }
-            // mapAttrs' (name: nixosConfig: {
-              name = "build-${name}";
-              value = {
-                needs = [ "test" ];
-                runs-on =
-                  {
-                    x86_64 = "ubuntu-latest";
-                    aarch64 = "ubuntu-24.04-arm";
-                  }
-                  .${nixosConfig._module.args.pkgs.stdenv.buildPlatform.qemuArch};
-                # needed for magic-nix-cache-action
-                permissions = {
-                  contents = "read";
-                  id-token = "write";
-                };
-                steps = [
-                  {
-                    name = "Checkout repository";
-                    uses = "actions/checkout@v4";
-                  }
-                  {
-                    name = "Free Disk Space (Ubuntu)";
-                    uses = "jlumbroso/free-disk-space@main";
-                    "with".tool-cache = true;
-                  }
-                  {
-                    uses = "DeterminateSystems/nix-installer-action@main";
-                    "with".extra-conf = ''
-                      extra-substituters = https://cache.jmbaur.com
-                      extra-trusted-public-keys = cache.jmbaur.com:C3ku8BNDXgfTO7dNHK+eojm4uy7Gvotwga+EV0cfhPQ=
-                    '';
-                  }
-                  { uses = "DeterminateSystems/magic-nix-cache-action@main"; }
-                  {
-                    name = "Build ${name}";
-                    env = {
-                      CACHE_SIGNING_KEY = "\${{ secrets.CACHE_SIGNING_KEY }}";
-                      AWS_ACCESS_KEY_ID = "\${{ secrets.AWS_ACCESS_KEY_ID }}";
-                      AWS_SECRET_ACCESS_KEY = "\${{ secrets.AWS_SECRET_ACCESS_KEY }}";
-                    };
-                    run = "nix run .#buildNixosConfigCI -- ${name}";
-                  }
-                ];
-              };
-            }) inputs.self.nixosConfigurations;
-        };
-
         update = (pkgs.formats.yaml { }).generate "update.yaml" {
           name = "update";
           on = {
@@ -276,8 +187,6 @@ inputs.nixpkgs.lib.mapAttrs (
             name = "update-github-workflows";
             runtimeInputs = [ ];
             text = ''
-              echo "# Do not manually edit this file, it is automatically generated" >"$PWD/.github/workflows/ci.yaml"
-              tee --append "$PWD/.github/workflows/ci.yaml" <${ci}
               echo "# Do not manually edit this file, it is automatically generated" >"$PWD/.github/workflows/update.yaml"
               tee --append "$PWD/.github/workflows/update.yaml" <${update}
             '';
