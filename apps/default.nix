@@ -164,10 +164,6 @@ inputs.nixpkgs.lib.mapAttrs (
                 run = ''nix run "$PWD#updateRepoDependencies"'';
               }
               {
-                name = "Update github action workflows";
-                run = ''nix run "$PWD#updateGithubWorkflows"'';
-              }
-              {
                 name = "Create pull request";
                 uses = "peter-evans/create-pull-request@v6";
                 "with" = {
