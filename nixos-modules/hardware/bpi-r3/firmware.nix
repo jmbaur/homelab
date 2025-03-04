@@ -1,102 +1,101 @@
 {
   buildArmTrustedFirmware,
-  buildPackages,
   dtc,
   fetchFromGitHub,
   formats,
   lib,
   mtdutils,
   openssl,
-  pkgsCross,
   runCommand,
   symlinkJoin,
   uboot-mt7986a_bpir3_emmc,
+  ubootTools,
   writeTextDir,
 }:
 
 let
-  atf = buildArmTrustedFirmware rec {
-    platform = "mt7986";
+  atf =
+    (buildArmTrustedFirmware rec {
+      platform = "mt7986";
 
-    version = builtins.substring 0 7 src.rev;
+      version = builtins.substring 0 7 src.rev;
 
-    # mt7986 not in upstream ATF yet
-    src = fetchFromGitHub {
-      owner = "mtk-openwrt";
-      repo = "arm-trusted-firmware";
-      rev = "e090770684e775711a624e68e0b28112227a4c38";
-      hash = "sha256-VI5OB2nWdXUjkSuUXl/0yQN+/aJp9Jkt+hy7DlL+PMg=";
-    };
+      # mt7986 not in upstream ATF yet
+      src = fetchFromGitHub {
+        owner = "mtk-openwrt";
+        repo = "arm-trusted-firmware";
+        rev = "e090770684e775711a624e68e0b28112227a4c38";
+        hash = "sha256-VI5OB2nWdXUjkSuUXl/0yQN+/aJp9Jkt+hy7DlL+PMg=";
+      };
 
-    strictDeps = true;
+      strictDeps = true;
 
-    nativeBuildInputs = [
-      dtc
-      openssl
-    ];
+      patches =
+        let
+          openwrt = fetchFromGitHub {
+            owner = "openwrt";
+            repo = "openwrt";
+            rev = "9ec32cfb2733856a2ab4caee07d9b3297568381d";
+            hash = "sha256-casYMJNLavzZdPzCuh1xAR9iaLYG9TieVcYDNhIiHUQ=";
+          };
+        in
+        map (file: "${openwrt}/package/boot/arm-trusted-firmware-mediatek/patches/${file}") [
+          "0001-mediatek-snfi-FM35Q1GA-is-x4-only.patch"
+          "0002-mediatek-snfi-adjust-pin-drive-strength-for-Fidelix-.patch"
+          "0003-mediatek-snfi-adjust-drive-strength-to-12mA-like-old.patch"
+          "0004-mediatek-snfi-fix-return-code-when-reading.patch"
+        ];
 
-    patches = [ ];
+      extraMakeFlags = [
+        "BL33=${uboot-mt7986a_bpir3_emmc}/u-boot.bin"
+        "BOOT_DEVICE=spim-nand" # defines where the FIP image lives
+        "DRAM_USE_DDR4=1"
+        "OVERRIDE_UBI_START_ADDR=0x200000"
+        "HAVE_DRAM_OBJ_FILE=yes"
+        "UBI=1"
+        "USE_MKIMAGE=1"
+        "all"
+        "fip"
+      ];
 
-    # bromimage is a pre-built binary for x86_64-linux
-    postPatch = ''
-      echo -e '#!/bin/sh\n${pkgsCross.gnu64.stdenv.hostPlatform.emulator buildPackages} tools/mediatek/bromimage/bromimage-linux-x86_64 "$@"' >tools/mediatek/bromimage/bromimage
-      chmod +x tools/mediatek/bromimage/bromimage
-    '';
+      filesToInstall = [
+        "build/${platform}/release/bl2.img"
+        "build/${platform}/release/fip.bin"
+      ];
 
-    enableParallelBuilding = true;
+      extraMeta.platforms = [ "aarch64-linux" ];
+    }).overrideAttrs
+      (old: {
+        nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [
+          dtc
+          openssl
+          ubootTools
+        ];
+      });
 
-    env.NIX_CFLAGS_COMPILE = toString [
-      # Accommodate -flto:
-      "-ffat-lto-objects"
-    ];
+  ubiImage =
+    runCommand "bpi-r3-ubi-image"
+      {
+        ubinizeConfig = (formats.ini { }).generate "ubinize.ini" rec {
+          ubootenv = {
+            vol_id = 1;
+            vol_name = "ubootenv";
+            mode = "ubi";
+            vol_type = "dynamic";
+            vol_size = "0x1f000";
+          };
+          ubootenvred = ubootenv // {
+            vol_id = 2;
+            vol_name = "ubootenvred";
+          };
+        };
 
-    extraMakeFlags = [
-      "OPENSSL_DIR=${
-        symlinkJoin {
-          name = "openssl-dir";
-          paths = with buildPackages.openssl; [
-            out
-            bin
-          ];
-        }
-      }"
-      "BL33=${uboot-mt7986a_bpir3_emmc}/u-boot.bin"
-      "DRAM_USE_DDR4=1"
-      "BOOT_DEVICE=spim-nand" # defines where the FIP image lives
-      "OD=$(OBJDUMP)"
-      "OC=$(OBJCOPY)"
-      # GNU's assembler doesn't recognize the `-x` option, so instead,
-      # use the GNU C compiler, which does recognize it.
-      "HOSTAS=$(CC_FOR_BUILD)"
-      "AS=$(CC)"
-      "all"
-      "fip"
-    ];
-
-    filesToInstall = [
-      "build/${platform}/release/bl2.img"
-      "build/${platform}/release/fip.bin"
-    ];
-
-    extraMeta.platforms = [ "aarch64-linux" ];
-  };
-  ubinizeConfig = (formats.ini { }).generate "ubinize.ini" rec {
-    ubootenv = {
-      vol_id = 1;
-      vol_name = "ubootenv";
-      mode = "ubi";
-      vol_type = "dynamic";
-      vol_size = "0x1f000";
-    };
-    ubootenvred = ubootenv // {
-      vol_id = 2;
-      vol_name = "ubootenvred";
-    };
-  };
-  ubiImage = runCommand "bpi-r3-ubi-image" { nativeBuildInputs = [ mtdutils ]; } ''
-    mkdir -p $out
-    ubinize -vv -o $out/ubi.img -m 2048 -p 128KiB ${ubinizeConfig}
-  '';
+        nativeBuildInputs = [ mtdutils ];
+      }
+      ''
+        mkdir -p $out
+        ubinize -vv -o $out/ubi.img -m 2048 -p 128KiB $ubinizeConfig
+      '';
 in
 symlinkJoin {
   name = "bpi-r3-firmware";
