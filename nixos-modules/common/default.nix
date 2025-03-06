@@ -36,6 +36,7 @@ in
       boot.initrd.systemd.enable = mkDefault true;
       system.etc.overlay.enable = mkDefault true;
 
+      # Maximum terminal compatibility for ssh sessions.
       environment.enableAllTerminfo = mkDefault true;
 
       programs.nano.enable = mkDefault false;
@@ -122,6 +123,13 @@ in
         }.tar.gz"
       ];
 
+      # MLS is deprecated (see https://github.com/NixOS/nixpkgs/issues/321121),
+      # beacondb.net has been proposed as a successor.
+      services.geoclue2.geoProviderUrl = "https://beacondb.net/v1/geolocate";
+    }
+
+    # Performance related
+    {
       # Use the dbus-broker dbus daemon implementation (more performance, yeah?)
       services.dbus.implementation = "broker";
 
@@ -138,11 +146,8 @@ in
         "sd[a-z][0-9]*" = "bfq";
         "nvme[0-9]*" = "mq-deadline";
       };
-
-      # MLS is deprecated (see https://github.com/NixOS/nixpkgs/issues/321121),
-      # beacondb.net has been proposed as a successor.
-      services.geoclue2.geoProviderUrl = "https://beacondb.net/v1/geolocate";
     }
+
     {
       services.openssh = {
         enable = mkDefault isNotContainer;
