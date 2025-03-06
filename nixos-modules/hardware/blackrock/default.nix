@@ -12,6 +12,7 @@ let
     mkDefault
     mkEnableOption
     mkIf
+    versions
     ;
 
   wdk2023_syshacks = pkgs.fetchFromGitHub {
@@ -45,9 +46,9 @@ in
           { buildLinux, ... }@args:
           buildLinux (
             args
-            // {
-              version = "6.14.0-rc3";
-              extraMeta.branch = "6.14";
+            // rec {
+              version = "6.14.0-rc5";
+              extraMeta.branch = versions.majorMinor version;
 
               # TODO(jared): remove this
               ignoreConfigErrors = true;
@@ -55,9 +56,9 @@ in
               src = pkgs.fetchFromGitHub {
                 owner = "jhovold";
                 repo = "linux";
-                # wip/sc8280xp-6.14-rc3
-                rev = "a2890743ed6d5cdfd2591cebf2d06af8dfd9180d";
-                hash = "sha256-fMt2Ao9+y71/x7zaUxzpu28M9Ugie6yl4N9lufxhc2Q=";
+                # wip/sc8280xp-6.14-rc5
+                rev = "29912bfc7c8a54baf65a5c4c4aee7cbb32990527";
+                hash = "sha256-3QykehVbxJJhCUAL4sZ/bxtHrNYrkhMF0K8DPE5tcOw=";
               };
               kernelPatches = (args.kernelPatches or [ ]);
             }
