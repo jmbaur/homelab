@@ -1,0 +1,56 @@
+From c68c22cb9ccfbc7c9beaea25bdaabc0930c3e97a Mon Sep 17 00:00:00 2001
+From: Josua Mayer <josua@solid-run.com>
+Date: Fri, 31 Jan 2025 16:34:37 +0100
+Subject: [PATCH 8/9] plat/marvell/octeontx/otx2/t91/t9130: reorganise i2c
+ flush pinconfig
+
+Reorder pinconfig to set gpio value and direction before function.
+Further add small delay after pinconfig before toggling scl to ensure
+pinconfig has applied by the time of gpio value change, resulting in
+equal clock cycle lengths.
+
+Signed-off-by: Josua Mayer <josua@solid-run.com>
+---
+ .../octeontx/otx2/t91/t9130/board/dram_port.c    | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c b/plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c
+index a2e2a8c20..1e8a229c5 100644
+--- a/plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c
++++ b/plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c
+@@ -164,14 +164,17 @@ static void cp_mpp_write(int cp_index, int mpp_num, int value)
+  */
+ static void i2c_flush_bus(int cp_index, int mpp_scl, int mpp_sda)
+ {
+-	/* configure MPPs to GPIO */
+-	cp_mpp_function(cp_index, mpp_sda, 0);
++	/* configure SCL to output with initial value high */
++	cp_mpp_write(cp_index, mpp_scl, 1);
++	cp_mpp_direction(cp_index, mpp_scl, 0);
+ 	cp_mpp_function(cp_index, mpp_scl, 0);
+ 
+-	/* configure SDA to input, SCL to output, initial value high */
+-	cp_mpp_write(cp_index, mpp_scl, 1);
++	/* configure SDA as input */
+ 	cp_mpp_direction(cp_index, mpp_sda, 1);
+-	cp_mpp_direction(cp_index, mpp_scl, 0);
++	cp_mpp_function(cp_index, mpp_sda, 0);
++
++	/* permit time for applying pinconfig */
++	udelay(1);
+ 
+ 	/* toggle clock 9 times */
+ 	for(uint8_t i = 0; i < 9; i++) {
+@@ -198,6 +201,9 @@ static void mpp_config(void)
+ 	/* configure CP0 MPP 37 and 38 to I2C */
+ 	cp_mpp_function(0, 37, 2);
+ 	cp_mpp_function(0, 38, 2);
++
++	/* permit time for applying pinconfig */
++	udelay(1);
+ }
+ 
+ static u16 spd_crc16_sr (u8 *ptr, int count){
+-- 
+2.48.1
+

@@ -1,0 +1,158 @@
+From 20cd5ed99f49fd148f23860c78221ba921ecc2f4 Mon Sep 17 00:00:00 2001
+From: Josua Mayer <josua@solid-run.com>
+Date: Tue, 19 Nov 2024 12:30:57 +0100
+Subject: [PATCH 1/9] plat/marvell/octeontx/otx2/t91/t9130: ddr configuration
+ for solidrun som
+
+Signed-off-by: Josua Mayer <josua@solid-run.com>
+---
+ .../octeontx/otx2/t91/t9130/board/dram_port.c | 97 ++++++++++++-------
+ 1 file changed, 62 insertions(+), 35 deletions(-)
+
+diff --git a/plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c b/plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c
+index 82ce07b09..f0fd6b3b8 100644
+--- a/plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c
++++ b/plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c
+@@ -14,13 +14,11 @@
+ #include <mvebu_def.h>
+ #include <plat_marvell.h>
+ 
+-#define MVEBU_CP_MPP_CTRL37_OFFS		20
+-#define MVEBU_CP_MPP_CTRL38_OFFS		24
+-#define MVEBU_CP_MPP_CTRL37_I2C0_SCK_ENA	0x2
+-#define MVEBU_CP_MPP_CTRL38_I2C0_SDA_ENA	0x2
+-
++#define MVEBU_CP_MPP_CTRL_OFFS(n)		(4 * (n % 8))
+ #define MVEBU_MPP_CTRL_MASK			0xf
+ 
++#define NUM_OF_GPIO_PER_REG 32
++
+ /*
+  * This struct provides the DRAM training code with
+  * the appropriate board DRAM configuration
+@@ -46,17 +44,13 @@ struct mv_ddr_iface dram_iface_ap0 = {
+ 		      {0x1, 0x0, 0, 0},
+ 		      {0x1, 0x0, 0, 0} },
+ 		   SPEED_BIN_DDR_2400T,		/* speed_bin */
+-		   MV_DDR_DEV_WIDTH_8BIT,	/* sdram device width */
++		   MV_DDR_DEV_WIDTH_16BIT,	/* sdram device width */
+ 		   MV_DDR_DIE_CAP_8GBIT,	/* die capacity */
+ 		   MV_DDR_FREQ_SAR,		/* frequency */
+ 		   0, 0,			/* cas_l, cas_wl */
+-		   MV_DDR_TEMP_LOW} },		/* temperature */
+-#if DDR32
+-		MV_DDR_32BIT_ECC_PUP8_BUS_MASK,	/* subphys mask */
+-#else
+-		MV_DDR_64BIT_ECC_PUP8_BUS_MASK,	/* subphys mask */
+-#endif
+-		MV_DDR_CFG_SPD,			/* ddr configuration data src */
++		   MV_DDR_TEMP_HIGH} },		/* temperature */
++		MV_DDR_64BIT_BUS_MASK,		/* subphys mask */
++		MV_DDR_CFG_DEFAULT,		/* ddr configuration data src */
+ 		NOT_COMBINED,			/* ddr twin-die combined*/
+ 		{ {0} },			/* raw spd data */
+ 		{0},				/* timing parameters */
+@@ -113,23 +107,51 @@ struct mv_ddr_topology_map *mv_ddr_topology_map_get(void)
+ 	return &ptr_iface->tm;
+ }
+ 
+-static void mpp_config(void)
++static void cp_mpp_function(int cp_index, int mpp_num, u8 function)
+ {
+ 	uintptr_t reg;
+ 	uint32_t val;
+ 
+-	reg = MVEBU_CP_MPP_REGS(0, 4);
+-	/* configure CP0 MPP 37 and 38 to i2c */
++	reg = MVEBU_PM_MPP_REGS(cp_index, mpp_num);
+ 	val = mmio_read_32(reg);
+-	val &= ~((MVEBU_MPP_CTRL_MASK << MVEBU_CP_MPP_CTRL37_OFFS) |
+-		(MVEBU_MPP_CTRL_MASK << MVEBU_CP_MPP_CTRL38_OFFS));
+-	val |= (MVEBU_CP_MPP_CTRL37_I2C0_SCK_ENA <<
+-			MVEBU_CP_MPP_CTRL37_OFFS) |
+-		(MVEBU_CP_MPP_CTRL38_I2C0_SDA_ENA <<
+-			MVEBU_CP_MPP_CTRL38_OFFS);
++	val &= ~(MVEBU_MPP_CTRL_MASK << MVEBU_CP_MPP_CTRL_OFFS(mpp_num));
++	val |= (function << MVEBU_CP_MPP_CTRL_OFFS(mpp_num));
+ 	mmio_write_32(reg, val);
+ }
+ 
++static void cp_mpp_direction(int cp_index, int mpp_num, int input)
++{
++	uintptr_t reg;
++	uint32_t val;
++
++	/* set direction */
++	reg = MVEBU_CP_GPIO_DATA_OUT(cp_index, mpp_num);
++	val = mmio_read_32(reg);
++	val &= ~(1 << (mpp_num % NUM_OF_GPIO_PER_REG));
++	val |= (!!input << (mpp_num % NUM_OF_GPIO_PER_REG));
++	mmio_write_32(reg, val);
++}
++
++static int cp_mpp_read(int cp_index, int mpp_num)
++{
++	uintptr_t mpp_address = MVEBU_CP_GPIO_DATA_IN(cp_index, mpp_num);
++	unsigned int val = mmio_read_32(mpp_address) & (1 << mpp_num);
++
++	val &= (1 << (mpp_num % NUM_OF_GPIO_PER_REG));
++	return !!val;
++}
++
++static void mpp_config(void)
++{
++	/* set CP0 GPIO 10 and 11 direction to input */
++	cp_mpp_direction(0, 10, 1);
++	cp_mpp_direction(0, 11, 1);
++
++	/* configure CP0 MPP 10 and 11 to GPIO */
++	cp_mpp_function(0, 10, 0);
++	cp_mpp_function(0, 11, 0);
++}
++
+ /*
+  * This function may modify the default DRAM parameters
+  * based on information received from SPD or bootloader
+@@ -138,21 +160,26 @@ static void mpp_config(void)
+ void plat_marvell_dram_update_topology(void)
+ {
+ 	struct mv_ddr_topology_map *tm = mv_ddr_topology_map_get();
++	unsigned int val1, val2;
+ 
+-	INFO("Gathering DRAM information\n");
++	/* configure MPPs */
++	mpp_config();
+ 
+-	if (tm->cfg_src == MV_DDR_CFG_SPD) {
+-		/* configure MPPs to enable i2c */
+-		mpp_config();
++	/* read configuration pins */
++	val1 = cp_mpp_read(0, 10);
++	val2 = cp_mpp_read(0, 11);
+ 
+-		/* initialize i2c */
+-		i2c_init((void *)MVEBU_CP0_I2C_BASE);
+-
+-		/* select SPD memory page 0 to access DRAM configuration */
+-		i2c_write(I2C_SPD_P0_ADDR, 0x0, 1, tm->spd_data.all_bytes, 0);
+-
+-		/* read data from spd */
+-		i2c_read(I2C_SPD_ADDR, 0x0, 1, tm->spd_data.all_bytes,
+-			 sizeof(tm->spd_data.all_bytes));
++	/* select size */
++	if (val2) {
++		tm->interface_params[0].memory_size = MV_DDR_DIE_CAP_16GBIT;
++		tm->twin_die_combined = COMBINED;
+ 	}
++
++	/* select ecc */
++	if (val1) {
++		tm->bus_act_mask = MV_DDR_64BIT_ECC_PUP8_BUS_MASK;
++	}
++
++	NOTICE("%sGB capacity; %s ecc; strap values=(%d, %d)\n",
++	       (val2 ? "8" : "4"), (val1 ? "w/" : "w/o"), val1, val2);
+ }
+-- 
+2.48.1
+

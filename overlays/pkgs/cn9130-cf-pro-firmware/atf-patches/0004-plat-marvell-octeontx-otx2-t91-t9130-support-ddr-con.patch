@@ -1,0 +1,142 @@
+From e3229401244d31abb0ef2bde277903e259082d61 Mon Sep 17 00:00:00 2001
+From: Josua Mayer <josua@solid-run.com>
+Date: Wed, 4 Dec 2024 13:47:02 +0100
+Subject: [PATCH 4/9] plat/marvell/octeontx/otx2/t91/t9130: support ddr config
+ from spd eeprom
+
+SolidRun CN9132 CEX-7 supports SODIMM while CN9130 SoM uses fixed
+configurations based on pull-up resistors.
+
+Support reading the SODIMM SPD from EEPROM @ 0x53 and use its content if
+SPD has valid checksum. This only succeeds if SODIMM is present.
+Otherwise fall back to static configuration based on resistors for
+CN9130 SoM.
+
+Signed-off-by: Josua Mayer <josua@solid-run.com>
+---
+ .../octeontx/otx2/t91/t9130/board/dram_port.c | 102 +++++++++++++++---
+ 1 file changed, 87 insertions(+), 15 deletions(-)
+
+diff --git a/plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c b/plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c
+index f0fd6b3b8..20ef3513c 100644
+--- a/plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c
++++ b/plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c
+@@ -150,6 +150,64 @@ static void mpp_config(void)
+ 	/* configure CP0 MPP 10 and 11 to GPIO */
+ 	cp_mpp_function(0, 10, 0);
+ 	cp_mpp_function(0, 11, 0);
++
++	/* configure CP0 MPP 37 and 38 to I2C */
++	cp_mpp_function(0, 37, 2);
++	cp_mpp_function(0, 38, 2);
++}
++
++static u16 spd_crc16_sr (u8 *ptr, int count){
++	/*crc16 calculation*/
++	int crc = 0, i;
++
++	 while (--count >= 0) {
++		crc = crc ^ (int)*ptr++ << 8;
++		for (i = 0; i < 8; ++i)
++			if (crc & 0x8000)
++				crc = crc << 1 ^ 0x1021;
++			else
++				crc = crc << 1;
++	}
++	return (crc & 0xFFFF);
++}
++
++static int read_spd()
++{
++	struct mv_ddr_topology_map *tm = mv_ddr_topology_map_get();
++	int ret;
++	u16 crc;
++
++	/* initialize i2c */
++	i2c_init((void *)MVEBU_CP0_I2C_BASE);
++
++	/* select SPD memory page 0 to access DRAM configuration */
++	ret = i2c_write(I2C_SPD_P0_ADDR, 0x0, 1, tm->spd_data.all_bytes, 0);
++	if (ret)
++		goto err;
++
++	/* read data from spd */
++	ret = i2c_read(I2C_SPD_ADDR, 0x0, 1, tm->spd_data.all_bytes,
++		       sizeof(tm->spd_data.all_bytes));
++	if (ret)
++		goto err;
++
++	/* validate first 128 byte of SPD with CRC */
++	crc = spd_crc16_sr(tm->spd_data.all_bytes, 126);
++	if (crc != *((u16 *)&tm->spd_data.all_bytes[126])) {
++		ret = -1;
++		goto err;
++	}
++
++	/* indicate parameter source is SPD */
++	tm->cfg_src = MV_DDR_CFG_SPD;
++
++	// TODO: parse additional data and print part number from bytes 329-348
++
++	return 0;
++err:
++	/* clear spd, if any */
++	memset(tm->spd_data.all_bytes, 0, sizeof(tm->spd_data.all_bytes));
++	return ret;
+ }
+ 
+ /*
+@@ -165,21 +223,35 @@ void plat_marvell_dram_update_topology(void)
+ 	/* configure MPPs */
+ 	mpp_config();
+ 
+-	/* read configuration pins */
+-	val1 = cp_mpp_read(0, 10);
+-	val2 = cp_mpp_read(0, 11);
++	/*
++	 * read SPD, if available:
++	 * SoM EEPROM @ 0x53 is TLV
++	 * CEX7 EEPROM @ 0x53 is SPD on SODIMM
++	 */
++	if (!read_spd()) {
++		NOTICE("Found valid DDR SPD\n");
++		return;
++	} else {
++		// reading spd failed, assume SoM
++		/* read configuration pins */
++		val1 = cp_mpp_read(0, 10);
++		val2 = cp_mpp_read(0, 11);
+ 
+-	/* select size */
+-	if (val2) {
+-		tm->interface_params[0].memory_size = MV_DDR_DIE_CAP_16GBIT;
+-		tm->twin_die_combined = COMBINED;
++		/* select size */
++		if (val2) {
++			tm->interface_params[0].memory_size = MV_DDR_DIE_CAP_16GBIT;
++			tm->twin_die_combined = COMBINED;
++		}
++
++		/* select ecc */
++		if (val1) {
++			tm->bus_act_mask = MV_DDR_64BIT_ECC_PUP8_BUS_MASK;
++		}
++
++		/* indicate parameter source is builtin */
++		tm->cfg_src = MV_DDR_CFG_DEFAULT;
++
++		NOTICE("%sGB capacity; %s ecc; strap values=(%d, %d)\n",
++		       (val2 ? "8" : "4"), (val1 ? "w/" : "w/o"), val1, val2);
+ 	}
+-
+-	/* select ecc */
+-	if (val1) {
+-		tm->bus_act_mask = MV_DDR_64BIT_ECC_PUP8_BUS_MASK;
+-	}
+-
+-	NOTICE("%sGB capacity; %s ecc; strap values=(%d, %d)\n",
+-	       (val2 ? "8" : "4"), (val1 ? "w/" : "w/o"), val1, val2);
+ }
+-- 
+2.48.1
+

@@ -1,0 +1,79 @@
+From 6715fc8870efe800a8f9c9bb4cd516ccccc62f8f Mon Sep 17 00:00:00 2001
+From: Josua Mayer <josua@solid-run.com>
+Date: Wed, 29 Jan 2025 13:13:30 +0100
+Subject: [PATCH 7/9] plat/marvell/octeontx/otx2/t91/t9130: flush i2c bus
+ before use
+
+Add code for flushing the i2c bus with configuration eeproms before use
+to ensure sda is not being held either low or high by any peripheral due
+to an interrupted transaction.
+
+While the existing i2c driver has an unstuck function it can only
+recover from sda stuck low, not from being stuck high.
+
+Signed-off-by: Josua Mayer <josua@solid-run.com>
+---
+ .../octeontx/otx2/t91/t9130/board/dram_port.c | 40 +++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+
+diff --git a/plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c b/plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c
+index df16ac01e..a2e2a8c20 100644
+--- a/plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c
++++ b/plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c
+@@ -145,6 +145,43 @@ static int cp_mpp_read(int cp_index, int mpp_num)
+ 	return !!val;
+ }
+ 
++static void cp_mpp_write(int cp_index, int mpp_num, int value)
++{
++	uintptr_t reg;
++	uint32_t val;
++
++	/* set value */
++	reg = MVEBU_CP_GPIO_DATA_OUT(cp_index, mpp_num);
++	val = mmio_read_32(reg);
++	val &= ~(1 << (mpp_num % NUM_OF_GPIO_PER_REG));
++	val |= (!!value << (mpp_num % NUM_OF_GPIO_PER_REG));
++	mmio_write_32(reg, val);
++}
++
++/*
++ * flush i2c bus which might have sda stuck low or high
++ * due to an interrupted i2c transfer.
++ */
++static void i2c_flush_bus(int cp_index, int mpp_scl, int mpp_sda)
++{
++	/* configure MPPs to GPIO */
++	cp_mpp_function(cp_index, mpp_sda, 0);
++	cp_mpp_function(cp_index, mpp_scl, 0);
++
++	/* configure SDA to input, SCL to output, initial value high */
++	cp_mpp_write(cp_index, mpp_scl, 1);
++	cp_mpp_direction(cp_index, mpp_sda, 1);
++	cp_mpp_direction(cp_index, mpp_scl, 0);
++
++	/* toggle clock 9 times */
++	for(uint8_t i = 0; i < 9; i++) {
++		cp_mpp_write(cp_index, mpp_scl, 0);
++		udelay(10);
++		cp_mpp_write(cp_index, mpp_scl, 1);
++		udelay(10);
++	}
++}
++
+ static void mpp_config(void)
+ {
+ 	/* set CP0 GPIO 10 and 11 direction to input */
+@@ -155,6 +192,9 @@ static void mpp_config(void)
+ 	cp_mpp_function(0, 10, 0);
+ 	cp_mpp_function(0, 11, 0);
+ 
++	/* flush i2c bus unconditionally in case sda line stuck (low or high) */
++	i2c_flush_bus(0, 37, 38);
++
+ 	/* configure CP0 MPP 37 and 38 to I2C */
+ 	cp_mpp_function(0, 37, 2);
+ 	cp_mpp_function(0, 38, 2);
+-- 
+2.48.1
+

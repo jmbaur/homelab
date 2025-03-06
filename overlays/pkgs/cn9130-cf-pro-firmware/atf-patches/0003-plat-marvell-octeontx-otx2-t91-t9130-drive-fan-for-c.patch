@@ -1,0 +1,37 @@
+From b94519376a69c0d3e525c723911effbb07e9692c Mon Sep 17 00:00:00 2001
+From: Josua Mayer <josua@solid-run.com>
+Date: Tue, 3 Dec 2024 12:18:40 +0100
+Subject: [PATCH 3/9] plat/marvell/octeontx/otx2/t91/t9130: drive fan for
+ cn9132-sr-cex-7
+
+SolidRun CN9132 CEX-7 module controls main fan by CP0 MPP39.
+Drive this pin low early during boot to ensure proper cooling at all
+times.
+On CN9130 Clearfog Base and Pro this causes mikrobus pwm line to go low,
+leading to potential side-effects.
+
+Signed-off-by: Josua Mayer <josua@solid-run.com>
+---
+ plat/marvell/octeontx/otx2/t91/t9130/platform.mk | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/plat/marvell/octeontx/otx2/t91/t9130/platform.mk b/plat/marvell/octeontx/otx2/t91/t9130/platform.mk
+index 1e2716df0..500c6ac67 100644
+--- a/plat/marvell/octeontx/otx2/t91/t9130/platform.mk
++++ b/plat/marvell/octeontx/otx2/t91/t9130/platform.mk
+@@ -10,6 +10,12 @@ PCI_EP_SUPPORT		:= 0
+ CP_NUM			:= 1
+ $(eval $(call add_define,CP_NUM))
+ 
++# drive MPP39 low to set CN9132 CEX-7 fan full-speed
++# on SoM MPP39 is unused
++# clearfog base/pro route to mikrobus PWM
++EARLY_CP0_GPIO2_OUTPUT := 0x00000000
++EARLY_CP0_GPIO2_OUTPUT_ENABLE := 0xffffff7f
++
+ DOIMAGE_SEC     	:=	tools/doimage/secure/sec_img_7K.cfg
+ 
+ MARVELL_MOCHI_DRV	:=	drivers/marvell/mochi/ap807_setup.c
+-- 
+2.48.1
+

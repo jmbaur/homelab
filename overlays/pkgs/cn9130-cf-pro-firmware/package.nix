@@ -1,14 +1,12 @@
 {
   spi ? true,
   buildArmTrustedFirmware,
-  buildPackages,
   buildUBoot,
   fetchFromGitHub,
   lib,
   marvellBinaries,
   mv-ddr-marvell,
   openssl,
-  symlinkJoin,
 }:
 
 let
@@ -121,36 +119,27 @@ let
     ];
   };
 in
-buildArmTrustedFirmware rec {
+(buildArmTrustedFirmware rec {
   platform = "t9130";
 
-  src = fetchFromGitHub {
-    owner = "SolidRun";
-    repo = "atf-marvell";
-    rev = "atf-v2.8-marvell-sdk-v12";
-    hash = "sha256-nSIr0ETnyDOcJVz0ygxMfnerB5hBdBTCUD2jemqiXi0=";
-  };
-
-  patches = map (file: "${cn913x_build}/patches/arm-trusted-firmware/${file}") [
-    "0001-plat-marvell-octeontx-otx2-t91-t9130-ddr-configurati.patch"
-    "0002-plat-marvell-armada-8k-add-support-for-early-gpio-ho.patch"
-    "0003-plat-marvell-octeontx-otx2-t91-t9130-drive-fan-for-c.patch"
-    "0004-plat-marvell-octeontx-otx2-t91-t9130-support-ddr-con.patch"
-    "0005-plat-marvell-octeontx-otx2-t91-t9130-support-ddr-con.patch"
-    "0006-plat-marvell-octeontx-otx2-t91-t9130-gix-gpio-direct.patch"
-    "0007-plat-marvell-octeontx-otx2-t91-t9130-flush-i2c-bus-b.patch"
-    "0008-plat-marvell-octeontx-otx2-t91-t9130-reorganise-i2c-.patch"
-    "0009-plat-marvell-octeontx-otx2-t91-t9130-add-build-time-.patch"
-  ];
+  patches =
+    (map (file: "${./atf-patches}/${file}") [
+      "0001-plat-marvell-octeontx-otx2-t91-t9130-ddr-configurati.patch"
+      "0002-plat-marvell-armada-8k-add-support-for-early-gpio-ho.patch"
+      "0003-plat-marvell-octeontx-otx2-t91-t9130-drive-fan-for-c.patch"
+      "0004-plat-marvell-octeontx-otx2-t91-t9130-support-ddr-con.patch"
+      "0005-plat-marvell-octeontx-otx2-t91-t9130-support-ddr-con.patch"
+      "0006-plat-marvell-octeontx-otx2-t91-t9130-gix-gpio-direct.patch"
+      "0007-plat-marvell-octeontx-otx2-t91-t9130-flush-i2c-bus-b.patch"
+      "0008-plat-marvell-octeontx-otx2-t91-t9130-reorganise-i2c-.patch"
+      "0009-plat-marvell-octeontx-otx2-t91-t9130-add-build-time-.patch"
+    ])
+    ++ [ ../mcbin-firmware/marvell-atf-no-git.patch ];
 
   preBuild = ''
     cp -r ${mv-ddr-marvell} mv_ddr_marvell
     chmod -R +w mv_ddr_marvell
   '';
-
-  nativeBuildInputs = [ openssl ];
-
-  enableParallelBuilding = true;
 
   extraMakeFlags = [
     "SCP_BL2=${marvellBinaries}/mrvl_scp_bl2.img"
@@ -160,20 +149,13 @@ buildArmTrustedFirmware rec {
     "CP_NUM=1" # cn9130-cf-pro
     "LOG_LEVEL=20"
     "MARVELL_SECURE_BOOT=0"
-    "WORKAROUND_CVE_2018_3639=0"
-    "OPENSSL_DIR=${
-      symlinkJoin {
-        name = "openssl-dir";
-        paths = with buildPackages.openssl; [
-          out
-          bin
-        ];
-      }
-    }"
     "all"
     "fip"
     "mrvl_flash"
   ];
 
   filesToInstall = [ "build/${platform}/release/flash-image.bin" ];
-}
+}).overrideAttrs
+  (old: {
+    nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ openssl ];
+  })

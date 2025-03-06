@@ -1,0 +1,57 @@
+From 2312512bf5b4891e0263ff54a6cff4e8228c4f58 Mon Sep 17 00:00:00 2001
+From: Josua Mayer <josua@solid-run.com>
+Date: Tue, 3 Dec 2024 11:34:25 +0100
+Subject: [PATCH 2/9] plat: marvell: armada: 8k: add support for early gpio hog
+ on cp0 gpio2
+
+Add support for specifying initial gpio values to be activated early
+during boot for cp0 gpio2.
+It can be used for example to activate regulators and fans before
+complete initialization.
+
+Values are set via platform.mk before including a8k_common.mk, e.g.:
+
+EARLY_CP0_GPIO2_OUTPUT := 0x00000000
+EARLY_CP0_GPIO2_OUTPUT_ENABLE := 0xffffff7f
+
+Signed-off-by: Josua Mayer <josua@solid-run.com>
+---
+ plat/marvell/armada/a8k/common/a8k_common.mk    | 6 ++++++
+ plat/marvell/armada/a8k/common/plat_ble_setup.c | 4 ++++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/plat/marvell/armada/a8k/common/a8k_common.mk b/plat/marvell/armada/a8k/common/a8k_common.mk
+index bdad8b5fa..3f2f1b57b 100644
+--- a/plat/marvell/armada/a8k/common/a8k_common.mk
++++ b/plat/marvell/armada/a8k/common/a8k_common.mk
+@@ -79,6 +79,12 @@ $(eval $(call add_define,CONFIG_DDR4))
+ DDR_TOPOLOGY	?= 0
+ $(eval $(call add_define,DDR_TOPOLOGY))
+ 
++# Early GPIO Hog, e.g. for fan control
++EARLY_CP0_GPIO2_OUTPUT ?= 0x00000000
++EARLY_CP0_GPIO2_OUTPUT_ENABLE ?= 0xffffffff
++$(eval $(call add_define_val,CONFIG_EARLY_CP0_GPIO2_OUTPUT,${EARLY_CP0_GPIO2_OUTPUT}))
++$(eval $(call add_define_val,CONFIG_EARLY_CP0_GPIO2_OUTPUT_ENABLE,${EARLY_CP0_GPIO2_OUTPUT_ENABLE}))
++
+ MARVELL_GIC_SOURCES	:=	drivers/arm/gic/common/gic_common.c	\
+ 				drivers/arm/gic/v2/gicv2_main.c		\
+ 				drivers/arm/gic/v2/gicv2_helpers.c	\
+diff --git a/plat/marvell/armada/a8k/common/plat_ble_setup.c b/plat/marvell/armada/a8k/common/plat_ble_setup.c
+index 9c5ee153a..e67c8ad88 100644
+--- a/plat/marvell/armada/a8k/common/plat_ble_setup.c
++++ b/plat/marvell/armada/a8k/common/plat_ble_setup.c
+@@ -711,6 +711,10 @@ int ble_plat_setup(int *skip)
+ 	int ret, cp;
+ 	unsigned int freq_mode;
+ 
++	/* apply early gpio hogs */
++	mmio_write_32(0xF2440140, CONFIG_EARLY_CP0_GPIO2_OUTPUT);
++	mmio_write_32(0xF2440144, CONFIG_EARLY_CP0_GPIO2_OUTPUT_ENABLE);
++
+ 	/* Power down unused CPUs */
+ 	plat_marvell_early_cpu_powerdown();
+ 
+-- 
+2.48.1
+

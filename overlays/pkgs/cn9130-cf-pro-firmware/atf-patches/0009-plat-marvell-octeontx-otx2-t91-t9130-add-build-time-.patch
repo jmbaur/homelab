@@ -1,0 +1,143 @@
+From 9902d5a7e1350c002dce155f02eddf43a2335d79 Mon Sep 17 00:00:00 2001
+From: Josua Mayer <josua@solid-run.com>
+Date: Mon, 10 Feb 2025 12:05:25 +0100
+Subject: [PATCH 9/9] plat/marvell/octeontx/otx2/t91/t9130: add build-time
+ fixed memory config
+
+Add build-time option for fixed memory configuration instead of
+autoconfiguration. This is intended for development purposes and factory
+only.
+
+Specific configurations can be selected by configuring
+CONFIG_DDR_FIXED_CONFIG in
+plat/marvell/octeontx/otx2/t91/t9130/platform.mk as needed.
+
+Signed-off-by: Josua Mayer <josua@solid-run.com>
+---
+ .../octeontx/otx2/t91/t9130/board/dram_port.c | 87 ++++++++++++-------
+ .../octeontx/otx2/t91/t9130/platform.mk       |  8 ++
+ 2 files changed, 63 insertions(+), 32 deletions(-)
+
+diff --git a/plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c b/plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c
+index 1e8a229c5..1e3b60a41 100644
+--- a/plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c
++++ b/plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c
+@@ -339,41 +339,64 @@ void plat_marvell_dram_update_topology(void)
+ 	/* configure MPPs */
+ 	mpp_config();
+ 
+-	/*
+-	 * read SPD, if available:
+-	 * SoM EEPROM @ 0x53 is TLV
+-	 * CEX7 EEPROM @ 0x53 is SPD on SODIMM
+-	 */
+-	if (!read_spd()) {
+-		NOTICE("Found valid DDR SPD\n");
+-		return;
+-	} else if (!read_tlv()) {
+-		NOTICE("Found valid TLV\n");
+-		return;
+-	} else {
+-		// reading spd and tlv failed, fall-back to SoM configuration pins
+-		/* read configuration pins */
+-		val1 = cp_mpp_read(0, 10);
+-		val2 = cp_mpp_read(0, 11);
+-
+-		/* select size */
+-		if (val2) {
+-			tm->interface_params[0].memory_size = MV_DDR_DIE_CAP_16GBIT;
+-			tm->twin_die_combined = COMBINED;
++	if (CONFIG_DDR_FIXED_CONFIG == 0) {
++		/*
++		 * read SPD, if available:
++		 * SoM EEPROM @ 0x53 is TLV
++		 * CEX7 EEPROM @ 0x53 is SPD on SODIMM
++		 */
++		if (!read_spd()) {
++			NOTICE("Found valid DDR SPD\n");
++			return;
++		} else if (!read_tlv()) {
++			NOTICE("Found valid TLV\n");
++			return;
+ 		} else {
+-			tm->interface_params[0].memory_size = MV_DDR_DIE_CAP_8GBIT;
+-			tm->twin_die_combined = NOT_COMBINED;
+-		}
++			// reading spd and tlv failed, fall-back to SoM configuration pins
++			/* read configuration pins */
++			val1 = cp_mpp_read(0, 10);
++			val2 = cp_mpp_read(0, 11);
+ 
+-		/* select ecc */
+-		if (val1) {
+-			tm->bus_act_mask = MV_DDR_64BIT_ECC_PUP8_BUS_MASK;
+-		}
++			/* select size */
++			if (val2) {
++				tm->interface_params[0].memory_size = MV_DDR_DIE_CAP_16GBIT;
++				tm->twin_die_combined = COMBINED;
++			} else {
++				tm->interface_params[0].memory_size = MV_DDR_DIE_CAP_8GBIT;
++				tm->twin_die_combined = NOT_COMBINED;
++			}
+ 
+-		/* indicate parameter source is builtin */
++			/* select ecc */
++			if (val1) {
++				tm->bus_act_mask = MV_DDR_64BIT_ECC_PUP8_BUS_MASK;
++			}
++
++			/* indicate parameter source is builtin */
++			tm->cfg_src = MV_DDR_CFG_DEFAULT;
++
++			NOTICE("%sGB capacity; %s ecc; strap values=(%d, %d)\n",
++			       (val2 ? "8" : "4"), (val1 ? "w/" : "w/o"), val1, val2);
++		}
++	} else if (CONFIG_DDR_FIXED_CONFIG == 1) {
++		/* 4x K4A8G165WB-BIRC */
++		NOTICE("Fixed Memory Configuration %d\n", CONFIG_DDR_FIXED_CONFIG);
++		tm->interface_params[0].memory_size = MV_DDR_DIE_CAP_8GBIT;
++		tm->twin_die_combined = COMBINED;
+ 		tm->cfg_src = MV_DDR_CFG_DEFAULT;
+-
+-		NOTICE("%sGB capacity; %s ecc; strap values=(%d, %d)\n",
+-		       (val2 ? "8" : "4"), (val1 ? "w/" : "w/o"), val1, val2);
++	} else if (CONFIG_DDR_FIXED_CONFIG == 2) {
++		/* 4x K4AAG165WB-MCRC */
++		NOTICE("Fixed Memory Configuration %d\n", CONFIG_DDR_FIXED_CONFIG);
++		tm->interface_params[0].memory_size = MV_DDR_DIE_CAP_16GBIT;
++		tm->twin_die_combined = COMBINED;
++		tm->cfg_src = MV_DDR_CFG_DEFAULT;
++	} else if (CONFIG_DDR_FIXED_CONFIG == 3) {
++		/* 4x MT40A1G16TB-062E IT:F */
++		NOTICE("Fixed Memory Configuration %d\n", CONFIG_DDR_FIXED_CONFIG);
++		tm->interface_params[0].memory_size = MV_DDR_DIE_CAP_16GBIT;
++		tm->twin_die_combined = NOT_COMBINED;
++		tm->cfg_src = MV_DDR_CFG_DEFAULT;
++	} else {
++		NOTICE("Fixed Memory Configuration %d not implemented!\n", CONFIG_DDR_FIXED_CONFIG);
++		panic();
+ 	}
+ }
+diff --git a/plat/marvell/octeontx/otx2/t91/t9130/platform.mk b/plat/marvell/octeontx/otx2/t91/t9130/platform.mk
+index a077f17d8..c2351ebc0 100644
+--- a/plat/marvell/octeontx/otx2/t91/t9130/platform.mk
++++ b/plat/marvell/octeontx/otx2/t91/t9130/platform.mk
+@@ -16,6 +16,14 @@ $(eval $(call add_define,CP_NUM))
+ EARLY_CP0_GPIO2_OUTPUT := 0x00000000
+ EARLY_CP0_GPIO2_OUTPUT_ENABLE := 0xffffff7f
+ 
++# select specific memory configuration
++# 0: autodetection
++# 1: 4x K4A8G165WB-BIRC
++# 2: 4x K4AAG165WB-MCRC
++# 3: 4x MT40A1G16TB-062E IT:F
++CONFIG_DDR_FIXED_CONFIG ?= 0
++$(eval $(call add_define_val,CONFIG_DDR_FIXED_CONFIG,${CONFIG_DDR_FIXED_CONFIG}))
++
+ DOIMAGE_SEC     	:=	tools/doimage/secure/sec_img_7K.cfg
+ 
+ MARVELL_MOCHI_DRV	:=	drivers/marvell/mochi/ap807_setup.c
+-- 
+2.48.1
+

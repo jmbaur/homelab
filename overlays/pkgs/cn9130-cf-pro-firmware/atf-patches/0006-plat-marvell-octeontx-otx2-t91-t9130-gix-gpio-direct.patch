@@ -1,0 +1,32 @@
+From 6a1713bbeb4f7f11eceb64ebdc4038ed6c037360 Mon Sep 17 00:00:00 2001
+From: Josua Mayer <josua@solid-run.com>
+Date: Wed, 29 Jan 2025 13:11:17 +0100
+Subject: [PATCH 6/9] plat/marvell/octeontx/otx2/t91/t9130: gix gpio direction
+ function
+
+The cp_mpp_direction by accident was writing to the gpio value register
+rather than the output enable register.
+Update it using the intended register instead.
+
+Fixes: "plat/marvell/octeontx/otx2/t91/t9130: ddr configuration for solidrun som"
+Signed-off-by: Josua Mayer <josua@solid-run.com>
+---
+ plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c b/plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c
+index 9f578270d..df16ac01e 100644
+--- a/plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c
++++ b/plat/marvell/octeontx/otx2/t91/t9130/board/dram_port.c
+@@ -129,7 +129,7 @@ static void cp_mpp_direction(int cp_index, int mpp_num, int input)
+ 	uint32_t val;
+ 
+ 	/* set direction */
+-	reg = MVEBU_CP_GPIO_DATA_OUT(cp_index, mpp_num);
++	reg = MVEBU_CP_GPIO_DATA_OUT_EN(cp_index, mpp_num);
+ 	val = mmio_read_32(reg);
+ 	val &= ~(1 << (mpp_num % NUM_OF_GPIO_PER_REG));
+ 	val |= (!!input << (mpp_num % NUM_OF_GPIO_PER_REG));
+-- 
+2.48.1
+
