@@ -43,13 +43,27 @@ in
       programs.vim = {
         enable = mkDefault true;
         defaultEditor = true;
-        package = pkgs.vim.customize {
-          vimrcFile = pkgs.fetchurl {
-            url = "https://raw.githubusercontent.com/archlinux/svntogit-packages/68f6d131750aa778807119e03eed70286a17b1cb/trunk/archlinux.vim";
-            hash = "sha256-DPi0JzIRHQxmw5CKdtgyc26PjcOr74HLCS3fhMuGLqI=";
-          };
-          standalone = true; # prevents desktop entries from showing up
-        };
+        # Minimize the closure of vim
+        package =
+          (pkgs.vim-full.override {
+            features = "normal"; # One of tiny, small, normal, big or huge
+            config.vim = {
+              gui = "none";
+              python = false;
+              lua = false;
+              perl = false;
+              tcl = false;
+              ruby = false;
+            };
+          }).overrideAttrs
+            (old: {
+              postFixup =
+                (old.postFixup or "")
+                + ''
+                  rm -rf $out/share/applications
+                '';
+            });
+
       };
 
       # moving closer to perlless system
