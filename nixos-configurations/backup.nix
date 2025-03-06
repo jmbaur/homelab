@@ -77,10 +77,18 @@ in
     (mkIf cfg.sender.enable {
       systemd.tmpfiles.settings."10-backup"."/snapshots".v.age = "1M";
 
-      systemd.services.backup-send = {
-        startAt = [ "weekly" ];
-        serviceConfig.Type = "oneshot";
-        serviceConfig.ExecStart = getExe (
+      systemd.timers.backup-send = {
+        wantedBy = [ "timers.target" ];
+        timerConfig = {
+          OnCalendar = "weekly";
+          RandomizedDelaySec = "4h";
+          Persistent = true;
+        };
+      };
+
+      systemd.services.backup-send.serviceConfig = {
+        Type = "oneshot";
+        ExecStart = getExe (
           pkgs.writeShellApplication {
             name = "backup-send";
 
