@@ -129,8 +129,14 @@ in
       # good number of inotify watches, the value below is used by default on
       # several other distros.
       boot.kernel.sysctl = {
-        "fs.inotify.max_user_instances" = 524288;
-        "fs.inotify.max_user_watches" = 524288;
+        "fs.inotify.max_user_instances" = mkDefault 524288;
+        "fs.inotify.max_user_watches" = mkDefault 524288;
+      };
+
+      hardware.block.scheduler = mkDefault {
+        "mmcblk[0-9]*" = "bfq";
+        "sd[a-z][0-9]*" = "bfq";
+        "nvme[0-9]*" = "mq-deadline";
       };
 
       # MLS is deprecated (see https://github.com/NixOS/nixpkgs/issues/321121),
