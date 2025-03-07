@@ -52,6 +52,20 @@ inputs: {
         }
       );
 
+      vimPlugins = prev.vimPlugins.extend (
+        _: _: {
+          bpftrace-vim = final.vimUtils.buildVimPlugin {
+            name = "bpftrace.vim";
+            src = final.fetchFromGitHub {
+              owner = "mmarchini";
+              repo = "bpftrace.vim";
+              rev = "4c85f14c92eb75ddf68d27df8967aad399bdd18e";
+              hash = "sha256-VLbvyH9+RWAcWisXEC3yKGSXPI72+bZbWyeMhgyuzPg=";
+            };
+          };
+        }
+      );
+
       gnome-console =
         (prev.gnome-console.overrideAttrs (old: {
           patches = (old.patches or [ ]) ++ [ ./gnome-console-osc52.patch ];

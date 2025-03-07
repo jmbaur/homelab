@@ -1,8 +1,8 @@
 {
-  direnv,
   bash-language-server,
   clang-tools,
   curl,
+  direnv,
   dtc,
   fd,
   fzf,
@@ -92,6 +92,7 @@ let
   jmbaur-config = vimUtils.buildVimPlugin {
     name = "jmbaur-nvim-config";
     dependencies = with vimPlugins; [
+      bpftrace-vim
       direnv-vim
       fzf-lua
       gruvbox-nvim
