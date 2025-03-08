@@ -46,7 +46,7 @@ in
         # Minimize the closure of vim
         package =
           (pkgs.vim-full.override {
-            features = "normal"; # One of tiny, small, normal, big or huge
+            features = "huge"; # One of tiny, small, normal, big or huge
             config.vim = {
               gui = "none";
               python = false;
