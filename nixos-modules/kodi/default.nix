@@ -113,6 +113,11 @@ in
     }
 
     (mkIf (cfg.backend == "gbm") {
+      # TODO(jared): We shouldn't have to do this, though
+      # switch-to-configuration is flawed in that if getty@.service changes
+      # between configurations, it will be restarted, killing kodi.
+      systemd.services."getty@tty1".enable = false;
+
       systemd.services.kodi = mkMerge [
         commonSystemdSettings
         {
