@@ -178,9 +178,9 @@
     },
     "git-hooks_2": {
       "inputs": {
-        "flake-compat": "flake-compat_2",
-        "gitignore": "gitignore_2",
-        "nixpkgs": "nixpkgs_4"
+        "flake-compat": "flake-compat",
+        "gitignore": "gitignore",
+        "nixpkgs": "nixpkgs_2"
       },
       "locked": {
         "lastModified": 1741379162,
@@ -198,9 +198,9 @@
     },
     "git-hooks_3": {
       "inputs": {
-        "flake-compat": "flake-compat_4",
-        "gitignore": "gitignore_3",
-        "nixpkgs": "nixpkgs_6"
+        "flake-compat": "flake-compat",
+        "gitignore": "gitignore",
+        "nixpkgs": "nixpkgs_2"
       },
       "locked": {
         "lastModified": 1741379162,
@@ -218,9 +218,9 @@
     },
     "git-hooks_4": {
       "inputs": {
-        "flake-compat": "flake-compat_5",
-        "gitignore": "gitignore_4",
-        "nixpkgs": "nixpkgs_8"
+        "flake-compat": "flake-compat",
+        "gitignore": "gitignore",
+        "nixpkgs": "nixpkgs_2"
       },
       "locked": {
         "lastModified": 1741379162,
@@ -238,9 +238,9 @@
     },
     "git-hooks_5": {
       "inputs": {
-        "flake-compat": "flake-compat_6",
-        "gitignore": "gitignore_5",
-        "nixpkgs": "nixpkgs_14"
+        "flake-compat": "flake-compat",
+        "gitignore": "gitignore",
+        "nixpkgs": "nixpkgs_2"
       },
       "locked": {
         "lastModified": 1741379162,
@@ -757,11 +757,11 @@
         "nixpkgs": "nixpkgs_12"
       },
       "locked": {
-        "lastModified": 1741570111,
-        "narHash": "sha256-IVvkvbvp4FQrzVe1hcOkyA8jMwV7rOQYr/e7O/PqhA8=",
+        "lastModified": 1741570693,
+        "narHash": "sha256-WrI+2GcaUv8YmirXxNReVgozNUXyHBfVfo+g8BAkBYM=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "3d7b7f2398cfe8b9a8920b796d944c960f3089e8",
+        "rev": "0699bb594ae171e861ac4815a4c27e7f3a867d49",
         "type": "github"
       },
       "original": {
