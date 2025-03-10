@@ -73,6 +73,7 @@ inputs.nixpkgs.lib.mapAttrs (
         pkgs.writeShellApplication {
           name = "update-repo-dependencies";
           runtimeInputs = [
+            pkgs.all-follow
             pkgs.jq
             pkgs.nix-prefetch-scripts
           ];
@@ -82,7 +83,8 @@ inputs.nixpkgs.lib.mapAttrs (
               NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"
               export NIX_PATH
 
-              nix flake update --accept-flake-config
+              nix flake update
+              auto-follow -i
 
               readarray -t sources < <(find . -type f -name "*source.json")
               for source in "''${sources[@]}"; do

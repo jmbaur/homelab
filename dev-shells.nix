@@ -48,9 +48,7 @@ inputs.nixpkgs.lib.mapAttrs (
         pkgs.wg-dns
       ];
       packages = [
-        pkgs.bashInteractive
-        pkgs.just
-        pkgs.semver-tool
+        pkgs.all-follow
         pkgs.sops
       ];
       shellHook =
