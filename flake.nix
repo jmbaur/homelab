@@ -3,6 +3,8 @@
 
   inputs = {
     auto-follow.url = "github:fzakaria/nix-auto-follow";
+    flake-compat.url = "github:edolstra/flake-compat";
+    flake-parts.url = "github:hercules-ci/flake-parts";
     git-hooks.url = "github:cachix/git-hooks.nix";
     home-manager.url = "github:nix-community/home-manager";
     ipwatch.url = "github:jmbaur/ipwatch";
