@@ -757,11 +757,11 @@
         "nixpkgs": "nixpkgs_12"
       },
       "locked": {
-        "lastModified": 1741483871,
-        "narHash": "sha256-gpyYoL18Gmx0JMv+5+uIXqVCRIN9F2oqpmK9z/+2HWA=",
+        "lastModified": 1741570111,
+        "narHash": "sha256-IVvkvbvp4FQrzVe1hcOkyA8jMwV7rOQYr/e7O/PqhA8=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "1227db5faa727df48ab74234da53d6ced89e6ed2",
+        "rev": "3d7b7f2398cfe8b9a8920b796d944c960f3089e8",
         "type": "github"
       },
       "original": {
