@@ -3,8 +3,6 @@
 
   inputs = {
     auto-follow.url = "github:fzakaria/nix-auto-follow";
-    flake-compat.url = "github:edolstra/flake-compat";
-    flake-parts.url = "github:hercules-ci/flake-parts";
     git-hooks.url = "github:cachix/git-hooks.nix";
     home-manager.url = "github:nix-community/home-manager";
     ipwatch.url = "github:jmbaur/ipwatch";
@@ -15,6 +13,18 @@
     tinyboot.url = "github:jmbaur/tinyboot";
     u-boot-nix.url = "github:jmbaur/u-boot.nix";
     webauthn-tiny.url = "github:jmbaur/webauthn-tiny";
+
+    auto-follow.inputs.nixpkgs.follows = "nixpkgs";
+    git-hooks.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    ipwatch.inputs.nixpkgs.follows = "nixpkgs";
+    neovim-nightly-overlay.inputs.nixpkgs.follows = "nixpkgs";
+    nixos-router.inputs.nixpkgs.follows = "nixpkgs";
+    nixpkgs.inputs.nixpkgs.follows = "nixpkgs";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+    tinyboot.inputs.nixpkgs.follows = "nixpkgs";
+    u-boot-nix.inputs.nixpkgs.follows = "nixpkgs";
+    webauthn-tiny.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs: {

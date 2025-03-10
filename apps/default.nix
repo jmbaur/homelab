@@ -84,7 +84,7 @@ inputs.nixpkgs.lib.mapAttrs (
               export NIX_PATH
 
               nix flake update
-              auto-follow -i
+              # auto-follow -i
 
               readarray -t sources < <(find . -type f -name "*source.json")
               for source in "''${sources[@]}"; do
