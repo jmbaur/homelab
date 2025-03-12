@@ -30,6 +30,7 @@ require("mini.basics").setup({
 vim.opt.belloff = "all"
 vim.opt.colorcolumn = "80"
 vim.opt.foldmethod = "marker"
+vim.opt.laststatus = 1
 vim.opt.title = true
 
 vim.opt.shell = "/bin/sh" -- should exist everywhere

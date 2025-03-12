@@ -9,7 +9,7 @@ local config = wezterm.config_builder()
 
 config.automatically_reload_config = false
 config.check_for_updates = false
-config.color_scheme = "GruvboxDark"
+config.colors = { foreground = "#bcbcbc", background = "#1c1c1c" }
 config.default_workspace = "default"
 config.enable_scroll_bar = false
 config.hide_tab_bar_if_only_one_tab = true

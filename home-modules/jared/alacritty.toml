@@ -1,0 +1,9 @@
+[colors.primary]
+background = "#1c1c1c"
+foreground = "#bcbcbc"
+
+[selection]
+save_to_clipboard = true
+
+[mouse]
+hide_when_typing = true

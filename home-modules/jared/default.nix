@@ -316,16 +316,10 @@ in
             vim.opt.exrc = true
           '';
 
-      xdg.configFile."wezterm/wezterm.lua".source = ./wezterm.lua;
+      xdg.configFile."alacritty/alacritty.toml".source = ./alacritty.toml;
       xdg.configFile."kitty/kitty.conf".source = ./kitty.conf;
-      xdg.configFile."ghostty/config".text = ''
-        app-notifications = no-clipboard-copy
-        copy-on-select = clipboard
-        keybind = ctrl+enter=unbind
-        keybind = alt+two=unbind
-        mouse-hide-while-typing = true
-        theme = GruvboxDark
-      '';
+      xdg.configFile."wezterm/wezterm.lua".source = ./wezterm.lua;
+      xdg.configFile."ghostty/config".source = ./ghostty.config;
     })
   ];
 }

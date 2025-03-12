@@ -95,7 +95,6 @@ let
       bpftrace-vim
       direnv-vim
       fzf-lua
-      gruvbox-nvim
       mini-nvim
       nvim-lspconfig
       nvim-treesitter-context

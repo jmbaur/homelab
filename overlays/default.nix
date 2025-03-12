@@ -5,22 +5,15 @@ inputs: {
     inputs.u-boot-nix.overlays.default
     # auto-added packages
     (
-      _: prev:
+      final: prev:
       prev.lib.packagesFromDirectoryRecursive {
-        inherit (prev) callPackage;
+        inherit (final) callPackage;
         directory = ./pkgs;
       }
     )
+
     # cross-compilation fixes
     (final: prev: {
-      libfido2 = prev.libfido2.override {
-        withPcsclite = final.stdenv.hostPlatform == final.stdenv.buildPlatform;
-      };
-
-      wpa_supplicant = prev.wpa_supplicant.override {
-        withPcsclite = final.stdenv.hostPlatform == final.stdenv.buildPlatform;
-      };
-
       perlPackages = prev.perlPackages.overrideScope (
         _: perlPackagesPrev: {
           NetDNS = perlPackagesPrev.NetDNS.overrideAttrs (old: {
@@ -38,6 +31,7 @@ inputs: {
         });
       });
     })
+
     # all other packages
     (final: prev: {
       patchNameFromSubject =

@@ -86,7 +86,7 @@ function _G.project_tabline()
 	return s
 end
 
-vim.opt.showtabline = 2 -- always show tabline
+vim.opt.showtabline = 1 -- always show tabline
 vim.opt.tabline = "%!v:lua.project_tabline()"
 
 local get_projects_dir = function()

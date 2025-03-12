@@ -20,7 +20,6 @@
     ipwatch.inputs.nixpkgs.follows = "nixpkgs";
     neovim-nightly-overlay.inputs.nixpkgs.follows = "nixpkgs";
     nixos-router.inputs.nixpkgs.follows = "nixpkgs";
-    nixpkgs.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     tinyboot.inputs.nixpkgs.follows = "nixpkgs";
     u-boot-nix.inputs.nixpkgs.follows = "nixpkgs";
