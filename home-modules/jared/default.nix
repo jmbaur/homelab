@@ -157,7 +157,10 @@ in
         eval "$(zoxide init posix --hook prompt)"
       '';
 
-      programs.fish.enable = true;
+      programs.fish = {
+        enable = true;
+        package = pkgs.fishMinimal;
+      };
 
       programs.nix-index.enable = true;
 

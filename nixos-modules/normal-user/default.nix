@@ -37,6 +37,7 @@ in
 
     programs.fish = {
       enable = true;
+      package = pkgs.fishMinimal;
       interactiveShellInit = ''
         function fish_greeting
         end
