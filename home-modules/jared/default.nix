@@ -160,10 +160,12 @@ in
       '';
 
       home.file.".bashrc".text = ''
+        alias j=tmux-jump
+
         source ${pkgs.bash-sensible}/sensible.bash
         source ${pkgs.nix-index}/etc/profile.d/command-not-found.sh
         source ${config.programs.git.package}/share/bash-completion/completions/git-prompt.sh
-        PROMPT_COMMAND='__git_ps1 "\u@\h:\w" "\\\$ "'
+        PROMPT_COMMAND='__git_ps1 "\n\[\033[1;32m\][\u@\h:\w]" "\\\$\[\033[0m\] " "[%s]"'
         PROMPT_DIRTRIM=2
 
         # This should occur last, it amends PROMPT_COMMAND
