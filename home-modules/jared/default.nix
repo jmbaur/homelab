@@ -325,7 +325,8 @@ in
 
       xdg.configFile."alacritty/alacritty.toml".source = ./alacritty.toml;
       xdg.configFile."foot/foot.ini".source = ./foot.ini;
-      xdg.configFile."ghostty/config".source = ./ghostty.config;
+      xdg.configFile."sway/config".source = ./sway.conf;
+      xdg.configFile."ghostty/config".source = ./ghostty.conf;
       xdg.configFile."kitty/kitty.conf".source = ./kitty.conf;
       xdg.configFile."wezterm/wezterm.lua".source = ./wezterm.lua;
     })

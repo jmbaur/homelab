@@ -30,6 +30,8 @@ in
     networking.wireless.iwd.enable = true;
     networking.networkmanager.wifi.backend = "iwd";
 
+    hardware.bluetooth.enable = true;
+
     services.automatic-timezoned.enable = mkDefault true;
     services.dbus.packages = [ pkgs.mako ];
     services.flatpak.enable = mkDefault true;
