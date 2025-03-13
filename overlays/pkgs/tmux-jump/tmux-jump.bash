@@ -22,19 +22,14 @@ fi
 
 tmux_session_path=
 if ! tmux_session_path=$(
-	fd "^\.git$" \
+	fd '^\.git$' \
 		--base-directory "$base_directory" \
 		--hidden \
-		--type directory \
 		--max-depth 2 \
 		--no-ignore |
-		sed "s,/\.git/,," |
+		sed 's,/\.git/\?,,' |
 		{ [[ -n ${1-} ]] && grep ".*$1.*" || cat; } |
-		sk \
-			--exit-0 \
-			--select-1 \
-			--preview-window=down \
-			--preview="git -C $base_directory/{} remote --verbose"
+		sk --exit-0 --select-1
 ); then
 	echo "No matches"
 	exit 2
