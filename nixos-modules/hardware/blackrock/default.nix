@@ -87,7 +87,6 @@ in
       (pkgs.linux-firmware.overrideAttrs (old: {
         postInstall =
           (old.postInstall or "")
-          # bash
           + ''
             # symlink exists in armbian/firmware
             pushd $out/lib/firmware/qcom

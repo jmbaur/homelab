@@ -35,19 +35,9 @@ in
   config = mkIf cfg.enable {
     users.mutableUsers = true;
 
-    programs.fish = {
-      enable = true;
-      package = pkgs.fishMinimal;
-      interactiveShellInit = ''
-        function fish_greeting
-        end
-      '';
-    };
-
     users.users.${cfg.username} = {
       isNormalUser = true;
       createHome = false; # we do this ourselves below
-      shell = pkgs.fish;
       extraGroups =
         [ "wheel" ]
         ++ optional config.custom.dev.enable "dialout" # serial consoles

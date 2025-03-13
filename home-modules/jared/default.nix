@@ -99,6 +99,7 @@ in
         mdcat
         ncdu
         nix-diff
+        nix-index
         nix-output-monitor
         nix-prefetch-scripts
         nix-tree
@@ -153,24 +154,17 @@ in
         .git
       '';
 
-      xdg.configFile."oils/oshrc".text = ''
-        eval "$(direnv hook bash)"
-        eval "$(zoxide init posix --hook prompt)"
+      home.file.".bashrc".text = ''
+        source ${pkgs.bash-sensible}/sensible.bash
+        eval "$(${getExe pkgs.direnv} hook bash)"
+        source ${pkgs.nix-index}/etc/profile.d/command-not-found.sh
+        source ${config.programs.git.package}/share/bash-completion/completions/git-prompt.sh
+        PROMPT_COMMAND='__git_ps1 "\u@\h:\w" "\\\$ "'
+        PROMPT_DIRTRIM=2
       '';
 
-      programs.fish = {
-        enable = true;
-        package = pkgs.fishMinimal;
-      };
-
-      programs.nix-index.enable = true;
-
-      programs.zoxide.enable = true;
-
-      programs.direnv = {
-        enable = true;
-        nix-direnv.enable = true;
-      };
+      xdg.configFile."direnv/lib/hm-nix-direnv.sh".source =
+        "${pkgs.nix-direnv}/share/nix-direnv/direnvrc";
 
       programs.gpg = {
         enable = true;

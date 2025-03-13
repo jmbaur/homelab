@@ -77,33 +77,31 @@ inputs.nixpkgs.lib.mapAttrs (
             pkgs.jq
             pkgs.nix-prefetch-scripts
           ];
-          text =
-            # bash
-            ''
-              NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"
-              export NIX_PATH
+          text = ''
+            NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"
+            export NIX_PATH
 
-              nix flake update
-              # auto-follow -i
+            nix flake update
+            # auto-follow -i
 
-              readarray -t sources < <(find . -type f -name "*source.json")
-              for source in "''${sources[@]}"; do
-                args=()
-                if [[ $(jq -r ".fetchSubmodules" < "$source") == "true" ]]; then
-                  args+=("--fetch-submodules")
-                fi
-                args+=("$(jq -r ".url" < "$source")")
-                nix-prefetch-git "''${args[@]}" | tee "$source"
-              done
+            readarray -t sources < <(find . -type f -name "*source.json")
+            for source in "''${sources[@]}"; do
+              args=()
+              if [[ $(jq -r ".fetchSubmodules" < "$source") == "true" ]]; then
+                args+=("--fetch-submodules")
+              fi
+              args+=("$(jq -r ".url" < "$source")")
+              nix-prefetch-git "''${args[@]}" | tee "$source"
+            done
 
-              # shellcheck disable=SC2185,SC2044
-              readarray -t cargo_tomls < <(find ./overlays/pkgs -type f -name "Cargo.toml")
-              for cargo_toml in "''${cargo_tomls[@]}"; do
-                pushd "$(dirname "$cargo_toml")"
-                nix develop ".#$(basename "$(dirname "$cargo_toml")")" --command cargo update --verbose
-                popd
-              done
-            '';
+            # shellcheck disable=SC2185,SC2044
+            readarray -t cargo_tomls < <(find ./overlays/pkgs -type f -name "Cargo.toml")
+            for cargo_toml in "''${cargo_tomls[@]}"; do
+              pushd "$(dirname "$cargo_toml")"
+              nix develop ".#$(basename "$(dirname "$cargo_toml")")" --command cargo update --verbose
+              popd
+            done
+          '';
         }
       )
     );

@@ -100,7 +100,6 @@ inputs: {
       mako = prev.mako.overrideAttrs (old: {
         postInstall =
           (old.postInstall or "")
-          # bash
           + ''
             substituteInPlace $out/share/dbus-1/services/fr.emersion.mako.service \
               --replace-fail "Exec=$out/bin/mako" "SystemdService=mako.service"

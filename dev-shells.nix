@@ -62,11 +62,9 @@ inputs.nixpkgs.lib.mapAttrs (
             stylua.enable = true;
           };
         }).shellHook
-        +
-          # bash
-          ''
-            ln -sf ${sopsConfig} $PWD/.sops.yaml
-          '';
+        + ''
+          ln -sf ${sopsConfig} $PWD/.sops.yaml
+        '';
     };
   }
 ) inputs.self.legacyPackages
