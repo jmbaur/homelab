@@ -74,6 +74,7 @@ in
         copy
         curl
         dig
+        direnv
         fd
         file
         fsrx
@@ -154,13 +155,19 @@ in
         .git
       '';
 
+      home.file.".bash_profile".text = ''
+        source $HOME/.bashrc
+      '';
+
       home.file.".bashrc".text = ''
         source ${pkgs.bash-sensible}/sensible.bash
-        eval "$(${getExe pkgs.direnv} hook bash)"
         source ${pkgs.nix-index}/etc/profile.d/command-not-found.sh
         source ${config.programs.git.package}/share/bash-completion/completions/git-prompt.sh
         PROMPT_COMMAND='__git_ps1 "\u@\h:\w" "\\\$ "'
         PROMPT_DIRTRIM=2
+
+        # This should occur last, it amends PROMPT_COMMAND
+        eval "$(${getExe pkgs.direnv} hook bash)"
       '';
 
       xdg.configFile."direnv/lib/hm-nix-direnv.sh".source =
