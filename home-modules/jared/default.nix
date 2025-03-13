@@ -97,6 +97,7 @@ in
         man-pages
         man-pages-posix
         mdcat
+        ncdu
         nix-diff
         nix-output-monitor
         nix-prefetch-scripts
@@ -320,9 +321,10 @@ in
           '';
 
       xdg.configFile."alacritty/alacritty.toml".source = ./alacritty.toml;
+      xdg.configFile."foot/foot.ini".source = ./foot.ini;
+      xdg.configFile."ghostty/config".source = ./ghostty.config;
       xdg.configFile."kitty/kitty.conf".source = ./kitty.conf;
       xdg.configFile."wezterm/wezterm.lua".source = ./wezterm.lua;
-      xdg.configFile."ghostty/config".source = ./ghostty.config;
     })
   ];
 }
