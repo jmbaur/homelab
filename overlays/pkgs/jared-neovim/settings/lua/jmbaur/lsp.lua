@@ -130,7 +130,7 @@ local on_attach = get_on_attach({})
 
 local servers = {
 	bashls = { enable = vim.g.lang_support_shell, config = { on_attach = on_attach_format } },
-	clangd = { enable = vim.g.lang_support_c, config = { on_attach = on_attach_format } },
+	clangd = { enable = vim.g.lang_support_c, config = { on_attach = on_attach } },
 	gopls = {
 		enable = vim.g.lang_support_go,
 		config = {
