@@ -48,6 +48,13 @@ in
     environment.systemPackages =
       [
         pkgs.mako
+        (pkgs.symlinkJoin {
+          name = "default-${pkgs.xcursor-pro.name}";
+          paths = [ pkgs.xcursor-pro ];
+          postBuild = ''
+            ln -sf $out/share/icons/XCursor-Pro-Dark $out/share/icons/default
+          '';
+        })
       ]
       ++ optionals config.services.flatpak.enable [ setupFlathub ]
       ++ optionals config.programs.firefox.enable [ pkgs.firefoxpwa ];
