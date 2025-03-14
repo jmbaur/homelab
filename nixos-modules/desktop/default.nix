@@ -45,6 +45,11 @@ in
 
     systemd.packages = [ pkgs.mako ];
 
+    # TODO(jared): sway issue, documented here: https://codeberg.org/dnkl/foot/issues/1675#issuecomment-1736249
+    environment.etc."xdg/foot/foot.ini".source = (pkgs.formats.ini { }).generate "foot.ini" {
+      main.resize-by-cells = false;
+    };
+
     environment.systemPackages =
       [
         pkgs.mako
