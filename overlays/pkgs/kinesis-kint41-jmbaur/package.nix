@@ -1,28 +1,18 @@
 {
-  lib,
-  stdenv,
-  fetchgit,
+  fetchFromGitHub,
   qmk,
-  ...
+  stdenv,
 }:
 
-let
-  source = lib.importJSON ./qmk-source.json;
-in
-stdenv.mkDerivation {
+stdenv.mkDerivation (finalAttrs: {
   pname = "kinesis-kint41-jmbaur";
-  version = "unstable-${builtins.substring 0 7 source.rev}";
+  version = "0.28.0";
 
-  src = fetchgit {
-    inherit (source)
-      url
-      rev
-      hash
-      fetchSubmodules
-      fetchLFS
-      deepClone
-      leaveDotGit
-      ;
+  src = fetchFromGitHub {
+    owner = "qmk";
+    repo = "qmk_firmware";
+    tag = finalAttrs.version;
+    hash = "sha256-GW1S4e1Wuz4gRSJWduYbu0G4Lq9SUuFhR6SpZnA8cuo=";
   };
 
   nativeBuildInputs = [ qmk ];
@@ -38,4 +28,4 @@ stdenv.mkDerivation {
     install -D --target-directory=$out .build/kinesis_kint41_jmbaur.hex
     runHook postInstall
   '';
-}
+})

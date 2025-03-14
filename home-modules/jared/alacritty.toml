@@ -2,6 +2,10 @@
 background = "#1c1c1c"
 foreground = "#bcbcbc"
 
+[window.padding]
+x = 4
+y = 4
+
 [selection]
 save_to_clipboard = true
 
