@@ -54,10 +54,10 @@ in
       [
         pkgs.mako
         (pkgs.symlinkJoin {
-          name = "default-${pkgs.xcursor-pro.name}";
-          paths = [ pkgs.xcursor-pro ];
+          name = "default-${pkgs.xcursor-chromeos.name}";
+          paths = [ pkgs.xcursor-chromeos ];
           postBuild = ''
-            ln -sf $out/share/icons/XCursor-Pro-Dark $out/share/icons/default
+            ln -sf $out/share/icons/${pkgs.xcursor-chromeos.pname} $out/share/icons/default
           '';
         })
       ]
