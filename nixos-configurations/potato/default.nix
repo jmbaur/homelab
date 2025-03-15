@@ -27,7 +27,13 @@
 
       tinyboot = {
         enable = false; # TODO
-        board = "fizz-fizz";
+        chromebook = true;
+        video = true;
+        linux.consoles = [ "ttyS0,115200n8" ];
+        linux.kconfig = with lib.kernel; {
+          PINCTRL_ALDERLAKE = yes;
+          PINCTRL_TIGERLAKE = yes;
+        };
       };
 
       boot.kernelParams = [ "console=ttyS0,115200" ];

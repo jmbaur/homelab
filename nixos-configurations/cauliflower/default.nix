@@ -1,4 +1,9 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   nixpkgs.hostPlatform = "x86_64-linux";
 
@@ -23,7 +28,13 @@
 
   tinyboot = {
     enable = false;
-    board = "brya-banshee";
+    chromebook = true;
+    video = true;
+    linux.consoles = [ "ttyS0,115200n8" ];
+    linux.kconfig = with lib.kernel; {
+      PINCTRL_ALDERLAKE = yes;
+      PINCTRL_TIGERLAKE = yes;
+    };
   };
 
   services.yggdrasil.settings.Peers = [ "tls://celery.jmbaur.com:443" ];

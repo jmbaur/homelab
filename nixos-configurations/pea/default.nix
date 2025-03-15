@@ -13,7 +13,9 @@
 
       tinyboot = {
         enable = true;
-        board = "asurada-spherion";
+        platform.mediatek = true;
+        video = true;
+        chromebook = true;
       };
     }
     {
