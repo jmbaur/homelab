@@ -26,18 +26,9 @@ in
 
     hardware.deviceTree.name = "mediatek/mt8192-asurada-spherion-r0.dtb";
 
-    boot.kernelPackages = pkgs.linuxPackages_testing;
-
     boot.kernelParams = [
       "console=ttyS0,115200"
       "console=tty1"
-    ];
-
-    boot.initrd.availableKernelModules = [
-      "anx7625"
-      "panel_edp"
-      "mediatek_drm"
-      "panfrost"
     ];
   };
 }
