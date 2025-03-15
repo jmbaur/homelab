@@ -10,12 +10,21 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "xcursor-chromeos";
   version = "136.0.7068.1";
 
-  src = fetchurl {
-    url = "https://chromium.googlesource.com/chromium/src/+archive/${finalAttrs.version}/ui/resources.tar.gz";
-    hash = "sha256-RZJK6XihlOPVxGBQVryi+kcWEX7n6nr9JEkX3qs2D0k=";
-  };
-
-  sourceRoot = ".";
+  # The tarballs from gitiles are not reproducible, so fetch the tarball and
+  # immediately unpack it so our FOD is reproducible.
+  src =
+    (fetchurl {
+      url = "https://chromium.googlesource.com/chromium/src/+archive/${finalAttrs.version}/ui/resources.tar.gz";
+      postFetch = ''
+        tmp=$(mktemp -d)
+        tar -C $tmp -xvf $downloadedFile
+        rm -f $out; mv $tmp $out
+      '';
+      hash = "sha256-KQf0Hz5pubo2NCPAoZH1v9mvLA3X0DPo4FWvrX6PJgo=";
+    }).overrideAttrs
+      {
+        outputHashMode = "recursive";
+      };
 
   dontConfigure = true;
 
