@@ -1,0 +1,44 @@
+# shellcheck shell=bash
+
+export EDITOR=nvim
+export MANPAGER="nvim +Man!"
+export GOPATH=${XDG_DATA_HOME:-~/.local/share}/go
+
+alias j=tmux-jump
+function remove-ssh-connections() {
+	# shellcheck disable=SC2016
+	pids=$(fd --regex 'ssh-[a-f0-9]{40}' "$XDG_RUNTIME_DIR" \
+		--exec lsfd --filter "NAME =~ \"state=listen path={}\"" --output PID --noheadings \;)
+
+	# shellcheck disable=SC2086
+	kill $pids
+}
+
+# shellcheck disable=SC1091
+source @bashSensible@/sensible.bash
+
+# shellcheck disable=SC1091
+source @nixIndex@/etc/profile.d/command-not-found.sh
+
+# shellcheck disable=SC1091
+source @git@/share/bash-completion/completions/git-prompt.sh
+
+__my_ps1() {
+	__git_ps1 "\n\[\033[1;32m\][\u@\h:\w]" "\\\$\[\033[0m\] " "[%s]"
+}
+
+# Inspired from direnv's way of prepending stuff to PROMPT_COMMAND (see output
+# of `direnv hook bash`).
+if [[ ";${PROMPT_COMMAND[*]:-};" != *";__my_ps1;"* ]]; then
+	if [[ "$(declare -p PROMPT_COMMAND 2>&1)" == "declare -a"* ]]; then
+		PROMPT_COMMAND=(__my_ps1 "${PROMPT_COMMAND[@]}")
+	else
+		# shellcheck disable=SC2128,SC2178
+		PROMPT_COMMAND="__my_ps1${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
+	fi
+fi
+
+PROMPT_DIRTRIM=2
+
+# This should occur last, it amends PROMPT_COMMAND
+eval "$(direnv hook bash)"

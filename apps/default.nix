@@ -75,7 +75,6 @@ inputs.nixpkgs.lib.mapAttrs (
           runtimeInputs = [
             pkgs.all-follow
             pkgs.jq
-            pkgs.nix-prefetch-scripts
           ];
           text = ''
             NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"

@@ -102,7 +102,6 @@ in
         nix-diff
         nix-index
         nix-output-monitor
-        nix-prefetch-scripts
         nix-tree
         nixos-kexec
         nixos-shell
@@ -135,17 +134,6 @@ in
         zip
       ];
 
-      home.sessionVariables = {
-        EDITOR = "nvim";
-        MANPAGER = "nvim +Man!";
-        GOPATH = "${config.xdg.dataHome}/go";
-      };
-
-      home.shellAliases = {
-        j = "tmux-jump";
-        remove-ssh-connections = ''${getExe pkgs.fd} --regex "ssh-[a-f0-9]{40}" $XDG_RUNTIME_DIR --exec sh -c 'kill $(${getExe' pkgs.util-linux "lsfd"} --filter "NAME =~ \"state=listen path={}\"" --output PID --noheadings)' \;'';
-      };
-
       home.file.".sqliterc".text = ''
         .headers ON
         .mode columns
@@ -159,18 +147,12 @@ in
         source $HOME/.bashrc
       '';
 
-      home.file.".bashrc".text = ''
-        alias j=tmux-jump
-
-        source ${pkgs.bash-sensible}/sensible.bash
-        source ${pkgs.nix-index}/etc/profile.d/command-not-found.sh
-        source ${config.programs.git.package}/share/bash-completion/completions/git-prompt.sh
-        PROMPT_COMMAND='__git_ps1 "\n\[\033[1;32m\][\u@\h:\w]" "\\\$\[\033[0m\] " "[%s]"'
-        PROMPT_DIRTRIM=2
-
-        # This should occur last, it amends PROMPT_COMMAND
-        eval "$(${getExe pkgs.direnv} hook bash)"
-      '';
+      home.file.".bashrc".source = pkgs.substituteAll {
+        src = ./bashrc.in;
+        bashSensible = pkgs.bash-sensible;
+        nixIndex = pkgs.nix-index;
+        git = config.programs.git.package;
+      };
 
       xdg.configFile."direnv/lib/hm-nix-direnv.sh".source =
         "${pkgs.nix-direnv}/share/nix-direnv/direnvrc";
