@@ -1,3 +1,3 @@
-setlocal colorcolumn=""
+setlocal colorcolumn=
 setlocal nonumber norelativenumber
-setlocal signcolumn="no"
+setlocal signcolumn=no

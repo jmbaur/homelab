@@ -1,9 +1,10 @@
 setlocal wrap
 setlocal linebreak
-setlocal showbreak='+++ '
+setlocal showbreak="+++ "
 setlocal conceallevel=2 " make links look nice
-setlocal colorcolumn=''
-" vim.keymap.set({ "n", "v" }, "j", "gj", { buffer = true })
-" vim.keymap.set({ "n", "v" }, "<Down>", "g<Down>", { buffer = true })
-" vim.keymap.set({ "n", "v" }, "k", "gk", { buffer = true })
-" vim.keymap.set({ "n", "v" }, "<Up>", "g<Up>", { buffer = true })
+setlocal colorcolumn=
+
+nnoremap <buffer><silent> j gj
+nnoremap <buffer><silent> <Down> g<Down>
+nnoremap <buffer><silent> k gk
+nnoremap <buffer><silent> <Up> g<Up>

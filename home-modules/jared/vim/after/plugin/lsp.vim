@@ -72,7 +72,7 @@ if executable("zls")
 	})
 endif
 
-def LspAttach()
+def! LspAttach()
 	set signcolumn=yes
 	nnoremap <buffer><silent> <C-]> <cmd>LspGotoDefinition<enter>
 	nnoremap <buffer><silent> K <cmd>LspHover<enter>

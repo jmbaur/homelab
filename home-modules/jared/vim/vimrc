@@ -46,13 +46,13 @@ g:mapleader = " "
 g:dispatch_no_tmux_make = 1
 
 nnoremap <leader>b <cmd>call fzf#vim#buffers("", { "placeholder": "{1}", "window": "bot new" })<enter>
-nnoremap <leader>f <cmd>call fzf#vim#files("", {"source": "fd --hidden", "window": "bot new"})<enter>
+nnoremap <leader>f <cmd>call fzf#vim#files("", {"source": "fd --hidden --type file", "window": "bot new"})<enter>
 nnoremap <leader>g <cmd>call fzf#vim#grep2("rg --column --line-number --no-heading --color=always --smart-case -- ", "", {"window": "bot new"})<enter>
 
 # Make 'Y' behave similarly to 'C', 'D', and others
 nnoremap Y y$
 
-def Osc52()
+def! Osc52()
 	# If we are not copying to the unnamed register (as indicated by the
 	# empty string), don't do anything.
 	if v:event.regname != ""

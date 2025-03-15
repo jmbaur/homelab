@@ -11,28 +11,25 @@
       nixpkgs.hostPlatform = "aarch64-linux";
 
       boot.kernelPackages = pkgs.linuxPackagesFor (
-        pkgs.callPackage
-          (
-            { buildLinux, ... }@args:
-            buildLinux (
-              args
-              // {
-                version = "6.13.0";
-                extraMeta.branch = "6.13";
+        pkgs.callPackage (
+          { buildLinux, ... }@args:
+          buildLinux (
+            args
+            // {
+              version = "6.13.0";
+              extraMeta.branch = "6.13";
 
-                src = pkgs.fetchgit {
-                  url = "https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linux";
-                  # rk3588 branch
-                  rev = "8af493584632ee57446659e26eae58192e8a80d7";
-                  hash = "sha256-rqhRdaHM1aHMg2F5GK+Hd9NZ6Q5Bp9+QGK16kWGTGjE=";
-                };
-                kernelPatches = (args.kernelPatches or [ ]);
-              }
-              // (args.argsOverride or { })
-            )
+              src = pkgs.fetchgit {
+                url = "https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linux";
+                # rk3588 branch
+                rev = "ec942df0e50138eb0ffcb80811044ca6a2928248";
+                hash = "sha256-v1HDob1k32I165IrlS/styNxw/3dyYYtMDT4sM5ZWFI=";
+              };
+              kernelPatches = (args.kernelPatches or [ ]);
+            }
+            // (args.argsOverride or { })
           )
-          {
-          }
+        ) { }
       );
 
       boot.initrd.availableKernelModules = [
