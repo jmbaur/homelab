@@ -22,12 +22,11 @@ in
     services.evremap = {
       enable = true;
       settings.device_name =
-        lib.mkDefault
-          {
-            x86_64 = "AT Translated Set 2 keyboard";
-            aarch64 = throw "TODO";
-          }
-          .${pkgs.stdenv.hostPlatform.qemuArch};
+        {
+          x86_64 = "AT Translated Set 2 keyboard";
+          aarch64 = throw "TODO";
+        }
+        .${pkgs.stdenv.hostPlatform.qemuArch};
 
       settings.remap =
         [

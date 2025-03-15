@@ -30,9 +30,6 @@ in
 
       environment.systemPackages = [ pkgs.nixos-kexec ];
 
-      # CapsLock is terrible
-      services.xserver.xkb.options = mkDefault "ctrl:nocaps";
-
       boot.initrd.systemd.enable = mkDefault true;
       system.etc.overlay.enable = mkDefault true;
 
@@ -91,7 +88,6 @@ in
       environment.stub-ld.enable = false;
 
       i18n.defaultLocale = "en_US.UTF-8";
-      console.useXkbConfig = true;
 
       # No need for mutable users in most use cases
       users.mutableUsers = mkDefault false;

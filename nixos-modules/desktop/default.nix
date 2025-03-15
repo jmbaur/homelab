@@ -44,6 +44,22 @@ in
         };
       };
 
+      services.evremap = {
+        enable = true;
+        settings.device_name = mkDefault "AT Translated Set 2 keyboard";
+
+        settings.remap = mkDefault [
+          {
+            input = [ "KEY_CAPSLOCK" ];
+            output = [ "KEY_LEFTCTRL" ];
+          }
+          {
+            input = [ "KEY_LEFTCTRL" ];
+            output = [ "KEY_CAPSLOCK" ];
+          }
+        ];
+      };
+
       programs.yubikey-touch-detector.enable = mkDefault true;
 
       systemd.packages = [ pkgs.mako ];
