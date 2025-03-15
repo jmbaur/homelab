@@ -19,9 +19,86 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    services.xserver.xkb = lib.mkIf cfg.laptop {
-      options = "ctrl:swap_lwin_lctl";
-      model = "chromebook";
+    services.evremap = {
+      enable = true;
+      settings.device_name =
+        lib.mkDefault
+          {
+            x86_64 = "AT Translated Set 2 keyboard";
+            aarch64 = throw "TODO";
+          }
+          .${pkgs.stdenv.hostPlatform.qemuArch};
+
+      settings.remap =
+        [
+          {
+            input = [
+              "KEY_RIGHTALT"
+              "KEY_BACKSPACE"
+            ];
+            output = [ "KEY_DELETE" ];
+          }
+          {
+            input = [ "KEY_LEFTMETA" ];
+            output = [ "KEY_LEFTCTRL" ];
+          }
+          {
+            input = [ "KEY_LEFTCTRL" ];
+            output = [ "KEY_LEFTMETA" ];
+          }
+          {
+            input = [
+              "KEY_LEFTALT"
+              "KEY_UP"
+            ];
+            output = [ "KEY_PAGEUP" ];
+          }
+          {
+            input = [
+              "KEY_LEFTALT"
+              "KEY_DOWN"
+            ];
+            output = [ "KEY_PAGEDOWN" ];
+          }
+          {
+            input = [
+              "KEY_LEFTALT"
+              "KEY_LEFT"
+            ];
+            output = [ "KEY_HOME" ];
+          }
+          {
+            input = [
+              "KEY_LEFTALT"
+              "KEY_RIGHT"
+            ];
+            output = [ "KEY_END" ];
+          }
+        ]
+        ++
+        # function keys
+        lib.imap1
+          (index: key: {
+            input = [
+              "KEY_RIGHTALT"
+              key
+            ];
+            output = [ "KEY_F${toString index}" ];
+          })
+          [
+            "KEY_BACK"
+            "KEY_REFRESH"
+            "KEY_FULL_SCREEN"
+            "KEY_SCALE"
+            "KEY_SYSRQ"
+            "KEY_BRIGHTNESSDOWN"
+            "KEY_BRIGHTNESSUP"
+            "KEY_KBDILLUMTOGGLE"
+            "KEY_PLAYPAUSE"
+            "KEY_MUTE"
+            "KEY_VOLUMEDOWN"
+            "KEY_VOLUMEUP"
+          ];
     };
 
     services.udev.packages = lib.optionals cfg.laptop [
