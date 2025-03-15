@@ -47,10 +47,7 @@ inputs.nixpkgs.lib.mapAttrs (
         pkgs.nix-key
         pkgs.wg-dns
       ];
-      packages = [
-        pkgs.all-follow
-        pkgs.sops
-      ];
+      packages = [ pkgs.sops ];
       shellHook =
         (inputs.git-hooks.lib.${system}.run {
           src = ./.;

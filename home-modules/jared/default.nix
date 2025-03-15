@@ -8,7 +8,6 @@
 
 let
   inherit (lib)
-    getExe
     getExe'
     mkDefault
     mkEnableOption
@@ -65,10 +64,12 @@ in
         age-plugin-yubikey
         ansifilter
         as-tree
+        bash-language-server
         bat
         binary-diff
         cachix
         carapace
+        clang-tools
         cntr
         comma
         copy
@@ -78,14 +79,18 @@ in
         fd
         file
         fsrx
+        fzf
         gh
         git-extras
         git-gone
         gnumake
+        go-tools
+        gofumpt
+        gopls
         grex
         gron
         htmlq
-        jared-neovim-all-languages
+        inotify-tools
         jo
         jq
         just
@@ -99,10 +104,12 @@ in
         man-pages-posix
         mdcat
         ncdu
+        nil
         nix-diff
         nix-index
         nix-output-monitor
         nix-tree
+        nixfmt-rfc-style
         nixos-kexec
         nixos-shell
         nload
@@ -117,21 +124,29 @@ in
         procs
         pstree
         pwgen
+        pyright
         qemu
         rage
         ripgrep
+        ruff
+        rust-analyzer
+        rustfmt
         sd
+        shellcheck
+        shfmt
         strace-with-colors
         tcpdump
         tea
         tio
         tmux-jump
         tokei
+        ttags
         unzip
         usbutils
         watchexec
         wip
         zip
+        zls
       ];
 
       home.file.".sqliterc".text = ''
@@ -307,10 +322,17 @@ in
 
       xdg.configFile."alacritty/alacritty.toml".source = ./alacritty.toml;
       xdg.configFile."foot/foot.ini".source = ./foot.ini;
-      xdg.configFile."sway/config".source = ./sway.conf;
       xdg.configFile."ghostty/config".source = ./ghostty.conf;
       xdg.configFile."kitty/kitty.conf".source = ./kitty.conf;
+      xdg.configFile."sway/config".source = ./sway.conf;
       xdg.configFile."wezterm/wezterm.lua".source = ./wezterm.lua;
+
+      xdg.configFile."vim".source =
+        pkgs.runCommand "vim-config" { env.VIM_PLUG = pkgs.vimPlugins.vim-plug; }
+          ''
+            cp -r ${./vim} $out; chmod +w $out
+            install -Dm0644 -t $out/autoload ${pkgs.vimPlugins.vim-plug}/plug.vim 
+          '';
     })
   ];
 }

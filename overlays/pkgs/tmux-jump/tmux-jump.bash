@@ -29,7 +29,7 @@ if ! tmux_session_path=$(
 		--no-ignore |
 		sed 's,/\.git/\?,,' |
 		{ [[ -n ${1-} ]] && grep ".*$1.*" || cat; } |
-		fzy
+		fzf
 ); then
 	echo "No matches"
 	exit 2

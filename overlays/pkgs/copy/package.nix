@@ -1,1 +1,1 @@
-{ writeShellScriptBin }: writeShellScriptBin "copy" ''printf "\033]52;c;$(base64)\07"''
+{ writeShellScriptBin }: writeShellScriptBin "copy" ''printf "\033]52;c;$(base64)\007"''

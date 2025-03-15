@@ -1,0 +1,78 @@
+vim9script
+
+plug#begin("~/.local/state/vim/plug")
+Plug "junegunn/fzf"
+Plug "junegunn/fzf.vim"
+Plug "mmarchini/bpftrace.vim"
+Plug "tpope/vim-commentary"
+Plug "tpope/vim-dispatch"
+Plug "tpope/vim-eunuch"
+Plug "tpope/vim-fugitive"
+Plug "tpope/vim-repeat"
+Plug "tpope/vim-rsi"
+Plug "tpope/vim-sensible"
+Plug "tpope/vim-surround"
+Plug "tpope/vim-unimpaired"
+Plug "tpope/vim-vinegar"
+Plug "yegappan/lsp"
+plug#end()
+
+set colorcolumn=80
+set autoread
+set background=dark
+set grepprg=rg\ --vimgrep\ --ignore-case
+set hidden
+set hlsearch
+set ignorecase smartcase
+set laststatus=2
+set noswapfile
+set nowrap
+set number relativenumber
+set showmatch
+set splitbelow splitright
+set title
+set wildoptions=pum,tagfile
+
+colorscheme lunaperche
+
+g:fzy = {
+	findcmd: "fd --type f --type l",
+	lines: 10,
+	prompt: ">>> ",
+}
+
+g:mapleader = " "
+
+g:dispatch_no_tmux_make = 1
+
+nnoremap <leader>b <cmd>call fzf#vim#buffers("", { "placeholder": "{1}", "window": "bot new" })<enter>
+nnoremap <leader>f <cmd>call fzf#vim#files("", {"source": "fd --hidden", "window": "bot new"})<enter>
+nnoremap <leader>g <cmd>call fzf#vim#grep2("rg --column --line-number --no-heading --color=always --smart-case -- ", "", {"window": "bot new"})<enter>
+
+# Make 'Y' behave similarly to 'C', 'D', and others
+nnoremap Y y$
+
+def Osc52()
+	# If we are not copying to the unnamed register (as indicated by the
+	# empty string), don't do anything.
+	if v:event.regname != ""
+		return
+	endif
+
+	var osc52_content = printf(
+		"\x1b]52;c;%s\x07",
+		base64_encode(str2blob(v:event.regcontents)),
+	)
+
+	if writefile([osc52_content], "/dev/fd/2", "b") != 0
+		echo "failed to copy with osc52"
+	endif
+enddef
+
+autocmd_add([{
+	replace: true,
+	group: "Osc52",
+	event: "TextYankPost",
+	pattern: "*",
+	cmd: "Osc52()"
+}])

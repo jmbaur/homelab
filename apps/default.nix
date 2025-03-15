@@ -72,16 +72,12 @@ inputs.nixpkgs.lib.mapAttrs (
       getExe (
         pkgs.writeShellApplication {
           name = "update-repo-dependencies";
-          runtimeInputs = [
-            pkgs.all-follow
-            pkgs.jq
-          ];
+          runtimeInputs = [ pkgs.jq ];
           text = ''
             NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"
             export NIX_PATH
 
             nix flake update
-            # auto-follow -i
 
             # shellcheck disable=SC2185,SC2044
             readarray -t cargo_tomls < <(find ./overlays/pkgs -type f -name "Cargo.toml")

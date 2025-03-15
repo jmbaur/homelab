@@ -1,7 +1,6 @@
 inputs: {
   default = inputs.nixpkgs.lib.composeManyExtensions [
     # needed by some stuff below
-    inputs.auto-follow.overlays.default
     inputs.u-boot-nix.overlays.default
     # auto-added packages
     (
@@ -105,29 +104,6 @@ inputs: {
               --replace-fail "Exec=$out/bin/mako" "SystemdService=mako.service"
           '';
       });
-
-      jared-neovim = prev.jared-neovim.override {
-        neovim-unwrapped =
-          inputs.neovim-nightly-overlay.packages.${final.stdenv.hostPlatform.system}.default.overrideAttrs
-            (old: {
-              patches = (old.patches or [ ]) ++ [
-                # # TODO(jared): This allows neovim to detach from the
-                # # controlling terminal, similar to tmux. This work is still WIP.
-                # (final.fetchpatch {
-                #   url = "https://github.com/neovim/neovim/commit/103b47d42afb217bd58d9add7750b81469f02177.patch";
-                #   hash = "sha256-yn1fqhtf5jMJQp5o+QHU5dlm4PiSMh5cc9IZfJAHmW0=";
-                # })
-              ];
-            });
-      };
-      jared-neovim-all-languages = final.jared-neovim.override { supportAllLanguages = true; };
-
-      uboot-clearfog_uart = prev.uboot-clearfog.override {
-        extraStructuredConfig = with final.lib.kernel; {
-          MVEBU_SPL_BOOT_DEVICE_MMC = no;
-          MVEBU_SPL_BOOT_DEVICE_UART = yes;
-        };
-      };
 
       marvellBinaries = final.fetchFromGitHub {
         owner = "MarvellEmbeddedProcessors";
