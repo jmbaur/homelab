@@ -24,7 +24,7 @@ in
       settings.device_name =
         {
           x86_64 = "AT Translated Set 2 keyboard";
-          aarch64 = throw "TODO";
+          aarch64 = "cros_ec";
         }
         .${pkgs.stdenv.hostPlatform.qemuArch};
 
