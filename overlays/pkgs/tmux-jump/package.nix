@@ -1,8 +1,7 @@
 {
   fd,
-  gitMinimal,
   lib,
-  skim,
+  fzy,
   tmux,
   writeShellApplication,
 }:
@@ -10,8 +9,7 @@ writeShellApplication {
   name = "tmux-jump";
   runtimeInputs = [
     fd
-    gitMinimal
-    skim
+    fzy
     tmux
   ];
   text = lib.fileContents ./tmux-jump.bash;
