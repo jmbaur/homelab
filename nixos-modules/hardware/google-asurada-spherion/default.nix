@@ -26,7 +26,7 @@ in
 
     hardware.deviceTree.name = "mediatek/mt8192-asurada-spherion-r0.dtb";
 
-    boot.kernelPackages = pkgs.linuxPackages_latest;
+    boot.kernelPackages = pkgs.linuxPackages_testing;
 
     boot.kernelParams = [
       "console=ttyS0,115200"
