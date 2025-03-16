@@ -75,10 +75,14 @@ endif
 def LspAttach()
     set signcolumn=yes
     nnoremap <buffer><silent> <C-]> <cmd>LspGotoDefinition<enter>
+    nnoremap <buffer><silent> <C-k> <cmd>LspShowSignature<enter>
     nnoremap <buffer><silent> K <cmd>LspHover<enter>
     nnoremap <buffer><silent> [d <cmd>LspDiagPrevWrap<enter>
     nnoremap <buffer><silent> ]d <cmd>LspDiagNextWrap<enter>
     nnoremap <buffer><silent> gd <cmd>LspGotoDefinition<enter>
+    nnoremap <buffer><silent> gD <cmd>LspGotoDeclaration<enter>
+    nnoremap <buffer><silent> gt <cmd>LspGotoTypeDef<enter>
+    nnoremap <buffer><silent><leader> a <cmd>LspCodeAction<enter>
     nnoremap <buffer><silent><leader> r <cmd>LspShowReferences<enter>
     nnoremap <buffer><silent><leader> rn <cmd>LspRename<enter>
 enddef
