@@ -1,6 +1,6 @@
 vim9script
 
-def g:Run(arg: string)
+def! g:Run(arg: string)
     execute get(builtins, arg, NixRun(arg))
 enddef
 
@@ -13,14 +13,14 @@ def NixRun(attr: string): string
 enddef
 
 var builtins = {
-    nix: "terminal ++close ++shell nix repl --file \"<nixpkgs>\"",
-    python3: NixRun("python3"),
     bash: NixRun("bash"),
-    lua: NixRun("lua"),
-    nodejs: NixShell("nodejs", "node"),
-    deno: NixRun("deno"),
     bc: NixRun("bc"),
+    deno: NixRun("deno"),
     ghci: NixShell("ghc", "ghci"),
+    lua: NixRun("lua"),
+    nix: "terminal ++close ++shell nix repl --file \"<nixpkgs>\"",
+    nodejs: NixShell("nodejs", "node"),
+    python3: NixRun("python3"),
 }
 
 def RunComplete(

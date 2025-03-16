@@ -61,7 +61,8 @@ def DetectForge(remote_url: string): string
     throw "Forge type not detected"
 enddef
 
-def g:Permalink(range: number, line1: number, line2: number, bang: any)
+# TODO(jared): Make this work with tags
+def! g:Permalink(range: number, line1: number, line2: number, bang: any)
     var args = {
         range: range,
         line1: line1,
@@ -72,20 +73,29 @@ def g:Permalink(range: number, line1: number, line2: number, bang: any)
 
     var repo_dir = trim(system("git -C " .. shellescape(fnamemodify(current_file, ":p:h")) .. " rev-parse --show-toplevel"))
 
-    var rev = trim(system("git -C " .. shellescape(repo_dir) .. " rev-parse HEAD"))
+    var GitCommand = (command) => trim(system("git -C " .. shellescape(repo_dir) .. " " .. command))
 
-    var branch = trim(system("git -C " .. shellescape(repo_dir) .. " branch --show-current"))
-
-    if branch == ""
-        echo "detached HEAD, cannot get permalink"
-        return
+    var is_clean = GitCommand("diff HEAD") == ""
+    if !is_clean
+        throw "working tree is dirty, cannot get permalink"
     endif
 
-    var remote = trim(system("git -C " .. shellescape(repo_dir) .. " config branch." .. shellescape(branch) .. ".remote"))
+    var remote_refspecs = filter(
+        map(split(
+            GitCommand("branch --points-at HEAD --remotes"),
+            "\n",
+        ), (_, val) => trim(val)),
+        (_, val) => match(val, ".*\/HEAD -> .*") != 0
+    )
+    if len(remote_refspecs) == 0
+        throw "no remote branches found that point at HEAD"
+    endif
 
-    var git_file = trim(system("git -C " .. shellescape(repo_dir) .. " ls-files " .. shellescape(current_file)))
+    var remote = substitute(remote_refspecs[0], "\/.*", "", "")
 
-    var remote_url = trim(system("git -C " .. shellescape(repo_dir) .. " remote get-url " .. shellescape(remote)))
+    var git_file = GitCommand("ls-files " .. shellescape(current_file))
+
+    var remote_url = GitCommand("remote get-url " .. shellescape(remote))
 
     remote_url = substitute(remote_url, "git+ssh://", "https://", "")
 
@@ -99,11 +109,11 @@ def g:Permalink(range: number, line1: number, line2: number, bang: any)
     elseif match(remote_url, "^https://git.sr.ht/.*$") == 0
         ForgeFn = SourcehutUrl
     else
-        var forge = trim(system("git -C " .. shellescape(repo_dir) .. " config get " .. shellescape(printf("remote.%s.forge-type", remote))))
+        var forge = GitCommand("config get " .. shellescape(printf("remote.%s.forge-type", remote)))
         if forge == ""
             # no forge type set, try and detect it
             forge = DetectForge(remote_url)
-            system("git -C " .. shellescape(repo_dir) .. " config set " .. shellescape(printf("remote.%s.forge-type ", remote)) .. shellescape(forge)) 
+            GitCommand("config set " .. shellescape(printf("remote.%s.forge-type ", remote)) .. shellescape(forge))
         endif
 
         ForgeFn = get(forges, forge)
@@ -113,7 +123,7 @@ def g:Permalink(range: number, line1: number, line2: number, bang: any)
         throw "Unknown forge type"
     endif
 
-    url = ForgeFn(args, remote_url, rev, git_file)
+    url = ForgeFn(args, remote_url, GitCommand("rev-parse HEAD"), git_file)
 
     if bang
         setreg("@", url)
