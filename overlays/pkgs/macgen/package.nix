@@ -1,30 +1,17 @@
-{ rustPlatform, runCommand }:
+{
+  runCommand,
+  stdenv,
+  zig_0_14,
+}:
 
-rustPlatform.buildRustPackage rec {
-  pname = "macgen";
-  version = "0.1.0";
+runCommand "macgen" { depsBuildBuild = [ zig_0_14 ]; } ''
+  mkdir -p $out/bin
 
-  cargoVendorDir = "vendor";
-
-  src = runCommand "${pname}-src" { } ''
-    mkdir -p $out/{vendor,src}
-
-    cp ${./macgen.rs} $out/src/main.rs
-
-    cat >$out/Cargo.toml <<EOF
-    [package]
-    name = "${pname}"
-    version = "${version}"
-    edition = "2021"
-    EOF
-
-    cat >$out/Cargo.lock <<EOF
-    version = 3
-    [[package]]
-    name = "${pname}"
-    version = "${version}"
-    EOF
-  '';
-
-  meta.mainProgram = "macgen";
-}
+  ZIG_GLOBAL_CACHE_DIR=$TEMPDIR zig build-exe \
+    -j$NIX_BUILD_CORES \
+    -femit-bin=$out/bin/macgen \
+    -fstrip \
+    -O ReleaseSafe \
+    -target ${stdenv.hostPlatform.qemuArch}-linux \
+    ${./macgen.zig}
+''

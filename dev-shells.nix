@@ -40,14 +40,11 @@ inputs.nixpkgs.lib.mapAttrs (
   in
   {
     default = pkgs.mkShell {
-      inputsFrom = [
-        pkgs.homelab-backup-recv
-        pkgs.homelab-git-shell-commands
-        pkgs.local-overlay-fixup-db
-        pkgs.nix-key
-        pkgs.wg-dns
+      packages = [
+        pkgs.zig_0_14
+        pkgs.sops
       ];
-      packages = [ pkgs.sops ];
+
       shellHook =
         (inputs.git-hooks.lib.${system}.run {
           src = ./.;
@@ -56,7 +53,6 @@ inputs.nixpkgs.lib.mapAttrs (
             nixfmt-rfc-style.enable = true;
             shellcheck.enable = true;
             shfmt.enable = true;
-            stylua.enable = true;
           };
         }).shellHook
         + ''
