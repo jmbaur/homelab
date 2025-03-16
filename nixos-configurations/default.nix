@@ -134,6 +134,7 @@ inputs.nixpkgs.lib.genAttrs allHosts (
 
           custom.yggdrasil.peers = {
             cauliflower.allowAll = true;
+            garlic.allowAll = true;
             pea.allowAll = true;
             zucchini.allowAll = true;
           };
