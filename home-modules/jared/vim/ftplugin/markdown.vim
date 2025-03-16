@@ -1,6 +1,6 @@
 setlocal wrap
 setlocal linebreak
-setlocal showbreak="+++ "
+setlocal showbreak=>\ 
 setlocal conceallevel=2 " make links look nice
 setlocal colorcolumn=
 
