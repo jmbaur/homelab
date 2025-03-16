@@ -75,6 +75,11 @@ def! g:Permalink(range: number, line1: number, line2: number, bang: any)
 
     var GitCommand = (command) => trim(system("git -C " .. shellescape(repo_dir) .. " " .. command))
 
+    var git_file = GitCommand("ls-files " .. shellescape(current_file))
+    if v:shell_error > 0
+        throw "could not find git file"
+    endif
+
     var is_clean = GitCommand("diff HEAD") == ""
     if !is_clean
         throw "working tree is dirty, cannot get permalink"
@@ -92,8 +97,6 @@ def! g:Permalink(range: number, line1: number, line2: number, bang: any)
     endif
 
     var remote = substitute(remote_refspecs[0], "\/.*", "", "")
-
-    var git_file = GitCommand("ls-files " .. shellescape(current_file))
 
     var remote_url = GitCommand("remote get-url " .. shellescape(remote))
 
