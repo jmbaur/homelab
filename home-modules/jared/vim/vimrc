@@ -1,22 +1,5 @@
 vim9script
 
-plug#begin("~/.local/state/vim/plug")
-Plug "junegunn/fzf"
-Plug "junegunn/fzf.vim"
-Plug "mmarchini/bpftrace.vim"
-Plug "tpope/vim-commentary"
-Plug "tpope/vim-dispatch"
-Plug "tpope/vim-eunuch"
-Plug "tpope/vim-fugitive"
-Plug "tpope/vim-repeat"
-Plug "tpope/vim-rsi"
-Plug "tpope/vim-sensible"
-Plug "tpope/vim-surround"
-Plug "tpope/vim-unimpaired"
-Plug "tpope/vim-vinegar"
-Plug "yegappan/lsp"
-plug#end()
-
 set colorcolumn=80
 set autoread
 set background=dark
@@ -52,21 +35,25 @@ nnoremap <leader>g <cmd>call fzf#vim#grep2("rg --column --line-number --no-headi
 # Make 'Y' behave similarly to 'C', 'D', and others
 nnoremap Y y$
 
-def! Osc52()
+def! g:Osc52Copy(content: list<string>)
+	var osc52_content = printf(
+		"\x1b]52;c;%s\x07",
+		base64_encode(str2blob(content)),
+	)
+
+	if writefile([osc52_content], "/dev/fd/2", "b") != 0
+		echo "failed to copy with osc52"
+	endif
+enddef
+
+def Osc52()
 	# If we are not copying to the unnamed register (as indicated by the
 	# empty string), don't do anything.
 	if v:event.regname != ""
 		return
 	endif
 
-	var osc52_content = printf(
-		"\x1b]52;c;%s\x07",
-		base64_encode(str2blob(v:event.regcontents)),
-	)
-
-	if writefile([osc52_content], "/dev/fd/2", "b") != 0
-		echo "failed to copy with osc52"
-	endif
+	g:Osc52Copy(v:event.regcontents)
 enddef
 
 autocmd_add([{
@@ -75,4 +62,12 @@ autocmd_add([{
 	event: "TextYankPost",
 	pattern: "*",
 	cmd: "Osc52()"
+}])
+
+autocmd_add([{
+    replace: true,
+    group: "NewTerminal",
+    event: "TerminalWinOpen",
+    pattern: "*",
+    cmd: "setlocal nospell nonumber norelativenumber signcolumn=no",
 }])

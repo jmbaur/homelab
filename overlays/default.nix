@@ -47,6 +47,16 @@ inputs: {
 
       vimPlugins = prev.vimPlugins.extend (
         _: _: {
+          lsp = final.vimUtils.buildVimPlugin {
+            name = "lsp";
+            src = final.fetchFromGitHub {
+              owner = "yegappan";
+              repo = "lsp";
+              rev = "9f3d92ed7f3ba0ba5b496f0fd2150ce56b049832";
+              hash = "sha256-dXm03apOI6zDyBXL6LiSPABmT9wCin6tjDVD2smrSU0=";
+            };
+          };
+
           bpftrace-vim = final.vimUtils.buildVimPlugin {
             name = "bpftrace.vim";
             src = final.fetchFromGitHub {

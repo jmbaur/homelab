@@ -9,6 +9,7 @@
 let
   inherit (lib)
     getExe'
+    concatLines
     mkDefault
     mkEnableOption
     mkIf
@@ -327,12 +328,34 @@ in
       xdg.configFile."sway/config".source = ./sway.conf;
       xdg.configFile."wezterm/wezterm.lua".source = ./wezterm.lua;
 
-      xdg.configFile."vim".source =
-        pkgs.runCommand "vim-config" { env.VIM_PLUG = pkgs.vimPlugins.vim-plug; }
-          ''
-            cp -r ${./vim} $out; chmod +w $out
-            install -Dm0644 -t $out/autoload ${pkgs.vimPlugins.vim-plug}/plug.vim 
-          '';
+      xdg.configFile."vim".source = pkgs.runCommand "vim-config" { } ''
+        cp -r ${./vim} $out; chmod +w $out
+        mkdir -p $out/pack/jared/start
+        ${concatLines (
+          map
+            (plugin: ''
+              cp -r ${plugin} $out/pack/jared/start/${plugin.name}
+            '')
+            (
+              with pkgs.vimPlugins;
+              [
+                bpftrace-vim
+                fzf-vim
+                lsp
+                vim-commentary
+                vim-dispatch
+                vim-eunuch
+                vim-fugitive
+                vim-repeat
+                vim-rsi
+                vim-sensible
+                vim-surround
+                vim-unimpaired
+                vim-vinegar
+              ]
+            )
+        )}
+      '';
     })
   ];
 }
