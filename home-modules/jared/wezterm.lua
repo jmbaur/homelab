@@ -20,7 +20,7 @@ config.tab_max_width = 32 -- twice the default
 config.term = "wezterm"
 config.use_dead_keys = false
 config.use_fancy_tab_bar = false
-config.window_padding = { left = 0, right = 0, top = 0, bottom = 0 }
+config.window_padding = { left = 4, right = 4, top = 4, bottom = 4 }
 
 if cool_shit then
 	config.leader = { key = "s", mods = "CTRL" }
