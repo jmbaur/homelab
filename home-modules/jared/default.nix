@@ -138,6 +138,7 @@ in
         strace-with-colors
         tcpdump
         tea
+        tinybar
         tio
         tmux-jump
         tokei
