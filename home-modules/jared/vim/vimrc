@@ -28,6 +28,7 @@ match ExtraWhitespace /\s\+$/
 g:mapleader = " "
 g:dispatch_no_tmux_make = 1
 
+nnoremap - <cmd>Dir<enter>
 nnoremap <leader>b <cmd>call fzf#vim#buffers("", { "placeholder": "{1}", "window": "bot new" })<enter>
 nnoremap <leader>f <cmd>call fzf#vim#files("", {"source": "fd --hidden --type file", "window": "bot new"})<enter>
 nnoremap <leader>g <cmd>call fzf#vim#grep2("rg --column --line-number --no-heading --color=always --smart-case -- ", "", {"window": "bot new"})<enter>
