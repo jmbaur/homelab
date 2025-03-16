@@ -1,8 +1,0 @@
-[package]
-name = "homelab-git-shell-commands"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-git2 = "0.20.0"
-rprompt = "2.1.1"

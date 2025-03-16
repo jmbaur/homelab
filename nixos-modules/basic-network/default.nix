@@ -110,52 +110,6 @@ in
               '';
             };
           };
-
-          systemd.services.tinyclatd = {
-            # TODO(jared): finish and enable
-            enable = false;
-
-            description = "464XLAT CLAT daemon";
-            documentation = [ "man:clatd(8)" ];
-            wantedBy = [ "multi-user.target" ];
-            after = [ "network-online.target" ];
-            wants = [ "network-online.target" ];
-            startLimitIntervalSec = 0;
-
-            serviceConfig = {
-              ExecStart = lib.getExe pkgs.tinyclatd;
-
-              # Hardening
-              CapabilityBoundingSet = [ "CAP_NET_ADMIN" ];
-              LockPersonality = true;
-              MemoryDenyWriteExecute = true;
-              NoNewPrivileges = true;
-              PrivateTmp = true;
-              ProtectClock = true;
-              ProtectControlGroups = true;
-              ProtectHome = true;
-              ProtectHostname = true;
-              ProtectKernelLogs = true;
-              ProtectKernelModules = true;
-              ProtectProc = "invisible";
-              ProtectSystem = true;
-              RestrictAddressFamilies = [
-                "AF_INET"
-                "AF_INET6"
-                "AF_NETLINK"
-              ];
-              RestrictNamespaces = true;
-              RestrictRealtime = true;
-              RestrictSUIDSGID = true;
-              SystemCallArchitectures = "native";
-              SystemCallFilter = [
-                "@network-io"
-                "@system-service"
-                "~@privileged"
-                "~@resources"
-              ];
-            };
-          };
         }
       )
       (lib.mkIf (!config.custom.server.enable) {
