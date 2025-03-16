@@ -24,72 +24,20 @@ def ConstructUrl(
     return url
 enddef
 
-def GithubUrl(
-        args: dict<any>,
-        remote_url: string,
-        rev: string,
-        file: string,
-        ): string
-    return ConstructUrl(
-        args,
-        "%s/blob/%s/%s",
-        "#L%s",
-        "-L%s",
-        remote_url,
-        rev,
-        file,
-    )
+def GithubUrl(args: dict<any>, remote_url: string, rev: string, file: string): string
+    return ConstructUrl(args, "%s/blob/%s/%s", "#L%s", "-L%s", remote_url, rev, file)
 enddef
 
-def GitlabUrl(
-        args: dict<any>,
-        remote_url: string,
-        rev: string,
-        file: string,
-        ): string
-    return ConstructUrl(
-        args,
-        "%s/-/blob/%s/%s",
-        "#L%s",
-        "-%s",
-        remote_url,
-        rev,
-        file,
-    )
+def GitlabUrl(args: dict<any>, remote_url: string, rev: string, file: string): string
+    return ConstructUrl(args, "%s/-/blob/%s/%s", "#L%s", "-%s", remote_url, rev, file)
 enddef
 
-def GiteaUrl(
-        args: dict<any>,
-        remote_url: string,
-        rev: string,
-        file: string,
-        ): string
-    return ConstructUrl(
-        args,
-        "%s/src/commit/%s/%s",
-        "#L%s",
-        "-L%s",
-        remote_url,
-        rev,
-        file,
-    )
+def GiteaUrl(args: dict<any>, remote_url: string, rev: string, file: string): string
+    return ConstructUrl(args, "%s/src/commit/%s/%s", "#L%s", "-L%s", remote_url, rev, file)
 enddef
 
-def SourcehutUrl(
-        args: dict<any>,
-        remote_url: string,
-        rev: string,
-        file: string,
-        ): string
-    return ConstructUrl(
-        args,
-        "%s/tree/%s/item/%s",
-        "#L%s",
-        "-%s",
-        remote_url,
-        rev,
-        file,
-    )
+def SourcehutUrl(args: dict<any>, remote_url: string, rev: string, file: string): string
+    return ConstructUrl(args, "%s/tree/%s/item/%s", "#L%s", "-%s", remote_url, rev, file)
 enddef
 
 var forges = {
