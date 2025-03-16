@@ -32,6 +32,19 @@
         ) { }
       );
 
+      boot.kernelPatches = [
+        {
+          name = "disable-rust";
+          patch = null;
+          extraStructuredConfig = {
+            RUST = lib.mkForce lib.kernel.unset;
+            DRM_PANIC = lib.mkForce lib.kernel.unset;
+            DRM_PANIC_SCREEN = lib.mkForce lib.kernel.unset;
+            DRM_PANIC_SCREEN_QR_CODE = lib.mkForce lib.kernel.unset;
+          };
+        }
+      ];
+
       boot.initrd.availableKernelModules = [
         "dwmac_rk"
         "nvme"
