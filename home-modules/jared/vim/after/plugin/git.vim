@@ -75,7 +75,7 @@ def SourcehutUrl(
 	)
 enddef
 
-def Permalink(range: number, line1: number, line2: number, bang: any)
+def g:Permalink(range: number, line1: number, line2: number, bang: any)
 	var args = {
 		range: range,
 		line1: line1,
@@ -122,4 +122,4 @@ def Permalink(range: number, line1: number, line2: number, bang: any)
 	echo url
 enddef
 
-command! -bang -range Permalink call Permalink(<range>, <line1>, <line2>, <bang>0)
+command! -bang -range Permalink vim9cmd g:Permalink(<range>, <line1>, <line2>, <bang>0)

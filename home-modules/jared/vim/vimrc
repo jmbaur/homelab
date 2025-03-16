@@ -1,8 +1,8 @@
 vim9script
 
-set colorcolumn=80
 set autoread
 set background=dark
+set colorcolumn=80
 set grepprg=rg\ --vimgrep\ --ignore-case
 set hidden
 set hlsearch
@@ -11,21 +11,17 @@ set laststatus=2
 set noswapfile
 set nowrap
 set number relativenumber
+set ruler
+set showcmd
 set showmatch
 set splitbelow splitright
+set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
 set title
 set wildoptions=pum,tagfile
 
 colorscheme lunaperche
 
-g:fzy = {
-	findcmd: "fd --type f --type l",
-	lines: 10,
-	prompt: ">>> ",
-}
-
 g:mapleader = " "
-
 g:dispatch_no_tmux_make = 1
 
 nnoremap <leader>b <cmd>call fzf#vim#buffers("", { "placeholder": "{1}", "window": "bot new" })<enter>
