@@ -27,7 +27,7 @@ in
           buildLinux (
             args
             // rec {
-              version = "6.14.0-rc5";
+              version = "6.14.0-rc6";
               extraMeta.branch = versions.majorMinor version;
 
               # TODO(jared): remove this
@@ -36,9 +36,9 @@ in
               src = pkgs.fetchFromGitHub {
                 owner = "jhovold";
                 repo = "linux";
-                # wip/x1e80100-6.14-rc5
-                rev = "38e4853ad98d7c1210364778c6ed6f37476f3680";
-                hash = "sha256-/QNtX/3AZ3Qy+xYhtA060gSUwjGL2yCKs/4kREhaBZY=";
+                # wip/x1e80100-6.14-rc6
+                rev = "28b6f9ecfadfd9019e4ddb538a9b65cfb342ba54";
+                hash = "";
               };
               kernelPatches = (args.kernelPatches or [ ]);
             }
@@ -103,5 +103,7 @@ in
     ];
 
     boot.loader.efi.canTouchEfiVariables = false;
+
+    services.evremap.settings.device_name = "hid-over-i2c 04F3:000D Keyboard";
   };
 }
