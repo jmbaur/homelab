@@ -21,6 +21,10 @@ set wildoptions=pum,tagfile
 
 colorscheme lunaperche
 
+# Make trailing whitespace standout.
+highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$/
+
 g:mapleader = " "
 g:dispatch_no_tmux_make = 1
 

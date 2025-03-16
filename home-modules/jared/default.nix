@@ -326,7 +326,6 @@ in
       xdg.configFile."ghostty/config".source = ./ghostty.conf;
       xdg.configFile."kitty/kitty.conf".source = ./kitty.conf;
       xdg.configFile."sway/config".source = ./sway.conf;
-      xdg.configFile."wezterm/wezterm.lua".source = ./wezterm.lua;
 
       xdg.configFile."vim".source = pkgs.runCommand "vim-config" { } ''
         cp -r ${./vim} $out; chmod +w $out
