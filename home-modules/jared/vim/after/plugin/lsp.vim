@@ -9,7 +9,10 @@ if executable("nil")
         filetype: ["nix"],
         path: "nil",
         args: [],
-        initializationOptions: {formatting: {command: ["nixfmt"]}},
+        initializationOptions: {
+            formatting: {command: ["nixfmt"]},
+            nix: {flake: {autoArchive: false}},
+        },
     })
     add(format_on_save_patterns, "*.nix")
 endif
