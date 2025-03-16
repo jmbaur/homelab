@@ -60,6 +60,7 @@ in
     boot.initrd.extraFirmwarePaths = map (file: "qcom/${file}") [
       "gen70500_sqe.fw"
       "gen70500_gmu.bin"
+      "x1e80100/LENOVO/21N1/qcdxkmsuc8380.mbn"
     ];
 
     boot.initrd.includeDefaultModules = false;
