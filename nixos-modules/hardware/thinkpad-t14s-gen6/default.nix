@@ -38,7 +38,7 @@ in
                 repo = "linux";
                 # wip/x1e80100-6.14-rc6
                 rev = "28b6f9ecfadfd9019e4ddb538a9b65cfb342ba54";
-                hash = "";
+                hash = "sha256-iLosPkNM/fWzw3k0HWZu7VkXtDErzv03HleM57Sy+VE=";
               };
               kernelPatches = (args.kernelPatches or [ ]);
             }
