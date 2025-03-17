@@ -23,7 +23,7 @@ in
         services.resolved.enable = true;
 
         # Allow clatd to find dns server. See comment above.
-        services.resolved.extraConfig = ''
+        services.resolved.extraConfig = lib.mkIf config.services.clatd.enable ''
           DNSStubListenerExtra=::1
         '';
 
@@ -38,10 +38,6 @@ in
           !config.networking.networkmanager.enable
         )
         {
-          # TODO(jared): This does not work on newer kernels due to using
-          # dev_base_lock.
-          # boot.extraModulePackages = [ (config.boot.kernelPackages.callPackage ./nat46.nix { }) ];
-
           networking.useNetworkd = true;
 
           systemd.network.wait-online.enable = !hasWireless;

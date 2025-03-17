@@ -10,43 +10,36 @@ let
     mkDefault
     mkEnableOption
     mkIf
+    gvariant
     mkMerge
-    optionals
     ;
 
   cfg = config.custom.desktop;
 
-  setupFlathub = pkgs.writeShellApplication {
-    name = "setup-flathub";
-    text = "flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo";
-  };
+  enabledExtensions = [
+    pkgs.gnomeExtensions.appindicator
+    pkgs.gnomeExtensions.caffeine
+    pkgs.gnomeExtensions.clipboard-history
+  ];
 in
 {
   options.custom.desktop.enable = mkEnableOption "desktop";
 
   config = mkIf cfg.enable (mkMerge [
     {
+      boot.kernelParams = [ "quiet" ];
+
       custom.normalUser.enable = true;
 
-      services.automatic-timezoned.enable = mkDefault true;
-      services.dbus.packages = [ pkgs.mako ];
       services.flatpak.enable = mkDefault true;
       services.fwupd.enable = mkDefault true;
-      services.power-profiles-daemon.enable = mkDefault true;
       services.printing.enable = mkDefault true;
-      services.upower.enable = mkDefault true;
-
-      programs.sway = {
-        enable = true;
-        wrapperFeatures = {
-          base = true;
-          gtk = true;
-        };
-      };
 
       services.evremap = {
         enable = true;
-        settings.device_name = mkDefault "AT Translated Set 2 keyboard";
+        settings.device_name = mkIf pkgs.stdenv.hostPlatform.isx86_64 (
+          mkDefault "AT Translated Set 2 keyboard"
+        );
 
         settings.remap = mkDefault [
           {
@@ -62,28 +55,49 @@ in
 
       programs.yubikey-touch-detector.enable = mkDefault true;
 
-      systemd.packages = [ pkgs.mako ];
-
-      environment.etc."xdg/foot/foot.ini".source = (pkgs.formats.ini { }).generate "foot.ini" {
-        main.font = "monospace:size=10"; # default font is far too small
-        main.resize-by-cells = false; # TODO(jared): sway issue, documented here: https://codeberg.org/dnkl/foot/issues/1675#issuecomment-1736249
+      services.xserver = {
+        enable = true;
+        excludePackages = [ pkgs.xterm ];
+        desktopManager.gnome.enable = true;
+        displayManager.gdm.enable = true;
       };
 
-      environment.systemPackages =
-        [
-          pkgs.libnotify
-          pkgs.mako
-          pkgs.wvkbd
-          (pkgs.symlinkJoin {
-            name = "default-${pkgs.xcursor-chromeos.name}";
-            paths = [ pkgs.xcursor-chromeos ];
-            postBuild = ''
-              ln -sf $out/share/icons/${pkgs.xcursor-chromeos.pname} $out/share/icons/default
-            '';
-          })
-        ]
-        ++ optionals config.services.flatpak.enable [ setupFlathub ]
-        ++ optionals config.programs.firefox.enable [ pkgs.firefoxpwa ];
+      environment.systemPackages = enabledExtensions;
+
+      programs.dconf = {
+        enable = true;
+        profiles.user.databases = [
+          {
+            settings = {
+              "org/gnome/desktop/wm/preferences".resize-with-right-button = gvariant.mkBoolean true;
+              "org/gnome/system/location".enabled = gvariant.mkBoolean true;
+              "org/gnome/desktop/datetime".automatic-timezone = gvariant.mkBoolean true;
+              "org/gnome/mutter".experimental-features = gvariant.mkArray [ "scale-monitor-framebuffer" ];
+              "org/gnome/shell" = {
+                enabled-extensions = gvariant.mkArray (map (extension: extension.extensionUuid) enabledExtensions);
+                favorite-apps = gvariant.mkArray [
+                  "firefox.desktop"
+                  "org.gnome.Console.desktop"
+                  "org.gnome.Nautilus.desktop"
+                  "org.gnome.Settings.desktop"
+                ];
+              };
+              "org/gnome/desktop/background" = {
+                picture-uri = "file:///run/current-system/sw/share/backgrounds/gnome/vnc-l.png";
+                picture-uri-dark = "file:///run/current-system/sw/share/backgrounds/gnome/vnc-d.png";
+              };
+            };
+          }
+        ];
+      };
+
+      systemd.services.setup-flathub = mkIf config.services.flatpak.enable {
+        unitConfig.ConditionPathExists = "!/var/lib/flatpak/repo/flathub.trustedkeys.gpg";
+        requires = [ "network-online.target" ];
+        after = [ "network-online.target" ];
+        wantedBy = [ "multi-user.target" ];
+        serviceConfig.ExecStart = "${lib.getExe config.services.flatpak.package} remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo";
+      };
 
       # Add a default browser to use
       programs.firefox = {
@@ -94,8 +108,6 @@ in
         preferences."browser.tabs.inTitlebar" = mkIf (
           !config.services.xserver.desktopManager.gnome.enable
         ) 0;
-        # Make it possible for firefox to be the only desktop app.
-        nativeMessagingHosts.packages = [ pkgs.firefoxpwa ];
       };
     }
 
@@ -106,8 +118,6 @@ in
       networking.wireless.iwd.enable = true;
       networking.networkmanager.wifi.backend = "iwd";
 
-      hardware.bluetooth.enable = true;
-
       # We use systemd-resolved
       services.avahi.enable = false;
 
@@ -115,24 +125,6 @@ in
       # plus setting this to true means that geoclue will be dependent on avahi
       # being enabled, since NMEA support in geoclue uses avahi.
       services.geoclue2.enableNmea = mkDefault false;
-    }
-
-    # Display brightness
-    {
-      # TODO(jared): Find or write a utility that can modify brightness of
-      # internal and external displays at once.
-      environment.systemPackages = [
-        pkgs.brightnessctl
-        pkgs.ddcutil
-      ];
-
-      boot.kernelModules = [ "i2c-dev" ];
-
-      # The usual case, using TAG+="uaccess":  If a /dev/i2c device is associated
-      # with a video adapter, grant the current user access to it.
-      services.udev.extraRules = ''
-        SUBSYSTEM=="i2c-dev", KERNEL=="i2c-[0-9]*", ATTRS{class}=="0x030000", TAG+="uaccess"
-      '';
     }
   ]);
 }

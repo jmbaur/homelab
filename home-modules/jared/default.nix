@@ -91,7 +91,6 @@ in
         grex
         gron
         htmlq
-        i3status-rust
         inotify-tools
         jo
         jq
@@ -321,13 +320,6 @@ in
           ''
             vim.opt.exrc = true
           '';
-
-      xdg.configFile."alacritty/alacritty.toml".source = ./alacritty.toml;
-      xdg.configFile."foot/foot.ini".source = ./foot.ini;
-      xdg.configFile."ghostty/config".source = ./ghostty.conf;
-      xdg.configFile."i3status-rust/config.toml".source = ./i3status.toml;
-      xdg.configFile."kitty/kitty.conf".source = ./kitty.conf;
-      xdg.configFile."sway/config".source = ./sway.conf;
 
       xdg.configFile."vim".source = pkgs.runCommand "vim-config" { } ''
         cp -r ${./vim} $out; chmod +w $out
