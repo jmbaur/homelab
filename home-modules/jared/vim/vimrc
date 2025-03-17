@@ -48,22 +48,14 @@ def! g:Osc52Copy(content: list<string>)
 	endif
 enddef
 
-def Osc52()
-	# If we are not copying to the unnamed register (as indicated by the
-	# empty string), don't do anything.
-	if v:event.regname != ""
-		return
-	endif
-
-	g:Osc52Copy(v:event.regcontents)
-enddef
-
 autocmd_add([{
 	replace: true,
 	group: "Osc52",
 	event: "TextYankPost",
 	pattern: "*",
-	cmd: "Osc52()"
+    # Only copy to the system clipboard via OSC52 if we are copying to the
+    # unnamed register (as indicated by the empty string).
+    cmd: "if v:event.regname == \"\" | g:Osc52Copy(v:event.regcontents) | endif"
 }])
 
 autocmd_add([{

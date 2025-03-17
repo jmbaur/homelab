@@ -75,7 +75,10 @@ inputs: {
 
       gnome-console =
         (prev.gnome-console.overrideAttrs (old: {
-          patches = (old.patches or [ ]) ++ [ ./gnome-console-osc52.patch ];
+          patches = (old.patches or [ ]) ++ [
+            ./gnome-console-osc52.patch
+            ./gnome-console-black-background.patch
+          ];
         })).override
           {
             vte-gtk4 = final.vte-gtk4.overrideAttrs (old: {
