@@ -65,13 +65,15 @@ in
       systemd.packages = [ pkgs.mako ];
 
       environment.etc."xdg/foot/foot.ini".source = (pkgs.formats.ini { }).generate "foot.ini" {
-        main.font = "monospace:size=12"; # default font is far too small
+        main.font = "monospace:size=10"; # default font is far too small
         main.resize-by-cells = false; # TODO(jared): sway issue, documented here: https://codeberg.org/dnkl/foot/issues/1675#issuecomment-1736249
       };
 
       environment.systemPackages =
         [
+          pkgs.libnotify
           pkgs.mako
+          pkgs.wvkbd
           (pkgs.symlinkJoin {
             name = "default-${pkgs.xcursor-chromeos.name}";
             paths = [ pkgs.xcursor-chromeos ];
