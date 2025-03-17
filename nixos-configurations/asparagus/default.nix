@@ -26,10 +26,16 @@
           NEW_LEDS = yes;
         };
       };
+
+      services.evremap.settings = {
+        device_name = lib.mkForce "Google Inc. Hammer";
+        phys = "usb-xhci-hcd.0.auto-1.3/input0";
+      };
     }
     {
       custom.desktop.enable = true;
       custom.recovery.targetDisk = "/dev/disk/by-path/platform-7c4000.mmc";
+
     }
   ];
 }
