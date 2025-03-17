@@ -91,6 +91,7 @@ in
         grex
         gron
         htmlq
+        i3status-rust
         inotify-tools
         jo
         jq
@@ -138,7 +139,6 @@ in
         strace-with-colors
         tcpdump
         tea
-        tinybar
         tio
         tmux-jump
         tokei
@@ -325,6 +325,7 @@ in
       xdg.configFile."alacritty/alacritty.toml".source = ./alacritty.toml;
       xdg.configFile."foot/foot.ini".source = ./foot.ini;
       xdg.configFile."ghostty/config".source = ./ghostty.conf;
+      xdg.configFile."i3status-rust/config.toml".source = ./i3status.toml;
       xdg.configFile."kitty/kitty.conf".source = ./kitty.conf;
       xdg.configFile."sway/config".source = ./sway.conf;
 
