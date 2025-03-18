@@ -16,4 +16,5 @@ runCommand "pomo" { depsBuildBuild = [ zig_0_14 ]; } ''
     -O ReleaseSafe \
     -target ${stdenv.hostPlatform.qemuArch}-linux \
     ${./pomo.zig}
+  rm -f $out/bin/*.o
 ''

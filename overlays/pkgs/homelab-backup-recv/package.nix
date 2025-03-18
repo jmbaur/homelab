@@ -16,4 +16,5 @@ runCommand "homelab-backup-recv" { depsBuildBuild = [ zig_0_14 ]; } ''
     -O ReleaseSafe \
     -target ${stdenv.hostPlatform.qemuArch}-linux \
     ${./homelab-backup-recv.zig}
+  rm -f $out/bin/*.o
 ''

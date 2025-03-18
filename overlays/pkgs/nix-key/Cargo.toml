@@ -1,8 +1,0 @@
-[package]
-name = "nix-key"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-base64 = "0.22.1"
-libsodium-sys-stable = "1.22.2"

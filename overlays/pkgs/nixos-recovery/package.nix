@@ -7,7 +7,6 @@
   jq,
   lib,
   nix,
-  nix-key,
   nixos-install,
   systemd,
   util-linux,
@@ -26,7 +25,6 @@ writeShellApplication {
     dosfstools # mkfs.vfat
     jq
     nix # nix-env
-    nix-key
     nixos-install
     systemd # systemd-repart
     util-linux # sfdisk, blockdev
