@@ -1,0 +1,9 @@
+*.swp
+*~
+.direnv
+.envrc
+.exrc
+.nvim.lua
+.nvimrc
+Session.vim
+tags

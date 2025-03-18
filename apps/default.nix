@@ -11,19 +11,20 @@ inputs.nixpkgs.lib.mapAttrs (
       getExe'
       ;
 
-    mkApp = script: {
+    mkApp = description: script: {
       type = "app";
+      meta = { inherit description; };
       program = toString script;
     };
   in
   {
-    setupPamU2f = mkApp (
+    setupPamU2f = mkApp "Setup U2F on a yubikey" (
       pkgs.writeShellScript "setup-pam-u2f" ''
         ${pkgs.pam_u2f}/bin/pamu2fcfg -opam://homelab
       ''
     );
 
-    setupYubikey = mkApp (
+    setupYubikey = mkApp "Setup common yubikey settings (enable openpgp & ssh resident key, remove default pins, etc.)" (
       pkgs.writeShellScript "setup-yubikey" ''
         set -o errexit
         echo "enabling openpgp"
@@ -42,13 +43,13 @@ inputs.nixpkgs.lib.mapAttrs (
       ''
     );
 
-    flashKinesis = mkApp (
+    flashKinesis = mkApp "Flash kinesis keyboard with custom QMK firmware (https://github.com/kinx-project/kint)" (
       pkgs.writeShellScript "flash-kinesis" ''
         ${pkgs.teensy-loader-cli}/bin/teensy-loader-cli -w -v --mcu=TEENSY40 "${pkgs.kinesis-kint41-jmbaur}/kinesis_kint41_jmbaur.hex"
       ''
     );
 
-    testDesktop = mkApp (
+    testDesktop = mkApp "Test changes to ./nixos-modules/desktop/* in a VM" (
       getExe (
         (inputs.nixpkgs.legacyPackages.${system}.nixos (
           { modulesPath, ... }:
@@ -68,7 +69,7 @@ inputs.nixpkgs.lib.mapAttrs (
       )
     );
 
-    buildNixosConfigCI = mkApp (
+    buildNixosConfigCI = mkApp "TODO(jared): delete me!" (
       getExe (
         pkgs.writeShellApplication {
           name = "build-nixos-config-ci";
@@ -139,7 +140,7 @@ inputs.nixpkgs.lib.mapAttrs (
           };
         };
       in
-      mkApp (
+      mkApp "Generate github workflow files" (
         getExe (
           pkgs.writeShellApplication {
             name = "update-github-workflows";
@@ -151,5 +152,9 @@ inputs.nixpkgs.lib.mapAttrs (
           }
         )
       );
+
+    activateJaredHomeEnvironment = mkApp "Activate home environment for Jared" (
+      getExe inputs.self.packages.${system}.jaredHomeEnvironment
+    );
   }
 ) inputs.self.legacyPackages

@@ -242,26 +242,6 @@
         "type": "github"
       }
     },
-    "home-manager": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1742326330,
-        "narHash": "sha256-Tumt3tcMXJniSh7tw2gW+WAnVLeB3WWm+E+yYFnLBXo=",
-        "owner": "nix-community",
-        "repo": "home-manager",
-        "rev": "22a36aa709de7dd42b562a433b9cefecf104a6ee",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "repo": "home-manager",
-        "type": "github"
-      }
-    },
     "ipwatch": {
       "inputs": {
         "git-hooks": "git-hooks_2",
@@ -323,7 +303,6 @@
     "root": {
       "inputs": {
         "git-hooks": "git-hooks",
-        "home-manager": "home-manager",
         "ipwatch": "ipwatch",
         "nixos-router": "nixos-router",
         "nixpkgs": "nixpkgs",

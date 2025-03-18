@@ -1,0 +1,15 @@
+# vim: ft=gitconfig
+
+[commit]
+        gpgSign = true
+
+[gpg]
+        format = "ssh"
+
+[gpg "ssh"]
+        allowedSignersFile = /nix/store/gpjgrhyf07fjcsdx3jqkv60y9n0yk27a-allowed-signers-file.txt
+        defaultKeyCommand = "ssh-add -L"
+
+[user]
+        email = "jaredbaur@fastmail.com"
+        signingKey = "key::sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIBhCHaXn5ghEJQVpVZr4hOajD6Zp/0PO4wlymwfrg/S5AAAABHNzaDo="
