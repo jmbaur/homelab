@@ -36,7 +36,7 @@ in
       services.printing.enable = mkDefault true;
 
       services.evremap = {
-        enable = true;
+        enable = mkDefault true;
         settings.device_name = mkIf pkgs.stdenv.hostPlatform.isx86_64 (
           mkDefault "AT Translated Set 2 keyboard"
         );

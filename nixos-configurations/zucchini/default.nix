@@ -97,6 +97,8 @@
       hardware.firmware = [
         (pkgs.extractLinuxFirmwareDirectory "arm/mali")
       ];
+
+      services.evremap.enable = false;
     }
     {
       custom.desktop.enable = true;
