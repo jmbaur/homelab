@@ -1,7 +1,13 @@
 vim9script
 
-def! g:Run(arg: string)
-    execute get(builtins, arg, NixRun(arg))
+def! g:Run(args: string, mods: string)
+    var command = ""
+    if mods != ""
+        command = mods .. " "
+    endif
+
+    command = command .. get(builtins, args, NixRun(args))
+    execute command
 enddef
 
 def NixShell(attr: string, command: string): string
@@ -39,4 +45,4 @@ def RunComplete(
     return candidates
 enddef
 
-command! -nargs=? -complete=customlist,RunComplete Run vim9cmd g:Run(<q-args>)
+command! -nargs=? -complete=customlist,RunComplete Run vim9cmd g:Run(<q-args>, <q-mods>)
