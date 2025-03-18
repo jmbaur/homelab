@@ -7,8 +7,8 @@ jobs:
       uses: actions/checkout@v4
     - name: Install Nix
       uses: DeterminateSystems/nix-installer-action@main
-    - name: Update out of tree packages
-      run: nix run "$PWD#updateRepoDependencies"
+    - name: Update repo dependencies
+      run: nix flake update
     - name: Create pull request
       uses: peter-evans/create-pull-request@v6
       with:

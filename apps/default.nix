@@ -68,29 +68,6 @@ inputs.nixpkgs.lib.mapAttrs (
       )
     );
 
-    updateRepoDependencies = mkApp (
-      getExe (
-        pkgs.writeShellApplication {
-          name = "update-repo-dependencies";
-          runtimeInputs = [ pkgs.jq ];
-          text = ''
-            NIX_PATH="nixpkgs=$(nix flake prefetch nixpkgs --json | jq --raw-output '.storePath')"
-            export NIX_PATH
-
-            nix flake update
-
-            # shellcheck disable=SC2185,SC2044
-            readarray -t cargo_tomls < <(find ./overlays/pkgs -type f -name "Cargo.toml")
-            for cargo_toml in "''${cargo_tomls[@]}"; do
-              pushd "$(dirname "$cargo_toml")"
-              nix develop ".#$(basename "$(dirname "$cargo_toml")")" --command cargo update --verbose
-              popd
-            done
-          '';
-        }
-      )
-    );
-
     buildNixosConfigCI = mkApp (
       getExe (
         pkgs.writeShellApplication {
@@ -145,8 +122,8 @@ inputs.nixpkgs.lib.mapAttrs (
                 uses = "DeterminateSystems/nix-installer-action@main";
               }
               {
-                name = "Update out of tree packages";
-                run = ''nix run "$PWD#updateRepoDependencies"'';
+                name = "Update repo dependencies";
+                run = "nix flake update";
               }
               {
                 name = "Create pull request";
