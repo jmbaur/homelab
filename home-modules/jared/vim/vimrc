@@ -12,6 +12,7 @@ set noswapfile
 set nowrap
 set number relativenumber
 set ruler
+set shortmess-=S
 set showcmd
 set showmatch
 set splitbelow splitright

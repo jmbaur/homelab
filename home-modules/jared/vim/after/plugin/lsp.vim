@@ -92,7 +92,7 @@ def LspAttach()
     nnoremap <buffer><silent> <C-W>gd <cmd>botright LspGotoDefinition<enter>
     nnoremap <buffer><silent> <C-k> <cmd>LspShowSignature<enter>
     nnoremap <buffer><silent> <leader>a <cmd>LspCodeAction<enter>
-    nnoremap <buffer><silent> <leader>rn <cmd>LspRename<enter>
+    nnoremap <buffer><silent> <leader>n <cmd>LspRename<enter>
     nnoremap <buffer><silent> K <cmd>LspHover<enter>
     nnoremap <buffer><silent> [d <cmd>LspDiagPrevWrap<enter>
     nnoremap <buffer><silent> ]d <cmd>LspDiagNextWrap<enter>

@@ -7,7 +7,9 @@
 runCommand "pomo" { depsBuildBuild = [ zig_0_14 ]; } ''
   mkdir -p $out/bin
 
-  ZIG_GLOBAL_CACHE_DIR=$TEMPDIR zig build-exe \
+  export ZIG_GLOBAL_CACHE_DIR=$TEMPDIR
+  zig test -j$NIX_BUILD_CORES ${./pomo.zig}
+  zig build-exe \
     -j$NIX_BUILD_CORES \
     -femit-bin=$out/bin/pomo \
     -fstrip \

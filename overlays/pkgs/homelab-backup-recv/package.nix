@@ -1,25 +1,19 @@
 {
-  lib,
-  rustPlatform,
+  runCommand,
+  stdenv,
+  zig_0_14,
 }:
 
-rustPlatform.buildRustPackage {
-  pname = "homelab-backup-recv";
-  version = "0.1.0";
+runCommand "homelab-backup-recv" { depsBuildBuild = [ zig_0_14 ]; } ''
+  mkdir -p $out/bin
 
-  src = lib.fileset.toSource {
-    root = ./.;
-    fileset = lib.fileset.unions [
-      ./Cargo.lock
-      ./Cargo.toml
-      ./src
-    ];
-  };
-
-  cargoLock.lockFile = ./Cargo.lock;
-
-  meta = {
-    description = "Program to receive btrfs snapshots where the connecting IPv6 address identifies the sender (e.g. in the yygdrasil network)";
-    mainProgram = "homelab-backup-recv";
-  };
-}
+  export ZIG_GLOBAL_CACHE_DIR=$TEMPDIR
+  zig test -j$NIX_BUILD_CORES ${./homelab-backup-recv.zig}
+  zig build-exe \
+    -j$NIX_BUILD_CORES \
+    -femit-bin=$out/bin/homelab-backup-recv \
+    -fstrip \
+    -O ReleaseSafe \
+    -target ${stdenv.hostPlatform.qemuArch}-linux \
+    ${./homelab-backup-recv.zig}
+''

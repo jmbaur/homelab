@@ -7,8 +7,9 @@
 runCommand "macgen" { depsBuildBuild = [ zig_0_14 ]; } ''
   mkdir -p $out/bin
 
-  ZIG_GLOBAL_CACHE_DIR=$TEMPDIR zig build-exe \
-    -j$NIX_BUILD_CORES \
+  export ZIG_GLOBAL_CACHE_DIR=$TEMPDIR
+  zig test -j$NIX_BUILD_CORES ${./macgen.zig}
+  zig build-exe \
     -femit-bin=$out/bin/macgen \
     -fstrip \
     -O ReleaseSafe \
