@@ -261,12 +261,13 @@ writeShellApplication {
         destination="$HOME/''${elements[0]}"
         source="''${elements[1]}"
         mkdir --parents "$(dirname "$destination")"
-        if [[ -L "$destination" ]]; then
-          if [[ $(readlink --canonicalize-existing "$destination") != "$source" ]]; then
-            ln --verbose --symbolic --force "$source" "$destination"
-          fi
-        elif [[ -e "$destination" ]]; then
+        if [[ -e "$destination" ]] && [[ ! -L "$destination" ]]; then
           echo "Will not clobber existing file at $destination"
+        else
+          if [[ $(readlink --canonicalize-existing "$destination") == "$source" ]]; then
+            exit 0 # only exits this subshell
+          fi
+          ln --verbose --symbolic --force "$source" "$destination"
         fi
       )
     done
