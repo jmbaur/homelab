@@ -169,9 +169,7 @@ let
       git = pkgs.git;
     };
 
-    ".config/direnv/lib/nix-direnv.sh" = writeText "nix-direnv.sh" ''
-      ${pkgs.nix-direnv}/share/nix-direnv/direnvrc
-    '';
+    ".config/direnv/lib/nix-direnv.sh" = "${pkgs.nix-direnv}/share/nix-direnv/direnvrc";
 
     ".ssh/config" = substituteAll {
       name = "sshconfig";

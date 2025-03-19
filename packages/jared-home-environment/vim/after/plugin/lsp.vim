@@ -110,13 +110,27 @@ def LspFormat()
     endif
 enddef
 
-autocmd_add([{
-    replace: true,
-    group: "FormatOnSave",
-    event: "BufWritePre",
-    pattern: join(format_on_save_patterns, ","),
-    cmd: "LspFormat()"
-}])
+def! g:ToggleFormatOnSave()
+    try
+        # autocmd_get will throw if group not found
+        if len(autocmd_get({group: "FormatOnSave"})) > 0
+            autocmd_delete([{group: "FormatOnSave"}])
+        endif
+    catch
+        autocmd_add([{
+            replace: true,
+            group: "FormatOnSave",
+            event: "BufWritePre",
+            pattern: join(format_on_save_patterns, ","),
+            cmd: "LspFormat()"
+        }])
+    endtry
+enddef
+
+command! ToggleFormatOnSave vim9cmd g:ToggleFormatOnSave()
+
+# Enable format on save, initially.
+g:ToggleFormatOnSave()
 
 g:LspOptionsSet({
     autoComplete: false,
