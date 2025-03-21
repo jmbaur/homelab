@@ -148,6 +148,7 @@ let
         bash-language-server
         bat
         binary-diff
+        bpftrace
         cachix
         carapace
         clang-tools
