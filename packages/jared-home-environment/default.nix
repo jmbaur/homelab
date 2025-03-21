@@ -269,7 +269,7 @@ writeShellApplication {
           if [[ $(readlink --canonicalize-existing "$destination") == "$source" ]]; then
             exit 0 # only exits this subshell
           fi
-          ln --verbose --symbolic --force "$source" "$destination"
+          ln --verbose --symbolic --force --no-dereference "$source" "$destination"
         fi
       )
     done
