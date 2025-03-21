@@ -100,7 +100,7 @@ def! g:Permalink(range: number, line1: number, line2: number, bang: any)
 
     var remote_url = GitCommand("remote get-url " .. shellescape(remote))
 
-    remote_url = substitute(remote_url, "git+ssh://", "https://", "")
+    remote_url = substitute(remote_url, "git+ssh://.*@", "https://", "")
 
     var url = ""
     var ForgeFn = null_function
