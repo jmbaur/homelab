@@ -155,6 +155,7 @@ let
         comma
         copy
         curl
+        difftastic
         dig
         direnv
         fd
