@@ -32,6 +32,15 @@ if executable("rust-analyzer")
     add(format_on_save_patterns, "*.rs")
 endif
 
+if executable("clangd")
+    add(lsp_servers, {
+        name: "clangd",
+        filetype: ["c", "cpp"],
+        path: "clangd",
+        args: [],
+    })
+endif
+
 if executable("bash-language-server")
     add(lsp_servers, {
         name: "bashls",
