@@ -12,9 +12,6 @@ in
   options.custom.dev.enable = lib.mkEnableOption "dev setup";
 
   config = lib.mkIf cfg.enable {
-    # home-manager is great for making user-specific changes, such as adding a bunch of dev-friendly tooling
-    environment.systemPackages = [ pkgs.home-manager ];
-
     documentation.enable = true;
     documentation.doc.enable = true;
     documentation.info.enable = true;
