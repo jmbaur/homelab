@@ -10,7 +10,7 @@
 
 stdenv.mkDerivation {
   pname = "pico-serprog";
-  version = "unstable-2025-02-12";
+  version = "20230827";
 
   src = fetchFromGitea {
     domain = "codeberg.org";
