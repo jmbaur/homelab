@@ -12,7 +12,8 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "qmk";
     repo = "qmk_firmware";
     tag = finalAttrs.version;
-    hash = "sha256-GW1S4e1Wuz4gRSJWduYbu0G4Lq9SUuFhR6SpZnA8cuo=";
+    fetchSubmodules = true;
+    hash = "sha256-ThFBLA1YlRmSVkOV3NW1YWF5NCsbWJRLfHQYIejiYGA=";
   };
 
   nativeBuildInputs = [ qmk ];
