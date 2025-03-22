@@ -25,21 +25,17 @@ source @nixIndex@/etc/profile.d/command-not-found.sh
 source @git@/share/bash-completion/completions/git-prompt.sh
 
 __my_ps1() {
-	__git_ps1 "\n\[\033[1;32m\][\u@\h:\w]" "\\\$\[\033[0m\] " "[%s]"
-}
-
-__terminal_title() {
-	printf "\033]0;%s\007" "$PWD"
+	__git_ps1 "\033]0;\u@\h:\w\007\n\[\033[1;32m\][\u@\h:\w]" "\\\$\[\033[0m\] " "[%s]"
 }
 
 # Inspired from direnv's way of prepending stuff to PROMPT_COMMAND (see output
 # of `direnv hook bash`).
 if [[ ";${PROMPT_COMMAND[*]:-};" != *";__my_ps1;"* ]]; then
 	if [[ "$(declare -p PROMPT_COMMAND 2>&1)" == "declare -a"* ]]; then
-		PROMPT_COMMAND=(__my_ps1 __terminal_title "${PROMPT_COMMAND[@]}")
+		PROMPT_COMMAND=(__my_ps1 "${PROMPT_COMMAND[@]}")
 	else
 		# shellcheck disable=SC2128,SC2178
-		PROMPT_COMMAND="__my_ps1;__terminal_title${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
+		PROMPT_COMMAND="__my_ps1${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
 	fi
 fi
 
