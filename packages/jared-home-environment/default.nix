@@ -116,7 +116,6 @@ let
                 fzf-vim
                 lsp
                 vim-commentary
-                vim-dir
                 vim-dispatch
                 vim-eunuch
                 vim-fugitive
@@ -125,6 +124,7 @@ let
                 vim-sensible
                 vim-surround
                 vim-unimpaired
+                vim-vinegar
               ]
             )
         )}
