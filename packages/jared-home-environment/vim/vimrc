@@ -20,7 +20,10 @@ set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
 set title
 set wildoptions=pum,tagfile
 
-colorscheme lunaperche
+if match(&term, 'linux\|vt220\|dumb') == -1
+    set termguicolors
+    colorscheme lunaperche
+endif
 
 # Make trailing whitespace standout.
 highlight ExtraWhitespace ctermbg=red guibg=red
