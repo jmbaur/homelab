@@ -18,6 +18,11 @@ in
     documentation.man.enable = true;
     documentation.nixos.enable = true;
 
+    services.scx.enable = lib.mkDefault {
+      enable = true;
+      scheduler = "scx_rustland";
+    };
+
     programs.ssh.startAgent = lib.mkDefault true;
     programs.gnupg.agent.enable = lib.mkDefault true;
     services.pcscd.enable = config.custom.desktop.enable;
