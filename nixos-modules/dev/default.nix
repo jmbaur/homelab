@@ -18,7 +18,7 @@ in
     documentation.man.enable = true;
     documentation.nixos.enable = true;
 
-    services.scx.enable = lib.mkDefault {
+    services.scx = lib.mkDefault {
       enable = true;
       scheduler = "scx_rustland";
     };

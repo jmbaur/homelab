@@ -16,6 +16,7 @@
     {
       sops.secrets = {
         nix_signing_key = { };
+        nix_signing_key2 = { };
         ssh_remote_build.owner = config.users.users.hydra-queue-runner.name;
         hydra_netrc.owner = config.users.users.hydra.name;
       };
