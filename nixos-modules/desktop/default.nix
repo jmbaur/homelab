@@ -96,6 +96,7 @@ in
         requires = [ "network-online.target" ];
         after = [ "network-online.target" ];
         wantedBy = [ "multi-user.target" ];
+        serviceConfig.Restart = "on-failure";
         serviceConfig.ExecStart = "${lib.getExe config.services.flatpak.package} remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo";
       };
 
