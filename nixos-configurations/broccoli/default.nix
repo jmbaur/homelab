@@ -22,7 +22,12 @@
 
       services.harmonia = {
         enable = true;
-        signKeyPaths = [ config.sops.secrets.nix_signing_key.path ];
+        signKeyPaths = [
+          config.sops.secrets.nix_signing_key.path
+
+          # TODO(jared): Remove after all hosts are validating with new key
+          config.sops.secrets.nix_signing_key2.path
+        ];
         settings.bind = "[::]:5000";
       };
 
