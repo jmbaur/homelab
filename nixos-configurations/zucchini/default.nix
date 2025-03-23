@@ -98,6 +98,9 @@
         (pkgs.extractLinuxFirmwareDirectory "arm/mali")
       ];
 
+      # vulkan doesn't work (yet)
+      environment.variables.GSK_RENDERER = "gl";
+
       services.evremap.enable = false;
     }
     {
