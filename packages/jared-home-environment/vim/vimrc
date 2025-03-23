@@ -43,7 +43,7 @@ def! g:Osc52Copy(content: list<string>)
 		base64_encode(str2blob(content)),
 	)
 
-	if writefile([osc52_content], "/dev/fd/2", "b") != 0
+	if writefile([osc52_content], "/dev/fd/1", "b") != 0
 		echo "failed to copy with osc52"
 	endif
 enddef
