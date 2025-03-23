@@ -13,6 +13,5 @@
     rhubarb.ip = "200:161:89b:2b1e:e84b:ea2:37b3:9e26";
     squash.ip = "200:f01b:c880:839b:52:c41b:2c0d:5757";
     zucchini.ip = "200:59ff:6c49:7614:faa8:b669:24d9:5262";
-    c445b61a92026767f4f915eb1af73b70eb4211c63fe72abb068cb4a0f21eb0ca.ip = "200:7774:93ca:dbfb:3130:160d:d429:ca11";
   };
 }
