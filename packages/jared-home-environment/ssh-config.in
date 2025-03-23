@@ -1,5 +1,8 @@
 # vim: ft=sshconfig
 
+Host *.internal
+  ForwardAgent yes
+
 Host *.local
   ForwardAgent yes
   ProxyCommand ipv6-link-local-ssh-proxy-command %h %p
