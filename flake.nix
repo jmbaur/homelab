@@ -2,7 +2,6 @@
   description = "NixOS configurations for the homelab";
 
   inputs = {
-    nix.url = "github:nixos/nix/2.26.3";
     git-hooks.url = "github:cachix/git-hooks.nix";
     ipwatch.url = "github:jmbaur/ipwatch";
     nixos-router.url = "github:jmbaur/nixos-router";
@@ -14,8 +13,6 @@
 
     git-hooks.inputs.nixpkgs.follows = "nixpkgs";
     ipwatch.inputs.nixpkgs.follows = "nixpkgs";
-    nix.inputs.git-hooks-nix.follows = "git-hooks";
-    nix.inputs.nixpkgs.follows = "nixpkgs";
     nixos-router.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     tinyboot.inputs.nixpkgs.follows = "nixpkgs";
