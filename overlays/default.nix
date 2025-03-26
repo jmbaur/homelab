@@ -29,14 +29,6 @@ inputs: {
         name:
         (final.lib.replaceStrings [ " " "[" "]" "," "/" ":" ] [ "-" "" "" "_" "_" "" ] name) + ".patch";
 
-      nixVersions = prev.nixVersions.extend (
-        _: nPrev: {
-          nix_2_25_sysroot = nPrev.nix_2_25.overrideAttrs (old: {
-            patches = (old.patches or [ ]) ++ [ ./nix-local-overlay-store-regex.patch ];
-          });
-        }
-      );
-
       vimPlugins = prev.vimPlugins.extend (
         _: _: {
           vim-dir = final.vimUtils.buildVimPlugin {
