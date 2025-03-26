@@ -1,7 +1,6 @@
 inputs: {
   default = inputs.nixpkgs.lib.composeManyExtensions [
     # needed by some stuff below
-    inputs.nix.overlays.default
     inputs.u-boot-nix.overlays.default
     # auto-added packages
     (
