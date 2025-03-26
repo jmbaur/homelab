@@ -1,145 +1,138 @@
 {
-  buildEnv,
-  formats,
   jq,
   lib,
   pkgs,
-  runCommand,
-  substituteAll,
   writeShellApplication,
-  writeText,
 
-  extraFiles ? { },
-  extraPackages ? [ ],
-  sshIncludes ? [ ],
-  gitIncludes ? [
-    (substituteAll {
-      src = ./personal.gitconfig;
-      allowedSignersFile = writeText "allowed-signers" ''
-        jaredbaur@fastmail.com sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIBhCHaXn5ghEJQVpVZr4hOajD6Zp/0PO4wlymwfrg/S5AAAABHNzaDo=
-        jaredbaur@fastmail.com sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIHRlxBSW3BzX33FG7444p/M5lb9jYR5OkjS2jPpnuXozAAAABHNzaDo=
-      '';
-    })
-  ],
+  extraModules ? [ ],
 }:
 
 let
-  manifest = (formats.json { }).generate "manifest.json" (
+  baseModule =
     {
-      ".gnupg/scdaemon.conf" = writeText "scdaemon.conf" ''
-        disable-ccid
-      '';
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
+    {
+      gitIncludes = lib.mkDefault [
+        (pkgs.substituteAll {
+          src = ./personal.gitconfig;
+          allowedSignersFile = pkgs.writeText "allowed-signers" ''
+            jaredbaur@fastmail.com sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIBhCHaXn5ghEJQVpVZr4hOajD6Zp/0PO4wlymwfrg/S5AAAABHNzaDo=
+            jaredbaur@fastmail.com sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIHRlxBSW3BzX33FG7444p/M5lb9jYR5OkjS2jPpnuXozAAAABHNzaDo=
+          '';
+        })
+      ];
 
-      ".gnupg/gpg.conf" = writeText "gpg.conf" ''
-        cert-digest-algo SHA512
-        charset utf-8
-        default-preference-list SHA512 SHA384 SHA256 AES256 AES192 AES ZLIB BZIP2 ZIP Uncompressed
-        fixed-list-mode
-        keyid-format 0xlong
-        list-options show-uid-validity
-        no-comments
-        no-emit-version
-        no-symkey-cache
-        personal-cipher-preferences AES256 AES192 AES
-        personal-compress-preferences ZLIB BZIP2 ZIP Uncompressed
-        personal-digest-preferences SHA512 SHA384 SHA256
-        require-cross-certification
-        s2k-cipher-algo AES256
-        s2k-digest-algo SHA512
-        use-agent
-        verify-options show-uid-validity
-        with-fingerprint
-      '';
+      files = {
+        ".gnupg/scdaemon.conf" = pkgs.writeText "scdaemon.conf" ''
+          disable-ccid
+        '';
 
-      ".config/nix/nix.conf" = writeText "nix.conf" ''
-        experimental-features = nix-command flakes
-      '';
+        ".gnupg/gpg.conf" = pkgs.writeText "gpg.conf" ''
+          cert-digest-algo SHA512
+          charset utf-8
+          default-preference-list SHA512 SHA384 SHA256 AES256 AES192 AES ZLIB BZIP2 ZIP Uncompressed
+          fixed-list-mode
+          keyid-format 0xlong
+          list-options show-uid-validity
+          no-comments
+          no-emit-version
+          no-symkey-cache
+          personal-cipher-preferences AES256 AES192 AES
+          personal-compress-preferences ZLIB BZIP2 ZIP Uncompressed
+          personal-digest-preferences SHA512 SHA384 SHA256
+          require-cross-certification
+          s2k-cipher-algo AES256
+          s2k-digest-algo SHA512
+          use-agent
+          verify-options show-uid-validity
+          with-fingerprint
+        '';
 
-      ".sqliterc" = writeText "sqliterc" ''
-        .headers ON
-        .mode columns
-      '';
+        ".config/nix/nix.conf" = pkgs.writeText "nix.conf" ''
+          experimental-features = nix-command flakes
+        '';
 
-      ".config/fd/ignore" = writeText "fd-ignore" ''
-        .git
-      '';
+        ".sqliterc" = pkgs.writeText "sqliterc" ''
+          .headers ON
+          .mode columns
+        '';
 
-      ".bash_profile" = writeText "bash-profile" ''
-        source $HOME/.bashrc
-      '';
+        ".config/fd/ignore" = pkgs.writeText "fd-ignore" ''
+          .git
+        '';
 
-      ".bashrc" = substituteAll {
-        name = "bashrc";
-        src = ./bashrc.in;
-        bashSensible = pkgs.bash-sensible;
-        nixIndex = pkgs.nix-index;
-        git = pkgs.git;
-      };
+        ".bash_profile" = pkgs.writeText "bash-profile" ''
+          source $HOME/.bashrc
+        '';
 
-      ".config/direnv/lib/nix-direnv.sh" = "${pkgs.nix-direnv}/share/nix-direnv/direnvrc";
+        ".bashrc" = pkgs.substituteAll {
+          name = "bashrc";
+          src = ./bashrc.in;
+          bashSensible = pkgs.bash-sensible;
+          nixIndex = pkgs.nix-index;
+          git = pkgs.git;
+        };
 
-      ".ssh/config" = substituteAll {
-        name = "sshconfig";
-        src = ./ssh-config.in;
-        extraConfig = lib.concatLines (map (include: "Include ${include}") sshIncludes);
-      };
+        ".config/direnv/lib/nix-direnv.sh" = "${pkgs.nix-direnv}/share/nix-direnv/direnvrc";
 
-      ".config/git/ignore" = ./gitignore;
-      ".config/git/config" = substituteAll {
-        name = "gitconfig";
-        src = ./gitconfig.in;
-        extraConfig = ''
-          [include]
-          ${lib.concatLines (map (include: "  path = ${include}") gitIncludes)}
+        ".ssh/config" = pkgs.substituteAll {
+          name = "sshconfig";
+          src = ./ssh-config.in;
+          extraConfig = lib.concatLines (map (include: "Include ${include}") config.sshIncludes);
+        };
+
+        ".config/git/ignore" = ./gitignore;
+        ".config/git/config" = pkgs.substituteAll {
+          name = "gitconfig";
+          src = ./gitconfig.in;
+          extraConfig = ''
+            [include]
+            ${lib.concatLines (map (include: "  path = ${include}") config.gitIncludes)}
+          '';
+        };
+
+        ".config/tmux/tmux.conf" = pkgs.substituteAll {
+          name = "tmux.conf";
+          src = ./tmux.conf.in;
+          tmuxLogging = pkgs.tmuxPlugins.logging;
+          tmuxFingers = pkgs.tmuxPlugins.fingers;
+        };
+
+        ".config/vim" = pkgs.runCommand "vim-config" { } ''
+          cp -r ${./vim} $out; chmod +w $out
+          mkdir -p $out/pack/jared/start
+          ${lib.concatLines (
+            map
+              (plugin: ''
+                cp -r ${plugin} $out/pack/jared/start/${plugin.name}
+              '')
+              (
+                with pkgs.vimPlugins;
+                [
+                  bpftrace-vim
+                  fzf-vim
+                  lsp
+                  vim-commentary
+                  vim-dispatch
+                  vim-eunuch
+                  vim-fugitive
+                  vim-repeat
+                  vim-rsi
+                  vim-sensible
+                  vim-surround
+                  vim-unimpaired
+                  vim-vinegar
+                ]
+              )
+          )}
         '';
       };
 
-      ".config/tmux/tmux.conf" = substituteAll {
-        name = "tmux.conf";
-        src = ./tmux.conf.in;
-        tmuxLogging = pkgs.tmuxPlugins.logging;
-        tmuxFingers = pkgs.tmuxPlugins.fingers;
-      };
-
-      ".config/vim" = runCommand "vim-config" { } ''
-        cp -r ${./vim} $out; chmod +w $out
-        mkdir -p $out/pack/jared/start
-        ${lib.concatLines (
-          map
-            (plugin: ''
-              cp -r ${plugin} $out/pack/jared/start/${plugin.name}
-            '')
-            (
-              with pkgs.vimPlugins;
-              [
-                bpftrace-vim
-                fzf-vim
-                lsp
-                vim-commentary
-                vim-dispatch
-                vim-eunuch
-                vim-fugitive
-                vim-repeat
-                vim-rsi
-                vim-sensible
-                vim-surround
-                vim-unimpaired
-                vim-vinegar
-              ]
-            )
-        )}
-      '';
-    }
-    // extraFiles
-  );
-
-  environment = buildEnv {
-    name = "jared-home-environment";
-
-    inherit manifest;
-
-    paths =
-      (with pkgs; [
+      packages = with pkgs; [
         _caffeine
         abduco
         age-plugin-yubikey
@@ -231,11 +224,52 @@ let
         wip
         zip
         zls
-      ])
-      ++ extraPackages;
-  };
-in
+      ];
+    };
 
+  eval = lib.evalModules {
+    specialArgs = { inherit pkgs; };
+    modules = [
+      (
+        { config, lib, ... }:
+        {
+          options = {
+            files = lib.mkOption {
+              type = lib.types.attrsOf lib.types.path;
+              default = { };
+            };
+
+            packages = lib.mkOption { };
+
+            gitIncludes = lib.mkOption {
+              type = lib.types.listOf lib.types.path;
+              default = [ ];
+            };
+
+            sshIncludes = lib.mkOption {
+              type = lib.types.listOf lib.types.path;
+              default = [ ];
+            };
+
+            environment = lib.mkOption {
+              readOnly = true;
+              type = lib.types.package;
+            };
+          };
+
+          config.environment = pkgs.buildEnv {
+            name = "jared-home-environment";
+            manifest = (pkgs.formats.json { }).generate "manifest.json" config.files;
+            paths = config.packages;
+          };
+        }
+      )
+      baseModule
+    ] ++ extraModules;
+  };
+
+  inherit (eval.config) environment;
+in
 writeShellApplication {
   name = "${environment.name}-activate";
   runtimeInputs = [ jq ];
