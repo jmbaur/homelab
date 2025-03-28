@@ -7,19 +7,26 @@
 
 let
   inherit (lib)
+    escapeShellArg
+    flatten
+    getExe
+    getExe'
     mkDefault
     mkEnableOption
+    mkForce
     mkIf
-    gvariant
     mkMerge
     ;
 
   cfg = config.custom.desktop;
 
-  enabledExtensions = [
-    pkgs.gnomeExtensions.appindicator
-    pkgs.gnomeExtensions.caffeine
-    pkgs.gnomeExtensions.clipboard-history
+  lockCmd = toString [
+    (getExe pkgs.swaylock)
+    "--daemonize"
+    "--show-failed-attempts"
+    "--indicator-caps-lock"
+    "--image=/etc/sway/wallpaper"
+    "--scaling fill"
   ];
 in
 {
@@ -27,13 +34,9 @@ in
 
   config = mkIf cfg.enable (mkMerge [
     {
-      boot.kernelParams = [ "quiet" ];
-
       custom.normalUser.enable = true;
 
-      services.flatpak.enable = mkDefault true;
       services.fwupd.enable = mkDefault true;
-      services.printing.enable = mkDefault true;
 
       services.evremap = {
         enable = mkDefault true;
@@ -53,51 +56,15 @@ in
         ];
       };
 
+      services.automatic-timezoned.enable = mkDefault true;
+
       programs.yubikey-touch-detector.enable = mkDefault true;
 
-      services.xserver = {
-        enable = true;
-        excludePackages = [ pkgs.xterm ];
-        desktopManager.gnome.enable = true;
-        displayManager.gdm.enable = true;
-      };
-
-      environment.systemPackages = enabledExtensions;
+      system.userActivationScripts.xdg-user-dirs = getExe' pkgs.xdg-user-dirs "xdg-user-dirs-update";
 
       programs.dconf = {
         enable = true;
-        profiles.user.databases = [
-          {
-            settings = {
-              "org/gnome/desktop/wm/preferences".resize-with-right-button = gvariant.mkBoolean true;
-              "org/gnome/system/location".enabled = gvariant.mkBoolean true;
-              "org/gnome/desktop/datetime".automatic-timezone = gvariant.mkBoolean true;
-              "org/gnome/mutter".experimental-features = gvariant.mkArray [ "scale-monitor-framebuffer" ];
-              "org/gnome/shell" = {
-                enabled-extensions = gvariant.mkArray (map (extension: extension.extensionUuid) enabledExtensions);
-                favorite-apps = gvariant.mkArray [
-                  "firefox.desktop"
-                  "org.gnome.Console.desktop"
-                  "org.gnome.Nautilus.desktop"
-                  "org.gnome.Settings.desktop"
-                ];
-              };
-              "org/gnome/desktop/background" = {
-                picture-uri = "file:///run/current-system/sw/share/backgrounds/gnome/vnc-l.png";
-                picture-uri-dark = "file:///run/current-system/sw/share/backgrounds/gnome/vnc-d.png";
-              };
-            };
-          }
-        ];
-      };
-
-      systemd.services.setup-flathub = mkIf config.services.flatpak.enable {
-        unitConfig.ConditionPathExists = "!/var/lib/flatpak/repo/flathub.trustedkeys.gpg";
-        requires = [ "network-online.target" ];
-        after = [ "network-online.target" ];
-        wantedBy = [ "multi-user.target" ];
-        serviceConfig.Restart = "on-failure";
-        serviceConfig.ExecStart = "${lib.getExe config.services.flatpak.package} remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo";
+        profiles.user.databases = [ ];
       };
 
       # Add a default browser to use
@@ -119,6 +86,8 @@ in
       networking.wireless.iwd.enable = true;
       networking.networkmanager.wifi.backend = "iwd";
 
+      hardware.bluetooth.enable = true;
+
       # We use systemd-resolved
       services.avahi.enable = false;
 
@@ -126,6 +95,155 @@ in
       # plus setting this to true means that geoclue will be dependent on avahi
       # being enabled, since NMEA support in geoclue uses avahi.
       services.geoclue2.enableNmea = mkDefault false;
+    }
+
+    # Display brightness
+    {
+      # TODO(jared): Find or write a utility that can modify brightness of
+      # internal and external displays at once.
+      environment.systemPackages = [
+        pkgs.brightnessctl
+        pkgs.ddcutil
+      ];
+
+      boot.kernelModules = [ "i2c-dev" ];
+
+      # The usual case, using TAG+="uaccess":  If a /dev/i2c device is associated
+      # with a video adapter, grant the current user access to it.
+      services.udev.extraRules = ''
+        SUBSYSTEM=="i2c-dev", KERNEL=="i2c-[0-9]*", ATTRS{class}=="0x030000", TAG+="uaccess"
+      '';
+    }
+
+    {
+      programs.sway = {
+        enable = true;
+        wrapperFeatures = {
+          base = true;
+          gtk = true;
+        };
+        extraPackages = [ ];
+      };
+
+      environment.loginShellInit = ''
+        if [ -z "$WAYLAND_DISPLAY" ] && [ -n "$XDG_VTNR" ] && [ "$XDG_VTNR" -eq 1 ] ; then
+            exec systemd-cat --identifier=sway sway
+        fi
+      '';
+
+      fonts.packages = [ pkgs.jetbrains-mono ];
+      fonts.fontconfig.defaultFonts.monospace = [ "JetBrainsMono" ];
+
+      systemd.packages = [ pkgs.mako ];
+      services.dbus.packages = [ pkgs.mako ];
+
+      environment.etc."xdg/rofi.rasi".text = ''
+        @theme "glue_pro_blue"
+      '';
+
+      environment.etc."xdg/foot/foot.ini".source = (pkgs.formats.ini { }).generate "foot.ini" {
+        colors.background = "000000";
+        colors.foreground = "ffffff";
+        main.font = "monospace:size=12"; # default font is far too small
+        main.pad = "4x4";
+        main.resize-by-cells = false; # TODO(jared): sway issue, documented here: https://codeberg.org/dnkl/foot/issues/1675#issuecomment-1736249
+        main.selection-target = "both";
+        mouse.hide-when-typing = "yes";
+      };
+
+      environment.etc."sway/config".source = mkForce ./sway.config;
+
+      systemd.tmpfiles.settings."10-sway-wallpaper"."/etc/sway/wallpaper".C = {
+        mode = "0666";
+        argument = "${pkgs.sway-unwrapped}/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png";
+      };
+
+      environment.systemPackages = [
+        pkgs.brightnessctl
+        pkgs.clipman
+        pkgs.foot
+        pkgs.grim
+        pkgs.libnotify
+        pkgs.mako
+        pkgs.rofi-wayland
+        pkgs.swayidle
+        pkgs.swaylock
+        pkgs.way-displays
+        pkgs.wl-mirror
+        pkgs.zbar
+        (pkgs.symlinkJoin {
+          name = "default-${pkgs.xcursor-chromeos.name}";
+          paths = [ pkgs.xcursor-chromeos ];
+          postBuild = ''
+            ln -sf $out/share/icons/${pkgs.xcursor-chromeos.pname} $out/share/icons/default
+          '';
+        })
+      ];
+
+      systemd.user.services.clipman = {
+        description = "Clipboard management daemon";
+        after = [ "graphical-session.target" ];
+        partOf = [ "graphical-session.target" ];
+        wantedBy = [ "graphical-session.target" ];
+        serviceConfig = {
+          Restart = "on-failure";
+          RestartSec = 3;
+          ExecStart = "${getExe' pkgs.wl-clipboard "wl-paste"} --type text --watch ${getExe pkgs.clipman} store";
+        };
+      };
+
+      systemd.user.services.swayidle = {
+        description = "Idle manager for Wayland";
+        documentation = [ "man:swayidle(1)" ];
+        unitConfig.ConditionEnvironment = "WAYLAND_DISPLAY";
+        after = [ "graphical-session.target" ];
+        partOf = [ "graphical-session.target" ];
+        wantedBy = [ "graphical-session.target" ];
+        # swayidle executes commands using "sh -c", so the PATH needs to contain
+        # a shell.
+        path = [ pkgs.bash ];
+        serviceConfig = {
+          Restart = "on-failure";
+          RestartSec = 3;
+          ExecStart = toString (
+            flatten (
+              [
+                (getExe pkgs.swayidle)
+                "-w"
+                [
+                  "timeout"
+                  "600"
+                  (escapeShellArg "loginctl lock-session")
+                ]
+                [
+                  "timeout"
+                  "900"
+                  (escapeShellArg "swaymsg 'output * power off'")
+                  "resume"
+                  (escapeShellArg "swaymsg 'output * power on'")
+                ]
+              ]
+              ++ lib.optionals (!config.custom.server.enable) ([
+                [
+                  "timeout"
+                  "1200"
+                  (escapeShellArg "systemctl suspend")
+                ]
+              ])
+              ++ [
+                [
+                  "before-sleep"
+                  (escapeShellArg lockCmd)
+                ]
+                [
+                  "lock"
+                  (escapeShellArg lockCmd)
+                ]
+              ]
+            )
+          );
+        };
+      };
     }
   ]);
 }

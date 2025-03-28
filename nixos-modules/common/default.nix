@@ -36,33 +36,6 @@ in
       # Maximum terminal compatibility for ssh sessions.
       environment.enableAllTerminfo = mkDefault true;
 
-      programs.nano.enable = mkDefault false;
-      programs.vim = {
-        enable = mkDefault true;
-        defaultEditor = true;
-        # Minimize the closure of vim
-        package =
-          (pkgs.vim-full.override {
-            features = "huge"; # One of tiny, small, normal, big or huge
-            config.vim = {
-              gui = "none";
-              python = false;
-              lua = false;
-              perl = false;
-              tcl = false;
-              ruby = false;
-            };
-          }).overrideAttrs
-            (old: {
-              postFixup =
-                (old.postFixup or "")
-                + ''
-                  rm -rf $out/share/applications
-                '';
-            });
-
-      };
-
       # moving closer to perlless system
       environment.defaultPackages = mkDefault [ ];
       documentation.info.enable = mkDefault false;
@@ -92,11 +65,6 @@ in
       # No need for mutable users in most use cases
       users.mutableUsers = mkDefault false;
       services.userborn.enable = mkDefault true;
-
-      programs.tmux = {
-        enable = mkDefault true;
-        keyMode = mkIf (config.programs.vim.enable || config.programs.neovim.enable) "vi";
-      };
 
       nix = {
         package = pkgs.nixVersions.nix_2_26;

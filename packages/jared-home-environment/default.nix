@@ -102,8 +102,8 @@ let
           tmuxFingers = pkgs.tmuxPlugins.fingers;
         };
 
-        ".config/vim" = pkgs.runCommand "vim-config" { } ''
-          cp -r ${./vim} $out; chmod +w $out
+        ".config/nvim" = pkgs.runCommand "nvim-config" { } ''
+          cp -r ${./nvim} $out; chmod +w $out
           mkdir -p $out/pack/jared/start
           ${lib.concatLines (
             map
@@ -114,17 +114,12 @@ let
                 with pkgs.vimPlugins;
                 [
                   bpftrace-vim
-                  fzf-vim
-                  lsp
-                  vim-commentary
+                  fzf-lua
                   vim-dispatch
                   vim-eunuch
                   vim-fugitive
-                  vim-repeat
                   vim-rsi
-                  vim-sensible
                   vim-surround
-                  vim-unimpaired
                   vim-vinegar
                 ]
               )
@@ -132,99 +127,111 @@ let
         '';
       };
 
-      packages = with pkgs; [
-        _caffeine
-        abduco
-        age-plugin-yubikey
-        ansifilter
-        as-tree
-        bash-language-server
-        bat
-        binary-diff
-        bpftrace
-        cachix
-        carapace
-        clang-tools
-        cntr
-        comma
-        copy
-        curl
-        difftastic
-        dig
-        direnv
-        fd
-        file
-        fsrx
-        fzf
-        gh
-        git
-        git-extras
-        git-gone
-        gnumake
-        go-tools
-        gofumpt
-        gopls
-        grex
-        gron
-        htmlq
-        inotify-tools
-        ipv6-link-local-ssh-proxy-command
-        jq
-        just
-        killall
-        libarchive
-        linux-scripts
-        lrzsz
-        lsof
-        macgen
-        man-pages
-        man-pages-posix
-        mdcat
-        ncdu
-        nil
-        nix-diff
-        nix-index
-        nix-output-monitor
-        nix-tree
-        nixfmt-rfc-style
-        nixos-kexec
-        nixos-shell
-        nload
-        nmap
-        nurl
-        oils-for-unix
-        pax-utils
-        pb
-        pciutils
-        poke
-        pomo
-        procs
-        pstree
-        pwgen
-        pyright
-        qemu
-        rage
-        ripgrep
-        ruff
-        rust-analyzer
-        rustfmt
-        sd
-        shellcheck
-        shfmt
-        strace-with-colors
-        tcpdump
-        tea
-        tio
-        tmux-jump
-        tokei
-        ttags
-        unzip
-        usbutils
-        watchexec
-        wip
-        zip
-        zls
-      ];
+      packages =
+        [
+          (pkgs.wrapNeovimUnstable pkgs.neovim-unwrapped {
+            vimAlias = true;
+            withNodeJs = false;
+            withPerl = false;
+            withPython3 = false;
+            withRuby = false;
+            wrapRc = false;
+          })
+        ]
+        ++ (with pkgs; [
+          _caffeine
+          abduco
+          age-plugin-yubikey
+          ansifilter
+          as-tree
+          bash-language-server
+          bat
+          binary-diff
+          bpftrace
+          cachix
+          carapace
+          clang-tools
+          cntr
+          comma
+          copy
+          curl
+          difftastic
+          dig
+          direnv
+          fd
+          file
+          fsrx
+          fzf
+          gh
+          git
+          git-extras
+          git-gone
+          gnumake
+          go-tools
+          gofumpt
+          gopls
+          grex
+          gron
+          htmlq
+          inotify-tools
+          ipv6-link-local-ssh-proxy-command
+          jq
+          just
+          killall
+          libarchive
+          linux-scripts
+          lrzsz
+          lsof
+          macgen
+          man-pages
+          man-pages-posix
+          mdcat
+          ncdu
+          nil
+          nix-diff
+          nix-index
+          nix-output-monitor
+          nix-tree
+          nixfmt-rfc-style
+          nixos-kexec
+          nixos-shell
+          nload
+          nmap
+          nurl
+          oils-for-unix
+          pax-utils
+          pb
+          pciutils
+          poke
+          pomo
+          procs
+          pstree
+          pwgen
+          pyright
+          qemu
+          rage
+          ripgrep
+          ruff
+          rust-analyzer
+          rustfmt
+          sd
+          shellcheck
+          shfmt
+          strace-with-colors
+          tcpdump
+          tea
+          tio
+          tmux
+          tmux-jump
+          tokei
+          ttags
+          unzip
+          usbutils
+          watchexec
+          wip
+          zip
+          zls
+        ]);
     };
 
   eval = lib.evalModules {
@@ -298,7 +305,7 @@ writeShellApplication {
         source="''${elements[1]}"
         mkdir --parents "$(dirname "$destination")"
         if [[ -e "$destination" ]] && [[ ! -L "$destination" ]]; then
-          echo "Will not clobber existing file at $destination"
+          echo "will not clobber existing file at $destination"
         else
           if [[ $(readlink --canonicalize-existing "$destination") == "$source" ]]; then
             exit 0 # only exits this subshell

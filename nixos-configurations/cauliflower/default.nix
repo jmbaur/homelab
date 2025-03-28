@@ -21,13 +21,12 @@
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
-  boot.kernelPackages = pkgs.linuxPackages_6_12;
-
   # TODO(jared): fix this
   boot.initrd.systemd.tpm2.enable = false;
 
+  boot.loader.systemd-boot.enable = false;
   tinyboot = {
-    enable = false;
+    enable = true;
     chromebook = true;
     video = true;
     linux.consoles = [ "ttyS0,115200n8" ];

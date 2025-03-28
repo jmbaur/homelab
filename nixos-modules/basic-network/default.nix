@@ -22,15 +22,21 @@ in
 
         services.resolved.enable = true;
 
-        # Allow clatd to find dns server. See comment above.
-        services.resolved.extraConfig = lib.mkIf config.services.clatd.enable ''
-          DNSStubListenerExtra=::1
-        '';
-
         networking.firewall.allowedUDPPorts = [
           5353 # mDNS
         ];
       }
+
+      (lib.mkIf (!config.systemd.network.enable) {
+        # Allow clatd to find dns server. See comment
+        # next to clatd config. This is only needed if
+        # systemd-networkd is not enabled since clatd has
+        # special integration for obtaining the PREF64
+        # prefix from systemd-networkd.
+        services.resolved.extraConfig = lib.mkIf config.services.clatd.enable ''
+          DNSStubListenerExtra=::1
+        '';
+      })
 
       (lib.mkIf
         (
@@ -117,7 +123,7 @@ in
             # for AAAA records to systemd-resolved's default IPv4 bind address
             # (127.0.0.53), so we add an IPv6 listener address to systemd-resolved
             # and tell clatd to use that instead.
-            dns64-servers = lib.mkIf config.services.resolved.enable "::1";
+            dns64-servers = lib.mkIf (!config.systemd.network.enable && config.services.resolved.enable) "::1";
           };
         };
 

@@ -1,0 +1,28 @@
+diff --git a/src/head.c b/src/head.c
+index d91c77e..123ea3f 100644
+--- a/src/head.c
++++ b/src/head.c
+@@ -218,8 +218,8 @@ wl_fixed_t head_auto_scale(const struct Head * const head, const double min, con
+ 		dpi_quantized = dpi_max;
+ 	}
+ 
+-	// 96dpi approximately correct for older monitors and became the convention for 1:1 scaling
+-	return head_get_fixed_scale(head, (double) dpi_quantized / 96, head->scaling_base);
++	// 160dpi approximately correct for older monitors and became the convention for 1:1 scaling
++	return head_get_fixed_scale(head, (double) dpi_quantized / 160, head->scaling_base);
+ }
+ 
+ void head_set_scaled_dimensions(struct Head * const head) {
+diff --git a/src/mode.c b/src/mode.c
+index fd3ac46..aa40e93 100644
+--- a/src/mode.c
++++ b/src/mode.c
+@@ -154,7 +154,7 @@ double mode_scale(struct Mode *mode) {
+ 		return 1;
+ 	}
+ 
+-	return dpi / 96;
++	return dpi / 160;
+ }
+ 
+ struct SList *modes_res_refresh(struct SList *modes) {

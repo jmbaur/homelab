@@ -18,9 +18,9 @@ in
     documentation.man.enable = true;
     documentation.nixos.enable = true;
 
-    services.scx = lib.mkDefault {
-      enable = true;
-      scheduler = "scx_rustland";
+    services.scx = {
+      enable = lib.mkDefault true;
+      scheduler = "scx_bpfland";
     };
 
     programs.ssh.startAgent = lib.mkDefault true;

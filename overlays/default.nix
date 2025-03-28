@@ -28,6 +28,10 @@ inputs: {
         name:
         (final.lib.replaceStrings [ " " "[" "]" "," "/" ":" ] [ "-" "" "" "_" "_" "" ] name) + ".patch";
 
+      way-displays = prev.way-displays.overrideAttrs (old: {
+        patches = (old.patches or [ ]) ++ [ ./way-displays-default-dpi.patch ];
+      });
+
       vimPlugins = prev.vimPlugins.extend (
         _: _: {
           vim-dir = final.vimUtils.buildVimPlugin {
