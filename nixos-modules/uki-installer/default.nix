@@ -23,6 +23,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    custom.recovery.uefiCompatible = true;
+
     boot.bootspec.extensions."custom.ukify.v1" = {
       inherit (pkgs.stdenv.hostPlatform) efiArch;
       osRelease = config.environment.etc."os-release".source;

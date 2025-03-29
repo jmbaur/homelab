@@ -115,7 +115,7 @@ let
         };
 
         partitions = {
-          "10-boot" = mkIf baseConfig.boot.loader.systemd-boot.enable {
+          "10-boot" = mkIf cfg.uefiCompatible {
             contents = {
               "/EFI/boot/boot${efiArch}.efi".source =
                 "${config.systemd.package}/lib/systemd/boot/efi/systemd-boot${efiArch}.efi";
@@ -229,6 +229,15 @@ in
       type = types.path;
       description = ''
         The path to the block device that NixOS will be installed on.
+      '';
+    };
+
+    uefiCompatible = mkOption {
+      type = types.bool;
+      default = config.boot.loader.systemd-boot.enable;
+      defaultText = ''config.boot.loader.systemd-boot.enable'';
+      description = ''
+        Whether the recovery image should be built to be UEFI compatible.
       '';
     };
 
