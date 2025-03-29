@@ -174,6 +174,7 @@ let
           gron
           htmlq
           inotify-tools
+          inotify-tools
           ipv6-link-local-ssh-proxy-command
           jq
           just
