@@ -170,6 +170,7 @@ in
         pkgs.swaylock
         pkgs.way-displays
         pkgs.wl-mirror
+        pkgs.wlay
         pkgs.zbar
         (pkgs.symlinkJoin {
           name = "default-${pkgs.xcursor-chromeos.name}";
