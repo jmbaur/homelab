@@ -158,6 +158,10 @@ in
         argument = "${pkgs.sway-unwrapped}/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png";
       };
 
+      programs.gnupg.agent.pinentryPackage = pkgs.pinentry-rofi.override {
+        rofi = pkgs.rofi-wayland;
+      };
+
       environment.systemPackages = [
         pkgs.brightnessctl
         pkgs.clipman
