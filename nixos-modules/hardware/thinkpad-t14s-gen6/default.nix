@@ -18,7 +18,12 @@ in
 
     hardware.deviceTree.name = "qcom/x1e78100-lenovo-thinkpad-t14s.dtb";
 
-    hardware.firmware = [ pkgs.linux-firmware ];
+    hardware.firmware = [
+      pkgs.linux-firmware
+      (pkgs.runCommand "thinkpad-t14s-tplg" { } ''
+        install -Dm0444 -t $out/lib/firmware/qcom/x1e80100 ${pkgs.audioreach-topology}/X1E80100-LENOVO-Thinkpad-T14s-tplg.bin
+      '')
+    ];
 
     boot.kernelPackages = pkgs.linuxPackagesFor (
       pkgs.callPackage
