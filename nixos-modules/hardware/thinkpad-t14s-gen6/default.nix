@@ -106,5 +106,8 @@ in
     boot.loader.efi.canTouchEfiVariables = false;
 
     services.evremap.settings.device_name = "hid-over-i2c 04F3:000D Keyboard";
+
+    # https://lists.infradead.org/pipermail/ath12k/2024-April/002004.html
+    networking.wireless.iwd.settings.General.ControlPortOverNL80211 = false;
   };
 }
