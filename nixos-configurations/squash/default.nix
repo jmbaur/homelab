@@ -10,9 +10,13 @@ let
     tinybootLinux = config.tinyboot.build.linux;
     fdt = "${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name}";
   };
+
+  tinybootFirmware = pkgs.callPackage ./firmware.nix {
+    inherit (config.system.build) tinybootFitImage;
+  };
 in
 {
-  system.build = { inherit tinybootFitImage; };
+  system.build = { inherit tinybootFitImage tinybootFirmware; };
 
   # better support for mt7915 wifi card
   boot.kernelPackages = pkgs.linuxPackages_6_12;

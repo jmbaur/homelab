@@ -1,19 +1,24 @@
 {
-  tinybootLinux,
+  dtc,
   fdt,
+  runCommand,
+  tinybootLinux,
   tinybootLoader,
   ubootTools,
-  runCommand,
 }:
 
 runCommand "tinyboot-fit-image"
   {
-    nativeBuildInputs = [ ubootTools ];
+    nativeBuildInputs = [
+      dtc
+      ubootTools
+    ];
   }
   ''
     cp ${tinybootLinux}/zImage .
     cp ${tinybootLoader}/*.cpio .
     cp ${fdt} .
+    cp ${./tinyboot.its} tinyboot.its
 
-    mkimage -f ${./tinyboot.its} $out
+    mkimage -f ./tinyboot.its $out
   ''
