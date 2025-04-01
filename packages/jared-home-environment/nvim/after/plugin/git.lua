@@ -107,7 +107,7 @@ vim.api.nvim_create_user_command("Permalink", function(opts)
 	elseif string.match(remote_url, "^https://git.sr.ht/.*$") then
 		forge_fn = forges["sourcehut"]
 	else
-		local forge = git_command({ "config", "get", string.format("remote.%s.forge-type", remote) }).stdout
+		local forge = vim.trim(git_command({ "config", "get", string.format("remote.%s.forge-type", remote) }).stdout)
 		if forge == "" then
 			forge = detect_forge(remote_url)
 			git_command({ "config", "set", string.format("remote.%s.forge-type", remote), forge })
