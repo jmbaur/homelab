@@ -73,7 +73,8 @@ inputs: {
         (prev.gnome-console.overrideAttrs (old: {
           patches = (old.patches or [ ]) ++ [
             ./gnome-console-osc52.patch
-            ./gnome-console-black-background.patch
+            # ./gnome-console-black-background.patch
+            ./gnome-console-copy-on-select.patch
           ];
         })).override
           {

@@ -1,0 +1,12 @@
+diff --git a/src/kgx-terminal.c b/src/kgx-terminal.c
+index fffbb92..4726ad3 100644
+--- a/src/kgx-terminal.c
++++ b/src/kgx-terminal.c
+@@ -520,6 +520,7 @@ kgx_terminal_selection_changed (VteTerminal *self)
+ {
+   gtk_widget_action_set_enabled (GTK_WIDGET (self), "term.copy",
+                                  vte_terminal_get_has_selection (self));
++  copy_activated(KGX_TERMINAL (self));
+ }
+ 
+ 

@@ -82,3 +82,10 @@ vim.api.nvim_create_autocmd({ "TermOpen" }, {
 		vim.cmd.startinsert()
 	end,
 })
+
+vim.api.nvim_create_autocmd({ "ColorScheme" }, {
+	group = vim.api.nvim_create_augroup("ColorScheme", { clear = true }),
+	callback = function()
+		vim.api.nvim_set_hl(0, "Normal", {})
+	end,
+})
