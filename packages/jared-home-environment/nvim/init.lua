@@ -1,5 +1,37 @@
 local fzf_lua = require("fzf-lua")
 
+vim.api.nvim_set_hl(0, "ExtraWhitespace", { bg = "red" })
+vim.cmd.match("ExtraWhitespace /\\s\\+$/")
+vim.api.nvim_create_autocmd({ "TextYankPost" }, {
+	group = vim.api.nvim_create_augroup("TextYankPost", { clear = true }),
+	pattern = "*",
+	callback = function()
+		vim.hl.on_yank({ higroup = "Visual", timeout = 300 })
+	end,
+})
+
+vim.api.nvim_create_autocmd({ "TermOpen" }, {
+	group = vim.api.nvim_create_augroup("TermOpen", { clear = true }),
+	callback = function()
+		local ns_id = vim.api.nvim_create_namespace("terminal")
+		vim.api.nvim_win_set_hl_ns(vim.api.nvim_get_current_win(), ns_id)
+		vim.api.nvim_set_hl(ns_id, "ExtraWhitespace", {})
+
+		vim.opt_local.spell = false
+		vim.opt_local.number = false
+		vim.opt_local.relativenumber = false
+		vim.opt_local.signcolumn = "no"
+		vim.cmd.startinsert()
+	end,
+})
+
+vim.api.nvim_create_autocmd({ "ColorScheme" }, {
+	group = vim.api.nvim_create_augroup("ColorScheme", { clear = true }),
+	callback = function()
+		vim.api.nvim_set_hl(0, "Normal", {})
+	end,
+})
+
 vim.g.clipboard = "osc52"
 vim.g.dispatch_no_tmux_make = 1
 vim.g.loaded_perl_provider = 0
@@ -57,35 +89,3 @@ vim.keymap.set("n", "<Leader>c", fzf_lua.resume, { desc = "Resume picker" })
 vim.keymap.set("n", "<Leader>f", fzf_lua.files, { desc = "Find files" })
 vim.keymap.set("n", "<Leader>g", fzf_lua.live_grep, { desc = "Find regexp pattern" })
 vim.keymap.set("n", "<Leader>h", fzf_lua.command_history, { desc = "Find Ex-mode history" })
-
-vim.api.nvim_set_hl(0, "ExtraWhitespace", { bg = "red" })
-vim.cmd.match("ExtraWhitespace /\\s\\+$/")
-vim.api.nvim_create_autocmd({ "TextYankPost" }, {
-	group = vim.api.nvim_create_augroup("TextYankPost", { clear = true }),
-	pattern = "*",
-	callback = function()
-		vim.hl.on_yank({ higroup = "Visual", timeout = 300 })
-	end,
-})
-
-vim.api.nvim_create_autocmd({ "TermOpen" }, {
-	group = vim.api.nvim_create_augroup("TermOpen", { clear = true }),
-	callback = function()
-		local ns_id = vim.api.nvim_create_namespace("terminal")
-		vim.api.nvim_win_set_hl_ns(vim.api.nvim_get_current_win(), ns_id)
-		vim.api.nvim_set_hl(ns_id, "ExtraWhitespace", {})
-
-		vim.opt_local.spell = false
-		vim.opt_local.number = false
-		vim.opt_local.relativenumber = false
-		vim.opt_local.signcolumn = "no"
-		vim.cmd.startinsert()
-	end,
-})
-
-vim.api.nvim_create_autocmd({ "ColorScheme" }, {
-	group = vim.api.nvim_create_augroup("ColorScheme", { clear = true }),
-	callback = function()
-		vim.api.nvim_set_hl(0, "Normal", {})
-	end,
-})
