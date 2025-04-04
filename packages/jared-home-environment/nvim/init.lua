@@ -65,6 +65,7 @@ vim.cmd.colorscheme(vim.opt.termguicolors:get() and "lunaperche" or "default")
 vim.cmd.iabbrev("todo:", "TODO(jared):")
 
 fzf_lua.setup({
+	fzf_opts = { ["--no-color"] = true },
 	defaults = { file_icons = false },
 	files = { previewer = false },
 	winopts = {
