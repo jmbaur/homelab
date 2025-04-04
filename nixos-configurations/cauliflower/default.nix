@@ -21,6 +21,18 @@
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
+  system.build.firmware = pkgs.callPackage ./coreboot.nix {
+    kconfig = ''
+      CONFIG_BOARD_GOOGLE_BANSHEE=y
+      CONFIG_VENDOR_GOOGLE=y
+      CONFIG_GENERIC_LINEAR_FRAMEBUFFER=y
+      CONFIG_CBFS_SIZE=0x800000
+      CONFIG_PAYLOAD_LINUX=y
+      CONFIG_PAYLOAD_FILE="${config.tinyboot.build.linux}/bzImage"
+      CONFIG_LINUX_INITRD="${config.tinyboot.build.initrd}/tboot-loader.cpio"
+    '';
+  };
+
   # TODO(jared): fix this
   boot.initrd.systemd.tpm2.enable = false;
 
@@ -28,8 +40,11 @@
   tinyboot = {
     enable = true;
     chromebook = true;
-    video = true;
-    linux.consoles = [ "ttyS0,115200n8" ];
+    efi = true; # coreboot exposes an efi-compatible framebuffer
+    linux.consoles = [
+      "ttyS0,115200n8"
+      "tty1"
+    ];
     linux.kconfig = with lib.kernel; {
       PINCTRL_ALDERLAKE = yes;
       PINCTRL_TIGERLAKE = yes;
