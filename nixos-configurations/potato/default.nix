@@ -28,7 +28,7 @@
       tinyboot = {
         enable = false; # TODO
         chromebook = true;
-        video = true;
+        efi = true;
         linux.consoles = [ "ttyS0,115200n8" ];
         linux.kconfig = with lib.kernel; {
           PINCTRL_ALDERLAKE = yes;

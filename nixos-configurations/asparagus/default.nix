@@ -16,7 +16,7 @@
         enable = true;
         platform.qualcomm = true;
         chromebook = true;
-        video = true;
+        efi = true;
         linux.kconfig = with lib.kernel; {
           HID_GOOGLE_HAMMER = yes;
           I2C_CROS_EC_TUNNEL = yes;

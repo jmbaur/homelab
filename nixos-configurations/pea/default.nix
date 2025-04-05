@@ -14,14 +14,13 @@
       tinyboot = {
         enable = true;
         platform.mediatek = true;
-        video = true;
         chromebook = true;
       };
     }
     {
       custom.desktop.enable = true;
       custom.dev.enable = true;
-      custom.recovery.targetDisk = "/dev/mmcblk0"; # TODO(jared): refine this
+      custom.recovery.targetDisk = "/dev/disk/by-path/platform-11f60000.mmc";
     }
   ];
 }
