@@ -32,6 +32,32 @@ vim.api.nvim_create_autocmd({ "ColorScheme" }, {
 	end,
 })
 
+vim.api.nvim_create_autocmd({ "OptionSet" }, {
+	pattern = { "background" },
+	callback = function(opts)
+		-- Will be called once per startup. This is the only way we can obtain
+		-- the correct auto-detected background set by neovim.
+		if opts.match == "background" then
+			fzf_lua.setup({
+				fzf_args = string.format("--color=%s", vim.opt.background:get() == "light" and "light" or "dark"),
+				defaults = { file_icons = false },
+				files = { previewer = false },
+				winopts = {
+					split = "botright 15new",
+					border = "single",
+					preview = {
+						hidden = "hidden",
+						border = "border",
+						title = false,
+						layout = "horizontal",
+						horizontal = "right:50%",
+					},
+				},
+			})
+		end
+	end,
+})
+
 vim.g.clipboard = "osc52"
 vim.g.dispatch_no_tmux_make = 1
 vim.g.loaded_perl_provider = 0
@@ -63,23 +89,6 @@ vim.cmd.colorscheme(vim.opt.termguicolors:get() and "lunaperche" or "default")
 
 -- TODO(jared): use vim.snippet
 vim.cmd.iabbrev("todo:", "TODO(jared):")
-
-fzf_lua.setup({
-	fzf_opts = { ["--no-color"] = true },
-	defaults = { file_icons = false },
-	files = { previewer = false },
-	winopts = {
-		split = "botright 15new",
-		border = "single",
-		preview = {
-			hidden = "hidden",
-			border = "border",
-			title = false,
-			layout = "horizontal",
-			horizontal = "right:50%",
-		},
-	},
-})
 
 fzf_lua.register_ui_select()
 

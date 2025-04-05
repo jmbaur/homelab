@@ -29,19 +29,25 @@ if ! tmux_session_path=$(
 		--no-ignore |
 		sed 's,/\.git/\?,,' |
 		{ [[ -n ${1-} ]] && grep ".*$1.*" || cat; } |
-		fzf --select-1
+		fzy
 ); then
 	echo "No matches"
 	exit 2
 fi
 
-# decimals are not allowed in tmux's statusline
+# Decimals are not allowed in tmux's statusline.
 function escape_basename() {
 	basename "$1" | sed "s,\.,_,g"
 }
 
 tmux_session_name="$(escape_basename "$tmux_session_path")"
 
+in_tmux() {
+	test "${TERM_PROGRAM:-}" == "tmux"
+}
+
+# Output will be empty if session with the name we want doesn't exist,
+# otherwise it will be an integer representing the number of connected clients.
 clients_attached=$(tmux list-sessions \
 	-f "#{==:#{session_name},$tmux_session_name}" \
 	-F "#{session_attached}" 2>/dev/null || echo)
@@ -49,12 +55,10 @@ if [[ -z $clients_attached ]]; then
 	tmux new-session -d \
 		-s "$tmux_session_name" \
 		-c "${base_directory}/${tmux_session_path}"
-elif [[ $clients_attached -gt 0 ]]; then
-	exit 0
 fi
 
-if [[ -n ${TMUX-} ]]; then
-	# current attached to a tmux session
+if in_tmux; then
+	# Currently attached to a tmux session, switch to our new one.
 	exec tmux switch-client -t "$tmux_session_name"
 else
 	exec tmux attach-session -t "$tmux_session_name"

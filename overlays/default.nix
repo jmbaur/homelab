@@ -32,30 +32,18 @@ inputs: {
         patches = (old.patches or [ ]) ++ [ ./way-displays-default-dpi.patch ];
       });
 
+      tmux = prev.tmux.overrideAttrs (old: rec {
+        version = old.version + "-" + builtins.substring 0 7 src.rev;
+        src = final.fetchFromGitHub {
+          owner = "tmux";
+          repo = "tmux";
+          rev = "d3c39375d5e9f4a0dcb5bd210c912d70ceca5de9";
+          hash = "sha256-CTo6NJTuS2m5W6WyqTHg4G6NiRqt874pFGvVgmbKeC8=";
+        };
+      });
+
       vimPlugins = prev.vimPlugins.extend (
         _: _: {
-          vim-dir = final.vimUtils.buildVimPlugin {
-            pname = "vim-dir";
-            version = "2025-01-23";
-            src = final.fetchFromGitHub {
-              owner = "habamax";
-              repo = "vim-dir";
-              rev = "c0ce178b9df864de5b5b89460f22ccc7ac10757c";
-              hash = "sha256-Qxb6ooB6pfDpKTioD0xuzC4O1dtDxMcKVWlB0IxyKhA=";
-            };
-          };
-
-          lsp = final.vimUtils.buildVimPlugin {
-            pname = "lsp";
-            version = "2025-03-12";
-            src = final.fetchFromGitHub {
-              owner = "yegappan";
-              repo = "lsp";
-              rev = "9f3d92ed7f3ba0ba5b496f0fd2150ce56b049832";
-              hash = "sha256-dXm03apOI6zDyBXL6LiSPABmT9wCin6tjDVD2smrSU0=";
-            };
-          };
-
           bpftrace-vim = final.vimUtils.buildVimPlugin {
             pname = "bpftrace.vim";
             version = "2019-06-19";
@@ -73,7 +61,6 @@ inputs: {
         (prev.gnome-console.overrideAttrs (old: {
           patches = (old.patches or [ ]) ++ [
             ./gnome-console-osc52.patch
-            # ./gnome-console-black-background.patch
             ./gnome-console-copy-on-select.patch
           ];
         })).override

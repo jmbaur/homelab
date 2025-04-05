@@ -13,19 +13,19 @@ eval "$(argc --argc-eval "$0" "$@")"
 choice=${argc_config:-}
 
 if [[ -z $choice ]]; then
-	choice=$(find /nix/var/nix/profiles -name 'system-*' | tac | fzf --select-1)
+	choice=$(find /nix/var/nix/profiles -name 'system-*' | tac | fzy)
 fi
 
 if [[ -z $choice ]]; then
 	exit 1
 fi
 
+# Ensure our appended params begin with an empty space, as to not combine with
+# the last kernel param in the selected nixos closure.
 if [[ -n ${argc_append:-} ]]; then
 	argc_append=" ${argc_append}"
 fi
 
-eval "$(
-	jq --raw-output --arg append "${argc_append:-}" --from-file "$kexec_jq" <"${choice}/boot.json"
-)"
+eval "$(jq --raw-output --arg append "${argc_append:-}" --from-file "$kexec_jq" <"${choice}/boot.json")"
 
 systemctl kexec

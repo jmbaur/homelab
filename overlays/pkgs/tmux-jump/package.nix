@@ -1,7 +1,7 @@
 {
   fd,
   lib,
-  fzf,
+  fzy,
   tmux,
   writeShellApplication,
 }:
@@ -9,7 +9,7 @@ writeShellApplication {
   name = "tmux-jump";
   runtimeInputs = [
     fd
-    fzf
+    fzy
     tmux
   ];
   text = lib.fileContents ./tmux-jump.bash;
