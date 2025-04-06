@@ -24,10 +24,8 @@ if vim.fn.executable("rust-analyzer") == 1 then
 		root_markers = { "Cargo.toml" },
 		settings = {
 			["rust-analyzer"] = {
-				initializationOptions = {
-					diagnostics = { disabled = { "unresolved-proc-macro" } },
-					check = { command = vim.fn.executable("cargo-clippy") == 1 and "clippy" or "check" },
-				},
+				diagnostics = { disabled = { "unresolved-proc-macro" } },
+				check = { command = vim.fn.executable("cargo-clippy") == 1 and "clippy" or "check" },
 			},
 		},
 	})
@@ -54,10 +52,8 @@ if vim.fn.executable("gopls") == 1 then
 		filetypes = { "go", "gomod" },
 		settings = {
 			["gopls"] = {
-				initializationOptions = {
-					gofumpt = vim.fn.executable("gofumpt") == 1,
-					staticcheck = vim.fn.executable("staticcheck") == 1,
-				},
+				gofumpt = vim.fn.executable("gofumpt") == 1,
+				staticcheck = vim.fn.executable("staticcheck") == 1,
 			},
 		},
 	})
