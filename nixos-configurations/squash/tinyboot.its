@@ -1,0 +1,50 @@
+/dts-v1/;
+
+/ {
+	description = "tinyboot";
+	#address-cells = <1>;
+
+	images {
+		kernel {
+			data = /incbin/("./zImage");
+			type = "kernel";
+			arch = "arm";
+			os = "linux";
+			compression = "none";
+			load = <00000000>;
+			entry = <00000000>;
+			hash {
+				algo = "sha256";
+			};
+		};
+		initrd {
+			data = /incbin/("./tboot-loader.cpio");
+			type = "ramdisk";
+			compression = "none";
+			load = <00000000>;
+			arch = "arm";
+			hash {
+				algo = "sha256";
+			};
+		};
+		fdt {
+			data = /incbin/("./armada-388-clearfog-pro.dtb");
+			type = "flat_dt";
+			arch = "arm";
+			compression = "none";
+			load = <00000000>;
+			hash {
+				algo = "sha256";
+			};
+		};
+	};
+
+	configurations {
+		default = "config";
+		config {
+			kernel = "kernel";
+			ramdisk = "ramdisk";
+			fdt = "fdt";
+		};
+	};
+};
