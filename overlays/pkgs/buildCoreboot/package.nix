@@ -6,7 +6,8 @@
   pkgsBuildBuild,
   python3,
   stdenvNoCC,
-
+}:
+{
   kconfig ? "",
 }:
 

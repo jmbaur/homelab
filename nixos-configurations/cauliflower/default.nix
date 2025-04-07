@@ -21,7 +21,7 @@
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
-  system.build.firmware = pkgs.callPackage ./coreboot.nix {
+  system.build.firmware = pkgs.buildCoreboot {
     kconfig = ''
       CONFIG_BOARD_GOOGLE_BANSHEE=y
       CONFIG_VENDOR_GOOGLE=y
