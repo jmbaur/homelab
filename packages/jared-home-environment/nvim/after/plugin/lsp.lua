@@ -80,7 +80,7 @@ vim.lsp.config("*", { root_markers = { ".git" } })
 vim.api.nvim_create_autocmd({ "LspAttach" }, {
 	desc = "Set mappings in LSP-enabled buffer",
 	group = vim.api.nvim_create_augroup("LspAttach", { clear = true }),
-	callback = function()
+	callback = function(opts)
 		vim.opt_local.signcolumn = "yes"
 
 		vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, {
@@ -92,29 +92,34 @@ vim.api.nvim_create_autocmd({ "LspAttach" }, {
 			buffer = true,
 			desc = "LSP definition",
 		})
+
+		if vim.tbl_contains({ "zig", "nix", "go", "sh", "bash", "rust" }, vim.fn.getbufvar(opts.buf, "&filetype")) then
+			vim.api.nvim_create_autocmd({ "BufWritePre" }, {
+				group = vim.api.nvim_create_augroup("FormatOnSave", { clear = true }),
+				buffer = opts.buf,
+				callback = function()
+					if not vim.lsp.buf_is_attached() then
+						return
+					end
+
+					if vim.g.no_format_on_save then
+						return
+					end
+
+					vim.lsp.buf.format()
+				end,
+			})
+		end
 	end,
 })
 
 vim.api.nvim_create_user_command("ToggleFormatOnSave", function(opts)
-	if pcall(vim.api.nvim_get_autocmds, { group = "FormatOnSave" }) then
-		if not opts.bang then
-			vim.api.nvim_del_augroup_by_name("FormatOnSave")
-		end
+	if opts.bang or vim.g.no_format_on_save then
+		vim.g.no_format_on_save = nil
 	else
-		vim.api.nvim_create_autocmd({ "BufWritePre" }, {
-			pattern = { "*.zig", "*.nix", "*.go", "*.sh", "*.bash", "*.rs" },
-			group = vim.api.nvim_create_augroup("FormatOnSave", { clear = true }),
-			callback = function()
-				if vim.lsp.buf_is_attached() then
-					vim.lsp.buf.format()
-				end
-			end,
-		})
+		vim.g.no_format_on_save = true
 	end
 end, {
-	bang = true,
+	bang = true, -- forcefully enable format on save
 	desc = "Toggle format on save for LSP-enabled buffers",
 })
-
--- Enable format on save, initially.
-vim.cmd.ToggleFormatOnSave()

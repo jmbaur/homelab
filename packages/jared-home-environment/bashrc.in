@@ -25,7 +25,22 @@ source @nixIndex@/etc/profile.d/command-not-found.sh
 source @git@/share/bash-completion/completions/git-prompt.sh
 
 __my_ps1() {
-	__git_ps1 "\033]0;\u@\h:\w\007\n\[\033[1;32m\][\u@\h:\w]" "\\\$\[\033[0m\] " "[%s]"
+	# This must be first so we capture the exit status of the last command.
+	local status=$?
+
+	# Print OSC0 to set the terminal title and OSC7 to set the terminal
+	# working directory. Add a newline to give the prompt some extra space.
+	local begin="\033]0;\u@\h:\w\007\033]7;file://$HOSTNAME$PWD\007\n"
+
+	# Prefix the prompt with the last exit code if it was non-zero.
+	if [[ $status -ne 0 ]]; then
+		begin="$begin\[\033[1;31m\][$status]\[\033[0m\]"
+	fi
+
+	# Add the actual prompt.
+	begin="$begin\[\033[1;32m\][\u@\h:\w]"
+
+	__git_ps1 "$begin" "\\\$\[\033[0m\] " "[%s]"
 }
 
 # Inspired from direnv's way of prepending stuff to PROMPT_COMMAND (see output
@@ -41,5 +56,5 @@ fi
 
 PROMPT_DIRTRIM=2
 
-# This should occur last, it amends PROMPT_COMMAND
+# This should occur last, it amends PROMPT_COMMAND.
 eval "$(direnv hook bash)"
