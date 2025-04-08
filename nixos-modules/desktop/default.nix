@@ -145,7 +145,7 @@ in
         (pkgs.formats.ini { listsAsDuplicateKeys = true; }).generate "foot.ini"
           {
             main.include = [
-              (pkgs.concatText "foot-modus-operandi.ini" [ "${pkgs.foot.src}/themes/modus-operandi" ])
+              (pkgs.concatText "foot-paper-color-light.ini" [ "${pkgs.foot.src}/themes/paper-color-light" ])
             ];
             main.font = "monospace:size=12"; # default font is far too small
             main.pad = "4x4";
