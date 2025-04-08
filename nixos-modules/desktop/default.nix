@@ -275,6 +275,27 @@ in
           );
         };
       };
+
+      systemd.user.services.gammastep = {
+        description = "Display colour temperature adjuster";
+        documentation = [ "https://gitlab.com/chinstrap/gammastep" ];
+        after = [
+          "graphical-session-pre.target"
+          config.systemd.user.services.geoclue-agent.name
+        ];
+        wants = [ config.systemd.user.services.geoclue-agent.name ];
+        partOf = [ "graphical-session.target" ];
+        wantedBy = [ "graphical-session.target" ];
+        serviceConfig = {
+          Restart = "on-failure";
+          RestartSec = 3;
+          ExecStart = toString [
+            (getExe pkgs.gammastep)
+            "-l"
+            "geoclue2"
+          ];
+        };
+      };
     }
   ]);
 }
