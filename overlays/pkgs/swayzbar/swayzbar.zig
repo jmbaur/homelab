@@ -71,7 +71,10 @@ const Battery = struct {
 
         try posix.epoll_ctl(epollfd, linux.EPOLL.CTL_ADD, timerfd, &timer_event);
 
-        var power_supply_class_dir = try std.fs.cwd().openDir("/sys/class/power_supply", .{ .iterate = true });
+        var power_supply_class_dir = try std.fs.cwd().openDir(
+            "/sys/class/power_supply",
+            .{ .iterate = true },
+        );
         defer power_supply_class_dir.close();
 
         var uevents_index: usize = 0;
@@ -217,6 +220,17 @@ pub fn main() !void {
     const epollfd = try posix.epoll_create1(0);
     defer posix.close(epollfd);
 
+    var stdin_event = linux.epoll_event{
+        .data = .{ .fd = std.posix.STDIN_FILENO },
+        .events = linux.EPOLL.IN,
+    };
+    try posix.epoll_ctl(
+        epollfd,
+        linux.EPOLL.CTL_ADD,
+        std.posix.STDIN_FILENO,
+        &stdin_event,
+    );
+
     var modules = [_]Module{
         .{ .battery = try Battery.init(epollfd) },
         .{ .date_time = try DateTime.init(epollfd) },
@@ -243,6 +257,12 @@ pub fn main() !void {
         while (index < n_events) : (index += 1) {
             const event = events[index];
 
+            if (event.data.fd == std.posix.STDIN_FILENO) {
+                // We don't yet do anything with stdin data, just consume it.
+                try std.io.getStdIn().reader().skipUntilDelimiterOrEof('\n');
+                continue;
+            }
+
             var found = false;
             for (modules[0..], 0..) |*module, i| {
                 if (event.data.fd == module.fd()) {
@@ -257,7 +277,10 @@ pub fn main() !void {
                             body_list[i] = Body{ .full_text = content };
                         }
                     } else |err| {
-                        std.log.err("module '{s}' failure: {}", .{ module.name(), err });
+                        std.log.err(
+                            "module '{s}' failure: {}",
+                            .{ module.name(), err },
+                        );
                     }
                 }
             }
