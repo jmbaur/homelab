@@ -116,6 +116,18 @@ in
     }
 
     {
+      services.greetd = {
+        enable = true;
+        vt = 1;
+        settings.default_session.command = "sway --config ${
+          pkgs.substituteAll {
+            name = "login-sway.config";
+            src = ./login-sway.config.in;
+            inherit (pkgs.greetd) wlgreet;
+          }
+        }";
+      };
+
       programs.sway = {
         enable = true;
         wrapperFeatures = {
@@ -124,12 +136,6 @@ in
         };
         extraPackages = [ ];
       };
-
-      environment.loginShellInit = ''
-        if [ -z "$WAYLAND_DISPLAY" ] && [ -n "$XDG_VTNR" ] && [ "$XDG_VTNR" -eq 1 ] ; then
-            exec systemd-cat --identifier=sway sway
-        fi
-      '';
 
       fonts.packages = [ pkgs.jetbrains-mono ];
       fonts.fontconfig.defaultFonts.monospace = [ "JetBrainsMono" ];
