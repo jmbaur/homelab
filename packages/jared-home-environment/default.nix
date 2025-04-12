@@ -65,8 +65,11 @@ let
           .git
         '';
 
+        # Source bashrc if we are in an interactive shell
         ".bash_profile" = pkgs.writeText "bash-profile" ''
-          source $HOME/.bashrc
+          if [[ $- == *i* ]] && [[ -f $HOME/.bashrc ]]; then
+            source $HOME/.bashrc
+          fi
         '';
 
         ".bashrc" = pkgs.substituteAll {
