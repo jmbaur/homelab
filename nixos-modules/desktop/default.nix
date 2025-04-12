@@ -145,7 +145,10 @@ in
         (pkgs.formats.ini { listsAsDuplicateKeys = true; }).generate "foot.ini"
           {
             main.include = [
-              (pkgs.concatText "foot-paper-color-light.ini" [ "${pkgs.foot.src}/themes/paper-color-light" ])
+              (pkgs.runCommand "foot-modus-operandi.ini" { } ''
+                cat ${pkgs.foot.src}/themes/modus-operandi >$out
+                substituteInPlace $out --replace-fail 'regular0=000000' 'regular0=ffffff'
+              '')
             ];
             main.font = "monospace:size=12"; # default font is far too small
             main.pad = "4x4";
