@@ -44,6 +44,27 @@ inputs: {
 
       vimPlugins = prev.vimPlugins.extend (
         _: _: {
+          azy-nvim = final.vimUtils.buildVimPlugin {
+            pname = "azy.nvim";
+            version = "2024-08-09";
+            nvimSkipModules = [
+              "azy.async"
+              "azy.builtins"
+              "azy.ui"
+            ];
+            buildInputs = [ final.neovim-unwrapped.lua ];
+            preInstall = ''
+              make lib
+              install build/afzy.so lua/azy
+            '';
+            src = final.fetchFromSourcehut {
+              owner = "~vigoux";
+              repo = "azy.nvim";
+              rev = "2fe367a3642009025d5fd78b3e893edee15afd36";
+              hash = "sha256-J4iMuHQFSfeDqp7Bm5635/DAdhVizP71aQoLuGy8YjY=";
+            };
+          };
+
           bpftrace-vim = final.vimUtils.buildVimPlugin {
             pname = "bpftrace.vim";
             version = "2019-06-19";
@@ -52,6 +73,17 @@ inputs: {
               repo = "bpftrace.vim";
               rev = "4c85f14c92eb75ddf68d27df8967aad399bdd18e";
               hash = "sha256-VLbvyH9+RWAcWisXEC3yKGSXPI72+bZbWyeMhgyuzPg=";
+            };
+          };
+
+          nvim-qwahl = final.vimUtils.buildVimPlugin {
+            pname = "nvim-qwahl";
+            version = "2025-03-26";
+            src = final.fetchFromGitHub {
+              owner = "mfussenegger";
+              repo = "nvim-qwahl";
+              rev = "1bb6c53320b948e37f32c4f8c8846343ca4df1b2";
+              hash = "sha256-BKY9reEmHPUr/ysXucwXbhVsAERXNrUj+lx49QfLaoc=";
             };
           };
         }

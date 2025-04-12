@@ -116,6 +116,8 @@ let
               (
                 with pkgs.vimPlugins;
                 [
+                  # azy-nvim
+                  # nvim-qwahl
                   bpftrace-vim
                   fzf-lua
                   vim-dispatch
