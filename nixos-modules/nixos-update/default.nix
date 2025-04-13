@@ -39,7 +39,10 @@ in
     # TODO(jared): We need to be able to automatically rollback from bad
     # updates, thus we need to not garbage collect known good working versions
     # in order to ensure rolling back is even possible.
-    nix.gc.automatic = mkIf cfg.automatic true;
+    nix.gc = mkIf cfg.automatic {
+      automatic = true;
+      options = "--delete-older-than 10d";
+    };
 
     systemd.services.nixos-update = {
       stopIfChanged = false;
