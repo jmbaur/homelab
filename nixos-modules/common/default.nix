@@ -67,7 +67,7 @@ in
       services.userborn.enable = mkDefault true;
 
       nix = {
-        package = pkgs.nixVersions.nix_2_26;
+        package = pkgs.nixVersions.nix_2_28;
         channel.enable = false; # opt out of nix channels
         distributedBuilds = mkDefault true; # allow for populating /etc/nix/machines for remote building
         settings = {
