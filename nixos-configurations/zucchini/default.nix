@@ -10,40 +10,7 @@
     {
       nixpkgs.hostPlatform = "aarch64-linux";
 
-      boot.kernelPackages = pkgs.linuxPackagesFor (
-        pkgs.callPackage (
-          { buildLinux, ... }@args:
-          buildLinux (
-            args
-            // {
-              version = "6.13.0";
-              extraMeta.branch = "6.13";
-
-              src = pkgs.fetchgit {
-                url = "https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linux";
-                # rk3588 branch
-                rev = "ec942df0e50138eb0ffcb80811044ca6a2928248";
-                hash = "sha256-v1HDob1k32I165IrlS/styNxw/3dyYYtMDT4sM5ZWFI=";
-              };
-              kernelPatches = (args.kernelPatches or [ ]);
-            }
-            // (args.argsOverride or { })
-          )
-        ) { }
-      );
-
-      boot.kernelPatches = [
-        {
-          name = "disable-rust";
-          patch = null;
-          extraStructuredConfig = {
-            RUST = lib.mkForce lib.kernel.unset;
-            DRM_PANIC = lib.mkForce lib.kernel.unset;
-            DRM_PANIC_SCREEN = lib.mkForce lib.kernel.unset;
-            DRM_PANIC_SCREEN_QR_CODE = lib.mkForce lib.kernel.unset;
-          };
-        }
-      ];
+      boot.kernelPackages = pkgs.linuxPackages_testing;
 
       boot.initrd.availableKernelModules = [
         "dwmac_rk"
