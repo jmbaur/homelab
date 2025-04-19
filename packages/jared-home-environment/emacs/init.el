@@ -33,9 +33,24 @@
 (define-key evil-normal-state-map (kbd "C-c -") 'evil-numbers/dec-at-pt)
 (define-key evil-visual-state-map (kbd "C-c -") 'evil-numbers/dec-at-pt)
 
+;; minibuffer config
+;; Support opening new minibuffers from inside existing minibuffers.
+(setq enable-recursive-minibuffers t)
+;; Hide commands in M-x which do not work in the current mode.  Vertico
+;; commands are hidden in normal buffers. This setting is useful beyond
+;; Vertico.
+(setq read-extended-command-predicate #'command-completion-default-include-p)
+;; Do not allow the cursor in the minibuffer prompt
+(setq minibuffer-prompt-properties
+'(read-only t cursor-intangible t face minibuffer-prompt))
+
+(savehist-mode 1)
+
 ;; completion (requires orderless and vertico)
-(setq completion-styles '(orderless basic)
-      completion-category-overrides '((file (styles basic partial-completion))))
+(require 'orderless)
+(setq completion-styles '(orderless basic))
+(setq completion-category-overrides '((file (styles basic partial-completion))))
+(setq completion-category-defaults nil)
 (vertico-mode 1)
 
 ;; project integration (requires projectile)
