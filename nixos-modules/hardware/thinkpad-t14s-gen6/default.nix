@@ -32,7 +32,7 @@ in
           buildLinux (
             args
             // rec {
-              version = "6.14.0";
+              version = "6.15.0-rc3";
               extraMeta.branch = versions.majorMinor version;
 
               # TODO(jared): remove this
@@ -41,9 +41,9 @@ in
               src = pkgs.fetchFromGitHub {
                 owner = "jhovold";
                 repo = "linux";
-                # wip/x1e80100-6.14
-                rev = "5f4df433497c460200adf168a50f0260c3dd4062";
-                hash = "sha256-s1DKyjz9qm+M4YcCEQbfglqWFasUNfxrrIh8Y6zWVqg=";
+                # wip/x1e80100-6.15-rc3
+                rev = "d683863b91512bd148111e5b2c69861765d13f84";
+                hash = "sha256-oTwZAFGRLOLLosFLr5DowAQZ+H2W7ypwpUUrH8O4Q6o=";
               };
               kernelPatches = (args.kernelPatches or [ ]);
             }
