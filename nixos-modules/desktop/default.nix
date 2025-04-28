@@ -52,11 +52,16 @@ in
         profiles.user.databases = [ ];
       };
 
-      # Add a default browser to use
       programs.firefox = {
         enable = mkDefault true;
+
         # Allow users to override preferences set here
         preferencesStatus = "user";
+
+        # Default is 2 for some reason, using 1 makes firefox use the
+        # native file picker.
+        preferences."widget.use-xdg-desktop-portal.file-picker" = 1;
+
         # Default value only looks good in GNOME
         preferences."browser.tabs.inTitlebar" = mkIf (
           !config.services.xserver.desktopManager.gnome.enable
