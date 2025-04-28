@@ -58,14 +58,23 @@ in
         # Allow users to override preferences set here
         preferencesStatus = "user";
 
-        # Default is 2 for some reason, using 1 makes firefox use the
-        # native file picker.
-        preferences."widget.use-xdg-desktop-portal.file-picker" = 1;
-
-        # Default value only looks good in GNOME
-        preferences."browser.tabs.inTitlebar" = mkIf (
-          !config.services.xserver.desktopManager.gnome.enable
-        ) 0;
+        preferences = mkMerge (
+          [
+            {
+              # Default value only looks good in GNOME
+              "browser.tabs.inTitlebar" = mkIf (!config.services.xserver.desktopManager.gnome.enable) 0;
+            }
+          ]
+          # Default is 2 for some reason, using 1 makes firefox use the
+          # native portal variant.
+          ++ map (opt: { "widget.use-xdg-desktop-portal.${opt}" = 1; }) [
+            "file-picker"
+            "mime-handler"
+            "settings"
+            "location"
+            "open-uri"
+          ]
+        );
       };
     }
 
