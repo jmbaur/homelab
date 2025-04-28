@@ -21,6 +21,8 @@
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
   system.build.firmware = pkgs.buildCoreboot {
     kconfig = ''
       CONFIG_BOARD_GOOGLE_BANSHEE=y
