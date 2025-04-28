@@ -66,7 +66,8 @@
 (setq eldoc-echo-area-use-multiline-p nil)
 
 (setq eglot-workspace-configuration
-      '(:nil (:formatting (:command ["nixfmt"]))))
+      '(:nil (:formatting (:command ["nixfmt"])
+			  :nix (:flake (:autoArchive :json-false)))))
 
 (defun lsp-setup ()
   (add-hook 'before-save-hook 'eglot-format-buffer nil t)

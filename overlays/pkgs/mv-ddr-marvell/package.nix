@@ -1,7 +1,7 @@
 {
   applyPatches,
   fetchFromGitHub,
-  substituteAll,
+  replaceVars,
 }:
 
 applyPatches rec {
@@ -12,8 +12,7 @@ applyPatches rec {
     hash = "sha256-atsj0FCEkMLfnABsaJZGHKO0ZKad19jsKAkz39fIcFY=";
   };
   patches = [
-    (substituteAll {
-      src = ./remove-impurity.patch;
+    (replaceVars ./remove-impurity.patch {
       shortRev = builtins.substring 0 7 src.rev;
     })
   ];

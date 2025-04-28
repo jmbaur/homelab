@@ -17,8 +17,8 @@ let
     }:
     {
       gitIncludes = lib.mkDefault [
-        (pkgs.substituteAll {
-          src = ./personal.gitconfig;
+        (pkgs.replaceVars ./personal.gitconfig {
+          signingKey = "key::sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIBhCHaXn5ghEJQVpVZr4hOajD6Zp/0PO4wlymwfrg/S5AAAABHNzaDo=";
           allowedSignersFile = pkgs.writeText "allowed-signers" ''
             jaredbaur@fastmail.com sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIBhCHaXn5ghEJQVpVZr4hOajD6Zp/0PO4wlymwfrg/S5AAAABHNzaDo=
             jaredbaur@fastmail.com sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIHRlxBSW3BzX33FG7444p/M5lb9jYR5OkjS2jPpnuXozAAAABHNzaDo=
@@ -72,9 +72,7 @@ let
           fi
         '';
 
-        ".bashrc" = pkgs.substituteAll {
-          name = "bashrc";
-          src = ./bashrc.in;
+        ".bashrc" = pkgs.replaceVars ./bashrc.in {
           bashSensible = pkgs.bash-sensible;
           nixIndex = pkgs.nix-index;
           git = pkgs.git;
@@ -82,25 +80,19 @@ let
 
         ".config/direnv/lib/nix-direnv.sh" = "${pkgs.nix-direnv}/share/nix-direnv/direnvrc";
 
-        ".ssh/config" = pkgs.substituteAll {
-          name = "sshconfig";
-          src = ./ssh-config.in;
+        ".ssh/config" = pkgs.replaceVars ./ssh-config.in {
           extraConfig = lib.concatLines (map (include: "Include ${include}") config.sshIncludes);
         };
 
         ".config/git/ignore" = ./gitignore;
-        ".config/git/config" = pkgs.substituteAll {
-          name = "gitconfig";
-          src = ./gitconfig.in;
+        ".config/git/config" = pkgs.replaceVars ./gitconfig.in {
           extraConfig = ''
             [include]
             ${lib.concatLines (map (include: "  path = ${include}") config.gitIncludes)}
           '';
         };
 
-        ".config/tmux/tmux.conf" = pkgs.substituteAll {
-          name = "tmux.conf";
-          src = ./tmux.conf.in;
+        ".config/tmux/tmux.conf" = pkgs.replaceVars ./tmux.conf.in {
           tmuxLogging = pkgs.tmuxPlugins.logging;
           tmuxFingers = pkgs.tmuxPlugins.fingers;
         };
