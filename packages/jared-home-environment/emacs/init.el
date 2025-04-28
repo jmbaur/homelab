@@ -70,6 +70,8 @@
 
 (defun lsp-setup ()
   (add-hook 'before-save-hook 'eglot-format-buffer nil t)
+  (local-set-key (kbd "[d") 'flymake-goto-prev-error)
+  (local-set-key (kbd "]d") 'flymake-goto-next-error)
   (eglot-ensure))
 
 (add-hook 'go-mode-hook 'lsp-setup)
