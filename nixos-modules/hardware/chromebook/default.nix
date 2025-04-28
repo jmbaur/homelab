@@ -19,6 +19,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
+
     services.evremap = {
       enable = true;
       settings.device_name =
