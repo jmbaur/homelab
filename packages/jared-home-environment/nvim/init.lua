@@ -64,9 +64,10 @@ vim.g.loaded_perl_provider = 0
 vim.g.loaded_python3_provider = 0
 vim.g.mapleader = vim.api.nvim_replace_termcodes("<Space>", true, true, true)
 
-vim.opt.termguicolors = vim.regex("linux\\|vt220\\|dumb"):match_str(vim.env.TERM) == nil
 vim.opt.autoread = true
+vim.opt.clipboard = "unnamedplus"
 vim.opt.colorcolumn = tostring(80)
+vim.opt.completeopt = table.concat({ "popup", "menuone", "noinsert", "noselect", "fuzzy" }, ",")
 vim.opt.exrc = true
 vim.opt.hidden = true
 vim.opt.hlsearch = true
@@ -77,10 +78,10 @@ vim.opt.ruler = true
 vim.opt.shortmess:remove({ "S" })
 vim.opt.showcmd = true
 vim.opt.showmatch = true
-vim.opt.clipboard = "unnamedplus"
 vim.opt.smartcase = true
 vim.opt.splitbelow = true
 vim.opt.splitright = true
+vim.opt.termguicolors = vim.regex("linux\\|vt220\\|dumb"):match_str(vim.env.TERM) == nil
 vim.opt.title = true
 vim.opt.wildoptions = table.concat({ "pum", "tagfile" }, ",")
 vim.opt.wrap = false

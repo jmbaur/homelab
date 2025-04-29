@@ -1,3 +1,5 @@
+;;; -*- lexical-binding: t -*-
+
 ;; basics
 (setq custom-file "/dev/null")
 (load-theme 'modus-operandi)

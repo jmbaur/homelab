@@ -83,16 +83,6 @@ vim.api.nvim_create_autocmd({ "LspAttach" }, {
 	callback = function(opts)
 		vim.opt_local.signcolumn = "yes"
 
-		vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, {
-			buffer = true,
-			desc = "LSP signature help",
-		})
-
-		vim.keymap.set("n", "<C-]>", vim.lsp.buf.definition, {
-			buffer = true,
-			desc = "LSP definition",
-		})
-
 		if vim.tbl_contains({ "zig", "nix", "go", "sh", "bash", "rust" }, vim.fn.getbufvar(opts.buf, "&filetype")) then
 			vim.api.nvim_create_autocmd({ "BufWritePre" }, {
 				group = vim.api.nvim_create_augroup("FormatOnSave", { clear = true }),

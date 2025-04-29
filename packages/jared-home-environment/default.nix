@@ -97,8 +97,6 @@ let
           tmuxFingers = pkgs.tmuxPlugins.fingers;
         };
 
-        ".config/emacs" = ./emacs;
-
         ".config/nvim" = pkgs.runCommand "nvim-config" { } ''
           cp -r ${./nvim} $out; chmod +w $out
           mkdir -p $out/pack/jared/start
@@ -174,7 +172,6 @@ let
           inotify-tools
           inotify-tools
           ipv6-link-local-ssh-proxy-command
-          jared-emacs
           jq
           just
           killall
