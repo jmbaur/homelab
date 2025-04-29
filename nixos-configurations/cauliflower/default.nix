@@ -58,6 +58,12 @@
   nixpkgs.buildPlatform = config.nixpkgs.hostPlatform;
   custom.recovery.targetDisk = "/dev/disk/by-path/pci-0000:01:00.0-nvme-1";
 
+  # Force using SOF driver, this is likely common to all alderlake
+  # chromebook devices.
+  boot.extraModprobeConfig = ''
+    options snd-intel-dspcfg dsp_driver=3
+  '';
+
   services.pipewire.wireplumber.configPackages = [
     (pkgs.writeTextDir "share/wireplumber/wireplumber.conf.d/10-pro-audio.conf" ''
       monitor.alsa.rules = [
