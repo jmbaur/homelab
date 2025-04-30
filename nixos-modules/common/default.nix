@@ -102,8 +102,7 @@ in
         }.tar.gz"
       ];
 
-      # MLS is deprecated (see https://github.com/NixOS/nixpkgs/issues/321121),
-      # beacondb.net has been proposed as a successor.
+      # TODO(jared): Can delete this after e51ab12e173e3699bb5c0fbe9985e5231d6729a4 is in nixos-unstable.
       services.geoclue2.geoProviderUrl = "https://beacondb.net/v1/geolocate";
     }
 

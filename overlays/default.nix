@@ -76,6 +76,18 @@ inputs: {
             };
           };
 
+          nvim-fzy = final.vimUtils.buildVimPlugin {
+            pname = "nvim-fzy";
+            version = "";
+            src = final.fetchFromGitea {
+              domain = "codeberg.org";
+              owner = "mfussenegger";
+              repo = "nvim-fzy";
+              rev = "cc41ba47d2f82c05cbf3a05b24dee325f8a96e1a";
+              hash = "sha256-XibxiD2ZPcipn3P9Ziiao2C0wZMLGZleBnHQe3xJoMA=";
+            };
+          };
+
           nvim-qwahl = final.vimUtils.buildVimPlugin {
             pname = "nvim-qwahl";
             version = "2025-03-26";
