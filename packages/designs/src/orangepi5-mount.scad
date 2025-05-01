@@ -5,7 +5,7 @@ tolerance = 0.5;
 
 board_screw_radius = 1 /* m2 screw */ + tolerance;
 
-mount_screw_radius = 2.75 /* m? screw */ / 2 + tolerance;
+mount_screw_radius = 3 /* m3 screw (self-taps into din rail mount) */ / 2 + tolerance;
 
 x = 100;
 y = 60;
