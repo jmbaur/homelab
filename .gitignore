@@ -1,4 +1,5 @@
 *.qcow2
+*.stl
 .direnv
 .nixos-test-history
 .pre-commit-config.yaml
