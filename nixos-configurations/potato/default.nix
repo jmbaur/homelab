@@ -78,6 +78,18 @@
             {
               matches = [
                 {
+                  device.name = "alsa_card.platform-avs_rt5663.2"
+                }
+              ]
+              actions = {
+                update-props = {
+                  device.profile = "pro-audio"
+                }
+              }
+            }
+            {
+              matches = [
+                {
                   device.name = "alsa_card.platform-avs_hdaudio.2"
                 }
               ]
