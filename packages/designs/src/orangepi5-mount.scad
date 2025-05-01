@@ -25,21 +25,21 @@ mount2_2_x = mount2_1_x + mount_screw_distance;
 mount2_2_y = mount2_1_y;
 
 module hole(r, x, y) {
-    translate([x, y, -tolerance]) linear_extrude(z+2*tolerance) circle(r=r, $fn=360);
+	translate([x, y, -tolerance]) linear_extrude(z+2*tolerance) circle(r=r, $fn=360);
 }
 
 difference() {
-    cube([x + off, y + off, z]);
+	cube([x + off, y + off, z]);
 
-    // board screws
-    hole(r=board_screw_radius, x=x, y=y);
-    hole(r=board_screw_radius, x=off, y=y);
-    hole(r=board_screw_radius, x=x, y=off);
-    hole(r=board_screw_radius, x=off, y=off);
-    
-    // mount screws
-    hole(r=mount_screw_radius, x=mount1_1_x + 2*off, y=mount1_1_y+off);
-    hole(r=mount_screw_radius, x=mount1_2_x + 2*off, y=mount1_2_y+off);
-    hole(r=mount_screw_radius, x=mount2_1_x + 2*off, y=mount2_1_y);
-    hole(r=mount_screw_radius, x=mount2_2_x + 2*off, y=mount2_2_y);
+	// board screws
+	hole(r=board_screw_radius, x=x, y=y);
+	hole(r=board_screw_radius, x=off, y=y);
+	hole(r=board_screw_radius, x=x, y=off);
+	hole(r=board_screw_radius, x=off, y=off);
+
+	// mount screws
+	hole(r=mount_screw_radius, x=mount1_1_x + 2*off, y=mount1_1_y+off);
+	hole(r=mount_screw_radius, x=mount1_2_x + 2*off, y=mount1_2_y+off);
+	hole(r=mount_screw_radius, x=mount2_1_x + 2*off, y=mount2_1_y);
+	hole(r=mount_screw_radius, x=mount2_2_x + 2*off, y=mount2_2_y);
 }
