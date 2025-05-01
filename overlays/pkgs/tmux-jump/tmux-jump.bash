@@ -38,6 +38,11 @@ if ! tmux_session_path=$(
 	exit 2
 fi
 
+if [[ ! -d "$tmux_session_path" ]]; then
+	echo "Directory $tmux_session_path does not exist"
+	exit 3
+fi
+
 # Decimals are not allowed in tmux's statusline.
 function escape_basename() {
 	basename "$1" | sed "s,\.,_,g"
