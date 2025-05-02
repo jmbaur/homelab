@@ -95,6 +95,10 @@ in
       # We use systemd-resolved
       services.avahi.enable = false;
 
+      # Allows desktops to do stuff like timezone detection, display
+      # modifications (brightness, redshift), etc.
+      services.geoclue2.enable = true;
+
       # It would be uncommon for a desktop system to have an NMEA serial device,
       # plus setting this to true means that geoclue will be dependent on avahi
       # being enabled, since NMEA support in geoclue uses avahi.

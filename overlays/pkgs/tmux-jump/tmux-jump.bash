@@ -20,7 +20,6 @@ if ! test -d "$base_directory"; then
 	exit 1
 fi
 
-tmux_session_path=
 if ! tmux_session_path=$(
 	fd '^\.git$' \
 		--base-directory "$base_directory" \
@@ -38,8 +37,10 @@ if ! tmux_session_path=$(
 	exit 2
 fi
 
-if [[ ! -d "$tmux_session_path" ]]; then
-	echo "Directory $tmux_session_path does not exist"
+tmux_session_directory="${base_directory}/${tmux_session_path}"
+
+if [[ ! -d "$tmux_session_directory" ]]; then
+	echo "Directory $tmux_session_directory does not exist"
 	exit 3
 fi
 
@@ -62,7 +63,7 @@ clients_attached=$(tmux list-sessions \
 if [[ -z $clients_attached ]]; then
 	tmux new-session -d \
 		-s "$tmux_session_name" \
-		-c "${base_directory}/${tmux_session_path}"
+		-c "$tmux_session_directory"
 fi
 
 if in_tmux; then
