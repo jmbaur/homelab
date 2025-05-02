@@ -35,6 +35,15 @@
           EFI_STUB = lib.kernel.yes;
         };
       }
+
+      # mvebu_v7_defconfig does not enable kexec
+      {
+        name = "kexec-support";
+        patch = null;
+        extraStructuredConfig = {
+          KEXEC = lib.kernel.yes;
+        };
+      }
     ];
 
     hardware.deviceTree = {
