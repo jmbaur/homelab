@@ -41,8 +41,9 @@ inputs.nixpkgs.lib.mapAttrs (
   {
     default = pkgs.mkShell {
       packages = [
-        pkgs.zig_0_14
+        pkgs.openscad
         pkgs.sops
+        pkgs.zig_0_14
       ];
 
       shellHook =

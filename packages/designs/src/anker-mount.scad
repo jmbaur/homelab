@@ -1,16 +1,17 @@
-// Din rail mount for the OrangePi 5 (with standoffs, not included) to be
-// mounted on a pair of generic din rail adapters, DigiKey part #277-2296-ND.
+// Din rail mount for the Anker 7-port USB hub (with standoffs, not included) to
+// be mounted on a pair of generic din rail adapters, DigiKey part #277-2296-ND.
 
 tolerance = 0.5;
 
-board_screw_radius = 1 /* m2 screw */ + tolerance;
+x = 109;
+y = 44;
+z = 23;
+
+thickness = 3;
 
 mount_screw_radius =
     3 /* m3 screw (self-taps into din rail mount) */ / 2 + tolerance;
 
-x = 100;
-y = 60;
-z = 4;
 off = 5; // offset from side
 
 mount_screw_distance = 25;
@@ -31,17 +32,40 @@ module hole(r, x, y) {
 }
 
 difference() {
-  cube([ x + off, y + off, z ]);
+  // outer
+  cube([
+    x + thickness + tolerance,
+    y + thickness + tolerance,
+    z + thickness + tolerance,
+  ]);
 
-  // board screws
-  hole(r = board_screw_radius, x = x, y = y);
-  hole(r = board_screw_radius, x = off, y = y);
-  hole(r = board_screw_radius, x = x, y = off);
-  hole(r = board_screw_radius, x = off, y = off);
+  // inner
+  translate([ -tolerance, thickness, thickness ]) cube([
+    x + tolerance,
+    y - thickness + tolerance,
+    z + thickness,
+  ]);
 
   // mount screws
   hole(r = mount_screw_radius, x = mount1_1_x + 2 * off, y = mount1_1_y + off);
   hole(r = mount_screw_radius, x = mount1_2_x + 2 * off, y = mount1_2_y + off);
   hole(r = mount_screw_radius, x = mount2_1_x + 2 * off, y = mount2_1_y);
   hole(r = mount_screw_radius, x = mount2_2_x + 2 * off, y = mount2_2_y);
-}
+};
+
+wing_length = 4;
+
+// top wings
+difference() {
+  color("lightblue") translate([ 0, 0, z + thickness + tolerance ]) cube([
+    x + thickness + tolerance,
+    y + thickness + tolerance,
+    thickness,
+  ]);
+
+  translate([ -tolerance, thickness * 2, z + thickness ]) cube([
+    x + tolerance,
+    y - 3 * thickness + tolerance,
+    thickness * 2,
+  ]);
+};

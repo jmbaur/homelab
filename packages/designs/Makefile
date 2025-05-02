@@ -2,16 +2,16 @@
 
 out ?= $(PWD)
 
-SOURCES := src/orangepi5-mount.scad
+SOURCES := $(wildcard src/*.scad)
 STLS := $(foreach source,$(SOURCES),$(patsubst %.scad,%.stl,$(source)))
 
 all: $(STLS)
 
 install: all
-	$(foreach stl,$(STLS),install -Dm0644 -t $(out) $(stl))
+	install -Dm0644 -t $(out) $(STLS)
 
 clean:
-	$(foreach stl,$(STLS),rm -f $(stl))
+	rm -f $(STLS)
 
 %.stl: %.scad
 	openscad --export-format=binstl -o $@ $<
