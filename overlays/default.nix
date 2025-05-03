@@ -12,7 +12,12 @@ inputs: {
     )
 
     # cross-compilation fixes
-    (_: prev: {
+    (final: prev: {
+      # TODO(jared): Can delete when https://github.com/NixOS/nixpkgs/pull/403807 is merged.
+      kodi = prev.kodi.override { jre_headless = final.buildPackages.jdk11_headless; };
+      kodi-wayland = prev.kodi-wayland.override { jre_headless = final.buildPackages.jdk11_headless; };
+      kodi-gbm = prev.kodi-gbm.override { jre_headless = final.buildPackages.jdk11_headless; };
+
       perlPackages = prev.perlPackages.overrideScope (
         _: perlPackagesPrev: {
           NetDNS = perlPackagesPrev.NetDNS.overrideAttrs (old: {
