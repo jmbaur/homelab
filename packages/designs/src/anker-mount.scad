@@ -3,9 +3,9 @@
 
 tolerance = 0.5;
 
-x = 109;
-y = 44;
-z = 23;
+x = 111;
+y = 45;
+z = 24;
 
 thickness = 3;
 
@@ -57,15 +57,15 @@ wing_length = 4;
 
 // top wings
 difference() {
-  color("lightblue") translate([ 0, 0, z + thickness + tolerance ]) cube([
+  translate([ 0, 0, z + thickness + tolerance ]) cube([
     x + thickness + tolerance,
     y + thickness + tolerance,
     thickness,
   ]);
 
   translate([ -tolerance, thickness * 2, z + thickness ]) cube([
-    x + tolerance,
+    x + tolerance - thickness,
     y - 3 * thickness + tolerance,
-    thickness * 2,
+    thickness + (2*tolerance),
   ]);
 };

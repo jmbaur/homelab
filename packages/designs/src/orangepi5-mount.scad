@@ -10,7 +10,7 @@ mount_screw_radius =
 
 x = 100;
 y = 60;
-z = 4;
+z = 3;
 off = 5; // offset from side
 
 mount_screw_distance = 25;
