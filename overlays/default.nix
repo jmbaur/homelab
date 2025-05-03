@@ -12,20 +12,32 @@ inputs: {
     )
 
     # cross-compilation fixes
-    (final: prev: {
-      # TODO(jared): Can delete when https://github.com/NixOS/nixpkgs/pull/403807 is merged.
-      kodi = prev.kodi.override { jre_headless = final.buildPackages.jdk11_headless; };
-      kodi-wayland = prev.kodi-wayland.override { jre_headless = final.buildPackages.jdk11_headless; };
-      kodi-gbm = prev.kodi-gbm.override { jre_headless = final.buildPackages.jdk11_headless; };
+    (
+      final: prev:
+      let
+        kodiOverrides = {
+          jre_headless = final.buildPackages.jdk11_headless;
+          ffmpeg = prev.ffmpeg_6.override {
+            # Ends up pulling in qt5 stuff that doesn't cross-compile.
+            withSdl2 = false;
+          };
+        };
+      in
+      {
+        # TODO(jared): Can delete when https://github.com/NixOS/nixpkgs/pull/403807 is merged.
+        kodi = prev.kodi.override kodiOverrides;
+        kodi-wayland = prev.kodi-wayland.override kodiOverrides;
+        kodi-gbm = prev.kodi-gbm.override kodiOverrides;
 
-      perlPackages = prev.perlPackages.overrideScope (
-        _: perlPackagesPrev: {
-          NetDNS = perlPackagesPrev.NetDNS.overrideAttrs (old: {
-            patches = (old.patches or [ ]) ++ [ ./perl-netdns-fix-cross.patch ];
-          });
-        }
-      );
-    })
+        perlPackages = prev.perlPackages.overrideScope (
+          _: perlPackagesPrev: {
+            NetDNS = perlPackagesPrev.NetDNS.overrideAttrs (old: {
+              patches = (old.patches or [ ]) ++ [ ./perl-netdns-fix-cross.patch ];
+            });
+          }
+        );
+      }
+    )
 
     # all other packages
     (final: prev: {
