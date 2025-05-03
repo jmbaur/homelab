@@ -66,6 +66,6 @@ difference() {
   translate([ -tolerance, thickness * 2, z + thickness ]) cube([
     x + tolerance - thickness,
     y - 3 * thickness + tolerance,
-    thickness + (2*tolerance),
+    thickness + (2 * tolerance),
   ]);
 };
