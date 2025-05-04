@@ -17,13 +17,18 @@ z = 24;
 overhang_length = 4;
 
 module hole(r, x, y) {
-  translate([ x, y, -((z + thickness + tolerance) / 2) ])
-      linear_extrude(thickness, center = true) circle(r = r, $fn = 360);
+  translate([ x, y, -((z + thickness + (2 * tolerance)) / 2) ])
+      linear_extrude(thickness + tolerance, center = true)
+          circle(r = r, $fn = 360);
 }
 
 difference() {
   // outer
-  cube([ x, y + (2 * thickness), z + (2 * thickness) ], center = true);
+  cube(
+      [
+        x, y + (2 * (thickness + tolerance)), z + (2 * (thickness + tolerance))
+      ],
+      center = true);
 
   // bottom inner
   cube(
@@ -35,13 +40,13 @@ difference() {
       center = true);
 
   // top inner
-  translate([ 0, 0, (z + thickness + tolerance) / 2 ]) cube(
-      [
-        x + (2 * tolerance),
-        y - (2 * overhang_length),
-        thickness,
-      ],
-      center = true);
+  translate([ 0, 0, (z + thickness + (2 * tolerance)) / 2 ]) cube(
+        [
+          x + (2 * tolerance),
+          y - (2 * overhang_length),
+          thickness + tolerance,
+        ],
+        center = true);
 
   // mount screws
   hole(r = mount_screw_radius, x = 0, y = mount_screw_distance / 2);
