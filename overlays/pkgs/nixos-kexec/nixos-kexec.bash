@@ -13,13 +13,7 @@ eval "$(argc --argc-eval "$0" "$@")"
 choice=${argc_config:-}
 
 if [[ -z $choice ]]; then
-	choice=$(
-		find /nix/var/nix/profiles -name 'system-*' | tac |
-			(
-				mapfile -t stdin </dev/stdin
-				if [[ ${#stdin[@]} -eq 1 ]]; then printf "%s" "${stdin[0]}"; else printf "%s\n" "${stdin[@]}" | fzy; fi
-			)
-	)
+	choice=$(find /nix/var/nix/profiles -name 'system-*' | tac | fzf --select-1)
 fi
 
 if [[ -z $choice ]]; then

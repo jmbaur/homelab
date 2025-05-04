@@ -1,7 +1,7 @@
 {
   argc,
   coreutils-full,
-  fzy,
+  fzf,
   jq,
   kexec-tools,
   lib,
@@ -15,7 +15,7 @@ writeShellApplication {
     argc
     coreutils-full
     jq
-    fzy
+    fzf
     kexec-tools
   ];
 

@@ -179,6 +179,7 @@ let
           linux-scripts
           lrzsz
           lsof
+          lua-language-server
           macgen
           man-pages
           man-pages-posix

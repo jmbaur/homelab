@@ -27,11 +27,7 @@ if ! tmux_session_path=$(
 		--max-depth 2 \
 		--no-ignore |
 		sed 's,/\.git/\?,,' |
-		{ [[ -n ${1-} ]] && grep ".*$1.*" || cat; } |
-		(
-			mapfile -t stdin </dev/stdin
-			if [[ ${#stdin[@]} -eq 1 ]]; then printf "%s" "${stdin[0]}"; else printf "%s\n" "${stdin[@]}" | fzy; fi
-		)
+		{ [[ -n ${1-} ]] && grep ".*$1.*" || cat; } | fzf --select-1
 ); then
 	echo "No matches"
 	exit 2

@@ -59,6 +59,22 @@ if vim.fn.executable("gopls") == 1 then
 	})
 end
 
+if vim.fn.executable("lua-language-server") == 1 then
+	add_lsp("lua-language-server", {
+		cmd = { "lua-language-server" },
+		filetypes = { "lua" },
+		root_markers = {
+			".luacheckrc",
+			".luarc.json",
+			".luarc.jsonc",
+			".stylua.toml",
+			"selene.toml",
+			"selene.yml",
+			"stylua.toml",
+		},
+	})
+end
+
 if vim.fn.executable("pyright-langserver") == 1 then
 	add_lsp("pyright", {
 		cmd = { "pyright-langserver", "--stdio" },

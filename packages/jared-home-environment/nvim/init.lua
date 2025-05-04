@@ -32,28 +32,40 @@ vim.api.nvim_create_autocmd({ "ColorScheme" }, {
 	end,
 })
 
+function setup_fzf(background)
+	fzf_lua.setup({
+		fzf_args = string.format("--color=%s", background or "dark"),
+		defaults = { file_icons = false },
+		files = { previewer = false },
+		winopts = {
+			split = "botright 15new",
+			border = "single",
+			preview = {
+				hidden = "hidden",
+				border = "border",
+				title = false,
+				layout = "horizontal",
+				horizontal = "right:50%",
+			},
+		},
+	})
+end
+
+-- Neovim does some detection of the terminal background color prior to setting
+-- the "background" option (unless of course we set it explicitly ourselves).
+-- So in order to ensure fzf-lua has a correct initial configuration according
+-- to what we want, even if the "background" option hasn't been set yet, we can
+-- do the initial configuration here and then perform the configuration again
+-- once the "background" option is set.
+setup_fzf()
+
+-- Will be called once per startup. This is the only way we can obtain the
+-- correct auto-detected background set by neovim.
 vim.api.nvim_create_autocmd({ "OptionSet" }, {
 	pattern = { "background" },
 	callback = function(opts)
-		-- Will be called once per startup. This is the only way we can obtain
-		-- the correct auto-detected background set by neovim.
 		if opts.match == "background" then
-			fzf_lua.setup({
-				fzf_args = string.format("--color=%s", vim.opt.background:get() == "light" and "light" or "dark"),
-				defaults = { file_icons = false },
-				files = { previewer = false },
-				winopts = {
-					split = "botright 15new",
-					border = "single",
-					preview = {
-						hidden = "hidden",
-						border = "border",
-						title = false,
-						layout = "horizontal",
-						horizontal = "right:50%",
-					},
-				},
-			})
+			setup_fzf(vim.opt.background:get())
 		end
 	end,
 })
