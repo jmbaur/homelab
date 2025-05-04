@@ -112,3 +112,11 @@ vim.keymap.set("n", "<Leader>c", fzf_lua.resume, { desc = "Resume picker" })
 vim.keymap.set("n", "<Leader>f", fzf_lua.files, { desc = "Find files" })
 vim.keymap.set("n", "<Leader>g", fzf_lua.live_grep, { desc = "Find regexp pattern" })
 vim.keymap.set("n", "<Leader>h", fzf_lua.command_history, { desc = "Find Ex-mode history" })
+
+require("nvim-treesitter.configs").setup({
+	indent = { enable = true },
+	highlight = {
+		enable = true,
+		additional_vim_regex_highlighting = false,
+	},
+})

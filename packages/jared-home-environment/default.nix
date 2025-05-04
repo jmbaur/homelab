@@ -97,30 +97,7 @@ let
           tmuxFingers = pkgs.tmuxPlugins.fingers;
         };
 
-        ".config/nvim" = pkgs.runCommand "nvim-config" { } ''
-          cp -r ${./nvim} $out; chmod +w $out
-          mkdir -p $out/pack/jared/start
-          ${lib.concatLines (
-            map
-              (plugin: ''
-                cp -r ${plugin} $out/pack/jared/start/${plugin.name}
-              '')
-              (
-                with pkgs.vimPlugins;
-                [
-                  bpftrace-vim
-                  fzf-lua
-                  nvim-qwahl
-                  vim-dispatch
-                  vim-eunuch
-                  vim-fugitive
-                  vim-rsi
-                  vim-surround
-                  vim-vinegar
-                ]
-              )
-          )}
-        '';
+        ".config/nvim" = ./nvim;
       };
 
       packages =
@@ -132,6 +109,17 @@ let
             withPython3 = false;
             withRuby = false;
             wrapRc = false;
+            plugins = with pkgs.vimPlugins; [
+              bpftrace-vim
+              fzf-lua
+              nvim-treesitter.withAllGrammars
+              vim-dispatch
+              vim-eunuch
+              vim-fugitive
+              vim-rsi
+              vim-surround
+              vim-vinegar
+            ];
           })
         ]
         ++ (with pkgs; [
