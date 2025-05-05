@@ -41,7 +41,7 @@ inputs.nixpkgs.lib.mapAttrs (
   {
     default = pkgs.mkShell {
       packages = [
-        pkgs.openscad
+        pkgs.openscad-unstable
         pkgs.sops
         pkgs.zig_0_14
       ];

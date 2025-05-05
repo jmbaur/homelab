@@ -1,6 +1,6 @@
 {
   stdenvNoCC,
-  openscad,
+  openscad-unstable,
   lib,
 }:
 
@@ -15,5 +15,5 @@ stdenvNoCC.mkDerivation {
     ];
   };
 
-  nativeBuildInputs = [ openscad ];
+  nativeBuildInputs = [ openscad-unstable ];
 }
