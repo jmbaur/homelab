@@ -51,7 +51,7 @@ if vim.fn.executable("gopls") == 1 then
 		cmd = { "gopls", "serve" },
 		filetypes = { "go", "gomod" },
 		settings = {
-			["gopls"] = {
+			gopls = {
 				gofumpt = vim.fn.executable("gofumpt") == 1,
 				staticcheck = vim.fn.executable("staticcheck") == 1,
 			},
@@ -88,6 +88,7 @@ if vim.fn.executable("zls") == 1 then
 		cmd = { "zls" },
 		filetypes = { "zig" },
 		root_markers = { "build.zig", "build.zig.zon" },
+		settings = { zls = { semantic_tokens = "partial" } },
 	})
 end
 
