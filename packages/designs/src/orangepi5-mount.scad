@@ -3,11 +3,13 @@
 
 tolerance = 0.001;
 
+screw_radius_tolerance = 0.3;
+
 // m2 screw
-board_screw_radius = 1;
+board_screw_radius = 1 + screw_radius_tolerance;
 
 // m3 screw (self-taps into din rail mount)
-mount_screw_radius = 1.5;
+mount_screw_radius = 1.5 + screw_radius_tolerance;
 
 x = 100;
 y = 60;

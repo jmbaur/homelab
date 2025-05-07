@@ -3,16 +3,20 @@
 
 tolerance = 0.001;
 
-mount_screw_radius =
-    (3 /* m3 screw (self-taps into din rail mount) */ / 2) + tolerance;
+inside_tolerance = 0.5;
+
+screw_radius_tolerance = 0.3;
+
+mount_screw_radius = (3 /* m3 screw (self-taps into din rail mount) */ / 2) +
+                     screw_radius_tolerance;
 
 thickness = 3;
 
 mount_screw_distance = 25;
 
-x = mount_screw_radius * 4;
-y_bottom = 45.5;
-y_top = 44.1;
+x = 15;
+y_bottom = 45.5 + inside_tolerance;
+y_top = 44.1 + inside_tolerance;
 z = 23;
 
 overhang_length = 4;
