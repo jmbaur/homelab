@@ -2,7 +2,7 @@ tolerance = 0.001;
 
 screw_distance = 70;
 screw_radius_tolerance = 0.5;
-screw_radius = 5 /* m5 screw size */ / 2 + screw_radius_tolerance;
+screw_radius = 6 /* m6 screw size */ / 2 + screw_radius_tolerance;
 
 thickness = 5;
 
