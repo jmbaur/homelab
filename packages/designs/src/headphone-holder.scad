@@ -1,17 +1,17 @@
 tolerance = 0.001;
 
-screw_distance = 70;
+screw_distance = 72;
 screw_radius_tolerance = 0.5;
 screw_radius = 6 /* m6 screw size */ / 2 + screw_radius_tolerance;
 
-thickness = 5;
+thickness = 3;
 
-mount_plate_x = 100;
+mount_plate_x = 90;
 mount_plate_y = 40;
 
 holder_plate_x = 50;
 holder_plate_y = 70;
-holder_plate_z_translate = holder_plate_y / 2 + thickness / 2;
+holder_plate_z_translate = holder_plate_y / 2;
 
 holder_radius = 20;
 holder_length = mount_plate_y;
@@ -27,7 +27,7 @@ module hole(r, x, y, z) {
 difference() {
   minkowski() {
     cube([ mount_plate_x, mount_plate_y, thickness / 2 ], center = true);
-    sphere(r = 2);
+    cylinder(h = thickness / 2, r = 2, center = true);
   }
 
   translate([ 0, -20 + thickness / 2, 20 + thickness / 2 ]) rotate([ 90, 0, 0 ])
@@ -38,10 +38,10 @@ difference() {
 }
 
 minkowski() {
-  translate([ 0, -mount_plate_y / 2 + thickness / 2, holder_plate_z_translate ])
+  translate([ 0, -mount_plate_y / 2 + thickness / 4, holder_plate_z_translate ])
       rotate([ 90, 0, 0 ]) cube(
           [ holder_plate_x, holder_plate_y, thickness / 2 ], center = true);
-  sphere(r = 1);
+  cylinder(h = thickness / 2, r = 2, center = true);
 }
 
 hull() {
