@@ -18,13 +18,18 @@ side_offset = 5; // offset from side
 
 mount_screw_distance = 25;
 
+$fn = 100;
+
 module hole(r, x, y) {
   translate([ x, y, -tolerance / 2 ])
       linear_extrude(z + 2 * tolerance, center = true) circle(r = r, $fn = 360);
 }
 
 difference() {
-  cube([ x + (2 * side_offset), y + 2 * side_offset, z ], center = true);
+  minkowski() {
+    cube([ x + (2 * side_offset), y + 2 * side_offset, z / 2 ], center = true);
+    cylinder(h = z / 2, r = 2, center = true);
+  }
 
   // board screws
   hole(r = board_screw_radius, x = x / 2 - side_offset,
