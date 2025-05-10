@@ -110,7 +110,8 @@
     {
       nixpkgs.buildPlatform = config.nixpkgs.hostPlatform;
 
-      custom.desktop.enable = true;
+      custom.basicNetwork.enable = true;
+      custom.normalUser.enable = true;
       custom.dev.enable = true;
       custom.recovery.targetDisk = "/dev/disk/by-path/pci-0000:03:00.0-nvme-1";
 

@@ -71,7 +71,8 @@
       services.evremap.enable = false;
     }
     {
-      custom.desktop.enable = true;
+      custom.basicNetwork.enable = true;
+      custom.normalUser.enable = true;
       custom.dev.enable = true;
       custom.recovery.targetDisk = "/dev/disk/by-path/platform-a41000000.pcie-pci-0004:41:00.0-nvme-1";
     }
