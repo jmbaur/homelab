@@ -9,11 +9,11 @@ thickness = 3;
 mount_plate_x = 90;
 mount_plate_y = 40;
 
-holder_plate_x = 50;
+holder_plate_x = 40;
 holder_plate_y = 70;
 holder_plate_z_translate = holder_plate_y / 2;
 
-holder_radius = 20;
+holder_radius = holder_plate_x / 2 + 2;
 holder_length = mount_plate_y;
 holder_z_translate = holder_plate_z_translate + 10;
 
@@ -37,18 +37,45 @@ difference() {
   hole(screw_radius, screw_distance / 2, 0, 0);
 }
 
-minkowski() {
-  translate([ 0, -mount_plate_y / 2 + thickness / 4, holder_plate_z_translate ])
-      rotate([ 90, 0, 0 ]) cube(
-          [ holder_plate_x, holder_plate_y, thickness / 2 ], center = true);
-  cylinder(h = thickness / 2, r = 2, center = true);
-}
+difference() {
+  minkowski() {
+    translate(
+        [ 0, -mount_plate_y / 2 + thickness / 4, holder_plate_z_translate ])
+        rotate([ 90, 0, 0 ]) cube(
+            [ holder_plate_x, holder_plate_y, thickness / 2 ], center = true);
+    cylinder(h = thickness / 2, r = 2, center = true);
+  }
 
-hull() {
-  translate([ 0, thickness / 2, holder_z_translate ]) rotate([ 90, 0, 0 ])
-      linear_extrude(height = holder_length, center = true)
+  translate([ 0, -mount_plate_y / 2 + thickness / 4, holder_z_translate ])
+      rotate([ 90, 0, 0 ]) linear_extrude(height = 2 * thickness, center = true)
           circle(r = holder_radius);
 
-  translate([ 0, holder_length / 2, holder_z_translate ])
+  minkowski() {
+    translate([
+      0, -mount_plate_y / 2 + thickness / 4,
+      holder_z_translate + holder_plate_y / 2
+    ]) rotate([ 90, 0, 0 ])
+        cube([ holder_plate_x, holder_plate_y, thickness / 2 ], center = true);
+    cylinder(h = thickness / 2, r = 2 + tolerance, center = true);
+  }
+}
+
+translate([
+  0, -mount_plate_y / 2 - 2 / 4,
+  (holder_plate_y - holder_radius - thickness) / 2
+]) rotate([ 90, 0, 0 ])
+    cube(
+        [
+          holder_plate_x + 2 * 2, holder_plate_y - holder_radius - thickness,
+          thickness
+        ],
+        center = true);
+
+hull() {
+  translate([ 0, thickness / 2 - thickness / 2 - 2, holder_z_translate ])
+      rotate([ 90, 0, 0 ]) linear_extrude(height = holder_length, center = true)
+          circle(r = holder_radius);
+
+  translate([ 0, holder_length / 2 - thickness / 2 - 2, holder_z_translate ])
       sphere(r = holder_radius);
 }
