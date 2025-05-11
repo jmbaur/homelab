@@ -124,6 +124,8 @@
       };
 
       custom.yggdrasil.peers.broccoli.allowedTCPPorts = [ 22 ];
+
+      services.tailscale.enable = true;
     }
   ];
 }
