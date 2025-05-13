@@ -49,16 +49,6 @@ inputs: {
         patches = (old.patches or [ ]) ++ [ ./way-displays-default-dpi.patch ];
       });
 
-      tmux = prev.tmux.overrideAttrs (old: rec {
-        version = old.version + "-" + builtins.substring 0 7 src.rev;
-        src = final.fetchFromGitHub {
-          owner = "tmux";
-          repo = "tmux";
-          rev = "d3c39375d5e9f4a0dcb5bd210c912d70ceca5de9";
-          hash = "sha256-CTo6NJTuS2m5W6WyqTHg4G6NiRqt874pFGvVgmbKeC8=";
-        };
-      });
-
       vimPlugins = prev.vimPlugins.extend (
         _: _: {
           bpftrace-vim = final.vimUtils.buildVimPlugin {
