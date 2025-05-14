@@ -132,6 +132,7 @@ let
           bat
           binary-diff
           bpftrace
+          bpftrace
           cachix
           carapace
           clang-tools
