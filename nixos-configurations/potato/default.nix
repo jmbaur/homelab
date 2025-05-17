@@ -126,6 +126,7 @@
       custom.yggdrasil.peers.broccoli.allowedTCPPorts = [ 22 ];
 
       services.tailscale.enable = true;
+      networking.firewall.interfaces.${config.services.tailscale.interfaceName}.allowedTCPPorts = [ 22 ];
     }
   ];
 }

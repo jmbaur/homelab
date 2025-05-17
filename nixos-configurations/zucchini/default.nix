@@ -77,6 +77,7 @@
       custom.recovery.targetDisk = "/dev/disk/by-path/platform-a41000000.pcie-pci-0004:41:00.0-nvme-1";
 
       services.tailscale.enable = true;
+      networking.firewall.interfaces.${config.services.tailscale.interfaceName}.allowedTCPPorts = [ 22 ];
     }
   ];
 }
