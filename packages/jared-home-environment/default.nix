@@ -207,6 +207,7 @@ let
           strace-with-colors
           tcpdump
           tea
+          tinyxxd
           tio
           tmux
           tmux-jump
