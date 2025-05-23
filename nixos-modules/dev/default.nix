@@ -40,22 +40,19 @@ in
       preferStaticEmulators = true;
 
       emulatedSystems =
-        # TODO(jared): will not be fixed until we have https://github.com/nixos/nixpkgs/commits/a1d539f8eecffd258f3ed1ccc3a055aed56fbaa1
-        lib.mkIf false (
-          lib.optionals pkgs.stdenv.hostPlatform.isAarch64 [
-            # TODO(jared): pkgsStatic.qemu-user doesn't build right now
-            # "riscv32-linux"
-            # "riscv64-linux"
-            # "i686-linux"
-            # "x86_64-linux"
-          ]
-          ++ lib.optionals pkgs.stdenv.hostPlatform.isx86_64 [
-            # "riscv32-linux"
-            # "riscv64-linux"
-            # "armv7l-linux"
-            # "aarch64-linux"
-          ]
-        );
+        lib.optionals pkgs.stdenv.hostPlatform.isAarch64 [
+          # TODO(jared): pkgsStatic.qemu-user doesn't build right now
+          # "riscv32-linux"
+          # "riscv64-linux"
+          # "i686-linux"
+          # "x86_64-linux"
+        ]
+        ++ lib.optionals pkgs.stdenv.hostPlatform.isx86_64 [
+          "riscv32-linux"
+          "riscv64-linux"
+          "armv7l-linux"
+          "aarch64-linux"
+        ];
     };
   };
 }
