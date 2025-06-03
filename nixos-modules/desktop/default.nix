@@ -22,30 +22,78 @@ in
     {
       custom.normalUser.enable = true;
 
-      services.evremap = {
-        enable = mkDefault true;
-        settings.device_name = mkIf pkgs.stdenv.hostPlatform.isx86_64 (
-          mkDefault "AT Translated Set 2 keyboard"
-        );
-
-        settings.remap = mkDefault [
-          {
-            input = [ "KEY_CAPSLOCK" ];
-            output = [ "KEY_LEFTCTRL" ];
-          }
-          {
-            input = [ "KEY_LEFTCTRL" ];
-            output = [ "KEY_CAPSLOCK" ];
-          }
-        ];
-      };
+      environment.systemPackages = [
+        pkgs.clipman
+        pkgs.i3status
+        pkgs.kanshi
+        pkgs.mako
+        pkgs.wl-clipboard
+        (pkgs.runCommand "default-icon-theme" { } ''
+          mkdir -p $out/share/icons
+          ln -sf ${pkgs.adwaita-icon-theme}/share/icons/Adwaita $out/share/icons/default
+        '')
+      ];
 
       programs.yubikey-touch-detector.enable = mkDefault true;
-      services.desktopManager.plasma6.enable = true;
-      services.displayManager.sddm.enable = true;
       services.flatpak.enable = true;
       services.fwupd.enable = mkDefault true;
       services.printing.enable = mkDefault true;
+      services.automatic-timezoned.enable = mkDefault true;
+      security.rtkit.enable = mkDefault true;
+
+      environment.etc."sway/config.d/input.conf".text = ''
+        input type:keyboard xkb_options ctrl:nocaps
+        input type:touchpad {
+          natural_scroll enabled
+          tap enabled
+        }
+      '';
+
+      environment.etc."sway/config.d/idle.conf".text = ''
+        exec swayidle -w timeout 300 'swaylock -f -c 000000' timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' before-sleep 'swaylock -f -c 000000' lock 'swaylock -f -c 000000'
+      '';
+
+      environment.etc."sway/config.d/output.conf".text = ''
+        output * background #444444 solid_color
+      '';
+
+      environment.etc."sway/config.d/custom.conf".text = ''
+        bindsym $mod+Shift+d exec makoctl dismiss --all
+        bindsym $mod+Shift+v exec clipman pick --tool CUSTOM --tool-args wmenu --err-on-no-selection
+
+        exec wl-paste -t text --watch clipman store
+
+        workspace_auto_back_and_forth yes
+
+        bar {
+          binding_mode_indicator no
+          workspace_buttons no
+          mode hide
+          tray_output none
+          status_command i3status
+          colors {
+            statusline #ffffff
+            background #323232
+            inactive_workspace #32323200 #32323200 #5c5c5c
+          }
+        }
+      '';
+
+      programs.sway.enable = true;
+      programs.foot = {
+        enable = true;
+        settings = {
+          mouse.hide-when-typing = "yes";
+          main = {
+            selection-target = "both";
+            font = "monospace:size=12";
+          };
+          colors = {
+            background = "000000";
+            foreground = "ffffff";
+          };
+        };
+      };
 
       programs.dconf = {
         enable = true;
@@ -62,7 +110,7 @@ in
           [
             {
               # Default value only looks good in GNOME
-              "browser.tabs.inTitlebar" = mkIf (!config.services.xserver.desktopManager.gnome.enable) 0;
+              "browser.tabs.inTitlebar" = mkIf (!config.services.desktopManager.gnome.enable) 0;
             }
           ]
           # Default is 2 for some reason, using 1 makes firefox use the

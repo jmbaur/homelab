@@ -80,7 +80,6 @@ vim.opt.autoread = true
 vim.opt.clipboard = "unnamedplus"
 vim.opt.colorcolumn = tostring(80)
 vim.opt.completeopt = table.concat({ "popup", "menuone", "noinsert", "noselect", "fuzzy" }, ",")
-vim.opt.exrc = true
 vim.opt.hidden = true
 vim.opt.hlsearch = true
 vim.opt.ignorecase = true

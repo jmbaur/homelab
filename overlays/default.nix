@@ -7,7 +7,7 @@ inputs: {
       final: prev:
       prev.lib.packagesFromDirectoryRecursive {
         inherit (final) callPackage;
-        directory = ./pkgs;
+        directory = ./by-name;
       }
     )
 
@@ -41,14 +41,6 @@ inputs: {
 
     # all other packages
     (final: prev: {
-      patchNameFromSubject =
-        name:
-        (final.lib.replaceStrings [ " " "[" "]" "," "/" ":" ] [ "-" "" "" "_" "_" "" ] name) + ".patch";
-
-      way-displays = prev.way-displays.overrideAttrs (old: {
-        patches = (old.patches or [ ]) ++ [ ./way-displays-default-dpi.patch ];
-      });
-
       vimPlugins = prev.vimPlugins.extend (
         _: _: {
           bpftrace-vim = final.vimUtils.buildVimPlugin {
