@@ -26,7 +26,7 @@ in
 
   config = mkIf cfg.enable (mkMerge [
     {
-      system.stateVersion = mkDefault "25.05";
+      system.stateVersion = mkDefault "25.11";
 
       environment.systemPackages = [ pkgs.nixos-kexec ];
 
