@@ -60,6 +60,8 @@ in
       environment.etc."sway/config.d/custom.conf".text = ''
         bindsym $mod+Shift+d exec makoctl dismiss --all
         bindsym $mod+Shift+v exec clipman pick --tool CUSTOM --tool-args wmenu --err-on-no-selection
+        bindsym $mod+Shift+s sticky toggle
+        bindsym $mod+Control+l exec loginctl lock-session
 
         exec wl-paste -t text --watch clipman store
 
