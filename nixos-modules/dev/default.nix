@@ -349,13 +349,16 @@ in
           escapeTime = 10;
           historyLimit = 50000;
           keyMode = "vi";
-          shortcut = "s";
           terminal = "tmux-256color";
           plugins = [
             pkgs.tmuxPlugins.fingers
             pkgs.tmuxPlugins.logging
           ];
           extraConfig = ''
+            unbind C-b
+            set -g prefix C-s
+            bind-key -N "Send the prefix key through to the application" C-s send-prefix
+
             set-option -as terminal-features ",alacritty:RGB"
             set-option -as terminal-features ",foot:RGB"
             set-option -as terminal-features ",rio:RGB"
@@ -377,6 +380,8 @@ in
             set-option -g status-left-length 90
             set-option -g status-right-length 90
 
+            bind-key -N "Kill the current pane" x kill-pane
+            bind-key -N "Kill the current window" & kill-window
             bind-key -T copy-mode-vi v send-keys -X begin-selection
             bind-key -T copy-mode-vi y send-keys -X copy-selection
             bind-key ESCAPE copy-mode
