@@ -248,7 +248,7 @@ in
               prune = true;
               prunetags = true;
             };
-            # "git-extras \"get\"".clone-path = "${config.users.users.jared.home}/.local/state/projects";
+            "git-extras \"get\"".clone-path = "/var/lib/projects";
             gpg.format = "ssh";
             "gpg \"ssh\"".program = "ssh-keygen";
             init.defaultBranch = "main";
@@ -275,6 +275,11 @@ in
               ''
             );
           };
+        };
+
+        systemd.tmpfiles.settings."10-projects"."/var/lib/projects".d = {
+          group = config.users.groups.wheel.name;
+          mode = "0770";
         };
 
         programs.direnv.enable = true;

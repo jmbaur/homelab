@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 
-default_base_directory=${XDG_STATE_HOME:-${HOME}/.local/state}/projects
+declare -r default_base_directory=/var/lib/projects
 
 function usage() {
 	if [[ -n ${1-} ]]; then
