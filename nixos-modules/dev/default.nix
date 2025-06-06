@@ -192,13 +192,7 @@ in
             ProxyCommand ipv6-link-local-ssh-proxy-command %h %p
 
           Host *
-            ForwardAgent no
-            AddKeysToAgent no
-            Compression no
-            ServerAliveInterval 0
-            ServerAliveCountMax 3
-            HashKnownHosts no
-            UserKnownHostsFile ~/.ssh/known_hosts
+            ServerAliveInterval 11
             ControlMaster auto
             ControlPath /tmp/ssh-%i-%C
             ControlPersist 30m
