@@ -5,6 +5,7 @@ let
     attrValues
     concatLines
     concatMapStringsSep
+    mapAttrs'
     mapAttrsToList
     mkAfter
     mkDefault
@@ -12,6 +13,7 @@ let
     mkIf
     mkMerge
     mkOption
+    nameValuePair
     optionalString
     types
     ;
@@ -79,11 +81,9 @@ in
       services.yggdrasil.settings.IfName = mkDefault "ygg0";
     }
     (mkIf (cfg.peers != { }) {
-      networking.extraHosts = concatLines (
-        mapAttrsToList (peerName: peerSettings: ''
-          ${peerSettings.ip} ${peerName}.internal
-        '') cfg.peers
-      );
+      networking.hosts = mapAttrs' (
+        peerName: peerSettings: nameValuePair peerSettings.ip [ "${peerName}.internal" ]
+      ) cfg.peers;
 
       networking.nftables.tables."nixos-fw".content =
         let
