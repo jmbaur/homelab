@@ -53,6 +53,16 @@ in
       '';
 
       environment.etc."sway/config.d/output.conf".text = ''
+        exec kanshi --config ${pkgs.writeText "kanshi.conf" ''
+          profile docked {
+            output eDP-1 disable
+            output * enable
+          }
+          profile undocked {
+            output * enable
+          }
+        ''}
+
         output * background #444444 solid_color
       '';
 
