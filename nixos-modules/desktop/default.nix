@@ -35,7 +35,6 @@ in
       ];
 
       programs.yubikey-touch-detector.enable = mkDefault true;
-      services.flatpak.enable = true;
       services.fwupd.enable = mkDefault true;
       services.printing.enable = mkDefault true;
       services.automatic-timezoned.enable = mkDefault true;
