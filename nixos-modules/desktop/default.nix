@@ -68,6 +68,7 @@ in
         workspace_auto_back_and_forth yes
 
         bar {
+          position top
           binding_mode_indicator no
           workspace_buttons no
           mode hide
