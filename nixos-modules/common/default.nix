@@ -124,6 +124,11 @@ in
         "sd[a-z][0-9]*" = "bfq";
         "nvme[0-9]*" = "mq-deadline";
       };
+
+      boot.kernelParams = [
+        "systemd.show_status=auto"
+        "systemd.log_level=warning"
+      ];
     }
 
     {
