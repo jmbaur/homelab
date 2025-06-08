@@ -24,7 +24,7 @@ in
 
       environment.systemPackages = [
         pkgs.clipman
-        pkgs.i3status
+        pkgs.i3status-rust
         pkgs.kanshi
         pkgs.mako
         pkgs.wl-clipboard
@@ -35,6 +35,7 @@ in
       ];
 
       programs.yubikey-touch-detector.enable = mkDefault true;
+      services.upower.enable = mkDefault true;
       services.fwupd.enable = mkDefault true;
       services.printing.enable = mkDefault true;
       services.automatic-timezoned.enable = mkDefault true;
@@ -82,7 +83,7 @@ in
           workspace_buttons no
           mode hide
           tray_output none
-          status_command i3status
+          status_command i3status-rs ${./i3status-rs.toml}
           colors {
             statusline #ffffff
             background #323232
