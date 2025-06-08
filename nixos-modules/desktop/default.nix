@@ -98,8 +98,9 @@ in
         settings = {
           mouse.hide-when-typing = "yes";
           main = {
-            selection-target = "both";
             font = "monospace:size=12";
+            resize-by-cells = "no";
+            selection-target = "both";
           };
           colors = {
             background = "000000";
