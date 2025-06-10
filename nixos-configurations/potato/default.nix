@@ -38,12 +38,7 @@
       };
 
       boot.loader.systemd-boot.enable = true;
-      tinyboot = {
-        enable = false;
-        chromebook = true;
-        efi = true; # coreboot exposes an efi-compatible framebuffer
-        linux.consoles = [ "ttyS0,115200n8" ];
-      };
+      boot.loader.tinyboot.enable = false;
 
       boot.kernelParams = [ "console=ttyS0,115200" ];
       systemd.services."serial-getty@ttyS0" = {

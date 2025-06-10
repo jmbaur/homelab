@@ -97,6 +97,6 @@ in
 
     boot.loader.grub = { inherit extraInstallCommands; };
     boot.loader.systemd-boot = { inherit extraInstallCommands; };
-    tinyboot = { inherit extraInstallCommands; };
+    boot.loader.tinyboot = { inherit extraInstallCommands; };
   };
 }

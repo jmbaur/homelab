@@ -37,19 +37,7 @@
   boot.initrd.systemd.tpm2.enable = false;
 
   boot.loader.systemd-boot.enable = false;
-  tinyboot = {
-    enable = true;
-    chromebook = true;
-    efi = true; # coreboot exposes an efi-compatible framebuffer
-    linux.consoles = [
-      "ttyS0,115200n8"
-      "tty1"
-    ];
-    linux.kconfig = with lib.kernel; {
-      PINCTRL_ALDERLAKE = yes;
-      PINCTRL_TIGERLAKE = yes;
-    };
-  };
+  boot.loader.tinyboot.enable = true;
 
   services.yggdrasil.settings.Peers = [ "tls://celery.jmbaur.com:443" ];
 
