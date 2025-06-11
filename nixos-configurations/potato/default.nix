@@ -4,6 +4,13 @@
   pkgs,
   ...
 }:
+
+let
+  tinybootKernel = pkgs.linuxKernel.manualConfig {
+    inherit (pkgs.linux_6_15) src version;
+    configfile = ./tinyboot-linux.config;
+  };
+in
 {
   config = lib.mkMerge [
     {
@@ -32,8 +39,8 @@
           CONFIG_GENERIC_LINEAR_FRAMEBUFFER=y
           CONFIG_CBFS_SIZE=0x800000
           CONFIG_PAYLOAD_LINUX=y
-          CONFIG_PAYLOAD_FILE="${config.tinyboot.build.linux}/bzImage"
-          CONFIG_LINUX_INITRD="${config.tinyboot.build.initrd}/tboot-loader.cpio"
+          CONFIG_PAYLOAD_FILE="${tinybootKernel}/bzImage"
+          CONFIG_LINUX_INITRD="${pkgs.tinyboot}/${pkgs.tinyboot.initrdFile}"
         '';
       };
 
