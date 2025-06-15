@@ -18,12 +18,7 @@ in
 
     hardware.deviceTree.name = "qcom/x1e78100-lenovo-thinkpad-t14s.dtb";
 
-    hardware.firmware = [
-      pkgs.linux-firmware
-      (pkgs.runCommand "thinkpad-t14s-tplg" { } ''
-        install -Dm0444 -t $out/lib/firmware/qcom/x1e80100 ${pkgs.audioreach-topology}/X1E80100-LENOVO-Thinkpad-T14s-tplg.bin
-      '')
-    ];
+    hardware.firmware = [ pkgs.linux-firmware ];
 
     boot.kernelPackages = pkgs.linuxPackagesFor (
       pkgs.callPackage
@@ -32,7 +27,7 @@ in
           buildLinux (
             args
             // rec {
-              version = "6.15.0-rc3";
+              version = "6.15.0";
               extraMeta.branch = versions.majorMinor version;
 
               # TODO(jared): remove this
@@ -41,9 +36,9 @@ in
               src = pkgs.fetchFromGitHub {
                 owner = "jhovold";
                 repo = "linux";
-                # wip/x1e80100-6.15-rc3
-                rev = "d683863b91512bd148111e5b2c69861765d13f84";
-                hash = "sha256-oTwZAFGRLOLLosFLr5DowAQZ+H2W7ypwpUUrH8O4Q6o=";
+                # wip/x1e80100-6.15
+                rev = "64941e2988752ce492e2dac6249535423189ee46";
+                hash = "sha256-SKHe6gYN+zLSM04t9lQFkEWPzSDOP3s+BvPrCV8VoH4=";
               };
               kernelPatches = (args.kernelPatches or [ ]);
             }
