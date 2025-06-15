@@ -66,7 +66,6 @@ in
           as-tree
           bash-language-server
           bat
-          binary-diff
           bpftrace
           cachix
           carapace
@@ -92,6 +91,7 @@ in
           gopls
           grex
           gron
+          hexdiff
           htmlq
           inotify-tools
           ipv6-link-local-ssh-proxy-command
