@@ -1,0 +1,48 @@
+diff --git a/src/kgx-livery-manager.c b/src/kgx-livery-manager.c
+index 34a60a1..98940c3 100644
+--- a/src/kgx-livery-manager.c
++++ b/src/kgx-livery-manager.c
+@@ -125,26 +125,26 @@ standard_livery (void)
+   g_autoptr (KgxPalette) night = NULL;
+   g_autoptr (KgxPalette) day = NULL;
+   GdkRGBA night_colours[16] = {
+-    GDK_RGBA ("241f31"), /* Black          */
+-    GDK_RGBA ("c01c28"), /* Red            */
+-    GDK_RGBA ("2ec27e"), /* Green          */
+-    GDK_RGBA ("f5c211"), /* Yellow         */
+-    GDK_RGBA ("1e78e4"), /* Blue           */
+-    GDK_RGBA ("9841bb"), /* Magenta        */
+-    GDK_RGBA ("0ab9dc"), /* Cyan           */
+-    GDK_RGBA ("c0bfbc"), /* White          */
+-    GDK_RGBA ("5e5c64"), /* Bright Black   */
+-    GDK_RGBA ("ed333b"), /* Bright Red     */
+-    GDK_RGBA ("57e389"), /* Bright Green   */
+-    GDK_RGBA ("f8e45c"), /* Bright Yellow  */
+-    GDK_RGBA ("51a1ff"), /* Bright Blue    */
+-    GDK_RGBA ("c061cb"), /* Bright Magenta */
+-    GDK_RGBA ("4fd2fd"), /* Bright Cyan    */
+-    GDK_RGBA ("f6f5f4"), /* Bright White   */
++    GDK_RGBA ("1e1e1e"), /* Black          */
++    GDK_RGBA ("ff5f59"), /* Red            */
++    GDK_RGBA ("44bc44"), /* Green          */
++    GDK_RGBA ("d0bc00"), /* Yellow         */
++    GDK_RGBA ("2fafff"), /* Blue           */
++    GDK_RGBA ("feacd0"), /* Magenta        */
++    GDK_RGBA ("00d3d0"), /* Cyan           */
++    GDK_RGBA ("ffffff"), /* White          */
++    GDK_RGBA ("535353"), /* Bright Black   */
++    GDK_RGBA ("ff7f9f"), /* Bright Red     */
++    GDK_RGBA ("00c06f"), /* Bright Green   */
++    GDK_RGBA ("dfaf7a"), /* Bright Yellow  */
++    GDK_RGBA ("00bcff"), /* Bright Blue    */
++    GDK_RGBA ("b6a0ff"), /* Bright Magenta */
++    GDK_RGBA ("6ae4b9"), /* Bright Cyan    */
++    GDK_RGBA ("989898"), /* Bright White   */
+   };
+ 
+   night = kgx_palette_new (&((GdkRGBA) { 1.0, 1.0, 1.0, 1.0 }),
+-                           &((GdkRGBA) { 0.11, 0.11, 0.12, 1.0 }),
++                           &((GdkRGBA) { 0.0, 0.0, 0.0, 1.0 }),
+                            0.04,
+                            G_N_ELEMENTS (night_colours),
+                            night_colours);

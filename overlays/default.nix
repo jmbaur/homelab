@@ -72,6 +72,7 @@ inputs: {
           patches = (old.patches or [ ]) ++ [
             ./gnome-console-osc52.patch
             ./gnome-console-copy-on-select.patch
+            ./gnome-console-colors.patch
           ];
         })).override
           {
