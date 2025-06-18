@@ -95,16 +95,13 @@ in
       programs.sway.enable = true;
       programs.foot = {
         enable = true;
+        theme = "modus-vivendi";
         settings = {
           mouse.hide-when-typing = "yes";
           main = {
             font = "monospace:size=12";
             resize-by-cells = "no";
             selection-target = "both";
-          };
-          colors = {
-            background = "000000";
-            foreground = "ffffff";
           };
         };
       };
