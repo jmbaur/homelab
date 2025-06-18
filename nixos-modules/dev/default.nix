@@ -276,6 +276,8 @@ in
           mode = "0770";
         };
 
+        nix.settings.warn-dirty = false;
+
         programs.direnv.enable = true;
 
         programs.nix-index.enable = true;
