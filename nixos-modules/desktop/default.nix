@@ -24,9 +24,9 @@ in
 
       environment.systemPackages = [
         pkgs.clipman
-        pkgs.i3status-rust
         pkgs.kanshi
         pkgs.mako
+        pkgs.swayzbar
         pkgs.wl-clipboard
         (pkgs.runCommand "default-icon-theme" { } ''
           mkdir -p $out/share/icons
@@ -41,17 +41,7 @@ in
       services.automatic-timezoned.enable = mkDefault true;
       security.rtkit.enable = mkDefault true;
 
-      environment.etc."sway/config.d/input.conf".text = ''
-        input type:keyboard xkb_options ctrl:nocaps
-        input type:touchpad {
-          natural_scroll enabled
-          tap enabled
-        }
-      '';
-
-      environment.etc."sway/config.d/idle.conf".text = ''
-        exec swayidle -w timeout 300 'swaylock -f -c 000000' timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' before-sleep 'swaylock -f -c 000000' lock 'swaylock -f -c 000000'
-      '';
+      environment.etc."sway/config".source = ./sway.config;
 
       environment.etc."sway/config.d/output.conf".text = ''
         exec kanshi --config ${pkgs.writeText "kanshi.conf" ''
@@ -63,33 +53,6 @@ in
             output * enable
           }
         ''}
-
-        output * background #444444 solid_color
-      '';
-
-      environment.etc."sway/config.d/custom.conf".text = ''
-        bindsym $mod+Shift+d exec makoctl dismiss --all
-        bindsym $mod+Shift+v exec clipman pick --tool=CUSTOM --tool-args='wmenu -l10' --err-on-no-selection
-        bindsym $mod+Shift+s sticky toggle
-        bindsym $mod+Control+l exec loginctl lock-session
-
-        exec wl-paste -t text --watch clipman store
-
-        workspace_auto_back_and_forth yes
-
-        bar {
-          position top
-          binding_mode_indicator no
-          workspace_buttons no
-          mode hide
-          tray_output none
-          status_command i3status-rs ${./i3status-rs.toml}
-          colors {
-            statusline #ffffff
-            background #323232
-            inactive_workspace #32323200 #32323200 #5c5c5c
-          }
-        }
       '';
 
       programs.sway.enable = true;

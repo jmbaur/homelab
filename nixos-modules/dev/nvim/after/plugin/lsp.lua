@@ -72,6 +72,7 @@ if vim.fn.executable("lua-language-server") == 1 then
 			"selene.yml",
 			"stylua.toml",
 		},
+		settings = { Lua = { diagnostics = { globals = { "vim" } } } },
 	})
 end
 
@@ -86,8 +87,8 @@ end
 if vim.fn.executable("zls") == 1 then
 	add_lsp("zls", {
 		cmd = { "zls" },
-		filetypes = { "zig" },
-		root_markers = { "build.zig", "build.zig.zon" },
+		filetypes = { "zig", "zir" },
+		root_markers = { "zls.json", "build.zig", "build.zig.zon" },
 		settings = { zls = { semantic_tokens = "partial" } },
 	})
 end
