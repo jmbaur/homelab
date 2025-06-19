@@ -40,11 +40,14 @@ inputs.nixpkgs.lib.mapAttrs (
   in
   {
     default = pkgs.mkShell {
-      packages = [
-        pkgs.openscad-unstable
-        pkgs.sops
-        pkgs.zig_0_14
-      ];
+      packages =
+        [
+          pkgs.sops
+          pkgs.zig_0_14
+        ]
+        ++ lib.optionals (lib.warn "openscad-unstable currently broken, excluding from dev shell" false) [
+          pkgs.openscad-unstable
+        ];
 
       shellHook =
         (inputs.git-hooks.lib.${system}.run {
