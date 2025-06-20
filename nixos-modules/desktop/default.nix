@@ -26,6 +26,7 @@ in
         pkgs.clipman
         pkgs.kanshi
         pkgs.mako
+        pkgs.rofi-wayland
         pkgs.swayzbar
         pkgs.wl-clipboard
         (pkgs.runCommand "default-icon-theme" { } ''
@@ -34,12 +35,18 @@ in
         '')
       ];
 
+      programs.gnupg.agent.pinentryPackage = pkgs.pinentry-rofi.override {
+        rofi = pkgs.rofi-wayland;
+      };
+
       programs.yubikey-touch-detector.enable = mkDefault true;
       services.upower.enable = mkDefault true;
       services.fwupd.enable = mkDefault true;
       services.printing.enable = mkDefault true;
       services.automatic-timezoned.enable = mkDefault true;
       security.rtkit.enable = mkDefault true;
+
+      environment.etc."xdg/rofi.rasi".source = ./rofi.rasi;
 
       environment.etc."sway/config".source = ./sway.config;
 
