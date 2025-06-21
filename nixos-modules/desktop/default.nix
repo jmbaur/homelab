@@ -26,6 +26,8 @@ in
         pkgs.clipman
         pkgs.kanshi
         pkgs.mako
+        pkgs.pasystray
+        pkgs.pavucontrol
         pkgs.rofi-wayland
         pkgs.swayzbar
         pkgs.wl-clipboard
