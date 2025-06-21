@@ -47,7 +47,7 @@ in
           buildLinux (
             args
             // rec {
-              version = "6.15.0";
+              version = "6.16.0-rc2";
               extraMeta.branch = versions.majorMinor version;
 
               # TODO(jared): remove this
@@ -56,9 +56,9 @@ in
               src = pkgs.fetchFromGitHub {
                 owner = "jhovold";
                 repo = "linux";
-                # wip/sc8280xp-6.15
-                rev = "ababc24306a694b74995cffc4e9c51aa84b9af8a";
-                hash = "sha256-0KTN63q+86g++BVQPOm7MHAVQvj+t3aJFsPwE+wDk2U=";
+                # wip/sc8280xp-6.16-rc2
+                rev = "b901c120a0ed4b3c5fad0d6644867ee50cab4eaf";
+                hash = "sha256-vfLqdntP9VxfBr/T2ojB350wjwpoj2S7Xa6njHxiIOU=";
               };
               kernelPatches = (args.kernelPatches or [ ]);
             }
