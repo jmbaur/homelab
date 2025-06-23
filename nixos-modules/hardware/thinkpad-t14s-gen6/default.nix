@@ -55,6 +55,7 @@ in
     boot.kernelParams = [
       "clk_ignore_unused"
       "pd_ignore_unused"
+      "console=tty1"
     ];
 
     boot.initrd.extraFirmwarePaths = map (file: "qcom/${file}") [
@@ -86,6 +87,10 @@ in
       "phy_qcom_qmp_pcie"
       "pcie_qcom"
       "panel_samsung_atna33xc20"
+
+      "qcom_pmic_tcpm"
+      "phy-qcom-qmp-usb"
+      "phy-qcom-qmp-usbc"
 
       # Needed with the DP altmode patches
       "ps883x"
