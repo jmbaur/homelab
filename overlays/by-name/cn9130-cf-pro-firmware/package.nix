@@ -29,8 +29,6 @@ let
       hash = "sha256-sfrrGpvqlbfTvBkKxDjPwOD695paMIQRa7nIuY0CK7A=";
     };
 
-    enableParallelBuilding = true;
-
     patches =
       map (file: "${cn913x_build}/patches/u-boot/${file}") [
         "0001-add-initial-support-for-solidrun-cn9130-som-based-bo.patch"

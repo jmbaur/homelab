@@ -111,6 +111,8 @@ in
       # Use the dbus-broker dbus daemon implementation (more performance, yeah?)
       services.dbus.implementation = "broker";
 
+      # TODO(jared): can remove once https://github.com/NixOS/nixpkgs/pull/417511 is in nixos-unstable.
+      #
       # The default max inotify watches is 8192. Nowadays most apps require a
       # good number of inotify watches, the value below is used by default on
       # several other distros.
