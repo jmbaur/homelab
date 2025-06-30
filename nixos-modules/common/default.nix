@@ -42,6 +42,12 @@ in
       programs.command-not-found.enable = mkDefault false;
       boot.enableContainers = mkDefault false;
 
+      programs.nano.enable = false;
+      programs.vim = lib.mkIf (!(config.programs.neovim.enable && config.programs.neovim.defaultEditor)) {
+        enable = true;
+        defaultEditor = true;
+      };
+
       networking.nftables.enable = mkDefault true;
 
       boot.tmp.cleanOnBoot = mkDefault isNotContainer;
