@@ -9,9 +9,6 @@
 
       custom.dont-use-me-chromeos-partition.enable = true;
 
-      # TODO(jared): resolve conflict between systemd-boot and tinyboot.
-      boot.loader.systemd-boot.enable = false;
-
       boot.loader.tinyboot = {
         enable = true;
         # platform.qualcomm = true;

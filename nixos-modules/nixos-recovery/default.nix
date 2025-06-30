@@ -115,13 +115,29 @@ let
         };
 
         partitions = {
-          "10-boot" = mkIf cfg.uefiCompatible {
-            contents = {
-              "/EFI/boot/boot${efiArch}.efi".source =
-                "${config.systemd.package}/lib/systemd/boot/efi/systemd-boot${efiArch}.efi";
-              "/EFI/Linux/recovery.efi".source =
-                "${config.system.build.uki}/${config.system.boot.loader.ukiFile}";
-            };
+          "10-boot" = {
+            contents =
+              if baseConfig.boot.loader.systemd-boot.enable then
+                {
+                  "/EFI/boot/boot${efiArch}.efi".source =
+                    "${config.systemd.package}/lib/systemd/boot/efi/systemd-boot${efiArch}.efi";
+                  "/EFI/Linux/recovery.efi".source =
+                    "${config.system.build.uki}/${config.system.boot.loader.ukiFile}";
+                }
+              else if baseConfig.boot.loader.tinyboot.enable then
+                {
+                  "/linux".source = "${config.system.build.kernel}/${config.system.boot.loader.kernelFile}";
+                  "/initrd".source = "${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile}";
+                  "/loader/entries/recovery.conf".source = pkgs.writeText "recovery.conf" ''
+                    title recovery
+                    linux /linux
+                    initrd /initrd
+                    options init=${config.system.build.toplevel}/init ${toString config.boot.kernelParams}
+                  '';
+                }
+              else
+                throw "non-compatible bootloader";
+
             repartConfig = {
               Type = "esp";
               Label = "recovery-boot";
@@ -232,15 +248,6 @@ in
       '';
     };
 
-    uefiCompatible = mkOption {
-      type = types.bool;
-      default = config.boot.loader.systemd-boot.enable;
-      defaultText = ''config.boot.loader.systemd-boot.enable'';
-      description = ''
-        Whether the recovery image should be built to be UEFI compatible.
-      '';
-    };
-
     modules = mkOption {
       type = types.listOf types.deferredModule;
       default = [ ];
@@ -260,7 +267,7 @@ in
       }
     ];
 
-    boot.loader.systemd-boot.enable = mkDefault true;
+    boot.loader.systemd-boot.enable = mkDefault (!config.boot.loader.tinyboot.enable);
 
     fileSystems.${config.boot.loader.efi.efiSysMountPoint} = {
       device = "/dev/disk/by-partlabel/boot";

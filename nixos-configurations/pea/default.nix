@@ -39,9 +39,6 @@ in
     {
       hardware.chromebook.asurada-spherion.enable = true;
 
-      # TODO(jared): resolve conflict between systemd-boot and tinyboot.
-      boot.loader.systemd-boot.enable = false;
-
       boot.loader.tinyboot.enable = true;
 
       system.build.firmware =
