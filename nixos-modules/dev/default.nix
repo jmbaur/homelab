@@ -69,7 +69,6 @@ in
           bpftrace
           cachix
           carapace
-          clang-tools
           cntr
           comma
           copy
@@ -80,21 +79,18 @@ in
           fd
           file
           fsrx
-          fzf
           gh
           git
           git-extras
           git-gone
           gnumake
-          go-tools
-          gofumpt
-          gopls
           grex
           gron
           hexdiff
           htmlq
           inotify-tools
           ipv6-link-local-ssh-proxy-command
+          jared-neovim
           jq
           just
           killall
@@ -102,18 +98,15 @@ in
           linux-scripts
           lrzsz
           lsof
-          lua-language-server
           macgen
           man-pages
           man-pages-posix
           mdcat
           ncdu
-          nil
           nix-diff
           nix-index
           nix-output-monitor
           nix-tree
-          nixfmt-rfc-style
           nixos-kexec
           nixos-shell
           nload
@@ -128,16 +121,10 @@ in
           procs
           pstree
           pwgen
-          pyright
           qemu
           rage
           ripgrep
-          ruff
-          rust-analyzer
-          rustfmt
           sd
-          shellcheck
-          shfmt
           strace-with-colors
           tcpdump
           tea
@@ -145,42 +132,14 @@ in
           tio
           tmux-jump
           tokei
-          ttags
           unzip
           usbutils
           watchexec
           wip
           zip
-          zls
         ];
 
-        programs.neovim = {
-          enable = true;
-          defaultEditor = true;
-          withRuby = false;
-          vimAlias = true;
-          configure = {
-            customRC = "set exrc";
-            packages.pack.start =
-              [
-                (pkgs.vimUtils.buildVimPlugin {
-                  name = "jared-neovim-config";
-                  src = ./nvim;
-                })
-              ]
-              ++ (with pkgs.vimPlugins; [
-                bpftrace-vim
-                fzf-lua
-                nvim-treesitter.withAllGrammars
-                vim-dispatch
-                vim-eunuch
-                vim-fugitive
-                vim-rsi
-                vim-surround
-                vim-vinegar
-              ]);
-          };
-        };
+        environment.variables.EDITOR = "nvim";
 
         # TODO(jared): could probably go in common
         programs.ssh.extraConfig = ''
