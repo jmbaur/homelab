@@ -2,16 +2,19 @@
   description = "NixOS configurations for the homelab";
 
   inputs = {
+    nixpkgs.url = "github:jmbaur/nixpkgs/jmbaur-nixos-unstable";
+
     git-hooks.url = "github:cachix/git-hooks.nix";
+    home-manager.url = "github:nix-community/home-manager";
     ipwatch.url = "github:jmbaur/ipwatch";
     nixos-router.url = "github:jmbaur/nixos-router";
-    nixpkgs.url = "github:jmbaur/nixpkgs/jmbaur-nixos-unstable";
     sops-nix.url = "github:Mic92/sops-nix";
     tinyboot.url = "github:jmbaur/tinyboot";
     u-boot-nix.url = "github:jmbaur/u-boot.nix";
     webauthn-tiny.url = "github:jmbaur/webauthn-tiny";
 
     git-hooks.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
     ipwatch.inputs.nixpkgs.follows = "nixpkgs";
     nixos-router.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";

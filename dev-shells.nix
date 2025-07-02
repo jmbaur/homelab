@@ -46,19 +46,18 @@ inputs.nixpkgs.lib.mapAttrs (
         pkgs.zig_0_14
       ];
 
-      shellHook =
+      env.SOPS_CONFIG = sopsConfig;
+
+      inherit
         (inputs.git-hooks.lib.${system}.run {
           src = ./.;
           hooks = {
             deadnix.enable = true;
-            nixfmt-rfc-style.enable = true;
             shellcheck.enable = true;
-            shfmt.enable = true;
           };
-        }).shellHook
-        + ''
-          ln -sf ${sopsConfig} $PWD/.sops.yaml
-        '';
+        })
+        shellHook
+        ;
     };
   }
 ) inputs.self.legacyPackages
