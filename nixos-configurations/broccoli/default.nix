@@ -56,6 +56,8 @@
 
       systemd.services.hydra-evaluator.environment.GC_DONT_GC = "1"; # https://github.com/NixOS/nix/issues/4178#issuecomment-738886808
 
+      system.stateVersion = "25.05";
+
       services.hydra = {
         enable = true;
         hydraURL = "http://localhost:3000";
