@@ -93,6 +93,7 @@ in
             ln -sf {a660_gmu.bin,a690_gmu.bin}
             popd
 
+            # TODO(jared): might not need this anymore
             # copy in updated ath11k wireless firmware
             pushd ${wdk2023_syshacks}/usr/lib/firmware/updates
             find . ! -name '*zst' -type f -exec sh -c 'cp -vf {} $out/lib/firmware/{}' \;

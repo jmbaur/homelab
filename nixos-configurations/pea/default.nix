@@ -10,6 +10,16 @@ let
     configfile = ./tinyboot-linux.config;
   };
 
+  tinyboot = pkgs.tinyboot.override {
+    firmwareDirectory = pkgs.callPackage (
+      { runCommand, zstd }:
+      runCommand "tinyboot-pea-firmware" { nativeBuildInputs = [ zstd ]; } ''
+        mkdir -p $out/lib/firmware/mediatek/mt8192
+        zstd <${pkgs.linux-firmware}/lib/firmware/mediatek/mt8192/scp.img >$out/lib/firmware/mediatek/mt8192/scp.img.zst
+      ''
+    ) { };
+  };
+
   fitImage = pkgs.callPackage (
     {
       runCommand,
@@ -28,7 +38,7 @@ let
       ''
         lzma --threads $NIX_BUILD_CORES <${tinybootKernel}/Image >kernel.lzma
         cp ${tinybootKernel}/dtbs/mediatek/mt8192-asurada-spherion-r0.dtb dtb
-        cp ${pkgs.tinyboot}/${pkgs.tinyboot.initrdFile} initrd
+        cp ${tinyboot}/${tinyboot.initrdFile} initrd
         cp ${./tinyboot.its} image.its
         mkimage --fit image.its $out
       ''
