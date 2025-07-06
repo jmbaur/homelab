@@ -70,7 +70,7 @@ let
     boot.initrd.kernelModules = config.boot.initrd.kernelModules;
     boot.kernelModules = config.boot.kernelModules;
     boot.kernelPackages = config.boot.kernelPackages;
-    boot.kernelParams = config.boot.kernelParams;
+    boot.kernelParams = mkForce config.boot.kernelParams;
     boot.kernelPatches = mkForce [ ];
   };
 
