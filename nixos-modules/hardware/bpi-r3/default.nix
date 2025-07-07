@@ -10,17 +10,6 @@
   config = lib.mkIf config.hardware.bpi-r3.enable {
     boot.kernelPackages = pkgs.linuxPackages_6_15;
 
-    boot.kernelPatches = [
-      {
-        name = "mt7986a-wifi";
-        patch = pkgs.fetchpatch {
-          url = "https://raw.githubusercontent.com/openwrt/openwrt/06b37a5856ac7d0a2ddc2c0745ac1da3a01688d6/target/linux/mediatek/patches-6.6/195-dts-mt7986a-bpi-r3-leds-port-names-and-wifi-eeprom.patch";
-          excludes = [ "arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-nor.dtso" ]; # doesn't apply cleanly
-          hash = "sha256-saqnN7A8nUYPLl7JtC6BEljmb+rmuUcgDIXTb3s55UE=";
-        };
-      }
-    ];
-
     hardware.firmware = [
       pkgs.wireless-regdb
       (pkgs.extractLinuxFirmwareDirectory "mediatek")
@@ -36,6 +25,7 @@
             name = builtins.baseNameOf dtsFile;
           })
           [
+            ./mt7986a-wifi.dtso
             ./nand.dtso
             ./emmc.dtso
           ];

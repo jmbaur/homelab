@@ -56,10 +56,10 @@
   systemd.network.networks = lib.mapAttrs' (name: value: lib.nameValuePair "10-${name}" value) (
     lib.genAttrs
       [
+        "lan0"
         "lan1"
         "lan2"
         "lan3"
-        "lan4"
       ]
       (name: {
         inherit name;
