@@ -19,30 +19,6 @@
           hash = "sha256-saqnN7A8nUYPLl7JtC6BEljmb+rmuUcgDIXTb3s55UE=";
         };
       }
-
-      {
-        name = "bpi-r3-enablement";
-        patch = null;
-        extraStructuredConfig = {
-          BRIDGE = lib.kernel.yes;
-          HSR = lib.kernel.yes;
-          MEDIATEK_GE_PHY = lib.kernel.yes;
-          MTD_NAND_ECC_MEDIATEK = lib.kernel.yes;
-          MTD_SPI_NAND = lib.kernel.yes;
-          MTK_LVTS_THERMAL = lib.kernel.yes;
-          MTK_SOC_THERMAL = lib.kernel.yes;
-          MTK_THERMAL = lib.kernel.yes;
-          NET_DSA = lib.kernel.yes;
-          NET_DSA_MT7530 = lib.kernel.yes;
-          NET_DSA_TAG_MTK = lib.kernel.yes;
-          NET_MEDIATEK_SOC = lib.kernel.yes;
-          NET_MEDIATEK_STAR_EMAC = lib.kernel.yes;
-          PCIE_MEDIATEK = lib.kernel.yes;
-          PCIE_MEDIATEK_GEN3 = lib.kernel.yes;
-          PCS_MTK_LYNXI = lib.kernel.yes;
-          REGULATOR_MT6380 = lib.kernel.yes;
-        };
-      }
     ];
 
     hardware.firmware = [
