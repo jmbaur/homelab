@@ -2,10 +2,12 @@ inputs:
 
 let
   inherit (inputs.nixpkgs.lib)
+    filterAttrs
     flatten
     listToAttrs
     mapAttrs
     mapAttrsToList
+    systems
     zipAttrs
     ;
 
@@ -28,10 +30,13 @@ let
     ) inputs.self.nixosConfigurations
   );
 in
-mapAttrs (
-  system: _:
-  listToAttrs (flatten (nixosConfigurations.${system} or [ ]))
-  //
-    # TODO(jared): use _hydraAggregate to gate nixosConfigurations on checks
-    inputs.self.checks.${system}
-) inputs.self.legacyPackages
+mapAttrs
+  (
+    system: _:
+    listToAttrs (flatten (nixosConfigurations.${system} or [ ]))
+    //
+      # TODO(jared): use _hydraAggregate to gate nixosConfigurations on checks
+      inputs.self.checks.${system}
+  )
+  # Filter out non-linux platforms, since we only build on linux
+  (filterAttrs (system: _: (systems.elaborate system).isLinux) inputs.self.legacyPackages)
