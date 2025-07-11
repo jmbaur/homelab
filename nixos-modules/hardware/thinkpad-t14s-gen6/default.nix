@@ -27,7 +27,7 @@ in
           buildLinux (
             args
             // rec {
-              version = "6.16.0-rc4";
+              version = "6.16.0-rc5";
               extraMeta.branch = versions.majorMinor version;
 
               # TODO(jared): remove this
@@ -36,9 +36,9 @@ in
               src = pkgs.fetchFromGitHub {
                 owner = "jhovold";
                 repo = "linux";
-                # wip/x1e80100-6.16-rc4
-                rev = "27d871947861726e08decf0c5b04ddd32a3ab63b";
-                hash = "sha256-RMfyD4NJzYC6MbsFlT2GIvs+atvfBQk7XTN8i3Ehra4=";
+                # wip/x1e80100-6.16-rc5
+                rev = "5b6ae203bb6fce22195698b1bc8bdeb050a3d1b0";
+                hash = "sha256-7p8fJQBh5+x0FBE6H4OgZwRvRQ7sQWsvd1KsEY5VGtA=";
               };
               kernelPatches = (args.kernelPatches or [ ]);
             }
