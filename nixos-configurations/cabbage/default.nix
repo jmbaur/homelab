@@ -50,5 +50,5 @@ in
   custom.desktop.enable = true;
   custom.dev.enable = true;
   nixpkgs.buildPlatform = config.nixpkgs.hostPlatform;
-  custom.recovery.targetDisk = "/dev/disk/by-path/pci-0000:01:00.0-nvme-1";
+  custom.recovery.targetDisk = "/dev/disk/by-path/pci-0000:03:00.0-nvme-1";
 }
