@@ -4,7 +4,7 @@
 /plugin/;
 
 / {
-	compatible = "bananapi,bpi-r3", "mediatek,mt7986a";
+	compatible = "bananapi,bpi-r3";
 };
 
 &wifi {
