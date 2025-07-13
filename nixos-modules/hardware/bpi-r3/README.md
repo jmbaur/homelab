@@ -24,3 +24,5 @@ SW1-A and SW1-B are for bootstrap selection, SW1-C and SW1-D are for system conn
 | SPI-NAND | High  | Low   | High  | X
 | eMMC     | Low   | High  | X     | Low
 | SD       | High  | High  | X     | High
+
+For our configuration, we boot firmware from SPI-NAND and OS from eMMC, so we set our dipswitches to High,Low,High,Low.
