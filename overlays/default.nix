@@ -42,8 +42,8 @@ inputs: {
     # all other packages
     (final: prev: {
       vimPlugins = prev.vimPlugins.extend (
-        finalVimUtils: _: {
-          bpftrace-vim = finalVimUtils.buildVimPlugin {
+        _: _: {
+          bpftrace-vim = final.vimUtils.buildVimPlugin {
             pname = "bpftrace.vim";
             version = "2019-06-19";
             src = final.fetchFromGitHub {
@@ -54,7 +54,7 @@ inputs: {
             };
           };
 
-          nvim-qwahl = finalVimUtils.buildVimPlugin {
+          nvim-qwahl = final.vimUtils.buildVimPlugin {
             pname = "nvim-qwahl";
             version = "2025-03-26";
             src = final.fetchFromGitHub {
