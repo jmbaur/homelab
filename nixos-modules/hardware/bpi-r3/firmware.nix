@@ -50,9 +50,6 @@ let
         "BL33=${uboot-mt7986a_bpir3_emmc}/u-boot.bin"
         "BOOT_DEVICE=spim-nand" # defines where the FIP image lives
         "DRAM_USE_DDR4=1"
-        "OVERRIDE_UBI_START_ADDR=0x200000"
-        "HAVE_DRAM_OBJ_FILE=yes"
-        "UBI=1"
         "USE_MKIMAGE=1"
         "all"
         "fip"
