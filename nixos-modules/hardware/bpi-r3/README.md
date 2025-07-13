@@ -16,9 +16,11 @@ uboot> mtd write ubi $loadaddr
 
 # dip switches
 
-| Device           | SW1 #1 | SW1 #2 | SW1 #3 | SW1 #4
-| ---------------- | ------ | ------ | ------ | ------
-| SPI-NOR          | OFF    | OFF    | OFF    | X
-| SPI-NAND         | ON     | OFF    | ON     | X
-| eMMC             | OFF    | ON     | X      | OFF
-| SD               | ON     | ON     | X      | ON
+SW1-A and SW1-B are for bootstrap selection, SW1-C and SW1-D are for system connection.
+
+| Device   | SW1-A | SW1-B | SW1-C | SW1-D
+| ---------| ------| ------| ------| -----
+| SPI-NOR  | Low   | Low   | Low   | X
+| SPI-NAND | High  | Low   | High  | X
+| eMMC     | Low   | High  | X     | Low
+| SD       | High  | High  | X     | High
