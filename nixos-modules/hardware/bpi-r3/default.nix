@@ -32,6 +32,42 @@
           ];
     };
 
+    boot.kernelPatches = [
+      {
+        name = "pcie-perst-fix";
+        patch = ./pcie-perst.patch;
+        extraStructuredConfig.PCIE_MEDIATEK_GEN3 = lib.kernel.yes; # TODO(jared): is this needed?
+      }
+      {
+        name = "switch-reset-line-fix";
+        patch = pkgs.fetchpatch {
+          url = "https://lore.kernel.org/linux-arm-kernel/20240627075856.2314804-2-leith@bade.nz/raw";
+          hash = "sha256-3kAnvJO/R7nTaahAimMQascL9mY9K375EKsbpDRVE3E=";
+        };
+      }
+      {
+        name = "boot-mode-gpio-hog";
+        patch = pkgs.fetchpatch {
+          url = "https://lore.kernel.org/linux-arm-kernel/20240627075856.2314804-3-leith@bade.nz/raw";
+          hash = "sha256-7FQLAWYtilj+MH34UAO80mztO9igYRJy5oPGc1ts5MQ=";
+        };
+      }
+      {
+        name = "add-missing-pin-groups";
+        patch = pkgs.fetchpatch {
+          url = "https://lore.kernel.org/linux-arm-kernel/20240627075856.2314804-4-leith@bade.nz/raw";
+          hash = "sha256-YibxuXNlvGrLlbfqev2aiOdprzJcXwBRpq9yOik/gjc=";
+        };
+      }
+      {
+        name = "uart1-fixes";
+        patch = pkgs.fetchpatch {
+          url = "https://lore.kernel.org/linux-arm-kernel/20240627075856.2314804-5-leith@bade.nz/raw";
+          hash = "sha256-Na7r1DxEkwJg0biDlzfjK8YxZu9Bi8i0MxygORdr3Wg=";
+        };
+      }
+    ];
+
     environment.systemPackages = [
       pkgs.mtdutils
       pkgs.uboot-env-tools
@@ -47,7 +83,12 @@
     # use it!
     boot.kernelParams = [ "efi=noruntime" ];
 
-    boot.kernelModules = [ "ubi" ];
+    # The kernel tries to iterate the MTD partitions in the initrd, but we need
+    # to provide the kernel modules to allow it to do so.
+    boot.initrd.availableKernelModules = [
+      "spinand"
+      "ubi"
+    ];
 
     boot.extraModprobeConfig = ''
       options ubi mtd=ubi

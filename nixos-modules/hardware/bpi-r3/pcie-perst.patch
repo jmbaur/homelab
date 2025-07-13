@@ -1,0 +1,20 @@
+diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c b/drivers/pci/controller/pcie-mediatek-gen3.c
+index b55f5973414c..09b593a9f1b4 100644
+--- a/drivers/pci/controller/pcie-mediatek-gen3.c
++++ b/drivers/pci/controller/pcie-mediatek-gen3.c
+@@ -475,8 +475,13 @@ static int mtk_pcie_startup_port(struct mtk_gen3_pcie *pcie)
+ 		msleep(PCIE_T_PVPERL_MS);
+ 
+ 		/* De-assert reset signals */
+-		val &= ~(PCIE_MAC_RSTB | PCIE_PHY_RSTB | PCIE_BRG_RSTB |
+-			 PCIE_PE_RSTB);
++		val &= ~(PCIE_MAC_RSTB | PCIE_PHY_RSTB | PCIE_BRG_RSTB);
++		writel_relaxed(val, pcie->base + PCIE_RST_CTRL_REG);
++
++		msleep(PCIE_T_PVPERL_MS);
++
++		/* De-assert PERST# signals */
++		val &= ~(PCIE_PE_RSTB);
+ 		writel_relaxed(val, pcie->base + PCIE_RST_CTRL_REG);
+ 	}
+ 
