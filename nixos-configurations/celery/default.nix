@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, ... }:
 
 {
   imports = [ ./router.nix ];
@@ -29,15 +29,9 @@
     }
   ];
 
-  # Make the pcf8523 driver builtin so we dont' run into issues such as this:
+  # Make the pcf8523 module available in the initrd so we dont' run into issues such as this:
   # https://github.com/systemd/systemd/issues/17737
-  boot.kernelPatches = [
-    {
-      name = "rtc";
-      patch = null;
-      extraStructuredConfig.RTC_DRV_PCF8523 = lib.kernel.yes;
-    }
-  ];
+  boot.initrd.availableKernelModules = [ "rtc-pcf8523" ];
 
   custom.server.enable = true;
   custom.basicNetwork.enable = !config.router.enable;

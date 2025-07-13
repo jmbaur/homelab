@@ -25,9 +25,10 @@
             name = builtins.baseNameOf dtsFile;
           })
           [
-            ./mt7986a-wifi.dtso
+            ./wifi-calibration.dtso
             ./nand.dtso
             ./emmc.dtso
+            ./disable-gpio-keys.dtso
           ];
     };
 
@@ -59,7 +60,9 @@
     '';
 
     # bpi-r3 uses KEY_RESTART
-    systemd.services.reset-button = {
+    #
+    # TODO(jared): gpio keys in conflict with PCIE lines
+    systemd.services.reset-button = lib.mkIf false {
       description = "Restart the system when the reset button is pressed";
       unitConfig.ConditionPathExists = [ "/dev/input/by-path/platform-gpio-keys-event" ];
       serviceConfig.ExecStart = toString [
@@ -81,6 +84,7 @@
               AHCI_PCI = yes;
               AUTOBOOT = yes;
               BLK = yes;
+              BOARD_LATE_INIT = yes;
               BOOTCOUNT_ENV = yes;
               BOOTCOUNT_LIMIT = yes;
               BOOTMETH_EFI_BOOTMGR = yes;

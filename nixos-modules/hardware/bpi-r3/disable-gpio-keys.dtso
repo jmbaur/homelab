@@ -1,0 +1,12 @@
+// From https://forum.banana-pi.org/t/bpi-r3-button-connections/18274
+
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "bananapi,bpi-r3", "mediatek,mt7986a";
+};
+
+&{/gpio-keys} {
+	status = "disabled";
+};
