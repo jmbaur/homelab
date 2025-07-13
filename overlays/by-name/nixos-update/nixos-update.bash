@@ -32,6 +32,10 @@ function update() {
 		fi
 
 		"${new_toplevel}/bin/switch-to-configuration" $switch_action
+
+		if [[ $switch_action == "boot" ]]; then
+			echo "Setup $new_toplevel for next boot. Reboot to finish switch."
+		fi
 	fi
 }
 
