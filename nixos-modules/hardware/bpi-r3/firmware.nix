@@ -24,27 +24,12 @@ let
       src = fetchFromGitHub {
         owner = "mtk-openwrt";
         repo = "arm-trusted-firmware";
-        rev = "e090770684e775711a624e68e0b28112227a4c38";
-        hash = "sha256-VI5OB2nWdXUjkSuUXl/0yQN+/aJp9Jkt+hy7DlL+PMg=";
+        rev = "78a0dfd927bb00ce973a1f8eb4079df0f755887a"; # mtksoc-20250711 branch
+        hash = "sha256-m9ApkBVf0I11rNg68vxofGRJ+BcnlM6C+Zrn8TfMvbY=";
       };
 
       strictDeps = true;
-
-      patches =
-        let
-          openwrt = fetchFromGitHub {
-            owner = "openwrt";
-            repo = "openwrt";
-            rev = "9ec32cfb2733856a2ab4caee07d9b3297568381d";
-            hash = "sha256-casYMJNLavzZdPzCuh1xAR9iaLYG9TieVcYDNhIiHUQ=";
-          };
-        in
-        map (file: "${openwrt}/package/boot/arm-trusted-firmware-mediatek/patches/${file}") [
-          "0001-mediatek-snfi-FM35Q1GA-is-x4-only.patch"
-          "0002-mediatek-snfi-adjust-pin-drive-strength-for-Fidelix-.patch"
-          "0003-mediatek-snfi-adjust-drive-strength-to-12mA-like-old.patch"
-          "0004-mediatek-snfi-fix-return-code-when-reading.patch"
-        ];
+      enableParallelBuilding = true;
 
       extraMakeFlags = [
         "BL33=${uboot-mt7986a_bpir3_emmc}/u-boot.bin"

@@ -117,7 +117,13 @@
     system.build = {
       uboot =
         (pkgs.uboot-mt7986a_bpir3_emmc.overrideAttrs (old: {
-          patches = (old.patches or [ ]) ++ [ ./mt7986-persistent-mac-from-cpu-uid.patch ];
+          patches = (old.patches or [ ]) ++ [
+            ./mt7986-persistent-mac-from-cpu-uid.patch
+            (pkgs.fetchpatch {
+              url = "https://github.com/u-boot/u-boot/commit/1bf212129768d65a47145209c65bf37b6082d718.patch";
+              hash = "sha256-+xQ5Rb4feoVA3MBj9AnYlz3U14lmBLlvBx07ZpyTKOE=";
+            })
+          ];
         })).override
           {
             extraStructuredConfig = with lib.kernel; {
@@ -165,7 +171,6 @@
               SCSI = yes;
               SCSI_AHCI = yes;
               SPI = yes;
-              SUPPORT_EMMC_BOOT = yes;
               SYS_BOOTM_LEN = freeform "0x${lib.toHexString (128 * 1024 * 1024)}";
               SYS_REDUNDAND_ENVIRONMENT = yes;
               USB = yes;
@@ -176,6 +181,7 @@
               USE_BOOTCOMMAND = yes;
               WDT = yes;
               WDT_MTK = yes;
+              # MMC = unset;
             };
           };
 
