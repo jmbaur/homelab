@@ -27,6 +27,7 @@ let
     ];
     paths = [
       pkgs.busybox
+      pkgs.cryptsetup
       pkgs.kmod
     ] ++ config.system.fsPackages;
   };
