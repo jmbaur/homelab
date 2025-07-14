@@ -101,9 +101,7 @@
     '';
 
     # bpi-r3 uses KEY_RESTART
-    #
-    # TODO(jared): gpio keys in conflict with PCIE lines
-    systemd.services.reset-button = lib.mkIf false {
+    systemd.services.reset-button = {
       description = "Restart the system when the reset button is pressed";
       unitConfig.ConditionPathExists = [ "/dev/input/by-path/platform-gpio-keys-event" ];
       serviceConfig.ExecStart = toString [
