@@ -34,6 +34,16 @@
 
     boot.kernelPatches = [
       {
+        name = "mt7986-common-config";
+        patch = null;
+        extraStructuredConfig = with lib.kernel; {
+          NET_DSA = yes;
+          NET_DSA_MT7530 = yes;
+          NET_DSA_TAG_MTK = yes;
+          NET_MEDIATEK_SOC = yes;
+        };
+      }
+      {
         name = "pcie-perst-fix";
         patch = ./pcie-perst.patch;
         extraStructuredConfig.PCIE_MEDIATEK_GEN3 = lib.kernel.yes; # TODO(jared): is this needed?
@@ -90,9 +100,10 @@
       "ubi"
     ];
 
+    # TODO(jared): mt7915e WED causing instability
+    # options mt7915e wed_enable=Y
     boot.extraModprobeConfig = ''
       options ubi mtd=ubi
-      options mt7915e wed_enable=Y
     '';
 
     environment.etc."fw_env.config".text = ''
