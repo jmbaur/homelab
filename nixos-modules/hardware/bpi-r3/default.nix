@@ -35,8 +35,12 @@
     boot.kernelPatches = [
       {
         name = "mt7986-common-config";
-        patch = null;
+        # The nixos kernel configurator is not capable of overriding what is in the defconfig...
+        patch = ./defconfig.patch;
+        # Misbehaving drivers (and their dependencies) that don't work well when built as modules.
         extraStructuredConfig = with lib.kernel; {
+          BRIDGE = yes;
+          HSR = yes;
           NET_DSA = yes;
           NET_DSA_MT7530 = yes;
           NET_DSA_TAG_MTK = yes;
