@@ -9,21 +9,6 @@
 
   hardware.deviceTree.overlays = [
     {
-      name = "disable-pcie";
-      dtsText = ''
-        /dts-v1/;
-        /plugin/;
-
-        / {
-          compatible = "bananapi,bpi-r3";
-        };
-
-        &pcie {
-          status = "disabled";
-        };
-      '';
-    }
-    {
       name = "real-time-clock";
       dtsText = ''
         /dts-v1/;

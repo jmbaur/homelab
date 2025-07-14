@@ -28,7 +28,7 @@
             ./wifi-calibration.dtso
             ./nand.dtso
             ./emmc.dtso
-            ./disable-gpio-keys.dtso
+            ./disable-pcie.dtso
           ];
     };
 
