@@ -28,7 +28,7 @@ let
     paths = [
       pkgs.busybox
       pkgs.kmod
-    ];
+    ] ++ config.system.fsPackages;
   };
 in
 {
