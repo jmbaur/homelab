@@ -100,9 +100,9 @@
       "ubi"
     ];
 
-    # TODO(jared): mt7915e WED causing instability
-    # options mt7915e wed_enable=Y
+    # TODO(jared): disable mt7915e WED for now, causing instability
     boot.extraModprobeConfig = ''
+      options mt7915e wed_enable=N
       options ubi mtd=ubi
     '';
 
