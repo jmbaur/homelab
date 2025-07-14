@@ -142,6 +142,7 @@
               CMD_SCSI = yes;
               CMD_UBI = yes;
               CMD_USB = yes;
+              CMD_WDT = yes;
               DM_MTD = yes;
               DM_SCSI = yes;
               DM_SPI = yes;
@@ -181,7 +182,6 @@
               USE_BOOTCOMMAND = yes;
               WDT = yes;
               WDT_MTK = yes;
-              # MMC = unset;
             };
           };
 
