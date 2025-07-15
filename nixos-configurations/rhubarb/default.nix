@@ -15,11 +15,6 @@
     {
       services.kodi.enable = true;
 
-      services.scx = {
-        enable = true;
-        scheduler = "scx_lavd";
-      };
-
       services.pipewire.wireplumber.configPackages = [
         (pkgs.writeTextDir "share/wireplumber/wireplumber.conf.d/10-hdmi-output.conf" ''
           wireplumber.settings = {

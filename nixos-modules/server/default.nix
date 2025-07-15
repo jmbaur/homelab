@@ -73,7 +73,5 @@
         "systemd"
       ];
     };
-
-    services.scx.scheduler = lib.mkDefault "scx_tickless";
   };
 }
