@@ -38,7 +38,7 @@ wrapNeovimUnstable neovim-unwrapped (
       [
         (vimUtils.buildVimPlugin {
           name = "jared-neovim-config";
-          src = ../../../nixos-modules/dev/nvim;
+          src = ./nvim;
           runtimeDeps = [
             clang-tools
             fd
