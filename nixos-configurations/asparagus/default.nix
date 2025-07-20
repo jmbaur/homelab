@@ -7,8 +7,6 @@
 
       hardware.chromebook.trogdor.enable = true;
 
-      custom.dont-use-me-chromeos-partition.enable = true;
-
       boot.loader.tinyboot = {
         enable = true;
         # platform.qualcomm = true;
