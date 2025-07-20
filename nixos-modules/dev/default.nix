@@ -26,6 +26,11 @@ in
 
         programs.adb.enable = lib.mkDefault true;
 
+        services.udev.extraRules = ''
+          # FTDI FT4232H
+          SUBSYSTEMS=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6011", GROUP="dialout", MODE="0660"
+        '';
+
         boot.binfmt = {
           # Make sure builder isn't masquerading as being
           # able to do native builds for non-native
