@@ -26,13 +26,13 @@ in
 
         programs.adb.enable = lib.mkDefault true;
 
-        services.udev.extraRules = ''
-          # SEGGER J-Link
-          SUBSYSTEMS=="usb", ATTRS{idVendor}=="1366", ATTRS{idProduct}=="1020", TAG+="uaccess"
-
-          # FTDI FT4232H
-          SUBSYSTEMS=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6011", TAG+="uaccess"
-        '';
+        services.udev.packages = [
+          (pkgs.concatTextFile {
+            name = "openocd-udev-rules";
+            files = [ "${pkgs.openocd}/share/openocd/contrib/60-openocd.rules" ];
+            destination = "/lib/udev/rules.d/60-openocd.rules";
+          })
+        ];
 
         boot.binfmt = {
           # Make sure builder isn't masquerading as being
