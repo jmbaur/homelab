@@ -27,8 +27,11 @@ in
         programs.adb.enable = lib.mkDefault true;
 
         services.udev.extraRules = ''
+          # SEGGER J-Link
+          SUBSYSTEMS=="usb", ATTRS{idVendor}=="1366", ATTRS{idProduct}=="1020", TAG+="uaccess"
+
           # FTDI FT4232H
-          SUBSYSTEMS=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6011", GROUP="dialout", MODE="0660"
+          SUBSYSTEMS=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6011", TAG+="uaccess"
         '';
 
         boot.binfmt = {
