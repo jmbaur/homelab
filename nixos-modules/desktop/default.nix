@@ -1,9 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, ... }:
 
 let
   inherit (lib)
@@ -22,66 +17,16 @@ in
     {
       custom.normalUser.enable = true;
 
-      environment.systemPackages = [
-        pkgs.clipman
-        pkgs.kanshi
-        pkgs.mako
-        pkgs.pasystray
-        pkgs.pavucontrol
-        pkgs.rofi-wayland
-        pkgs.swayzbar
-        pkgs.wl-clipboard
-        (pkgs.runCommand "default-icon-theme" { } ''
-          mkdir -p $out/share/icons
-          ln -sf ${pkgs.adwaita-icon-theme}/share/icons/Adwaita $out/share/icons/default
-        '')
-      ];
+      services.displayManager.sddm.enable = true;
+      services.desktopManager.plasma6.enable = true;
 
-      programs.gnupg.agent.pinentryPackage = pkgs.pinentry-rofi.override {
-        rofi = pkgs.rofi-wayland;
-      };
+      networking.networkmanager.enable = true;
 
       programs.yubikey-touch-detector.enable = mkDefault true;
       services.upower.enable = mkDefault true;
       services.fwupd.enable = mkDefault true;
       services.printing.enable = mkDefault true;
-      services.automatic-timezoned.enable = mkDefault true;
       security.rtkit.enable = mkDefault true;
-
-      environment.etc."xdg/rofi.rasi".source = ./rofi.rasi;
-
-      environment.etc."sway/config".source = ./sway.config;
-
-      environment.etc."sway/config.d/output.conf".text = ''
-        exec kanshi --config ${pkgs.writeText "kanshi.conf" ''
-          profile docked {
-            output eDP-1 disable
-            output * enable
-          }
-          profile undocked {
-            output * enable
-          }
-        ''}
-      '';
-
-      programs.sway.enable = true;
-      programs.foot = {
-        enable = true;
-        theme = "modus-vivendi";
-        settings = {
-          mouse.hide-when-typing = "yes";
-          main = {
-            font = "monospace:size=12";
-            resize-by-cells = "no";
-            selection-target = "both";
-          };
-        };
-      };
-
-      programs.dconf = {
-        enable = true;
-        profiles.user.databases = [ ];
-      };
 
       programs.firefox = {
         enable = mkDefault true;
