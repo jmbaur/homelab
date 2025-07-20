@@ -82,13 +82,14 @@
       home.sessionVariables.EDITOR = "nvim";
 
       programs.ssh = {
+        enable = true;
         serverAliveInterval = 11;
         controlMaster = "auto";
         controlPath = "/tmp/ssh-%i-%C";
         controlPersist = "30m";
-        matchBlocks."*.internal".forwardAgent = "yes";
+        matchBlocks."*.internal".forwardAgent = true;
         matchBlocks."*.local" = {
-          forwardAgent = "yes";
+          forwardAgent = true;
           proxyCommand = "${lib.getExe pkgs.ipv6-link-local-ssh-proxy-command} %h %p";
         };
       };
