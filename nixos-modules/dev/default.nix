@@ -26,11 +26,6 @@ in
 
         programs.adb.enable = lib.mkDefault true;
 
-        systemd.tmpfiles.settings."10-projects"."/var/lib/projects".d = {
-          group = config.users.groups.wheel.name;
-          mode = "0770";
-        };
-
         boot.binfmt = {
           # Make sure builder isn't masquerading as being
           # able to do native builds for non-native

@@ -137,7 +137,7 @@
             prune = true;
             prunetags = true;
           };
-          "git-extras \"get\"".clone-path = "/var/lib/projects";
+          "git-extras \"get\"".clone-path = "${config.home.homeDirectory}/.local/state/projects";
           gpg.format = "ssh";
           "gpg \"ssh\"".program = "ssh-keygen";
           init.defaultBranch = "main";
