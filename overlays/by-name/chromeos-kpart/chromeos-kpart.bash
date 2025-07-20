@@ -2,7 +2,7 @@
 
 declare keyblock vbprivk fitimage_its
 
-toplevel=$1
+toplevel=$(readlink --canonicalize-existing "$1")
 dtb=${2:-}
 out=$PWD
 
