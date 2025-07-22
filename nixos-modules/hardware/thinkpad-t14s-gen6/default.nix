@@ -114,5 +114,19 @@ in
 
     # https://lists.infradead.org/pipermail/ath12k/2024-April/002004.html
     networking.wireless.iwd.settings.General.ControlPortOverNL80211 = false;
+
+    environment.systemPackages = [
+      (pkgs.writeShellApplication {
+        name = "update-firmware";
+        runtimeInputs = [
+          config.systemd.package
+          pkgs.innoextract
+        ];
+        text = ''
+          declare -r esp=${config.boot.loader.efi.efiSysMountPoint}
+          ${lib.fileContents ./update-firmware.bash}
+        '';
+      })
+    ];
   };
 }
