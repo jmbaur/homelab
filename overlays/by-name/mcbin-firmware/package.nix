@@ -3,38 +3,30 @@
   marvellBinaries,
   uboot-mvebu_mcbin-88f8040,
   mv-ddr-marvell,
-  openssl,
 }:
 
-let
-  atf =
-    (buildArmTrustedFirmware rec {
-      platform = "a80x0_mcbin";
+buildArmTrustedFirmware rec {
+  platform = "a80x0_mcbin";
 
-      patches = [ ./marvell-atf-no-git.patch ];
+  patches = [ ./marvell-atf-no-git.patch ];
 
-      preBuild = ''
-        cp -r ${mv-ddr-marvell} ./mv_ddr_marvell
-        chmod -R +w ./mv_ddr_marvell
-      '';
+  preBuild = ''
+    cp -r ${mv-ddr-marvell} ./mv_ddr_marvell
+    chmod -R +w ./mv_ddr_marvell
+  '';
 
-      extraMakeFlags = [
-        "SCP_BL2=${marvellBinaries}/mrvl_scp_bl2.img"
-        "BL33=${uboot-mvebu_mcbin-88f8040}/u-boot.bin"
-        "MV_DDR_PATH=./mv_ddr_marvell"
-        "LOG_LEVEL=20"
-        "MARVELL_SECURE_BOOT=0"
-        "all"
-        "fip"
-        "mrvl_flash"
-      ];
+  extraMakeFlags = [
+    "SCP_BL2=${marvellBinaries}/mrvl_scp_bl2.img"
+    "BL33=${uboot-mvebu_mcbin-88f8040}/u-boot.bin"
+    "MV_DDR_PATH=./mv_ddr_marvell"
+    "LOG_LEVEL=20"
+    "MARVELL_SECURE_BOOT=0"
+    "all"
+    "fip"
+    "mrvl_flash"
+  ];
 
-      env.NIX_CFLAGS_COMPILE = toString [ "-Wno-array-bounds" ];
+  enableParallelBuilding = true;
 
-      filesToInstall = [ "build/${platform}/release/flash-image.bin" ];
-    }).overrideAttrs
-      (old: {
-        nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ openssl ];
-      });
-in
-atf
+  filesToInstall = [ "build/${platform}/release/flash-image.bin" ];
+}
