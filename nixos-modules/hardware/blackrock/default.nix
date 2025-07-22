@@ -47,7 +47,7 @@ in
           buildLinux (
             args
             // rec {
-              version = "6.16.0-rc6";
+              version = "6.16.0-rc7";
               extraMeta.branch = versions.majorMinor version;
 
               # TODO(jared): remove this
@@ -56,9 +56,9 @@ in
               src = pkgs.fetchFromGitHub {
                 owner = "jhovold";
                 repo = "linux";
-                # wip/sc8280xp-6.16-rc6
-                rev = "c80aa62483ade51fa2ec91df9b402123fbedc8d6";
-                hash = "sha256-QMr9bv+zMVE6//FjZGWqrIb7rv5ypxAPNIsJOcljEYA=";
+                # wip/sc8280xp-6.16-rc7
+                rev = "27ec0c77d3cc0e56ad24088c40568a44794c54b4";
+                hash = "sha256-vxCiLGgpN0hVIEtPT7g8Q88znRVK3ZRskTOmxIv7D2w=";
               };
               kernelPatches = (args.kernelPatches or [ ]);
             }
@@ -85,20 +85,18 @@ in
 
     hardware.firmware = [
       (pkgs.linux-firmware.overrideAttrs (old: {
-        postInstall =
-          (old.postInstall or "")
-          + ''
-            # symlink exists in armbian/firmware
-            pushd $out/lib/firmware/qcom
-            ln -sf {a660_gmu.bin,a690_gmu.bin}
-            popd
+        postInstall = (old.postInstall or "") + ''
+          # symlink exists in armbian/firmware
+          pushd $out/lib/firmware/qcom
+          ln -sf {a660_gmu.bin,a690_gmu.bin}
+          popd
 
-            # TODO(jared): might not need this anymore
-            # copy in updated ath11k wireless firmware
-            pushd ${wdk2023_syshacks}/usr/lib/firmware/updates
-            find . ! -name '*zst' -type f -exec sh -c 'cp -vf {} $out/lib/firmware/{}' \;
-            popd
-          '';
+          # TODO(jared): might not need this anymore
+          # copy in updated ath11k wireless firmware
+          pushd ${wdk2023_syshacks}/usr/lib/firmware/updates
+          find . ! -name '*zst' -type f -exec sh -c 'cp -vf {} $out/lib/firmware/{}' \;
+          popd
+        '';
       }))
       (pkgs.fetchurl {
         name = "wdk2023-firmware";
