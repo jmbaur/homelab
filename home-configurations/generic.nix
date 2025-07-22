@@ -54,10 +54,8 @@
         nmap
         nurl
         oils-for-unix
-        pax-utils
         pb
         pciutils
-        poke
         pomo
         procs
         pstree
@@ -88,10 +86,7 @@
         controlPath = "/tmp/ssh-%i-%C";
         controlPersist = "30m";
         matchBlocks."*.internal".forwardAgent = true;
-        matchBlocks."*.local" = {
-          forwardAgent = true;
-          proxyCommand = "${lib.getExe pkgs.ipv6-link-local-ssh-proxy-command} %h %p";
-        };
+        matchBlocks."*.local".forwardAgent = true;
       };
 
       programs.git = {
@@ -175,6 +170,13 @@
       programs.direnv.enable = true;
 
       programs.nix-index.enable = true;
+
+      programs.zsh = {
+        enable = true;
+        initContent = ''
+          bindkey -e
+        '';
+      };
 
       programs.bash = {
         enable = true;
@@ -261,7 +263,7 @@
           set-option -as terminal-features ",xterm-kitty:RGB"
           set-option -g allow-passthrough on
           set-option -g automatic-rename on
-          set-option -g default-shell $SHELL
+          set-option -g default-command $SHELL
           set-option -g detach-on-destroy off
           set-option -g focus-events on
           set-option -g renumber-windows on
@@ -286,6 +288,9 @@
     }
 
     (lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+      programs.ssh.matchBlocks."*.local".proxyCommand =
+        "${lib.getExe pkgs.ipv6-link-local-ssh-proxy-command} %h %p";
+
       home.packages = with pkgs; [
         _caffeine
         bpftrace
@@ -294,6 +299,8 @@
         inotify-tools
         ipv6-link-local-ssh-proxy-command
         nixos-kexec
+        pax-utils
+        poke
         strace-with-colors
       ];
     })
