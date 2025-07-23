@@ -33,6 +33,7 @@
         grex
         gron
         htmlq
+        htop-vim
         jared-neovim
         jq
         just
