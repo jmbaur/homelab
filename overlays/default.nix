@@ -41,6 +41,8 @@ inputs: {
 
     # all other packages
     (final: prev: {
+      cros-ec-fizz = prev.cros-ec.override { board = "fizz"; };
+
       vimPlugins = prev.vimPlugins.extend (
         _: _: {
           bpftrace-vim = final.vimUtils.buildVimPlugin {
@@ -109,12 +111,10 @@ inputs: {
 
       # Make dbus service file start the systemd service
       mako = prev.mako.overrideAttrs (old: {
-        postInstall =
-          (old.postInstall or "")
-          + ''
-            substituteInPlace $out/share/dbus-1/services/fr.emersion.mako.service \
-              --replace-fail "Exec=$out/bin/mako" "SystemdService=mako.service"
-          '';
+        postInstall = (old.postInstall or "") + ''
+          substituteInPlace $out/share/dbus-1/services/fr.emersion.mako.service \
+            --replace-fail "Exec=$out/bin/mako" "SystemdService=mako.service"
+        '';
       });
 
       marvellBinaries = final.fetchFromGitHub {
