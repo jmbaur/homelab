@@ -3,7 +3,7 @@ inputs.nixpkgs.lib.mapAttrs (
   _: pkgs:
   pkgs.treefmt.withConfig {
     runtimeInputs = [
-      pkgs.nixfmt-rfc-style
+      pkgs.nixfmt
       pkgs.shfmt
       pkgs.stylua
       pkgs.zig_0_14

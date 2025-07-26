@@ -9,7 +9,7 @@
   neovim-unwrapped,
   neovimUtils,
   nil,
-  nixfmt-rfc-style,
+  nixfmt,
   pyright,
   ripgrep,
   ruff,
@@ -45,7 +45,7 @@ wrapNeovimUnstable neovim-unwrapped (
           go-tools
           gofumpt
           gopls
-          nixfmt-rfc-style
+          nixfmt
           lua-language-server
           nil
           pyright
