@@ -60,19 +60,18 @@ in
     services.ipwatch = {
       enable = true;
       hooks.${cfg.interface} = {
-        filters =
-          [
-            "IsGlobalUnicast"
-            "!IsPrivate"
-            "!IsLoopback"
-            "!Is4In6"
-          ]
-          ++ lib.optionals (!cfg.ipv4.enable) [
-            "!Is4"
-          ]
-          ++ lib.optionals (!cfg.ipv6.enable) [
-            "!Is6"
-          ];
+        filters = [
+          "IsGlobalUnicast"
+          "!IsPrivate"
+          "!IsLoopback"
+          "!Is4In6"
+        ]
+        ++ lib.optionals (!cfg.ipv4.enable) [
+          "!Is4"
+        ]
+        ++ lib.optionals (!cfg.ipv6.enable) [
+          "!Is6"
+        ];
         program = lib.getExe (
           pkgs.writeShellScriptBin "start-update-cloudflare" ''
             env | grep -e ^IS_IP6= -e ^IS_IP4= -e ^ADDR= >${config.systemd.paths.update-cloudflare.pathConfig.PathChanged}

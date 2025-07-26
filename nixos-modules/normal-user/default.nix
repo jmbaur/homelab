@@ -38,13 +38,14 @@ in
     users.users.${cfg.username} = {
       isNormalUser = true;
       createHome = false; # we do this ourselves below
-      extraGroups =
-        [ "wheel" ]
-        ++ optional config.custom.dev.enable "dialout" # serial consoles
-        ++ optional config.networking.networkmanager.enable "networkmanager"
-        ++ optional config.programs.adb.enable "adbusers"
-        ++ optional config.programs.wireshark.enable "wireshark"
-        ++ optional config.virtualisation.docker.enable "docker";
+      extraGroups = [
+        "wheel"
+      ]
+      ++ optional config.custom.dev.enable "dialout" # serial consoles
+      ++ optional config.networking.networkmanager.enable "networkmanager"
+      ++ optional config.programs.adb.enable "adbusers"
+      ++ optional config.programs.wireshark.enable "wireshark"
+      ++ optional config.virtualisation.docker.enable "docker";
     };
 
     systemd.tmpfiles.settings.home-directories.${config.users.users.${cfg.username}.home}.${

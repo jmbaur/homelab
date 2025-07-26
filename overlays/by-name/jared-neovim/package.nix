@@ -34,43 +34,42 @@ wrapNeovimUnstable neovim-unwrapped (
 
     vimAlias = true;
 
-    plugins =
-      [
-        (vimUtils.buildVimPlugin {
-          name = "jared-neovim-config";
-          src = ./nvim;
-          runtimeDeps = [
-            clang-tools
-            fd
-            fzf
-            go-tools
-            gofumpt
-            gopls
-            nixfmt-rfc-style
-            lua-language-server
-            nil
-            pyright
-            ripgrep
-            ruff
-            rust-analyzer
-            rustfmt
-            shellcheck
-            shfmt
-            ttags
-            zls
-          ];
-        })
-      ]
-      ++ (with vimPlugins; [
-        bpftrace-vim
-        fzf-lua
-        nvim-treesitter.withAllGrammars
-        vim-dispatch
-        vim-eunuch
-        vim-fugitive
-        vim-rsi
-        vim-surround
-        vim-vinegar
-      ]);
+    plugins = [
+      (vimUtils.buildVimPlugin {
+        name = "jared-neovim-config";
+        src = ./nvim;
+        runtimeDeps = [
+          clang-tools
+          fd
+          fzf
+          go-tools
+          gofumpt
+          gopls
+          nixfmt-rfc-style
+          lua-language-server
+          nil
+          pyright
+          ripgrep
+          ruff
+          rust-analyzer
+          rustfmt
+          shellcheck
+          shfmt
+          ttags
+          zls
+        ];
+      })
+    ]
+    ++ (with vimPlugins; [
+      bpftrace-vim
+      fzf-lua
+      nvim-treesitter.withAllGrammars
+      vim-dispatch
+      vim-eunuch
+      vim-fugitive
+      vim-rsi
+      vim-surround
+      vim-vinegar
+    ]);
   }
 )

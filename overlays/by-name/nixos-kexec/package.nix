@@ -19,9 +19,8 @@ writeShellApplication {
     kexec-tools
   ];
 
-  text =
-    ''
-      kexec_jq=${./nixos-kexec.jq}
-    ''
-    + lib.fileContents ./nixos-kexec.bash;
+  text = ''
+    kexec_jq=${./nixos-kexec.jq}
+  ''
+  + lib.fileContents ./nixos-kexec.bash;
 }

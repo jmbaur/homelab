@@ -233,7 +233,8 @@ let
       modules = [
         inheritFromBaseConfig
         recoveryConfig
-      ] ++ cfg.modules;
+      ]
+      ++ cfg.modules;
     }
   );
 in
@@ -308,12 +309,10 @@ in
       # Add hydra-build-products so that the recovery images can be downloaded
       # from the web UI.
       recoveryImage = recovery.config.system.build.image.overrideAttrs (old: {
-        postInstall =
-          (old.postInstall or "")
-          + ''
-            mkdir -p $out/nix-support
-            echo "file recovery-image $out/recovery.raw.zst" >> $out/nix-support/hydra-build-products
-          '';
+        postInstall = (old.postInstall or "") + ''
+          mkdir -p $out/nix-support
+          echo "file recovery-image $out/recovery.raw.zst" >> $out/nix-support/hydra-build-products
+        '';
       });
     };
   };

@@ -29,7 +29,8 @@ let
       pkgs.busybox
       pkgs.cryptsetup
       pkgs.kmod
-    ] ++ config.system.fsPackages;
+    ]
+    ++ config.system.fsPackages;
   };
 in
 {
