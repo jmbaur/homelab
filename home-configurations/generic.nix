@@ -176,6 +176,8 @@
         enable = true;
         initContent = ''
           bindkey -e
+          alias j=tmux-jump
+          bindkey \^U backward-kill-line
         '';
       };
 
