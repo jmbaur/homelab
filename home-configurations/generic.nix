@@ -32,6 +32,7 @@
         gnumake
         grex
         gron
+        hexyl
         htmlq
         htop-vim
         jared-neovim
@@ -46,6 +47,7 @@
         man-pages
         man-pages-posix
         mdcat
+        moar
         ncdu
         nix-diff
         nix-output-monitor
