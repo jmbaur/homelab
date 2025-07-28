@@ -32,7 +32,7 @@ vim.api.nvim_create_autocmd({ "ColorScheme" }, {
 	end,
 })
 
-function setup_fzf(background)
+local setup_fzf = function(background)
 	fzf_lua.setup({
 		fzf_args = string.format("--color=%s", background or "dark"),
 		defaults = { file_icons = false },

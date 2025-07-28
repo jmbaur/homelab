@@ -72,7 +72,7 @@ if vim.fn.executable("lua-language-server") == 1 then
 			"selene.yml",
 			"stylua.toml",
 		},
-		settings = { Lua = { diagnostics = { globals = { "vim" } } } },
+		settings = { Lua = {} },
 	})
 end
 
