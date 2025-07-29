@@ -28,7 +28,10 @@ in
     {
       system.stateVersion = mkDefault "25.11";
 
-      environment.systemPackages = [ pkgs.nixos-kexec ];
+      environment.systemPackages = [
+        pkgs.modprobed-db
+        pkgs.nixos-kexec
+      ];
 
       boot.initrd.systemd.enable = mkDefault true;
       system.etc.overlay.enable = mkDefault true;
