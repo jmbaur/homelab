@@ -33,6 +33,7 @@
         grex
         gron
         hexyl
+        home-manager
         htmlq
         htop-vim
         jared-neovim
