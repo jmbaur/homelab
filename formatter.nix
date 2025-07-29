@@ -19,6 +19,10 @@ inputs.nixpkgs.lib.mapAttrs (
 
       formatter.shell = {
         command = "shfmt";
+        options = [
+          "-w"
+          "-s"
+        ];
         includes = [
           "*.sh"
           "*.bash"

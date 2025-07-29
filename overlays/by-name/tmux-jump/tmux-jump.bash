@@ -33,7 +33,7 @@ fi
 
 tmux_session_directory="${base_directory}/${tmux_session_path}"
 
-if [[ ! -d "$tmux_session_directory" ]]; then
+if [[ ! -d $tmux_session_directory ]]; then
 	echo "Directory $tmux_session_directory does not exist"
 	exit 3
 fi
