@@ -63,6 +63,7 @@ wrapNeovimUnstable neovim-unwrapped (
     ++ (with vimPlugins; [
       bpftrace-vim
       fzf-lua
+      nvim-lspconfig
       nvim-treesitter.withAllGrammars
       vim-dispatch
       vim-eunuch
