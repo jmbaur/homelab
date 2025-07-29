@@ -1,5 +1,6 @@
 {
   clang-tools,
+  dts-lsp,
   fd,
   fzf,
   go-tools,
@@ -21,6 +22,7 @@
   vimPlugins,
   vimUtils,
   wrapNeovimUnstable,
+  zig,
   zls,
 }:
 
@@ -40,14 +42,15 @@ wrapNeovimUnstable neovim-unwrapped (
         src = ./nvim;
         runtimeDeps = [
           clang-tools
+          dts-lsp
           fd
           fzf
           go-tools
           gofumpt
           gopls
-          nixfmt
           lua-language-server
           nil
+          nixfmt
           pyright
           ripgrep
           ruff
@@ -56,6 +59,7 @@ wrapNeovimUnstable neovim-unwrapped (
           shellcheck
           shfmt
           ttags
+          zig
           zls
         ];
       })

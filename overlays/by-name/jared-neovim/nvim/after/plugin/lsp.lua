@@ -29,6 +29,10 @@ if vim.fn.executable("clangd") == 1 then
 	add_lsp("clangd", {})
 end
 
+if vim.fn.executable("dts-lsp") == 1 then
+	add_lsp("dts_lsp", {})
+end
+
 if vim.fn.executable("bash-language-server") == 1 then
 	add_lsp("bashls", {})
 end
