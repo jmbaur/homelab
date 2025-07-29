@@ -5,10 +5,10 @@
   gnused,
   lib,
   tmux,
-  writeShellApplication,
+  writeArgcShellApplication,
 }:
 
-writeShellApplication {
+writeArgcShellApplication {
   name = "tmux-jump";
   runtimeInputs = [
     coreutils

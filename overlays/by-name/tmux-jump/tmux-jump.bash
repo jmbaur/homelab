@@ -1,17 +1,13 @@
 # shellcheck shell=bash
 
-declare -r default_base_directory=${XDG_STATE_HOME:-$HOME/.local/state}/projects
+declare argc_project
 
-function usage() {
-	if [[ -n ${1-} ]]; then
-		echo "$1"
-		echo
-	fi
-	echo "Usage: $(basename "$0") [PROJECT NAME]"
-	echo
-	echo "The default projects directory is $default_base_directory. This can be"
-	echo "overridden by setting the $PROJECTS_DIR environment variable."
-}
+# @env PROJECTS_DIR           defaults to $XDG_STATE_HOME/projects
+# @arg project
+
+eval "$(argc --argc-eval "$0" "$@")"
+
+declare -r default_base_directory=${XDG_STATE_HOME:-$HOME/.local/state}/projects
 
 base_directory=${PROJECTS_DIR:-$default_base_directory}
 
@@ -20,6 +16,8 @@ if ! test -d "$base_directory"; then
 	exit 1
 fi
 
+declare -r project=${argc_project:-}
+
 if ! tmux_session_path=$(
 	fd '^\.git$' \
 		--base-directory "$base_directory" \
@@ -27,7 +25,7 @@ if ! tmux_session_path=$(
 		--max-depth 2 \
 		--no-ignore |
 		sed 's,/\.git/\?,,' |
-		{ [[ -n ${1-} ]] && grep ".*$1.*" || cat; } | fzf --select-1
+		{ [[ -n $project ]] && grep ".*$project.*" || cat; } | fzf --select-1
 ); then
 	echo "No matches"
 	exit 2

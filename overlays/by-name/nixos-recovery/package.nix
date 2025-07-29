@@ -1,5 +1,4 @@
 {
-  argc,
   btrfs-progs,
   cryptsetup,
   curl,
@@ -10,15 +9,14 @@
   nixos-install,
   systemd,
   util-linux,
-  writeShellApplication,
+  writeArgcShellApplication,
 }:
 
-writeShellApplication {
+writeArgcShellApplication {
   name = "nixos-recovery";
 
   runtimeInputs = [
     "/run/wrappers" # mount
-    argc
     btrfs-progs # mkfs.btrfs
     cryptsetup
     curl

@@ -1,18 +1,16 @@
 {
-  argc,
   coreutils-full,
   fzf,
   jq,
   kexec-tools,
   lib,
-  writeShellApplication,
+  writeArgcShellApplication,
 }:
 
-writeShellApplication {
+writeArgcShellApplication {
   name = "nixos-kexec";
 
   runtimeInputs = [
-    argc
     coreutils-full
     jq
     fzf
@@ -21,6 +19,6 @@ writeShellApplication {
 
   text = ''
     kexec_jq=${./nixos-kexec.jq}
-  ''
-  + lib.fileContents ./nixos-kexec.bash;
+    ${lib.fileContents ./nixos-kexec.bash}
+  '';
 }

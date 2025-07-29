@@ -1,18 +1,16 @@
 {
-  argc,
   curl,
   jq,
   lib,
   nix,
   systemd,
-  writeShellApplication,
+  writeArgcShellApplication,
 }:
 
-writeShellApplication {
+writeArgcShellApplication {
   name = "nixos-update";
 
   runtimeInputs = [
-    argc
     curl
     jq
     nix
