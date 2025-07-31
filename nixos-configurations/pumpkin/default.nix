@@ -25,9 +25,7 @@
       systemd.network.wait-online.anyInterface = true;
     }
     {
-      custom.yggdrasil.peers.rhubarb.allowedTCPPorts = [
-        config.services.navidrome.settings.Port
-      ];
+      custom.yggdrasil.peers.onion.allowedTCPPorts = [ config.services.navidrome.settings.Port ];
 
       services.navidrome = {
         enable = true;
@@ -39,9 +37,7 @@
       };
     }
     {
-      custom.yggdrasil.peers.rhubarb.allowedTCPPorts = [
-        8096
-      ];
+      custom.yggdrasil.peers.onion.allowedTCPPorts = [ 8096 ];
 
       services.jellyfin.enable = true;
     }
