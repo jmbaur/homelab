@@ -32,14 +32,19 @@ let
   kodiPackage =
     (
       (
+        (
+          {
+            gbm = pkgs.kodi-gbm;
+            wayland = pkgs.kodi-wayland;
+          }
+          .${cfg.backend}
+        ).override
         {
-          gbm = pkgs.kodi-gbm;
-          wayland = pkgs.kodi-wayland;
+          sambaSupport = false; # deps don't cross-compile
         }
-        .${cfg.backend}
-      ).override
+      ).overrideAttrs
       {
-        sambaSupport = false; # deps don't cross-compile
+        enableParallelBuilding = true;
       }
     ).withPackages
       (p: [
