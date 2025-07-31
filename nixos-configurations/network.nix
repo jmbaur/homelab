@@ -7,6 +7,7 @@
     cauliflower.ip = "201:4a45:5f4a:79f2:4c9e:9ab2:5e8d:38fe";
     celery.ip = "206:db73:272c:557c:37de:4c83:beb6:8478";
     garlic.ip = "201:d9e1:ed5:3c5f:d730:1331:1ff8:30e2";
+    onion.ip = "202:7ce8:3b24:cfa:37c2:9cd7:ebe6:9039";
     pea.ip = "200:9ab:a322:6e17:c20f:e243:3a15:3f6";
     potato.ip = "200:39c8:70a3:d484:2390:f7c5:f1cc:976e";
     pumpkin.ip = "201:5c00:65be:ef51:f30d:7742:6053:1ab3";
