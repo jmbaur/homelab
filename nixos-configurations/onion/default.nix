@@ -19,6 +19,11 @@
     }
     {
       services.kodi.enable = true;
+
+      hardware.graphics.extraPackages = with pkgs; [
+        (intel-vaapi-driver.override { enableHybridCodec = true; })
+        intel-media-driver
+      ];
     }
   ];
 }
