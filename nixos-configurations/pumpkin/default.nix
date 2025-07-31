@@ -39,13 +39,6 @@
       };
     }
     {
-      services.photoprism = {
-        enable = true;
-        address = "[::]";
-        originalsPath = "/var/lib/photoprism-photos";
-      };
-    }
-    {
       custom.yggdrasil.peers.rhubarb.allowedTCPPorts = [
         8096
       ];

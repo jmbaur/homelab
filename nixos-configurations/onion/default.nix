@@ -14,6 +14,8 @@
       custom.recovery.targetDisk = "/dev/mmcblk0";
 
       hardware.firmware = [ (pkgs.extractLinuxFirmwareDirectory "rtl_nic") ];
+
+      boot.initrd.availableKernelModules = [ "sdhci_pci" ];
     }
     {
       services.kodi.enable = true;
