@@ -13,7 +13,10 @@
       custom.basicNetwork.enable = true;
       custom.recovery.targetDisk = "/dev/mmcblk0";
 
-      hardware.firmware = [ (pkgs.extractLinuxFirmwareDirectory "rtl_nic") ];
+      hardware.firmware = [
+        (pkgs.extractLinuxFirmwareDirectory "rtl_nic")
+        (pkgs.extractLinuxFirmwareDirectory "intel")
+      ];
 
       boot.initrd.availableKernelModules = [
         "sdhci_pci"
