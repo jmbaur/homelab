@@ -23,7 +23,6 @@
       "phy-mvebu-cp110-utmi"
       "sdhci"
       "uas"
-      "usb_storage"
     ];
 
     systemd.network.links = {

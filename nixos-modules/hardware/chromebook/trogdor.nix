@@ -88,7 +88,6 @@
       "qcom_rpm"
       "uas"
       "ucsi_glink"
-      "usb_storage"
 
       # storage
       "nvme"

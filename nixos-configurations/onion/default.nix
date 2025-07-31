@@ -15,7 +15,10 @@
 
       hardware.firmware = [ (pkgs.extractLinuxFirmwareDirectory "rtl_nic") ];
 
-      boot.initrd.availableKernelModules = [ "sdhci_pci" ];
+      boot.initrd.availableKernelModules = [
+        "sdhci_pci"
+        "uas"
+      ];
     }
     {
       services.kodi.enable = true;

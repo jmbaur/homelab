@@ -25,7 +25,7 @@ in
       boot.initrd.availableKernelModules = [
         "nvme"
         "sd_mod"
-        "usb_storage"
+        "uas"
         "xhci_pci"
       ];
       boot.initrd.kernelModules = [ "i915" ];

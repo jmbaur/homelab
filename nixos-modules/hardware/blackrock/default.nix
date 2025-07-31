@@ -145,7 +145,6 @@ in
       "qcom_rpm"
       "uas"
       "ucsi_glink"
-      "usb_storage"
 
       # NOTE: See https://github.com/jhovold/linux/commit/f8ef0dcee4a61f686655f9be82d0576b99612dec
 

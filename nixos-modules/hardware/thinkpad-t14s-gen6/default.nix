@@ -72,7 +72,7 @@ in
       "i2c_qcom_geni"
 
       # Definitely needed for USB:
-      "usb_storage"
+      "uas"
       "phy_qcom_qmp_combo"
       "phy_snps_eusb2"
       "phy_qcom_eusb2_repeater"
