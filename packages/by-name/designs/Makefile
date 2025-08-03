@@ -2,14 +2,15 @@
 
 out ?= $(PWD)
 
-DESIGNS := orangepi5-mount \
+DESIGNS := \
 	   anker-usb-mount \
-	   headphone-holder \
-	   de10nano-mount \
-	   cti-smarc-mount \
 	   congatec-mount \
+	   cti-smarc-mount \
+	   de10nano-mount \
+	   headphone-holder \
 	   imx8mp-evk-mount \
-
+	   orangepi5-mount \
+	   ultra96-mount \
 
 SOURCES := $(foreach design,$(DESIGNS),src/$(design).scad)
 STLS := $(foreach source,$(SOURCES),$(patsubst %.scad,%.stl,$(source)))
