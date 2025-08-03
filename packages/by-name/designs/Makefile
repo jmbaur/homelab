@@ -2,7 +2,12 @@
 
 out ?= $(PWD)
 
-SOURCES := $(wildcard src/*.scad)
+DESIGNS := orangepi5-mount \
+	   anker-usb-mount \
+	   headphone-holder \
+	   de10nano-mount \
+
+SOURCES := $(foreach design,$(DESIGNS),src/$(design).scad)
 STLS := $(foreach source,$(SOURCES),$(patsubst %.scad,%.stl,$(source)))
 
 all: $(STLS)
