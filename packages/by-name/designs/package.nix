@@ -15,5 +15,12 @@ stdenvNoCC.mkDerivation {
     ];
   };
 
+  postInstall = ''
+    mkdir -p $out/nix-support
+    for file in $(find $out -type f -name '*.stl'); do
+      echo "file $(basename $file) $file" >> $out/nix-support/hydra-build-products
+    done
+  '';
+
   nativeBuildInputs = [ openscad-unstable ];
 }
