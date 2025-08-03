@@ -20,9 +20,9 @@ in
     # doesn't work on the RPI4.
     #
     # TODO(jared): figure out how to get rid of this.
-    systemd.watchdog = {
-      runtimeTime = null;
-      rebootTime = null;
+    systemd.settings.Manager = {
+      RuntimeWatchdogSec = null;
+      RebootWatchdogSec = null;
     };
 
     system.build.firmwareImage = firmwareImage;

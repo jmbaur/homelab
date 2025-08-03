@@ -42,16 +42,17 @@
       # that we can hopefully still access it remotely.
       enableEmergencyMode = false;
 
-      watchdog = {
-        runtimeTime = lib.mkDefault "20s";
-        rebootTime = lib.mkDefault "30s";
-        kexecTime = lib.mkDefault "30s";
+      settings.Manager = {
+        KExecWatchdogSec = lib.mkDefault "30s";
+        RebootWatchdogSec = lib.mkDefault "30s";
+        RuntimeWatchdogSec = lib.mkDefault "20s";
       };
 
       sleep.extraConfig = ''
         AllowSuspend=no
         AllowHibernation=no
       '';
+
     };
 
     # use TCP BBR has significantly increased throughput and reduced latency for connections
