@@ -6,6 +6,10 @@ DESIGNS := orangepi5-mount \
 	   anker-usb-mount \
 	   headphone-holder \
 	   de10nano-mount \
+	   cti-smarc-mount \
+	   congatec-mount \
+	   imx8mp-evk-mount \
+
 
 SOURCES := $(foreach design,$(DESIGNS),src/$(design).scad)
 STLS := $(foreach source,$(SOURCES),$(patsubst %.scad,%.stl,$(source)))
