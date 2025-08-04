@@ -40,12 +40,7 @@ inputs.nixpkgs.lib.genAttrs allHosts (
         # Opinionated configuration that we want to be applied to all machines
         # _within_ this flake, but not necessarily exported for outside usage
         # as a module.
-        {
-          config,
-          lib,
-          pkgs,
-          ...
-        }:
+        { config, lib, ... }:
         {
           _file = "<homelab/nixos-configurations/default.nix>";
 
@@ -80,7 +75,7 @@ inputs.nixpkgs.lib.genAttrs allHosts (
           custom.update = {
             enable = lib.mkDefault true;
             automatic = lib.mkDefault true;
-            endpoint = lib.mkDefault "http://broccoli.internal:3000/job/homelab/main/${pkgs.stdenv.buildPlatform.system}.${config.networking.hostName}-toplevel/latest";
+            endpoint = lib.mkDefault "http://broccoli.internal:3000/job/homelab/main/${config.networking.hostName}.toplevel/latest";
           };
 
           custom.recovery = {
