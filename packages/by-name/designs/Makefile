@@ -3,6 +3,7 @@
 out ?= $(PWD)
 
 DESIGNS := \
+	allwinner-d1-mount \
 	anker-usb-mount \
 	congatec-mount \
 	cti-smarc-mount \
