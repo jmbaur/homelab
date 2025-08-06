@@ -183,9 +183,6 @@ let
         };
       };
 
-      # Not strictly needed, but nice to have.
-      boot.initrd.systemd.enable = true;
-
       # Don't launch any gettys
       systemd.services."getty@".enable = false;
       systemd.services."serial-getty@".enable = false;
