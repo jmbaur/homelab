@@ -7,6 +7,7 @@
     git-hooks.url = "github:cachix/git-hooks.nix";
     home-manager.url = "github:nix-community/home-manager";
     ipwatch.url = "github:jmbaur/ipwatch";
+    mixos.url = "github:jmbaur/mixos";
     nix-index-database.url = "github:nix-community/nix-index-database";
     nixos-router.url = "github:jmbaur/nixos-router";
     sops-nix.url = "github:Mic92/sops-nix";
@@ -17,6 +18,7 @@
     git-hooks.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     ipwatch.inputs.nixpkgs.follows = "nixpkgs";
+    mixos.inputs.nixpkgs.follows = "nixpkgs";
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
     nixos-router.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
