@@ -22,7 +22,7 @@ in
 
         programs.ssh.startAgent = lib.mkDefault true;
         programs.gnupg.agent.enable = lib.mkDefault true;
-        services.pcscd.enable = config.custom.desktop.enable;
+        services.pcscd.enable = lib.mkDefault config.custom.desktop.enable;
 
         programs.adb.enable = lib.mkDefault true;
 
