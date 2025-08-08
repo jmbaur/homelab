@@ -91,11 +91,17 @@
       '')
     ];
 
-    # TODO(jared): There is an issue where uboot advertises the ability to
-    # perform a reset via the EFI runtime services, however the linux kernel
-    # hangs indefinitely when it attempts to use it, so in the meantime, don't
-    # use it!
-    boot.kernelParams = [ "efi=noruntime" ];
+    boot.kernelParams = [
+      # TODO(jared): There is an issue where uboot advertises the ability to
+      # perform a reset via the EFI runtime services, however the linux kernel
+      # hangs indefinitely when it attempts to use it, so in the meantime,
+      # don't use it!
+      "efi=noruntime"
+
+      # TODO(jared): Sometimes the mt7530 MDIO bus will timeout. This seems to
+      # prevent that from happening.
+      "clk_ignore_unused"
+    ];
 
     # The kernel tries to iterate the MTD partitions in the initrd, but we need
     # to provide the kernel modules to allow it to do so.
