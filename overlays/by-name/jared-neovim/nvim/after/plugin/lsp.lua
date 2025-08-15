@@ -15,7 +15,7 @@ if vim.fn.executable("nil") == 1 then
 end
 
 if vim.fn.executable("rust-analyzer") == 1 then
-	add_lsp("rust-analyzer", {
+	add_lsp("rust_analyzer", {
 		settings = {
 			["rust-analyzer"] = {
 				diagnostics = { disabled = { "unresolved-proc-macro" } },
