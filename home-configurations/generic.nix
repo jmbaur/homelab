@@ -182,8 +182,21 @@
         enable = true;
         initContent = ''
           bindkey -e
+
           alias j=tmux-jump
+
+          export GOPATH=''${XDG_DATA_HOME:-~/.local/share}/go
+
           bindkey \^U backward-kill-line
+
+          autoload -Uz vcs_info
+          precmd_vcs_info() { vcs_info }
+          precmd_newline() { printf "\n" }
+          precmd_functions+=(precmd_vcs_info precmd_newline)
+          setopt prompt_subst
+          zstyle ':vcs_info:*' actionformats '[%b|%a]'
+          zstyle ':vcs_info:*' formats '[%b]'
+          PROMPT='%B%(?..%F{1}[%?]%f)%F{2}[%n@%m:%2~]''${vcs_info_msg_0_}%#%f%b '
         '';
       };
 
