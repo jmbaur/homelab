@@ -114,7 +114,7 @@ in
       {
         name = "google-firmware";
         patch = null;
-        extraStructuredConfig.GOOGLE_FIRMWARE = lib.kernel.yes;
+        structuredExtraConfig.GOOGLE_FIRMWARE = lib.kernel.yes;
       }
     ];
 

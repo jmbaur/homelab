@@ -36,7 +36,7 @@
       {
         name = "trogdor-hardware-enablement";
         patch = null;
-        extraStructuredConfig = {
+        structuredExtraConfig = {
           RMI4_F11 = lib.kernel.yes;
           RMI4_F12 = lib.kernel.yes;
           RMI4_F30 = lib.kernel.yes;

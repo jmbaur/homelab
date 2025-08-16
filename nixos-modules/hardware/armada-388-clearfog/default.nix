@@ -30,7 +30,7 @@
       {
         name = "efi-support";
         patch = null;
-        extraStructuredConfig = {
+        structuredExtraConfig = {
           EFI = lib.kernel.yes;
           EFI_STUB = lib.kernel.yes;
         };
@@ -40,7 +40,7 @@
       {
         name = "kexec-support";
         patch = null;
-        extraStructuredConfig = {
+        structuredExtraConfig = {
           KEXEC = lib.kernel.yes;
         };
       }
@@ -112,7 +112,7 @@
     # ubootenvred  2176KiB   128KiB
     # empty        2304KiB  1792KiB
     system.build.firmware = pkgs.uboot-clearfog_spi.override {
-      extraStructuredConfig = with lib.kernel; {
+      structuredExtraConfig = with lib.kernel; {
         BOOTCOUNT_ENV = yes;
         BOOTCOUNT_LIMIT = yes;
         BOOTSTD_DEFAULTS = yes;
@@ -131,7 +131,7 @@
 
     # usage: kwboot -b u-boot-with-spl.kwb /dev/ttyUSB0 && tio /dev/ttyUSB0
     system.build.uartFirmware = config.system.build.firmware.override {
-      extraStructuredConfig = with lib.kernel; {
+      structuredExtraConfig = with lib.kernel; {
         ENV_IS_IN_MMC = unset;
         ENV_IS_NOWHERE = yes;
         MVEBU_SPL_BOOT_DEVICE_MMC = unset;

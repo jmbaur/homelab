@@ -38,7 +38,7 @@
         # The nixos kernel configurator is not capable of overriding what is in the defconfig...
         patch = ./defconfig.patch;
         # Misbehaving drivers (and their dependencies) that don't work well when built as modules.
-        extraStructuredConfig = with lib.kernel; {
+        structuredExtraConfig = with lib.kernel; {
           BRIDGE = yes;
           HSR = yes;
           NET_DSA = yes;
@@ -50,7 +50,7 @@
       {
         name = "pcie-perst-fix";
         patch = ./pcie-perst.patch;
-        extraStructuredConfig.PCIE_MEDIATEK_GEN3 = lib.kernel.yes; # TODO(jared): is this needed?
+        structuredExtraConfig.PCIE_MEDIATEK_GEN3 = lib.kernel.yes; # TODO(jared): is this needed?
       }
       {
         name = "switch-reset-line-fix";
@@ -145,7 +145,7 @@
           ];
         })).override
           {
-            extraStructuredConfig = with lib.kernel; {
+            structuredExtraConfig = with lib.kernel; {
               AHCI = yes;
               AHCI_PCI = yes;
               AUTOBOOT = yes;
