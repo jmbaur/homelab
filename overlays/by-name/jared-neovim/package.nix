@@ -75,6 +75,7 @@ wrapNeovimUnstable neovim-unwrapped (
       vim-rsi
       vim-surround
       vim-vinegar
+      zoxide-vim
     ]);
   }
 )

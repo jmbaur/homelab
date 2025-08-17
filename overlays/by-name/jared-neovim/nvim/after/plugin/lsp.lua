@@ -122,6 +122,7 @@ vim.api.nvim_create_autocmd({ "LspAttach" }, {
 				group = vim.api.nvim_create_augroup("FormatOnSave", { clear = true }),
 				buffer = opts.buf,
 				callback = function()
+					---@diagnostic disable-next-line: missing-parameter
 					if not vim.lsp.buf_is_attached(0) then
 						return
 					end

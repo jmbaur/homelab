@@ -1,9 +1,27 @@
+local nix_path_is_set = function()
+	return vim.fn.match(vim.trim(vim.system({ "nix", "config", "show", "nix-path" }):wait().stdout), "nixpkgs") ~= -1
+end
+
 local nix_shell = function(attr, command)
-	return string.format("nix shell nixpkgs\\#%s -c %s", attr, command)
+	return function()
+		if nix_path_is_set() then
+			return string.format("nix shell nixpkgs\\#%s -c %s", attr, command)
+		else
+			return string.format("nix shell github:nixos/nixpkgs/master\\#%s -c %s", attr, command)
+		end
+	end
 end
 
 local nix_run = function(attr)
 	return nix_shell(attr, attr)
+end
+
+local nix_repl = function()
+	if nix_path_is_set() then
+		return 'nix repl --file "<nixpkgs>"'
+	else
+		return "nix repl"
+	end
 end
 
 local run_builtins = {
@@ -12,7 +30,7 @@ local run_builtins = {
 	deno = nix_run("deno"),
 	ghci = nix_shell("ghc", "ghci"),
 	lua = nix_run("lua"),
-	nix = 'nix repl --file "<nixpkgs>"',
+	nix = nix_repl,
 	node = nix_shell("nodejs", "node"),
 	python3 = nix_run("python3"),
 }
@@ -27,14 +45,16 @@ vim.api.nvim_create_user_command("Run", function(opts)
 	table.insert(cmd, "terminal")
 
 	if vim.tbl_contains(vim.tbl_keys(run_builtins), opts.args) then
-		table.insert(cmd, run_builtins[opts.args])
-	else
-		table.insert(nix_run(opts.args))
+		local builtin = run_builtins[opts.args]
+		table.insert(cmd, type(builtin) == "function" and builtin() or builtin)
+	elseif opts.args ~= "" then
+		table.insert(cmd, nix_run(opts.args))
 	end
 
 	vim.fn.execute(table.concat(cmd, " "))
 end, {
-	nargs = 1,
+	nargs = "?",
+	---@diagnostic disable-next-line: unused-local
 	complete = function(arg_lead, cmdline, cursor_pos)
 		local candidates = {}
 

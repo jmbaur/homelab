@@ -75,6 +75,8 @@ vim.g.dispatch_no_tmux_make = 1
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_python3_provider = 0
 vim.g.mapleader = vim.api.nvim_replace_termcodes("<Space>", true, true, true)
+vim.g.zoxide_hook = "pwd"
+vim.g.zoxide_use_select = 1
 
 vim.opt.autoread = true
 vim.opt.clipboard = "unnamedplus"
@@ -97,6 +99,7 @@ vim.opt.title = true
 vim.opt.wildoptions = table.concat({ "pum", "tagfile" }, ",")
 vim.opt.wrap = false
 
+---@diagnostic disable-next-line: undefined-field
 vim.cmd.colorscheme(vim.opt.termguicolors:get() and "lunaperche" or "default")
 
 -- TODO(jared): use vim.snippet

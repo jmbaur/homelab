@@ -96,8 +96,6 @@ vim.api.nvim_create_user_command("Permalink", function(opts)
 
 	local rev = stdout_or_bail(git_command({ "rev-parse", "HEAD" }))
 
-	local url = nil
-
 	local forge_fn = nil
 
 	if string.match(remote_url, "^https?://github.com/.*$") then
