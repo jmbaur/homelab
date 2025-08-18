@@ -145,7 +145,7 @@
           ];
         })).override
           {
-            structuredExtraConfig = with lib.kernel; {
+            extraStructuredConfig = with lib.kernel; {
               AHCI = yes;
               AHCI_PCI = yes;
               AUTOBOOT = yes;

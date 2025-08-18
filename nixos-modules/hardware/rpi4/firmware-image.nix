@@ -43,7 +43,7 @@ let
   bootmLen = 80 * 1024 * 1024; # 80MiB
 
   uboot = uboot-rpi_arm64.override {
-    structuredExtraConfig = with lib.kernel; {
+    extraStructuredConfig = with lib.kernel; {
       DISTRO_DEFAULTS = unset;
       BOOTSTD_DEFAULTS = yes;
       FIT = yes;

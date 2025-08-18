@@ -14,7 +14,7 @@
       boot.kernelPackages = pkgs.linuxPackages_latest;
 
       system.build.firmware = pkgs.uboot-orangepi_zero3.override {
-        structuredExtraConfig = with lib.kernel; {
+        extraStructuredConfig = with lib.kernel; {
           DISTRO_DEFAULTS = unset;
           BOOTSTD_DEFAULTS = yes;
           FIT = yes;
