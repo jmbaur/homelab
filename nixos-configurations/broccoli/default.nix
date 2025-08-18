@@ -32,20 +32,7 @@
         settings.bind = "[::]:5000";
       };
 
-      nix.settings = {
-        # IFD bad
-        allow-import-from-derivation = false;
-
-        # Allow hydra user to set netrc-file
-        extra-trusted-users = [ config.users.users.hydra.name ];
-      };
-
-      systemd.tmpfiles.settings."10-hydra" = {
-        "${config.users.users.hydra.home}/.config/nix".d = { };
-        "${config.users.users.hydra.home}/.config/nix/nix.conf"."L+".argument = toString (
-          pkgs.writeText "hydra-nix.conf" ''netrc-file = ${config.sops.secrets.hydra_netrc.path}''
-        );
-      };
+      nix.settings.netrc-file = config.sops.secrets.hydra_netrc.path;
 
       nix.settings.allowed-uris = [
         "https://"
@@ -63,6 +50,9 @@
         hydraURL = "http://localhost:3000";
         notificationSender = "hydra@localhost";
         useSubstitutes = true;
+        extraConfig = ''
+          allow_import_from_derivation = false
+        '';
       };
 
       # Allow all yggdrasil to reach hydra and harmonia

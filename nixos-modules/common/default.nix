@@ -80,6 +80,7 @@ in
         channel.enable = false; # opt out of nix channels
         distributedBuilds = mkDefault true; # allow for populating /etc/nix/machines for remote building
         settings = {
+          allow-import-from-derivation = false;
           auto-allocate-uids = true;
           builders-use-substitutes = mkDefault true;
           fsync-store-paths = true;
