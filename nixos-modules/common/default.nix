@@ -7,7 +7,6 @@
 let
   inherit (lib)
     genAttrs
-    mkAfter
     mkDefault
     mkEnableOption
     mkForce
@@ -146,22 +145,8 @@ in
     {
       services.openssh = {
         enable = mkDefault isNotContainer;
-        openFirewall = mkDefault false;
         settings.PasswordAuthentication = false;
       };
-
-      # Only open firewall for ssh on link-local ipv6. This ensures that we
-      # cannot accidentally route ssh traffic over multiple networks, enforcing
-      # this type of traffic to come from a machine on the same link.
-      networking.firewall.extraInputRules =
-        mkIf (with config.services.openssh; enable && !openFirewall)
-          # Use mkAfter so that we can put other rules in the same input-allow
-          # chain that will take precedence over this rule.
-          (
-            mkAfter ''
-              ip6 saddr fe80::/64 tcp dport ssh accept
-            ''
-          );
     }
   ]);
 }
