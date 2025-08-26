@@ -89,16 +89,6 @@ inputs: {
             });
           };
 
-      # Add support for colorized output.
-      strace-with-colors = prev.strace.overrideAttrs (old: {
-        patches = (old.patches or [ ]) ++ [
-          (final.fetchpatch {
-            url = "https://raw.githubusercontent.com/xfgusta/strace-with-colors/197c71f6f304f085e0c84151e6ccc6fcc2f29f7d/strace-with-colors.patch";
-            hash = "sha256-gcQldGsRgvGnrDX0zqcLTpEpchNEbCUFdKyii0wetEI=";
-          })
-        ];
-      });
-
       # Add support for PREF64 NDP option.
       tcpdump = prev.tcpdump.overrideAttrs (old: {
         patches = (old.patches or [ ]) ++ [
