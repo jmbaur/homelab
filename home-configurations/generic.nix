@@ -47,7 +47,6 @@
         macgen
         man-pages
         man-pages-posix
-        mdcat
         moar
         ncdu
         nix-diff
@@ -325,7 +324,7 @@
         nixos-kexec
         pax-utils
         poke
-        strace-with-colors
+        strace
       ];
     })
   ];
