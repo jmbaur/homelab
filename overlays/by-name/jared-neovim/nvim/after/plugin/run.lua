@@ -1,13 +1,21 @@
-local nix_path_is_set = function()
+local nix_path_contains_nixpkgs = function()
 	return vim.fn.match(vim.trim(vim.system({ "nix", "config", "show", "nix-path" }):wait().stdout), "nixpkgs") ~= -1
 end
 
+-- Use a large tarball TTL value so invocations of 'nix shell' can be fast
+local max_tarball_ttl = math.pow(2, 32) - 1
+
 local nix_shell = function(attr, command)
 	return function()
-		if nix_path_is_set() then
-			return string.format("nix shell nixpkgs\\#%s -c %s", attr, command)
+		if nix_path_contains_nixpkgs() then
+			return string.format("nix shell --tarball-ttl %s nixpkgs\\#%s -c %s", max_tarball_ttl, attr, command)
 		else
-			return string.format("nix shell github:nixos/nixpkgs/master\\#%s -c %s", attr, command)
+			return string.format(
+				"nix shell --tarball-ttl %s github:nixos/nixpkgs/master\\#%s -c %s",
+				max_tarball_ttl,
+				attr,
+				command
+			)
 		end
 	end
 end
@@ -17,11 +25,13 @@ local nix_run = function(attr)
 end
 
 local nix_repl = function()
-	if nix_path_is_set() then
-		return 'nix repl --file "<nixpkgs>"'
-	else
-		return "nix repl"
+	local cmd = { "nix", "repl" }
+	local flake_nix = vim.fs.find({ "flake.nix" }, { limit = 1, type = "file", upward = true })
+	if #flake_nix > 0 then
+		table.insert(cmd, vim.fs.dirname(flake_nix[1]))
 	end
+
+	return table.concat(cmd, " ")
 end
 
 local run_builtins = {

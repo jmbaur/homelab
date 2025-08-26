@@ -111,6 +111,8 @@ end
 
 vim.lsp.config("*", { root_markers = { ".git" } })
 
+local format_on_save_group = vim.api.nvim_create_augroup("FormatOnSave", { clear = true })
+
 vim.api.nvim_create_autocmd({ "LspAttach" }, {
 	desc = "Set mappings in LSP-enabled buffer",
 	group = vim.api.nvim_create_augroup("LspAttach", { clear = true }),
@@ -119,11 +121,10 @@ vim.api.nvim_create_autocmd({ "LspAttach" }, {
 
 		if vim.tbl_contains({ "zig", "nix", "go", "sh", "bash", "rust" }, vim.fn.getbufvar(opts.buf, "&filetype")) then
 			vim.api.nvim_create_autocmd({ "BufWritePre" }, {
-				group = vim.api.nvim_create_augroup("FormatOnSave", { clear = true }),
+				group = format_on_save_group,
 				buffer = opts.buf,
 				callback = function()
-					---@diagnostic disable-next-line: missing-parameter
-					if not vim.lsp.buf_is_attached(0) then
+					if not vim.lsp.buf_is_attached(0, opts.data.client_id) then
 						return
 					end
 
@@ -133,6 +134,28 @@ vim.api.nvim_create_autocmd({ "LspAttach" }, {
 
 					vim.lsp.buf.format()
 				end,
+			})
+		end
+	end,
+})
+
+vim.api.nvim_create_autocmd({ "LspDetach" }, {
+	desc = "Teardown for LSP-enabled buffers",
+	group = vim.api.nvim_create_augroup("LspDetach", { clear = true }),
+	callback = function(opts)
+		vim.opt_local.signcolumn = "no"
+
+		local client = vim.lsp.get_client_by_id(opts.data.client_id)
+		if client == nil then
+			return
+		end
+
+		-- Remove the autocommand to format the buffer on save, if it exists
+		if client:supports_method("textDocument/formatting") then
+			vim.api.nvim_clear_autocmds({
+				event = { "BufWritePre" },
+				group = format_on_save_group,
+				buffer = opts.buf,
 			})
 		end
 	end,
@@ -149,13 +172,15 @@ end, {
 	desc = "Toggle format on save for LSP-enabled buffers",
 })
 
+local diagnostic_sign = "\u{2759}"
+
 vim.diagnostic.config({
 	signs = {
 		text = {
-			[vim.diagnostic.severity.ERROR] = "\u{2759}",
-			[vim.diagnostic.severity.WARN] = "\u{2759}",
-			[vim.diagnostic.severity.INFO] = "\u{2759}",
-			[vim.diagnostic.severity.HINT] = "\u{2759}",
+			[vim.diagnostic.severity.ERROR] = diagnostic_sign,
+			[vim.diagnostic.severity.WARN] = diagnostic_sign,
+			[vim.diagnostic.severity.INFO] = diagnostic_sign,
+			[vim.diagnostic.severity.HINT] = diagnostic_sign,
 		},
 	},
 })
