@@ -1,26 +1,39 @@
-{ lib, buildUBoot }:
-buildUBoot {
-  defconfig = "tools-only_defconfig";
-  installDir = "$out/bin";
-  hardeningDisable = [ ];
-  dontStrip = false;
-  extraMeta.platforms = lib.platforms.linux;
-  extraMakeFlags = [
-    "HOST_TOOLS_ALL=y"
-    "CROSS_BUILD_TOOLS=1"
-    "NO_SDL=1"
+{
+  lib,
+  stdenv,
+  ubootTools,
+}:
+
+stdenv.mkDerivation (_: {
+  pname = "uboot-env-tools";
+  inherit (ubootTools)
+    depsBuildBuild
+    nativeBuildInputs
+    src
+    version
+    ;
+
+  configurePhase = ''
+    runHook preConfigure
+
+    make -j$NIX_BUILD_CORES tools-only_defconfig
+
+    runHook postConfigure
+  '';
+
+  makeFlags = [
+    "CROSS_COMPILE=${stdenv.cc.targetPrefix}"
     "envtools"
   ];
 
-  outputs = [
-    "out"
-    "man"
-  ];
+  installPhase = ''
+    runHook preInstall
 
-  postInstall = ''
-    installManPage doc/*.1
-    ln -s $out/bin/fw_printenv $out/bin/fw_setenv
+    install -Dt $out/bin tools/env/fw_printenv
+    ln -sf $out/bin/{fw_printenv,fw_setenv}
+
+    runHook postInstall
   '';
 
-  filesToInstall = [ "tools/env/fw_printenv" ];
-}
+  meta.platforms = lib.platforms.linux;
+})

@@ -1,12 +1,11 @@
 {
   spi ? true,
   buildArmTrustedFirmware,
-  buildUBoot,
   fetchFromGitHub,
   lib,
+  makeUBoot,
   marvellBinaries,
   mv-ddr-marvell,
-  openssl,
 }:
 
 let
@@ -17,8 +16,8 @@ let
     hash = "sha256-NBy4tiUjHmsKoJneidR8qcT9TyjA8ffVbWE+nkziW6M=";
   };
 
-  uboot = buildUBoot {
-    defconfig = "mvebu_db_cn91xx_defconfig";
+  uboot = makeUBoot {
+    boardName = "mvebu_db_cn91xx";
 
     version = "2023.01";
 
@@ -53,71 +52,57 @@ let
       ]
       ++ [ ./fix-compiler-warnings.patch ];
 
-    passAsFile = [ "extraConfig" ];
+    kconfig =
+      with lib.kernel;
+      {
+        BOOTSTD_BOOTCOMMAND = yes;
+        BOOTSTD_FULL = yes;
+        CMD_VBE = unset;
+        FIT = yes;
+        SYS_BOOTM_LEN = freeform "0x${lib.toHexString (128 * 1024 * 1024)}";
 
-    configurePhase = ''
-      runHook preConfigure
-
-      $BASH ./scripts/kconfig/merge_config.sh configs/$defconfig $extraConfigPath
-      echo CONFIG_DEFAULT_DEVICE_TREE=\"cn9130-cf-pro\" >>.config
-      make $makeFlags $olddefconfig
-
-      runHook postConfigure
-    '';
-
-    extraConfig = (
-      ''
-        CONFIG_BOOTSTD_BOOTCOMMAND=y
-        CONFIG_BOOTSTD_FULL=y
-        CONFIG_CMD_VBE=n
-        CONFIG_FIT=y
-        CONFIG_SYS_BOOTM_LEN=0x${lib.toHexString (128 * 1024 * 1024)}
-      ''
-      + ''
-        CONFIG_NET_RANDOM_ETHADDR=y
-        CONFIG_I2C_EEPROM=y
-        CONFIG_CMD_TLV_EEPROM=y
-        CONFIG_ID_EEPROM=y
-        CONFIG_LAST_STAGE_INIT=y
-        CONFIG_GPIO_HOG=y
-        CONFIG_PHY_MARVELL_10G=y
-        CONFIG_DM_PCA953X=y
-        CONFIG_DM_RTC=y
-        CONFIG_MARVELL_RTC=y
-        CONFIG_DM_REGULATOR_FIXED=y
-        CONFIG_BUTTON=y
-        CONFIG_BUTTON_GPIO=y
-        CONFIG_CMD_GPIO=y
-        CONFIG_LED=y
-        CONFIG_LED_GPIO=y
-        CONFIG_CMD_SNTP=y
-        CONFIG_SUPPORT_EMMC_BOOT=y
-      ''
-      + (
+        DEFAULT_DEVICE_TREE = freeform "cn9130-cf-pro";
+        NET_RANDOM_ETHADDR = yes;
+        I2C_EEPROM = yes;
+        CMD_TLV_EEPROM = yes;
+        ID_EEPROM = yes;
+        LAST_STAGE_INIT = yes;
+        GPIO_HOG = yes;
+        PHY_MARVELL_10G = yes;
+        DM_PCA953X = yes;
+        DM_RTC = yes;
+        MARVELL_RTC = yes;
+        DM_REGULATOR_FIXED = yes;
+        BUTTON = yes;
+        BUTTON_GPIO = yes;
+        CMD_GPIO = yes;
+        LED = yes;
+        LED_GPIO = yes;
+        CMD_SNTP = yes;
+        SUPPORT_EMMC_BOOT = yes;
+      }
+      // (
         if spi then
-          ''
-            CONFIG_ENV_IS_IN_MMC=n
-            CONFIG_ENV_IS_IN_SPI_FLASH=y
-            CONFIG_ENV_SIZE=0x10000
-            CONFIG_ENV_OFFSET=0x3f0000
-            CONFIG_ENV_SECT_SIZE=0x10000
-          ''
+          {
+            ENV_IS_IN_MMC = unset;
+            ENV_IS_IN_SPI_FLASH = yes;
+            ENV_SIZE = freeform "0x10000";
+            ENV_OFFSET = freeform "0x3f0000";
+            ENV_SECT_SIZE = freeform "0x10000";
+          }
         else
-          ''
-            CONFIG_ENV_IS_IN_MMC=y
-            CONFIG_SYS_MMC_ENV_DEV=1
-            CONFIG_SYS_MMC_ENV_PART=0
-            CONFIG_ENV_IS_IN_SPI_FLASH=n
-          ''
-      )
-    );
-    filesToInstall = [
-      "u-boot.bin"
-      ".config"
-    ];
+          {
+            ENV_IS_IN_MMC = yes;
+            SYS_MMC_ENV_DEV = freeform 1;
+            SYS_MMC_ENV_PART = freeform 0;
+            ENV_IS_IN_SPI_FLASH = unset;
+          }
+      );
+
+    artifacts = [ "u-boot.bin" ];
   };
 in
-(buildArmTrustedFirmware rec {
+buildArmTrustedFirmware rec {
   platform = "t9130";
 
   patches =
@@ -153,7 +138,6 @@ in
   ];
 
   filesToInstall = [ "build/${platform}/release/flash-image.bin" ];
-}).overrideAttrs
-  (old: {
-    nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ openssl ];
-  })
+
+  passthru = { inherit uboot; };
+}

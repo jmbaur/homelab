@@ -134,8 +134,8 @@
     };
 
     system.build = {
-      uboot =
-        (pkgs.uboot-mt7986a_bpir3_emmc.overrideAttrs (old: {
+      uboot = (
+        pkgs.uboot-mt7986a_bpir3_emmc.overrideAttrs (old: {
           patches = (old.patches or [ ]) ++ [
             ./mt7986-persistent-mac-from-cpu-uid.patch
             (pkgs.fetchpatch {
@@ -143,9 +143,10 @@
               hash = "sha256-+xQ5Rb4feoVA3MBj9AnYlz3U14lmBLlvBx07ZpyTKOE=";
             })
           ];
-        })).override
-          {
-            extraStructuredConfig = with lib.kernel; {
+
+          kconfig =
+            (old.kconfig or { })
+            // (with lib.kernel; {
               AHCI = yes;
               AHCI_PCI = yes;
               AUTOBOOT = yes;
@@ -172,7 +173,6 @@
               ENV_IS_IN_UBI = yes;
               ENV_OFFSET = unset;
               ENV_SIZE = freeform "0x1f000";
-              ENV_SIZE_REDUND = freeform "0x1f000";
               ENV_UBI_PART = freeform "ubi";
               ENV_UBI_VOLUME = freeform "ubootenv";
               ENV_UBI_VOLUME_REDUND = freeform "ubootenvred";
@@ -201,8 +201,9 @@
               USE_BOOTCOMMAND = yes;
               WDT = yes;
               WDT_MTK = yes;
-            };
-          };
+            });
+        })
+      );
 
       firmware = pkgs.callPackage ./firmware.nix {
         uboot-mt7986a_bpir3_emmc = config.system.build.uboot;

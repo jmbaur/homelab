@@ -112,7 +112,7 @@
     # ubootenvred  2176KiB   128KiB
     # empty        2304KiB  1792KiB
     system.build.firmware = pkgs.uboot-clearfog_spi.override {
-      extraStructuredConfig = with lib.kernel; {
+      kconfig = with lib.kernel; {
         BOOTCOUNT_ENV = yes;
         BOOTCOUNT_LIMIT = yes;
         BOOTSTD_DEFAULTS = yes;
