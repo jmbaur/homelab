@@ -1,10 +1,10 @@
 const std = @import("std");
 
 fn usage(program_name: []const u8) noreturn {
-    std.io.getStdErr().writer().print(
+    std.debug.print(
         \\usage:
         \\{s}: <peer-file> <snapshot-root>
-    , .{program_name}) catch unreachable;
+    , .{program_name});
 
     std.process.exit(1);
 }

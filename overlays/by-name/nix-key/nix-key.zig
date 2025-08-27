@@ -7,7 +7,7 @@ const C = @cImport({
 });
 
 fn usage(program_name: []const u8) noreturn {
-    std.io.getStdErr().writer().print(
+    std.debug.print(
         \\usage:
         \\{0s}: <action> [<arg>...]
         \\
@@ -16,7 +16,7 @@ fn usage(program_name: []const u8) noreturn {
         \\    {0s} sign <data-file> <key-file>
         \\  verify:
         \\    {0s} verify <data-file> <signature-file> [<verify-key>...]
-    , .{program_name}) catch unreachable;
+    , .{program_name});
 
     std.process.exit(1);
 }
@@ -90,7 +90,11 @@ fn sign(
 
     const encoded = std.base64.standard.Encoder.encode(encode_buf, &signature);
 
-    try std.io.getStdOut().writer().print("{s}:{s}", .{ key_name, encoded });
+    var out_buf = [_]u8{0} ** 1024;
+    var stdout_file = std.fs.File.stdout().writer(&out_buf);
+    var stdout = &stdout_file.interface;
+    try stdout.print("{s}:{s}", .{ key_name, encoded });
+    try stdout.flush();
 }
 
 fn verify(

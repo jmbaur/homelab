@@ -1,11 +1,12 @@
 const std = @import("std");
 
-const thirty_seconds = 30 * std.time.ns_per_s;
-
 var inside_tmux = false;
 
+var out_buf = [_]u8{0} ** 1024;
+var stdout_file = std.fs.File.stdout().writer(&out_buf);
+
 fn notify(message: []const u8) !void {
-    const stdout = std.io.getStdOut().writer();
+    var stdout = &stdout_file.interface;
     try stdout.print("{s}\n", .{message});
 
     if (inside_tmux) {
@@ -19,22 +20,26 @@ fn notify(message: []const u8) !void {
     }
 
     try stdout.writeAll("\x07"); // bell
+    try stdout.flush();
 }
 
 fn pomo(
     message: []const u8,
     duration: comptime_int,
 ) !void {
-    if (duration < thirty_seconds) {
-        @compileError("duration too short");
-    }
-
-    try std.io.getStdOut().writer().writeAll("\x1b[2J\x1b[0;0H");
+    var stdout = &stdout_file.interface;
+    try stdout.writeAll("\x1b[2J\x1b[0;0H");
+    try stdout.flush();
     try notify(message);
 
-    std.Thread.sleep(duration - thirty_seconds);
-    try notify("30 seconds left!");
-    std.Thread.sleep(thirty_seconds);
+    const warning_time_ns = @min(duration / 10, 30 * std.time.ns_per_s);
+
+    var msg_buf = [_]u8{0} ** 30;
+    const msg = try std.fmt.bufPrint(&msg_buf, "{}s left!", .{@divFloor(warning_time_ns, std.time.ns_per_s)});
+
+    std.Thread.sleep(duration - warning_time_ns);
+    try notify(msg);
+    std.Thread.sleep(warning_time_ns);
 }
 
 pub fn main() !void {
@@ -42,6 +47,9 @@ pub fn main() !void {
     defer arena.deinit();
 
     const allocator = arena.allocator();
+
+    var stdin_file = std.fs.File.stdin().reader(&.{});
+    var stdin = &stdin_file.interface;
 
     inside_tmux = b: {
         _ = std.process.getEnvVarOwned(allocator, "TMUX") catch |err| switch (err) {
@@ -68,6 +76,6 @@ pub fn main() !void {
         // We don't have the controlling terminal in raw mode, so input will
         // be buffered until a newline is entered. This means if we succeed to
         // read anything, then the user hit <ENTER>.
-        _ = try std.io.getStdIn().reader().readByte();
+        _ = try stdin.takeByte();
     }
 }

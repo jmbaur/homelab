@@ -6,7 +6,9 @@ pub fn main() !void {
     var buf = [_]u8{0} ** 6;
     prng.fill(&buf);
 
-    const stdout = std.io.getStdOut().writer();
+    var out_buf = [_]u8{0} ** 32;
+    var stdout_file = std.fs.File.stdout().writer(&out_buf);
+    var stdout = &stdout_file.interface;
 
     for (0..6) |i| {
         try stdout.print("{x:0>2}", .{buf[i]});
@@ -14,4 +16,6 @@ pub fn main() !void {
             try stdout.writeByte(':');
         }
     }
+
+    try stdout.flush();
 }

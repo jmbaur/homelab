@@ -1,10 +1,10 @@
 {
   runCommand,
   stdenv,
-  zig_0_14,
+  zig_0_15,
 }:
 
-runCommand "pomo" { depsBuildBuild = [ zig_0_14 ]; } ''
+runCommand "pomo" { depsBuildBuild = [ zig_0_15 ]; } ''
   mkdir -p $out/bin
 
   export ZIG_GLOBAL_CACHE_DIR=$TEMPDIR

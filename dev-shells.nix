@@ -44,7 +44,7 @@ inputs.nixpkgs.lib.mapAttrs (
         pkgs.home-manager
         pkgs.openscad-unstable
         pkgs.sops
-        pkgs.zig_0_14
+        pkgs.zig_0_15
       ];
 
       env.SOPS_CONFIG = sopsConfig;

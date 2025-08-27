@@ -6,7 +6,7 @@ inputs.nixpkgs.lib.mapAttrs (
       pkgs.nixfmt
       pkgs.shfmt
       pkgs.stylua
-      pkgs.zig_0_14
+      pkgs.zig_0_15
     ];
 
     settings = {

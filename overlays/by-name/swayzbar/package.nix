@@ -1,5 +1,7 @@
 {
+  lib,
   stdenv,
+  writeText,
   zig_0_14,
 }:
 
@@ -14,6 +16,14 @@ stdenv.mkDerivation {
     args=(
       "-j$NIX_BUILD_CORES"
       "-target ${stdenv.hostPlatform.qemuArch}-linux-gnu"
+      "--libc ${writeText "libc.txt" ''
+        include_dir=${lib.getDev stdenv.cc.libc}/include
+        sys_include_dir=${lib.getDev stdenv.cc.libc}/include
+        crt_dir=${stdenv.cc.libc}/lib
+        msvc_lib_dir=
+        kernel32_lib_dir=
+        gcc_dir=
+      ''}"
       "--dynamic-linker $(cat $NIX_CC/nix-support/dynamic-linker)"
       "-lc"
       "-feach-lib-rpath"
