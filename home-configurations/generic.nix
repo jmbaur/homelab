@@ -84,12 +84,15 @@
 
       programs.ssh = {
         enable = true;
-        serverAliveInterval = 11;
-        controlMaster = "auto";
-        controlPath = "/tmp/ssh-%i-%C";
-        controlPersist = "30m";
+        enableDefaultConfig = false;
         matchBlocks."*.internal".forwardAgent = true;
         matchBlocks."*.local".forwardAgent = true;
+        matchBlocks."*" = {
+          serverAliveInterval = 11;
+          controlMaster = "auto";
+          controlPath = "/tmp/ssh-%i-%C";
+          controlPersist = "30m";
+        };
       };
 
       programs.git = {
