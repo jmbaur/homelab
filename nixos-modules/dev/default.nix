@@ -45,19 +45,23 @@ in
           preferStaticEmulators = true;
 
           emulatedSystems =
-            lib.optionals pkgs.stdenv.hostPlatform.isAarch64 [
-              # TODO(jared): pkgsStatic.qemu-user doesn't build right now
-              # "riscv32-linux"
-              # "riscv64-linux"
-              # "i686-linux"
-              # "x86_64-linux"
-            ]
-            ++ lib.optionals pkgs.stdenv.hostPlatform.isx86_64 [
-              "riscv32-linux"
-              "riscv64-linux"
-              "armv7l-linux"
-              "aarch64-linux"
-            ];
+            if (lib.warn "pkgsStatic.qemu-user doesn't build right now" true) then
+              [ ]
+            else
+              (
+                lib.optionals pkgs.stdenv.hostPlatform.isAarch64 [
+                  "riscv32-linux"
+                  "riscv64-linux"
+                  "i686-linux"
+                  "x86_64-linux"
+                ]
+                ++ lib.optionals pkgs.stdenv.hostPlatform.isx86_64 [
+                  "riscv32-linux"
+                  "riscv64-linux"
+                  "armv7l-linux"
+                  "aarch64-linux"
+                ]
+              );
         };
       }
     ]
