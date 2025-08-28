@@ -11,6 +11,7 @@
   uboot-mt7986a_bpir3_emmc,
   ubootTools,
   writeTextDir,
+  uartBoot ? false,
 }:
 
 let
@@ -33,17 +34,24 @@ let
 
       extraMakeFlags = [
         "BL33=${uboot-mt7986a_bpir3_emmc}/u-boot.bin"
-        "BOOT_DEVICE=spim-nand" # defines where the FIP image lives
+        "BOOT_DEVICE=${if uartBoot then "ram" else "spim-nand"}" # defines where the FIP image lives
         "DRAM_USE_DDR4=1"
         "USE_MKIMAGE=1"
         "all"
         "fip"
+      ]
+      ++ lib.optionals uartBoot [
+        "RAM_BOOT_UART_DL=1"
       ];
 
-      filesToInstall = [
-        "build/${platform}/release/bl2.img"
-        "build/${platform}/release/fip.bin"
-      ];
+      filesToInstall =
+        if uartBoot then
+          [ "build/${platform}/release/bl2.bin" ]
+        else
+          [ "build/${platform}/release/bl2.img" ]
+          ++ [
+            "build/${platform}/release/fip.bin"
+          ];
 
       extraMeta.platforms = [ "aarch64-linux" ];
     }).overrideAttrs

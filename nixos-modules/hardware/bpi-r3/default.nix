@@ -208,6 +208,16 @@
       firmware = pkgs.callPackage ./firmware.nix {
         uboot-mt7986a_bpir3_emmc = config.system.build.uboot;
       };
+
+      # mtk_uartboot \
+      #   --aarch64 \
+      #   --brom-load-baudrate 115200 --bl2-load-baudrate 115200 \
+      #   -s /dev/ttyUSB0 \
+      #   -p ./path/to/bl2.bin \
+      #   -f ./path/to/fip.bin
+      uartBootFirmware = config.system.build.firmware.override { uartBoot = true; };
     };
+
+    nixpkgs.buildPlatform = builtins.currentSystem;
   };
 }
