@@ -102,7 +102,7 @@ let
     artifacts = [ "u-boot.bin" ];
   };
 in
-buildArmTrustedFirmware rec {
+buildArmTrustedFirmware (finalAttrs: {
   platform = "t9130";
 
   patches =
@@ -124,7 +124,7 @@ buildArmTrustedFirmware rec {
     chmod -R +w mv_ddr_marvell
   '';
 
-  extraMakeFlags = [
+  makeFlags = [
     "SCP_BL2=${marvellBinaries}/mrvl_scp_bl2.img"
     "BL33=${uboot}/u-boot.bin"
     "USE_COHERENT_MEM=0"
@@ -137,7 +137,9 @@ buildArmTrustedFirmware rec {
     "mrvl_flash"
   ];
 
-  filesToInstall = [ "build/${platform}/release/flash-image.bin" ];
+  filesToInstall = [ "build/${finalAttrs.platform}/release/flash-image.bin" ];
 
   passthru = { inherit uboot; };
-}
+
+  meta.platforms = [ "aarch64-linux" ];
+})
