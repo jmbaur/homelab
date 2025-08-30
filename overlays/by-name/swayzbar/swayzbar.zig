@@ -377,6 +377,6 @@ pub fn main() !void {
         }
 
         try json_stream.endArray();
-        try stdout.flush();
+        try json_stream.writer.flush();
     }
 }
