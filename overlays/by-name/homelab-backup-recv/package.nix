@@ -1,12 +1,12 @@
 {
   runCommand,
   stdenv,
-  zig_0_14,
+  zig_0_15,
 }:
 
 runCommand "homelab-backup-recv"
   {
-    depsBuildBuild = [ zig_0_14 ];
+    depsBuildBuild = [ zig_0_15 ];
     meta.mainProgram = "homelab-backup-recv";
   }
   ''

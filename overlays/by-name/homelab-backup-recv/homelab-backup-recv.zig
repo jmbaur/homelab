@@ -11,7 +11,10 @@ fn usage(program_name: []const u8) noreturn {
 
 const Peers = std.AutoHashMap(std.net.Ip6Address, []const u8);
 
-fn parse_peers(allocator: std.mem.Allocator, file_contents: []const u8) !Peers {
+var reader_buf = [_]u8{0} ** 4096;
+var writer_buf = [_]u8{0} ** 4096;
+
+fn parsePeers(allocator: std.mem.Allocator, file_contents: []const u8) !Peers {
     var peers = Peers.init(allocator);
     errdefer peers.deinit();
 
@@ -46,7 +49,7 @@ fn parse_peers(allocator: std.mem.Allocator, file_contents: []const u8) !Peers {
 }
 
 test {
-    var peers = try parse_peers(std.testing.allocator,
+    var peers = try parsePeers(std.testing.allocator,
         \\foo 2001:db8::1
         \\bar 2001:db8::2
     );
@@ -64,7 +67,7 @@ test {
     );
 }
 
-fn handle_connection(
+fn handleConnection(
     allocator: std.mem.Allocator,
     connection: std.net.Server.Connection,
     peers: Peers,
@@ -76,7 +79,7 @@ fn handle_connection(
     address.setPort(0);
 
     const peer_name = peers.get(address.in6) orelse {
-        std.log.warn("address {} not found in peers", .{connection.address});
+        std.log.warn("address {f} not found in peers", .{connection.address});
         return;
     };
 
@@ -109,27 +112,28 @@ fn handle_connection(
         return;
     };
 
-    const reader = connection.stream.reader();
-    const writer = child_stdin.writer();
+    var stream_reader = connection.stream.reader(&reader_buf);
+    var reader = stream_reader.interface();
+    var child_writer = child_stdin.writer(&writer_buf);
 
-    var buf: [4096]u8 = undefined;
-
-    var total_bytes: u64 = 0;
-    while (true) {
-        const bytes_read = try reader.read(&buf); //  catch |err| switch (err) {};
-        if (bytes_read == 0) {
-            break;
+    var total_bytes: usize = 0;
+    while (reader.stream(&child_writer.interface, .unlimited)) |bytes| {
+        total_bytes += bytes;
+    } else |err| {
+        switch (err) {
+            error.EndOfStream => {
+                // btrfs-receive requires writing and EOF byte
+                try child_writer.interface.writeByte(0);
+                try child_writer.interface.flush();
+            },
+            else => return err,
         }
-
-        total_bytes += bytes_read;
-
-        try writer.writeAll(buf[0..bytes_read]);
     }
 
     const term = try child.wait();
 
     switch (term.Exited) {
-        0 => std.log.info("finished backup for peer {s} (received {:.2})", .{ peer_name, std.fmt.fmtIntSizeDec(total_bytes) }),
+        0 => std.log.info("finished backup for peer {s} (received {Bi:.2})", .{ peer_name, total_bytes }),
         else => |status| std.log.err("failed to backup peer {s} (btrfs exited with status {})", .{ peer_name, status }),
     }
 }
@@ -163,13 +167,13 @@ pub fn main() !void {
     );
     defer gpa.allocator().free(peer_file_contents);
 
-    var peers = try parse_peers(gpa.allocator(), peer_file_contents);
+    var peers = try parsePeers(gpa.allocator(), peer_file_contents);
     defer peers.deinit();
 
     var iter = peers.iterator();
     while (iter.next()) |peer| {
         std.log.info(
-            "using peer '{s}' at {}",
+            "using peer '{s}' at {f}",
             .{ peer.value_ptr.*, peer.key_ptr.* },
         );
     }
@@ -182,7 +186,7 @@ pub fn main() !void {
     while (true) {
         var handle = try std.Thread.spawn(
             .{},
-            handle_connection,
+            handleConnection,
             .{ gpa.allocator(), try server.accept(), peers, snapshot_root },
         );
         handle.detach();
