@@ -2,12 +2,12 @@
   lib,
   stdenv,
   writeText,
-  zig_0_14,
+  zig_0_15,
 }:
 
 stdenv.mkDerivation {
   name = "swayzbar";
-  depsBuildBuild = [ zig_0_14 ];
+  depsBuildBuild = [ zig_0_15 ];
   passthru.broken = !stdenv.hostPlatform.isGnu;
   buildCommand = ''
     mkdir -p $out/bin

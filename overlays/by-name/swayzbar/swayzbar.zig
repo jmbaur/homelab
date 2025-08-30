@@ -8,6 +8,9 @@ const C = @cImport({
     @cInclude("time.h");
 });
 
+var in_buffer = [_]u8{0} ** 4096;
+var out_buffer = [_]u8{0} ** 4096;
+
 const Clock = struct {
     timerfd: posix.fd_t,
 
@@ -114,7 +117,7 @@ const Battery = struct {
         const n_read = try posix.read(self.timerfd, std.mem.asBytes(&exp));
         std.debug.assert(n_read == @sizeOf(@TypeOf(exp)));
 
-        var rendered = std.ArrayList(u8).init(allocator);
+        var rendered = try std.ArrayList(u8).initCapacity(allocator, 4096);
 
         var uevent_contents: [4096]u8 = undefined;
         for (self.uevents) |uevent| {
@@ -145,14 +148,14 @@ const Battery = struct {
                     }
                 }
 
-                try rendered.writer().print("{s}: {d}%", .{
+                try rendered.print(allocator, "{s}: {d}%", .{
                     bat_name orelse continue,
                     100 * (now orelse continue) / (full orelse continue),
                 });
             }
         }
 
-        const content = try rendered.toOwnedSlice();
+        const content = try rendered.toOwnedSlice(allocator);
         if (std.mem.eql(u8, content, "")) {
             return null;
         } else {
@@ -308,15 +311,17 @@ pub fn main() !void {
         }
     }
 
-    var buffered_stdout = std.io.bufferedWriter(std.io.getStdOut().writer());
-    const stdout = buffered_stdout.writer();
+    var stdin_file = std.fs.File.stdin().reader(&in_buffer);
+    var stdin = &stdin_file.interface;
 
-    try json.stringify(Header{}, .{ .emit_null_optional_fields = false }, stdout);
+    var stdout_file = std.fs.File.stdout().writer(&out_buffer);
+    var stdout = &stdout_file.interface;
+
+    try json.Stringify.value(Header{}, .{ .emit_null_optional_fields = false }, stdout);
     try stdout.writeByte('\n');
-    try buffered_stdout.flush();
+    try stdout.flush();
 
-    var json_stream = json.writeStream(stdout, .{ .emit_null_optional_fields = false });
-    defer json_stream.deinit();
+    var json_stream = json.Stringify{ .writer = stdout, .options = .{ .emit_null_optional_fields = false } };
 
     try json_stream.beginArray();
 
@@ -333,7 +338,7 @@ pub fn main() !void {
             if (event.data.ptr == 0) {
                 // We don't yet do anything with stdin data, just consume it.
                 std.log.debug("got click event", .{});
-                try std.io.getStdIn().reader().skipUntilDelimiterOrEof('\n');
+                _ = try stdin.discardDelimiterInclusive('\n');
                 continue;
             } else {
                 const module: *Module = @ptrFromInt(event.data.ptr);
@@ -370,6 +375,6 @@ pub fn main() !void {
         }
 
         try json_stream.endArray();
-        try buffered_stdout.flush();
+        try stdout.flush();
     }
 }
