@@ -117,7 +117,9 @@ const Battery = struct {
         const n_read = try posix.read(self.timerfd, std.mem.asBytes(&exp));
         std.debug.assert(n_read == @sizeOf(@TypeOf(exp)));
 
-        var rendered = try std.ArrayList(u8).initCapacity(allocator, 4096);
+        var rendered = std.io.Writer.Allocating.init(allocator);
+        errdefer rendered.deinit();
+        var writer = &rendered.writer;
 
         var uevent_contents: [4096]u8 = undefined;
         for (self.uevents) |uevent| {
@@ -148,14 +150,14 @@ const Battery = struct {
                     }
                 }
 
-                try rendered.print(allocator, "{s}: {d}%", .{
+                try writer.print("{s}: {d}%", .{
                     bat_name orelse continue,
                     100 * (now orelse continue) / (full orelse continue),
                 });
             }
         }
 
-        const content = try rendered.toOwnedSlice(allocator);
+        const content = try rendered.toOwnedSlice();
         if (std.mem.eql(u8, content, "")) {
             return null;
         } else {
