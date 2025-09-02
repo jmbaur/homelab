@@ -65,7 +65,7 @@ inputs.nixpkgs.lib.genAttrs allHosts (
           ];
 
           nix.settings = {
-            substituters = [ "http://broccoli.internal:5000" ];
+            substituters = [ "http://broccoli.internal:5000?compression=zstd" ];
             trusted-public-keys = [ "broccoli-1:KWc9hG+cfZ91p9FgTsRLF18kbSYP+J7Txukz66BK07w=" ];
           };
 
