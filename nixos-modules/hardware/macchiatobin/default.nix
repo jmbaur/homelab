@@ -16,7 +16,6 @@ in
 
   config = lib.mkIf config.hardware.macchiatobin.enable {
     nixpkgs.hostPlatform = "aarch64-linux";
-    nixpkgs.buildPlatform = "x86_64-linux";
 
     hardware.deviceTree.name = "marvell/armada-8040-mcbin.dtb";
     system.build.firmware = pkgs.mcbin-firmware.override {
