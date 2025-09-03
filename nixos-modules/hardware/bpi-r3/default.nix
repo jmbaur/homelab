@@ -134,79 +134,79 @@
     };
 
     system.build = {
-      uboot = (
-        pkgs.uboot-mt7986a_bpir3_emmc.overrideAttrs (old: {
-          patches = (old.patches or [ ]) ++ [
-            ./mt7986-persistent-mac-from-cpu-uid.patch
-            (pkgs.fetchpatch {
-              url = "https://github.com/u-boot/u-boot/commit/1bf212129768d65a47145209c65bf37b6082d718.patch";
-              hash = "sha256-+xQ5Rb4feoVA3MBj9AnYlz3U14lmBLlvBx07ZpyTKOE=";
-            })
-          ];
+      uboot = pkgs.makeUBoot {
+        boardName = "mt7986a_bpir3_emmc";
+        artifacts = [ "u-boot.bin" ];
+        meta.platforms = [ "aarch64-linux" ];
 
-          kconfig =
-            (old.kconfig or { })
-            // (with lib.kernel; {
-              AHCI = yes;
-              AHCI_PCI = yes;
-              AUTOBOOT = yes;
-              BLK = yes;
-              BOARD_LATE_INIT = yes;
-              BOOTCOUNT_ENV = yes;
-              BOOTCOUNT_LIMIT = yes;
-              BOOTMETH_EFI_BOOTMGR = yes;
-              BOOTSTD_DEFAULTS = yes;
-              BOOTSTD_FULL = yes;
-              CMD_BOOTEFI = yes;
-              CMD_MTD = yes;
-              CMD_SCSI = yes;
-              CMD_UBI = yes;
-              CMD_USB = yes;
-              CMD_WDT = yes;
-              DM_MTD = yes;
-              DM_SCSI = yes;
-              DM_SPI = yes;
-              DM_USB = yes;
-              EFI_BOOTMGR = yes;
-              EFI_LOADER = yes;
-              ENV_IS_IN_MMC = unset;
-              ENV_IS_IN_UBI = yes;
-              ENV_OFFSET = unset;
-              ENV_SIZE = freeform "0x1f000";
-              ENV_UBI_PART = freeform "ubi";
-              ENV_UBI_VOLUME = freeform "ubootenv";
-              ENV_UBI_VOLUME_REDUND = freeform "ubootenvred";
-              ENV_VARS_UBOOT_RUNTIME_CONFIG = yes;
-              FIT = yes;
-              MTD = yes;
-              MTD_SPI_NAND = yes;
-              MTK_AHCI = yes;
-              MTK_SPIM = yes;
-              PARTITIONS = yes;
-              PCI = yes;
-              PCIE_MEDIATEK = yes;
-              PHY = yes;
-              PHY_FIXED = yes;
-              PHY_MTK_TPHY = yes;
-              SCSI = yes;
-              SCSI_AHCI = yes;
-              SPI = yes;
-              SYS_BOOTM_LEN = freeform "0x${lib.toHexString (128 * 1024 * 1024)}";
-              SYS_REDUNDAND_ENVIRONMENT = yes;
-              USB = yes;
-              USB_HOST = yes;
-              USB_STORAGE = yes;
-              USB_XHCI_HCD = yes;
-              USB_XHCI_MTK = yes;
-              USE_BOOTCOMMAND = yes;
-              WDT = yes;
-              WDT_MTK = yes;
-            });
-        })
-      );
+        patches = [
+          ./mt7986-persistent-mac-from-cpu-uid.patch
+          (pkgs.fetchpatch {
+            url = "https://github.com/u-boot/u-boot/commit/1bf212129768d65a47145209c65bf37b6082d718.patch";
+            hash = "sha256-+xQ5Rb4feoVA3MBj9AnYlz3U14lmBLlvBx07ZpyTKOE=";
+          })
+        ];
+
+        kconfig = with lib.kernel; {
+          AHCI = yes;
+          AHCI_PCI = yes;
+          AUTOBOOT = yes;
+          BLK = yes;
+          BOARD_LATE_INIT = yes;
+          BOOTCOUNT_ENV = yes;
+          BOOTCOUNT_LIMIT = yes;
+          BOOTMETH_EFI_BOOTMGR = yes;
+          BOOTSTD_DEFAULTS = yes;
+          BOOTSTD_FULL = yes;
+          CMD_BOOTEFI = yes;
+          CMD_MTD = yes;
+          CMD_SCSI = yes;
+          CMD_UBI = yes;
+          CMD_USB = yes;
+          CMD_WDT = yes;
+          DM_MTD = yes;
+          DM_SCSI = yes;
+          DM_SPI = yes;
+          DM_USB = yes;
+          EFI_BOOTMGR = yes;
+          EFI_LOADER = yes;
+          ENV_IS_IN_MMC = unset;
+          ENV_IS_IN_UBI = yes;
+          ENV_OFFSET = unset;
+          ENV_SIZE = freeform "0x1f000";
+          ENV_UBI_PART = freeform "ubi";
+          ENV_UBI_VOLUME = freeform "ubootenv";
+          ENV_UBI_VOLUME_REDUND = freeform "ubootenvred";
+          ENV_VARS_UBOOT_RUNTIME_CONFIG = yes;
+          FIT = yes;
+          MTD = yes;
+          MTD_SPI_NAND = yes;
+          MTK_AHCI = yes;
+          MTK_SPIM = yes;
+          PARTITIONS = yes;
+          PCI = yes;
+          PCIE_MEDIATEK = yes;
+          PHY = yes;
+          PHY_FIXED = yes;
+          PHY_MTK_TPHY = yes;
+          SCSI = yes;
+          SCSI_AHCI = yes;
+          SPI = yes;
+          SYS_BOOTM_LEN = freeform "0x${lib.toHexString (128 * 1024 * 1024)}";
+          SYS_REDUNDAND_ENVIRONMENT = yes;
+          USB = yes;
+          USB_HOST = yes;
+          USB_STORAGE = yes;
+          USB_XHCI_HCD = yes;
+          USB_XHCI_MTK = yes;
+          USE_BOOTCOMMAND = yes;
+          WDT = yes;
+          WDT_MTK = yes;
+        };
+      };
 
       firmware = pkgs.callPackage ./firmware.nix {
-        uboot-mt7986a_bpir3_emmc = config.system.build.uboot;
+        inherit (config.system.build) uboot;
       };
 
       # mtk_uartboot \

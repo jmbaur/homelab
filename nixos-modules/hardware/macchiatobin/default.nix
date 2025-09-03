@@ -16,9 +16,14 @@ in
 
   config = lib.mkIf config.hardware.macchiatobin.enable {
     nixpkgs.hostPlatform = "aarch64-linux";
+    nixpkgs.buildPlatform = "x86_64-linux";
+
     hardware.deviceTree.name = "marvell/armada-8040-mcbin.dtb";
     system.build.firmware = pkgs.mcbin-firmware.override {
-      uboot-mvebu_mcbin-88f8040 = pkgs.uboot-mvebu_mcbin-88f8040.override {
+      uboot = pkgs.makeUBoot {
+        boardName = "mvebu_mcbin-88f8040";
+        artifacts = [ "u-boot.bin" ];
+        meta.platforms = [ "aarch64-linux" ];
         kconfig = with lib.kernel; {
           DISTRO_DEFAULTS = unset;
           BOOTSTD_DEFAULTS = yes;

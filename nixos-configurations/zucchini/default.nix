@@ -41,8 +41,14 @@
       };
 
       nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem pkg.pname [ "rkbin" ];
-      system.build.firmware = pkgs.uboot-orangepi-5-rk3588s.override {
+      system.build.firmware = pkgs.makeUBoot {
+        boardName = "orangepi-5-rk3588s";
         artifacts = [ "u-boot-rockchip-spi.bin" ];
+        makeFlags = [
+          "BL31=${pkgs.armTrustedFirmwareRK3588}/bl31.elf"
+          "ROCKCHIP_TPL=${pkgs.rkbin.TPL_RK3588}"
+        ];
+        meta.platforms = [ "aarch64-linux" ];
         kconfig = with lib.kernel; {
           BAUDRATE = freeform 115200; # c'mon rockchip
           USE_PREBOOT = yes;

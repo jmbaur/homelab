@@ -8,7 +8,7 @@
   openssl,
   runCommand,
   symlinkJoin,
-  uboot-mt7986a_bpir3_emmc,
+  uboot,
   ubootTools,
   writeTextDir,
   uartBoot ? false,
@@ -32,7 +32,7 @@ let
     enableParallelBuilding = true;
 
     makeFlags = [
-      "BL33=${uboot-mt7986a_bpir3_emmc}/u-boot.bin"
+      "BL33=${uboot}/u-boot.bin"
       "BOOT_DEVICE=${if uartBoot then "ram" else "spim-nand"}" # defines where the FIP image lives
       "DRAM_USE_DDR4=1"
       "USE_MKIMAGE=1"

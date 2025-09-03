@@ -5,11 +5,11 @@
 {
   dosfstools,
   lib,
+  makeUBoot,
   mtools,
   raspberrypi-armstubs,
   raspberrypifw,
   runCommand,
-  uboot-rpi_arm64,
   util-linux,
   writeText,
 
@@ -42,7 +42,10 @@ let
   kernelLoadAddress = 524288;
   bootmLen = 80 * 1024 * 1024; # 80MiB
 
-  uboot = uboot-rpi_arm64.override {
+  uboot = makeUBoot {
+    boardName = "rpi_arm64";
+    artifacts = [ "u-boot.bin" ];
+    meta.platforms = [ "aarch64-linux" ];
     kconfig = with lib.kernel; {
       DISTRO_DEFAULTS = unset;
       BOOTSTD_DEFAULTS = yes;

@@ -111,7 +111,10 @@
     # ubootenv     2048KiB   128KiB
     # ubootenvred  2176KiB   128KiB
     # empty        2304KiB  1792KiB
-    system.build.firmware = pkgs.uboot-clearfog_spi.override {
+    system.build.firmware = pkgs.makeUBoot {
+      boardName = "clearfog_spi";
+      artifacts = [ "u-boot-with-spl.kwb" ];
+      meta.platforms = [ "armv7l-linux" ];
       kconfig = with lib.kernel; {
         BOOTCOUNT_ENV = yes;
         BOOTCOUNT_LIMIT = yes;
