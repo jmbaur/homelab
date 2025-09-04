@@ -8,7 +8,7 @@
   options.hardware.bpi-r3.enable = lib.mkEnableOption "bananapi r3";
 
   config = lib.mkIf config.hardware.bpi-r3.enable {
-    boot.kernelPackages = pkgs.linuxPackages_6_15;
+    boot.kernelPackages = pkgs.linuxPackages_6_16;
 
     hardware.firmware = [
       pkgs.wireless-regdb
