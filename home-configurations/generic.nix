@@ -151,9 +151,6 @@
           rerere.enabled = true;
           tag.sort = "creatordate";
           transfer.fsckobjects = true;
-          "url \"git+ssh://git@codeberg.org/\"".pushInsteadOf = "https://codeberg.org/";
-          "url \"git+ssh://git@github.com/\"".pushInsteadOf = "https://github.com/";
-          "url \"git+ssh://git@gitlab.com/\"".pushInsteadOf = "https://gitlab.com/";
           user.name = "Jared Baur";
           user.email = lib.mkDefault "jaredbaur@fastmail.com";
           user.signingKey = lib.mkDefault "key::sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIBhCHaXn5ghEJQVpVZr4hOajD6Zp/0PO4wlymwfrg/S5AAAABHNzaDo=";
