@@ -1,7 +1,8 @@
 {
   buildArmTrustedFirmware,
   marvellBinaries,
-  uboot,
+  uboot-mvebu_mcbin-88f8040,
+  uboot ? uboot-mvebu_mcbin-88f8040,
   mv-ddr-marvell,
 }:
 
