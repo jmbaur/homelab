@@ -75,7 +75,7 @@ inputs.nixpkgs.lib.genAttrs allHosts (
           custom.update = {
             enable = lib.mkDefault true;
             automatic = lib.mkDefault true;
-            endpoint = lib.mkDefault "http://hydra.jmbaur.com/job/homelab/main/${config.networking.hostName}.toplevel/latest";
+            endpoint = lib.mkDefault "https://hydra.jmbaur.com/job/homelab/main/${config.networking.hostName}.toplevel/latest";
           };
 
           custom.recovery = {
