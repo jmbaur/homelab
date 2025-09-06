@@ -35,6 +35,13 @@ inputs: {
     (final: prev: {
       cros-ec-fizz = prev.cros-ec.override { board = "fizz"; };
 
+      # https://github.com/NixOS/nixpkgs/issues/366902
+      qemu-user = prev.qemu-user.overrideAttrs (old: {
+        configureFlags =
+          old.configureFlags
+          ++ final.lib.optionals (with final.stdenv.hostPlatform; isAarch64 && isStatic) [ "--disable-pie" ];
+      });
+
       vimPlugins = prev.vimPlugins.extend (
         _: _: {
           bpftrace-vim = final.vimUtils.buildVimPlugin {
