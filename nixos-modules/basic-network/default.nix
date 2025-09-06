@@ -15,8 +15,6 @@ in
   config = lib.mkIf cfg.enable (
     lib.mkMerge [
       {
-        networking.useDHCP = false;
-
         # Randomize wireless card's MAC address for each connected network.
         networking.wireless.iwd.settings.General.AddressRandomization = "network";
 
@@ -65,7 +63,6 @@ in
                   MulticastDNS = true;
                 };
                 ipv6AcceptRAConfig = {
-                  Token = "prefixstable";
                   UseDomains = "route";
                   RouteMetric = 100;
                   UsePREF64 = true;
@@ -88,7 +85,6 @@ in
                   MulticastDNS = true;
                 };
                 ipv6AcceptRAConfig = {
-                  Token = "prefixstable";
                   UseDomains = "route";
                   RouteMetric = 100;
                   UsePREF64 = true;

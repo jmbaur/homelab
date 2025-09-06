@@ -8,8 +8,10 @@
 {
   config = lib.mkMerge [
     {
-      custom.server.enable = true;
-      custom.basicNetwork.enable = true;
+      custom.server = {
+        enable = true;
+        interfaces.broccoli-0.matchConfig.Path = "platform-xhci-hcd.0.auto-usb-0:1.1:1.0";
+      };
       hardware.blackrock.enable = true;
       custom.recovery.targetDisk = "/dev/disk/by-path/platform-1c20000.pcie-pci-0002:01:00.0-nvme-1";
     }
@@ -19,8 +21,26 @@
         nix_signing_key2 = { };
         ssh_remote_build.owner = config.users.users.hydra-queue-runner.name;
         hydra_netrc.owner = config.users.users.hydra.name;
+        "cf-origin/cert".owner = config.services.nginx.user;
+        "cf-origin/key".owner = config.services.nginx.user;
       };
 
+      services.nginx = {
+        enable = true;
+        recommendedProxySettings = true;
+        recommendedOptimisation = true;
+        recommendedTlsSettings = true;
+        virtualHosts."${config.networking.hostName}.jmbaur.com" = {
+          onlySSL = true;
+          locations."/".return = 404;
+          sslCertificate = config.sops.secrets."cf-origin/cert".path;
+          sslCertificateKey = config.sops.secrets."cf-origin/key".path;
+        };
+      };
+
+      networking.firewall.allowedTCPPorts = [ 443 ];
+    }
+    {
       services.harmonia = {
         enable = true;
         signKeyPaths = [
@@ -29,9 +49,22 @@
           # TODO(jared): Remove after all hosts are validating with new key
           config.sops.secrets.nix_signing_key2.path
         ];
+
+        # TODO(jared): switch to localhost after all hosts are using https://cache.jmbaur.com
         settings.bind = "[::]:5000";
       };
 
+      # TODO(jared): Remove after all hosts are using https://cache.jmbaur.com
+      custom.yggdrasil.all.allowedTCPPorts = [ 5000 ];
+
+      services.nginx.virtualHosts."cache.jmbaur.com" = {
+        onlySSL = true;
+        locations."/".proxyPass = "http://[::1]:5000";
+        sslCertificate = config.sops.secrets."cf-origin/cert".path;
+        sslCertificateKey = config.sops.secrets."cf-origin/key".path;
+      };
+    }
+    {
       nix.settings.netrc-file = config.sops.secrets.hydra_netrc.path;
 
       nix.settings.allowed-uris = [
@@ -47,19 +80,26 @@
 
       services.hydra = {
         enable = true;
-        hydraURL = "http://localhost:3000";
+        logo = ./dr-doom.svg;
+        hydraURL = "https://hydra.jmbaur.com";
         notificationSender = "hydra@localhost";
         useSubstitutes = true;
         extraConfig = ''
           allow_import_from_derivation = false
+          binary_cache_public_uri = https://cache.jmbaur.com
+          log_prefix = https://cache.jmbaur.com/
         '';
       };
 
-      # Allow all yggdrasil to reach hydra and harmonia
-      custom.yggdrasil.all.allowedTCPPorts = [
-        5000
-        3000
-      ];
+      # TODO(jared): Remove after all hosts are using https://hydra.jmbaur.com
+      custom.yggdrasil.all.allowedTCPPorts = [ 3000 ];
+
+      services.nginx.virtualHosts."hydra.jmbaur.com" = {
+        onlySSL = true;
+        locations."/".proxyPass = "http://[::1]:3000";
+        sslCertificate = config.sops.secrets."cf-origin/cert".path;
+        sslCertificateKey = config.sops.secrets."cf-origin/key".path;
+      };
 
       nix.distributedBuilds = true;
       nix.buildMachines = [
