@@ -50,6 +50,7 @@ in
         defaultEditor = true;
       };
 
+      networking.useDHCP = false;
       networking.nftables.enable = mkDefault true;
 
       boot.tmp.cleanOnBoot = mkDefault isNotContainer;

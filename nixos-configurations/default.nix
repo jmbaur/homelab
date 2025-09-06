@@ -65,8 +65,8 @@ inputs.nixpkgs.lib.genAttrs allHosts (
           ];
 
           nix.settings = {
-            substituters = [ "http://broccoli.internal:5000?compression=zstd" ];
-            trusted-public-keys = [ "broccoli-1:KWc9hG+cfZ91p9FgTsRLF18kbSYP+J7Txukz66BK07w=" ];
+            substituters = [ "https://cache.jmbaur.com" ];
+            trusted-public-keys = [ "cache.jmbaur.com-1:qIdQ48kbe/ZGhF+roEt1BJZlrP+mP0lCmoGese1Sb6s=" ];
           };
 
           custom.normalUser.username = lib.mkDefault "jared";
@@ -75,7 +75,7 @@ inputs.nixpkgs.lib.genAttrs allHosts (
           custom.update = {
             enable = lib.mkDefault true;
             automatic = lib.mkDefault true;
-            endpoint = lib.mkDefault "http://broccoli.internal:3000/job/homelab/main/${config.networking.hostName}.toplevel/latest";
+            endpoint = lib.mkDefault "http://hydra.jmbaur.com/job/homelab/main/${config.networking.hostName}.toplevel/latest";
           };
 
           custom.recovery = {

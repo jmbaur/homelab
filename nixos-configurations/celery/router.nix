@@ -4,6 +4,10 @@
   pkgs,
   ...
 }:
+
+let
+  inherit (lib) concatLines mapAttrsToList;
+in
 {
   boot.kernelParams = [ "cfg80211.ieee80211_regdom=US" ];
   hardware.wirelessRegulatoryDatabase = true;
@@ -27,6 +31,14 @@
     extraInputRules = ''
       iifname ${config.router.wanInterface} tcp dport ssh drop
     '';
+
+    # TODO(jared): put this behind a chain that we jump to when our prefix changes
+    extraForwardRules = concatLines (
+      mapAttrsToList (
+        name: interfaceID:
+        ''ip6 daddr & ::ffff:ffff:ffff:ffff == ${interfaceID} accept comment "forward to ${name}"''
+      ) (import ../../nixos-modules/server/network.nix { inherit lib; })
+    );
   };
 
   services.yggdrasil.settings = {

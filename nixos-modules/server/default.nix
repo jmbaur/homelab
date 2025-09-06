@@ -5,15 +5,76 @@
   ...
 }:
 
-{
-  options.custom.server.enable = lib.mkEnableOption "server";
+let
+  inherit (lib)
+    mapAttrs'
+    mkEnableOption
+    mkOption
+    nameValuePair
+    types
+    ;
 
-  config = lib.mkIf config.custom.server.enable {
+  cfg = config.custom.server;
+
+  network = import ./network.nix { inherit lib; };
+
+  interfaceSubmodule =
+    { name, ... }:
+    {
+      options = {
+        name = mkOption {
+          readOnly = true;
+          default = name;
+          description = ''
+            TODO
+          '';
+        };
+        matchConfig = mkOption {
+          type = types.attrs;
+          description = ''
+            TODO
+          '';
+        };
+      };
+    };
+in
+{
+  options.custom.server = {
+    enable = mkEnableOption "server";
+
+    interfaces = mkOption {
+      type = types.attrsOf (types.submodule interfaceSubmodule);
+      default = { };
+      description = ''
+        TODO
+      '';
+    };
+  };
+
+  config = lib.mkIf cfg.enable {
     documentation.enable = lib.mkDefault false;
     documentation.doc.enable = lib.mkDefault false;
     documentation.info.enable = lib.mkDefault false;
     documentation.man.enable = lib.mkDefault false;
     documentation.nixos.enable = lib.mkDefault false;
+
+    systemd.network = {
+      enable = true;
+      networks = mapAttrs' (
+        name: interface:
+        nameValuePair "10-${name}" {
+          inherit (interface) matchConfig;
+          networkConfig = {
+            DHCP = "ipv4";
+            Domains = "~.";
+          };
+          ipv6AcceptRAConfig = {
+            Token = "static:${network.${name}}";
+            UseDomains = "route";
+          };
+        }
+      ) cfg.interfaces;
+    };
 
     programs.command-not-found.enable = lib.mkDefault false;
 

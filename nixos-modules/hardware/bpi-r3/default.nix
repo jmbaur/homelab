@@ -217,7 +217,5 @@
       #   -f ./path/to/fip.bin
       uartBootFirmware = config.system.build.firmware.override { uartBoot = true; };
     };
-
-    nixpkgs.buildPlatform = builtins.currentSystem;
   };
 }
