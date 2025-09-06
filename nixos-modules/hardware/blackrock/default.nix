@@ -30,6 +30,9 @@ in
 
     hardware.qualcomm.enable = true;
 
+    boot.loader.systemd-boot.extraFiles."EFI/systemd/drivers/slbounce${pkgs.stdenv.hostPlatform.efiArch}.efi" =
+      "${pkgs.slbounce}/slbounce.efi";
+
     # TODO(jared): ACPI not enabled in johan_defconfig, needed by tpm-crb
     # kernel module.
     boot.initrd.systemd.tpm2.enable = false;
@@ -80,7 +83,7 @@ in
 
     hardware.deviceTree = {
       enable = true;
-      name = "qcom/sc8280xp-microsoft-blackrock.dtb";
+      name = "qcom/sc8280xp-microsoft-blackrock-el2.dtb";
     };
 
     hardware.firmware = [
@@ -176,6 +179,7 @@ in
       "pd_ignore_unused"
       "arm64.nopauth"
       "efi=noruntime"
+      "id_aa64mmfr0.ecv=1" # for slbounce
     ];
   };
 }
