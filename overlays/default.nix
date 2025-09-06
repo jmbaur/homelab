@@ -54,17 +54,6 @@ inputs: {
               hash = "sha256-VLbvyH9+RWAcWisXEC3yKGSXPI72+bZbWyeMhgyuzPg=";
             };
           };
-
-          nvim-qwahl = final.vimUtils.buildVimPlugin {
-            pname = "nvim-qwahl";
-            version = "2025-03-26";
-            src = final.fetchFromGitHub {
-              owner = "mfussenegger";
-              repo = "nvim-qwahl";
-              rev = "1bb6c53320b948e37f32c4f8c8846343ca4df1b2";
-              hash = "sha256-BKY9reEmHPUr/ysXucwXbhVsAERXNrUj+lx49QfLaoc=";
-            };
-          };
         }
       );
 
