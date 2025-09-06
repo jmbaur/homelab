@@ -35,11 +35,11 @@
     "flake-compat_3": {
       "flake": false,
       "locked": {
-        "lastModified": 1696426674,
-        "narHash": "sha256-kvjfFW7WAETZlt09AgDn1MrtKzP7t90Vf7vypd3OL1U=",
+        "lastModified": 1747046372,
+        "narHash": "sha256-CIVLLkVgvHYbgI2UpXvIIBJ12HWgX+fjA8Xf8PUmqCY=",
         "owner": "edolstra",
         "repo": "flake-compat",
-        "rev": "0f9255e01c2351cc7d116c072cb317785dd33b33",
+        "rev": "9100a0f413b0c601e0533d1d94ffd501ce2e7885",
         "type": "github"
       },
       "original": {
@@ -119,11 +119,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1750779888,
-        "narHash": "sha256-wibppH3g/E2lxU43ZQHC5yA/7kIKLGxVEnsnVK1BtRg=",
+        "lastModified": 1755960406,
+        "narHash": "sha256-RF7j6C1TmSTK9tYWO6CdEMtg6XZaUKcvZwOCD2SICZs=",
         "owner": "cachix",
         "repo": "git-hooks.nix",
-        "rev": "16ec914f6fb6f599ce988427d9d94efddf25fe6d",
+        "rev": "e891a93b193fcaf2fc8012d890dc7f0befe86ec2",
         "type": "github"
       },
       "original": {
@@ -249,11 +249,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1756954499,
-        "narHash": "sha256-Pg4xBHzvzNY8l9x/rLWoJMnIR8ebG+xeU+IyqThIkqU=",
+        "lastModified": 1757075491,
+        "narHash": "sha256-a+NMGl5tcvm+hyfSG2DlVPa8nZLpsumuRj1FfcKb2mQ=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "ed1a98c375450dfccf427adacd2bfd1a7b22eb25",
+        "rev": "f56bf065f9abedc7bc15e1f2454aa5c8edabaacf",
         "type": "github"
       },
       "original": {
@@ -290,11 +290,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1756486169,
-        "narHash": "sha256-HuGhylTNXsX3iLzPWEv2xnwBGA/lwVaVXOSRpSZQCRU=",
+        "lastModified": 1757137302,
+        "narHash": "sha256-Q6x0dZiuQMQzm1hEm4uFvBd30ds+PpWlc9sG94Ih2Y0=",
         "owner": "jmbaur",
         "repo": "mixos",
-        "rev": "138766644f653b6293fa51557411e3cc7daf70ea",
+        "rev": "4f8580ca30aba06bd211f0a23dccb6b8c0bb4612",
         "type": "github"
       },
       "original": {
@@ -331,11 +331,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1752609217,
-        "narHash": "sha256-DeITZZWdXznmOArof0nRzD3uY686Qyqk03DnnjXEFjM=",
+        "lastModified": 1757137769,
+        "narHash": "sha256-6jx8AGa0fK6pS/IvvH5/H6wSzboTRNs6sl4+HjGa/EA=",
         "owner": "jmbaur",
         "repo": "nixos-router",
-        "rev": "860f1ab640938f688f369e3ee935dd424cde35c8",
+        "rev": "ed890fd4fdd43c40e19d296dae9a6d075a3e064c",
         "type": "github"
       },
       "original": {
