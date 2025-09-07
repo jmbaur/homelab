@@ -6,7 +6,10 @@
 }:
 
 let
-  inherit (lib) concatLines mapAttrsToList;
+  inherit (lib)
+    attrValues
+    concatStringsSep
+    ;
 in
 {
   boot.kernelParams = [ "cfg80211.ieee80211_regdom=US" ];
@@ -32,13 +35,54 @@ in
       iifname ${config.router.wanInterface} tcp dport ssh drop
     '';
 
-    # TODO(jared): put this behind a chain that we jump to when our prefix changes
-    extraForwardRules = concatLines (
-      mapAttrsToList (
-        name: interfaceID:
-        ''ip6 daddr & ::ffff:ffff:ffff:ffff == ${interfaceID} accept comment "forward to ${name}"''
-      ) (import ../../nixos-modules/server/network.nix { inherit lib; })
-    );
+    extraForwardRules =
+      let
+        interfaceIDs = attrValues (import ../../nixos-modules/server/network.nix { inherit lib; });
+      in
+      ''
+        iifname ${config.router.wanInterface} ip6 daddr & ffff:ffff:ffff:ffff:: @lan-gua-prefix ip6 daddr & ::ffff:ffff:ffff:ffff == { ${concatStringsSep ", " interfaceIDs} } accept comment "forward to server"
+      '';
+  };
+
+  # Add an nftables set for updating when the GUA prefix on WAN changes
+  networking.nftables.tables."nixos-fw".content = ''
+    set lan-gua-prefix {
+      comment "LAN GUA prefixes"
+      type ipv6_addr
+      flags interval
+      auto-merge
+      elements = { 2000::/3 }
+    }
+  '';
+
+  systemd.services.wan-update-firewall = {
+    serviceConfig.Restart = "on-failure";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "network.target" ];
+    wants = [ "network.target" ];
+    path = [
+      config.systemd.package
+      pkgs.ipwatch
+      pkgs.jq
+      pkgs.networkd-dhcpv6-client-prefix
+      pkgs.nftables
+    ];
+    script = ''
+      ipwatch -hook ${config.router.wanInterface}:${
+        concatStringsSep "," [
+          "!IsPrivate"
+          "Is6"
+          "IsGlobalUnicast"
+        ]
+      } | while read -r json_line; do
+        address=$(echo "$json_line" | jq -r '.address')
+        prefixlen=$(echo "$json_line" | jq -r '.prefixlen')
+        readarray new_gua_lan_prefixes <<< $(networkctl status --json=short ${config.router.wanInterface} | networkd-dhcpv6-client-prefix)
+        echo "New GUA LAN prefixes: ''${new_gua_lan_prefixes[@]}"
+        nft flush set inet nixos-fw "lan-gua-prefix"
+        nft add element inet nixos-fw "lan-gua-prefix" { "$(printf "%s," ''${new_gua_lan_prefixes[@]})" }
+      done
+    '';
   };
 
   services.yggdrasil.settings = {
