@@ -23,7 +23,7 @@
   vimUtils,
   wrapNeovimUnstable,
   zig,
-  zls,
+  zls_0_15,
 }:
 
 wrapNeovimUnstable neovim-unwrapped (
@@ -60,7 +60,7 @@ wrapNeovimUnstable neovim-unwrapped (
           shfmt
           ttags
           zig
-          zls
+          zls_0_15
         ];
       })
     ]
