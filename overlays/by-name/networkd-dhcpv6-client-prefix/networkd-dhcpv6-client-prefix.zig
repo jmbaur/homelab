@@ -48,4 +48,5 @@ pub fn main() !void {
     for (value.DHCPv6Client.Prefixes) |prefix| {
         try stdout.print("{f}\n", .{prefix});
     }
+    try stdout.flush();
 }
