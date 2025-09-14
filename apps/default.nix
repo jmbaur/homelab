@@ -152,9 +152,5 @@ inputs.nixpkgs.lib.mapAttrs (
           }
         )
       );
-
-    activateJaredHomeEnvironment = mkApp "Activate home environment for Jared" (
-      getExe inputs.self.packages.${system}.jaredHomeEnvironment
-    );
   }
 ) inputs.self.legacyPackages
