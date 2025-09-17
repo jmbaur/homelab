@@ -52,7 +52,7 @@ inputs.nixpkgs.lib.genAttrs allHosts (
           ];
 
           # Default to the same build platform as our build server.
-          nixpkgs.buildPlatform = lib.mkDefault "x86_64-linux";
+          nixpkgs.buildPlatform = lib.mkDefault "aarch64-linux";
 
           networking.hostName = host;
 
