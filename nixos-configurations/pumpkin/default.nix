@@ -76,5 +76,13 @@
         sslCertificateKey = config.sops.secrets."cf-origin/key".path;
       };
     }
+    {
+      services.nginx.virtualHosts."garage.jmbaur.com" = {
+        onlySSL = true;
+        locations."/".proxyPass = "http://rhubarb.internal:8080";
+        sslCertificate = config.sops.secrets."cf-origin/cert".path;
+        sslCertificateKey = config.sops.secrets."cf-origin/key".path;
+      };
+    }
   ];
 }

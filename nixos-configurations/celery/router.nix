@@ -20,6 +20,8 @@ in
     openFirewall = false;
   };
 
+  services.openssh.openFirewall = false;
+
   custom.ddns = {
     enable = true;
     interface = config.router.wanInterface;
@@ -30,10 +32,10 @@ in
 
   networking.firewall = {
     allowedTCPPorts = [ 443 ];
-    interfaces.${config.router.lanInterface}.allowedTCPPorts = [ 9001 ];
-    extraInputRules = ''
-      iifname ${config.router.wanInterface} tcp dport ssh drop
-    '';
+    interfaces.${config.router.lanInterface}.allowedTCPPorts = [
+      22
+      9001
+    ];
 
     extraForwardRules =
       let

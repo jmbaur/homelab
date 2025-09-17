@@ -32,4 +32,5 @@ concatMapAttrs
   {
     broccoli = 1;
     pumpkin = 1;
+    rhubarb = 1;
   }

@@ -1,11 +1,19 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   config = lib.mkMerge [
     {
       hardware.rpi4.enable = true;
 
-      custom.server.enable = true;
+      custom.server = {
+        enable = true;
+        interfaces.rhubarb-0.matchConfig.Path = "platform-fe300000.mmc";
+      };
+
       custom.basicNetwork.enable = true;
 
       # NOTE: This might change depending on which USB port we plug into. This
@@ -13,8 +21,6 @@
       custom.recovery.targetDisk = "/dev/disk/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:2:1.0-scsi-0:0:0:0";
     }
     {
-      services.kodi.enable = true;
-
       services.pipewire.wireplumber.configPackages = [
         (pkgs.writeTextDir "share/wireplumber/wireplumber.conf.d/10-hdmi-output.conf" ''
           wireplumber.settings = {
@@ -38,6 +44,24 @@
           ]
         '')
       ];
+    }
+    {
+      networking.wireless.iwd.enable = true;
+      environment.systemPackages = [ pkgs.iw ];
+
+      systemd.sockets.garage-door = {
+        listenStreams = [ "[::]:8080" ];
+        wantedBy = [ "sockets.target" ];
+      };
+
+      systemd.services.garage-door.serviceConfig.ExecStart = toString [
+        (lib.getExe pkgs.homelab-garage-door)
+        "/dev/gpiochip0"
+        "23" # set
+        "24" # unset
+      ];
+
+      custom.yggdrasil.peers.pumpkin.allowedTCPPorts = [ 8080 ];
     }
   ];
 }
