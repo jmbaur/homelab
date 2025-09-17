@@ -35,9 +35,7 @@ fn toggle(fd: std.posix.fd_t) !void {
     var values = std.mem.zeroes(C.gpio_v2_line_values);
     values.mask = 0b11;
 
-    std.log.debug("before: {}", .{get(fd)});
-
-    // set line high, unset line low
+    std.log.debug("setting set pin high", .{});
     values.bits = 0b01;
     std.debug.assert(.SUCCESS == std.posix.errno(
         std.os.linux.ioctl(
@@ -49,9 +47,7 @@ fn toggle(fd: std.posix.fd_t) !void {
 
     std.Thread.sleep(std.time.ns_per_s);
 
-    std.log.debug("after set line high, unset line low: {}", .{get(fd)});
-
-    // unset line high, set line low
+    std.log.debug("setting unset pin high", .{});
     values.bits = 0b10;
     std.debug.assert(.SUCCESS == std.posix.errno(
         std.os.linux.ioctl(
@@ -63,9 +59,7 @@ fn toggle(fd: std.posix.fd_t) !void {
 
     std.Thread.sleep(std.time.ns_per_s);
 
-    std.log.debug("after set line low, unset line high: {}", .{get(fd)});
-
-    // both lines low
+    std.log.debug("setting both pins low", .{});
     values.bits = 0b00;
     std.debug.assert(.SUCCESS == std.posix.errno(
         std.os.linux.ioctl(
@@ -74,8 +68,6 @@ fn toggle(fd: std.posix.fd_t) !void {
             @intFromPtr(&values),
         ),
     ));
-
-    std.log.debug("after set line low, unset line low: {}", .{get(fd)});
 }
 
 fn handleConnection(
