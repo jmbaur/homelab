@@ -61,7 +61,11 @@
         "24" # unset
       ];
 
+      services.yggdrasil.settings.Peers = [ "tls://celery.jmbaur.com:443" ];
+
       custom.yggdrasil.peers.pumpkin.allowedTCPPorts = [ 8080 ];
+
+      nixpkgs.buildPlatform = "x86_64-linux";
     }
   ];
 }
