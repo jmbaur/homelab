@@ -60,7 +60,7 @@ in
 
       services.hydra = {
         enable = true;
-        logo = ./dr-doom.svg;
+        # logo = ./dr-doom.svg;
         hydraURL = "https://hydra.jmbaur.com";
         notificationSender = "hydra@localhost";
         useSubstitutes = true;
