@@ -76,8 +76,8 @@ fn handleConnection(
 ) !void {
     defer connection.stream.close();
 
-    var read_buf = [_]u8{0} ** 1024;
-    var write_buf = [_]u8{0} ** 1024;
+    var read_buf = [_]u8{0} ** 4096;
+    var write_buf = [_]u8{0} ** 4096;
 
     var stream_reader = connection.stream.reader(&read_buf);
     var stream_writer = connection.stream.writer(&write_buf);
