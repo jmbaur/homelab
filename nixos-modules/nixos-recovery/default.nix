@@ -16,6 +16,7 @@ let
     mkForce
     mkIf
     mkOption
+    optionalString
     types
     ;
 
@@ -48,7 +49,8 @@ let
     nixpkgs.pkgs = pkgs;
     nixpkgs.overlays = mkForce [ ];
 
-    networking.hostName = "${config.networking.hostName}-recovery";
+    networking.hostName =
+      config.networking.hostName + (optionalString (config.networking.hostName != "") "-") + "recovery";
 
     networking.wireless.iwd = config.networking.wireless.iwd;
 
