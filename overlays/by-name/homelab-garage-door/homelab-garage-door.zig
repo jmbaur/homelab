@@ -5,17 +5,6 @@ const C = @cImport({
 
 pub const std_options: std.Options = .{ .log_level = .debug };
 
-const button =
-    \\<!DOCTYPE html>
-    \\<html>
-    \\<head>
-    \\<title>Garage Door</title>
-    \\<script>function toggle() { fetch("/toggle"); }</script>
-    \\</head>
-    \\<button type="submit" onclick="toggle()">Toggle</button> 
-    \\</html>
-;
-
 fn get(fd: std.posix.fd_t) C.gpio_v2_line_values {
     var values = std.mem.zeroes(C.gpio_v2_line_values);
     values.mask = 0b11;
@@ -88,7 +77,7 @@ fn handleConnection(
     std.log.info("{f} {s}", .{ connection.address, request.head.target });
 
     if (std.mem.eql(u8, "/", request.head.target)) {
-        try request.respond(button, .{
+        try request.respond(@embedFile("./index.html"), .{
             .extra_headers = &.{
                 .{ .name = "Content-Type", .value = "text/html" },
             },

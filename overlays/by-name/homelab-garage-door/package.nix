@@ -19,7 +19,7 @@ runCommand "homelab-garage-door"
       -femit-bin=$out/bin/homelab-garage-door \
       -fstrip \
       -O ReleaseSafe \
-      -target ${stdenv.hostPlatform.qemuArch}-linux \
+      -target ${stdenv.hostPlatform.qemuArch}-${stdenv.hostPlatform.rust.platform.os} \
       ${./homelab-garage-door.zig}
     rm -f $out/bin/*.o
   ''
