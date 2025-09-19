@@ -14,7 +14,7 @@ runCommand "pomo" { depsBuildBuild = [ zig_0_15 ]; } ''
     -femit-bin=$out/bin/pomo \
     -fstrip \
     -O ReleaseSafe \
-    -target ${stdenv.hostPlatform.qemuArch}-linux \
+    -target ${stdenv.hostPlatform.qemuArch}-${stdenv.hostPlatform.rust.platform.os} \
     ${./pomo.zig}
   rm -f $out/bin/*.o
 ''

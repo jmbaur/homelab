@@ -19,7 +19,7 @@ runCommand "networkd-dhcpv6-client-prefix"
       -femit-bin=$out/bin/networkd-dhcpv6-client-prefix \
       -fstrip \
       -O ReleaseSafe \
-      -target ${stdenv.hostPlatform.qemuArch}-linux \
+      -target ${stdenv.hostPlatform.qemuArch}-${stdenv.hostPlatform.rust.platform.os} \
       ${./networkd-dhcpv6-client-prefix.zig}
     rm -f $out/bin/*.o
   ''

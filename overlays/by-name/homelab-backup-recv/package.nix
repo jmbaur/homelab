@@ -19,7 +19,7 @@ runCommand "homelab-backup-recv"
       -femit-bin=$out/bin/homelab-backup-recv \
       -fstrip \
       -O ReleaseSafe \
-      -target ${stdenv.hostPlatform.qemuArch}-linux \
+      -target ${stdenv.hostPlatform.qemuArch}-${stdenv.hostPlatform.rust.platform.os} \
       ${./homelab-backup-recv.zig}
     rm -f $out/bin/*.o
   ''

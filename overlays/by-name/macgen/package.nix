@@ -13,7 +13,7 @@ runCommand "macgen" { depsBuildBuild = [ zig_0_15 ]; } ''
     -femit-bin=$out/bin/macgen \
     -fstrip \
     -O ReleaseSafe \
-    -target ${stdenv.hostPlatform.qemuArch}-linux \
+    -target ${stdenv.hostPlatform.qemuArch}-${stdenv.hostPlatform.rust.platform.os} \
     ${./macgen.zig}
   rm -f $out/bin/*.o
 ''
