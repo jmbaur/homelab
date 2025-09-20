@@ -290,11 +290,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1758216493,
-        "narHash": "sha256-lBBmRAFr9g5lMseBUAY4iS7VGPXmPyGybU9Y6BE47GA=",
+        "lastModified": 1758312106,
+        "narHash": "sha256-cei+Y/94m0esjDN9vOYWxdsA5ygH0pwyeOfqEVgH5h4=",
         "owner": "jmbaur",
         "repo": "mixos",
-        "rev": "675911531279490f6cccfe141f1f22ffe941b8c9",
+        "rev": "a1406ddfa3d8b0f42ebd24683be2ff35bb75406a",
         "type": "github"
       },
       "original": {
