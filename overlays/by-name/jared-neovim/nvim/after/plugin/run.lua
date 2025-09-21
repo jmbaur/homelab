@@ -58,7 +58,7 @@ vim.api.nvim_create_user_command("Run", function(opts)
 		local builtin = run_builtins[opts.args]
 		table.insert(cmd, type(builtin) == "function" and builtin() or builtin)
 	elseif opts.args ~= "" then
-		table.insert(cmd, nix_run(opts.args))
+		table.insert(cmd, nix_run(opts.args)())
 	end
 
 	vim.fn.execute(table.concat(cmd, " "))
