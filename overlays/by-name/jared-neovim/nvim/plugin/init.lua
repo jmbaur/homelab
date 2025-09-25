@@ -1,3 +1,5 @@
+vim.loader.enable()
+
 local fzf_lua = require("fzf-lua")
 local mini_misc = require("mini.misc")
 
