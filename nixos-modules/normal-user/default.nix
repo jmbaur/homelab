@@ -93,10 +93,8 @@ in
               if ! (
                 passwd "${cfg.username}"
 
-                uid=$(id -u ${cfg.username})
-                gid=$(id -g ${cfg.username})
-                echo "''${uid}:$((0x80000)):$((0x10000))" >/etc/subuid
-                echo "''${gid}:$((0x80000)):$((0x10000))" >/etc/subgid
+                echo "${cfg.username}:$((0x80000)):$((0x10000))" >/etc/subuid
+                echo "${cfg.username}:$((0x80000)):$((0x10000))" >/etc/subgid
               ); then
                 echo "ERROR: failed to update normal user"
                 sleep 20 # give the user some time to read any error output
