@@ -78,6 +78,13 @@
         }
       ];
 
+      hardware.deviceTree.overlays = [
+        # {
+        #     name = "imx708.dtbo";
+        #     dtboFile = "${pkgs.raspberrypifw}/share/raspberrypi/boot/overlays/imx708.dtbo";
+        # }
+      ];
+
       networking.wireless.iwd.enable = true;
       environment.systemPackages = [ pkgs.iw ];
 
