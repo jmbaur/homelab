@@ -116,6 +116,11 @@ in
       services.geoclue2.geoProviderUrl = "https://beacondb.net/v1/geolocate";
     }
 
+    {
+      # bcache-tools doesn't cross-compile, and this is enabled by default??
+      boot.bcache.enable = mkDefault false;
+    }
+
     # Performance related
     {
       # Use the dbus-broker dbus daemon implementation (more performance, yeah?)
