@@ -273,8 +273,9 @@ in
       device = "/dev/disk/by-partlabel/boot";
       fsType = "vfat";
       options = [
+        "fmask=0022"
+        "dmask=0022"
         "x-systemd.automount"
-        "umask=0077"
       ];
     };
 

@@ -25,7 +25,7 @@ writeArgcShellApplication {
     nix # nix-env
     nixos-install
     systemd # systemd-repart
-    util-linux # sfdisk, blockdev
+    util-linux # blockdev
   ];
 
   text = lib.fileContents ./nixos-recovery.bash;

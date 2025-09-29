@@ -6,8 +6,8 @@ declare argc_update_endpoint argc_closure argc_target_disk argc_fstab
 
 # @option --update-endpoint
 # @option --closure
-# @option --target-disk
-# @option --fstab
+# @option --target-disk!
+# @option --fstab!
 
 eval "$(argc --argc-eval "$0" "$@")"
 
@@ -40,11 +40,9 @@ if [[ $(findmnt /nix/.ro-store --output source --noheadings) == "$target_disk"* 
 	exit 1
 fi
 
-echo "label: gpt" | sfdisk --wipe=always "$target_disk"
-
 # partition disks
 sector_size=$(blockdev --getss "$target_disk")
-systemd-repart --dry-run=no --factory-reset=yes --sector-size="$sector_size" "$target_disk"
+systemd-repart --dry-run=no --empty=force --factory-reset=yes --sector-size="$sector_size" "$target_disk"
 
 udevadm wait --timeout=10 "$root_partition"
 sleep 2 # TODO(jared): don't do this, though it does appear to be necessary
