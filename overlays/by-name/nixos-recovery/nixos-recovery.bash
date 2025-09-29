@@ -42,7 +42,7 @@ fi
 
 # partition disks
 sector_size=$(blockdev --getss "$target_disk")
-systemd-repart --dry-run=no --empty=force --factory-reset=yes --sector-size="$sector_size" "$target_disk"
+systemd-repart --dry-run=no --empty=force --sector-size="$sector_size" "$target_disk"
 
 udevadm wait --timeout=10 "$root_partition"
 sleep 2 # TODO(jared): don't do this, though it does appear to be necessary

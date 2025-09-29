@@ -146,8 +146,6 @@ testers.runNixOSTest {
                 "${nodes.machine.system.build.recoveryImage}/recovery.raw.zst",
               ], stdout=outfile)
 
-          os.environ["USB_STICK"] = tmp_disk_image.name
-
           updateServer.wait_for_unit("multi-user.target")
           updateServer.succeed("cat ${
             # mock the hydra json endpoint
@@ -163,7 +161,7 @@ testers.runNixOSTest {
           subprocess.run(["${lib.getExe' qemu "qemu-img"}", "create", "-f", "qcow2", tmp_nixos_disk_image.name, "4096M"])
           machine.wait_for_unit("nixos-recovery.service")
           machine.wait_for_shutdown() # a reboot will occur after installation succeeds
-          os.environ["QEMU_OPTS"] = ""
+          os.environ.pop("QEMU_OPTS")
 
           machine.start(allow_reboot=True)
           machine.wait_for_unit("multi-user.target")

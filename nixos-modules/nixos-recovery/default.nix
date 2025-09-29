@@ -214,9 +214,8 @@ let
         onSuccess = [ "reboot.target" ];
         onFailure = [ "rescue.target" ];
         serviceConfig = {
-          StandardError = "tty";
-          StandardInput = "tty";
-          StandardOutput = "tty";
+          StandardError = "journal+console";
+          StandardOutput = "journal+console";
           ExecStart = toString [
             (getExe nixosRecovery)
             "--update-endpoint=${updateEndpoint}"
