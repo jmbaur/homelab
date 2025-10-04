@@ -27,29 +27,7 @@ in
 
     system.build.firmwareImage = firmwareImage;
 
-    hardware.deviceTree = {
-      name = "broadcom/bcm2711-rpi-4-b.dtb";
-      overlays = [
-        {
-          name = "rpi4-cma-overlay";
-          dtsText = ''
-            /dts-v1/;
-            /plugin/;
-
-            / {
-              compatible = "brcm,bcm2711";
-
-              fragment@0 {
-                target = <&cma>;
-                __overlay__ {
-                  size = <(320 * 1024 * 1024)>;
-                };
-              };
-            };
-          '';
-        }
-      ];
-    };
+    boot.kernelPackages = pkgs.linuxPackages_rpi4;
 
     # Pins 6,8,10 on the 40-pin layout.
     #  6 -> gnd

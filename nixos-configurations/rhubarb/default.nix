@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   pkgs,
   ...
@@ -48,42 +49,20 @@
       ];
     }
     {
-      boot.kernelPatches = [
-        {
-          name = "media/i2c: Add a driver for the Sony IMX708 image sensor";
-          patch = pkgs.fetchpatch {
-            url = "https://github.com/raspberrypi/linux/commit/9bbe36729058ba8ca2ee8cdd99b3e459211f81fe.patch";
-            excludes = [ "drivers/media/i2c/Makefile" ];
-            hash = "sha256-MgxZLpWSztSI3TEO5K05KDaVU4hAvnIaaixhJ0r4K00=";
-          };
-        }
-        {
-          # The patch from above doesn't apply cleanly to drivers/media/i2c/Makefile, do the change here instead.
-          name = "add imx708 to makefile";
-          patch = ./imx708-makefile.patch;
-        }
-        {
-          name = "media: i2c: imx708: Fix lockdep issues.";
-          patch = pkgs.fetchpatch {
-            url = "https://github.com/raspberrypi/linux/commit/96f6b239ff694192416df9cc3f8e130fb7b19301.patch";
-            hash = "sha256-KHQnpwukO7WU5CZptu9gcoqrV8j/Yh/K13sEj7QxrII=";
-          };
-        }
-        {
-          name = "media: i2c: Tweak default PDAF gain table in imx708 driver";
-          patch = pkgs.fetchpatch {
-            url = "https://github.com/raspberrypi/linux/commit/686f5708baaafb35e03e6e56396339330d0fec48.patch";
-            hash = "sha256-6W8cCJMDRUBaVGynojWCkbCXKAvmkUHWRi29XWESMWk=";
-          };
-        }
-      ];
-
-      hardware.deviceTree.overlays = [
-        # {
-        #     name = "imx708.dtbo";
-        #     dtboFile = "${pkgs.raspberrypifw}/share/raspberrypi/boot/overlays/imx708.dtbo";
-        # }
-      ];
+      # NOTE: this makes the overlays option not work at all :/
+      hardware.deviceTree = {
+        name = "broadcom/bcm2711-rpi-4-b.dtb";
+        package = lib.mkForce (
+          pkgs.runCommand "device-tree-package"
+            {
+              nativeBuildInputs = [ pkgs.buildPackages.libraspberrypi ];
+            }
+            ''
+              mkdir -p $out/broadcom
+              dtmerge ${config.hardware.deviceTree.kernelPackage}/dtbs/broadcom/bcm2711-rpi-4-b.dtb $out/broadcom/bcm2711-rpi-4-b.dtb ${config.hardware.deviceTree.kernelPackage}/dtbs/overlays/imx708.dtbo
+            ''
+        );
+      };
 
       networking.wireless.iwd.enable = true;
       environment.systemPackages = [ pkgs.iw ];
