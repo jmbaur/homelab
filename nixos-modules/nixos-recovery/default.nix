@@ -150,7 +150,7 @@ let
           };
           "11-recovery" = {
             storePaths = [ config.system.build.toplevel ];
-            stripNixStorePrefix = true;
+            nixStorePrefix = "/";
             repartConfig = {
               Type = "linux-generic";
               Format = "squashfs";
