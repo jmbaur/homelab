@@ -79,9 +79,22 @@
         "24" # unset
       ];
 
+      services.mediamtx = {
+        enable = true;
+        allowVideoAccess = true;
+        settings.paths.cam = {
+          source = "udp://127.0.0.1:3333";
+          runOnInit = "${pkgs.rpicam-apps}/bin/rpicam-vid -n -t 0 --codec libav --libav-format mpegts -o udp://127.0.0.1:3333";
+          runOnInitRestart = true;
+        };
+      };
+
       services.yggdrasil.settings.Peers = [ "tls://celery.jmbaur.com:443" ];
 
-      custom.yggdrasil.peers.pumpkin.allowedTCPPorts = [ 8080 ];
+      custom.yggdrasil.peers.pumpkin.allowedTCPPorts = [
+        8080 # homelab-garage-door
+        8889 # webrtc mediamtx
+      ];
     }
   ];
 }

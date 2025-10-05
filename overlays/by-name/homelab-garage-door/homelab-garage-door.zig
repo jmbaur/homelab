@@ -1,4 +1,5 @@
 const std = @import("std");
+const ioctl = std.os.linux.ioctl;
 const C = @cImport({
     @cInclude("linux/gpio.h");
 });
@@ -10,7 +11,7 @@ fn get(fd: std.posix.fd_t) C.gpio_v2_line_values {
     values.mask = 0b11;
 
     std.debug.assert(.SUCCESS == std.posix.errno(
-        std.os.linux.ioctl(
+        ioctl(
             fd,
             C.GPIO_V2_LINE_GET_VALUES_IOCTL,
             @intFromPtr(&values),
@@ -27,7 +28,7 @@ fn toggle(fd: std.posix.fd_t) !void {
     std.log.debug("setting set pin high", .{});
     values.bits = 0b01;
     std.debug.assert(.SUCCESS == std.posix.errno(
-        std.os.linux.ioctl(
+        ioctl(
             fd,
             C.GPIO_V2_LINE_SET_VALUES_IOCTL,
             @intFromPtr(&values),
@@ -39,7 +40,7 @@ fn toggle(fd: std.posix.fd_t) !void {
     std.log.debug("setting unset pin high", .{});
     values.bits = 0b10;
     std.debug.assert(.SUCCESS == std.posix.errno(
-        std.os.linux.ioctl(
+        ioctl(
             fd,
             C.GPIO_V2_LINE_SET_VALUES_IOCTL,
             @intFromPtr(&values),
@@ -51,7 +52,7 @@ fn toggle(fd: std.posix.fd_t) !void {
     std.log.debug("setting both pins low", .{});
     values.bits = 0b00;
     std.debug.assert(.SUCCESS == std.posix.errno(
-        std.os.linux.ioctl(
+        ioctl(
             fd,
             C.GPIO_V2_LINE_SET_VALUES_IOCTL,
             @intFromPtr(&values),
