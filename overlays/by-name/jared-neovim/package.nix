@@ -65,6 +65,7 @@ wrapNeovimUnstable neovim-unwrapped (
       })
     ]
     ++ (with vimPlugins; [
+      alabaster-nvim
       bpftrace-vim
       fzf-lua
       mini-nvim
