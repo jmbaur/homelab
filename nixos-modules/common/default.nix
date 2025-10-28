@@ -154,5 +154,10 @@ in
         settings.PasswordAuthentication = false;
       };
     }
+
+    # TODO(jared): remove when we have https://github.com/NixOS/nixpkgs/pull/450658
+    {
+      programs.ssh.package = pkgs.openssh_10_2;
+    }
   ]);
 }
