@@ -55,16 +55,6 @@ inputs: {
               hash = "sha256-VLbvyH9+RWAcWisXEC3yKGSXPI72+bZbWyeMhgyuzPg=";
             };
           };
-          alabaster-nvim = final.vimUtils.buildVimPlugin {
-            pname = "alabaster.nvim";
-            version = "2025-10-21";
-            src = final.fetchFromGitHub {
-              owner = "p00f";
-              repo = "alabaster.nvim";
-              rev = "481910715c46b83b9bf50bb9402d176391fb3017";
-              hash = "sha256-Dfcwyi8KY2JG4jjy+Ey1YztxIv5J6SbnN8kINfzY6tk=";
-            };
-          };
         }
       );
 

@@ -130,7 +130,7 @@ vim.opt.wrap = false
 
 vim.cmd.colorscheme(
 	---@diagnostic disable-next-line: undefined-field
-	vim.opt.termguicolors:get() and "alabaster" or "vim"
+	vim.opt.termguicolors:get() and "lunaperche" or "vim"
 )
 
 -- TODO(jared): use vim.snippet
