@@ -47,7 +47,7 @@
         macgen
         man-pages
         man-pages-posix
-        moar
+        moor
         ncdu
         nix-diff
         nix-output-monitor
