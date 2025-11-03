@@ -16,15 +16,20 @@
     webauthn-tiny.url = "github:jmbaur/webauthn-tiny";
 
     git-hooks.inputs.nixpkgs.follows = "nixpkgs";
+    git-hooks.inputs.flake-compat.follows = "";
+    git-hooks.inputs.gitignore.follows = "";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     ipwatch.inputs.nixpkgs.follows = "nixpkgs";
+    ipwatch.inputs.git-hooks.follows = "";
     mixos.inputs.nixpkgs.follows = "nixpkgs";
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
     nixos-router.inputs.nixpkgs.follows = "nixpkgs";
+    nixos-router.inputs.git-hooks.follows = "";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     tinyboot.inputs.nixpkgs.follows = "nixpkgs";
     u-boot-nix.inputs.nixpkgs.follows = "nixpkgs";
     webauthn-tiny.inputs.nixpkgs.follows = "nixpkgs";
+    webauthn-tiny.inputs.git-hooks.follows = "";
   };
 
   outputs = inputs: {
