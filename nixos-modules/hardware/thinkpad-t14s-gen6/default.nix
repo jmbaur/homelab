@@ -6,7 +6,7 @@
 }:
 
 let
-  inherit (lib) mkEnableOption mkIf versions;
+  inherit (lib) mkEnableOption mkIf;
 in
 {
   options.hardware.thinkpad-t14s-gen6.enable = mkEnableOption "Lenovo ThinkPad T14s Gen 6";
@@ -20,35 +20,7 @@ in
 
     hardware.firmware = [ pkgs.linux-firmware ];
 
-    boot.kernelPackages = pkgs.linuxPackagesFor (
-      pkgs.callPackage
-        (
-          { buildLinux, ... }@args:
-          buildLinux (
-            args
-            // rec {
-              version = "6.16.0";
-              extraMeta.branch = versions.majorMinor version;
-
-              # TODO(jared): remove this
-              ignoreConfigErrors = true;
-
-              src = pkgs.fetchFromGitHub {
-                owner = "jhovold";
-                repo = "linux";
-                # wip/x1e80100-6.16
-                rev = "a9cd6cda46ab81b1ec1d687d40ff0933dc6e6915";
-                hash = "sha256-pEnaEqHID9+ar+qCzygtGGneajYcBdWACEd1CIzPdM0=";
-              };
-              kernelPatches = (args.kernelPatches or [ ]);
-            }
-            // (args.argsOverride or { })
-          )
-        )
-        {
-          defconfig = "johan_defconfig";
-        }
-    );
+    boot.kernelPackages = pkgs.linuxPackages_testing;
 
     boot.consoleLogLevel = 7;
 
