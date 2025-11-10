@@ -8,6 +8,8 @@
   options.hardware.bpi-r3.enable = lib.mkEnableOption "bananapi r3";
 
   config = lib.mkIf config.hardware.bpi-r3.enable {
+    nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
+
     boot.kernelPackages = pkgs.linuxPackages_6_17;
 
     hardware.firmware = [
@@ -139,13 +141,7 @@
         artifacts = [ "u-boot.bin" ];
         meta.platforms = [ "aarch64-linux" ];
 
-        patches = [
-          ./mt7986-persistent-mac-from-cpu-uid.patch
-          (pkgs.fetchpatch {
-            url = "https://github.com/u-boot/u-boot/commit/1bf212129768d65a47145209c65bf37b6082d718.patch";
-            hash = "sha256-+xQ5Rb4feoVA3MBj9AnYlz3U14lmBLlvBx07ZpyTKOE=";
-          })
-        ];
+        patches = [ ./mt7986-persistent-mac-from-cpu-uid.patch ];
 
         kconfig = with lib.kernel; {
           AHCI = yes;

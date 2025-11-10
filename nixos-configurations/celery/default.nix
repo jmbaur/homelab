@@ -3,7 +3,7 @@
 {
   imports = [ ./router.nix ];
 
-  nixpkgs.hostPlatform = "aarch64-linux";
+  nixpkgs.buildPlatform = "x86_64-linux";
 
   hardware.bpi-r3.enable = true;
 

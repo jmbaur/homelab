@@ -1,8 +1,8 @@
 diff --git a/board/mediatek/mt7986/mt7986_rfb.c b/board/mediatek/mt7986/mt7986_rfb.c
-index 846c715ca05..810591de4fc 100644
+index 0ca87a88aed..39e3e1dd7fa 100644
 --- a/board/mediatek/mt7986/mt7986_rfb.c
 +++ b/board/mediatek/mt7986/mt7986_rfb.c
-@@ -4,6 +4,54 @@
+@@ -4,3 +4,50 @@
   * Author: Sam Shih <sam.shih@mediatek.com>
   */
  
@@ -53,10 +53,6 @@ index 846c715ca05..810591de4fc 100644
 +
 +	return 0;
 +}
-+
- int board_init(void)
- {
- 	return 0;
 diff --git a/include/configs/mt7986.h b/include/configs/mt7986.h
 index 090b4c6833e..22013259b6b 100644
 --- a/include/configs/mt7986.h
