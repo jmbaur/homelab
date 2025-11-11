@@ -39,17 +39,15 @@ in
     boot.initrd.includeDefaultModules = false;
 
     boot.initrd.availableKernelModules = [
-      # keyboard
-      "i2c_hid_of"
-      "i2c_qcom_geni"
-
       # Definitely needed for USB:
-      "uas"
+      "usb_storage"
       "phy_qcom_qmp_combo"
       "phy_snps_eusb2"
       "phy_qcom_eusb2_repeater"
       "tcsrcc_x1e80100"
 
+      "i2c_hid_of"
+      "i2c_qcom_geni"
       "dispcc-x1e80100"
       "gpucc-x1e80100"
       "phy_qcom_edp"
@@ -57,17 +55,19 @@ in
       "msm"
       "nvme"
       "phy_qcom_qmp_pcie"
-      "pcie_qcom"
-      "panel_samsung_atna33xc20"
-
-      "qcom_pmic_tcpm"
-      "phy-qcom-qmp-usb"
-      "phy-qcom-qmp-usbc"
 
       # Needed with the DP altmode patches
       "ps883x"
       "pmic_glink_altmode"
       "qrtr"
+
+      # Needed for t14s LCD display
+      "pwm_bl"
+      "leds_qcom_lpg"
+
+      # Needed for USB
+      "phy_nxp_ptn3222"
+      "phy_qcom_qmp_usb"
     ];
 
     # TODO(jared): ACPI not enabled in johan_defconfig, needed by tpm-crb
