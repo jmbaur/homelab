@@ -24,12 +24,19 @@ in
 inputs:
 
 let
-  allHosts = builtins.attrNames (
-    inputs.nixpkgs.lib.filterAttrs (_: entryType: entryType == "directory") (builtins.readDir ./.)
+  inherit (inputs.nixpkgs.lib)
+    attrNames
+    const
+    filterAttrs
+    genAttrs
+    ;
+
+  allHosts = attrNames (
+    filterAttrs (const (entryType: entryType == "directory")) (builtins.readDir ./.)
   );
 in
 
-inputs.nixpkgs.lib.genAttrs allHosts (
+genAttrs allHosts (
   host:
   inputs.nixpkgs.lib.nixosSystem {
     # extraModules are included in any usage of `noUserModules`, which means all of our custom options will still exist.

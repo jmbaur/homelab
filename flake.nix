@@ -40,6 +40,7 @@
     homeConfigurations = import ./home-configurations inputs;
     hydraJobs = import ./hydra-jobs inputs;
     legacyPackages = import ./legacy-packages.nix inputs;
+    mixosConfigurations = import ./mixos-configurations inputs;
     nixosConfigurations = import ./nixos-configurations inputs;
     nixosModules = import ./nixos-modules inputs;
     overlays = import ./overlays inputs;
