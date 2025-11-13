@@ -128,13 +128,18 @@ in
         {
           wantedBy = [ "multi-user.target" ];
           conflicts = [ "getty@tty1.service" ];
+
           serviceConfig = {
             User = "kodi";
             Group = "kodi";
             TTYPath = "/dev/tty1";
-            StandardInput = "tty";
+            TTYReset = "yes";
+            TTYVHangup = "yes";
+            TTYVTDisallocate = "yes";
+            StandardInput = "tty-fail";
             StandardOutput = "journal";
-            PAMName = "login";
+            StandardError = "journal";
+            PAMName = "kodi";
             Restart = "always";
             ExecStart = toString [
               (getExe' kodiPackage "kodi-standalone")
@@ -142,6 +147,17 @@ in
           };
         }
       ];
+
+      # systemd 258 defaults this to user-light, which means the user systemd
+      # instance is never started and things like audio (which run as a user
+      # service) don't work.
+      security.pam.services.kodi.text = ''
+        auth    required pam_unix.so nullok
+        account required pam_unix.so
+        session required pam_unix.so
+        session required pam_env.so conffile=/etc/pam/environment readenv=0
+        session required ${config.systemd.package}/lib/security/pam_systemd.so class=user
+      '';
     })
 
     (mkIf (cfg.backend == "wayland") {
