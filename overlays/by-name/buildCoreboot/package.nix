@@ -28,19 +28,14 @@ let
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "coreboot";
-  version = "25.06";
+  version = "25.09";
 
-  src =
-    (fetchgit {
-      url = "https://github.com/coreboot/coreboot";
-      rev = finalAttrs.version;
-      hash = "sha256-N8Hip8do0GQg4OvYwwsDnA0gy0UiWP04kwd7OfFJkLk=";
-      fetchSubmodules = true;
-    }).overrideAttrs
-      (_: {
-        # https://github.com/nixos/nixpkgs/blob/4c62505847d88f16df11eff3c81bf9a453a4979e/pkgs/build-support/fetchgit/nix-prefetch-git#L328
-        NIX_PREFETCH_GIT_CHECKOUT_HOOK = ''clean_git -C "$dir" submodule update --init --recursive --checkout -j ''${NIX_BUILD_CORES:-1} --progress'';
-      });
+  src = fetchgit {
+    url = "https://github.com/coreboot/coreboot";
+    rev = finalAttrs.version;
+    hash = "sha256-ItQVCDC/MiF5rgecmxeR000lqTQy1VCSSILl1z4bJmM=";
+    fetchSubmodules = true;
+  };
 
   depsBuildBuild = [
     pkgsBuildBuild.stdenv.cc
