@@ -25,13 +25,7 @@ local nix_run = function(attr)
 end
 
 local nix_repl = function()
-	local cmd = { "nix", "repl", "--tarball-ttl", max_tarball_ttl }
-	local flake_nix = vim.fs.find({ "flake.nix" }, { limit = 1, type = "file", upward = true })
-	if #flake_nix > 0 then
-		table.insert(cmd, vim.fs.dirname(flake_nix[1]))
-	end
-
-	return table.concat(cmd, " ")
+	return table.concat({ "nix", "repl", "--tarball-ttl", max_tarball_ttl }, " ")
 end
 
 local run_builtins = {
