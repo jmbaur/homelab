@@ -6,7 +6,7 @@
 
 let
   tinybootKernel = pkgs.linuxKernel.manualConfig {
-    inherit (pkgs.linux_6_17) src version;
+    inherit (pkgs.linux_testing) src version;
     configfile = ./tinyboot-linux.config;
   };
 
