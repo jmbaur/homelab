@@ -51,21 +51,17 @@ in
 
       boot.loader.tinyboot.enable = true;
 
-      system.build.firmware =
-        (pkgs.buildCoreboot {
-          kconfig = ''
-            CONFIG_BOARD_GOOGLE_SPHERION=y
-            CONFIG_VENDOR_GOOGLE=y
-            CONFIG_DEFAULT_CONSOLE_LOGLEVEL_5=y
-            # CONFIG_PAYLOAD_NONE is not set
-            CONFIG_PAYLOAD_FIT_SUPPORT=y
-            CONFIG_PAYLOAD_FIT=y
-            CONFIG_PAYLOAD_FILE="${fitImage}"
-          '';
-        }).overrideAttrs
-          (old: {
-            patches = (old.patches or [ ]) ++ [ ./coreboot-memlayout.patch ];
-          });
+      system.build.firmware = pkgs.buildCoreboot {
+        kconfig = ''
+          CONFIG_BOARD_GOOGLE_SPHERION=y
+          CONFIG_VENDOR_GOOGLE=y
+          CONFIG_DEFAULT_CONSOLE_LOGLEVEL_5=y
+          # CONFIG_PAYLOAD_NONE is not set
+          CONFIG_PAYLOAD_FIT_SUPPORT=y
+          CONFIG_PAYLOAD_FIT=y
+          CONFIG_PAYLOAD_FILE="${fitImage}"
+        '';
+      };
     }
     {
       nixpkgs.buildPlatform = "x86_64-linux";
