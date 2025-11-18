@@ -51,6 +51,7 @@ in
 
       boot.loader.tinyboot.enable = true;
 
+      system.build.tinyboot = tinyboot;
       system.build.firmware = pkgs.buildCoreboot {
         kconfig = ''
           CONFIG_BOARD_GOOGLE_SPHERION=y

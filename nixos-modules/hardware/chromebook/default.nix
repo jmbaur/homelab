@@ -22,7 +22,7 @@ in
     boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
 
     services.evremap = {
-      enable = true;
+      enable = false;
       settings.device_name =
         {
           x86_64 = "AT Translated Set 2 keyboard";
