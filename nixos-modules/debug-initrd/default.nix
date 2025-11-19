@@ -86,7 +86,8 @@ in
             rootModules = config.boot.initrd.availableKernelModules ++ config.boot.initrd.kernelModules;
             kernel = config.system.modulesTree;
             firmware = config.hardware.firmware;
-            allowMissing = false;
+            allowMissing = config.boot.initrd.allowMissingModules;
+            inherit (config.boot.initrd) extraFirmwarePaths;
           }
           + "/lib";
       }
