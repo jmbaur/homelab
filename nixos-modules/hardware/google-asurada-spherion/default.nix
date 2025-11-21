@@ -28,6 +28,7 @@ in
     boot.kernelParams = [
       "console=ttyS0,115200"
       "console=tty1"
+      "cma=256M"
     ];
   };
 }
