@@ -80,4 +80,6 @@ in
   ];
 
   services.tailscale.enable = true;
+
+  programs.qgroundcontrol.enable = true;
 }
