@@ -28,7 +28,7 @@ let
 
   nixosRecovery = pkgs.nixos-recovery.override {
     nix = config.nix.package;
-    nixos-install = config.system.build.nixos-install;
+    inherit (config.system.build) nixos-install;
     systemd = config.systemd.package;
   };
 
@@ -226,15 +226,13 @@ let
       };
     };
 
-  recovery = (
-    noUserModules.extendModules {
+  recovery = noUserModules.extendModules {
       modules = [
         inheritFromBaseConfig
         recoveryConfig
       ]
       ++ cfg.modules;
-    }
-  );
+    };
 in
 {
   options.custom.recovery = {

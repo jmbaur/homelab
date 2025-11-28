@@ -85,7 +85,7 @@ in
           pkgs.makeModulesClosure {
             rootModules = config.boot.initrd.availableKernelModules ++ config.boot.initrd.kernelModules;
             kernel = config.system.modulesTree;
-            firmware = config.hardware.firmware;
+            inherit (config.hardware) firmware;
             allowMissing = config.boot.initrd.allowMissingModules;
             inherit (config.boot.initrd) extraFirmwarePaths;
           }

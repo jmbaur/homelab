@@ -94,7 +94,7 @@ in
           };
 
           services.networkd-dispatcher = {
-            enable = config.services.clatd.enable;
+            inherit (config.services.clatd) enable;
             rules.restart-clatd = {
               onState = [
                 "routable"

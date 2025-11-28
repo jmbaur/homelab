@@ -37,7 +37,7 @@ let
   };
 
   peerSubmodule =
-    { ... }:
+    _:
     {
       options = {
         ip = mkOption { type = types.nonEmptyStr; };

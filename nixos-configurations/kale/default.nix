@@ -76,7 +76,7 @@ in
         {
           hostName = "localhost";
           protocol = null; # only works with "localhost" builder
-          system = pkgs.stdenv.hostPlatform.system;
+          inherit (pkgs.stdenv.hostPlatform) system;
           supportedFeatures = config.nix.settings.system-features or [ ];
           maxJobs = 4;
         }

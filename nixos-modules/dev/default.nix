@@ -44,8 +44,7 @@ in
           # different architectures work.
           preferStaticEmulators = true;
 
-          emulatedSystems = (
-            lib.optionals pkgs.stdenv.hostPlatform.isAarch64 [
+          emulatedSystems = lib.optionals pkgs.stdenv.hostPlatform.isAarch64 [
               "riscv32-linux"
               "riscv64-linux"
               "i686-linux"
@@ -56,8 +55,7 @@ in
               "riscv64-linux"
               "armv7l-linux"
               "aarch64-linux"
-            ]
-          );
+            ];
         };
       }
     ]

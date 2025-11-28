@@ -60,7 +60,7 @@ in
                 rev = "0546ae0beea38a750132882d9040019d26ca9b7e";
                 hash = "sha256-4DWbK1oNCBwW3puyRmq9G1B1ROlVAAm3zZRXe/UC15A=";
               };
-              kernelPatches = (args.kernelPatches or [ ]);
+              kernelPatches = args.kernelPatches or [ ];
             }
             // (args.argsOverride or { })
           )

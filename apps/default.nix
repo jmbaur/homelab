@@ -50,8 +50,7 @@ inputs.nixpkgs.lib.mapAttrs (
     );
 
     testDesktop = mkApp "Test changes to ./nixos-modules/desktop/* in a VM" (
-      getExe (
-        (inputs.nixpkgs.legacyPackages.${system}.nixos (
+      getExe (inputs.nixpkgs.legacyPackages.${system}.nixos (
           { modulesPath, ... }:
           {
             imports = [
@@ -66,7 +65,6 @@ inputs.nixpkgs.lib.mapAttrs (
             virtualisation.diskSize = 4096;
           }
         )).config.system.build.vm
-      )
     );
 
     buildNixosConfigCI = mkApp "TODO(jared): delete me!" (
