@@ -13,16 +13,7 @@ inputs: {
     )
 
     # cross-compilation fixes
-    (final: prev: {
-      # TODO: remove when https://github.com/NixOS/nixpkgs/pull/440083 is merged.
-      tayga = prev.tayga.overrideAttrs (old: {
-        env =
-          (old.env or { })
-          // final.lib.optionalAttrs final.stdenv.hostPlatform.is32bit {
-            NIX_CFLAGS_COMPILE = "-D_TIME_BITS=64 -D_FILE_OFFSET_BITS=64";
-          };
-      });
-
+    (_final: prev: {
       perlPackages = prev.perlPackages.overrideScope (
         _: perlPackagesPrev: {
           NetDNS = perlPackagesPrev.NetDNS.overrideAttrs (old: {
@@ -35,6 +26,13 @@ inputs: {
     # all other packages
     (final: prev: {
       cros-ec-fizz = prev.cros-ec.override { board = "fizz"; };
+
+      # TODO(jared): remove when we have https://github.com/NixOS/nixpkgs/pull/465400
+      termbench-pro = prev.termbench-pro.overrideAttrs (old: {
+        buildInputs = final.lib.filter (drv: drv.pname != final.glaze.pname) (old.buildInputs or [ ]) ++ [
+          (final.glaze.override { enableSSL = false; })
+        ];
+      });
 
       # https://github.com/NixOS/nixpkgs/issues/366902
       qemu-user = prev.qemu-user.overrideAttrs (old: {

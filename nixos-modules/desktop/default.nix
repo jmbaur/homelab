@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   inherit (lib)
@@ -17,16 +22,57 @@ in
     {
       custom.normalUser.enable = true;
 
-      services.displayManager.sddm.enable = true;
-      services.desktopManager.plasma6.enable = true;
+      programs.sway = {
+        enable = true;
+        wrapperFeatures = {
+          base = true;
+          gtk = true;
+        };
+      };
 
-      networking.networkmanager.enable = true;
+      fonts = {
+        packages = [ pkgs.iosevka ];
+        fontconfig.defaultFonts.monospace = [ "Iosevka" ];
+      };
+
+      environment.systemPackages = [
+        pkgs.clipman
+        pkgs.kanshi
+        pkgs.mako
+        pkgs.rofi
+        pkgs.wl-clipboard
+        (pkgs.runCommand "default-icon-theme" { } ''
+          mkdir -p $out/share/icons
+          ln -sf ${pkgs.adwaita-icon-theme}/share/icons/Adwaita $out/share/icons/default
+        '')
+      ];
 
       programs.yubikey-touch-detector.enable = mkDefault true;
-      services.upower.enable = mkDefault true;
+      security.rtkit.enable = mkDefault true;
+      services.automatic-timezoned.enable = mkDefault true;
       services.fwupd.enable = mkDefault true;
       services.printing.enable = mkDefault true;
-      security.rtkit.enable = mkDefault true;
+      services.upower.enable = mkDefault true;
+
+      programs.foot = {
+        enable = true;
+        theme = "modus-vivendi";
+        settings = {
+          mouse.hide-when-typing = "yes";
+          main = {
+            font = "monospace:size=12";
+            resize-by-cells = "no";
+            selection-target = "both";
+          };
+        };
+      };
+
+      programs.gnupg.agent.pinentryPackage = pkgs.pinentry-rofi;
+
+      programs.dconf = {
+        enable = true;
+        profiles.user.databases = [ ];
+      };
 
       programs.firefox = {
         enable = mkDefault true;

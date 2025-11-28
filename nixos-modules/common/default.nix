@@ -36,7 +36,7 @@ in
       system.etc.overlay.enable = mkDefault true;
 
       # Maximum terminal compatibility for ssh sessions.
-      environment.enableAllTerminfo = mkDefault true;
+      environment.enableAllTerminfo = mkDefault config.services.openssh.enable;
 
       # moving closer to perlless system
       environment.defaultPackages = mkDefault [ ];
