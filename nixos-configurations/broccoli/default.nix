@@ -52,6 +52,9 @@
 
         # TODO(jared): switch to localhost after all hosts are using https://cache.jmbaur.com
         settings.bind = "[::]:5000";
+
+        # TODO(jared): will need this soon
+        # settings.enable_compression = true;
       };
 
       # TODO(jared): Remove after all hosts are using https://cache.jmbaur.com
@@ -61,6 +64,7 @@
         onlySSL = true;
         locations."/" = {
           proxyPass = "http://[::1]:5000";
+          # TODO(jared): is this needed?
           extraConfig = ''
             proxy_set_header Accept-Encoding zstd;
           '';
