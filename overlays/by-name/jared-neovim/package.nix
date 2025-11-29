@@ -18,7 +18,7 @@
   rustfmt,
   shellcheck,
   shfmt,
-  terraform-ls,
+  tofu-ls,
   ttags,
   vimPlugins,
   vimUtils,
@@ -59,7 +59,7 @@ wrapNeovimUnstable neovim-unwrapped (
           rustfmt
           shellcheck
           shfmt
-          terraform-ls
+          tofu-ls
           ttags
           zig
           zls_0_15

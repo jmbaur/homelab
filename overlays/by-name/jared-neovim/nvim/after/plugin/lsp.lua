@@ -37,8 +37,8 @@ if vim.fn.executable("bash-language-server") == 1 then
 	add_lsp("bashls", {})
 end
 
-if vim.fn.executable("terraform-ls") == 1 and vim.fn.executable("terraform") == 1 then
-	add_lsp("terraformls", {})
+if vim.fn.executable("tofu-ls") == 1 and vim.fn.executable("tofu") == 1 then
+	add_lsp("tofu_ls", {})
 end
 
 if vim.fn.executable("gopls") == 1 and vim.fn.executable("go") == 1 then
