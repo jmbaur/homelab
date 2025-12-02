@@ -33,30 +33,6 @@ in
             destination = "/lib/udev/rules.d/60-openocd.rules";
           })
         ];
-
-        boot.binfmt = {
-          # Make sure builder isn't masquerading as being
-          # able to do native builds for non-native
-          # architectures.
-          addEmulatedSystemsToNixSandbox = false;
-
-          # Makes chroot/sandbox environments of
-          # different architectures work.
-          preferStaticEmulators = true;
-
-          emulatedSystems = lib.optionals pkgs.stdenv.hostPlatform.isAarch64 [
-              "riscv32-linux"
-              "riscv64-linux"
-              "i686-linux"
-              "x86_64-linux"
-            ]
-            ++ lib.optionals pkgs.stdenv.hostPlatform.isx86_64 [
-              "riscv32-linux"
-              "riscv64-linux"
-              "armv7l-linux"
-              "aarch64-linux"
-            ];
-        };
       }
     ]
   );
