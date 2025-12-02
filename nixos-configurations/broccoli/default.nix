@@ -64,9 +64,8 @@
         onlySSL = true;
         locations."/" = {
           proxyPass = "http://[::1]:5000";
-          # TODO(jared): is this needed?
           extraConfig = ''
-            proxy_set_header Accept-Encoding zstd;
+            proxy_set_header Accept-Encoding $http_accept_encoding;
           '';
         };
         sslCertificate = config.sops.secrets."cf-origin/cert".path;
