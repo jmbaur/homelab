@@ -8,10 +8,10 @@
   config = lib.mkMerge [
     {
       home.packages = with pkgs; [
-        abduco
         age-plugin-yubikey
         ansifilter
         as-tree
+        awscli2
         bash-language-server
         bat
         cachix
@@ -87,6 +87,8 @@
         enableDefaultConfig = false;
         matchBlocks."*.internal".forwardAgent = true;
         matchBlocks."*.local".forwardAgent = true;
+        matchBlocks."i-* mi-*".proxyCommand =
+          "${pkgs.runtimeShell} -c \"${lib.getExe pkgs.awscli2} ssm start-session --target %h --document-name AWS-StartSSHSession --parameters 'portNumber=%p'\"";
         matchBlocks."*" = {
           serverAliveInterval = 11;
           controlMaster = "auto";
@@ -320,7 +322,7 @@
         cntr
         hexdiff
         inotify-tools
-        ipv6-link-local-ssh-proxy-command
+        mac-vendor-lookup
         nixos-kexec
         pax-utils
         poke
