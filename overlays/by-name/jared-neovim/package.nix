@@ -18,6 +18,8 @@
   rustfmt,
   shellcheck,
   shfmt,
+  texlab,
+  texlive,
   tofu-ls,
   ttags,
   vimPlugins,
@@ -59,6 +61,9 @@ wrapNeovimUnstable neovim-unwrapped (
           rustfmt
           shellcheck
           shfmt
+          texlab
+          texlive.pkgs.latexindent
+          texlive.pkgs.latexmk
           tofu-ls
           ttags
           zig
