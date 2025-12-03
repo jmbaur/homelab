@@ -36,19 +36,17 @@ let
     '';
   };
 
-  peerSubmodule =
-    _:
-    {
-      options = {
-        ip = mkOption { type = types.nonEmptyStr; };
+  peerSubmodule = _: {
+    options = {
+      ip = mkOption { type = types.nonEmptyStr; };
 
-        allowAll = mkEnableOption "allow all traffic from this peer";
+      allowAll = mkEnableOption "allow all traffic from this peer";
 
-        allowedTCPPorts = allowedTCPPortsOption;
+      allowedTCPPorts = allowedTCPPortsOption;
 
-        allowedUDPPorts = allowedUDPPortsOption;
-      };
+      allowedUDPPorts = allowedUDPPortsOption;
     };
+  };
 in
 {
   options.custom.yggdrasil = {

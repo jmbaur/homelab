@@ -33,10 +33,10 @@ let
     (
       (
         {
-            gbm = pkgs.kodi-gbm;
-            wayland = pkgs.kodi-wayland;
-          }
-          .${cfg.backend}.override
+          gbm = pkgs.kodi-gbm;
+          wayland = pkgs.kodi-wayland;
+        }
+        .${cfg.backend}.override
         {
           sambaSupport = false; # deps don't cross-compile
         }

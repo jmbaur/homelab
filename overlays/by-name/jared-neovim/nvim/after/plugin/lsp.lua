@@ -127,7 +127,12 @@ vim.api.nvim_create_autocmd({ "LspAttach" }, {
 	callback = function(opts)
 		vim.opt_local.signcolumn = "yes"
 
-		if vim.tbl_contains({ "zig", "nix", "go", "sh", "bash", "rust", "tex" }, vim.fn.getbufvar(opts.buf, "&filetype")) then
+		if
+			vim.tbl_contains(
+				{ "zig", "nix", "go", "sh", "bash", "rust", "tex" },
+				vim.fn.getbufvar(opts.buf, "&filetype")
+			)
+		then
 			vim.api.nvim_create_autocmd({ "BufWritePre" }, {
 				group = format_on_save_group,
 				buffer = opts.buf,

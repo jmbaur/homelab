@@ -227,12 +227,12 @@ let
     };
 
   recovery = noUserModules.extendModules {
-      modules = [
-        inheritFromBaseConfig
-        recoveryConfig
-      ]
-      ++ cfg.modules;
-    };
+    modules = [
+      inheritFromBaseConfig
+      recoveryConfig
+    ]
+    ++ cfg.modules;
+  };
 in
 {
   options.custom.recovery = {

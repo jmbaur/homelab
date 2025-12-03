@@ -16,7 +16,7 @@ concatMapAttrs
         x:
         let
           name' = "${name}-${toString x}";
-        
+
           hash = builtins.hashString "sha256" name';
         in
         # Prefix with two colons to indicate these are the last 64 bits

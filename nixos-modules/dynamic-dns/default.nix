@@ -54,7 +54,8 @@ in
         DynamicUser = true;
         Restart = "on-failure";
         EnvironmentFile = [ config.sops.secrets.ipwatch_env.path ];
-        ExecStart = getExe (pkgs.writeShellApplication {
+        ExecStart = getExe (
+          pkgs.writeShellApplication {
             name = "update-cloudflare";
             runtimeInputs = [
               pkgs.jq
@@ -96,7 +97,8 @@ in
                   fi
                 done
               '';
-          });
+          }
+        );
       };
     };
   };
