@@ -3,15 +3,8 @@ local add_lsp = function(name, opts)
 	vim.lsp.enable(name)
 end
 
-if vim.fn.executable("nil") == 1 then
-	add_lsp("nil_ls", {
-		settings = {
-			["nil"] = {
-				formatting = { command = { "nixfmt" } },
-				nix = { flake = { autoArchive = false } },
-			},
-		},
-	})
+if vim.fn.executable("nixd") == 1 then
+	add_lsp("nixd", {})
 end
 
 if vim.fn.executable("rust-analyzer") == 1 then
@@ -129,7 +122,7 @@ vim.api.nvim_create_autocmd({ "LspAttach" }, {
 
 		if
 			vim.tbl_contains(
-				{ "zig", "nix", "go", "sh", "bash", "rust", "tex" },
+				{ "zig", "nix", "go", "sh", "bash", "rust", "terraform", "tex" },
 				vim.fn.getbufvar(opts.buf, "&filetype")
 			)
 		then

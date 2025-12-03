@@ -9,7 +9,7 @@
   lua-language-server,
   neovim-unwrapped,
   neovimUtils,
-  nil,
+  nixd,
   nixfmt,
   pyright,
   ripgrep,
@@ -52,7 +52,7 @@ wrapNeovimUnstable neovim-unwrapped (
           gofumpt
           gopls
           lua-language-server
-          nil
+          nixd
           nixfmt
           pyright
           ripgrep
