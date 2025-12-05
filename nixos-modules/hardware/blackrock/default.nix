@@ -12,7 +12,6 @@ let
     mkDefault
     mkEnableOption
     mkIf
-    versions
     ;
 
   wdk2023_syshacks = pkgs.fetchFromGitHub {
@@ -40,35 +39,7 @@ in
       }
     ];
 
-    boot.kernelPackages = pkgs.linuxPackagesFor (
-      pkgs.callPackage
-        (
-          { buildLinux, ... }@args:
-          buildLinux (
-            args
-            // rec {
-              version = "6.16.0";
-              extraMeta.branch = versions.majorMinor version;
-
-              # TODO(jared): remove this
-              ignoreConfigErrors = true;
-
-              src = pkgs.fetchFromGitHub {
-                owner = "jhovold";
-                repo = "linux";
-                # wip/sc8280xp-6.16
-                rev = "0546ae0beea38a750132882d9040019d26ca9b7e";
-                hash = "sha256-4DWbK1oNCBwW3puyRmq9G1B1ROlVAAm3zZRXe/UC15A=";
-              };
-              kernelPatches = args.kernelPatches or [ ];
-            }
-            // (args.argsOverride or { })
-          )
-        )
-        {
-          defconfig = "johan_defconfig";
-        }
-    );
+    boot.kernelPackages = pkgs.linuxPackages_6_18;
 
     boot.consoleLogLevel = 7;
 

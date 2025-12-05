@@ -20,7 +20,7 @@ in
 
     hardware.firmware = [ pkgs.linux-firmware ];
 
-    boot.kernelPackages = pkgs.linuxPackages_testing;
+    boot.kernelPackages = pkgs.linuxPackages_6_18;
 
     boot.consoleLogLevel = 7;
 
