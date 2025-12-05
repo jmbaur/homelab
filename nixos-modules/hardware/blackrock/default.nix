@@ -121,7 +121,6 @@ in
 
       # storage
       "nvme"
-      "pcie_qcom"
       "phy_qcom_qmp_pcie"
 
       # keyboard
