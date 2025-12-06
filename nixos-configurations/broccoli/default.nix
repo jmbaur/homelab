@@ -62,12 +62,7 @@
 
       services.nginx.virtualHosts."cache.jmbaur.com" = {
         onlySSL = true;
-        locations."/" = {
-          proxyPass = "http://[::1]:5000";
-          extraConfig = ''
-            proxy_set_header Accept-Encoding $http_accept_encoding;
-          '';
-        };
+        locations."/".proxyPass = "http://[::1]:5000";
         sslCertificate = config.sops.secrets."cf-origin/cert".path;
         sslCertificateKey = config.sops.secrets."cf-origin/key".path;
       };
