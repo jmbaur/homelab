@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   pkgs,
   ...
@@ -49,6 +50,12 @@ in
       hardware.chromebook.asurada-spherion.enable = true;
 
       boot.loader.tinyboot.enable = true;
+
+      environment.systemPackages = [
+        (pkgs.writeShellScriptBin "update-firmware" ''
+          ${lib.getExe pkgs.flashrom} -p internal --write ${config.system.build.firmware}/coreboot.rom
+        '')
+      ];
 
       system.build.firmware = pkgs.buildCoreboot {
         kconfig = ''
