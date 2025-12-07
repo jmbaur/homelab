@@ -81,6 +81,8 @@ in
       networking.wireless.iwd.enable = true;
       custom.normalUser.enable = true;
 
+      hardware.graphics.enable = true;
+
       programs.firefox.enable = false;
       xdg.portal.enable = lib.mkForce false;
       services.speechd.enable = false;
