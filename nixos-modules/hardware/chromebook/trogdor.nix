@@ -117,7 +117,6 @@
       "phy-qcom-qmp-usb-legacy"
       "phy-qcom-qmp-usbc"
       "phy-qcom-qusb2"
-      "phy-qcom-snps-eusb2"
       "phy-qcom-usb-hs"
       "phy-qcom-usb-hs-28nm"
       "phy-qcom-usb-hsic"
