@@ -3,8 +3,11 @@ inputs.nixpkgs.lib.mapAttrs (
   _: pkgs:
   pkgs.treefmt.withConfig {
     runtimeInputs = [
+      pkgs.deadnix
       pkgs.nixfmt
+      pkgs.shellcheck
       pkgs.shfmt
+      pkgs.statix
       pkgs.stylua
       pkgs.zig_0_15
     ];
@@ -17,6 +20,21 @@ inputs.nixpkgs.lib.mapAttrs (
         includes = [ "*.nix" ];
       };
 
+      formatter.deadnix = {
+        command = "deadnix";
+        includes = [ "*.nix" ];
+        options = [ "--edit" ];
+      };
+
+      formatter.statix = {
+        command = pkgs.writeShellScript "statix-fix" ''
+          for file in "$@"; do
+            statix fix "$file"
+          done
+        '';
+        includes = [ "*.nix" ];
+      };
+
       formatter.shell = {
         command = "shfmt";
         options = [
@@ -26,6 +44,18 @@ inputs.nixpkgs.lib.mapAttrs (
         includes = [
           "*.sh"
           "*.bash"
+          "*.envrc"
+          "*.envrc.*"
+        ];
+      };
+
+      formatter.shellcheck = {
+        command = "shellcheck";
+        includes = [
+          "*.sh"
+          "*.bash"
+          "*.envrc"
+          "*.envrc.*"
         ];
       };
 

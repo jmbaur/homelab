@@ -53,9 +53,9 @@ inputs.nixpkgs.lib.mapAttrs (
       inherit
         (inputs.git-hooks.lib.${system}.run {
           src = ./.;
-          hooks = {
-            deadnix.enable = true;
-            shellcheck.enable = true;
+          hooks.treefmt = {
+            enable = true;
+            packageOverrides.treefmt = inputs.self.formatter.${system};
           };
         })
         shellHook
