@@ -68,5 +68,15 @@ in
       custom.dev.enable = false;
       custom.recovery.targetDisk = "/dev/disk/by-path/platform-11f60000.mmc";
     }
+    {
+      # smaller cross desktop
+      custom.basicNetwork.enable = true;
+      networking.wireless.iwd.enable = true;
+      custom.normalUser.enable = true;
+
+      programs.firefox.enable = false;
+      xdg.portal.enable = lib.mkForce false;
+      services.speechd.enable = false;
+    }
   ];
 }
