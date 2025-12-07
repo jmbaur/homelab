@@ -6,6 +6,7 @@ declare -r url="https://www.wireshark.org/download/automated/data/manuf.gz"
 
 cache_dir=${XDG_CACHE_HOME:-${HOME:-$(mktemp -d)}/.cache/mac-vendor-lookup}
 
+mkdir -p "$cache_dir"
 manuf_location="${cache_dir}/manuf.gz"
 
 (
