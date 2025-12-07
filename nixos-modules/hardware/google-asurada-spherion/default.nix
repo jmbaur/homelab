@@ -32,7 +32,7 @@ in
     ];
 
     boot.initrd.availableKernelModules = [
-      "usb_storage"
+      "uas"
       "sd_mod"
     ];
   };
