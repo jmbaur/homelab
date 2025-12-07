@@ -31,7 +31,6 @@
 
     boot.kernelParams = [ "deferred_probe_timeout=30" ];
 
-    boot.kernelPackages = pkgs.linuxPackages_6_12;
     boot.kernelPatches = [
       {
         name = "trogdor-hardware-enablement";
