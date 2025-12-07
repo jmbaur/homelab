@@ -30,5 +30,10 @@ in
       "console=tty1"
       "cma=256M"
     ];
+
+    boot.initrd.availableKernelModules = [
+      "usb_storage"
+      "sd_mod"
+    ];
   };
 }
