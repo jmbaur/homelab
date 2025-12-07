@@ -14,8 +14,7 @@ let
     firmwareDirectory = pkgs.callPackage (
       { runCommand, zstd }:
       runCommand "tinyboot-pea-firmware" { nativeBuildInputs = [ zstd ]; } ''
-        mkdir -p $out/lib/firmware/mediatek/mt8192
-        zstd <${pkgs.linux-firmware}/lib/firmware/mediatek/mt8192/scp.img >$out/lib/firmware/mediatek/mt8192/scp.img.zst
+        install -Dm0444 ${pkgs.linux-firmware}/lib/firmware/mediatek/mt8192/scp.img $out/lib/firmware/mediatek/mt8192/scp.img
       ''
     ) { };
   };
