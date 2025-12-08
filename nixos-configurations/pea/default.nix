@@ -71,7 +71,7 @@ in
     }
     {
       nixpkgs.buildPlatform = "x86_64-linux";
-      custom.desktop.enable = false;
+      custom.desktop.enable = true;
       custom.dev.enable = false;
       custom.recovery.targetDisk = "/dev/disk/by-path/platform-11f60000.mmc";
     }
@@ -86,6 +86,9 @@ in
       programs.firefox.enable = false;
       xdg.portal.enable = lib.mkForce false;
       services.speechd.enable = false;
+
+      # TODO(jared): doesn't build
+      services.fwupd.enable = false;
     }
   ];
 }
