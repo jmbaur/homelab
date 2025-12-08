@@ -33,6 +33,9 @@ in
             destination = "/lib/udev/rules.d/60-openocd.rules";
           })
         ];
+
+        # Used by openocd udev rules
+        users.groups.plugdev = { };
       }
     ]
   );
