@@ -88,6 +88,7 @@ in
       services.speechd.enable = false;
 
       # TODO(jared): doesn't build
+      services.pipewire.enable = false;
       services.fwupd.enable = false;
     }
   ];

@@ -31,8 +31,8 @@ in
       };
 
       fonts = {
-        packages = [ pkgs.iosevka ];
-        fontconfig.defaultFonts.monospace = [ "Iosevka" ];
+        packages = [ pkgs.hack-font ];
+        fontconfig.defaultFonts.monospace = [ "Hack" ];
       };
 
       environment.systemPackages = [
