@@ -75,7 +75,6 @@
       "phy_qcom_qmp_usbc"
       "phy_qcom_qusb2"
       "phy_qcom_sgmii_eth"
-      "phy_qcom_snps_eusb2"
       "phy_qcom_snps_femto_v2"
       "phy_qcom_usb_hs"
       "phy_qcom_usb_hs_28nm"
