@@ -10,7 +10,7 @@
   config = lib.mkIf config.hardware.bpi-r3.enable {
     nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
 
-    boot.kernelPackages = pkgs.linuxPackages_6_17;
+    boot.kernelPackages = pkgs.linuxPackages_6_18;
 
     hardware.firmware = [
       pkgs.wireless-regdb

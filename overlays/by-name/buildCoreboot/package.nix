@@ -1,5 +1,6 @@
 {
   fetchgit,
+  lib,
   nss,
   openssl,
   pkg-config,
@@ -7,75 +8,83 @@
   python3,
   stdenvNoCC,
 }:
-{
-  kconfig ? "",
-}:
 
-let
-  toolchain =
-    pkgsBuildBuild.coreboot-toolchain.${
-      {
-        i386 = "i386";
-        x86_64 = "i386";
-        arm64 = "aarch64";
-        arm = "arm";
-        riscv = "riscv";
-        powerpc = "ppc64";
-      }
-      .${stdenvNoCC.hostPlatform.linuxArch}
-    }.override
-      { withAda = stdenvNoCC.hostPlatform.isx86_64; };
-in
-stdenvNoCC.mkDerivation (finalAttrs: {
-  pname = "coreboot";
-  version = "25.09";
+lib.extendMkDerivation {
+  constructDrv = stdenvNoCC.mkDerivation;
 
-  src = fetchgit {
-    url = "https://github.com/coreboot/coreboot";
-    rev = finalAttrs.version;
-    hash = "sha256-ItQVCDC/MiF5rgecmxeR000lqTQy1VCSSILl1z4bJmM=";
-    fetchSubmodules = true;
-  };
+  excludeDrvArgNames = [ "kconfig" ];
 
-  depsBuildBuild = [
-    pkgsBuildBuild.stdenv.cc
-    pkg-config
-    openssl
-    nss
-    python3
-  ];
+  extendDrvArgs =
+    finalAttrs:
+    {
+      kconfig,
+    }:
+    let
+      toolchain =
+        pkgsBuildBuild.coreboot-toolchain.${
+          {
+            i386 = "i386";
+            x86_64 = "i386";
+            arm64 = "aarch64";
+            arm = "arm";
+            riscv = "riscv";
+            powerpc = "ppc64";
+          }
+          .${stdenvNoCC.hostPlatform.linuxArch}
+        }.override
+          { withAda = stdenvNoCC.hostPlatform.isx86_64; };
+    in
+    {
+      pname = "coreboot";
+      version = "25.09";
 
-  strictDeps = true;
-  enableParallelBuilding = true;
+      src = fetchgit {
+        url = "https://github.com/coreboot/coreboot";
+        rev = finalAttrs.version;
+        hash = "sha256-ItQVCDC/MiF5rgecmxeR000lqTQy1VCSSILl1z4bJmM=";
+        fetchSubmodules = true;
+      };
 
-  inherit kconfig;
-  passAsFile = [ "kconfig" ];
+      depsBuildBuild = [
+        pkgsBuildBuild.stdenv.cc
+        pkg-config
+        openssl
+        nss
+        python3
+      ];
 
-  makeFlags = [
-    "BUILD_TIMELESS=1"
-    "KERNELVERSION=${finalAttrs.version}"
-    "UPDATED_SUBMODULES=1"
-    "XGCCPATH=${toolchain}/bin/"
-  ];
+      strictDeps = true;
+      enableParallelBuilding = true;
 
-  postPatch = ''
-    patchShebangs util 3rdparty/vboot/scripts
-  '';
+      inherit kconfig;
+      passAsFile = [ "kconfig" ];
 
-  configurePhase = ''
-    runHook preConfigure
+      makeFlags = [
+        "BUILD_TIMELESS=1"
+        "KERNELVERSION=${finalAttrs.version}"
+        "UPDATED_SUBMODULES=1"
+        "XGCCPATH=${toolchain}/bin/"
+      ];
 
-    cat $kconfigPath > .config
-    make -j$NIX_BUILD_CORES olddefconfig
+      postPatch = ''
+        patchShebangs util 3rdparty/vboot/scripts
+      '';
 
-    runHook postConfigure
-  '';
+      configurePhase = ''
+        runHook preConfigure
 
-  installPhase = ''
-    runHook preInstall
+        cat $kconfigPath > .config
+        make -j$NIX_BUILD_CORES olddefconfig
 
-    install -Dm0444 --target-directory=$out build/coreboot.rom .config
+        runHook postConfigure
+      '';
 
-    runHook postInstall
-  '';
-})
+      installPhase = ''
+        runHook preInstall
+
+        install -Dm0444 --target-directory=$out build/coreboot.rom .config
+
+        runHook postInstall
+      '';
+    };
+}
