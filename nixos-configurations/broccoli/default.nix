@@ -18,7 +18,6 @@
     {
       sops.secrets = {
         nix_signing_key = { };
-        nix_signing_key2 = { };
         ssh_remote_build.owner = config.users.users.hydra-queue-runner.name;
         hydra_netrc.owner = config.users.users.hydra.name;
         "cf-origin/cert".owner = config.services.nginx.user;
@@ -43,12 +42,7 @@
     {
       services.harmonia = {
         enable = true;
-        signKeyPaths = [
-          config.sops.secrets.nix_signing_key.path
-
-          # TODO(jared): Remove after all hosts are validating with new key
-          config.sops.secrets.nix_signing_key2.path
-        ];
+        signKeyPaths = [ config.sops.secrets.nix_signing_key.path ];
 
         # TODO(jared): switch to localhost after all hosts are using https://cache.jmbaur.com
         settings.bind = "[::]:5000";
@@ -94,8 +88,20 @@
         '';
       };
 
-      # TODO(jared): Remove after all hosts are using https://hydra.jmbaur.com
-      custom.yggdrasil.all.allowedTCPPorts = [ 3000 ];
+      # TODO(jared): uncomment when we have https://github.com/NixOS/nixpkgs/pull/464613
+      # nix.firewall = {
+      #   enable = true;
+      #   allowPrivateNetworks = false;
+      #   allowedTCPPorts = [
+      #     22 # SSH (for git+ssh:// URLs)
+      #     80 # HTTP
+      #     443 # HTTPS
+      #   ];
+      #   allowedUDPPorts = [
+      #     53 # DNS
+      #     443 # QUIC/HTTP3
+      #   ];
+      # };
 
       services.nginx.virtualHosts."hydra.jmbaur.com" = {
         onlySSL = true;
