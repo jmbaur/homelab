@@ -1,0 +1,50 @@
+From fae2e91a60e8577c6a81cb921524e0014a0ebc79 Mon Sep 17 00:00:00 2001
+From: Leith Bade <leith@bade.nz>
+Date: Thu, 27 Jun 2024 17:58:54 +1000
+Subject: [PATCH 2/4] arm64: dts: mediatek: mt7986: add gpio-hog for boot mode
+ switch on BPI-R3
+
+To avoid future pin conflicts with the boot mode dip switch (SW1), add
+a gpio-hog to document the two GPIOs it is connected to. If another device
+attempts to then claim the pins a log message will get printed.
+
+The BPI-R3 has a four position DIP switch (labelled SW1), that is used to
+configure the boot mode. The first two positions (labelled A & B)
+configure two bootstrap pins on the MT7986 that select which flash chip
+the boot ROM will load the second stage bootloader from. The third
+position toggles chip select lines to select between the NOR or NAND chip
+on the SPI0 bus. The fourth position toggles chip select lines to select
+between the eMMC chip or SD card on the MMC0 bus.
+
+Only the first two positions are connected to GPIO pins on the MT7986. In
+the public schematic for the BPI-R3 (titled "BPI-R3-MT7986A",
+revision "V1.1", sheet 4), these are the MT7986 (U1E) pins GPIO_0 (GPIO5)
+and GPIO_1 (GPIO6). This gpio-hog configures the two boot mode pins as
+inputs.
+
+Signed-off-by: Leith Bade <leith@bade.nz>
+---
+ arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts
+index cead58aaca59..61a23ab35ea3 100644
+--- a/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts
++++ b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts
+@@ -232,6 +232,13 @@ &pcie_phy {
+ };
+ 
+ &pio {
++	boot_mode_hog: boot-mode-hog {
++		gpio-hog;
++		gpios = <5 GPIO_ACTIVE_HIGH>,
++			<6 GPIO_ACTIVE_HIGH>;
++		input;
++	};
++
+ 	i2c_pins: i2c-pins {
+ 		mux {
+ 			function = "i2c";
+-- 
+2.51.2
+

@@ -56,31 +56,19 @@
       }
       {
         name = "switch-reset-line-fix";
-        patch = pkgs.fetchpatch {
-          url = "https://lore.kernel.org/linux-arm-kernel/20240627075856.2314804-2-leith@bade.nz/raw";
-          hash = "sha256-3kAnvJO/R7nTaahAimMQascL9mY9K375EKsbpDRVE3E=";
-        };
+        patch = ./0001-arm64-dts-mediatek-mt7986-fix-the-switch-reset-line-.patch;
       }
       {
         name = "boot-mode-gpio-hog";
-        patch = pkgs.fetchpatch {
-          url = "https://lore.kernel.org/linux-arm-kernel/20240627075856.2314804-3-leith@bade.nz/raw";
-          hash = "sha256-7FQLAWYtilj+MH34UAO80mztO9igYRJy5oPGc1ts5MQ=";
-        };
+        patch = ./0002-arm64-dts-mediatek-mt7986-add-gpio-hog-for-boot-mode.patch;
       }
       {
         name = "add-missing-pin-groups";
-        patch = pkgs.fetchpatch {
-          url = "https://lore.kernel.org/linux-arm-kernel/20240627075856.2314804-4-leith@bade.nz/raw";
-          hash = "sha256-YibxuXNlvGrLlbfqev2aiOdprzJcXwBRpq9yOik/gjc=";
-        };
+        patch = ./0003-arm64-dts-mediatek-mt7986-add-missing-pin-groups-to-.patch;
       }
       {
         name = "uart1-fixes";
-        patch = pkgs.fetchpatch {
-          url = "https://lore.kernel.org/linux-arm-kernel/20240627075856.2314804-5-leith@bade.nz/raw";
-          hash = "sha256-Na7r1DxEkwJg0biDlzfjK8YxZu9Bi8i0MxygORdr3Wg=";
-        };
+        patch = ./0004-arm64-dts-mediatek-mt7986-add-missing-UART1-CTS-RTS-.patch;
       }
     ];
 

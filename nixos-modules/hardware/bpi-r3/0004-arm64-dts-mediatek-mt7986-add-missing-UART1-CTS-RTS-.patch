@@ -1,0 +1,40 @@
+From 22a3f6bc7434000b6227243ecf0080cc43d2f991 Mon Sep 17 00:00:00 2001
+From: Leith Bade <leith@bade.nz>
+Date: Thu, 27 Jun 2024 17:58:56 +1000
+Subject: [PATCH 4/4] arm64: dts: mediatek: mt7986: add missing UART1 CTS/RTS
+ pins in BPI-R3
+
+The current definition of the uart1_pins pin group does not include the
+CTS and RTS pins that are available on header CON1.
+
+In the public schematic for the BPI-R3 (titled "BPI-R3-MT7986A",
+revision "V1.1", sheet 4), the UART1_RTS and UART1_CTS pins are connected
+via nets to the connector CON1 (sheet 14) UART0-RTS and UART0-CTS pins.
+The datasheet does not show these nets as connected to anything else.
+
+These pins can be configured for either UART1 or as a GPIO, with no other
+alternate usage listed in the pinctrl driver. By changing the pin group
+definition from uart1_rx_tx to uart1 the additional RTS and CTS pins are
+included.
+
+Signed-off-by: Leith Bade <leith@bade.nz>
+---
+ arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts
+index 044b9e4534f7..b8ed880422e3 100644
+--- a/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts
++++ b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts
+@@ -346,7 +346,7 @@ mux {
+ 	uart1_pins: uart1-pins {
+ 		mux {
+ 			function = "uart";
+-			groups = "uart1_rx_tx";
++			groups = "uart1";
+ 		};
+ 	};
+ 
+-- 
+2.51.2
+
