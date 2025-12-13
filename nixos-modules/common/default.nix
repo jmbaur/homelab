@@ -111,9 +111,6 @@ in
           if (revision != null) then revision else "nixos-unstable"
         }.tar.gz"
       ];
-
-      # TODO(jared): Can delete this after e51ab12e173e3699bb5c0fbe9985e5231d6729a4 is in nixos-unstable.
-      services.geoclue2.geoProviderUrl = "https://beacondb.net/v1/geolocate";
     }
 
     {
