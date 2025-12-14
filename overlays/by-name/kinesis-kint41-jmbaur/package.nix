@@ -6,14 +6,14 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "kinesis-kint41-jmbaur";
-  version = "0.28.0";
+  version = "0.31.2";
 
   src = fetchFromGitHub {
     owner = "qmk";
     repo = "qmk_firmware";
     tag = finalAttrs.version;
     fetchSubmodules = true;
-    hash = "sha256-ThFBLA1YlRmSVkOV3NW1YWF5NCsbWJRLfHQYIejiYGA=";
+    hash = "sha256-3OoC+oebnlyQINwHQLSWt36gqsTGrGBNV3OKvEG2fho=";
   };
 
   nativeBuildInputs = [ qmk ];
