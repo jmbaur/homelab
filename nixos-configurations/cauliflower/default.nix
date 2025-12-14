@@ -43,7 +43,7 @@ in
   # TODO(jared): fix this
   boot.initrd.systemd.tpm2.enable = false;
 
-  boot.loader.systemd-boot.enable = true;
+  boot.loader.tinyboot.enable = true;
 
   services.yggdrasil.settings.Peers = [ "tls://celery.jmbaur.com:443" ];
 
