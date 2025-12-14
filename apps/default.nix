@@ -45,7 +45,7 @@ inputs.nixpkgs.lib.mapAttrs (
 
     flashKinesis = mkApp "Flash kinesis keyboard with custom QMK firmware (https://github.com/kinx-project/kint)" (
       pkgs.writeShellScript "flash-kinesis" ''
-        ${pkgs.teensy-loader-cli}/bin/teensy-loader-cli -w -v --mcu=TEENSY40 "${pkgs.kinesis-kint41-jmbaur}/kinesis_kint41_jmbaur.hex"
+        ${pkgs.teensy-loader-cli}/bin/teensy-loader-cli -w -v --mcu=TEENSY40 ${pkgs.kinesis-kint41-jmbaur}/kinesis_kint41_jmbaur.hex
       ''
     );
 
