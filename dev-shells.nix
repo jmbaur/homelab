@@ -44,6 +44,7 @@ inputs.nixpkgs.lib.mapAttrs (
         pkgs.home-manager
         pkgs.lldb
         pkgs.openscad-unstable
+        pkgs.sbcl
         pkgs.sops
         pkgs.zig_0_15
       ];

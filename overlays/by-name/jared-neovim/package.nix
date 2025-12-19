@@ -2,6 +2,8 @@
   clang-tools,
   dts-lsp,
   fd,
+  fennel-ls,
+  fnlfmt,
   fzf,
   go-tools,
   gofumpt,
@@ -11,6 +13,7 @@
   neovimUtils,
   nixd,
   nixfmt,
+  pkgsBuildBuild,
   pyright,
   ripgrep,
   ruff,
@@ -33,6 +36,8 @@ wrapNeovimUnstable neovim-unwrapped (
   neovimUtils.makeNeovimConfig {
     customRC = "set exrc";
 
+    extraLuaPackages = ps: [ ps.fennel ];
+
     withNodeJs = false;
     withPerl = false;
     withRuby = false;
@@ -43,10 +48,18 @@ wrapNeovimUnstable neovim-unwrapped (
       (vimUtils.buildVimPlugin {
         name = "jared-neovim-config";
         src = ./nvim;
+        buildPhase = "make";
+        postInstall = ''
+          find $out -name '*.fnl' -delete
+          rm $out/Makefile
+        '';
+        nativeBuildInputs = [ pkgsBuildBuild.neovim-unwrapped.lua.pkgs.fennel ];
         runtimeDeps = [
           clang-tools
           dts-lsp
           fd
+          fennel-ls
+          fnlfmt
           fzf
           go-tools
           gofumpt
@@ -73,6 +86,7 @@ wrapNeovimUnstable neovim-unwrapped (
     ]
     ++ (with vimPlugins; [
       bpftrace-vim
+      conjure
       fzf-lua
       mini-nvim
       nvim-lspconfig

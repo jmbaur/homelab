@@ -4,11 +4,11 @@ inputs.nixpkgs.lib.mapAttrs (
   pkgs.treefmt.withConfig {
     runtimeInputs = [
       pkgs.deadnix
+      pkgs.fnlfmt
       pkgs.nixfmt
       pkgs.shellcheck
       pkgs.shfmt
       pkgs.statix
-      pkgs.stylua
       pkgs.zig_0_15
     ];
 
@@ -59,9 +59,10 @@ inputs.nixpkgs.lib.mapAttrs (
         ];
       };
 
-      formatter.stylua = {
-        command = "stylua";
-        includes = [ "*.lua" ];
+      formatter.fennel = {
+        command = "fnlfmt";
+        options = [ "--fix" ];
+        includes = [ "*.fnl" ];
       };
 
       formatter.zig = {

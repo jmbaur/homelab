@@ -1,20 +1,21 @@
 {
-  runCommand,
+  lib,
+  sbcl,
   stdenv,
-  zig_0_15,
 }:
 
-runCommand "copy" { depsBuildBuild = [ zig_0_15 ]; } ''
-  mkdir -p $out/bin
+stdenv.mkDerivation {
+  pname = "copy";
+  version = "0.0.0";
 
-  export ZIG_GLOBAL_CACHE_DIR=$TEMPDIR
-  zig test -j$NIX_BUILD_CORES ${./copy.zig}
-  zig build-exe \
-    -j$NIX_BUILD_CORES \
-    -femit-bin=$out/bin/copy \
-    -fstrip \
-    -O ReleaseSafe \
-    -target ${stdenv.hostPlatform.qemuArch}-${stdenv.hostPlatform.rust.platform.os} \
-    ${./copy.zig}
-  rm -f $out/bin/*.o
-''
+  src = lib.fileset.toSource {
+    root = ./.;
+    fileset = lib.fileset.difference ./. ./package.nix;
+  };
+
+  nativeBuildInputs = [ sbcl ];
+
+  dontStrip = true;
+
+  meta.mainProgram = "copy";
+}
