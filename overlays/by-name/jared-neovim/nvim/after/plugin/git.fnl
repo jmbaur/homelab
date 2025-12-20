@@ -17,10 +17,10 @@
   (lambda [args remote-url rev git-file]
     (let [(line1 line2) (unpack (get-range args))]
       (var url (string.format base-url-fmt remote-url rev git-file))
-      (if (not= line1 nil)
-          (set url (.. url (string.format line1-fmt line1))))
-      (if (not= line2 nil)
-          (set url (.. url (string.format line2-fmt line2))))
+      (when (not= line1 nil)
+        (set url (.. url (string.format line1-fmt line1))))
+      (when (not= line2 nil)
+        (set url (.. url (string.format line2-fmt line2))))
       url)))
 
 (local forges
@@ -29,9 +29,10 @@
         :sourcehut (construct-url "%s/tree/%s/item/%s" "#L%s" "-%s")
         :gitea (construct-url "%s/src/commit/%s/%s" "#L%s" "-L%s")})
 
-(local github-header-regex (vim.regex "^x-github-request-id: .*$"))
-(local gitlab-header-regex (vim.regex "^x-gitlab-meta: .*$"))
-(local gitea-header-regex (vim.regex "^set-cookie: .*i_like_gitea.*$"))
+(local forge-header-matchers
+       {:github (vim.regex "^x-github-request-id: .*$")
+        :gitlab (vim.regex "^x-gitlab-meta: .*$")
+        :gitea (vim.regex "^set-cookie: .*i_like_gitea.*$")})
 
 (fn detect-forge [remote-url]
   (local headers (vim.split (stdout-or-bail (: (vim.system [:curl
@@ -40,12 +41,12 @@
                                                             remote-url])
                                                :wait))
                             "\r\n"))
-  (local found-forge (icollect [_ header (ipairs headers)]
-                       (if (github-header-regex:match_str header)
-                           :github
-                           (if (gitlab-header-regex:match_str header) :gitlab
-                               (if (gitea-header-regex:match_str header)
-                                   :gitea)))))
+  (local found-forge
+         (vim.tbl_keys ((collect [forge matcher (pairs forge-header-matchers)]
+                          (when (> (length (icollect [_ header (ipairs headers)]
+                                             (matcher:match_str header)))
+                                   0)
+                            (values forge true))))))
   (if (= (length found-forge) 0)
       (error "forge type not detected" vim.log.levels.ERROR)
       (. found-forge 1)))
