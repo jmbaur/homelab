@@ -48,7 +48,7 @@ wrapNeovimUnstable neovim-unwrapped (
       (vimUtils.buildVimPlugin {
         name = "jared-neovim-config";
         src = ./nvim;
-        buildPhase = "make";
+        buildPhase = "make -j$NIX_BUILD_CORES";
         postInstall = ''
           find $out -name '*.fnl' -delete
           rm $out/Makefile
