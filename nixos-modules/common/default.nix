@@ -35,6 +35,9 @@ in
       boot.initrd.systemd.enable = mkDefault true;
       system.etc.overlay.enable = mkDefault true;
 
+      # Used by a lot of stuff, but doesn't exist by default.
+      users.groups.plugdev = { };
+
       # Maximum terminal compatibility for ssh sessions.
       environment.enableAllTerminfo = mkDefault config.services.openssh.enable;
 
@@ -68,8 +71,6 @@ in
           });
 
       environment.stub-ld.enable = false;
-
-      i18n.defaultLocale = "en_US.UTF-8";
 
       # No need for mutable users in most use cases
       users.mutableUsers = mkDefault false;
