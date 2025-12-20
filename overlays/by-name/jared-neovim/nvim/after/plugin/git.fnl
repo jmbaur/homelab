@@ -53,7 +53,8 @@
 
 (vim.api.nvim_create_user_command :Permalink
                                   (lambda [opts]
-                                    (local current-file (vim.fn.expand "%"))
+                                    (local current-file
+                                           (vim.fs.normalize (vim.fn.expand "%")))
                                     (local repo-dir
                                            (stdout-or-bail (: (vim.system [:git
                                                                            :-C
@@ -80,6 +81,7 @@
                                                              (not= (vim.fn.match value
                                                                                  ".*\\/HEAD -> .*")
                                                                    0))
+                                                           ; Using HEAD here means that we cannot have any pending commits that have not been pushed to a remote.
                                                            (vim.split (stdout-or-bail (git-command [:branch
                                                                                                     :--points-at
                                                                                                     :HEAD
