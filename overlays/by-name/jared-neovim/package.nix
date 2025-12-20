@@ -90,6 +90,7 @@ wrapNeovimUnstable neovim-unwrapped (
       fzf-lua
       mini-nvim
       nvim-lspconfig
+      nvim-paredit
       nvim-treesitter.withAllGrammars
       vim-dispatch
       vim-eunuch

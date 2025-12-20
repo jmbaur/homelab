@@ -43,6 +43,7 @@ inputs.nixpkgs.lib.mapAttrs (
       packages = [
         pkgs.home-manager
         pkgs.lldb
+        pkgs.neovim-unwrapped.lua.pkgs.fennel
         pkgs.openscad-unstable
         pkgs.sbcl
         pkgs.sops

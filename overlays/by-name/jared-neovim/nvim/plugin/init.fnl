@@ -3,6 +3,8 @@
 (local fzf-lua (require :fzf-lua))
 (local mini-misc (require :mini.misc))
 (local nvim-treesitter-configs (require :nvim-treesitter.configs))
+(local paredit (require :nvim-paredit))
+(paredit.setup)
 
 (mini-misc.setup_restore_cursor)
 (mini-misc.setup_termbg_sync)
