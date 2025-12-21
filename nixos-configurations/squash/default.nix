@@ -1,8 +1,5 @@
 { config, pkgs, ... }:
 {
-  # better support for mt7915 wifi card
-  boot.kernelPackages = pkgs.linuxPackages_6_12;
-
   hardware.firmware = [
     pkgs.wireless-regdb
     (pkgs.extractLinuxFirmwareDirectory "mediatek")

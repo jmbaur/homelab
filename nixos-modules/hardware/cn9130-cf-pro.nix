@@ -17,7 +17,6 @@
 
     hardware.deviceTree.name = "marvell/cn9130-cf-pro.dtb";
 
-    boot.kernelPackages = pkgs.linuxPackages_6_12;
     boot.initrd.availableKernelModules = [
       "phy-armada38x-comphy"
       "phy-mvebu-cp110-utmi"
