@@ -11,12 +11,17 @@
 (add-lsp-if-has [:clangd] :clangd nil)
 (add-lsp-if-has [:dts-lsp] :dts_lsp)
 (add-lsp-if-has [:fennel-ls] :fennel_ls)
-(add-lsp-if-has [:latexindent :latexmk] :texlab)
 (add-lsp-if-has [:nixd] :nixd)
 (add-lsp-if-has [:pyright-langserver] :pyright)
 (add-lsp-if-has [:tofu-ls :tofu] :tofu_ls)
 (add-lsp-if-has [:zls] :zls {:settings {:zls {:semantic_tokens :partial}}})
 (add-lsp-if-has [:lua-language-server] :lua_ls)
+(add-lsp-if-has [:latexmk] :texlab
+                {:settings {:texlab {:latexFormatter (if (= (vim.fn.executable :tex-fmt)
+                                                            1)
+                                                         :tex-fmt
+                                                         nil)}}})
+
 (add-lsp-if-has [:gopls :go] :gopls
                 {:settings {:gopls {:gofumpt (= (vim.fn.executable :gofumpt) 1)
                                     :staticcheck (= (vim.fn.executable :staticcheck)

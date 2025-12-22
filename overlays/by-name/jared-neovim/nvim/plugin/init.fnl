@@ -43,16 +43,18 @@
   (fzf-lua.setup {:fzf_args (string.format "--color=%s" (or background :dark))
                   :defaults {:file_icons false}
                   :files {:previewer false}
+                  :hls {:title "" :title_flags ""}
                   :winopts {:split "botright 15new"
-                            :border :single
-                            :preview {:hidden :hidden
-                                      :border :border
+                            :border false
+                            :preview {:hidden true
+                                      :border nil
                                       :title false
                                       :layout :horizontal
                                       :horizontal "right:50%"}}})
   nil)
 
-(setup-fzf)
+; TODO(jared): do we need this?
+; (setup-fzf)
 
 (vim.api.nvim_create_autocmd [:OptionSet]
                              {:pattern [:background]
