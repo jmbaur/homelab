@@ -39,8 +39,8 @@
                                           (vim.cmd.startinsert)
                                           nil)})
 
-(fn setup-fzf [background]
-  (fzf-lua.setup {:fzf_args (string.format "--color=%s" (or background :dark))
+(fn setup-fzf [?background]
+  (fzf-lua.setup {:fzf_args (string.format "--color=%s" (or ?background :dark))
                   :defaults {:file_icons false}
                   :files {:previewer false}
                   :hls {:title "" :title_flags ""}
@@ -53,8 +53,8 @@
                                       :horizontal "right:50%"}}})
   nil)
 
-; TODO(jared): do we need this?
-; (setup-fzf)
+; Do the initial setup of fzf such that we don't start with the defaults.
+(setup-fzf)
 
 (vim.api.nvim_create_autocmd [:OptionSet]
                              {:pattern [:background]
