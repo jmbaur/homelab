@@ -2,6 +2,7 @@
 
 (setq-default truncate-lines t)
 
+(setq confirm-kill-emacs 'yes-or-no-p)
 (setq load-prefer-newer t)
 (setq native-comp-jit-compilation t)
 (setq evil-want-C-u-scroll t)
