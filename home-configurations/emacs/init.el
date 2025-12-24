@@ -18,13 +18,14 @@
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (global-display-line-numbers-mode 1)
-(global-auto-revert-mode t)
+(global-auto-revert-mode 1)
+(icomplete-vertical-mode 1)
 
 (if (and window-system (fboundp 'scroll-bar-mode))
     (scroll-bar-mode -1)
   (setq interprogram-cut-function 'osc52-select-text))
 
-(load-theme 'wheatgrass)
+(load-theme 'modus-vivendi)
 
 (setq direnv-always-show-summary nil)
 (direnv-mode 1)
@@ -44,11 +45,18 @@
 (add-hook 'emacs-lisp-mode-hook (lambda ()
 				  (compile-angel-on-save-local-mode 1)))
 (add-hook 'nix-mode-hook (lambda ()
-			   (eglot-ensure)))
+			   (eglot-ensure)
+			   (add-hook 'after-save-hook 'eglot-format nil t)))
 (add-hook 'zig-mode-hook (lambda ()
-			   (eglot-ensure)))
+			   (eglot-ensure)
+			   (add-hook 'after-save-hook 'eglot-format nil t)))
 (add-hook 'rust-mode-hook (lambda ()
-			   (eglot-ensure)))
+			    (eglot-ensure)
+			    (add-hook 'after-save-hook 'eglot-format nil t)))
+(add-hook 'vterm-mode-hook (lambda ()
+			     (display-line-numbers-mode -1)))
+(add-hook 'eat-mode-hook (lambda ()
+			   (display-line-numbers-mode -1)))
 
 ;; ensure we load custom-file, if set
 (unless (eq custom-file nil)

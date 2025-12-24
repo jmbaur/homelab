@@ -6,7 +6,6 @@
   fd,
   fennel-ls,
   fnlfmt,
-  fzf,
   go-tools,
   gofumpt,
   gopls,
@@ -25,7 +24,7 @@
   texlive,
   tofu-ls,
   ttags,
-  zig,
+  zig_0_15,
   zls_0_15,
 }:
 
@@ -36,6 +35,7 @@ let
       compile-angel
       direnv
       dts-mode
+      eat
       evil
       evil-collection
       evil-commentary
@@ -50,7 +50,7 @@ let
       markdown-mode
       nix-mode
       racket-mode
-      ripgrep
+      rg
       rust-mode
       slime
       terraform-mode
@@ -62,6 +62,7 @@ let
 in
 buildEnv {
   name = "jared-emacs";
+  meta.mainProgram = "emacs";
   paths = [
     clang-tools
     dts-lsp
@@ -69,7 +70,6 @@ buildEnv {
     fd
     fennel-ls
     fnlfmt
-    fzf
     go-tools
     gofumpt
     gopls
@@ -88,7 +88,7 @@ buildEnv {
     texlive.pkgs.latexmk
     tofu-ls
     ttags
-    zig
+    zig_0_15
     zls_0_15
   ];
 }
