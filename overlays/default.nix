@@ -27,13 +27,6 @@ inputs: {
     (final: prev: {
       cros-ec-fizz = prev.cros-ec.override { board = "fizz"; };
 
-      # TODO(jared): remove when we have https://github.com/NixOS/nixpkgs/pull/465400
-      termbench-pro = prev.termbench-pro.overrideAttrs (old: {
-        buildInputs = final.lib.filter (drv: drv.pname != final.glaze.pname) (old.buildInputs or [ ]) ++ [
-          (final.glaze.override { enableSSL = false; })
-        ];
-      });
-
       vimPlugins = prev.vimPlugins.extend (
         _: _: {
           bpftrace-vim = final.vimUtils.buildVimPlugin {
