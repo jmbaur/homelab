@@ -36,6 +36,7 @@
         home-manager
         htmlq
         htop-vim
+        jared-emacs
         jared-neovim
         jq
         just
@@ -115,6 +116,7 @@
           };
           core.excludesFile = pkgs.writeText "gitignore" (
             lib.concatLines [
+              "*.elc"
               "*.swp"
               "*~"
               ".direnv"
@@ -310,6 +312,9 @@
           bind-key j display-popup -EE tmux-jump
         '';
       };
+
+      xdg.configFile."emacs/init.el".source = ./emacs/init.el;
+      xdg.configFile."emacs/early-init.el".source = ./emacs/early-init.el;
     }
 
     (lib.mkIf pkgs.stdenv.hostPlatform.isLinux {

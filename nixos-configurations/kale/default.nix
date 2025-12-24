@@ -56,7 +56,7 @@ in
 
       zramSwap.memoryPercent = 200;
 
-      system.stateVersion = "25.05";
+      system.stateVersion = "26.05";
 
       services.hydra = {
         enable = true;

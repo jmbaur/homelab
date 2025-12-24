@@ -1,17 +1,94 @@
-{ emacs-nox }:
-emacs-nox.pkgs.withPackages (
-  epkgs: with epkgs; [
-    compile-angel
-    evil
-    evil-collection
-    evil-commentary
-    evil-numbers
-    evil-surround
-    geiser
-    magit
-    nix-mode
-    slime
-    vterm
-    zig-mode
-  ]
-)
+{
+  buildEnv,
+  clang-tools,
+  dts-lsp,
+  emacs-pgtk,
+  fd,
+  fennel-ls,
+  fnlfmt,
+  fzf,
+  go-tools,
+  gofumpt,
+  gopls,
+  lua-language-server,
+  nixd,
+  nixfmt,
+  pyright,
+  ripgrep,
+  ruff,
+  rust-analyzer,
+  rustfmt,
+  shellcheck,
+  shfmt,
+  tex-fmt,
+  texlab,
+  texlive,
+  tofu-ls,
+  ttags,
+  zig,
+  zls_0_15,
+}:
+
+let
+  emacs = emacs-pgtk.pkgs.withPackages (
+    epkgs: with epkgs; [
+      company
+      compile-angel
+      direnv
+      dts-mode
+      evil
+      evil-collection
+      evil-commentary
+      evil-numbers
+      evil-surround
+      fennel-mode
+      geiser
+      go-mode
+      haskell-mode
+      janet-mode
+      magit
+      markdown-mode
+      nix-mode
+      racket-mode
+      ripgrep
+      rust-mode
+      slime
+      terraform-mode
+      typescript-mode
+      vterm
+      zig-mode
+    ]
+  );
+in
+buildEnv {
+  name = "jared-emacs";
+  paths = [
+    clang-tools
+    dts-lsp
+    emacs
+    fd
+    fennel-ls
+    fnlfmt
+    fzf
+    go-tools
+    gofumpt
+    gopls
+    lua-language-server
+    nixd
+    nixfmt
+    pyright
+    ripgrep
+    ruff
+    rust-analyzer
+    rustfmt
+    shellcheck
+    shfmt
+    tex-fmt
+    texlab
+    texlive.pkgs.latexmk
+    tofu-ls
+    ttags
+    zig
+    zls_0_15
+  ];
+}

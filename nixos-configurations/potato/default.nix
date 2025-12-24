@@ -45,8 +45,7 @@ in
         '';
       };
 
-      boot.loader.systemd-boot.enable = true;
-      boot.loader.tinyboot.enable = false;
+      boot.loader.tinyboot.enable = true;
 
       boot.kernelParams = [ "console=ttyS0,115200" ];
       systemd.services."serial-getty@ttyS0" = {

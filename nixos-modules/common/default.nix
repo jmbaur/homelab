@@ -25,7 +25,7 @@ in
 
   config = mkIf cfg.enable (mkMerge [
     {
-      system.stateVersion = mkDefault "25.11";
+      system.stateVersion = mkDefault "26.05";
 
       environment.systemPackages = [
         pkgs.modprobed-db

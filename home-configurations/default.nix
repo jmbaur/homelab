@@ -16,7 +16,7 @@ inputs.nixpkgs.lib.mapAttrs' (system: pkgs: {
               ''
             );
             {
-              stateVersion = "25.11";
+              stateVersion = "26.05";
               username = builtins.getEnv "USER";
               homeDirectory = builtins.getEnv "HOME";
             };
