@@ -48,6 +48,7 @@
 			   (eglot-ensure)
 			   (add-hook 'after-save-hook 'eglot-format nil t)))
 (add-hook 'zig-mode-hook (lambda ()
+			   (zig-format-on-save-mode -1) ; we use eglot-format instead
 			   (eglot-ensure)
 			   (add-hook 'after-save-hook 'eglot-format nil t)))
 (add-hook 'rust-mode-hook (lambda ()
