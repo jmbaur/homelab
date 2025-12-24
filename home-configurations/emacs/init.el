@@ -3,6 +3,7 @@
 (require 'company)
 (require 'compile-angel)
 (require 'direnv)
+(require 'eat)
 (require 'eglot)
 (require 'evil)
 (require 'evil-collection)
@@ -71,6 +72,9 @@
 			     (display-line-numbers-mode -1)))
 (add-hook 'eat-mode-hook (lambda ()
 			   (display-line-numbers-mode -1)))
+(add-hook 'eshell-load-hook (lambda ()
+			      (display-line-numbers-mode -1)
+			      (eat-eshell-mode)))
 
 ;; ensure we load custom-file, if set
 (unless (eq custom-file nil)
