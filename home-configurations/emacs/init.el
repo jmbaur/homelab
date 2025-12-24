@@ -24,7 +24,7 @@
     (scroll-bar-mode -1)
   (setq interprogram-cut-function 'osc52-select-text))
 
-(load-theme 'modus-operandi)
+(load-theme 'wheatgrass)
 
 (setq direnv-always-show-summary nil)
 (direnv-mode 1)
@@ -49,8 +49,6 @@
 			   (eglot-ensure)))
 (add-hook 'rust-mode-hook (lambda ()
 			   (eglot-ensure)))
-
-
 
 ;; ensure we load custom-file, if set
 (unless (eq custom-file nil)
