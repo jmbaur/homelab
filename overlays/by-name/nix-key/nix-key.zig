@@ -1,5 +1,3 @@
-// TODO(jared): We are setting an arbitrary limit on the data filesize to 4KiB.
-
 const std = @import("std");
 
 const C = @cImport({
@@ -39,7 +37,7 @@ fn sign(
     const data_file = try std.fs.cwd().openFile(data_filepath, .{});
     defer data_file.close();
 
-    const key_content = try key_file.readToEndAlloc(allocator, 4096);
+    const key_content = try key_file.readToEndAlloc(allocator, std.math.maxInt(usize));
     defer allocator.free(key_content);
 
     var split = std.mem.splitSequence(u8, key_content, ":");
@@ -59,7 +57,7 @@ fn sign(
 
     try std.base64.standard.Decoder.decode(key_data, key_base64);
 
-    const data_content = try data_file.readToEndAlloc(allocator, 4096);
+    const data_content = try data_file.readToEndAlloc(allocator, std.math.maxInt(usize));
     defer allocator.free(data_content);
 
     var signature = [_]u8{0} ** C.crypto_sign_BYTES;
@@ -136,13 +134,13 @@ fn verify(
     var data_file = try std.fs.cwd().openFile(data_filepath, .{});
     defer data_file.close();
 
-    const data_contents = try data_file.readToEndAlloc(allocator, 4096);
+    const data_contents = try data_file.readToEndAlloc(allocator, std.math.maxInt(usize));
     defer allocator.free(data_contents);
 
     var signature_file = try std.fs.cwd().openFile(signature_filepath, .{});
     defer signature_file.close();
 
-    const signature_contents = try signature_file.readToEndAlloc(allocator, 4096);
+    const signature_contents = try signature_file.readToEndAlloc(allocator, std.math.maxInt(usize));
     defer allocator.free(signature_contents);
 
     var split = std.mem.splitSequence(u8, signature_contents, ":");
@@ -173,7 +171,6 @@ fn verify(
     }
 }
 
-// zig run overlays/pkgs/nix-key/nix-key.zig -lc -lsodium -L ./result/lib -I ./result-dev/include -- sign /tmp/key /tmp/key
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{ .safety = true }){};
     defer {
