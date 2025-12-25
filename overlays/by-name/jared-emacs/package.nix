@@ -52,6 +52,7 @@ let
       rg
       rust-mode
       slime
+      sops
       terraform-mode
       typescript-mode
       vterm

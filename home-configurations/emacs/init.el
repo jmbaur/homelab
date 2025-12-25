@@ -71,14 +71,18 @@
 (add-hook 'zig-mode-hook (lambda ()
 			   (zig-format-on-save-mode -1) ; we use eglot-format instead
 			   (setup-lsp)))
-(add-hook 'term-mode-hook (lambda ()
-			     (display-line-numbers-mode -1)))
-(add-hook 'vterm-mode-hook (lambda ()
-			     (display-line-numbers-mode -1)))
-(add-hook 'eat-mode-hook (lambda ()
-			   (display-line-numbers-mode -1)))
+
+(defun setup-term ()
+  ;; line numbers are not nearly useful in terminal like environments
+  (display-line-numbers-mode -1))
+
+(add-hook 'eat-mode-hook 'setup-term)
+(add-hook 'nix-repl-hook 'setup-term)
+(add-hook 'shell-mode-hook 'setup-term)
+(add-hook 'term-mode-hook 'setup-term)
+(add-hook 'vterm-mode-hook 'setup-term)
 (add-hook 'eshell-load-hook (lambda ()
-			      (display-line-numbers-mode -1)
+			      (setup-term)
 			      (eat-eshell-mode)))
 
 ;; ensure we load custom-file, if set
