@@ -61,22 +61,21 @@
           allow_import_from_derivation = false
           binary_cache_public_uri = https://cache.jmbaur.com
           log_prefix = https://cache.jmbaur.com/
-          store_uri = file:///var/lib/hydra/binary-cache?compression=zstd&parallel-compression=true&ls-compression=br&log-compression=br&write-nar-listing=true&secret-key=${config.sops.secrets.nix_signing_key.path}
+          store_uri = file:///var/lib/binary-cache?compression=zstd&parallel-compression=true&ls-compression=br&log-compression=br&write-nar-listing=true&secret-key=${config.sops.secrets.nix_signing_key.path}
         '';
       };
 
       services.nginx.virtualHosts."cache.jmbaur.com" = {
         onlySSL = true;
-        locations."/".root = "/var/lib/hydra/binary-cache";
+        locations."/".root = "/var/lib/binary-cache";
         sslCertificate = config.sops.secrets."cf-origin/cert".path;
         sslCertificateKey = config.sops.secrets."cf-origin/key".path;
       };
 
-      systemd.tmpfiles.settings."10-binary-cache" = {
-        "/var/lib/hydra/binary-cache".d = {
-          user = config.users.users.hydra-queue-runner.name;
-          mode = "755";
-        };
+      systemd.tmpfiles.settings."10-binary-cache"."/var/lib/binary-cache".d = {
+        user = config.users.users.hydra-queue-runner.name;
+        group = config.users.groups.nginx.name;
+        mode = "750";
       };
 
       networking.nftables.flushRuleset = !config.nix.firewall.enable;
