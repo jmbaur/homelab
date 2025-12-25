@@ -30,7 +30,7 @@
     (scroll-bar-mode -1)
   (setq interprogram-cut-function 'osc52-select-text))
 
-(load-theme 'modus-vivendi)
+(load-theme 'modus-vivendi-tritanopia)
 
 (setq direnv-always-show-summary nil)
 (direnv-mode 1)
