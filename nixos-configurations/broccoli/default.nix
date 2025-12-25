@@ -17,7 +17,7 @@
     }
     {
       sops.secrets = {
-        nix_signing_key = { };
+        nix_signing_key.owner = config.users.users.hydra-queue-runner.name;
         ssh_remote_build.owner = config.users.users.hydra-queue-runner.name;
         hydra_netrc.owner = config.users.users.hydra.name;
         "cf-origin/cert".owner = config.services.nginx.user;
@@ -38,28 +38,6 @@
       };
 
       networking.firewall.allowedTCPPorts = [ 443 ];
-    }
-    {
-      services.harmonia = {
-        enable = true;
-        signKeyPaths = [ config.sops.secrets.nix_signing_key.path ];
-
-        # TODO(jared): switch to localhost after all hosts are using https://cache.jmbaur.com
-        settings.bind = "[::]:5000";
-
-        # TODO(jared): will need this soon
-        # settings.enable_compression = true;
-      };
-
-      # TODO(jared): Remove after all hosts are using https://cache.jmbaur.com
-      custom.yggdrasil.all.allowedTCPPorts = [ 5000 ];
-
-      services.nginx.virtualHosts."cache.jmbaur.com" = {
-        onlySSL = true;
-        locations."/".proxyPass = "http://[::1]:5000";
-        sslCertificate = config.sops.secrets."cf-origin/cert".path;
-        sslCertificateKey = config.sops.secrets."cf-origin/key".path;
-      };
     }
     {
       nix.settings.netrc-file = config.sops.secrets.hydra_netrc.path;
@@ -85,7 +63,22 @@
           allow_import_from_derivation = false
           binary_cache_public_uri = https://cache.jmbaur.com
           log_prefix = https://cache.jmbaur.com/
+          store_uri = file:///var/lib/hydra/binary-cache?compression=zstd&parallel-compression=true&ls-compression=br&log-compression=br&write-nar-listing=true&secret-key=${config.sops.secrets.nix_signing_key.path}
         '';
+      };
+
+      services.nginx.virtualHosts."cache.jmbaur.com" = {
+        onlySSL = true;
+        locations."/".root = "/var/lib/hydra/binary-cache";
+        sslCertificate = config.sops.secrets."cf-origin/cert".path;
+        sslCertificateKey = config.sops.secrets."cf-origin/key".path;
+      };
+
+      systemd.tmpfiles.settings."10-binary-cache" = {
+        "/var/lib/hydra/binary-cache".d = {
+          user = config.users.users.hydra-queue-runner.name;
+          mode = "755";
+        };
       };
 
       networking.nftables.flushRuleset = !config.nix.firewall.enable;
