@@ -331,7 +331,6 @@
         hexdiff
         inotify-tools
         mac-vendor-lookup
-        nixos-kexec
         pax-utils
         poke
         strace

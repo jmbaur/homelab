@@ -2,6 +2,12 @@ const std = @import("std");
 
 const PROFILES_DIR = "/nix/var/nix/profiles";
 
+// NOTE: This is super hacky, but this value differs across libc
+// implementations as well as what the kernel itself defines. Since we
+// are almost certainly using a systemd built against glibc, we hardcode
+// the value.
+const SIGRTMIN = 34;
+
 fn chooseToplevelFromGenerations(allocator: std.mem.Allocator) ![]const u8 {
     var buf: [1024]u8 = undefined;
     var stdout = std.fs.File.stdout();
@@ -138,12 +144,18 @@ pub fn main() !void {
 
     switch (std.posix.E.init(ret)) {
         .SUCCESS => {},
-        else => |err| return std.posix.unexpectedErrno(err),
+        else => |err| {
+            std.log.err("kexec failed: {}", .{err});
+            return std.posix.unexpectedErrno(err);
+        },
     }
 
-    // same as running systemctl kexec
-    switch (std.posix.E.init(std.os.linux.kill(1, std.os.linux.sigrtmin() + 6))) {
+    // Same as running systemctl kexec
+    switch (std.posix.E.init(std.os.linux.kill(1, SIGRTMIN + 6))) {
         .SUCCESS => {},
-        else => |err| return std.posix.unexpectedErrno(err),
+        else => |err| {
+            std.log.err("kill failed: {}", .{err});
+            return std.posix.unexpectedErrno(err);
+        },
     }
 }
