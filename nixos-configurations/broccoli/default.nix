@@ -88,20 +88,21 @@
         '';
       };
 
-      # TODO(jared): uncomment when we have https://github.com/NixOS/nixpkgs/pull/464613
-      # nix.firewall = {
-      #   enable = true;
-      #   allowPrivateNetworks = false;
-      #   allowedTCPPorts = [
-      #     22 # SSH (for git+ssh:// URLs)
-      #     80 # HTTP
-      #     443 # HTTPS
-      #   ];
-      #   allowedUDPPorts = [
-      #     53 # DNS
-      #     443 # QUIC/HTTP3
-      #   ];
-      # };
+      networking.nftables.flushRuleset = !config.nix.firewall.enable;
+
+      nix.firewall = {
+        enable = true;
+        allowPrivateNetworks = false;
+        allowedTCPPorts = [
+          22 # SSH (for git+ssh:// URLs)
+          80 # HTTP
+          443 # HTTPS
+        ];
+        allowedUDPPorts = [
+          53 # DNS
+          443 # QUIC/HTTP3
+        ];
+      };
 
       services.nginx.virtualHosts."hydra.jmbaur.com" = {
         onlySSL = true;
