@@ -47,6 +47,9 @@
         "github:"
       ];
 
+      # Prevent using our own substituter because, well, we are that substituter
+      nix.settings.substituters = lib.mkForce [ "https://cache.nixos.org" ];
+
       zramSwap.memoryPercent = 200;
 
       system.stateVersion = "25.05";
