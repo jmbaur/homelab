@@ -71,6 +71,8 @@
 (add-hook 'zig-mode-hook (lambda ()
 			   (zig-format-on-save-mode -1) ; we use eglot-format instead
 			   (setup-lsp)))
+(add-hook 'term-mode-hook (lambda ()
+			     (display-line-numbers-mode -1)))
 (add-hook 'vterm-mode-hook (lambda ()
 			     (display-line-numbers-mode -1)))
 (add-hook 'eat-mode-hook (lambda ()

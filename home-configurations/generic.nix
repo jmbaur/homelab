@@ -51,7 +51,6 @@
         moor
         ncdu
         nix-diff
-        nix-output-monitor
         nix-tree
         nixos-shell
         nload
