@@ -16,6 +16,8 @@
 (setq auto-save-list-file-prefix (file-name-concat user-emacs-directory "auto-save-list"))
 (setq transient-history-file (file-name-concat user-emacs-directory "transient" "history.el"))
 
+(setenv "PAGER" "") ;; ensure eshell and friends don't have a pager set
+
 (when (boundp 'native-comp-eln-load-path)
   (startup-redirect-eln-cache (file-name-concat user-emacs-directory "eln-cache")))
 
