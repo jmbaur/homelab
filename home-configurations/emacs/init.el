@@ -54,7 +54,7 @@
 
 ;; add extra keybindings for project switching
 (define-key project-prefix-map "t" 'eat-project)
-(define-key project-prefix-map "g" 'rg-project) ;; overrides default grep
+(define-key project-prefix-map "r" 'rg-project) ;; overrides project-query-replace-regexp
 (define-key project-prefix-map "m" 'magit-project-status)
 
 (defun setup-lsp (&optional format-on-save)
