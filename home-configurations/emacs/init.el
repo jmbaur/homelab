@@ -9,6 +9,7 @@
 (require 'evil-commentary)
 (require 'evil-surround)
 (require 'flymake)
+(require 'magit-extras)
 (require 'project)
 (require 'rg)
 (require 'zig-mode)
@@ -41,16 +42,20 @@
 (evil-commentary-mode 1)
 (evil-collection-init)
 
+(setq project-list-file (file-name-concat xdg-cache-home "emacs" "projects"))
+(defun refresh-projects ()
+  "Refresh projects file"
+  (interactive)
+  (project-remember-projects-under (file-name-concat xdg-state-home "projects")))
+
 ;; scrape the projects directory, if it has not yet been scraped
-(let ((project-file (file-name-concat xdg-cache-home "emacs" "projects"))
-      (projects-dir (file-name-concat xdg-state-home "projects")))
-  (setq project-list-file project-file)
-  (defun refresh-projects ()
-    "Refresh projects file"
-    (interactive)
-    (project-remember-projects-under projects-dir))
-  (unless (file-exists-p project-file)
-    (refresh-projects)))
+(unless (file-exists-p project-list-file)
+  (refresh-projects))
+
+;; add extra keybindings for project switching
+(define-key project-prefix-map "t" 'eat-project)
+(define-key project-prefix-map "g" 'rg-project) ;; overrides default grep
+(define-key project-prefix-map "m" 'magit-project-status)
 
 (defun setup-lsp (&optional format-on-save)
   "LSP common setup"
@@ -69,7 +74,7 @@
 (add-hook 'nix-mode-hook 'setup-lsp)
 (add-hook 'rust-mode-hook 'setup-lsp)
 (add-hook 'zig-mode-hook (lambda ()
-			   (zig-format-on-save-mode -1) ; we use eglot-format instead
+			   (zig-format-on-save-mode -1) ;; we use eglot-format instead
 			   (setup-lsp)))
 
 (defun setup-term ()
