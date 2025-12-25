@@ -57,6 +57,12 @@
 (define-key project-prefix-map "r" 'rg-project) ;; overrides project-query-replace-regexp
 (define-key project-prefix-map "m" 'magit-project-status)
 
+;; ensure the extra commands show up when switching projects
+(add-to-list 'project-switch-commands '(eat-project "Eat") t)
+(add-to-list 'project-switch-commands '(rg-project "Find ripgrep") t)
+(add-to-list 'project-switch-commands '(magit-project-status "Magit") t)
+
+
 (defun setup-lsp (&optional format-on-save)
   "LSP common setup"
   (define-key eglot-mode-map (kbd "C-c e f n") #'flymake-goto-next-error)
