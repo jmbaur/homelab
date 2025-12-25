@@ -68,10 +68,13 @@ in
       # Needed for USB
       "phy_nxp_ptn3222"
       "phy_qcom_qmp_usb"
+
+      # realtime clock, prevent time jumps
+      "rtc_pm8xxx"
     ];
 
-    # TODO(jared): ACPI not enabled in johan_defconfig, needed by tpm-crb
-    # kernel module.
+    # TODO(jared): fix this
+    systemd.tpm2.enable = false;
     boot.initrd.systemd.tpm2.enable = false;
     custom.recovery.modules = [
       {

@@ -31,6 +31,7 @@ in
 
     # TODO(jared): ACPI not enabled in johan_defconfig, needed by tpm-crb
     # kernel module.
+    systemd.tpm2.enable = false;
     boot.initrd.systemd.tpm2.enable = false;
     custom.recovery.modules = [
       {
