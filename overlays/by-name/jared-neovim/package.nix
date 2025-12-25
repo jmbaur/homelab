@@ -3,11 +3,13 @@
   dts-lsp,
   fd,
   fennel-ls,
+  fetchFromGitHub,
   fnlfmt,
   fzf,
   go-tools,
   gofumpt,
   gopls,
+  lib,
   lua-language-server,
   neovim-unwrapped,
   neovimUtils,
@@ -29,11 +31,29 @@
   vimPlugins,
   vimUtils,
   wrapNeovimUnstable,
-  zig,
+  zig_0_15,
   zls_0_15,
 }:
 
-wrapNeovimUnstable neovim-unwrapped (
+let
+  neovim = neovim-unwrapped.overrideAttrs (
+    assert (
+      lib.assertMsg (
+        !lib.versionAtLeast neovim-unwrapped.version "0.12.0"
+      ) "Neovim version from nixpkgs is already 0.12.0"
+    );
+    {
+      version = "0.12.0";
+      src = fetchFromGitHub {
+        owner = "neovim";
+        repo = "neovim";
+        rev = "5a1a92cc7a3d3a338fe5f610190910e220f074f6";
+        hash = "sha256-kTaJ3AQ+yPvk1vs5wNHaw8uNxLKp4e2t49ZM7t4QZuE=";
+      };
+    }
+  );
+in
+wrapNeovimUnstable neovim (
   neovimUtils.makeNeovimConfig {
     customRC = "set exrc";
 
@@ -51,8 +71,7 @@ wrapNeovimUnstable neovim-unwrapped (
         src = ./nvim;
         buildPhase = "make -j$NIX_BUILD_CORES";
         postInstall = ''
-          find $out -name '*.fnl' -delete
-          rm $out/Makefile
+          find $out -name '*.fnl' -o -name 'Makefile' -delete
         '';
         nativeBuildInputs = [ pkgsBuildBuild.neovim-unwrapped.lua.pkgs.fennel ];
         runtimeDeps = [
@@ -80,7 +99,7 @@ wrapNeovimUnstable neovim-unwrapped (
           texlive.pkgs.latexmk
           tofu-ls
           ttags
-          zig
+          zig_0_15
           zls_0_15
         ];
       })
