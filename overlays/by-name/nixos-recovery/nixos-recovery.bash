@@ -13,12 +13,15 @@ eval "$(argc --argc-eval "$0" "$@")"
 
 target_disk=$(readlink --canonicalize-existing "$argc_target_disk")
 fstab=$(readlink --canonicalize-existing "$argc_fstab")
+mountpoint=$(mktemp -d "XXXX-nixos-recovery")
 
-function error_handler() {
-	umount --recursive /mnt 2>/dev/null || true
-	dmsetup remove root 2>/dev/null || true
+function cleanup() {
+	if umount --recursive "$mountpoint" 2>/dev/null; then
+		dmsetup remove root 2>/dev/null || true
+		rm -rf "$mountpoint" || true
+	fi
 }
-trap error_handler ERR
+trap cleanup EXIT
 
 if [[ -z ${argc_closure:-} ]]; then
 	# get the nix output path to our toplevel, used at the end
@@ -54,10 +57,10 @@ echo "" | cryptsetup open "$root_partition" root
 #
 # TODO(jared): we should be able to use `mount --all` here
 for mountpoint in "/" "/boot"; do
-	mount --target-prefix=/mnt --options X-mount.mkdir --fstab="$fstab" "$mountpoint"
+	mount --target-prefix="$mountpoint" --options X-mount.mkdir --fstab="$fstab" "$mountpoint"
 done
 
 # install toplevel
 #
 # TODO(jared): why do we need $HOME set?
-env HOME="$(mktemp -d)" nixos-install --closure "$toplevel" --root /mnt --no-root-password --no-channel-copy
+env HOME="$(mktemp -d)" nixos-install --closure "$toplevel" --root "$mountpoint" --no-root-password --no-channel-copy

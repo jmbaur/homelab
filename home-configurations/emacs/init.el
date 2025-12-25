@@ -1,7 +1,6 @@
 ;;; -*- lexical-binding: t -*-
 
 (require 'company)
-(require 'compile-angel)
 (require 'direnv)
 (require 'eat)
 (require 'eglot)
@@ -24,7 +23,7 @@
 (tool-bar-mode -1)
 (global-display-line-numbers-mode 1)
 (global-auto-revert-mode 1)
-(icomplete-vertical-mode 1)
+(fido-vertical-mode 1)
 (rg-enable-default-bindings)
 
 (if (and window-system (fboundp 'scroll-bar-mode))
@@ -37,7 +36,7 @@
 (direnv-mode 1)
 
 (evil-mode 1)
-(evil-surround-mode 1)
+(global-evil-surround-mode 1)
 (evil-commentary-mode 1)
 (evil-collection-init)
 
@@ -60,11 +59,10 @@
   (if (or format-on-save t)
       (add-hook 'after-save-hook 'eglot-format nil t)))
 
-(add-hook 'emacs-lisp-mode-hook (lambda ()
-				  (compile-angel-on-save-local-mode 1)))
+(add-hook 'bash-ts-mode 'setup-lsp)
+(add-hook 'c-mode-hook 'setup-lsp)
 (add-hook 'nix-mode-hook 'setup-lsp)
 (add-hook 'rust-mode-hook 'setup-lsp)
-(add-hook 'c-mode-hook 'setup-lsp)
 (add-hook 'zig-mode-hook (lambda ()
 			   (zig-format-on-save-mode -1) ; we use eglot-format instead
 			   (setup-lsp)))

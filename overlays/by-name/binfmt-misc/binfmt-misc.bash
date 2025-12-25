@@ -1,32 +1,53 @@
 # shellcheck shell=bash
 
 declare -r qemu_user native_system
+declare argc_action
 
-if findmnt /proc/sys/fs/binfmt_misc; then
-	echo "binfmt_misc already mounted"
-	exit 1
-fi
-
-mount -t binfmt_misc none /proc/sys/fs/binfmt_misc
-echo -1 >/proc/sys/fs/binfmt_misc/status
-
-# function cleanup() {
-#     umount /proc/sys/fs/binfmt_misc
-# }
-
-# trap EXIT cleanup
-
-readonly registrations=(":x86_64-linux:M::\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x3e\x00:\xff\xff\xff\xff\xff\xfe\xfe\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:$qemu_user/bin/qemu-x86_64:PF"
+readonly registrations=(
 	":i386-linux:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x03\x00:\xff\xff\xff\xff\xff\xfe\xfe\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:$qemu_user/bin/qemu-i386:PF"
-	":aarch64-linux:M::\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\xb7\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\x00\xff\xfe\xff\xff\xff:$qemu_user/bin/qemu-aarch64:PF"
+	":x86_64-linux:M::\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x3e\x00:\xff\xff\xff\xff\xff\xfe\xfe\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:$qemu_user/bin/qemu-x86_64:PF"
 	":armv7l-linux:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x28\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\x00\xff\xfe\xff\xff\xff:$qemu_user/bin/qemu-arm:PF"
+	":aarch64-linux:M::\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\xb7\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\x00\xff\xfe\xff\xff\xff:$qemu_user/bin/qemu-aarch64:PF"
 	":riscv32-linux:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\xf3\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:$qemu_user/bin/qemu-riscv32:PF"
-	":riscv64-linux:M::\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\xf3\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:$qemu_user/bin/qemu-riscv64:PF")
+	":riscv64-linux:M::\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\xf3\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:$qemu_user/bin/qemu-riscv64:PF"
+)
 
-for registration in "${registrations[@]}"; do
-	system=$(echo "$registration" | cut -d':' -f2)
-	if [[ $system != "$native_system" ]]; then
-		echo "registering for system $system"
-		echo "$registration" >/proc/sys/fs/binfmt_misc/register
+# @arg action up|down
+
+eval "$(argc --argc-eval "$0" "$@")"
+
+action=${argc_action:-up}
+
+function up() {
+	if findmnt /proc/sys/fs/binfmt_misc >/dev/null; then
+		echo "binfmt_misc already mounted"
+		exit 1
 	fi
-done
+
+	mount -t binfmt_misc none /proc/sys/fs/binfmt_misc
+
+	# Ensure we start from a clear slate. The kernel will persist
+	# binfmt_misc registrations with the "fix binary" flag set.
+	echo -1 >/proc/sys/fs/binfmt_misc/status
+
+	for registration in "${registrations[@]}"; do
+		system=$(echo "$registration" | cut -d':' -f2)
+		if [[ $system != "$native_system" ]]; then
+			echo "registering for system $system"
+			echo "$registration" >/proc/sys/fs/binfmt_misc/register
+		fi
+	done
+}
+
+function down() {
+	umount /proc/sys/fs/binfmt_misc || true
+}
+
+case $action in
+up | down)
+	$action
+	;;
+*)
+	echo "unknown action \"$action\""
+	;;
+esac

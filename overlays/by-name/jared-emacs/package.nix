@@ -32,7 +32,6 @@ let
   emacs = emacs-pgtk.pkgs.withPackages (
     epkgs: with epkgs; [
       company
-      compile-angel
       direnv
       dts-mode
       eat

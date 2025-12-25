@@ -135,9 +135,9 @@ testers.runNixOSTest {
               raise Exception(f"booted from the wrong entry, expected {filename}, got {booted_entry}")
 
       with subtest("installation"):
-          tmp_disk_image = tempfile.NamedTemporaryFile()
+          tmp_recovery_disk_image = tempfile.NamedTemporaryFile()
 
-          with open(tmp_disk_image.name, "w") as outfile:
+          with open(tmp_recovery_disk_image.name, "w") as outfile:
               subprocess.run([
                 "${lib.getExe zstd}",
                 "--force",
@@ -154,11 +154,11 @@ testers.runNixOSTest {
             }
           } >/var/lib/fake-hydra/${nodes.machine.networking.hostName}")
 
-          os.environ["QEMU_OPTS"] = f"-drive index=2,if=virtio,id=installer,format=raw,file={tmp_disk_image.name}"
+          os.environ["QEMU_OPTS"] = f"-drive index=2,if=virtio,id=installer,format=raw,file={tmp_recovery_disk_image.name}"
 
-          tmp_nixos_disk_image = tempfile.NamedTemporaryFile()
-          os.environ["NIXOS"] = tmp_nixos_disk_image.name
-          subprocess.run(["${lib.getExe' qemu "qemu-img"}", "create", "-f", "qcow2", tmp_nixos_disk_image.name, "4096M"])
+          tmp_target_disk_image = tempfile.NamedTemporaryFile()
+          os.environ["NIXOS"] = tmp_target_disk_image.name
+          subprocess.run(["${lib.getExe' qemu "qemu-img"}", "create", "-f", "qcow2", tmp_target_disk_image.name, "4096M"])
           machine.wait_for_unit("nixos-recovery.service")
           machine.wait_for_shutdown() # a reboot will occur after installation succeeds
           os.environ.pop("QEMU_OPTS")
