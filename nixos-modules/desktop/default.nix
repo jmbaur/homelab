@@ -37,6 +37,7 @@ in
 
       environment.systemPackages = [
         pkgs.clipman
+        pkgs.gnome-themes-extra # provides adwaita themes for GTK applications
         pkgs.kanshi
         pkgs.mako
         pkgs.rofi
