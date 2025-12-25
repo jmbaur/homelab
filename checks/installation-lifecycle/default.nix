@@ -1,5 +1,4 @@
 {
-  formats,
   inputs,
   lib,
   qemu,
@@ -147,12 +146,12 @@ testers.runNixOSTest {
               ], stdout=outfile)
 
           updateServer.wait_for_unit("multi-user.target")
-          updateServer.succeed("cat ${
+          updateServer.succeed("""echo ${
             # mock the hydra json endpoint
-            (formats.json { }).generate "toplevel" {
-              buildoutputs.out.path = nodes.machine.system.build.toplevel;
-            }
-          } >/var/lib/fake-hydra/${nodes.machine.networking.hostName}")
+            lib.escapeShellArg (
+              builtins.toJSON { buildoutputs.out.path = nodes.machine.system.build.toplevel; }
+            )
+          } >/var/lib/fake-hydra/${nodes.machine.networking.hostName}""")
 
           os.environ["QEMU_OPTS"] = f"-drive index=2,if=virtio,id=installer,format=raw,file={tmp_recovery_disk_image.name}"
 
@@ -169,12 +168,14 @@ testers.runNixOSTest {
           assert "${nodes.machine.system.build.toplevel}" == machine.succeed("readlink --canonicalize-existing /run/current-system").strip()
 
       with subtest("update"):
-          updateServer.succeed("cat ${
+          updateServer.succeed("""echo ${
             # mock the hydra json endpoint
-            (formats.json { }).generate "foo-update-toplevel" {
-              buildoutputs.out.path = nodes.machine.system.build.foo-update.config.system.build.toplevel;
-            }
-          } >/var/lib/fake-hydra/${nodes.machine.networking.hostName}")
+            lib.escapeShellArg (
+              builtins.toJSON {
+                buildoutputs.out.path = nodes.machine.system.build.foo-update.config.system.build.toplevel;
+              }
+            )
+          } >/var/lib/fake-hydra/${nodes.machine.networking.hostName}""")
           machine.succeed("systemctl start nixos-update.service")
           machine.reboot()
           assert "foo" == machine.succeed("cat /etc/foo").strip()

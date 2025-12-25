@@ -13,12 +13,13 @@ eval "$(argc --argc-eval "$0" "$@")"
 
 target_disk=$(readlink --canonicalize-existing "$argc_target_disk")
 fstab=$(readlink --canonicalize-existing "$argc_fstab")
-mountpoint=$(mktemp -d "XXXX-nixos-recovery")
+target_mountpoint=$(mktemp -d --suffix="-nixos-recovery")
+chmod o+rx "$target_mountpoint"
 
 function cleanup() {
-	if umount --recursive "$mountpoint" 2>/dev/null; then
+	if umount --recursive "$target_mountpoint" 2>/dev/null; then
 		dmsetup remove root 2>/dev/null || true
-		rm -rf "$mountpoint" || true
+		rm -rf "$target_mountpoint" || true
 	fi
 }
 trap cleanup EXIT
@@ -53,14 +54,13 @@ sleep 2 # TODO(jared): don't do this, though it does appear to be necessary
 # unlock root partition
 echo "" | cryptsetup open "$root_partition" root
 
-# mount all filesystems needed for performing the installation
-#
-# TODO(jared): we should be able to use `mount --all` here
-for mountpoint in "/" "/boot"; do
-	mount --target-prefix="$mountpoint" --options X-mount.mkdir --fstab="$fstab" "$mountpoint"
-done
+# TODO(jared): mount --all should be able to mount the root filesystem as well?
+mount --mkdir --target-prefix="$target_mountpoint" --fstab="$fstab" /
+mount --all --mkdir --target-prefix="$target_mountpoint" --fstab="$fstab"
+
+echo "Installing NixOS toplevel $toplevel"
 
 # install toplevel
 #
 # TODO(jared): why do we need $HOME set?
-env HOME="$(mktemp -d)" nixos-install --closure "$toplevel" --root "$mountpoint" --no-root-password --no-channel-copy
+env HOME="$(mktemp -d)" nixos-install --closure "$toplevel" --root "$target_mountpoint" --no-root-password --no-channel-copy
