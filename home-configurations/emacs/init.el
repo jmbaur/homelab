@@ -35,6 +35,7 @@
 (setq direnv-always-show-summary nil)
 (direnv-mode 1)
 
+(setq evil-undo-system 'undo-redo)
 (evil-mode 1)
 (global-evil-surround-mode 1)
 (evil-commentary-mode 1)
