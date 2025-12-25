@@ -45,8 +45,12 @@
 (let ((project-file (file-name-concat xdg-cache-home "emacs" "projects"))
       (projects-dir (file-name-concat xdg-state-home "projects")))
   (setq project-list-file project-file)
+  (defun refresh-projects ()
+    "Refresh projects file"
+    (interactive)
+    (project-remember-projects-under projects-dir))
   (unless (file-exists-p project-file)
-    (project-remember-projects-under projects-dir)))
+    (refresh-projects)))
 
 (defun setup-lsp (&optional format-on-save)
   "LSP common setup"
