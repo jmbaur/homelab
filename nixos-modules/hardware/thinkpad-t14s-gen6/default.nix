@@ -40,6 +40,7 @@ in
       "clk_ignore_unused"
       "pd_ignore_unused"
       "console=tty1"
+      "id_aa64mmfr0.ecv=1" # needed for kvm to work (see https://github.com/torvalds/linux/commit/358dd4a9bdac63a0a8fb13773bfce6f599e25433)
     ];
 
     boot.initrd.extraFirmwarePaths = map (file: "qcom/${file}") [
