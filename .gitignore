@@ -4,4 +4,6 @@
 .nixos-test-history
 .pre-commit-config.yaml
 .sops.yaml
+.zig-cache
 result*
+zig-out
