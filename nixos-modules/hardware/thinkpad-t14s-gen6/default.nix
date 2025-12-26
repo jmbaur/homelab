@@ -12,11 +12,23 @@ in
   options.hardware.thinkpad-t14s-gen6.enable = mkEnableOption "Lenovo ThinkPad T14s Gen 6";
 
   config = mkIf config.hardware.thinkpad-t14s-gen6.enable {
+    assertions = [
+      {
+        assertion = config.boot.loader.systemd-boot.enable;
+        message = "Depending on systemd-boot for slbounce loading";
+      }
+    ];
+
     hardware.qualcomm.enable = true;
 
     nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
 
     hardware.deviceTree.name = "qcom/x1e78100-lenovo-thinkpad-t14s-el2.dtb";
+
+    boot.loader.systemd-boot.extraFiles = {
+      "tcblaunch.exe" = pkgs.tcblaunch;
+      "EFI/systemd/drivers/slbounceaa64.efi" = "${pkgs.slbounce}/slbounce.efi";
+    };
 
     hardware.firmware = [ pkgs.linux-firmware ];
 
@@ -103,10 +115,5 @@ in
         '';
       })
     ];
-
-    boot.loader.systemd-boot.extraFiles = {
-      "tcblaunch.exe" = pkgs.tcblaunch;
-      "EFI/systemd/drivers/slbounceaa64.efi" = "${pkgs.slbounce}/slbounce.efi";
-    };
   };
 }

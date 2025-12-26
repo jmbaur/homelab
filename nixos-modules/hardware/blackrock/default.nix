@@ -25,6 +25,13 @@ in
   options.hardware.blackrock.enable = mkEnableOption "microsoft,blackrock";
 
   config = mkIf config.hardware.blackrock.enable {
+    assertions = [
+      {
+        assertion = config.boot.loader.systemd-boot.enable;
+        message = "Depending on systemd-boot for slbounce loading";
+      }
+    ];
+
     nixpkgs.hostPlatform = mkDefault "aarch64-linux";
 
     hardware.qualcomm.enable = true;
@@ -50,9 +57,11 @@ in
       "qcdxkmsuc8280.mbn"
     ];
 
-    hardware.deviceTree = {
-      enable = true;
-      name = "qcom/sc8280xp-microsoft-blackrock.dtb";
+    hardware.deviceTree.name = "qcom/sc8280xp-microsoft-blackrock-el2.dtb";
+
+    boot.loader.systemd-boot.extraFiles = {
+      "tcblaunch.exe" = pkgs.tcblaunch;
+      "EFI/systemd/drivers/slbounceaa64.efi" = "${pkgs.slbounce}/slbounce.efi";
     };
 
     hardware.firmware = [
