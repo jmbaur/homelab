@@ -1,0 +1,12 @@
+.{
+    .name = .homelab,
+    .version = "0.0.0",
+    .fingerprint = 0x2f5abc681da8c5f3,
+    .paths = .{""},
+    .dependencies = .{
+        .libqrencode = .{
+            .url = "https://github.com/fukuchi/libqrencode/archive/v4.1.1.tar.gz",
+            .hash = "N-V-__8AAPASEwAUxk9NnoI_4CU6jwKmMTm2KHybduvYIQml",
+        },
+    },
+}
