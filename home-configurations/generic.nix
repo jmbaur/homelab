@@ -246,7 +246,7 @@
             __git_ps1 "$begin" "\\\$\[\033[0m\] " "[%s]"
           }
 
-          if [ "$TERM" == "dumb" ]; then
+          if [ "$TERM" == "dumb" ] || [ "$TERM" == "vt102" ] || [ -n "$INSIDE_EMACS" ]; then
             unset PROMPT_COMMAND
             PS1='$ '
           else
