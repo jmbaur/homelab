@@ -24,6 +24,7 @@
 (tool-bar-mode -1)
 (global-display-line-numbers-mode 1)
 (global-auto-revert-mode 1)
+(savehist-mode 1)
 (fido-vertical-mode 1)
 (rg-enable-default-bindings)
 
@@ -93,6 +94,7 @@
 (add-hook 'shell-mode-hook 'setup-term)
 (add-hook 'term-mode-hook 'setup-term)
 (add-hook 'vterm-mode-hook 'setup-term)
+(add-hook 'shell-command-mode-hook 'view-mode) ;; ensure we can't modify buffer for shell output
 (add-hook 'eshell-load-hook (lambda ()
 			      (setup-term)
 			      (eat-eshell-mode)))

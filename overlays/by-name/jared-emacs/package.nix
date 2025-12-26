@@ -9,6 +9,7 @@
   go-tools,
   gofumpt,
   gopls,
+  lib,
   lua-language-server,
   nixd,
   nixfmt,
@@ -29,36 +30,40 @@
 }:
 
 let
-  emacs = emacs-pgtk.pkgs.withPackages (
-    epkgs: with epkgs; [
-      company
-      direnv
-      dts-mode
-      eat
-      evil
-      evil-collection
-      evil-commentary
-      evil-numbers
-      evil-surround
-      fennel-mode
-      geiser
-      go-mode
-      haskell-mode
-      janet-mode
-      magit
-      markdown-mode
-      nix-mode
-      racket-mode
-      rg
-      rust-mode
-      slime
-      sops
-      terraform-mode
-      typescript-mode
-      vterm
-      zig-mode
-    ]
-  );
+  emacs =
+    (emacs-pgtk.overrideAttrs (old: {
+      configureFlags = (old.configureFlags or [ ]) ++ [ (lib.withFeature true "sound") ];
+    })).pkgs.withPackages
+      (
+        epkgs: with epkgs; [
+          company
+          direnv
+          dts-mode
+          eat
+          evil
+          evil-collection
+          evil-commentary
+          evil-numbers
+          evil-surround
+          fennel-mode
+          geiser
+          go-mode
+          haskell-mode
+          janet-mode
+          magit
+          markdown-mode
+          nix-mode
+          racket-mode
+          rg
+          rust-mode
+          slime
+          sops
+          terraform-mode
+          typescript-mode
+          vterm
+          zig-mode
+        ]
+      );
 in
 buildEnv {
   name = "jared-emacs";
