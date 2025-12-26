@@ -85,6 +85,7 @@
 
 (defun setup-term ()
   ;; line numbers are not nearly useful in terminal like environments
+  (line-number-mode -1)
   (display-line-numbers-mode -1))
 
 (add-hook 'eat-mode-hook 'setup-term)
