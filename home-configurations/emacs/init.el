@@ -46,6 +46,12 @@
 (evil-commentary-mode 1)
 (evil-collection-init)
 
+;; makes magit faster for large repos
+(remove-hook 'magit-status-headers-hook 'magit-insert-tags-header)
+(setq magit-revision-insert-related-refs nil)
+(remove-hook 'magit-status-sections-hook 'magit-insert-unpulled-from-upstream)
+(remove-hook 'magit-status-sections-hook 'magit-insert-unpushed-to-upstream-or-recent)
+
 (setq project-list-file (file-name-concat xdg-cache-home "emacs" "projects"))
 (defun refresh-projects ()
   "Refresh projects file"
