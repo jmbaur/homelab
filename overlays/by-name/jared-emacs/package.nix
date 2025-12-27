@@ -48,6 +48,7 @@ let
           fennel-mode
           geiser
           go-mode
+          goto-chg
           haskell-mode
           janet-mode
           magit

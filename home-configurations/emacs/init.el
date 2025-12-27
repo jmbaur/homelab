@@ -32,12 +32,14 @@
     (scroll-bar-mode -1)
   (setq interprogram-cut-function 'osc52-select-text))
 
-(load-theme 'modus-vivendi-tritanopia)
+(load-theme 'wheatgrass)
 
 (setq direnv-always-show-summary nil)
 (direnv-mode 1)
 
 (setq evil-undo-system 'undo-redo)
+(setq evil-want-Y-yank-to-eol t)
+(setq evil-ex-completion-map nil) ;; allows for "normal" minibuffer input when using evil-ex
 (evil-mode 1)
 (global-evil-surround-mode 1)
 (evil-commentary-mode 1)
@@ -59,17 +61,18 @@
 (define-key project-prefix-map "m" 'magit-project-status)
 
 ;; ensure the extra commands show up when switching projects
+(add-to-list 'project-switch-commands '(project-execute-extended-command "Extended command") t)
 (add-to-list 'project-switch-commands '(eat-project "Eat") t)
 (add-to-list 'project-switch-commands '(rg-project "Find ripgrep") t)
 (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)
 
-
 (defun setup-lsp (&optional format-on-save)
   "LSP common setup"
+  (interactive)
   (define-key eglot-mode-map (kbd "C-c e f n") #'flymake-goto-next-error)
   (define-key eglot-mode-map (kbd "C-c e f p") #'flymake-goto-prev-error)
   (define-key eglot-mode-map (kbd "C-c e r") #'eglot-rename)
-  (define-key eglot-mode-map (kbd "C-c C-o") #'company-complete)
+  (define-key eglot-mode-map (kbd "C-c C-o") #'company-complete) ;; TODO(jared): we want this enabled for all company-enabled buffers
   (setq company-idle-delay nil)
   (company-mode)
   (eglot-ensure)
