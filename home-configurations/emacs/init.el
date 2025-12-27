@@ -32,6 +32,8 @@
     (scroll-bar-mode -1)
   (setq interprogram-cut-function 'osc52-select-text))
 
+(setq mode-line-compact 'long)
+
 (load-theme 'modus-vivendi)
 
 (setq direnv-always-show-summary nil)
