@@ -139,13 +139,15 @@ in
   services.hostapd = {
     enable = true;
     radios.wlan0 = {
-      settings.bridge = config.router.lanInterface;
+      settings = {
+        bridge = config.router.lanInterface;
+      };
       networks.wlan0 = {
         ssid = "Silence of the LANs";
+        # NOTE: Add three authentication mechanisms to allow older
+        # devices that only support wpa2-sha1 to connect.
+        settings.wpa_key_mgmt = lib.mkForce "WPA-PSK WPA-PSK-SHA256 SAE";
         authentication = {
-          # TODO(jared): investigate using wpa3-sae-transition
-          #
-          # Allow older devices that only support wpa2 to connect.
           mode = "wpa2-sha256";
           wpaPasswordFile = config.sops.secrets.wlan0.path;
           saePasswordsFile = config.sops.secrets.wlan0.path;
