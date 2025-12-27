@@ -32,7 +32,7 @@
     (scroll-bar-mode -1)
   (setq interprogram-cut-function 'osc52-select-text))
 
-(load-theme 'wheatgrass)
+(load-theme 'modus-vivendi)
 
 (setq direnv-always-show-summary nil)
 (direnv-mode 1)
@@ -62,14 +62,19 @@
 (unless (file-exists-p project-list-file)
   (refresh-projects))
 
+(defun eat-project-new ()
+  "Start a new Eat session in the current project's root directory"
+  (interactive)
+  (eat-project t))
+
 ;; add extra keybindings for project switching
-(define-key project-prefix-map "t" 'eat-project)
+(define-key project-prefix-map "t" 'eat-project-new)
 (define-key project-prefix-map "r" 'rg-project) ;; overrides project-query-replace-regexp
 (define-key project-prefix-map "m" 'magit-project-status)
 
 ;; ensure the extra commands show up when switching projects
 (add-to-list 'project-switch-commands '(project-execute-extended-command "Extended command") t)
-(add-to-list 'project-switch-commands '(eat-project "Eat") t)
+(add-to-list 'project-switch-commands '(eat-project-new "Eat") t)
 (add-to-list 'project-switch-commands '(rg-project "Find ripgrep") t)
 (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)
 
