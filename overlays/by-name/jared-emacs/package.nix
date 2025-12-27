@@ -47,6 +47,7 @@ let
           evil-surround
           fennel-mode
           geiser
+          git-link
           go-mode
           goto-chg
           haskell-mode
