@@ -111,11 +111,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1766816277,
-        "narHash": "sha256-SHQGaiYMtVpgdO3hM7UZj60S2X0XHqEjGVQ9JizdNb0=",
+        "lastModified": 1766989344,
+        "narHash": "sha256-yeAY9eP71Uy++d4OuPJkz+8lsWpMIEqEPoGhtGZCmDo=",
         "owner": "jmbaur",
         "repo": "nixos-router",
-        "rev": "e69e71565b8fed449360e7c3190cd97f2b6244e9",
+        "rev": "df445698f4bb60018eff3eba3ca96b1b88425675",
         "type": "github"
       },
       "original": {
