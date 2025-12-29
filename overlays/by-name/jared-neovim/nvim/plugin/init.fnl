@@ -121,7 +121,8 @@
 (set vim.opt.wildoptions (table.concat [:pum :tagfile] ","))
 (set vim.opt.wrap false)
 
-(vim.cmd.colorscheme (or (= (vim.opt.termguicolors:get) true) :vim :lunaperche))
+(vim.cmd.colorscheme (if (= (vim.opt.termguicolors:get) true) :lunaperche
+                         :vim))
 
 ; TODO(jared): use vim.snippet
 (vim.cmd.iabbrev "todo:" "TODO(jared):")
