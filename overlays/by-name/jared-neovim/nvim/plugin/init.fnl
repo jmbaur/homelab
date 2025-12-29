@@ -6,8 +6,13 @@
 (local paredit (require :nvim-paredit))
 (paredit.setup)
 
+(local is-dumb-term (not= (: (vim.regex "linux\\|vt220\\|vt202\\|dumb")
+                             :match_str vim.env.TERM)
+                          nil))
+
 (mini-misc.setup_restore_cursor)
-(mini-misc.setup_termbg_sync)
+(when (not is-dumb-term)
+  (mini-misc.setup_termbg_sync))
 
 (vim.api.nvim_set_hl 0 :ExtraWhitespace {:bg :red})
 (vim.cmd.match "ExtraWhitespace /\\s\\+$/")
@@ -109,16 +114,14 @@
 (set vim.opt.splitbelow true)
 (set vim.opt.splitkeep :screen)
 (set vim.opt.splitright true)
-(set vim.opt.termguicolors (= (: (vim.regex "linux\\|vt220\\|dumb") :match_str
-                                 vim.env.TERM)
-                              nil))
+(set vim.opt.termguicolors (not is-dumb-term))
 
 (set vim.opt.title true)
 (set vim.opt.virtualedit :block)
 (set vim.opt.wildoptions (table.concat [:pum :tagfile] ","))
 (set vim.opt.wrap false)
 
-(vim.cmd.colorscheme (if (= (vim.opt.termguicolors:get) nil) :vim :lunaperche))
+(vim.cmd.colorscheme (or (= (vim.opt.termguicolors:get) true) :vim :lunaperche))
 
 ; TODO(jared): use vim.snippet
 (vim.cmd.iabbrev "todo:" "TODO(jared):")
