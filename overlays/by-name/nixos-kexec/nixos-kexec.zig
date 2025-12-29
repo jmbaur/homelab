@@ -110,6 +110,12 @@ pub fn main() !void {
         try cmdline.writer.writeAll(param.string);
         try cmdline.writer.writeByte(' ');
     }
+
+    if (append) |extra_cmdline| {
+        try cmdline.writer.writeAll(std.mem.trim(u8, extra_cmdline, &std.ascii.whitespace));
+        try cmdline.writer.writeByte(' ');
+    }
+
     var full_cmdline = cmdline.writer.buffered();
     full_cmdline[full_cmdline.len - 1] = 0; // required by kexec_file_load
 
