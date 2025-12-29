@@ -28,6 +28,8 @@ in
       boot.kernelModules = [ "kvm-amd" ];
       boot.extraModulePackages = [ ];
 
+      boot.kernelParams = [ "console=ttyS0,115200" ];
+
       nixpkgs.config.allowUnfree = true;
       services.xserver.videoDrivers = [ "nvidia" ];
       hardware.nvidia = {
@@ -50,8 +52,14 @@ in
       fileSystems."/var" = {
         fsType = "btrfs";
         device = "/dev/disk/by-partlabel/big";
-        options = [ "compress=zstd,noatime,discard=async" ];
+        options = [
+          "compress=zstd"
+          "noatime"
+          "discard=async"
+        ];
       };
+
+      services.fwupd.enable = true;
 
       sops.secrets = {
         nix_signing_key.owner = config.users.users.hydra-queue-runner.name;
@@ -77,7 +85,7 @@ in
       networking.firewall.allowedTCPPorts = [ 443 ];
     }
     {
-      # nix.settings.netrc-file = config.sops.secrets.hydra_netrc.path;
+      nix.settings.netrc-file = config.sops.secrets.hydra_netrc.path;
 
       nix.settings.allowed-uris = [
         "https://"
@@ -153,8 +161,8 @@ in
           sshUser = "builder";
           sshKey = config.sops.secrets.ssh_remote_build.path;
           system = "aarch64-linux";
-          publicHostKey = "TODO";
-          maxJobs = 4; # TODO(jared): revisit this value
+          publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSURWckhkcmFaL3lVWWpBeFQ5c1psZUJQNVY2eTI5QlY0ajFFbEJWSUZSYWogcm9vdEBicm9jY29saQo=";
+          maxJobs = 8;
           supportedFeatures = [
             "nixos-test"
             "benchmark"

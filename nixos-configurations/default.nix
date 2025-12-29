@@ -130,6 +130,7 @@ genAttrs allHosts (
           ) config.services.yggdrasil.settings.MulticastInterfaces or [ ]) [ 9001 ];
 
           custom.yggdrasil.peers = {
+            potato.allowAll = true;
             cauliflower.allowAll = true;
             garlic.allowAll = true;
             pea.allowAll = true;

@@ -19,7 +19,7 @@
       users.users.builder = {
         isNormalUser = true;
         openssh.authorizedKeys.keys = [
-          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPdvoVe/aTHTNPIg5xtq4XEKo6PyEa0HkOWoWzvYBoQI broccoli-hydra"
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPdvoVe/aTHTNPIg5xtq4XEKo6PyEa0HkOWoWzvYBoQI kale-hydra"
         ];
       };
 
