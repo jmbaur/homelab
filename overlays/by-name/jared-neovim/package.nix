@@ -47,8 +47,8 @@ let
       src = fetchFromGitHub {
         owner = "neovim";
         repo = "neovim";
-        rev = "e916f0327728c78945e6353eeeeb88749b077c0b";
-        hash = "sha256-0QP+beaZydoVTJT8gKVInyKX4yMPWfvS2feY9hulW5E=";
+        rev = "10b610bbd93a1e987dd39f406635820c794b0c3c";
+        hash = "sha256-GeXsLjOdtS00EQxhHSw1QqeqmOdf6ekKsnlsrLNZyQk=";
       };
     }
   );
@@ -65,61 +65,59 @@ wrapNeovimUnstable neovim (
 
     vimAlias = true;
 
-    plugins =
-      [
-        (vimUtils.buildVimPlugin {
-          name = "jared-neovim-config";
-          src = ./nvim;
-          buildPhase = "make -j$NIX_BUILD_CORES";
-          postInstall = ''
-            find $out -name '*.fnl' -o -name 'Makefile' -delete
-          '';
-          nativeBuildInputs = [ pkgsBuildBuild.neovim-unwrapped.lua.pkgs.fennel ];
-          runtimeDeps = [
-            clang-tools
-            dts-lsp
-            fd
-            fennel-ls
-            fnlfmt
-            fzf
-            go-tools
-            gofumpt
-            gopls
-            lua-language-server
-            nixd
-            nixfmt
-            pyright
-            ripgrep
-            ruff
-            rust-analyzer
-            rustfmt
-            shellcheck
-            shfmt
-            tex-fmt
-            texlab
-            texlive.pkgs.latexmk
-            tofu-ls
-            ttags
-            zig_0_15
-            zls_0_15
-          ];
-        })
-      ]
-      ++ (with vimPlugins; [
-        bpftrace-vim
-        conjure
-        fzf-lua
-        mini-nvim
-        nvim-lspconfig
-        nvim-paredit
-        nvim-treesitter.withAllGrammars
-        vim-dispatch
-        vim-eunuch
-        vim-fugitive
-        vim-rsi
-        vim-surround
-        vim-vinegar
-        zoxide-vim
-      ]);
+    plugins = [
+      (vimUtils.buildVimPlugin {
+        name = "jared-neovim-config";
+        src = ./nvim;
+        buildPhase = "make -j$NIX_BUILD_CORES";
+        postInstall = ''
+          find $out -name '*.fnl' -o -name 'Makefile' -delete
+        '';
+        nativeBuildInputs = [ pkgsBuildBuild.neovim-unwrapped.lua.pkgs.fennel ];
+        runtimeDeps = [
+          clang-tools
+          dts-lsp
+          fd
+          fennel-ls
+          fnlfmt
+          fzf
+          go-tools
+          gofumpt
+          gopls
+          lua-language-server
+          nixd
+          nixfmt
+          pyright
+          ripgrep
+          ruff
+          rust-analyzer
+          rustfmt
+          shellcheck
+          shfmt
+          tex-fmt
+          texlab
+          texlive.pkgs.latexmk
+          tofu-ls
+          ttags
+          zig_0_15
+          zls_0_15
+        ];
+      })
+    ]
+    ++ (with vimPlugins; [
+      # conjure # TODO(jared): get this working nicely
+      fzf-lua
+      mini-nvim
+      nvim-lspconfig
+      nvim-paredit
+      nvim-treesitter.withAllGrammars
+      vim-dispatch
+      vim-eunuch
+      vim-fugitive
+      vim-rsi
+      vim-surround
+      vim-vinegar
+      zoxide-vim
+    ]);
   }
 )

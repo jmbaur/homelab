@@ -27,21 +27,6 @@ inputs: {
     (final: prev: {
       cros-ec-fizz = prev.cros-ec.override { board = "fizz"; };
 
-      vimPlugins = prev.vimPlugins.extend (
-        _: _: {
-          bpftrace-vim = final.vimUtils.buildVimPlugin {
-            pname = "bpftrace.vim";
-            version = "2019-06-19";
-            src = final.fetchFromGitHub {
-              owner = "mmarchini";
-              repo = "bpftrace.vim";
-              rev = "4c85f14c92eb75ddf68d27df8967aad399bdd18e";
-              hash = "sha256-VLbvyH9+RWAcWisXEC3yKGSXPI72+bZbWyeMhgyuzPg=";
-            };
-          };
-        }
-      );
-
       gnome-console =
         (prev.gnome-console.overrideAttrs (old: {
           patches = (old.patches or [ ]) ++ [
