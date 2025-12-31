@@ -41,7 +41,7 @@
 
 (global-sops-mode 1)
 
-(setq evil-undo-system 'undo-redo)
+(evil-set-undo-system 'undo-redo)
 (setq evil-want-Y-yank-to-eol t)
 (evil-mode 1)
 (global-evil-surround-mode 1)
