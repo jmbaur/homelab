@@ -9,6 +9,7 @@ let
   inherit (lib)
     concatLines
     getExe
+    getExe'
     mapAttrs'
     mapAttrsToList
     mkEnableOption
@@ -60,7 +61,7 @@ in
         path = [ pkgs.btrfs-progs ];
         wantedBy = [ "multi-user.target" ];
         serviceConfig.ExecStart = toString [
-          (getExe pkgs.homelab-backup-recv)
+          (getExe' pkgs.homelab-utils "homelab-backup-recv")
           (pkgs.writeText "peer-file.txt" (
             concatLines (
               mapAttrsToList (

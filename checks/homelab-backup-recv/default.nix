@@ -22,7 +22,7 @@ testers.runNixOSTest {
         path = [ pkgs.btrfs-progs ];
         wantedBy = [ "multi-user.target" ];
         serviceConfig.ExecStart = toString [
-          (lib.getExe pkgs.homelab-backup-recv)
+          (lib.getExe' pkgs.homelab-utils "homelab-backup-recv")
           (pkgs.writeText "peer-file.txt" ''
             localhost ::1
           '')

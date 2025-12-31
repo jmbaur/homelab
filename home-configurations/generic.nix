@@ -12,12 +12,10 @@
         ansifilter
         as-tree
         awscli2
-        bash-language-server
         bat
         cachix
         carapace
         comma
-        copy
         curl
         difftastic
         dig
@@ -34,6 +32,7 @@
         gron
         hexyl
         home-manager
+        homelab-utils
         htmlq
         htop-vim
         jared-emacs
@@ -45,7 +44,6 @@
         linux-scripts
         lrzsz
         lsof
-        macgen
         man-pages
         man-pages-posix
         moor
@@ -57,9 +55,7 @@
         nmap
         nurl
         oils-for-unix
-        pb
         pciutils
-        pomo
         procs
         pstree
         pwgen

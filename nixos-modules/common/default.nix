@@ -29,7 +29,7 @@ in
 
       environment.systemPackages = [
         pkgs.modprobed-db
-        pkgs.nixos-kexec
+        pkgs.homelab-utils
       ];
 
       boot.initrd.systemd.enable = mkDefault true;

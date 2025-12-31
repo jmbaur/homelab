@@ -14,7 +14,9 @@ testers.runNixOSTest {
   nodes.machine =
     { pkgs, ... }:
     {
-      environment.systemPackages = [ pkgs.nixos-kexec ];
+      environment.systemPackages = [
+        pkgs.homelab-utils # nixos-kexec
+      ];
       specialisation.hello.configuration = {
         environment.systemPackages = [ pkgs.hello ];
       };

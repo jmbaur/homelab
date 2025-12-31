@@ -4,6 +4,11 @@
     .fingerprint = 0x2f5abc681da8c5f3,
     .paths = .{""},
     .dependencies = .{
+        .libsodium = .{
+            // TODO(jared): move to a tagged release once we are all on the same zig version
+            .url = "https://github.com/jedisct1/libsodium/archive/19b1c53024a807ca0366de65a8eb77b6ef0750c6.tar.gz",
+            .hash = "N-V-__8AAK8OZQAKWzlNsYDxXEcvTb_0yYHlRk6JkiR1fQ-K",
+        },
         .libqrencode = .{
             .url = "https://github.com/fukuchi/libqrencode/archive/v4.1.1.tar.gz",
             .hash = "N-V-__8AAPASEwAUxk9NnoI_4CU6jwKmMTm2KHybduvYIQml",

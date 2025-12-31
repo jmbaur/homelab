@@ -154,7 +154,7 @@
       unitConfig.ConditionFirstBoot = true;
       wantedBy = [ "multi-user.target" ];
       path = [
-        pkgs.macgen
+        pkgs.homelab-utils # macgen
         pkgs.uboot-env-tools
       ];
       script = ''

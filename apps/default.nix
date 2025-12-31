@@ -74,7 +74,7 @@ inputs.nixpkgs.lib.mapAttrs (
           name = "build-nixos-config-ci";
           runtimeInputs = [
             pkgs.curl
-            pkgs.nix-key
+            pkgs.homelab-utils # nix-key
             pkgs.s5cmd
           ];
           text = ''

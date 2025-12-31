@@ -66,7 +66,7 @@ in
       config.systemd.package
       pkgs.ipwatch
       pkgs.jq
-      pkgs.networkd-dhcpv6-client-prefix
+      pkgs.homelab-utils # networkd-dhcpv6-client-prefix
       pkgs.nftables
     ];
     script = ''
