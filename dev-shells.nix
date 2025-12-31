@@ -47,6 +47,7 @@ inputs.nixpkgs.lib.mapAttrs (
         pkgs.openscad-unstable
         pkgs.sbcl
         pkgs.sops
+        pkgs.ssh-to-age
         pkgs.zig_0_15
       ];
 
