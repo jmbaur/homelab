@@ -6,7 +6,10 @@
 }:
 let
   inherit (builtins) listToAttrs genList;
-  inherit (lib) mkMerge;
+  inherit (lib)
+    mkForce
+    mkMerge
+    ;
 in
 {
   config = mkMerge [
@@ -88,6 +91,10 @@ in
       networking.firewall.allowedTCPPorts = [ 443 ];
     }
     {
+      # Ensure our build machine doesn't attempt to use itself as a substituter
+      nix.settings.substituters = mkForce [ "https://cache.nixos.org" ];
+      nix.settings.extra-substituters = mkForce [ ];
+
       nix.settings.netrc-file = config.sops.secrets.hydra_netrc.path;
 
       nix.settings.allowed-uris = [

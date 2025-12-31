@@ -16,6 +16,11 @@
     }
     {
       nix.settings.extra-trusted-users = [ config.users.users.builder.name ];
+
+      # Ensure our build machine doesn't attempt to use itself as a substituter
+      nix.settings.substituters = lib.mkForce [ "https://cache.nixos.org" ];
+      nix.settings.extra-substituters = lib.mkForce [ ];
+
       users.users.builder = {
         isNormalUser = true;
         openssh.authorizedKeys.keys = [
