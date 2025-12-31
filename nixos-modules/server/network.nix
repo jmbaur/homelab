@@ -1,11 +1,13 @@
 { lib }:
 let
-  inherit (lib)
-    concatMapAttrs
+  inherit (builtins)
     concatStringsSep
     genList
     listToAttrs
     substring
+    ;
+  inherit (lib)
+    concatMapAttrs
     ;
 in
 concatMapAttrs
@@ -31,4 +33,5 @@ concatMapAttrs
     broccoli = 1;
     pumpkin = 1;
     rhubarb = 1;
+    kale = 1;
   }

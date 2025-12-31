@@ -5,7 +5,8 @@
   ...
 }:
 let
-  inherit (lib) mkMerge listToAttrs genList;
+  inherit (builtins) listToAttrs genList;
+  inherit (lib) mkMerge;
 in
 {
   config = mkMerge [
@@ -45,8 +46,10 @@ in
       );
     }
     {
-      custom.server.enable = true;
-      custom.basicNetwork.enable = true;
+      custom.server = {
+        enable = true;
+        interfaces.kale-0.matchConfig.Path = "pci-0000:01:00.0";
+      };
       custom.recovery.targetDisk = "/dev/disk/by-path/pci-0000:41:00.0-nvme-1";
 
       fileSystems."/var" = {
