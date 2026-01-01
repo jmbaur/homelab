@@ -1,24 +1,32 @@
 # Based on https://github.com/NixOS/nixpkgs/pull/281803
 {
-  stdenv,
-  fetchFromGitHub,
-  lib,
-  makeWrapper,
-  meson,
-  ninja,
-  pkg-config,
   boost,
-  ffmpeg-headless,
+  fetchFromGitHub,
+  ffmpeg_7-headless,
+  lib,
   libcamera,
-  libdrm,
-  libepoxy,
   libexif,
   libjpeg,
   libpng,
   libtiff,
-  libX11,
+  makeWrapper,
+  meson,
+  ninja,
+  pkg-config,
+  stdenv,
 }:
 
+let
+  ffmpeg = ffmpeg_7-headless.overrideAttrs {
+    version = "7.1.2";
+    src = fetchFromGitHub {
+      owner = "jc-kynesim";
+      repo = "rpi-ffmpeg";
+      rev = "de943d66dab18e89fc10c74459bea1d787edc49d";
+      hash = "sha256-Qbgos7uzYXF5E557kR2EXhX9eJRmO0LVmSE2NOpEZY0=";
+    };
+  };
+in
 stdenv.mkDerivation (finalAttrs: {
   pname = "rpicam-apps";
   version = "1.11.0";
@@ -32,11 +40,8 @@ stdenv.mkDerivation (finalAttrs: {
 
   buildInputs = [
     boost
-    ffmpeg-headless
-    libX11
+    ffmpeg
     libcamera
-    libdrm
-    libepoxy # GLES/EGL preview window
     libexif
     libjpeg
     libpng
