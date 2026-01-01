@@ -47,8 +47,8 @@ let
       src = fetchFromGitHub {
         owner = "neovim";
         repo = "neovim";
-        rev = "f4f60f6a193f9c715fe5ff7574c8c42d17ad04f5";
-        hash = "sha256-OlWYT3jSndNvhT2LtNHLhpsheDSoAKFSKw+kgY6XiHc=";
+        rev = "170992c8d218f28dcffd967ecc2bae3fb3c46545";
+        hash = "sha256-SewYGH53QWyiHBNCxJuyESu/D7v0tXi2oq3NREI/AeA=";
       };
     }
   );
@@ -107,9 +107,8 @@ wrapNeovimUnstable neovim (
     ++ (with vimPlugins; [
       # conjure # TODO(jared): get this working nicely
       fzf-lua
-      mini-nvim
+      modus-themes-nvim
       nvim-lspconfig
-      nvim-paredit
       nvim-treesitter.withAllGrammars
       vim-dispatch
       vim-eunuch

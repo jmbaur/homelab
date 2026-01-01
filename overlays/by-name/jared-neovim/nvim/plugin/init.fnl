@@ -1,18 +1,14 @@
 (vim.loader.enable)
 
 (local fzf-lua (require :fzf-lua))
-(local mini-misc (require :mini.misc))
 (local nvim-treesitter-configs (require :nvim-treesitter.configs))
-(local paredit (require :nvim-paredit))
-(paredit.setup)
+(local modus (require :modus-themes))
+
+(modus.setup {:styles {:comments {:italic false} :keywords {:italic false}}})
 
 (local is-dumb-term (not= (: (vim.regex "linux\\|vt220\\|vt202\\|dumb")
                              :match_str vim.env.TERM)
                           nil))
-
-(mini-misc.setup_restore_cursor)
-(when (not is-dumb-term)
-  (mini-misc.setup_termbg_sync))
 
 (vim.api.nvim_set_hl 0 :ExtraWhitespace {:bg :red})
 (vim.cmd.match "ExtraWhitespace /\\s\\+$/")
@@ -121,8 +117,7 @@
 (set vim.opt.wildoptions (table.concat [:pum :tagfile] ","))
 (set vim.opt.wrap false)
 
-(vim.cmd.colorscheme (if (= (vim.opt.termguicolors:get) true) :lunaperche
-                         :vim))
+(vim.cmd.colorscheme (if (= (vim.opt.termguicolors:get) true) :modus :vim))
 
 ; TODO(jared): use vim.snippet
 (vim.cmd.iabbrev "todo:" "TODO(jared):")
