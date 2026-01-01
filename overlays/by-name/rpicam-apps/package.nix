@@ -5,6 +5,7 @@
   ffmpeg_7-headless,
   lib,
   libcamera,
+  libdrm,
   libexif,
   libjpeg,
   libpng,
@@ -42,6 +43,7 @@ stdenv.mkDerivation (finalAttrs: {
     boost
     ffmpeg
     libcamera
+    libdrm
     libexif
     libjpeg
     libpng
