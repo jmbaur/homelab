@@ -21,13 +21,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "rpicam-apps";
-  version = "1.10.1";
+  version = "1.11.0";
 
   src = fetchFromGitHub {
     owner = "raspberrypi";
     repo = "rpicam-apps";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-uEwpXogTvxOK25/QgKRKWFtgoSWOKZSGZdU1N3dgt7c=";
+    hash = "sha256-3f0ThN4C9ZZ/6Is51Q6QA2tnEDnLKCLbxlCNqsGzw14=";
   };
 
   buildInputs = [
@@ -73,8 +73,7 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   postInstall = ''
-    for f in rpicam-hello rpicam-jpeg rpicam-raw rpicam-still rpicam-vid
-    do
+    for f in rpicam-hello rpicam-jpeg rpicam-raw rpicam-still rpicam-vid; do
       wrapProgram $out/bin/$f --set-default LIBCAMERA_IPA_PROXY_PATH ${libcamera}/libexec/libcamera
     done
   '';

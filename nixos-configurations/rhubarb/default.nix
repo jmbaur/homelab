@@ -65,7 +65,10 @@
       };
 
       networking.wireless.iwd.enable = true;
-      environment.systemPackages = [ pkgs.iw ];
+      environment.systemPackages = [
+        pkgs.iw
+        pkgs.rpicam-apps
+      ];
 
       systemd.sockets.garage-door = {
         listenStreams = [ "[::]:8080" ];
