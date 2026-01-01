@@ -32,12 +32,8 @@ stdenv.mkDerivation (finalAttrs: {
 
   buildInputs = [
     boost
-    (ffmpeg-headless.override {
-      # audio stuff, not needed here
-      withOpenmpt = false;
-      withPulse = false;
-      withSpeex = false;
-    })
+    ffmpeg-headless
+    libX11
     libcamera
     libdrm
     libepoxy # GLES/EGL preview window
@@ -45,7 +41,6 @@ stdenv.mkDerivation (finalAttrs: {
     libjpeg
     libpng
     libtiff
-    libX11
   ];
 
   nativeBuildInputs = [
@@ -72,9 +67,9 @@ stdenv.mkDerivation (finalAttrs: {
     "-Denable_qt=disabled"
   ];
 
-  postInstall = ''
-    for f in rpicam-hello rpicam-jpeg rpicam-raw rpicam-still rpicam-vid; do
-      wrapProgram $out/bin/$f --set-default LIBCAMERA_IPA_PROXY_PATH ${libcamera}/libexec/libcamera
-    done
-  '';
+  # postInstall = ''
+  #   for f in rpicam-hello rpicam-jpeg rpicam-raw rpicam-still rpicam-vid; do
+  #     wrapProgram $out/bin/$f --set-default LIBCAMERA_IPA_PROXY_PATH ${libcamera}/libexec/libcamera
+  #   done
+  # '';
 })
