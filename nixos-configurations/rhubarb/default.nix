@@ -92,8 +92,7 @@
         before = [ config.systemd.services.mediamtx.name ];
         requiredBy = [ config.systemd.services.mediamtx.name ];
         wantedBy = [ "multi-user.target" ];
-        path = [ pkgs.rpicam-apps ];
-        serviceConfig.ExecStart = "rpicam-vid -n -t 0 --codec libav --libav-format mpegts -o udp://127.0.0.1:3333";
+        serviceConfig.ExecStart = "${lib.getExe' pkgs.rpicam-apps "rpicam-vid"} -n -t 0 --codec libav --libav-format mpegts -o udp://127.0.0.1:3333";
       };
 
       services.yggdrasil.settings.Peers = [ "tls://celery.jmbaur.com:443" ];
