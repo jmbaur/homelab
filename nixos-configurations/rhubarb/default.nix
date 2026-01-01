@@ -85,11 +85,15 @@
       services.mediamtx = {
         enable = true;
         allowVideoAccess = true;
-        settings.paths.cam = {
-          source = "udp://127.0.0.1:3333";
-          runOnInit = "${pkgs.rpicam-apps}/bin/rpicam-vid -n -t 0 --codec libav --libav-format mpegts -o udp://127.0.0.1:3333";
-          runOnInitRestart = true;
-        };
+        settings.paths.cam.source = "udp://127.0.0.1:3333";
+      };
+
+      systemd.services.rpicam-vid = {
+        before = [ config.systemd.services.mediamtx.name ];
+        requiredBy = [ config.systemd.services.mediamtx.name ];
+        wantedBy = [ "multi-user.target" ];
+        path = [ pkgs.rpicam-apps ];
+        serviceConfig.ExecStart = "rpicam-vid -n -t 0 --codec libav --libav-format mpegts -o udp://127.0.0.1:3333";
       };
 
       services.yggdrasil.settings.Peers = [ "tls://celery.jmbaur.com:443" ];
