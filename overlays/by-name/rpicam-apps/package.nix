@@ -66,10 +66,4 @@ stdenv.mkDerivation (finalAttrs: {
     "-Denable_hailo=disabled"
     "-Denable_qt=disabled"
   ];
-
-  # postInstall = ''
-  #   for f in rpicam-hello rpicam-jpeg rpicam-raw rpicam-still rpicam-vid; do
-  #     wrapProgram $out/bin/$f --set-default LIBCAMERA_IPA_PROXY_PATH ${libcamera}/libexec/libcamera
-  #   done
-  # '';
 })
