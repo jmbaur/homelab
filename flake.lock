@@ -50,11 +50,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1764557893,
-        "narHash": "sha256-VkGLpyh3xpCYyvj426dTIfKgc0vm+kRDlsHdk8+LLGw=",
+        "lastModified": 1767236806,
+        "narHash": "sha256-F8faI+KHdEO96Y12PUcSI/kAENCcCM4KvD3uvWRrbzE=",
         "owner": "jmbaur",
         "repo": "ipwatch",
-        "rev": "8df9ae2bf656612040894b9aa6f98cab5a087279",
+        "rev": "07861532d48c5a658319af4eb274f230d06322b4",
         "type": "github"
       },
       "original": {
@@ -70,11 +70,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1766356899,
-        "narHash": "sha256-Q6rmGMG1X7TtNlyqeh7WAierqNFBFoGKcQadmDP1p/I=",
+        "lastModified": 1767231953,
+        "narHash": "sha256-F7MVUUkSmzW+468Rym8NJ/8VY6R1uF90ZVkPtb7UiZ4=",
         "owner": "jmbaur",
         "repo": "mixos",
-        "rev": "28c35b7b5024dbadbeef28d41340a397ff56dba4",
+        "rev": "e9f9e76b3f07461a77f612829ee9ae7a15448dc0",
         "type": "github"
       },
       "original": {
@@ -223,11 +223,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1764557924,
-        "narHash": "sha256-SmTnQi5r+ux+mdloUjHKqVm9sNhImZn2HnUegz9ET40=",
+        "lastModified": 1767236695,
+        "narHash": "sha256-/4hbcd+smRbsLRFijoOj6ZhsQbcLUYieWbztq/s3GpM=",
         "owner": "jmbaur",
         "repo": "webauthn-tiny",
-        "rev": "6c13e1b114ddfd3023daa839781cbbbf12984c42",
+        "rev": "2b29ef0024e5f99f0b0791590563520d28632954",
         "type": "github"
       },
       "original": {
