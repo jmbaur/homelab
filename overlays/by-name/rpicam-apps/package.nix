@@ -8,7 +8,7 @@
   ninja,
   pkg-config,
   boost,
-  ffmpeg-headless,
+  ffmpeg,
   libcamera,
   libdrm,
   libepoxy,
@@ -32,7 +32,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   buildInputs = [
     boost
-    ffmpeg-headless
+    ffmpeg
     libX11
     libcamera
     libdrm
