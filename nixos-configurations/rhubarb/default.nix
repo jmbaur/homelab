@@ -93,6 +93,7 @@
 
       custom.yggdrasil.peers.pumpkin.allowedTCPPorts = [
         8080 # homelab-garage-door
+        8888 # hls mediamtx
         8889 # webrtc mediamtx
       ];
     }

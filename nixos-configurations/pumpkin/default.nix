@@ -82,7 +82,7 @@
         onlySSL = true;
         basicAuthFile = config.sops.secrets."garage-htpasswd".path;
         locations."/".proxyPass = "http://rhubarb.internal:8080";
-        locations."/cam".proxyPass = "http://rhubarb.internal:8889";
+        locations."/cam".proxyPass = "http://rhubarb.internal:8888";
         sslCertificate = config.sops.secrets."cf-origin/cert".path;
         sslCertificateKey = config.sops.secrets."cf-origin/key".path;
       };
