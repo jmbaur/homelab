@@ -89,6 +89,11 @@
         settings.paths.cam.source = "rpiCamera";
       };
 
+      # needed by libcamera/mediamtx-rpicamera
+      services.udev.extraRules = ''
+        SUBSYSTEM=="dma_heap", GROUP="video", MODE="0660"
+      '';
+
       services.yggdrasil.settings.Peers = [ "tls://celery.jmbaur.com:443" ];
 
       custom.yggdrasil.peers.pumpkin.allowedTCPPorts = [
