@@ -1,0 +1,28 @@
+diff --git a/internal/staticsources/rpicamera/camera_arm_.go b/internal/staticsources/rpicamera/camera_arm_.go
+index 9c33c017..6226961e 100644
+--- a/internal/staticsources/rpicamera/camera_arm_.go
++++ b/internal/staticsources/rpicamera/camera_arm_.go
+@@ -132,6 +132,8 @@ func dumpEmbedFSRecursive(src string, dest string) error {
+ }
+ 
+ func dumpComponent() error {
++	var err error
++
+ 	dumpMutex.Lock()
+ 	defer dumpMutex.Unlock()
+ 
+@@ -140,10 +142,10 @@ func dumpComponent() error {
+ 		return nil
+ 	}
+ 
+-	err := checkArchitecture()
+-	if err != nil {
+-		return err
+-	}
++	// err := checkArchitecture()
++	// if err != nil {
++	// 	return err
++	// }
+ 
+ 	dumpPath = dumpPrefix + strconv.FormatInt(time.Now().UnixNano(), 10)
+ 

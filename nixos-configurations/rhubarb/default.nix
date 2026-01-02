@@ -84,15 +84,9 @@
 
       services.mediamtx = {
         enable = true;
+        package = pkgs.mediamtx-rpi;
         allowVideoAccess = true;
-        settings.paths.cam.source = "udp://127.0.0.1:3333";
-      };
-
-      systemd.services.rpicam-vid = {
-        before = [ config.systemd.services.mediamtx.name ];
-        requiredBy = [ config.systemd.services.mediamtx.name ];
-        wantedBy = [ "multi-user.target" ];
-        serviceConfig.ExecStart = "${lib.getExe' pkgs.rpicam-apps "rpicam-vid"} -n -t 0 --codec libav --libav-format mpegts -o udp://127.0.0.1:3333";
+        settings.paths.cam.source = "rpiCamera";
       };
 
       services.yggdrasil.settings.Peers = [ "tls://celery.jmbaur.com:443" ];

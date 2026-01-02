@@ -1,0 +1,50 @@
+diff --git a/meson.build b/meson.build
+index e531889..08021a6 100644
+--- a/meson.build
++++ b/meson.build
+@@ -71,7 +71,7 @@ if not freetype_dep.found()
+     freetype_dep = freetype_proj.dependency('freetype')
+ endif
+ 
+-libjpeg_dep = dependency('libjpeg', version: '<3.0.0', static : true)
++libjpeg_dep = dependency('libjpeg', static : true)
+ 
+ openh264_dep = dependency(
+     'openh264',
+@@ -88,12 +88,6 @@ dependencies = [
+     openh264_dep
+ ]
+ 
+-text_font = custom_target(
+-    'text_font.h',
+-    output : 'text_font.h',
+-    command : ['./text_font.sh']
+-)
+-
+ sources = [
+     'base64.c',
+     'camera.cpp',
+@@ -107,7 +101,7 @@ sources = [
+     'sensor_mode.c',
+     'text.c',
+     'window.c',
+-    text_font
++    'text_font.h',
+ ]
+ 
+ mtxrpicam = executable(
+diff --git a/post_install.sh b/post_install.sh
+index 56ad0a7..db58b04 100755
+--- a/post_install.sh
++++ b/post_install.sh
+@@ -1,8 +1,8 @@
+ #!/bin/sh -e
+ 
+-MACHINE=$(gcc -dumpmachine)
++MACHINE=$($CC -dumpmachine)
+ 
+-if [ "$MACHINE" = "aarch64-linux-gnu" ]; then
++if [ "$MACHINE" = "aarch64-unknown-linux-gnu" ]; then
+     OUT_DIR="mtxrpicam_64"
+ else
+     OUT_DIR="mtxrpicam_32"
