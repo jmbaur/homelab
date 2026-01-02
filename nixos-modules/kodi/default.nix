@@ -46,9 +46,9 @@ let
       }
     ).withPackages
       (p: [
+        p.inputstream-adaptive
         p.jellyfin
         p.joystick
-        (p.inputstream-adaptive.overrideAttrs { env.NIX_CFLAGS_COMPILE = "-std=gnu17"; }) # TODO(jared): delete this when compiling with gcc15 works
         (p.buildKodiAddon {
           name = "subsonic-plugin";
           namespace = "plugin.audio.subsonic";
