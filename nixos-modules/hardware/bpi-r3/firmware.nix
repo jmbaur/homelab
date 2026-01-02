@@ -56,7 +56,7 @@ let
       extraMeta.platforms = [ "aarch64-linux" ];
     }).overrideAttrs
       (old: {
-        nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [
+        depsBuildBuild = (old.depsBuildBuild or [ ]) ++ [
           dtc
           openssl
           ubootTools

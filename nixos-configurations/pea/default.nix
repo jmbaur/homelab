@@ -29,7 +29,7 @@ let
     }:
     runCommand "spherion-fitImage"
       {
-        nativeBuildInputs = [
+        depsBuildBuild = [
           xz
           dtc
           ubootTools

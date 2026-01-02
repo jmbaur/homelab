@@ -14,7 +14,7 @@ let
     }:
     runCommand "wormdingler-fitImage"
       {
-        nativeBuildInputs = [
+        depsBuildBuild = [
           xz
           dtc
           ubootTools
