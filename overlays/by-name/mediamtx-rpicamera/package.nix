@@ -1,9 +1,7 @@
 {
   fetchFromGitHub,
-  fetchgit,
   fetchurl,
   freetype,
-  lib,
   libcamera,
   libjpeg,
   meson,
@@ -32,7 +30,10 @@ stdenv.mkDerivation (finalAttrs: {
     hash = "sha256-G8tnvo2Elc6a+7cHo7SKfEwF2sUzD9C92Pj4qdlOxIo=";
   };
 
-  patches = [ ./uninsane.patch ];
+  patches = [
+    ./pull-77.patch
+    ./uninsane.patch
+  ];
 
   # look at text_font.sh
   postPatch = ''
@@ -48,18 +49,7 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   buildInputs = [
-    # TODO(jared): mediamtx-rpicamera does not yet support libcamera 0.6.0
-    (libcamera.overrideAttrs (
-      final: prev: {
-        version = "0.5.2";
-        src = fetchgit {
-          url = "https://git.libcamera.org/libcamera/libcamera.git";
-          rev = "v${final.version}";
-          hash = "sha256-nr1LmnedZMGBWLf2i5uw4E/OMeXObEKgjuO+PUx/GDY=";
-        };
-        mesonFlags = lib.filter (flag: builtins.match ".*libunwind.*" flag == null) prev.mesonFlags;
-      }
-    ))
+    libcamera
     freetype
     libjpeg
     openh264
