@@ -82,10 +82,9 @@ pub fn main() !void {
         }
     }
 
-    var toplevel_dir = try std.fs.cwd().openDir(
-        toplevel orelse try chooseToplevelFromGenerations(allocator),
-        .{},
-    );
+    const chosen = toplevel orelse try chooseToplevelFromGenerations(allocator);
+    std.log.info("booting from {s}", .{chosen});
+    var toplevel_dir = try std.fs.cwd().openDir(chosen, .{});
     defer toplevel_dir.close();
 
     var boot_json = try toplevel_dir.openFile("boot.json", .{});
