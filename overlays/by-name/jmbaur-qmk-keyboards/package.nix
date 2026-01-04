@@ -34,7 +34,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   installPhase = ''
     runHook preInstall
-    install -D --target-directory=$out .build/*.hex
+    install -D --target-directory=$out .build/*.hex .build/*.bin
     runHook postInstall
   '';
 })
