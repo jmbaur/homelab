@@ -1,7 +1,6 @@
 (vim.loader.enable)
 
 (local fzf-lua (require :fzf-lua))
-(local nvim-treesitter-configs (require :nvim-treesitter.configs))
 (local modus (require :modus-themes))
 
 (modus.setup {:styles {:comments {:italic false} :keywords {:italic false}}})
@@ -15,7 +14,6 @@
 (vim.api.nvim_create_autocmd [:TextYankPost]
                              {:group (vim.api.nvim_create_augroup :TextYankPost
                                                                   {:clear true})
-                              :pattern "*"
                               :callback (lambda []
                                           (vim.hl.on_yank {:higroup :Visual
                                                            :timeout 300})
@@ -64,14 +62,16 @@
                                               (setup-fzf (vim.opt.background:get)))
                                           nil)})
 
-(nvim-treesitter-configs.setup {:indent {:enable true}
-                                :highlight {:enable true
-                                            :additional_vim_regex_highlighting false}
-                                :incremental_selection {:enable true
-                                                        :keymaps {:init_selection :gnn
-                                                                  :node_incremental :grn
-                                                                  :scope_incremental :grc
-                                                                  :node_decremental :grm}}})
+;; TODO(jared): consider only enabling this on certain filetypes
+(vim.api.nvim_create_autocmd :Filetype
+                             {:callback (lambda [opts]
+                                          (if (pcall vim.treesitter.start)
+                                              (do
+                                                (tset vim.bo :indentexpr
+                                                      "v:lua.require(\"nvim-treesitter\").indentexpr()")
+                                                (tset vim.wo :foldexpr
+                                                      "v:lua.vim.treesitter.foldexpr()")
+                                                (tset vim.wo :foldmethod :expr))))})
 
 (set vim.g.clipboard :osc52)
 (set vim.g.dispatch_no_tmux_make 1)
@@ -83,8 +83,6 @@
 (set vim.g.zoxide_use_select 1)
 
 (set vim.wo.foldenable false)
-(set vim.wo.foldexpr "v:lua.vim.treesitter.foldexpr()")
-(set vim.wo.foldmethod :expr)
 (set vim.wo.foldminlines 20)
 (set vim.wo.foldnestmax 1)
 

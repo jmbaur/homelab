@@ -47,8 +47,8 @@ let
       src = fetchFromGitHub {
         owner = "neovim";
         repo = "neovim";
-        rev = "147190d8e7dd53cb329230630f764020b15d9c21";
-        hash = "sha256-5DNgzEsHSRtnmiL0EVjI7Yf5TuDbwWbdpTExufIPPsw=";
+        rev = "715015d3b231a5d640f9bb109caf4d817c7f2bd6";
+        hash = "sha256-kufXcgn8ZbShHKCvgHgxZq85yCWrOJYgcY40k+JBno8=";
       };
     }
   );
