@@ -25,6 +25,9 @@ inputs: {
 
     # all other packages
     (final: prev: {
+      # TODO(jared): delete this when there is a fix upstream
+      hydra = prev.hydra.overrideAttrs { doCheck = false; };
+
       cros-ec-fizz = prev.cros-ec.override { board = "fizz"; };
 
       gnome-console =
