@@ -23,6 +23,7 @@ testers.runNixOSTest {
     };
 
   testScript = ''
+    machine.start(allow_reboot=True)
     machine.fail("hello")
     machine.succeed("nixos-kexec /run/current-system/specialisation/hello")
     machine.wait_for_console_text("Starting new kernel")
