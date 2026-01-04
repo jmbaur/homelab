@@ -62,6 +62,30 @@ fn chooseToplevelFromGenerations(allocator: std.mem.Allocator) ![]const u8 {
     );
 }
 
+const KEXEC_LOADED = "/sys/kernel/kexec_loaded";
+
+fn waitForKexecKernelLoaded() !void {
+    var f = try std.fs.cwd().openFile(KEXEC_LOADED, .{});
+    defer f.close();
+
+    var buffer: [1]u8 = undefined;
+    var reader = f.reader(&buffer);
+
+    var time_slept: usize = 0;
+    while (time_slept < 10 * std.time.ns_per_s) : (time_slept += std.time.ns_per_s) {
+        std.log.debug("waiting for kexec load to finish", .{});
+        try f.seekTo(0);
+
+        if (try reader.interface.takeByte() == '1') {
+            return;
+        }
+
+        std.Thread.sleep(std.time.ns_per_s);
+    }
+
+    return error.Timeout;
+}
+
 pub fn main() !void {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
@@ -146,6 +170,8 @@ pub fn main() !void {
             );
         }
     };
+
+    try waitForKexecKernelLoaded();
 
     switch (std.posix.E.init(ret)) {
         .SUCCESS => {},
