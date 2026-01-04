@@ -82,7 +82,7 @@ pub fn main() !void {
         }
     }
 
-    const chosen = toplevel orelse try chooseToplevelFromGenerations(allocator);
+    const chosen = try std.fs.cwd().realpathAlloc(allocator, toplevel orelse try chooseToplevelFromGenerations(allocator));
     std.log.info("booting from {s}", .{chosen});
     var toplevel_dir = try std.fs.cwd().openDir(chosen, .{});
     defer toplevel_dir.close();
