@@ -24,8 +24,6 @@ in
         programs.gnupg.agent.enable = lib.mkDefault true;
         services.pcscd.enable = lib.mkDefault config.custom.desktop.enable;
 
-        programs.adb.enable = lib.mkDefault true;
-
         services.udev.packages = [
           (pkgs.concatTextFile {
             name = "openocd-udev-rules";
