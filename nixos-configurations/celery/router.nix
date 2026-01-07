@@ -6,9 +6,15 @@
 }:
 
 let
-  inherit (lib)
+  inherit (builtins)
     attrValues
     concatStringsSep
+    ;
+  inherit (lib)
+    genAttrs
+    mapAttrs'
+    mkForce
+    nameValuePair
     ;
 in
 {
@@ -89,7 +95,7 @@ in
 
   services.yggdrasil.settings = {
     Listen = [ "tls://[::]:443" ];
-    MulticastInterfaces = [
+    MulticastInterfaces = mkForce [
       {
         Regex = config.router.lanInterface;
         Beacon = true;
@@ -111,8 +117,8 @@ in
     Kind = "bridge";
   };
 
-  systemd.network.networks = lib.mapAttrs' (name: value: lib.nameValuePair "10-${name}" value) (
-    lib.genAttrs
+  systemd.network.networks = mapAttrs' (name: value: nameValuePair "10-${name}" value) (
+    genAttrs
       [
         "lan0"
         "lan1"
@@ -146,7 +152,7 @@ in
         ssid = "Silence of the LANs";
         # NOTE: Add three authentication mechanisms to allow older
         # devices that only support wpa2-sha1 to connect.
-        settings.wpa_key_mgmt = lib.mkForce "WPA-PSK WPA-PSK-SHA256 SAE";
+        settings.wpa_key_mgmt = mkForce "WPA-PSK WPA-PSK-SHA256 SAE";
         authentication = {
           mode = "wpa2-sha256";
           wpaPasswordFile = config.sops.secrets.wlan0.path;

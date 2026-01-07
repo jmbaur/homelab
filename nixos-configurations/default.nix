@@ -115,7 +115,7 @@ genAttrs allHosts (
             enable = true;
             persistentKeys = lib.mkDefault true;
             openMulticastPort = lib.mkDefault true;
-            settings.MulticastInterfaces = lib.mkDefault [
+            settings.MulticastInterfaces = [
               {
                 Regex = ".*";
                 Beacon = true;
