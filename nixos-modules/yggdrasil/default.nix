@@ -8,7 +8,6 @@ let
     mapAttrs'
     mapAttrsToList
     mkAfter
-    mkDefault
     mkEnableOption
     mkIf
     mkMerge
@@ -76,7 +75,7 @@ in
         }
       ];
 
-      services.yggdrasil.settings.IfName = mkDefault "ygg0";
+      services.yggdrasil.settings.IfName = "ygg0";
     }
     (mkIf (cfg.peers != { }) {
       networking.hosts = mapAttrs' (
