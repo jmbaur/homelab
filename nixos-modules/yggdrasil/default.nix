@@ -75,7 +75,7 @@ in
         }
       ];
 
-      services.yggdrasil.settings.IfName = "ygg0";
+      services.yggdrasil.settings.IfName = lib.mkDefault "ygg0";
     }
     (mkIf (cfg.peers != { }) {
       networking.hosts = mapAttrs' (
