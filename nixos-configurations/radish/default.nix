@@ -27,13 +27,14 @@
       hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
     }
     {
-      custom.basicNetwork.enable = true;
-      custom.common.enable = true;
       custom.dev.enable = true;
       custom.desktop.enable = true;
+      custom.recovery.targetDisk = "/dev/disk/by-path/pci-0000:01:00.0-nvme-1";
 
       services.cloudflare-warp.enable = true;
       nixpkgs.config.allowUnfree = true;
+
+      virtualisation.podman.enable = true;
     }
   ];
 }

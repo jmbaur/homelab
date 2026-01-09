@@ -1,5 +1,4 @@
 {
-  config,
   pkgs,
   ...
 }:
@@ -49,7 +48,6 @@ in
 
   custom.desktop.enable = true;
   custom.dev.enable = true;
-  nixpkgs.buildPlatform = config.nixpkgs.hostPlatform;
   custom.recovery.targetDisk = "/dev/disk/by-path/pci-0000:01:00.0-nvme-1";
 
   # Force using SOF driver, this is likely common to all alderlake

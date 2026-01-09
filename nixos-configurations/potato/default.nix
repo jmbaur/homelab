@@ -1,5 +1,4 @@
 {
-  config,
   lib,
   pkgs,
   ...
@@ -110,8 +109,6 @@ in
 
     }
     {
-      nixpkgs.buildPlatform = config.nixpkgs.hostPlatform;
-
       custom.basicNetwork.enable = true;
       custom.normalUser.enable = true;
       custom.dev.enable = true;

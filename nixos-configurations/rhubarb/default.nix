@@ -8,8 +8,6 @@
 {
   config = lib.mkMerge [
     {
-      nixpkgs.buildPlatform = "x86_64-linux";
-
       hardware.rpi4.enable = true;
 
       custom.server = {

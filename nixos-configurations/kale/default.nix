@@ -15,7 +15,6 @@ in
   config = mkMerge [
     {
       nixpkgs.hostPlatform = "x86_64-linux";
-      nixpkgs.buildPlatform = config.nixpkgs.hostPlatform;
 
       hardware.cpu.amd.updateMicrocode = true;
       hardware.enableRedistributableFirmware = true;
