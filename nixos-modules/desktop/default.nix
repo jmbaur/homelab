@@ -22,58 +22,15 @@ in
     {
       custom.normalUser.enable = true;
 
-      programs.sway = {
-        enable = true;
-        wrapperFeatures = {
-          base = true;
-          gtk = true;
-        };
-      };
-
-      fonts = {
-        packages = [ pkgs.iosevka-bin ];
-        fontconfig.defaultFonts.monospace = [ "Iosevka" ];
-      };
-
-      environment.systemPackages = [
-        pkgs.clipman
-        pkgs.gnome-themes-extra # provides adwaita themes for GTK applications
-        pkgs.kanshi
-        pkgs.mako
-        pkgs.rofi
-        pkgs.wl-clipboard
-        (pkgs.runCommand "default-icon-theme" { } ''
-          mkdir -p $out/share/icons
-          ln -sf ${pkgs.adwaita-icon-theme}/share/icons/Adwaita $out/share/icons/default
-        '')
-      ];
+      services.desktopManager.plasma6.enable = true;
+      services.displayManager.sddm.enable = true;
 
       programs.yubikey-touch-detector.enable = mkDefault true;
       security.rtkit.enable = mkDefault true;
-      services.automatic-timezoned.enable = mkDefault true;
+      services.flatpak.enable = mkDefault true;
       services.fwupd.enable = mkDefault true;
       services.printing.enable = mkDefault true;
       services.upower.enable = mkDefault true;
-
-      programs.foot = {
-        enable = true;
-        theme = "modus-vivendi";
-        settings = {
-          mouse.hide-when-typing = "yes";
-          main = {
-            font = "monospace:size=12";
-            resize-by-cells = "no";
-            selection-target = "both";
-          };
-        };
-      };
-
-      programs.gnupg.agent.pinentryPackage = pkgs.pinentry-rofi;
-
-      programs.dconf = {
-        enable = true;
-        profiles.user.databases = [ ];
-      };
 
       programs.firefox = {
         enable = mkDefault true;
@@ -105,7 +62,6 @@ in
     {
       custom.basicNetwork.enable = true;
 
-      networking.wireless.iwd.enable = true;
       networking.networkmanager.wifi.backend = "iwd";
 
       # plasma6 does not enable this by default
