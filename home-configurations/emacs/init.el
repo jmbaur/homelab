@@ -58,7 +58,10 @@
 (defun refresh-projects ()
   "Refresh projects file"
   (interactive)
-  (project-remember-projects-under (file-name-concat xdg-state-home "projects")))
+  (let
+      ((projects-dir (file-name-concat xdg-state-home "projects")))
+    (if (file-exists-p projects-dir)
+	(project-remember-projects-under projects-dir))))
 
 ;; scrape the projects directory, if it has not yet been scraped
 (unless (file-exists-p project-list-file)
