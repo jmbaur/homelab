@@ -114,7 +114,11 @@ in
         useSubstitutes = true;
         extraConfig = ''
           allow_import_from_derivation = false
-          max_output_size = ${toString (4 * 1024 * 1024)}
+          max_output_size = ${
+            toString (
+              4 * 1024 * 1024 * 1024 # 4 GiB
+            )
+          }
           binary_cache_public_uri = https://cache.jmbaur.com
           log_prefix = https://cache.jmbaur.com/
           store_uri = file:///var/lib/binary-cache?compression=zstd&parallel-compression=true&ls-compression=br&log-compression=br&write-nar-listing=true&secret-key=${config.sops.secrets.nix_signing_key.path}
