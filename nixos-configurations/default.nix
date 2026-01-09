@@ -35,11 +35,11 @@ let
     filterAttrs (const (entryType: entryType == "directory")) (builtins.readDir ./.)
   );
 in
-
 genAttrs allHosts (
   host:
   inputs.nixpkgs.lib.nixosSystem {
-    # extraModules are included in any usage of `noUserModules`, which means all of our custom options will still exist.
+    # extraModules are included in any usage of `noUserModules`, which
+    # means all of our custom options will still exist.
     extraModules = [ inputs.self.nixosModules.default ];
 
     modules = [
@@ -89,30 +89,12 @@ genAttrs allHosts (
             enable = lib.mkDefault true;
             modules = [
               ./network.nix
-              {
-                custom.common.enable = true;
-
-                # We set the update endpoint to be a host on the yggdrasil
-                # network, so we must enable this in the recovery system as
-                # well.
-                services.yggdrasil = {
-                  enable = true;
-                  openMulticastPort = true;
-                  settings.MulticastInterfaces = [
-                    {
-                      Regex = ".*";
-                      Beacon = true;
-                      Listen = true;
-                      Port = 9001;
-                    }
-                  ];
-                };
-              }
+              { custom.common.enable = true; }
             ];
           };
 
           services.yggdrasil = {
-            enable = true;
+            enable = lib.mkDefault true;
             persistentKeys = lib.mkDefault true;
             openMulticastPort = lib.mkDefault true;
             settings.MulticastInterfaces = [
@@ -125,9 +107,12 @@ genAttrs allHosts (
             ];
           };
 
-          networking.firewall.allowedTCPPorts = lib.mkIf (lib.any (
-            iface: (iface.Regex or "") == ".*"
-          ) config.services.yggdrasil.settings.MulticastInterfaces or [ ]) [ 9001 ];
+          networking.firewall.allowedTCPPorts = lib.mkIf (
+            config.services.yggdrasil.enable
+            && lib.any (
+              iface: (iface.Regex or "") == ".*"
+            ) config.services.yggdrasil.settings.MulticastInterfaces or [ ]
+          ) [ 9001 ];
 
           custom.yggdrasil.peers = {
             potato.allowAll = true;
@@ -137,7 +122,7 @@ genAttrs allHosts (
             zucchini.allowAll = true;
           };
 
-          custom.backup.sender = {
+          custom.backup.sender = lib.mkIf config.services.yggdrasil.enable {
             enable = lib.mkDefault true;
             receiver = "artichoke.internal 4000";
           };
