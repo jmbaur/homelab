@@ -24,8 +24,8 @@ in
 inputs:
 
 let
+  inherit (builtins) attrNames;
   inherit (inputs.nixpkgs.lib)
-    attrNames
     const
     filterAttrs
     genAttrs
