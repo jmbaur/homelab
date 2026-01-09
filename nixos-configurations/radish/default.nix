@@ -37,6 +37,13 @@
       nixpkgs.config.allowUnfree = true;
 
       virtualisation.podman.enable = true;
+
+      nix.settings = {
+        extra-substituters = [ "https://cache.northwood.space" ];
+        extra-trusted-public-keys = [
+          "cache.northwood.space-1:aS//R1OH2ct1xKquarzaEWRW21gDJ9pRyM8zUgvhBbc="
+        ];
+      };
     }
   ];
 }
