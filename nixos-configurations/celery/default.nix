@@ -3,8 +3,6 @@
 {
   imports = [ ./router.nix ];
 
-  nixpkgs.buildPlatform = "x86_64-linux";
-
   hardware.bpi-r3.enable = true;
 
   hardware.deviceTree.overlays = [

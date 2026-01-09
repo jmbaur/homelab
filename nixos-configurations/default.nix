@@ -58,8 +58,8 @@ genAttrs allHosts (
             }
           ];
 
-          # Default to the same build platform as our build server.
-          nixpkgs.buildPlatform = lib.mkDefault "aarch64-linux";
+          # Default to the same build platform as our main build server.
+          nixpkgs.buildPlatform = lib.mkDefault "x86_64-linux";
 
           networking.hostName = host;
 

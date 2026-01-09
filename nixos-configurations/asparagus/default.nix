@@ -55,9 +55,10 @@ in
       };
     }
     {
+      nixpkgs.buildPlatform = "aarch64-linux";
+
       custom.desktop.enable = true;
       custom.recovery.targetDisk = "/dev/disk/by-path/platform-7c4000.mmc";
-      nixpkgs.buildPlatform = "x86_64-linux";
     }
   ];
 }
