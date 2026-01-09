@@ -5,10 +5,12 @@
   ...
 }:
 let
+  inherit (builtins) genList;
   inherit (lib)
     genAttrs
     mkDefault
     mkEnableOption
+    concatLines
     mkForce
     mkIf
     mkMerge
@@ -19,6 +21,10 @@ let
   isNotContainer = !config.boot.isContainer;
 
   inherit (config.system.nixos) revision;
+
+  subxidContent = concatLines (
+    genList (uid: "${toString uid}:${toString (uid * 65536)}:65536") (65536 - 1000)
+  );
 in
 {
   options.custom.common.enable = mkEnableOption "common config";
@@ -48,7 +54,7 @@ in
       boot.enableContainers = mkDefault false;
 
       programs.nano.enable = false;
-      programs.vim = lib.mkIf (!(config.programs.neovim.enable && config.programs.neovim.defaultEditor)) {
+      programs.vim = mkIf (!(config.programs.neovim.enable && config.programs.neovim.defaultEditor)) {
         enable = true;
         defaultEditor = true;
       };
@@ -75,6 +81,17 @@ in
       # No need for mutable users in most use cases
       users.mutableUsers = mkDefault false;
       services.userborn.enable = mkDefault true;
+
+      environment.etc = mkIf config.services.userborn.enable {
+        "subuid" = {
+          text = subxidContent;
+          mode = "0444";
+        };
+        "subgid" = {
+          text = subxidContent;
+          mode = "0444";
+        };
+      };
 
       nix = {
         package = pkgs.nixVersions.nix_2_32;

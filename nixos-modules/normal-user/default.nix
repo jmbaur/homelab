@@ -89,12 +89,7 @@ in
               printf "=%.0s" {1..80}
               printf "\n"
 
-              if ! (
-                passwd "${cfg.username}"
-
-                echo "${cfg.username}:$((0x80000)):$((0x10000))" >/etc/subuid
-                echo "${cfg.username}:$((0x80000)):$((0x10000))" >/etc/subgid
-              ); then
+              if ! passwd "${cfg.username}"; then
                 echo "ERROR: failed to update normal user"
                 sleep 20 # give the user some time to read any error output
               fi
