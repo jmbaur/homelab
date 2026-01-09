@@ -30,6 +30,8 @@
       custom.dev.enable = true;
       custom.desktop.enable = true;
       custom.recovery.targetDisk = "/dev/disk/by-path/pci-0000:01:00.0-nvme-1";
+      custom.backup.sender.enable = false;
+      services.yggdrasil.enable = false;
 
       services.cloudflare-warp.enable = true;
       nixpkgs.config.allowUnfree = true;
