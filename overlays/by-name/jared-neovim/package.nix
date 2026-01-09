@@ -47,8 +47,8 @@ let
       src = fetchFromGitHub {
         owner = "neovim";
         repo = "neovim";
-        rev = "3e83f7bec7789fe584cd939e4a60f270a4c626ff";
-        hash = "sha256-z5DaW7lzJuYB3pgKN5n76ZqKDPs9oKcEVC3zzYz7DXY=";
+        rev = "03e9797bb21c77084cf1558405649a6bd6c4c15e";
+        hash = "sha256-PCgLcgH+cWPFVpxH47hJJ7C9MqmXGTHNaW3b4QiEJrw=";
       };
     }
   );
@@ -105,8 +105,19 @@ wrapNeovimUnstable neovim (
       })
     ]
     ++ (with vimPlugins; [
-      # conjure # TODO(jared): get this working nicely
-      fzf-lua
+      # TODO(jared): get this working nicely
+      # conjure
+
+      # TODO(jared): remove when we have https://github.com/ibhagwan/fzf-lua/pull/2501
+      (fzf-lua.overrideAttrs {
+        src = fetchFromGitHub {
+          owner = "phanen";
+          repo = "fzf-lua";
+          rev = "6a116987d04cd6ce8a6b8466682720b5a36029d6";
+          hash = "sha256-SdoWY8t8smSAEyTFFHGi3mLIP5hyf+uRcB84lN1ys8g=";
+        };
+      })
+
       modus-themes-nvim
       nvim-lspconfig
       nvim-treesitter.withAllGrammars
