@@ -93,9 +93,10 @@ in
     '';
   };
 
-  services.yggdrasil.settings = {
+  services.yggdrasil.settings = mkForce {
+    IfName = "ygg0";
     Listen = [ "tls://[::]:443" ];
-    MulticastInterfaces = mkForce [
+    MulticastInterfaces = [
       {
         Regex = config.router.lanInterface;
         Beacon = true;
