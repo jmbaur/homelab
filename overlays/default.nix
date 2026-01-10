@@ -21,6 +21,8 @@ inputs: {
           });
         }
       );
+
+      ubootTools = prev.ubootTools.override { pythonScriptsToInstall = { }; };
     })
 
     # all other packages
