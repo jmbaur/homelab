@@ -47,8 +47,8 @@ let
       src = fetchFromGitHub {
         owner = "neovim";
         repo = "neovim";
-        rev = "03e9797bb21c77084cf1558405649a6bd6c4c15e";
-        hash = "sha256-PCgLcgH+cWPFVpxH47hJJ7C9MqmXGTHNaW3b4QiEJrw=";
+        rev = "295fb3fdb2a359febc2e75e4eb0f9f438775ab05";
+        hash = "sha256-Kd2gff6x8uQJsL9i4IZa50fVnFDAez3jjw+K9YmhHVY=";
       };
     }
   );
@@ -111,10 +111,10 @@ wrapNeovimUnstable neovim (
       # TODO(jared): remove when we have https://github.com/ibhagwan/fzf-lua/pull/2501
       (fzf-lua.overrideAttrs {
         src = fetchFromGitHub {
-          owner = "phanen";
+          owner = "ibhagwan";
           repo = "fzf-lua";
-          rev = "6a116987d04cd6ce8a6b8466682720b5a36029d6";
-          hash = "sha256-SdoWY8t8smSAEyTFFHGi3mLIP5hyf+uRcB84lN1ys8g=";
+          rev = "b8d1356b7120f5cf111709cb2fa504096248fb26";
+          hash = "sha256-KNtnowiuudPH7g9EpF65n3JNbFL5cIDMP9LIrnvcL7k=";
         };
       })
 
