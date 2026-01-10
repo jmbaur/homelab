@@ -13,7 +13,7 @@ inputs: {
     )
 
     # cross-compilation fixes
-    (_final: prev: {
+    (final: prev: {
       perlPackages = prev.perlPackages.overrideScope (
         _: perlPackagesPrev: {
           NetDNS = perlPackagesPrev.NetDNS.overrideAttrs (old: {
@@ -23,6 +23,12 @@ inputs: {
       );
 
       ubootTools = prev.ubootTools.override { pythonScriptsToInstall = { }; };
+
+      openocd = prev.openocd.override {
+        jimtcl = final.jimtcl.override {
+          SDLSupport = false;
+        };
+      };
     })
 
     # all other packages
