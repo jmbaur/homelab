@@ -31,6 +31,7 @@
 let
   emacs = emacs-pgtk.pkgs.withPackages (
     epkgs: with epkgs; [
+      auto-dark
       company
       direnv
       dts-mode
