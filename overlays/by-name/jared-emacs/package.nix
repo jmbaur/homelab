@@ -2,7 +2,7 @@
   buildEnv,
   clang-tools,
   dts-lsp,
-  emacs-pgtk,
+  emacs-nox,
   fd,
   fennel-ls,
   fnlfmt,
@@ -29,7 +29,7 @@
 }:
 
 let
-  emacs = emacs-pgtk.pkgs.withPackages (
+  emacs = emacs-nox.pkgs.withPackages (
     epkgs: with epkgs; [
       auto-dark
       company
