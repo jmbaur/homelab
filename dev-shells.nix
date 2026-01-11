@@ -53,16 +53,17 @@ inputs.nixpkgs.lib.mapAttrs (
 
       env.SOPS_CONFIG = sopsConfig;
 
-      inherit
+      shellHook =
         (inputs.git-hooks.lib.${system}.run {
           src = ./.;
           hooks.treefmt = {
             enable = true;
             packageOverrides.treefmt = inputs.self.formatter.${system};
           };
-        })
-        shellHook
-        ;
+        }).shellHook
+        + ''
+          unset ZIG_GLOBAL_CACHE_DIR
+        '';
     };
   }
 ) inputs.self.legacyPackages
