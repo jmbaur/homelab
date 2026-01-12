@@ -1,4 +1,5 @@
 {
+  bash-language-server,
   clang-tools,
   dts-lsp,
   fd,
@@ -75,6 +76,7 @@ wrapNeovimUnstable neovim (
         '';
         nativeBuildInputs = [ pkgsBuildBuild.neovim-unwrapped.lua.pkgs.fennel ];
         runtimeDeps = [
+          bash-language-server
           clang-tools
           dts-lsp
           fd
