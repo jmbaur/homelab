@@ -14,12 +14,21 @@
       hardware.firmware = [
         (pkgs.extractLinuxFirmwareDirectory "rtl_nic")
         (pkgs.extractLinuxFirmwareDirectory "intel")
+        pkgs.sof-firmware
       ];
 
       boot.initrd.availableKernelModules = [
         "sdhci_pci"
         "uas"
       ];
+
+      boot.kernelPackages = pkgs.linuxPackages_6_18;
+
+      # dsp_driver=3 == "use SOF"
+      boot.extraModprobeConfig = ''
+        options snd-intel-dspcfg dsp_driver=3
+        options snd-soc-avs ignore_fw_version=1
+      '';
     }
     {
       services.kodi.enable = true;
