@@ -48,8 +48,8 @@ let
       src = fetchFromGitHub {
         owner = "neovim";
         repo = "neovim";
-        rev = "025c0c34ce597484db01850cc1576b488bc84986";
-        hash = "sha256-Uk7gv89BLJT8h2h9Fa+fDPkXOWcr4EsbL2tK8Vho7gc=";
+        rev = "83552847f32e19b9701cda048323f45181343e24";
+        hash = "sha256-JPn/9o4x1cdWmifyYi0cX3mKGuv5T6EBKiHCMOZOy48=";
       };
     }
   );
@@ -74,7 +74,7 @@ wrapNeovimUnstable neovim (
         postInstall = ''
           find $out -name '*.fnl' -o -name 'Makefile' -delete
         '';
-        nativeBuildInputs = [ pkgsBuildBuild.neovim-unwrapped.lua.pkgs.fennel ];
+        depsBuildBuild = [ pkgsBuildBuild.neovim-unwrapped.lua.pkgs.fennel ];
         runtimeDeps = [
           bash-language-server
           clang-tools

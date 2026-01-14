@@ -31,7 +31,7 @@
 
 (local forge-header-matchers
        {:github (vim.regex "^x-github-request-id: .*$")
-        :gitlab (vim.regex "^x-gitlab-meta: .*$")
+        :gitlab (vim.regex "\\c^x-gitlab-meta: .*$")
         :gitea (vim.regex "^set-cookie: .*i_like_gitea.*$")})
 
 (fn detect-forge [remote-url]
@@ -42,11 +42,11 @@
                                                :wait))
                             "\r\n"))
   (local found-forge
-         (vim.tbl_keys ((collect [forge matcher (pairs forge-header-matchers)]
-                          (when (> (length (icollect [_ header (ipairs headers)]
-                                             (matcher:match_str header)))
-                                   0)
-                            (values forge true))))))
+         (vim.tbl_keys (collect [forge matcher (pairs forge-header-matchers)]
+                         (when (> (length (icollect [_ header (ipairs headers)]
+                                            (matcher:match_str header)))
+                                  0)
+                           (values forge true)))))
   (if (= (length found-forge) 0)
       (error "forge type not detected" vim.log.levels.ERROR)
       (. found-forge 1)))
