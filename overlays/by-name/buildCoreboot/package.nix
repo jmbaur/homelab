@@ -36,12 +36,12 @@ lib.extendMkDerivation {
     in
     {
       pname = "coreboot";
-      version = "25.09";
+      version = "25.12";
 
       src = fetchgit {
         url = "https://github.com/coreboot/coreboot";
         rev = finalAttrs.version;
-        hash = "sha256-ItQVCDC/MiF5rgecmxeR000lqTQy1VCSSILl1z4bJmM=";
+        hash = "sha256-9/dwx944lSS8ARBi0vD5ht9u+Tdl5WPF0tjFL07QRps=";
         fetchSubmodules = true;
       };
 
