@@ -41,22 +41,21 @@ stdenvNoCC.mkDerivation (
 
     nativeBuildInputs = [ zig_0_15 ];
 
-    strictDeps = true;
+    __structuredAttrs = true;
     doCheck = true;
+    dontPatchELF = true;
     dontStrip = true;
+    strictDeps = true;
 
     zigBuildFlags = [
       "-Dtarget=${stdenvNoCC.hostPlatform.qemuArch}-${stdenvNoCC.hostPlatform.parsed.kernel.name}"
     ];
 
     # TODO(jared): libsodium modifies downloaded contents at build time (this
-    # should be fixed). In addition to that, it fails when
-    # ZIG_GLOBAL_CACHE_DIR is set (that should also be checked).
-    configurePhase = ''
-      runHook preConfigure
+    # should be fixed).
+    postHook = ''
       cp -r ${deps} $ZIG_GLOBAL_CACHE_DIR/p
       chmod u+w --recursive $ZIG_GLOBAL_CACHE_DIR/p
-      runHook postConfigure
     '';
     passthru.deps = deps;
     meta.platforms = lib.platforms.linux;
