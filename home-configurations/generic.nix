@@ -165,7 +165,7 @@
       };
 
       nix = {
-        package = pkgs.nixVersions.nix_2_32;
+        package = pkgs.nixVersions.nix_2_33;
         settings.warn-dirty = false;
       };
 
