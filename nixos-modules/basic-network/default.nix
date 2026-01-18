@@ -26,14 +26,13 @@ in
       }
 
       (lib.mkIf (!config.systemd.network.enable) {
-        # Allow clatd to find dns server. See comment
-        # next to clatd config. This is only needed if
-        # systemd-networkd is not enabled since clatd has
-        # special integration for obtaining the PREF64
-        # prefix from systemd-networkd.
-        services.resolved.extraConfig = lib.mkIf config.services.clatd.enable ''
-          DNSStubListenerExtra=::1
-        '';
+        # Allow clatd to find dns server. See comment next to clatd config.
+        # This is only needed if systemd-networkd is not enabled since clatd
+        # has special integration for obtaining the PREF64 prefix from
+        # systemd-networkd.
+        services.resolved.settings.Resolve.DNSStubListenerExtra = lib.mkIf config.services.clatd.enable [
+          "::1"
+        ];
       })
 
       (lib.mkIf
