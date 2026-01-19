@@ -78,7 +78,7 @@ fn handleConnection(
     std.log.info("{f} {s}", .{ connection.address, request.head.target });
 
     if (std.mem.eql(u8, "/", request.head.target)) {
-        try request.respond(@embedFile("./index.html"), .{
+        try request.respond(@embedFile("./garage-door.html"), .{
             .extra_headers = &.{
                 .{ .name = "Content-Type", .value = "text/html" },
             },
