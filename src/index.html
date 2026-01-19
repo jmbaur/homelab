@@ -10,23 +10,12 @@
 		const garage_movement_ms = 10000;
 		var press;
 		var locked;
-		function reset() {
+		function cancel() {
 			press = null;
 			locked = false;
 			document.body.style.backgroundColor = "green";
 		}
-		reset();
-		function isMobileDevice() {
-			const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-			if (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent)) {
-				return true;
-			}
-			return false;
-		}
-		const startevent = isMobileDevice() ? "touchstart" : "mousedown";
-		const endevent = isMobileDevice() ? "touchend" : "mouseup";
-		const cancelevent = isMobileDevice() ? "touchcancel" : "mouseleave";
-		document.addEventListener(startevent, function(event) {
+		function start(event) {
 			if (locked) {
 				return;
 			}
@@ -38,8 +27,8 @@
 					document.body.style.backgroundColor = "lightgreen";
 				}
 			}, press_min_ms);
-		});
-		document.addEventListener(endevent, function(event) {
+		}
+		function end(event) {
 			if (press === null || !locked) {
 				return;
 			}
@@ -47,12 +36,18 @@
 			press = null;
 			if (diff < press_min_ms) {
 				document.body.style.backgroundColor = "red";
-				window.setTimeout(reset, press_min_ms);
+				window.setTimeout(cancel, press_min_ms);
 			} else {
 				fetch("/toggle");
-				window.setTimeout(reset, garage_movement_ms);
+				window.setTimeout(cancel, garage_movement_ms);
 			}
-		});
-		document.addEventListener(cancelevent, reset);
+		}
+		document.addEventListener("touchstart", start);
+		document.addEventListener("mousedown", start);
+		document.addEventListener("touchend", end);
+		document.addEventListener("mouseup", end);
+		document.addEventListener("touchcancel", cancel);
+		document.addEventListener("mouseleave", cancel);
+		cancel();
 	</script>
 </html>
