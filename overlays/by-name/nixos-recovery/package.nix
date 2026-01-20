@@ -1,5 +1,6 @@
 {
   btrfs-progs,
+  coreutils,
   cryptsetup,
   curl,
   dosfstools,
@@ -18,6 +19,7 @@ writeArgcShellApplication {
   runtimeInputs = [
     "/run/wrappers" # mount
     btrfs-progs # mkfs.btrfs
+    coreutils
     cryptsetup
     curl
     dosfstools # mkfs.vfat

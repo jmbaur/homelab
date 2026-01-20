@@ -13,12 +13,13 @@ eval "$(argc --argc-eval "$0" "$@")"
 
 target_disk=$(readlink --canonicalize-existing "$argc_target_disk")
 fstab=$(readlink --canonicalize-existing "$argc_fstab")
+mapper_device=$(shuf -er -n16 {A..Z} {a..z} {0..9} | tr -d '\n')
 target_mountpoint=$(mktemp -d --suffix="-nixos-recovery")
 chmod o+rx "$target_mountpoint"
 
 function cleanup() {
 	if umount --recursive "$target_mountpoint" 2>/dev/null; then
-		dmsetup remove root 2>/dev/null || true
+		dmsetup remove "$mapper_device" 2>/dev/null || true
 		rm -rf "$target_mountpoint" || true
 	fi
 }
@@ -52,10 +53,10 @@ udevadm wait --timeout=10 "$root_partition"
 sleep 2 # TODO(jared): don't do this, though it does appear to be necessary
 
 # unlock root partition
-echo "" | cryptsetup open "$root_partition" root
+echo "" | cryptsetup open "$root_partition" "$mapper_device"
 
 # TODO(jared): mount --all should be able to mount the root filesystem as well?
-mount --mkdir --target-prefix="$target_mountpoint" --fstab="$fstab" /
+mount --mkdir --target-prefix="$target_mountpoint" --fstab="$fstab" "/dev/mapper/${mapper_device}" /
 mount --all --mkdir --target-prefix="$target_mountpoint" --fstab="$fstab"
 
 echo "Installing NixOS toplevel $toplevel"
