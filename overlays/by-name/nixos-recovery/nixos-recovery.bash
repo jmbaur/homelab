@@ -61,6 +61,4 @@ mount --all --mkdir --target-prefix="$target_mountpoint" --fstab="$fstab"
 echo "Installing NixOS toplevel $toplevel"
 
 # install toplevel
-#
-# TODO(jared): why do we need $HOME set?
-env HOME="$(mktemp -d)" nixos-install --closure "$toplevel" --root "$target_mountpoint" --no-root-password --no-channel-copy
+nixos-install --closure "$toplevel" --root "$target_mountpoint" --no-root-password --no-channel-copy

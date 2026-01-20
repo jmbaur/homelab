@@ -213,6 +213,7 @@ let
         ];
         onSuccess = [ "reboot.target" ];
         onFailure = [ "rescue.target" ];
+        environment.HOME = "/tmp"; # needed by nixos-install
         serviceConfig = {
           StandardError = "journal+console";
           StandardOutput = "journal+console";
