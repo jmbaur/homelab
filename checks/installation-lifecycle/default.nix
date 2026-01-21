@@ -63,7 +63,6 @@ testers.runNixOSTest {
 
         virtualisation.directBoot.enable = false;
         virtualisation.efi.keepVariables = false;
-        virtualisation.graphics = false;
         virtualisation.mountHostNixStore = false;
         virtualisation.useBootLoader = true;
         virtualisation.useEFIBoot = true;
