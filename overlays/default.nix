@@ -58,16 +58,6 @@ inputs: {
             });
           };
 
-      # Add support for PREF64 NDP option.
-      tcpdump = prev.tcpdump.overrideAttrs (old: {
-        patches = (old.patches or [ ]) ++ [
-          (final.fetchpatch {
-            url = "https://github.com/the-tcpdump-group/tcpdump/commit/d879d9349ab7b3dffc4797b6a8ece758e93636c1.patch";
-            hash = "sha256-Z1gHBYNUMdIkNT+miI3Iis183yJvc29OLAvg6kkvDGY=";
-          })
-        ];
-      });
-
       # Make dbus service file start the systemd service
       mako = prev.mako.overrideAttrs (old: {
         postInstall = (old.postInstall or "") + ''
