@@ -29,6 +29,7 @@
   texlive,
   tofu-ls,
   ttags,
+  typescript-go,
   vimPlugins,
   vimUtils,
   wrapNeovimUnstable,
@@ -101,6 +102,7 @@ wrapNeovimUnstable neovim (
           texlive.pkgs.latexmk
           tofu-ls
           ttags
+          typescript-go
           zig_0_15
           zls_0_15
         ];

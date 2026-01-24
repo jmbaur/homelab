@@ -16,6 +16,7 @@
 (add-lsp-if-has [:tofu-ls :tofu] :tofu_ls)
 (add-lsp-if-has [:zls] :zls {:settings {:zls {:semantic_tokens :partial}}})
 (add-lsp-if-has [:lua-language-server] :lua_ls)
+(add-lsp-if-has [:tsgo] :tsgo)
 (add-lsp-if-has [:latexmk] :texlab
                 {:settings {:texlab {:latexFormatter (if (= (vim.fn.executable :tex-fmt)
                                                             1)
