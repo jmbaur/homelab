@@ -72,7 +72,6 @@
         unzip
         usbutils
         watchexec
-        wip
         zip
       ];
 
