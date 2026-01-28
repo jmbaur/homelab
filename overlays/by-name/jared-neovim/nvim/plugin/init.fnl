@@ -1,9 +1,6 @@
 (vim.loader.enable)
 
 (local fzf-lua (require :fzf-lua))
-(local modus (require :modus-themes))
-
-(modus.setup {:styles {:comments {:italic false} :keywords {:italic false}}})
 
 (local is-dumb-term (not= (: (vim.regex "linux\\|vt220\\|vt202\\|dumb")
                              :match_str vim.env.TERM)
@@ -115,7 +112,8 @@
 (set vim.opt.wildoptions (table.concat [:pum :tagfile] ","))
 (set vim.opt.wrap false)
 
-(vim.cmd.colorscheme (if (= (vim.opt.termguicolors:get) true) :modus :vim))
+(vim.cmd.colorscheme (if (= (vim.opt.termguicolors:get) true) :lunaperche
+                         :vim))
 
 ; TODO(jared): use vim.snippet
 (vim.cmd.iabbrev "todo:" "TODO(jared):")
