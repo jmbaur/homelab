@@ -45,12 +45,12 @@ let
       ) "Neovim version from nixpkgs is already 0.12.0"
     );
     {
-      version = "0.12.0";
+      version = "0.12.0-dev";
       src = fetchFromGitHub {
         owner = "neovim";
         repo = "neovim";
-        rev = "19a3b6778979e0b328f9a791a9f92296fd406690";
-        hash = "sha256-j9aX0TJ5rK4v+XupUjbk8WLV0LdFXpyL1hw99oH/1lg=";
+        rev = "ed4c549ea2436b820860c3453d348c84d441de9b";
+        hash = "sha256-jUfWCAZYosw51HBzOrlgmRMFENDMLHHvgM7N4SYaSPw=";
       };
     }
   );
