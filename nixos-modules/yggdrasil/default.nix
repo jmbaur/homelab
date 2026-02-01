@@ -93,15 +93,15 @@ in
           chain yggdrasil-known-peers {
             ${optionalString (
               cfg.allKnownPeers.allowedTCPPorts != [ ]
-            ) ''tcp dport { ${knownPeersTcpPorts} } accept''}
+            ) "tcp dport { ${knownPeersTcpPorts} } accept"}
             ${optionalString (
               cfg.allKnownPeers.allowedUDPPorts != [ ]
-            ) ''udp dport { ${knownPeersUdpPorts} } accept''}
+            ) "udp dport { ${knownPeersUdpPorts} } accept"}
           }
 
           chain yggdrasil-global {
-            ${optionalString (cfg.all.allowedTCPPorts != [ ]) ''tcp dport { ${allPeersTcpPorts} } accept''}
-            ${optionalString (cfg.all.allowedUDPPorts != [ ]) ''udp dport { ${allPeersUdpPorts} } accept''}
+            ${optionalString (cfg.all.allowedTCPPorts != [ ]) "tcp dport { ${allPeersTcpPorts} } accept"}
+            ${optionalString (cfg.all.allowedUDPPorts != [ ]) "udp dport { ${allPeersUdpPorts} } accept"}
           }
         '';
 
@@ -132,7 +132,7 @@ in
             # yggdrasil network, the allowed ports for the entire network
             # also apply to our known peers.
             ''
-              ${optionalString (ips != [ ]) ''ip6 saddr { ${ips} } jump yggdrasil-known-peers''}
+              ${optionalString (ips != [ ]) "ip6 saddr { ${ips} } jump yggdrasil-known-peers"}
               ip6 saddr 200::/7 goto yggdrasil-global
             ''
           )

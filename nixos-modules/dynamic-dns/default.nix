@@ -37,7 +37,7 @@ in
     subdomain = mkOption {
       type = types.str;
       default = config.networking.hostName;
-      defaultText = ''config.networking.hostName'';
+      defaultText = "config.networking.hostName";
     };
   };
 
