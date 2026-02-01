@@ -1,24 +1,24 @@
 {
-  dtc,
   fetchFromGitHub,
+  pkgsBuildBuild,
   stdenv,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
-  pname = "slbounce";
-  version = "5";
+  pname = "qebspil";
+  version = "1";
 
   src = fetchFromGitHub {
-    owner = "TravMurav";
-    repo = "slbounce";
+    owner = "stephan-gh";
+    repo = "qebspil";
     tag = "v${finalAttrs.version}";
     fetchSubmodules = true;
-    hash = "sha256-X1lGJ+OYNcPORq3qqf1TLcuYa82sHAecXkUyiarnEp4=";
+    hash = "sha256-kWUXzeYWNxGgmjt/p9yozrWc5ouUs0XXBRfiFMlu+QQ=";
   };
 
   makeFlags = [ "CROSS_COMPILE=${stdenv.cc.targetPrefix}" ];
 
-  nativeBuildInputs = [ dtc ];
+  depsBuildBuild = [ pkgsBuildBuild.stdenv.cc ];
 
   installPhase = ''
     runHook preInstall
