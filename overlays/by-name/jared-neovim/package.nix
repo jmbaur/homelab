@@ -4,15 +4,12 @@
   dts-lsp,
   fd,
   fennel-ls,
-  fetchFromGitHub,
   fnlfmt,
   fzf,
   go-tools,
   gofumpt,
   gopls,
-  lib,
   lua-language-server,
-  neovim-unwrapped,
   neovimUtils,
   nixd,
   nixfmt,
@@ -33,29 +30,12 @@
   vimPlugins,
   vimUtils,
   wrapNeovimUnstable,
+  zig-neovim-unwrapped,
   zig_0_15,
   zls_0_15,
 }:
 
-let
-  neovim = neovim-unwrapped.overrideAttrs (
-    assert (
-      lib.assertMsg (
-        !lib.versionAtLeast neovim-unwrapped.version "0.12.0"
-      ) "Neovim version from nixpkgs is already 0.12.0"
-    );
-    {
-      version = "0.12.0-dev";
-      src = fetchFromGitHub {
-        owner = "neovim";
-        repo = "neovim";
-        rev = "8aec33e3221fb452198ab98d7bd7fdfb119c3dfb";
-        hash = "sha256-gaFp3OT8b3k7rWtDnUla3HirJ+wyF7fsgzdBym8iSYc=";
-      };
-    }
-  );
-in
-wrapNeovimUnstable neovim (
+wrapNeovimUnstable zig-neovim-unwrapped (
   neovimUtils.makeNeovimConfig {
     customRC = "set exrc";
 
