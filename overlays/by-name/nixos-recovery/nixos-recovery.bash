@@ -54,9 +54,9 @@ sleep 2 # TODO(jared): don't do this, though it does appear to be necessary
 # unlock root partition
 echo "" | cryptsetup open "$root_partition" root
 
-# TODO(jared): mount --all should be able to mount the root filesystem as well?
+# only mount root and boot
 mount --mkdir --target-prefix="$target_mountpoint" --fstab="$fstab" /
-mount --all --mkdir --target-prefix="$target_mountpoint" --fstab="$fstab"
+mount --mkdir --target-prefix="$target_mountpoint" --fstab="$fstab" /boot
 
 echo "Installing NixOS toplevel $toplevel"
 
