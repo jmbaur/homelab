@@ -5,7 +5,6 @@
   fd,
   fennel-ls,
   fnlfmt,
-  fzf,
   go-tools,
   gofumpt,
   gopls,
@@ -63,7 +62,6 @@ wrapNeovimUnstable zig-neovim-unwrapped (
           fd
           fennel-ls
           fnlfmt
-          fzf
           go-tools
           gofumpt
           gopls
@@ -89,7 +87,6 @@ wrapNeovimUnstable zig-neovim-unwrapped (
       })
     ]
     ++ (with vimPlugins; [
-      fzf-lua
       nvim-lspconfig
       nvim-treesitter.withAllGrammars
       vim-dispatch
@@ -98,7 +95,6 @@ wrapNeovimUnstable zig-neovim-unwrapped (
       vim-rsi
       vim-surround
       vim-vinegar
-      zoxide-vim
     ]);
   }
 )

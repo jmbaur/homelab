@@ -1,7 +1,5 @@
 (vim.loader.enable)
 
-(local fzf-lua (require :fzf-lua))
-
 (local is-dumb-term (not= (: (vim.regex "linux\\|vt220\\|vt202\\|dumb")
                              :match_str vim.env.TERM)
                           nil))
@@ -33,30 +31,6 @@
                                                false)
                                           (set vim.opt_local.signcolumn :no)
                                           (vim.cmd.startinsert)
-                                          nil)})
-
-(fn setup-fzf [?background]
-  (fzf-lua.setup {:fzf_args (string.format "--color=%s" (or ?background :dark))
-                  :defaults {:file_icons false}
-                  :files {:previewer false}
-                  :hls {:title "" :title_flags ""}
-                  :winopts {:split "botright 15new"
-                            :border false
-                            :preview {:hidden true
-                                      :border nil
-                                      :title false
-                                      :layout :horizontal
-                                      :horizontal "right:50%"}}})
-  nil)
-
-; Do the initial setup of fzf such that we don't start with the defaults.
-(setup-fzf)
-
-(vim.api.nvim_create_autocmd [:OptionSet]
-                             {:pattern [:background]
-                              :callback (lambda [opts]
-                                          (if (= (. opts :match) :background)
-                                              (setup-fzf (vim.opt.background:get)))
                                           nil)})
 
 ;; TODO(jared): consider only enabling this on certain filetypes
@@ -118,15 +92,25 @@
 ; TODO(jared): use vim.snippet
 (vim.cmd.iabbrev "todo:" "TODO(jared):")
 
-(fzf-lua.register_ui_select)
+; TODO(jared): port this to fennel
 
-(vim.keymap.set :n :<Leader>? fzf-lua.helptags {:desc "Find help tags"})
-(vim.keymap.set :n :<Leader>_ fzf-lua.registers {:desc "Find registers"})
-(vim.keymap.set :n :<Leader>b fzf-lua.buffers {:desc "Find buffers"})
-(vim.keymap.set :n :<Leader>c fzf-lua.resume {:desc "Resume picker"})
-(vim.keymap.set :n :<Leader>f fzf-lua.files {:desc "Find files"})
-(vim.keymap.set :n :<Leader>g fzf-lua.live_grep {:desc "Find regexp pattern"})
-(vim.keymap.set :n :<Leader>h fzf-lua.command_history
-                {:desc "Find Ex-mode history"})
+(var filescache [])
+(set _G.FuzzyFind (lambda [arg _]
+                    (set filescache
+                         (vim.split (. (: (vim.system [:fd :--type :file])
+                                          :wait)
+                                       :stdout)
+                                    "\n"))
+                    (if (= arg "")
+                        filescache
+                        (vim.fn.matchfuzzy filescache arg))))
+
+(vim.api.nvim_create_autocmd [:CmdlineEnter]
+                             {:pattern [":"]
+                              :callback (lambda [_]
+                                          (set filescache [])
+                                          nil)})
+
+(set vim.opt.findfunc "v:lua._G.FuzzyFind")
 
 nil
