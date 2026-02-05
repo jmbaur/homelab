@@ -109,7 +109,7 @@
 
 (set vim.opt.title true)
 (set vim.opt.virtualedit :block)
-(set vim.opt.wildoptions (table.concat [:pum :tagfile] ","))
+(set vim.opt.wildoptions (table.concat [:pum :fuzzy] ","))
 (set vim.opt.wrap false)
 
 (vim.cmd.colorscheme (if (= (vim.opt.termguicolors:get) true) :lunaperche
