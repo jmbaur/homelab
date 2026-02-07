@@ -21,19 +21,16 @@ in
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "mediamtx-rpicamera";
-  version = "2.5.1";
+  version = "2.5.3";
 
   src = fetchFromGitHub {
     owner = "bluenviron";
     repo = "mediamtx-rpicamera";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-G8tnvo2Elc6a+7cHo7SKfEwF2sUzD9C92Pj4qdlOxIo=";
+    hash = "sha256-TJZBcY457HNSIiHQf95LlChXp1CT0AQfCA6tvtVv/Q0=";
   };
 
-  patches = [
-    ./pull-77.patch
-    ./uninsane.patch
-  ];
+  patches = [ ./uninsane.patch ];
 
   # look at text_font.sh
   postPatch = ''
