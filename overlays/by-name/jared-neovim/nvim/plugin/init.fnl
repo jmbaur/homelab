@@ -62,6 +62,7 @@
 (set vim.opt.clipboard :unnamedplus)
 (set vim.opt.colorcolumn :80)
 (set vim.opt.completeopt (table.concat [:menuone :noselect] ","))
+(set vim.opt.grepprg "rg --vimgrep")
 (set vim.opt.hidden true)
 (set vim.opt.hlsearch true)
 (set vim.opt.ignorecase true)
@@ -71,7 +72,6 @@
 (set vim.opt.linebreak true)
 (set vim.opt.number true)
 (set vim.opt.ruler true)
-(vim.opt.shortmess:remove [:S])
 (set vim.opt.showcmd true)
 (set vim.opt.showmatch true)
 (set vim.opt.smartcase true)
@@ -80,6 +80,8 @@
 (set vim.opt.splitkeep :screen)
 (set vim.opt.splitright true)
 (set vim.opt.termguicolors (not is-dumb-term))
+
+(vim.opt.shortmess:remove [:S])
 
 (set vim.opt.title true)
 (set vim.opt.virtualedit :block)
