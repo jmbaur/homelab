@@ -53,7 +53,7 @@ stdenvNoCC.mkDerivation (
 
     # TODO(jared): libsodium modifies downloaded contents at build time (this
     # should be fixed).
-    postHook = ''
+    postConfigure = ''
       cp -r ${deps} $ZIG_GLOBAL_CACHE_DIR/p
       chmod u+w --recursive $ZIG_GLOBAL_CACHE_DIR/p
     '';

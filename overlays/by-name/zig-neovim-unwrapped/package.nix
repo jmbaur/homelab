@@ -26,17 +26,18 @@ stdenvNoCC.mkDerivation (
   {
     pname = "neovim-unwrapped";
     version = "0.12.0-dev";
+
     src = fetchFromGitHub {
       owner = "neovim";
       repo = "neovim";
-      rev = "e70452990935fedd7de6ca84dde4a0ac16807fd9";
-      hash = "sha256-wEpaExB0aDMWcUAU4lYN/KjGqrJCitHAEYvnooL8cBk=";
+      rev = "6ad73421cbfc42d63e8e2d3522ef1e6b9ed48855";
+      hash = "sha256-rfezPRo4gPD0kjjKxaHaL4XtHl1HAZJBjz2NVfOzGrw=";
     };
 
     __structuredAttrs = true;
     strictDeps = true;
 
-    postHook = ''
+    postConfigure = ''
       ln -s ${deps} $ZIG_GLOBAL_CACHE_DIR/p
     '';
 
