@@ -12,7 +12,7 @@ declare -r default_base_directory=${XDG_STATE_HOME:-$HOME/.local/state}/projects
 base_directory=${PROJECTS_DIR:-$default_base_directory}
 
 if ! test -d "$base_directory"; then
-	usage "Cannot find projects directory"
+	echo "Cannot find projects directory"
 	exit 1
 fi
 
