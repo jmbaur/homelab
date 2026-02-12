@@ -38,6 +38,8 @@
 
       virtualisation.podman.enable = true;
 
+      hardware.saleae-logic.enable = true;
+
       nix.settings = {
         extra-substituters = [ "https://cache.northwood.space" ];
         extra-trusted-public-keys = [
