@@ -20,7 +20,7 @@ stdenvNoCC.mkDerivation (
       '';
       outputHashAlgo = null;
       outputHashMode = "recursive";
-      outputHash = "sha256-/auHXoPhbxzjx2Jw7AtARYkFr0sC5YuivB9LbkWZxSQ=";
+      outputHash = "sha256-IFa02DlODegN14BbqiI8mt6jgHoME0IuqSYk4qbjbB4=";
     };
   in
   {
@@ -30,8 +30,8 @@ stdenvNoCC.mkDerivation (
     src = fetchFromGitHub {
       owner = "neovim";
       repo = "neovim";
-      rev = "6b4ec2264e1d8ba027b85f3883d532c5068be92a";
-      hash = "sha256-6F/Z/UQxalaSoqewSQ4fL8zSws3Vy4wgA5DgyTaeqTo=";
+      rev = "8a0cbf04d6a60f91c69c707789b18986a6921f8f";
+      hash = "sha256-+c2VTNDqGTbowRKUj8fc0mRx1hM2eBLjcxB7Tfu4Wjg=";
     };
 
     __structuredAttrs = true;
