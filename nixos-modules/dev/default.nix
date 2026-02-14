@@ -24,6 +24,9 @@ in
         programs.gnupg.agent.enable = lib.mkDefault true;
         services.pcscd.enable = lib.mkDefault config.custom.desktop.enable;
 
+        # kitty is nice
+        environment.systemPackages = [ pkgs.kitty ];
+
         services.udev.packages = [
           (pkgs.concatTextFile {
             name = "openocd-udev-rules";
