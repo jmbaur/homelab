@@ -100,4 +100,31 @@
       };
     };
   };
+
+  networking.firewall.allowedTCPPorts = [ 443 ];
+
+  sops.secrets."cf-origin/cert".owner = config.services.nginx.user;
+  sops.secrets."cf-origin/key".owner = config.services.nginx.user;
+  sops.secrets."garage-htpasswd".owner = config.services.nginx.user;
+
+  services.nginx = {
+    enable = true;
+    recommendedProxySettings = true;
+    recommendedOptimisation = true;
+    recommendedTlsSettings = true;
+    virtualHosts."${config.networking.hostName}.jmbaur.com" = {
+      onlySSL = true;
+      locations."/".return = 404;
+      sslCertificate = config.sops.secrets."cf-origin/cert".path;
+      sslCertificateKey = config.sops.secrets."cf-origin/key".path;
+    };
+    virtualHosts."garage.jmbaur.com" = {
+      onlySSL = true;
+      basicAuthFile = config.sops.secrets."garage-htpasswd".path;
+      locations."/".proxyPass = "http://rhubarb.internal:8080";
+      locations."/cam".proxyPass = "http://rhubarb.internal:8888";
+      sslCertificate = config.sops.secrets."cf-origin/cert".path;
+      sslCertificateKey = config.sops.secrets."cf-origin/key".path;
+    };
+  };
 }

@@ -32,7 +32,6 @@
     {
       sops.secrets."cf-origin/cert".owner = config.services.nginx.user;
       sops.secrets."cf-origin/key".owner = config.services.nginx.user;
-      sops.secrets."garage-htpasswd".owner = config.services.nginx.user;
 
       services.nginx = {
         enable = true;
@@ -76,16 +75,6 @@
       services.nginx.virtualHosts."jellyfin.jmbaur.com" = {
         onlySSL = true;
         locations."/".proxyPass = "http://[::1]:8096";
-        sslCertificate = config.sops.secrets."cf-origin/cert".path;
-        sslCertificateKey = config.sops.secrets."cf-origin/key".path;
-      };
-    }
-    {
-      services.nginx.virtualHosts."garage.jmbaur.com" = {
-        onlySSL = true;
-        basicAuthFile = config.sops.secrets."garage-htpasswd".path;
-        locations."/".proxyPass = "http://rhubarb.internal:8080";
-        locations."/cam".proxyPass = "http://rhubarb.internal:8888";
         sslCertificate = config.sops.secrets."cf-origin/cert".path;
         sslCertificateKey = config.sops.secrets."cf-origin/key".path;
       };

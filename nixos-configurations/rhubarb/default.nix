@@ -63,10 +63,7 @@
       };
 
       networking.wireless.iwd.enable = true;
-      environment.systemPackages = [
-        pkgs.iw
-        pkgs.rpicam-apps
-      ];
+      environment.systemPackages = [ pkgs.iw ];
 
       systemd.sockets.garage-door = {
         listenStreams = [ "[::]:8080" ];
@@ -92,9 +89,9 @@
         SUBSYSTEM=="dma_heap", GROUP="video", MODE="0660"
       '';
 
-      services.yggdrasil.settings.Peers = [ "tls://celery.jmbaur.com:443" ];
+      services.yggdrasil.settings.Peers = [ "tls://celery.jmbaur.com:3443" ];
 
-      custom.yggdrasil.peers.pumpkin.allowedTCPPorts = [
+      custom.yggdrasil.peers.celery.allowedTCPPorts = [
         8080 # homelab-garage-door
         8888 # hls mediamtx
         8889 # webrtc mediamtx

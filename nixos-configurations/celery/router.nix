@@ -37,7 +37,7 @@ in
   custom.yggdrasil.allKnownPeers.allowedTCPPorts = [ config.services.iperf3.port ];
 
   networking.firewall = {
-    allowedTCPPorts = [ 443 ];
+    allowedTCPPorts = [ 3443 ];
     interfaces.${config.router.lanInterface}.allowedTCPPorts = [
       22
       9001
@@ -94,7 +94,7 @@ in
   };
 
   services.yggdrasil.settings = {
-    Listen = [ "tls://[::]:443" ];
+    Listen = [ "tls://[::]:3443" ];
     MulticastInterfaces = mkForce [
       {
         Regex = config.router.lanInterface;

@@ -44,7 +44,7 @@ in
 
   boot.loader.tinyboot.enable = true;
 
-  services.yggdrasil.settings.Peers = [ "tls://celery.jmbaur.com:443" ];
+  services.yggdrasil.settings.Peers = [ "tls://celery.jmbaur.com:3443" ];
 
   custom.desktop.enable = true;
   custom.dev.enable = true;
