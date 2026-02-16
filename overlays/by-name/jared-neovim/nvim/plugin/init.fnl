@@ -50,8 +50,6 @@
 (set vim.g.loaded_python3_provider 0)
 (set vim.g.mapleader (vim.api.nvim_replace_termcodes :<Space> true true true))
 (set vim.g.maplocalleader ",")
-(set vim.g.zoxide_hook :pwd)
-(set vim.g.zoxide_use_select 1)
 
 (set vim.wo.foldenable false)
 (set vim.wo.foldminlines 20)

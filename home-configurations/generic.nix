@@ -175,8 +175,6 @@
 
       programs.nix-index.enable = true;
 
-      programs.zoxide.enable = true;
-
       programs.zsh = {
         enable = true;
         initContent = ''
