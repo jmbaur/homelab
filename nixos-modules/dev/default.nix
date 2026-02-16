@@ -25,7 +25,7 @@ in
         services.pcscd.enable = lib.mkDefault config.custom.desktop.enable;
 
         # kitty is nice
-        environment.systemPackages = [ pkgs.kitty ];
+        environment.systemPackages = lib.optionals config.custom.desktop.enable [ pkgs.kitty ];
 
         services.udev.packages = [
           (pkgs.concatTextFile {
