@@ -91,41 +91,47 @@ pub fn build(b: *std.Build) !void {
     });
     b.installArtifact(pomo);
 
-    const swayzbar = b.addExecutable(.{
-        .name = "swayzbar",
-        .root_module = b.createModule(.{
-            .root_source_file = b.path("src/swayzbar.zig"),
-            .target = target,
-            .optimize = optimize,
-            .strip = optimize != .Debug,
-            .link_libc = true,
-        }),
-    });
-    b.installArtifact(swayzbar);
+    if (target.result.os.tag == .linux) {
+        const swayzbar = b.addExecutable(.{
+            .name = "swayzbar",
+            .root_module = b.createModule(.{
+                .root_source_file = b.path("src/swayzbar.zig"),
+                .target = target,
+                .optimize = optimize,
+                .strip = optimize != .Debug,
+                .link_libc = true,
+            }),
+        });
+        b.installArtifact(swayzbar);
+    }
 
-    const nixos_kexec = b.addExecutable(.{
-        .name = "nixos-kexec",
-        .root_module = b.createModule(.{
-            .root_source_file = b.path("src/nixos-kexec.zig"),
-            .target = target,
-            .optimize = optimize,
-            .strip = optimize != .Debug,
-            .link_libc = false,
-        }),
-    });
-    b.installArtifact(nixos_kexec);
+    if (target.result.os.tag == .linux) {
+        const nixos_kexec = b.addExecutable(.{
+            .name = "nixos-kexec",
+            .root_module = b.createModule(.{
+                .root_source_file = b.path("src/nixos-kexec.zig"),
+                .target = target,
+                .optimize = optimize,
+                .strip = optimize != .Debug,
+                .link_libc = false,
+            }),
+        });
+        b.installArtifact(nixos_kexec);
+    }
 
-    const homelab_garage_door = b.addExecutable(.{
-        .name = "homelab-garage-door",
-        .root_module = b.createModule(.{
-            .root_source_file = b.path("src/homelab-garage-door.zig"),
-            .target = target,
-            .optimize = optimize,
-            .strip = optimize != .Debug,
-            .link_libc = true,
-        }),
-    });
-    b.installArtifact(homelab_garage_door);
+    if (target.result.os.tag == .linux) {
+        const homelab_garage_door = b.addExecutable(.{
+            .name = "homelab-garage-door",
+            .root_module = b.createModule(.{
+                .root_source_file = b.path("src/homelab-garage-door.zig"),
+                .target = target,
+                .optimize = optimize,
+                .strip = optimize != .Debug,
+                .link_libc = true,
+            }),
+        });
+        b.installArtifact(homelab_garage_door);
+    }
 
     const homelab_backup_recv = b.addExecutable(.{
         .name = "homelab-backup-recv",

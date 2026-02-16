@@ -58,6 +58,6 @@ stdenvNoCC.mkDerivation (
       chmod u+w --recursive $ZIG_GLOBAL_CACHE_DIR/p
     '';
     passthru.deps = deps;
-    meta.platforms = lib.platforms.linux;
+    meta.platforms = lib.platforms.all;
   }
 )
