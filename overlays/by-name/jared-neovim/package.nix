@@ -87,6 +87,7 @@ wrapNeovimUnstable zig-neovim-unwrapped (
       })
     ]
     ++ (with vimPlugins; [
+      direnv-vim
       nvim-lspconfig
       nvim-treesitter.withAllGrammars
       vim-dispatch
