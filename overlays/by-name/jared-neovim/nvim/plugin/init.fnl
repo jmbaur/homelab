@@ -94,8 +94,6 @@
 ; TODO(jared): use vim.snippet
 (vim.cmd.iabbrev "todo:" "TODO(jared):")
 
-; TODO(jared): port this to fennel
-
 (var filescache [])
 (set _G.FuzzyFind (lambda [arg _]
                     (set filescache
