@@ -5,8 +5,11 @@
 
 (fn open-project [opts]
   (local project-path (vim.fs.joinpath (project-dir) opts.args))
-  (vim.cmd.tabnew project-path)
-  (vim.cmd.tcd project-path))
+  (if (vim.uv.fs_stat project-path)
+      (do
+        (vim.cmd.tabnew project-path)
+        (vim.cmd.tcd project-path))
+      (vim.print (string.format "Project does not exist at %s" project-path))))
 
 (fn project-complete [arg-lead cmdline cursor-pos]
   (icollect [name entry-type (vim.fs.dir (project-dir) {:depth 1})]
