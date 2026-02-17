@@ -8,7 +8,8 @@
   (if (vim.uv.fs_stat project-path)
       (do
         (vim.cmd.tabnew project-path)
-        (vim.cmd.tcd project-path))
+        (vim.cmd.tcd project-path)
+        nil)
       (vim.print (string.format "Project does not exist at %s" project-path))))
 
 (fn project-complete [arg-lead cmdline cursor-pos]
