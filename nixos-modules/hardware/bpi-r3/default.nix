@@ -10,8 +10,6 @@
   config = lib.mkIf config.hardware.bpi-r3.enable {
     nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
 
-    boot.kernelPackages = pkgs.linuxPackages_6_18;
-
     hardware.firmware = [
       pkgs.wireless-regdb
       (pkgs.extractLinuxFirmwareDirectory "mediatek")
@@ -24,7 +22,7 @@
         map
           (dtsFile: {
             inherit dtsFile;
-            name = builtins.baseNameOf dtsFile;
+            name = baseNameOf dtsFile;
           })
           [
             ./wifi-calibration.dtso

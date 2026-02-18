@@ -32,7 +32,7 @@ in
 
     hardware.firmware = [ pkgs.linux-firmware ];
 
-    boot.kernelPackages = pkgs.linuxPackages_6_18;
+    boot.kernelPackages = pkgs.linuxPackages_6_19;
 
     boot.consoleLogLevel = 7;
 

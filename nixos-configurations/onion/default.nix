@@ -22,8 +22,6 @@
         "uas"
       ];
 
-      boot.kernelPackages = pkgs.linuxPackages_6_18;
-
       # dsp_driver=3 == "use SOF"
       boot.extraModprobeConfig = ''
         options snd-intel-dspcfg dsp_driver=3
