@@ -45,7 +45,6 @@ inputs.nixpkgs.lib.mapAttrs (
         pkgs.lldb
         pkgs.neovim-unwrapped.lua.pkgs.fennel
         pkgs.openscad-unstable
-        pkgs.sbcl
         pkgs.sops
         pkgs.ssh-to-age
         pkgs.zig_0_15
