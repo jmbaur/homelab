@@ -9,6 +9,7 @@
 
 # celery
 solve issues at early boot
+
 ```
 [    0.527711] mtk-socinfo mtk-socinfo.0.auto: error -ENOENT: Failed to get socinfo data
 [    0.527816] mtk-socinfo mtk-socinfo.0.auto: probe with driver mtk-socinfo failed with error -2
@@ -27,6 +28,7 @@ Jan 12 02:12:48 celery kernel: mtdblock: MTD device 'fip' is NAND, please consid
 ```
 
 solve reboot issues (hangs indefinitely) https://freedesktop.org/wiki/Software/systemd/Debugging/#diagnosingshutdownproblems
+
 ```
 [  OK  ] Removed slice Slice /system/systemd-zram-setup.
 [  OK  ] Reached target System Shutdown.
@@ -53,6 +55,7 @@ solve panic on early boot
 [    3.314332] dw-apb-uart 5000000.serial: Error applying setting, reverse things back
 [    3.324627] sun6i-spi 5010000.spi: Error applying setting, reverse things back
 ```
+
 # pumpkin
 
 Recovery image doesn't work without kernel modules that allow for USB mass storage access into initrd, meaning we must put the recovery image on an sdcard or something similar.
@@ -61,6 +64,10 @@ Recovery image doesn't work without kernel modules that allow for USB mass stora
 
 On some systems, the only python dependency is the `systemd-boot-builder.py` script.
 If we implement this ourselves, we can get rid of this dependency as well as implement some features that have yet to be implemented upstream (e.g. boot counting).
+
+# filesystem shenanigans
+
+For multi-disk systems, it would probably be best to have the non root-filesystem disk not mounted somewhere like /var, such that if the disk were to fail, we wouldn't be able to boot past the initrd.
 
 # updating
 

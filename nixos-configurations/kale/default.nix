@@ -64,6 +64,17 @@ in
         ];
       };
 
+      fileSystems."/mnt/media" = {
+        fsType = "btrfs";
+        device = "/dev/disk/by-partlabel/media";
+        options = [
+          "compress=zstd"
+          "defaults"
+          "noatime"
+          "subvol=/data"
+        ];
+      };
+
       services.fwupd.enable = true;
 
       sops.secrets = {
@@ -185,6 +196,49 @@ in
           ];
         }
       ];
+    }
+    {
+      fileSystems."/var/lib/jellyfin" = {
+        fsType = "none";
+        options = [ "bind" ];
+        device = "/mnt/media/jellyfin";
+      };
+
+      custom.yggdrasil.peers.onion.allowedTCPPorts = [ 8096 ];
+
+      services.jellyfin.enable = true;
+
+      services.nginx.virtualHosts."jellyfin.jmbaur.com" = {
+        onlySSL = true;
+        locations."/".proxyPass = "http://[::1]:8096";
+        sslCertificate = config.sops.secrets."cf-origin/cert".path;
+        sslCertificateKey = config.sops.secrets."cf-origin/key".path;
+      };
+    }
+    {
+      fileSystems."/var/lib/navidrome" = {
+        fsType = "none";
+        options = [ "bind" ];
+        device = "/mnt/media/navidrome";
+      };
+
+      custom.yggdrasil.peers.onion.allowedTCPPorts = [ config.services.navidrome.settings.Port ];
+
+      services.navidrome = {
+        enable = true;
+        settings = {
+          Address = "[::1]";
+          Port = 4533;
+          DefaultTheme = "Auto";
+        };
+      };
+
+      services.nginx.virtualHosts."music.jmbaur.com" = {
+        onlySSL = true;
+        locations."/".proxyPass = "http://[::1]:${toString config.services.navidrome.settings.Port}";
+        sslCertificate = config.sops.secrets."cf-origin/cert".path;
+        sslCertificateKey = config.sops.secrets."cf-origin/key".path;
+      };
     }
   ];
 }
