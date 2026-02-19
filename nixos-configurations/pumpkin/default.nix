@@ -1,11 +1,8 @@
-{ config, lib, ... }:
+{ lib, ... }:
 
 {
   config = lib.mkMerge [
     {
-      # TODO(jared): a bunch of media-related pacakges don't cross-compile
-      nixpkgs.buildPlatform = config.nixpkgs.hostPlatform;
-
       hardware.macchiatobin.enable = true;
 
       custom.recovery.targetDisk = "/dev/disk/by-path/platform-f06e0000.mmc";
