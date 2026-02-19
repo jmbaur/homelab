@@ -33,6 +33,10 @@
                                           (vim.cmd.startinsert)
                                           nil)})
 
+(vim.api.nvim_create_autocmd [:BufRead :BufNewFile]
+                             {:pattern [:*.rdl]
+                              :command "set filetype=systemrdl"})
+
 ;; TODO(jared): consider only enabling this on certain filetypes
 (vim.api.nvim_create_autocmd :Filetype
                              {:callback (lambda [opts]

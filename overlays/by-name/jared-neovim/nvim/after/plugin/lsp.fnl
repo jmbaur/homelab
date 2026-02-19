@@ -42,7 +42,7 @@
 
 (fn lsp-attach [opts]
   (set vim.opt_local.signcolumn :yes)
-  (if (vim.tbl_contains [:zig :nix :go :sh :bash :rust :terraform :tex :fennel]
+  (if (vim.tbl_contains [:zig :nix :go :sh :bash :rust :terraform :tex]
                         (vim.fn.getbufvar opts.buf :&filetype))
       (vim.api.nvim_create_autocmd [:BufWritePre]
                                    {:group format-on-save-group
