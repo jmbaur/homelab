@@ -48,7 +48,13 @@ stdenvNoCC.mkDerivation (
     strictDeps = true;
 
     zigBuildFlags = [
-      "-Dtarget=${stdenvNoCC.hostPlatform.qemuArch}-${stdenvNoCC.hostPlatform.parsed.kernel.name}"
+      "-Dtarget=${stdenvNoCC.hostPlatform.qemuArch}-${
+        {
+          darwin = "macos";
+          linux = "linux";
+        }
+        .${stdenvNoCC.hostPlatform.parsed.kernel.name}
+      }"
     ];
 
     # TODO(jared): libsodium modifies downloaded contents at build time (this
