@@ -1,7 +1,7 @@
 { lib, pkgs, ... }:
 let
   tinybootKernel = pkgs.linuxKernel.manualConfig {
-    inherit (pkgs.linux_6_18) src version;
+    inherit (pkgs.linux_6_19) src version;
     configfile = ./tinyboot-linux.config;
   };
 
@@ -35,6 +35,8 @@ in
       hardware.deviceTree.name = "qcom/sc7180-trogdor-wormdingler-rev1-boe.dtb";
 
       hardware.chromebook.trogdor.enable = true;
+
+      boot.kernelPackages = pkgs.linuxPackages_6_19;
 
       boot.loader.tinyboot.enable = true;
       system.build.firmware = pkgs.buildCoreboot {

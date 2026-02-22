@@ -5,7 +5,7 @@
 
 let
   tinybootKernel = pkgs.linuxKernel.manualConfig {
-    inherit (pkgs.linux_6_18) src version;
+    inherit (pkgs.linux_6_19) src version;
     configfile = ./tinyboot-linux.config;
   };
 in
@@ -16,6 +16,7 @@ in
   hardware.cpu.intel.updateMicrocode = true;
   hardware.chromebook.enable = true;
 
+  boot.kernelPackages = pkgs.linuxPackages_6_19;
   boot.initrd.availableKernelModules = [
     "nvme"
     "sd_mod"
