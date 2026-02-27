@@ -6,18 +6,20 @@
 
 (vim.api.nvim_create_autocmd [:BufRead :BufNewFile]
                              {:pattern [:*.rdl]
-                              :command "set filetype=systemrdl"})
+                              :callback (lambda []
+                                          (set vim.optlocal.filetype :systemrdl)
+                                          nil)})
 
 ;; TODO(jared): consider only enabling this on certain filetypes
 (vim.api.nvim_create_autocmd :Filetype
-                             {:callback (lambda [opts]
+                             {:callback (lambda []
                                           (if (pcall vim.treesitter.start)
                                               (do
-                                                (tset vim.bo :indentexpr
-                                                      "v:lua.require(\"nvim-treesitter\").indentexpr()")
-                                                (tset vim.wo :foldexpr
-                                                      "v:lua.vim.treesitter.foldexpr()")
-                                                (tset vim.wo :foldmethod :expr))))})
+                                                (set vim.bo.indentexpr
+                                                     "v:lua.require(\"nvim-treesitter\").indentexpr()")
+                                                (set vim.wo.foldexpr
+                                                     "v:lua.vim.treesitter.foldexpr()")
+                                                (set vim.wo.foldmethod :expr))))})
 
 (set vim.g.clipboard :osc52)
 (set vim.g.dispatch_no_tmux_make 1)
@@ -119,15 +121,15 @@
                                           (vim.fn.clearmatches)
                                           nil)})
 
-(local terminal-ns (vim.api.nvim_create_namespace :terminal))
-(vim.api.nvim_set_hl terminal-ns :ExtraWhitespace {})
+(local no-extra-whitespace-ns (vim.api.nvim_create_namespace :terminal))
+(vim.api.nvim_set_hl no-extra-whitespace-ns :ExtraWhitespace {})
 
 (vim.api.nvim_create_autocmd [:TermOpen]
                              {:group (vim.api.nvim_create_augroup :TermOpen
                                                                   {:clear true})
                               :callback (lambda []
                                           (vim.api.nvim_win_set_hl_ns (vim.api.nvim_get_current_win)
-                                                                      terminal-ns)
+                                                                      no-extra-whitespace-ns)
                                           (set vim.opt_local.spell false)
                                           (set vim.opt_local.number false)
                                           (set vim.opt_local.relativenumber
