@@ -27,7 +27,7 @@
     }
   ];
 
-  # Make the pcf8523 module available in the initrd so we dont' run into issues such as this:
+  # Make the pcf8523 module available in the initrd so we don't run into issues such as this:
   # https://github.com/systemd/systemd/issues/17737
   boot.initrd.availableKernelModules = [ "rtc-pcf8523" ];
 
