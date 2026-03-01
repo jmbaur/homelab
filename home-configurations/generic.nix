@@ -13,7 +13,6 @@
         as-tree
         awscli2
         bat
-        cachix
         carapace
         comma
         curl
