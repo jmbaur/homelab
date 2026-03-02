@@ -11,7 +11,8 @@ let
     recursiveUpdate
     systems
     ;
-  onlyLinuxOutput = filterAttrs (system: _: (systems.elaborate system).isLinux);
+  isLinux = system: (systems.elaborate system).isLinux;
+  onlyLinuxOutput = filterAttrs (flip (const isLinux));
 in
 # TODO(jared): put nixos configurations in their own attrset
 (builtins.mapAttrs (
@@ -29,7 +30,9 @@ in
 // recursiveUpdate (onlyLinuxOutput inputs.self.packages) (onlyLinuxOutput inputs.self.checks)
 // {
   # The stub home configuration is not impure
-  homeConfigurations = mapAttrs (const (homeConfig: homeConfig.activationPackage)) (
-    filterAttrs (flip (const (hasSuffix "-stub"))) inputs.self.homeConfigurations
+  homeConfigurations = filterAttrs (const (drv: isLinux drv.system)) (
+    mapAttrs (const (homeConfig: homeConfig.activationPackage)) (
+      filterAttrs (flip (const (hasSuffix "-stub"))) inputs.self.homeConfigurations
+    )
   );
 }
