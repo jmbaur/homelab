@@ -64,7 +64,13 @@ stdenv.mkDerivation (
       }-gnu"
     ]
     ++ lib.optionals stdenv.hostPlatform.isLinux [
-      "-Ddynamic-linker=${lib.getLib stdenv.cc.libc}/lib/ld-linux-x86-64.so.2"
+      "-Ddynamic-linker=${lib.getLib stdenv.cc.libc}/lib/${
+        {
+          x86_64 = "ld-linux-x86_64.so.2";
+          aarch64 = "ld-linux-aarch64.so.1";
+        }
+        .${stdenv.hostPlatform.qemuArch}
+      }"
     ];
 
     postConfigure = ''
