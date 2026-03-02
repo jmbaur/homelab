@@ -148,6 +148,13 @@ in
         mode = "750";
       };
 
+      services.ncps = {
+        enable = true;
+        cache.hostName = "cache.jmbaur.com";
+        cache.upstream.urls = [ "https://cache.nixos.org" ];
+        cache.upstream.publicKeys = [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" ];
+      };
+
       networking.nftables.flushRuleset = !config.nix.firewall.enable;
 
       nix.firewall = {
