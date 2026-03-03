@@ -96,40 +96,10 @@
                                                            :timeout 300})
                                           nil)})
 
-(vim.api.nvim_set_hl 0 :ExtraWhitespace {:link :Error})
-(vim.api.nvim_create_autocmd :BufWinEnter
-                             {:pattern "*"
-                              :callback (lambda []
-                                          (vim.cmd.match "ExtraWhitespace /\\s\\+$/")
-                                          nil)})
-
-(vim.api.nvim_create_autocmd :InsertEnter
-                             {:pattern "*"
-                              :callback (lambda []
-                                          (vim.cmd.match "ExtraWhitespace /\\s\\+\\%#\\@<!$/")
-                                          nil)})
-
-(vim.api.nvim_create_autocmd :InsertLeave
-                             {:pattern "*"
-                              :callback (lambda []
-                                          (vim.cmd.match "ExtraWhitespace /\\s\\+$/")
-                                          nil)})
-
-(vim.api.nvim_create_autocmd :BufWinLeave
-                             {:pattern "*"
-                              :callback (lambda []
-                                          (vim.fn.clearmatches)
-                                          nil)})
-
-(local no-extra-whitespace-ns (vim.api.nvim_create_namespace :terminal))
-(vim.api.nvim_set_hl no-extra-whitespace-ns :ExtraWhitespace {})
-
 (vim.api.nvim_create_autocmd [:TermOpen]
                              {:group (vim.api.nvim_create_augroup :TermOpen
                                                                   {:clear true})
                               :callback (lambda []
-                                          (vim.api.nvim_win_set_hl_ns (vim.api.nvim_get_current_win)
-                                                                      no-extra-whitespace-ns)
                                           (set vim.opt_local.spell false)
                                           (set vim.opt_local.number false)
                                           (set vim.opt_local.relativenumber
