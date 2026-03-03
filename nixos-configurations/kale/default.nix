@@ -145,6 +145,14 @@ in
       services.nginx.virtualHosts."testcache.jmbaur.com" = {
         onlySSL = true;
         locations."/".proxyPass = "http://[::1]:8501";
+        locations."/upload" = {
+          proxyPass = "http://[::1]:8501";
+          extraConfig = ''
+            allow 127.0.0.1;
+            allow ::1;
+            deny all;
+          '';
+        };
         sslCertificate = config.sops.secrets."cf-origin/cert".path;
         sslCertificateKey = config.sops.secrets."cf-origin/key".path;
       };
