@@ -142,6 +142,13 @@ in
         sslCertificateKey = config.sops.secrets."cf-origin/key".path;
       };
 
+      services.nginx.virtualHosts."testcache.jmbaur.com" = {
+        onlySSL = true;
+        locations."/".proxyPass = "http://[::1]:8501";
+        sslCertificate = config.sops.secrets."cf-origin/cert".path;
+        sslCertificateKey = config.sops.secrets."cf-origin/key".path;
+      };
+
       systemd.tmpfiles.settings."10-binary-cache"."/var/lib/binary-cache".v = {
         user = config.users.users.hydra-queue-runner.name;
         group = config.users.groups.nginx.name;
