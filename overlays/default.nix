@@ -13,7 +13,7 @@ inputs: {
     )
 
     # cross-compilation fixes
-    (final: prev: {
+    (_final: prev: {
       perlPackages = prev.perlPackages.overrideScope (
         _: perlPackagesPrev: {
           NetDNS = perlPackagesPrev.NetDNS.overrideAttrs (old: {
@@ -21,14 +21,6 @@ inputs: {
           });
         }
       );
-
-      ubootTools = prev.ubootTools.override { pythonScriptsToInstall = { }; };
-
-      openocd = prev.openocd.override {
-        jimtcl = final.jimtcl.override {
-          SDLSupport = false;
-        };
-      };
 
       gnutls = prev.gnutls.overrideAttrs (old: {
         postPatch = old.postPatch + ''
@@ -39,9 +31,6 @@ inputs: {
 
     # all other packages
     (final: prev: {
-      # TODO(jared): delete this when there is a fix upstream
-      hydra = prev.hydra.overrideAttrs { doCheck = false; };
-
       cros-ec-fizz = prev.cros-ec.override { board = "fizz"; };
 
       gnome-console =
