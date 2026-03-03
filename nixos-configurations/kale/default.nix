@@ -78,7 +78,7 @@ in
       services.fwupd.enable = true;
 
       sops.secrets = {
-        nix_signing_key.owner = config.users.users.hydra-queue-runner.name;
+        nix_signing_key = { };
         ssh_remote_build.owner = config.users.users.hydra-queue-runner.name;
         hydra_netrc.owner = config.users.users.hydra.name;
         "cf-origin/cert".owner = config.services.nginx.user;
@@ -131,18 +131,11 @@ in
           }
           binary_cache_public_uri = https://cache.jmbaur.com
           log_prefix = https://cache.jmbaur.com/
-          store_uri = file:///var/lib/binary-cache?compression=zstd&parallel-compression=true&ls-compression=br&log-compression=br&write-nar-listing=true&secret-key=${config.sops.secrets.nix_signing_key.path}
+          store_uri = http://[::1]:8501/upload
         '';
       };
 
       services.nginx.virtualHosts."cache.jmbaur.com" = {
-        onlySSL = true;
-        locations."/".root = "/var/lib/binary-cache";
-        sslCertificate = config.sops.secrets."cf-origin/cert".path;
-        sslCertificateKey = config.sops.secrets."cf-origin/key".path;
-      };
-
-      services.nginx.virtualHosts."testcache.jmbaur.com" = {
         onlySSL = true;
         locations."/".proxyPass = "http://[::1]:8501";
         locations."/upload" = {
@@ -157,15 +150,10 @@ in
         sslCertificateKey = config.sops.secrets."cf-origin/key".path;
       };
 
-      systemd.tmpfiles.settings."10-binary-cache"."/var/lib/binary-cache".v = {
-        user = config.users.users.hydra-queue-runner.name;
-        group = config.users.groups.nginx.name;
-        mode = "750";
-      };
-
       services.ncps = {
         enable = true;
         cache = {
+          secretKeyPath = config.sops.secrets.nix_signing_key.path;
           hostName = "cache.jmbaur.com-1";
           upstream.urls = [ "https://cache.nixos.org" ];
           upstream.publicKeys = [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" ];
