@@ -45,6 +45,61 @@ let
         p.inputstream-adaptive
         p.jellyfin
         p.joystick
+        p.mediacccde
+        p.netflix
+        p.youtube
+
+        # TODO(jared): contribute these upstream
+        (p.callPackage (
+          {
+            buildKodiAddon,
+            fetchzip,
+            rel,
+          }:
+          buildKodiAddon rec {
+            pname = "skin.ftv";
+            version = "8.0.1";
+            namespace = pname;
+            src = fetchzip {
+              url = "https://mirrors.kodi.tv/addons/${lib.toLower rel}/skin.ftv/skin.ftv-${version}.zip";
+              hash = "sha256-kgVwAnrknpyfc3ViBV3BZ5CCTQCDVxsDIjt7dobV0eA=";
+            };
+          }
+        ) { })
+        (p.callPackage (
+          {
+            buildKodiAddon,
+            fetchzip,
+            rel,
+          }:
+          buildKodiAddon rec {
+            pname = "plugin.video.archive.org";
+            version = "1.0.0";
+            namespace = pname;
+            src = fetchzip {
+              url = "https://mirrors.kodi.tv/addons/${lib.toLower rel}/plugin.video.archive.org/plugin.video.archive.org-${version}.zip";
+              hash = "sha256-q/V2L+NjPhwVnlED6ihXaRCmq3m4TH/cpCCxJyIV3QY=";
+            };
+          }
+        ) { })
+        (p.callPackage (
+          {
+            buildKodiAddon,
+            fetchzip,
+            rel,
+            requests,
+          }:
+          buildKodiAddon rec {
+            pname = "plugin.video.mlbtv";
+            version = "2025.7.18+matrix.1";
+            namespace = pname;
+            src = fetchzip {
+              url = "https://mirrors.kodi.tv/addons/${lib.toLower rel}/plugin.video.mlbtv/plugin.video.mlbtv-${version}.zip";
+              hash = "sha256-VuTlUr5jiyhx5VAkaCjA85zpYsyLT7BHGjR6gs3emGc=";
+            };
+            propagatedBuildInputs = [ requests ];
+          }
+        ) { })
       ]);
 in
 {
