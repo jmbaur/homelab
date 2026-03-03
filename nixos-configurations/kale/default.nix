@@ -157,7 +157,7 @@ in
           hostName = "cache.jmbaur.com-1";
           upstream.urls = [ "https://cache.nixos.org" ];
           upstream.publicKeys = [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" ];
-          maxSize = "100G";
+          maxSize = "512G";
           lru.schedule = "0 2 * * *";
           allowPutVerb = true;
         };
