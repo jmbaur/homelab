@@ -10,8 +10,15 @@
   zig_0_15,
 }:
 
-# static musl isn't capable of dlopen(), needed for treesitter to work
-assert !stdenv.hostPlatform.isStatic;
+let
+  # cross-compilation currently broken
+  canCross = false;
+in
+assert
+  stdenv.buildPlatform == stdenv.hostPlatform
+  &&
+    # static musl isn't capable of dlopen(), needed for treesitter to work
+    !stdenv.hostPlatform.isStatic;
 stdenv.mkDerivation (
   finalAttrs:
   let
@@ -54,7 +61,7 @@ stdenv.mkDerivation (
     # Prevent zig from being in the runtime closure
     disallowedReferences = [ zig_0_15 ];
 
-    zigBuildFlags = [
+    zigBuildFlags = lib.optionals canCross [
       "-Dtarget=${stdenv.hostPlatform.qemuArch}-${
         {
           darwin = "macos";
@@ -62,15 +69,6 @@ stdenv.mkDerivation (
         }
         .${stdenv.hostPlatform.parsed.kernel.name}
       }-gnu"
-    ]
-    ++ lib.optionals stdenv.hostPlatform.isLinux [
-      "-Ddynamic-linker=${lib.getLib stdenv.cc.libc}/lib/${
-        {
-          x86_64 = "ld-linux-x86_64.so.2";
-          aarch64 = "ld-linux-aarch64.so.1";
-        }
-        .${stdenv.hostPlatform.qemuArch}
-      }"
     ];
 
     postConfigure = ''
