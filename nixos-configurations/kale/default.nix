@@ -157,7 +157,7 @@ in
 
       services.ncps = {
         enable = true;
-        cache.hostName = "cache.jmbaur.com";
+        cache.hostName = "cache.jmbaur.com-1";
         cache.upstream.urls = [ "https://cache.nixos.org" ];
         cache.upstream.publicKeys = [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" ];
       };
