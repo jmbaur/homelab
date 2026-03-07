@@ -109,11 +109,10 @@ in
         RuntimeWatchdogSec = lib.mkDefault "20s";
       };
 
-      sleep.extraConfig = ''
-        AllowSuspend=no
-        AllowHibernation=no
-      '';
-
+      sleep.settings.Sleep = {
+        AllowSuspend = false;
+        AllowHibernation = false;
+      };
     };
 
     # use TCP BBR has significantly increased throughput and reduced latency for connections
