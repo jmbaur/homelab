@@ -40,10 +40,6 @@ wrapNeovimUnstable zig-neovim-unwrapped (
 
     extraLuaPackages = ps: [ ps.fennel ];
 
-    withNodeJs = false;
-    withPerl = false;
-    withRuby = false;
-
     vimAlias = true;
 
     plugins = [
