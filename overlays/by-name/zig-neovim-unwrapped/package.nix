@@ -10,11 +10,8 @@
   zig_0_15,
 }:
 
-let
-  # cross-compilation currently broken
-  canCross = false;
-in
 assert
+  # cross-compilation currently broken
   stdenv.buildPlatform == stdenv.hostPlatform
   &&
     # static musl isn't capable of dlopen(), needed for treesitter to work
@@ -45,8 +42,8 @@ stdenv.mkDerivation (
     src = fetchFromGitHub {
       owner = "neovim";
       repo = "neovim";
-      rev = "4fb0f95330c6577fa7c6c807306bbdc3b645a646";
-      hash = "sha256-1aw1l/oaJiUBg5r8PXddNzEykJ/E3DWyWrvSWkjrGNk=";
+      rev = "0ced2169279bc7d1d1dad906f9841707e336c371";
+      hash = "sha256-fA4fGlVhq5/DaCbCzQpUNgA4hp8KhW0jhXhfeVQLXrU=";
     };
 
     __structuredAttrs = true;
@@ -60,16 +57,6 @@ stdenv.mkDerivation (
 
     # Prevent zig from being in the runtime closure
     disallowedReferences = [ zig_0_15 ];
-
-    zigBuildFlags = lib.optionals canCross [
-      "-Dtarget=${stdenv.hostPlatform.qemuArch}-${
-        {
-          darwin = "macos";
-          linux = "linux";
-        }
-        .${stdenv.hostPlatform.parsed.kernel.name}
-      }${lib.optionalString stdenv.hostPlatform.isLinux "-gnu"}"
-    ];
 
     postConfigure = ''
       ln -s ${deps} $ZIG_GLOBAL_CACHE_DIR/p
