@@ -21,12 +21,6 @@ inputs: {
           });
         }
       );
-
-      gnutls = prev.gnutls.overrideAttrs (old: {
-        postPatch = old.postPatch + ''
-          touch doc/stamp_error_codes
-        '';
-      });
     })
 
     # all other packages
