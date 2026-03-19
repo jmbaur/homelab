@@ -94,7 +94,7 @@ in
       };
 
       nix = {
-        package = pkgs.nixVersions.nix_2_33;
+        package = pkgs.nixVersions.nix_2_34;
         channel.enable = false; # opt out of nix channels
         distributedBuilds = mkDefault true; # allow for populating /etc/nix/machines for remote building
         settings = {
@@ -102,6 +102,7 @@ in
           auto-allocate-uids = true;
           builders-use-substitutes = mkDefault true;
           fsync-store-paths = true;
+          lint-url-literals = "fatal";
           use-cgroups = true;
           extra-trusted-users = [ "@wheel" ];
           extra-system-features = [ "uid-range" ];
@@ -110,7 +111,6 @@ in
             "cgroups"
             "flakes"
             "nix-command"
-            "no-url-literals"
           ];
         };
       };
