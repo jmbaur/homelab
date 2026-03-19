@@ -8,13 +8,13 @@
   config = lib.mkMerge [
     {
       home.packages = with pkgs; [
+        (comma.override { nix = config.nix.package; })
         age-plugin-yubikey
         ansifilter
         as-tree
         awscli2
         bat
         carapace
-        comma
         curl
         difftastic
         dig
@@ -161,14 +161,14 @@
         };
       };
 
-      nix = {
-        package = pkgs.nixVersions.nix_2_34;
-        settings.warn-dirty = false;
-      };
+      nix.package = pkgs.nixVersions.nix_2_34;
 
       programs.direnv = {
         enable = true;
-        nix-direnv.enable = true;
+        nix-direnv = {
+          enable = true;
+          package = pkgs.nix-direnv.override { nix = config.nix.package; };
+        };
       };
 
       programs.nix-index.enable = true;

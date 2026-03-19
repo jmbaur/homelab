@@ -20,6 +20,8 @@ in
         documentation.man.enable = true;
         documentation.nixos.enable = true;
 
+        nix.settings.warn-dirty = false;
+
         programs.ssh.startAgent = lib.mkDefault true;
         programs.gnupg.agent.enable = lib.mkDefault true;
         services.pcscd.enable = lib.mkDefault config.custom.desktop.enable;
