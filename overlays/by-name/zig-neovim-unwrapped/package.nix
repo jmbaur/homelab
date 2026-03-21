@@ -1,7 +1,6 @@
 {
   fetchFromGitHub,
   lib,
-  neovim-unwrapped,
   nukeReferences,
   patchelfUnstable,
   pkgsBuildBuild,
@@ -62,7 +61,7 @@ stdenv.mkDerivation (
       ln -s ${deps} $ZIG_GLOBAL_CACHE_DIR/p
     '';
 
-    inherit (neovim-unwrapped) meta lua;
+    inherit (pkgsBuildBuild.neovim-unwrapped) meta lua;
 
     # Not performed by the zig install, but needed by pkgs.wrapNeovimUnstable
     postInstall = ''
