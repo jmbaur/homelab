@@ -24,6 +24,7 @@
   texlab,
   texlive,
   tofu-ls,
+  tree-sitter,
   ttags,
   typescript-go,
   vimPlugins,
@@ -75,6 +76,7 @@ wrapNeovimUnstable zig-neovim-unwrapped (
           texlab
           texlive.pkgs.latexmk
           tofu-ls
+          tree-sitter
           ttags
           typescript-go
           zig_0_15
