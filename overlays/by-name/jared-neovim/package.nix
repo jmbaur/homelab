@@ -47,10 +47,8 @@ wrapNeovimUnstable zig-neovim-unwrapped (
       (vimUtils.buildVimPlugin {
         name = "jared-neovim-config";
         src = ./nvim;
-        buildPhase = "make -j$NIX_BUILD_CORES";
-        postInstall = ''
-          find $out -name '*.fnl' -o -name 'Makefile' -delete
-        '';
+        buildPhase = "make -j$NIX_BUILD_CORES install";
+        dontInstall = true;
         depsBuildBuild = [ pkgsBuildBuild.neovim-unwrapped.lua.pkgs.fennel ];
         runtimeDeps = [
           bash-language-server
