@@ -21,6 +21,8 @@
                                                      "v:lua.vim.treesitter.foldexpr()")
                                                 (set vim.wo.foldmethod :expr))))})
 
+(vim.keymap.set :n :<leader>p ":Project ")
+
 (set vim.g.clipboard :osc52)
 (set vim.g.dispatch_no_tmux_make 1)
 (set vim.g.loaded_perl_provider 0)
