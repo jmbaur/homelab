@@ -21,8 +21,6 @@
                                                      "v:lua.vim.treesitter.foldexpr()")
                                                 (set vim.wo.foldmethod :expr))))})
 
-(vim.keymap.set :n :<leader>p ":Project ")
-
 (set vim.g.clipboard :osc52)
 (set vim.g.dispatch_no_tmux_make 1)
 (set vim.g.loaded_perl_provider 0)
@@ -70,6 +68,8 @@
 
 ; TODO(jared): use vim.snippet
 (vim.cmd.iabbrev "todo:" "TODO(jared):")
+
+(vim.keymap.set :n :<leader>p ":Project ")
 
 (var filescache [])
 (set _G.FuzzyFind (lambda [arg _]
