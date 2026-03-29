@@ -39,7 +39,7 @@ testers.runNixOSTest {
         environment.etc."nix/signing-key".source =
           pkgs.writeText "harmonia.secret" "snakeoil:W46kfFxg/nmU1e0BUROxafCqLAJ1humEFuO4jUSRtovM25YhZE+eLA1PyEC86+TH50JwlSAbXVz9wgNzYsv7jw==";
 
-        services.harmonia = {
+        services.harmonia.cache = {
           enable = true;
           signKeyPaths = [ "/etc/nix/signing-key" ];
           settings.bind = "[::]:5000";
