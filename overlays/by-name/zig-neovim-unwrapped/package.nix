@@ -36,13 +36,13 @@ stdenv.mkDerivation (
   in
   {
     pname = "neovim-unwrapped";
-    version = "0.12.0-dev";
+    version = "0.12.0";
 
     src = fetchFromGitHub {
       owner = "neovim";
       repo = "neovim";
-      rev = "d5516daf121aa718e79bcd423ee24c24492893c0";
-      hash = "sha256-aOiiQCmjCrvo+jAUDO2oMa377FvOtU97aqvTm74ZRGU=";
+      tag = "v${finalAttrs.version}";
+      hash = "sha256-uWhrGAwQ2nnAkyJ46qGkYxJ5K1jtyUIQOAVu3yTlquk=";
     };
 
     __structuredAttrs = true;
