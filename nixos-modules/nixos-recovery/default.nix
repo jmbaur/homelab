@@ -74,6 +74,7 @@ let
     boot.kernelPackages = config.boot.kernelPackages;
     boot.kernelParams = mkForce config.boot.kernelParams;
     boot.kernelPatches = mkForce [ ];
+    services.udev.extraRules = config.services.udev.extraRules;
   };
 
   recoveryConfig =
