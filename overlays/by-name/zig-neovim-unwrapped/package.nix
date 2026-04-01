@@ -5,7 +5,6 @@
   patchelfUnstable,
   pkgsBuildBuild,
   stdenv,
-  stdenvNoCC,
   zig_0_15,
 }:
 
@@ -18,31 +17,21 @@ assert
 stdenv.mkDerivation (
   finalAttrs:
   let
-    deps = stdenvNoCC.mkDerivation {
-      pname = finalAttrs.pname + "-deps";
-      inherit (finalAttrs) src version;
-      nativeBuildInputs = [ zig_0_15 ];
-      buildCommand = ''
-        export ZIG_GLOBAL_CACHE_DIR=$(mktemp -d)
-        runHook unpackPhase
-        cd $sourceRoot
-        zig build --fetch=all
-        mv $ZIG_GLOBAL_CACHE_DIR/p $out
-      '';
-      outputHashAlgo = null;
-      outputHashMode = "recursive";
-      outputHash = "sha256-x8Cs3h3tyV5UKl0+m+oFQ0vR+7msJ1SbnAh9koWsjE8=";
+    deps = zig_0_15.fetchDeps {
+      fetchAll = true;
+      inherit (finalAttrs) pname version src;
+      hash = "sha256-EAKZPJkZ3oqM8uXzlWN1f3LzaNgWl6E2y7zokILpp9o=";
     };
   in
   {
     pname = "neovim-unwrapped";
-    version = "0.12.0";
+    version = "0.13.0-dev";
 
     src = fetchFromGitHub {
       owner = "neovim";
       repo = "neovim";
-      tag = "v${finalAttrs.version}";
-      hash = "sha256-uWhrGAwQ2nnAkyJ46qGkYxJ5K1jtyUIQOAVu3yTlquk=";
+      rev = "fa51f5502f050b5db2e6eee2a3d754c38427df53";
+      hash = "sha256-yVhVP69ho4VZjzhbuSRQDduaCC78SX5uSfgO9EsuqeU=";
     };
 
     __structuredAttrs = true;
