@@ -10,26 +10,28 @@
     mixos.url = "github:jmbaur/mixos";
     nix-index-database.url = "github:nix-community/nix-index-database";
     nixos-router.url = "github:jmbaur/nixos-router";
+    quartus-nix.url = "github:jmbaur/quartus-nix";
     sops-nix.url = "github:Mic92/sops-nix";
     tinyboot.url = "github:jmbaur/tinyboot";
     u-boot-nix.url = "github:jmbaur/u-boot.nix";
     webauthn-tiny.url = "github:jmbaur/webauthn-tiny";
 
-    git-hooks.inputs.nixpkgs.follows = "nixpkgs";
     git-hooks.inputs.flake-compat.follows = "";
     git-hooks.inputs.gitignore.follows = "";
+    git-hooks.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    ipwatch.inputs.nixpkgs.follows = "nixpkgs";
     ipwatch.inputs.git-hooks.follows = "";
+    ipwatch.inputs.nixpkgs.follows = "nixpkgs";
     mixos.inputs.nixpkgs.follows = "nixpkgs";
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
-    nixos-router.inputs.nixpkgs.follows = "nixpkgs";
     nixos-router.inputs.git-hooks.follows = "";
+    nixos-router.inputs.nixpkgs.follows = "nixpkgs";
+    quartus-nix.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     tinyboot.inputs.nixpkgs.follows = "nixpkgs";
     u-boot-nix.inputs.nixpkgs.follows = "nixpkgs";
-    webauthn-tiny.inputs.nixpkgs.follows = "nixpkgs";
     webauthn-tiny.inputs.git-hooks.follows = "";
+    webauthn-tiny.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs: {

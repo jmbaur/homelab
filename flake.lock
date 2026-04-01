@@ -140,6 +140,26 @@
         "type": "github"
       }
     },
+    "quartus-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1768524138,
+        "narHash": "sha256-jX7oDeyxz40UcPVMjIVa6TRpcIhbycPTpczhHHUD1+Y=",
+        "owner": "jmbaur",
+        "repo": "quartus-nix",
+        "rev": "1749bb1892fc54090f001ffabce7e6d4fab9902c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jmbaur",
+        "repo": "quartus-nix",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "git-hooks": "git-hooks",
@@ -149,6 +169,7 @@
         "nix-index-database": "nix-index-database",
         "nixos-router": "nixos-router",
         "nixpkgs": "nixpkgs",
+        "quartus-nix": "quartus-nix",
         "sops-nix": "sops-nix",
         "tinyboot": "tinyboot",
         "u-boot-nix": "u-boot-nix",

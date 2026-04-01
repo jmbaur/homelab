@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   modulesPath,
   ...
 }:
@@ -64,6 +65,8 @@
           "cache.northwood.space-1:aS//R1OH2ct1xKquarzaEWRW21gDJ9pRyM8zUgvhBbc="
         ];
       };
+
+      environment.systemPackages = [ pkgs.quartus-prime-pro-24_2 ];
     }
   ];
 }
