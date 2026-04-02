@@ -10,20 +10,9 @@ in
 stdenvNoCC.mkDerivation (
   finalAttrs:
   let
-    deps = stdenvNoCC.mkDerivation {
-      pname = finalAttrs.pname + "-deps";
-      inherit (finalAttrs) src version;
-      depsBuildBuild = [ zig_0_15 ];
-      buildCommand = ''
-        export ZIG_GLOBAL_CACHE_DIR=$(mktemp -d)
-        runHook unpackPhase
-        cd $sourceRoot
-        zig build --fetch
-        mv $ZIG_GLOBAL_CACHE_DIR/p $out
-      '';
-      outputHashAlgo = null;
-      outputHashMode = "recursive";
-      outputHash = "sha256-GcuXahLxAXtkALRfOhjVMQq84w8XJx/XYLN9LauF/VY=";
+    deps = zig_0_15.fetchDeps {
+      inherit (finalAttrs) pname version src;
+      hash = "sha256-GcuXahLxAXtkALRfOhjVMQq84w8XJx/XYLN9LauF/VY=";
     };
   in
   {

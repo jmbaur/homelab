@@ -52,7 +52,10 @@
                                                             builtin)))
                                         (if (not= "" opts.args)
                                             (table.insert cmd
-                                                          (nix-run opts.args))))
+                                                          (if (string.match (vim.trim opts.args)
+                                                                            "%s")
+                                                              opts.args
+                                                              ((nix-run opts.args))))))
                                     (vim.fn.execute (table.concat cmd " "))
                                     nil)
                                   {:nargs "?"
