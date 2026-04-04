@@ -296,12 +296,11 @@ in
       allowDiscards = config.services.fstrim.enable;
     };
 
-    # enable zram by default since we don't create any swap partitions
-    zramSwap.enable = mkDefault true;
-
     # Not applicable for our image-based systems since the root filesystem
     # isn't created at build-time.
     systemd.services.systemd-growfs-root.enable = false;
+
+    boot.kernelParams = [ "zswap.enabled=1" ];
 
     system.build = {
       inherit recovery;
