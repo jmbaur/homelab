@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   modulesPath,
   ...
 }:
@@ -45,6 +46,19 @@
         extra-trusted-public-keys = [
           "cache.northwood.space-1:aS//R1OH2ct1xKquarzaEWRW21gDJ9pRyM8zUgvhBbc="
         ];
+      };
+    }
+    {
+      environment.systemPackages = [ pkgs.fleetctl ];
+      systemd.services.fleet = {
+        enable = false; # TODO
+        serviceConfig = {
+          ExecStart = toString [
+            (lib.getExe pkgs.fleet)
+            "serve"
+          ];
+        };
+        wantedBy = [ "multi-user.target" ];
       };
     }
   ];
