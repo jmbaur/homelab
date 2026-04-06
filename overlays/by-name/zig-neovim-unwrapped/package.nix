@@ -30,8 +30,8 @@ stdenv.mkDerivation (
     src = fetchFromGitHub {
       owner = "neovim";
       repo = "neovim";
-      rev = "eb9be11da854b4901f9d8f5b2f2b6c45427df5de";
-      hash = "sha256-+lGAOD5iaHhxqpYYxG+72zZLCJ0j7mAnhzKKgEhHKng=";
+      rev = "af707dd24261f34a72ba7bbea5cf2e802f81837d";
+      hash = "sha256-D3zyJwwc9/iHLBHyTq990gnDMrw5XTAMn2L4VvVz4zw=";
     };
 
     __structuredAttrs = true;
