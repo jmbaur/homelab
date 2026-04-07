@@ -50,15 +50,31 @@
     }
     {
       environment.systemPackages = [ pkgs.fleetctl ];
-      systemd.services.fleet = {
-        enable = false; # TODO
+
+      systemd.services.orbit = {
+        description = "Orbit osquery";
+        after = [ "network.target" ];
+        wantedBy = [ "multi-user.target" ];
+        unitConfig.StartLimitIntervalSec = 0;
         serviceConfig = {
+          EnvironmentFile = "/etc/orbit.env";
+          Restart = "always";
+          RestartSec = 1;
+          KillMode = "control-group";
+          KillSignal = "SIGTERM";
+          CPUQuota = "20%";
+          StateDirectory = "orbit";
+          BindPaths = [ "%S/orbit:/opt" ];
+          BindReadOnlyPaths = [
+            "${lib.getExe' pkgs.fleet "desktop"}:/opt/orbit/bin/desktop/linux/stable/fleet-desktop/fleet-desktop"
+            "${lib.getExe' pkgs.osquery "osqueryd"}:/opt/orbit/bin/osqueryd/linux/stable/osqueryd"
+            "${pkgs.osquery}:/opt/osquery"
+          ];
           ExecStart = toString [
-            (lib.getExe pkgs.fleet)
-            "serve"
+            (lib.getExe' pkgs.fleet "orbit")
+            "--disable-updates"
           ];
         };
-        wantedBy = [ "multi-user.target" ];
       };
     }
   ];
