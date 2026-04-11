@@ -275,7 +275,7 @@ in
         "fmask=0022"
         "dmask=0022"
         "x-systemd.automount"
-        "x-systemd.idle-timeout=2min"
+        "x-systemd.idle-timeout=1"
       ];
     };
 
