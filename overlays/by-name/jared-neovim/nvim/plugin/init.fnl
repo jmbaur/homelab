@@ -111,6 +111,17 @@
                                           (vim.cmd.startinsert)
                                           nil)})
 
+(local qfgroup (vim.api.nvim_create_augroup :QuickFix {:clear true}))
+(vim.api.nvim_create_autocmd [:QuickFixCmdPost]
+                             {:group qfgroup
+                              :pattern "[^l]*"
+                              :callback (lambda [] (vim.cmd.cwindow))})
+
+(vim.api.nvim_create_autocmd [:QuickFixCmdPost]
+                             {:group qfgroup
+                              :pattern :l*
+                              :callback (lambda [] (vim.cmd.lwindow))})
+
 ((. (require :vim._core.ui2) :enable) {:enable true
                                        :msg {:targets :cmd
                                              :cmd {:height 0.9}
