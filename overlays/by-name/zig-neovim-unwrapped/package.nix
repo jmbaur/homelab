@@ -20,7 +20,7 @@ stdenv.mkDerivation (
     deps = zig_0_15.fetchDeps {
       fetchAll = true;
       inherit (finalAttrs) pname version src;
-      hash = "sha256-x5zyufIJ/wNv//W0Zeg9xMvVdGxUh6ovmWvL9dvwIQU=";
+      hash = "sha256-XJ6ep0g08HTMYY+RjDXIoqsKptXjVeX/CGH/LrQpX4s=";
     };
   in
   {
@@ -30,8 +30,8 @@ stdenv.mkDerivation (
     src = fetchFromGitHub {
       owner = "neovim";
       repo = "neovim";
-      rev = "92317013b4ad9e108183d165f34427111ec171da";
-      hash = "sha256-zIub/EshlSYCkK0HtABl6S6iNGNdS+V8b4ouQHGgy7k=";
+      rev = "1740d51eded3cd9b8244470b3e79d467598301ed";
+      hash = "sha256-+OFcY3cRVYJiHta5kBb/RYnNHjEbTeVKBrGqRCtJERM=";
     };
 
     __structuredAttrs = true;
