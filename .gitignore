@@ -8,3 +8,4 @@
 repl-result-*
 result*
 zig-out
+zig-pkg
