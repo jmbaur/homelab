@@ -9,7 +9,7 @@ inputs.nixpkgs.lib.mapAttrs (
       pkgs.shellcheck
       pkgs.shfmt
       pkgs.statix
-      pkgs.zig_0_15
+      pkgs.zig_0_16
     ];
 
     settings = {

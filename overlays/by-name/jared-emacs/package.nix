@@ -24,8 +24,8 @@
   texlive,
   tofu-ls,
   ttags,
-  zig_0_15,
-  zls_0_15,
+  zig_0_16,
+  zls_0_16,
 }:
 
 let
@@ -91,7 +91,7 @@ buildEnv {
     texlive.pkgs.latexmk
     tofu-ls
     ttags
-    zig_0_15
-    zls_0_15
+    zig_0_16
+    zls_0_16
   ];
 }

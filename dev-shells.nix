@@ -47,7 +47,7 @@ inputs.nixpkgs.lib.mapAttrs (
         pkgs.openscad-unstable
         pkgs.sops
         pkgs.ssh-to-age
-        pkgs.zig_0_15
+        pkgs.zig_0_16
       ];
 
       env.SOPS_CONFIG = sopsConfig;
