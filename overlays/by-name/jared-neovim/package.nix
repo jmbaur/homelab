@@ -32,8 +32,8 @@
   vimUtils,
   wrapNeovimUnstable,
   zig-neovim-unwrapped,
-  zig_0_15,
-  zls_0_15,
+  zig_0_16,
+  zls_0_16,
 }:
 
 wrapNeovimUnstable
@@ -80,8 +80,8 @@ wrapNeovimUnstable
           tree-sitter
           ttags
           typescript-go
-          zig_0_15
-          zls_0_15
+          zig_0_16
+          zls_0_16
         ];
       })
     ]
