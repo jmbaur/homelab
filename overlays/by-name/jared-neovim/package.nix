@@ -43,7 +43,8 @@ wrapNeovimUnstable neovim-unwrapped {
 
   plugins = [
     (vimUtils.buildVimPlugin {
-      name = "jared-neovim-config";
+      pname = "jared-neovim-config";
+      version = "0.0.0";
       src = ./nvim;
       buildPhase = "make -j$NIX_BUILD_CORES install";
       dontInstall = true;
