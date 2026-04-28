@@ -21,7 +21,15 @@
                                                      "v:lua.vim.treesitter.foldexpr()")
                                                 (set vim.wo.foldmethod :expr))))})
 
-(set vim.g.clipboard :osc52)
+(local paste
+       (lambda []
+         [(vim.fn.split (vim.fn.getreg "") "\n") (vim.fn.getregtype "")]))
+
+(set vim.g.clipboard {:name "OSC 52"
+                      :copy {:+ ((. (require :vim.ui.clipboard.osc52) :copy) "+")
+                             :* ((. (require :vim.ui.clipboard.osc52) :copy) "*")}
+                      :paste {:+ paste :* paste}})
+
 (set vim.g.dispatch_no_tmux_make 1)
 (set vim.g.loaded_perl_provider 0)
 (set vim.g.loaded_python3_provider 0)
