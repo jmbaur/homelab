@@ -40,6 +40,7 @@
       virtualisation.podman.enable = true;
 
       hardware.saleae-logic.enable = true;
+      environment.systemPackages = [ config.hardware.saleae-logic.package ];
 
       nix.settings = {
         extra-substituters = [ "https://cache.northwood.space" ];
