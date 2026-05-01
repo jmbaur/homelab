@@ -3,7 +3,6 @@
 (require 'auto-dark)
 (require 'company)
 (require 'direnv)
-(require 'eat)
 (require 'eglot)
 (require 'evil)
 (require 'evil-collection)
@@ -74,13 +73,7 @@
 (unless (file-exists-p project-list-file)
   (refresh-projects))
 
-(defun eat-project-new ()
-  "Start a new Eat session in the current project's root directory"
-  (interactive)
-  (eat-project t))
-
 ;; add extra keybindings for project switching
-(define-key project-prefix-map "t" 'eat-project-new)
 (define-key project-prefix-map "r" 'rg-project) ;; overrides project-query-replace-regexp
 (define-key project-prefix-map "m" 'magit-project-status)
 
@@ -120,7 +113,6 @@
 (add-hook 'nix-repl-hook 'setup-term)
 (add-hook 'shell-mode-hook 'setup-term)
 (add-hook 'term-mode-hook 'setup-term)
-(add-hook 'vterm-mode-hook 'setup-term)
 (add-hook 'shell-command-mode-hook 'view-mode) ;; ensure we can't modify buffer for shell output
 (add-hook 'eshell-load-hook (lambda ()
 			      (setup-term)

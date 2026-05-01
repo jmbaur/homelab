@@ -35,7 +35,6 @@ let
       company
       direnv
       dts-mode
-      eat
       evil
       evil-collection
       evil-commentary
@@ -58,7 +57,6 @@ let
       sops
       terraform-mode
       typescript-mode
-      vterm
       zig-mode
     ]
   );
