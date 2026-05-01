@@ -90,6 +90,7 @@
   (define-key eglot-mode-map (kbd "C-c e f n") #'flymake-goto-next-error)
   (define-key eglot-mode-map (kbd "C-c e f p") #'flymake-goto-prev-error)
   (define-key eglot-mode-map (kbd "C-c e r") #'eglot-rename)
+  (define-key eglot-mode-map (kbd "C-c e a") #'eglot-code-actions)
   (define-key eglot-mode-map (kbd "C-c C-o") #'company-complete) ;; TODO(jared): we want this enabled for all company-enabled buffers
   (setq company-idle-delay nil)
   (company-mode)
@@ -101,6 +102,7 @@
 (add-hook 'c-mode-hook 'setup-lsp)
 (add-hook 'nix-mode-hook 'setup-lsp)
 (add-hook 'rust-mode-hook 'setup-lsp)
+(add-hook 'python-mode-hook 'setup-lsp)
 (add-hook 'zig-mode-hook (lambda ()
 			   (zig-format-on-save-mode -1) ;; we use eglot-format instead
 			   (setup-lsp)))
