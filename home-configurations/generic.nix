@@ -34,6 +34,7 @@
         homelab-utils
         htmlq
         htop-vim
+        jared-emacs
         jared-neovim
         jq
         just
