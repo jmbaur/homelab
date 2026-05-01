@@ -50,6 +50,7 @@
 
 (evil-set-undo-system 'undo-redo)
 (setq evil-want-Y-yank-to-eol t)
+(setq evil-symbol-word-search t)
 (evil-mode 1)
 (global-evil-surround-mode 1)
 (evil-commentary-mode 1)
