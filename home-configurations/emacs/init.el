@@ -71,9 +71,6 @@
 (add-to-list 'project-switch-commands '(rg-project "Find ripgrep") t)
 (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)
 
-;; improves eglot performance
-(add-to-list 'eglot-ignored-server-capabilities :hoverProvider)
-
 (defun setup-lsp (&optional format-on-save)
   "LSP common setup"
   (interactive)
@@ -84,6 +81,7 @@
   (define-key eglot-mode-map (kbd "C-c C-o") #'company-complete) ;; TODO(jared): we want this enabled for all company-enabled buffers
   (setq company-idle-delay nil)
   (company-mode)
+  (eldoc-mode -1) ;; too noisy
   (eglot-ensure)
   (if (eq t (or format-on-save t))
       (add-hook 'after-save-hook 'eglot-format nil t)))
