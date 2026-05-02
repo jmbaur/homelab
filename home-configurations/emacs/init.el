@@ -85,14 +85,14 @@
   (setq company-idle-delay nil)
   (company-mode)
   (eglot-ensure)
-  (if (or format-on-save t)
+  (if (eq t (or format-on-save t))
       (add-hook 'after-save-hook 'eglot-format nil t)))
 
 (add-hook 'bash-ts-mode 'setup-lsp)
 (add-hook 'c-mode-hook 'setup-lsp)
 (add-hook 'nix-mode-hook 'setup-lsp)
 (add-hook 'rust-mode-hook 'setup-lsp)
-(add-hook 'python-mode-hook 'setup-lsp)
+(add-hook 'python-mode-hook (lambda () (setup-lsp -1)))
 (add-hook 'zig-mode-hook (lambda ()
 			   (zig-format-on-save-mode -1) ;; we use eglot-format instead
 			   (setup-lsp)))
