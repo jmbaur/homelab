@@ -33,9 +33,8 @@
         home-manager
         homelab-utils
         htmlq
-        htop-vim
+        htop
         jared-emacs
-        jared-neovim
         jq
         just
         killall
@@ -74,7 +73,7 @@
         zip
       ];
 
-      home.sessionVariables.EDITOR = "nvim";
+      home.sessionVariables.EDITOR = "emacs";
 
       programs.ssh = {
         enable = true;
