@@ -37,10 +37,11 @@
       services.cloudflare-warp.enable = true;
       nixpkgs.config.allowUnfree = true;
 
-      virtualisation.podman.enable = true;
-
       hardware.saleae-logic.enable = true;
-      environment.systemPackages = [ config.hardware.saleae-logic.package ];
+      environment.systemPackages = [
+        config.hardware.saleae-logic.package
+        pkgs.quartus-prime-pro-24_2
+      ];
 
       nix.settings = {
         extra-substituters = [ "https://cache.northwood.space" ];
