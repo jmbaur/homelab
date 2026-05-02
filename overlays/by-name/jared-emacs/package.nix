@@ -29,37 +29,34 @@
 }:
 
 let
-  emacs = emacs-pgtk.pkgs.withPackages (
-    epkgs: with epkgs; [
-      auto-dark
-      company
-      direnv
-      dts-mode
-      evil
-      evil-collection
-      evil-commentary
-      evil-numbers
-      evil-surround
-      fennel-mode
-      geiser
-      git-link
-      go-mode
-      goto-chg
-      haskell-mode
-      janet-mode
-      magit
-      markdown-mode
-      nix-mode
-      racket-mode
-      rg
-      rust-mode
-      slime
-      sops
-      terraform-mode
-      typescript-mode
-      zig-mode
-    ]
-  );
+  emacs = emacs-pgtk.pkgs.withPackages (epkgs: [
+    epkgs.company
+    epkgs.direnv
+    epkgs.dts-mode
+    epkgs.evil
+    epkgs.evil-collection
+    epkgs.evil-commentary
+    epkgs.evil-numbers
+    epkgs.evil-surround
+    epkgs.fennel-mode
+    epkgs.geiser
+    epkgs.git-link
+    epkgs.go-mode
+    epkgs.goto-chg
+    epkgs.haskell-mode
+    epkgs.janet-mode
+    epkgs.magit
+    epkgs.markdown-mode
+    epkgs.nix-mode
+    epkgs.racket-mode
+    epkgs.rg
+    epkgs.rust-mode
+    epkgs.slime
+    epkgs.sops
+    epkgs.terraform-mode
+    epkgs.typescript-mode
+    epkgs.zig-mode
+  ]);
 in
 buildEnv {
   name = "jared-emacs";

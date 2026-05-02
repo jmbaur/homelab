@@ -1,6 +1,5 @@
 ;;; -*- lexical-binding: t -*-
 
-(require 'auto-dark)
 (require 'company)
 (require 'direnv)
 (require 'eglot)
@@ -28,14 +27,8 @@
 (fido-vertical-mode 1)
 (rg-enable-default-bindings)
 
-(defun color-theme-changed-handler (args)
-  (message "hi: %s" args))
-
-;; TODO(jared): consider https://github.com/LionyxML/auto-dark-emacs?tab=readme-ov-file#notes-for-emacs-daemon--server-mode-users
 (if window-system
     (progn
-      (setq auto-dark-themes '((modus-vivendi) (modus-operandi)))
-      (auto-dark-mode)
       (if (fboundp 'scroll-bar-mode)
 	  (scroll-bar-mode -1)))
   (setq interprogram-cut-function 'osc52-select-text))
