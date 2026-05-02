@@ -85,7 +85,7 @@
 (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)
 
 ;; improves eglot performance
-(setq eglot-events-buffer-config :size 0)
+(add-to-list 'eglot-ignored-server-capabilities :hoverProvider)
 
 (defun setup-lsp (&optional format-on-save)
   "LSP common setup"
