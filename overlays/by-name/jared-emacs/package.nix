@@ -40,6 +40,7 @@ let
     epkgs.evil-surround
     epkgs.fennel-mode
     epkgs.geiser
+    epkgs.ghostel
     epkgs.git-link
     epkgs.go-mode
     epkgs.goto-chg

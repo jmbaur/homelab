@@ -72,13 +72,15 @@
   (refresh-projects))
 
 ;; add extra keybindings for project switching and override the switch commands
-(define-key project-prefix-map "g" 'rg-project) ;; overrides project-query-replace-regexp
+(define-key project-prefix-map "g" 'rg-project)
+(define-key project-prefix-map "t" 'ghostel-project)
 (define-key project-prefix-map "m" 'magit-project-status)
 (define-key project-prefix-map "r" 'project-recompile)
 (setq project-switch-commands '((project-find-file "Find file")
 			       (project-find-dir "Find directory")
 			       (rg-project "Find regexp")
 			       (project-eshell "Eshell")
+			       (ghostel-project "Terminal")
 			       (magit-project-status "Magit")))
 
 ;; (add-to-list 'project-switch-commands '(project-execute-extended-command "Extended command") t)
