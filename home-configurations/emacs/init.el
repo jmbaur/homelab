@@ -81,9 +81,11 @@
 
 ;; ensure the extra commands show up when switching projects
 (add-to-list 'project-switch-commands '(project-execute-extended-command "Extended command") t)
-(add-to-list 'project-switch-commands '(eat-project-new "Eat") t)
 (add-to-list 'project-switch-commands '(rg-project "Find ripgrep") t)
 (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)
+
+;; improves eglot performance
+(setq eglot-events-buffer-config :size 0)
 
 (defun setup-lsp (&optional format-on-save)
   "LSP common setup"
@@ -113,14 +115,11 @@
   (line-number-mode -1)
   (display-line-numbers-mode -1))
 
-(add-hook 'eat-mode-hook 'setup-term)
 (add-hook 'nix-repl-hook 'setup-term)
 (add-hook 'shell-mode-hook 'setup-term)
 (add-hook 'term-mode-hook 'setup-term)
 (add-hook 'shell-command-mode-hook 'view-mode) ;; ensure we can't modify buffer for shell output
-(add-hook 'eshell-load-hook (lambda ()
-			      (setup-term)
-			      (eat-eshell-mode)))
+(add-hook 'eshell-load-hook 'setup-term)
 
 ;; ensure we load custom-file, if set
 (unless (eq custom-file nil)
