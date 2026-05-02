@@ -83,6 +83,8 @@
 			       (ghostel-project "Terminal")
 			       (magit-project-status "Magit")))
 
+(define-global-abbrev "todo" "TODO(jared)")
+
 (defun setup-lsp (&optional args)
   "LSP common setup"
   (interactive)
@@ -92,6 +94,7 @@
   (define-key eglot-mode-map (kbd "C-c e a") #'eglot-code-actions)
   (define-key eglot-mode-map (kbd "C-c C-o") #'company-complete) ;; TODO(jared): we want this enabled for all company-enabled buffers
   (setq company-idle-delay nil)
+  (abbrev-mode)
   (company-mode)
   (eglot-inlay-hints-mode -1) ;; too noisy
   (eglot-ensure)
