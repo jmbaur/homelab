@@ -26,6 +26,7 @@
 (savehist-mode 1)
 (fido-vertical-mode 1)
 (rg-enable-default-bindings)
+(setq rg-command-line-flags '("--hidden"))
 
 (if window-system
     (progn
@@ -70,20 +71,25 @@
 (unless (file-exists-p project-list-file)
   (refresh-projects))
 
-;; add extra keybindings for project switching
-(define-key project-prefix-map "r" 'rg-project) ;; overrides project-query-replace-regexp
+;; add extra keybindings for project switching and override the switch commands
+(define-key project-prefix-map "g" 'rg-project) ;; overrides project-query-replace-regexp
 (define-key project-prefix-map "m" 'magit-project-status)
+(define-key project-prefix-map "r" 'project-recompile)
+(setq project-switch-commands '((project-find-file "Find file")
+			       (project-find-dir "Find directory")
+			       (rg-project "Find regexp")
+			       (project-eshell "Eshell")
+			       (magit-project-status "Magit")))
 
-;; ensure the extra commands show up when switching projects
-(add-to-list 'project-switch-commands '(project-execute-extended-command "Extended command") t)
-(add-to-list 'project-switch-commands '(rg-project "Find ripgrep") t)
-(add-to-list 'project-switch-commands '(magit-project-status "Magit") t)
+;; (add-to-list 'project-switch-commands '(project-execute-extended-command "Extended command") t)
+;; (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)
 
-(defun setup-lsp (&optional format-on-save)
+(defun setup-lsp (&rest args)
   "LSP common setup"
   (interactive)
-  (define-key eglot-mode-map (kbd "C-c e f n") #'flymake-goto-next-error)
-  (define-key eglot-mode-map (kbd "C-c e f p") #'flymake-goto-prev-error)
+  
+  (define-key eglot-mode-map (kbd "C-c f n") #'flymake-goto-next-error)
+  (define-key eglot-mode-map (kbd "C-c f p") #'flymake-goto-prev-error)
   (define-key eglot-mode-map (kbd "C-c e r") #'eglot-rename)
   (define-key eglot-mode-map (kbd "C-c e a") #'eglot-code-actions)
   (define-key eglot-mode-map (kbd "C-c C-o") #'company-complete) ;; TODO(jared): we want this enabled for all company-enabled buffers
@@ -91,18 +97,21 @@
   (company-mode)
   (eglot-inlay-hints-mode -1) ;; too noisy
   (eglot-ensure)
-  (if (eq t (or format-on-save t))
+  (if (eq t (or (plist-get args :format-on-save) t))
       (add-hook 'after-save-hook 'eglot-format nil t)))
 
 (add-hook 'bash-ts-mode 'setup-lsp)
 (add-hook 'c-mode-hook 'setup-lsp)
 (add-hook 'nix-mode-hook 'setup-lsp)
 (add-hook 'rust-mode-hook 'setup-lsp)
-(add-hook 'python-mode-hook (lambda () (setup-lsp -1)))
+(add-hook 'python-mode-hook (lambda () (setup-lsp :format-on-safe -1)))
 (add-hook 'zig-mode-hook (lambda ()
 			   (zig-format-on-save-mode -1) ;; we use eglot-format instead
-			   (setup-lsp)))
-
+			   (setup-lsp)
+			   ;; std.Progress output is not emacs friendly (https://codeberg.org/ziglang/zig-mode/issues/571)
+			   (advice-add 'zig--run-cmd :around
+				       (lambda (f cmd &optional source &rest args)
+					 (apply f cmd source (append '("--color" "off") args))))))
 (defun setup-term ()
   ;; line numbers are not nearly useful in terminal like environments
   (line-number-mode -1)
