@@ -81,7 +81,11 @@
   (define-key eglot-mode-map (kbd "C-c C-o") #'company-complete) ;; TODO(jared): we want this enabled for all company-enabled buffers
   (setq company-idle-delay nil)
   (company-mode)
-  (eldoc-mode -1) ;; too noisy
+
+  ;; too noisy
+  (eldoc-mode -1) 
+  (eglot-inlay-hints-mode -1)
+
   (eglot-ensure)
   (if (eq t (or format-on-save t))
       (add-hook 'after-save-hook 'eglot-format nil t)))
