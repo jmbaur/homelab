@@ -83,7 +83,7 @@
 			       (ghostel-project "Terminal")
 			       (magit-project-status "Magit")))
 
-(defun setup-lsp (&rest args)
+(defun setup-lsp (&optional args)
   "LSP common setup"
   (interactive)
   (define-key eglot-mode-map (kbd "C-c f n") #'flymake-goto-next-error)
