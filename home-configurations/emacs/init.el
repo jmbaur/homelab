@@ -83,13 +83,9 @@
 			       (ghostel-project "Terminal")
 			       (magit-project-status "Magit")))
 
-;; (add-to-list 'project-switch-commands '(project-execute-extended-command "Extended command") t)
-;; (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)
-
 (defun setup-lsp (&rest args)
   "LSP common setup"
   (interactive)
-  
   (define-key eglot-mode-map (kbd "C-c f n") #'flymake-goto-next-error)
   (define-key eglot-mode-map (kbd "C-c f p") #'flymake-goto-prev-error)
   (define-key eglot-mode-map (kbd "C-c e r") #'eglot-rename)
@@ -114,6 +110,7 @@
 			   (advice-add 'zig--run-cmd :around
 				       (lambda (f cmd &optional source &rest args)
 					 (apply f cmd source (append '("--color" "off") args))))))
+
 (defun setup-term ()
   ;; line numbers are not nearly useful in terminal like environments
   (line-number-mode -1)
