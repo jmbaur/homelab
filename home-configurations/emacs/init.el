@@ -85,8 +85,14 @@
 
 (define-global-abbrev "todo" "TODO(jared)")
 
+(advice-add 'zig--run-cmd :around
+	    (lambda (f cmd &optional source &rest args)
+	      "Disable zig build progress"
+	      (apply f cmd source (append '("--color" "off") args))))
+
 (add-hook 'eglot-managed-mode-hook
 	  (lambda ()
+	    "Common LSP setup"
 	    (define-key eglot-mode-map (kbd "C-c n") #'flymake-goto-next-error)
 	    (define-key eglot-mode-map (kbd "C-c p") #'flymake-goto-prev-error)
 	    (define-key eglot-mode-map (kbd "C-c r") #'eglot-rename)
@@ -100,16 +106,15 @@
 	    (let ((format-on-save (cond
 				   ((derived-mode-p 'python-mode) -1)
 				   ((derived-mode-p 'zig-mode)
-				    (advice-add 'zig--run-cmd :around
-						(lambda (f cmd &optional source &rest args)
-						  (apply f cmd source (append '("--color" "off") args))))
+				    ;; disable zig build progress
+				    (setq-local compile-command "zig build --color off")
 				    ;; we use eglot-format instead
 				    (zig-format-on-save-mode -1)
 				    t))))
 	      (when (or format-on-save t)
 		(add-hook 'after-save-hook 'eglot-format nil t)))))
 
-(add-hook 'bash-ts-mode 'elgot-ensure)
+(add-hook 'sh-mode 'elgot-ensure)
 (add-hook 'c-mode-hook 'eglot-ensure)
 (add-hook 'nix-mode-hook 'eglot-ensure)
 (add-hook 'rust-mode-hook 'eglot-ensure)
@@ -117,6 +122,7 @@
 (add-hook 'zig-mode-hook 'eglot-ensure)
 
 (defun setup-term ()
+  "Common terminal setup"
   ;; line numbers are not nearly useful in terminal like environments
   (line-number-mode -1)
   (display-line-numbers-mode -1))
