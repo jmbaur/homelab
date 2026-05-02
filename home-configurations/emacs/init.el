@@ -85,40 +85,43 @@
 
 (define-global-abbrev "todo" "TODO(jared)")
 
-(defun setup-lsp (&optional args)
-  "LSP common setup"
-  (interactive)
-  (define-key eglot-mode-map (kbd "C-c f n") #'flymake-goto-next-error)
-  (define-key eglot-mode-map (kbd "C-c f p") #'flymake-goto-prev-error)
-  (define-key eglot-mode-map (kbd "C-c e r") #'eglot-rename)
-  (define-key eglot-mode-map (kbd "C-c e a") #'eglot-code-actions)
-  (define-key eglot-mode-map (kbd "C-c C-o") #'company-complete) ;; TODO(jared): we want this enabled for all company-enabled buffers
-  (setq company-idle-delay nil)
-  (abbrev-mode)
-  (company-mode)
-  (eglot-inlay-hints-mode -1) ;; too noisy
-  (eglot-ensure)
-  (if (eq t (or (plist-get args :format-on-save) t))
-      (add-hook 'after-save-hook 'eglot-format nil t)))
+(add-hook 'eglot-managed-mode-hook
+	  (lambda ()
+	    (define-key eglot-mode-map (kbd "C-c n") #'flymake-goto-next-error)
+	    (define-key eglot-mode-map (kbd "C-c p") #'flymake-goto-prev-error)
+	    (define-key eglot-mode-map (kbd "C-c r") #'eglot-rename)
+	    (define-key eglot-mode-map (kbd "C-c a") #'eglot-code-actions)
+	    (define-key eglot-mode-map (kbd "C-c .") #'company-complete)
+	    (define-key eglot-mode-map (kbd "C-c C-.") #'company-complete)
+	    (setq company-idle-delay nil)
+	    (abbrev-mode)
+	    (company-mode)
+	    (eglot-inlay-hints-mode -1) ;; too noisy
+	    (let ((format-on-save (cond
+				   ((derived-mode-p 'python-mode) -1)
+				   ((derived-mode-p 'zig-mode)
+				    (advice-add 'zig--run-cmd :around
+						(lambda (f cmd &optional source &rest args)
+						  (apply f cmd source (append '("--color" "off") args))))
+				    ;; we use eglot-format instead
+				    (zig-format-on-save-mode -1)
+				    t))))
+	      (when (or format-on-save t)
+		(add-hook 'after-save-hook 'eglot-format nil t)))))
 
-(add-hook 'bash-ts-mode 'setup-lsp)
-(add-hook 'c-mode-hook 'setup-lsp)
-(add-hook 'nix-mode-hook 'setup-lsp)
-(add-hook 'rust-mode-hook 'setup-lsp)
-(add-hook 'python-mode-hook (lambda () (setup-lsp :format-on-save -1)))
-(add-hook 'zig-mode-hook (lambda ()
-			   (zig-format-on-save-mode -1) ;; we use eglot-format instead
-			   (setup-lsp)
-			   ;; std.Progress output is not emacs friendly (https://codeberg.org/ziglang/zig-mode/issues/571)
-			   (advice-add 'zig--run-cmd :around
-				       (lambda (f cmd &optional source &rest args)
-					 (apply f cmd source (append '("--color" "off") args))))))
+(add-hook 'bash-ts-mode 'elgot-ensure)
+(add-hook 'c-mode-hook 'eglot-ensure)
+(add-hook 'nix-mode-hook 'eglot-ensure)
+(add-hook 'rust-mode-hook 'eglot-ensure)
+(add-hook 'python-mode-hook 'eglot-ensure)
+(add-hook 'zig-mode-hook 'eglot-ensure)
 
 (defun setup-term ()
   ;; line numbers are not nearly useful in terminal like environments
   (line-number-mode -1)
   (display-line-numbers-mode -1))
 
+(add-hook 'ghostel-mode-hook 'setup-term)
 (add-hook 'nix-repl-hook 'setup-term)
 (add-hook 'shell-mode-hook 'setup-term)
 (add-hook 'term-mode-hook 'setup-term)
