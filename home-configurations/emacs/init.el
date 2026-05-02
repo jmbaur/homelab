@@ -102,7 +102,7 @@
 (add-hook 'c-mode-hook 'setup-lsp)
 (add-hook 'nix-mode-hook 'setup-lsp)
 (add-hook 'rust-mode-hook 'setup-lsp)
-(add-hook 'python-mode-hook (lambda () (setup-lsp :format-on-safe -1)))
+(add-hook 'python-mode-hook (lambda () (setup-lsp :format-on-save -1)))
 (add-hook 'zig-mode-hook (lambda ()
 			   (zig-format-on-save-mode -1) ;; we use eglot-format instead
 			   (setup-lsp)
