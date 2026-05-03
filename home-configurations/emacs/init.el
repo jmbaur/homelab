@@ -127,12 +127,14 @@
   (line-number-mode -1)
   (display-line-numbers-mode -1))
 
-(add-hook 'ghostel-mode-hook 'setup-term)
 (add-hook 'nix-repl-hook 'setup-term)
 (add-hook 'shell-mode-hook 'setup-term)
 (add-hook 'term-mode-hook 'setup-term)
 (add-hook 'shell-command-mode-hook 'view-mode) ;; ensure we can't modify buffer for shell output
 (add-hook 'eshell-load-hook 'setup-term)
+(add-hook 'ghostel-mode-hook (lambda ()
+			       (setup-term)
+			       (evil-ghostel-mode)))
 
 ;; ensure we load custom-file, if set
 (unless (eq custom-file nil)

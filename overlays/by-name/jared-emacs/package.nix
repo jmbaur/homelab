@@ -30,6 +30,12 @@
 
 let
   emacs = emacs-pgtk.pkgs.withPackages (epkgs: [
+    (epkgs.ghostel.overrideAttrs (old: {
+      packageRequires = [ epkgs.evil ];
+      preBuild = (old.preBuild or "") + ''
+        cp extensions/evil-ghostel/evil-ghostel.el lisp
+      '';
+    }))
     epkgs.company
     epkgs.direnv
     epkgs.dts-mode
@@ -40,7 +46,6 @@ let
     epkgs.evil-surround
     epkgs.fennel-mode
     epkgs.geiser
-    epkgs.ghostel
     epkgs.git-link
     epkgs.go-mode
     epkgs.goto-chg
