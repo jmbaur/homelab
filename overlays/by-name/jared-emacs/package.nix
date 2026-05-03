@@ -53,6 +53,7 @@ let
     epkgs.janet-mode
     epkgs.magit
     epkgs.markdown-mode
+    epkgs.meson-mode
     epkgs.nix-mode
     epkgs.racket-mode
     epkgs.rg
