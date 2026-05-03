@@ -26,7 +26,6 @@
 (savehist-mode 1)
 (fido-vertical-mode 1)
 (rg-enable-default-bindings)
-(setq rg-command-line-flags '("--hidden"))
 
 (if window-system
     (progn
