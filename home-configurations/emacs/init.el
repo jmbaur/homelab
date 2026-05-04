@@ -71,19 +71,26 @@
 (unless (file-exists-p project-list-file)
   (refresh-projects))
 
+(defun project-term ()
+  "Launch terminal in current project"
+  (interactive)
+  (if (eq system-type 'darwin)
+      (let ((default-directory (project-root (project-current t))))
+	(ansi-term (getenv "SHELL") (file-name-base default-directory)))
+    (ghostel-project)))
+
 ;; add extra keybindings for project switching and override the switch commands
 (define-key project-prefix-map "g" 'rg-project)
 (define-key project-prefix-map "m" 'magit-project-status)
 (define-key project-prefix-map "r" 'project-recompile)
-(unless (eq system-type 'darwin)
-  (define-key project-prefix-map "t" 'ghostel-project))
+(define-key project-prefix-map "t" 'project-term)
 
 (setq project-switch-commands '((project-find-file "Find file")
-			       (project-find-dir "Find directory")
-			       (rg-project "Find regexp")
-			       (project-eshell "Eshell")
-			       (ghostel-project "Terminal")
-			       (magit-project-status "Magit")))
+				(project-find-dir "Find directory")
+				(rg-project "Find regexp")
+				(project-eshell "Eshell")
+				(project-term "Terminal")
+				(magit-project-status "Magit")))
 
 (define-global-abbrev "todo" "TODO(jared)")
 
