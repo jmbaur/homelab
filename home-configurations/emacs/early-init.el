@@ -1,7 +1,7 @@
 ;;; -*- lexical-binding: t -*-
 
 (setq confirm-kill-emacs 'yes-or-no-p)
-(setq dired-dwim-target )
+(setq dired-dwim-target t)
 (setq direnv-always-show-summary nil)
 (setq evil-symbol-word-search t)
 (setq evil-want-C-u-scroll t)
