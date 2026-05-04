@@ -72,9 +72,11 @@
 
 ;; add extra keybindings for project switching and override the switch commands
 (define-key project-prefix-map "g" 'rg-project)
-(define-key project-prefix-map "t" 'ghostel-project)
 (define-key project-prefix-map "m" 'magit-project-status)
 (define-key project-prefix-map "r" 'project-recompile)
+(unless (eq system-type 'darwin)
+  (define-key project-prefix-map "t" 'ghostel-project))
+
 (setq project-switch-commands '((project-find-file "Find file")
 			       (project-find-dir "Find directory")
 			       (rg-project "Find regexp")
@@ -131,9 +133,10 @@
 (add-hook 'term-mode-hook 'setup-term)
 (add-hook 'shell-command-mode-hook 'view-mode) ;; ensure we can't modify buffer for shell output
 (add-hook 'eshell-load-hook 'setup-term)
-(add-hook 'ghostel-mode-hook (lambda ()
-			       (setup-term)
-			       (evil-ghostel-mode)))
+(unless (eq system-type 'darwin)
+  (add-hook 'ghostel-mode-hook (lambda ()
+				 (setup-term)
+				 (evil-ghostel-mode))))
 
 ;; ensure we load custom-file, if set
 (unless (eq custom-file nil)

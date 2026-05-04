@@ -9,6 +9,7 @@
   go-tools,
   gofumpt,
   gopls,
+  lib,
   lua-language-server,
   nixd,
   nixfmt,
@@ -19,6 +20,7 @@
   rustfmt,
   shellcheck,
   shfmt,
+  stdenv,
   tex-fmt,
   texlab,
   texlive,
@@ -29,41 +31,46 @@
 }:
 
 let
-  emacs = emacs-pgtk.pkgs.withPackages (epkgs: [
-    (epkgs.ghostel.overrideAttrs (old: {
-      packageRequires = [ epkgs.evil ];
-      preBuild = (old.preBuild or "") + ''
-        cp extensions/evil-ghostel/evil-ghostel.el lisp
-      '';
-    }))
-    epkgs.company
-    epkgs.direnv
-    epkgs.dts-mode
-    epkgs.evil
-    epkgs.evil-collection
-    epkgs.evil-commentary
-    epkgs.evil-numbers
-    epkgs.evil-surround
-    epkgs.fennel-mode
-    epkgs.geiser
-    epkgs.git-link
-    epkgs.go-mode
-    epkgs.goto-chg
-    epkgs.haskell-mode
-    epkgs.janet-mode
-    epkgs.magit
-    epkgs.markdown-mode
-    epkgs.meson-mode
-    epkgs.nix-mode
-    epkgs.racket-mode
-    epkgs.rg
-    epkgs.rust-mode
-    epkgs.slime
-    epkgs.sops
-    epkgs.terraform-mode
-    epkgs.typescript-mode
-    epkgs.zig-mode
-  ]);
+  emacs = emacs-pgtk.pkgs.withPackages (
+    epkgs:
+    lib.optionals (!stdenv.hostPlatform.isDarwin) [
+      (epkgs.ghostel.overrideAttrs (old: {
+        packageRequires = [ epkgs.evil ];
+        preBuild = (old.preBuild or "") + ''
+          cp extensions/evil-ghostel/evil-ghostel.el lisp
+        '';
+      }))
+    ]
+    ++ [
+      epkgs.company
+      epkgs.direnv
+      epkgs.dts-mode
+      epkgs.evil
+      epkgs.evil-collection
+      epkgs.evil-commentary
+      epkgs.evil-numbers
+      epkgs.evil-surround
+      epkgs.fennel-mode
+      epkgs.geiser
+      epkgs.git-link
+      epkgs.go-mode
+      epkgs.goto-chg
+      epkgs.haskell-mode
+      epkgs.janet-mode
+      epkgs.magit
+      epkgs.markdown-mode
+      epkgs.meson-mode
+      epkgs.nix-mode
+      epkgs.racket-mode
+      epkgs.rg
+      epkgs.rust-mode
+      epkgs.slime
+      epkgs.sops
+      epkgs.terraform-mode
+      epkgs.typescript-mode
+      epkgs.zig-mode
+    ]
+  );
 in
 buildEnv {
   name = "jared-emacs";
