@@ -76,7 +76,9 @@
   (interactive)
   (if (eq system-type 'darwin)
       (let ((default-directory (project-root (project-current t))))
-	(ansi-term (getenv "SHELL") (file-name-base default-directory)))
+	(ansi-term
+	 (getenv "SHELL")
+	 (format "term-%s" (car (last (file-name-split default-directory) 2)))))
     (ghostel-project)))
 
 ;; add extra keybindings for project switching and override the switch commands
