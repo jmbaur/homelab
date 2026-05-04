@@ -19,7 +19,8 @@
    (format "\x1b]52;c;%s\x07"
 	   (base64-encode-string text t))))
 
-(menu-bar-mode -1)
+(unless (eq system-type 'darwin)
+  (menu-bar-mode -1))
 (tool-bar-mode -1)
 (global-display-line-numbers-mode 1)
 (global-auto-revert-mode 1)
