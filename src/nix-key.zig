@@ -20,9 +20,10 @@ fn usage(program_name: []const u8) noreturn {
 }
 
 fn sign(
+    io: std.Io,
     allocator: std.mem.Allocator,
     program_name: []const u8,
-    args: *std.process.ArgIterator,
+    args: *std.process.Args.Iterator,
 ) !void {
     const data_filepath = args.next() orelse {
         return usage(program_name);
@@ -31,16 +32,24 @@ fn sign(
         return usage(program_name);
     };
 
-    const key_file = try std.fs.cwd().openFile(key_filepath, .{});
-    defer key_file.close();
+    const key_file = try std.Io.Dir.cwd().openFile(io, key_filepath, .{});
+    defer key_file.close(io);
 
-    const data_file = try std.fs.cwd().openFile(data_filepath, .{});
-    defer data_file.close();
+    const data_file = try std.Io.Dir.cwd().openFile(io, data_filepath, .{});
+    defer data_file.close(io);
 
-    const key_content = try key_file.readToEndAlloc(allocator, std.math.maxInt(usize));
-    defer allocator.free(key_content);
+    var buffer: [1024]u8 = undefined;
 
-    var split = std.mem.splitSequence(u8, key_content, ":");
+    var key_content: std.Io.Writer.Allocating = .init(allocator);
+    var key_file_reader = key_file.reader(io, &buffer);
+    while (true) {
+        if (key_file_reader.interface.stream(&key_content.writer, .unlimited)) |_| {} else |err| switch (err) {
+            error.EndOfStream => break,
+            else => return err,
+        }
+    }
+
+    var split = std.mem.splitSequence(u8, key_content.written(), ":");
 
     const key_name = split.next() orelse return usage(program_name);
     const key_base64 = split.next() orelse return usage(program_name);
@@ -57,8 +66,14 @@ fn sign(
 
     try std.base64.standard.Decoder.decode(key_data, key_base64);
 
-    const data_content = try data_file.readToEndAlloc(allocator, std.math.maxInt(usize));
-    defer allocator.free(data_content);
+    var data_file_reader = data_file.reader(io, &buffer);
+    var data_content: std.Io.Writer.Allocating = .init(allocator);
+    while (true) {
+        if (data_file_reader.interface.stream(&data_content.writer, .unlimited)) |_| {} else |err| switch (err) {
+            error.EndOfStream => break,
+            else => return err,
+        }
+    }
 
     var signature = [_]u8{0} ** C.crypto_sign_BYTES;
 
@@ -71,8 +86,8 @@ fn sign(
     if (C.crypto_sign_detached(
         &signature,
         &signature_len,
-        data_content.ptr,
-        data_content.len,
+        data_content.written().ptr,
+        data_content.written().len,
         key_data.ptr,
     ) != 0) {
         return error.LibsodiumSignDetached;
@@ -88,17 +103,18 @@ fn sign(
 
     const encoded = std.base64.standard.Encoder.encode(encode_buf, &signature);
 
-    var out_buf = [_]u8{0} ** 1024;
-    var stdout_file = std.fs.File.stdout().writer(&out_buf);
+    var out_buf: [1024]u8 = undefined;
+    var stdout_file = std.Io.File.stdout().writer(io, &out_buf);
     var stdout = &stdout_file.interface;
     try stdout.print("{s}:{s}", .{ key_name, encoded });
     try stdout.flush();
 }
 
 fn verify(
+    io: std.Io,
     allocator: std.mem.Allocator,
     program_name: []const u8,
-    args: *std.process.ArgIterator,
+    args: *std.process.Args.Iterator,
 ) !void {
     const data_filepath = args.next() orelse return usage(program_name);
     const signature_filepath = args.next() orelse return usage(program_name);
@@ -131,16 +147,18 @@ fn verify(
         }
     }
 
-    var data_file = try std.fs.cwd().openFile(data_filepath, .{});
-    defer data_file.close();
+    var data_file = try std.Io.Dir.cwd().openFile(io, data_filepath, .{});
+    defer data_file.close(io);
 
-    const data_contents = try data_file.readToEndAlloc(allocator, std.math.maxInt(usize));
+    var data_file_reader = data_file.reader(io, &.{});
+    const data_contents = try data_file_reader.interface.allocRemaining(allocator, .unlimited);
     defer allocator.free(data_contents);
 
-    var signature_file = try std.fs.cwd().openFile(signature_filepath, .{});
-    defer signature_file.close();
+    var signature_file = try std.Io.Dir.cwd().openFile(io, signature_filepath, .{});
+    defer signature_file.close(io);
 
-    const signature_contents = try signature_file.readToEndAlloc(allocator, std.math.maxInt(usize));
+    var signature_file_reader = signature_file.reader(io, &.{});
+    const signature_contents = try signature_file_reader.interface.allocRemaining(allocator, .unlimited);
     defer allocator.free(signature_contents);
 
     var split = std.mem.splitSequence(u8, signature_contents, ":");
@@ -171,13 +189,10 @@ fn verify(
     }
 }
 
-pub fn main() !void {
-    var gpa = std.heap.GeneralPurposeAllocator(.{ .safety = true }){};
-    defer {
-        _ = gpa.deinit();
-    }
+pub fn main(init: std.process.Init) !void {
+    const allocator = init.arena.allocator();
 
-    var args = try std.process.argsWithAllocator(gpa.allocator());
+    var args = init.minimal.args.iterate();
     defer args.deinit();
 
     const program_name = args.next() orelse unreachable;
@@ -185,9 +200,9 @@ pub fn main() !void {
     const action = args.next() orelse return usage(program_name);
 
     if (std.mem.eql(u8, action, "sign")) {
-        return sign(gpa.allocator(), program_name, &args);
+        return sign(init.io, allocator, program_name, &args);
     } else if (std.mem.eql(u8, action, "verify")) {
-        return verify(gpa.allocator(), program_name, &args);
+        return verify(init.io, allocator, program_name, &args);
     } else {
         return usage(program_name);
     }

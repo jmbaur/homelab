@@ -1,5 +1,5 @@
 const std = @import("std");
-const ioctl = std.os.linux.ioctl;
+const system = std.os.linux;
 const C = @cImport({
     @cInclude("linux/gpio.h");
 });
@@ -11,7 +11,7 @@ fn get(fd: std.posix.fd_t) C.gpio_v2_line_values {
     values.mask = 0b11;
 
     std.debug.assert(.SUCCESS == std.posix.errno(
-        ioctl(
+        system.ioctl(
             fd,
             C.GPIO_V2_LINE_GET_VALUES_IOCTL,
             @intFromPtr(&values),
@@ -21,38 +21,38 @@ fn get(fd: std.posix.fd_t) C.gpio_v2_line_values {
     return values;
 }
 
-fn toggle(fd: std.posix.fd_t) !void {
+fn toggle(io: std.Io, fd: std.posix.fd_t) !void {
     var values = std.mem.zeroes(C.gpio_v2_line_values);
     values.mask = 0b11;
 
     std.log.debug("setting set pin high", .{});
     values.bits = 0b01;
     std.debug.assert(.SUCCESS == std.posix.errno(
-        ioctl(
+        system.ioctl(
             fd,
             C.GPIO_V2_LINE_SET_VALUES_IOCTL,
             @intFromPtr(&values),
         ),
     ));
 
-    std.Thread.sleep(std.time.ns_per_s);
+    try io.sleep(std.Io.Duration.fromSeconds(1), .boot);
 
     std.log.debug("setting unset pin high", .{});
     values.bits = 0b10;
     std.debug.assert(.SUCCESS == std.posix.errno(
-        ioctl(
+        system.ioctl(
             fd,
             C.GPIO_V2_LINE_SET_VALUES_IOCTL,
             @intFromPtr(&values),
         ),
     ));
 
-    std.Thread.sleep(std.time.ns_per_s);
+    try io.sleep(std.Io.Duration.fromSeconds(1), .boot);
 
     std.log.debug("setting both pins low", .{});
     values.bits = 0b00;
     std.debug.assert(.SUCCESS == std.posix.errno(
-        ioctl(
+        system.ioctl(
             fd,
             C.GPIO_V2_LINE_SET_VALUES_IOCTL,
             @intFromPtr(&values),
@@ -61,21 +61,22 @@ fn toggle(fd: std.posix.fd_t) !void {
 }
 
 fn handleConnection(
-    connection: *std.net.Server.Connection,
+    io: std.Io,
+    stream: *std.Io.net.Stream,
     fd: std.posix.fd_t,
 ) !void {
-    defer connection.stream.close();
+    defer stream.close(io);
 
-    var read_buf = [_]u8{0} ** 4096;
-    var write_buf = [_]u8{0} ** 4096;
+    var read_buf: [4096]u8 = undefined;
+    var write_buf: [4096]u8 = undefined;
 
-    var stream_reader = connection.stream.reader(&read_buf);
-    var stream_writer = connection.stream.writer(&write_buf);
+    var stream_reader = stream.reader(io, &read_buf);
+    var stream_writer = stream.writer(io, &write_buf);
 
-    var server: std.http.Server = .init(stream_reader.interface(), &stream_writer.interface);
+    var server: std.http.Server = .init(&stream_reader.interface, &stream_writer.interface);
     var request = try server.receiveHead();
 
-    std.log.info("{f} {s}", .{ connection.address, request.head.target });
+    std.log.info("{f} {s}", .{ stream.socket.address, request.head.target });
 
     if (std.mem.eql(u8, "/", request.head.target)) {
         try request.respond(@embedFile("./garage-door.html"), .{
@@ -85,7 +86,7 @@ fn handleConnection(
         });
     } else if (std.mem.eql(u8, "/toggle", request.head.target)) {
         try request.respond("OK", .{});
-        try toggle(fd);
+        try toggle(io, fd);
     } else {
         try request.respond("Not found", .{
             .status = .not_found,
@@ -93,13 +94,8 @@ fn handleConnection(
     }
 }
 
-pub fn main() !void {
-    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-    defer arena.deinit();
-
-    const allocator = arena.allocator();
-
-    var args = try std.process.argsWithAllocator(allocator);
+pub fn main(init: std.process.Init) !void {
+    var args = init.minimal.args.iterate();
     _ = args.next() orelse unreachable;
     const chip = args.next() orelse return error.InvalidArgument;
 
@@ -112,11 +108,10 @@ pub fn main() !void {
         .{ chip, set_line, unset_line },
     );
 
-    const env = try std.process.getEnvMap(allocator);
-    const mode: enum { oneshot, server } = if (env.get("LISTEN_FDS")) |_| .server else .oneshot;
+    const mode: enum { oneshot, server } = if (init.environ_map.get("LISTEN_FDS")) |_| .server else .oneshot;
 
-    const gpiochip = try std.fs.cwd().openFile(chip, .{ .mode = .read_only });
-    defer gpiochip.close();
+    const gpiochip = try std.Io.Dir.cwd().openFile(init.io, chip, .{ .mode = .read_only });
+    defer gpiochip.close(init.io);
 
     var line_request = std.mem.zeroes(C.gpio_v2_line_request);
     line_request.offsets[0] = set_line;
@@ -126,7 +121,7 @@ pub fn main() !void {
     std.mem.copyForwards(u8, &line_request.consumer, "garage-door");
 
     std.debug.assert(.SUCCESS == std.posix.errno(
-        std.os.linux.ioctl(
+        system.ioctl(
             gpiochip.handle,
             C.GPIO_V2_GET_LINE_IOCTL,
             @intFromPtr(&line_request),
@@ -134,24 +129,27 @@ pub fn main() !void {
     ));
     std.log.debug("line: {}", .{line_request});
 
-    defer std.posix.close(line_request.fd);
+    defer _ = system.close(line_request.fd);
 
     switch (mode) {
-        .oneshot => try toggle(line_request.fd),
+        .oneshot => try toggle(init.io, line_request.fd),
         .server => {
-            const listen_address: std.net.Ip6Address = .init([_]u8{0} ** 16, 0, 0, 0);
-            var server: std.net.Server = .{
-                .listen_address = .{ .in6 = listen_address },
-                .stream = .{ .handle = 3 },
+            var server: std.Io.net.Server = .{
+                .socket = .{
+                    .handle = 3, // socket-activated
+                    .address = std.Io.net.IpAddress.parseIp6("::", 0) catch @panic("invalid IPv6 address"),
+                },
+                .options = void{},
             };
 
             while (true) {
-                var connection = server.accept() catch |err| {
+                var connection = server.accept(init.io) catch |err| {
                     std.log.err("failed to accept connection: {}", .{err});
                     continue;
                 };
 
                 handleConnection(
+                    init.io,
                     &connection,
                     line_request.fd,
                 ) catch |err| {

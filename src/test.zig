@@ -8,5 +8,4 @@ test {
     _ = @import("./nixos-kexec.zig");
     _ = @import("./pb.zig");
     _ = @import("./pomo.zig");
-    _ = @import("./swayzbar.zig");
 }

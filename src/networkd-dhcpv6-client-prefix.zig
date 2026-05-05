@@ -27,23 +27,20 @@ const NetworkdStatus = struct {
     DHCPv6Client: DHCPv6Client,
 };
 
-pub fn main() !void {
-    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-    defer arena.deinit();
+pub fn main(init: std.process.Init) !void {
+    var buf: [4096]u8 = undefined;
 
-    var buf = [_]u8{0} ** 4096;
+    var stdin_file = std.Io.File.stdin().reader(init.io, &buf);
 
-    var stdin_file = std.fs.File.stdin().reader(&buf);
+    var json_reader: std.json.Scanner.Reader = .init(init.arena.allocator(), &stdin_file.interface);
 
-    var json_reader: std.json.Scanner.Reader = .init(arena.allocator(), &stdin_file.interface);
-
-    const status = try std.json.parseFromTokenSource(NetworkdStatus, arena.allocator(), &json_reader, .{
+    const status = try std.json.parseFromTokenSource(NetworkdStatus, init.arena.allocator(), &json_reader, .{
         .ignore_unknown_fields = true,
     });
 
     const value: NetworkdStatus = status.value;
 
-    var stdout_file = std.fs.File.stdout().writer(&.{});
+    var stdout_file = std.Io.File.stdout().writer(init.io, &.{});
     var stdout = &stdout_file.interface;
     for (value.DHCPv6Client.Prefixes) |prefix| {
         try stdout.print("{f}\n", .{prefix});

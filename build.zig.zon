@@ -5,9 +5,8 @@
     .paths = .{""},
     .dependencies = .{
         .libsodium = .{
-            // TODO(jared): move to a tagged release once the build.zig script issues are worked out
-            .url = "https://github.com/jedisct1/libsodium/archive/d603d6b151b49cfda96d6eea7723e8890f7b7267.tar.gz",
-            .hash = "N-V-__8AAF7WaQDUzNqSfPNvCxfZCwbdGDuo2xk5giEXqIU6",
+            .url = "https://github.com/jedisct1/libsodium/archive/refs/tags/1.0.22-RELEASE.tar.gz",
+            .hash = "N-V-__8AAGV3jgBL34nv4uUihxaCgroWLfj966-SVjBHn9RE",
         },
         .libqrencode = .{
             .url = "https://github.com/fukuchi/libqrencode/archive/v4.1.1.tar.gz",

@@ -9,20 +9,31 @@ fn usage(program_name: []const u8) noreturn {
     std.process.exit(1);
 }
 
-const Peers = std.AutoHashMap(std.net.Ip6Address, []const u8);
+const Peers = std.array_hash_map.Auto(std.Io.net.Ip6Address, []const u8);
 
-var reader_buf = [_]u8{0} ** 4096;
-var writer_buf = [_]u8{0} ** 4096;
+fn parsePeers(arena: std.mem.Allocator, reader: *std.Io.Reader) !Peers {
+    var peers: Peers = .empty;
+    errdefer peers.deinit(arena);
 
-fn parsePeers(allocator: std.mem.Allocator, file_contents: []const u8) !Peers {
-    var peers = Peers.init(allocator);
-    errdefer peers.deinit();
+    var line_buf: [1024]u8 = undefined;
+    var line_writer: std.Io.Writer = .fixed(&line_buf);
 
-    var split = std.mem.splitSequence(u8, file_contents, "\n");
+    while (true) {
+        defer _ = line_writer.consumeAll();
 
-    while (split.next()) |line| {
-        if (std.mem.eql(u8, line, "")) {
-            continue;
+        const written = b: {
+            if (reader.streamDelimiter(&line_writer, '\n')) |written| {
+                reader.toss(1);
+                break :b written;
+            } else |err| switch (err) {
+                error.EndOfStream => break :b 0,
+                else => return err,
+            }
+        };
+
+        const line = line_writer.buffer[0..line_writer.end];
+        if (line.len == 0 and written == 0) {
+            break;
         }
 
         var line_split = std.mem.splitSequence(u8, line, " ");
@@ -37,49 +48,74 @@ fn parsePeers(allocator: std.mem.Allocator, file_contents: []const u8) !Peers {
             continue;
         };
 
-        const ip = std.net.Ip6Address.parse(ip_string, 0) catch {
+        const ip = std.Io.net.Ip6Address.parse(ip_string, 0) catch {
             std.log.err("invalid line '{s}'", .{line});
             continue;
         };
 
-        try peers.put(ip, name);
+        try peers.put(arena, ip, try arena.dupe(u8, name));
+
+        if (written == 0) break;
     }
 
     return peers;
 }
 
-test {
-    var peers = try parsePeers(std.testing.allocator,
-        \\foo 2001:db8::1
-        \\bar 2001:db8::2
-    );
-    defer peers.deinit();
+fn assertParsePeers(allocator: std.mem.Allocator, peers_content: []const u8) !void {
+    var peer_reader = std.Io.Reader.fixed(peers_content);
+    var peers = try parsePeers(allocator, &peer_reader);
 
     try std.testing.expectEqual(2, peers.count());
     try std.testing.expectEqualStrings(
         "foo",
-        peers.get(try std.net.Ip6Address.parse("2001:db8::1", 0)).?,
+        peers.get(try std.Io.net.Ip6Address.parse("2001:db8::1", 0)).?,
     );
 
     try std.testing.expectEqualStrings(
         "bar",
-        peers.get(try std.net.Ip6Address.parse("2001:db8::2", 0)).?,
+        peers.get(try std.Io.net.Ip6Address.parse("2001:db8::2", 0)).?,
     );
 }
 
+test parsePeers {
+    var arena: std.heap.ArenaAllocator = .init(std.testing.allocator);
+    defer arena.deinit();
+
+    const fixed_peers =
+        \\foo 2001:db8::1
+        \\bar 2001:db8::2
+    ;
+    try assertParsePeers(arena.allocator(), fixed_peers);
+
+    const fixed_peers_with_newline = fixed_peers ++ "\n";
+    try assertParsePeers(arena.allocator(), fixed_peers_with_newline);
+}
+
 fn handleConnection(
+    io: std.Io,
     allocator: std.mem.Allocator,
-    connection: std.net.Server.Connection,
+    stream: std.Io.net.Stream,
     peers: Peers,
     snapshot_root: []const u8,
 ) !void {
-    defer connection.stream.close();
+    var reader_buf: [4096]u8 = undefined;
+    var writer_buf: [4096]u8 = undefined;
 
-    var address = connection.address;
+    defer stream.close(io);
+
+    var address = stream.socket.address;
     address.setPort(0);
 
-    const peer_name = peers.get(address.in6) orelse {
-        std.log.warn("address {f} not found in peers", .{connection.address});
+    switch (address) {
+        .ip4 => {
+            std.log.warn("got IPv4 address, skipping", .{});
+            return;
+        },
+        .ip6 => {},
+    }
+
+    const peer_name = peers.get(address.ip6) orelse {
+        std.log.warn("address {f} not found in peers", .{address});
         return;
     };
 
@@ -89,35 +125,30 @@ fn handleConnection(
     );
     defer allocator.free(snapshot_path);
 
-    std.fs.cwd().access(snapshot_path, .{}) catch |err| switch (err) {
+    std.Io.Dir.cwd().access(io, snapshot_path, .{}) catch |err| switch (err) {
         error.FileNotFound => {
-            try std.fs.cwd().makePath(snapshot_path);
+            try std.Io.Dir.cwd().createDirPath(io, snapshot_path);
         },
         else => return err,
     };
 
-    var child = std.process.Child.init(
-        &.{ "btrfs", "receive", "-e", snapshot_path },
-        allocator,
-    );
-
-    child.stdin_behavior = .Pipe;
-    child.stdout_behavior = .Inherit;
-    child.stderr_behavior = .Inherit;
-
-    try child.spawn();
+    var child = try std.process.spawn(io, .{
+        .argv = &.{ "btrfs", "receive", "-e", snapshot_path },
+        .stdin = .pipe,
+        .stdout = .inherit,
+        .stderr = .inherit,
+    });
 
     const child_stdin = child.stdin orelse {
         std.log.err("btrfs child process stdin not available", .{});
         return;
     };
 
-    var stream_reader = connection.stream.reader(&reader_buf);
-    var reader = stream_reader.interface();
-    var child_writer = child_stdin.writer(&writer_buf);
+    var stream_reader = stream.reader(io, &reader_buf);
+    var child_writer = child_stdin.writer(io, &writer_buf);
 
     var total_bytes: usize = 0;
-    while (reader.stream(&child_writer.interface, .unlimited)) |bytes| {
+    while (stream_reader.interface.stream(&child_writer.interface, .unlimited)) |bytes| {
         total_bytes += bytes;
     } else |err| {
         switch (err) {
@@ -130,21 +161,16 @@ fn handleConnection(
         }
     }
 
-    const term = try child.wait();
+    const term = try child.wait(io);
 
-    switch (term.Exited) {
+    switch (term.exited) {
         0 => std.log.info("finished backup for peer {s} (received {Bi:.2})", .{ peer_name, total_bytes }),
         else => |status| std.log.err("failed to backup peer {s} (btrfs exited with status {})", .{ peer_name, status }),
     }
 }
 
-pub fn main() !void {
-    var gpa = std.heap.GeneralPurposeAllocator(.{ .safety = true }){};
-    defer {
-        _ = gpa.deinit();
-    }
-
-    var args = try std.process.argsWithAllocator(gpa.allocator());
+pub fn main(init: std.process.Init) !void {
+    var args = init.minimal.args.iterate();
     defer args.deinit();
 
     const program_name = args.next() orelse unreachable;
@@ -158,17 +184,13 @@ pub fn main() !void {
         return usage(program_name);
     };
 
-    var peer_file = try std.fs.cwd().openFile(peer_filepath, .{});
-    defer peer_file.close();
+    var peer_file = try std.Io.Dir.cwd().openFile(init.io, peer_filepath, .{});
+    defer peer_file.close(init.io);
 
-    const peer_file_contents = try peer_file.readToEndAlloc(
-        gpa.allocator(),
-        4096,
-    );
-    defer gpa.allocator().free(peer_file_contents);
+    var buf: [1024]u8 = undefined;
+    var reader = peer_file.reader(init.io, &buf);
 
-    var peers = try parsePeers(gpa.allocator(), peer_file_contents);
-    defer peers.deinit();
+    var peers = try parsePeers(init.arena.allocator(), &reader.interface);
 
     var iter = peers.iterator();
     while (iter.next()) |peer| {
@@ -178,16 +200,16 @@ pub fn main() !void {
         );
     }
 
-    const bind_address = try std.net.Address.parseIp("::", port);
+    const bind_address = try std.Io.net.IpAddress.parse("::", port);
 
-    var server = try bind_address.listen(.{});
-    defer server.deinit();
+    var server = try bind_address.listen(init.io, .{});
+    defer server.deinit(init.io);
 
     while (true) {
         var handle = try std.Thread.spawn(
             .{},
             handleConnection,
-            .{ gpa.allocator(), try server.accept(), peers, snapshot_root },
+            .{ init.io, init.gpa, try server.accept(init.io), peers, snapshot_root },
         );
         handle.detach();
     }

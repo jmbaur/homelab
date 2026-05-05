@@ -1,13 +1,11 @@
 const std = @import("std");
 
-pub fn main() !void {
-    var prng = std.Random.DefaultPrng.init(@intCast(std.time.microTimestamp()));
-
-    var buf = [_]u8{0} ** 6;
-    prng.fill(&buf);
+pub fn main(init: std.process.Init) !void {
+    var buf: [6]u8 = undefined;
+    init.io.random(&buf);
 
     var out_buf = [_]u8{0} ** 32;
-    var stdout_file = std.fs.File.stdout().writer(&out_buf);
+    var stdout_file = std.Io.File.stdout().writer(init.io, &out_buf);
     var stdout = &stdout_file.interface;
 
     for (0..6) |i| {

@@ -92,20 +92,6 @@ pub fn build(b: *std.Build) !void {
     b.installArtifact(pomo);
 
     if (target.result.os.tag == .linux) {
-        const swayzbar = b.addExecutable(.{
-            .name = "swayzbar",
-            .root_module = b.createModule(.{
-                .root_source_file = b.path("src/swayzbar.zig"),
-                .target = target,
-                .optimize = optimize,
-                .strip = optimize != .Debug,
-                .link_libc = true,
-            }),
-        });
-        b.installArtifact(swayzbar);
-    }
-
-    if (target.result.os.tag == .linux) {
         const nixos_kexec = b.addExecutable(.{
             .name = "nixos-kexec",
             .root_module = b.createModule(.{

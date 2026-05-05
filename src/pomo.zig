@@ -2,10 +2,10 @@ const std = @import("std");
 
 var inside_tmux = false;
 
-var out_buf = [_]u8{0} ** 1024;
-var stdout_file = std.fs.File.stdout().writer(&out_buf);
+var out_buf: [1024]u8 = undefined;
 
-fn notify(message: []const u8) !void {
+fn notify(io: std.Io, message: []const u8) !void {
+    var stdout_file = std.Io.File.stdout().writer(io, &out_buf);
     var stdout = &stdout_file.interface;
     try stdout.print("{s}\n", .{message});
 
@@ -24,49 +24,38 @@ fn notify(message: []const u8) !void {
 }
 
 fn pomo(
+    io: std.Io,
     message: []const u8,
     duration: comptime_int,
 ) !void {
+    var stdout_file = std.Io.File.stdout().writer(io, &out_buf);
     var stdout = &stdout_file.interface;
     try stdout.writeAll("\x1b[2J\x1b[0;0H");
     try stdout.flush();
-    try notify(message);
+    try notify(io, message);
 
     const warning_time_ns = @min(duration / 10, 30 * std.time.ns_per_s);
 
     var msg_buf = [_]u8{0} ** 30;
     const msg = try std.fmt.bufPrint(&msg_buf, "{}s left!", .{@divFloor(warning_time_ns, std.time.ns_per_s)});
 
-    std.Thread.sleep(duration - warning_time_ns);
-    try notify(msg);
-    std.Thread.sleep(warning_time_ns);
+    try io.sleep(std.Io.Duration.fromNanoseconds(duration - warning_time_ns), .boot);
+    try notify(io, msg);
+    try io.sleep(std.Io.Duration.fromNanoseconds(warning_time_ns), .boot);
 }
 
-pub fn main() !void {
-    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-    defer arena.deinit();
+pub fn main(init: std.process.Init) !void {
+    var stdin_file = std.Io.File.stdin().reader(init.io, &.{});
 
-    const allocator = arena.allocator();
-
-    var stdin_file = std.fs.File.stdin().reader(&.{});
-    var stdin = &stdin_file.interface;
-
-    inside_tmux = b: {
-        _ = std.process.getEnvVarOwned(allocator, "TMUX") catch |err| switch (err) {
-            error.EnvironmentVariableNotFound => break :b false,
-            else => return err,
-        };
-
-        break :b true;
-    };
+    inside_tmux = init.environ_map.get("TMUX") != null;
 
     while (true) {
         for (0..4) |_| {
-            try pomo("work!", 25 * std.time.ns_per_min);
-            try pomo("break!", 5 * std.time.ns_per_min);
+            try pomo(init.io, "work!", 25 * std.time.ns_per_min);
+            try pomo(init.io, "break!", 5 * std.time.ns_per_min);
         }
 
-        try pomo("long break!", 30 * std.time.ns_per_min);
+        try pomo(init.io, "long break!", 30 * std.time.ns_per_min);
 
         std.debug.print(
             "Press <ENTER> to continue to the next pomodoro session, CTRL-C to quit.",
@@ -76,6 +65,6 @@ pub fn main() !void {
         // We don't have the controlling terminal in raw mode, so input will
         // be buffered until a newline is entered. This means if we succeed to
         // read anything, then the user hit <ENTER>.
-        _ = try stdin.takeByte();
+        _ = try stdin_file.interface.takeByte();
     }
 }

@@ -2,6 +2,7 @@
   lib,
   stdenvNoCC,
   zig_0_15,
+  zig_0_16,
 }:
 
 let
@@ -10,9 +11,11 @@ in
 stdenvNoCC.mkDerivation (
   finalAttrs:
   let
+    # zig build --fetch seems to not work with 0.16.x
     deps = zig_0_15.fetchDeps {
+      fetchAll = true;
       inherit (finalAttrs) pname version src;
-      hash = "sha256-GcuXahLxAXtkALRfOhjVMQq84w8XJx/XYLN9LauF/VY=";
+      hash = "sha256-aoVc2HmNFx6U1k+oihyDw8LYfqlWmwBXMXVImaRtA54=";
     };
   in
   {
@@ -28,7 +31,7 @@ stdenvNoCC.mkDerivation (
       ];
     };
 
-    nativeBuildInputs = [ zig_0_15 ];
+    nativeBuildInputs = [ zig_0_16 ];
 
     __structuredAttrs = true;
     doCheck = true;
@@ -50,9 +53,12 @@ stdenvNoCC.mkDerivation (
     # should be fixed).
     postConfigure = ''
       cp -r ${deps} $ZIG_GLOBAL_CACHE_DIR/p
-      chmod u+w --recursive $ZIG_GLOBAL_CACHE_DIR/p
+      chmod u+w --recursive $ZIG_GLOBAL_CACHE_DIR
+      zigBuildFlagsArray+=("--system" "$ZIG_GLOBAL_CACHE_DIR/p")
+      zigCheckFlagsArray+=("--system" "$ZIG_GLOBAL_CACHE_DIR/p")
     '';
-    passthru.deps = deps;
+
+    passthru = { inherit deps; };
     meta.platforms = lib.platforms.all;
   }
 )

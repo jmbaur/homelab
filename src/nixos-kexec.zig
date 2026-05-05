@@ -8,21 +8,21 @@ const PROFILES_DIR = "/nix/var/nix/profiles";
 // the value.
 const SIGRTMIN = 34;
 
-fn chooseToplevelFromGenerations(allocator: std.mem.Allocator) ![]const u8 {
+fn chooseToplevelFromGenerations(io: std.Io, allocator: std.mem.Allocator) ![]const u8 {
     var buf: [1024]u8 = undefined;
-    var stdout = std.fs.File.stdout();
-    var writer = stdout.writer(&buf);
+    var stdout = std.Io.File.stdout();
+    var writer = stdout.writer(io, &buf);
 
-    var generations: std.ArrayList([]const u8) = .{};
+    var generations: std.ArrayList([]const u8) = .empty;
     defer generations.deinit(allocator);
 
-    var profiles_dir = try std.fs.cwd().openDir(PROFILES_DIR, .{ .iterate = true });
-    defer profiles_dir.close();
+    var profiles_dir = try std.Io.Dir.cwd().openDir(io, PROFILES_DIR, .{ .iterate = true });
+    defer profiles_dir.close(io);
 
     var index: usize = 0;
 
     var iter = profiles_dir.iterate();
-    while (try iter.next()) |dir_entry| {
+    while (try iter.next(io)) |dir_entry| {
         if (dir_entry.kind == .sym_link and
             std.mem.startsWith(u8, dir_entry.name, "system-") and
             std.mem.endsWith(u8, dir_entry.name, "-link"))
@@ -42,8 +42,8 @@ fn chooseToplevelFromGenerations(allocator: std.mem.Allocator) ![]const u8 {
     try writer.interface.print("which generation would you like to kexec? ", .{});
     try writer.interface.flush();
 
-    var stdin = std.fs.File.stdin();
-    var reader = stdin.reader(&buf);
+    var stdin = std.Io.File.stdin();
+    var reader = stdin.reader(io, &buf);
     const input = try reader.interface.takeDelimiterExclusive('\n');
     const choice = try std.fmt.parseInt(
         usize,
@@ -62,13 +62,15 @@ fn chooseToplevelFromGenerations(allocator: std.mem.Allocator) ![]const u8 {
     );
 }
 
-pub fn main() !void {
-    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-    defer arena.deinit();
+pub fn kill(pid: std.posix.system.pid_t, sig: usize) usize {
+    return std.posix.system.syscall2(.kill, @as(usize, @bitCast(@as(isize, pid))), sig);
+}
 
-    const allocator = arena.allocator();
+pub fn main(i: std.process.Init) !void {
+    const allocator = i.arena.allocator();
 
-    var args = std.process.args();
+    var args = i.minimal.args.iterate();
+    defer args.deinit();
     _ = args.next(); // skip argv[0]
 
     var toplevel: ?[]const u8 = null;
@@ -82,19 +84,22 @@ pub fn main() !void {
         }
     }
 
-    var toplevel_dir = try std.fs.cwd().openDir(
-        toplevel orelse try chooseToplevelFromGenerations(allocator),
+    var toplevel_dir = try std.Io.Dir.cwd().openDir(
+        i.io,
+        toplevel orelse try chooseToplevelFromGenerations(i.io, allocator),
         .{},
     );
-    defer toplevel_dir.close();
+    defer toplevel_dir.close(i.io);
 
-    var boot_json = try toplevel_dir.openFile("boot.json", .{});
-    defer boot_json.close();
+    var boot_json = try toplevel_dir.openFile(i.io, "boot.json", .{});
+    defer boot_json.close(i.io);
+
+    var boot_json_reader = boot_json.reader(i.io, &.{});
 
     const bootspec = try std.json.parseFromSlice(
         std.json.Value,
         allocator,
-        try boot_json.readToEndAlloc(allocator, std.math.maxInt(usize)),
+        try boot_json_reader.interface.allocRemaining(allocator, .unlimited),
         .{},
     );
 
@@ -119,13 +124,13 @@ pub fn main() !void {
     var full_cmdline = cmdline.writer.buffered();
     full_cmdline[full_cmdline.len - 1] = 0; // required by kexec_file_load
 
-    var kernel_file = try std.fs.cwd().openFile(kernel.string, .{});
-    defer kernel_file.close();
+    var kernel_file = try std.Io.Dir.cwd().openFile(i.io, kernel.string, .{});
+    defer kernel_file.close(i.io);
 
     const ret = b: {
         if (initrd) |initrd_filepath| {
-            var initrd_file = try std.fs.cwd().openFile(initrd_filepath.string, .{});
-            defer initrd_file.close();
+            var initrd_file = try std.Io.Dir.cwd().openFile(i.io, initrd_filepath.string, .{});
+            defer initrd_file.close(i.io);
 
             break :b std.os.linux.syscall5(
                 .kexec_file_load,
@@ -148,7 +153,7 @@ pub fn main() !void {
         }
     };
 
-    switch (std.posix.E.init(ret)) {
+    switch (std.posix.errno(ret)) {
         .SUCCESS => {},
         else => |err| {
             std.log.err("kexec failed: {}", .{err});
@@ -157,7 +162,7 @@ pub fn main() !void {
     }
 
     // Same as running systemctl kexec
-    switch (std.posix.E.init(std.os.linux.kill(1, SIGRTMIN + 6))) {
+    switch (std.posix.errno(kill(1, SIGRTMIN + 6))) {
         .SUCCESS => {},
         else => |err| {
             std.log.err("kill failed: {}", .{err});

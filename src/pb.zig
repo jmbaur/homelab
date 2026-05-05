@@ -65,31 +65,23 @@ fn writeUTF8(qrcode: *C.QRcode, writer: *std.Io.Writer) !void {
     try writeUTF8Margin(writer, realwidth);
 }
 
-pub fn main() !void {
+pub fn main(init: std.process.Init) !void {
     var buffer: [1024]u8 = undefined;
 
-    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-    defer arena.deinit();
+    const allocator = init.arena.allocator();
 
-    const allocator = arena.allocator();
+    var stdin: std.Io.File = .stdin();
+    var stdin_reader = stdin.reader(init.io, &buffer);
+    const body = try stdin_reader.interface.allocRemaining(allocator, .unlimited);
 
-    var body: std.Io.Writer.Allocating = .init(allocator);
-
-    var stdin: std.fs.File = .stdin();
-    var stdin_reader = stdin.reader(&buffer);
-    while (stdin_reader.interface.stream(&body.writer, .unlimited)) |_| {} else |err| switch (err) {
-        error.EndOfStream => {},
-        else => return err,
-    }
-
-    var client: std.http.Client = .{ .allocator = allocator };
+    var client: std.http.Client = .{ .io = init.io, .allocator = allocator };
     defer client.deinit();
 
     var request = try client.request(.POST, paste_rs, .{});
     defer request.deinit();
 
     @memset(&buffer, 0);
-    try request.sendBodyComplete(body.written());
+    try request.sendBodyComplete(body);
     var response = try request.receiveHead(&.{});
     var response_reader = response.reader(&buffer);
 
@@ -102,8 +94,8 @@ pub fn main() !void {
     );
     defer C.QRcode_free(qrcode);
 
-    var stdout: std.fs.File = .stdout();
-    var stdout_writer = stdout.writer(&.{});
+    var stdout: std.Io.File = .stdout();
+    var stdout_writer = stdout.writer(init.io, &.{});
     defer stdout_writer.interface.flush() catch {};
 
     try stdout_writer.interface.print("{s}\n", .{paste_url});
