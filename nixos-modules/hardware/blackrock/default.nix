@@ -47,7 +47,7 @@ in
       }
     ];
 
-    boot.kernelPackages = pkgs.linuxPackages_6_19;
+    boot.kernelPackages = pkgs.linuxPackages_7_0;
 
     boot.consoleLogLevel = 7;
 

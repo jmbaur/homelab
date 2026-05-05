@@ -6,7 +6,7 @@
 
 let
   tinybootKernel = pkgs.linuxKernel.manualConfig {
-    inherit (pkgs.linux_6_19) src version;
+    inherit (pkgs.linux_7_0) src version;
     configfile = ./tinyboot-linux.config;
   };
 in
@@ -15,7 +15,7 @@ in
     {
       nixpkgs.hostPlatform = "x86_64-linux";
 
-      boot.kernelPackages = pkgs.linuxPackages_6_19;
+      boot.kernelPackages = pkgs.linuxPackages_7_0;
       hardware.cpu.intel.updateMicrocode = true;
       hardware.chromebook = {
         enable = true;

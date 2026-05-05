@@ -7,7 +7,7 @@
 
 let
   tinybootKernel = pkgs.linuxKernel.manualConfig {
-    inherit (pkgs.linux_6_19) src version;
+    inherit (pkgs.linux_7_0) src version;
     configfile = ./tinyboot-linux.config;
   };
 
@@ -49,7 +49,7 @@ in
     {
       hardware.chromebook.asurada-spherion.enable = true;
 
-      boot.kernelPackages = pkgs.linuxPackages_6_19;
+      boot.kernelPackages = pkgs.linuxPackages_7_0;
       boot.loader.tinyboot.enable = true;
 
       environment.systemPackages = [
