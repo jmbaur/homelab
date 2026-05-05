@@ -76,16 +76,14 @@
   (interactive)
   (if (eq system-type 'darwin)
       (let ((default-directory (project-root (project-current t))))
-	(ansi-term
-	 (getenv "SHELL")
-	 (format "term-%s" (car (last (file-name-split default-directory) 2)))))
+	(vterm (format "term-%s" (car (last (file-name-split default-directory) 2)))))
     (ghostel-project)))
 
 ;; add extra keybindings for project switching and override the switch commands
-(define-key project-prefix-map "g" 'rg-project)
-(define-key project-prefix-map "m" 'magit-project-status)
-(define-key project-prefix-map "r" 'project-recompile)
-(define-key project-prefix-map "t" 'project-term)
+(define-key project-prefix-map "g" #'rg-project)
+(define-key project-prefix-map "m" #'magit-project-status)
+(define-key project-prefix-map "r" #'project-recompile)
+(define-key project-prefix-map "t" #'project-term)
 
 (setq project-switch-commands '((project-find-file "Find file")
 				(project-find-dir "Find directory")
@@ -125,12 +123,12 @@
 	      (when (or format-on-save t)
 		(add-hook 'after-save-hook 'eglot-format nil t)))))
 
-(add-hook 'sh-mode 'elgot-ensure)
-(add-hook 'c-mode-hook 'eglot-ensure)
-(add-hook 'nix-mode-hook 'eglot-ensure)
-(add-hook 'rust-mode-hook 'eglot-ensure)
-(add-hook 'python-mode-hook 'eglot-ensure)
-(add-hook 'zig-mode-hook 'eglot-ensure)
+(add-hook 'sh-mode #'elgot-ensure)
+(add-hook 'c-mode-hook #'eglot-ensure)
+(add-hook 'nix-mode-hook #'eglot-ensure)
+(add-hook 'rust-mode-hook #'eglot-ensure)
+(add-hook 'python-mode-hook #'eglot-ensure)
+(add-hook 'zig-mode-hook #'eglot-ensure)
 
 (defun setup-term ()
   "Common terminal setup"
@@ -138,12 +136,13 @@
   (line-number-mode -1)
   (display-line-numbers-mode -1))
 
-(add-hook 'nix-repl-hook 'setup-term)
-(add-hook 'shell-mode-hook 'setup-term)
-(add-hook 'term-mode-hook 'setup-term)
-(add-hook 'shell-command-mode-hook 'view-mode) ;; ensure we can't modify buffer for shell output
-(add-hook 'eshell-load-hook 'setup-term)
-(unless (eq system-type 'darwin)
+(add-hook 'nix-repl-hook #'setup-term)
+(add-hook 'shell-mode-hook #'setup-term)
+(add-hook 'term-mode-hook #'setup-term)
+(add-hook 'shell-command-mode-hook #'view-mode) ;; ensure we can't modify buffer for shell output
+(add-hook 'eshell-load-hook #'setup-term)
+(if (eq system-type 'darwin)
+    (add-hook 'vterm-mode-hook #'setup-term)
   (add-hook 'ghostel-mode-hook (lambda ()
 				 (setup-term)
 				 (evil-ghostel-mode))))
