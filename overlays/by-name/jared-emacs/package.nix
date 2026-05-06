@@ -61,6 +61,7 @@ let
     epkgs.magit
     epkgs.markdown-mode
     epkgs.meson-mode
+    epkgs.monroe
     epkgs.nix-mode
     epkgs.racket-mode
     epkgs.rg
