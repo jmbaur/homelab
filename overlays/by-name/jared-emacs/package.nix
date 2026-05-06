@@ -58,6 +58,7 @@ let
     epkgs.goto-chg
     epkgs.haskell-mode
     epkgs.janet-mode
+    epkgs.lua-mode
     epkgs.magit
     epkgs.markdown-mode
     epkgs.meson-mode

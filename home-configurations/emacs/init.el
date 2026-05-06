@@ -138,6 +138,7 @@
 (add-hook 'c-mode-hook #'eglot-ensure)
 (add-hook 'dts-mode-hook #'eglot-ensure)
 (add-hook 'fennel-mode-hook #'eglot-ensure)
+(add-hook 'lua-mode-hook #'eglot-ensure)
 (add-hook 'nix-mode-hook #'eglot-ensure)
 (add-hook 'python-mode-hook #'eglot-ensure)
 (add-hook 'rust-mode-hook #'eglot-ensure)
