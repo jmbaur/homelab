@@ -50,6 +50,7 @@ let
     epkgs.evil-commentary
     epkgs.evil-numbers
     epkgs.evil-surround
+    epkgs.exec-path-from-shell
     epkgs.fennel-mode
     epkgs.geiser
     epkgs.git-link
