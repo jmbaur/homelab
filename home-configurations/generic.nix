@@ -200,6 +200,12 @@
         poke
         strace
       ];
+
+      services.emacs = {
+        enable = true;
+        package = pkgs.jared-emacs;
+        client.enable = true;
+      };
     })
   ];
 }
