@@ -135,13 +135,14 @@
 (add-to-list 'eglot-server-programs
 	     '(dts-mode . ("dts-lsp" "--stdio")))
 
-(add-hook 'sh-mode #'elgot-ensure)
 (add-hook 'c-mode-hook #'eglot-ensure)
-(add-hook 'nix-mode-hook #'eglot-ensure)
-(add-hook 'rust-mode-hook #'eglot-ensure)
-(add-hook 'python-mode-hook #'eglot-ensure)
-(add-hook 'zig-mode-hook #'eglot-ensure)
 (add-hook 'dts-mode-hook #'eglot-ensure)
+(add-hook 'fennel-mode-hook #'eglot-ensure)
+(add-hook 'nix-mode-hook #'eglot-ensure)
+(add-hook 'python-mode-hook #'eglot-ensure)
+(add-hook 'rust-mode-hook #'eglot-ensure)
+(add-hook 'sh-mode #'elgot-ensure)
+(add-hook 'zig-mode-hook #'eglot-ensure)
 
 (defun setup-term ()
   "Common terminal setup"
