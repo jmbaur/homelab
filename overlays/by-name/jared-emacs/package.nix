@@ -1,6 +1,7 @@
 {
   buildEnv,
   clang-tools,
+  fetchFromGitHub,
   dts-lsp,
   emacs-pgtk,
   fd,
@@ -42,6 +43,17 @@ let
           '';
         }))
     )
+    (epkgs.melpaBuild (_finalAttrs: {
+      pname = "rail";
+      version = "0.4.0";
+
+      src = fetchFromGitHub {
+        owner = "Sasanidas";
+        repo = "Rail";
+        rev = "04e306bcdff11b54807203ca3bea85f4645633d1";
+        hash = "sha256-HSeD20A0yqbs4QjuP/kHQM3Glu/CIse7iP+yFCGFD5k=";
+      };
+    }))
     epkgs.company
     epkgs.direnv
     epkgs.dts-mode
@@ -62,7 +74,6 @@ let
     epkgs.magit
     epkgs.markdown-mode
     epkgs.meson-mode
-    epkgs.monroe
     epkgs.nix-mode
     epkgs.racket-mode
     epkgs.rg
