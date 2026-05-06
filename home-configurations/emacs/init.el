@@ -117,20 +117,22 @@
 	    (define-key eglot-mode-map (kbd "C-c a") #'eglot-code-actions)
 	    (define-key eglot-mode-map (kbd "C-c .") #'company-complete)
 	    (define-key eglot-mode-map (kbd "C-c C-.") #'company-complete)
+	    (add-hook 'before-save-hook #'eglot-format nil t)
 	    (setq company-idle-delay nil)
 	    (abbrev-mode)
 	    (company-mode)
 	    (eglot-inlay-hints-mode -1) ;; too noisy
-	    (let ((format-on-save (cond
-				   ((derived-mode-p 'python-mode) -1)
-				   ((derived-mode-p 'zig-mode)
-				    ;; disable zig build progress
-				    (setq-local compile-command "zig build --color off")
-				    ;; we use eglot-format instead
-				    (zig-format-on-save-mode -1)
-				    t))))
-	      (when (or format-on-save t)
-		(add-hook 'after-save-hook 'eglot-format nil t)))))
+	    (cond
+	     ((derived-mode-p 'python-mode)
+	      (remove-hook 'before-save-hook #'eglot-format))
+	     ((derived-mode-p 'fennel-mode)
+	      (add-hook 'before-save-hook #'fennel-format nil t)
+	      (remove-hook 'before-save-hook #'eglot-format))
+	     ((derived-mode-p 'zig-mode)
+	      ;; disable zig build progress
+	      (setq-local compile-command "zig build --color off")
+	      ;; we use eglot-format instead
+	      (zig-format-on-save-mode -1)))))
 
 (add-to-list 'eglot-server-programs
 	     '(dts-mode . ("dts-lsp" "--stdio")))
