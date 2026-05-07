@@ -200,13 +200,6 @@
         poke
         strace
       ];
-
-      services.emacs = {
-        enable = true;
-        package = pkgs.jared-emacs;
-        socketActivation.enable = true;
-        client.enable = true;
-      };
     })
   ];
 }
