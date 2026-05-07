@@ -53,8 +53,6 @@
 
 (direnv-mode 1)
 
-(global-sops-mode 1)
-
 (evil-set-undo-system 'undo-redo)
 (evil-mode 1)
 (global-evil-surround-mode 1)
