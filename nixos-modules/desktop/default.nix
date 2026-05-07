@@ -21,8 +21,7 @@ in
     {
       custom.normalUser.enable = true;
 
-      services.desktopManager.plasma6.enable = true;
-      services.displayManager.sddm.enable = true;
+      programs.sway.enable = true;
 
       programs.yubikey-touch-detector.enable = mkDefault true;
       security.rtkit.enable = mkDefault true;
@@ -61,6 +60,7 @@ in
     {
       custom.basicNetwork.enable = true;
 
+      networking.wireless.iwd.enable = mkDefault true;
       networking.networkmanager.wifi.backend = "iwd";
 
       # plasma6 does not enable this by default
