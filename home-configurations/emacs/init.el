@@ -123,10 +123,7 @@
 	    (company-mode)
 	    (eglot-inlay-hints-mode -1) ;; too noisy
 	    (cond
-	     ((derived-mode-p 'python-mode)
-	      (remove-hook 'before-save-hook #'eglot-format))
-	     ((derived-mode-p 'fennel-mode)
-	      (add-hook 'before-save-hook #'fennel-format nil t)
+	     ((or (derived-mode-p 'python-mode) (derived-mode-p 'fennel-mode))
 	      (remove-hook 'before-save-hook #'eglot-format))
 	     ((derived-mode-p 'zig-mode)
 	      ;; disable zig build progress
