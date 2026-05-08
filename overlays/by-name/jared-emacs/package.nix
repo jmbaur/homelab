@@ -82,6 +82,7 @@ let
     epkgs.sops
     epkgs.terraform-mode
     epkgs.typescript-mode
+    epkgs.yaml-mode
     epkgs.zig-mode
   ]);
 in

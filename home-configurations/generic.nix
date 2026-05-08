@@ -181,6 +181,8 @@
         '';
       };
 
+      programs.zsh.enable = pkgs.stdenv.hostPlatform.isDarwin;
+
       xdg.configFile."emacs/init.el".source = ./emacs/init.el;
       xdg.configFile."emacs/early-init.el".source = ./emacs/early-init.el;
     }
