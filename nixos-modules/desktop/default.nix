@@ -26,6 +26,13 @@ in
       environment.systemPackages = [
         pkgs.foot
         pkgs.sfwbar
+        (pkgs.symlinkJoin {
+          name = "default-${pkgs.xcursor-chromeos.name}";
+          paths = [ pkgs.xcursor-chromeos ];
+          postBuild = ''
+            ln -sf $out/share/icons/${pkgs.xcursor-chromeos.pname} $out/share/icons/default
+          '';
+        })
       ];
 
       programs.yubikey-touch-detector.enable = mkDefault true;
