@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 
@@ -21,7 +22,11 @@ in
     {
       custom.normalUser.enable = true;
 
-      programs.sway.enable = true;
+      programs.labwc.enable = true;
+      environment.systemPackages = [
+        pkgs.foot
+        pkgs.sfwbar
+      ];
 
       programs.yubikey-touch-detector.enable = mkDefault true;
       security.rtkit.enable = mkDefault true;
