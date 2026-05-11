@@ -102,7 +102,6 @@ in
           auto-allocate-uids = true;
           builders-use-substitutes = mkDefault true;
           fsync-store-paths = true;
-          lint-url-literals = "fatal";
           use-cgroups = true;
           extra-trusted-users = [ "@wheel" ];
           extra-system-features = [ "uid-range" ];
