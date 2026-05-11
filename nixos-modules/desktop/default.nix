@@ -62,7 +62,6 @@ in
           toString [
             "DISPLAY"
             "WAYLAND_DISPLAY"
-            "SWAYSOCK"
             "XDG_CURRENT_DESKTOP"
             "XDG_SESSION_TYPE"
             "NIXOS_OZONE_WL"
