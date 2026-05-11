@@ -41,10 +41,15 @@
       environment.systemPackages = [
         config.hardware.saleae-logic.package
         pkgs.quartus-prime-pro-24_2
+        pkgs.slack
+        pkgs.teams-for-linux
       ];
 
       nix.settings = {
-        extra-substituters = [ "https://cache.northwood.space" ];
+        extra-substituters = [
+          "https://cache.northwood.space"
+          "https://dev-cache.northwood.space?trusted=1"
+        ];
         extra-trusted-public-keys = [
           "cache.northwood.space-1:aS//R1OH2ct1xKquarzaEWRW21gDJ9pRyM8zUgvhBbc="
         ];
