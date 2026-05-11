@@ -3,7 +3,7 @@
 {
   fetchurl,
   stdenvNoCC,
-  xorg,
+  xcursorgen,
 }:
 
 stdenvNoCC.mkDerivation (finalAttrs: {
@@ -28,7 +28,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   dontConfigure = true;
 
-  nativeBuildInputs = [ xorg.xcursorgen ];
+  nativeBuildInputs = [ xcursorgen ];
 
   makeFlags = [ "-f ${./Makefile}" ];
 
