@@ -75,9 +75,26 @@ in
         ${config.systemd.user.services.sfwbar.serviceConfig.ExecStart} &
       '';
 
+      environment.etc."xdg/labwc/shutdown".source = pkgs.writeShellScript "labwc-shutdown" ''
+        systemctl --user --no-block stop labwc-session.target
+      '';
+
+      environment.etc."xdg/labwc/environment".source =
+        (pkgs.formats.keyValue { }).generate "labwc-environment"
+          {
+            XKB_DEFAULT_MODEL = config.services.xserver.xkbModel;
+            XKB_DEFAULT_OPTIONS = config.services.xserver.xkbOptions;
+            XKB_DEFAULT_VARIANT = config.services.xserver.xkbVariant;
+          };
+
+      environment.etc."xdg/labwc/rc.xml".source = ./labwc-rc.xml;
+
       environment.systemPackages = [
+        pkgs.brightnessctl
         pkgs.foot
+        pkgs.grim
         pkgs.sfwbar
+        pkgs.slurp
         pkgs.swaybg
         pkgs.swaylock
         (pkgs.symlinkJoin {

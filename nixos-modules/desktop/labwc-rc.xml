@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<labwc_config>
+  <desktops number="2" />
+
+  <keyboard>
+    <default />
+
+    <keybind key="W-1">
+      <action name="GoToDesktop" to="1" />
+    </keybind>
+    <keybind key="W-2">
+      <action name="GoToDesktop" to="2" />
+    </keybind>
+
+    <keybind key="W-S-1">
+      <action name="SendToDesktop" to="1" />
+    </keybind>
+    <keybind key="W-S-2">
+      <action name="SendToDesktop" to="2" />
+    </keybind>
+
+    <keybind key="Print">
+      <action name="Execute">
+	<command>sh -c 'grim -t jpeg ~/Pictures/$(date +%Y-%m-%d_%H-%m-%s).jpg'</command>
+      </action>
+    </keybind>
+    <keybind key="W-Print">
+      <action name="Execute">
+	<command>sh -c 'grim -t jpeg -g "$(slurp)"  ~/Pictures/$(date +%Y-%m-%d_%H-%m-%s).jpg'</command>
+      </action>
+    </keybind>
+
+    <keybind key="XF86MonBrightnessUp">
+      <action name="Execute" command="brightnessctl set +5%" />
+    </keybind>
+    <keybind key="XF86MonBrightnessDown">
+      <action name="Execute" command="brightnessctl set 5%-" />
+    </keybind>
+    <keybind key="XF86_AudioLowerVolume">
+      <action name="Execute" command="wpctl set-volume  @DEFAULT_AUDIO_SINK@ 5%-"/>
+    </keybind>
+    <keybind key="XF86_AudioRaiseVolume">
+      <action name="Execute" command="wpctl set-volume  @DEFAULT_AUDIO_SINK@ 5%+"/>
+    </keybind>
+    <keybind key="XF86_AudioMute">
+      <action name="Execute" command="wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle "/>
+    </keybind>
+    <keybind key="XF86AudioMicMute">
+      <action name="Execute" command="wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle" />
+    </keybind>
+  </keyboard>
+</labwc_config>
