@@ -40,7 +40,7 @@
       hardware.saleae-logic.enable = true;
       environment.systemPackages = [
         config.hardware.saleae-logic.package
-        pkgs.element
+        pkgs.element-desktop
         pkgs.quartus-prime-pro-24_2
         pkgs.signal-desktop
         pkgs.slack
