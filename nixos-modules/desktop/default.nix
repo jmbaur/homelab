@@ -97,6 +97,7 @@ in
         pkgs.brightnessctl
         pkgs.foot
         pkgs.grim
+        pkgs.labwc-tweaks
         pkgs.sfwbar
         pkgs.slurp
         pkgs.swaybg
