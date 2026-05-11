@@ -7,6 +7,7 @@
 
 let
   inherit (lib)
+    getExe
     mkDefault
     mkEnableOption
     mkIf
@@ -23,9 +24,62 @@ in
       custom.normalUser.enable = true;
 
       programs.labwc.enable = true;
+
+      systemd.user.targets.labwc-session = {
+        description = "labwc session";
+        documentation = [ "man:labwc(1) man:systemd.special(7)" ];
+        bindsTo = [ "graphical-session.target" ];
+        wants = [ "graphical-session-pre.target" ];
+        after = [ "graphical-session-pre.target" ];
+      };
+
+      systemd.user.services.sfwbar = {
+        enable = false;
+        serviceConfig.ExecStart = getExe pkgs.sfwbar;
+        wantedBy = [ "graphical-session.target" ];
+      };
+
+      systemd.user.services.swaybg = {
+        enable = false;
+        serviceConfig.ExecStart = toString [
+          (getExe pkgs.swaybg)
+          "--mode"
+          "tile"
+          "--image"
+          (pkgs.runCommand "weston-pattern.png" { } ''
+            install -Dm0644 ${pkgs.weston}/share/weston/pattern.png $out
+          '')
+        ];
+        wantedBy = [ "graphical-session.target" ];
+      };
+
+      environment.etc."xdg/labwc/autostart".source = pkgs.writeShellScript "labwc-autostart" ''
+        systemctl --user import-environment ${
+          toString [
+            "DISPLAY"
+            "WAYLAND_DISPLAY"
+            "SWAYSOCK"
+            "XDG_CURRENT_DESKTOP"
+            "XDG_SESSION_TYPE"
+            "NIXOS_OZONE_WL"
+            "XCURSOR_THEME"
+            "XCURSOR_SIZE"
+          ]
+        }
+        systemctl --user --no-block start labwc-session.target
+
+        # TODO(jared): just use the systemd services instead, once
+        # nixos stops tharwting attempts to set the environment of the
+        # user's systemd instance.
+        ${config.systemd.user.services.swaybg.serviceConfig.ExecStart} &
+        ${config.systemd.user.services.sfwbar.serviceConfig.ExecStart} &
+      '';
+
       environment.systemPackages = [
         pkgs.foot
         pkgs.sfwbar
+        pkgs.swaybg
+        pkgs.swaylock
         (pkgs.symlinkJoin {
           name = "default-${pkgs.xcursor-chromeos.name}";
           paths = [ pkgs.xcursor-chromeos ];
