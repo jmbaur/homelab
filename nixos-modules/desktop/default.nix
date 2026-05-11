@@ -108,7 +108,6 @@ in
 
       programs.yubikey-touch-detector.enable = mkDefault true;
       security.rtkit.enable = mkDefault true;
-      services.flatpak.enable = mkDefault true;
       services.fwupd.enable = mkDefault true;
       services.printing.enable = mkDefault true;
       services.upower.enable = mkDefault true;
