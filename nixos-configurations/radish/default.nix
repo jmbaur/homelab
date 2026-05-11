@@ -44,6 +44,7 @@
         pkgs.quartus-prime-pro-24_2
         pkgs.signal-desktop
         pkgs.slack
+        pkgs.spotify
         pkgs.teams-for-linux
       ];
 
