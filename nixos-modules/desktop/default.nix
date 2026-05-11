@@ -53,6 +53,10 @@ in
         wantedBy = [ "graphical-session.target" ];
       };
 
+      environment.etc."xdg/foot/foot.ini".source = (pkgs.formats.ini { }).generate "foot.ini" {
+        main.font = "monospace:size=12";
+      };
+
       environment.etc."xdg/labwc/autostart".source = pkgs.writeShellScript "labwc-autostart" ''
         systemctl --user import-environment ${
           toString [
@@ -82,9 +86,9 @@ in
       environment.etc."xdg/labwc/environment".source =
         (pkgs.formats.keyValue { }).generate "labwc-environment"
           {
-            XKB_DEFAULT_MODEL = config.services.xserver.xkbModel;
-            XKB_DEFAULT_OPTIONS = config.services.xserver.xkbOptions;
-            XKB_DEFAULT_VARIANT = config.services.xserver.xkbVariant;
+            XKB_DEFAULT_MODEL = config.services.xserver.xkb.model;
+            XKB_DEFAULT_OPTIONS = config.services.xserver.xkb.options;
+            XKB_DEFAULT_VARIANT = config.services.xserver.xkb.variant;
           };
 
       environment.etc."xdg/labwc/rc.xml".source = ./labwc-rc.xml;

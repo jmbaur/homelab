@@ -2,6 +2,12 @@
 <labwc_config>
   <desktops number="2" />
 
+  <libinput>
+    <device category="touchpad">
+      <naturalScroll>yes</naturalScroll>
+    </device>
+  </libinput>
+
   <keyboard>
     <default />
 
