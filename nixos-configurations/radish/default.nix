@@ -45,6 +45,7 @@
         pkgs.signal-desktop
         pkgs.slack
         pkgs.spotify
+        pkgs.supersonic
         pkgs.teams-for-linux
       ];
 
