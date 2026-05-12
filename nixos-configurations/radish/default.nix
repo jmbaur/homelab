@@ -49,6 +49,8 @@
       ];
 
       nix.settings = {
+        extra-system-features = [ "fpga" ];
+        sandbox = "relaxed";
         extra-substituters = [
           "https://cache.northwood.space"
           "https://dev-cache.northwood.space?trusted=1"
