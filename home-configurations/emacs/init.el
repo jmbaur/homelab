@@ -100,6 +100,7 @@
 				(magit-project-status "Magit")))
 
 (define-global-abbrev "toodoo" "TODO(jared)")
+(abbrev-mode)
 
 (advice-add 'zig--run-cmd :around
 	    (lambda (f cmd &optional source &rest args)
@@ -117,7 +118,6 @@
 	    (define-key eglot-mode-map (kbd "C-c C-.") #'company-complete)
 	    (add-hook 'before-save-hook #'eglot-format nil t)
 	    (setq company-idle-delay nil)
-	    (abbrev-mode)
 	    (company-mode)
 	    (eglot-inlay-hints-mode -1) ;; too noisy
 	    (cond
