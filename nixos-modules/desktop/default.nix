@@ -35,7 +35,7 @@ in
             chmod +x $out/autostart
           '')
           "--session"
-          "'${getExe pkgs.wlgreet} --command \"${getExe config.programs.labwc.package} --merge-config\"'"
+          "'${getExe pkgs.wlgreet} --command \"systemd-cat --identifier=labwc ${getExe config.programs.labwc.package} --merge-config --session=${getExe pkgs.sfwbar}\"'"
         ];
       };
 
@@ -49,14 +49,7 @@ in
         after = [ "graphical-session-pre.target" ];
       };
 
-      systemd.user.services.sfwbar = {
-        enable = false;
-        serviceConfig.ExecStart = getExe pkgs.sfwbar;
-        wantedBy = [ "graphical-session.target" ];
-      };
-
       systemd.user.services.swaybg = {
-        enable = false;
         serviceConfig.ExecStart = toString [
           (getExe pkgs.swaybg)
           "--mode"
@@ -70,7 +63,6 @@ in
       };
 
       systemd.user.services.swayidle = {
-        enable = false;
         serviceConfig.ExecStart = toString [
           (getExe pkgs.swayidle)
           "-w"
@@ -87,7 +79,7 @@ in
       };
 
       environment.etc."xdg/foot/foot.ini".source = (pkgs.formats.ini { }).generate "foot.ini" {
-        main.font = "monospace:size=12";
+        main.font = "monospace:size=10";
       };
 
       environment.etc."xdg/labwc/autostart".source = pkgs.writeShellScript "labwc-autostart" ''
@@ -103,13 +95,6 @@ in
           ]
         }
         systemctl --user --no-block start labwc-session.target
-
-        # TODO(jared): just use the systemd services instead, once
-        # nixos stops tharwting attempts to set the environment of the
-        # user's systemd instance.
-        ${config.systemd.user.services.swaybg.serviceConfig.ExecStart} &
-        ${config.systemd.user.services.swayidle.serviceConfig.ExecStart} &
-        ${config.systemd.user.services.sfwbar.serviceConfig.ExecStart} &
       '';
 
       environment.etc."xdg/labwc/shutdown".source = pkgs.writeShellScript "labwc-shutdown" ''
