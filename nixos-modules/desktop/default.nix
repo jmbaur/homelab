@@ -63,6 +63,11 @@ in
       };
 
       systemd.user.services.swayidle = {
+        path = [
+          pkgs.swaylock
+          pkgs.bash
+          pkgs.wlopm
+        ];
         serviceConfig.ExecStart = toString [
           (getExe pkgs.swayidle)
           "-w"
