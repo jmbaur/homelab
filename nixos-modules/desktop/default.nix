@@ -115,11 +115,13 @@ in
           };
 
       environment.etc."xdg/labwc/rc.xml".source = ./labwc-rc.xml;
+      environment.etc."xdg/labwc/menu.xml".source = ./labwc-menu.xml;
 
       environment.systemPackages = [
         pkgs.brightnessctl
         pkgs.foot
         pkgs.grim
+        pkgs.labwc-menu-generator
         pkgs.labwc-tweaks
         pkgs.sfwbar
         pkgs.slurp
