@@ -23,6 +23,22 @@ in
     {
       custom.normalUser.enable = true;
 
+      services.greetd = {
+        enable = true;
+        settings.default_session.command = toString [
+          (getExe config.programs.labwc.package)
+          "--config-dir"
+          (pkgs.runCommand "labwc-greetd-config-dir" { } ''
+            mkdir -p $out
+            install -Dm0644 ${./labwc-greetd-rc.xml} $out/rc.xml
+            echo '${config.systemd.user.services.swaybg.serviceConfig.ExecStart} &' >$out/autostart
+            chmod +x $out/autostart
+          '')
+          "--session"
+          "'${getExe pkgs.wlgreet} --command \"${getExe config.programs.labwc.package} --merge-config\"'"
+        ];
+      };
+
       programs.labwc.enable = true;
 
       systemd.user.targets.labwc-session = {
