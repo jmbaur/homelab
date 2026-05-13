@@ -53,6 +53,23 @@ in
         wantedBy = [ "graphical-session.target" ];
       };
 
+      systemd.user.services.swayidle = {
+        enable = false;
+        serviceConfig.ExecStart = toString [
+          (getExe pkgs.swayidle)
+          "-w"
+          "timeout"
+          300
+          "'swaylock -f'"
+          "timeout"
+          600
+          "'wlopm --off *'"
+          "before-sleep"
+          "'swaylock -f'"
+        ];
+        wantedBy = [ "graphical-session.target" ];
+      };
+
       environment.etc."xdg/foot/foot.ini".source = (pkgs.formats.ini { }).generate "foot.ini" {
         main.font = "monospace:size=12";
       };
@@ -75,6 +92,7 @@ in
         # nixos stops tharwting attempts to set the environment of the
         # user's systemd instance.
         ${config.systemd.user.services.swaybg.serviceConfig.ExecStart} &
+        ${config.systemd.user.services.swayidle.serviceConfig.ExecStart} &
         ${config.systemd.user.services.sfwbar.serviceConfig.ExecStart} &
       '';
 
@@ -100,7 +118,9 @@ in
         pkgs.sfwbar
         pkgs.slurp
         pkgs.swaybg
+        pkgs.swayidle
         pkgs.swaylock
+        pkgs.wlopm
         (pkgs.symlinkJoin {
           name = "default-${pkgs.xcursor-chromeos.name}";
           paths = [ pkgs.xcursor-chromeos ];
