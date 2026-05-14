@@ -140,6 +140,7 @@
 (add-hook 'python-mode-hook #'eglot-ensure)
 (add-hook 'rust-mode-hook #'eglot-ensure)
 (add-hook 'sh-mode #'elgot-ensure)
+(add-hook 'sh-mode-hook #'eglot-ensure)
 (add-hook 'zig-mode-hook #'eglot-ensure)
 
 (defun setup-term ()

@@ -1,11 +1,12 @@
 {
+  bash-language-server,
   buildEnv,
   clang-tools,
-  fetchFromGitHub,
   dts-lsp,
   emacs-pgtk,
   fd,
   fennel-ls,
+  fetchFromGitHub,
   fnlfmt,
   go-tools,
   gofumpt,
@@ -90,6 +91,7 @@ buildEnv {
   name = "jared-emacs";
   meta.mainProgram = "emacs";
   paths = [
+    bash-language-server
     clang-tools
     dts-lsp
     emacs
