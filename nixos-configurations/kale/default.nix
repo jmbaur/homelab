@@ -129,6 +129,8 @@ in
               4 * 1024 * 1024 * 1024 # 4 GiB
             )
           }
+          evaluator_workers = 8
+          evaluator_max_memory_size = 8192
           binary_cache_public_uri = https://cache.jmbaur.com
           log_prefix = https://cache.jmbaur.com/
           store_uri = http://[::1]:8501/upload
