@@ -23,6 +23,7 @@ testers.runNixOSTest {
     };
 
   testScript = ''
+    machine.start(allow_reboot=True)  # needed for qemu-system-aarch64
     machine.fail("hello")
     machine.succeed("nixos-kexec /run/current-system/specialisation/hello")
     machine.connected = False
