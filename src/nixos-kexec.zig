@@ -2,12 +2,6 @@ const std = @import("std");
 
 const PROFILES_DIR = "/nix/var/nix/profiles";
 
-// NOTE: This is super hacky, but this value differs across libc
-// implementations as well as what the kernel itself defines. Since we
-// are almost certainly using a systemd built against glibc, we hardcode
-// the value.
-const SIGRTMIN = 34;
-
 fn chooseToplevelFromGenerations(io: std.Io, allocator: std.mem.Allocator) ![]const u8 {
     var buf: [1024]u8 = undefined;
     var stdout = std.Io.File.stdout();
@@ -66,10 +60,10 @@ pub fn kill(pid: std.posix.system.pid_t, sig: usize) usize {
     return std.posix.system.syscall2(.kill, @as(usize, @bitCast(@as(isize, pid))), sig);
 }
 
-pub fn main(i: std.process.Init) !void {
-    const allocator = i.arena.allocator();
+pub fn main(init: std.process.Init) !void {
+    const allocator = init.arena.allocator();
 
-    var args = i.minimal.args.iterate();
+    var args = init.minimal.args.iterate();
     defer args.deinit();
     _ = args.next(); // skip argv[0]
 
@@ -85,16 +79,16 @@ pub fn main(i: std.process.Init) !void {
     }
 
     var toplevel_dir = try std.Io.Dir.cwd().openDir(
-        i.io,
-        toplevel orelse try chooseToplevelFromGenerations(i.io, allocator),
+        init.io,
+        toplevel orelse try chooseToplevelFromGenerations(init.io, allocator),
         .{},
     );
-    defer toplevel_dir.close(i.io);
+    defer toplevel_dir.close(init.io);
 
-    var boot_json = try toplevel_dir.openFile(i.io, "boot.json", .{});
-    defer boot_json.close(i.io);
+    var boot_json = try toplevel_dir.openFile(init.io, "boot.json", .{});
+    defer boot_json.close(init.io);
 
-    var boot_json_reader = boot_json.reader(i.io, &.{});
+    var boot_json_reader = boot_json.reader(init.io, &.{});
 
     const bootspec = try std.json.parseFromSlice(
         std.json.Value,
@@ -106,11 +100,11 @@ pub fn main(i: std.process.Init) !void {
     const bootspec_v1 = bootspec.value.object.get("org.nixos.bootspec.v1") orelse return error.MissingBootspecV1;
     const kernel = bootspec_v1.object.get("kernel") orelse return error.MissingKernel;
     const initrd = bootspec_v1.object.get("initrd");
-    const init = bootspec_v1.object.get("init");
+    const init_ = bootspec_v1.object.get("init");
     const kernel_params = bootspec_v1.object.get("kernelParams") orelse return error.MissingKernel;
 
     var cmdline: std.Io.Writer.Allocating = .init(allocator);
-    try cmdline.writer.print("init={s} ", .{init.?.string});
+    try cmdline.writer.print("init={s} ", .{init_.?.string});
     for (kernel_params.array.items) |param| {
         try cmdline.writer.writeAll(param.string);
         try cmdline.writer.writeByte(' ');
@@ -124,13 +118,13 @@ pub fn main(i: std.process.Init) !void {
     var full_cmdline = cmdline.writer.buffered();
     full_cmdline[full_cmdline.len - 1] = 0; // required by kexec_file_load
 
-    var kernel_file = try std.Io.Dir.cwd().openFile(i.io, kernel.string, .{});
-    defer kernel_file.close(i.io);
+    var kernel_file = try std.Io.Dir.cwd().openFile(init.io, kernel.string, .{});
+    defer kernel_file.close(init.io);
 
     const ret = b: {
         if (initrd) |initrd_filepath| {
-            var initrd_file = try std.Io.Dir.cwd().openFile(i.io, initrd_filepath.string, .{});
-            defer initrd_file.close(i.io);
+            var initrd_file = try std.Io.Dir.cwd().openFile(init.io, initrd_filepath.string, .{});
+            defer initrd_file.close(init.io);
 
             break :b std.os.linux.syscall5(
                 .kexec_file_load,
@@ -162,11 +156,7 @@ pub fn main(i: std.process.Init) !void {
     }
 
     // Same as running systemctl kexec
-    switch (std.posix.errno(kill(1, SIGRTMIN + 6))) {
-        .SUCCESS => {},
-        else => |err| {
-            std.log.err("kill failed: {}", .{err});
-            return std.posix.unexpectedErrno(err);
-        },
-    }
+    var child = try std.process.spawn(init.io, .{ .argv = &.{ "systemctl", "kexec" } });
+    const term = try child.wait(init.io);
+    std.log.info("{}", .{term});
 }
