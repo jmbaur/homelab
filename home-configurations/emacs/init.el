@@ -132,15 +132,26 @@
 (add-to-list 'eglot-server-programs
 	     '(dts-mode . ("dts-lsp" "--stdio")))
 
-(add-hook 'c-mode-hook #'eglot-ensure)
+(setq major-mode-remap-alist
+ '((yaml-mode . yaml-ts-mode)
+   (sh-mode . bash-ts-mode) ;; probably don't want to do this
+   (js-mode . js-ts-mode)
+   (typescript-mode . typescript-ts-mode)
+   (json-mode . json-ts-mode)
+   (css-mode . css-ts-mode)
+   (c-mode . c-ts-mode)
+   (lua-mode . lua-ts-mode)
+   (rust-mode . rust-ts-mode)
+   (python-mode . python-ts-mode)))
+
+(add-hook 'bash-ts-mode-hook #'eglot-ensure)
+(add-hook 'c-ts-mode-hook #'eglot-ensure)
 (add-hook 'dts-mode-hook #'eglot-ensure)
 (add-hook 'fennel-mode-hook #'eglot-ensure)
-(add-hook 'lua-mode-hook #'eglot-ensure)
+(add-hook 'lua-ts-mode-hook #'eglot-ensure)
 (add-hook 'nix-mode-hook #'eglot-ensure)
-(add-hook 'python-mode-hook #'eglot-ensure)
-(add-hook 'rust-mode-hook #'eglot-ensure)
-(add-hook 'sh-mode #'elgot-ensure)
-(add-hook 'sh-mode-hook #'eglot-ensure)
+(add-hook 'python-ts-mode-hook #'eglot-ensure)
+(add-hook 'rust-ts-mode-hook #'eglot-ensure)
 (add-hook 'zig-mode-hook #'eglot-ensure)
 
 (defun setup-term ()

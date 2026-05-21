@@ -82,6 +82,7 @@ let
     epkgs.slime
     epkgs.sops
     epkgs.terraform-mode
+    epkgs.treesit-grammars.with-all-grammars
     epkgs.typescript-mode
     epkgs.yaml-mode
     epkgs.zig-mode
