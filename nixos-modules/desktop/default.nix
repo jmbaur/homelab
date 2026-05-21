@@ -35,7 +35,7 @@ in
             chmod +x $out/autostart
           '')
           "--session"
-          "'${getExe pkgs.wlgreet} --command \"systemd-cat --identifier=labwc ${getExe config.programs.labwc.package} --merge-config --session=${getExe pkgs.sfwbar}\"'"
+          "'${getExe pkgs.wlgreet} --command \"systemd-cat --identifier=labwc ${getExe config.programs.labwc.package} --merge-config --startup=${getExe pkgs.sfwbar}\"'"
         ];
       };
 
@@ -101,11 +101,11 @@ in
             "XCURSOR_SIZE"
           ]
         }
-        systemctl --user --no-block start labwc-session.target
+        systemctl --user --no-block start ${config.systemd.user.targets.labwc-session.name}
       '';
 
       environment.etc."xdg/labwc/shutdown".source = pkgs.writeShellScript "labwc-shutdown" ''
-        systemctl --user --no-block stop labwc-session.target
+        systemctl --user --no-block stop ${config.systemd.user.targets.labwc-session.name}
       '';
 
       environment.etc."xdg/labwc/environment".source =
