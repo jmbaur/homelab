@@ -79,6 +79,8 @@ in
           "'wlopm --off *'"
           "before-sleep"
           "'swaylock -f'"
+          "lock"
+          "'swaylock -f'"
         ];
         wantedBy = [ "graphical-session.target" ];
       };
