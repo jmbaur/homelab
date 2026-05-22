@@ -3,7 +3,7 @@
   buildEnv,
   clang-tools,
   dts-lsp,
-  emacs-pgtk,
+  emacs-nox,
   fd,
   fennel-ls,
   fetchFromGitHub,
@@ -32,7 +32,7 @@
 }:
 
 let
-  emacs = emacs-pgtk.pkgs.withPackages (epkgs: [
+  emacs = emacs-nox.pkgs.withPackages (epkgs: [
     (
       if stdenv.hostPlatform.isDarwin then
         epkgs.vterm
