@@ -100,7 +100,7 @@
 				(magit-project-status "Magit")))
 
 (define-global-abbrev "toodoo" "TODO(jared)")
-(abbrev-mode)
+(setq-default abbrev-mode t)
 
 (advice-add 'zig--run-cmd :around
 	    (lambda (f cmd &optional source &rest args)
