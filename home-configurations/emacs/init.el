@@ -28,7 +28,7 @@
    (format "\x1b]52;c;%s\x07"
 	   (base64-encode-string text t))))
 
-(unless (eq system-type 'darwin)
+(unless (and window-system (eq system-type 'darwin))
   (menu-bar-mode -1))
 (tool-bar-mode -1)
 (global-display-line-numbers-mode 1)
