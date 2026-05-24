@@ -78,15 +78,15 @@
       programs.ssh = {
         enable = true;
         enableDefaultConfig = false;
-        matchBlocks."*.internal".forwardAgent = true;
-        matchBlocks."*.local".forwardAgent = true;
-        matchBlocks."i-* mi-*".proxyCommand =
+        settings."Host *.internal".ForwardAgent = true;
+        settings."Host *.local".ForwardAgent = true;
+        settings."Host i-* mi-*".ProxyCommand =
           "${pkgs.runtimeShell} -c \"${lib.getExe pkgs.awscli2} ssm start-session --target %h --document-name AWS-StartSSHSession --parameters 'portNumber=%p'\"";
-        matchBlocks."*" = {
-          serverAliveInterval = 11;
-          controlMaster = "auto";
-          controlPath = "/tmp/ssh-%i-%C";
-          controlPersist = "30m";
+        settings."Host *" = {
+          ServerAliveInterval = 11;
+          ControlMaster = "auto";
+          ControlPath = "/tmp/ssh-%i-%C";
+          ControlPersist = "30m";
         };
       };
 
@@ -188,7 +188,7 @@
     }
 
     (lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-      programs.ssh.matchBlocks."*.local".proxyCommand =
+      programs.ssh.settings."Host *.local".ProxyCommand =
         "${lib.getExe pkgs.ipv6-link-local-ssh-proxy-command} %h %p";
 
       home.packages = with pkgs; [
