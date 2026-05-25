@@ -58,6 +58,7 @@ let
     epkgs.company
     epkgs.direnv
     epkgs.dts-mode
+    epkgs.eat
     epkgs.evil
     epkgs.evil-collection
     epkgs.evil-commentary
