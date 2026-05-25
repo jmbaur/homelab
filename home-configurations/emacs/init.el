@@ -165,6 +165,7 @@
 (add-hook 'term-mode-hook #'setup-term)
 (add-hook 'shell-command-mode-hook #'view-mode) ;; ensure we can't modify buffer for shell output
 (add-hook 'eshell-load-hook #'setup-term)
+(add-hook 'eat-mode-hook #'setup-term)
 (if (eq system-type 'darwin)
     (add-hook 'vterm-mode-hook #'setup-term)
   (add-hook 'ghostel-mode-hook (lambda ()
