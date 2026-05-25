@@ -178,6 +178,7 @@
         initExtra = ''
           export GOPATH=''${XDG_DATA_HOME:-~/.local/share}/go
           source ${pkgs.bash-sensible}/sensible.bash
+          [ -n "$EAT_SHELL_INTEGRATION_DIR" ] && source "$EAT_SHELL_INTEGRATION_DIR/bash"
         '';
       };
 

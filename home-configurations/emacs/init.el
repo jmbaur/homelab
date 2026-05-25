@@ -92,13 +92,13 @@
 (define-key project-prefix-map "g" #'rg-project)
 (define-key project-prefix-map "m" #'magit-project-status)
 (define-key project-prefix-map "r" #'project-recompile)
-(define-key project-prefix-map "t" #'project-term)
+(define-key project-prefix-map "t" #'eat-project)
 
 (setq project-switch-commands '((project-find-file "Find file")
 				(project-find-dir "Find directory")
 				(rg-project "Find regexp")
 				(project-eshell "Eshell")
-				(project-term "Terminal")
+				(eat-project "Terminal")
 				(magit-project-status "Magit")))
 
 (define-global-abbrev "toodoo" "TODO(jared)")
