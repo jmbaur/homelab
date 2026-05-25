@@ -160,6 +160,7 @@
 (defun setup-term ()
   "Common terminal setup"
   ;; line numbers are not nearly useful in terminal like environments
+  (with-editor-export-editor)
   (line-number-mode -1)
   (display-line-numbers-mode -1))
 
