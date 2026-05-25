@@ -41,7 +41,9 @@
     (progn
       (if (fboundp 'scroll-bar-mode)
 	  (scroll-bar-mode -1)))
-  (setq interprogram-cut-function 'osc52-select-text))
+  (progn
+   (xterm-mouse-mode t)
+   (setq interprogram-cut-function 'osc52-select-text)))
 
 ;; Set TERM for comint-derived modes like shell-mode
 (setq comint-terminfo-terminal "dumb-emacs-ansi")
