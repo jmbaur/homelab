@@ -35,6 +35,7 @@
 (global-auto-revert-mode 1)
 (savehist-mode 1)
 (fido-vertical-mode 1)
+(editorconfig-mode 1)
 (rg-enable-default-bindings)
 
 (if window-system
