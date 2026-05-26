@@ -70,7 +70,21 @@
 (evil-commentary-mode 1)
 (evil-collection-init)
 
-;; makes magit faster for large repos
+(defun setup-theme (frame)
+  "Select theme based on the terminal's background mode (also works outside of terminal)."
+  (with-selected-frame frame
+    (let ((bg-mode (frame-parameter frame 'background-mode)))
+      (if (eq bg-mode 'dark)
+          (load-theme 'modus-vivendi t)
+        (load-theme 'modus-operandi t)))))
+
+;; Apply theme when a new frame is created (essential for emacs-daemon)
+(add-hook 'after-make-frame-functions 'setup-theme)
+
+;; Also run for the initial frame
+(setup-theme (selected-frame))
+
+;; Makes magit faster for large repos
 (remove-hook 'magit-status-headers-hook 'magit-insert-tags-header)
 (setq magit-revision-insert-related-refs nil)
 (remove-hook 'magit-status-sections-hook 'magit-insert-unpulled-from-upstream)
@@ -85,7 +99,7 @@
     (if (file-exists-p projects-dir)
 	(project-remember-projects-under projects-dir))))
 
-;; scrape the projects directory, if it has not yet been scraped
+;; Scrape the projects directory, if it has not yet been scraped
 (unless (file-exists-p project-list-file)
   (refresh-projects))
 
@@ -97,7 +111,7 @@
 	(vterm (format "term-%s" (car (last (file-name-split default-directory) 2)))))
     (ghostel-project)))
 
-;; add extra keybindings for project switching and override the switch commands
+;; Add extra keybindings for project switching and override the switch commands
 (define-key project-prefix-map "g" #'rg-project)
 (define-key project-prefix-map "m" #'magit-project-status)
 (define-key project-prefix-map "r" #'project-recompile)
@@ -165,10 +179,12 @@
 (add-hook 'rust-ts-mode-hook #'eglot-ensure)
 (add-hook 'zig-mode-hook #'eglot-ensure)
 
+
 (defun setup-term ()
   "Common terminal setup"
-  ;; line numbers are not nearly useful in terminal like environments
-  (with-editor-export-editor)
+  ;; TODO(jared): this seems to cause problems
+  ;; ;; line numbers are not nearly useful in terminal like environments
+  ;; (with-editor-export-editor)
   (line-number-mode -1)
   (display-line-numbers-mode -1))
 
@@ -186,7 +202,7 @@
     (add-hook 'ghostel-mode-hook #'setup-term)
     (add-hook 'ghostel-mode-hook #'evil-ghostel-mode)))
 
-;; ensure we load custom-file, if set
+;; Ensure we load custom-file, if set
 (unless (eq custom-file nil)
   (when (file-exists-p custom-file)
     (load custom-file)))
