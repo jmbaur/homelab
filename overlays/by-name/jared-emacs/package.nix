@@ -3,6 +3,7 @@
   buildEnv,
   clang-tools,
   dts-lsp,
+  emacs,
   emacs-nox,
   fd,
   fennel-ls,
@@ -32,7 +33,7 @@
 }:
 
 let
-  emacs = emacs-nox.pkgs.withPackages (epkgs: [
+  deps = epkgs: [
     (
       if stdenv.hostPlatform.isDarwin then
         epkgs.vterm
@@ -68,10 +69,13 @@ let
     epkgs.fennel-mode
     epkgs.geiser
     epkgs.git-link
+    epkgs.gnuplot-mode
     epkgs.go-mode
     epkgs.goto-chg
     epkgs.haskell-mode
     epkgs.janet-mode
+    epkgs.just-mode
+    epkgs.kconfig-mode
     epkgs.lua-mode
     epkgs.magit
     epkgs.markdown-mode
@@ -87,7 +91,19 @@ let
     epkgs.typescript-mode
     epkgs.yaml-mode
     epkgs.zig-mode
-  ]);
+  ];
+
+  emacs' = (if stdenv.hostPlatform.isLinux then emacs-nox else emacs).pkgs.withPackages (
+    epkgs:
+    [
+      (epkgs.trivialBuild {
+        name = "jared-emacs-config";
+        src = ./default.el;
+        packageRequires = deps epkgs;
+      })
+    ]
+    ++ deps epkgs
+  );
 in
 buildEnv {
   name = "jared-emacs";
@@ -96,7 +112,7 @@ buildEnv {
     bash-language-server
     clang-tools
     dts-lsp
-    emacs
+    emacs'
     fd
     fennel-ls
     fnlfmt
