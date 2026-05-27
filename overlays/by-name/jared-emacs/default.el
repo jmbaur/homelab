@@ -31,7 +31,6 @@
     (make-directory backup-dir t))
   (setq backup-directory-alist `(("." . backup-dir))))
 
-
 ;; Ensure environment variables from shell are present in non-shell
 ;; environments. This comes first since some packages below expect the
 ;; environment to be entirely set.
@@ -61,6 +60,12 @@
   (setq gc-cons-threshold 800000))
 (add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
 (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
+
+;; https://whhone.com/posts/emacs-in-a-terminal/#tweak-for-xterm-paste
+(define-advice xterm-paste
+    (:before (&args) delete-active-region)
+  "Delete the selected text first before pasting from xterm."
+  (when (use-region-p) (delete-active-region)))
 
 (defun osc52-select-text (text)
   "Use ANSI OSC 52 escape sequence to attempt clipboard copy"
