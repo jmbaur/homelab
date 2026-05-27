@@ -183,6 +183,10 @@
       };
 
       programs.zsh.enable = pkgs.stdenv.hostPlatform.isDarwin;
+
+      xdg.configFile."emacs/early-init.el".text = ''
+        (setq inhibit-startup-screen t)
+      '';
     }
 
     (lib.mkIf pkgs.stdenv.hostPlatform.isLinux {

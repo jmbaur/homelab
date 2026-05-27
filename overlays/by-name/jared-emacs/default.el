@@ -7,7 +7,6 @@
 (setq evil-want-C-u-scroll t)
 (setq evil-want-Y-yank-to-eol t)
 (setq evil-want-keybinding nil)
-(setq inhibit-splash-screen t)
 (setq isearch-lazy-count t)
 (setq load-prefer-newer t)
 (setq mode-line-compact 'long)
