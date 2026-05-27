@@ -67,6 +67,12 @@
   "Delete the selected text first before pasting from xterm."
   (when (use-region-p) (delete-active-region)))
 
+;; https://whhone.com/posts/emacs-in-a-terminal/#show-diff-highlighting-with-margin
+(add-hook 'diff-hl-mode-on-hook
+	  (lambda ()
+	    (unless (display-graphic-p)
+	      (diff-hl-margin-local-mode))))
+
 (defun osc52-select-text (text)
   "Use ANSI OSC 52 escape sequence to attempt clipboard copy"
   (send-string-to-terminal
