@@ -76,6 +76,7 @@ let
     epkgs.janet-mode
     epkgs.just-mode
     epkgs.kconfig-mode
+    epkgs.kkp
     epkgs.lua-mode
     epkgs.magit
     epkgs.markdown-mode
