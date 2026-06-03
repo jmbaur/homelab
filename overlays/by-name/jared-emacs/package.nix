@@ -4,7 +4,7 @@
   clang-tools,
   dts-lsp,
   emacs,
-  emacs-nox,
+  emacs-pgtk,
   emacsPackagesFor,
   fd,
   fennel-ls,
@@ -35,7 +35,7 @@
 
 let
   emacsPackages =
-    (emacsPackagesFor (if stdenv.hostPlatform.isLinux then emacs-nox else emacs)).overrideScope
+    (emacsPackagesFor (if stdenv.hostPlatform.isLinux then emacs-pgtk else emacs)).overrideScope
       (
         epkgsFinal: epkgsPrev: {
           ghostel = epkgsPrev.ghostel.overrideAttrs (old: {
