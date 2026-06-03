@@ -1,26 +1,41 @@
 ;;; -*- lexical-binding: t -*-
 
-(setq confirm-kill-emacs 'yes-or-no-p)
-(setq dired-dwim-target t)
-(setq direnv-always-show-summary nil)
+;; evil requires these to be set prior to loading the evil packages
 (setq evil-symbol-word-search t)
 (setq evil-want-C-u-scroll t)
 (setq evil-want-Y-yank-to-eol t)
 (setq evil-want-keybinding nil)
+
+(require 'company)
+(require 'dired)
+(require 'direnv)
+(require 'eglot)
+(require 'evil)
+(require 'evil-collection)
+(require 'evil-commentary)
+(require 'evil-surround)
+(require 'flymake)
+(require 'magit-extras)
+(require 'project)
+(require 'rg)
+(require 'zig-mode)
+
+(defvar xdg-cache-home (expand-file-name (or (getenv "XDG_CACHE_HOME") "~/.cache")))
+(defvar xdg-config-home (expand-file-name (or (getenv "XDG_CONFIG_HOME") "~/.config")))
+(defvar xdg-state-home (expand-file-name (or (getenv "XDG_STATE_HOME") "~/.local/state")))
+(setq auto-save-list-file-prefix (file-name-concat user-emacs-directory "auto-save-list"))
+(setq confirm-kill-emacs 'yes-or-no-p)
+(setq custom-file (file-name-concat user-emacs-directory "custom.el"))
+(setq dired-dwim-target t)
+(setq direnv-always-show-summary nil)
 (setq isearch-lazy-count t)
 (setq load-prefer-newer t)
 (setq mode-line-compact 'long)
 (setq native-comp-jit-compilation t)
+(setq transient-history-file (file-name-concat user-emacs-directory "transient" "history.el"))
+(setq user-emacs-directory (file-name-concat xdg-state-home "emacs"))
 (setq-default eglot-events-buffer-size 0)
 (setq-default truncate-lines t)
-
-(setq xdg-cache-home (expand-file-name (or (getenv "XDG_CACHE_HOME") "~/.cache")))
-(setq xdg-config-home (expand-file-name (or (getenv "XDG_CONFIG_HOME") "~/.config")))
-(setq xdg-state-home (expand-file-name (or (getenv "XDG_STATE_HOME") "~/.local/state")))
-(setq user-emacs-directory (file-name-concat xdg-state-home "emacs"))
-(setq custom-file (file-name-concat user-emacs-directory "custom.el"))
-(setq auto-save-list-file-prefix (file-name-concat user-emacs-directory "auto-save-list"))
-(setq transient-history-file (file-name-concat user-emacs-directory "transient" "history.el"))
 
 (when (boundp 'native-comp-eln-load-path)
   (startup-redirect-eln-cache (file-name-concat user-emacs-directory "eln-cache")))
@@ -38,19 +53,6 @@
   (add-to-list 'exec-path-from-shell-variables var))
 (when (or (memq window-system '(mac ns x)) (daemonp))
   (exec-path-from-shell-initialize))
-
-(require 'company)
-(require 'direnv)
-(require 'eglot)
-(require 'evil)
-(require 'evil-collection)
-(require 'evil-commentary)
-(require 'evil-surround)
-(require 'flymake)
-(require 'magit-extras)
-(require 'project)
-(require 'rg)
-(require 'zig-mode)
 
 ;; http://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-cons-threshold/
 (defun my-minibuffer-setup-hook ()
@@ -114,12 +116,13 @@
 (evil-collection-init)
 
 (defun setup-theme (frame)
-  "Select theme based on the terminal's background mode (also works outside of terminal)."
+  "Select theme based on the terminal's background mode.
+Also works outside of terminal."
   (with-selected-frame frame
     (let ((bg-mode (frame-parameter frame 'background-mode)))
       (if (eq bg-mode 'dark)
-          (load-theme 'modus-vivendi t)
-        (load-theme 'modus-operandi t)))))
+	  (load-theme 'modus-vivendi t)
+	(load-theme 'modus-operandi t)))))
 
 ;; Apply theme when a new frame is created (essential for emacs-daemon)
 (add-hook 'after-make-frame-functions 'setup-theme)
@@ -142,6 +145,9 @@
     (if (file-exists-p projects-dir)
 	(project-remember-projects-under projects-dir))))
 
+(setq magit-clone-default-directory (file-name-concat xdg-state-home "projects/"))
+(add-hook 'magit-post-clone-hook #'refresh-projects)
+
 ;; Scrape the projects directory, if it has not yet been scraped
 (unless (file-exists-p project-list-file)
   (refresh-projects))
@@ -149,10 +155,12 @@
 (defun project-term ()
   "Launch terminal in current project"
   (interactive)
-  (if (eq system-type 'darwin)
+  (if (or (eq system-type 'darwin) t) ;; TODO(jared): setup ghostel again?
       (let ((default-directory (project-root (project-current t))))
 	(vterm (format "term-%s" (car (last (file-name-split default-directory) 2)))))
-    (ghostel-project)))
+    (progn
+      ;;(ghostel-project)
+      (message "unreachable"))))
 
 ;; Add extra keybindings for project switching and override the switch commands
 (define-key project-prefix-map "g" #'rg-project)
@@ -222,7 +230,6 @@
 (add-hook 'rust-ts-mode-hook #'eglot-ensure)
 (add-hook 'zig-mode-hook #'eglot-ensure)
 
-
 (defun setup-term ()
   "Common terminal setup"
   ;; TODO(jared): this seems to cause problems
@@ -231,19 +238,21 @@
   (line-number-mode -1)
   (display-line-numbers-mode -1))
 
+(add-hook 'eat-mode-hook #'setup-term)
+(add-hook 'eshell-load-hook #'eat-eshell-mode)
+(add-hook 'eshell-load-hook #'setup-term)
 (add-hook 'nix-repl-hook #'setup-term)
+(add-hook 'shell-command-mode-hook #'setup-term)
+(add-hook 'shell-command-mode-hook #'view-mode) ;; ensure we can't modify buffer for shell output
 (add-hook 'shell-mode-hook #'setup-term)
 (add-hook 'term-mode-hook #'setup-term)
-(add-hook 'shell-command-mode-hook #'view-mode) ;; ensure we can't modify buffer for shell output
-(add-hook 'eat-mode-hook #'setup-term)
-(add-hook 'eshell-load-hook #'setup-term)
-(add-hook 'eshell-load-hook #'eat-eshell-mode)
+(add-hook 'vterm-mode-hook #'setup-term)
 
-(if (eq system-type 'darwin)
-    (add-hook 'vterm-mode-hook #'setup-term)
-  (progn
-    (add-hook 'ghostel-mode-hook #'setup-term)
-    (add-hook 'ghostel-mode-hook #'evil-ghostel-mode)))
+;; TODO(jared): setup ghostel again?
+;; (if (not (eq system-type 'darwin))
+;;     (progn
+;;       (add-hook 'ghostel-mode-hook #'setup-term)
+;;       (add-hook 'ghostel-mode-hook #'evil-ghostel-mode)))
 
 ;; Ensure we load custom-file, if set
 (unless (eq custom-file nil)

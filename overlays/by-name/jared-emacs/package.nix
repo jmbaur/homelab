@@ -5,6 +5,7 @@
   dts-lsp,
   emacs,
   emacs-nox,
+  emacsPackagesFor,
   fd,
   fennel-ls,
   fetchFromGitHub,
@@ -33,30 +34,32 @@
 }:
 
 let
-  deps = epkgs: [
-    (
-      if stdenv.hostPlatform.isDarwin then
-        epkgs.vterm
-      else
-        (epkgs.ghostel.overrideAttrs (old: {
-          packageRequires = [ epkgs.evil ];
-          preBuild = (old.preBuild or "") + ''
-            cp extensions/evil-ghostel/evil-ghostel.el lisp
-          '';
-        }))
-    )
-    (epkgs.melpaBuild (_finalAttrs: {
-      pname = "rail";
-      version = "0.4.0";
+  emacsPackages =
+    (emacsPackagesFor (if stdenv.hostPlatform.isLinux then emacs-nox else emacs)).overrideScope
+      (
+        epkgsFinal: epkgsPrev: {
+          ghostel = epkgsPrev.ghostel.overrideAttrs (old: {
+            packageRequires = [ epkgsFinal.evil ];
+            preBuild = (old.preBuild or "") + ''
+              cp extensions/evil-ghostel/evil-ghostel.el lisp
+            '';
+          });
+          rail = epkgsFinal.melpaBuild {
+            pname = "rail";
+            version = "0.4.0";
+            src = fetchFromGitHub {
+              owner = "Sasanidas";
+              repo = "Rail";
+              rev = "04e306bcdff11b54807203ca3bea85f4645633d1";
+              hash = "sha256-HSeD20A0yqbs4QjuP/kHQM3Glu/CIse7iP+yFCGFD5k=";
+            };
+          };
+        }
+      );
 
-      src = fetchFromGitHub {
-        owner = "Sasanidas";
-        repo = "Rail";
-        rev = "04e306bcdff11b54807203ca3bea85f4645633d1";
-        hash = "sha256-HSeD20A0yqbs4QjuP/kHQM3Glu/CIse7iP+yFCGFD5k=";
-      };
-    }))
+  deps = epkgs: [
     epkgs.company
+    epkgs.diff-hl
     epkgs.direnv
     epkgs.dts-mode
     epkgs.eat
@@ -81,8 +84,10 @@ let
     epkgs.magit
     epkgs.markdown-mode
     epkgs.meson-mode
+    epkgs.monroe
     epkgs.nix-mode
     epkgs.racket-mode
+    epkgs.rail
     epkgs.rg
     epkgs.rust-mode
     epkgs.slime
@@ -90,11 +95,12 @@ let
     epkgs.terraform-mode
     epkgs.treesit-grammars.with-all-grammars
     epkgs.typescript-mode
+    epkgs.vterm
     epkgs.yaml-mode
     epkgs.zig-mode
   ];
 
-  emacs' = (if stdenv.hostPlatform.isLinux then emacs-nox else emacs).pkgs.withPackages (
+  emacs' = emacsPackages.withPackages (
     epkgs:
     [
       (epkgs.trivialBuild {
