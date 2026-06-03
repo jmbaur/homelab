@@ -9,6 +9,7 @@
 (require 'company)
 (require 'dired)
 (require 'direnv)
+(require 'eat)
 (require 'eglot)
 (require 'evil)
 (require 'evil-collection)
@@ -108,6 +109,10 @@
   (add-hook 'compilation-filter-hook 'ansi-color-compilation-filter))
 
 (direnv-mode 1)
+
+(add-hook 'evil-collection-setup-hook (lambda (mode _mode-keymaps)
+					(if (eq mode 'eat)
+					    (evil-define-key 'insert 'eat-semi-char-mode-map (kbd "C-y") #'eat-yank))))
 
 (evil-set-undo-system 'undo-redo)
 (evil-mode 1)
