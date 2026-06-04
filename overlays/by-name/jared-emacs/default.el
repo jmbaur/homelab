@@ -29,6 +29,7 @@
 (setq custom-file (file-name-concat user-emacs-directory "custom.el"))
 (setq dired-dwim-target t)
 (setq direnv-always-show-summary nil)
+(setq fill-column 80)
 (setq isearch-lazy-count t)
 (setq load-prefer-newer t)
 (setq mode-line-compact 'long)
