@@ -243,6 +243,8 @@ Also works outside of terminal."
   (line-number-mode -1)
   (display-line-numbers-mode -1))
 
+(add-hook 'compilation-mode-hook #'setup-term)
+(add-hook 'compilation-mode-hook #'view-mode) ;; ensure we can't modify buffer for compilation output
 (add-hook 'eat-mode-hook #'setup-term)
 (add-hook 'eshell-load-hook #'eat-eshell-mode)
 (add-hook 'eshell-load-hook #'setup-term)
