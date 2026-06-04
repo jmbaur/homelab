@@ -8,6 +8,7 @@
 let
   inherit (lib)
     getExe
+    getExe'
     mkDefault
     mkEnableOption
     mkIf
@@ -26,24 +27,13 @@ in
       services.greetd = {
         enable = true;
         settings.default_session.command = toString [
-          "${getExe config.programs.sway.package} --config ${pkgs.writeText "sway-greetd-config" ''
-            exec ${config.systemd.user.services.swaybg.serviceConfig.ExecStart}
-            exec '${getExe pkgs.wlgreet} --command "systemd-cat --identifier=labwc ${getExe config.programs.labwc.package} --merge-config --startup=${getExe pkgs.sfwbar}"; swaymsg exit'
-            bindsym Mod4+shift+e exec swaynag -t warning -m 'What do you want to do?' -b 'Poweroff' 'systemctl poweroff' -b 'Reboot' 'systemctl reboot'
-          ''}"
+          "${getExe' config.services.greetd.package "agreety"}"
+          "--cmd"
+          ''"systemd-cat --identifier=sway ${getExe config.programs.sway.package}"''
         ];
       };
 
       programs.sway.enable = true;
-      programs.labwc.enable = true;
-
-      systemd.user.targets.labwc-session = {
-        description = "labwc session";
-        documentation = [ "man:labwc(1) man:systemd.special(7)" ];
-        bindsTo = [ "graphical-session.target" ];
-        wants = [ "graphical-session-pre.target" ];
-        after = [ "graphical-session-pre.target" ];
-      };
 
       systemd.user.services.swaybg = {
         serviceConfig.ExecStart = toString [
@@ -85,43 +75,16 @@ in
         main.font = "monospace:size=10";
       };
 
-      environment.etc."xdg/labwc/autostart".source = pkgs.writeShellScript "labwc-autostart" ''
-        systemctl --user import-environment ${
-          toString [
-            "DISPLAY"
-            "WAYLAND_DISPLAY"
-            "XDG_CURRENT_DESKTOP"
-            "XDG_SESSION_TYPE"
-            "NIXOS_OZONE_WL"
-            "XCURSOR_THEME"
-            "XCURSOR_SIZE"
-          ]
-        }
-        systemctl --user --no-block start ${config.systemd.user.targets.labwc-session.name}
-      '';
-
-      environment.etc."xdg/labwc/shutdown".source = pkgs.writeShellScript "labwc-shutdown" ''
-        systemctl --user --no-block stop ${config.systemd.user.targets.labwc-session.name}
-      '';
-
-      environment.etc."xdg/labwc/environment".source =
-        (pkgs.formats.keyValue { }).generate "labwc-environment"
-          {
-            XKB_DEFAULT_MODEL = config.services.xserver.xkb.model;
-            XKB_DEFAULT_OPTIONS = config.services.xserver.xkb.options;
-            XKB_DEFAULT_VARIANT = config.services.xserver.xkb.variant;
-          };
-
-      environment.etc."xdg/labwc/rc.xml".source = ./labwc-rc.xml;
-      environment.etc."xdg/labwc/menu.xml".source = ./labwc-menu.xml;
+      environment.variables = {
+        XKB_DEFAULT_MODEL = config.services.xserver.xkb.model;
+        XKB_DEFAULT_OPTIONS = config.services.xserver.xkb.options;
+        XKB_DEFAULT_VARIANT = config.services.xserver.xkb.variant;
+      };
 
       environment.systemPackages = [
         pkgs.brightnessctl
         pkgs.foot
         pkgs.grim
-        pkgs.labwc-menu-generator
-        pkgs.labwc-tweaks
-        pkgs.sfwbar
         pkgs.slurp
         pkgs.swaybg
         pkgs.swayidle
