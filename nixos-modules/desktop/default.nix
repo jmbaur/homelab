@@ -26,19 +26,15 @@ in
       services.greetd = {
         enable = true;
         settings.default_session.command = toString [
-          (getExe config.programs.labwc.package)
-          "--config-dir"
-          (pkgs.runCommand "labwc-greetd-config-dir" { } ''
-            mkdir -p $out
-            install -Dm0644 ${./labwc-greetd-rc.xml} $out/rc.xml
-            echo '${config.systemd.user.services.swaybg.serviceConfig.ExecStart} &' >$out/autostart
-            chmod +x $out/autostart
-          '')
-          "--session"
-          "'${getExe pkgs.wlgreet} --command \"systemd-cat --identifier=labwc ${getExe config.programs.labwc.package} --merge-config --startup=${getExe pkgs.sfwbar}\"'"
+          "${getExe config.programs.sway.package} --config ${pkgs.writeText "sway-greetd-config" ''
+            exec ${config.systemd.user.services.swaybg.serviceConfig.ExecStart}
+            exec '${getExe pkgs.wlgreet} --command "systemd-cat --identifier=labwc ${getExe config.programs.labwc.package} --merge-config --startup=${getExe pkgs.sfwbar}"; swaymsg exit'
+            bindsym Mod4+shift+e exec swaynag -t warning -m 'What do you want to do?' -b 'Poweroff' 'systemctl poweroff' -b 'Reboot' 'systemctl reboot'
+          ''}"
         ];
       };
 
+      programs.sway.enable = true;
       programs.labwc.enable = true;
 
       systemd.user.targets.labwc-session = {

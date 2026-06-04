@@ -70,7 +70,7 @@ in
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
-
+        TTYReset = true;
         StandardInput = "tty";
         StandardOutput = "tty";
         StandardError = "tty";
@@ -83,8 +83,6 @@ in
 
             text = ''
               trap "" INT # prevent CTRL-C
-
-              stty sane
 
               printf "=%.0s" {1..80}
               printf "\n"
