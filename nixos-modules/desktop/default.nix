@@ -35,6 +35,8 @@ in
 
       programs.sway.enable = true;
 
+      systemd.user.services.xdg-desktop-portal-wlr.path = [ pkgs.wmenu ];
+
       systemd.user.services.swaybg = {
         serviceConfig.ExecStart = toString [
           (getExe pkgs.swaybg)
