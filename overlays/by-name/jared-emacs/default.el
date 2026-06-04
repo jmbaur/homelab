@@ -126,8 +126,8 @@ Also works outside of terminal."
   (with-selected-frame frame
     (let ((bg-mode (frame-parameter frame 'background-mode)))
       (if (eq bg-mode 'dark)
-	  (load-theme 'modus-vivendi t)
-	(load-theme 'modus-operandi t)))))
+	  (load-theme 'modus-vivendi-tritanopia t)
+	(load-theme 'modus-operandi-tritanopia t)))))
 
 ;; Apply theme when a new frame is created (essential for emacs-daemon)
 (add-hook 'after-make-frame-functions 'setup-theme)
