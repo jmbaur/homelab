@@ -24,6 +24,7 @@
         fsrx
         gh
         git
+        git-absorb
         git-extras
         git-gone
         gnumake
