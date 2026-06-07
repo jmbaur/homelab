@@ -107,6 +107,7 @@ in
         pkgs.swayidle
         pkgs.swaylock
         pkgs.wev
+        pkgs.wf-recorder
         pkgs.wl-mirror
         pkgs.wlopm
         pkgs.wlr-randr
