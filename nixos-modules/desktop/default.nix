@@ -73,6 +73,15 @@ in
         wantedBy = [ "graphical-session.target" ];
       };
 
+      systemd.user.services.gammastep = {
+        serviceConfig.ExecStart = toString [
+          (getExe pkgs.gammastep)
+          "-l"
+          "geoclue2"
+        ];
+        wantedBy = [ "graphical-session.target" ];
+      };
+
       environment.etc."xdg/foot/foot.ini".source = (pkgs.formats.ini { }).generate "foot.ini" {
         main.font = "monospace:size=10";
       };
@@ -83,15 +92,24 @@ in
         XKB_DEFAULT_VARIANT = config.services.xserver.xkb.variant;
       };
 
+      fonts = {
+        packages = [ pkgs.jetbrains-mono ];
+        fontconfig.defaultFonts.monospace = [ "JetBrains Mono" ];
+      };
+
       environment.systemPackages = [
         pkgs.brightnessctl
         pkgs.foot
+        pkgs.gammastep
         pkgs.grim
         pkgs.slurp
         pkgs.swaybg
         pkgs.swayidle
         pkgs.swaylock
+        pkgs.wev
+        pkgs.wl-mirror
         pkgs.wlopm
+        pkgs.wlr-randr
         (pkgs.symlinkJoin {
           name = "default-${pkgs.xcursor-chromeos.name}";
           paths = [ pkgs.xcursor-chromeos ];
