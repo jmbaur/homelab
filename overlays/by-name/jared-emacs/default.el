@@ -1,10 +1,10 @@
 ;;; -*- lexical-binding: t -*-
 
 ;; evil requires these to be set prior to loading the evil packages
-(setq evil-symbol-word-search t)
-(setq evil-want-C-u-scroll t)
-(setq evil-want-Y-yank-to-eol t)
-(setq evil-want-keybinding nil)
+(defvar evil-symbol-word-search t)
+(defvar evil-want-C-u-scroll t)
+(defvar evil-want-Y-yank-to-eol t)
+(defvar evil-want-keybinding nil)
 
 (require 'company)
 (require 'dired)
