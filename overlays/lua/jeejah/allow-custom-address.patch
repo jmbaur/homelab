@@ -1,0 +1,14 @@
+diff --git a/jeejah.fnl b/jeejah.fnl
+index 9097cb6..0df9762 100644
+--- a/jeejah.fnl
++++ b/jeejah.fnl
+@@ -199,7 +199,8 @@
+ 
+ (λ start [options]
+   (let [port (or options.port 7888)
+-        server (assert (socket.bind "localhost" port))
++        address (or options.address "*")
++        server (assert (socket.bind address port))
+         state {: server : options :connections {} :handler-coros {} :sessions {}
+                :sockets [server]}]
+     (server:settimeout 0.01)

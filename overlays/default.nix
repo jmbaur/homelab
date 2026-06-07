@@ -12,6 +12,30 @@ inputs: {
         directory = ./by-name;
       }
     )
+    (
+      final: prev:
+      inputs.nixpkgs.lib.genAttrs
+        [
+          "lua5"
+          "lua5_1"
+          "luajit_2_1"
+          "luajit_2_0"
+          "lua5_2"
+          "lua5_3"
+          "lua5_4"
+        ]
+        (
+          lua:
+          prev.${lua}.override {
+            packageOverrides =
+              luafinal: _luaprev:
+              final.lib.packagesFromDirectoryRecursive {
+                inherit (luafinal) callPackage;
+                directory = ./lua;
+              };
+          }
+        )
+    )
 
     # cross-compilation fixes
     (_final: prev: {
