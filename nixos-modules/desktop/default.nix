@@ -102,6 +102,8 @@ in
         pkgs.foot
         pkgs.gammastep
         pkgs.grim
+        pkgs.libnotify
+        pkgs.mako
         pkgs.slurp
         pkgs.swaybg
         pkgs.swayidle
