@@ -14,6 +14,7 @@
 (require 'evil)
 (require 'evil-collection)
 (require 'evil-commentary)
+(require 'evil-numbers)
 (require 'evil-surround)
 (require 'flymake)
 (require 'magit-extras)
@@ -120,6 +121,8 @@
 (global-evil-surround-mode 1)
 (evil-commentary-mode 1)
 (evil-collection-init)
+(define-key evil-normal-state-map (kbd "C-c +") #'evil-numbers/inc-at-pt)
+(define-key evil-normal-state-map (kbd "C-c -") #'evil-numbers/dec-at-pt)
 
 (defun setup-theme (frame)
   "Select theme based on the terminal's background mode.
