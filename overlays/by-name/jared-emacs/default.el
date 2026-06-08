@@ -16,6 +16,7 @@
 (require 'evil-commentary)
 (require 'evil-numbers)
 (require 'evil-surround)
+(require 'exec-path-from-shell)
 (require 'flymake)
 (require 'magit-extras)
 (require 'project)
@@ -51,7 +52,6 @@
 ;; Ensure environment variables from shell are present in non-shell
 ;; environments. This comes first since some packages below expect the
 ;; environment to be entirely set.
-(require 'exec-path-from-shell)
 (dolist (var '("SSH_AUTH_SOCK" "SSH_AGENT_PID" "NIX_SSL_CERT_FILE"))
   (add-to-list 'exec-path-from-shell-variables var))
 (when (or (memq window-system '(mac ns x)) (daemonp))
