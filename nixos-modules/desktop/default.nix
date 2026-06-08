@@ -48,6 +48,8 @@ in
           '')
         ];
         wantedBy = [ "graphical-session.target" ];
+        bindsTo = [ "graphical-session.target" ];
+        after = [ "graphical-session.target" ];
       };
 
       systemd.user.services.swayidle = {
@@ -71,6 +73,8 @@ in
           "'swaylock -f'"
         ];
         wantedBy = [ "graphical-session.target" ];
+        bindsTo = [ "graphical-session.target" ];
+        after = [ "graphical-session.target" ];
       };
 
       systemd.user.services.gammastep = {
@@ -80,6 +84,8 @@ in
           "geoclue2"
         ];
         wantedBy = [ "graphical-session.target" ];
+        bindsTo = [ "graphical-session.target" ];
+        after = [ "graphical-session.target" ];
       };
 
       environment.etc."xdg/foot/foot.ini".source = (pkgs.formats.ini { }).generate "foot.ini" {
