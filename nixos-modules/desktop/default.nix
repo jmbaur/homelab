@@ -103,6 +103,7 @@ in
         pkgs.gammastep
         pkgs.grim
         pkgs.libnotify
+        pkgs.luajit.pkgs.swaybar
         pkgs.mako
         pkgs.slurp
         pkgs.swaybg

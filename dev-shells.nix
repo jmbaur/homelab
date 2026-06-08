@@ -41,9 +41,15 @@ inputs.nixpkgs.lib.mapAttrs (
   {
     default = pkgs.mkShell {
       packages = [
+        (pkgs.luajit.withPackages (p: [
+          p.cqueues
+          p.dkjson
+          p.fennel
+          p.jeejah
+          p.ldbus
+        ]))
         pkgs.home-manager
         pkgs.lldb
-        pkgs.neovim-unwrapped.lua.pkgs.fennel
         pkgs.openscad-unstable
         pkgs.sops
         pkgs.ssh-to-age
