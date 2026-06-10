@@ -111,6 +111,12 @@
   (add-to-list 'compilation-environment "TERM=dumb-emacs-ansi")
   (add-hook 'compilation-filter-hook 'ansi-color-compilation-filter))
 
+(add-hook 'window-configuration-change-hook
+	  (lambda ()
+	    (when (not (display-graphic-p))
+	      (send-string-to-terminal
+	       (format "\033]0;Emacs: %s\007" (buffer-name))))))
+
 (direnv-mode 1)
 
 (add-hook 'evil-collection-setup-hook (lambda (mode _mode-keymaps)
