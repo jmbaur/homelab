@@ -186,6 +186,7 @@
       programs.zsh.enable = pkgs.stdenv.hostPlatform.isDarwin;
 
       xdg.configFile."emacs/early-init.el".text = ''
+        ;;; -*- lexical-binding: t -*-
         (setq inhibit-startup-screen t)
       '';
     }
