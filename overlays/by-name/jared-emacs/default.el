@@ -145,6 +145,9 @@ Also works outside of terminal."
 (remove-hook 'magit-status-sections-hook 'magit-insert-unpulled-from-upstream)
 (remove-hook 'magit-status-sections-hook 'magit-insert-unpushed-to-upstream-or-recent)
 
+;; makes find-file-hook faster
+(setq vc-handled-backends '(Git))
+
 (setq project-list-file (file-name-concat xdg-cache-home "emacs" "projects"))
 (defun refresh-projects ()
   "Refresh projects file"
@@ -242,10 +245,12 @@ Also works outside of terminal."
 (defun setup-term ()
   "Common terminal setup"
   ;; TODO(jared): this seems to cause problems
-  ;; ;; line numbers are not nearly useful in terminal like environments
   ;; (with-editor-export-editor)
-  (line-number-mode -1)
-  (display-line-numbers-mode -1))
+  ;; makes terminal faster since emacs doesn't need to parse all output
+  (font-lock-mode -1)
+  ;; line numbers are not nearly useful in terminal like environments
+  (display-line-numbers-mode -1)
+  (line-number-mode -1))
 
 (add-hook 'compilation-mode-hook #'setup-term)
 (add-hook 'compilation-mode-hook #'view-mode) ;; ensure we can't modify buffer for compilation output
