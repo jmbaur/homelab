@@ -89,7 +89,7 @@ in
       };
 
       environment.etc."xdg/foot/foot.ini".source = (pkgs.formats.ini { }).generate "foot.ini" {
-        main.font = "monospace:size=10";
+        main.font = "monospace:size=12";
       };
 
       environment.variables = {
