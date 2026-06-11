@@ -88,8 +88,36 @@ in
         after = [ "graphical-session.target" ];
       };
 
-      environment.etc."xdg/foot/foot.ini".source = (pkgs.formats.ini { }).generate "foot.ini" {
-        main.font = "monospace:size=12";
+      systemd.user.services.kanshi = {
+        serviceConfig.ExecStart = toString [
+          (getExe pkgs.kanshi)
+          "--config"
+          (pkgs.writeText "kanshi.conf" ''
+            profile docked {
+              output eDP-1 disable
+              output * enable
+            }
+            profile undocked {
+              output * enable
+            }
+          '')
+        ];
+        wantedBy = [ "graphical-session.target" ];
+        bindsTo = [ "graphical-session.target" ];
+        after = [ "graphical-session.target" ];
+      };
+
+      programs.foot = {
+        enable = true;
+        theme = "modus-vivendi";
+        settings = {
+          mouse.hide-when-typing = "yes";
+          main = {
+            font = "monospace:size=12";
+            resize-by-cells = "no";
+            selection-target = "both";
+          };
+        };
       };
 
       environment.variables = {
@@ -108,6 +136,7 @@ in
         pkgs.foot
         pkgs.gammastep
         pkgs.grim
+        pkgs.kanshi
         pkgs.libnotify
         pkgs.luajit.pkgs.swaybar
         pkgs.mako
@@ -117,6 +146,7 @@ in
         pkgs.swaylock
         pkgs.wev
         pkgs.wf-recorder
+        pkgs.wl-clipboard
         pkgs.wl-mirror
         pkgs.wlopm
         pkgs.wlr-randr
@@ -131,6 +161,7 @@ in
 
       programs.yubikey-touch-detector.enable = mkDefault true;
       security.rtkit.enable = mkDefault true;
+      services.automatic-timezoned.enable = mkDefault true;
       services.fwupd.enable = mkDefault true;
       services.printing.enable = mkDefault true;
       services.upower.enable = mkDefault true;
