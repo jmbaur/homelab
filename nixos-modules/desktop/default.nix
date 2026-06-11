@@ -135,6 +135,7 @@ in
         pkgs.brightnessctl
         pkgs.foot
         pkgs.gammastep
+        pkgs.gnome-themes-extra
         pkgs.grim
         pkgs.kanshi
         pkgs.libnotify
@@ -165,6 +166,18 @@ in
       services.fwupd.enable = mkDefault true;
       services.printing.enable = mkDefault true;
       services.upower.enable = mkDefault true;
+
+      programs.dconf = {
+        enable = true;
+        profiles.user.databases = [
+          {
+            settings."org/gnome/desktop/interface" = {
+              color-scheme = "prefer-dark";
+              gtk-theme = "Adwaita";
+            };
+          }
+        ];
+      };
 
       programs.firefox = {
         enable = mkDefault true;

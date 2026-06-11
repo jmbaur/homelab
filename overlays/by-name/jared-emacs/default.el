@@ -83,6 +83,7 @@
    (format "\x1b]52;c;%s\x07"
 	   (base64-encode-string text t))))
 
+(load-theme 'modus-vivendi-tritanopia t)
 (unless (and window-system (eq system-type 'darwin))
   (menu-bar-mode -1))
 (tool-bar-mode -1)
@@ -130,21 +131,6 @@
 (evil-collection-init)
 (define-key evil-normal-state-map (kbd "C-c +") #'evil-numbers/inc-at-pt)
 (define-key evil-normal-state-map (kbd "C-c -") #'evil-numbers/dec-at-pt)
-
-(defun setup-theme (frame)
-  "Select theme based on the terminal's background mode.
-Also works outside of terminal."
-  (with-selected-frame frame
-    (let ((bg-mode (frame-parameter frame 'background-mode)))
-      (if (eq bg-mode 'dark)
-	  (load-theme 'modus-vivendi-tritanopia t)
-	(load-theme 'modus-operandi-tritanopia t)))))
-
-;; Apply theme when a new frame is created (essential for emacs-daemon)
-(add-hook 'after-make-frame-functions 'setup-theme)
-
-;; Also run for the initial frame
-(setup-theme (selected-frame))
 
 ;; Makes magit faster for large repos
 (remove-hook 'magit-status-headers-hook 'magit-insert-tags-header)
