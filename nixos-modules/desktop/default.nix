@@ -124,6 +124,7 @@ in
         XKB_DEFAULT_MODEL = config.services.xserver.xkb.model;
         XKB_DEFAULT_OPTIONS = config.services.xserver.xkb.options;
         XKB_DEFAULT_VARIANT = config.services.xserver.xkb.variant;
+        QT_QPA_PLATFORMTHEME = "gtk3"; # easy QT theme integration
       };
 
       fonts = {
