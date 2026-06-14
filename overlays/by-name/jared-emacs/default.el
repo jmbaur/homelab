@@ -173,6 +173,7 @@
 (define-key project-prefix-map "r" #'project-recompile)
 (define-key project-prefix-map "t" #'eat-project)
 
+(setq project-switch-use-entire-map t)
 (setq project-switch-commands '((project-find-file "Find file")
 				(project-find-dir "Find directory")
 				(rg-project "Find regexp")
