@@ -36,6 +36,7 @@
 (setq load-prefer-newer t)
 (setq mode-line-compact 'long)
 (setq native-comp-jit-compilation t)
+(setq rg-executable-per-connection nil) ;; probably makes rg.el less portable, but rg-find-executable seems broken (https://github.com/dajva/rg.el/issues/184)
 (setq transient-history-file (file-name-concat user-emacs-directory "transient" "history.el"))
 (setq user-emacs-directory (file-name-concat xdg-state-home "emacs"))
 (setq-default eglot-events-buffer-size 0)
