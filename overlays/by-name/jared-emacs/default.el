@@ -188,15 +188,19 @@
 	      "Disable zig build progress"
 	      (apply f cmd source (append '("--color" "off") args))))
 
+(add-hook 'company-mode-hook
+	  (lambda ()
+	    "Common company-mode setup"
+	    (keymap-local-set "C-c ." #'company-complete)
+	    (keymap-local-set "C-c C-." #'company-complete)))
+
 (add-hook 'eglot-managed-mode-hook
 	  (lambda ()
 	    "Common LSP setup"
-	    (define-key eglot-mode-map (kbd "C-c n") #'flymake-goto-next-error)
-	    (define-key eglot-mode-map (kbd "C-c p") #'flymake-goto-prev-error)
-	    (define-key eglot-mode-map (kbd "C-c r") #'eglot-rename)
-	    (define-key eglot-mode-map (kbd "C-c a") #'eglot-code-actions)
-	    (define-key eglot-mode-map (kbd "C-c .") #'company-complete)
-	    (define-key eglot-mode-map (kbd "C-c C-.") #'company-complete)
+	    (keymap-local-set "C-c n" #'flymake-goto-next-error)
+	    (keymap-local-set "C-c p" #'flymake-goto-prev-error)
+	    (keymap-local-set "C-c r" #'eglot-rename)
+	    (keymap-local-set "C-c a" #'eglot-code-actions)
 	    (add-hook 'before-save-hook #'eglot-format nil t)
 	    (setq company-idle-delay nil)
 	    (company-mode)
@@ -228,6 +232,7 @@
 (add-hook 'bash-ts-mode-hook #'eglot-ensure)
 (add-hook 'c-ts-mode-hook #'eglot-ensure)
 (add-hook 'dts-mode-hook #'eglot-ensure)
+(add-hook 'emacs-lisp-mode-hook #'company-mode)
 (add-hook 'fennel-mode-hook #'eglot-ensure)
 (add-hook 'lua-ts-mode-hook #'eglot-ensure)
 (add-hook 'nix-mode-hook #'eglot-ensure)
