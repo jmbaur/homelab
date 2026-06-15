@@ -247,7 +247,7 @@
   ;; TODO(jared): this seems to cause problems
   ;; (with-editor-export-editor)
   ;; makes terminal faster since emacs doesn't need to parse all output
-  (when (not (eq major-mode 'vterm-mode))
+  (when (not (member major-mode '(rg-mode vterm-mode)))
     (font-lock-mode -1))
   ;; line numbers are not nearly useful in terminal like environments
   (display-line-numbers-mode -1)
