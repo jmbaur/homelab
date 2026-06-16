@@ -107,6 +107,21 @@ in
         after = [ "graphical-session.target" ];
       };
 
+      systemd.user.services.clipman = {
+        serviceConfig.ExecStart = toString [
+          (getExe' pkgs.wl-clipboard "wl-paste")
+          "-t"
+          "text"
+          "--watch"
+          (getExe pkgs.clipman)
+          "store"
+          "--no-persist"
+        ];
+        wantedBy = [ "graphical-session.target" ];
+        bindsTo = [ "graphical-session.target" ];
+        after = [ "graphical-session.target" ];
+      };
+
       programs.foot = {
         enable = true;
         theme = "modus-vivendi";
@@ -134,6 +149,7 @@ in
 
       environment.systemPackages = [
         pkgs.brightnessctl
+        pkgs.clipman
         pkgs.foot
         pkgs.gammastep
         pkgs.gnome-themes-extra
