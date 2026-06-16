@@ -105,14 +105,6 @@
     ;; (global-kkp-mode +1)
     (setq interprogram-cut-function 'osc52-select-text)))
 
-;; Set TERM for comint-derived modes like shell-mode
-(setq comint-terminfo-terminal "dumb-emacs-ansi")
-
-;; Enable basic ANSI escape sequence support for compilation-mode
-(with-eval-after-load 'compile
-  (add-to-list 'compilation-environment "TERM=dumb-emacs-ansi")
-  (add-hook 'compilation-filter-hook 'ansi-color-compilation-filter))
-
 (add-hook 'window-configuration-change-hook
 	  (lambda ()
 	    (when (not (display-graphic-p))
