@@ -1,22 +1,8 @@
 ;;; -*- lexical-binding: t -*-
 
-;; evil requires these to be set prior to loading the evil packages
-(defvar evil-symbol-word-search t)
-(defvar evil-want-C-u-scroll t)
-(defvar evil-want-Y-yank-to-eol t)
-(defvar evil-want-keybinding nil)
-
 (require 'company)
-(require 'dired)
-(require 'direnv)
 (require 'eat)
 (require 'eglot)
-(require 'evil)
-(require 'evil-collection)
-(require 'evil-commentary)
-(require 'evil-numbers)
-(require 'evil-surround)
-(require 'exec-path-from-shell)
 (require 'flymake)
 (require 'magit-extras)
 (require 'project)
@@ -29,8 +15,6 @@
 (setq auto-save-list-file-prefix (file-name-concat user-emacs-directory "auto-save-list"))
 (setq confirm-kill-emacs 'yes-or-no-p)
 (setq custom-file (file-name-concat user-emacs-directory "custom.el"))
-(setq dired-dwim-target t)
-(setq direnv-always-show-summary nil)
 (setq fill-column 80)
 (setq isearch-lazy-count t)
 (setq load-prefer-newer t)
@@ -50,13 +34,19 @@
     (make-directory backup-dir t))
   (setq backup-directory-alist `(("." . backup-dir))))
 
-;; Ensure environment variables from shell are present in non-shell
-;; environments. This comes first since some packages below expect the
-;; environment to be entirely set.
-(dolist (var '("SSH_AUTH_SOCK" "SSH_AGENT_PID" "NIX_SSL_CERT_FILE"))
-  (add-to-list 'exec-path-from-shell-variables var))
-(when (or (memq window-system '(mac ns x)) (daemonp))
-  (exec-path-from-shell-initialize))
+(use-package dired
+  :config
+  (setq dired-dwim-target t))
+  
+(use-package exec-path-from-shell
+  :config
+  ;; Ensure environment variables from shell are present in non-shell
+  ;; environments. This comes first since some packages below expect the
+  ;; environment to be entirely set.
+  (dolist (var '("SSH_AUTH_SOCK" "SSH_AGENT_PID" "NIX_SSL_CERT_FILE"))
+    (add-to-list 'exec-path-from-shell-variables var))
+  (when (or (memq window-system '(mac ns x)) (daemonp))
+    (exec-path-from-shell-initialize)))
 
 ;; http://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-cons-threshold/
 (defun my-minibuffer-setup-hook ()
@@ -111,19 +101,39 @@
 	      (send-string-to-terminal
 	       (format "\033]0;Emacs: %s\007" (buffer-name))))))
 
-(direnv-mode 1)
+(use-package direnv
+  :config
+  (setq direnv-always-show-summary nil)
+  (direnv-mode 1))
 
-(add-hook 'evil-collection-setup-hook (lambda (mode _mode-keymaps)
-					(if (eq mode 'eat)
-					    (evil-define-key 'insert 'eat-semi-char-mode-map (kbd "C-y") #'eat-yank))))
+(use-package evil
+  :init
+  ;; evil requires these to be set prior to loading the evil packages
+  (defvar evil-symbol-word-search t)
+  (defvar evil-want-C-u-scroll t)
+  (defvar evil-want-Y-yank-to-eol t)
+  (defvar evil-want-keybinding nil)
+  :config
+  (evil-mode 1)
+  (evil-set-undo-system 'undo-redo)
+  (use-package evil-collection
+    :config
+    (evil-collection-init)
+    (add-hook 'evil-collection-setup-hook
+	      (lambda (mode _mode-keymaps)
+		(if (eq mode 'eat)
+		    (evil-define-key 'insert 'eat-semi-char-mode-map (kbd "C-y") #'eat-yank)))))
+  (use-package evil-surround
+    :config
+    (global-evil-surround-mode 1))
+  (use-package evil-commentary
+    :config
+    (evil-commentary-mode 1))
+  (use-package evil-numbers
+    :config
+    (define-key evil-normal-state-map (kbd "C-c +") #'evil-numbers/inc-at-pt)
+    (define-key evil-normal-state-map (kbd "C-c -") #'evil-numbers/dec-at-pt)))
 
-(evil-set-undo-system 'undo-redo)
-(evil-mode 1)
-(global-evil-surround-mode 1)
-(evil-commentary-mode 1)
-(evil-collection-init)
-(define-key evil-normal-state-map (kbd "C-c +") #'evil-numbers/inc-at-pt)
-(define-key evil-normal-state-map (kbd "C-c -") #'evil-numbers/dec-at-pt)
 
 ;; Makes magit faster for large repos
 (remove-hook 'magit-status-headers-hook 'magit-insert-tags-header)
@@ -174,8 +184,10 @@
 				(eat-project "Terminal")
 				(magit-project-status "Magit")))
 
-(define-global-abbrev "toodoo" "TODO(jared)")
-(setq-default abbrev-mode t)
+(use-package abbrev
+  :config
+  (define-global-abbrev "toodoo" "TODO(jared)")
+  (setq-default abbrev-mode t))
 
 (advice-add 'zig--run-cmd :around
 	    (lambda (f cmd &optional source &rest args)
