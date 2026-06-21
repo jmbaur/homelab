@@ -91,6 +91,12 @@
 (use-package envrc
   :config (envrc-global-mode))
 
+(defun evil-yank-pulse-hint (beg end &rest _)
+  "Flash a temporary highlight over the yanked region."
+  (when (and (called-interactively-p 'any)
+	     (derived-mode-p 'prog-mode 'text-mode)) ; Only pulse in text/code
+    (pulse-momentary-highlight-region beg end 'next-error)))
+
 (use-package evil
   :init
   ;; evil requires these to be set prior to loading the evil packages
@@ -101,6 +107,7 @@
   :config
   (evil-mode 1)
   (evil-set-undo-system 'undo-redo)
+  (advice-add 'evil-yank :after #'evil-yank-pulse-hint)
   (use-package evil-collection
     :config
     (evil-collection-init)
