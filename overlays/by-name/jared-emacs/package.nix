@@ -3,8 +3,8 @@
   buildEnv,
   clang-tools,
   dts-lsp,
-  emacs,
-  emacs-pgtk,
+  emacs-unstable,
+  emacs-unstable-pgtk,
   emacsPackagesFor,
   fd,
   fennel-ls,
@@ -35,7 +35,8 @@
 
 let
   emacsPackages =
-    (emacsPackagesFor (if stdenv.hostPlatform.isLinux then emacs-pgtk else emacs)).overrideScope
+    (emacsPackagesFor (if stdenv.hostPlatform.isLinux then emacs-unstable-pgtk else emacs-unstable))
+    .overrideScope
       (
         epkgsFinal: epkgsPrev: {
           ghostel = epkgsPrev.ghostel.overrideAttrs (old: {
@@ -59,10 +60,10 @@ let
 
   deps = epkgs: [
     epkgs.company
-    epkgs.diff-hl
     epkgs.direnv
     epkgs.dts-mode
     epkgs.eat
+    epkgs.envrc
     epkgs.evil
     epkgs.evil-collection
     epkgs.evil-commentary

@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "github:jmbaur/nixpkgs/jmbaur-nixos-unstable";
 
+    emacs-overlay.url = "github:nix-community/emacs-overlay";
     git-hooks.url = "github:cachix/git-hooks.nix";
     home-manager.url = "github:nix-community/home-manager";
     ipwatch.url = "github:jmbaur/ipwatch";
@@ -16,6 +17,7 @@
     u-boot-nix.url = "github:jmbaur/u-boot.nix";
     webauthn-tiny.url = "github:jmbaur/webauthn-tiny";
 
+    emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
     git-hooks.inputs.flake-compat.follows = "";
     git-hooks.inputs.gitignore.follows = "";
     git-hooks.inputs.nixpkgs.follows = "nixpkgs";
