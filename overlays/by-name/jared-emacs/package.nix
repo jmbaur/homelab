@@ -60,7 +60,6 @@ let
 
   deps = epkgs: [
     epkgs.company
-    epkgs.direnv
     epkgs.dts-mode
     epkgs.eat
     epkgs.envrc
