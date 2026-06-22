@@ -246,28 +246,17 @@
   (add-hook 'rust-ts-mode-hook #'eglot-ensure))
 
 (use-package company
-  :hook (prog-mode
-	 (company-mode . (lambda ()
-			   "Common company-mode setup"
-			   (keymap-local-set "C-c ." #'company-complete)
-			   (keymap-local-set "C-c C-." #'company-complete)))
-	 (eglot-managed-mode . (lambda ()
-				 (setq company-idle-delay nil)
-				 (company-mode)))))
+  :hook
+  (prog-mode eglot-managed-mode
+	     (company-mode . (lambda ()
+			       "Common company-mode setup"
+			       (setq company-idle-delay nil)
+			       (keymap-local-set "C-c ." #'company-complete)
+			       (keymap-local-set "C-c C-." #'company-complete)))))
 
-(use-package files
+(use-package treesit
   :config
-  (setq major-mode-remap-alist
-	'((yaml-mode . yaml-ts-mode)
-	  (sh-mode . bash-ts-mode) ;; probably don't want to do this
-	  (js-mode . js-ts-mode)
-	  (typescript-mode . typescript-ts-mode)
-	  (json-mode . json-ts-mode)
-	  (css-mode . css-ts-mode)
-	  (c-mode . c-ts-mode)
-	  (lua-mode . lua-ts-mode)
-	  (rust-mode . rust-ts-mode)
-	  (python-mode . python-ts-mode))))
+  (setq treesit-enabled-modes t))
 
 (defun setup-term ()
   "Common terminal setup"
