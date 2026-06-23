@@ -14,17 +14,20 @@
         arch = "armv7-a";
         fpu = "vfpv3-d16";
       };
-      linux-kernel = {
-        DTB = true;
-        autoModules = true;
-        preferBuiltin = true;
-        target = "zImage";
-        name = "armada-388-clearfog";
-        baseConfig = "mvebu_v7_defconfig";
-      };
     };
 
     boot.kernelParams = [ "console=ttyS0,115200" ];
+
+    boot.kernelPackages = pkgs.linuxPackagesFor (
+      pkgs.buildLinux {
+        inherit (pkgs.linux) version src;
+        autoModules = true;
+        preferBuiltin = true;
+        buildDTBs = true;
+        target = "zImage";
+        defconfig = "mvebu_v7_defconfig";
+      }
+    );
 
     boot.kernelPatches = [
       {
