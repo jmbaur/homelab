@@ -13,6 +13,7 @@
   go-tools,
   gofumpt,
   gopls,
+  lib,
   lua-language-server,
   nixd,
   nixfmt,
@@ -58,47 +59,50 @@ let
         }
       );
 
-  deps = epkgs: [
-    epkgs.company
-    epkgs.dts-mode
-    epkgs.eat
-    epkgs.envrc
-    epkgs.evil
-    epkgs.evil-collection
-    epkgs.evil-commentary
-    epkgs.evil-numbers
-    epkgs.evil-surround
-    epkgs.exec-path-from-shell
-    epkgs.fennel-mode
-    epkgs.geiser
-    epkgs.git-link
-    epkgs.gnuplot-mode
-    epkgs.go-mode
-    epkgs.goto-chg
-    epkgs.haskell-mode
-    epkgs.janet-mode
-    epkgs.just-mode
-    epkgs.kconfig-mode
-    epkgs.kkp
-    epkgs.lua-mode
-    epkgs.magit
-    epkgs.markdown-mode
-    epkgs.meson-mode
-    epkgs.monroe
-    epkgs.nix-mode
-    epkgs.racket-mode
-    epkgs.rail
-    epkgs.rg
-    epkgs.rust-mode
-    epkgs.slime
-    epkgs.sops
-    epkgs.terraform-mode
-    epkgs.treesit-grammars.with-all-grammars
-    epkgs.typescript-mode
-    epkgs.vterm
-    epkgs.yaml-mode
-    epkgs.zig-mode
-  ];
+  deps =
+    epkgs:
+    [
+      epkgs.company
+      epkgs.dts-mode
+      epkgs.eat
+      epkgs.envrc
+      epkgs.evil
+      epkgs.evil-collection
+      epkgs.evil-commentary
+      epkgs.evil-numbers
+      epkgs.evil-surround
+      epkgs.exec-path-from-shell
+      epkgs.fennel-mode
+      epkgs.geiser
+      epkgs.git-link
+      epkgs.gnuplot-mode
+      epkgs.go-mode
+      epkgs.goto-chg
+      epkgs.haskell-mode
+      epkgs.janet-mode
+      epkgs.just-mode
+      epkgs.kconfig-mode
+      epkgs.kkp
+      epkgs.lua-mode
+      epkgs.magit
+      epkgs.markdown-mode
+      epkgs.meson-mode
+      epkgs.monroe
+      epkgs.nix-mode
+      epkgs.racket-mode
+      epkgs.rail
+      epkgs.rg
+      epkgs.rust-mode
+      epkgs.slime
+      epkgs.sops
+      epkgs.terraform-mode
+      epkgs.treesit-grammars.with-all-grammars
+      epkgs.typescript-mode
+      epkgs.vterm
+      epkgs.yaml-mode
+      epkgs.zig-mode
+    ]
+    ++ lib.optionals stdenv.hostPlatform.isLinux [ epkgs.ghostel ];
 
   emacs' = emacsPackages.withPackages (
     epkgs:

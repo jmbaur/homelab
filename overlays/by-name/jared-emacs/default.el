@@ -300,11 +300,10 @@
 (use-package vterm
   :hook (vterm-mode . setup-term))
 
-;; TODO(jared): setup ghostel again?
-;; (if (not (eq system-type 'darwin))
-;;     (progn
-;;       (add-hook 'ghostel-mode-hook #'setup-term)
-;;       (add-hook 'ghostel-mode-hook #'evil-ghostel-mode)))
+(if (not (eq system-type 'darwin))
+    (use-package ghostel
+      :hook ((ghostel-mode . setup-term)
+	     (ghostel-mode . evil-ghostel-mode))))
 
 ;; Ensure we load custom-file, if set
 (unless (eq custom-file nil)
