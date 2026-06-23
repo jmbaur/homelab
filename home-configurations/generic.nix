@@ -180,6 +180,11 @@
           export GOPATH=''${XDG_DATA_HOME:-~/.local/share}/go
           source ${pkgs.bash-sensible}/sensible.bash
           [ -n "$EAT_SHELL_INTEGRATION_DIR" ] && source "$EAT_SHELL_INTEGRATION_DIR/bash"
+          if [[ "$INSIDE_EMACS" = 'vterm' ]] \
+            && [[ -n ''${EMACS_VTERM_PATH} ]] \
+            && [[ -f ''${EMACS_VTERM_PATH}/etc/emacs-vterm-bash.sh ]]; then
+          source ''${EMACS_VTERM_PATH}/etc/emacs-vterm-bash.sh
+          fi
         '';
       };
 
