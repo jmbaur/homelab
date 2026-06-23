@@ -1,6 +1,7 @@
 {
   bash-language-server,
   buildEnv,
+  clang,
   clang-tools,
   dts-lsp,
   emacs-unstable,
@@ -121,6 +122,7 @@ buildEnv {
   meta.mainProgram = "emacs";
   paths = [
     bash-language-server
+    clang
     clang-tools
     dts-lsp
     emacs'
