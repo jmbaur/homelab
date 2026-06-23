@@ -238,12 +238,12 @@
 	      (eglot-inlay-hints-mode -1))) ;; too noisy
   (add-to-list 'eglot-server-programs
 	       '(dts-mode . ("dts-lsp" "--stdio")))
-  (add-hook 'bash-ts-mode-hook #'eglot-ensure)
-  (add-hook 'c-ts-mode-hook #'eglot-ensure)
+  (add-hook 'shell-mode-hook #'eglot-ensure)
+  (add-hook 'c-mode-hook #'eglot-ensure)
   (add-hook 'dts-mode-hook #'eglot-ensure)
-  (add-hook 'lua-ts-mode-hook #'eglot-ensure)
+  (add-hook 'lua-mode-hook #'eglot-ensure)
   (add-hook 'nix-mode-hook #'eglot-ensure)
-  (add-hook 'rust-ts-mode-hook #'eglot-ensure))
+  (add-hook 'rust-mode-hook #'eglot-ensure))
 
 (use-package company
   :hook
