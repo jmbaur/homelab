@@ -33,9 +33,12 @@ in
         ];
       };
 
-      programs.sway.enable = true;
+      programs.sway = {
+        enable = true;
+        extraPackages = [ ];
+      };
 
-      systemd.user.services.xdg-desktop-portal-wlr.path = [ pkgs.wmenu ];
+      systemd.user.services.xdg-desktop-portal-wlr.path = [ pkgs.rofi ];
 
       systemd.user.services.swaybg = {
         serviceConfig.ExecStart = toString [
@@ -158,6 +161,8 @@ in
         pkgs.libnotify
         pkgs.luajit.pkgs.swaybar
         pkgs.mako
+        pkgs.pulseaudio
+        pkgs.rofi
         pkgs.slurp
         pkgs.swaybg
         pkgs.swayidle
@@ -168,6 +173,7 @@ in
         pkgs.wl-mirror
         pkgs.wlopm
         pkgs.wlr-randr
+        pkgs.wmenu
         (pkgs.symlinkJoin {
           name = "default-${pkgs.xcursor-chromeos.name}";
           paths = [ pkgs.xcursor-chromeos ];
