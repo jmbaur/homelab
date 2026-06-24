@@ -100,31 +100,40 @@
 (use-package evil
   :init
   ;; evil requires these to be set prior to loading the evil packages
-  (defvar evil-symbol-word-search t)
-  (defvar evil-want-C-u-scroll t)
-  (defvar evil-want-Y-yank-to-eol t)
-  (defvar evil-want-keybinding nil)
+  (setq evil-symbol-word-search t)
+  (setq evil-want-C-u-scroll t)
+  (setq evil-want-Y-yank-to-eol t)
+  (setq evil-want-keybinding nil)
   :config
   (evil-mode 1)
   (evil-set-undo-system 'undo-redo)
-  (advice-add 'evil-yank :after #'evil-yank-pulse-hint)
-  (use-package evil-collection
-    :config
-    (evil-collection-init)
-    :hook
-    (evil-collection-setup . (lambda (mode _mode-keymaps)
-			       (if (eq mode 'eat)
-				   (evil-define-key 'insert 'eat-semi-char-mode-map (kbd "C-y") #'eat-yank)))))
-  (use-package evil-surround
-    :config
-    (global-evil-surround-mode +1))
-  (use-package evil-commentary
-    :config
-    (evil-commentary-mode +1))
-  (use-package evil-numbers
-    :config
-    (define-key evil-normal-state-map (kbd "C-c +") #'evil-numbers/inc-at-pt)
-    (define-key evil-normal-state-map (kbd "C-c -") #'evil-numbers/dec-at-pt)))
+  (advice-add 'evil-yank :after #'evil-yank-pulse-hint))
+
+(use-package evil-collection
+  :after evil
+  :config
+  (evil-collection-init)
+  :hook
+  (evil-collection-setup . (lambda (mode _mode-keymaps)
+			     (if (eq mode 'eat)
+				 (evil-define-key 'insert 'eat-semi-char-mode-map (kbd "C-y") #'eat-yank)))))
+
+(use-package evil-surround
+  :after evil
+  :config
+  (global-evil-surround-mode +1))
+
+(use-package evil-commentary
+  :after evil
+  :config
+  (evil-commentary-mode +1))
+
+(use-package evil-numbers
+  :after evil
+  :config
+  (define-key evil-normal-state-map (kbd "C-c +") #'evil-numbers/inc-at-pt)
+  (define-key evil-normal-state-map (kbd "C-c -") #'evil-numbers/dec-at-pt))
+
 
 
 (defun refresh-projects ()
