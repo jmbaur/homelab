@@ -152,16 +152,6 @@
   (setq magit-clone-default-directory (file-name-concat xdg-state-home "projects/"))
   (add-hook 'magit-post-clone-hook #'refresh-projects))
 
-(defun project-term ()
-  "Launch terminal in current project"
-  (interactive)
-  (if (or (eq system-type 'darwin) t) ;; TODO(jared): setup ghostel again?
-      (let ((default-directory (project-root (project-current t))))
-	(vterm (format "term-%s" (car (last (file-name-split default-directory) 2)))))
-    (progn
-      ;;(ghostel-project)
-      (message "unreachable"))))
-
 (use-package rg
   :config
   ;; probably makes rg.el less portable, but rg-find-executable seems
@@ -169,24 +159,84 @@
   (setq rg-executable-per-connection nil)
   (rg-enable-default-bindings))
 
+(use-package comint)
+
+(defun setup-term ()
+  "Common terminal setup"
+  ;; TODO(jared): this seems to cause problems
+  ;; (with-editor-export-editor)
+  ;; makes terminal faster since emacs doesn't need to parse all output
+  (when (not (member major-mode '(compilation-mode rg-mode vterm-mode)))
+    (font-lock-mode -1))
+  ;; line numbers are not nearly useful in terminal like environments
+  (display-line-numbers-mode -1)
+  (line-number-mode -1))
+
+(use-package compile
+  :hook
+  (compilation-mode . (lambda ()
+			(view-mode) ;; ensure we can't modify buffer for compilation output
+			(setup-term))))
+
+(use-package eat
+  :hook setup-term)
+
+(use-package eshell
+  :hook
+  (eshell-load . (lambda ()
+		   (eat-eshell-mode)
+		   (setup-term))))
+
+(use-package nix
+  :hook (nix-repl-mode . setup-term))
+
+(use-package shell
+  :hook
+  ((shell-command-mode . (lambda ()
+			   (view-mode) ;; ensure we can't modify buffer for shell output
+			   (setup-term)))
+   (shell-mode . setup-term)))
+
+(use-package term
+  :hook (term-mode . setup-term))
+
+(use-package vterm
+  :hook (vterm-mode . setup-term))
+
+(if (not (eq system-type 'darwin))
+    (use-package ghostel
+      :hook ((ghostel-mode . setup-term)
+	     (ghostel-mode . evil-ghostel-mode))))
+
+(defun my-project-shell ()
+  "Start an inferior shell in the current project's root directory.
+If a buffer already exists for running a shell in the project's root,
+switch to it.  Otherwise, create a new shell buffer.
+With \\[universal-argument] prefix arg, create a new inferior shell buffer even
+if one already exists."
+  (interactive)
+  (require 'comint)
+  (let* ((default-directory (project-root (project-current t)))
+	 (default-project-shell-name (project-prefixed-buffer-name "shell"))
+	 (shell-buffer (get-buffer default-project-shell-name)))
+    (if (and shell-buffer (not current-prefix-arg))
+	(if (comint-check-proc shell-buffer)
+	    (pop-to-buffer shell-buffer (bound-and-true-p display-comint-buffer-action))
+	  (vterm shell-buffer))
+      (vterm (generate-new-buffer-name default-project-shell-name)))))
+
 (use-package project
   :config
   (setq project-list-file (file-name-concat xdg-cache-home "emacs" "projects"))
   ;; Scrape the projects directory, if it has not yet been scraped
   (unless (file-exists-p project-list-file)
     (refresh-projects))
+  (setq project-switch-use-entire-map t)
   ;; Add extra keybindings for project switching and override the switch commands
-  (define-key project-prefix-map "g" #'rg-project)
   (define-key project-prefix-map "m" #'magit-project-status)
   (define-key project-prefix-map "r" #'project-recompile)
-  (define-key project-prefix-map "t" #'eat-project)
-  (setq project-switch-use-entire-map t)
-  (setq project-switch-commands '((project-find-file "Find file")
-				  (project-find-dir "Find directory")
-				  (rg-project "Find regexp")
-				  (project-eshell "Eshell")
-				  (eat-project "Terminal")
-				  (magit-project-status "Magit"))))
+  (advice-add 'project-search :override #'rg-project)
+  (advice-add 'project-shell :override #'my-project-shell))
 
 (use-package abbrev
   :config
@@ -261,53 +311,6 @@
 (use-package treesit
   :config
   (setq treesit-enabled-modes t))
-
-(defun setup-term ()
-  "Common terminal setup"
-  ;; TODO(jared): this seems to cause problems
-  ;; (with-editor-export-editor)
-  ;; makes terminal faster since emacs doesn't need to parse all output
-  (when (not (member major-mode '(compilation-mode rg-mode vterm-mode)))
-    (font-lock-mode -1))
-  ;; line numbers are not nearly useful in terminal like environments
-  (display-line-numbers-mode -1)
-  (line-number-mode -1))
-
-(use-package compile
-  :hook
-  (compilation-mode . (lambda ()
-			(view-mode) ;; ensure we can't modify buffer for compilation output
-			(setup-term))))
-
-(use-package eat
-  :hook setup-term)
-
-(use-package eshell
-  :hook
-  (eshell-load . (lambda ()
-		   (eat-eshell-mode)
-		   (setup-term))))
-
-(use-package nix
-  :hook (nix-repl-mode . setup-term))
-
-(use-package shell
-  :hook
-  ((shell-command-mode . (lambda ()
-			   (view-mode) ;; ensure we can't modify buffer for shell output
-			   (setup-term)))
-   (shell-mode . setup-term)))
-
-(use-package term
-  :hook (term-mode . setup-term))
-
-(use-package vterm
-  :hook (vterm-mode . setup-term))
-
-(if (not (eq system-type 'darwin))
-    (use-package ghostel
-      :hook ((ghostel-mode . setup-term)
-	     (ghostel-mode . evil-ghostel-mode))))
 
 ;; Ensure we load custom-file, if set
 (unless (eq custom-file nil)
