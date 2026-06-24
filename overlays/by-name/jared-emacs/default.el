@@ -235,7 +235,7 @@ if one already exists."
   ;; Add extra keybindings for project switching and override the switch commands
   (define-key project-prefix-map "m" #'magit-project-status)
   (define-key project-prefix-map "r" #'project-recompile)
-  (advice-add 'project-search :override #'rg-project)
+  (advice-add 'project-find-regexp :override #'rg-project)
   (advice-add 'project-shell :override #'my-project-shell))
 
 (use-package abbrev
