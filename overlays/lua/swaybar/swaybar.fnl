@@ -11,23 +11,41 @@
 (set coroutine.resume auxlib.resume)
 (set coroutine.wrap auxlib.wrap)
 
-(fn battery-percentage [dbus-conn]
-  (local msg (ldbus.message.new_method_call :org.freedesktop.UPower
-                                            :/org/freedesktop/UPower/devices/DisplayDevice
-                                            :org.freedesktop.DBus.Properties
-                                            :Get))
+(fn dbus-get-property [dest object interface property service dbus-conn]
+  (local msg (ldbus.message.new_method_call dest object interface :Get))
   (local iter (ldbus.message.iter.new))
   (msg:iter_init_append iter)
-  (iter:append_basic :org.freedesktop.UPower.Device)
-  (iter:append_basic :Percentage)
-  ;; TODO(jared): validate return values of send_with_reply_and_block
+  (iter:append_basic service)
+  (iter:append_basic property)
   (let [(reply err) (dbus-conn:send_with_reply_and_block msg)]
     (if err
         (error err)
         (do
           (reply:iter_init iter)
           (local sub-iter (iter:recurse))
-          (string.format "BAT: %s%%" (sub-iter:get_basic))))))
+          (sub-iter:get_basic)))))
+
+(fn online [dbus-conn]
+  (string.format "NET: %s"
+                 (dbus-get-property :org.freedesktop.network1
+                                    :/org/freedesktop/network1
+                                    :org.freedesktop.DBus.Properties
+                                    :OnlineState
+                                    :org.freedesktop.network1.Manager dbus-conn)))
+
+(fn timezone [dbus-conn]
+  (string.format "TZ: %s"
+                 (dbus-get-property :org.freedesktop.timedate1
+                                    :/org/freedesktop/timedate1
+                                    :org.freedesktop.DBus.Properties :Timezone
+                                    :org.freedesktop.timedate1 dbus-conn)))
+
+(fn battery-percentage [dbus-conn]
+  (string.format "BAT: %s%%"
+                 (dbus-get-property :org.freedesktop.UPower
+                                    :/org/freedesktop/UPower/devices/DisplayDevice
+                                    :org.freedesktop.DBus.Properties :Percentage
+                                    :org.freedesktop.UPower.Device dbus-conn)))
 
 (local cq (cqueues.new))
 (cq:wrap (fn []
@@ -36,6 +54,8 @@
            (io.stdout:flush)
            (while true
              (io.stdout:write (json.encode [{:full_text (battery-percentage dbus-conn)}
+                                            {:full_text (online dbus-conn)}
+                                            {:full_text (timezone dbus-conn)}
                                             {:full_text (os.date "%D %T")}])
                               ",")
              (io.stdout:flush)
