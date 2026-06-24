@@ -104,6 +104,7 @@
   (setq evil-want-C-u-scroll t)
   (setq evil-want-Y-yank-to-eol t)
   (setq evil-want-keybinding nil)
+  (setq evil-disable-insert-state-bindings t)
   :config
   (evil-mode 1)
   (evil-set-undo-system 'undo-redo)
@@ -112,11 +113,7 @@
 (use-package evil-collection
   :after evil
   :config
-  (evil-collection-init)
-  :hook
-  (evil-collection-setup . (lambda (mode _mode-keymaps)
-			     (if (eq mode 'eat)
-				 (evil-define-key 'insert 'eat-semi-char-mode-map (kbd "C-y") #'eat-yank)))))
+  (evil-collection-init))
 
 (use-package evil-surround
   :after evil
@@ -133,8 +130,6 @@
   :config
   (define-key evil-normal-state-map (kbd "C-c +") #'evil-numbers/inc-at-pt)
   (define-key evil-normal-state-map (kbd "C-c -") #'evil-numbers/dec-at-pt))
-
-
 
 (defun refresh-projects ()
   "Refresh projects file"
