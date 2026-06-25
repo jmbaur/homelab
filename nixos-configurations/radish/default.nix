@@ -41,6 +41,7 @@
       environment.systemPackages = [
         config.hardware.saleae-logic.package
         pkgs.element-desktop
+        pkgs.nomachine-client
         pkgs.quartus-prime-pro-24_2
         pkgs.signal-desktop
         pkgs.slack
