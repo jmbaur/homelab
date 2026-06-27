@@ -125,14 +125,10 @@ testers.runNixOSTest {
     { nodes, ... }:
     # python
     ''
+      from pathlib import Path
       import os
       import subprocess
       import tempfile
-
-      def assert_boot_entry(filename: str):
-          booted_entry = machine.succeed("iconv -f UTF-16 -t UTF-8 /sys/firmware/efi/efivars/LoaderEntrySelected-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f").strip('\x06').strip('\x00')
-          if booted_entry != filename:
-              raise Exception(f"booted from the wrong entry, expected {filename}, got {booted_entry}")
 
       with subtest("installation"):
           tmp_recovery_disk_image = tempfile.NamedTemporaryFile()
@@ -165,7 +161,12 @@ testers.runNixOSTest {
 
           machine.start(allow_reboot=True)
           machine.wait_for_unit("multi-user.target")
-          assert_boot_entry("nixos-generation-1.conf")
+
+          booted_entry = machine.succeed("iconv -f UTF-16 -t UTF-8 /sys/firmware/efi/efivars/LoaderEntrySelected-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f").strip('\x06').strip('\x00')
+          esp_entry = Path(machine.succeed("ls /boot/loader/entries/nixos*.conf").strip()).name
+          if booted_entry != esp_entry:
+              raise Exception(f"booted from the wrong entry, expected {esp_entry}, got {booted_entry}")
+
           assert "${nodes.machine.system.build.toplevel}" == machine.succeed("readlink --canonicalize-existing /run/current-system").strip()
 
       with subtest("update"):
