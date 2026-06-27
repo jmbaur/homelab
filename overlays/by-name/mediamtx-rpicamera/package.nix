@@ -20,13 +20,13 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "mediamtx-rpicamera";
-  version = "2.6.0";
+  version = "2.7.0";
 
   src = fetchFromGitHub {
     owner = "bluenviron";
     repo = "mediamtx-rpicamera";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-opTE58PMhG0k8Y8zAeheAb6aRN0Qq+ozMDPx1yyiHT0=";
+    hash = "sha256-5m2rY8pjpxTWehRyDeCjp1dFYvhecgCUCHjkcCBOxBg=";
   };
 
   patches = [ ./uninsane.patch ];
