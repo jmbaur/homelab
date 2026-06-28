@@ -96,6 +96,7 @@
     ]
     ++ (with vimPlugins; [
       direnv-vim
+      modus-themes-nvim
       nvim-lspconfig
       nvim-treesitter.withAllGrammars
       vim-dispatch
