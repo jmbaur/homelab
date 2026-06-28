@@ -4,8 +4,7 @@
   clang,
   clang-tools,
   dts-lsp,
-  emacs-unstable,
-  emacs-unstable-pgtk,
+  emacs-unstable-nox,
   emacsPackagesFor,
   fd,
   fennel-ls,
@@ -36,29 +35,26 @@
 }:
 
 let
-  emacsPackages =
-    (emacsPackagesFor (if stdenv.hostPlatform.isLinux then emacs-unstable-pgtk else emacs-unstable))
-    .overrideScope
-      (
-        epkgsFinal: epkgsPrev: {
-          ghostel = epkgsPrev.ghostel.overrideAttrs (old: {
-            packageRequires = [ epkgsFinal.evil ];
-            preBuild = (old.preBuild or "") + ''
-              cp extensions/evil-ghostel/evil-ghostel.el lisp
-            '';
-          });
-          rail = epkgsFinal.melpaBuild {
-            pname = "rail";
-            version = "0.4.0";
-            src = fetchFromGitHub {
-              owner = "Sasanidas";
-              repo = "Rail";
-              rev = "04e306bcdff11b54807203ca3bea85f4645633d1";
-              hash = "sha256-HSeD20A0yqbs4QjuP/kHQM3Glu/CIse7iP+yFCGFD5k=";
-            };
-          };
-        }
-      );
+  emacsPackages = (emacsPackagesFor emacs-unstable-nox).overrideScope (
+    epkgsFinal: epkgsPrev: {
+      ghostel = epkgsPrev.ghostel.overrideAttrs (old: {
+        packageRequires = [ epkgsFinal.evil ];
+        preBuild = (old.preBuild or "") + ''
+          cp extensions/evil-ghostel/evil-ghostel.el lisp
+        '';
+      });
+      rail = epkgsFinal.melpaBuild {
+        pname = "rail";
+        version = "0.4.0";
+        src = fetchFromGitHub {
+          owner = "Sasanidas";
+          repo = "Rail";
+          rev = "04e306bcdff11b54807203ca3bea85f4645633d1";
+          hash = "sha256-HSeD20A0yqbs4QjuP/kHQM3Glu/CIse7iP+yFCGFD5k=";
+        };
+      };
+    }
+  );
 
   deps =
     epkgs:
