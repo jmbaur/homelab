@@ -7,7 +7,6 @@
 (setq confirm-kill-emacs 'yes-or-no-p)
 (setq custom-file (file-name-concat user-emacs-directory "custom.el"))
 (setq fill-column 80)
-(setq isearch-lazy-count t)
 (setq load-prefer-newer t)
 (setq mode-line-compact 'long)
 (setq native-comp-jit-compilation t)
@@ -45,10 +44,10 @@
 (load-theme 'modus-vivendi-tritanopia t)
 (unless (and window-system (eq system-type 'darwin))
   (menu-bar-mode -1))
-(tool-bar-mode -1)
-(global-auto-revert-mode +1)
-(savehist-mode +1)
-(fido-vertical-mode +1)
+
+(use-package tool-bar
+  :config
+  (tool-bar-mode -1))
 
 (if window-system
     (progn
@@ -56,6 +55,7 @@
       (if (fboundp 'scroll-bar-mode)
 	  (scroll-bar-mode -1)))
   (progn
+    (setq ring-bell-function #'ignore)
     (xterm-mouse-mode +1)
     ;; (global-kkp-mode +1)
     (setq interprogram-cut-function 'osc52-select-text)))
@@ -65,6 +65,22 @@
 	    (when (not (display-graphic-p))
 	      (send-string-to-terminal
 	       (format "\033]0;Emacs: %s\007" (buffer-name))))))
+
+(use-package savehist
+  :config
+  (savehist-mode +1))
+
+(use-package icomplete
+  :config
+  (fido-vertical-mode +1))
+
+(use-package autorevert
+  :config
+  (global-auto-revert-mode +1))
+  
+(use-package isearch
+  :config
+  (setq isearch-lazy-count t))
 
 (use-package transient
   :config
