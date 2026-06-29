@@ -120,7 +120,6 @@
   (setq evil-want-C-u-scroll t)
   (setq evil-want-Y-yank-to-eol t)
   (setq evil-want-keybinding nil)
-  (setq evil-disable-insert-state-bindings t)
   :config
   (evil-mode 1)
   (evil-set-undo-system 'undo-redo)
@@ -260,6 +259,7 @@ if one already exists."
   (setq-default abbrev-mode t))
 
 (use-package zig-mode
+  :after eglot
   :config
   (advice-add 'zig--run-cmd :around
 	      (lambda (f cmd &optional source &rest args)
@@ -285,11 +285,13 @@ if one already exists."
   :hook (prog-mode . display-line-numbers-mode))
 
 (use-package python
+  :after eglot
   :hook ((python-mode . eglot-ensure)
 	 (eglot-managed-mode . (lambda ()
 				 (remove-hook 'before-save-hook #'eglot-format)))))
 
 (use-package fennel-mode
+  :after eglot
   :config
   :hook ((fennel-mode . eglot-ensure)
 	 (eglot-managed-mode . (lambda ()
