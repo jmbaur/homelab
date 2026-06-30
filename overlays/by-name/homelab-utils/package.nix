@@ -1,7 +1,6 @@
 {
   lib,
   stdenvNoCC,
-  zig_0_15,
   zig_0_16,
 }:
 
@@ -11,11 +10,10 @@ in
 stdenvNoCC.mkDerivation (
   finalAttrs:
   let
-    # zig build --fetch seems to not work with 0.16.x
-    deps = zig_0_15.fetchDeps {
+    deps = zig_0_16.fetchDeps {
       fetchAll = true;
       inherit (finalAttrs) pname version src;
-      hash = "sha256-aoVc2HmNFx6U1k+oihyDw8LYfqlWmwBXMXVImaRtA54=";
+      hash = "sha256-Zh0cWmGqgjNlp0bx1OevzsgK+Ghf16+3j4HdBiF6piM=";
     };
   in
   {
