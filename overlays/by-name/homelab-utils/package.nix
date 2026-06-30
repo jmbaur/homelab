@@ -52,8 +52,6 @@ stdenvNoCC.mkDerivation (
     postConfigure = ''
       cp -r ${deps} $ZIG_GLOBAL_CACHE_DIR/p
       chmod u+w --recursive $ZIG_GLOBAL_CACHE_DIR
-      zigBuildFlagsArray+=("--system" "$ZIG_GLOBAL_CACHE_DIR/p")
-      zigCheckFlagsArray+=("--system" "$ZIG_GLOBAL_CACHE_DIR/p")
     '';
 
     passthru = { inherit deps; };
