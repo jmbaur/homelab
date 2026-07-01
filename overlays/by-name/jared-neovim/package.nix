@@ -24,6 +24,7 @@
   rustfmt,
   shellcheck,
   shfmt,
+  stdenv,
   tex-fmt,
   texlab,
   texlive,
@@ -43,7 +44,7 @@
   (neovim-unwrapped.overrideAttrs {
     version = "v0.13.0-dev";
     src = fetchFromGitHub (lib.importJSON ./src.json);
-    postFixup = ''
+    postFixup = lib.optionalString stdenv.hostPlatform.isLinux ''
       mv $out/share/applications/org.neovim.nvim.desktop $out/share/applications/nvim.desktop
     '';
   })
