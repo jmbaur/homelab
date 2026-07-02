@@ -19,7 +19,6 @@
 
     emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
     git-hooks.inputs.flake-compat.follows = "";
-    git-hooks.inputs.gitignore.follows = "";
     git-hooks.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     ipwatch.inputs.git-hooks.follows = "";
