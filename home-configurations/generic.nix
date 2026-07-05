@@ -66,7 +66,7 @@
         tea
         tinyxxd
         tio
-        tmux-jump
+        tmux
         tokei
         unzip
         usbutils
@@ -193,6 +193,21 @@
       xdg.configFile."emacs/early-init.el".text = ''
         ;;; -*- lexical-binding: t -*-
         (setq inhibit-startup-screen t)
+      '';
+
+      xdg.configFile."tmux/tmux.conf".text = ''
+        # Use ctrl+\ as prefix
+        unbind C-b
+        set-option -g prefix C-\\
+        bind-key C-\\ send-prefix
+
+        # unbind all keybindings, except for detach
+        unbind-key -a
+        unbind-key -a -T root
+        bind-key d detach-client
+
+        # remove status bar
+        set -g status off
       '';
     }
 
