@@ -258,6 +258,13 @@ if one already exists."
   (define-global-abbrev "toodoo" "TODO(jared)")
   (setq-default abbrev-mode t))
 
+(use-package markdown-mode
+  :hook
+  (markdown-mode . (lambda ()
+		     (visual-line-mode -1)
+		     (auto-fill-mode -1)
+		     (toggle-truncate-lines 1))))
+
 (use-package zig-mode
   :after eglot
   :config
