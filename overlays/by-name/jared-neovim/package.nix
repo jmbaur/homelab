@@ -29,7 +29,6 @@
   texlab,
   texlive,
   tofu-ls,
-  tree-sitter,
   ttags,
   typescript-go,
   vimPlugins,
@@ -87,7 +86,6 @@
           texlab
           texlive.pkgs.latexmk
           tofu-ls
-          tree-sitter
           ttags
           typescript-go
           zig_0_16
@@ -99,7 +97,6 @@
       direnv-vim
       modus-themes-nvim
       nvim-lspconfig
-      nvim-treesitter.withAllGrammars
       vim-dispatch
       vim-eunuch
       vim-fugitive
