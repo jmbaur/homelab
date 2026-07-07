@@ -162,7 +162,7 @@
         };
       };
 
-      nix.package = pkgs.nixVersions.nix_2_34;
+      nix.package = pkgs.nixVersions.git;
 
       programs.direnv = {
         enable = true;

@@ -38,7 +38,6 @@ in
         pkgs.homelab-utils
       ];
 
-      boot.initrd.systemd.enable = mkDefault true;
       system.etc.overlay.enable = mkDefault true;
 
       # Used by a lot of stuff, but doesn't exist by default.
@@ -88,7 +87,7 @@ in
       };
 
       nix = {
-        package = pkgs.nixVersions.nix_2_34;
+        package = pkgs.nixVersions.git;
         channel.enable = false; # opt out of nix channels
         distributedBuilds = mkDefault true; # allow for populating /etc/nix/machines for remote building
         settings = {
@@ -131,19 +130,6 @@ in
 
     # Performance related
     {
-      # Use the dbus-broker dbus daemon implementation (more performance, yeah?)
-      services.dbus.implementation = "broker";
-
-      # TODO(jared): can remove once https://github.com/NixOS/nixpkgs/pull/417511 is in nixos-unstable.
-      #
-      # The default max inotify watches is 8192. Nowadays most apps require a
-      # good number of inotify watches, the value below is used by default on
-      # several other distros.
-      boot.kernel.sysctl = {
-        "fs.inotify.max_user_instances" = 524288;
-        "fs.inotify.max_user_watches" = 524288;
-      };
-
       hardware.block.scheduler = mkDefault {
         "mmcblk[0-9]*" = "bfq";
         "sd[a-z][0-9]*" = "bfq";
