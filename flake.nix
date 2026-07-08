@@ -10,6 +10,7 @@
     ipwatch.url = "github:jmbaur/ipwatch";
     mixos.url = "github:jmbaur/mixos";
     nix-index-database.url = "github:nix-community/nix-index-database";
+    nix.url = "github:nixos/nix/2.35-maintenance";
     nixos-router.url = "github:jmbaur/nixos-router";
     quartus-nix.url = "github:jmbaur/quartus-nix";
     sops-nix.url = "github:Mic92/sops-nix";
@@ -25,6 +26,7 @@
     ipwatch.inputs.nixpkgs.follows = "nixpkgs";
     mixos.inputs.nixpkgs.follows = "nixpkgs";
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
+    nix.inputs.nixpkgs.follows = "nixpkgs";
     nixos-router.inputs.git-hooks.follows = "";
     nixos-router.inputs.nixpkgs.follows = "nixpkgs";
     quartus-nix.inputs.nixpkgs.follows = "nixpkgs";
