@@ -192,10 +192,10 @@
       '';
 
       xdg.configFile."tmux/tmux.conf".text = ''
-        # Use ctrl+\ as prefix
+        # Use ctrl+s as prefix
         unbind C-b
-        set-option -g prefix C-\\
-        bind-key C-\\ send-prefix
+        set-option -g prefix C-s
+        bind-key C-s send-prefix
 
         # unbind all keybindings, except for detach
         unbind-key -a
