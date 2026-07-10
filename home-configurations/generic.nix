@@ -75,7 +75,7 @@
         zip
       ];
 
-      home.sessionVariables.EDITOR = "emacs";
+      home.sessionVariables.EDITOR = "nvim";
 
       programs.ssh = {
         enable = true;
