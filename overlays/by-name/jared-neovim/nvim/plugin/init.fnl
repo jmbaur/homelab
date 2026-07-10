@@ -68,7 +68,7 @@
 ; TODO(jared): use vim.snippet
 (vim.cmd.iabbrev "todo:" "TODO(jared):")
 
-(vim.keymap.set :n :<leader>p ":Project ")
+(vim.keymap.set :n :<leader>p ":Project! ")
 
 (var filescache [])
 (set _G.FuzzyFind (lambda [arg _]
