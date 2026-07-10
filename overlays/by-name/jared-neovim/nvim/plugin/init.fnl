@@ -33,7 +33,6 @@
 (set vim.opt.autoread true)
 (set vim.opt.breakindent true)
 (set vim.opt.clipboard :unnamedplus)
-(set vim.opt.cmdheight 0)
 (set vim.opt.colorcolumn :80)
 (set vim.opt.completeopt (table.concat [:menuone :noselect] ","))
 (set vim.opt.hidden true)
