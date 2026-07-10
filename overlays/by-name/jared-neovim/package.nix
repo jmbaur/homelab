@@ -95,6 +95,7 @@
     ]
     ++ (with vimPlugins; [
       direnv-vim
+      fennel-vim
       modus-themes-nvim
       nvim-lspconfig
       readline-vim
