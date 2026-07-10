@@ -97,10 +97,10 @@
       direnv-vim
       modus-themes-nvim
       nvim-lspconfig
+      readline-vim
       vim-dispatch
       vim-eunuch
       vim-fugitive
-      vim-rsi
       vim-surround
       vim-vinegar
     ]);

@@ -55,8 +55,12 @@
 (set vim.opt.wildoptions (table.concat [:pum :fuzzy] ","))
 (set vim.opt.wrap false)
 
-(vim.cmd.colorscheme (if (= (vim.opt.termguicolors:get) true) :lunaperche
-                         :vim))
+((. (require :modus-themes) :setup) {:variants {:modus_operandi :tritanopia
+                                                :modus_vivendi :tritanopia}
+                                     :styles {:comments {:italic false}
+                                              :keywords {:italic false}}})
+
+(vim.cmd.colorscheme (if (= (vim.opt.termguicolors:get) true) :modus :vim))
 
 ; TODO(jared): use vim.snippet
 (vim.cmd.iabbrev "todo:" "TODO(jared):")
