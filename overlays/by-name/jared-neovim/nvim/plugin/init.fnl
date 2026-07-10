@@ -36,7 +36,6 @@
 (set vim.opt.cmdheight 0)
 (set vim.opt.colorcolumn :80)
 (set vim.opt.completeopt (table.concat [:menuone :noselect] ","))
-(set vim.opt.grepprg "rg --vimgrep")
 (set vim.opt.hidden true)
 (set vim.opt.hlsearch true)
 (set vim.opt.ignorecase true)
