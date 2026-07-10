@@ -41,6 +41,7 @@
        (vim.api.nvim_create_augroup :FormatOnSave {:clear true}))
 
 (fn lsp-attach [opts]
+  (set vim.opt_local.number true)
   (set vim.opt_local.signcolumn :yes)
   (if (vim.tbl_contains [:zig :c :cpp :nix :go :sh :bash :rust :terraform :tex]
                         (vim.fn.getbufvar opts.buf :&filetype))
