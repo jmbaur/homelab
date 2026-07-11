@@ -1,5 +1,6 @@
 {
   bash-language-server,
+  runCommand,
   clang-tools,
   dts-lsp,
   fd,
@@ -29,6 +30,7 @@
   texlab,
   texlive,
   tofu-ls,
+  tree-sitter-grammars,
   ttags,
   typescript-go,
   vimPlugins,
@@ -56,10 +58,39 @@
 
     plugins = [
       (vimUtils.buildVimPlugin {
+        pname = "nvim-tree-sitter";
+        version = "0.0.0";
+        src = runCommand "nvim-tree-sitter-src" { } ''
+          mkdir -p $out/plugin $out/parser $out/queries/lua
+          mkdir -p $out/parser
+          ${lib.concatMapStringsSep "\n" (
+            grammar:
+            let
+              name = lib.strings.replaceStrings [ "-" ] [ "_" ] (
+                lib.strings.removePrefix "tree-sitter-" (
+                  lib.strings.removeSuffix "-grammar" (lib.strings.getName grammar)
+                )
+              );
+            in
+            ''
+              install -Dm0644 ${grammar}/parser $out/parser/${name}.so
+              echo 'vim.treesitter.language.add("${name}")' >> $out/plugin/init.lua
+              if [[ -d ${grammar}/queries ]]; then
+                cp -r ${grammar}/queries $out/queries/${name}
+              else
+                echo "lang ${name} does not have any queries!"
+              fi
+            ''
+          ) tree-sitter-grammars.allGrammars}
+        '';
+      })
+      (vimUtils.buildVimPlugin {
         pname = "jared-neovim-config";
         version = "0.0.0";
         src = ./nvim;
-        buildPhase = "make -j$NIX_BUILD_CORES install";
+        buildPhase = ''
+          make -j$NIX_BUILD_CORES install
+        '';
         dontInstall = true;
         depsBuildBuild = [ pkgsBuildBuild.neovim-unwrapped.lua.pkgs.fennel ];
         runtimeDeps = [
