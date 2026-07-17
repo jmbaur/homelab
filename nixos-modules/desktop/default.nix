@@ -174,6 +174,7 @@ in
         pkgs.wlopm
         pkgs.wlr-randr
         pkgs.wmenu
+        pkgs.zathura
         (pkgs.symlinkJoin {
           name = "default-${pkgs.xcursor-chromeos.name}";
           paths = [ pkgs.xcursor-chromeos ];
