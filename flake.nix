@@ -9,6 +9,7 @@
     home-manager.url = "github:nix-community/home-manager";
     ipwatch.url = "github:jmbaur/ipwatch";
     mixos.url = "github:jmbaur/mixos";
+    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     nix-index-database.url = "github:nix-community/nix-index-database";
     nix.url = "github:nixos/nix/2.35-maintenance";
     nixos-router.url = "github:jmbaur/nixos-router";
@@ -18,13 +19,13 @@
     u-boot-nix.url = "github:jmbaur/u-boot.nix";
     webauthn-tiny.url = "github:jmbaur/webauthn-tiny";
 
-    emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
     git-hooks.inputs.flake-compat.follows = "";
     git-hooks.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     ipwatch.inputs.git-hooks.follows = "";
     ipwatch.inputs.nixpkgs.follows = "nixpkgs";
     mixos.inputs.nixpkgs.follows = "nixpkgs";
+    neovim-nightly-overlay.inputs.nixpkgs.follows = "nixpkgs";
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
     nix.inputs.nixpkgs.follows = "nixpkgs";
     nixos-router.inputs.git-hooks.follows = "";
