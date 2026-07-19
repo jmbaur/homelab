@@ -17,16 +17,16 @@ buildGoModule (finalAttrs: {
   pname = "mediamtx";
   # check for hls.js version updates in internal/servers/hls/hlsjsdownloader/VERSION
   # check for mtxrpicam version updates in internal/staticsources/rpicamera/mtxrpicamdownloader/VERSION
-  version = "1.19.1";
+  version = "1.19.2";
 
   src = fetchFromGitHub {
     owner = "bluenviron";
     repo = "mediamtx";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-dLojhgpAcW2fUkYaT/xz8bvO7eOzD9I93RCLLW7UVHk=";
+    hash = "sha256-jUyA0XjR92I6RNTXtFKqrUG0v7P3DDnoThWHSxTQE2I=";
   };
 
-  vendorHash = "sha256-gVqPVHJ5wi4o1kYn4vOFWifiOVUnliU3zx6uSMlKEUc=";
+  vendorHash = "sha256-i3J91K0aQ6/vC+HsJjjjWNjl9vX9uOSEzmNjB6cMU6Q=";
 
   patches = [ ./uninsane.patch ];
   postPatch = ''
