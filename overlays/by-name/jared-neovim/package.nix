@@ -24,6 +24,7 @@
   texlab,
   texlive,
   tofu-ls,
+  tree-sitter,
   ttags,
   typescript-go,
   vimPlugins,
@@ -72,6 +73,7 @@ wrapNeovimUnstable neovim-unwrapped {
         texlab
         texlive.pkgs.latexmk
         tofu-ls
+        tree-sitter
         ttags
         typescript-go
         zig_0_16
@@ -84,6 +86,7 @@ wrapNeovimUnstable neovim-unwrapped {
     fennel-vim
     modus-themes-nvim
     nvim-lspconfig
+    nvim-treesitter.withAllGrammars
     readline-vim
     vim-dispatch
     vim-eunuch

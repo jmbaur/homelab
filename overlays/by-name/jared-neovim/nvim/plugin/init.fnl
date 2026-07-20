@@ -10,6 +10,17 @@
                                           (set vim.optlocal.filetype :systemrdl)
                                           nil)})
 
+;; TODO(jared): consider only enabling this on certain filetypes
+(vim.api.nvim_create_autocmd :Filetype
+                             {:callback (lambda []
+                                          (if (pcall vim.treesitter.start)
+                                              (do
+                                                (set vim.bo.indentexpr
+                                                     "v:lua.require(\"nvim-treesitter\").indentexpr()")
+                                                (set vim.wo.foldexpr
+                                                     "v:lua.vim.treesitter.foldexpr()")
+                                                (set vim.wo.foldmethod :expr))))})
+
 (local paste
        (lambda []
          [(vim.fn.split (vim.fn.getreg "") "\n") (vim.fn.getregtype "")]))
