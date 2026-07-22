@@ -9,7 +9,8 @@
       (do
         (if opts.bang
             (vim.cmd.tabnew project-path))
-        (vim.cmd.tcd project-path))
+        (vim.cmd.tcd project-path)
+        (vim.cmd.edit "."))
       (vim.print (string.format "Project does not exist at %s" project-path))))
 
 (fn project-complete [arg-lead _cmdline _cursor-pos]
