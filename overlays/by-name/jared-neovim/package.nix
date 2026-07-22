@@ -82,6 +82,7 @@ wrapNeovimUnstable neovim-unwrapped {
     })
   ]
   ++ (with vimPlugins; [
+    conjure
     direnv-vim
     fennel-vim
     modus-themes-nvim
