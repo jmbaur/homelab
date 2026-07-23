@@ -36,9 +36,8 @@
 (set vim.g.mapleader (vim.api.nvim_replace_termcodes :<Space> true true true))
 (set vim.g.maplocalleader ",")
 (set vim.g.direnv_silent_load 1)
-; disable conjure mappings for now
-(set (. vim.g "conjure#mapping#enable_defaults") false)
-(set (. vim.g "conjure#mapping#enable_ft_mappings") false)
+(set (. vim.g "conjure#mapping#doc_word") false)
+(set (. vim.g "conjure#log#hud#enabled") false)
 
 (set vim.wo.foldenable false)
 (set vim.wo.foldminlines 20)
