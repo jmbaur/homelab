@@ -233,13 +233,10 @@ in
     {
       custom.basicNetwork.enable = true;
 
-      networking.wireless.iwd.enable = mkDefault true;
-      networking.networkmanager.wifi.backend = "iwd";
-
-      # plasma6 does not enable this by default
-      networking.networkmanager.enable = mkIf config.services.desktopManager.plasma6.enable (
-        mkDefault true
-      );
+      networking.networkmanager = {
+        enable = mkDefault true;
+        wifi.backend = mkDefault "iwd";
+      };
 
       hardware.bluetooth.enable = true;
 

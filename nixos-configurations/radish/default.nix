@@ -63,7 +63,10 @@
       };
     }
     {
-      environment.systemPackages = [ pkgs.fleetctl ];
+      environment.systemPackages = [
+        pkgs.agentp
+        pkgs.fleetctl
+      ];
 
       systemd.services.orbit = {
         description = "Orbit osquery";
