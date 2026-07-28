@@ -26,12 +26,29 @@
           (sub-iter:get_basic)))))
 
 (fn online [dbus-conn]
-  (string.format "NET: %s"
-                 (dbus-get-property :org.freedesktop.network1
-                                    :/org/freedesktop/network1
-                                    :org.freedesktop.DBus.Properties
-                                    :OnlineState
-                                    :org.freedesktop.network1.Manager dbus-conn)))
+  (string.format "NET: %s" (case (dbus-get-property :org.freedesktop.NetworkManager
+                                                    :/org/freedesktop/NetworkManager
+                                                    :org.freedesktop.DBus.Properties
+                                                    :State
+                                                    :org.freedesktop.NetworkManager
+                                                    dbus-conn)
+                             ; https://www.networkmanager.dev/docs/api/latest/nm-dbus-types.html#NMState
+                             10
+                             :offline
+                             20
+                             :disconnecting
+                             30
+                             :disconnecting
+                             40
+                             :connecting
+                             50
+                             :offline
+                             60
+                             :online*
+                             70
+                             :online
+                             _
+                             :unknown)))
 
 (fn timezone [dbus-conn]
   (string.format "TZ: %s"
