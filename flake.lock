@@ -201,11 +201,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1782880950,
-        "narHash": "sha256-x56xFBRC2iIRECIo2TOR8AQjg4ayTBkbJQ6YuPvSEn0=",
+        "lastModified": 1785211045,
+        "narHash": "sha256-h/Of0Xum7rxgRRnr7DGB9kp4hlPl8hEqGIiFmqOspQs=",
         "owner": "jmbaur",
         "repo": "ipwatch",
-        "rev": "3850a3a2fd99d9f0420ff96ef38f1aefb903b2f9",
+        "rev": "adbae2971bd544d09d24346497f5d3c7aa470970",
         "type": "github"
       },
       "original": {
