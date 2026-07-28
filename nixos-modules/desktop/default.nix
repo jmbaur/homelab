@@ -131,7 +131,7 @@ in
         settings = {
           mouse.hide-when-typing = "yes";
           main = {
-            font = "monospace:size=12";
+            font = "monospace:size=11";
             resize-by-cells = "no";
             selection-target = "both";
           };
