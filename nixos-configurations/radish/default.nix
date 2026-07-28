@@ -68,6 +68,8 @@
         pkgs.fleetctl
       ];
 
+      systemd.packages = [ pkgs.agentp ];
+
       systemd.services.orbit = {
         description = "Orbit osquery";
         after = [ "network.target" ];
