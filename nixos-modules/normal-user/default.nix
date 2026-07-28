@@ -1,100 +1,59 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, ... }:
 
 let
   inherit (lib)
-    findFirst
-    getExe
+    getExe'
     mkEnableOption
     mkIf
-    mkOption
-    optional
-    types
     ;
 
   cfg = config.custom.normalUser;
-
-  usingBtrfs =
-    config.fileSystems.${
-      findFirst (path: config.fileSystems ? "${path}") (throw "mount not found") [
-        "/home"
-        "/"
-      ]
-    }.fsType == "btrfs";
 in
 {
   options.custom.normalUser = {
     enable = mkEnableOption "normal user";
-    username = mkOption { type = types.str; };
   };
 
   config = mkIf cfg.enable {
-    users.mutableUsers = true;
+    # This is needed if mutableUsers is false since we don't configure our
+    # primary user through the traditional NixOS options. Since our primary
+    # user is wheel, they can freely administer the machine, thus no need for a
+    # root password or remote access (e.g. via ssh) to login as the root user.
+    users.allowNoPasswordLogin = !config.users.mutableUsers;
 
-    users.users.${cfg.username} = {
-      isNormalUser = true;
-      createHome = false; # we do this ourselves below
-      extraGroups = [
-        "wheel"
-      ]
-      ++ optional config.custom.dev.enable "dialout" # serial consoles
-      ++ optional config.networking.networkmanager.enable "networkmanager"
-      ++ optional config.programs.wireshark.enable "wireshark"
-      ++ optional config.virtualisation.docker.enable "docker";
+    # TODO(jared): Use upstream unit as-is
+    systemd.services.systemd-homed-firstboot.serviceConfig.ExecStart = [
+      "" # clear upstream default
+      (toString [
+        "homectl"
+        "firstboot"
+        "--prompt-new-user"
+        # above is default, custom stuff below
+        "--enforce-password-policy=no"
+      ])
+    ];
+
+    services.homed.enable = true;
+
+    # Ugly: sshd refuses to start if a store path is given because /nix/store
+    # is group-writable. So indirect by a symlink.
+    environment.etc."ssh/homed_authorized_keys_command" = {
+      mode = "0755";
+      text = ''
+        #!/bin/sh
+        exec ${getExe' config.systemd.package "userdbctl"} ssh-authorized-keys "$@"
+      '';
     };
 
-    systemd.tmpfiles.settings.home-directories.${config.users.users.${cfg.username}.home}.${
-      if usingBtrfs then "v" else "d"
-    } =
-      {
-        mode = config.users.users.${cfg.username}.homeMode;
-        user = config.users.users.${cfg.username}.name;
-        inherit (config.users.users.${cfg.username}) group;
-      };
-
-    systemd.services.configure-admin-user = {
-      unitConfig.ConditionFirstBoot = true;
-
-      wantedBy = [ "multi-user.target" ];
-
-      after = [ "home.mount" ];
-      before = [
-        "systemd-user-sessions.service"
-        "first-boot-complete.target"
-      ];
-
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-        TTYReset = true;
-        StandardInput = "tty";
-        StandardOutput = "tty";
-        StandardError = "tty";
-
-        ExecStart = getExe (
-          pkgs.writeShellApplication {
-            name = "configure-normal-user";
-
-            runtimeInputs = [ pkgs.shadow ];
-
-            text = ''
-              trap "" INT # prevent CTRL-C
-
-              printf "=%.0s" {1..80}
-              printf "\n"
-
-              if ! passwd "${cfg.username}"; then
-                echo "ERROR: failed to update normal user"
-                sleep 20 # give the user some time to read any error output
-              fi
-            '';
-          }
-        );
-      };
-    };
+    # TODO(jared): nixos doesn't have nice options for specifying match blocks
+    # https://wiki.archlinux.org/title/systemd-homed#SSH_remote_unlocking
+    services.openssh.extraConfig = ''
+      Match User *,!root
+        PasswordAuthentication yes
+        PubkeyAuthentication yes
+        AuthenticationMethods publickey,password
+        AuthorizedKeysCommand /etc/ssh/homed_authorized_keys_command %u
+        AuthorizedKeysCommandUser root
+    '';
   };
 }

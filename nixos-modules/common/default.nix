@@ -73,9 +73,9 @@ in
 
       # No need for mutable users in most use cases
       users.mutableUsers = mkDefault false;
-      services.userborn.enable = mkDefault true;
+      systemd.sysusers.enable = mkDefault true;
 
-      environment.etc = mkIf config.services.userborn.enable {
+      environment.etc = mkIf (config.services.userborn.enable || config.systemd.sysusers.enable) {
         "subuid" = {
           text = subxidContent;
           mode = "0444";

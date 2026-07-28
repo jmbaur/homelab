@@ -66,7 +66,6 @@ inputs.nixpkgs.lib.mapAttrs (
             ];
             custom.common.enable = true;
             custom.desktop.enable = true;
-            custom.normalUser.username = "waldo";
             virtualisation.cores = 4;
             virtualisation.memorySize = 4096;
             virtualisation.diskSize = 4096;
