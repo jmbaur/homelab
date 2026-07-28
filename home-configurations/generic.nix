@@ -195,14 +195,6 @@
         unbind C-b
         set-option -g prefix C-s
         bind-key C-s send-prefix
-
-        # unbind all keybindings, except for detach
-        unbind-key -a
-        unbind-key -a -T root
-        bind-key d detach-client
-
-        # remove status bar
-        set -g status off
       '';
     }
 
