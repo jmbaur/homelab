@@ -22,7 +22,8 @@
       nix.settings.extra-substituters = lib.mkForce [ ];
 
       users.users.builder = {
-        isNormalUser = true;
+        isSystemUser = true;
+        group = config.users.groups.users.name;
         openssh.authorizedKeys.keys = [
           "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPdvoVe/aTHTNPIg5xtq4XEKo6PyEa0HkOWoWzvYBoQI kale-hydra"
         ];
