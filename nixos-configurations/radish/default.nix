@@ -69,6 +69,14 @@
       ];
 
       systemd.packages = [ pkgs.agentp ];
+      systemd.services.agentpd.path = [
+        pkgs.coreutils-full
+        pkgs.findutils
+        pkgs.gawk
+        pkgs.iproute2
+        "/run/wrappers" # sudo
+      ]
+      ++ lib.optionals config.networking.networkmanager.enable [ pkgs.networkmanager ];
 
       systemd.services.orbit = {
         description = "Orbit osquery";
