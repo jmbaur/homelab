@@ -70,11 +70,12 @@
 
       systemd.packages = [ pkgs.agentp ];
       systemd.services.agentpd.path = [
+        "/run/wrappers" # sudo
         pkgs.coreutils-full
         pkgs.findutils
         pkgs.gawk
         pkgs.iproute2
-        "/run/wrappers" # sudo
+        pkgs.lsof
       ]
       ++ lib.optionals config.networking.networkmanager.enable [ pkgs.networkmanager ];
 
