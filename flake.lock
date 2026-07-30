@@ -2,7 +2,9 @@
   "nodes": {
     "emacs-overlay": {
       "inputs": {
-        "nixpkgs": "nixpkgs",
+        "nixpkgs": [
+          "nixpkgs"
+        ],
         "nixpkgs-stable": "nixpkgs-stable"
       },
       "locked": {
@@ -343,16 +345,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1785318670,
-        "narHash": "sha256-dN6Ou5x/+23FZLEpYP3IffO+NyJFzUlGumt1uu3MMaY=",
-        "owner": "NixOS",
+        "lastModified": 1785364495,
+        "narHash": "sha256-FBPy6Kb6RahOR4Wh78LWRSXwkUuGlvEO4oH0uvkv9Qk=",
+        "owner": "jmbaur",
         "repo": "nixpkgs",
-        "rev": "0954f7ee2f6bb3dc7d4e3d0d8bcb8fd4bde4cfc5",
+        "rev": "6d90b1aba712e3ed7a7f2e7cb37781ead7608984",
         "type": "github"
       },
       "original": {
-        "owner": "NixOS",
-        "ref": "nixos-unstable",
+        "owner": "jmbaur",
+        "ref": "jmbaur-nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -401,22 +403,6 @@
       "original": {
         "owner": "NixOS",
         "ref": "nixos-26.05",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs_2": {
-      "locked": {
-        "lastModified": 1785364495,
-        "narHash": "sha256-FBPy6Kb6RahOR4Wh78LWRSXwkUuGlvEO4oH0uvkv9Qk=",
-        "owner": "jmbaur",
-        "repo": "nixpkgs",
-        "rev": "6d90b1aba712e3ed7a7f2e7cb37781ead7608984",
-        "type": "github"
-      },
-      "original": {
-        "owner": "jmbaur",
-        "ref": "jmbaur-nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -474,7 +460,7 @@
         "nix": "nix",
         "nix-index-database": "nix-index-database",
         "nixos-router": "nixos-router",
-        "nixpkgs": "nixpkgs_2",
+        "nixpkgs": "nixpkgs",
         "quartus-nix": "quartus-nix",
         "sops-nix": "sops-nix",
         "tinyboot": "tinyboot",
