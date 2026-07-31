@@ -25,14 +25,12 @@ in
         ];
       }
 
-      (lib.mkIf (!config.systemd.network.enable) {
+      (lib.mkIf (!config.systemd.network.enable && config.services.clatd.enable) {
         # Allow clatd to find dns server. See comment next to clatd config.
         # This is only needed if systemd-networkd is not enabled since clatd
         # has special integration for obtaining the PREF64 prefix from
         # systemd-networkd.
-        services.resolved.settings.Resolve.DNSStubListenerExtra = lib.mkIf config.services.clatd.enable [
-          "::1"
-        ];
+        services.resolved.settings.Resolve.DNSStubListenerExtra = [ "::1" ];
       })
 
       (lib.mkIf
@@ -92,8 +90,8 @@ in
             };
           };
 
-          services.networkd-dispatcher = {
-            inherit (config.services.clatd) enable;
+          services.networkd-dispatcher = lib.mkIf config.services.clatd.enable {
+            enable = true;
             rules.restart-clatd = {
               onState = [
                 "routable"
@@ -109,7 +107,7 @@ in
           };
         }
       )
-      (lib.mkIf (!config.custom.server.enable) {
+      (lib.mkIf (!config.custom.server.enable && !config.networking.networkmanager.enable) {
         services.clatd = {
           enable = true;
           settings = {
