@@ -118,20 +118,19 @@
                                         (set forge-fn (. forges (. forge 1)))))
                                     (if (= forge-fn nil)
                                         (do
-                                          (var forge
-                                               (vim.trim (. (git-command [:config
-                                                                          :get
-                                                                          (string.format "remote.%s.forge-type"
-                                                                                         remote)])
-                                                            :stdout)))
-                                          (if (= forge "")
-                                              (set forge
-                                                   (detect-forge remote-url))
-                                              (git-command [:config
-                                                            :set
-                                                            (string.format "remote.%s.forge-type"
-                                                                           remote)
-                                                            forge]))
+                                          (local forge
+                                                 (case (vim.trim (. (git-command [:config
+                                                                                  :get
+                                                                                  (string.format "remote.%s.forge-type"
+                                                                                                 remote)])
+                                                                    :stdout))
+                                                   "" (detect-forge remote-url)
+                                                   forge forge))
+                                          (git-command [:config
+                                                        :set
+                                                        (string.format "remote.%s.forge-type"
+                                                                       remote)
+                                                        forge])
                                           (set forge-fn (. forges forge))))
                                     (if (= forge-fn nil)
                                         (error "unknown forge type"
