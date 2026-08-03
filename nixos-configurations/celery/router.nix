@@ -107,6 +107,7 @@ in
 
   router = {
     enable = true;
+    ipv6Only = true;
     lanInterface = config.systemd.network.netdevs."10-br0".netdevConfig.Name;
     wanInterface = "wan";
     dns.upstreamProvider = "quad9";
