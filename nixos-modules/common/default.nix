@@ -106,9 +106,10 @@ in
         };
       };
 
-      # Entirely unhelpful tool when the nixos config is not shipped on the
-      # device.
+      # Tools that pull in lots of stuff and often are not used
       system.tools.nixos-option.enable = mkDefault false;
+      system.tools.nixos-generate-config.enable = mkDefault false;
+      system.tools.nixos-build-vms.enable = mkDefault false;
 
       # Prevent copying in nixpkgs source eagerly
       nixpkgs.flake.source = mkForce null;
