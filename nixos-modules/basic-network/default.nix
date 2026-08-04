@@ -18,6 +18,9 @@ in
         # Randomize wireless card's MAC address for each connected network.
         networking.wireless.iwd.settings.General.AddressRandomization = "network";
 
+        # Enable networkmanager clat support by default
+        networking.networkmanager.connectionConfig."ipv4.clat" = lib.mkDefault 1;
+
         services.resolved.enable = true;
 
         networking.firewall.allowedUDPPorts = [
