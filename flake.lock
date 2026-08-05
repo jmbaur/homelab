@@ -8,11 +8,11 @@
         "nixpkgs-stable": "nixpkgs-stable"
       },
       "locked": {
-        "lastModified": 1785868934,
-        "narHash": "sha256-G6RlbJucUMdluOlg7LZ5FpCEpCKinTIH7ht50P2rEYc=",
+        "lastModified": 1785954066,
+        "narHash": "sha256-Vmp6qtvYZnt4Z6IG9vQ04g30cR66J5v91+5DPrYQP7w=",
         "owner": "nix-community",
         "repo": "emacs-overlay",
-        "rev": "2fe2db4ff893fddd90e2b4aef5106b81eb63d7bd",
+        "rev": "cb1e1d65c9447f78b5acd8af37e0c2615e4deb13",
         "type": "github"
       },
       "original": {
@@ -182,11 +182,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1785531816,
-        "narHash": "sha256-vkMnV0JIyw+g/NmcfoajlGaAO+9a0ezia+FZohQJrik=",
+        "lastModified": 1785958398,
+        "narHash": "sha256-5r/JgsoNMTx+qIh83WkxpujEKBR7PF5ssnh5vYCuSAw=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "bf9ce9fec78f95f374e8dd3b503863a3ec128ebe",
+        "rev": "a7c70cc290290f373f50cd820403833d250459ac",
         "type": "github"
       },
       "original": {
@@ -225,11 +225,11 @@
         "pyproject-nix": "pyproject-nix"
       },
       "locked": {
-        "lastModified": 1785862482,
-        "narHash": "sha256-e4Lo2eFC46J+J/f/cGrhj8xw6g2EZi6z7Rt571tXvdA=",
+        "lastModified": 1785909583,
+        "narHash": "sha256-5Uj0ce36jcmbwR70dvjZu+rOKv3v0oAp6HafIe92ZEQ=",
         "owner": "jmbaur",
         "repo": "mixos",
-        "rev": "64f768a72bf8357ffb55d98711bbfd57a68e305e",
+        "rev": "bccd96438266e60e6f67e450c708ec49df2b79f7",
         "type": "github"
       },
       "original": {
@@ -393,11 +393,11 @@
     },
     "nixpkgs-stable": {
       "locked": {
-        "lastModified": 1785734586,
-        "narHash": "sha256-ODZkEK9Gy50yg6h98u7KkitZ3oc/uuTFK00bh1CRdNA=",
+        "lastModified": 1785858998,
+        "narHash": "sha256-fKCq5jphd6l/Ms6gc3dptkw/TcKLYub9lQE5g6rbbkc=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "531670d871c0e29724a02f3cbcac170adc65b58c",
+        "rev": "04607e1165ac22c5fde6dcc54c9e0b3c0487c555",
         "type": "github"
       },
       "original": {
@@ -512,11 +512,11 @@
         "zig-overlay": "zig-overlay"
       },
       "locked": {
-        "lastModified": 1785862042,
-        "narHash": "sha256-zQGi57Tou2xOmB6cjdhbLqV+znVAngW5Ic8bKJGh/8w=",
+        "lastModified": 1785902205,
+        "narHash": "sha256-AAc5uvYdJWOO8094NjEnVy8MAUBO/CHf+Pwq3ovgmsQ=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "28c3123dfe5c22003d120754e1e5e41c719753eb",
+        "rev": "5ac24bc598ca4a5ee126d0210feebb8e5be00012",
         "type": "github"
       },
       "original": {
