@@ -188,6 +188,7 @@ in
       security.rtkit.enable = mkDefault true;
       services.automatic-timezoned.enable = mkDefault true;
       services.fwupd.enable = mkDefault true;
+      services.hardware.bolt.enable = mkDefault true;
       services.printing.enable = mkDefault true;
       services.upower.enable = mkDefault true;
 
