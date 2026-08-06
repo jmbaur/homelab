@@ -82,13 +82,15 @@ wrapNeovimUnstable neovim-unwrapped {
     })
   ]
   ++ (with vimPlugins; [
+    (readline-vim.overrideAttrs (old: {
+      patches = (old.patches or [ ]) ++ [ ./readline-vim-c-y-pum.patch ];
+    }))
     conjure
     direnv-vim
     fennel-vim
     modus-themes-nvim
     nvim-lspconfig
     nvim-treesitter.withAllGrammars
-    readline-vim
     vim-dispatch
     vim-eunuch
     vim-fugitive

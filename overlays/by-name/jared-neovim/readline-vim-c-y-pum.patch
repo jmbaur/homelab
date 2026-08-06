@@ -1,0 +1,13 @@
+diff --git a/plugin/readline.vim b/plugin/readline.vim
+index f797b8d..9959bf1 100644
+--- a/plugin/readline.vim
++++ b/plugin/readline.vim
+@@ -65,7 +65,7 @@ cnoremap <expr> <esc>t <sid>transpose_words()
+ cnoremap <expr> <esc>T <sid>transpose_words()
+ 
+ " yank (paste) previously deleted text
+-cnoremap <expr> <c-y> <sid>yank()
++cnoremap <expr> <C-Y> pumvisible() ? "\<C-Y>" : "\<C-R>-"
+ 
+ " make word uppercase
+ cnoremap <expr> <esc>u <sid>upcase_word()
