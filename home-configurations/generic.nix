@@ -191,6 +191,7 @@
       '';
 
       xdg.configFile."tmux/tmux.conf".text = ''
+        set -g allow-passthrough on
         # Use ctrl+s as prefix
         unbind C-b
         set-option -g prefix C-s

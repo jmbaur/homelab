@@ -22,8 +22,18 @@ pub fn main(init: std.process.Init) !void {
         _ = n_bytes;
     }
 
+    const in_tmux = init.environ_map.get("TMUX") != null;
+    if (in_tmux) {
+        try stdout.writeAll("\x1bPtmux;\x1b");
+    }
+
     try stdout.writeAll("\x1b]52;c;");
     try std.base64.standard.Encoder.encodeWriter(stdout, input.written());
     try stdout.writeAll("\x07");
+
+    if (in_tmux) {
+        try stdout.writeAll("\x1b\\");
+    }
+
     try stdout.flush();
 }
