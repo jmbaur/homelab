@@ -89,7 +89,7 @@ in
     # TODO(jared): fix this
     systemd.tpm2.enable = false;
     boot.initrd.systemd.tpm2.enable = false;
-    custom.recovery.modules = [
+    custom.recovery.extraModule.imports = [
       {
         boot.initrd.includeDefaultModules = false;
         boot.initrd.systemd.tpm2.enable = false;

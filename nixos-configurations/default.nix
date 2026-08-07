@@ -79,14 +79,14 @@ genAttrs allHosts (
 
           custom.common.enable = lib.mkDefault true;
           custom.update = {
-            enable = lib.mkDefault true;
+            enable = lib.mkDefault (!config.custom.desktop.enable);
             automatic = lib.mkDefault true;
             endpoint = lib.mkDefault "https://hydra.jmbaur.com/job/homelab/main/${config.networking.hostName}.toplevel/latest";
           };
 
           custom.recovery = {
             enable = lib.mkDefault true;
-            modules = [
+            extraModule.imports = [
               ./network.nix
               { custom.common.enable = true; }
             ];

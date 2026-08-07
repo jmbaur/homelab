@@ -24,7 +24,6 @@ let
 
   baseConfig = config;
   fstab = baseConfig.environment.etc.fstab.source;
-  updateEndpoint = baseConfig.custom.update.endpoint;
 
   nixosRecovery = pkgs.nixos-recovery.override {
     nix = config.nix.package;
@@ -220,7 +219,7 @@ let
           StandardOutput = "journal+console";
           ExecStart = toString [
             (getExe nixosRecovery)
-            "--update-endpoint=${updateEndpoint}"
+            "--update-endpoint=${cfg.endpoint}"
             "--target-disk=${cfg.targetDisk}"
             "--fstab=${fstab}"
           ];
@@ -247,9 +246,16 @@ in
       '';
     };
 
-    modules = mkOption {
-      type = types.listOf types.deferredModule;
-      default = [ ];
+    endpoint = mkOption {
+      type = types.str;
+      description = ''
+        The Hydra HTTP endpoint to use when pulling updates.
+      '';
+    };
+
+    extraModule = mkOption {
+      type = types.deferredModule;
+      default = { };
       description = ''
         Extra NixOS modules to include in the recovery system configuration.
         Can be useful for adding extra hardware support needed for a particular
@@ -259,13 +265,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    assertions = [
-      {
-        assertion = config.custom.update.enable;
-        message = "nixos-recovery (`config.custom.recovery`) does not work without also enabling nixos-update (`config.custom.update`)";
-      }
-    ];
-
     boot.loader.systemd-boot.enable = mkDefault (!config.boot.loader.tinyboot.enable);
 
     fileSystems.${config.boot.loader.efi.efiSysMountPoint} = {

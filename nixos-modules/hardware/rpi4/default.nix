@@ -65,7 +65,7 @@ in
     ];
 
     boot.initrd.systemd.tpm2.enable = lib.mkDefault false;
-    custom.recovery.modules = [
+    custom.recovery.extraModule.imports = [
       {
         boot.initrd.systemd.tpm2.enable = false;
       }

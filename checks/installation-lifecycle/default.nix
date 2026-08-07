@@ -95,6 +95,7 @@ testers.runNixOSTest {
 
         custom.recovery = {
           enable = true;
+          endpoint = "http://updateServer/${config.networking.hostName}";
           targetDisk = "/dev/disk/by-id/virtio-nixos";
           modules = [
             # TODO(jared): For some reason, this isn't propagated to the recovery
