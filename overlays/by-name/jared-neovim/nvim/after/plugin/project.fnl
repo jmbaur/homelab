@@ -14,10 +14,13 @@
       (vim.print (string.format "Project does not exist at %s" project-path))))
 
 (fn project-complete [arg-lead _cmdline _cursor-pos]
-  (icollect [name entry-type (vim.fs.dir (project-dir) {:depth 1})]
-    (when (= entry-type :directory)
-      (if (not= -1 (vim.fn.match name arg-lead))
-          name))))
+  (let [candidates (icollect [name entry-type (vim.fs.dir (project-dir)
+                                                          {:depth 1})]
+                     (when (= entry-type :directory)
+                       name))]
+    (if (= (string.len arg-lead) 0)
+        candidates
+        (vim.fn.matchfuzzy candidates arg-lead))))
 
 (vim.api.nvim_create_user_command :Project open-project
                                   {:desc "Open new tab at directory for project"
