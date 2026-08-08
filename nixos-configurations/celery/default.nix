@@ -107,6 +107,23 @@
   sops.secrets."cf-origin/key".owner = config.services.nginx.user;
   sops.secrets."garage-htpasswd".owner = config.services.nginx.user;
 
+  services.wastebin = {
+    enable = true;
+    settings = {
+      WASTEBIN_ADDRESS_PORT = "[::1]:8088";
+      WASTEBIN_DATABASE_PATH = ":memory:";
+    };
+  };
+
+  systemd.services.wastebin.serviceConfig =
+    let
+      memoryHigh = 128 * 1024 * 1024;
+    in
+    {
+      MemoryHigh = memoryHigh;
+      MemoryMax = 1.25 * memoryHigh;
+    };
+
   services.nginx = {
     enable = true;
     recommendedProxySettings = true;
@@ -123,6 +140,12 @@
       sslCertificate = config.sops.secrets."cf-origin/cert".path;
       sslCertificateKey = config.sops.secrets."cf-origin/key".path;
       locations."/".return = "302 https://github.com/jmbaur/mixos";
+    };
+    virtualHosts."paste.jmbaur.com" = {
+      onlySSL = true;
+      sslCertificate = config.sops.secrets."cf-origin/cert".path;
+      sslCertificateKey = config.sops.secrets."cf-origin/key".path;
+      locations."/".proxyPass = "http://[::1]:8088";
     };
     virtualHosts."garage.jmbaur.com" = {
       onlySSL = true;
