@@ -16,7 +16,10 @@
       };
     };
 
-    boot.kernelParams = [ "console=ttyS0,115200" ];
+    boot.kernelParams = [
+      "efi=noruntime" # TODO(jared): We run into UEFI issues here, just use tinyboot!
+      "console=ttyS0,115200"
+    ];
 
     boot.kernelPackages = pkgs.linuxPackagesFor (
       pkgs.buildLinux {
