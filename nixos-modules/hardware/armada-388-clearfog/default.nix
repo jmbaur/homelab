@@ -135,21 +135,25 @@
         ENV_SIZE = freeform "0x20000";
         FIT = yes;
         FIT_BEST_MATCH = yes; # TODO(jared): seems to not work
+        SPL_FIT = yes;
         SYS_BOOTM_LEN = freeform "0x${lib.toHexString (50 * 1024 * 1024)}"; # 50MiB
         SYS_REDUNDAND_ENVIRONMENT = yes;
       };
     };
 
     # usage: kwboot -b u-boot-with-spl.kwb /dev/ttyUSB0 && tio /dev/ttyUSB0
-    system.build.uartFirmware = config.system.build.firmware.override {
-      structuredExtraConfig = with lib.kernel; {
-        ENV_IS_IN_MMC = unset;
-        ENV_IS_NOWHERE = yes;
-        MVEBU_SPL_BOOT_DEVICE_MMC = unset;
-        MVEBU_SPL_BOOT_DEVICE_UART = yes;
-        SPL_MMC = unset;
-      };
-    };
+    system.build.uartFirmware = config.system.build.firmware.overrideAttrs (old: {
+      kconfig =
+        with lib.kernel;
+        old.kconfig
+        // {
+          ENV_IS_IN_MMC = unset;
+          ENV_IS_NOWHERE = yes;
+          MVEBU_SPL_BOOT_DEVICE_MMC = unset;
+          MVEBU_SPL_BOOT_DEVICE_UART = yes;
+          SPL_MMC = unset;
+        };
+    });
 
     environment.etc."fw_env.config".text = ''
       /dev/mtd2 0x0 0x20000 0x10000

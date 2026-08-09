@@ -54,6 +54,9 @@ inputs.nixpkgs.lib.mapAttrs (
         pkgs.sops
         pkgs.ssh-to-age
         pkgs.zig_0_16
+      ]
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+        pkgs.ubootTools
       ];
 
       env.SOPS_CONFIG = sopsConfig;
