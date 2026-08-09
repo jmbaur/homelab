@@ -512,11 +512,11 @@
         "zig-overlay": "zig-overlay"
       },
       "locked": {
-        "lastModified": 1786302768,
-        "narHash": "sha256-nImaEToRkXJM8sSeWF7aXF4eEbsd5B+5LKb1Uq49mnQ=",
+        "lastModified": 1786315603,
+        "narHash": "sha256-1WFFFiuEVkL7NBT2B0JP04bON+VNd5T3s4LzYYCCad8=",
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "rev": "b97d1c3f3120bf1b92343ba462690c992a97a230",
+        "rev": "ae2ed78874db2e9c2db37200af4220e77e795fef",
         "type": "github"
       },
       "original": {
