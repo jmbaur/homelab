@@ -50,7 +50,6 @@
         nix-diff
         nix-tree
         nixos-shell
-        nload
         nmap
         nurl
         oils-for-unix
