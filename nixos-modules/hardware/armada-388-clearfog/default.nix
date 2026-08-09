@@ -42,15 +42,14 @@
         };
       }
 
-      # mvebu_v7_defconfig does not enable kexec , maybe because of this:
+      # mvebu_v7_defconfig does not enable kexec, maybe because of this:
       # https://github.com/gregkh/linux/blob/7b923c78b50d2ec52690c4353e5aad8302e80599/arch/arm/mach-mvebu/pmsu.c#L507
       {
         name = "kexec-support";
-        patch = null;
+        # Manual revert of https://patchwork.kernel.org/project/linux-arm-kernel/patch/1427820378-13415-1-git-send-email-gregory.clement@free-electrons.com/
+        patch = ./cpuidle.patch;
         structuredExtraConfig = {
           KEXEC = lib.kernel.yes;
-          PM_SLEEP_SMP = lib.kernel.no;
-          HOTPLUG_CPU = lib.kernel.no;
         };
       }
     ];

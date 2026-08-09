@@ -28,6 +28,7 @@ let
     paths = [
       pkgs.busybox
       pkgs.cryptsetup
+      pkgs.kexec-tools
       pkgs.kmod
     ]
     ++ config.system.fsPackages;
