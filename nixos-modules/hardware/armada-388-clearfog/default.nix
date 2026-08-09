@@ -167,7 +167,7 @@
         if ! fw_printenv | grep --silent 'eth[1-3]addr'; then
           for index in 1 2 3; do
             echo "eth''${index}addr $(macgen)"
-          done | fw_setenv --script
+          done | fw_setenv --script -
           echo "Wrote new MAC addresses to uboot environment, reboot to take effect."
         fi
       '';
