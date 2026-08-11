@@ -1,7 +1,6 @@
 inputs: {
   default = inputs.nixpkgs.lib.composeManyExtensions [
     # needed by some stuff below
-    inputs.emacs-overlay.overlays.default
     inputs.ipwatch.overlays.default
     inputs.neovim-nightly-overlay.overlays.default
     inputs.nix.overlays.default
