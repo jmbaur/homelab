@@ -23,6 +23,7 @@
       boot.initrd.kernelModules = [ ];
       boot.kernelModules = [ "kvm-intel" ];
       boot.extraModulePackages = [ ];
+      boot.kernelPackages = pkgs.linuxPackages_7_1;
 
       hardware.cpu.intel.npu.enable = true;
       hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
