@@ -161,9 +161,14 @@
         };
       };
 
+      nix.package = pkgs.nixVersions.nix_2_35;
+
       programs.direnv = {
         enable = true;
-        nix-direnv.enable = true;
+        nix-direnv = {
+          enable = true;
+          package = pkgs.nix-direnv.override { nix = config.nix.package; };
+        };
       };
 
       programs.nix-index.enable = true;

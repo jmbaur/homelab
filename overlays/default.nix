@@ -3,7 +3,6 @@ inputs: {
     # needed by some stuff below
     inputs.ipwatch.overlays.default
     inputs.neovim-nightly-overlay.overlays.default
-    inputs.nix.overlays.default
     inputs.quartus-nix.overlays.default
     inputs.u-boot-nix.overlays.default
     # auto-added packages
