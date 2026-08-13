@@ -11,7 +11,7 @@ let
     recursiveUpdate
     systems
     ;
-  isLinux = system: (systems.elaborate system).isLinux;
+  isLinux = system: (systems.elaborate system).hostPlatform.isLinux;
   onlyLinuxOutput = filterAttrs (flip (const isLinux));
 in
 # TODO(jared): put nixos configurations in their own attrset
