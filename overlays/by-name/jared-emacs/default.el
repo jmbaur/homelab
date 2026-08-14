@@ -51,7 +51,7 @@
 
 (if window-system
     (progn
-      (set-face-attribute 'default nil :height 120) ;; sane font size
+      (set-face-attribute 'default nil :height 100) ;; sane font size
       (if (fboundp 'scroll-bar-mode)
 	  (scroll-bar-mode -1)))
   (progn
