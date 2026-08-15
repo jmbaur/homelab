@@ -231,8 +231,8 @@ let
     modules = [
       inheritFromBaseConfig
       recoveryConfig
-    ]
-    ++ cfg.modules;
+      cfg.extraModule
+    ];
   };
 in
 {
