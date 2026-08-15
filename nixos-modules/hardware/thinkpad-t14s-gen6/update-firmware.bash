@@ -17,6 +17,7 @@ pushd "$out" >/dev/null || exit 1
 innoextract --output-dir out "$firmware_update_utility"
 
 install -Dv ./out/*/Rfs/Usb/Bootaa64.efi "${esp}/EFI/Lenovo/update.efi"
+mkdir -p "${esp}/Flash"
 cp -r out/*/Rfs/Fw/* "${esp}/Flash/"
 
 bootctl set-oneshot /EFI/Lenovo/update.efi
