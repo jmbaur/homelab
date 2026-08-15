@@ -86,6 +86,7 @@ genAttrs allHosts (
 
           custom.recovery = {
             enable = lib.mkDefault true;
+            endpoint = lib.mkDefault "https://hydra.jmbaur.com/job/homelab/main/${config.networking.hostName}.toplevel/latest";
             extraModule.imports = [
               ./network.nix
               { custom.common.enable = true; }
