@@ -75,7 +75,7 @@ fn sign(
         }
     }
 
-    var signature = [_]u8{0} ** C.crypto_sign_BYTES;
+    var signature: [C.crypto_sign_BYTES]u8 = @splat(0);
 
     var signature_len: c_ulonglong = 0;
 

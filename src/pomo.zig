@@ -36,7 +36,7 @@ fn pomo(
 
     const warning_time_ns = @min(duration / 10, 30 * std.time.ns_per_s);
 
-    var msg_buf = [_]u8{0} ** 30;
+    var msg_buf: [30]u8 = @splat(0);
     const msg = try std.fmt.bufPrint(&msg_buf, "{}s left!", .{@divFloor(warning_time_ns, std.time.ns_per_s)});
 
     try io.sleep(std.Io.Duration.fromNanoseconds(duration - warning_time_ns), .boot);

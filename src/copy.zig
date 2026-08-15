@@ -3,8 +3,8 @@ const std = @import("std");
 const encoder = std.base64.standard.Encoder;
 
 pub fn main(init: std.process.Init) !void {
-    var in_buf = [_]u8{0} ** 1024;
-    var out_buf = [_]u8{0} ** 1024;
+    var in_buf: [1024]u8 = @splat(0);
+    var out_buf: [1024]u8 = @splat(0);
 
     var stdout_file = std.Io.File.stdout().writer(init.io, &out_buf);
     var stdout = &stdout_file.interface;
