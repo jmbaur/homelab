@@ -171,7 +171,7 @@ in
         pkgs.swayidle
         pkgs.swaylock
         pkgs.wev
-        # pkgs.wf-recorder # doesn't build currently
+        pkgs.wf-recorder
         pkgs.wl-clipboard
         pkgs.wl-mirror
         pkgs.wlopm
