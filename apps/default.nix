@@ -58,7 +58,10 @@ inputs.nixpkgs.lib.mapAttrs (
     testDesktop = mkApp "Test changes to ./nixos-modules/desktop/* in a VM" (
       getExe
         (inputs.nixpkgs.legacyPackages.${system}.nixos (
-          { modulesPath, ... }:
+          { pkgs, modulesPath, ... }:
+          let
+            inherit (pkgs.stdenv.hostPlatform) isLinux isAarch64;
+          in
           {
             imports = [
               "${modulesPath}/virtualisation/qemu-vm.nix"
@@ -69,6 +72,7 @@ inputs.nixpkgs.lib.mapAttrs (
             virtualisation.cores = 4;
             virtualisation.memorySize = 4096;
             virtualisation.diskSize = 4096;
+            virtualisation.qemu.options = lib.optionals (isLinux && isAarch64) [ "-device virtio-gpu-pci" ];
           }
         )).config.system.build.vm
     );
