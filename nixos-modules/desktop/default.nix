@@ -70,6 +70,9 @@ in
           "timeout"
           600
           "'wlopm --off *'"
+          "timeout"
+          1800
+          "'systemctl suspend'"
           "before-sleep"
           "'swaylock -f'"
           "lock"
