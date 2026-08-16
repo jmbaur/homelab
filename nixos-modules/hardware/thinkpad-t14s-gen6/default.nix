@@ -37,6 +37,7 @@ in
     boot.consoleLogLevel = 7;
 
     boot.kernelParams = [
+      "cma=128M" # used on ubuntu
       "clk_ignore_unused"
       "pd_ignore_unused"
       "console=tty1"
