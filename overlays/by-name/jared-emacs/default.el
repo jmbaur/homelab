@@ -125,11 +125,6 @@
   (evil-set-undo-system 'undo-redo)
   (advice-add 'evil-yank :after #'evil-yank-pulse-hint))
 
-(use-package evil-collection
-  :after evil
-  :config
-  (evil-collection-init))
-
 (use-package evil-surround
   :after evil
   :config

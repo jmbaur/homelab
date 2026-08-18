@@ -4,7 +4,7 @@
   clang,
   clang-tools,
   dts-lsp,
-  emacs31-nox,
+  emacs31-pgtk,
   emacsPackagesFor,
   fd,
   fennel-ls,
@@ -35,7 +35,7 @@
 }:
 
 let
-  emacsPackages = (emacsPackagesFor emacs31-nox).overrideScope (
+  emacsPackages = (emacsPackagesFor emacs31-pgtk).overrideScope (
     epkgsFinal: epkgsPrev: {
       ghostel = epkgsPrev.ghostel.overrideAttrs (old: {
         packageRequires = [ epkgsFinal.evil ];
@@ -64,7 +64,6 @@ let
       epkgs.eat
       epkgs.envrc
       epkgs.evil
-      epkgs.evil-collection
       epkgs.evil-commentary
       epkgs.evil-numbers
       epkgs.evil-surround
