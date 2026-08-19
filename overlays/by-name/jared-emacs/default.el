@@ -41,7 +41,7 @@
    (format "\x1b]52;c;%s\x07"
 	   (base64-encode-string text t))))
 
-(load-theme 'modus-vivendi-tritanopia t)
+(load-theme 'modus-vivendi t)
 (unless (and window-system (eq system-type 'darwin))
   (menu-bar-mode -1))
 
