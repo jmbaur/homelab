@@ -97,7 +97,7 @@ testers.runNixOSTest {
           enable = true;
           endpoint = "http://updateServer/${config.networking.hostName}";
           targetDisk = "/dev/disk/by-id/virtio-nixos";
-          modules = [
+          extraModule.imports = [
             # TODO(jared): For some reason, this isn't propagated to the recovery
             # system configuration with `noUserModules.extendModules`.
             { virtualisation.test.nodeName = config.virtualisation.test.nodeName; }
