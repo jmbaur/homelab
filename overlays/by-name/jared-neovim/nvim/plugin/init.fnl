@@ -68,9 +68,7 @@
 (set vim.opt.wildoptions (table.concat [:pum :fuzzy] ","))
 (set vim.opt.wrap false)
 
-((. (require :modus-themes) :setup) {:variants {:modus_operandi :tritanopia
-                                                :modus_vivendi :tritanopia}
-                                     :styles {:comments {:italic false}
+((. (require :modus-themes) :setup) {:styles {:comments {:italic false}
                                               :keywords {:italic false}}})
 
 (vim.cmd.colorscheme (if (= (vim.opt.termguicolors:get) true) :modus :vim))
