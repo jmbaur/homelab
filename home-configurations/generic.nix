@@ -171,7 +171,13 @@
         };
       };
 
-      programs.nix-index.enable = true;
+      programs.nix-index = {
+        enable = true;
+        enableBashIntegration = false;
+        enableFishIntegration = false;
+        enableZshIntegration = false;
+        enableNushellIntegration = false;
+      };
 
       programs.bash = {
         enable = true;
