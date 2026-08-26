@@ -64,10 +64,15 @@
       };
     }
     {
-      environment.systemPackages = [
-        pkgs.agentp
-        pkgs.fleetctl
-      ];
+      services.orbit = {
+        enable = true;
+        fleetUrl = "https://fleet.northwood.space";
+        enrollSecretPath = "/etc/fleet/enroll-secret";
+        desktop.enable = true;
+      };
+    }
+    {
+      environment.systemPackages = [ pkgs.agentp ];
 
       systemd.packages = [ pkgs.agentp ];
       systemd.services.agentpd.path = [
@@ -79,32 +84,6 @@
         pkgs.lsof
       ]
       ++ lib.optionals config.networking.networkmanager.enable [ pkgs.networkmanager ];
-
-      systemd.services.orbit = {
-        description = "Orbit osquery";
-        after = [ "network.target" ];
-        wantedBy = [ "multi-user.target" ];
-        unitConfig.StartLimitIntervalSec = 0;
-        serviceConfig = {
-          EnvironmentFile = "/etc/orbit.env";
-          Restart = "always";
-          RestartSec = 1;
-          KillMode = "control-group";
-          KillSignal = "SIGTERM";
-          CPUQuota = "20%";
-          StateDirectory = "orbit";
-          BindPaths = [ "%S/orbit:/opt" ];
-          BindReadOnlyPaths = [
-            "${lib.getExe' pkgs.fleet "desktop"}:/opt/orbit/bin/desktop/linux/stable/fleet-desktop/fleet-desktop"
-            "${lib.getExe' pkgs.osquery "osqueryd"}:/opt/orbit/bin/osqueryd/linux/stable/osqueryd"
-            "${pkgs.osquery}:/opt/osquery"
-          ];
-          ExecStart = toString [
-            (lib.getExe' pkgs.fleet "orbit")
-            "--disable-updates"
-          ];
-        };
-      };
     }
   ];
 }
