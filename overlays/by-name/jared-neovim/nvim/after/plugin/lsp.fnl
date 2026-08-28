@@ -79,12 +79,12 @@
 
 (vim.api.nvim_create_user_command :ToggleFormatOnSave
                                   (lambda [opts]
-                                    (if (or opts.bang vim.g.no_format_on_save)
-                                        (set vim.g.no_format_on_save nil)
-                                        (set vim.g.no_format_on_save true)))
+                                    (if (or opts.bang vim.bo.no_format_on_save)
+                                        (set vim.bo.no_format_on_save nil)
+                                        (set vim.bo.no_format_on_save true)))
                                   {:bang true
                                    ; forcefully enable format on save
-                                   :desc "Toggle format on save for LSP-enabled buffers"})
+                                   :desc "Toggle format on save for current buffer"})
 
 ; NOTE: fnlfmt will attempt to resolve this unicode character
 
