@@ -210,6 +210,11 @@
     }
 
     (lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+      xdg.userDirs = {
+        enable = true;
+        createDirectories = true;
+      };
+
       programs.ssh.settings."Host *.local".ProxyCommand =
         "${lib.getExe pkgs.ipv6-link-local-ssh-proxy-command} %h %p";
 
