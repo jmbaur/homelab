@@ -120,11 +120,14 @@
 (local qfgroup (vim.api.nvim_create_augroup :QuickFix {:clear true}))
 (vim.api.nvim_create_autocmd [:QuickFixCmdPost]
                              {:group qfgroup
+                              ;; Don't match any commands that start with "l",
+                              ;; with "l"-prefixed commands likely being window local.
                               :pattern "[^l]*"
                               :callback (lambda [] (vim.cmd.cwindow))})
 
 (vim.api.nvim_create_autocmd [:QuickFixCmdPost]
                              {:group qfgroup
+                              ;; Reverse logic from above.
                               :pattern :l*
                               :callback (lambda [] (vim.cmd.lwindow))})
 
