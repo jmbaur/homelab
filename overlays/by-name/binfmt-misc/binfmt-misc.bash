@@ -21,10 +21,9 @@ action=${argc_action:-up}
 function up() {
 	if findmnt /proc/sys/fs/binfmt_misc >/dev/null; then
 		echo "binfmt_misc already mounted"
-		exit 1
+	else
+		mount -t binfmt_misc none /proc/sys/fs/binfmt_misc
 	fi
-
-	mount -t binfmt_misc none /proc/sys/fs/binfmt_misc
 
 	# Ensure we start from a clear slate. The kernel will persist
 	# binfmt_misc registrations with the "fix binary" flag set.
