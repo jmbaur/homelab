@@ -140,11 +140,11 @@
         "pyproject-nix": "pyproject-nix"
       },
       "locked": {
-        "lastModified": 1787960352,
-        "narHash": "sha256-KwmW4atHmn2qZUuQklKzFwcQD9MzmsiugJbrGR0oYwo=",
+        "lastModified": 1787978025,
+        "narHash": "sha256-u2wtbtjcAeVH7tUz7veVwWYkP4/08k23Yndmjp9VTLI=",
         "owner": "jmbaur",
         "repo": "mixos",
-        "rev": "243b5cff8dbccd3c41e0887e5f06b013d89e67d1",
+        "rev": "58b04a3a1740dff35c493529ecd1529cfc8eef03",
         "type": "github"
       },
       "original": {
