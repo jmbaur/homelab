@@ -4,7 +4,7 @@
   ubootTools,
 }:
 
-stdenv.mkDerivation (_: {
+stdenv.mkDerivation {
   pname = "uboot-env-tools";
   inherit (ubootTools)
     depsBuildBuild
@@ -36,4 +36,4 @@ stdenv.mkDerivation (_: {
   '';
 
   meta.platforms = lib.platforms.linux;
-})
+}
