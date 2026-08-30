@@ -60,6 +60,7 @@
         qemu
         rage
         ripgrep
+        rsbkb
         sd
         tcpdump
         tea
