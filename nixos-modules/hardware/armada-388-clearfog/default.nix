@@ -23,7 +23,7 @@
 
     boot.kernelPackages = pkgs.linuxPackagesFor (
       pkgs.buildLinux {
-        inherit (pkgs.linux) version src;
+        inherit (pkgs.linux_7_2) version src;
         autoModules = true;
         preferBuiltin = true;
         buildDTBs = true;

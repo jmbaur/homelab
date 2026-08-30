@@ -1,0 +1,13 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "solidrun,clearfog-a1";
+};
+
+&i2c1 {
+	rng@40 {
+		compatible = "microchip,rng90";
+		reg = <0x40>;
+	};
+};

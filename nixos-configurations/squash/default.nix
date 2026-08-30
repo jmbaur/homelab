@@ -1,4 +1,9 @@
-{ config, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   hardware.firmware = [
     pkgs.wireless-regdb
@@ -9,6 +14,23 @@
 
   # TODO(jared): use FIT_BEST_MATCH feature in u-boot to choose this automatically
   hardware.deviceTree.name = "armada-388-clearfog-pro.dtb";
+
+  boot.kernelPatches = [
+    {
+      name = "rng90-support";
+      patch = ./0001-char-hw_random-add-RNG90-driver.patch;
+      structuredExtraConfig = {
+        HW_RANDOM_RNG90 = lib.kernel.module;
+      };
+    }
+  ];
+
+  hardware.deviceTree.overlays = [
+    {
+      name = "rng90";
+      dtsFile = ./rng90.dtso;
+    }
+  ];
 
   custom = {
     server.enable = true;
