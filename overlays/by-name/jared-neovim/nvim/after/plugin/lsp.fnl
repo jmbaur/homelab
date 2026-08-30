@@ -51,7 +51,7 @@
                                     :callback (lambda []
                                                 (and (vim.lsp.buf_is_attached 0
                                                                               opts.data.client_id)
-                                                     (not vim.g.no_format_on_save)
+                                                     (not vim.w.no_format_on_save)
                                                      (vim.lsp.buf.format))
                                                 nil)}))
   nil)
@@ -79,9 +79,9 @@
 
 (vim.api.nvim_create_user_command :ToggleFormatOnSave
                                   (lambda [opts]
-                                    (if (or opts.bang vim.bo.no_format_on_save)
-                                        (set vim.bo.no_format_on_save nil)
-                                        (set vim.bo.no_format_on_save true)))
+                                    (if (or opts.bang vim.w.no_format_on_save)
+                                        (set vim.w.no_format_on_save nil)
+                                        (set vim.w.no_format_on_save true)))
                                   {:bang true
                                    ; forcefully enable format on save
                                    :desc "Toggle format on save for current buffer"})
