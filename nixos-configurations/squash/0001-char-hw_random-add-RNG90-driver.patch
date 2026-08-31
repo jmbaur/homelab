@@ -1,20 +1,14 @@
-From 035572cc7b1e8819da2d3b6c6a5f925f2cbdb14b Mon Sep 17 00:00:00 2001
+From d506fb04527beb3b406467b6ce76d0a3bfe11cc9 Mon Sep 17 00:00:00 2001
 From: Jared Baur <jaredbaur@fastmail.com>
 Date: Sat, 29 Aug 2026 23:22:46 -0700
 Subject: [PATCH] char: hw_random: add RNG90 driver
 
----
- drivers/char/hw_random/Kconfig  |   6 ++
- drivers/char/hw_random/Makefile |   1 +
- drivers/char/hw_random/rng90.c  | 143 ++++++++++++++++++++++++++++++++
- 3 files changed, 150 insertions(+)
- create mode 100644 drivers/char/hw_random/rng90.c
 
 diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-index 1bf5e3f8a557..5c735ae8af6b 100644
+index a5bcef4a54ee..7d5137b847e5 100644
 --- a/drivers/char/hw_random/Kconfig
 +++ b/drivers/char/hw_random/Kconfig
-@@ -625,6 +625,12 @@ config HW_RANDOM_ROCKCHIP
+@@ -625,6 +625,11 @@ config HW_RANDOM_ROCKCHIP
  
  	  If unsure, say Y.
  
@@ -22,35 +16,33 @@ index 1bf5e3f8a557..5c735ae8af6b 100644
 +	tristate "Microchip RNG90 Random Number Generator Driver"
 +	depends on I2C
 +	depends on HW_RANDOM
-+	select CRC16
 +
  config HW_RANDOM_XILINX
  	tristate "Support for Xilinx True Random Generator"
  	depends on ZYNQMP_FIRMWARE || COMPILE_TEST
 diff --git a/drivers/char/hw_random/Makefile b/drivers/char/hw_random/Makefile
-index 8fce2aa6cf7d..22ceeb851e66 100644
+index 95b5adb49560..11073ec32d1a 100644
 --- a/drivers/char/hw_random/Makefile
 +++ b/drivers/char/hw_random/Makefile
-@@ -52,6 +52,7 @@ obj-$(CONFIG_HW_RANDOM_ARM_SMCCC_TRNG) += arm_smccc_trng.o
+@@ -52,5 +52,6 @@ obj-$(CONFIG_HW_RANDOM_ARM_SMCCC_TRNG) += arm_smccc_trng.o
  obj-$(CONFIG_HW_RANDOM_CN10K) += cn10k-rng.o
  obj-$(CONFIG_HW_RANDOM_POLARFIRE_SOC) += mpfs-rng.o
  obj-$(CONFIG_HW_RANDOM_ROCKCHIP) += rockchip-rng.o
 +obj-$(CONFIG_HW_RANDOM_RNG90) += rng90.o
  obj-$(CONFIG_HW_RANDOM_JH7110) += jh7110-trng.o
  obj-$(CONFIG_HW_RANDOM_XILINX) += xilinx-trng.o
- obj-$(CONFIG_HW_RANDOM_QCOM) += qcom-rng.o
 diff --git a/drivers/char/hw_random/rng90.c b/drivers/char/hw_random/rng90.c
 new file mode 100644
-index 000000000000..38c2e541b7c1
+index 000000000000..49a75482ccb8
 --- /dev/null
 +++ b/drivers/char/hw_random/rng90.c
-@@ -0,0 +1,143 @@
-+#include <linux/crc16.h>
+@@ -0,0 +1,200 @@
 +#include <linux/delay.h>
 +#include <linux/hw_random.h>
 +#include <linux/i2c.h>
 +#include <linux/minmax.h>
 +#include <linux/module.h>
++#include <linux/pm_runtime.h>
 +
 +#define RNG90_RESET 0x0 /* resets address counter */
 +#define RNG90_SLEEP 0x1
@@ -64,6 +56,29 @@ index 000000000000..38c2e541b7c1
 +	struct i2c_client *client;
 +};
 +
++static uint16_t rng90_crc16(const uint8_t *data, size_t len)
++{
++	uint16_t crc = 0x0000;
++	size_t i;
++
++	for (i = 0; i < len; i++) {
++		uint8_t byte = data[i];
++		uint8_t shift;
++
++		for (shift = 0x01; shift != 0; shift <<= 1) {
++			bool dbit = (byte & shift) != 0;
++			bool cbit = (crc & 0x8000) != 0;
++
++			crc <<= 1;
++			if (dbit != cbit) {
++				crc ^= 0x8005;
++			}
++		}
++	}
++
++	return crc;
++}
++
 +static int rng90_trng_init(struct hwrng *rng)
 +{
 +	struct rng90_trng *trng = container_of(rng, struct rng90_trng, rng);
@@ -72,8 +87,11 @@ index 000000000000..38c2e541b7c1
 +
 +	ret = i2c_master_send(trng->client, pkt, sizeof(pkt));
 +	if (ret < 0) {
++		dev_err(trng->dev, "RNG reset failed: %d\n", ret);
 +		return ret;
 +	}
++
++	dev_info(trng->dev, "RNG initialized\n");
 +
 +	return 0;
 +}
@@ -89,31 +107,35 @@ index 000000000000..38c2e541b7c1
 +	memset(pkt, 0, sizeof(pkt));
 +
 +	pkt[0] = RNG90_COMMAND;
-+	pkt[1] = sizeof(pkt);
++	pkt[1] = sizeof(pkt) - 1;
 +	pkt[2] = RNG90_OPCODE_RANDOM;
 +
-+	crc = crc16(0, &pkt[1], 25);
++	crc = rng90_crc16(&pkt[1], 25);
 +	pkt[26] = (uint8_t)(crc & 0xff);
 +	pkt[27] = (uint8_t)(crc >> 8);
 +
 +	ret = i2c_master_send(trng->client, pkt, sizeof(pkt));
-+	if (ret < 0)
++	if (ret < 0) {
++		dev_err(trng->dev, "Random command send failed: %d\n", ret);
 +		return ret;
++	}
 +
 +	udelay(RNG90_RANDOM_MAX_WAIT_MS);
 +
 +	ret = i2c_master_recv(trng->client, response, sizeof(response));
-+	if (ret < 0)
++	if (ret < 0) {
++		dev_err(trng->dev, "Random command recv failed: %d\n", ret);
 +		return ret;
-+
-+	dev_dbg(trng->dev, "Got %d bytes from in response\n", response[0]);
-+
-+	if (response[1] == 1) {
-+		dev_err(trng->dev, "RNG read error: 0x%x\n", response[1]);
-+		return -EIO;
 +	}
 +
-+	if (response[1] != 32) {
++	print_hex_dump(KERN_DEBUG, "rng90 i2c recv: ", DUMP_PREFIX_NONE, 16, 1,
++		       response, sizeof(response), false);
++
++	// response[0]: count
++	// <32 bytes of random data>
++	// response[33]: crc lo
++	// response[34]: crc hi
++	if (response[0] != 35) {
 +		dev_err(trng->dev, "Got invalid RNG response length: %d\n",
 +			response[0]);
 +		return -EIO;
@@ -121,7 +143,7 @@ index 000000000000..38c2e541b7c1
 +
 +	memcpy(buf, &response[1], min(max, 32));
 +
-+	return 32;
++	return min(max, 32);
 +}
 +
 +static int rng90_probe(struct i2c_client *client)
@@ -150,22 +172,46 @@ index 000000000000..38c2e541b7c1
 +	return 0;
 +}
 +
-+static void rng90_shutdown(struct i2c_client *client)
++static int rng90_power_off(struct device *dev)
 +{
++	struct i2c_client *client = to_i2c_client(dev);
 +	uint8_t pkt[1] = { RNG90_SLEEP };
 +	int ret;
 +
 +	ret = i2c_master_send(client, pkt, sizeof(pkt));
 +	if (ret < 0) {
-+		dev_err(&client->dev, "Failed to put RNG to sleep: %d\n", ret);
++		dev_err(&client->dev, "RNG sleep failed: %d\n", ret);
 +	}
++
++	return 0;
++}
++
++static int rng90_power_on(struct device *dev)
++{
++	struct i2c_client *client = to_i2c_client(dev);
++	uint8_t pkt[1] = { RNG90_RESET };
++	uint8_t response[4];
++	int ret;
++
++	// response ignored here, client might be waking
++	ret = i2c_master_send(client, pkt, sizeof(pkt));
++
++	udelay(50); // allow for self-test to finish on wake
++
++	ret = i2c_master_recv(client, response, sizeof(response));
++	if (ret < 0 || !(response[0] != 0x4 && response[1] != 0x11 &&
++			 response[2] != 0x33 && response[3] != 0x43)) {
++		dev_err(dev, "RNG did not wake\n");
++		return -EIO;
++	}
++
++	return 0;
 +}
 +
 +static const struct i2c_device_id rng90_id[] = {
 +	{ "rng90" },
 +	{},
 +};
-+
 +MODULE_DEVICE_TABLE(i2c, rng90_id);
 +
 +static const struct of_device_id of_rng90_match[] = {
@@ -174,14 +220,17 @@ index 000000000000..38c2e541b7c1
 +};
 +MODULE_DEVICE_TABLE(of, of_rng90_match);
 +
++static const struct dev_pm_ops rng90_pm_ops = { SET_RUNTIME_PM_OPS(
++	rng90_power_off, rng90_power_on, NULL) };
++
 +static struct i2c_driver rng90_driver = {
 +	.driver = {
 +		.name = "rng90",
++		.pm	= &rng90_pm_ops,	
 +		.of_match_table = of_match_ptr(of_rng90_match),
 +	},
 +	.id_table = rng90_id,
 +	.probe = rng90_probe,
-+	.shutdown = rng90_shutdown,
 +};
 +module_i2c_driver(rng90_driver);
 +
