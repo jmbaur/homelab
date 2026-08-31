@@ -1,4 +1,4 @@
-From e594c2d0c898358d0958426d1b68130cba328c2d Mon Sep 17 00:00:00 2001
+From 035572cc7b1e8819da2d3b6c6a5f925f2cbdb14b Mon Sep 17 00:00:00 2001
 From: Jared Baur <jaredbaur@fastmail.com>
 Date: Sat, 29 Aug 2026 23:22:46 -0700
 Subject: [PATCH] char: hw_random: add RNG90 driver
@@ -41,7 +41,7 @@ index 8fce2aa6cf7d..22ceeb851e66 100644
  obj-$(CONFIG_HW_RANDOM_QCOM) += qcom-rng.o
 diff --git a/drivers/char/hw_random/rng90.c b/drivers/char/hw_random/rng90.c
 new file mode 100644
-index 000000000000..31bd9037a49a
+index 000000000000..38c2e541b7c1
 --- /dev/null
 +++ b/drivers/char/hw_random/rng90.c
 @@ -0,0 +1,143 @@
@@ -92,9 +92,9 @@ index 000000000000..31bd9037a49a
 +	pkt[1] = sizeof(pkt);
 +	pkt[2] = RNG90_OPCODE_RANDOM;
 +
-+	crc = crc16(0, pkt, 25);
-+	pkt[25] = (uint8_t)(crc & 0xff);
-+	pkt[26] = (uint8_t)(crc >> 8);
++	crc = crc16(0, &pkt[1], 25);
++	pkt[26] = (uint8_t)(crc & 0xff);
++	pkt[27] = (uint8_t)(crc >> 8);
 +
 +	ret = i2c_master_send(trng->client, pkt, sizeof(pkt));
 +	if (ret < 0)
@@ -108,12 +108,12 @@ index 000000000000..31bd9037a49a
 +
 +	dev_dbg(trng->dev, "Got %d bytes from in response\n", response[0]);
 +
-+	if (response[0] == 1) {
++	if (response[1] == 1) {
 +		dev_err(trng->dev, "RNG read error: 0x%x\n", response[1]);
 +		return -EIO;
 +	}
 +
-+	if (response[0] != 32) {
++	if (response[1] != 32) {
 +		dev_err(trng->dev, "Got invalid RNG response length: %d\n",
 +			response[0]);
 +		return -EIO;

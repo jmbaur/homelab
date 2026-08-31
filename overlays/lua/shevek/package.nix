@@ -40,7 +40,6 @@ buildLuaPackage rec {
 
   meta = {
     description = "Simple nREPL client";
-    maintainers = [ "jared@northwoodspace.io" ];
     mainProgram = "shevek";
   };
 }

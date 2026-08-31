@@ -1,4 +1,4 @@
-From e594c2d0c898358d0958426d1b68130cba328c2d Mon Sep 17 00:00:00 2001
+From 2da49e65e6dcbef9ae58cd44366de605e1957804 Mon Sep 17 00:00:00 2001
 From: Jared Baur <jaredbaur@fastmail.com>
 Date: Sat, 29 Aug 2026 23:22:46 -0700
 Subject: [PATCH] char: hw_random: add RNG90 driver
@@ -6,8 +6,8 @@ Subject: [PATCH] char: hw_random: add RNG90 driver
 ---
  drivers/char/hw_random/Kconfig  |   6 ++
  drivers/char/hw_random/Makefile |   1 +
- drivers/char/hw_random/rng90.c  | 143 ++++++++++++++++++++++++++++++++
- 3 files changed, 150 insertions(+)
+ drivers/char/hw_random/rng90.c  | 160 ++++++++++++++++++++++++++++++++
+ 3 files changed, 167 insertions(+)
  create mode 100644 drivers/char/hw_random/rng90.c
 
 diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
@@ -41,10 +41,10 @@ index 8fce2aa6cf7d..22ceeb851e66 100644
  obj-$(CONFIG_HW_RANDOM_QCOM) += qcom-rng.o
 diff --git a/drivers/char/hw_random/rng90.c b/drivers/char/hw_random/rng90.c
 new file mode 100644
-index 000000000000..31bd9037a49a
+index 000000000000..5c9d71a0de87
 --- /dev/null
 +++ b/drivers/char/hw_random/rng90.c
-@@ -0,0 +1,143 @@
+@@ -0,0 +1,160 @@
 +#include <linux/crc16.h>
 +#include <linux/delay.h>
 +#include <linux/hw_random.h>
@@ -72,8 +72,11 @@ index 000000000000..31bd9037a49a
 +
 +	ret = i2c_master_send(trng->client, pkt, sizeof(pkt));
 +	if (ret < 0) {
++		dev_err(trng->dev, "RNG reset failed: %d\n", ret);
 +		return ret;
 +	}
++
++	dev_info(trng->dev, "RNG initialized\n");
 +
 +	return 0;
 +}
@@ -92,28 +95,43 @@ index 000000000000..31bd9037a49a
 +	pkt[1] = sizeof(pkt);
 +	pkt[2] = RNG90_OPCODE_RANDOM;
 +
-+	crc = crc16(0, pkt, 25);
-+	pkt[25] = (uint8_t)(crc & 0xff);
-+	pkt[26] = (uint8_t)(crc >> 8);
++	crc = crc16(0, &pkt[1], 25);
++	pkt[26] = (uint8_t)(crc & 0xff);
++	pkt[27] = (uint8_t)(crc >> 8);
++
++	print_hex_dump(KERN_INFO, "rng90 i2c send: ", DUMP_PREFIX_NONE, 16, 1,
++		       pkt, sizeof(pkt), false);
 +
 +	ret = i2c_master_send(trng->client, pkt, sizeof(pkt));
-+	if (ret < 0)
++	if (ret < 0) {
++		dev_err(trng->dev, "Random command send failed: %d\n", ret);
 +		return ret;
++	}
 +
 +	udelay(RNG90_RANDOM_MAX_WAIT_MS);
 +
 +	ret = i2c_master_recv(trng->client, response, sizeof(response));
-+	if (ret < 0)
++	if (ret < 0) {
++		dev_err(trng->dev, "Random command recv failed: %d\n", ret);
 +		return ret;
++	}
 +
-+	dev_dbg(trng->dev, "Got %d bytes from in response\n", response[0]);
++	print_hex_dump(KERN_INFO, "rng90 i2c recv: ", DUMP_PREFIX_NONE, 16, 1,
++		       response, sizeof(response), false);
 +
-+	if (response[0] == 1) {
++	if (response[0] != RNG90_COMMAND) {
++		dev_err(trng->dev,
++			"RNG read did not return command byte: 0x%x\n",
++			response[0]);
++		return -EIO;
++	}
++
++	if (response[1] == 1) {
 +		dev_err(trng->dev, "RNG read error: 0x%x\n", response[1]);
 +		return -EIO;
 +	}
 +
-+	if (response[0] != 32) {
++	if (response[1] != 32) {
 +		dev_err(trng->dev, "Got invalid RNG response length: %d\n",
 +			response[0]);
 +		return -EIO;
@@ -157,7 +175,7 @@ index 000000000000..31bd9037a49a
 +
 +	ret = i2c_master_send(client, pkt, sizeof(pkt));
 +	if (ret < 0) {
-+		dev_err(&client->dev, "Failed to put RNG to sleep: %d\n", ret);
++		dev_err(&client->dev, "RNG sleep failed: %d\n", ret);
 +	}
 +}
 +
@@ -165,7 +183,6 @@ index 000000000000..31bd9037a49a
 +	{ "rng90" },
 +	{},
 +};
-+
 +MODULE_DEVICE_TABLE(i2c, rng90_id);
 +
 +static const struct of_device_id of_rng90_match[] = {
