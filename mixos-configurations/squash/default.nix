@@ -1,4 +1,9 @@
 { pkgs, lib, ... }: {
+  packages = [
+    pkgs.kexec-tools
+    pkgs.strace
+  ];
+
   init.shell = {
     tty = "ttyS0";
     action = "askfirst";
