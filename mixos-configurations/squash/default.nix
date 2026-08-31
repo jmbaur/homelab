@@ -43,10 +43,10 @@
       };
     }
     {
-      name = "modules-decompress";
+      name = "module-decompress";
       patch = null;
       structuredExtraConfig = {
-        MODULES_DECOMPRESS = lib.kernel.yes;
+        MODULE_DECOMPRESS = lib.kernel.yes;
       };
     }
   ];
