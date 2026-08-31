@@ -39,9 +39,11 @@
       nixpkgs.config.allowUnfree = true;
 
       hardware.saleae-logic.enable = true;
+      services.udev.packages = [ pkgs.kingstvis ];
       environment.systemPackages = [
         config.hardware.saleae-logic.package
         pkgs.element-desktop
+        pkgs.kingstvis
         pkgs.nomachine-client
         pkgs.quartus-prime-pro-24_2
         pkgs.signal-desktop
