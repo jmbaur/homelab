@@ -27,7 +27,15 @@ in
 
     system.build.firmwareImage = firmwareImage;
 
-    boot.kernelPackages = pkgs.linuxPackages_rpi4;
+    boot.kernelPackages = pkgs.linuxPackagesFor (
+      pkgs.callPackage ./linux-rpi.nix {
+        kernelPatches = with pkgs.kernelPatches; [
+          bridge_stp_helper
+          request_key_helper
+        ];
+        rpiVersion = 4;
+      }
+    );
 
     # Pins 6,8,10 on the 40-pin layout.
     #  6 -> gnd
