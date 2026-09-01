@@ -68,8 +68,6 @@ let
       BOOTCOUNT_ENV = yes;
     };
   };
-
-  label = "FIRMWARE";
 in
 runCommand "rpi4-firmware-image"
   {
@@ -78,7 +76,7 @@ runCommand "rpi4-firmware-image"
       mtools
       util-linux
     ];
-    passthru = { inherit uboot label; };
+    passthru = { inherit uboot; };
   }
   ''
     img=$(mktemp)
@@ -93,7 +91,7 @@ runCommand "rpi4-firmware-image"
 
     eval $(partx $img -o START,SECTORS --nr 1 --pairs)
     truncate -s $((SECTORS * 512)) fs.img
-    mkfs.vfat --invariant -i ${firmwarePartitionID} -n ${label} fs.img
+    mkfs.vfat --invariant -i ${firmwarePartitionID} -n FIRMWARE fs.img
 
     mkdir firmware
     cp ${uboot}/u-boot.bin firmware/kernel8.img
