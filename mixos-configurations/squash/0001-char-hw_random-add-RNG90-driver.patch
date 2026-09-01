@@ -1,8 +1,14 @@
-From d506fb04527beb3b406467b6ce76d0a3bfe11cc9 Mon Sep 17 00:00:00 2001
+From c33f951bffdfc45f5b0edeb1183c7ce49451a238 Mon Sep 17 00:00:00 2001
 From: Jared Baur <jaredbaur@fastmail.com>
 Date: Sat, 29 Aug 2026 23:22:46 -0700
 Subject: [PATCH] char: hw_random: add RNG90 driver
 
+---
+ drivers/char/hw_random/Kconfig  |   5 +
+ drivers/char/hw_random/Makefile |   1 +
+ drivers/char/hw_random/rng90.c  | 203 ++++++++++++++++++++++++++++++++
+ 3 files changed, 209 insertions(+)
+ create mode 100644 drivers/char/hw_random/rng90.c
 
 diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
 index a5bcef4a54ee..7d5137b847e5 100644
@@ -33,10 +39,10 @@ index 95b5adb49560..11073ec32d1a 100644
  obj-$(CONFIG_HW_RANDOM_XILINX) += xilinx-trng.o
 diff --git a/drivers/char/hw_random/rng90.c b/drivers/char/hw_random/rng90.c
 new file mode 100644
-index 000000000000..49a75482ccb8
+index 000000000000..0bdf5b14342e
 --- /dev/null
 +++ b/drivers/char/hw_random/rng90.c
-@@ -0,0 +1,200 @@
+@@ -0,0 +1,203 @@
 +#include <linux/delay.h>
 +#include <linux/hw_random.h>
 +#include <linux/i2c.h>
@@ -49,6 +55,7 @@ index 000000000000..49a75482ccb8
 +#define RNG90_COMMAND 0x3
 +#define RNG90_OPCODE_RANDOM 0x16
 +#define RNG90_RANDOM_MAX_WAIT_MS 72
++#define RNG90_SELFTEST_MAX_WAIT_MS 50
 +
 +struct rng90_trng {
 +	struct hwrng rng;
@@ -120,7 +127,7 @@ index 000000000000..49a75482ccb8
 +		return ret;
 +	}
 +
-+	udelay(RNG90_RANDOM_MAX_WAIT_MS);
++	mdelay(RNG90_RANDOM_MAX_WAIT_MS);
 +
 +	ret = i2c_master_recv(trng->client, response, sizeof(response));
 +	if (ret < 0) {
@@ -135,7 +142,7 @@ index 000000000000..49a75482ccb8
 +	// <32 bytes of random data>
 +	// response[33]: crc lo
 +	// response[34]: crc hi
-+	if (response[0] != 35) {
++	if (response[0] != sizeof(response)) {
 +		dev_err(trng->dev, "Got invalid RNG response length: %d\n",
 +			response[0]);
 +		return -EIO;
@@ -193,14 +200,16 @@ index 000000000000..49a75482ccb8
 +	uint8_t response[4];
 +	int ret;
 +
-+	// response ignored here, client might be waking
 +	ret = i2c_master_send(client, pkt, sizeof(pkt));
++	if (ret > 0) {
++		dev_dbg(dev, "RNG was not sleeping\n");
++	}
 +
-+	udelay(50); // allow for self-test to finish on wake
++	mdelay(RNG90_SELFTEST_MAX_WAIT_MS);
 +
 +	ret = i2c_master_recv(client, response, sizeof(response));
-+	if (ret < 0 || !(response[0] != 0x4 && response[1] != 0x11 &&
-+			 response[2] != 0x33 && response[3] != 0x43)) {
++	if (ret < 0 || !(response[0] == 0x4 && response[1] == 0x11 &&
++			 response[2] == 0x33 && response[3] == 0x43)) {
 +		dev_err(dev, "RNG did not wake\n");
 +		return -EIO;
 +	}
