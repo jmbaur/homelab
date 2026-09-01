@@ -84,6 +84,11 @@
         settings.paths.cam.source = "rpiCamera";
       };
 
+      # TODO(jared): mediamtx fails to parse YAML documents created with pkgs.formats.yaml_1_2, just use JSON.
+      environment.etc."mediamtx.yaml".source = lib.mkForce (
+        (pkgs.formats.json { }).generate "mediamtx.yaml" config.services.mediamtx.settings
+      );
+
       # needed by libcamera/mediamtx-rpicamera
       services.udev.extraRules = ''
         SUBSYSTEM=="dma_heap", GROUP="video", MODE="0660"
