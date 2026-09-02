@@ -1,4 +1,4 @@
-From c33f951bffdfc45f5b0edeb1183c7ce49451a238 Mon Sep 17 00:00:00 2001
+From eb6c8ed8f0744a7f04f6166608f4e2a1fd1692c3 Mon Sep 17 00:00:00 2001
 From: Jared Baur <jaredbaur@fastmail.com>
 Date: Sat, 29 Aug 2026 23:22:46 -0700
 Subject: [PATCH] char: hw_random: add RNG90 driver
@@ -6,8 +6,8 @@ Subject: [PATCH] char: hw_random: add RNG90 driver
 ---
  drivers/char/hw_random/Kconfig  |   5 +
  drivers/char/hw_random/Makefile |   1 +
- drivers/char/hw_random/rng90.c  | 203 ++++++++++++++++++++++++++++++++
- 3 files changed, 209 insertions(+)
+ drivers/char/hw_random/rng90.c  | 200 ++++++++++++++++++++++++++++++++
+ 3 files changed, 206 insertions(+)
  create mode 100644 drivers/char/hw_random/rng90.c
 
 diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
@@ -39,10 +39,10 @@ index 95b5adb49560..11073ec32d1a 100644
  obj-$(CONFIG_HW_RANDOM_XILINX) += xilinx-trng.o
 diff --git a/drivers/char/hw_random/rng90.c b/drivers/char/hw_random/rng90.c
 new file mode 100644
-index 000000000000..0bdf5b14342e
+index 000000000000..671afda1341b
 --- /dev/null
 +++ b/drivers/char/hw_random/rng90.c
-@@ -0,0 +1,203 @@
+@@ -0,0 +1,200 @@
 +#include <linux/delay.h>
 +#include <linux/hw_random.h>
 +#include <linux/i2c.h>
@@ -127,16 +127,13 @@ index 000000000000..0bdf5b14342e
 +		return ret;
 +	}
 +
-+	mdelay(RNG90_RANDOM_MAX_WAIT_MS);
++	msleep(RNG90_RANDOM_MAX_WAIT_MS);
 +
 +	ret = i2c_master_recv(trng->client, response, sizeof(response));
 +	if (ret < 0) {
 +		dev_err(trng->dev, "Random command recv failed: %d\n", ret);
 +		return ret;
 +	}
-+
-+	print_hex_dump(KERN_DEBUG, "rng90 i2c recv: ", DUMP_PREFIX_NONE, 16, 1,
-+		       response, sizeof(response), false);
 +
 +	// response[0]: count
 +	// <32 bytes of random data>
@@ -205,7 +202,7 @@ index 000000000000..0bdf5b14342e
 +		dev_dbg(dev, "RNG was not sleeping\n");
 +	}
 +
-+	mdelay(RNG90_SELFTEST_MAX_WAIT_MS);
++	msleep(RNG90_SELFTEST_MAX_WAIT_MS);
 +
 +	ret = i2c_master_recv(client, response, sizeof(response));
 +	if (ret < 0 || !(response[0] == 0x4 && response[1] == 0x11 &&
