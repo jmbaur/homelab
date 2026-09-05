@@ -10,7 +10,7 @@
     {
       nixpkgs.hostPlatform = "aarch64-linux";
 
-      boot.kernelPackages = pkgs.linuxPackages_testing;
+      boot.kernelPackages = pkgs.linuxPackages_7_2;
 
       boot.initrd.availableKernelModules = [
         "dwmac_rk"
