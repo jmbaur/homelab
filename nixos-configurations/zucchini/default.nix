@@ -11,6 +11,12 @@
       nixpkgs.hostPlatform = "aarch64-linux";
 
       boot.kernelPackages = pkgs.linuxPackages_7_2;
+      boot.kernelPatches = [
+        {
+          name = baseNameOf ./0001-add-ov13855-sensor-driver.patch;
+          patch = ./0001-add-ov13855-sensor-driver.patch;
+        }
+      ];
 
       boot.initrd.availableKernelModules = [
         "dwmac_rk"
@@ -37,6 +43,10 @@
               };
             '';
           }
+          {
+            name = baseNameOf ./rk3588-ov13855-c3.dtso;
+            dtsFile = ./rk3588-ov13855-c3.dtso;
+          }
         ];
       };
 
@@ -57,8 +67,15 @@
       };
 
       environment.systemPackages = [
-        pkgs.uboot-env-tools
+        pkgs.ffmpeg-headless
+        pkgs.gpio-utils
+        pkgs.i2c-tools
+        pkgs.libcamera
+        pkgs.libgpiod
+        pkgs.mediamtx
         pkgs.mtdutils
+        pkgs.uboot-env-tools
+        pkgs.v4l-utils
         (pkgs.writeShellScriptBin "update-firmware" ''
           ${lib.getExe' pkgs.mtdutils "flashcp"} \
             --verbose \
@@ -79,7 +96,6 @@
     {
       custom.basicNetwork.enable = true;
       custom.normalUser.enable = true;
-      custom.dev.enable = true;
       custom.recovery.targetDisk = "/dev/disk/by-path/platform-a41000000.pcie-pci-0004:41:00.0-nvme-1";
     }
   ];
