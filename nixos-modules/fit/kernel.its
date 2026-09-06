@@ -1,0 +1,62 @@
+/dts-v1/;
+
+/ {
+	description = "@description@";
+	#address-cells = <1>;
+
+	images {
+		kernel {
+			description = "kernel";
+			data = /incbin/("./kernel.lzma");
+			type = "kernel";
+			arch = "@arch@";
+			os = "linux";
+			compression = "lzma";
+			load = <@loadAddress@>;
+			entry = <@loadAddress@>;
+			hash {
+				algo = "crc32";
+			};
+		};
+
+		fdt {
+			description = "dtb";
+			data = /incbin/("./dtb");
+			type = "flat_dt";
+			arch = "@arch@";
+			compression = "none";
+			hash {
+				algo = "crc32";
+			};
+		};
+
+		initrd {
+			description = "initrd";
+			data = /incbin/("initrd");
+			type = "ramdisk";
+			arch = "@arch@";
+			os = "linux";
+			compression = "none";
+			hash {
+				algo = "crc32";
+			};
+		};
+	};
+
+	configurations {
+		default = "boot";
+
+		boot {
+			description = "@description@";
+			kernel = "kernel";
+			fdt = "fdt";
+			ramdisk = "initrd";
+
+			signature {
+				algo = "crc32";
+				key-name-hint = "dev";
+				sign-images = "kernel", "fdt", "initrd";
+			};
+		};
+	};
+};
