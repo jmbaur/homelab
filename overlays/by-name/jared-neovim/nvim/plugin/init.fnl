@@ -4,6 +4,21 @@
                              :match_str vim.env.TERM)
                           nil))
 
+(fn set-grepprg-rg []
+  (if (vim.fn.executable :rg)
+      (set vim.opt.grepprg
+           (string.format "rg --vimgrep %s"
+                          (case [(vim.opt.ignorecase:get)
+                                 (vim.opt.smartcase:get)]
+                            [true true] "-Si "
+                            [false true] "-S "
+                            [true false] "-i "
+                            [_ _] "")))))
+
+(vim.api.nvim_create_autocmd [:OptionSet]
+                             {:pattern [:ignorecase :smartcase]
+                              :callback (lambda [_] (set-grepprg-rg))})
+
 (vim.api.nvim_create_autocmd [:BufRead :BufNewFile]
                              {:pattern [:*.rdl]
                               :callback (lambda []
@@ -67,6 +82,8 @@
 (set vim.opt.virtualedit :block)
 (set vim.opt.wildoptions (table.concat [:pum :fuzzy] ","))
 (set vim.opt.wrap false)
+
+(set-grepprg-rg)
 
 ((. (require :modus-themes) :setup) {:styles {:comments {:italic false}
                                               :keywords {:italic false}}})
