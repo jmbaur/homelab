@@ -66,16 +66,21 @@
         };
       };
 
+      hardware.graphics.enable = true;
+
       environment.systemPackages = [
         pkgs.ffmpeg-headless
         pkgs.gpio-utils
         pkgs.i2c-tools
-        pkgs.libcamera
         pkgs.libgpiod
         pkgs.mediamtx
         pkgs.mtdutils
         pkgs.uboot-env-tools
         pkgs.v4l-utils
+        (pkgs.libcamera.overrideAttrs (old: {
+          nativeBuildInputs = old.nativeBuildInputs ++ [ pkgs.pkgsBuildHost.addDriverRunpath ];
+          patches = (old.patches or [ ]) ++ [ ./rockchip-cif.patch ];
+        }))
         (pkgs.writeShellScriptBin "update-firmware" ''
           ${lib.getExe' pkgs.mtdutils "flashcp"} \
             --verbose \
