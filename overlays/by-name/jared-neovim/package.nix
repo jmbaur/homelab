@@ -26,7 +26,7 @@
   tofu-ls,
   tree-sitter,
   ttags,
-  typescript-go,
+  typescript,
   vimPlugins,
   vimUtils,
   wrapNeovimUnstable,
@@ -75,7 +75,7 @@ wrapNeovimUnstable neovim-unwrapped {
         tofu-ls
         tree-sitter
         ttags
-        typescript-go
+        typescript
         zig_0_16
         zls_0_16
       ];
