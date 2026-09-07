@@ -59,6 +59,7 @@
         pwgen
         qemu
         rage
+        renameutils
         ripgrep
         rsbkb
         sd
