@@ -1,7 +1,7 @@
-From c7c2972eafab8758a882c5729fc67290cbf7ba9f Mon Sep 17 00:00:00 2001
+From b8eb74ae58010097fe5426c5f8ef8e4e5e954365 Mon Sep 17 00:00:00 2001
 From: Jared Baur <jaredbaur@fastmail.com>
 Date: Sat, 5 Sep 2026 16:07:57 -0700
-Subject: [PATCH] add ov13855 sensor driver
+Subject: [PATCH 6/6] add driver for ov13855 camera sensor
 
 ---
  drivers/media/i2c/Kconfig             |   11 +
@@ -17,7 +17,7 @@ Subject: [PATCH] add ov13855 sensor driver
  create mode 100644 include/uapi/linux/rk-video-format.h
 
 diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index 5d173e0ecf42..2331af974840 100644
+index 5d173e0ecf424..2331af9748404 100644
 --- a/drivers/media/i2c/Kconfig
 +++ b/drivers/media/i2c/Kconfig
 @@ -440,6 +440,17 @@ config VIDEO_OV08X40
@@ -39,7 +39,7 @@ index 5d173e0ecf42..2331af974840 100644
  	tristate "OmniVision OV13858 sensor support"
  	help
 diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-index e45359efe0e4..c90e9116bca0 100644
+index e45359efe0e41..c90e9116bca09 100644
 --- a/drivers/media/i2c/Makefile
 +++ b/drivers/media/i2c/Makefile
 @@ -91,6 +91,7 @@ obj-$(CONFIG_VIDEO_OV02C10) += ov02c10.o
@@ -52,7 +52,7 @@ index e45359efe0e4..c90e9116bca0 100644
  obj-$(CONFIG_VIDEO_OV2640) += ov2640.o
 diff --git a/drivers/media/i2c/otp_eeprom.h b/drivers/media/i2c/otp_eeprom.h
 new file mode 100644
-index 000000000000..d13007f4b8eb
+index 0000000000000..d13007f4b8ebf
 --- /dev/null
 +++ b/drivers/media/i2c/otp_eeprom.h
 @@ -0,0 +1,203 @@
@@ -261,7 +261,7 @@ index 000000000000..d13007f4b8eb
 +
 diff --git a/drivers/media/i2c/ov13855.c b/drivers/media/i2c/ov13855.c
 new file mode 100644
-index 000000000000..013c5c99e6c8
+index 0000000000000..013c5c99e6c8b
 --- /dev/null
 +++ b/drivers/media/i2c/ov13855.c
 @@ -0,0 +1,1915 @@
@@ -2182,7 +2182,7 @@ index 000000000000..013c5c99e6c8
 +MODULE_LICENSE("GPL v2");
 diff --git a/include/uapi/linux/rk-camera-module.h b/include/uapi/linux/rk-camera-module.h
 new file mode 100644
-index 000000000000..cb7580886fa3
+index 0000000000000..cb7580886fa35
 --- /dev/null
 +++ b/include/uapi/linux/rk-camera-module.h
 @@ -0,0 +1,1216 @@
@@ -3404,7 +3404,7 @@ index 000000000000..cb7580886fa3
 +#endif /* _UAPI_RKMODULE_CAMERA_H */
 diff --git a/include/uapi/linux/rk-video-format.h b/include/uapi/linux/rk-video-format.h
 new file mode 100644
-index 000000000000..7fcfef805f0a
+index 0000000000000..7fcfef805f0a0
 --- /dev/null
 +++ b/include/uapi/linux/rk-video-format.h
 @@ -0,0 +1,45 @@

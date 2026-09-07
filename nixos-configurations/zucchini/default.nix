@@ -11,12 +11,24 @@
       nixpkgs.hostPlatform = "aarch64-linux";
 
       boot.kernelPackages = pkgs.linuxPackages_7_2;
-      boot.kernelPatches = [
-        {
-          name = baseNameOf ./0001-add-ov13855-sensor-driver.patch;
-          patch = ./0001-add-ov13855-sensor-driver.patch;
-        }
-      ];
+      boot.kernelPatches =
+        lib.mapAttrsToList
+          (
+            name:
+            lib.const {
+              name = lib.removeSuffix ".patch" name;
+              patch = ./${name};
+            }
+          )
+          (
+            lib.filterAttrs (
+              name: entryType:
+              entryType == "regular"
+              && lib.hasSuffix ".patch" name
+              && name != "0005-media-rkisp2-Add-statistics-capture-video-node.patch"
+              && name != "rockchip-cif.patch"
+            ) (lib.readDir ./.)
+          );
 
       boot.initrd.availableKernelModules = [
         "dwmac_rk"
