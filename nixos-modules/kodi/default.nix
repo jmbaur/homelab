@@ -91,11 +91,11 @@ let
           }:
           buildKodiAddon rec {
             pname = "plugin.video.mlbtv";
-            version = "2025.7.18+matrix.1";
+            version = "2026.4.9+matrix.1";
             namespace = pname;
             src = fetchzip {
               url = "https://mirrors.kodi.tv/addons/${lib.toLower rel}/plugin.video.mlbtv/plugin.video.mlbtv-${version}.zip";
-              hash = "sha256-VuTlUr5jiyhx5VAkaCjA85zpYsyLT7BHGjR6gs3emGc=";
+              hash = "sha256-8BKDajtHI7p087aAZryc0H/SF+81+riVtdhv5VhzYUM=";
             };
             propagatedBuildInputs = [ requests ];
           }
