@@ -7,6 +7,8 @@
 {
   config = lib.mkMerge [
     {
+      nixpkgs.config.allowUnfree = true;
+
       home.packages = with pkgs; [
         age-plugin-yubikey
         ansifilter
@@ -14,6 +16,7 @@
         awscli2
         bat
         carapace
+        claude-code
         comma
         curl
         difftastic
