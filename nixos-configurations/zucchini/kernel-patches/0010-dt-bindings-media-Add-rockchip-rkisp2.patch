@@ -1,7 +1,7 @@
-From 0282b6b4f2094813edf33760365af4bf0782f4b7 Mon Sep 17 00:00:00 2001
+From fb296d379eb24b70637b3de8ccb4a0e71a502430 Mon Sep 17 00:00:00 2001
 From: Paul Elder <paul.elder@ideasonboard.com>
-Date: Mon, 24 Aug 2026 18:03:58 +0900
-Subject: [PATCH 1/6] media: dt-bindings: Add rockchip rkisp2 bindings
+Date: Fri, 24 Apr 2026 17:41:09 +0900
+Subject: [PATCH] dt-bindings: media: Add rockchip rkisp2
 
 Add documentation for the Rockchip rkisp2 bindings. This is meant to
 support multiple versions of Rockchip ISPs going forward, including the
@@ -9,6 +9,12 @@ support multiple versions of Rockchip ISPs going forward, including the
 for the RK3588, which is a 3.0.
 
 Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
+
+---
+Changes in v3:
+- reorder patches
+
+No change in v2
 ---
  .../bindings/media/rockchip-isp2.yaml         | 125 ++++++++++++++++++
  1 file changed, 125 insertions(+)
@@ -16,11 +22,11 @@ Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
 
 diff --git a/Documentation/devicetree/bindings/media/rockchip-isp2.yaml b/Documentation/devicetree/bindings/media/rockchip-isp2.yaml
 new file mode 100644
-index 0000000000000..3cc7eda4d3760
+index 000000000..b85c28e4d
 --- /dev/null
 +++ b/Documentation/devicetree/bindings/media/rockchip-isp2.yaml
 @@ -0,0 +1,125 @@
-+# SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
 +%YAML 1.2
 +---
 +$id: http://devicetree.org/schemas/media/rockchip-isp2.yaml#
@@ -145,6 +151,3 @@ index 0000000000000..3cc7eda4d3760
 +            iommus = <&isp0_mmu>;
 +        };
 +    };
--- 
-2.55.0
-

@@ -1,7 +1,7 @@
-From 9779854e04d407590062174ec796a374e6531af2 Mon Sep 17 00:00:00 2001
+From 631cf9296b6038e4a72d32ceb17769817aa2cacf Mon Sep 17 00:00:00 2001
 From: Paul Elder <paul.elder@ideasonboard.com>
-Date: Mon, 24 Aug 2026 18:04:02 +0900
-Subject: [PATCH 5/6] media: rkisp2: Add statistics capture video node
+Date: Fri, 6 Mar 2026 17:57:19 +0900
+Subject: [PATCH] media: rkisp2: Add statistics capture video node
 
 Implement support for getting statistics out of the ISP by dequeueing
 statistics buffers from rkisp2.
@@ -17,7 +17,27 @@ Support for the following statistics engines is added:
 
 Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
 ---
- .../media/v4l/metafmt-rkisp2.rst              |  24 +-
+
+I've kept the debug counters that helped me debug interrupts for the
+stats engines.
+
+---
+Changes in v3:
+- add padding to uapi structs
+- fix metafmt documentation
+
+Changes in v2:
+- redesign stats accumulation
+  - rfc/v1 checked imsc at v_start to see what stats we expect and send
+    them to userspace only after we receive all of them (or at next
+    v_start if that comes first)
+    - stats interrupt*s* come between v_start and input formatter
+  - v2 we just send whatever stats came at end-of-frame time
+    - this is guaranteed to be after all stats interrupts have come
+- fix memops
+- use extensible stats
+---
+ .../media/v4l/metafmt-rkisp2.rst              |  48 +-
  .../media/platform/rockchip/rkisp2/Makefile   |   3 +-
  .../platform/rockchip/rkisp2/rkisp2-common.h  |  56 ++
  .../platform/rockchip/rkisp2/rkisp2-debug.c   |  14 +
@@ -26,15 +46,15 @@ Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
  .../platform/rockchip/rkisp2/rkisp2-params.c  | 238 ++++++++
  .../rockchip/rkisp2/rkisp2-regs-v2x.h         |  39 +-
  .../rockchip/rkisp2/rkisp2-regs-v3x.h         |  14 +
- .../platform/rockchip/rkisp2/rkisp2-stats.c   | 508 ++++++++++++++++++
+ .../platform/rockchip/rkisp2/rkisp2-stats.c   | 509 ++++++++++++++++++
  drivers/media/v4l2-core/v4l2-ioctl.c          |   1 +
- include/uapi/linux/rkisp2-config.h            | 244 ++++++++-
+ .../uapi/linux/media/rockchip/rkisp2-config.h | 264 ++++++++-
  include/uapi/linux/videodev2.h                |   1 +
- 13 files changed, 1151 insertions(+), 6 deletions(-)
+ 13 files changed, 1196 insertions(+), 6 deletions(-)
  create mode 100644 drivers/media/platform/rockchip/rkisp2/rkisp2-stats.c
 
 diff --git a/Documentation/userspace-api/media/v4l/metafmt-rkisp2.rst b/Documentation/userspace-api/media/v4l/metafmt-rkisp2.rst
-index e0ca6cbed6429..ab2e020071d99 100644
+index f80286dd5..fcd009446 100644
 --- a/Documentation/userspace-api/media/v4l/metafmt-rkisp2.rst
 +++ b/Documentation/userspace-api/media/v4l/metafmt-rkisp2.rst
 @@ -1,10 +1,11 @@
@@ -52,7 +72,7 @@ index e0ca6cbed6429..ab2e020071d99 100644
  
  Configuration Parameters
  ========================
-@@ -64,6 +65,23 @@ first member and userspace must populate the type member with a value from
+@@ -64,6 +65,47 @@ first member and userspace must populate the type member with a value from
  
  	params->data_size += sizeof(struct rkisp2_params_bls);
  
@@ -62,22 +82,46 @@ index e0ca6cbed6429..ab2e020071d99 100644
 +The ISP device collects different statistics over an input bayer frame. Those
 +statistics can be obtained by userspace from the
 +:ref:`rkisp2_stats <rkisp2_stats>` metadata capture video node, using
-+the :c:type:`v4l2_meta_format` interface. The buffer contains a single instance
-+of the C structure :c:type:`rkisp2_stats_buffer` defined in
-+``rkisp2-config.h``, so the structure can be obtained from the buffer by:
++the :c:type:`v4l2_meta_format` interface. Rather than a single struct containing
++sub-structs for each statistics area of the ISP, statistics for the RkISP2 use
++the v4l2-isp statistics system, through which groups of statistics are defined
++as distinct members or "blocks" which may be added to the data member of type
++:c:type:`v4l2_isp_buffer`. Userspace is responsible for parsing the buffer and
++extracting the blocks of statistics. Each block-specific struct embeds
++:c:type:`v4l2_isp_block_header` as its first member and userspace must
++interpret the type member with a value from :c:type:`rkisp2_stats_block_type`.
 +
 +.. code-block:: C
 +
-+	struct rkisp2_stats_buffer *stats =
-+		(struct rkisp2_stats_buffer *)buf;
++        const struct v4l2_isp_buffer *stats =
++                (struct v4l2_isp_buffer *)buf;
++        size_t block_offset = 0;
 +
-+For details of the statistics see :c:type:`rkisp2_stats_buffer`.
++        while (block_offset < stats->data_size) {
++                const struct v4l2_isp_stats_block_header *block =
++                        (void*)(stats->data + block_offset);
++
++                block_offset += block->size;
++
++                switch (block->type) {
++                case RKISP2_STATS_BLOCK_AE_LITE:
++                        const struct rkisp2_stats_ae_lite *ae_lite =
++                                (struct rkisp2_stats_ae_lite *)block;
++                        for (unsigned int i = 0; i < RKISP2_ISP_AE_MEAN_MAX_LITE; i++)
++                                printf("ae_lite.exp_mean_r[%u] = 0x%08x\n",
++                                        i, ae_lite.exp_mean_r[%i]);
++                        break;
++                default:
++                        printf("Unknown block type 0x%04x", block->type);
++                        break;
++                }
++        }
 +
  rkisp2 uAPI data types
  ======================
  
 diff --git a/drivers/media/platform/rockchip/rkisp2/Makefile b/drivers/media/platform/rockchip/rkisp2/Makefile
-index 2d41b4ab8f7cc..1f92a8d45cfeb 100644
+index 2d41b4ab8..1f92a8d45 100644
 --- a/drivers/media/platform/rockchip/rkisp2/Makefile
 +++ b/drivers/media/platform/rockchip/rkisp2/Makefile
 @@ -6,7 +6,8 @@ rockchip-isp2-y := rkisp2-capture.o \
@@ -91,7 +135,7 @@ index 2d41b4ab8f7cc..1f92a8d45cfeb 100644
  rockchip-isp2-$(CONFIG_DEBUG_FS) += rkisp2-debug.o
  
 diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-common.h b/drivers/media/platform/rockchip/rkisp2/rkisp2-common.h
-index 0479a24fa7f98..7b9eb03fa50ea 100644
+index 7911e81fc..7fcf99179 100644
 --- a/drivers/media/platform/rockchip/rkisp2/rkisp2-common.h
 +++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-common.h
 @@ -105,6 +105,7 @@ enum rkisp2_isp_pad {
@@ -151,7 +195,7 @@ index 0479a24fa7f98..7b9eb03fa50ea 100644
  /*
   * struct rkisp2_params - ISP input parameters device
   *
-@@ -384,9 +427,16 @@ struct rkisp2_debug {
+@@ -385,9 +428,16 @@ struct rkisp2_debug {
  	unsigned long irq_delay;
  	unsigned long mipi_error;
  	unsigned long stats_error;
@@ -168,7 +212,7 @@ index 0479a24fa7f98..7b9eb03fa50ea 100644
  };
  
  /*
-@@ -408,6 +458,7 @@ struct rkisp2_debug {
+@@ -409,6 +459,7 @@ struct rkisp2_debug {
   * @capture_devs:  capture devices
   * @dmarx:	   ISP memory read device
   * @params:	   ISP parameters metadata output device
@@ -176,7 +220,7 @@ index 0479a24fa7f98..7b9eb03fa50ea 100644
   * @pipe:	   media pipeline
   * @stream_lock:   serializes {start/stop}_streaming callbacks between the capture devices.
   * @debug:	   debug params to be exposed on debugfs
-@@ -431,6 +482,7 @@ struct rkisp2_device {
+@@ -432,6 +483,7 @@ struct rkisp2_device {
  	struct rkisp2_capture capture_devs[2];
  	struct rkisp2_dmarx dmarx;
  	struct rkisp2_params params;
@@ -184,15 +228,15 @@ index 0479a24fa7f98..7b9eb03fa50ea 100644
  	struct media_pipeline pipe;
  	struct mutex stream_lock; /* serialize {start/stop}_streaming cb between capture devices */
  	struct rkisp2_debug debug;
-@@ -521,6 +573,7 @@ irqreturn_t rkisp2_capture_isr(int irq, void *ctx);
+@@ -522,6 +574,7 @@ irqreturn_t rkisp2_capture_isr(int irq, void *ctx);
  irqreturn_t rkisp2_mipi_isr(int irq, void *ctx);
  void rkisp2_dmarx_isr(struct rkisp2_device *rkisp2, u32 status);
  void rkisp2_params_isr(struct rkisp2_params *params);
-+irqreturn_t rkisp2_stats_isr_eof(struct rkisp2_stats *);
++irqreturn_t rkisp2_stats_isr_eof(struct rkisp2_stats *stats);
  
  /* register/unregisters functions of the entities */
  int rkisp2_capture_devs_register(struct rkisp2_device *rkisp2);
-@@ -548,6 +601,9 @@ void rkisp2_resizer_pre_configure(struct rkisp2_device *rkisp2,
+@@ -549,6 +602,9 @@ void rkisp2_resizer_pre_configure(struct rkisp2_device *rkisp2,
  				  const struct v4l2_mbus_framefmt *sp_src_frm);
  void rkisp2_resizer_devs_init(struct rkisp2_device *rkisp2);
  
@@ -203,7 +247,7 @@ index 0479a24fa7f98..7b9eb03fa50ea 100644
  void rkisp2_debug_init(struct rkisp2_device *rkisp2);
  void rkisp2_debug_cleanup(struct rkisp2_device *rkisp2);
 diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-debug.c b/drivers/media/platform/rockchip/rkisp2/rkisp2-debug.c
-index 4f439bd9156b0..0788fc12269be 100644
+index 4f439bd91..0788fc122 100644
 --- a/drivers/media/platform/rockchip/rkisp2/rkisp2-debug.c
 +++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-debug.c
 @@ -191,6 +191,8 @@ void rkisp2_debug_init(struct rkisp2_device *rkisp2)
@@ -235,10 +279,10 @@ index 4f439bd9156b0..0788fc12269be 100644
  			    &rkisp2_debug_input_status_fops);
  
 diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-dev.c b/drivers/media/platform/rockchip/rkisp2/rkisp2-dev.c
-index 6fc0b60441214..1c98f3a3d155f 100644
+index a01e405c0..b369b361f 100644
 --- a/drivers/media/platform/rockchip/rkisp2/rkisp2-dev.c
 +++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-dev.c
-@@ -131,12 +131,21 @@ static int rkisp2_create_links(struct rkisp2_device *rkisp2)
+@@ -132,12 +132,21 @@ static int rkisp2_create_links(struct rkisp2_device *rkisp2)
  	if (ret)
  		return ret;
  
@@ -260,7 +304,7 @@ index 6fc0b60441214..1c98f3a3d155f 100644
  	rkisp2_params_unregister(rkisp2);
  	rkisp2_dmarx_unregister(rkisp2);
  	rkisp2_capture_devs_unregister(rkisp2);
-@@ -165,6 +174,10 @@ static int rkisp2_entities_register(struct rkisp2_device *rkisp2)
+@@ -166,6 +175,10 @@ static int rkisp2_entities_register(struct rkisp2_device *rkisp2)
  	if (ret)
  		goto error;
  
@@ -272,7 +316,7 @@ index 6fc0b60441214..1c98f3a3d155f 100644
  	if (ret)
  		goto error;
 diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-isp.c b/drivers/media/platform/rockchip/rkisp2/rkisp2-isp.c
-index 00336c5e99f3c..0833ffe57f39c 100644
+index 00336c5e9..0833ffe57 100644
 --- a/drivers/media/platform/rockchip/rkisp2/rkisp2-isp.c
 +++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-isp.c
 @@ -738,6 +738,7 @@ int rkisp2_isp_register(struct rkisp2_device *rkisp2)
@@ -292,7 +336,7 @@ index 00336c5e99f3c..0833ffe57f39c 100644
  
  	rkisp2_write(rkisp2, RKISP2_CIF_ISP_ICR, status);
 diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-params.c b/drivers/media/platform/rockchip/rkisp2/rkisp2-params.c
-index ea821a642c384..ebc48ae0d0f69 100644
+index 07f57f26c..1c04da421 100644
 --- a/drivers/media/platform/rockchip/rkisp2/rkisp2-params.c
 +++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-params.c
 @@ -34,6 +34,10 @@
@@ -358,7 +402,7 @@ index ea821a642c384..ebc48ae0d0f69 100644
  };
  
  static_assert(ARRAY_SIZE(rkisp2_params_handlers) ==
-@@ -549,6 +577,216 @@ static void rkisp2_params_crop_init(struct rkisp2_params *params)
+@@ -555,6 +583,216 @@ static void rkisp2_params_crop_init(struct rkisp2_params *params)
  	__rkisp2_params_crop(params, &arg, V4L2_ISP_PARAMS_FL_BLOCK_ENABLE);
  }
  
@@ -576,7 +620,7 @@ index ea821a642c384..ebc48ae0d0f69 100644
  				    struct rkisp2_params_buffer *buf,
  				    enum rkisp2_params_configure_priority prio)
 diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-regs-v2x.h b/drivers/media/platform/rockchip/rkisp2/rkisp2-regs-v2x.h
-index 883bdb7c2a611..26deacb0b63d7 100644
+index 883bdb7c2..4a0d342d1 100644
 --- a/drivers/media/platform/rockchip/rkisp2/rkisp2-regs-v2x.h
 +++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-regs-v2x.h
 @@ -1429,7 +1429,7 @@
@@ -625,13 +669,13 @@ index 883bdb7c2a611..26deacb0b63d7 100644
 +#define ISP_RAWHIST_BIG_WEIGHT_WND3(a)		(((a) & 0x3f) << 18)
 +#define ISP_RAWHIST_BIG_WEIGHT_WND4(a)		(((a) & 0x3f) << 24)
 +
-+#define ISP_RAWHIST_BIN_MASK 			GENMASK(27, 0)
++#define ISP_RAWHIST_BIN_MASK			GENMASK(27, 0)
 +
 +#define ISP_RAWHIST_RAM_OFFSET(a)		((a) & 0xff)
 +
  #endif /* _RKISP_REGS_V2X_H */
 diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-regs-v3x.h b/drivers/media/platform/rockchip/rkisp2/rkisp2-regs-v3x.h
-index d27d9a48887e0..5a478d7b35653 100644
+index d27d9a488..5a478d7b3 100644
 --- a/drivers/media/platform/rockchip/rkisp2/rkisp2-regs-v3x.h
 +++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-regs-v3x.h
 @@ -3359,6 +3359,7 @@
@@ -671,10 +715,10 @@ index d27d9a48887e0..5a478d7b35653 100644
  #define ISP32_RAWAWB_2DDR_PATH_ERR	BIT(29)
 diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-stats.c b/drivers/media/platform/rockchip/rkisp2/rkisp2-stats.c
 new file mode 100644
-index 0000000000000..597ef0fe90510
+index 000000000..7bbc1e25b
 --- /dev/null
 +++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-stats.c
-@@ -0,0 +1,508 @@
+@@ -0,0 +1,509 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
 +/*
 + * Rockchip ISP2 Driver - Stats subdevice
@@ -830,6 +874,7 @@ index 0000000000000..597ef0fe90510
 +static int rkisp2_stats_vb2_start_streaming(struct vb2_queue *vq, unsigned int count)
 +{
 +	struct rkisp2_stats *stats = vq->drv_priv;
++
 +	stats->icr = 0;
 +	stats->cur_buf = NULL;
 +	stats->awb_window_offset = 0;
@@ -1184,7 +1229,7 @@ index 0000000000000..597ef0fe90510
 +	mutex_destroy(&node->vlock);
 +}
 diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index 470e5b84ed153..1b57764879910 100644
+index 470e5b84e..1b5776487 100644
 --- a/drivers/media/v4l2-core/v4l2-ioctl.c
 +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
 @@ -1468,6 +1468,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
@@ -1195,10 +1240,10 @@ index 470e5b84ed153..1b57764879910 100644
  	case V4L2_META_FMT_C3ISP_PARAMS:	descr = "Amlogic C3 ISP Parameters"; break;
  	case V4L2_META_FMT_C3ISP_STATS:		descr = "Amlogic C3 ISP Statistics"; break;
  	case V4L2_META_FMT_MALI_C55_PARAMS:	descr = "ARM Mali-C55 ISP Parameters"; break;
-diff --git a/include/uapi/linux/rkisp2-config.h b/include/uapi/linux/rkisp2-config.h
-index 5f8c8a555003d..d798cae1076e2 100644
---- a/include/uapi/linux/rkisp2-config.h
-+++ b/include/uapi/linux/rkisp2-config.h
+diff --git a/include/uapi/linux/media/rockchip/rkisp2-config.h b/include/uapi/linux/media/rockchip/rkisp2-config.h
+index c43053797..cccd6278e 100644
+--- a/include/uapi/linux/media/rockchip/rkisp2-config.h
++++ b/include/uapi/linux/media/rockchip/rkisp2-config.h
 @@ -20,6 +20,17 @@
  #define RKISP2_ISP_LSC_SAMPLES_MAX		17
  #define RKISP2_ISP_LSC_SECTORS_TBL_SIZE_MAX	16
@@ -1217,7 +1262,7 @@ index 5f8c8a555003d..d798cae1076e2 100644
  /**
   * enum rkisp2_isp_version - ISP variants
   *
-@@ -60,6 +71,109 @@ enum rkisp2_isp_crop_en {
+@@ -60,6 +71,115 @@ enum rkisp2_isp_crop_en {
  	RKISP2_ISP_CROP_ENABLE_SELF = 0x2,
  };
  
@@ -1270,6 +1315,7 @@ index 5f8c8a555003d..d798cae1076e2 100644
 + * @exp_mean_g: Mean luminance value of block xy for g channel
 + * @exp_mean_b: Mean luminance value of block xy for b channel
 + * @done: This set to nonzero when the stats are ready
++ * @reserved: padding
 + *
 + * Image is divided into 5x5 blocks on lite and 15x15 blocks on big.
 + */
@@ -1279,6 +1325,7 @@ index 5f8c8a555003d..d798cae1076e2 100644
 +	__u16 exp_mean_g[RKISP2_ISP_AE_MEAN_MAX_LITE];
 +	__u16 exp_mean_b[RKISP2_ISP_AE_MEAN_MAX_LITE];
 +	__u8 done;
++	__u8 reserved;
 +};
 +
 +/**
@@ -1289,6 +1336,7 @@ index 5f8c8a555003d..d798cae1076e2 100644
 + *	       type. Bits 0-4 are the fractional part and bits 5-27 are the
 + *	       integer part.
 + * @done: This set to nonzero when the stats are ready
++ * @reserved: padding
 + *
 + * There are 256 bins, at least on 3.x.
 + */
@@ -1296,6 +1344,7 @@ index 5f8c8a555003d..d798cae1076e2 100644
 +	struct v4l2_isp_block_header header;
 +	__u32 hist_bins[RKISP2_ISP_HIST_BIN_N_MAX];
 +	__u8 done;
++	__u8 reserved[7];
 +};
 +
 +/**
@@ -1307,6 +1356,7 @@ index 5f8c8a555003d..d798cae1076e2 100644
 + * @counts_b: Counts of blue (18-bits)
 + * @counts_w: Counts of white point (10-bits)
 + * @done: This set to nonzero when the stats are ready
++ * @reserved: padding
 + *
 + * TODO Figure out what is being counted
 + */
@@ -1317,6 +1367,7 @@ index 5f8c8a555003d..d798cae1076e2 100644
 +	__u32 counts_b[RKISP2_ISP_AWB_COUNTS_SIZE];
 +	__u16 counts_w[RKISP2_ISP_AWB_COUNTS_SIZE];
 +	__u8 done;
++	__u8 reserved;
 +};
 +
 +#define RKISP2_STATS_MAX_SIZE					\
@@ -1327,7 +1378,7 @@ index 5f8c8a555003d..d798cae1076e2 100644
  /*---------- Parameters ------------*/
  
  /**
-@@ -72,6 +186,12 @@ enum rkisp2_isp_crop_en {
+@@ -72,6 +192,12 @@ enum rkisp2_isp_crop_en {
   * @RKISP2_PARAMS_BLOCK_GOC: Gamma out correction
   * @RKISP2_PARAMS_BLOCK_LSC: Lens shading correction
   * @RKISP2_PARAMS_BLOCK_CROP: Crop config
@@ -1340,7 +1391,7 @@ index 5f8c8a555003d..d798cae1076e2 100644
   */
  enum rkisp2_params_block_type {
  	RKISP2_PARAMS_BLOCK_BLS,
-@@ -81,6 +201,12 @@ enum rkisp2_params_block_type {
+@@ -81,6 +207,12 @@ enum rkisp2_params_block_type {
  	RKISP2_PARAMS_BLOCK_GOC,
  	RKISP2_PARAMS_BLOCK_LSC,
  	RKISP2_PARAMS_BLOCK_CROP,
@@ -1353,7 +1404,7 @@ index 5f8c8a555003d..d798cae1076e2 100644
  };
  
  /**
-@@ -141,6 +267,36 @@ struct rkisp2_isp_awb_gains {
+@@ -141,6 +273,36 @@ struct rkisp2_isp_awb_gains {
  	__u16 gb;
  };
  
@@ -1390,8 +1441,8 @@ index 5f8c8a555003d..d798cae1076e2 100644
  /**
   * struct rkisp2_params_bls - RkISP2 params BLS config
   *
-@@ -351,6 +507,88 @@ struct rkisp2_params_crop {
- 	struct rkisp2_isp_window sp_crop;
+@@ -369,6 +531,102 @@ struct rkisp2_params_crop {
+ 	__u8 reserved1[6];
  } __attribute__((aligned(8)));
  
 +/**
@@ -1404,12 +1455,16 @@ index 5f8c8a555003d..d798cae1076e2 100644
 + *
 + * @header: The RkISP2 parameters block header
 + * @window_num: 0 for 1x1, 1 for 5x5
++ * @reserved: padding
 + * @meas_window: Size of measurement window. First window for 5x5.
++ * @reserved1: padding
 + */
 +struct rkisp2_params_ae_lite {
 +	struct v4l2_isp_params_block_header header;
 +	__u8 window_num;
++	__u8 reserved;
 +	struct rkisp2_isp_window meas_window;
++	__u8 reserved1[6];
 +} __attribute__((aligned(8)));
 +
 +/**
@@ -1422,20 +1477,26 @@ index 5f8c8a555003d..d798cae1076e2 100644
 + * @data_sel: Data selection mode (from enum rkisp2_isp_histogram_data_sel)
 + * @mode: Histogram mode (from enum rkisp2_isp_histogram_mode)
 + * @stepsize: Predivider (count every <stepsize> pixel)
++ * @reserved: padding
 + * @waterline: Waterline for region statics
 + * @coeffs: Coefficients for raw2y formula
++ * @reserved1: padding
 + * @meas_window: Size of first measurement subwindow
 + * @weights: Weights
++ * @reserved2: padding
 + */
 +struct rkisp2_params_hist_lite {
 +	struct v4l2_isp_params_block_header header;
 +	__u8 data_sel;
 +	__u8 mode;
 +	__u8 stepsize;
++	__u8 reserved;
 +	__u16 waterline;
 +	struct rkisp2_isp_color_cc coeffs;
++	__u8 reserved1;
 +	struct rkisp2_isp_window meas_window;
 +	__u8 weights[RKISP2_ISP_HIST_WEIGHT_GRIDS_SIZE_LITE];
++	__u8 reserved2[5];
 +} __attribute__((aligned(8)));
 +
 +/**
@@ -1448,14 +1509,16 @@ index 5f8c8a555003d..d798cae1076e2 100644
 + */
 +struct rkisp2_params_hist_big {
 +	struct v4l2_isp_params_block_header header;
-+	__u8 window_num;
 +	__u8 data_sel;
 +	__u8 mode;
 +	__u8 stepsize;
++	__u8 window_num;
 +	__u16 waterline;
 +	struct rkisp2_isp_color_cc coeffs;
++	__u8 reserved1;
 +	struct rkisp2_isp_window meas_window;
 +	__u8 weights[RKISP2_ISP_HIST_WEIGHT_GRIDS_SIZE_BIG];
++	__u8 reserved2[5];
 +} __attribute__((aligned(8)));
 +
 +/**
@@ -1468,18 +1531,20 @@ index 5f8c8a555003d..d798cae1076e2 100644
 + * @meas_window: Size of first measurement subwindow (13 bits)
 + * @limits: Limits for white point detection [min, max] (8 bits)
 + * @weights: Weights (6-bits)
++ * @reserved: padding
 + */
 +struct rkisp2_params_awb_meas {
 +	struct v4l2_isp_params_block_header header;
 +	struct rkisp2_isp_window meas_window;
 +	struct rkisp2_isp_awb_color_quad limits[2];
 +	__u8 weights[RKISP2_ISP_AWB_COUNTS_SIZE];
++	__u8 reserved[7];
 +} __attribute__((aligned(8)));
 +
  #define RKISP2_PARAMS_MAX_SIZE					\
  	(sizeof(struct rkisp2_params_bls)			+\
  	sizeof(struct rkisp2_params_awb_gains)			+\
-@@ -358,6 +596,10 @@ struct rkisp2_params_crop {
+@@ -376,6 +634,10 @@ struct rkisp2_params_crop {
  	sizeof(struct rkisp2_params_ccm)			+\
  	sizeof(struct rkisp2_params_goc)			+\
  	sizeof(struct rkisp2_params_lsc)			+\
@@ -1492,7 +1557,7 @@ index 5f8c8a555003d..d798cae1076e2 100644
  
  #endif /* _UAPI_RKISP2_CONFIG_H */
 diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-index 1d418a752d895..399f4d73af157 100644
+index 1d418a752..399f4d73a 100644
 --- a/include/uapi/linux/videodev2.h
 +++ b/include/uapi/linux/videodev2.h
 @@ -878,6 +878,7 @@ struct v4l2_pix_format {
@@ -1503,6 +1568,3 @@ index 1d418a752d895..399f4d73af157 100644
  
  /* Vendor specific - used for C3_ISP */
  #define V4L2_META_FMT_C3ISP_PARAMS	v4l2_fourcc('C', '3', 'P', 'M') /* Amlogic C3 ISP Parameters */
--- 
-2.55.0
-

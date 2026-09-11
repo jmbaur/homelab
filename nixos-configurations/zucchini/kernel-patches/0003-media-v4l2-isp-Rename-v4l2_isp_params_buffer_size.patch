@@ -1,0 +1,110 @@
+From a5898cbc91cc32f682b5e4af6bd3e174e70282d4 Mon Sep 17 00:00:00 2001
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Date: Sat, 27 Jun 2026 15:42:00 +0200
+Subject: [PATCH] media: v4l2-isp: Rename v4l2_isp_params_buffer_size
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Rename v4l2_isp_params_buffer_size() to v4l2_isp_buffer_size() to
+support statistics.
+
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+---
+ .../platform/arm/mali-c55/mali-c55-params.c   | 12 +++++-----
+ include/media/v4l2-isp.h                      | 22 +++++++++++--------
+ 2 files changed, 19 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/media/platform/arm/mali-c55/mali-c55-params.c b/drivers/media/platform/arm/mali-c55/mali-c55-params.c
+index de0e9d898..dc483f032 100644
+--- a/drivers/media/platform/arm/mali-c55/mali-c55-params.c
++++ b/drivers/media/platform/arm/mali-c55/mali-c55-params.c
+@@ -487,7 +487,7 @@ static int mali_c55_params_g_fmt_meta_out(struct file *file, void *fh,
+ {
+ 	static const struct v4l2_meta_format mfmt = {
+ 		.dataformat = V4L2_META_FMT_MALI_C55_PARAMS,
+-		.buffersize = v4l2_isp_params_buffer_size(MALI_C55_PARAMS_MAX_SIZE),
++		.buffersize = v4l2_isp_buffer_size(MALI_C55_PARAMS_MAX_SIZE),
+ 	};
+ 
+ 	f->fmt.meta = mfmt;
+@@ -540,13 +540,13 @@ mali_c55_params_queue_setup(struct vb2_queue *q, unsigned int *num_buffers,
+ 	if (*num_planes && *num_planes > 1)
+ 		return -EINVAL;
+ 
+-	if (sizes[0] && sizes[0] < v4l2_isp_params_buffer_size(MALI_C55_PARAMS_MAX_SIZE))
++	if (sizes[0] && sizes[0] < v4l2_isp_buffer_size(MALI_C55_PARAMS_MAX_SIZE))
+ 		return -EINVAL;
+ 
+ 	*num_planes = 1;
+ 
+ 	if (!sizes[0])
+-		sizes[0] = v4l2_isp_params_buffer_size(MALI_C55_PARAMS_MAX_SIZE);
++		sizes[0] = v4l2_isp_buffer_size(MALI_C55_PARAMS_MAX_SIZE);
+ 
+ 	return 0;
+ }
+@@ -556,7 +556,7 @@ static int mali_c55_params_buf_init(struct vb2_buffer *vb)
+ 	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
+ 	struct mali_c55_params_buf *buf = to_mali_c55_params_buf(vbuf);
+ 
+-	buf->config = kvmalloc(v4l2_isp_params_buffer_size(MALI_C55_PARAMS_MAX_SIZE),
++	buf->config = kvmalloc(v4l2_isp_buffer_size(MALI_C55_PARAMS_MAX_SIZE),
+ 			       GFP_KERNEL);
+ 	if (!buf->config)
+ 		return -ENOMEM;
+@@ -583,7 +583,7 @@ static int mali_c55_params_buf_prepare(struct vb2_buffer *vb)
+ 	int ret;
+ 
+ 	ret = v4l2_isp_params_validate_buffer_size(mali_c55->dev, vb,
+-			v4l2_isp_params_buffer_size(MALI_C55_PARAMS_MAX_SIZE));
++			v4l2_isp_buffer_size(MALI_C55_PARAMS_MAX_SIZE));
+ 	if (ret)
+ 		return ret;
+ 
+@@ -593,7 +593,7 @@ static int mali_c55_params_buf_prepare(struct vb2_buffer *vb)
+ 	 * changed to the buffer content whilst the driver processes it.
+ 	 */
+ 
+-	memcpy(buf->config, config, v4l2_isp_params_buffer_size(MALI_C55_PARAMS_MAX_SIZE));
++	memcpy(buf->config, config, v4l2_isp_buffer_size(MALI_C55_PARAMS_MAX_SIZE));
+ 
+ 	return v4l2_isp_params_validate_buffer(mali_c55->dev, vb, buf->config,
+ 					       mali_c55_params_block_types_info,
+diff --git a/include/media/v4l2-isp.h b/include/media/v4l2-isp.h
+index f3a6d0edc..d70ed6b43 100644
+--- a/include/media/v4l2-isp.h
++++ b/include/media/v4l2-isp.h
+@@ -15,17 +15,21 @@ struct device;
+ struct vb2_buffer;
+ 
+ /**
+- * v4l2_isp_params_buffer_size - Calculate size of v4l2_isp_params_buffer
+- * @max_params_size: The total size of the ISP configuration blocks
++ * v4l2_isp_buffer_size - Calculate size of v4l2_isp_buffer
++ * @max_size: The total size of the ISP configuration or statistics blocks
++ *
++ * Users of v4l2-isp will have differing sized data arrays for parameters and
++ * statistics, depending on their specific blocks. Drivers need to be able to
++ * calculate the appropriate size of the buffer to accommodate all ISP blocks
++ * supported by the platform. This macro provides a convenient tool for the
++ * calculation.
++ *
++ * The intended users of this function are drivers initializing the size
++ * of their metadata (parameters and statistics) buffers.
+  *
+- * Users of the v4l2 extensible parameters will have differing sized data arrays
+- * depending on their specific parameter buffers. Drivers and userspace will
+- * need to be able to calculate the appropriate size of the struct to
+- * accommodate all ISP configuration blocks provided by the platform.
+- * This macro provides a convenient tool for the calculation.
+  */
+-#define v4l2_isp_params_buffer_size(max_params_size) \
+-	(offsetof(struct v4l2_isp_params_buffer, data) + (max_params_size))
++#define v4l2_isp_buffer_size(max_size)			\
++	(offsetof(struct v4l2_isp_buffer, data) + (max_size))
+ 
+ /**
+  * v4l2_isp_params_validate_buffer_size - Validate a V4L2 ISP buffer sizes
