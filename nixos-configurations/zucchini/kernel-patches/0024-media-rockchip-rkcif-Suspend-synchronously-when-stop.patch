@@ -1,0 +1,49 @@
+From b9a54cf809d3e96685fe2d7aeac9e0d17609eb17 Mon Sep 17 00:00:00 2001
+From: Jared Baur <jaredbaur@fastmail.com>
+Date: Mon, 12 Oct 2026 13:01:41 -0700
+Subject: [PATCH] media: rockchip: rkcif: Suspend synchronously when stopping
+
+The runtime suspend resets the VICAP, and the reset covers its IOMMU as
+well. Stopping the stream queues the suspend asynchronously, so it can
+run while the stream's buffers are being released, which unmaps them
+through that IOMMU. When the two overlap the bus locks up: on an RK3588
+the board hangs silently, every CPU at once, until the watchdog resets
+it. Killing a libcamera application mid-stream triggered it within a
+handful of attempts.
+
+Suspend synchronously, so the reset is finished before the buffers go.
+The same applies to the error path of start_streaming.
+---
+ drivers/media/platform/rockchip/rkcif/rkcif-stream.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/platform/rockchip/rkcif/rkcif-stream.c b/drivers/media/platform/rockchip/rkcif/rkcif-stream.c
+index 5410bc7fe..baa1d7490 100644
+--- a/drivers/media/platform/rockchip/rkcif/rkcif-stream.c
++++ b/drivers/media/platform/rockchip/rkcif/rkcif-stream.c
+@@ -293,7 +293,7 @@ static int rkcif_stream_start_streaming(struct vb2_queue *queue,
+ 	if (stream->stop_streaming)
+ 		stream->stop_streaming(stream);
+ err_runtime_put:
+-	pm_runtime_put(rkcif->dev);
++	pm_runtime_put_sync(rkcif->dev);
+ err_pipeline_stop:
+ 	video_device_pipeline_stop(&stream->vdev);
+ err_out:
+@@ -325,7 +325,12 @@ static void rkcif_stream_stop_streaming(struct vb2_queue *queue)
+ 	v4l2_subdev_disable_streams(&stream->interface->sd, RKCIF_IF_PAD_SRC,
+ 				    mask);
+ 
+-	pm_runtime_put(rkcif->dev);
++	/*
++	 * The runtime suspend resets the VICAP, IOMMU included. Let it finish
++	 * before the buffers are released, as unmapping them goes through the
++	 * IOMMU, and an access during the reset locks up the bus.
++	 */
++	pm_runtime_put_sync(rkcif->dev);
+ 
+ 	rkcif_stream_return_all_buffers(stream, VB2_BUF_STATE_ERROR);
+ 
+-- 
+2.55.0
+

@@ -1,0 +1,105 @@
+From 3fbba5a61af5c2868d98d27e28fbbf17c464d3d2 Mon Sep 17 00:00:00 2001
+From: Jared Baur <jared@northwoodspace.io>
+Date: Thu, 10 Sep 2026 22:10:32 -0700
+Subject: [PATCH] ipa: rkisp2: data: Add starting-point tuning file for ov13855
+
+Add a tuning file for the OmniVision OV13855, as used on the camera
+module shipped with the Orange Pi 5.
+
+Without a matching tuning file the pipeline handler falls back to
+uncalibrated.yaml, which enables only BlackLevelSubtraction. That leaves
+the stream with no auto-exposure and no auto-white-balance, which is not
+usable for a live feed. This file enables Agc and Awb, and sets the
+sensor's black level.
+
+The colour correction matrix and lens shading correction are left out:
+both need captures from a real module, which can be produced with
+utils/tuning/rkisp2.py.
+---
+ src/ipa/rkisp2/data/meson.build  |  1 +
+ src/ipa/rkisp2/data/ov13855.yaml | 64 ++++++++++++++++++++++++++++++++
+ 2 files changed, 65 insertions(+)
+ create mode 100644 src/ipa/rkisp2/data/ov13855.yaml
+
+diff --git a/src/ipa/rkisp2/data/meson.build b/src/ipa/rkisp2/data/meson.build
+index f4dc569db..e25d9e623 100644
+--- a/src/ipa/rkisp2/data/meson.build
++++ b/src/ipa/rkisp2/data/meson.build
+@@ -3,6 +3,7 @@
+ conf_files = files([
+     'imx219.yaml',
+     'imx708.yaml',
++    'ov13855.yaml',
+     'uncalibrated.yaml',
+ ])
+ 
+diff --git a/src/ipa/rkisp2/data/ov13855.yaml b/src/ipa/rkisp2/data/ov13855.yaml
+new file mode 100644
+index 000000000..aa5cb0e01
+--- /dev/null
++++ b/src/ipa/rkisp2/data/ov13855.yaml
+@@ -0,0 +1,64 @@
++# SPDX-License-Identifier: CC0-1.0
++#
++# Starting-point tuning for the OmniVision OV13855.
++#
++# This is NOT a calibrated tuning file. The values here are either
++# sensor-independent defaults or derived from the sensor datasheet and the
++# Rockchip ov13855 driver; no measurements were taken from a real module.
++#
++# Notably absent, because both require captures from the actual camera:
++#   - Ccm (colour correction matrix): without it colour is left unconverted,
++#     which mostly shows up as undersaturated, slightly green-cast output.
++#   - LensShadingCorrection: without it expect vignetting towards the corners.
++#
++# Generate calibrated replacements for those with utils/tuning/rkisp2.py.
++%YAML 1.1
++---
++version: 1
++algorithms:
++  - Crop:
++  - ColorSpaceConversion:
++  - Agc:
++      AeMeteringMode:
++        MeteringCentreWeighted: [ 0, 0, 0, 0, 0, 0, 6, 8, 6, 0, 0, 8, 16, 8, 0, 0, 6, 8, 6, 0, 0, 0, 0, 0, 0 ]
++        MeteringSpot: [ 0, 0, 0, 0, 0, 0, 2, 4, 2, 0, 0, 4, 16, 4, 0, 0, 2, 4, 2, 0, 0, 0, 0, 0, 0 ]
++        MeteringMatrix: [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]
++      AeExposureMode:
++        # The driver exposes analogue gain 0x80..0x7c0, i.e. 1.0x to 15.5x.
++        # Stay well short of the top of that range: the last few stops on this
++        # sensor are very noisy.
++        ExposureNormal:
++          exposureTime: [ 100, 10000, 30000, 60000, 120000 ]
++          gain: [ 1.0, 2.0, 4.0, 6.0, 8.0 ]
++        ExposureShort:
++          exposureTime: [ 100, 5000, 10000, 20000, 60000 ]
++          gain: [ 1.0, 2.0, 4.0, 8.0, 12.0 ]
++        ExposureLong:
++          exposureTime: [ 100, 20000, 60000, 120000, 240000 ]
++          gain: [ 1.0, 2.0, 4.0, 6.0, 6.0 ]
++      AeConstraintMode:
++        ConstraintNormal:
++          lower:
++            qLo: 0.98
++            qHi: 1.0
++            yTarget: [ 0, 0.5, 1000, 0.5 ]
++        ConstraintHighlight:
++          lower:
++            qLo: 0.98
++            qHi: 1.0
++            yTarget: [ 0, 0.5, 1000, 0.5 ]
++          upper:
++            qLo: 0.98
++            qHi: 1.0
++            yTarget: [ 0, 0.8, 1000, 0.5 ]
++      relativeLuminanceTarget: 0.5
++  - Awb:
++  - BlackLevelSubtraction:
++      # The OV13855 outputs a black level of 64 on its 10-bit data; the ISP
++      # takes these in a 16-bit scale, so 64 << 6 == 4096.
++      R: 4096
++      Gr: 4096
++      Gb: 4096
++      B: 4096
++  - GammaOutCorrection:
++...

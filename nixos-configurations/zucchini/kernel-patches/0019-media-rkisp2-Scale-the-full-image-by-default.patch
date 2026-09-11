@@ -1,0 +1,119 @@
+From 708edad642a91ee595084b1b5dd28b2be248a918 Mon Sep 17 00:00:00 2001
+From: Jared Baur <jaredbaur@fastmail.com>
+Date: Sun, 11 Oct 2026 23:43:25 -0700
+Subject: [PATCH 19/20] media: rkisp2: Scale the full image by default
+
+The resizers are only configured from a crop block in a parameter
+buffer, or from rkisp2_params_crop_init() when no parameter buffer is
+queued at stream start. libcamera always queues a parameter buffer and
+only sends a crop block for an explicit ScalerCrop, so the dual crop and
+resizer are left unconfigured and the main path writes the top-left
+corner of the frame. The default crop itself is also the output size at
+(0,0), which crops rather than scales.
+
+Configure the default crop at every stream start, before the first
+parameter buffer is applied so that a crop block in it still takes
+precedence, and make it the largest centred window with the output's
+aspect ratio so the full field of view is scaled to the output size.
+---
+ .../platform/rockchip/rkisp2/rkisp2-params.c  | 62 ++++++++++++-------
+ 1 file changed, 39 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-params.c b/drivers/media/platform/rockchip/rkisp2/rkisp2-params.c
+index 1c04da421..8e651f6bd 100644
+--- a/drivers/media/platform/rockchip/rkisp2/rkisp2-params.c
++++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-params.c
+@@ -554,31 +554,46 @@ static void rkisp2_params_crop(struct rkisp2_params *params,
+ 	__rkisp2_params_crop(params, arg, block.header->flags);
+ }
+ 
++/*
++ * The default crop window for a path is the largest rectangle centred in the
++ * ISP output that has the aspect ratio of the path's output, so that the
++ * resizer scales the full field of view without distortion.
++ */
++static void rkisp2_params_default_window(const struct rkisp2_resizer *rsz,
++					 struct rkisp2_isp_window *window)
++{
++	u32 sink_w = rsz->sink_size.width, sink_h = rsz->sink_size.height;
++	u32 src_w = rsz->source_size.width, src_h = rsz->source_size.height;
++	u32 w = sink_w, h = sink_h;
++
++	if (src_w && src_h) {
++		if ((u64)sink_w * src_h > (u64)sink_h * src_w)
++			w = ALIGN_DOWN(div_u64((u64)sink_h * src_w, src_h), 2);
++		else
++			h = ALIGN_DOWN(div_u64((u64)sink_w * src_h, src_w), 2);
++	}
++
++	window->h_offs = ALIGN_DOWN((sink_w - w) / 2, 2);
++	window->v_offs = ALIGN_DOWN((sink_h - h) / 2, 2);
++	window->h_size = w;
++	window->v_size = h;
++}
++
+ static void rkisp2_params_crop_init(struct rkisp2_params *params)
+ {
+ 	struct rkisp2_device *rkisp2 = params->rkisp2;
+-
+-	/* Create an initial crop configuration to configure */
+ 	struct rkisp2_params_crop arg = {
+ 		.header.type = RKISP2_PARAMS_BLOCK_CROP,
+-		.header.flags = 0,
+ 		.header.size = sizeof(struct rkisp2_params_crop),
+ 		.crop_en = RKISP2_ISP_CROP_ENABLE_MAIN | RKISP2_ISP_CROP_ENABLE_SELF,
+-
+-		.mp_crop.h_offs = 0,
+-		.mp_crop.v_offs = 0,
+-		.mp_crop.h_size = rkisp2->resizer_devs[0].source_size.width,
+-		.mp_crop.v_size = rkisp2->resizer_devs[0].source_size.height,
+-
+-		.sp_crop.h_offs = 0,
+-		.sp_crop.v_offs = 0,
+-		.sp_crop.h_size = rkisp2->resizer_devs[1].source_size.width,
+-		.sp_crop.v_size = rkisp2->resizer_devs[1].source_size.height
+ 	};
+ 
+-	dev_dbg(rkisp2->dev,
+-		"%s: set mp crop to %dx%d\n",
+-		__func__, arg.mp_crop.h_size, arg.mp_crop.v_size);
++	rkisp2_params_default_window(&rkisp2->resizer_devs[0], &arg.mp_crop);
++	rkisp2_params_default_window(&rkisp2->resizer_devs[1], &arg.sp_crop);
++
++	dev_dbg(rkisp2->dev, "%s: set mp crop to (%u,%u)/%ux%u\n", __func__,
++		arg.mp_crop.h_offs, arg.mp_crop.v_offs,
++		arg.mp_crop.h_size, arg.mp_crop.v_size);
+ 
+ 	__rkisp2_params_crop(params, &arg, V4L2_ISP_PARAMS_FL_BLOCK_ENABLE);
+ }
+@@ -865,19 +880,20 @@ void rkisp2_params_pre_configure(struct rkisp2_params *params,
+ 
+ 	rkisp2_resizer_pre_configure(rkisp2, sink_frm, mp_src_frm, sp_src_frm);
+ 
++	/*
++	 * Always start from the default crop, as the resizers must be
++	 * configured for the stream even when the first parameter buffer
++	 * carries no crop block. A crop block in that buffer overrides it.
++	 */
++	rkisp2_params_crop_init(params);
++
+ 	spin_lock_irq(&params->buf_lock);
+ 	buf = list_first_entry_or_null(&params->params,
+ 				       struct rkisp2_params_buffer, queue);
+ 	spin_unlock_irq(&params->buf_lock);
+ 
+-	if (!buf) {
+-		/*
+-		 * Initialize crop in the event that are no pre-queued
+-		 * parameter buffers
+-		 */
+-		rkisp2_params_crop_init(params);
++	if (!buf)
+ 		return;
+-	}
+ 
+ 	rkisp2_params_configure(params, buf, RKISP2_PARAMS_CONFIG_PRIO_PRE);
+ }
+-- 
+2.55.0
+

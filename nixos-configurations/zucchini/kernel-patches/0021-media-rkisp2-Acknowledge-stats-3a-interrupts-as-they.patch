@@ -1,0 +1,96 @@
+From 7ccc8fe971ab68f0910ba64c00e9a011e3a7141d Mon Sep 17 00:00:00 2001
+From: Jared Baur <jaredbaur@fastmail.com>
+Date: Mon, 12 Oct 2026 01:04:49 -0700
+Subject: [PATCH 21/23] media: rkisp2: Acknowledge stats 3a interrupts as they
+ arrive
+
+The stats 3a interrupts are routed to the ISP interrupt line, but are
+only acknowledged at the end of the frame, when the stats are read. A
+block that completes earlier therefore keeps the line asserted until
+then, and the interrupt handler runs back to back: about 20000 times a
+frame at 4224x3136, which keeps a CPU busy for the whole stream.
+
+Acknowledge them as they arrive and remember them for the frame end,
+as the vendor driver does.
+---
+ .../media/platform/rockchip/rkisp2/rkisp2-common.h    |  7 +++++++
+ drivers/media/platform/rockchip/rkisp2/rkisp2-isp.c   | 11 +++++++++--
+ drivers/media/platform/rockchip/rkisp2/rkisp2-stats.c |  4 +++-
+ 3 files changed, 19 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-common.h b/drivers/media/platform/rockchip/rkisp2/rkisp2-common.h
+index cf7168461..f03b4ef11 100644
+--- a/drivers/media/platform/rockchip/rkisp2/rkisp2-common.h
++++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-common.h
+@@ -331,11 +331,17 @@ struct rkisp2_capture {
+  * @stat:	  queue of rkisp2_buffer
+  * @vdev_fmt:	  v4l2_format of the metadata format
+  * @icr:	  interrupts that the stats has handled for the current frame (for stats 3a)
++ * @status:	  stats 3a interrupts acknowledged before the end of the current frame
+  * @cur_buf:	  the current buffer to accumulate stats over multiple interrupts
+  *
+  * The icr field tracks which stats have been handled and whose interrupts will
+  * be cleared at end-of-frame when the stats are being handled.
+  *
++ * The stats3a interrupts share the ISP interrupt line, so they are still
++ * acknowledged as they arrive, and remembered in the status field until the
++ * end of the frame. Otherwise the line stays asserted until then and the
++ * interrupt handler runs continuously.
++ *
+  * The stats are handled at end-of-frame as opposed to on the stats3a
+  * interrupts as there is one interrupt per stats block that has completed, and
+  * as we don't yet support returning partial stats to userspace, it's not
+@@ -359,6 +365,7 @@ struct rkisp2_stats {
+ 	struct v4l2_format vdev_fmt;
+ 
+ 	u32 icr;
++	u32 status;
+ 	struct rkisp2_buffer *cur_buf;
+ 
+ 	unsigned int awb_window_offset;
+diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-isp.c b/drivers/media/platform/rockchip/rkisp2/rkisp2-isp.c
+index 6e9da90ef..b753172f9 100644
+--- a/drivers/media/platform/rockchip/rkisp2/rkisp2-isp.c
++++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-isp.c
+@@ -794,14 +794,21 @@ irqreturn_t rkisp2_isp_isr(int irq, void *ctx)
+ {
+ 	struct device *dev = ctx;
+ 	struct rkisp2_device *rkisp2 = dev_get_drvdata(dev);
+-	u32 status, isp_err;
++	u32 status, status_3a, isp_err;
+ 
+ 	if (!rkisp2->irqs_enabled)
+ 		return IRQ_NONE;
+ 
++	/* The stats are read at the frame end, see struct rkisp2_stats. */
++	status_3a = rkisp2_read(rkisp2, ISP_ISP3A_MIS);
++	if (status_3a) {
++		rkisp2->stats.status |= status_3a;
++		rkisp2_write(rkisp2, ISP_ISP3A_ICR, status_3a);
++	}
++
+ 	status = rkisp2_read(rkisp2, RKISP2_CIF_ISP_MIS);
+ 	if (!status)
+-		return IRQ_NONE;
++		return status_3a ? IRQ_HANDLED : IRQ_NONE;
+ 
+ 	/* Vertical sync signal, starting generating new frame */
+ 	if (status & RKISP2_CIF_ISP_V_START) {
+diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-stats.c b/drivers/media/platform/rockchip/rkisp2/rkisp2-stats.c
+index 7bbc1e25b..6be23630b 100644
+--- a/drivers/media/platform/rockchip/rkisp2/rkisp2-stats.c
++++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-stats.c
+@@ -429,7 +429,9 @@ static void rkisp2_stats_send_measurement_3a(struct rkisp2_stats *stats, u32 sta
+ irqreturn_t rkisp2_stats_isr_eof(struct rkisp2_stats *stats)
+ {
+ 	struct rkisp2_device *rkisp2 = stats->rkisp2;
+-	u32 status = rkisp2_read(rkisp2, ISP_ISP3A_MIS);
++	u32 status = stats->status | rkisp2_read(rkisp2, ISP_ISP3A_MIS);
++
++	stats->status = 0;
+ 
+ 	spin_lock(&stats->lock);
+ 	rkisp2_stats_send_measurement_3a(stats, status);
+-- 
+2.55.0
+

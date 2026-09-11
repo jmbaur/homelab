@@ -1,7 +1,7 @@
-From cdbbc6bc568639cefa9ec7d5675c141c505b6f30 Mon Sep 17 00:00:00 2001
+From c7644b03a1aaf1c9f9039fe09e2e21643537b0e7 Mon Sep 17 00:00:00 2001
 From: Xu Hongfei <xuhf@rock-chips.com>
-Date: Mon, 24 Aug 2026 18:04:00 +0900
-Subject: [PATCH 3/6] media: rockchip: rkisp2: Add rkisp2 driver
+Date: Tue, 21 Oct 2025 20:59:43 +0800
+Subject: [PATCH] media: rockchip: rkisp2: Add rkisp2 driver
 
 This patch adds the rkisp2 driver, which aims to support all Rockchip
 ISP 2.x and 3.x versions. This initial version only supports the version
@@ -28,6 +28,31 @@ Limitations:
 Signed-off-by: Xu Hongfei <xuhf@rock-chips.com>
 Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
 ---
+Misc notes:
+
+- NV21 and YUV422 and YVU422 need some debugging
+- I haven't tested raw output yet since VICAP can be used on its own for
+  raw output
+- Self path is untested
+- The features flag isn't really necessary at this stage (since we only
+  support one ISP version) but I wanted to include it already since as
+  soon as we add support for another ISP version we will need it. I've
+  used dual crop as the first feature flag because that is one known
+  difference between rk3588 and rk3568 afaia.
+---
+Changes in v3:
+- mv include/uapi/linux/rkisp2-config.h
+  include/uapi/linux/media/rockchip/rkisp2-config.h
+- add MAINTAINERS
+
+Changes in v2:
+- fixed 8-bit raw input
+- disable DMA input on stop stream (thus fixing a page fault storm)
+- split DMA RX pads
+- split main/self path pads
+- remove cropping and scaling (it has been moved to params)
+---
+ MAINTAINERS                                   |   10 +
  drivers/media/platform/rockchip/Kconfig       |    1 +
  drivers/media/platform/rockchip/Makefile      |    1 +
  .../media/platform/rockchip/rkisp2/Kconfig    |   19 +
@@ -36,15 +61,15 @@ Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
  .../platform/rockchip/rkisp2/rkisp2-common.c  |  180 +
  .../platform/rockchip/rkisp2/rkisp2-common.h  |  465 +++
  .../platform/rockchip/rkisp2/rkisp2-debug.c   |  220 ++
- .../platform/rockchip/rkisp2/rkisp2-dev.c     |  341 ++
+ .../platform/rockchip/rkisp2/rkisp2-dev.c     |  342 ++
  .../platform/rockchip/rkisp2/rkisp2-dmarx.c   |  706 ++++
  .../platform/rockchip/rkisp2/rkisp2-isp.c     |  826 ++++
  .../rockchip/rkisp2/rkisp2-regs-v2x.h         | 2588 +++++++++++++
  .../rockchip/rkisp2/rkisp2-regs-v3x.h         | 3383 +++++++++++++++++
  .../platform/rockchip/rkisp2/rkisp2-regs.h    | 1736 +++++++++
+ .../uapi/linux/media/rockchip/rkisp2-config.h |   20 +
  include/uapi/linux/rkisp1-config.h            |    1 +
- include/uapi/linux/rkisp2-config.h            |   20 +
- 16 files changed, 12038 insertions(+)
+ 17 files changed, 12049 insertions(+)
  create mode 100644 drivers/media/platform/rockchip/rkisp2/Kconfig
  create mode 100644 drivers/media/platform/rockchip/rkisp2/Makefile
  create mode 100644 drivers/media/platform/rockchip/rkisp2/rkisp2-capture.c
@@ -57,10 +82,31 @@ Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
  create mode 100644 drivers/media/platform/rockchip/rkisp2/rkisp2-regs-v2x.h
  create mode 100644 drivers/media/platform/rockchip/rkisp2/rkisp2-regs-v3x.h
  create mode 100644 drivers/media/platform/rockchip/rkisp2/rkisp2-regs.h
- create mode 100644 include/uapi/linux/rkisp2-config.h
+ create mode 100644 include/uapi/linux/media/rockchip/rkisp2-config.h
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8014b9f82..af91414e0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -23424,6 +23424,16 @@ F:	Documentation/userspace-api/media/v4l/metafmt-rkisp1.rst
+ F:	drivers/media/platform/rockchip/rkisp1
+ F:	include/uapi/linux/rkisp1-config.h
+ 
++ROCKCHIP ISP V2 DRIVER
++M:	Paul Elder <paul.elder@ideasonboard.com>
++L:	linux-media@vger.kernel.org
++L:	linux-rockchip@lists.infradead.org
++S:	Maintained
++F:	Documentation/devicetree/bindings/media/rockchip-isp2.yaml
++F:	Documentation/userspace-api/media/v4l/metafmt-rkisp2.rst
++F:	drivers/media/platform/rockchip/rkisp2
++F:	include/uapi/linux/media/rockchip/rkisp2-config.h
++
+ ROCKCHIP RK3568 RANDOM NUMBER GENERATOR SUPPORT
+ M:	Daniel Golle <daniel@makrotopia.org>
+ M:	Aurelien Jarno <aurelien@aurel32.net>
 diff --git a/drivers/media/platform/rockchip/Kconfig b/drivers/media/platform/rockchip/Kconfig
-index ba401d32f01ba..b008652cf515d 100644
+index ba401d32f..b008652cf 100644
 --- a/drivers/media/platform/rockchip/Kconfig
 +++ b/drivers/media/platform/rockchip/Kconfig
 @@ -6,3 +6,4 @@ source "drivers/media/platform/rockchip/rga/Kconfig"
@@ -69,7 +115,7 @@ index ba401d32f01ba..b008652cf515d 100644
  source "drivers/media/platform/rockchip/rkvdec/Kconfig"
 +source "drivers/media/platform/rockchip/rkisp2/Kconfig"
 diff --git a/drivers/media/platform/rockchip/Makefile b/drivers/media/platform/rockchip/Makefile
-index 0e0b2cbbd4bd2..9e2ac1e51c93a 100644
+index 0e0b2cbbd..9e2ac1e51 100644
 --- a/drivers/media/platform/rockchip/Makefile
 +++ b/drivers/media/platform/rockchip/Makefile
 @@ -3,3 +3,4 @@ obj-y += rga/
@@ -79,7 +125,7 @@ index 0e0b2cbbd4bd2..9e2ac1e51c93a 100644
 +obj-y += rkisp2/
 diff --git a/drivers/media/platform/rockchip/rkisp2/Kconfig b/drivers/media/platform/rockchip/rkisp2/Kconfig
 new file mode 100644
-index 0000000000000..96a200a9ae7b9
+index 000000000..96a200a9a
 --- /dev/null
 +++ b/drivers/media/platform/rockchip/rkisp2/Kconfig
 @@ -0,0 +1,19 @@
@@ -104,7 +150,7 @@ index 0000000000000..96a200a9ae7b9
 +	  will be called rockchip-isp2.
 diff --git a/drivers/media/platform/rockchip/rkisp2/Makefile b/drivers/media/platform/rockchip/rkisp2/Makefile
 new file mode 100644
-index 0000000000000..9a9d7b5233c44
+index 000000000..9a9d7b523
 --- /dev/null
 +++ b/drivers/media/platform/rockchip/rkisp2/Makefile
 @@ -0,0 +1,11 @@
@@ -121,7 +167,7 @@ index 0000000000000..9a9d7b5233c44
 +obj-$(CONFIG_VIDEO_ROCKCHIP_ISP2) += rockchip-isp2.o
 diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-capture.c b/drivers/media/platform/rockchip/rkisp2/rkisp2-capture.c
 new file mode 100644
-index 0000000000000..c5f5578d64835
+index 000000000..c5f5578d6
 --- /dev/null
 +++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-capture.c
 @@ -0,0 +1,1540 @@
@@ -1667,7 +1713,7 @@ index 0000000000000..c5f5578d64835
 +}
 diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-common.c b/drivers/media/platform/rockchip/rkisp2/rkisp2-common.c
 new file mode 100644
-index 0000000000000..c09438c8b7b08
+index 000000000..c09438c8b
 --- /dev/null
 +++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-common.c
 @@ -0,0 +1,180 @@
@@ -1853,7 +1899,7 @@ index 0000000000000..c09438c8b7b08
 +}
 diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-common.h b/drivers/media/platform/rockchip/rkisp2/rkisp2-common.h
 new file mode 100644
-index 0000000000000..596f6ca8f755e
+index 000000000..4d8b892f5
 --- /dev/null
 +++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-common.h
 @@ -0,0 +1,465 @@
@@ -1876,7 +1922,7 @@ index 0000000000000..596f6ca8f755e
 +#include <linux/list.h>
 +#include <linux/mutex.h>
 +#include <linux/spinlock.h>
-+#include <linux/rkisp2-config.h>
++#include <linux/media/rockchip/rkisp2-config.h>
 +#include <media/media-device.h>
 +#include <media/media-entity.h>
 +#include <media/v4l2-ctrls.h>
@@ -2324,7 +2370,7 @@ index 0000000000000..596f6ca8f755e
 +#endif /* _RKISP2_COMMON_H */
 diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-debug.c b/drivers/media/platform/rockchip/rkisp2/rkisp2-debug.c
 new file mode 100644
-index 0000000000000..4f439bd9156b0
+index 000000000..4f439bd91
 --- /dev/null
 +++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-debug.c
 @@ -0,0 +1,220 @@
@@ -2550,10 +2596,10 @@ index 0000000000000..4f439bd9156b0
 +}
 diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-dev.c b/drivers/media/platform/rockchip/rkisp2/rkisp2-dev.c
 new file mode 100644
-index 0000000000000..3c7edd2e55a31
+index 000000000..8cba9d606
 --- /dev/null
 +++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-dev.c
-@@ -0,0 +1,341 @@
+@@ -0,0 +1,342 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
 +/*
 + * Rockchip ISP2 Driver - Base driver
@@ -2670,6 +2716,7 @@ index 0000000000000..3c7edd2e55a31
 +		struct media_entity *source =
 +			&rkisp2->dmarx.chan[i].vnode.vdev.entity;
 +		u32 flags = (i == RKISP2_RAWRD0 ?  MEDIA_LNK_FL_ENABLED : 0);
++
 +		ret = media_create_pad_link(source, 0,
 +					    &rkisp2->isp.sd.entity,
 +					    RKISP2_ISP_PAD_SINK_VIDEO_DMA_BASE + i,
@@ -2897,7 +2944,7 @@ index 0000000000000..3c7edd2e55a31
 +MODULE_LICENSE("Dual MIT/GPL");
 diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-dmarx.c b/drivers/media/platform/rockchip/rkisp2/rkisp2-dmarx.c
 new file mode 100644
-index 0000000000000..ee52d3529b58b
+index 000000000..ee52d3529
 --- /dev/null
 +++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-dmarx.c
 @@ -0,0 +1,706 @@
@@ -3609,7 +3656,7 @@ index 0000000000000..ee52d3529b58b
 +}
 diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-isp.c b/drivers/media/platform/rockchip/rkisp2/rkisp2-isp.c
 new file mode 100644
-index 0000000000000..c1c03bc71a8f5
+index 000000000..c1c03bc71
 --- /dev/null
 +++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-isp.c
 @@ -0,0 +1,826 @@
@@ -4441,7 +4488,7 @@ index 0000000000000..c1c03bc71a8f5
 +}
 diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-regs-v2x.h b/drivers/media/platform/rockchip/rkisp2/rkisp2-regs-v2x.h
 new file mode 100644
-index 0000000000000..883bdb7c2a611
+index 000000000..883bdb7c2
 --- /dev/null
 +++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-regs-v2x.h
 @@ -0,0 +1,2588 @@
@@ -7035,7 +7082,7 @@ index 0000000000000..883bdb7c2a611
 +#endif /* _RKISP_REGS_V2X_H */
 diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-regs-v3x.h b/drivers/media/platform/rockchip/rkisp2/rkisp2-regs-v3x.h
 new file mode 100644
-index 0000000000000..bb79d08d206f8
+index 000000000..bb79d08d2
 --- /dev/null
 +++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-regs-v3x.h
 @@ -0,0 +1,3383 @@
@@ -10424,7 +10471,7 @@ index 0000000000000..bb79d08d206f8
 +#endif /* _RKISP2_REGS_V3X_H */
 diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-regs.h b/drivers/media/platform/rockchip/rkisp2/rkisp2-regs.h
 new file mode 100644
-index 0000000000000..6848f55397347
+index 000000000..6848f5539
 --- /dev/null
 +++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-regs.h
 @@ -0,0 +1,1736 @@
@@ -12164,23 +12211,11 @@ index 0000000000000..6848f55397347
 +#define RKISP2_CIF_ISP_CSI0_VERSION		(RKISP2_CIF_ISP_CSI0_BASE + 0x0000007c)
 +
 +#endif /* _RKISP2_REGS_H */
-diff --git a/include/uapi/linux/rkisp1-config.h b/include/uapi/linux/rkisp1-config.h
-index d97384abc1575..e571ea851508b 100644
---- a/include/uapi/linux/rkisp1-config.h
-+++ b/include/uapi/linux/rkisp1-config.h
-@@ -207,6 +207,7 @@ enum rkisp1_cif_isp_version {
- 	RKISP1_V12,
- 	RKISP1_V13,
- 	RKISP1_V_IMX8MP,
-+	RKISP1_V30,
- };
- 
- enum rkisp1_cif_isp_histogram_mode {
-diff --git a/include/uapi/linux/rkisp2-config.h b/include/uapi/linux/rkisp2-config.h
+diff --git a/include/uapi/linux/media/rockchip/rkisp2-config.h b/include/uapi/linux/media/rockchip/rkisp2-config.h
 new file mode 100644
-index 0000000000000..ce8093db59981
+index 000000000..ce8093db5
 --- /dev/null
-+++ b/include/uapi/linux/rkisp2-config.h
++++ b/include/uapi/linux/media/rockchip/rkisp2-config.h
 @@ -0,0 +1,20 @@
 +/* SPDX-License-Identifier: ((GPL-2.0-or-later WITH Linux-syscall-note) OR MIT) */
 +/*
@@ -12202,6 +12237,15 @@ index 0000000000000..ce8093db59981
 +};
 +
 +#endif /* _UAPI_RKISP2_CONFIG_H */
--- 
-2.55.0
-
+diff --git a/include/uapi/linux/rkisp1-config.h b/include/uapi/linux/rkisp1-config.h
+index d97384abc..e571ea851 100644
+--- a/include/uapi/linux/rkisp1-config.h
++++ b/include/uapi/linux/rkisp1-config.h
+@@ -207,6 +207,7 @@ enum rkisp1_cif_isp_version {
+ 	RKISP1_V12,
+ 	RKISP1_V13,
+ 	RKISP1_V_IMX8MP,
++	RKISP1_V30,
+ };
+ 
+ enum rkisp1_cif_isp_histogram_mode {

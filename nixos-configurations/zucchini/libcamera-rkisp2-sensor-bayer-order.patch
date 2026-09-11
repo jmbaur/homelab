@@ -1,0 +1,92 @@
+rkisp2: Use the sensor's own Bayer order
+
+The default configuration and the raw format fallback assumed SRGGB10. For a
+sensor with another Bayer order, such as the OV13855 (SBGGR10) or the IMX415
+(SGBRG10), no sensor format is found and clampSensorSize() dereferences an
+empty size list. Pick the raw format the same way the rkisp1 pipeline
+handler does instead: the one with the most bits per pixel that both the
+sensor and VICAP support.
+
+Link: https://patchwork.libcamera.org/comment/40791/
+
+--- a/src/libcamera/pipeline/rkisp2/rkisp2.cpp
++++ b/src/libcamera/pipeline/rkisp2/rkisp2.cpp
+@@ -117,6 +117,7 @@
+ 		 V4L2VideoDevice *stat);
+ 	PixelFormat getSensorFormat(unsigned int mbusCode, const Size &size,
+ 				    const Size &maxSize);
++	unsigned int sensorRawMbusCode() const;
+ 
+ 	PipelineHandlerRkISP2 *pipe();
+ 	const PipelineHandlerRkISP2 *pipe() const;
+@@ -315,6 +316,32 @@
+ 	return formats::SRGGB10;
+ }
+ 
++/*
++ * The raw media bus code with the highest bits per pixel that both the sensor
++ * and VICAP support, as the rkisp1 pipeline handler picks its raw format, or
++ * 0 if there is none.
++ */
++unsigned int RkISP2CameraData::sensorRawMbusCode() const
++{
++	const std::vector<unsigned int> mbusCodes = sensor_->mbusCodes();
++	unsigned int rawBitsPerPixel = 0;
++	unsigned int rawMbusCode = 0;
++
++	for (const auto &[format, mbusCode] : rawFormats) {
++		if (std::find(mbusCodes.begin(), mbusCodes.end(), mbusCode) ==
++		    mbusCodes.end())
++			continue;
++
++		const PixelFormatInfo &info = PixelFormatInfo::info(format);
++		if (info.bitsPerPixel > rawBitsPerPixel) {
++			rawBitsPerPixel = info.bitsPerPixel;
++			rawMbusCode = mbusCode;
++		}
++	}
++
++	return rawMbusCode;
++}
++
+ PipelineHandlerRkISP2 *RkISP2CameraData::pipe()
+ {
+ 	return static_cast<PipelineHandlerRkISP2 *>(Camera::Private::pipe());
+@@ -562,8 +589,20 @@
+ 	const Size &maxSize = usingIsp ? ispMaxSize : vicapMaxSize;
+ 
+ 	if (!usingIsp) {
+-		if (!rawFormats.count(cfg.pixelFormat)) {
+-			cfg.pixelFormat = formats::SRGGB10;
++		/* Fall back to the sensor's own raw format */
++		if (!rawFormats.count(cfg.pixelFormat) ||
++		    sensor->sizes(rawFormats.at(cfg.pixelFormat)).empty()) {
++			unsigned int code = data_->sensorRawMbusCode();
++			auto it = std::find_if(rawFormats.begin(), rawFormats.end(),
++					       [code](const auto &value) { return value.second == code; });
++			if (it == rawFormats.end()) {
++				LOG(RkISP2, Error)
++					<< "Sensor " << sensor->model()
++					<< " doesn't support raw capture";
++				return Invalid;
++			}
++
++			cfg.pixelFormat = it->first;
+ 			status = Adjusted;
+ 		}
+ 
+@@ -672,7 +711,13 @@
+ 	Size maxSize = isRaw ? vicapMaxSize : ispMaxSize;
+ 
+ 	Size defaultSize = { 1920, 1080 };
+-	unsigned int defaultMbusCode = MEDIA_BUS_FMT_SRGGB10_1X10;
++	unsigned int defaultMbusCode = data->sensorRawMbusCode();
++	if (!defaultMbusCode) {
++		LOG(RkISP2, Error)
++			<< "Sensor " << data->sensor_->model()
++			<< " doesn't support raw capture";
++		return nullptr;
++	}
+ 	PixelFormat rawFormat = data->getSensorFormat(defaultMbusCode,
+ 						      defaultSize, maxSize);
+ 

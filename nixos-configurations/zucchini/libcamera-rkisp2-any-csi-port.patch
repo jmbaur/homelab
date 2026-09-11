@@ -1,0 +1,171 @@
+rkisp2: Find the CSI-2 receiver and VICAP interface from the sensor
+
+Instead of hard-coding the CSI-2 receiver at 0xfdd30000 and rkcif-mipi2,
+find the capture device closest to the sensor as the simple pipeline handler
+does, and use MediaPipeline, as the rkisp1 pipeline handler does, to find
+the CSI-2 receiver and VICAP MIPI interface on the way to it. This makes
+cameras on the other CSI-2 ports, such as the Orange Pi 5's CAM2 and CAM3
+through the DC-PHYs, work.
+
+--- a/src/libcamera/pipeline/rkisp2/rkisp2.cpp
++++ b/src/libcamera/pipeline/rkisp2/rkisp2.cpp
+@@ -7,8 +7,12 @@
+ 
+ #include <algorithm>
+ #include <deque>
++#include <iterator>
++#include <list>
+ #include <memory>
++#include <queue>
+ #include <set>
++#include <unordered_set>
+ #include <vector>
+ 
+ #include <libcamera/base/log.h>
+@@ -35,6 +39,7 @@
+ #include "libcamera/internal/global_configuration.h"
+ #include "libcamera/internal/ipa_manager.h"
+ #include "libcamera/internal/media_device.h"
++#include "libcamera/internal/media_pipeline.h"
+ #include "libcamera/internal/pipeline_handler.h"
+ #include "libcamera/internal/request.h"
+ #include "libcamera/internal/sequence_sync_helper.h"
+@@ -210,6 +215,39 @@
+  */
+ static constexpr unsigned int kRkISP2MinBufferCount = 4;
+ 
++/*
++ * Find the video capture device closest to the sensor with a breadth-first
++ * search, as the simple pipeline handler does.
++ */
++MediaEntity *findCaptureDevice(MediaEntity *sensor)
++{
++	std::unordered_set<MediaEntity *> visited{ sensor };
++	std::queue<MediaEntity *> queue;
++
++	queue.push(sensor);
++
++	while (!queue.empty()) {
++		MediaEntity *entity = queue.front();
++		queue.pop();
++
++		if (entity->function() == MEDIA_ENT_F_IO_V4L)
++			return entity;
++
++		for (const MediaPad *pad : entity->pads()) {
++			if (!(pad->flags() & MEDIA_PAD_FL_SOURCE))
++				continue;
++
++			for (const MediaLink *link : pad->links()) {
++				MediaEntity *next = link->sink()->entity();
++				if (visited.insert(next).second)
++					queue.push(next);
++			}
++		}
++	}
++
++	return nullptr;
++}
++
+ } /* namespace */
+ 
+ class PipelineHandlerRkISP2 : public PipelineHandler
+@@ -1112,51 +1150,74 @@
+ 
+ bool PipelineHandlerRkISP2::match(DeviceEnumerator *enumerator)
+ {
+-	DeviceMatch dm("rockchip-cif");
+-	/* \todo Generalize this for the other csi ports */
+ 	/*
+ 	 * I think we will have one camera per csi port, and then 4 streams
+ 	 * each that correspond to the 4 channels. Not sure how to handle
+ 	 * routing to the ISP though. For now we'll just assume one camera.
+ 	 */
+-	dm.add("rkcif-mipi2");
+-	/* \todo Generalize this for the other channels */
+-	dm.add("rkcif-mipi2-id0");
+-	dm.add("dw-mipi-csi2rx fdd30000.csi");
++	DeviceMatch dm("rockchip-cif");
+ 
+ 	media_ = acquireMediaDevice(enumerator, dm);
+ 	if (!media_)
+ 		return false;
+ 
+-	csi_ = V4L2Subdevice::fromEntityName(media_.get(), "dw-mipi-csi2rx fdd30000.csi");
+-	if (!csi_ || csi_->open() < 0) {
+-		LOG(RkISP2, Error) << "Failed to open csi";
+-		return false;
++	MediaEntity *sensorEntity = nullptr;
++	for (MediaEntity *entity : media_->locateEntities(MEDIA_ENT_F_CAM_SENSOR)) {
++		LOG(RkISP2, Debug) << "Identified " << entity->name();
++		sensor_ = CameraSensorFactoryBase::create(entity);
++		/* Just get the first sensor for now */
++		if (sensor_) {
++			sensorEntity = entity;
++			break;
++		}
+ 	}
+ 
+-	cif_ = V4L2Subdevice::fromEntityName(media_.get(), "rkcif-mipi2");
+-	if (!cif_ || cif_->open() < 0) {
+-		LOG(RkISP2, Error) << "Failed to open cif";
++	if (!sensor_) {
++		LOG(RkISP2, Error) << "Failed to find sensor";
+ 		return false;
+ 	}
+ 
++	/*
++	 * Use whichever CSI-2 receiver and VICAP MIPI interface the sensor is
++	 * connected to, rather than assuming the one at 0xfdd30000.
++	 */
+ 	/* \todo Support multiple streams */
+-	video_ = V4L2VideoDevice::fromEntityName(media_.get(), "rkcif-mipi2-id0");
+-	if (!video_ || video_->open() < 0) {
+-		LOG(RkISP2, Error) << "Failed to open capture device";
++	MediaEntity *captureDevice = findCaptureDevice(sensorEntity);
++	if (!captureDevice) {
++		LOG(RkISP2, Error) << "Failed to find capture device";
+ 		return false;
+ 	}
+ 
+-	for (MediaEntity *entity : media_->locateEntities(MEDIA_ENT_F_CAM_SENSOR)) {
+-		LOG(RkISP2, Debug) << "Identified " << entity->name();
+-		sensor_ = CameraSensorFactoryBase::create(entity);
+-		/* Just get the first sensor for now */
+-		if (sensor_)
+-			break;
++	MediaPipeline pipe;
++	if (pipe.init(sensorEntity, captureDevice->name()))
++		return false;
++
++	/* sensor -> CSI-2 receiver -> VICAP MIPI interface -> capture device */
++	const std::list<MediaPipeline::Entity> &entities = pipe.entities();
++	if (entities.size() != 4) {
++		LOG(RkISP2, Error)
++			<< "Unsupported pipeline from " << sensorEntity->name()
++			<< " to " << captureDevice->name();
++		return false;
+ 	}
+ 
+-	if (!sensor_) {
+-		LOG(RkISP2, Error) << "Failed to find sensor";
++	auto entity = std::next(entities.begin());
++
++	csi_ = std::make_unique<V4L2Subdevice>((entity++)->entity);
++	if (csi_->open() < 0) {
++		LOG(RkISP2, Error) << "Failed to open csi";
++		return false;
++	}
++
++	cif_ = std::make_unique<V4L2Subdevice>((entity++)->entity);
++	if (cif_->open() < 0) {
++		LOG(RkISP2, Error) << "Failed to open cif";
++		return false;
++	}
++
++	video_ = std::make_unique<V4L2VideoDevice>(captureDevice);
++	if (video_->open() < 0) {
++		LOG(RkISP2, Error) << "Failed to open capture device";
+ 		return false;
+ 	}
+ 

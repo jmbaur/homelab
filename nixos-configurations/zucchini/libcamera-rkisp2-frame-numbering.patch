@@ -1,0 +1,112 @@
+rkisp2: Keep requests numbered after the processed statistics
+
+The ISP processes every frame, whether a request is queued for it or
+not, and the IPA gets the statistics of each, initialising a frame
+context for them. The requests and parameters are numbered from 0 and
+only move on as their buffers come back late. When the application
+falls behind by more than the frame context queue's depth, the
+statistics overwrite contexts that requests and parameters are still
+numbered for, and the IPA aborts:
+
+  FATAL FCQueue fc_queue.h:71 Frame context for 6 has been overwritten by 22
+
+An RTSP sink stalling the pipeline for half a second while it sets up
+its session is enough.
+
+Keep the requests and parameters numbered after the last frame the
+statistics were processed for, as rkisp1 does with its frame counter.
+The requests still pending will come back late by as much, so the frames
+are recorded with the sequence sync helper as if found dropped. The
+parameter buffers are consumed on every frame and come back on time, so
+their queue only moves on, without a correction.
+
+diff --git a/include/libcamera/internal/sequence_sync_helper.h b/include/libcamera/internal/sequence_sync_helper.h
+--- a/include/libcamera/internal/sequence_sync_helper.h
++++ b/include/libcamera/internal/sequence_sync_helper.h
+@@ -61,6 +61,21 @@
+ 			<< " correctionToApply " << correctionToApply_;
+ 	}
+ 
++	/*
++	 * Record frames found to have gone by other than through gotFrame(),
++	 * as if gotFrame() had found them dropped. The frames still pending
++	 * are expected to come that much later too.
++	 */
++	void skipFrames(int count)
++	{
++		correctionToApply_ += count;
++		expectedOffset_ += count;
++
++		LOG(SequenceSyncHelper, Debug)
++			<< "Skip " << count << " frames"
++			<< " correctionToApply " << correctionToApply_;
++	}
++
+ 	void reset()
+ 	{
+ 		corrections_ = {};
+diff --git a/src/libcamera/buffer_queue.cpp b/src/libcamera/buffer_queue.cpp
+--- a/src/libcamera/buffer_queue.cpp
++++ b/src/libcamera/buffer_queue.cpp
+@@ -159,6 +159,23 @@
+ }
+ 
+ /**
++ * \brief Make the next buffer's sequence at least \a sequence
++ * \param[in] sequence The lowest sequence for the next buffer
++ *
++ * This is for frames known to have gone by without a buffer from the queue,
++ * such as when the queue ran empty. The buffers already queued are not
++ * expected to come back any later for it, so this leaves the sequence
++ * correction alone.
++ */
++void BufferQueue::skipToSequence(uint32_t sequence)
++{
++	uint32_t next = nextSequence();
++
++	if (next < sequence)
++		nextSequence_ += sequence - next;
++}
++
++/**
+  * \brief Move the next buffer to prepare state
+  * \param[out] sequence The expected sequence of the buffer
+  *
+diff --git a/src/libcamera/pipeline/rkisp2/rkisp2.cpp b/src/libcamera/pipeline/rkisp2/rkisp2.cpp
+--- a/src/libcamera/pipeline/rkisp2/rkisp2.cpp
++++ b/src/libcamera/pipeline/rkisp2/rkisp2.cpp
+@@ -505,6 +505,23 @@
+ 	if (buffer->metadata().status == FrameMetadata::FrameCancelled)
+ 		return;
+ 
++	/*
++	 * The ISP processes every frame, whether a request is queued for it
++	 * or not, and the IPA gets the statistics of each. Keep the requests
++	 * and parameters numbered after this frame, as rkisp1 does, or when
++	 * the application falls behind, their frame contexts get overwritten
++	 * by the statistics of the frames that went by.
++	 *
++	 * The requests still pending are filled after this frame, so they
++	 * come back late by as much, which the sync helper has to know. The
++	 * parameter buffers are consumed on every frame and come back on
++	 * time, so their queue only moves on.
++	 */
++	unsigned int nextFrame = frame_ + syncHelper_.correction();
++	if (nextFrame <= sequence)
++		syncHelper_.skipFrames(sequence + 1 - nextFrame);
++	paramQueue_->skipToSequence(sequence + 1);
++
+ 	ipa_->processStats(sequence, buffer->cookie(),
+ 			   delayedCtrls_->get(sequence));
+ 
+diff --git a/include/libcamera/internal/buffer_queue.h b/include/libcamera/internal/buffer_queue.h
+--- a/include/libcamera/internal/buffer_queue.h
++++ b/include/libcamera/internal/buffer_queue.h
+@@ -90,6 +90,7 @@
+ 
+ 	int sequenceCorrection();
+ 	uint32_t nextSequence();
++	void skipToSequence(uint32_t sequence);
+ 
+ 	int prepareBuffer(uint32_t *sequence = nullptr);
+ 	int prepareBuffer(FrameBuffer *buffer, uint32_t *sequence = nullptr);

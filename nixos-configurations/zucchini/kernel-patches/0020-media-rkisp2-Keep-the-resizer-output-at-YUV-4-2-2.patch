@@ -1,0 +1,58 @@
+From 752e4ec56e4ebe95edb6754e74252fb26f115231 Mon Sep 17 00:00:00 2001
+From: Jared Baur <jaredbaur@fastmail.com>
+Date: Sun, 11 Oct 2026 23:43:32 -0700
+Subject: [PATCH 20/20] media: rkisp2: Keep the resizer output at YUV 4:2:2
+
+The resizer derives its output chroma size from the capture format, so
+for a 4:2:0 format such as NV12 it also halves the chroma vertically.
+The memory interface then performs the 4:2:0 subsampling a second time,
+and only the top half of the image gets chroma; the rest of the CbCr
+plane is left unwritten.
+
+As in the vendor driver, scale chroma to YUV 4:2:2 in the resizer and
+leave the 4:2:0 conversion to the memory interface.
+---
+ .../platform/rockchip/rkisp2/rkisp2-resizer.c | 20 +++++++------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-resizer.c b/drivers/media/platform/rockchip/rkisp2/rkisp2-resizer.c
+index f8ccf232e..041635d8d 100644
+--- a/drivers/media/platform/rockchip/rkisp2/rkisp2-resizer.c
++++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-resizer.c
+@@ -212,18 +212,6 @@ static int rkisp2_mbus_code_xysubs(u32 code, u32 *xsubs, u32 *ysubs)
+ 	}
+ }
+ 
+-static void rkisp2_format_xysubs(const struct v4l2_format_info *info,
+-				 u32 *xsubs, u32 *ysubs)
+-{
+-	if (info && v4l2_is_format_yuv(info)) {
+-		*xsubs = info->hdiv ?: 1;
+-		*ysubs = info->vdiv ?: 1;
+-	} else {
+-		*xsubs = 1;
+-		*ysubs = 1;
+-	}
+-}
+-
+ static u32 rkisp2_scale_up_factor(u32 src, u32 dst)
+ {
+ 	if (src <= 1 || dst <= 1)
+@@ -263,7 +251,13 @@ static void rkisp2_resizer_config_rsz(struct rkisp2_resizer *rsz,
+ 	u32 rsz_ctrl = 0;
+ 
+ 	rkisp2_mbus_code_xysubs(src_fmt->code, &in_xsubs, &in_ysubs);
+-	rkisp2_format_xysubs(rsz->source_fmt_info, &out_xsubs, &out_ysubs);
++
++	/*
++	 * The resizer always outputs YUV 4:2:2. Vertical chroma subsampling
++	 * for 4:2:0 formats is done by the memory interface.
++	 */
++	out_xsubs = 2;
++	out_ysubs = 1;
+ 
+ 	in_c.width = DIV_ROUND_UP(in_rect->width, in_xsubs);
+ 	in_c.height = DIV_ROUND_UP(in_rect->height, in_ysubs);
+-- 
+2.55.0
+

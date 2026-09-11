@@ -1,0 +1,100 @@
+From 48f0cb1a0197e15f921ff9d74a59bc7c75db44cb Mon Sep 17 00:00:00 2001
+From: Jared Baur <jaredbaur@fastmail.com>
+Date: Sun, 11 Oct 2026 23:43:12 -0700
+Subject: [PATCH 18/20] media: rkisp2: Wait for the raw read to finish before
+ stopping
+
+Stopping the raw read node returns its buffers straight away, even when
+the read DMA is still fetching from one of them. Userspace may then
+release the buffer, and the ISP stop that follows soft-resets the ISP
+in the middle of the read, which can hang the system.
+
+On stop, stop starting new reads and wait for the frame in flight to be
+consumed before returning the buffers. Also fix the debug message in the
+interrupt handler, which dereferenced a NULL buffer when no read was
+pending.
+---
+ .../platform/rockchip/rkisp2/rkisp2-common.h  |  1 +
+ .../platform/rockchip/rkisp2/rkisp2-dmarx.c   | 26 ++++++++++++++-----
+ 2 files changed, 21 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-common.h b/drivers/media/platform/rockchip/rkisp2/rkisp2-common.h
+index 7fcf99179..cf7168461 100644
+--- a/drivers/media/platform/rockchip/rkisp2/rkisp2-common.h
++++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-common.h
+@@ -262,6 +262,7 @@ struct rkisp2_dmarx_chan {
+ 	const struct rkisp2_rawrd_cfg *cfg;
+ 	enum rkisp2_rawrd_id id;
+ 	bool streaming;
++	wait_queue_head_t idle;
+ };
+ 
+ struct rkisp2_dmarx {
+diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-dmarx.c b/drivers/media/platform/rockchip/rkisp2/rkisp2-dmarx.c
+index 7eec6ad59..5759a2363 100644
+--- a/drivers/media/platform/rockchip/rkisp2/rkisp2-dmarx.c
++++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-dmarx.c
+@@ -309,13 +309,12 @@ void rkisp2_dmarx_isr(struct rkisp2_device *rkisp2, u32 status)
+ 
+ 		if (!(status & chan->cfg->ready_mask))
+ 			continue;
+-		if (!chan->streaming)
+-			continue;
+ 
+ 		spin_lock(&chan->buf_lock);
+ 		done = chan->curr_buf;
+ 		chan->curr_buf = NULL;
+-		if (!list_empty(&chan->buf_queue)) {
++		/* Once stopping, let the current read finish but start no more. */
++		if (chan->streaming && !list_empty(&chan->buf_queue)) {
+ 			chan->curr_buf = list_first_entry(&chan->buf_queue,
+ 					struct rkisp2_buffer, queue);
+ 			list_del(&chan->curr_buf->queue);
+@@ -325,11 +324,13 @@ void rkisp2_dmarx_isr(struct rkisp2_device *rkisp2, u32 status)
+ 		if (chan->curr_buf)
+ 			rkisp2_rawrd_update_mi(chan, chan->curr_buf);
+ 
+-		if (done)
++		if (done) {
++			dev_dbg(rkisp2->dev, "%s: %s buffer %pad done\n",
++				__func__, chan->cfg->name, &done->buff_addr[0]);
+ 			vb2_buffer_done(&done->vb.vb2_buf, VB2_BUF_STATE_DONE);
++		}
+ 
+-		dev_dbg(rkisp2->dev, "%s: %s buffer %pad done\n",
+-			__func__, chan->cfg->name, &done->buff_addr[0]);
++		wake_up(&chan->idle);
+ 	}
+ }
+ 
+@@ -401,7 +402,19 @@ static void rkisp2_rawrd_stop_streaming(struct vb2_queue *queue)
+ 	struct media_entity *entity = &chan->vnode.vdev.entity;
+ 
+ 	mutex_lock(&rkisp2->stream_lock);
++	spin_lock_irq(&chan->buf_lock);
+ 	chan->streaming = false;
++	spin_unlock_irq(&chan->buf_lock);
++
++	/*
++	 * The buffers can't be returned while the read DMA is still fetching
++	 * from one, so wait for the frame in flight to be consumed.
++	 */
++	if (!wait_event_timeout(chan->idle, !READ_ONCE(chan->curr_buf),
++				msecs_to_jiffies(1000)))
++		dev_warn(rkisp2->dev, "%s: timeout waiting for read to finish\n",
++			 chan->cfg->name);
++
+ 	rkisp2_rawrd_return_all_buffers(chan, VB2_BUF_STATE_ERROR);
+ 
+ 	/*
+@@ -675,6 +688,7 @@ int rkisp2_dmarx_register(struct rkisp2_device *rkisp2)
+ 		chan->id = i;
+ 		spin_lock_init(&chan->buf_lock);
+ 		INIT_LIST_HEAD(&chan->buf_queue);
++		init_waitqueue_head(&chan->idle);
+ 		rkisp2_rawrd_set_default_pix(chan);
+ 
+ 		ret = rkisp2_rawrd_media_init(chan);
+-- 
+2.55.0
+

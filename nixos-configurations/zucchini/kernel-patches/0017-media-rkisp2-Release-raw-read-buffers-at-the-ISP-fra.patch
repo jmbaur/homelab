@@ -1,0 +1,89 @@
+From 6f67f5590435e50cad05649d0968caea85150ae8 Mon Sep 17 00:00:00 2001
+From: Jared Baur <jaredbaur@fastmail.com>
+Date: Sun, 11 Oct 2026 23:42:48 -0700
+Subject: [PATCH 17/20] media: rkisp2: Release raw read buffers at the ISP
+ frame end
+
+The raw read DMA moves on to its next buffer when the main or self path
+reports a frame end. The capture paths finish as soon as the last line
+of their crop window is written, which can be well before the ISP has
+read the whole input frame: with a 4224x3136 input cropped to 16:9,
+the main path is done 380 lines early. The next buffer is then
+programmed while the current one is still being read, the ISP never
+sees the end of its input, and no frame completes from then on.
+
+Hand the raw read buffer back and start the next one on the ISP frame
+end interrupt instead, which only fires once the full input frame has
+been consumed. The vendor driver likewise waits for the ISP frame end
+before triggering the next read back.
+---
+ drivers/media/platform/rockchip/rkisp2/rkisp2-capture.c | 2 --
+ drivers/media/platform/rockchip/rkisp2/rkisp2-dmarx.c   | 6 +++---
+ drivers/media/platform/rockchip/rkisp2/rkisp2-isp.c     | 7 +++++++
+ 3 files changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-capture.c b/drivers/media/platform/rockchip/rkisp2/rkisp2-capture.c
+index c5f5578d6..ebc9e0945 100644
+--- a/drivers/media/platform/rockchip/rkisp2/rkisp2-capture.c
++++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-capture.c
+@@ -757,8 +757,6 @@ irqreturn_t rkisp2_capture_isr(int irq, void *ctx)
+ 		wake_up(&cap->done);
+ 	}
+ 
+-	rkisp2_dmarx_isr(rkisp2, status);
+-
+ 	rkisp2_write(rkisp2, RKISP2_CIF_MI_ICR, status);
+ 
+ 	return IRQ_HANDLED;
+diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-dmarx.c b/drivers/media/platform/rockchip/rkisp2/rkisp2-dmarx.c
+index ee52d3529..7eec6ad59 100644
+--- a/drivers/media/platform/rockchip/rkisp2/rkisp2-dmarx.c
++++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-dmarx.c
+@@ -81,7 +81,7 @@ static const struct rkisp2_dmarx_fmt rkisp2_rawrd_formats[] = {
+ static const struct rkisp2_rawrd_cfg rkisp2_rawrd_cfgs[RKISP2_RAWRD_MAX] = {
+ 	[RKISP2_RAWRD0] = {
+ 		.name = RKISP2_RAWRD0_NAME,
+-		.ready_mask = RKISP2_CIF_MI_MP_FE | RKISP2_CIF_MI_SP_FE,
++		.ready_mask = RKISP2_CIF_ISP_FRAME,
+ 		.base_reg = MI_RAW2_RD_BASE,
+ 		.length_reg = MI_RAW2_RD_LENGTH,
+ 		.enable_mask = SW_CSI_RAW2_RD_EN_ORG,
+@@ -89,7 +89,7 @@ static const struct rkisp2_rawrd_cfg rkisp2_rawrd_cfgs[RKISP2_RAWRD_MAX] = {
+ 	},
+ 	[RKISP2_RAWRD1] = {
+ 		.name = RKISP2_RAWRD1_NAME,
+-		.ready_mask = RKISP2_CIF_MI_MP_FE | RKISP2_CIF_MI_SP_FE,
++		.ready_mask = RKISP2_CIF_ISP_FRAME,
+ 		.base_reg = MI_RAW0_RD_BASE,
+ 		.length_reg = MI_RAW0_RD_LENGTH,
+ 		.enable_mask = SW_CSI_RAW0_RD_EN_ORG,
+@@ -97,7 +97,7 @@ static const struct rkisp2_rawrd_cfg rkisp2_rawrd_cfgs[RKISP2_RAWRD_MAX] = {
+ 	},
+ 	[RKISP2_RAWRD2] = {
+ 		.name = RKISP2_RAWRD2_NAME,
+-		.ready_mask = RKISP2_CIF_MI_MP_FE | RKISP2_CIF_MI_SP_FE,
++		.ready_mask = RKISP2_CIF_ISP_FRAME,
+ 		.base_reg = MI_RAW1_RD_BASE,
+ 		.length_reg = MI_RAW1_RD_LENGTH,
+ 		.enable_mask = SW_CSI_RAW1_RD_EN_ORG,
+diff --git a/drivers/media/platform/rockchip/rkisp2/rkisp2-isp.c b/drivers/media/platform/rockchip/rkisp2/rkisp2-isp.c
+index 0833ffe57..6e9da90ef 100644
+--- a/drivers/media/platform/rockchip/rkisp2/rkisp2-isp.c
++++ b/drivers/media/platform/rockchip/rkisp2/rkisp2-isp.c
+@@ -833,6 +833,13 @@ irqreturn_t rkisp2_isp_isr(int irq, void *ctx)
+ 		rkisp2_stats_isr_eof(&rkisp2->stats);
+ 	}
+ 
++	/*
++	 * The read DMA may only move on to the next buffer once the ISP has
++	 * consumed the whole frame. The capture paths finish earlier when
++	 * they crop, so their frame end is too early for this.
++	 */
++	rkisp2_dmarx_isr(rkisp2, status);
++
+ 	rkisp2_write(rkisp2, RKISP2_CIF_ISP_ICR, status);
+ 
+ 	return IRQ_HANDLED;
+-- 
+2.55.0
+

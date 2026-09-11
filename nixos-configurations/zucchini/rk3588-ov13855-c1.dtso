@@ -1,0 +1,132 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * OV13855 camera module (CMK-OT2016-FV1) on the CAM1 connector of the
+ * Orange Pi 5 (RK3588S).
+ *
+ * Camera connector mapping for this board, taken from the vendor device tree
+ * (rk3588s-orangepi-5-camera{1,2,3}.dtsi):
+ *
+ *   CAM1 -> csi2_dphy0  -> mipi2_csi2 @ 0xfdd30000  (mainline: csi_dphy0 + csi2)
+ *   CAM2 -> csi2_dcphy0 -> mipi0_csi2 @ 0xfdd10000
+ *   CAM3 -> csi2_dcphy1 -> mipi1_csi2 @ 0xfdd20000
+ *
+ * Only CAM1 works with mainline. CAM2 and CAM3 hang off the Samsung DC-PHYs,
+ * which phy-rockchip-samsung-dcphy only drives in DSI transmit mode, and
+ * mainline has no CSI host node for 0xfdd10000 or 0xfdd20000.
+ */
+
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/rockchip,rk3588-cru.h>
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/pinctrl/rockchip.h>
+
+/ {
+	compatible = "rockchip,rk3588s";
+};
+
+&i2c7 {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	status = "okay";
+
+	/*
+	 * Voice coil motor for the lens. The vendor tree describes a VM149C
+	 * here, which is register compatible with the DW9714 that mainline
+	 * has a driver for. Focus is set manually via V4L2_CID_FOCUS_ABSOLUTE
+	 * on /dev/v4l-subdev*; the rkisp2 IPA has no autofocus algorithm.
+	 */
+	dw9714: focus@c {
+		compatible = "dongwoon,dw9714";
+		reg = <0x0c>;
+	};
+
+	ov13855: camera-sensor@36 {
+		compatible = "ovti,ov13855";
+		reg = <0x36>;
+
+		assigned-clocks = <&cru CLK_MIPI_CAMARAOUT_M3>;
+		assigned-clock-rates = <24000000>;
+		clocks = <&cru CLK_MIPI_CAMARAOUT_M3>;
+		clock-names = "xvclk";
+
+		pinctrl-names = "default";
+		pinctrl-0 = <&mipim0_camera3_clk &cam1_rstn &cam1_pwdn>;
+		pwdn-gpios = <&gpio3 RK_PC6 GPIO_ACTIVE_HIGH>;
+		reset-gpios = <&gpio3 RK_PC4 GPIO_ACTIVE_HIGH>;
+
+		lens-focus = <&dw9714>;
+		orientation = <2>; /* External */
+
+		/*
+		 * The Rockchip ov13855 driver fails probe with -EINVAL if any
+		 * of these four are missing.
+		 */
+		rockchip,camera-module-index = <0>;
+		rockchip,camera-module-facing = "back";
+		rockchip,camera-module-name = "CMK-OT2016-FV1";
+		rockchip,camera-module-lens-name = "default";
+
+		port {
+			ov13855_output: endpoint {
+				data-lanes = <1 2>;
+				link-frequencies = /bits/ 64 <540000000 270000000>;
+				remote-endpoint = <&csi2_input>;
+			};
+		};
+	};
+};
+
+&pinctrl {
+	cam1 {
+		cam1_rstn: cam1-rstn-pinctrl {
+			rockchip,pins = <3 RK_PC4 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+
+		cam1_pwdn: cam1-pwdn-pinctrl {
+			rockchip,pins = <3 RK_PC6 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+	};
+};
+
+&csi_dphy0 {
+	status = "okay";
+};
+
+&csi2 {
+	status = "okay";
+};
+
+&csi2_in {
+	csi2_input: endpoint {
+		data-lanes = <1 2>;
+		link-frequencies = /bits/ 64 <540000000 270000000>;
+		remote-endpoint = <&ov13855_output>;
+	};
+};
+
+&vicap {
+	status = "okay";
+};
+
+&vicap_mmu {
+	status = "okay";
+};
+
+/*
+ * Only ISP0 is enabled. rkisp2 registers one media device per ISP instance,
+ * all named "rkisp2", and the libcamera pipeline handler takes the first one
+ * that matches; enabling ISP1 as well would make that choice ambiguous.
+ *
+ * There is deliberately no device tree link from VICAP to the ISP: this
+ * driver runs the ISP in memory-to-memory mode, so userspace captures raw
+ * frames from rkcif-mipi2-id0 and feeds them back in through rkisp2_rawrd0.
+ */
+&isp0 {
+	status = "okay";
+};
+
+&isp0_mmu {
+	status = "okay";
+};

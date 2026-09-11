@@ -1,0 +1,54 @@
+From 3d3acd87a09b428732d3f417e95b4c906de882ad Mon Sep 17 00:00:00 2001
+From: Jared Baur <jaredbaur@fastmail.com>
+Date: Sun, 11 Oct 2026 23:42:21 -0700
+Subject: [PATCH 16/20] media: rockchip: rkcif: Stop the stream at a frame end
+ before the source
+
+rkcif_stream_stop_streaming() disables the source and then waits for
+the frame end that stops the stream. With the source stopped, that
+frame end never arrives, so the wait always times out after a second
+and the stream is stopped by force. The runtime suspend that follows
+resets the VICAP while its DMA may still be writing, which on RK3588
+locks up the bus and hangs the system.
+
+Wait for the stream to stop at a frame end first and only then disable
+the source, the same order rkisp1 uses.
+---
+ .../media/platform/rockchip/rkcif/rkcif-stream.c   | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/media/platform/rockchip/rkcif/rkcif-stream.c b/drivers/media/platform/rockchip/rkcif/rkcif-stream.c
+index 3130d420a..5410bc7fe 100644
+--- a/drivers/media/platform/rockchip/rkcif/rkcif-stream.c
++++ b/drivers/media/platform/rockchip/rkcif/rkcif-stream.c
+@@ -308,10 +308,12 @@ static void rkcif_stream_stop_streaming(struct vb2_queue *queue)
+ 	u64 mask;
+ 	int ret;
+ 
+-	mask = BIT_ULL(stream->id);
+-	v4l2_subdev_disable_streams(&stream->interface->sd, RKCIF_IF_PAD_SRC,
+-				    mask);
+-
++	/*
++	 * Stop capturing at the next frame end before stopping the source. The
++	 * frame end never arrives once the source is stopped, and the runtime
++	 * suspend that follows resets the VICAP with the DMA still running,
++	 * which can lock up the bus.
++	 */
+ 	stream->stopping = true;
+ 	ret = wait_event_timeout(stream->wq_stopped, !stream->stopping,
+ 				 msecs_to_jiffies(1000));
+@@ -319,6 +321,10 @@ static void rkcif_stream_stop_streaming(struct vb2_queue *queue)
+ 	if (!ret && stream->stop_streaming)
+ 		stream->stop_streaming(stream);
+ 
++	mask = BIT_ULL(stream->id);
++	v4l2_subdev_disable_streams(&stream->interface->sd, RKCIF_IF_PAD_SRC,
++				    mask);
++
+ 	pm_runtime_put(rkcif->dev);
+ 
+ 	rkcif_stream_return_all_buffers(stream, VB2_BUF_STATE_ERROR);
+-- 
+2.55.0
+

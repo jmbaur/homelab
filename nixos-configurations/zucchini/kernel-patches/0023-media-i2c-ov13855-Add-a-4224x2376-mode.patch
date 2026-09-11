@@ -1,0 +1,113 @@
+From cffa1163840e35426448a01ea880bfdffc78b0c3 Mon Sep 17 00:00:00 2001
+From: Jared Baur <jaredbaur@fastmail.com>
+Date: Mon, 12 Oct 2026 01:06:50 -0700
+Subject: [PATCH 23/23] media: i2c: ov13855: Add a 4224x2376 mode
+
+A single RK3588 ISP processes about 350 Mpixel/s, so it cannot keep up
+with the 4224x3136 mode at 30 fps and drops to about 26. A 16:9 window
+of the full mode is 10 Mpixel and keeps up, and it is the field of view
+a 16:9 output keeps of the 4:3 frame anyway.
+
+Report the crop rectangle of each mode, and the full array as the crop
+bounds, so userspace knows where the window sits.
+---
+ drivers/media/i2c/ov13855.c | 52 ++++++++++++++++++++++++++++++++++---
+ 1 file changed, 49 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/i2c/ov13855.c b/drivers/media/i2c/ov13855.c
+index 179d33287..ba6de2f20 100644
+--- a/drivers/media/i2c/ov13855.c
++++ b/drivers/media/i2c/ov13855.c
+@@ -116,6 +116,7 @@ struct ov13855_mode {
+ 	u32 link_freq_idx;
+ 	u32 bpp;
+ 	const struct regval *reg_list;
++	const struct regval *window_regs;
+ };
+ 
+ struct ov13855 {
+@@ -726,6 +727,18 @@ static const struct regval ov13855_4224x3136_30fps_regs[] = {
+ 	{ REG_NULL, 0x00 },
+ };
+ 
++/*
++ * The middle 4224x2376 of the full-resolution mode, for 16:9 output. The
++ * vertical offset stays even to keep the Bayer order.
++ */
++static const struct regval ov13855_4224x2376_window_regs[] = {
++	{ 0x380a, 0x09 },
++	{ 0x380b, 0x48 },
++	{ 0x3812, 0x01 },
++	{ 0x3813, 0x84 },
++	{ REG_NULL, 0x00 },
++};
++
+ static const struct ov13855_mode supported_modes[] = {
+ 	{
+ 		.width = 4224,
+@@ -741,6 +754,21 @@ static const struct ov13855_mode supported_modes[] = {
+ 		.reg_list = ov13855_4224x3136_30fps_regs,
+ 		.link_freq_idx = 0,
+ 	},
++	{
++		.width = 4224,
++		.height = 2376,
++		.max_fps = {
++			.numerator = 10000,
++			.denominator = 300000,
++		},
++		.exp_def = 0x0800,
++		.hts_def = 0x0462,
++		.vts_def = 0x0c8e,
++		.bpp = 10,
++		.reg_list = ov13855_4224x3136_30fps_regs,
++		.window_regs = ov13855_4224x2376_window_regs,
++		.link_freq_idx = 0,
++	},
+ #ifdef DEBUG
+ 	{
+ 		.width = 2112,
+@@ -1213,6 +1241,13 @@ static int __ov13855_start_stream(struct ov13855 *ov13855)
+ 	if (ret)
+ 		return ret;
+ 
++	if (ov13855->cur_mode->window_regs) {
++		ret = ov13855_write_array(ov13855->client,
++					  ov13855->cur_mode->window_regs);
++		if (ret)
++			return ret;
++	}
++
+ 	/* In case these controls are set before streaming */
+ 	mutex_unlock(&ov13855->mutex);
+ 	ret = v4l2_ctrl_handler_setup(&ov13855->ctrl_handler);
+@@ -1468,12 +1503,23 @@ static int ov13855_get_selection(struct v4l2_subdev *sd,
+ 				 struct v4l2_subdev_selection *sel)
+ {
+ 	struct ov13855 *ov13855 = to_ov13855(sd);
++	const struct ov13855_mode *mode = ov13855->cur_mode;
+ 
+-	if (sel->target == V4L2_SEL_TGT_CROP_BOUNDS) {
++	switch (sel->target) {
++	case V4L2_SEL_TGT_NATIVE_SIZE:
++	case V4L2_SEL_TGT_CROP_BOUNDS:
++	case V4L2_SEL_TGT_CROP_DEFAULT:
+ 		sel->r.left = 0;
+-		sel->r.width = ov13855->cur_mode->width;
+ 		sel->r.top = 0;
+-		sel->r.height = ov13855->cur_mode->height;
++		sel->r.width = supported_modes[0].width;
++		sel->r.height = supported_modes[0].height;
++		return 0;
++	case V4L2_SEL_TGT_CROP:
++		/* The modes are windows centred on the full-resolution one. */
++		sel->r.left = (supported_modes[0].width - mode->width) / 2;
++		sel->r.top = (supported_modes[0].height - mode->height) / 2;
++		sel->r.width = mode->width;
++		sel->r.height = mode->height;
+ 		return 0;
+ 	}
+ 
+-- 
+2.55.0
+

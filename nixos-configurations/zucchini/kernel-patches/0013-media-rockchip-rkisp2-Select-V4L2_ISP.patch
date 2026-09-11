@@ -1,0 +1,30 @@
+From 759990a21826dcc6c082a24801b8d76ca68991e7 Mon Sep 17 00:00:00 2001
+From: Jared Baur <jared@northwoodspace.io>
+Date: Thu, 10 Sep 2026 22:17:21 -0700
+Subject: [PATCH] media: rockchip: rkisp2: Select V4L2_ISP
+
+rkisp2 calls v4l2_isp_params_validate_buffer(),
+v4l2_isp_params_validate_buffer_size(), v4l2_isp_stats_init_block() and
+v4l2_isp_stats_init_buffer(), but nothing in its Kconfig pulls in the
+module that provides them.
+
+V4L2_ISP has no prompt, so it can only be turned on by a select. Without
+one, a config that enables VIDEO_ROCKCHIP_ISP2 but no other V4L2_ISP
+user still builds, and then rockchip-isp2.ko fails to load with four
+unknown symbols. Select it, as the amlogic c3-isp driver already does.
+---
+ drivers/media/platform/rockchip/rkisp2/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/media/platform/rockchip/rkisp2/Kconfig b/drivers/media/platform/rockchip/rkisp2/Kconfig
+index 96a200a9a..93007308f 100644
+--- a/drivers/media/platform/rockchip/rkisp2/Kconfig
++++ b/drivers/media/platform/rockchip/rkisp2/Kconfig
+@@ -9,6 +9,7 @@ config VIDEO_ROCKCHIP_ISP2
+ 	select VIDEOBUF2_DMA_CONTIG
+ 	select VIDEOBUF2_VMALLOC
+ 	select V4L2_FWNODE
++	select V4L2_ISP
+ 	select GENERIC_PHY_MIPI_DPHY
+ 	default n
+ 	help

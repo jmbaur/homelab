@@ -1,0 +1,36 @@
+rkisp2: Report the sensor timestamp
+
+The pipeline handler never sets controls::SensorTimestamp, so
+libcamerasrc computes every buffer's PTS from a timestamp of 0 and an
+RTSP stream built from it carries no usable timing. Record the
+timestamp of the completed buffer, as the rkisp1 pipeline handler does.
+
+diff --git a/src/libcamera/pipeline/rkisp2/rkisp2.cpp b/src/libcamera/pipeline/rkisp2/rkisp2.cpp
+index c2792a2..6b25b1a 100644
+--- a/src/libcamera/pipeline/rkisp2/rkisp2.cpp
++++ b/src/libcamera/pipeline/rkisp2/rkisp2.cpp
+@@ -442,6 +442,8 @@ void RkISP2CameraData::vicapBufferReady(FrameBuffer *buffer)
+ 	Request *request = buffer->request();
+ 
+ 	if (!mainPath_ || isRaw_) {
++		request->_d()->metadata().set(controls::SensorTimestamp,
++					      buffer->metadata().timestamp);
+ 		pipe()->completeBuffer(request, buffer);
+ 		pipe()->completeRequest(request);
+ 		return;
+@@ -483,6 +485,15 @@ void RkISP2CameraData::ispBufferReady(FrameBuffer *buffer)
+ 			<< info.sequence << " got " << buffer->metadata().sequence;
+ 	}
+ 
++	/*
++	 * Record the sensor's timestamp in the request metadata.
++	 *
++	 * \todo The sensor timestamp should be better estimated by connecting
++	 * to the V4L2Device::frameStart signal.
++	 */
++	request->_d()->metadata().set(controls::SensorTimestamp,
++				      buffer->metadata().timestamp);
++
+ 	pipe()->completeBuffer(request, buffer);
+ 	tryCompleteRequest(request, buffer);
+ }

@@ -1,0 +1,158 @@
+From: Peyton Howe <peyton@localhost>
+Subject: [PATCH] arm64: dts: rockchip: enable RK3588 DCPHY CSI RX
+
+Vendor Orange Pi 5/5B routes CAM2/CAM3 through Samsung MIPI DCPHY
+CSI RX (csi2_dcphy + mipi0/1 CSI hosts at 0xfdd10000 / 0xfdd20000).
+
+Mainline already has mipidcphy0/1 at the same MMIO. Switch them to
+two PHY cells so DSI stays TX (PHY_TYPE_DSI) and CSI can take
+PHY_TYPE_CSI, add CSI hosts 0/1, and turn the PHYs on for Orange Pi 5.
+
+Do not port vendor's rockchip,rk3588-csi2-dphy wrapper; the CSI2
+host consumes the DCPHY directly.
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
+index 7669e41a2..ca15933c2 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
+@@ -1516,10 +1516,18 @@ vicap_dvp: port@0 {
+ 
+ 			vicap_mipi0: port@1 {
+ 				reg = <0x1>;
++
++				vicap_mipi0_input: endpoint {
++					remote-endpoint = <&csi0_output>;
++				};
+ 			};
+ 
+ 			vicap_mipi1: port@2 {
+ 				reg = <0x2>;
++
++				vicap_mipi1_input: endpoint {
++					remote-endpoint = <&csi1_output>;
++				};
+ 			};
+ 
+ 			vicap_mipi2: port@3 {
+@@ -1574,6 +1582,66 @@ vicap_mmu: iommu@fdce0800 {
+ 		status = "disabled";
+ 	};
+ 
++	csi0: csi@fdd10000 {
++		compatible = "rockchip,rk3588-mipi-csi2", "rockchip,rk3568-mipi-csi2";
++		reg = <0x0 0xfdd10000 0x0 0x10000>;
++		interrupts = <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH 0>,
++			     <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH 0>;
++		interrupt-names = "err1", "err2";
++		clocks = <&cru PCLK_CSI_HOST_0>;
++		phys = <&mipidcphy0 PHY_TYPE_DPHY PHY_TYPE_CSI>;
++		power-domains = <&power RK3588_PD_VI>;
++		resets = <&cru SRST_P_CSI_HOST_0>;
++		status = "disabled";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			csi0_in: port@0 {
++				reg = <0>;
++			};
++
++			csi0_out: port@1 {
++				reg = <1>;
++
++				csi0_output: endpoint {
++					remote-endpoint = <&vicap_mipi0_input>;
++				};
++			};
++		};
++	};
++
++	csi1: csi@fdd20000 {
++		compatible = "rockchip,rk3588-mipi-csi2", "rockchip,rk3568-mipi-csi2";
++		reg = <0x0 0xfdd20000 0x0 0x10000>;
++		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH 0>,
++			     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH 0>;
++		interrupt-names = "err1", "err2";
++		clocks = <&cru PCLK_CSI_HOST_1>;
++		phys = <&mipidcphy1 PHY_TYPE_DPHY PHY_TYPE_CSI>;
++		power-domains = <&power RK3588_PD_VI>;
++		resets = <&cru SRST_P_CSI_HOST_1>;
++		status = "disabled";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			csi1_in: port@0 {
++				reg = <0>;
++			};
++
++			csi1_out: port@1 {
++				reg = <1>;
++
++				csi1_output: endpoint {
++					remote-endpoint = <&vicap_mipi1_input>;
++				};
++			};
++		};
++	};
++
+ 	csi2: csi@fdd30000 {
+ 		compatible = "rockchip,rk3588-mipi-csi2", "rockchip,rk3568-mipi-csi2";
+ 		reg = <0x0 0xfdd30000 0x0 0x10000>;
+@@ -1794,7 +1862,7 @@ dsi0: dsi@fde20000 {
+ 		resets = <&cru SRST_P_DSIHOST0>;
+ 		reset-names = "apb";
+ 		power-domains = <&power RK3588_PD_VOP>;
+-		phys = <&mipidcphy0 PHY_TYPE_DPHY>;
++		phys = <&mipidcphy0 PHY_TYPE_DPHY PHY_TYPE_DSI>;
+ 		phy-names = "dcphy";
+ 		rockchip,grf = <&vop_grf>;
+ 		status = "disabled";
+@@ -1822,7 +1890,7 @@ dsi1: dsi@fde30000 {
+ 		resets = <&cru SRST_P_DSIHOST1>;
+ 		reset-names = "apb";
+ 		power-domains = <&power RK3588_PD_VOP>;
+-		phys = <&mipidcphy1 PHY_TYPE_DPHY>;
++		phys = <&mipidcphy1 PHY_TYPE_DPHY PHY_TYPE_DSI>;
+ 		phy-names = "dcphy";
+ 		rockchip,grf = <&vop_grf>;
+ 		status = "disabled";
+@@ -3435,7 +3503,7 @@ mipidcphy0: phy@feda0000 {
+ 			 <&cru SRST_P_MIPI_DCPHY0_GRF>,
+ 			 <&cru SRST_S_MIPI_DCPHY0>;
+ 		reset-names = "m_phy", "apb", "grf", "s_phy";
+-		#phy-cells = <1>;
++		#phy-cells = <2>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -3451,7 +3519,7 @@ mipidcphy1: phy@fedb0000 {
+ 			 <&cru SRST_P_MIPI_DCPHY1_GRF>,
+ 			 <&cru SRST_S_MIPI_DCPHY1>;
+ 		reset-names = "m_phy", "apb", "grf", "s_phy";
+-		#phy-cells = <1>;
++		#phy-cells = <2>;
+ 		status = "disabled";
+ 	};
+ 
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtsi b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtsi
+index 9da13f96f..c1f5cf3e1 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtsi
+@@ -208,6 +208,14 @@ &hdptxphy0 {
+ 	status = "okay";
+ };
+ 
++&mipidcphy0 {
++	status = "okay";
++};
++
++&mipidcphy1 {
++	status = "okay";
++};
++
+ &i2c0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2c0m2_xfer>;

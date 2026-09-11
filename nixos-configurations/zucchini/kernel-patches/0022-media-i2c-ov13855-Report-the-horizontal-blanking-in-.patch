@@ -1,0 +1,53 @@
+From 3b7ffc8028369cfe23e7593b2f2db0f6a33b01d3 Mon Sep 17 00:00:00 2001
+From: Jared Baur <jaredbaur@fastmail.com>
+Date: Mon, 12 Oct 2026 01:04:58 -0700
+Subject: [PATCH 22/23] media: i2c: ov13855: Report the horizontal blanking in
+ pixels
+
+The HTS register counts in units of 4 pixels, but the driver subtracted
+the width from it directly, reporting a horizontal blanking of -3102
+pixels at 4224x3136. Userspace computes the line length and the frame
+duration from it, so libcamera took the 30 fps mode for a 120 fps one
+and reported exposure times 4 times too short.
+
+With HTS = 0x462, the line is 4488 pixels at 432 Mpixel/s, which gives
+the 30 fps the sensor is measured to run at.
+---
+ drivers/media/i2c/ov13855.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/i2c/ov13855.c b/drivers/media/i2c/ov13855.c
+index 59da17f19..179d33287 100644
+--- a/drivers/media/i2c/ov13855.c
++++ b/drivers/media/i2c/ov13855.c
+@@ -57,6 +57,9 @@
+ #define OV13855_EXPOSURE_STEP 1
+ #define OV13855_VTS_MAX 0x7fff
+ 
++/* The HTS register counts in units of 4 pixels at the pixel rate above. */
++#define OV13855_HTS_UNIT 4
++
+ #define OV13855_REG_GAIN_H 0x3508
+ #define OV13855_REG_GAIN_L 0x3509
+ #define OV13855_GAIN_H_MASK 0x1f
+@@ -912,7 +915,7 @@ static int ov13855_set_fmt(struct v4l2_subdev *sd,
+ #endif
+ 	} else {
+ 		ov13855->cur_mode = mode;
+-		h_blank = mode->hts_def - mode->width;
++		h_blank = mode->hts_def * OV13855_HTS_UNIT - mode->width;
+ 		__v4l2_ctrl_modify_range(ov13855->hblank, h_blank, h_blank, 1,
+ 					 h_blank);
+ 		vblank_def = mode->vts_def - mode->height;
+@@ -1606,7 +1609,7 @@ static int ov13855_initialize_controls(struct ov13855 *ov13855)
+ 
+ 	__v4l2_ctrl_s_ctrl(ov13855->link_freq, mode->link_freq_idx);
+ 
+-	h_blank = mode->hts_def - mode->width;
++	h_blank = mode->hts_def * OV13855_HTS_UNIT - mode->width;
+ 	ov13855->hblank = v4l2_ctrl_new_std(handler, NULL, V4L2_CID_HBLANK,
+ 					    h_blank, h_blank, 1, h_blank);
+ 	if (ov13855->hblank)
+-- 
+2.55.0
+
