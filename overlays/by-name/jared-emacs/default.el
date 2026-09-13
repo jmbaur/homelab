@@ -303,6 +303,9 @@ if one already exists."
   :config
   (setq-default eglot-events-buffer-size 0)
   (setq eglot-code-action-indications nil)
+  (setq-default eglot-workspace-configuration
+		'(:texlab (:latexFormatter "tex-fmt"
+			   :formatterLineLength 80)))
   (add-hook 'eglot-managed-mode-hook
 	    (lambda ()
 	      "common LSP setup"
