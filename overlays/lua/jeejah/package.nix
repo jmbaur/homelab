@@ -24,7 +24,10 @@ buildLuaPackage rec {
     hash = "sha256-WDniR7fz8066ybfMhg/hPY+qwGc2J97WGHhK2vn9n5U=";
   };
 
-  patches = [ ./allow-custom-address.patch ];
+  patches = [
+    ./allow-custom-address.patch
+    ./allow-custom-select.patch
+  ];
 
   depsBuildBuild = [ pkgsBuildBuild.luaPackages.fennel ];
 

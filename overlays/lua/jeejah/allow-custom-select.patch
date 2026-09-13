@@ -1,0 +1,18 @@
+Let an embedding application supply its own socket.select, so that jeejah can be
+run inside another event loop (e.g. cqueues) instead of owning the process.
+
+diff --git a/jeejah.fnl b/jeejah.fnl
+index 9097cb6..a5a9ad0 100644
+--- a/jeejah.fnl
++++ b/jeejah.fnl
+@@ -184,8 +184,8 @@
+         (coroutine.create #(case (pcall client-loop state conn)
+                              (_ err) (cleanup state conn err)))))
+ 
+-(λ loop [{: server : sockets : connections &as state}]
+-  (each [_ ready (ipairs (socket.select sockets))]
++(λ loop [{: server : sockets : connections : options &as state}]
++  (each [_ ready (ipairs ((or options.select socket.select) sockets))]
+     (if (= ready server)
+         (case (server:accept)
+           conn (accept state conn)

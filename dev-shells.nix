@@ -47,6 +47,7 @@ inputs.nixpkgs.lib.mapAttrs (
           p.fennel
           p.jeejah
           p.ldbus
+          p.shevek
         ]))
         pkgs.home-manager
         pkgs.lldb

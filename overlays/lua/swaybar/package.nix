@@ -1,6 +1,10 @@
 {
   buildLuaPackage,
+  cqueues,
+  dkjson,
   fennel,
+  jeejah,
+  ldbus,
   lib,
   lua,
 }:
@@ -20,11 +24,11 @@ buildLuaPackage {
   makeFlags = [
     "LUA=${
       lib.getExe (
-        lua.withPackages (p: [
-          p.cqueues
-          p.dkjson
-          # p.jeejah
-          p.ldbus
+        lua.withPackages (_: [
+          cqueues
+          dkjson
+          jeejah
+          ldbus
         ])
       )
     }"
