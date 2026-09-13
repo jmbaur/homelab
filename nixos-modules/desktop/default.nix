@@ -162,6 +162,7 @@ in
         pkgs.grim
         pkgs.kanshi
         pkgs.libnotify
+        pkgs.luajit.pkgs.shevek
         pkgs.luajit.pkgs.swaybar
         pkgs.mako
         pkgs.pulseaudio

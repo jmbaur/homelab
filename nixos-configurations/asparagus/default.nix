@@ -1,7 +1,7 @@
 { lib, pkgs, ... }:
 let
   tinybootKernel = pkgs.linuxKernel.manualConfig {
-    inherit (pkgs.linux_7_1) src version;
+    inherit (pkgs.linux_7_2) src version;
     configfile = ./tinyboot-linux.config;
   };
 
@@ -36,7 +36,7 @@ in
 
       hardware.chromebook.trogdor.enable = true;
 
-      boot.kernelPackages = pkgs.linuxPackages_7_1;
+      boot.kernelPackages = pkgs.linuxPackages_7_2;
 
       boot.loader.tinyboot.enable = true;
       system.build.firmware = pkgs.buildCoreboot {

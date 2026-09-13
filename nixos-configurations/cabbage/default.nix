@@ -5,14 +5,14 @@
 
 let
   tinybootKernel = pkgs.linuxKernel.manualConfig {
-    inherit (pkgs.linux_7_1) src version;
+    inherit (pkgs.linux_7_2) src version;
     configfile = ./tinyboot-linux.config;
   };
 in
 {
   nixpkgs.hostPlatform = "x86_64-linux";
 
-  boot.kernelPackages = pkgs.linuxPackages_7_1;
+  boot.kernelPackages = pkgs.linuxPackages_7_2;
 
   hardware.enableRedistributableFirmware = true;
   hardware.cpu.intel.updateMicrocode = true;
