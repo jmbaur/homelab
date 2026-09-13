@@ -43,6 +43,8 @@
 (fn lsp-attach [opts]
   (set vim.opt_local.number true)
   (set vim.opt_local.signcolumn :yes)
+  ;; don't use `gq` for LSP formatting, we already format on save
+  (tset (. vim.bo opts.buf) :formatexpr "")
   (if (vim.tbl_contains [:zig :c :cpp :nix :go :sh :bash :rust :terraform :tex]
                         (vim.fn.getbufvar opts.buf :&filetype))
       (vim.api.nvim_create_autocmd [:BufWritePre]
