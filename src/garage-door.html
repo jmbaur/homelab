@@ -1,53 +1,675 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>Garage Door</title>
-	</head>
-	<iframe src="/cam" width="100%" height="360" style="border:none;" allowfullscreen></iframe>
-	<div id="toggle"></div>
-	<script>
-		const press_min_ms = 1500;
-		const garage_movement_ms = 10000;
-		var press;
-		var locked;
-		function cancel() {
-			press = null;
-			locked = false;
-			document.body.style.backgroundColor = "green";
-		}
-		function start(event) {
-			if (locked) {
-				return;
-			}
-			press = Date.now();
-			locked = true;
-			document.body.style.backgroundColor = "darkgreen";
-			window.setTimeout(function() {
-				if (press != null && locked) {
-					document.body.style.backgroundColor = "lightgreen";
-				}
-			}, press_min_ms);
-		}
-		function end(event) {
-			if (press === null || !locked) {
-				return;
-			}
-			const diff = Date.now() - press;
-			press = null;
-			if (diff < press_min_ms) {
-				document.body.style.backgroundColor = "red";
-				window.setTimeout(cancel, press_min_ms);
-			} else {
-				fetch("/toggle");
-				window.setTimeout(cancel, garage_movement_ms);
-			}
-		}
-		document.addEventListener("touchstart", start);
-		document.addEventListener("mousedown", start);
-		document.addEventListener("touchend", end);
-		document.addEventListener("mouseup", end);
-		document.addEventListener("touchcancel", cancel);
-		document.addEventListener("mouseleave", cancel);
-		cancel();
-	</script>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="theme-color"
+      content="#f2f2f7"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#000000"
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <title>Garage Door</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%2334c759' d='M1 7.2 8 2l7 5.2V14H1z'/%3E%3Cpath fill='%23fff' d='M3.5 8.5h9V10h-9zm0 2.5h9v1.5h-9z'/%3E%3C/svg%3E"
+    />
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #f2f2f7;
+        --surface: #ffffff;
+        --text: #1c1c1e;
+        --muted: #6e6e73;
+        --border: #d5d5da;
+        --accent: #1c8c3c;
+        --accent-strong: #14682c;
+        --on-accent: #ffffff;
+        --danger: #c0392b;
+        --shadow: 0 1px 3px rgb(0 0 0 / 0.12);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #000000;
+          --surface: #1c1c1e;
+          --text: #f2f2f7;
+          --muted: #98989f;
+          --border: #38383a;
+          --accent: #30d158;
+          --accent-strong: #24a344;
+          --on-accent: #06240f;
+          --danger: #ff453a;
+          --shadow: none;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font:
+          400 16px/1.4 system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+        touch-action: manipulation;
+        -webkit-text-size-adjust: 100%;
+      }
+
+      main {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        height: 100%;
+        padding: max(12px, env(safe-area-inset-top))
+          max(12px, env(safe-area-inset-right))
+          max(12px, env(safe-area-inset-bottom))
+          max(12px, env(safe-area-inset-left));
+      }
+
+      .stage {
+        position: relative;
+        flex: 1 1 auto;
+        min-height: 0;
+        background: #000;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        overflow: hidden;
+      }
+
+      video {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        background: #000;
+      }
+
+      #stream-status {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        text-align: center;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #fff;
+        background: rgb(0 0 0 / 0.45);
+        text-shadow: 0 1px 4px #000;
+      }
+
+      #stream-status[hidden] {
+        display: none;
+      }
+
+      #fullscreen {
+        position: absolute;
+        right: 8px;
+        bottom: 8px;
+        width: 40px;
+        height: 40px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        border: none;
+        border-radius: 10px;
+        color: #fff;
+        background: rgb(0 0 0 / 0.45);
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      #fullscreen svg {
+        width: 18px;
+        height: 18px;
+        fill: currentColor;
+      }
+
+      .controls {
+        flex: 0 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      #toggle {
+        position: relative;
+        width: 100%;
+        min-height: 88px;
+        padding: 0;
+        overflow: hidden;
+        font: inherit;
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: var(--text);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        cursor: pointer;
+        touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+        -webkit-tap-highlight-color: transparent;
+        transition:
+          background-color 0.15s,
+          color 0.15s,
+          border-color 0.15s;
+      }
+
+      #toggle:focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      #fill {
+        position: absolute;
+        inset: 0;
+        transform: scaleX(0);
+        transform-origin: left center;
+        background: var(--accent);
+        transition: transform 0.15s ease-out;
+      }
+
+      #toggle[data-state="holding"] #fill {
+        transform: scaleX(1);
+        transition: transform var(--press-ms) linear;
+      }
+
+      #toggle[data-state="armed"] #fill {
+        transform: scaleX(1);
+        transition: none;
+      }
+
+      #label {
+        position: relative;
+        display: block;
+        padding: 24px 16px;
+      }
+
+      #toggle[data-state="armed"],
+      #toggle[data-state="sending"],
+      #toggle[data-state="moving"] {
+        color: var(--on-accent);
+        border-color: var(--accent-strong);
+      }
+
+      #toggle[data-state="sending"] #fill,
+      #toggle[data-state="moving"] #fill {
+        transform: scaleX(1);
+        transition: none;
+        background: var(--accent-strong);
+      }
+
+      #toggle[data-state="aborted"],
+      #toggle[data-state="error"] {
+        color: #fff;
+        border-color: var(--danger);
+      }
+
+      #toggle[data-state="aborted"] #fill,
+      #toggle[data-state="error"] #fill {
+        transform: scaleX(1);
+        transition: none;
+        background: var(--danger);
+      }
+
+      #toggle:disabled {
+        cursor: default;
+      }
+
+      #hint {
+        margin: 0;
+        min-height: 1.4em;
+        text-align: center;
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+
+      /* Phones held sideways: put the camera and the button next to each other
+			   so the video keeps most of the very limited height. */
+      @media (orientation: landscape) and (max-height: 520px) {
+        main {
+          flex-direction: row;
+          align-items: stretch;
+        }
+
+        .controls {
+          width: min(38vw, 260px);
+          justify-content: center;
+        }
+
+        #toggle {
+          min-height: 120px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        #fill {
+          transition-duration: 0.01ms;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="stage">
+        <video
+          id="video"
+          autoplay
+          muted
+          playsinline
+          disablepictureinpicture
+        ></video>
+        <div id="stream-status">Connecting to camera&hellip;</div>
+        <button
+          id="fullscreen"
+          type="button"
+          title="Fullscreen"
+          aria-label="Fullscreen"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M4 9V4h5v2H6v3H4zm11-5h5v5h-2V6h-3V4zM4 15h2v3h3v2H4v-5zm14 0h2v5h-5v-2h3v-3z"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <div class="controls">
+        <button
+          id="toggle"
+          type="button"
+          data-state="idle"
+          aria-describedby="hint"
+        >
+          <span id="fill" aria-hidden="true"></span>
+          <span id="label">Hold to toggle</span>
+        </button>
+        <p id="hint" role="status" aria-live="polite">
+          Hold the button for 1.5 seconds
+        </p>
+      </div>
+    </main>
+
+    <script>
+      "use strict";
+
+      const PRESS_MIN_MS = 1500;
+      const GARAGE_MOVEMENT_MS = 10000;
+      const STREAM_RETRY_MS = 2000;
+
+      const toggle = document.getElementById("toggle");
+      const label = document.getElementById("label");
+      const hint = document.getElementById("hint");
+      const video = document.getElementById("video");
+      const streamStatus = document.getElementById("stream-status");
+      const fullscreen = document.getElementById("fullscreen");
+
+      toggle.style.setProperty("--press-ms", PRESS_MIN_MS + "ms");
+
+      /* --- toggle button ------------------------------------------------ */
+
+      let state = "idle";
+      let pointerId = null;
+      let armTimer = null;
+      let resetTimer = null;
+      let countdownTimer = null;
+
+      function buzz(pattern) {
+        if (navigator.vibrate) {
+          navigator.vibrate(pattern);
+        }
+      }
+
+      function setState(next, text, tip) {
+        state = next;
+        toggle.dataset.state = next;
+        label.textContent = text;
+        hint.textContent = tip;
+      }
+
+      function clearTimers() {
+        window.clearTimeout(armTimer);
+        window.clearTimeout(resetTimer);
+        window.clearInterval(countdownTimer);
+        armTimer = resetTimer = countdownTimer = null;
+      }
+
+      function idle() {
+        clearTimers();
+        toggle.disabled = false;
+        setState("idle", "Hold to toggle", "Hold the button for 1.5 seconds");
+      }
+
+      function releasePointer() {
+        if (pointerId !== null) {
+          if (toggle.hasPointerCapture(pointerId)) {
+            toggle.releasePointerCapture(pointerId);
+          }
+          pointerId = null;
+        }
+      }
+
+      function beginHold() {
+        if (state !== "idle") {
+          return;
+        }
+
+        setState("holding", "Keep holding…", "Release early to cancel");
+        buzz(10);
+
+        armTimer = window.setTimeout(function () {
+          if (state === "holding") {
+            setState("armed", "Release to toggle", "Let go to move the door");
+            buzz(25);
+          }
+        }, PRESS_MIN_MS);
+      }
+
+      function cancelHold(complain) {
+        if (state !== "holding" && state !== "armed") {
+          return;
+        }
+
+        clearTimers();
+
+        if (!complain) {
+          idle();
+          return;
+        }
+
+        setState(
+          "aborted",
+          "Held too briefly",
+          "Hold until the button fills up",
+        );
+        resetTimer = window.setTimeout(idle, 1200);
+      }
+
+      function moving() {
+        let remaining = Math.round(GARAGE_MOVEMENT_MS / 1000);
+
+        setState("moving", "Door moving…", remaining + "s");
+
+        countdownTimer = window.setInterval(function () {
+          remaining -= 1;
+          hint.textContent = Math.max(remaining, 0) + "s";
+        }, 1000);
+
+        resetTimer = window.setTimeout(idle, GARAGE_MOVEMENT_MS);
+      }
+
+      function fire() {
+        clearTimers();
+        toggle.disabled = true;
+        setState("sending", "Sending…", "");
+        buzz([20, 40, 20]);
+
+        fetch("/toggle", { cache: "no-store" })
+          .then(function (response) {
+            if (!response.ok) {
+              throw new Error("HTTP " + response.status);
+            }
+            moving();
+          })
+          .catch(function (err) {
+            setState("error", "Failed to send", String(err.message || err));
+            resetTimer = window.setTimeout(idle, 3000);
+          });
+      }
+
+      toggle.addEventListener("pointerdown", function (event) {
+        if (state !== "idle" || !event.isPrimary) {
+          return;
+        }
+
+        event.preventDefault();
+        pointerId = event.pointerId;
+        toggle.setPointerCapture(pointerId);
+        beginHold();
+      });
+
+      toggle.addEventListener("pointermove", function (event) {
+        if (event.pointerId !== pointerId) {
+          return;
+        }
+
+        // Sliding off the button cancels, the way a native button does.
+        const box = toggle.getBoundingClientRect();
+        const inside =
+          event.clientX >= box.left &&
+          event.clientX <= box.right &&
+          event.clientY >= box.top &&
+          event.clientY <= box.bottom;
+
+        if (!inside) {
+          releasePointer();
+          cancelHold(false);
+        }
+      });
+
+      toggle.addEventListener("pointerup", function (event) {
+        if (event.pointerId !== pointerId) {
+          return;
+        }
+
+        releasePointer();
+
+        if (state === "armed") {
+          fire();
+        } else {
+          cancelHold(true);
+        }
+      });
+
+      toggle.addEventListener("pointercancel", function () {
+        releasePointer();
+        cancelHold(false);
+      });
+
+      toggle.addEventListener("contextmenu", function (event) {
+        event.preventDefault();
+      });
+
+      // Keyboard: hold space/enter for the same duration.
+      toggle.addEventListener("keydown", function (event) {
+        if (event.repeat || (event.key !== " " && event.key !== "Enter")) {
+          return;
+        }
+        event.preventDefault();
+        beginHold();
+      });
+
+      toggle.addEventListener("keyup", function (event) {
+        if (event.key !== " " && event.key !== "Enter") {
+          return;
+        }
+        event.preventDefault();
+        if (state === "armed") {
+          fire();
+        } else {
+          cancelHold(true);
+        }
+      });
+
+      toggle.addEventListener("blur", function () {
+        releasePointer();
+        cancelHold(false);
+      });
+
+      idle();
+
+      /* --- camera ------------------------------------------------------- */
+
+      const STREAM_URL = "/cam/index.m3u8";
+      const HLS_JS_URL = "/cam/hls.min.js";
+
+      let hls = null;
+      let hlsScript = null;
+      let streamRetry = null;
+      let streamGeneration = 0;
+
+      function showStreamStatus(text) {
+        streamStatus.textContent = text;
+        streamStatus.hidden = false;
+      }
+
+      function retryStream(text) {
+        showStreamStatus(text);
+        window.clearTimeout(streamRetry);
+        streamRetry = window.setTimeout(startStream, STREAM_RETRY_MS);
+      }
+
+      // hls.js is served by mediamtx itself, so no CDN is involved, but it is
+      // also unreachable whenever the camera is. Load it on demand so that a
+      // failure just folds into the normal stream retry.
+      function ensureHls() {
+        if (window.Hls) {
+          return Promise.resolve(true);
+        }
+
+        if (hlsScript === null) {
+          hlsScript = new Promise(function (resolve) {
+            const script = document.createElement("script");
+            script.src = HLS_JS_URL;
+            script.onload = function () {
+              resolve(Boolean(window.Hls));
+            };
+            script.onerror = function () {
+              script.remove();
+              hlsScript = null;
+              resolve(false);
+            };
+            document.head.appendChild(script);
+          });
+        }
+
+        return hlsScript;
+      }
+
+      function startStream() {
+        window.clearTimeout(streamRetry);
+
+        if (hls !== null) {
+          hls.destroy();
+          hls = null;
+        }
+
+        const generation = ++streamGeneration;
+        showStreamStatus("Connecting to camera…");
+
+        ensureHls().then(function (loaded) {
+          if (generation !== streamGeneration) {
+            return;
+          }
+
+          // Prefer hls.js for low-latency HLS, and fall back to the
+          // browser's own player (Safari) where it isn't usable.
+          if (loaded && Hls.isSupported()) {
+            hls = new Hls({
+              lowLatencyMode: true,
+              maxLiveSyncPlaybackRate: 1.5,
+            });
+
+            hls.on(Hls.Events.MEDIA_ATTACHED, function () {
+              hls.loadSource(STREAM_URL);
+            });
+
+            hls.on(Hls.Events.ERROR, function (_event, data) {
+              if (!data.fatal) {
+                return;
+              }
+
+              hls.destroy();
+              hls = null;
+
+              if (data.response && data.response.code === 404) {
+                retryStream("Camera offline, retrying…");
+              } else {
+                retryStream("Stream error, retrying…");
+              }
+            });
+
+            hls.attachMedia(video);
+          } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+            video.src = STREAM_URL;
+            video.load();
+          } else if (!loaded) {
+            retryStream("Camera unreachable, retrying…");
+          } else {
+            showStreamStatus("This browser cannot play the camera stream");
+          }
+        });
+      }
+
+      video.addEventListener("playing", function () {
+        streamStatus.hidden = true;
+      });
+
+      video.addEventListener("error", function () {
+        if (hls === null) {
+          retryStream("Stream error, retrying…");
+        }
+      });
+
+      // Autoplay can still be refused; a tap on the picture starts it.
+      video.addEventListener("click", function () {
+        video.play().catch(function () {});
+      });
+
+      streamStatus.addEventListener("click", function () {
+        startStream();
+      });
+
+      // Coming back from the background leaves the stream far behind live.
+      document.addEventListener("visibilitychange", function () {
+        if (document.visibilityState === "visible") {
+          startStream();
+        }
+      });
+
+      fullscreen.addEventListener("click", function () {
+        const stage = document.querySelector(".stage");
+
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        } else if (stage.requestFullscreen) {
+          stage.requestFullscreen().catch(function () {});
+        } else if (video.webkitEnterFullscreen) {
+          // iOS Safari only goes fullscreen on the video element itself.
+          video.webkitEnterFullscreen();
+        }
+      });
+
+      startStream();
+    </script>
+  </body>
 </html>

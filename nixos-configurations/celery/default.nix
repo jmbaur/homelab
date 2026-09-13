@@ -153,7 +153,12 @@
       sslCertificateKey = config.sops.secrets."cf-origin/key".path;
       basicAuthFile = config.sops.secrets."garage-htpasswd".path;
       locations."/".proxyPass = "http://rhubarb.internal:8080";
-      locations."/cam".proxyPass = "http://rhubarb.internal:8888";
+      locations."/cam" = {
+        proxyPass = "http://rhubarb.internal:8888";
+        # Low-latency HLS streams parts over long-lived chunked responses;
+        # buffering them here just adds latency back.
+        extraConfig = "proxy_buffering off;";
+      };
     };
   };
 }

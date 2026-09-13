@@ -37,9 +37,9 @@ let
           wayland = pkgs.kodi-wayland;
         }
         .${cfg.backend}.override
-        { sambaSupport = false; } # deps don't cross-compile
+          { sambaSupport = false; } # deps don't cross-compile
       ).overrideAttrs
-      { enableParallelBuilding = true; }
+        { enableParallelBuilding = true; }
     ).withPackages
       (p: [
         p.inputstream-adaptive

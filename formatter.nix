@@ -6,6 +6,7 @@ inputs.nixpkgs.lib.mapAttrs (
       pkgs.deadnix
       pkgs.fnlfmt
       pkgs.nixfmt
+      pkgs.prettier
       pkgs.shellcheck
       pkgs.shfmt
       pkgs.statix
@@ -24,6 +25,12 @@ inputs.nixpkgs.lib.mapAttrs (
         command = "deadnix";
         includes = [ "*.nix" ];
         options = [ "--edit" ];
+      };
+
+      formatter.prettier = {
+        command = "prettier";
+        includes = [ "*.html" ];
+        options = [ "--write" ];
       };
 
       formatter.statix = {

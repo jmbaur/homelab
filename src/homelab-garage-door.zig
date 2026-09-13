@@ -81,7 +81,7 @@ fn handleConnection(
     if (std.mem.eql(u8, "/", request.head.target)) {
         try request.respond(@embedFile("./garage-door.html"), .{
             .extra_headers = &.{
-                .{ .name = "Content-Type", .value = "text/html" },
+                .{ .name = "Content-Type", .value = "text/html; charset=utf-8" },
             },
         });
     } else if (std.mem.eql(u8, "/toggle", request.head.target)) {
