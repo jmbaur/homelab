@@ -24,6 +24,7 @@ inputs: {
           "lua5_2"
           "lua5_3"
           "lua5_4"
+          "lua5_5"
         ]
         (
           lua:
