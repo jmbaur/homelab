@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -79,7 +78,6 @@ in
 
       sops.secrets = {
         nix_signing_key = { };
-        ssh_remote_build.owner = config.users.users.hydra-queue-runner.name;
         hydra_netrc.owner = config.users.users.hydra.name;
         "cf-origin/cert".owner = config.services.nginx.user;
         "cf-origin/key".owner = config.services.nginx.user;
@@ -114,9 +112,9 @@ in
 
       zramSwap.memoryPercent = 200;
 
-      system.stateVersion = "26.05";
+      system.stateVersion = "26.11";
 
-      services.hydra = {
+      services.hydra-dev = {
         enable = true;
         logo = ./dr-doom.svg;
         hydraURL = "https://hydra.jmbaur.com";
@@ -124,18 +122,39 @@ in
         useSubstitutes = true;
         extraConfig = ''
           allow_import_from_derivation = false
-          max_output_size = ${
-            toString (
-              4 * 1024 * 1024 * 1024 # 4 GiB
-            )
-          }
           evaluator_workers = 8
           evaluator_max_memory_size = 8192
           binary_cache_public_uri = https://cache.jmbaur.com
           log_prefix = https://cache.jmbaur.com/
-          store_uri = http://[::1]:8501/upload
+          queue_runner_endpoint = http://[::1]:${toString config.services.hydra-queue-runner-dev.rest.port}
         '';
       };
+
+      services.hydra-queue-runner-dev = {
+        enable = true;
+
+        grpc.address = "[::]";
+        grpc.port = 50051;
+        rest.port = 8080;
+
+        settings = {
+          remoteStoreAddr = [ "http://[::1]:8501/upload" ];
+
+          useSubstitutes = true;
+
+          maxOutputSize = 4 * 1024 * 1024 * 1024; # 4 GiB
+        };
+      };
+
+      services.hydra-queue-builder-dev = {
+        enable = true;
+        queueRunnerAddr = "http://[::1]:${toString config.services.hydra-queue-runner-dev.grpc.port}";
+        settings.maxJobs = 24;
+      };
+
+      custom.yggdrasil.peers.broccoli.allowedTCPPorts = [
+        config.services.hydra-queue-runner-dev.grpc.port
+      ];
 
       services.nginx.virtualHosts."cache.jmbaur.com" = {
         onlySSL = true;
@@ -187,32 +206,6 @@ in
         sslCertificate = config.sops.secrets."cf-origin/cert".path;
         sslCertificateKey = config.sops.secrets."cf-origin/key".path;
       };
-
-      nix.distributedBuilds = true;
-      nix.buildMachines = [
-        {
-          hostName = "localhost";
-          protocol = null; # only works with "localhost" builder
-          inherit (pkgs.stdenv.hostPlatform) system;
-          supportedFeatures = config.nix.settings.system-features or [ ];
-          maxJobs = 24;
-        }
-        {
-          hostName = "broccoli.internal";
-          protocol = "ssh"; # ssh-ng not supported by hydra (see https://github.com/NixOS/hydra/blob/18c0d762109549351ecf622cde34514351a72492/src/hydra-queue-runner/build-remote.cc#L375)
-          sshUser = "builder";
-          sshKey = config.sops.secrets.ssh_remote_build.path;
-          system = "aarch64-linux";
-          publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSURWckhkcmFaL3lVWWpBeFQ5c1psZUJQNVY2eTI5QlY0ajFFbEJWSUZSYWogcm9vdEBicm9jY29saQo=";
-          maxJobs = 8;
-          supportedFeatures = [
-            "nixos-test"
-            "benchmark"
-            "big-parallel"
-            "kvm"
-          ];
-        }
-      ];
     }
     {
       fileSystems."/var/lib/jellyfin" = {

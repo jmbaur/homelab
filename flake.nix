@@ -6,6 +6,7 @@
 
     git-hooks.url = "github:cachix/git-hooks.nix";
     home-manager.url = "github:nix-community/home-manager";
+    hydra.url = "github:NixOS/hydra";
     ipwatch.url = "github:jmbaur/ipwatch";
     mixos.url = "github:jmbaur/mixos";
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
