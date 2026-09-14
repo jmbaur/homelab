@@ -51,14 +51,6 @@ inputs: {
 
     # all other packages
     (final: prev: {
-      emacs = prev.emacs.overrideAttrs (old: {
-        __structuredAttrs = true;
-        strictDeps = true;
-        nativeBuildInputs =
-          old.nativeBuildInputs
-          ++ final.lib.optionals final.stdenv.buildPlatform.isDarwin [ final.pkgsBuildHost.darwin.sigtool ];
-      });
-
       cros-ec-fizz = prev.cros-ec.override { board = "fizz"; };
 
       gnome-console =
