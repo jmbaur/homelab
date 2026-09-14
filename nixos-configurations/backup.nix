@@ -20,6 +20,31 @@ let
     ;
 
   cfg = config.custom.backup;
+
+  # Snapshots are named after an RFC-3339 date, so comparing lexically against
+  # the cutoff date is enough to find the expired ones.
+  pruneSnapshots =
+    name: glob:
+    pkgs.writeShellApplication {
+      inherit name;
+
+      runtimeInputs = [
+        pkgs.btrfs-progs
+        pkgs.coreutils
+      ];
+
+      text = ''
+        shopt -s nullglob
+
+        cutoff=$(date --rfc-3339=date --date='1 month ago')
+
+        for snapshot in ${glob}; do
+          if [[ "''${snapshot##*/}" < "$cutoff" ]]; then
+            btrfs subvolume delete -- "$snapshot"
+          fi
+        done
+      '';
+    };
 in
 {
   options.custom.backup = {
@@ -54,8 +79,22 @@ in
     (mkIf cfg.receiver.enable {
       systemd.tmpfiles.settings."10-backup" = mapAttrs' (nodeName: _: {
         name = "${cfg.receiver.snapshotRoot}/${nodeName}";
-        value.v.age = "1M";
+        value.v = { };
       }) config.custom.yggdrasil.peers;
+
+      systemd.timers.backup-prune = {
+        wantedBy = [ "timers.target" ];
+        timerConfig = {
+          OnCalendar = "daily";
+          RandomizedDelaySec = "1h";
+          Persistent = true;
+        };
+      };
+
+      systemd.services.backup-prune.serviceConfig = {
+        Type = "oneshot";
+        ExecStart = getExe (pruneSnapshots "backup-prune" "${cfg.receiver.snapshotRoot}/*/*");
+      };
 
       systemd.services.backup-recv = {
         path = [ pkgs.btrfs-progs ];
@@ -76,7 +115,7 @@ in
     })
 
     (mkIf cfg.sender.enable {
-      systemd.tmpfiles.settings."10-backup"."/snapshots".v.age = "1M";
+      systemd.tmpfiles.settings."10-backup"."/snapshots".v = { };
 
       systemd.timers.backup-send = {
         wantedBy = [ "timers.target" ];
@@ -89,12 +128,16 @@ in
 
       systemd.services.backup-send.serviceConfig = {
         Type = "oneshot";
+        # Prune first, so that expired snapshots are still reclaimed when the
+        # receiver is unreachable and the send below fails.
+        ExecStartPre = "-${getExe (pruneSnapshots "backup-prune" "/snapshots/*")}";
         ExecStart = getExe (
           pkgs.writeShellApplication {
             name = "backup-send";
 
             runtimeInputs = [
               pkgs.btrfs-progs
+              pkgs.coreutils
               pkgs.netcat
               pkgs.pv
             ];
