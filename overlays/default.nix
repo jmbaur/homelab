@@ -49,6 +49,23 @@ inputs: {
       );
     })
 
+    # URI 5.36 bundles URI/ws.pm and URI/wss.pm, which are the only two files
+    # the standalone URI-ws distribution provides, so anything pulling in both
+    # now collides. hydra's perlDeps is a buildEnv over
+    # lib.closePropagation, and CatalystRuntime still propagates URIws, so
+    # `nix build .#hydra` fails on the conflicting subpath. Alias the obsolete
+    # distribution to URI so the closure dedupes it away.
+    #
+    # Upstream: https://github.com/NixOS/nixpkgs/issues/562534 (open, no fix
+    # PR as of 2026-09-13). Drop this once nixpkgs stops referencing URIws.
+    (_final: prev: {
+      perlPackages = prev.perlPackages.overrideScope (
+        perlPackagesFinal: _: {
+          URIws = perlPackagesFinal.URI;
+        }
+      );
+    })
+
     # all other packages
     (final: prev: {
       emacs = prev.emacs.overrideAttrs (old: {

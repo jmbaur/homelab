@@ -104,6 +104,8 @@ let
       boot.loader.grub.enable = false;
 
       image.repart = {
+        enable = true;
+
         name = "recovery";
 
         compression.enable = true;
