@@ -6,12 +6,10 @@ in
   default = {
     nixpkgs.overlays = [ inputs.self.overlays.default ];
     imports = [
-      # `services.hydra-dev`, `services.hydra-queue-runner-dev` and
-      # `services.hydra-queue-builder-dev`. These replace nixpkgs'
-      # `services.hydra`, whose queue runner is the old C++ one.
-      inputs.hydra.nixosModules.web-app
-      inputs.hydra.nixosModules.queue-runner
       inputs.hydra.nixosModules.builder
+      inputs.hydra.nixosModules.queue-runner
+      inputs.hydra.nixosModules.web-app
+      inputs.jetpack-nixos.nixosModules.default
       inputs.nixos-router.nixosModules.default
       inputs.quartus-nix.nixosModules.default
       inputs.sops-nix.nixosModules.sops

@@ -15,6 +15,31 @@
         "type": "github"
       }
     },
+    "cuda-legacy": {
+      "inputs": {
+        "flake-parts": [
+          "jetpack-nixos",
+          "cuda-legacy"
+        ],
+        "nixpkgs": [
+          "jetpack-nixos",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1779836515,
+        "narHash": "sha256-X/AwJZeTjxetRM7JG2BXeffKa1PIg/uo8AP5TX/+kb0=",
+        "owner": "nixos-cuda",
+        "repo": "cuda-legacy",
+        "rev": "baf22622e1114bb36412e5cebe2303f302edb882",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos-cuda",
+        "repo": "cuda-legacy",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -183,6 +208,27 @@
       "original": {
         "owner": "jmbaur",
         "repo": "ipwatch",
+        "type": "github"
+      }
+    },
+    "jetpack-nixos": {
+      "inputs": {
+        "cuda-legacy": "cuda-legacy",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1789419417,
+        "narHash": "sha256-pDhQanL11fFJncXcIZF1ZVs+yDH+bj05zmN353nyxiE=",
+        "owner": "anduril",
+        "repo": "jetpack-nixos",
+        "rev": "b818d760e0e43239da4b665006351ce47a989d28",
+        "type": "github"
+      },
+      "original": {
+        "owner": "anduril",
+        "repo": "jetpack-nixos",
         "type": "github"
       }
     },
@@ -398,6 +444,7 @@
         "home-manager": "home-manager",
         "hydra": "hydra",
         "ipwatch": "ipwatch",
+        "jetpack-nixos": "jetpack-nixos",
         "mixos": "mixos",
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "nix-index-database": "nix-index-database",
