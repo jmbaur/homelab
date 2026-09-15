@@ -14,6 +14,9 @@ testers.runNixOSTest {
   nodes.machine =
     { pkgs, ... }:
     {
+      # mirror nixpkgs' kexec test memory size
+      virtualisation.memorySize = 4 * 1024;
+
       environment.systemPackages = [
         pkgs.homelab-utils # nixos-kexec
       ];
