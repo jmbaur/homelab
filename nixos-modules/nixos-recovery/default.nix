@@ -67,6 +67,7 @@ let
     # get them by inheriting config.boot.kernelPackages (see https://github.com/nixos/nixpkgs/blob/80ddc2ca0a4ee96b330bffb4d8ec4dbf9bd16fe8/nixos/modules/system/boot/kernel.nix#L46).
     boot.extraModulePackages = config.boot.extraModulePackages;
     boot.initrd.availableKernelModules = config.boot.initrd.availableKernelModules;
+    boot.initrd.includeDefaultModules = config.boot.initrd.includeDefaultModules;
     boot.initrd.extraFirmwarePaths = config.boot.initrd.extraFirmwarePaths;
     boot.initrd.kernelModules = config.boot.initrd.kernelModules;
     boot.kernelModules = config.boot.kernelModules;
