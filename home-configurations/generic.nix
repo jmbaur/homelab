@@ -57,6 +57,7 @@
         nurl
         oils-for-unix
         pciutils
+        pi-coding-agent
         procs
         pstree
         pwgen
