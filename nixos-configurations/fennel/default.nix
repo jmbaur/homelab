@@ -151,6 +151,9 @@ in
     wants = [ "network-online.target" ];
     after = [ "network-online.target" ];
 
+    # llama-cpp for jetson wants to read from /proc/meminfo
+    serviceConfig.ProcSubset = lib.mkForce "all";
+
     # The unit runs under DynamicUser, so it needs the groups that own the
     # Tegra GPU nodes to reach the device at all.
     serviceConfig.SupplementaryGroups = [
