@@ -95,9 +95,13 @@ in
       name = "more-nftables";
       patch = null;
       structuredExtraConfig = {
-        NF_CONNTRACK_MARK = lib.kernel.yes;
+        NFT_CT = lib.kernel.module;
+        NFT_FIB_INET = lib.kernel.module;
         NFT_FIB_IPV4 = lib.kernel.module;
         NFT_FIB_IPV6 = lib.kernel.module;
+        NFT_LOG = lib.kernel.module;
+        NF_CONNTRACK_MARK = lib.kernel.yes;
+        NF_LOG_SYSLOG = lib.kernel.module;
       };
     }
   ];
@@ -106,6 +110,11 @@ in
 
   custom.basicNetwork.enable = true;
   networking.wireless.iwd.enable = true;
+
+  systemd.network.wait-online = {
+    enable = true;
+    anyInterface = true;
+  };
 
   # TODO(jared): track this down
   boot.initrd.allowMissingModules = true;
@@ -132,10 +141,21 @@ in
     };
   };
 
-  # The unit runs under DynamicUser, so it needs the groups that own the Tegra
-  # GPU nodes to reach the device at all.
-  systemd.services.llama-cpp.serviceConfig.SupplementaryGroups = [
-    "video"
-    "render"
-  ];
+  systemd.services.llama-cpp = {
+    # llama-server resolves the preset's hf-repo against Hugging Face while
+    # parsing its arguments, and load-on-startup makes it fetch the weights
+    # before it serves anything, so it needs a route at start rather than just
+    # a configured interface. network.target (all the unit asks for upstream)
+    # is reached long before DHCP finishes, and the only retry is
+    # RestartSec=300.
+    wants = [ "network-online.target" ];
+    after = [ "network-online.target" ];
+
+    # The unit runs under DynamicUser, so it needs the groups that own the
+    # Tegra GPU nodes to reach the device at all.
+    serviceConfig.SupplementaryGroups = [
+      "video"
+      "render"
+    ];
+  };
 }

@@ -44,7 +44,7 @@ in
         {
           networking.useNetworkd = true;
 
-          systemd.network.wait-online.enable = !hasWireless;
+          systemd.network.wait-online.enable = lib.mkDefault (!hasWireless);
 
           systemd.network = {
             enable = true;
