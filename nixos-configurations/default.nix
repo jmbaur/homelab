@@ -119,7 +119,7 @@ genAttrs allHosts (
             cauliflower.allowAll = true;
             garlic.allowAll = true;
             pea.allowAll = true;
-            zucchini.allowAll = true;
+            radish.allowAll = true;
           };
 
           custom.backup.sender = lib.mkIf config.services.yggdrasil.enable {
