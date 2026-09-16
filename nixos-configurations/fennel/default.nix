@@ -25,11 +25,19 @@ let
         # Every agent turn resends a long, mostly unchanged prefix. Reuse it
         # across edits instead of reprocessing from the first changed token.
         cache-reuse = 256;
+        # Agent turns are prefill-heavy, and Thor has compute to spare; the
+        # 512-token default ubatch leaves prompt throughput on the table.
+        batch-size = 4096;
+        ubatch-size = 2048;
+        # Don't leave this to autodetection at a 256k window.
+        flash-attn = "on";
       };
 
       "Qwen3.8-27B" = {
         hf-repo = modelRepo;
-        hf-file = "Qwen3.8-27B-UD-Q8_K_XL.gguf";
+        # Decode is bandwidth-bound, so weight size sets the ceiling: 19.4G read
+        # per token against Q8_K_XL's 29.3G, for very little quality on a 27B.
+        hf-file = "Qwen3.8-27B-UD-Q5_K_XL.gguf";
         # mmproj-BF16.gguf sits next to it in the repo and is picked up
         # automatically, so pi sees the model as image-capable.
 
