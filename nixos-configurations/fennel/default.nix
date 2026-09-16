@@ -43,7 +43,11 @@
 
   custom.yggdrasil.peers.celery.allowedTCPPorts = [ config.services.llama-cpp.settings.port ];
 
-  environment.systemPackages = [ config.services.llama-cpp.package ];
+  environment.systemPackages = [
+    config.services.llama-cpp.package
+    pkgs.python3.pkgs.huggingface-hub
+  ];
+
   services.llama-cpp = {
     enable = true;
     package = pkgs.llama-cpp.override { cudaSupport = true; };
