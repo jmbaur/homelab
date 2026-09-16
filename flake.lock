@@ -425,11 +425,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1780034552,
-        "narHash": "sha256-dDANf2Y6j07HeWA3O2U/OcKy6rDlNbwNROIpx5Oa36c=",
+        "lastModified": 1789538737,
+        "narHash": "sha256-oxSjhD6/SsDRn8JWYUOLCOst+umIOqXF0y7W8fOutp4=",
         "owner": "jmbaur",
         "repo": "quartus-nix",
-        "rev": "564895123cabc3a5198c7c3bebe04d5214e2f959",
+        "rev": "56e40013ab50f98ddb6af2fe462f38675a2896cc",
         "type": "github"
       },
       "original": {
