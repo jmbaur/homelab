@@ -35,6 +35,16 @@ in
 
     services.homed.enable = true;
 
+    systemd.services.nscd = {
+      # TODO(jared): should probably be upstreamed in nixpkgs
+      startLimitIntervalSec = 0;
+
+      # Nscd is in the hot path of systemd-homed failing, which I have noticed
+      # to happen time-to-time. Provide more workers to nsncd so that is less
+      # likely.
+      environment.NSNCD_WORKER_COUNT = "64";
+    };
+
     # Ugly: sshd refuses to start if a store path is given because /nix/store
     # is group-writable. So indirect by a symlink.
     environment.etc."ssh/homed_authorized_keys_command" = {
