@@ -91,6 +91,15 @@ in
         EROFS_FS = lib.kernel.yes;
       };
     }
+    {
+      name = "more-nftables";
+      patch = null;
+      structuredExtraConfig = {
+        NF_CONNTRACK_MARK = lib.kernel.yes;
+        NFT_FIB_IPV4 = lib.kernel.module;
+        NFT_FIB_IPV6 = lib.kernel.module;
+      };
+    }
   ];
 
   hardware.graphics.enable = true;
