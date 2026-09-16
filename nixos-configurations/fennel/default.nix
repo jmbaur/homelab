@@ -95,6 +95,9 @@ in
 
   hardware.graphics.enable = true;
 
+  custom.basicNetwork.enable = true;
+  networking.wireless.iwd.enable = true;
+
   users.users.root.initialPassword = "";
 
   # TODO(jared): track this down
