@@ -100,8 +100,7 @@ in
   # TODO(jared): track this down
   boot.initrd.allowMissingModules = true;
 
-  # TODO(jared): be more specific
-  custom.recovery.targetDisk = "/dev/nvme0n1";
+  custom.recovery.targetDisk = "/dev/disk/by-path/platform-a808480000.pcie-pci-0005:01:00.0-nvme-1";
 
   custom.yggdrasil.peers.radish.allowedTCPPorts = [ config.services.llama-cpp.settings.port ];
 
