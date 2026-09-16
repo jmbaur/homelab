@@ -12,6 +12,7 @@
     pea.ip = "200:48ec:38e8:697f:5bb1:4935:28ed:732b";
     potato.ip = "200:39c8:70a3:d484:2390:f7c5:f1cc:976e";
     pumpkin.ip = "201:5c00:65be:ef51:f30d:7742:6053:1ab3";
+    radish.ip = "200:bc14:3655:e6a0:dd36:aba1:5e40:7050";
     rhubarb.ip = "200:161:89b:2b1e:e84b:ea2:37b3:9e26";
     squash.ip = "200:f01b:c880:839b:52:c41b:2c0d:5757";
     zucchini.ip = "203:93e:64eb:60b7:cee9:fa14:ec24:a82e";
