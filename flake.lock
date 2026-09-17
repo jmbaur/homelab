@@ -154,11 +154,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789482455,
-        "narHash": "sha256-pD3qVlQ4mUCFoTWrYtxecpSitQMsgJvJIN0FUIDZoEU=",
+        "lastModified": 1789618856,
+        "narHash": "sha256-OSqj7eOijvCZfN7owFWRxLWRhej5lZI+Kt82q3INLvc=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "efa3ccb4c3cc90d832eab232976379058fa75aa3",
+        "rev": "afa6821c70560bb19d1a8c577bff398f7f239869",
         "type": "github"
       },
       "original": {
@@ -219,11 +219,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789522908,
-        "narHash": "sha256-Ta2FxzRLACXaLPA7WBsN/dVbasP9U9Xbs6vPlI3Yk3Y=",
+        "lastModified": 1789587159,
+        "narHash": "sha256-z5YV7Xzo5K+qRlMVTsUaOAVJyPayUFfbwV5T4dYzMKc=",
         "owner": "anduril",
         "repo": "jetpack-nixos",
-        "rev": "a02fb736b4e2a6c74f2cac18d2126525bba7e3f2",
+        "rev": "f7c11e51386543a868152d6b93db387c58e8ba7d",
         "type": "github"
       },
       "original": {
@@ -263,11 +263,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789516941,
-        "narHash": "sha256-40Q2ozJgk6VIw5g5WdDs6Qf0u3EK1Hwu5xOjnoBG3tc=",
+        "lastModified": 1789603438,
+        "narHash": "sha256-sI0ZvYtW4ZkPlLoqhKpZYaIe+FsUuipKhPYRT7LmQl8=",
         "owner": "nix-community",
         "repo": "neovim-nightly-overlay",
-        "rev": "8406b7a1e0c6b058cb8d54f60c2abf74f33b61d5",
+        "rev": "8dcb1bee7f05eb815ef3ee8a5997764dbf606bb5",
         "type": "github"
       },
       "original": {
@@ -279,11 +279,11 @@
     "neovim-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1789478061,
-        "narHash": "sha256-kGns8jMz8Fd/mw2Xor6T/5sgeBQ6VxXV1ghX9TjBjb8=",
+        "lastModified": 1789600761,
+        "narHash": "sha256-vX7uFvlGGhZ2ckDc1V1gqOz1vWyR/8cD5uubVYQjNTw=",
         "owner": "neovim",
         "repo": "neovim",
-        "rev": "c171a697cbee36c4f36535e14f1407909733ca4b",
+        "rev": "7737589a0a83b7c31952a09c60a5bf630b3c468b",
         "type": "github"
       },
       "original": {
@@ -425,11 +425,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789538737,
-        "narHash": "sha256-oxSjhD6/SsDRn8JWYUOLCOst+umIOqXF0y7W8fOutp4=",
+        "lastModified": 1789629153,
+        "narHash": "sha256-lAhhh8x48zuqv2SMK4+MwrQ2FyjAI2J+88/2PdCx63Y=",
         "owner": "jmbaur",
         "repo": "quartus-nix",
-        "rev": "56e40013ab50f98ddb6af2fe462f38675a2896cc",
+        "rev": "7f0827ad425b508f2da4685f2ada732d6740678a",
         "type": "github"
       },
       "original": {
