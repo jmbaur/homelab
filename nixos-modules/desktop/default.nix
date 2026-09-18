@@ -19,7 +19,6 @@ let
 
   footThemes = "${config.programs.foot.package.themes}/share/foot/themes";
 
-  # Home-relative, foot's include cannot expand anything but a leading "~".
   footColorState = ".local/state/foot/color-theme.ini";
 
   # foot only picks a color theme at startup, so ship both and let the last
@@ -71,6 +70,12 @@ let
   gammastepConfig = pkgs.linkFarm "gammastep-config" {
     "gammastep/hooks/theme" = themeHook;
   };
+
+  sessionUnit = {
+    wantedBy = [ "graphical-session.target" ];
+    partOf = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+  };
 in
 {
   options.custom.desktop.enable = mkEnableOption "desktop";
@@ -95,104 +100,108 @@ in
 
       systemd.user.services.xdg-desktop-portal-wlr.path = [ pkgs.rofi ];
 
-      systemd.user.services.swaybg = {
-        serviceConfig.ExecStart = toString [
-          (getExe pkgs.swaybg)
-          "--mode"
-          "tile"
-          "--image"
-          (pkgs.runCommand "weston-pattern.png" { } ''
-            install -Dm0644 ${pkgs.weston}/share/weston/pattern.png $out
-          '')
-        ];
-        wantedBy = [ "graphical-session.target" ];
-        bindsTo = [ "graphical-session.target" ];
-        after = [ "graphical-session.target" ];
-      };
+      systemd.user.services.swaybg = mkMerge [
+        sessionUnit
+        {
+          serviceConfig.ExecStart = toString [
+            (getExe pkgs.swaybg)
+            "--mode"
+            "tile"
+            "--image"
+            (pkgs.runCommand "weston-pattern.png" { } ''
+              install -Dm0644 ${pkgs.weston}/share/weston/pattern.png $out
+            '')
+          ];
+        }
+      ];
 
-      systemd.user.services.swayidle = {
-        path = [
-          pkgs.swaylock
-          pkgs.bash
-          pkgs.wlopm
-        ];
-        serviceConfig.ExecStart = toString [
-          (getExe pkgs.swayidle)
-          "-w"
-          "timeout"
-          300
-          "'swaylock -f'"
-          "timeout"
-          600
-          "'wlopm --off *'"
-          "timeout"
-          1800
-          "'systemctl suspend'"
-          "before-sleep"
-          "'swaylock -f'"
-          "lock"
-          "'swaylock -f'"
-        ];
-        wantedBy = [ "graphical-session.target" ];
-        bindsTo = [ "graphical-session.target" ];
-        after = [ "graphical-session.target" ];
-      };
+      systemd.user.services.swayidle = mkMerge [
+        sessionUnit
+        {
+          path = [
+            pkgs.swaylock
+            pkgs.bash
+            pkgs.wlopm
+          ];
+          serviceConfig.ExecStart = toString [
+            (getExe pkgs.swayidle)
+            "-w"
+            "timeout"
+            300
+            "'swaylock -f'"
+            "timeout"
+            600
+            "'wlopm --off *'"
+            "timeout"
+            1800
+            "'systemctl suspend'"
+            "before-sleep"
+            "'swaylock -f'"
+            "lock"
+            "'swaylock -f'"
+          ];
+        }
+      ];
 
       # geoclue needs a working wifi lookup; set location.provider = "manual"
       # with coordinates on hosts where it cannot resolve one.
       location.provider = mkDefault "geoclue2";
 
-      systemd.user.services.gammastep = {
-        # Also means a user config.ini is ignored, the unit owns the settings.
-        environment.XDG_CONFIG_HOME = "${gammastepConfig}";
-        serviceConfig.ExecStart = toString [
-          (getExe pkgs.gammastep)
-          "-l"
-          (
-            if config.location.provider == "manual" then
-              "manual:lat=${toString config.location.latitude}:lon=${toString config.location.longitude}"
-            else
-              "geoclue2"
-          )
-        ];
-        wantedBy = [ "graphical-session.target" ];
-        bindsTo = [ "graphical-session.target" ];
-        after = [ "graphical-session.target" ];
-      };
+      systemd.user.services.gammastep = mkMerge [
+        sessionUnit
+        {
+          # Also means a user config.ini is ignored, the unit owns the settings.
+          environment.XDG_CONFIG_HOME = "${gammastepConfig}";
+          # geoclue occasionally fails to hand out a location and gammastep
+          # exits, taking the theme hook with it until the next session.
+          serviceConfig.Restart = "on-failure";
+          serviceConfig.RestartSec = 10;
+          serviceConfig.ExecStart = toString [
+            (getExe pkgs.gammastep)
+            "-l"
+            (
+              if config.location.provider == "manual" then
+                "manual:lat=${toString config.location.latitude}:lon=${toString config.location.longitude}"
+              else
+                "geoclue2"
+            )
+          ];
+        }
+      ];
 
-      systemd.user.services.kanshi = {
-        serviceConfig.ExecStart = toString [
-          (getExe pkgs.kanshi)
-          "--config"
-          (pkgs.writeText "kanshi.conf" ''
-            profile docked {
-              output eDP-1 disable
-              output * enable
-            }
-            profile undocked {
-              output * enable
-            }
-          '')
-        ];
-        wantedBy = [ "graphical-session.target" ];
-        bindsTo = [ "graphical-session.target" ];
-        after = [ "graphical-session.target" ];
-      };
+      systemd.user.services.kanshi = mkMerge [
+        sessionUnit
+        {
+          serviceConfig.ExecStart = toString [
+            (getExe pkgs.kanshi)
+            "--config"
+            (pkgs.writeText "kanshi.conf" ''
+              profile docked {
+                output eDP-1 disable
+                output * enable
+              }
+              profile undocked {
+                output * enable
+              }
+            '')
+          ];
+        }
+      ];
 
-      systemd.user.services.clipman = {
-        serviceConfig.ExecStart = toString [
-          (getExe' pkgs.wl-clipboard "wl-paste")
-          "-t"
-          "text"
-          "--watch"
-          (getExe pkgs.clipman)
-          "store"
-          "--no-persist"
-        ];
-        wantedBy = [ "graphical-session.target" ];
-        bindsTo = [ "graphical-session.target" ];
-        after = [ "graphical-session.target" ];
-      };
+      systemd.user.services.clipman = mkMerge [
+        sessionUnit
+        {
+          serviceConfig.ExecStart = toString [
+            (getExe' pkgs.wl-clipboard "wl-paste")
+            "-t"
+            "text"
+            "--watch"
+            (getExe pkgs.clipman)
+            "store"
+            "--no-persist"
+          ];
+        }
+      ];
 
       programs.foot = {
         enable = true;
