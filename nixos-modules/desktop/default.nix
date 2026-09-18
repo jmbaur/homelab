@@ -71,6 +71,27 @@ let
     "gammastep/hooks/theme" = themeHook;
   };
 
+  swaylockThemed = pkgs.writeShellApplication {
+    name = "swaylock";
+    runtimeInputs = [ pkgs.dconf ];
+    text = ''
+      declare -a swaylock_flags
+      case "$(dconf read /org/gnome/desktop/interface/color-scheme)" in
+      *prefer-light*) swaylock_flags+=("--color=a3a3a3") ;;
+      *) swaylock_flags+=("--color=2e2e2e") ;;
+      esac
+
+      exec ${getExe' pkgs.swaylock "swaylock"} "''${swaylock_flags[@]}" "$@"
+    '';
+  };
+
+  swaylock = pkgs.symlinkJoin {
+    name = "swaylock-themed";
+    paths = [ pkgs.swaylock ];
+    postBuild = "ln -sf ${getExe swaylockThemed} $out/bin/swaylock";
+    meta.mainProgram = "swaylock";
+  };
+
   sessionUnit = {
     wantedBy = [ "graphical-session.target" ];
     partOf = [ "graphical-session.target" ];
@@ -119,7 +140,6 @@ in
         sessionUnit
         {
           path = [
-            pkgs.swaylock
             pkgs.bash
             pkgs.wlopm
           ];
@@ -128,7 +148,7 @@ in
             "-w"
             "timeout"
             300
-            "'swaylock -f'"
+            "'${getExe swaylock} -f'"
             "timeout"
             600
             "'wlopm --off *'"
@@ -136,9 +156,9 @@ in
             1800
             "'systemctl suspend'"
             "before-sleep"
-            "'swaylock -f'"
+            "'${getExe swaylock} -f'"
             "lock"
-            "'swaylock -f'"
+            "'${getExe swaylock} -f'"
           ];
         }
       ];
@@ -251,7 +271,7 @@ in
         pkgs.slurp
         pkgs.swaybg
         pkgs.swayidle
-        pkgs.swaylock
+        swaylock
         pkgs.wev
         pkgs.wf-recorder
         pkgs.wl-clipboard
