@@ -92,6 +92,27 @@ let
     meta.mainProgram = "swaylock";
   };
 
+  # -theme wins over @theme in a user's config.rasi.
+  rofiThemed = pkgs.writeShellApplication {
+    name = "rofi";
+    runtimeInputs = [ pkgs.dconf ];
+    text = ''
+      case "$(dconf read /org/gnome/desktop/interface/color-scheme)" in
+      *prefer-light*) theme=Arc ;;
+      *) theme=Arc-Dark ;;
+      esac
+
+      exec ${getExe' pkgs.rofi "rofi"} -theme "$theme" "$@"
+    '';
+  };
+
+  rofi = pkgs.symlinkJoin {
+    name = "rofi-themed";
+    paths = [ pkgs.rofi ];
+    postBuild = "ln -sf ${getExe rofiThemed} $out/bin/rofi";
+    meta.mainProgram = "rofi";
+  };
+
   sessionUnit = {
     wantedBy = [ "graphical-session.target" ];
     partOf = [ "graphical-session.target" ];
@@ -119,7 +140,7 @@ in
         extraPackages = [ ];
       };
 
-      systemd.user.services.xdg-desktop-portal-wlr.path = [ pkgs.rofi ];
+      systemd.user.services.xdg-desktop-portal-wlr.path = [ rofi ];
 
       systemd.user.services.swaybg = mkMerge [
         sessionUnit
@@ -267,7 +288,7 @@ in
         pkgs.luajit.pkgs.swaybar
         pkgs.mako
         pkgs.pulseaudio
-        pkgs.rofi
+        rofi
         pkgs.slurp
         pkgs.swaybg
         pkgs.swayidle
