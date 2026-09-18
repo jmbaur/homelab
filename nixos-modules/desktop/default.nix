@@ -16,6 +16,61 @@ let
     ;
 
   cfg = config.custom.desktop;
+
+  footThemes = "${config.programs.foot.package.themes}/share/foot/themes";
+
+  # Home-relative, foot's include cannot expand anything but a leading "~".
+  footColorState = ".local/state/foot/color-theme.ini";
+
+  # foot only picks a color theme at startup, so ship both and let the last
+  # include (written by the hook below) decide which one is active.
+  footColors = pkgs.runCommand "foot-colors.ini" { } ''
+    cat ${footThemes}/modus-operandi ${footThemes}/modus-vivendi >$out
+    printf '[main]\ninitial-color-theme=dark\ninclude=~/${footColorState}\n' >>$out
+  '';
+
+  # gammastep hook, also run at startup with an old period of "none". Light
+  # only during full daylight, so the theme tracks the color temperature.
+  themeHook = getExe (
+    pkgs.writeShellApplication {
+      name = "gammastep-theme-hook";
+      runtimeInputs = [
+        pkgs.coreutils
+        pkgs.dconf
+        pkgs.procps
+      ];
+      text = ''
+        [ "$1" = period-changed ] || exit 0
+
+        # Inherited from the gammastep unit, where it points into the store.
+        unset XDG_CONFIG_HOME
+
+        case "$3" in
+        daytime) theme=light gtk_theme=Adwaita color_scheme=prefer-light foot_signal=USR2 ;;
+        night | transition) theme=dark gtk_theme=Adwaita-dark color_scheme=prefer-dark foot_signal=USR1 ;;
+        # "none" is also what gammastep reports on its way out.
+        *) exit 0 ;;
+        esac
+
+        dconf write /org/gnome/desktop/interface/color-scheme "'$color_scheme'"
+        dconf write /org/gnome/desktop/interface/gtk-theme "'$gtk_theme'"
+
+        install -Dm0644 /dev/stdin "$HOME/${footColorState}" <<EOF
+        [main]
+        initial-color-theme=$theme
+        EOF
+
+        # New terminals read the file above, running ones need a signal.
+        pkill --signal "$foot_signal" --exact foot || true
+      '';
+    }
+  );
+
+  # gammastep resolves hooks against $XDG_CONFIG_HOME only, so hand it a store
+  # directory rather than writing into the user's home.
+  gammastepConfig = pkgs.linkFarm "gammastep-config" {
+    "gammastep/hooks/theme" = themeHook;
+  };
 in
 {
   options.custom.desktop.enable = mkEnableOption "desktop";
@@ -83,11 +138,22 @@ in
         after = [ "graphical-session.target" ];
       };
 
+      # geoclue needs a working wifi lookup; set location.provider = "manual"
+      # with coordinates on hosts where it cannot resolve one.
+      location.provider = mkDefault "geoclue2";
+
       systemd.user.services.gammastep = {
+        # Also means a user config.ini is ignored, the unit owns the settings.
+        environment.XDG_CONFIG_HOME = "${gammastepConfig}";
         serviceConfig.ExecStart = toString [
           (getExe pkgs.gammastep)
           "-l"
-          "geoclue2"
+          (
+            if config.location.provider == "manual" then
+              "manual:lat=${toString config.location.latitude}:lon=${toString config.location.longitude}"
+            else
+              "geoclue2"
+          )
         ];
         wantedBy = [ "graphical-session.target" ];
         bindsTo = [ "graphical-session.target" ];
@@ -130,16 +196,22 @@ in
 
       programs.foot = {
         enable = true;
-        theme = "modus-vivendi";
         settings = {
           mouse.hide-when-typing = "yes";
           main = {
             font = "monospace:size=11";
             resize-by-cells = "no";
             selection-target = "both";
+            include = [ "${footColors}" ];
           };
         };
       };
+
+      # foot errors on a missing include, so seed the state file for sessions
+      # that start one before gammastep has run the hook.
+      systemd.user.tmpfiles.rules = [
+        "f %h/${footColorState} 0644 - - - [main]\\ninitial-color-theme=dark\\n"
+      ];
 
       environment.variables = {
         XKB_DEFAULT_MODEL = config.services.xserver.xkb.model;
@@ -200,6 +272,7 @@ in
         enable = true;
         profiles.user.databases = [
           {
+            # Only the fallback, the gammastep hook writes these per-user.
             settings."org/gnome/desktop/interface" = {
               color-scheme = "prefer-dark";
               gtk-theme = "Adwaita";
@@ -256,6 +329,19 @@ in
       # plus setting this to true means that geoclue will be dependent on avahi
       # being enabled, since NMEA support in geoclue uses avahi.
       services.geoclue2.enableNmea = mkDefault false;
+
+      # The module writes no [ip] section, so geoclue disables the source and
+      # wifi is the only one left. The url falls back to services.geoclue2.geoProviderUrl.
+      environment.etc."geoclue/conf.d/10-ip-source.conf".text = ''
+        [ip]
+        enable=true
+        method=ichnaea
+      '';
+
+      # The module only triggers off its own geoclue.conf.
+      systemd.services.geoclue.restartTriggers = [
+        config.environment.etc."geoclue/conf.d/10-ip-source.conf".source
+      ];
     }
   ]);
 }
