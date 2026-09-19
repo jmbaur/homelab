@@ -1,5 +1,8 @@
 (vim.loader.enable)
 
+(if (vim.env :SSH_CONNECTION)
+    (vim.cmd.detach!))
+
 (local is-dumb-term (not= (: (vim.regex "linux\\|vt220\\|vt202\\|dumb")
                              :match_str vim.env.TERM)
                           nil))
@@ -17,17 +20,17 @@
 
 (vim.api.nvim_create_autocmd [:OptionSet]
                              {:pattern [:ignorecase :smartcase]
-                              :callback (lambda [_] (set-grepprg-rg))})
+                              :callback (λ [_] (set-grepprg-rg))})
 
 (vim.api.nvim_create_autocmd [:BufRead :BufNewFile]
                              {:pattern [:*.rdl]
-                              :callback (lambda []
+                              :callback (λ []
                                           (set vim.optlocal.filetype :systemrdl)
                                           nil)})
 
 ;; TODO(jared): consider only enabling this on certain filetypes
 (vim.api.nvim_create_autocmd :Filetype
-                             {:callback (lambda []
+                             {:callback (λ []
                                           (if (pcall vim.treesitter.start)
                                               (do
                                                 (set vim.bo.indentexpr
@@ -37,7 +40,7 @@
                                                 (set vim.wo.foldmethod :expr))))})
 
 (local paste
-       (lambda []
+       (λ []
          [(vim.fn.split (vim.fn.getreg "") "\n") (vim.fn.getregtype "")]))
 
 (set vim.g.clipboard {:name "OSC 52"
@@ -96,7 +99,7 @@
 (vim.keymap.set :n :<leader>p ":Project! ")
 
 (var filescache [])
-(set _G.FuzzyFind (lambda [arg _]
+(set _G.FuzzyFind (λ [arg _]
                     (set filescache
                          (vim.split (. (: (vim.system [:fd :--type :file])
                                           :wait)
@@ -108,7 +111,7 @@
 
 (vim.api.nvim_create_autocmd [:CmdlineEnter]
                              {:pattern [":"]
-                              :callback (lambda [_]
+                              :callback (λ [_]
                                           (set filescache [])
                                           nil)})
 
@@ -117,7 +120,7 @@
 (vim.api.nvim_create_autocmd [:TextYankPost]
                              {:group (vim.api.nvim_create_augroup :TextYankPost
                                                                   {:clear true})
-                              :callback (lambda []
+                              :callback (λ []
                                           (vim.hl.hl_op {:higroup :Visual
                                                          :timeout 300})
                                           nil)})
@@ -125,7 +128,7 @@
 (vim.api.nvim_create_autocmd [:TermOpen]
                              {:group (vim.api.nvim_create_augroup :TermOpen
                                                                   {:clear true})
-                              :callback (lambda []
+                              :callback (λ []
                                           (set vim.opt_local.spell false)
                                           (set vim.opt_local.number false)
                                           (set vim.opt_local.relativenumber
@@ -140,13 +143,13 @@
                               ;; Don't match any commands that start with "l",
                               ;; with "l"-prefixed commands likely being window local.
                               :pattern "[^l]*"
-                              :callback (lambda [] (vim.cmd.cwindow))})
+                              :callback (λ [] (vim.cmd.cwindow))})
 
 (vim.api.nvim_create_autocmd [:QuickFixCmdPost]
                              {:group qfgroup
                               ;; Reverse logic from above.
                               :pattern :l*
-                              :callback (lambda [] (vim.cmd.lwindow))})
+                              :callback (λ [] (vim.cmd.lwindow))})
 
 ((. (require :vim._core.ui2) :enable) {:enable true})
 
