@@ -143,13 +143,17 @@
                               ;; Don't match any commands that start with "l",
                               ;; with "l"-prefixed commands likely being window local.
                               :pattern "[^l]*"
-                              :callback (λ [] (vim.cmd.cwindow))})
+                              :callback (λ []
+                                          (if (> (length (vim.fn.getqflist)) 1)
+                                              (vim.cmd.cwindow)))})
 
 (vim.api.nvim_create_autocmd [:QuickFixCmdPost]
                              {:group qfgroup
                               ;; Reverse logic from above.
                               :pattern :l*
-                              :callback (λ [] (vim.cmd.lwindow))})
+                              :callback (λ []
+                                          (if (> (length (vim.fn.getloclist)) 1)
+                                              (vim.cmd.lwindow)))})
 
 ((. (require :vim._core.ui2) :enable) {:enable true})
 
