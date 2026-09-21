@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 
 {
   imports = [ ./router.nix ];
@@ -139,7 +139,9 @@
       onlySSL = true;
       sslCertificate = config.sops.secrets."cf-origin/cert".path;
       sslCertificateKey = config.sops.secrets."cf-origin/key".path;
-      locations."/".return = "302 https://github.com/jmbaur/mixos";
+      # The manual is a static HTML tree; nginx serves it straight out of the
+      # store, so a new mixos input is all it takes to publish a new version.
+      root = "${pkgs.mixos.manual}/share/doc/mixos";
     };
     virtualHosts."paste.jmbaur.com" = {
       onlySSL = true;

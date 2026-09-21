@@ -1,7 +1,8 @@
 inputs: {
   default = inputs.nixpkgs.lib.composeManyExtensions [
-    # needed by some stuff below
+    # from flake inputs; some are needed by the overlays below
     inputs.ipwatch.overlays.default
+    inputs.mixos.overlays.default
     inputs.neovim-nightly-overlay.overlays.default
     inputs.quartus-nix.overlays.default
     inputs.u-boot-nix.overlays.default
