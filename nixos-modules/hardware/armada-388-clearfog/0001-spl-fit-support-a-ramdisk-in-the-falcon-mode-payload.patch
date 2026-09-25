@@ -1,0 +1,147 @@
+From 8f889116c0d4e27f8b5be17d2ebfa837ea6a914a Mon Sep 17 00:00:00 2001
+From: Jared Baur <jaredbaur@fastmail.com>
+Date: Sun, 20 Sep 2026 22:16:30 -0700
+Subject: [PATCH 1/2] spl: fit: support a ramdisk in the falcon mode payload
+
+SPL can already take the kernel and the device tree of a FIT payload when
+booting Linux directly, but it ignores the 'ramdisk' property of the
+selected configuration, so an ordinary Linux FIT image boots without its
+initramfs.
+
+Load the ramdisk alongside the kernel and record it in the device tree
+that is handed to Linux, so that a FIT holding a kernel, a ramdisk and an
+fdt boots in falcon mode the same way it would under bootm.
+
+The ramdisk lands at its own 'load' address when it has one, and directly
+above the device tree otherwise. This only applies when the device tree
+comes from the FIT itself, so the new option depends on
+!SPL_OS_BOOT_ARGS.
+---
+ common/spl/Kconfig     | 12 ++++++++
+ common/spl/spl_fit.c   | 62 ++++++++++++++++++++++++++++++++++++++++++
+ doc/develop/falcon.rst |  6 ++++
+ 3 files changed, 80 insertions(+)
+
+diff --git a/common/spl/Kconfig b/common/spl/Kconfig
+index 5fa94098..8fb97e58 100644
+--- a/common/spl/Kconfig
++++ b/common/spl/Kconfig
+@@ -1257,6 +1257,18 @@ config SPL_PAYLOAD_ARGS_ADDR
+ 	  Address in memory where the 'args' file, typically a device tree
+ 	  will be loaded in to memory.
+ 
++config SPL_OS_BOOT_RAMDISK
++	bool "Allow SPL to load a ramdisk for the kernel in falcon mode"
++	depends on SPL_OS_BOOT && !SPL_OS_BOOT_ARGS
++	depends on SPL_LOAD_FIT && !SPL_FIT_IMAGE_TINY && SPL_OF_LIBFDT
++	default y
++	help
++	  Load the image named by the 'ramdisk' property of the selected FIT
++	  configuration and point Linux at it with the linux,initrd-start and
++	  linux,initrd-end properties of /chosen. Together with the device tree
++	  SPL already takes from the FIT, this lets falcon mode boot an ordinary
++	  Linux FIT image containing a kernel, a ramdisk and an fdt.
++
+ config SYS_NAND_SPL_KERNEL_OFFS
+ 	hex "Address in memory to load the OS file for Falcon mode to"
+ 	depends on SPL_OS_BOOT && SPL_NAND_SUPPORT
+diff --git a/common/spl/spl_fit.c b/common/spl/spl_fit.c
+index 46ebcabe..be767a5e 100644
+--- a/common/spl/spl_fit.c
++++ b/common/spl/spl_fit.c
+@@ -514,6 +514,61 @@ static int spl_fit_append_fdt(struct spl_image_info *spl_image,
+ 	return ret;
+ }
+ 
++/**
++ * spl_fit_load_ramdisk() - load the ramdisk of a Falcon Mode FIT payload
++ * @spl_image:	the image being booted, with its fdt_addr already set up
++ * @info:	points to information about the device to load data from
++ * @offset:	the offset of the FIT image on the device
++ * @ctx:	points to the FIT context structure
++ *
++ * Load the image named by the 'ramdisk' property of the selected configuration
++ * and record it in the device tree handed to Linux, so that an ordinary Linux
++ * FIT image (kernel, ramdisk and fdt) boots in Falcon Mode the same way it
++ * would under bootm.
++ *
++ * The ramdisk is placed at its own 'load' address when it has one, otherwise
++ * directly above the device tree. A configuration without a ramdisk is not an
++ * error.
++ *
++ * Return:	0 on success, or a negative error number
++ */
++static int spl_fit_load_ramdisk(struct spl_image_info *spl_image,
++				struct spl_load_info *info, ulong offset,
++				const struct spl_fit_info *ctx)
++{
++	struct spl_image_info image_info;
++	void *fdt = spl_image->fdt_addr;
++	int node, ret;
++
++	if (!fdt_getprop(ctx->fit, ctx->conf_node, FIT_RAMDISK_PROP, NULL)) {
++		debug("%s: configuration has no ramdisk\n", __func__);
++		return 0;
++	}
++
++	if (!fdt) {
++		printf("%s: no device tree to record the ramdisk in\n",
++		       __func__);
++		return -ENOENT;
++	}
++
++	node = spl_fit_get_image_node(ctx, FIT_RAMDISK_PROP, 0);
++	if (node < 0)
++		return node;
++
++	/*
++	 * spl_fit_append_fdt() has already grown the device tree to its final
++	 * size, so the memory above it is free.
++	 */
++	image_info.load_addr = ALIGN(virt_to_phys(fdt) + fdt_totalsize(fdt), 8);
++
++	ret = load_simple_fit(info, offset, ctx, node, &image_info);
++	if (ret < 0)
++		return ret;
++
++	return fdt_initrd(fdt, image_info.load_addr,
++			  image_info.load_addr + image_info.size);
++}
++
+ static int spl_fit_record_loadable(const struct spl_fit_info *ctx, int index,
+ 				   void *blob, struct spl_image_info *image)
+ {
+@@ -872,6 +927,13 @@ int spl_load_simple_fit(struct spl_image_info *spl_image,
+ 			return ret;
+ 	}
+ 
++	if (CONFIG_IS_ENABLED(OS_BOOT_RAMDISK) &&
++	    spl_image->os == IH_OS_LINUX) {
++		ret = spl_fit_load_ramdisk(spl_image, info, offset, &ctx);
++		if (ret < 0)
++			return ret;
++	}
++
+ 	firmware_node = node;
+ 	/* Now check if there are more images for us to load */
+ 	for (; ; index++) {
+diff --git a/doc/develop/falcon.rst b/doc/develop/falcon.rst
+index 3fc23f65..fd9d5127 100644
+--- a/doc/develop/falcon.rst
++++ b/doc/develop/falcon.rst
+@@ -87,6 +87,12 @@ CONFIG_SPL_OS_BOOT_ARGS
+     Allow SPL to load args file for the kernel in Falcon Mode. This option can
+     be disabled if the device-tree is packaged directly in the FIT payload.
+ 
++CONFIG_SPL_OS_BOOT_RAMDISK
++    Allow SPL to load a ramdisk for the kernel in Falcon Mode. The ramdisk is
++    taken from the 'ramdisk' property of the selected FIT configuration and is
++    passed to Linux through /chosen, so an ordinary Linux FIT image holding a
++    kernel, a ramdisk and a device tree boots the same way it would under bootm.
++
+ CONFIG_SPL_OS_BOOT_SECURE
+     Enable secure boot for Falcon Mode, which provides an additional layer of
+     security by authenticating the boot process using a signed FIT image.
+-- 
+2.55.0
+

@@ -4,6 +4,48 @@
   pkgs,
   ...
 }:
+
+let
+  tinybootKernel = pkgs.linuxKernel.manualConfig {
+    inherit (pkgs.linux_7_2) src version;
+    configfile = ./tinyboot.config;
+    # Same fixes the booted kernel needs. kexec is the whole of what tinyboot
+    # does, and the rng90 is this board's only source of entropy. Only the
+    # patches carry over; tinyboot.config is what sets the kconfig here.
+    inherit (config.boot) kernelPatches;
+  };
+
+  # u-boot SPL boots this straight out of SPI flash, so it has to carry
+  # everything tinyboot needs: the kernel, its initrd and the fdt.
+  fitImage = pkgs.callPackage (
+    {
+      runCommand,
+      dtc,
+      ubootTools,
+    }:
+    runCommand "squash-tinyboot-fitImage"
+      {
+        depsBuildBuild = [
+          dtc
+          ubootTools
+        ];
+      }
+      ''
+        cp ${tinybootKernel}/zImage kernel
+        # tinyboot hands /sys/firmware/fdt to whatever it kexecs, so this is
+        # also the fdt the booted system ends up with, and the only place the
+        # deviceTree overlays can reach either kernel from.
+        cp ${config.hardware.deviceTree.package}/${config.hardware.deviceTree.name} dtb
+        cp ${pkgs.tinyboot}/${pkgs.tinyboot.initrdFile} initrd
+        cp ${./tinyboot.its} image.its
+        # -E keeps image data out of the FIT structure, which SPL buffers in
+        # full before parsing it. -B 0x8 pins the structure and data offsets to
+        # a fixed alignment rather than one that falls out of the last image's
+        # type, which is what mkimage does on its own.
+        mkimage -E -B 0x8 -f image.its $out
+      ''
+  ) { };
+in
 {
   hardware.firmware = [
     pkgs.wireless-regdb
@@ -11,6 +53,9 @@
   ];
 
   hardware.armada-388-clearfog.enable = true;
+  hardware.armada-388-clearfog.falconPayload = fitImage;
+
+  boot.loader.tinyboot.enable = true;
 
   # TODO(jared): use FIT_BEST_MATCH feature in u-boot to choose this automatically
   hardware.deviceTree.name = "armada-388-clearfog-pro.dtb";

@@ -1,0 +1,71 @@
+From 802e325a0ca0bd9a9c707a719f5c14bb6e322cd3 Mon Sep 17 00:00:00 2001
+From: Jared Baur <jaredbaur@fastmail.com>
+Date: Sun, 20 Sep 2026 22:16:34 -0700
+Subject: [PATCH 2/2] arm: mvebu: clearfog: only ever boot the falcon payload
+
+spl_start_uboot() has no weak implementation that boots an OS, so falcon
+mode on clearfog needs the board to say so.
+
+The kwbimage is built without U-Boot proper, so SPL must not fall back to
+it either. CONFIG_SPL_OS_BOOT_SECURE stops the SPI loader from doing so,
+and the board overrides board_boot_order() (now weak on mvebu) so SPL
+does not return to the BootROM to boot the kwbimage's main payload.
+---
+ arch/arm/mach-mvebu/spl.c          |  2 +-
+ board/solidrun/clearfog/clearfog.c | 20 ++++++++++++++++++++
+ 2 files changed, 21 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-mvebu/spl.c b/arch/arm/mach-mvebu/spl.c
+index cbef4113..e13aa3ae 100644
+--- a/arch/arm/mach-mvebu/spl.c
++++ b/arch/arm/mach-mvebu/spl.c
+@@ -285,7 +285,7 @@ u32 spl_boot_device(void)
+ 	}
+ }
+ 
+-void board_boot_order(u32 *spl_boot_list)
++__weak void board_boot_order(u32 *spl_boot_list)
+ {
+ 	spl_boot_list[0] = spl_boot_device();
+ 	if (spl_boot_list[0] != BOOT_DEVICE_BOOTROM)
+diff --git a/board/solidrun/clearfog/clearfog.c b/board/solidrun/clearfog/clearfog.c
+index 67b60d2e..01359b48 100644
+--- a/board/solidrun/clearfog/clearfog.c
++++ b/board/solidrun/clearfog/clearfog.c
+@@ -11,6 +11,7 @@
+ #include <net.h>
+ #include <netdev.h>
+ #include <mmc.h>
++#include <spl.h>
+ #include <asm/global_data.h>
+ #include <asm/io.h>
+ #include <asm/arch/cpu.h>
+@@ -246,6 +247,25 @@ int board_init(void)
+ 	return 0;
+ }
+ 
++#if IS_ENABLED(CONFIG_XPL_BUILD) && IS_ENABLED(CONFIG_SPL_OS_BOOT)
++int spl_start_uboot(void)
++{
++	/* The falcon payload is the only thing SPL boots. */
++	return 0;
++}
++
++void board_boot_order(u32 *spl_boot_list)
++{
++	/*
++	 * Unlike the mvebu default, do not fall back to the BootROM, which
++	 * would go on to boot the kwbimage's main payload (U-Boot proper).
++	 * UART boot still goes through the BootROM, as spl_boot_device()
++	 * returns BOOT_DEVICE_BOOTROM for it.
++	 */
++	spl_boot_list[0] = spl_boot_device();
++}
++#endif
++
+ int checkboard(void)
+ {
+ 	char *board = "Clearfog Pro";
+-- 
+2.55.0
+

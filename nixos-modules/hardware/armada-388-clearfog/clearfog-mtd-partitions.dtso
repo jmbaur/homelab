@@ -12,23 +12,14 @@
 		#size-cells = <1>;
 
 		partition@0 {
-			label = "uboot";
-			reg = <0x0 0x200000>;
+			label = "spl";
+			reg = <0x0 0x100000>;
 		};
 
-		partition@200000 {
-			label = "ubootenv";
-			reg = <0x200000 0x20000>;
-		};
-
-		partition@220000 {
-			label = "ubootenvred";
-			reg = <0x220000 0x20000>;
-		};
-
-		partition@240000 {
-			label = "ubi";
-			reg = <0x240000 0x1c0000>;
+		/* CONFIG_SYS_SPI_KERNEL_OFFS, where SPL looks for the payload */
+		partition@100000 {
+			label = "tinyboot";
+			reg = <0x100000 0x300000>;
 		};
 	};
 };
