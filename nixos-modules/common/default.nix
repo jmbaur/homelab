@@ -35,8 +35,8 @@ in
 
       environment.systemPackages = [
         pkgs.modprobed-db
-        pkgs.homelab-utils
-      ];
+      ]
+      ++ lib.attrValues pkgs.homelab-utils;
 
       system.etc.overlay.enable = mkDefault true;
 

@@ -5,10 +5,12 @@
     .paths = .{""},
     .dependencies = .{
         .libsodium = .{
+            .lazy = true,
             .url = "https://github.com/jedisct1/libsodium/archive/refs/tags/1.0.22-RELEASE.tar.gz",
             .hash = "N-V-__8AAGV3jgBL34nv4uUihxaCgroWLfj966-SVjBHn9RE",
         },
         .libqrencode = .{
+            .lazy = true,
             .url = "https://github.com/fukuchi/libqrencode/archive/v4.1.1.tar.gz",
             .hash = "N-V-__8AAPASEwAUxk9NnoI_4CU6jwKmMTm2KHybduvYIQml",
         },

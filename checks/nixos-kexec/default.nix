@@ -18,7 +18,7 @@ testers.runNixOSTest {
       virtualisation.memorySize = 4 * 1024;
 
       environment.systemPackages = [
-        pkgs.homelab-utils # nixos-kexec
+        pkgs.homelab-utils.nixos-kexec
       ];
       specialisation.hello.configuration = {
         environment.systemPackages = [ pkgs.hello ];

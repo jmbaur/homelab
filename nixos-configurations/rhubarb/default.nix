@@ -71,7 +71,7 @@
       };
 
       systemd.services.garage-door.serviceConfig.ExecStart = toString [
-        (lib.getExe' pkgs.homelab-utils "homelab-garage-door")
+        (lib.getExe pkgs.homelab-utils.homelab-garage-door)
         "/dev/gpiochip0"
         23 # set
         24 # unset

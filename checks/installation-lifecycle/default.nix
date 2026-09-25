@@ -20,7 +20,7 @@ testers.runNixOSTest {
         virtualisation.vlans = [ 1 ];
 
         environment.systemPackages = [
-          pkgs.homelab-utils # nix-key
+          pkgs.homelab-utils.nix-key
         ];
 
         networking.firewall.allowedTCPPorts = [

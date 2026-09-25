@@ -1,24 +1,81 @@
 const std = @import("std");
 
+const Tool = struct {
+    name: []const u8,
+    link_libc: bool = false,
+    linux_only: bool = false,
+    link: ?*const fn (*std.Build, *std.Build.Module) void = null,
+};
+
+const tools = [_]Tool{
+    .{ .name = "copy" },
+    .{ .name = "homelab-backup-recv" },
+    .{ .name = "homelab-garage-door", .link_libc = true, .linux_only = true },
+    .{ .name = "macgen" },
+    .{ .name = "networkd-dhcpv6-client-prefix" },
+    .{ .name = "nix-key", .link_libc = true, .link = linkLibsodium },
+    .{ .name = "nixos-kexec", .linux_only = true },
+    .{ .name = "pb", .link_libc = true, .link = linkLibqrencode },
+    .{ .name = "pomo" },
+};
+
 pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    const libsodium_dep = b.dependency("libsodium", .{ .target = target, .optimize = optimize, .shared = false });
-    const libqrencode_dep = b.dependency("libqrencode", .{});
+    // Lets each tool be packaged separately; builds all tools when unset.
+    const only = b.option([]const u8, "tool", "Only build and test this tool");
 
-    const libqrencode = b.addLibrary(.{
+    if (only) |name| {
+        for (tools) |tool| {
+            if (std.mem.eql(u8, tool.name, name)) break;
+        } else return error.UnknownTool;
+    }
+
+    const test_step = b.step("test", "Run unit tests");
+
+    for (tools) |tool| {
+        if (only) |name| if (!std.mem.eql(u8, tool.name, name)) continue;
+        if (tool.linux_only and target.result.os.tag != .linux) continue;
+
+        const module = b.createModule(.{
+            .root_source_file = b.path(b.fmt("src/{s}.zig", .{tool.name})),
+            .target = target,
+            .optimize = optimize,
+            .strip = optimize != .Debug,
+            .link_libc = tool.link_libc,
+        });
+        if (tool.link) |link| link(b, module);
+
+        b.installArtifact(b.addExecutable(.{ .name = tool.name, .root_module = module }));
+        test_step.dependOn(&b.addRunArtifact(b.addTest(.{ .root_module = module })).step);
+    }
+}
+
+fn linkLibsodium(b: *std.Build, module: *std.Build.Module) void {
+    const dep = b.lazyDependency("libsodium", .{
+        .target = module.resolved_target.?,
+        .optimize = module.optimize.?,
+        .shared = false,
+    }) orelse return;
+    module.linkLibrary(dep.artifact("sodium"));
+}
+
+fn linkLibqrencode(b: *std.Build, module: *std.Build.Module) void {
+    const dep = b.lazyDependency("libqrencode", .{}) orelse return;
+
+    const lib = b.addLibrary(.{
         .name = "qrencode",
         .linkage = .static,
         .root_module = b.createModule(.{
             .root_source_file = null,
-            .target = target,
-            .optimize = optimize,
+            .target = module.resolved_target.?,
+            .optimize = module.optimize.?,
             .link_libc = true,
         }),
     });
-    libqrencode.root_module.addCSourceFiles(.{
-        .root = libqrencode_dep.path(""),
+    lib.root_module.addCSourceFiles(.{
+        .root = dep.path(""),
         .flags = &.{
             "-DMAJOR_VERSION=4",
             "-DMINOR_VERSION=1",
@@ -39,132 +96,7 @@ pub fn build(b: *std.Build) !void {
             "mmask.c",
         },
     });
-    libqrencode.root_module.addIncludePath(libqrencode_dep.path(""));
-    libqrencode.installHeadersDirectory(libqrencode_dep.path(""), "", .{});
-
-    const pb = b.addExecutable(.{
-        .name = "pb",
-        .root_module = b.createModule(.{
-            .root_source_file = b.path("src/pb.zig"),
-            .target = target,
-            .optimize = optimize,
-            .strip = optimize != .Debug,
-            .link_libc = true,
-        }),
-    });
-    pb.root_module.linkLibrary(libqrencode);
-    b.installArtifact(pb);
-
-    const copy = b.addExecutable(.{
-        .name = "copy",
-        .root_module = b.createModule(.{
-            .root_source_file = b.path("src/copy.zig"),
-            .target = target,
-            .optimize = optimize,
-            .strip = optimize != .Debug,
-            .link_libc = false,
-        }),
-    });
-    b.installArtifact(copy);
-
-    const macgen = b.addExecutable(.{
-        .name = "macgen",
-        .root_module = b.createModule(.{
-            .root_source_file = b.path("src/macgen.zig"),
-            .target = target,
-            .optimize = optimize,
-            .strip = optimize != .Debug,
-            .link_libc = false,
-        }),
-    });
-    b.installArtifact(macgen);
-
-    const pomo = b.addExecutable(.{
-        .name = "pomo",
-        .root_module = b.createModule(.{
-            .root_source_file = b.path("src/pomo.zig"),
-            .target = target,
-            .optimize = optimize,
-            .strip = optimize != .Debug,
-            .link_libc = false,
-        }),
-    });
-    b.installArtifact(pomo);
-
-    if (target.result.os.tag == .linux) {
-        const nixos_kexec = b.addExecutable(.{
-            .name = "nixos-kexec",
-            .root_module = b.createModule(.{
-                .root_source_file = b.path("src/nixos-kexec.zig"),
-                .target = target,
-                .optimize = optimize,
-                .strip = optimize != .Debug,
-                .link_libc = false,
-            }),
-        });
-        b.installArtifact(nixos_kexec);
-    }
-
-    if (target.result.os.tag == .linux) {
-        const homelab_garage_door = b.addExecutable(.{
-            .name = "homelab-garage-door",
-            .root_module = b.createModule(.{
-                .root_source_file = b.path("src/homelab-garage-door.zig"),
-                .target = target,
-                .optimize = optimize,
-                .strip = optimize != .Debug,
-                .link_libc = true,
-            }),
-        });
-        b.installArtifact(homelab_garage_door);
-    }
-
-    const homelab_backup_recv = b.addExecutable(.{
-        .name = "homelab-backup-recv",
-        .root_module = b.createModule(.{
-            .root_source_file = b.path("src/homelab-backup-recv.zig"),
-            .target = target,
-            .optimize = optimize,
-            .strip = optimize != .Debug,
-            .link_libc = false,
-        }),
-    });
-    b.installArtifact(homelab_backup_recv);
-
-    const networkd_dhcpv6_client_prefix = b.addExecutable(.{
-        .name = "networkd-dhcpv6-client-prefix",
-        .root_module = b.createModule(.{
-            .root_source_file = b.path("src/networkd-dhcpv6-client-prefix.zig"),
-            .target = target,
-            .optimize = optimize,
-            .strip = optimize != .Debug,
-            .link_libc = false,
-        }),
-    });
-    b.installArtifact(networkd_dhcpv6_client_prefix);
-
-    const nix_key = b.addExecutable(.{
-        .name = "nix-key",
-        .root_module = b.createModule(.{
-            .root_source_file = b.path("src/nix-key.zig"),
-            .target = target,
-            .optimize = optimize,
-            .strip = optimize != .Debug,
-            .link_libc = true,
-        }),
-    });
-    nix_key.root_module.linkLibrary(libsodium_dep.artifact("sodium"));
-    b.installArtifact(nix_key);
-
-    const unit_tests = b.addTest(.{
-        .root_module = b.createModule(.{
-            .root_source_file = b.path("src/test.zig"),
-            .target = target,
-            .optimize = optimize,
-            .link_libc = false,
-        }),
-    });
-
-    const test_step = b.step("test", "Run unit tests");
-    test_step.dependOn(&b.addRunArtifact(unit_tests).step);
+    lib.root_module.addIncludePath(dep.path(""));
+    lib.installHeadersDirectory(dep.path(""), "", .{});
+    module.linkLibrary(lib);
 }

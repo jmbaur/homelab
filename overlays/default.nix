@@ -55,6 +55,8 @@ inputs: {
     (final: prev: {
       cros-ec-fizz = prev.cros-ec.override { board = "fizz"; };
 
+      homelab-utils = final.callPackages ./homelab-utils.nix { };
+
       fnlfmt = prev.fnlfmt.overrideAttrs rec {
         version = "0.3.2-${builtins.substring 0 9 src.rev}";
 
