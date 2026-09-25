@@ -4,10 +4,11 @@
     .fingerprint = 0x2f5abc681da8c5f3,
     .paths = .{""},
     .dependencies = .{
+        // TODO(jared): update to tagged release, we pin a pre-release so we don't need to make libsodium source read-write during sandboxed builds
         .libsodium = .{
             .lazy = true,
-            .url = "https://github.com/jedisct1/libsodium/archive/refs/tags/1.0.22-RELEASE.tar.gz",
-            .hash = "N-V-__8AAGV3jgBL34nv4uUihxaCgroWLfj966-SVjBHn9RE",
+            .url = "https://github.com/jedisct1/libsodium/archive/c960b3b0c6e430ff2dfdb776bf1c990e62f3f18b.tar.gz",
+            .hash = "N-V-__8AAMlLbwC3iAyzK1WEpn_J8aDObYVq5wL7FzR2wO5i",
         },
         .libqrencode = .{
             .lazy = true,

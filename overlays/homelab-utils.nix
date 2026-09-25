@@ -21,7 +21,7 @@ let
       ];
     };
     fetchAll = true;
-    hash = "sha256-Zh0cWmGqgjNlp0bx1OevzsgK+Ghf16+3j4HdBiF6piM=";
+    hash = "sha256-uz7IAdE+zBdJGvwKI/xY3dEcc/A7dgWCA/BPCEaFaNI=";
   };
 
   mkTool =
@@ -66,11 +66,8 @@ let
       ];
       zigCheckFlags = [ "-Dtool=${name}" ];
 
-      # TODO(jared): libsodium modifies downloaded contents at build time (this
-      # should be fixed).
       postConfigure = ''
-        cp -r ${deps} $ZIG_GLOBAL_CACHE_DIR/p
-        chmod u+w --recursive $ZIG_GLOBAL_CACHE_DIR
+        ln -sf ${deps} $ZIG_GLOBAL_CACHE_DIR/p
       '';
 
       passthru = { inherit deps; };
