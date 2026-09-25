@@ -109,23 +109,6 @@
         "type": "github"
       }
     },
-    "foreman": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1778098942,
-        "narHash": "sha256-BWVGk2CQvxy34UjIoLYYsNXgwgiQCNGFYY0ii3AW4mI=",
-        "owner": "Ericson2314",
-        "repo": "foreman",
-        "rev": "d15eded9294e6efcc5934d8e46abe3e86c8d2b01",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Ericson2314",
-        "ref": "socketfile",
-        "repo": "foreman",
-        "type": "github"
-      }
-    },
     "git-hooks": {
       "inputs": {
         "flake-compat": [],
@@ -170,18 +153,17 @@
     "hydra": {
       "inputs": {
         "crane": "crane",
-        "foreman": "foreman",
         "nix": "nix",
         "nix-eval-jobs": "nix-eval-jobs",
         "nixpkgs": "nixpkgs",
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1790338425,
-        "narHash": "sha256-g72eFu5QWJsAVsYjEZciYEL51X02FPTlABSjhUMjKX8=",
+        "lastModified": 1790347630,
+        "narHash": "sha256-V1VKz6BHwPRbBZg7X/BeBq7ec4FMjT6jD4YScWEZByc=",
         "owner": "NixOS",
         "repo": "hydra",
-        "rev": "f15c0955b55651abb7a887f7638026eb26b67735",
+        "rev": "6c3cf65a9b893518a0abac714a11b5ac1fb91598",
         "type": "github"
       },
       "original": {
@@ -382,11 +364,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1790185690,
-        "narHash": "sha256-xJ+X4hBtOcAFGBOe5nAMyMUeF9foJBmIOu3NjBqBycU=",
+        "lastModified": 1790348310,
+        "narHash": "sha256-IVu87NwcMeukF0NaYrUseCL01/xampRL7sDYblxfk60=",
         "owner": "jmbaur",
         "repo": "nixpkgs",
-        "rev": "4975466d324710c576dc11ad614684e6bd8cad8e",
+        "rev": "a1787df8e8a65bb7bf0924a713e7b9092523cd44",
         "type": "github"
       },
       "original": {
