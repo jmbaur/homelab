@@ -159,15 +159,18 @@
                               :pattern "[^l]*"
                               :callback (λ []
                                           (if (> (length (vim.fn.getqflist)) 1)
-                                              (vim.cmd.cwindow)))})
+                                              (vim.cmd.cwindow))
+                                          nil)})
 
 (vim.api.nvim_create_autocmd [:QuickFixCmdPost]
                              {:group qfgroup
                               ;; Reverse logic from above.
                               :pattern :l*
                               :callback (λ []
-                                          (if (> (length (vim.fn.getloclist)) 1)
-                                              (vim.cmd.lwindow)))})
+                                          (if (> (length (vim.fn.getloclist 0))
+                                                 1)
+                                              (vim.cmd.lwindow))
+                                          nil)})
 
 ((. (require :vim._core.ui2) :enable) {:enable true})
 
