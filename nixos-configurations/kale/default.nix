@@ -142,7 +142,7 @@ in
 
         settings = {
           remoteStoreAddr = [
-            "s3://cache.jmbaur.com?endpoint=http://[::1]:3900&region=garage&scheme=http&secret-key=${config.sops.secrets.nix_signing_key.path}"
+            "s3://cache.jmbaur.com?endpoint=http://[::1]:3900&region=garage&scheme=http&compression=zstd&log-compression=br&secret-key=${config.sops.secrets.nix_signing_key.path}"
           ];
 
           useSubstitutes = true;
