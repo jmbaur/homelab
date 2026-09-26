@@ -1,4 +1,5 @@
 {
+  binutils,
   lib,
   stdenvNoCC,
   zig_0_16,
@@ -46,13 +47,15 @@ let
         );
       };
 
-      nativeBuildInputs = [ zig_0_16 ];
+      nativeBuildInputs = [
+        binutils
+        zig_0_16
+      ];
 
       __structuredAttrs = true;
-      doCheck = true;
-      dontPatchELF = true;
-      dontStrip = true;
+      separateDebugInfo = true;
       strictDeps = true;
+      doCheck = true;
 
       zigBuildFlags = [
         "-Dtool=${name}"

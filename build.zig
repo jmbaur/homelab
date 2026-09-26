@@ -23,6 +23,9 @@ pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
+    // used by nixpkgs' separateDebugInfo
+    b.build_id = .sha1;
+
     // Lets each tool be packaged separately; builds all tools when unset.
     const only = b.option([]const u8, "tool", "Only build and test this tool");
 
@@ -42,7 +45,7 @@ pub fn build(b: *std.Build) !void {
             .root_source_file = b.path(b.fmt("src/{s}.zig", .{tool.name})),
             .target = target,
             .optimize = optimize,
-            .strip = optimize != .Debug,
+            .strip = false,
             .link_libc = tool.link_libc,
         });
         if (tool.link) |link| link(b, module);
