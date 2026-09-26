@@ -159,11 +159,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1790425345,
-        "narHash": "sha256-j/T+4Dt5jJTMzQp1gue6qfo5+HXRyZvFX6vGNekvIdw=",
+        "lastModified": 1790444723,
+        "narHash": "sha256-N+9yRuZJOFiTe+EGP6UIb4X8e6Rl5FEAnX2dWPE4oKU=",
         "owner": "NixOS",
         "repo": "hydra",
-        "rev": "047b9c2ddbfb8087e793f35451996d2c4927fb1a",
+        "rev": "c729053d058296cb52cdeccaa59e17a087320273",
         "type": "github"
       },
       "original": {
@@ -336,11 +336,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1785889256,
-        "narHash": "sha256-gEdUsQL+NBJ+y0k/uDtGHcBDm5/v3scnp/+ovJzzYok=",
+        "lastModified": 1790428127,
+        "narHash": "sha256-SCreWTZPC1lLhlx4dSLBqQKgKZJkMNiU1cumw50Kb9w=",
         "owner": "jmbaur",
         "repo": "nixos-router",
-        "rev": "30679ea89418e89e4382a9a948334b28cdb73b9e",
+        "rev": "87df8e8f0029b739ef21606b81026257e1029234",
         "type": "github"
       },
       "original": {
