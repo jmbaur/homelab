@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -77,7 +78,7 @@ in
       services.fwupd.enable = true;
 
       sops.secrets = {
-        nix_signing_key = { };
+        nix_signing_key.owner = config.users.users.hydra-queue-runner.name;
         hydra_netrc.owner = config.users.users.hydra.name;
         "cf-origin/cert".owner = config.services.nginx.user;
         "cf-origin/key".owner = config.services.nginx.user;
@@ -137,13 +138,22 @@ in
         grpc.port = 50051;
         rest.port = 8080;
 
+        awsCredentialsFile = "/var/lib/hydra/queue-runner/aws-credentials";
+
         settings = {
-          remoteStoreAddr = [ "http://[::1]:8501/upload" ];
+          remoteStoreAddr = [
+            "s3://cache.jmbaur.com?endpoint=http://[::1]:3900&region=garage&scheme=http&secret-key=${config.sops.secrets.nix_signing_key.path}"
+          ];
 
           useSubstitutes = true;
 
           maxOutputSize = 4 * 1024 * 1024 * 1024; # 4 GiB
         };
+      };
+
+      systemd.services.hydra-queue-runner-dev = {
+        requires = [ "garage-bootstrap.service" ];
+        after = [ "garage-bootstrap.service" ];
       };
 
       services.hydra-queue-builder-dev = {
@@ -158,30 +168,140 @@ in
 
       services.nginx.virtualHosts."cache.jmbaur.com" = {
         onlySSL = true;
-        locations."/".proxyPass = "http://[::1]:8501";
-        locations."/upload" = {
-          proxyPass = "http://[::1]:8501";
-          extraConfig = ''
-            allow 127.0.0.1;
-            allow ::1;
-            deny all;
+        root = pkgs.writeTextDir "index.html" (
+          let
+            publicKey =
+              lib.findFirst (lib.hasPrefix "cache.jmbaur.com-1:") (throw "missing cache.jmbaur.com public key")
+                config.nix.settings.trusted-public-keys;
+          in
+          ''
+            <!doctype html>
+            <html lang="en">
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1">
+              <title>cache.jmbaur.com</title>
+              <style>
+                body { font-family: system-ui, sans-serif; max-width: 48rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
+                pre { background: #8881; padding: 1rem; overflow-x: auto; }
+              </style>
+            </head>
+            <body>
+              <h1>cache.jmbaur.com</h1>
+              <h2>nix.conf</h2>
+              <pre>extra-substituters = https://cache.jmbaur.com
+            extra-trusted-public-keys = ${publicKey}</pre>
+              <h2>NixOS</h2>
+              <pre>nix.settings = {
+              extra-substituters = [ "https://cache.jmbaur.com" ];
+              extra-trusted-public-keys = [ "${publicKey}" ];
+            };</pre>
+            </body>
+            </html>
+          ''
+        );
+        locations."= /".tryFiles = "/index.html =404";
+        locations."= /index.html" = { };
+        locations."/".proxyPass = "http://[::1]:3902";
+        # hydra's S3 uploader doesn't write this
+        locations."= /nix-cache-info" = {
+          alias = pkgs.writeText "nix-cache-info" ''
+            StoreDir: /nix/store
+            WantMassQuery: 1
+            Priority: 10
           '';
+          extraConfig = "default_type text/x-nix-cache-info;";
         };
         sslCertificate = config.sops.secrets."cf-origin/cert".path;
         sslCertificateKey = config.sops.secrets."cf-origin/key".path;
       };
 
-      services.ncps = {
+      services.garage = {
         enable = true;
-        cache = {
-          secretKeyPath = config.sops.secrets.nix_signing_key.path;
-          hostName = "cache.jmbaur.com-1";
-          upstream.urls = [ "https://cache.nixos.org" ];
-          upstream.publicKeys = [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" ];
-          maxSize = "512G";
-          lru.schedule = "0 2 * * *";
-          allowPutVerb = true;
+        package = pkgs.garage_2;
+        environmentFile = "/var/lib/garage-rpc-secret/env";
+        settings = {
+          replication_factor = 1;
+          # NARs are already compressed
+          compression_level = "none";
+          rpc_bind_addr = "[::1]:3901";
+          rpc_public_addr = "[::1]:3901";
+          s3_api = {
+            s3_region = "garage";
+            api_bind_addr = "[::1]:3900";
+          };
+          s3_web = {
+            bind_addr = "[::1]:3902";
+            root_domain = ".web.garage";
+          };
         };
+      };
+
+      # Single node, so the RPC secret never needs to leave kale.
+      systemd.services.garage-rpc-secret = {
+        wantedBy = [ "garage.service" ];
+        before = [ "garage.service" ];
+        unitConfig.ConditionPathExists = "!/var/lib/garage-rpc-secret/env";
+        serviceConfig = {
+          Type = "oneshot";
+          StateDirectory = "garage-rpc-secret";
+          StateDirectoryMode = "0700";
+          UMask = "0077";
+        };
+        script = ''
+          echo "GARAGE_RPC_SECRET=$(od -An -tx1 -N32 /dev/urandom | tr -d ' \n')" > "$STATE_DIRECTORY/env"
+        '';
+      };
+
+      systemd.services.garage-bootstrap = {
+        requires = [ "garage.service" ];
+        after = [ "garage.service" ];
+        path = [
+          config.services.garage.package
+          pkgs.curl
+          pkgs.gawk
+        ];
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+          EnvironmentFile = config.services.garage.environmentFile;
+        };
+        script = ''
+          creds=/var/lib/hydra/queue-runner/aws-credentials
+
+          for _ in $(seq 60); do
+            garage status >/dev/null 2>&1 && break
+            sleep 1
+          done
+          garage status >/dev/null
+
+          if ! garage layout show | grep -q 'Current cluster layout version: [1-9]'; then
+            garage layout assign -z kale -c 1T "$(garage node id -q | cut -d@ -f1)"
+            garage layout apply --version 1
+          fi
+
+          garage bucket info cache.jmbaur.com >/dev/null 2>&1 || garage bucket create cache.jmbaur.com
+          garage bucket website --allow cache.jmbaur.com
+          garage key info hydra-queue-runner >/dev/null 2>&1 || garage key create hydra-queue-runner
+          garage bucket allow --read --write --key hydra-queue-runner cache.jmbaur.com
+
+          info=$(garage key info --show-secret hydra-queue-runner)
+          id=$(awk '/Key ID:/ {print $3}' <<<"$info")
+          secret=$(awk '/Secret key:/ {print $3}' <<<"$info")
+
+          install -d -m 0700 -o hydra-queue-runner -g hydra "$(dirname "$creds")"
+          umask 077
+          printf '[default]\naws_access_key_id = %s\naws_secret_access_key = %s\n' "$id" "$secret" > "$creds.tmp"
+          chown hydra-queue-runner:hydra "$creds.tmp"
+          mv "$creds.tmp" "$creds"
+
+          # Lifecycle rules are S3-API only. Keep this above hydra's 60 day
+          # presence-cache TTL so it never skips re-uploading an expired path.
+          curl --fail-with-body -sS -X PUT \
+            --aws-sigv4 "aws:amz:garage:s3" --user "$id:$secret" \
+            --data-binary '<LifecycleConfiguration><Rule><ID>expire</ID><Status>Enabled</Status><Filter></Filter><Expiration><Days>90</Days></Expiration></Rule></LifecycleConfiguration>' \
+            'http://[::1]:3900/cache.jmbaur.com?lifecycle'
+        '';
       };
 
       networking.nftables.flushRuleset = !config.nix.firewall.enable;
