@@ -107,7 +107,7 @@ in
 
   router = {
     enable = true;
-    ipv6Mostly = true;
+    ipv6Mostly = false; # TODO(jared): figure out how to interact with chromecast, that does not do well with this :(
     lanInterface = config.systemd.network.netdevs."10-br0".netdevConfig.Name;
     wanInterface = "wan";
     dns.upstreamProvider = "quad9";

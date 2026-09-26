@@ -159,11 +159,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1790355353,
-        "narHash": "sha256-QaSMmud4fMh2/DjGk+Xh5qK/Kyqck44T7MZGzwVfqCQ=",
+        "lastModified": 1790425345,
+        "narHash": "sha256-j/T+4Dt5jJTMzQp1gue6qfo5+HXRyZvFX6vGNekvIdw=",
         "owner": "NixOS",
         "repo": "hydra",
-        "rev": "ece64a7bf986503b06f9bea406428a0038604bb5",
+        "rev": "047b9c2ddbfb8087e793f35451996d2c4927fb1a",
         "type": "github"
       },
       "original": {
@@ -223,11 +223,11 @@
         "pyproject-nix": "pyproject-nix"
       },
       "locked": {
-        "lastModified": 1790338799,
-        "narHash": "sha256-NOYcliwOGwxo4pdlIFQXxvHjywEHrRD3yKQ4nO2U0uM=",
+        "lastModified": 1790405294,
+        "narHash": "sha256-YR5EHL8q6qGzmJWJ4o+bk7P8ewbBnYpdv7bWQyRDIJM=",
         "owner": "jmbaur",
         "repo": "mixos",
-        "rev": "e0a2d111cc6bfd8c7f6411e10667b9fabc564187",
+        "rev": "10e1c606da21be82e064ef03a5d34cba73c32f7b",
         "type": "github"
       },
       "original": {
