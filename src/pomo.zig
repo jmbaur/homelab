@@ -9,11 +9,15 @@ fn notify(io: std.Io, message: []const u8) !void {
     var stdout = &stdout_file.interface;
     try stdout.print("{s}\n", .{message});
 
+    // tmux passthrough requires every ESC inside the DCS to be doubled,
+    // otherwise the OSC's own ST ends the passthrough early.
+    const esc = if (inside_tmux) "\x1b\x1b" else "\x1b";
+
     if (inside_tmux) {
-        try stdout.writeAll("\x1bPtmux;\x1b");
+        try stdout.writeAll("\x1bPtmux;");
     }
 
-    try stdout.print("\x1b]777;notify;pomodoro;{s}\x1b\x5c", .{message});
+    try stdout.print("{s}]777;notify;pomodoro;{s}{s}\\", .{ esc, message, esc });
 
     if (inside_tmux) {
         try stdout.writeAll("\x1b\\");

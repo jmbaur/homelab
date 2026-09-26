@@ -248,6 +248,8 @@ in
         enable = true;
         settings = {
           mouse.hide-when-typing = "yes";
+          # timers like pomo usually fire in the window being worked in
+          desktop-notifications.inhibit-when-focused = "no";
           main = {
             font = "monospace:size=11";
             resize-by-cells = "no";

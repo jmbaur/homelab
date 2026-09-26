@@ -137,6 +137,20 @@
                                           (vim.cmd.startinsert)
                                           nil)})
 
+;; nvim's terminal swallows desktop notification OSCs, pass them to the host terminal.
+(vim.api.nvim_create_autocmd [:TermRequest]
+                             {:group (vim.api.nvim_create_augroup :TermNotify
+                                                                  {:clear true})
+                              :callback (λ [{: data}]
+                                          (let [seq data.sequence]
+                                            (if (or (vim.startswith seq
+                                                                    "\027]777;notify;")
+                                                    (vim.startswith seq
+                                                                    "\027]99;"))
+                                                (vim.api.nvim_ui_send (.. seq
+                                                                          data.terminator))))
+                                          nil)})
+
 (local qfgroup (vim.api.nvim_create_augroup :QuickFix {:clear true}))
 (vim.api.nvim_create_autocmd [:QuickFixCmdPost]
                              {:group qfgroup
