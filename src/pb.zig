@@ -3,7 +3,8 @@ const C = @cImport({
     @cInclude("qrencode.h");
 });
 
-const paste_rs = std.Uri.parse("https://paste.rs") catch @compileError("invalid URI");
+const paste_host = "https://paste.jmbaur.com";
+const paste_uri = std.Uri.parse(paste_host) catch @compileError("invalid URI");
 const margin = 2;
 const empty = " ";
 const lower = "\xe2\x96\x84";
@@ -77,21 +78,34 @@ pub fn main(init: std.process.Init) !void {
     var client: std.http.Client = .{ .io = init.io, .allocator = allocator };
     defer client.deinit();
 
-    var request = try client.request(.POST, paste_rs, .{});
+    const payload = try std.json.Stringify.valueAlloc(allocator, .{ .text = body }, .{});
+
+    var request = try client.request(.POST, paste_uri, .{
+        .headers = .{
+            .content_type = .{ .override = "application/json" },
+            .accept_encoding = .omit,
+        },
+    });
     defer request.deinit();
 
-    @memset(&buffer, 0);
-    try request.sendBodyComplete(body);
+    try request.sendBodyComplete(payload);
     var response = try request.receiveHead(&.{});
-    var response_reader = response.reader(&buffer);
+    if (response.head.status != .ok) {
+        std.log.err("paste failed: {d} {s}", .{ @intFromEnum(response.head.status), response.head.reason });
+        return error.PasteFailed;
+    }
 
-    const paste_url = try response_reader.takeDelimiterExclusive('\n');
-
-    const qrcode = C.QRcode_encodeString8bit(
-        response_reader.buffer[0..paste_url.len :0],
-        0,
-        C.QR_ECLEVEL_L,
+    const response_body = try response.reader(&buffer).allocRemaining(allocator, .unlimited);
+    const parsed = try std.json.parseFromSliceLeaky(
+        struct { path: []const u8 },
+        allocator,
+        response_body,
+        .{ .ignore_unknown_fields = true },
     );
+
+    const paste_url = try std.fmt.allocPrintSentinel(allocator, paste_host ++ "/raw{s}", .{parsed.path}, 0);
+
+    const qrcode = C.QRcode_encodeString8bit(paste_url, 0, C.QR_ECLEVEL_L);
     defer C.QRcode_free(qrcode);
 
     var stdout: std.Io.File = .stdout();
