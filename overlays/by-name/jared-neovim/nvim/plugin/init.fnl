@@ -8,7 +8,7 @@
                           nil))
 
 (fn set-grepprg-rg []
-  (if (vim.fn.executable :rg)
+  (if (= 1 (vim.fn.executable :rg))
       (set vim.opt.grepprg
            (string.format "rg --vimgrep %s"
                           (case [(vim.opt.ignorecase:get)
