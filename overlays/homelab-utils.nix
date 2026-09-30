@@ -157,6 +157,10 @@ lib.attrsets.unionOfDisjoint
   (lib.mapAttrs (name: args: mkChickenTool ({ inherit name; } // args)) {
     copy.eggs = eggs: [ eggs.base64 ];
     macgen.eggs = eggs: [ eggs.srfi-1 ];
+    nix-key.eggs = eggs: [
+      eggs.base64
+      eggs.libsodium
+    ];
     nixos-kexec = {
       platforms = lib.platforms.linux;
       eggs = eggs: [ eggs.srfi-13 ];
@@ -171,7 +175,6 @@ lib.attrsets.unionOfDisjoint
         platforms = lib.platforms.linux;
       };
       networkd-dhcpv6-client-prefix = { };
-      nix-key = { };
       pb = { };
     }
   )

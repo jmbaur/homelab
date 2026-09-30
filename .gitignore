@@ -8,8 +8,12 @@
 repl-result-*
 result*
 src/*.c
+src/*.import.scm
+src/*.o
+src/*.so
 src/copy
 src/macgen
+src/nix-key
 src/nixos-kexec
 src/pomo
 zig-out

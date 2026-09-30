@@ -57,6 +57,28 @@ inputs: {
 
       homelab-utils = final.callPackages ./homelab-utils.nix { };
 
+      chickenPackages_6 = final.lib.recurseIntoAttrs (
+        prev.chickenPackages_6.overrideScope (
+          cfinal: cprev: {
+            chickenEggs = final.lib.recurseIntoAttrs (
+              cprev.chickenEggs.overrideScope (
+                _: _: {
+                  libsodium =
+                    (cfinal.eggDerivation {
+                      pname = "libsodium";
+                      version = "0.0.0";
+                      src = ./chicken/libsodium;
+                    }).overrideAttrs
+                      (old: {
+                        buildInputs = old.buildInputs ++ [ final.libsodium ];
+                      });
+                }
+              )
+            );
+          }
+        )
+      );
+
       fnlfmt = prev.fnlfmt.overrideAttrs rec {
         version = "0.3.2-${builtins.substring 0 9 src.rev}";
 
