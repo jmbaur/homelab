@@ -104,6 +104,13 @@ in
             "flakes"
             "nix-command"
           ];
+          # Provide a sane default value so that nix commands don't outright fail on
+          # an otherwise unconfigured machine.
+          nix-path = mkDefault [
+            "nixpkgs=https://github.com/nixos/nixpkgs/archive/${
+              if (revision != null) then revision else "nixos-unstable"
+            }.tar.gz"
+          ];
         };
       };
 
@@ -114,14 +121,6 @@ in
 
       # Prevent copying in nixpkgs source eagerly
       nixpkgs.flake.source = mkForce null;
-
-      # Provide a sane default value so that nix commands don't outright fail on
-      # an otherwise unconfigured machine.
-      nix.nixPath = mkDefault [
-        "nixpkgs=https://github.com/nixos/nixpkgs/archive/${
-          if (revision != null) then revision else "nixos-unstable"
-        }.tar.gz"
-      ];
     }
 
     {
