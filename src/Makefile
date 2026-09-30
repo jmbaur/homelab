@@ -8,7 +8,7 @@ LDFLAGS += -L$(CHICKEN_PREFIX)/lib
 LDLIBS += -lchicken -lm
 
 PREFIX ?= /usr/local
-PROGRAMS ?= copy macgen nix-key nixos-kexec pomo
+PROGRAMS ?= copy macgen nix-key nixos-kexec pomo networkd-dhcpv6-client-prefix
 
 MAKEFLAGS += --no-builtin-rules
 

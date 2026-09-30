@@ -13,6 +13,7 @@ src/*.o
 src/*.so
 src/copy
 src/macgen
+src/networkd-dhcpv6-client-prefix
 src/nix-key
 src/nixos-kexec
 src/pomo

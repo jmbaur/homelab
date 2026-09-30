@@ -10,7 +10,6 @@ const Tool = struct {
 const tools = [_]Tool{
     .{ .name = "homelab-backup-recv" },
     .{ .name = "homelab-garage-door", .link_libc = true, .linux_only = true },
-    .{ .name = "networkd-dhcpv6-client-prefix" },
     .{ .name = "pb", .link_libc = true, .link = linkLibqrencode },
     .{ .name = "pomo" },
 };
