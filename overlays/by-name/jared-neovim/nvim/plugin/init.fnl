@@ -56,6 +56,10 @@
 (set vim.g.direnv_silent_load 1)
 (set (. vim.g "conjure#mapping#doc_word") false)
 (set (. vim.g "conjure#log#hud#enabled") false)
+;; -:c forces prompts on a pipe; runtime options must come first.
+(set (. vim.g "conjure#client#scheme#stdio#command") "csi -:c -quiet")
+(set (. vim.g "conjure#client#scheme#stdio#prompt_pattern") "#;[^%s]-%d+> ")
+(set (. vim.g "conjure#client#scheme#stdio#value_prefix_pattern") false)
 
 (set vim.wo.foldenable false)
 (set vim.wo.foldminlines 20)

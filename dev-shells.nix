@@ -49,6 +49,13 @@ inputs.nixpkgs.lib.mapAttrs (
           p.ldbus
           p.shevek
         ]))
+        pkgs.rlwrap
+        pkgs.chickenPackages_6.chicken
+        pkgs.chickenPackages_6.chickenEggs.base64
+        pkgs.chickenPackages_6.chickenEggs.srfi-1
+        pkgs.chickenPackages_6.chickenEggs.srfi-13
+        pkgs.chickenPackages_6.chickenEggs.srfi-37
+        pkgs.chickenPackages_6.chickenEggs.srfi-180
         pkgs.home-manager
         pkgs.lldb
         pkgs.openscad-unstable

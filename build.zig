@@ -8,13 +8,10 @@ const Tool = struct {
 };
 
 const tools = [_]Tool{
-    .{ .name = "copy" },
     .{ .name = "homelab-backup-recv" },
     .{ .name = "homelab-garage-door", .link_libc = true, .linux_only = true },
-    .{ .name = "macgen" },
     .{ .name = "networkd-dhcpv6-client-prefix" },
     .{ .name = "nix-key", .link_libc = true, .link = linkLibsodium },
-    .{ .name = "nixos-kexec", .linux_only = true },
     .{ .name = "pb", .link_libc = true, .link = linkLibqrencode },
     .{ .name = "pomo" },
 };

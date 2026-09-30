@@ -7,5 +7,10 @@
 .zig-cache
 repl-result-*
 result*
+src/*.c
+src/copy
+src/macgen
+src/nixos-kexec
+src/pomo
 zig-out
 zig-pkg
