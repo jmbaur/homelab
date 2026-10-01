@@ -7,8 +7,8 @@ CPPFLAGS += -DHAVE_CHICKEN_CONFIG_H -DC_ENABLE_PTABLES -I$(CHICKEN_PREFIX)/inclu
 LDFLAGS += -L$(CHICKEN_PREFIX)/lib
 LDLIBS += -lchicken -lm
 
-PREFIX ?= /usr/local
-PROGRAMS ?= copy homelab-backup-recv homelab-garage-door macgen nix-key nixos-kexec pomo networkd-dhcpv6-client-prefix
+PREFIX ?= $(out)
+PROGRAMS ?= copy homelab-backup-recv homelab-garage-door macgen networkd-dhcpv6-client-prefix nix-key nixos-kexec pb pomo
 
 MAKEFLAGS += --no-builtin-rules
 

@@ -41,17 +41,12 @@ inputs.nixpkgs.lib.mapAttrs (
   {
     default = pkgs.mkShell {
       packages = [
-        (pkgs.luajit.withPackages (p: [
-          p.cqueues
-          p.dkjson
-          p.fennel
-          p.jeejah
-          p.ldbus
-          p.shevek
-        ]))
         pkgs.chickenPackages_6.chicken
         pkgs.chickenPackages_6.chickenEggs.base64
+        pkgs.chickenPackages_6.chickenEggs.http-client
         pkgs.chickenPackages_6.chickenEggs.libsodium
+        pkgs.chickenPackages_6.chickenEggs.openssl
+        pkgs.chickenPackages_6.chickenEggs.qrencode
         pkgs.chickenPackages_6.chickenEggs.simple-logger
         pkgs.chickenPackages_6.chickenEggs.spiffy
         pkgs.chickenPackages_6.chickenEggs.srfi-1
@@ -64,10 +59,10 @@ inputs.nixpkgs.lib.mapAttrs (
         pkgs.libsodium
         pkgs.lldb
         pkgs.openscad-unstable
+        pkgs.qrencode
         pkgs.rlwrap
         pkgs.sops
         pkgs.ssh-to-age
-        pkgs.zig_0_16
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
         pkgs.chickenPackages_6.chickenEggs.gpiocdev

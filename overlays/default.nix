@@ -88,6 +88,7 @@ inputs: {
                   final.lib.const {
                     gpiocdev = cfinal.callPackage ./chicken/gpiocdev { };
                     libsodium = cfinal.callPackage ./chicken/libsodium { };
+                    qrencode = cfinal.callPackage ./chicken/qrencode { };
                   }
                 )
               )

@@ -1,88 +1,15 @@
 {
-  binutils,
   buildPackages,
   chickenPackages_6,
   lib,
   makeWrapper,
   stdenv,
-  stdenvNoCC,
-  zig_0_16,
 }:
 
 let
   root = ../.;
 
   version = "0.0.0";
-
-  # Shared by all tools so the dependencies are only fetched once.
-  deps = zig_0_16.fetchDeps {
-    pname = "homelab-utils";
-    inherit version;
-    src = lib.fileset.toSource {
-      inherit root;
-      fileset = lib.fileset.unions [
-        (root + /build.zig)
-        (root + /build.zig.zon)
-      ];
-    };
-    fetchAll = true;
-    hash = "sha256-uz7IAdE+zBdJGvwKI/xY3dEcc/A7dgWCA/BPCEaFaNI=";
-  };
-
-  mkTool =
-    {
-      name,
-      extraSrc ? [ ],
-      platforms ? lib.platforms.all,
-    }:
-    stdenvNoCC.mkDerivation {
-      pname = name;
-      inherit version;
-
-      src = lib.fileset.toSource {
-        inherit root;
-        fileset = lib.fileset.unions (
-          [
-            (root + /build.zig)
-            (root + /build.zig.zon)
-            (root + /src/${name}.zig)
-          ]
-          ++ extraSrc
-        );
-      };
-
-      nativeBuildInputs = [
-        binutils
-        zig_0_16
-      ];
-
-      __structuredAttrs = true;
-      separateDebugInfo = true;
-      strictDeps = true;
-      doCheck = true;
-
-      zigBuildFlags = [
-        "-Dtool=${name}"
-        "-Dtarget=${stdenvNoCC.hostPlatform.qemuArch}-${
-          {
-            darwin = "macos";
-            linux = "linux";
-          }
-          .${stdenvNoCC.hostPlatform.parsed.kernel.name}
-        }"
-      ];
-      zigCheckFlags = [ "-Dtool=${name}" ];
-
-      postConfigure = ''
-        ln -sf ${deps} $ZIG_GLOBAL_CACHE_DIR/p
-      '';
-
-      passthru = { inherit deps; };
-      meta = {
-        inherit platforms;
-        mainProgram = name;
-      };
-    };
 
   # Plain make rather than eggDerivation, since chicken-install can't cross.
   mkChickenTool =
@@ -157,47 +84,49 @@ let
       };
     };
 in
-lib.attrsets.unionOfDisjoint
-  (lib.mapAttrs (name: args: mkChickenTool ({ inherit name; } // args)) {
-    copy.eggs = eggs: [ eggs.base64 ];
-    homelab-backup-recv = {
-      extraSrc = [ (root + /src/homelab-backup-recv.h) ];
-      platforms = lib.platforms.linux;
-      eggs = eggs: [
-        eggs.simple-logger
-        eggs.srfi-18
-      ];
-    };
-    homelab-garage-door = {
-      extraSrc = [ (root + /src/garage-door.html) ];
-      platforms = lib.platforms.linux;
-      eggs = eggs: [
-        eggs.gpiocdev
-        eggs.intarweb
-        eggs.simple-logger
-        eggs.spiffy
-        eggs.srfi-18
-        eggs.uri-common
-      ];
-    };
-    macgen.eggs = eggs: [ eggs.srfi-1 ];
-    networkd-dhcpv6-client-prefix.eggs = eggs: [
-      eggs.srfi-1
-      eggs.srfi-13
-      eggs.srfi-180
+lib.mapAttrs (name: args: mkChickenTool ({ inherit name; } // args)) {
+  copy.eggs = eggs: [ eggs.base64 ];
+  homelab-backup-recv = {
+    extraSrc = [ (root + /src/homelab-backup-recv.h) ];
+    platforms = lib.platforms.linux;
+    eggs = eggs: [
+      eggs.simple-logger
+      eggs.srfi-18
     ];
-    nix-key.eggs = eggs: [
-      eggs.base64
-      eggs.libsodium
+  };
+  homelab-garage-door = {
+    extraSrc = [ (root + /src/garage-door.html) ];
+    platforms = lib.platforms.linux;
+    eggs = eggs: [
+      eggs.gpiocdev
+      eggs.intarweb
+      eggs.simple-logger
+      eggs.spiffy
+      eggs.srfi-18
+      eggs.uri-common
     ];
-    nixos-kexec = {
-      platforms = lib.platforms.linux;
-      eggs = eggs: [ eggs.srfi-13 ];
-    };
-    pomo = { };
-  })
-  (
-    lib.mapAttrs (name: args: mkTool ({ inherit name; } // args)) {
-      pb = { };
-    }
-  )
+  };
+  macgen.eggs = eggs: [ eggs.srfi-1 ];
+  networkd-dhcpv6-client-prefix.eggs = eggs: [
+    eggs.srfi-1
+    eggs.srfi-13
+    eggs.srfi-180
+  ];
+  nix-key.eggs = eggs: [
+    eggs.base64
+    eggs.libsodium
+  ];
+  nixos-kexec = {
+    platforms = lib.platforms.linux;
+    eggs = eggs: [ eggs.srfi-13 ];
+  };
+  pb.eggs = eggs: [
+    eggs.http-client
+    eggs.intarweb
+    eggs.openssl
+    eggs.qrencode
+    eggs.srfi-180
+    eggs.uri-common
+  ];
+  pomo = { };
+}

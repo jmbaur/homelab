@@ -18,6 +18,7 @@ src/macgen
 src/networkd-dhcpv6-client-prefix
 src/nix-key
 src/nixos-kexec
+src/pb
 src/pomo
 zig-out
 zig-pkg
