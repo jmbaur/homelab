@@ -51,6 +51,28 @@ inputs: {
       );
     })
 
+    # GCC 16 fixes
+    (final: prev: {
+      # TODO: drop once https://github.com/NixOS/nixpkgs/issues/568896 is fixed.
+      # C++20 std::lerp clashes with rxvt's own lerp.
+      rxvt-unicode-unwrapped = prev.rxvt-unicode-unwrapped.overrideAttrs (old: {
+        env = (old.env or { }) // {
+          NIX_CFLAGS_COMPILE = toString (old.env.NIX_CFLAGS_COMPILE or "") + " -std=gnu++17";
+        };
+      });
+
+      # TODO: drop once nixpkgs contour includes https://github.com/contour-terminal/contour/pull/1944
+      contour = prev.contour.overrideAttrs (old: {
+        patches = (old.patches or [ ]) ++ [
+          (final.fetchpatch {
+            url = "https://github.com/contour-terminal/contour/commit/38e543a71bffee72be34154f929493d3a1ea5c4a.patch";
+            includes = [ "src/vtbackend/Image.cpp" ];
+            hash = "sha256-C6FzHdOdKXaBb3ybqodd9xQ+E6XfDBH49ZgZLV5K8Rk=";
+          })
+        ];
+      });
+    })
+
     # all other packages
     (final: prev: {
       cros-ec-fizz = prev.cros-ec.override { board = "fizz"; };
