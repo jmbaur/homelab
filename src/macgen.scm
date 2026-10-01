@@ -17,6 +17,7 @@
 							  locally-administered-bit)
 					     unicast-mask))
     (string-intersperse
-      (map (lambda (i) (hex-octet (bytevector-u8-ref bytes i))) (iota 6)) ":")))
+      (map (lambda (i) (hex-octet (bytevector-u8-ref bytes i))) (iota 6))
+      ":")))
 
 (write-line (macgen))

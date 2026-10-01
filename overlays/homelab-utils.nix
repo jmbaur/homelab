@@ -160,6 +160,14 @@ in
 lib.attrsets.unionOfDisjoint
   (lib.mapAttrs (name: args: mkChickenTool ({ inherit name; } // args)) {
     copy.eggs = eggs: [ eggs.base64 ];
+    homelab-backup-recv = {
+      extraSrc = [ (root + /src/homelab-backup-recv.h) ];
+      platforms = lib.platforms.linux;
+      eggs = eggs: [
+        eggs.simple-logger
+        eggs.srfi-18
+      ];
+    };
     homelab-garage-door = {
       extraSrc = [ (root + /src/garage-door.html) ];
       platforms = lib.platforms.linux;
@@ -190,7 +198,6 @@ lib.attrsets.unionOfDisjoint
   })
   (
     lib.mapAttrs (name: args: mkTool ({ inherit name; } // args)) {
-      homelab-backup-recv = { };
       pb = { };
     }
   )

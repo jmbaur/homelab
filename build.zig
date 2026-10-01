@@ -8,7 +8,6 @@ const Tool = struct {
 };
 
 const tools = [_]Tool{
-    .{ .name = "homelab-backup-recv" },
     .{ .name = "pb", .link_libc = true, .link = linkLibqrencode },
     .{ .name = "pomo" },
 };

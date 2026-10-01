@@ -11,12 +11,13 @@
 (define (decode-key decoded . keys)
   (if (= 0 (length keys))
     decoded
-    (apply decode-key (cons 
+    (apply decode-key (cons
 			(let* ((key (string-split (car keys) ":"))
 			       (key-name (car key))
 			       (key-value (string->latin1 (base64-decode (cadr key)))))
 			  (cons key-name key-value))
-			decoded) (cdr keys))))
+			decoded)
+	   (cdr keys))))
 
 (define (sign data-filepath key-filepath)
   (let* ((data (call-with-input-file data-filepath (lambda (port)

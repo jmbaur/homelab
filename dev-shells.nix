@@ -56,6 +56,7 @@ inputs.nixpkgs.lib.mapAttrs (
         pkgs.chickenPackages_6.chickenEggs.spiffy
         pkgs.chickenPackages_6.chickenEggs.srfi-1
         pkgs.chickenPackages_6.chickenEggs.srfi-13
+        pkgs.chickenPackages_6.chickenEggs.srfi-18
         pkgs.chickenPackages_6.chickenEggs.srfi-180
         pkgs.chickenPackages_6.chickenEggs.srfi-37
         pkgs.chickenPackages_6.chickenEggs.vector-lib

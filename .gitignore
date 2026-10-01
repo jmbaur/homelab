@@ -12,6 +12,7 @@ src/*.import.scm
 src/*.o
 src/*.so
 src/copy
+src/homelab-backup-recv
 src/homelab-garage-door
 src/macgen
 src/networkd-dhcpv6-client-prefix

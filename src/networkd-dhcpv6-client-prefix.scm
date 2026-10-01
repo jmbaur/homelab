@@ -14,7 +14,8 @@
       (append z (list (let* ((next (take lst 2)))
 			(bitwise-ior
 			  (arithmetic-shift (car next) 8)
-			  (cadr next))))) (drop lst 2))))
+			  (cadr next)))))
+      (drop lst 2))))
 
 (let* ((input (json-read (current-input-port)))
        (prefixes (vector->list (alist-ref 'Prefixes (alist-ref 'DHCPv6Client input)))))
@@ -23,5 +24,7 @@
 		      (string-intersperse
 			(map (lambda (x)
 			       (string-pad (number->string x 16) 4 #\0))
-			     (chunk-prefix '() (vector->list (alist-ref 'Prefix prefix)))) ":")
-		      (alist-ref 'PrefixLength prefix))) prefixes))
+			     (chunk-prefix '() (vector->list (alist-ref 'Prefix prefix))))
+			":")
+		      (alist-ref 'PrefixLength prefix)))
+	    prefixes))

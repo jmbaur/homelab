@@ -27,7 +27,7 @@
 			     (if (= depth 4)
 			       (pomo 'long-break 0)
 			       (pomo 'work (+ 1 depth)))))
-    ((equal? cycle 'long-break) (begin 
+    ((equal? cycle 'long-break) (begin
 				  (message "long break!")
 				  (process-sleep (cycle-duration 30))
 				  (write-line "Press <ENTER> to continue into the next pomodoro session, <CTRL-C> to quit.")

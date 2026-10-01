@@ -34,7 +34,7 @@
 	      (error who (strerror (- ret))))))
 
 	(define-foreign-type line-request
-	  (nonnull-scheme-pointer "struct gpio_v2_line_request"))
+			     (nonnull-scheme-pointer "struct gpio_v2_line_request"))
 
 	(define line-request-size (foreign-type-size "struct gpio_v2_line_request"))
 
@@ -52,7 +52,7 @@
 	  (foreign-lambda* int ((line-request r)) "C_return(r->fd);"))
 
 	(define-foreign-type line-values
-	  (nonnull-scheme-pointer "struct gpio_v2_line_values"))
+			     (nonnull-scheme-pointer "struct gpio_v2_line_values"))
 
 	(define line-values-size (foreign-type-size "struct gpio_v2_line_values"))
 
@@ -90,7 +90,8 @@
 		void
 		(lambda ()
 		  (check-ioctl 'gpio-request-lines chip-fd
-			       (foreign-value "GPIO_V2_GET_LINE_IOCTL" unsigned-long) r))
+			       (foreign-value "GPIO_V2_GET_LINE_IOCTL" unsigned-long)
+			       r))
 		(lambda () (file-close chip-fd)))
 	      (line-request-fd r))))
 
@@ -100,7 +101,8 @@
 	(define (gpio-get-values fd #!optional (mask (all-lines-mask lines-max)))
 	  (let ((v (make-line-values 0 mask)))
 	    (check-ioctl 'gpio-get-values fd
-			 (foreign-value "GPIO_V2_LINE_GET_VALUES_IOCTL" unsigned-long) v)
+			 (foreign-value "GPIO_V2_LINE_GET_VALUES_IOCTL" unsigned-long)
+			 v)
 	    (line-values-bits v)))
 
 	(define (gpio-set-values! fd bits #!optional (mask (all-lines-mask lines-max)))

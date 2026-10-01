@@ -7,6 +7,7 @@ inputs.nixpkgs.lib.mapAttrs (
       pkgs.fnlfmt
       pkgs.nixfmt
       pkgs.prettier
+      pkgs.schemat
       pkgs.shellcheck
       pkgs.shfmt
       pkgs.statix
@@ -40,6 +41,15 @@ inputs.nixpkgs.lib.mapAttrs (
           done
         '';
         includes = [ "*.nix" ];
+      };
+
+      # Disabled in favor of the editor's lisp indentation.
+      formatter.schemat = inputs.nixpkgs.lib.mkIf false {
+        command = "schemat";
+        includes = [
+          "*.egg"
+          "*.scm"
+        ];
       };
 
       formatter.shell = {
