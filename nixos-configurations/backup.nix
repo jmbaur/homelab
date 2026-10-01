@@ -98,18 +98,59 @@ in
       systemd.services.backup-recv = {
         path = [ pkgs.btrfs-progs ];
         wantedBy = [ "multi-user.target" ];
-        serviceConfig.ExecStart = toString [
-          (getExe pkgs.homelab-utils.homelab-backup-recv)
-          (pkgs.writeText "peer-file.txt" (
-            concatLines (
-              mapAttrsToList (
-                nodeName: peerSettings: "${nodeName} ${peerSettings.ip}"
-              ) config.custom.yggdrasil.peers
-            )
-          ))
-          cfg.receiver.snapshotRoot
-          cfg.receiver.port
-        ];
+        unitConfig.RequiresMountsFor = [ cfg.receiver.snapshotRoot ];
+        serviceConfig = {
+          ExecStart = toString [
+            (getExe pkgs.homelab-utils.homelab-backup-recv)
+            (pkgs.writeText "peer-file.txt" (
+              concatLines (
+                mapAttrsToList (
+                  nodeName: peerSettings: "${nodeName} ${peerSettings.ip}"
+                ) config.custom.yggdrasil.peers
+              )
+            ))
+            cfg.receiver.snapshotRoot
+            cfg.receiver.port
+          ];
+
+          # btrfs-receive recreates arbitrary owners, modes, device nodes, file
+          # capabilities and trusted.* xattrs, and marks the subvolume as received.
+          CapabilityBoundingSet = [
+            "CAP_CHOWN"
+            "CAP_DAC_OVERRIDE"
+            "CAP_FOWNER"
+            "CAP_FSETID"
+            "CAP_MKNOD"
+            "CAP_SETFCAP"
+            "CAP_SYS_ADMIN"
+          ];
+          # No PrivateDevices or RestrictSUIDSGID: they would block received
+          # device nodes and setuid files.
+          IPAddressAllow = mapAttrsToList (_: peerSettings: peerSettings.ip) config.custom.yggdrasil.peers;
+          IPAddressDeny = "any";
+          LockPersonality = true;
+          MemoryDenyWriteExecute = true;
+          NoNewPrivileges = true;
+          PrivateIPC = true;
+          PrivateTmp = true;
+          ProcSubset = "pid";
+          ProtectClock = true;
+          ProtectControlGroups = true;
+          ProtectHome = true;
+          ProtectHostname = true;
+          ProtectKernelLogs = true;
+          ProtectKernelModules = true;
+          ProtectKernelTunables = true;
+          ProtectProc = "invisible";
+          ProtectSystem = "strict";
+          ReadWritePaths = [ cfg.receiver.snapshotRoot ];
+          RestrictAddressFamilies = [ "AF_INET6" ];
+          RestrictNamespaces = true;
+          RestrictRealtime = true;
+          SystemCallArchitectures = "native";
+          SystemCallFilter = [ "@system-service" ];
+          UMask = "0077";
+        };
       };
     })
 
