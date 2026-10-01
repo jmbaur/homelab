@@ -62,17 +62,12 @@ inputs: {
           cfinal: cprev: {
             chickenEggs = final.lib.recurseIntoAttrs (
               cprev.chickenEggs.overrideScope (
-                _: _: {
-                  libsodium =
-                    (cfinal.eggDerivation {
-                      pname = "libsodium";
-                      version = "0.0.0";
-                      src = ./chicken/libsodium;
-                    }).overrideAttrs
-                      (old: {
-                        buildInputs = old.buildInputs ++ [ final.libsodium ];
-                      });
-                }
+                final.lib.const (
+                  final.lib.const {
+                    gpiocdev = cfinal.callPackage ./chicken/gpiocdev { };
+                    libsodium = cfinal.callPackage ./chicken/libsodium { };
+                  }
+                )
               )
             );
           }

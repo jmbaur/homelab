@@ -89,6 +89,7 @@ let
     {
       name,
       eggs ? _: [ ],
+      extraSrc ? [ ],
       platforms ? lib.platforms.all,
     }:
     let
@@ -101,10 +102,13 @@ let
 
       src = lib.fileset.toSource {
         root = root + /src;
-        fileset = lib.fileset.unions [
-          (root + /src/Makefile)
-          (root + /src/${name}.scm)
-        ];
+        fileset = lib.fileset.unions (
+          [
+            (root + /src/Makefile)
+            (root + /src/${name}.scm)
+          ]
+          ++ extraSrc
+        );
       };
 
       # Build-platform eggs provide import libraries, host ones are loaded at runtime.
@@ -156,6 +160,18 @@ in
 lib.attrsets.unionOfDisjoint
   (lib.mapAttrs (name: args: mkChickenTool ({ inherit name; } // args)) {
     copy.eggs = eggs: [ eggs.base64 ];
+    homelab-garage-door = {
+      extraSrc = [ (root + /src/garage-door.html) ];
+      platforms = lib.platforms.linux;
+      eggs = eggs: [
+        eggs.gpiocdev
+        eggs.intarweb
+        eggs.simple-logger
+        eggs.spiffy
+        eggs.srfi-18
+        eggs.uri-common
+      ];
+    };
     macgen.eggs = eggs: [ eggs.srfi-1 ];
     networkd-dhcpv6-client-prefix.eggs = eggs: [
       eggs.srfi-1
@@ -175,10 +191,6 @@ lib.attrsets.unionOfDisjoint
   (
     lib.mapAttrs (name: args: mkTool ({ inherit name; } // args)) {
       homelab-backup-recv = { };
-      homelab-garage-door = {
-        extraSrc = [ (root + /src/garage-door.html) ];
-        platforms = lib.platforms.linux;
-      };
       pb = { };
     }
   )

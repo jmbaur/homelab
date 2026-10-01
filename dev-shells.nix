@@ -52,6 +52,8 @@ inputs.nixpkgs.lib.mapAttrs (
         pkgs.chickenPackages_6.chicken
         pkgs.chickenPackages_6.chickenEggs.base64
         pkgs.chickenPackages_6.chickenEggs.libsodium
+        pkgs.chickenPackages_6.chickenEggs.simple-logger
+        pkgs.chickenPackages_6.chickenEggs.spiffy
         pkgs.chickenPackages_6.chickenEggs.srfi-1
         pkgs.chickenPackages_6.chickenEggs.srfi-13
         pkgs.chickenPackages_6.chickenEggs.srfi-180
@@ -67,6 +69,7 @@ inputs.nixpkgs.lib.mapAttrs (
         pkgs.zig_0_16
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+        pkgs.chickenPackages_6.chickenEggs.gpiocdev
         pkgs.ubootTools
       ];
 

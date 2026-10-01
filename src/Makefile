@@ -8,7 +8,7 @@ LDFLAGS += -L$(CHICKEN_PREFIX)/lib
 LDLIBS += -lchicken -lm
 
 PREFIX ?= /usr/local
-PROGRAMS ?= copy macgen nix-key nixos-kexec pomo networkd-dhcpv6-client-prefix
+PROGRAMS ?= copy homelab-garage-door macgen nix-key nixos-kexec pomo networkd-dhcpv6-client-prefix
 
 MAKEFLAGS += --no-builtin-rules
 
@@ -16,6 +16,9 @@ MAKEFLAGS += --no-builtin-rules
 .SECONDARY: $(PROGRAMS:=.c)
 
 all: $(PROGRAMS)
+
+# Embedded at compile time.
+homelab-garage-door.c: garage-door.html
 
 %.c: %.scm
 	$(CHICKEN) $< -output-file $@ $(CHICKEN_FLAGS)

@@ -14,7 +14,7 @@
       (append z (list (let* ((next (take lst 2)))
 			(bitwise-ior
 			  (arithmetic-shift (car next) 8)
-			  (car (cdr next)))))) (drop lst 2))))
+			  (cadr next))))) (drop lst 2))))
 
 (let* ((input (json-read (current-input-port)))
        (prefixes (vector->list (alist-ref 'Prefixes (alist-ref 'DHCPv6Client input)))))

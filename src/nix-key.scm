@@ -14,7 +14,7 @@
     (apply decode-key (cons 
 			(let* ((key (string-split (car keys) ":"))
 			       (key-name (car key))
-			       (key-value (string->latin1 (base64-decode (car (cdr key))))))
+			       (key-value (string->latin1 (base64-decode (cadr key)))))
 			  (cons key-name key-value))
 			decoded) (cdr keys))))
 
