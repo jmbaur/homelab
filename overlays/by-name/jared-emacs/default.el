@@ -292,6 +292,9 @@ if one already exists."
 	 (eglot-managed-mode . (lambda ()
 				 (remove-hook 'before-save-hook #'eglot-format)))))
 
+(use-package scheme
+  :mode ("\\.egg\\'" . scheme-mode))
+
 (use-package fennel-mode
   :after eglot
   :config

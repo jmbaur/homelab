@@ -22,11 +22,7 @@
                              {:pattern [:ignorecase :smartcase]
                               :callback (λ [_] (set-grepprg-rg))})
 
-(vim.api.nvim_create_autocmd [:BufRead :BufNewFile]
-                             {:pattern [:*.rdl]
-                              :callback (λ []
-                                          (set vim.optlocal.filetype :systemrdl)
-                                          nil)})
+(vim.filetype.add {:extension {:egg :scheme :rdl :systemrdl}})
 
 ;; TODO(jared): consider only enabling this on certain filetypes
 (vim.api.nvim_create_autocmd :Filetype
