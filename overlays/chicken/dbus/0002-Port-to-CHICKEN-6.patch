@@ -1,0 +1,108 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jared Baur <jaredbaur@fastmail.com>
+Date: Thu, 1 Oct 2026 20:30:19 -0700
+Subject: [PATCH 2/2] Port to CHICKEN 6
+
+define-record-printer is gone, use set-record-printer!. make-parameter and friends moved to (scheme base), whose vector-for-each would clash with the local one. The tests also need (scheme base), and current-milliseconds is unbound at runtime.
+---
+ dbus.scm      | 31 +++++++++++++++++++++++--------
+ tests/run.scm |  8 ++++++--
+ 2 files changed, 29 insertions(+), 10 deletions(-)
+
+diff --git a/dbus.scm b/dbus.scm
+index ba3e6b8..904a018 100644
+--- a/dbus.scm
++++ b/dbus.scm
+@@ -45,6 +45,17 @@
+ (import scheme)
+ 
+ (cond-expand
++  (chicken-6
++   (import (except (scheme base) vector-for-each)
++           (chicken base)
++           (chicken foreign)
++           (chicken format)
++           (chicken gc)
++           (chicken condition)
++           (chicken pretty-print)
++           (srfi 18)
++           foreigners
++           miscmacros))
+   (chicken-5
+    (import (chicken base)
+            (chicken foreign)
+@@ -80,8 +91,9 @@
+   unsupported-type?
+   (signature unsupported-type-signature))
+ 
+-(define-record-printer (unsupported-type d out)
+-  (fprintf out "#<unsupported-type ~s>" (unsupported-type-signature d)))
++(set-record-printer! unsupported-type
++  (lambda (d out)
++    (fprintf out "#<unsupported-type ~s>" (unsupported-type-signature d))))
+ 
+ 
+ ;; Object path is a string which is a dbus path
+@@ -90,8 +102,9 @@
+   object-path?
+   (str object-path->string))
+ 
+-(define-record-printer (object-path d out)
+-  (fprintf out "#<object-path ~s>" (object-path->string d)))
++(set-record-printer! object-path
++  (lambda (d out)
++    (fprintf out "#<object-path ~s>" (object-path->string d))))
+ 
+ (define auto-unbox-object-paths (make-parameter #t))
+ 
+@@ -104,8 +117,9 @@
+   variant?
+   (data variant-data))
+ 
+-(define-record-printer (variant v out)
+-  (fprintf out "#,(variant ~S)" (variant-data v)))
++(set-record-printer! variant
++  (lambda (v out)
++    (fprintf out "#,(variant ~S)" (variant-data v))))
+ 
+ ;; If unboxing is turned on, when a "call"ed dbus service method
+ ;; returns a variant, it will look as if it was not packaged in a variant at all.
+@@ -128,8 +142,9 @@
+ (define (struct-ref struct idx) (vector-ref (struct->vector struct) idx))
+ (define (struct-set! struct idx val) (vector-set! (struct->vector struct) idx val))
+ 
+-(define-record-printer (struct v out)
+-  (fprintf out "#,(struct ~S)" (struct->vector v)))
++(set-record-printer! struct
++  (lambda (v out)
++    (fprintf out "#,(struct ~S)" (struct->vector v))))
+ 
+ ;; If unboxing is turned on, when a "call"ed dbus service method
+ ;; returns a struct, it will look like a vector instead.  This is
+diff --git a/tests/run.scm b/tests/run.scm
+index 6e8aa3a..1c44bea 100644
+--- a/tests/run.scm
++++ b/tests/run.scm
+@@ -1,3 +1,7 @@
++(cond-expand
++  (chicken-6 (import (scheme base) (chicken base)))
++  (else))
++
+ (import
+   (chicken format)
+   (chicken pathname)
+@@ -57,12 +61,12 @@
+   (dbus-call-test string-reverse "StringReverse" "hello there"))
+ 
+ (define (do-client-interaction)
+-  (let ((wait-start (current-milliseconds)))
++  (let ((wait-start (current-process-milliseconds)))
+     (let loop ()
+       (when
+ 	  (and
+ 	   (not (server-started))
+-	   (< (- (current-milliseconds) wait-start) 60000))
++	   (< (- (current-process-milliseconds) wait-start) 60000))
+ 	(dbus:poll-for-message bus: dbus:session-bus timeout: 500) (loop)))
+     (if (server-started)
+ 	(run-client-tests)

@@ -86,6 +86,7 @@ inputs: {
               cprev.chickenEggs.overrideScope (
                 final.lib.const (
                   final.lib.const {
+                    dbus = cfinal.callPackage ./chicken/dbus { };
                     gpiocdev = cfinal.callPackage ./chicken/gpiocdev { };
                     libsodium = cfinal.callPackage ./chicken/libsodium { };
                     qrencode = cfinal.callPackage ./chicken/qrencode { };

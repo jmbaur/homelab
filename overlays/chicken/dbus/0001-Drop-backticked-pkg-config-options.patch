@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jared Baur <jaredbaur@fastmail.com>
+Date: Thu, 1 Oct 2026 20:30:10 -0700
+Subject: [PATCH 1/2] Drop backticked pkg-config options
+
+chicken-install no longer runs these through a shell, so the flags reach csc verbatim. Link libdbus directly; include paths come from the build environment.
+---
+ dbus.egg | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/dbus.egg b/dbus.egg
+index c3ffb85..01b080c 100644
+--- a/dbus.egg
++++ b/dbus.egg
+@@ -5,8 +5,8 @@
+  (maintainer "John J. Foerch")
+  (dependencies miscmacros srfi-18 foreigners)
+  (test-dependencies scsh-process srfi-13 test)
+- (component-options (csc-options "-O3" "-d1" "-C" "`pkg-config --cflags dbus-1`")
+-                    (link-options "-L" "`pkg-config --libs dbus-1`"))
++ (component-options (csc-options "-O3" "-d1")
++                    (link-options "-L" "-ldbus-1"))
+  (components
+   (extension dbus (source "dbus.scm")))
+  (version "0.97"))
