@@ -137,11 +137,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790911008,
-        "narHash": "sha256-r7KBcjLlw7LzuvCYUU1V50L81uf+0YgHTCnhymTwwpw=",
+        "lastModified": 1790955005,
+        "narHash": "sha256-EEQKUylD8zuRTmDFX4rbwsHQ+iZhqqOldYcFN8SLcE0=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "a439f71e75b94c88300022045713c790c79ba007",
+        "rev": "0560d64401a6d5370732a69d08bc4a6b135962d9",
         "type": "github"
       },
       "original": {
@@ -159,11 +159,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1790867397,
-        "narHash": "sha256-jcKSLzmbjvac8wKJlsqytITXzbmOu3M3HftOSjwRLXo=",
+        "lastModified": 1790945712,
+        "narHash": "sha256-n2+lGmOrdkU+MHSkCm9Mq/wykMZCcjptOlxJV9UVMIY=",
         "owner": "NixOS",
         "repo": "hydra",
-        "rev": "1688da004083c381e52746eafee0b294d088a3ba",
+        "rev": "8c4ce85abe241f7fdcac194ed3828b0124db516b",
         "type": "github"
       },
       "original": {
@@ -223,11 +223,11 @@
         "pyproject-nix": "pyproject-nix"
       },
       "locked": {
-        "lastModified": 1790481821,
-        "narHash": "sha256-aMzK+pUPn7nvAWO27p8LeqKkIX83uFtvZAwNmK6S4o0=",
+        "lastModified": 1790916334,
+        "narHash": "sha256-SvV1GgWLNSKHCDtknq6Qxmm38S5bMxYfznhVw+/4zXA=",
         "owner": "jmbaur",
         "repo": "mixos",
-        "rev": "5ffa23024484c1d61ac1130b5fefda1ec97741bf",
+        "rev": "674bc74789869143dd3a26cb3740c39eb1b70d74",
         "type": "github"
       },
       "original": {
