@@ -233,7 +233,8 @@
       '';
 
       xdg.configFile."tmux/tmux.conf".text = ''
-        set -g allow-passthrough on
+        set-option -g allow-passthrough on
+        set-option -g focus-events on
         # Use ctrl+s as prefix
         unbind C-b
         set-option -g prefix C-s
