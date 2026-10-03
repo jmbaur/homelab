@@ -28,16 +28,51 @@ let
     printf '[main]\ninitial-color-theme=dark\ninclude=~/${footColorState}\n' >>$out
   '';
 
+  # Also run by the gammastep hook, so a manual pick holds until the next
+  # period change.
+  desktopTheme = pkgs.writeShellApplication {
+    name = "desktop-theme";
+    runtimeInputs = [
+      pkgs.coreutils
+      pkgs.dconf
+      pkgs.procps
+    ];
+    text = ''
+      theme=''${1:-toggle}
+      if [ "$theme" = toggle ]; then
+        case "$(dconf read /org/gnome/desktop/interface/color-scheme)" in
+        *prefer-light*) theme=dark ;;
+        *) theme=light ;;
+        esac
+      fi
+
+      case "$theme" in
+      light) gtk_theme=Adwaita color_scheme=prefer-light foot_signal=USR2 ;;
+      dark) gtk_theme=Adwaita-dark color_scheme=prefer-dark foot_signal=USR1 ;;
+      *)
+        echo "usage: desktop-theme [light|dark|toggle]" >&2
+        exit 1
+        ;;
+      esac
+
+      dconf write /org/gnome/desktop/interface/color-scheme "'$color_scheme'"
+      dconf write /org/gnome/desktop/interface/gtk-theme "'$gtk_theme'"
+
+      install -Dm0644 /dev/stdin "$HOME/${footColorState}" <<EOF
+      [main]
+      initial-color-theme=$theme
+      EOF
+
+      # New terminals read the file above, running ones need a signal.
+      pkill --signal "$foot_signal" --exact foot || true
+    '';
+  };
+
   # gammastep hook, also run at startup with an old period of "none". Light
   # only during full daylight, so the theme tracks the color temperature.
   themeHook = getExe (
     pkgs.writeShellApplication {
       name = "gammastep-theme-hook";
-      runtimeInputs = [
-        pkgs.coreutils
-        pkgs.dconf
-        pkgs.procps
-      ];
       text = ''
         [ "$1" = period-changed ] || exit 0
 
@@ -45,22 +80,11 @@ let
         unset XDG_CONFIG_HOME
 
         case "$3" in
-        daytime) theme=light gtk_theme=Adwaita color_scheme=prefer-light foot_signal=USR2 ;;
-        night | transition) theme=dark gtk_theme=Adwaita-dark color_scheme=prefer-dark foot_signal=USR1 ;;
+        daytime) exec ${getExe desktopTheme} light ;;
+        night | transition) exec ${getExe desktopTheme} dark ;;
         # "none" is also what gammastep reports on its way out.
         *) exit 0 ;;
         esac
-
-        dconf write /org/gnome/desktop/interface/color-scheme "'$color_scheme'"
-        dconf write /org/gnome/desktop/interface/gtk-theme "'$gtk_theme'"
-
-        install -Dm0644 /dev/stdin "$HOME/${footColorState}" <<EOF
-        [main]
-        initial-color-theme=$theme
-        EOF
-
-        # New terminals read the file above, running ones need a signal.
-        pkill --signal "$foot_signal" --exact foot || true
       '';
     }
   );
@@ -280,6 +304,7 @@ in
       environment.systemPackages = [
         pkgs.brightnessctl
         pkgs.clipman
+        desktopTheme
         pkgs.foot
         pkgs.gammastep
         pkgs.gnome-themes-extra
