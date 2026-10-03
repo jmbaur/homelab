@@ -111,7 +111,7 @@ in
         "github:"
       ];
 
-      zramSwap.memoryPercent = 200;
+      custom.recovery.swap = "zswap";
 
       system.stateVersion = "26.11";
 

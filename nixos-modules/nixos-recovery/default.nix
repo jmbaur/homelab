@@ -9,6 +9,7 @@
 
 let
   inherit (lib)
+    any
     flatten
     getExe
     mkDefault
@@ -256,6 +257,26 @@ in
       '';
     };
 
+    swap = mkOption {
+      type = types.enum [
+        "zram"
+        "zswap"
+      ];
+      default = "zram";
+      description = ''
+        How to provide swap.
+
+        - "zram": compressed swap in RAM only, never touches the disk. Use
+          this unless the below applies.
+        - "zswap": compressed swap in RAM, with cold pages written back to a
+          swapfile sized min(RAM/2, 10% of disk). Use this only with NVMe/SSD
+          storage, ample free disk space, and a working set that regularly
+          exceeds RAM (e.g. a build machine).
+
+        Avoid "zswap" on eMMC/SD/USB storage (flash wear, small disks).
+      '';
+    };
+
     extraModule = mkOption {
       type = types.deferredModule;
       default = { };
@@ -302,7 +323,66 @@ in
     # isn't created at build-time.
     systemd.services.systemd-growfs-root.enable = false;
 
-    boot.kernelParams = [ "zswap.enabled=1" ];
+    # zram needs no disk space and doesn't write to (often flash-based)
+    # storage, making it a reasonable default for most machines.
+    zramSwap.enable = mkDefault (cfg.swap == "zram");
+
+    boot.kernelParams = mkIf (cfg.swap == "zswap") [
+      "zswap.enabled=1"
+      # Proactively write cold pages back to the swapfile
+      "zswap.shrinker_enabled=1"
+    ];
+
+    # Backing store for zswap. The swapfile lives on the encrypted root
+    # filesystem in its own subvolume, since btrfs refuses to snapshot a
+    # subvolume containing an active swapfile. The size is left unset so that
+    # swapfile-create can pick it based on the size of the disk.
+    swapDevices = mkIf (cfg.swap == "zswap") (mkDefault [ { device = "/swap/swapfile"; } ]);
+
+    # Like systemd-repart sizing, this is only decided once, when the swapfile
+    # doesn't exist yet. Delete the swapfile to have it resized on next boot.
+    systemd.services.swapfile-create =
+      mkIf (cfg.swap == "zswap" && any ({ device, ... }: device == "/swap/swapfile") config.swapDevices)
+        {
+          description = "Create swapfile sized relative to the root filesystem and RAM";
+          wantedBy = [ "swap-swapfile.swap" ];
+          before = [
+            "swap-swapfile.swap"
+            "shutdown.target"
+          ];
+          conflicts = [ "shutdown.target" ];
+          unitConfig = {
+            DefaultDependencies = false;
+            RequiresMountsFor = [ "/swap" ];
+            ConditionPathExists = "!/swap/swapfile";
+          };
+          serviceConfig.Type = "oneshot";
+          path = [
+            pkgs.btrfs-progs
+            pkgs.coreutils
+            pkgs.gawk
+          ];
+          script = ''
+            # Systems installed before the swap subvolume was added to the
+            # repart definitions don't have it.
+            if [[ ! -d /swap ]]; then
+              btrfs subvolume create /swap
+            fi
+
+            # Half of RAM, capped at 10% of the filesystem
+            fs_size_mib=$(df --block-size=1M --output=size / | tail -n1)
+            mem_size_mib=$(($(awk '/^MemTotal:/ { print $2 }' /proc/meminfo) / 1024))
+            swap_size_mib=$((mem_size_mib / 2))
+            max_size_mib=$((fs_size_mib / 10))
+            swap_size_mib=$((swap_size_mib > max_size_mib ? max_size_mib : swap_size_mib))
+
+            # Create under a temporary name so that an interrupted run doesn't
+            # leave a partial swapfile in place.
+            rm -f /swap/swapfile.tmp
+            btrfs filesystem mkswapfile --size "''${swap_size_mib}M" --uuid clear /swap/swapfile.tmp
+            mv /swap/swapfile.tmp /swap/swapfile
+          '';
+        };
 
     system.build = {
       inherit recovery;

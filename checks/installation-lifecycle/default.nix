@@ -97,6 +97,8 @@ testers.runNixOSTest {
           enable = true;
           endpoint = "http://updateServer/${config.networking.hostName}";
           targetDisk = "/dev/disk/by-id/virtio-nixos";
+          # zram is covered by nixpkgs' own tests
+          swap = "zswap";
           extraModule.imports = [
             # TODO(jared): For some reason, this isn't propagated to the recovery
             # system configuration with `noUserModules.extendModules`.
@@ -169,6 +171,19 @@ testers.runNixOSTest {
               raise Exception(f"booted from the wrong entry, expected {esp_entry}, got {booted_entry}")
 
           assert "${nodes.machine.system.build.toplevel}" == machine.succeed("readlink --canonicalize-existing /run/current-system").strip()
+
+      with subtest("swap"):
+          machine.wait_for_unit("swap.target")
+          machine.succeed("swapon --show=NAME --noheadings | grep -x /swap/swapfile")
+          mem_size_mib = int(machine.succeed("awk '/^MemTotal:/ { print $2 }' /proc/meminfo")) // 1024
+          fs_size_mib = int(machine.succeed("df --block-size=1M --output=size / | tail -n1"))
+          expected_size = min(mem_size_mib // 2, fs_size_mib // 10) * 1024 * 1024
+          swap_size = int(machine.succeed("stat --format=%s /swap/swapfile"))
+          assert swap_size == expected_size, f"unexpected swapfile size {swap_size}, expected {expected_size}"
+          assert "Y" == machine.succeed("cat /sys/module/zswap/parameters/enabled").strip()
+          # The swapfile's subvolume must not prevent snapshotting the root subvolume.
+          machine.succeed("btrfs subvolume snapshot -r / /snapshot-test")
+          machine.succeed("btrfs subvolume delete /snapshot-test")
 
       with subtest("update"):
           updateServer.succeed("""echo ${
