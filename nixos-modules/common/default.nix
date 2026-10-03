@@ -55,7 +55,7 @@ in
       networking.useDHCP = false;
       networking.nftables.enable = mkDefault true;
 
-      boot.tmp.cleanOnBoot = mkDefault isNotContainer;
+      boot.tmp.useTmpfs = mkDefault isNotContainer;
 
       # The initrd doesn't have a fully-functioning terminal, prevent systemd
       # from using pager for services that launch a shell
