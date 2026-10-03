@@ -157,5 +157,20 @@ in
       "arm64.nopauth"
       "efi=noruntime"
     ];
+
+    environment.systemPackages = [
+      (pkgs.writeShellApplication {
+        name = "update-firmware";
+        text = ''
+          declare -r esp=${config.boot.loader.efi.efiSysMountPoint}
+          declare -r capsule=${pkgs.blackrock-uefi-capsule}
+          declare -r capsule_app=${pkgs.edk2-capsule-app.efi}
+          declare -r uefi_shell=${pkgs.edk2-uefi-shell.efi}
+          declare -r fw_class=${pkgs.blackrock-uefi-capsule.fwClass}
+          declare -r fw_version=${toString pkgs.blackrock-uefi-capsule.fwVersion}
+          ${lib.fileContents ./update-firmware.bash}
+        '';
+      })
+    ];
   };
 }
