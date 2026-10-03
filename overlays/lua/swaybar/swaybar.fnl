@@ -78,10 +78,12 @@
 
 (fn battery-percentage [dbus-conn]
   (string.format "BAT: %s%%"
-                 (dbus-get-property :org.freedesktop.UPower
-                                    :/org/freedesktop/UPower/devices/DisplayDevice
-                                    :org.freedesktop.DBus.Properties :Percentage
-                                    :org.freedesktop.UPower.Device dbus-conn)))
+                 (math.floor (dbus-get-property :org.freedesktop.UPower
+                                                :/org/freedesktop/UPower/devices/DisplayDevice
+                                                :org.freedesktop.DBus.Properties
+                                                :Percentage
+                                                :org.freedesktop.UPower.Device
+                                                dbus-conn))))
 
 (fn clock []
   (os.date "%D %T"))
