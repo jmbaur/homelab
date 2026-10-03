@@ -20,9 +20,11 @@ in
   # Each host scrapes only its own node exporter.
   # TODO(jared): Add centralized monitoring for all hosts.
   config = lib.mkIf nodeExporter.enable {
+    # Let every homelab host view the monitoring site.
+    custom.yggdrasil.allKnownPeers.allowedTCPPorts = [ config.services.prometheus.port ];
+
     services.prometheus = {
       enable = true;
-      # Only reachable by yggdrasil peers we allow all traffic from.
       listenAddress = "[::]";
       retentionTime = "30d";
       globalConfig.scrape_interval = "15s";
