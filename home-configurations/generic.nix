@@ -240,6 +240,12 @@
         set-option -g prefix C-s
         bind-key C-s send-prefix
       '';
+
+      xdg.configFile."ghostty/config.ghostty".text = ''
+        theme = dark:Modus Vivendi,light:Modus Operandi
+        keybind = ctrl+enter=unbind
+        macos-option-as-alt = true
+      '';
     }
 
     (lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
