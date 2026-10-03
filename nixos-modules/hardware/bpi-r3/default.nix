@@ -121,6 +121,18 @@
       wantedBy = [ "multi-user.target" ];
     };
 
+    # The 2.4GHz radio defaults to 29dBm, which overheats its front-end chip
+    # (MT7975N) to the point of firmware thermal throttling. 20dBm is plenty
+    # for indoor coverage. The mt7915 driver ignores TX power set on an
+    # interface, so it must be set on the phy.
+    systemd.services.hostapd.serviceConfig.ExecStartPre = lib.mkIf config.services.hostapd.enable [
+      (pkgs.writeShellScript "bpi-r3-2ghz-txpower" (
+        lib.concatMapStrings (iface: ''
+          ${lib.getExe pkgs.iw} phy "$(</sys/class/net/${iface}/phy80211/name)" set txpower fixed 2000
+        '') (lib.attrNames (lib.filterAttrs (_: radio: radio.band == "2g") config.services.hostapd.radios))
+      ))
+    ];
+
     system.build = {
       uboot = pkgs.makeUBoot {
         boardName = "mt7986a_bpir3_emmc";
