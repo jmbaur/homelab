@@ -33,9 +33,25 @@ in
         The Hydra HTTP endpoint to use when pulling updates.
       '';
     };
+
+    timestamp = mkOption {
+      type = types.nullOr types.ints.unsigned;
+      default = null;
+      description = ''
+        Unix timestamp of the source this configuration was built from (e.g.
+        the flake's `lastModified`). When set, nixos-update refuses to switch
+        to a configuration that is not strictly newer than the running one,
+        preventing downgrades after a manual deployment of something newer
+        than what Hydra has built.
+      '';
+    };
   };
 
   config = mkIf cfg.enable {
+    boot.bootspec.extensions."com.jmbaur.homelab.v1" = mkIf (cfg.timestamp != null) {
+      inherit (cfg) timestamp;
+    };
+
     # TODO(jared): We need to be able to automatically rollback from bad
     # updates, thus we need to not garbage collect known good working versions
     # in order to ensure rolling back is even possible.

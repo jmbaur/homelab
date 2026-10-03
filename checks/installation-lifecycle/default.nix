@@ -91,6 +91,7 @@ testers.runNixOSTest {
         custom.update = {
           enable = true;
           endpoint = "http://updateServer/${config.networking.hostName}";
+          timestamp = lib.mkDefault 1;
         };
 
         custom.recovery = {
@@ -119,6 +120,7 @@ testers.runNixOSTest {
           modules = [
             {
               environment.etc."foo".text = "foo";
+              custom.update.timestamp = 2;
             }
           ];
         };
@@ -196,6 +198,17 @@ testers.runNixOSTest {
           } >/var/lib/fake-hydra/${nodes.machine.networking.hostName}""")
           machine.succeed("systemctl start nixos-update.service")
           machine.reboot()
+          assert "foo" == machine.succeed("cat /etc/foo").strip()
+
+      with subtest("no downgrade"):
+          updateServer.succeed("""echo ${
+            # mock the hydra json endpoint
+            lib.escapeShellArg (
+              builtins.toJSON { buildoutputs.out.path = nodes.machine.system.build.toplevel; }
+            )
+          } >/var/lib/fake-hydra/${nodes.machine.networking.hostName}""")
+          machine.wait_until_succeeds("systemctl start nixos-update.service")
+          assert "${nodes.machine.system.build.foo-update.config.system.build.toplevel}" == machine.succeed("readlink --canonicalize-existing /nix/var/nix/profiles/system").strip()
           assert "foo" == machine.succeed("cat /etc/foo").strip()
     '';
 }

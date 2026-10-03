@@ -82,6 +82,7 @@ genAttrs allHosts (
             enable = lib.mkDefault (!config.custom.desktop.enable);
             automatic = lib.mkDefault true;
             endpoint = lib.mkDefault "https://hydra.jmbaur.com/job/homelab/main/${config.networking.hostName}.toplevel/latest";
+            timestamp = inputs.self.lastModified;
           };
 
           custom.recovery = {

@@ -19,6 +19,20 @@ function update() {
 		"$argc_update_endpoint" | jq --raw-output ".buildoutputs.out.path")
 
 	if [[ $(readlink --canonicalize-existing /run/current-system) != "$new_toplevel" ]]; then
+		nix-store --realise "$new_toplevel" >/dev/null
+
+		# Never move to a configuration that is not newer than the running one,
+		# e.g. after a manual deployment of something newer than what the build
+		# host has.
+		current_timestamp=$(jq --raw-output '."com.jmbaur.homelab.v1".timestamp // empty' /run/current-system/boot.json 2>/dev/null || true)
+		new_timestamp=$(jq --raw-output '."com.jmbaur.homelab.v1".timestamp // empty' "${new_toplevel}/boot.json" 2>/dev/null || true)
+		if [[ -n $current_timestamp ]] && [[ -n $new_timestamp ]]; then
+			if ((new_timestamp <= current_timestamp)); then
+				echo "Not updating to $new_toplevel, its timestamp ($new_timestamp) is not newer than the current system's ($current_timestamp)."
+				return
+			fi
+		fi
+
 		nix-env --set --profile $profile "$new_toplevel"
 
 		booted_toplevel_kernel="$(readlink --canonicalize-existing /run/booted-system/{initrd,kernel,kernel-modules})"
