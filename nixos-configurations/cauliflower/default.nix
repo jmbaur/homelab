@@ -50,6 +50,7 @@ in
   custom.desktop.enable = true;
   custom.dev.enable = true;
   custom.recovery.targetDisk = "/dev/disk/by-path/pci-0000:01:00.0-nvme-1";
+  custom.recovery.swap = "zswap";
 
   # Force using SOF driver, this is likely common to all alderlake
   # chromebook devices.

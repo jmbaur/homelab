@@ -32,6 +32,7 @@
       custom.dev.enable = true;
       custom.desktop.enable = true;
       custom.recovery.targetDisk = "/dev/disk/by-path/pci-0000:01:00.0-nvme-1";
+      custom.recovery.swap = "zswap";
       custom.backup.sender.enable = false;
       services.yggdrasil.settings.Peers = [ "tls://celery.jmbaur.com:3443" ];
 

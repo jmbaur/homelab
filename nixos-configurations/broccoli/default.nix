@@ -13,6 +13,7 @@
       };
       hardware.blackrock.enable = true;
       custom.recovery.targetDisk = "/dev/disk/by-path/platform-1c20000.pcie-pci-0002:01:00.0-nvme-1";
+      custom.recovery.swap = "zswap";
     }
     {
       # Ensure our build machine doesn't attempt to use itself as a substituter

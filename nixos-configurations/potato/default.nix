@@ -115,6 +115,7 @@ in
       custom.dev.enable = true;
       custom.desktop.enable = true;
       custom.recovery.targetDisk = "/dev/disk/by-path/pci-0000:03:00.0-nvme-1";
+      custom.recovery.swap = "zswap";
     }
   ];
 }
