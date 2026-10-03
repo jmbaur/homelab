@@ -129,7 +129,11 @@ in
 
   custom.recovery.targetDisk = "/dev/disk/by-path/platform-a808480000.pcie-pci-0005:01:00.0-nvme-1";
 
-  custom.yggdrasil.peers.radish.allowedTCPPorts = [ config.services.llama-cpp.settings.port ];
+  custom.yggdrasil.peers = lib.genAttrs [ "radish" "garlic" ] (
+    lib.const {
+      allowedTCPPorts = [ config.services.llama-cpp.settings.port ];
+    }
+  );
 
   environment.systemPackages = [
     config.services.llama-cpp.package
