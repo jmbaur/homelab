@@ -135,6 +135,9 @@ genAttrs allHosts (
       # Backup strategy
       ./backup.nix
 
+      # Metrics collection and dashboards
+      ./monitoring.nix
+
       # Host-specific configuration
       ./${host}
     ];

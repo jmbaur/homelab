@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="refresh" content="30" />
+    <title>
+      {{ with query `up{job="node"}` }}{{ (. | first).Labels.instance }}{{ end
+      }}
+    </title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --fg: #1f2328;
+        --bg: #ffffff;
+        --muted: #656d76;
+        --line: #d0d7de;
+        --bad: #cf222e;
+        --warn: #9a6700;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --fg: #e6edf3;
+          --bg: #0d1117;
+          --muted: #8d96a0;
+          --line: #30363d;
+          --bad: #f85149;
+          --warn: #d29922;
+        }
+      }
+      body {
+        font:
+          14px/1.4 system-ui,
+          sans-serif;
+        color: var(--fg);
+        background: var(--bg);
+        margin: 0 auto;
+        padding: 16px;
+        max-width: 1100px;
+      }
+      h1 {
+        font-size: 20px;
+      }
+      h2 {
+        font-size: 16px;
+        margin-top: 32px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      th,
+      td {
+        padding: 6px 10px;
+        border-bottom: 1px solid var(--line);
+        text-align: right;
+        white-space: nowrap;
+      }
+      th:first-child,
+      td:first-child {
+        text-align: left;
+      }
+      th {
+        color: var(--muted);
+        font-weight: 600;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .bad {
+        color: var(--bad);
+        font-weight: 600;
+      }
+      .warn {
+        color: var(--warn);
+        font-weight: 600;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .wrap {
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>
+      {{ with query `up{job="node"}` }}{{ (. | first).Labels.instance }}{{ end
+      }}
+    </h1>
+    <p class="muted">
+      Values link to a graph of the underlying query. Refreshes every 30s.
+    </p>
+
+    <h2>Hosts</h2>
+    <div class="wrap">
+      <table>
+        <tr>
+          <th>Host</th>
+          <th>Status</th>
+          <th>Uptime</th>
+          <th>Reboots (30d)</th>
+          <th>Load (1m)</th>
+          <th>Memory used</th>
+          <th>Root disk used</th>
+          <th>Hottest sensor</th>
+        </tr>
+        {{ range query `up{job="node"}` | sortByLabel "instance" }} {{ $i :=
+        .Labels.instance }}
+        <tr>
+          <td>{{ $i }}</td>
+          {{ $e := printf `up{instance="%s"}` $i }}
+          <td>
+            <a href="{{ graphLink $e }}"
+              >{{ if eq .Value 1.0 }}up{{ else }}<span class="bad">down</span>{{
+              end }}</a
+            >
+          </td>
+          {{ $e := printf `time() - node_boot_time_seconds{instance="%s"}` $i }}
+          <td>
+            <a href="{{ graphLink $e }}"
+              >{{ with query $e }}{{ . | first | value | humanizeDuration }}{{
+              else }}-{{ end }}</a
+            >
+          </td>
+          {{ $e := printf `changes(node_boot_time_seconds{instance="%s"}[30d])`
+          $i }}
+          <td>
+            <a href="{{ graphLink $e }}"
+              >{{ with query $e }}{{ $v := . | first | value }}<span
+                class="{{ if gt $v 4.0 }}bad{{ end }}"
+                >{{ printf "%.0f" $v }}</span
+              >{{ else }}-{{ end }}</a
+            >
+          </td>
+          {{ $e := printf `node_load1{instance="%s"}` $i }}
+          <td>
+            <a href="{{ graphLink $e }}"
+              >{{ with query $e }}{{ . | first | value | printf "%.2f" }}{{ else
+              }}-{{ end }}</a
+            >
+          </td>
+          {{ $e := printf `100 * (1 -
+          node_memory_MemAvailable_bytes{instance="%s"} /
+          node_memory_MemTotal_bytes{instance="%s"})` $i $i }}
+          <td>
+            <a href="{{ graphLink $e }}"
+              >{{ with query $e }}{{ $v := . | first | value }}<span
+                class="{{ if gt $v 90.0 }}bad{{ end }}"
+                >{{ printf "%.0f%%" $v }}</span
+              >{{ else }}-{{ end }}</a
+            >
+          </td>
+          {{ $e := printf `100 * (1 - node_filesystem_avail_bytes{instance="%s",
+          mountpoint="/"} / node_filesystem_size_bytes{instance="%s",
+          mountpoint="/"})` $i $i }}
+          <td>
+            <a href="{{ graphLink $e }}"
+              >{{ with query $e }}{{ $v := . | first | value }}<span
+                class="{{ if gt $v 90.0 }}bad{{ end }}"
+                >{{ printf "%.0f%%" $v }}</span
+              >{{ else }}-{{ end }}</a
+            >
+          </td>
+          {{ $e := printf `max(node_hwmon_temp_celsius{instance="%s"})` $i }}
+          <td>
+            <a href="{{ graphLink $e }}"
+              >{{ with query $e }}{{ $v := . | first | value }}<span
+                class="{{ if ge $v 100.0 }}bad{{ else if ge $v 80.0 }}warn{{ end }}"
+                >{{ printf "%.0f" $v }}°C</span
+              >{{ else }}-{{ end }}</a
+            >
+          </td>
+        </tr>
+        {{ else }}
+        <tr>
+          <td colspan="8" class="muted">
+            The node exporter is not being scraped.
+          </td>
+        </tr>
+        {{ end }}
+      </table>
+    </div>
+
+    <h2>Temperatures</h2>
+    <div class="wrap">
+      <table>
+        <tr>
+          <th>Chip</th>
+          <th>Sensor</th>
+          <th>Current</th>
+          <th>Critical</th>
+        </tr>
+        {{ range query `sort_desc(node_hwmon_temp_celsius * on(instance, chip)
+        group_left(chip_name) node_hwmon_chip_names)` }} {{ $sel := printf
+        `instance="%s", chip="%s", sensor="%s"` .Labels.instance .Labels.chip
+        .Labels.sensor }} {{ $crit := 0.0 }} {{ with query (printf
+        `node_hwmon_temp_crit_celsius{%s}` $sel) }}{{ $crit = . | first | value
+        }}{{ end }}
+        <tr>
+          <td>{{ .Labels.chip_name }}</td>
+          <td>{{ .Labels.sensor }}</td>
+          <td>
+            <a
+              href="{{ graphLink (printf `node_hwmon_temp_celsius{%s}` $sel) }}"
+              ><span
+                class="{{ if and (gt $crit 0.0) (ge .Value $crit) }}bad{{ else if ge .Value 80.0 }}warn{{ end }}"
+                >{{ printf "%.0f" .Value }}°C</span
+              ></a
+            >
+          </td>
+          <td class="muted">
+            {{ if gt $crit 0.0 }}{{ printf "%.0f" $crit }}°C{{ else }}-{{ end }}
+          </td>
+        </tr>
+        {{ else }}
+        <tr>
+          <td colspan="4" class="muted">No temperature sensors reported.</td>
+        </tr>
+        {{ end }}
+      </table>
+    </div>
+  </body>
+</html>
