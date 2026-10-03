@@ -3,7 +3,6 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="refresh" content="30" />
     {{ $host := "" }}{{ $up := 0.0 }} {{ with query `up{job="node"}` }}{{ $host
     = (. | first).Labels.instance }}{{ $up = . | first | value }}{{ end }}
     <title>{{ $host }}</title>
@@ -122,13 +121,12 @@
       }
     </style>
   </head>
-  <body>
+  <body data-up="{{ if eq $up 1.0 }}1{{ else }}0{{ end }}">
     <header>
       <h1>{{ $host }}</h1>
-      {{ if eq $up 1.0 }}<span class="status good">up</span>{{ else }}<span
-        class="status bad"
-        >node exporter down</span
-      >{{ end }}
+      {{ if eq $up 1.0 }}<span id="status" class="status good">up</span>{{ else
+      }}<span id="status" class="status bad">node exporter down</span>{{ end }}
+      <span id="updated" class="muted"></span>
     </header>
 
     <div class="tiles">
@@ -230,4 +228,43 @@
       </table>
     </div>
   </body>
+  <script>
+    // Refresh in the background instead of reloading the page, so that the
+    // last results stay visible when the host or its node exporter goes down.
+    function markUpdated() {
+      document.getElementById("updated").textContent =
+        "updated " + new Date().toLocaleTimeString();
+    }
+
+    function markDown(reason) {
+      const status = document.getElementById("status");
+      status.textContent = reason;
+      status.className = "status bad";
+    }
+
+    async function refresh() {
+      let page;
+      try {
+        const response = await fetch(location.href, { cache: "no-store" });
+        if (!response.ok) throw new Error(response.statusText);
+        page = new DOMParser().parseFromString(
+          await response.text(),
+          "text/html",
+        );
+      } catch {
+        markDown("down");
+        return;
+      }
+      if (page.body.dataset.up !== "1") {
+        markDown("node exporter down");
+        return;
+      }
+      document.title = page.title;
+      document.body.replaceWith(page.body);
+      markUpdated();
+    }
+
+    markUpdated();
+    setInterval(refresh, 30000);
+  </script>
 </html>
