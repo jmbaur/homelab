@@ -12,36 +12,34 @@ in
   options.hardware.thinkpad-t14s-gen6.enable = mkEnableOption "Lenovo ThinkPad T14s Gen 6";
 
   config = mkIf config.hardware.thinkpad-t14s-gen6.enable {
-    assertions = [
-      {
-        assertion = config.boot.loader.systemd-boot.enable;
-        message = "Depending on systemd-boot for slbounce loading";
-      }
-    ];
-
     hardware.qualcomm.enable = true;
 
     nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
 
-    hardware.deviceTree.name = "qcom/x1e78100-lenovo-thinkpad-t14s-el2.dtb";
-
-    boot.loader.systemd-boot.extraFiles = {
-      "tcblaunch.exe" = pkgs.tcblaunch;
-      "EFI/systemd/drivers/slbounceaa64.efi" = "${pkgs.slbounce}/slbounce.efi";
-    };
+    # Not using EL2 (via slbounce), since on this machine linux can't start
+    # the full adsp firmware from EL2, which means no audio.
+    hardware.deviceTree.name = "qcom/x1e78100-lenovo-thinkpad-t14s.dtb";
 
     hardware.firmware = [ pkgs.linux-firmware ];
 
     boot.kernelPackages = pkgs.linuxPackages_7_2;
 
+    boot.kernelPatches = [
+      {
+        # Mainline leaves the bluetooth UART disabled on the t14s.
+        name = "t14s-bluetooth";
+        patch = ./0001-arm64-dts-qcom-x1e78100-t14s-add-WCN7850-Bluetooth.patch;
+      }
+    ];
+
     boot.consoleLogLevel = 7;
 
     boot.kernelParams = [
       "cma=128M" # used on ubuntu
+      "efi=noruntime" # used on ubuntu, efivars are provided by qcom_qseecom_uefisecapp
       "clk_ignore_unused"
       "pd_ignore_unused"
       "console=tty1"
-      "id_aa64mmfr0.ecv=1" # needed for kvm to work (see https://github.com/torvalds/linux/commit/358dd4a9bdac63a0a8fb13773bfce6f599e25433)
     ];
 
     boot.initrd.extraFirmwarePaths = map (file: "qcom/${file}") [
@@ -58,7 +56,6 @@ in
       "phy_qcom_qmp_combo"
       "phy_snps_eusb2"
       "phy_qcom_eusb2_repeater"
-      "tcsrcc_x1e80100"
 
       "i2c_hid_of"
       "i2c_qcom_geni"
@@ -70,7 +67,13 @@ in
       "nvme"
       "phy_qcom_qmp_pcie"
 
-      # Needed with the DP altmode patches
+      # The HDMI port's bridge chain, msm won't bind without it
+      "display_connector"
+      "simple_bridge"
+
+      # The USB-C ports' DP bridge chain (retimers + HPD), msm won't bind
+      # without it. qrtr isn't a symbol dependency, but pmic_glink can't probe
+      # without it.
       "ps883x"
       "pmic_glink_altmode"
       "qrtr"
