@@ -65,6 +65,9 @@
       networking.wireless.iwd.enable = true;
       environment.systemPackages = [ pkgs.iw ];
 
+      # Only one of wired or wireless needs to be up.
+      systemd.network.wait-online.anyInterface = true;
+
       systemd.sockets.garage-door = {
         listenStreams = [ "[::]:8080" ];
         wantedBy = [ "sockets.target" ];

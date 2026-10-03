@@ -119,10 +119,7 @@ in
   custom.basicNetwork.enable = true;
   networking.wireless.iwd.enable = true;
 
-  systemd.network.wait-online = {
-    enable = true;
-    anyInterface = true;
-  };
+  systemd.network.wait-online.anyInterface = true;
 
   # TODO(jared): track this down
   boot.initrd.allowMissingModules = true;
