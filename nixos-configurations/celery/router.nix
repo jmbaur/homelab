@@ -38,10 +38,7 @@ in
 
   networking.firewall = {
     allowedTCPPorts = [ 3443 ];
-    interfaces.${config.router.lanInterface}.allowedTCPPorts = [
-      22
-      9001
-    ];
+    interfaces.${config.router.lanInterface}.allowedTCPPorts = [ 9001 ];
 
     extraForwardRules =
       let
