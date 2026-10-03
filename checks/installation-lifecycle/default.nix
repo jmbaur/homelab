@@ -207,7 +207,7 @@ testers.runNixOSTest {
               builtins.toJSON { buildoutputs.out.path = nodes.machine.system.build.toplevel; }
             )
           } >/var/lib/fake-hydra/${nodes.machine.networking.hostName}""")
-          machine.wait_until_succeeds("systemctl start nixos-update.service")
+          machine.succeed("systemctl start nixos-update.service")
           assert "${nodes.machine.system.build.foo-update.config.system.build.toplevel}" == machine.succeed("readlink --canonicalize-existing /nix/var/nix/profiles/system").strip()
           assert "foo" == machine.succeed("cat /etc/foo").strip()
     '';

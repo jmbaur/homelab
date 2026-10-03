@@ -61,6 +61,8 @@ in
     };
 
     systemd.services.nixos-update = {
+      wants = [ "network-online.target" ];
+      after = [ "network-online.target" ];
       stopIfChanged = false;
       restartIfChanged = false;
       reloadIfChanged = false;
