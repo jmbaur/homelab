@@ -93,6 +93,11 @@ in
 
   boot.kernelPatches = [
     {
+      # The jetpack kernel's libbpf fails to build with gcc 16.
+      name = "libbpf-discarded-qualifiers";
+      patch = ./libbpf-discarded-qualifiers.patch;
+    }
+    {
       name = "erofs";
       patch = null;
       structuredExtraConfig = {
@@ -138,7 +143,11 @@ in
 
   services.llama-cpp = {
     enable = true;
-    package = pkgs.llama-cpp.override { cudaSupport = true; };
+    package = pkgs.llama-cpp.override {
+      cudaSupport = true;
+      # nodejs 26 (nodejs_latest) fails to build on aarch64 with gcc 16.
+      nodejs_latest = pkgs.nodejs;
+    };
     openFirewall = false;
     settings = {
       port = 8080;
