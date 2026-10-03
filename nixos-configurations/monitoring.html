@@ -4,10 +4,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="refresh" content="30" />
-    <title>
-      {{ with query `up{job="node"}` }}{{ (. | first).Labels.instance }}{{ end
-      }}
-    </title>
+    {{ $host := "" }}{{ $up := 0.0 }} {{ with query `up{job="node"}` }}{{ $host
+    = (. | first).Labels.instance }}{{ $up = . | first | value }}{{ end }}
+    <title>{{ $host }}</title>
     <style>
       :root {
         color-scheme: light dark;
@@ -15,6 +14,8 @@
         --bg: #ffffff;
         --muted: #656d76;
         --line: #d0d7de;
+        --tile: #f6f8fa;
+        --good: #1a7f37;
         --bad: #cf222e;
         --warn: #9a6700;
       }
@@ -24,6 +25,8 @@
           --bg: #0d1117;
           --muted: #8d96a0;
           --line: #30363d;
+          --tile: #161b22;
+          --good: #3fb950;
           --bad: #f85149;
           --warn: #d29922;
         }
@@ -36,14 +39,49 @@
         background: var(--bg);
         margin: 0 auto;
         padding: 16px;
-        max-width: 1100px;
+        max-width: 900px;
+      }
+      header {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
       }
       h1 {
-        font-size: 20px;
+        font-size: 22px;
+        margin: 8px 0 16px;
       }
       h2 {
         font-size: 16px;
         margin-top: 32px;
+      }
+      .status {
+        font-weight: 600;
+      }
+      .tiles {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 12px;
+      }
+      .tile {
+        display: block;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--tile);
+        color: inherit;
+        text-decoration: none;
+      }
+      .tile:hover {
+        border-color: var(--muted);
+      }
+      .label {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .value {
+        font-size: 20px;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
       }
       table {
         border-collapse: collapse;
@@ -64,20 +102,17 @@
         color: var(--muted);
         font-weight: 600;
       }
-      a {
+      td a {
         color: inherit;
-        text-decoration: none;
       }
-      a:hover {
-        text-decoration: underline;
+      .good {
+        color: var(--good);
       }
       .bad {
         color: var(--bad);
-        font-weight: 600;
       }
       .warn {
         color: var(--warn);
-        font-weight: 600;
       }
       .muted {
         color: var(--muted);
@@ -88,102 +123,73 @@
     </style>
   </head>
   <body>
-    <h1>
-      {{ with query `up{job="node"}` }}{{ (. | first).Labels.instance }}{{ end
-      }}
-    </h1>
-    <p class="muted">
-      Values link to a graph of the underlying query. Refreshes every 30s.
-    </p>
+    <header>
+      <h1>{{ $host }}</h1>
+      {{ if eq $up 1.0 }}<span class="status good">up</span>{{ else }}<span
+        class="status bad"
+        >node exporter down</span
+      >{{ end }}
+    </header>
 
-    <h2>Hosts</h2>
-    <div class="wrap">
-      <table>
-        <tr>
-          <th>Host</th>
-          <th>Status</th>
-          <th>Uptime</th>
-          <th>Reboots (30d)</th>
-          <th>Load (1m)</th>
-          <th>Memory used</th>
-          <th>Root disk used</th>
-          <th>Hottest sensor</th>
-        </tr>
-        {{ range query `up{job="node"}` | sortByLabel "instance" }} {{ $i :=
-        .Labels.instance }}
-        <tr>
-          <td>{{ $i }}</td>
-          {{ $e := printf `up{instance="%s"}` $i }}
-          <td>
-            <a href="{{ graphLink $e }}"
-              >{{ if eq .Value 1.0 }}up{{ else }}<span class="bad">down</span>{{
-              end }}</a
-            >
-          </td>
-          {{ $e := printf `time() - node_boot_time_seconds{instance="%s"}` $i }}
-          <td>
-            <a href="{{ graphLink $e }}"
-              >{{ with query $e }}{{ . | first | value | humanizeDuration }}{{
-              else }}-{{ end }}</a
-            >
-          </td>
-          {{ $e := printf `changes(node_boot_time_seconds{instance="%s"}[30d])`
-          $i }}
-          <td>
-            <a href="{{ graphLink $e }}"
-              >{{ with query $e }}{{ $v := . | first | value }}<span
-                class="{{ if gt $v 4.0 }}bad{{ end }}"
-                >{{ printf "%.0f" $v }}</span
-              >{{ else }}-{{ end }}</a
-            >
-          </td>
-          {{ $e := printf `node_load1{instance="%s"}` $i }}
-          <td>
-            <a href="{{ graphLink $e }}"
-              >{{ with query $e }}{{ . | first | value | printf "%.2f" }}{{ else
-              }}-{{ end }}</a
-            >
-          </td>
-          {{ $e := printf `100 * (1 -
-          node_memory_MemAvailable_bytes{instance="%s"} /
-          node_memory_MemTotal_bytes{instance="%s"})` $i $i }}
-          <td>
-            <a href="{{ graphLink $e }}"
-              >{{ with query $e }}{{ $v := . | first | value }}<span
-                class="{{ if gt $v 90.0 }}bad{{ end }}"
-                >{{ printf "%.0f%%" $v }}</span
-              >{{ else }}-{{ end }}</a
-            >
-          </td>
-          {{ $e := printf `100 * (1 - node_filesystem_avail_bytes{instance="%s",
-          mountpoint="/"} / node_filesystem_size_bytes{instance="%s",
-          mountpoint="/"})` $i $i }}
-          <td>
-            <a href="{{ graphLink $e }}"
-              >{{ with query $e }}{{ $v := . | first | value }}<span
-                class="{{ if gt $v 90.0 }}bad{{ end }}"
-                >{{ printf "%.0f%%" $v }}</span
-              >{{ else }}-{{ end }}</a
-            >
-          </td>
-          {{ $e := printf `max(node_hwmon_temp_celsius{instance="%s"})` $i }}
-          <td>
-            <a href="{{ graphLink $e }}"
-              >{{ with query $e }}{{ $v := . | first | value }}<span
-                class="{{ if ge $v 100.0 }}bad{{ else if ge $v 80.0 }}warn{{ end }}"
-                >{{ printf "%.0f" $v }}°C</span
-              >{{ else }}-{{ end }}</a
-            >
-          </td>
-        </tr>
-        {{ else }}
-        <tr>
-          <td colspan="8" class="muted">
-            The node exporter is not being scraped.
-          </td>
-        </tr>
-        {{ end }}
-      </table>
+    <div class="tiles">
+      {{ $e := `time() - node_boot_time_seconds` }}
+      <a class="tile" href="{{ graphLink $e }}">
+        <div class="label">Uptime</div>
+        <div class="value">
+          {{ with query $e }}{{ . | first | value | humanizeDuration }}{{ else
+          }}-{{ end }}
+        </div>
+      </a>
+      {{ $e := `changes(node_boot_time_seconds[30d])` }}
+      <a class="tile" href="{{ graphLink $e }}">
+        <div class="label">Reboots (30d)</div>
+        <div class="value">
+          {{ with query $e }}{{ $v := . | first | value }}<span
+            class="{{ if gt $v 4.0 }}bad{{ end }}"
+            >{{ printf "%.0f" $v }}</span
+          >{{ else }}-{{ end }}
+        </div>
+      </a>
+      {{ $e := `node_load1` }}
+      <a class="tile" href="{{ graphLink $e }}">
+        <div class="label">Load (1m)</div>
+        <div class="value">
+          {{ with query $e }}{{ . | first | value | printf "%.2f" }}{{ else
+          }}-{{ end }}
+        </div>
+      </a>
+      {{ $e := `100 * (1 - node_memory_MemAvailable_bytes /
+      node_memory_MemTotal_bytes)` }}
+      <a class="tile" href="{{ graphLink $e }}">
+        <div class="label">Memory used</div>
+        <div class="value">
+          {{ with query $e }}{{ $v := . | first | value }}<span
+            class="{{ if gt $v 90.0 }}bad{{ end }}"
+            >{{ printf "%.0f%%" $v }}</span
+          >{{ else }}-{{ end }}
+        </div>
+      </a>
+      {{ $e := `100 * (1 - node_filesystem_avail_bytes{mountpoint="/"} /
+      node_filesystem_size_bytes{mountpoint="/"})` }}
+      <a class="tile" href="{{ graphLink $e }}">
+        <div class="label">Root disk used</div>
+        <div class="value">
+          {{ with query $e }}{{ $v := . | first | value }}<span
+            class="{{ if gt $v 90.0 }}bad{{ end }}"
+            >{{ printf "%.0f%%" $v }}</span
+          >{{ else }}-{{ end }}
+        </div>
+      </a>
+      {{ $e := `max(node_hwmon_temp_celsius)` }}
+      <a class="tile" href="{{ graphLink $e }}">
+        <div class="label">Hottest sensor</div>
+        <div class="value">
+          {{ with query $e }}{{ $v := . | first | value }}<span
+            class="{{ if ge $v 100.0 }}bad{{ else if ge $v 80.0 }}warn{{ end }}"
+            >{{ printf "%.0f" $v }}°C</span
+          >{{ else }}-{{ end }}
+        </div>
+      </a>
     </div>
 
     <h2>Temperatures</h2>
@@ -195,12 +201,11 @@
           <th>Current</th>
           <th>Critical</th>
         </tr>
-        {{ range query `sort_desc(node_hwmon_temp_celsius * on(instance, chip)
+        {{ range query `sort_desc(node_hwmon_temp_celsius * on(chip)
         group_left(chip_name) node_hwmon_chip_names)` }} {{ $sel := printf
-        `instance="%s", chip="%s", sensor="%s"` .Labels.instance .Labels.chip
-        .Labels.sensor }} {{ $crit := 0.0 }} {{ with query (printf
-        `node_hwmon_temp_crit_celsius{%s}` $sel) }}{{ $crit = . | first | value
-        }}{{ end }}
+        `chip="%s", sensor="%s"` .Labels.chip .Labels.sensor }} {{ $crit := 0.0
+        }} {{ with query (printf `node_hwmon_temp_crit_celsius{%s}` $sel) }}{{
+        $crit = . | first | value }}{{ end }}
         <tr>
           <td>{{ .Labels.chip_name }}</td>
           <td>{{ .Labels.sensor }}</td>
