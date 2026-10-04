@@ -10,9 +10,28 @@ let
     mkDefault
     mkEnableOption
     mkIf
+    getExe'
     ;
 
   cfg = config.custom.bigscreen;
+
+  # Same thing the bigscreen "Web Apps" settings page generates, but with
+  # widevine available for DRM'd video.
+  mlbtv = pkgs.makeDesktopItem {
+    name = "bigscreen-webapp-mlbtv";
+    desktopName = "MLB.TV";
+    icon = "applications-multimedia";
+    exec = toString [
+      (getExe' pkgs.coreutils "env")
+      "QTWEBENGINE_CHROMIUM_FLAGS=--widevine-path=${pkgs.widevine-cdm}/share/google/chrome/WidevineCdm/_platform_specific/linux_x64/libwidevinecdm.so"
+      (getExe' pkgs.kdePackages.plasma-bigscreen "plasma-bigscreen-webapp")
+      "--name"
+      "MLB.TV"
+      "--agent"
+      "\"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36\""
+      "https://www.mlb.com/tv"
+    ];
+  };
 in
 {
   options.custom.bigscreen = {
@@ -78,6 +97,7 @@ in
       config.services.kodi.package
       pkgs.jellyfin-desktop # formerly jellyfin-media-player
       pkgs.vacuum-tube
+      mlbtv
     ];
 
     # sddm won't autologin users below minimumUid, which defaults to 1000

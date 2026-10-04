@@ -30,6 +30,7 @@
     }
     {
       custom.bigscreen.enable = true;
+      nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem pkg.pname [ "widevine-cdm" ];
 
       hardware.graphics.extraPackages = with pkgs; [
         (intel-vaapi-driver.override { enableHybridCodec = true; })
