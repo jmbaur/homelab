@@ -29,7 +29,7 @@
       '';
     }
     {
-      services.kodi.enable = true;
+      custom.bigscreen.enable = true;
 
       hardware.graphics.extraPackages = with pkgs; [
         (intel-vaapi-driver.override { enableHybridCodec = true; })

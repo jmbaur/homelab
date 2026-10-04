@@ -112,6 +112,14 @@ in
       ];
       default = "gbm";
     };
+    package = mkOption {
+      type = types.package;
+      readOnly = true;
+      default = kodiPackage;
+      description = ''
+        Kodi package for the configured backend, including all addons.
+      '';
+    };
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -171,7 +179,7 @@ in
             PAMName = "kodi";
             Restart = "always";
             ExecStart = toString [
-              (getExe' kodiPackage "kodi-standalone")
+              (getExe' cfg.package "kodi-standalone")
             ];
           };
         }
@@ -193,7 +201,7 @@ in
       services.cage = {
         enable = true;
         user = config.users.users.kodi.name;
-        program = getExe' kodiPackage "kodi-standalone";
+        program = getExe' cfg.package "kodi-standalone";
       };
 
       systemd.services."cage-tty1" = commonSystemdSettings;
