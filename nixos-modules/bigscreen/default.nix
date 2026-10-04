@@ -56,10 +56,25 @@ in
       allowedUDPPorts = [ 8080 ];
     };
 
+    security.rtkit.enable = true;
+
     services.pipewire = {
       enable = true;
       alsa.enable = true;
       pulse.enable = true;
+      # Analog outputs outrank HDMI by default, but the TV is always on HDMI.
+      wireplumber.extraConfig."10-prefer-hdmi"."monitor.alsa.rules" = [
+        {
+          matches = [
+            { "node.name" = "~alsa_output.*Headphones.*"; }
+            { "node.name" = "~alsa_output.*Speaker.*"; }
+          ];
+          actions.update-props = {
+            "priority.driver" = 100;
+            "priority.session" = 100;
+          };
+        }
+      ];
     };
 
     services.desktopManager.plasma6.enable = true;
@@ -89,16 +104,33 @@ in
     # Allows the bigscreen input handler to create a uinput device for
     # translating CEC/gamepad input into key events.
     services.udev.packages = [ pkgs.kdePackages.plasma-bigscreen ];
+    # The udev rule only fires on the module's "add" uevent, which never
+    # happens for the static /dev/uinput node unless the module is loaded.
+    boot.kernelModules = [ "uinput" ];
+
+    # The homescreen's indicators hard-depend on the kdeconnect and plasma-nm
+    # QML modules, the whole applet fails to load without them.
+    programs.kdeconnect.enable = true;
 
     services.kodi.backend = mkDefault "wayland";
 
     environment.systemPackages = [
       pkgs.kdePackages.plasma-bigscreen
+      pkgs.kdePackages.plasma-nm # see programs.kdeconnect above
       config.services.kodi.package
       pkgs.jellyfin-desktop # formerly jellyfin-media-player
       pkgs.vacuum-tube
       mlbtv
     ];
+
+    # The bigscreen user has no password, so the lock screen could never be
+    # dismissed.
+    environment.etc."xdg/kscreenlockerrc".text = lib.generators.toINI { } {
+      Daemon = {
+        Autolock = false;
+        LockOnResume = false;
+      };
+    };
 
     # sddm won't autologin users below minimumUid, which defaults to 1000
     services.displayManager.sddm.autoLogin.minimumUid = config.users.users.bigscreen.uid;

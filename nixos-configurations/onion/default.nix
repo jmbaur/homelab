@@ -14,6 +14,7 @@
       hardware.firmware = [
         (pkgs.extractLinuxFirmwareDirectory "rtl_nic")
         (pkgs.extractLinuxFirmwareDirectory "intel")
+        (pkgs.extractLinuxFirmwareDirectory "i915")
         pkgs.sof-firmware
       ];
 
