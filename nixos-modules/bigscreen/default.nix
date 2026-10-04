@@ -104,9 +104,6 @@ in
     # Allows the bigscreen input handler to create a uinput device for
     # translating CEC/gamepad input into key events.
     services.udev.packages = [ pkgs.kdePackages.plasma-bigscreen ];
-    # The udev rule only fires on the module's "add" uevent, which never
-    # happens for the static /dev/uinput node unless the module is loaded.
-    boot.kernelModules = [ "uinput" ];
 
     # The homescreen's indicators hard-depend on the kdeconnect and plasma-nm
     # QML modules, the whole applet fails to load without them.
