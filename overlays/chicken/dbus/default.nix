@@ -18,6 +18,9 @@ eggDerivation rec {
   patches = [
     ./0001-Drop-backticked-pkg-config-options.patch
     ./0002-Port-to-CHICKEN-6.patch
+    ./0003-Export-arbitrary-match-rules.patch
+    ./0004-Raise-on-error-replies.patch
+    ./0005-Return-pointer-from-converters.patch
   ];
   separateDebugInfo = true;
   nativeBuildInputs = [ pkg-config ];

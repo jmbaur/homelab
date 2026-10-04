@@ -1,0 +1,69 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jared Baur <jaredbaur@fastmail.com>
+Date: Sat, 3 Oct 2026 22:50:00 -0500
+Subject: [PATCH 4/4] Raise on error replies in call
+
+An error reply's single string argument is the error text, not a return
+value; iterating it as one misbehaves ("bad argument type - not a
+pointer") instead of surfacing the D-Bus error. Check for error messages
+and raise them like the send-failure path does.
+---
+ dbus.scm | 35 +++++++++++++++++++++++++++++++----
+ 1 file changed, 31 insertions(+), 4 deletions(-)
+
+diff --git a/dbus.scm b/dbus.scm
+--- dbus.scm
++++ dbus.scm
+@@ -452,6 +452,31 @@
+        'location location
+        'message (string-append "(" err-name "): " err-message))))))
+ 
++;; A reply that is an error message: raise the error it names instead of
++;; trying to iterate its (single string) argument as a normal return value.
++(define (reply-error? msg)
++  ((foreign-lambda* bool ((message-ptr m))
++     "C_return(dbus_message_get_type(m) == DBUS_MESSAGE_TYPE_ERROR);")
++   msg))
++
++(define (raise-reply-error location msg)
++  (let ((err-message
++         ((foreign-lambda* c-string ((message-ptr m))
++            "DBusMessageIter iter;\n"
++            "const char *text = NULL;\n"
++            "if (dbus_message_iter_init(m, &iter) &&\n"
++            "    dbus_message_iter_get_arg_type(&iter) == DBUS_TYPE_STRING)\n"
++            "  dbus_message_iter_get_basic(&iter, &text);\n"
++            "C_return(text ? text : \"\");")
++          msg)))
++    (signal
++     (make-composite-condition
++      (make-property-condition 'dbus-call)
++      (make-property-condition
++       'exn
++       'location location
++       'message (string-append "(" (msg-error-name msg) "): " err-message))))))
++
+ ;; todo: garbage-collect this
+ (define make-iter-append
+  (foreign-lambda* message-iter-ptr ((message-ptr msg))
+@@ -816,11 +841,15 @@
+                            "reply = dbus_connection_send_with_reply_and_block(conn, msg, 5000, err);\n"
+                            "C_return(reply);\n")
+                          conn msg err)))
+-        (if reply-msg
+-            (let* ((reply-iter (make-iter reply-msg))
+-                   (reply-args (iter->list reply-iter)))
+-              reply-args)
+-            (raise-dbus-error 'call err))))))
++        (cond
++         (reply-msg
++          (if (reply-error? reply-msg)
++              (raise-reply-error 'call reply-msg)
++              (let* ((reply-iter (make-iter reply-msg))
++                     (reply-args (iter->list reply-iter)))
++                reply-args)))
++         (else
++          (raise-dbus-error 'call err)))))))
+ 
+ (define (make-method-proxy context name)
+   (let ((service (symbol->string (vector-ref context context-idx-service)))

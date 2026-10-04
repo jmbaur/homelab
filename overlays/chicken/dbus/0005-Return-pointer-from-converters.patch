@@ -1,0 +1,41 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jared Baur <jaredbaur@fastmail.com>
+Date: Sat, 3 Oct 2026 22:50:00 -0500
+Subject: [PATCH 5/6] Return the pointer from foreign-type converters
+
+CHICKEN 6 uses a conversion function's return value when the C call
+yields null. The converters here returned whatever set-finalizer!
+returns (#f), so a null result -- e.g. send_with_reply_and_block on an
+error reply -- came back as an unusable marker value and the next FFI
+call died with "bad argument type - not a pointer". Hand the pointer
+back, and guard the error-ptr finalizer like message-ptr's.
+---
+ dbus.scm | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/dbus.scm b/dbus.scm
+--- dbus.scm
++++ dbus.scm
+@@ -217,7 +217,9 @@
+ (define-foreign-type error-ptr (c-pointer "DBusError")
+   identity
+   (lambda (p)
+-    (set-finalizer! p (foreign-lambda void "dbus_error_free" error-ptr))))
++    (when p
++      (set-finalizer! p (foreign-lambda void "dbus_error_free" error-ptr)))
++    p))
+ 
+ (define-foreign-type connection-ptr (c-pointer "DBusConnection"))
+ 
+@@ -225,7 +227,11 @@
+   identity
+   (lambda (p)
+     (when p
+-      (set-finalizer! p (foreign-lambda void "dbus_message_unref" message-ptr)))))
++      (set-finalizer! p (foreign-lambda void "dbus_message_unref" message-ptr)))
++    ;; the conversion function's value is what CHICKEN 6 uses for a null
++    ;; result, so it must hand the pointer back; returning the #f from
++    ;; set-finalizer! turns a null reply into an unusable marker value.
++    p))
+ 
+ (define-foreign-type uint-ptr (c-pointer "dbus_uint32_t"))

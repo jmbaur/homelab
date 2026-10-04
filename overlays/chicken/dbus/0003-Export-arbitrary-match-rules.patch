@@ -1,0 +1,49 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jared Baur <jaredbaur@fastmail.com>
+Date: Sat, 3 Oct 2026 22:50:00 -0500
+Subject: [PATCH 3/4] Export arbitrary match rules and context paths
+
+add-match only installs interface-based rules, but some subscribers (like a
+status bar watching UPower or NetworkManager objects) need to select by
+object path. Expose dbus_bus_add_match/dbus_bus_remove_match directly, and
+expose the object path of a context so signal handlers can tell which
+object an unmatched signal came from.
+---
+ dbus.scm | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/dbus.scm b/dbus.scm
+--- dbus.scm
++++ dbus.scm
+@@ -9,6 +9,9 @@
+      register-method
+      enable-polling-thread!
+      poll-for-message
++     add-match-rule
++     remove-match-rule
++     context-path
+      discover-services
+      discover-api-xml
+      dbus-service
+@@ -871,6 +874,21 @@
+     ((foreign-safe-lambda void "dbus_bus_add_match" connection-ptr c-string error-ptr)
+      (get-conn (vector-ref context context-idx-bus)) rule #f)))
+ 
++;; Arbitrary match rules, for subscribers that want to select by object path
++;; rather than the interface-based rules add-match installs.
++(define (add-match-rule bus rule)
++  ((foreign-safe-lambda void "dbus_bus_add_match" connection-ptr c-string error-ptr)
++   (conn-or-abort bus) rule #f))
++
++(define (remove-match-rule bus rule)
++  ((foreign-safe-lambda void "dbus_bus_remove_match" connection-ptr c-string error-ptr)
++   (conn-or-abort bus) rule #f))
++
++;; The object path of a context, as in the one find-callback hands to
++;; default-signal-handler for an unmatched signal.
++(define (context-path context)
++  (vector-ref context context-idx-path))
++
+ ;; return #t if it received a message, #f if not
+ (define (poll-for-message #!key (bus session-bus) (timeout 0))
+   (let ((conn (conn-or-abort bus)))
