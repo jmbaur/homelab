@@ -4,7 +4,6 @@
   eggDerivation,
   fetchurl,
   lib,
-  pkg-config,
 }:
 
 eggDerivation rec {
@@ -23,16 +22,22 @@ eggDerivation rec {
     ./0005-Return-pointer-from-converters.patch
   ];
   separateDebugInfo = true;
-  nativeBuildInputs = [ pkg-config ];
-  buildInputs = [ dbus ];
-  propagatedBuildInputs = with chickenEggs; [
-    foreigners
-    miscmacros
-    srfi-18
-  ];
+  # The runtime closure: libdbus plus the eggs the dbus egg imports. Only
+  # propagated inputs reach the programs that use this egg, which is what
+  # puts them in the wrapper's CHICKEN_REPOSITORY_PATH; the -L flag in the
+  # egg file's link-options and the .so's runpath come from here too.
+  propagatedBuildInputs = [ dbus.lib ]
+    ++ (with chickenEggs; [
+      foreigners
+      miscmacros
+      srfi-18
+    ]);
+  # The FFI code includes <dbus/dbus.h>, which lives in the dev output; a
+  # build-time-only dependency, so it stays out of the runtime closure.
+  depsBuildTarget = [ dbus.dev ];
   # The egg's backticked pkg-config options don't survive chicken-install.
   preBuild = ''
-    export NIX_CFLAGS_COMPILE+=" $($PKG_CONFIG --cflags dbus-1)"
+    export NIX_CFLAGS_COMPILE+=" -I${dbus.dev}/include/dbus-1.0 -I${dbus.lib}/lib/dbus-1.0/include"
   '';
   meta.license = lib.licenses.mit;
 }

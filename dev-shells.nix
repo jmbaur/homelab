@@ -43,7 +43,9 @@ inputs.nixpkgs.lib.mapAttrs (
         pkgs.age-plugin-fido2-hmac
         pkgs.chickenPackages_6.chicken
         pkgs.chickenPackages_6.chickenEggs.base64
+        pkgs.chickenPackages_6.chickenEggs.dbus
         pkgs.chickenPackages_6.chickenEggs.http-client
+        pkgs.chickenPackages_6.chickenEggs.json
         pkgs.chickenPackages_6.chickenEggs.libsodium
         pkgs.chickenPackages_6.chickenEggs.openssl
         pkgs.chickenPackages_6.chickenEggs.qrencode
@@ -54,6 +56,7 @@ inputs.nixpkgs.lib.mapAttrs (
         pkgs.chickenPackages_6.chickenEggs.srfi-18
         pkgs.chickenPackages_6.chickenEggs.srfi-180
         pkgs.chickenPackages_6.chickenEggs.srfi-37
+        pkgs.chickenPackages_6.chickenEggs.tcprepl
         pkgs.chickenPackages_6.chickenEggs.vector-lib
         pkgs.home-manager
         pkgs.libsodium

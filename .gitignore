@@ -20,5 +20,6 @@ src/nix-key
 src/nixos-kexec
 src/pb
 src/pomo
+src/swaybar
 zig-out
 zig-pkg
