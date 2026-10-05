@@ -41,6 +41,7 @@ inputs.nixpkgs.lib.mapAttrs (
   {
     default = pkgs.mkShell {
       packages = [
+        pkgs.age-plugin-fido2-hmac
         pkgs.chickenPackages_6.chicken
         pkgs.chickenPackages_6.chickenEggs.base64
         pkgs.chickenPackages_6.chickenEggs.http-client
