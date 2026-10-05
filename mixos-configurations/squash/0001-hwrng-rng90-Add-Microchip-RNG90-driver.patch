@@ -1,0 +1,435 @@
+From 00aabbe5a252a2a53f5421da53d3889c27554d2a Mon Sep 17 00:00:00 2001
+From: Jared Baur <jaredbaur@fastmail.com>
+Date: Mon, 5 Oct 2026 11:00:41 -0700
+Subject: [PATCH] hwrng: rng90 - Add Microchip RNG90 driver
+
+Add a driver for the Microchip RNG90, a standalone random number
+generator with an I2C interface. The device combines a physical noise
+source with a SHA-256 Hash_DRBG per NIST SP 800-90A/B/C and returns
+32 bytes per Random command.
+
+The quality is set to 512: per the datasheet, each 256-bit output of
+the Random command carries a security strength of 128 bits.
+
+Signed-off-by: Jared Baur <jaredbaur@fastmail.com>
+---
+ MAINTAINERS                     |   6 +
+ drivers/char/hw_random/Kconfig  |  12 ++
+ drivers/char/hw_random/Makefile |   1 +
+ drivers/char/hw_random/rng90.c  | 353 ++++++++++++++++++++++++++++++++
+ 4 files changed, 372 insertions(+)
+ create mode 100644 drivers/char/hw_random/rng90.c
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 95cd976a068c..b68518c7888c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17770,6 +17770,12 @@ S:	Supported
+ F:	Documentation/devicetree/bindings/pwm/atmel,at91sam-pwm.yaml
+ F:	drivers/pwm/pwm-atmel.c
+ 
++MICROCHIP RNG90 DRIVER
++M:	Jared Baur <jaredbaur@fastmail.com>
++L:	linux-crypto@vger.kernel.org
++S:	Maintained
++F:	drivers/char/hw_random/rng90.c
++
+ MICROCHIP SAM9x7-COMPATIBLE LVDS CONTROLLER
+ M:	Manikandan Muralidharan <manikandan.m@microchip.com>
+ M:	Dharma Balasubiramani <dharma.b@microchip.com>
+diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
+index a5bcef4a54ee..321ce0909ec2 100644
+--- a/drivers/char/hw_random/Kconfig
++++ b/drivers/char/hw_random/Kconfig
+@@ -625,6 +625,18 @@ config HW_RANDOM_ROCKCHIP
+ 
+ 	  If unsure, say Y.
+ 
++config HW_RANDOM_RNG90
++	tristate "Microchip RNG90 Random Number Generator Driver"
++	depends on I2C
++	help
++	  This driver provides kernel-side support for the Microchip RNG90,
++	  an I2C-attached random number generator.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called rng90.
++
++	  If unsure, say N.
++
+ config HW_RANDOM_XILINX
+ 	tristate "Support for Xilinx True Random Generator"
+ 	depends on ZYNQMP_FIRMWARE || COMPILE_TEST
+diff --git a/drivers/char/hw_random/Makefile b/drivers/char/hw_random/Makefile
+index 95b5adb49560..11073ec32d1a 100644
+--- a/drivers/char/hw_random/Makefile
++++ b/drivers/char/hw_random/Makefile
+@@ -52,5 +52,6 @@ obj-$(CONFIG_HW_RANDOM_ARM_SMCCC_TRNG) += arm_smccc_trng.o
+ obj-$(CONFIG_HW_RANDOM_CN10K) += cn10k-rng.o
+ obj-$(CONFIG_HW_RANDOM_POLARFIRE_SOC) += mpfs-rng.o
+ obj-$(CONFIG_HW_RANDOM_ROCKCHIP) += rockchip-rng.o
++obj-$(CONFIG_HW_RANDOM_RNG90) += rng90.o
+ obj-$(CONFIG_HW_RANDOM_JH7110) += jh7110-trng.o
+ obj-$(CONFIG_HW_RANDOM_XILINX) += xilinx-trng.o
+diff --git a/drivers/char/hw_random/rng90.c b/drivers/char/hw_random/rng90.c
+new file mode 100644
+index 000000000000..919dc8c7729f
+--- /dev/null
++++ b/drivers/char/hw_random/rng90.c
+@@ -0,0 +1,353 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Driver for the Microchip RNG90 I2C random number generator
++ *
++ * Copyright (C) 2026 Jared Baur <jaredbaur@fastmail.com>
++ */
++
++#include <linux/delay.h>
++#include <linux/hw_random.h>
++#include <linux/i2c.h>
++#include <linux/iopoll.h>
++#include <linux/minmax.h>
++#include <linux/module.h>
++#include <linux/pm_runtime.h>
++#include <linux/unaligned.h>
++
++#define RNG90_RESET 0x0 /* resets address counter */
++#define RNG90_SLEEP 0x1
++#define RNG90_COMMAND 0x3
++#define RNG90_CMD_OVERHEAD 8 /* word address, count, opcode, params, crc */
++#define RNG90_CMD_MAX_DATA_LEN 20
++#define RNG90_OPCODE_INFO 0x30
++#define RNG90_INFO_REVISION 0x00
++#define RNG90_INFO_LEN 4
++#define RNG90_INFO_EXEC_TYP_US 280
++#define RNG90_INFO_EXEC_MAX_US 400
++#define RNG90_DEVICE_ID 0xd0
++#define RNG90_OPCODE_RANDOM 0x16
++#define RNG90_RANDOM_DATA_LEN 20
++#define RNG90_RANDOM_LEN 32
++#define RNG90_RANDOM_EXEC_TYP_US 20200 /* typical after the first execution */
++#define RNG90_RANDOM_EXEC_MAX_US 72000 /* first execution includes self-tests */
++#define RNG90_POLL_INTERVAL_US 1000
++#define RNG90_WAKE_DELAY_US 1800 /* tPU with the slowest clock divider */
++#define RNG90_WAKE_TIMEOUT_US 50000
++#define RNG90_STATUS_LEN 4
++#define RNG90_STATUS_WAKE 0x11
++#define RNG90_AUTOSUSPEND_DELAY_MS 1000
++
++/*
++ * Each Random command returns 256 bits from a Hash_DRBG reseeded from the
++ * noise source, with a datasheet-specified security strength of 128 bits.
++ */
++#define RNG90_QUALITY 512
++
++struct rng90_trng {
++	struct hwrng rng;
++	struct device *dev;
++	struct i2c_client *client;
++};
++
++static u16 rng90_crc16(const u8 *data, size_t len)
++{
++	u16 crc = 0x0000;
++	size_t i;
++
++	for (i = 0; i < len; i++) {
++		u8 byte = data[i];
++		u8 shift;
++
++		for (shift = 0x01; shift != 0; shift <<= 1) {
++			bool dbit = (byte & shift) != 0;
++			bool cbit = (crc & 0x8000) != 0;
++
++			crc <<= 1;
++			if (dbit != cbit)
++				crc ^= 0x8005;
++		}
++	}
++
++	return crc;
++}
++
++/* Responses end with a little-endian CRC over all preceding bytes. */
++static bool rng90_crc_valid(const u8 *resp, size_t len)
++{
++	return rng90_crc16(resp, len - 2) == get_unaligned_le16(&resp[len - 2]);
++}
++
++/*
++ * Send a command, wait for it to execute and read back its response.
++ *
++ * The command's data field is data_len zero bytes; no command used by this
++ * driver needs anything else there.
++ *
++ * On success, resp holds the whole response group:
++ * resp[0]: count (resp_len)
++ * resp[1..resp_len - 3]: output
++ * resp[resp_len - 2..resp_len - 1]: crc
++ *
++ * On failure the device instead returns a status group:
++ * resp[0]: count (4)
++ * resp[1]: status code
++ * resp[2..3]: crc
++ */
++static int rng90_command(struct i2c_client *client, u8 opcode,
++			 u8 param1, u16 param2, size_t data_len,
++			 unsigned int exec_typ_us, unsigned int exec_max_us,
++			 u8 *resp, size_t resp_len)
++{
++	/* word address, count, opcode, param1, param2, data, crc */
++	u8 pkt[RNG90_CMD_OVERHEAD + RNG90_CMD_MAX_DATA_LEN] = {};
++	size_t pkt_len = RNG90_CMD_OVERHEAD + data_len;
++	u16 crc;
++	int ret;
++
++	if (WARN_ON(data_len > RNG90_CMD_MAX_DATA_LEN))
++		return -EINVAL;
++
++	pkt[0] = RNG90_COMMAND;
++	pkt[1] = pkt_len - 1;
++	pkt[2] = opcode;
++	pkt[3] = param1;
++	put_unaligned_le16(param2, &pkt[4]);
++
++	crc = rng90_crc16(&pkt[1], pkt_len - 3);
++	put_unaligned_le16(crc, &pkt[pkt_len - 2]);
++
++	ret = i2c_master_send(client, pkt, pkt_len);
++	if (ret < 0) {
++		dev_err_ratelimited(&client->dev,
++				    "command 0x%02x send failed: %d\n",
++				    opcode, ret);
++		return ret;
++	}
++
++	/*
++	 * The device NACKs reads while it is busy executing the command, so
++	 * wait for the typical execution time and then poll until the
++	 * maximum. The exact NACK error code depends on the adapter, so any
++	 * error is retried; the last one is reported on timeout.
++	 */
++	fsleep(exec_typ_us);
++	read_poll_timeout(i2c_master_recv, ret, ret >= 0,
++			  RNG90_POLL_INTERVAL_US, exec_max_us - exec_typ_us,
++			  false, client, resp, resp_len);
++	if (ret < 0) {
++		dev_err_ratelimited(&client->dev,
++				    "command 0x%02x recv failed: %d\n",
++				    opcode, ret);
++		return ret;
++	}
++
++	if (resp[0] == RNG90_STATUS_LEN &&
++	    rng90_crc_valid(resp, RNG90_STATUS_LEN)) {
++		dev_err_ratelimited(&client->dev,
++				    "command 0x%02x failed with status 0x%02x\n",
++				    opcode, resp[1]);
++		return -EIO;
++	}
++
++	if (resp[0] != resp_len) {
++		dev_err_ratelimited(&client->dev,
++				    "command 0x%02x got invalid response length: %d\n",
++				    opcode, resp[0]);
++		return -EIO;
++	}
++
++	if (!rng90_crc_valid(resp, resp_len)) {
++		dev_err_ratelimited(&client->dev,
++				    "command 0x%02x got invalid response CRC\n",
++				    opcode);
++		return -EIO;
++	}
++
++	return 0;
++}
++
++static int rng90_random(struct rng90_trng *trng, void *buf, size_t max)
++{
++	u8 response[RNG90_RANDOM_LEN + 3];
++	int ret;
++
++	/* The Random command requires a data field, but ignores its value. */
++	ret = rng90_command(trng->client, RNG90_OPCODE_RANDOM, 0, 0,
++			    RNG90_RANDOM_DATA_LEN, RNG90_RANDOM_EXEC_TYP_US,
++			    RNG90_RANDOM_EXEC_MAX_US, response, sizeof(response));
++	if (!ret) {
++		ret = min(max, RNG90_RANDOM_LEN);
++		memcpy(buf, &response[1], ret);
++	}
++
++	/* Don't leave random bytes on the stack, even on failure. */
++	memzero_explicit(response, sizeof(response));
++
++	return ret;
++}
++
++static int rng90_trng_read(struct hwrng *rng, void *buf, size_t max, bool wait)
++{
++	struct rng90_trng *trng = container_of(rng, struct rng90_trng, rng);
++	int ret;
++
++	ret = pm_runtime_resume_and_get(trng->dev);
++	if (ret)
++		return ret;
++
++	ret = rng90_random(trng, buf, max);
++
++	pm_runtime_put_autosuspend(trng->dev);
++
++	return ret;
++}
++
++static int rng90_power_off(struct device *dev)
++{
++	struct i2c_client *client = to_i2c_client(dev);
++	u8 pkt[1] = { RNG90_SLEEP };
++	int ret;
++
++	ret = i2c_master_send(client, pkt, sizeof(pkt));
++	if (ret < 0) {
++		dev_err_ratelimited(&client->dev, "RNG sleep failed: %d\n", ret);
++		/*
++		 * Report a transient error so the device stays active and
++		 * suspend is retried; any other error is latched by the PM
++		 * core and makes every later resume fail.
++		 */
++		return -EAGAIN;
++	}
++
++	dev_dbg(&client->dev, "RNG90 put to sleep\n");
++
++	return 0;
++}
++
++static int rng90_power_on(struct device *dev)
++{
++	struct i2c_client *client = to_i2c_client(dev);
++	u8 pkt[1] = { RNG90_RESET };
++	u8 response[4];
++	int ret;
++
++	/*
++	 * A sleeping RNG90 NACKs its address, which is also the wake
++	 * condition. If it ACKs, it was already awake (e.g. never put to
++	 * sleep since power-up or a previous driver instance) and the reset
++	 * has rewound its address counter, so it is ready for use.
++	 */
++	ret = i2c_master_send(client, pkt, sizeof(pkt));
++	if (ret > 0) {
++		dev_dbg(dev, "RNG was not sleeping\n");
++		return 0;
++	}
++
++	/*
++	 * The device ignores the bus for tPU after the wake condition. tPU
++	 * is only characterized, not production tested, so keep polling a
++	 * while past it before giving up.
++	 */
++	fsleep(RNG90_WAKE_DELAY_US);
++	read_poll_timeout(i2c_master_recv, ret, ret >= 0,
++			  RNG90_POLL_INTERVAL_US, RNG90_WAKE_TIMEOUT_US,
++			  false, client, response, sizeof(response));
++	if (ret < 0 || response[0] != sizeof(response) ||
++	    response[1] != RNG90_STATUS_WAKE ||
++	    !rng90_crc_valid(response, sizeof(response))) {
++		dev_err_ratelimited(dev, "RNG did not wake\n");
++		/* Transient, so the next read retries the wake. */
++		return -EAGAIN;
++	}
++
++	dev_dbg(&client->dev, "RNG90 taken out of sleep\n");
++
++	return 0;
++}
++
++static int rng90_probe(struct i2c_client *client)
++{
++	struct device *dev = &client->dev;
++	u8 info[RNG90_INFO_LEN + 3];
++	struct rng90_trng *trng;
++	int ret;
++
++	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
++		return dev_err_probe(dev, -ENODEV,
++				     "I2C adapter does not support I2C transfers\n");
++
++	trng = devm_kzalloc(dev, sizeof(*trng), GFP_KERNEL);
++	if (!trng)
++		return -ENOMEM;
++
++	trng->dev = dev;
++	trng->client = client;
++	trng->rng.name = client->name;
++	trng->rng.read = rng90_trng_read;
++	trng->rng.quality = RNG90_QUALITY;
++
++	/*
++	 * Called directly rather than through runtime PM so that the
++	 * presence check also happens with CONFIG_PM disabled.
++	 */
++	ret = rng90_power_on(dev);
++	if (ret)
++		return dev_err_probe(dev, -ENODEV, "RNG90 not responding\n");
++
++	/* info[0]: count, info[1]: RFU, info[2]: device ID, ... */
++	ret = rng90_command(client, RNG90_OPCODE_INFO, RNG90_INFO_REVISION, 0,
++			    0, RNG90_INFO_EXEC_TYP_US, RNG90_INFO_EXEC_MAX_US,
++			    info, sizeof(info));
++	if (ret)
++		return dev_err_probe(dev, -ENODEV, "RNG90 not responding\n");
++
++	if (info[2] != RNG90_DEVICE_ID)
++		return dev_err_probe(dev, -ENODEV,
++				     "unexpected device ID 0x%02x\n", info[2]);
++
++	pm_runtime_set_autosuspend_delay(dev, RNG90_AUTOSUSPEND_DELAY_MS);
++	pm_runtime_use_autosuspend(dev);
++	ret = devm_pm_runtime_set_active_enabled(dev);
++	if (ret)
++		return ret;
++
++	ret = devm_hwrng_register(dev, &trng->rng);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to register rng device\n");
++
++	/* Put the device back to sleep if nothing reads from it. */
++	pm_runtime_mark_last_busy(dev);
++	pm_request_autosuspend(dev);
++
++	return 0;
++}
++
++static const struct i2c_device_id rng90_id[] = {
++	{ "rng90" },
++	{},
++};
++MODULE_DEVICE_TABLE(i2c, rng90_id);
++
++static const struct of_device_id of_rng90_match[] = {
++	{ .compatible = "microchip,rng90" },
++	{}
++};
++MODULE_DEVICE_TABLE(of, of_rng90_match);
++
++static DEFINE_RUNTIME_DEV_PM_OPS(rng90_pm_ops, rng90_power_off,
++				 rng90_power_on, NULL);
++
++static struct i2c_driver rng90_driver = {
++	.driver = {
++		.name = "rng90",
++		.pm	= pm_ptr(&rng90_pm_ops),
++		.of_match_table = of_rng90_match,
++	},
++	.id_table = rng90_id,
++	.probe = rng90_probe,
++};
++module_i2c_driver(rng90_driver);
++
++MODULE_AUTHOR("Jared Baur <jaredbaur@fastmail.com>");
++MODULE_DESCRIPTION("Microchip RNG90 driver");
++MODULE_LICENSE("GPL");
+-- 
+2.55.0
+

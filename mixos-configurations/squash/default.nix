@@ -42,7 +42,7 @@
     }
     {
       name = "rng90-support";
-      patch = ./0001-char-hw_random-add-RNG90-driver.patch;
+      patch = ./0001-hwrng-rng90-Add-Microchip-RNG90-driver.patch;
       structuredExtraConfig = {
         HW_RANDOM_RNG90 = lib.kernel.module;
       };
