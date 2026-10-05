@@ -373,6 +373,8 @@ in
           Address = "[::1]";
           Port = 4533;
           DefaultTheme = "Auto";
+          # Prefer Last.fm's art; the music's own art is only a fallback.
+          CoverArtPriority = "external, cover.*, folder.*, front.*, embedded";
         };
       };
 
