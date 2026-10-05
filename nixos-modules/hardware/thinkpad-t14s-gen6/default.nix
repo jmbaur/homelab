@@ -30,6 +30,13 @@ in
         name = "t14s-bluetooth";
         patch = ./0001-arm64-dts-qcom-x1e78100-t14s-add-WCN7850-Bluetooth.patch;
       }
+      {
+        # Iris faults (and wedges until reboot) when a non-pixel buffer lands
+        # below 600MB of IOVA. Backport of
+        # https://patchwork.linuxtv.org/project/linux-media/patch/20260818-reserve_iova_in_driver-v2-1-5005a1154408@oss.qualcomm.com/
+        name = "iris-reserve-low-iova";
+        patch = ./0002-media-iris-Fix-iova-allocation-from-restrict-region.patch;
+      }
     ];
 
     boot.consoleLogLevel = 7;
