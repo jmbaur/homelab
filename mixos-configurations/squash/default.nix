@@ -47,12 +47,5 @@
         HW_RANDOM_RNG90 = lib.kernel.module;
       };
     }
-    {
-      name = "module-decompress";
-      patch = null;
-      structuredExtraConfig = {
-        MODULE_DECOMPRESS = lib.kernel.yes;
-      };
-    }
   ];
 }
