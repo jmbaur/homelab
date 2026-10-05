@@ -26,7 +26,7 @@ inputs.nixpkgs.lib.mapAttrs (
 
     setupYubikey = mkApp "Setup common yubikey settings (enable openpgp & ssh resident key, remove default pins, etc.)" (
       pkgs.writeShellScript "setup-yubikey" ''
-        set -o errexit
+        set -o errexit -o nounset -o pipefail
         echo "enabling openpgp"
         ${getExe pkgs.yubikey-manager} config usb --enable openpgp
         echo "setting cache for openpgp touches"
@@ -40,6 +40,8 @@ inputs.nixpkgs.lib.mapAttrs (
         ${getExe pkgs.yubikey-manager} fido access change-pin
         echo "adding ssh key backed with fido2"
         ${getExe' pkgs.openssh "ssh-keygen"} -t ed25519-sk -O resident
+        echo "enrolling age fido2 credential with sops (select yes for decryption PIN, and yes for separate identity)"
+        ${getExe pkgs.age-plugin-fido2-hmac} --generate
       ''
     );
 
