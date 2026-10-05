@@ -31,6 +31,7 @@
   tofu-ls,
   ttags,
   zig_0_16,
+  zigscient,
   zls_0_16,
 }:
 
@@ -143,6 +144,7 @@ buildEnv {
     tofu-ls
     ttags
     zig_0_16
+    zigscient
     zls_0_16
   ];
 }

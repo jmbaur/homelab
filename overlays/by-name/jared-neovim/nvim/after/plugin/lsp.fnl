@@ -14,7 +14,28 @@
 (add-lsp-if-has [:nixd] :nixd)
 (add-lsp-if-has [:pyright-langserver] :pyright)
 (add-lsp-if-has [:tofu-ls :tofu] :tofu_ls)
-(add-lsp-if-has [:zls] :zls {:settings {:zls {:semantic_tokens :partial}}})
+(fn zig-version []
+  (let [result (: (vim.system [:zig :version] {:text true}) :wait)]
+    (if (= result.code 0) (vim.version.parse (vim.trim result.stdout)) nil)))
+
+;; zigscient supports zig >= 0.17, zls is pinned to zig 0.16
+(fn zig-root-dir [want-zigscient]
+  (fn [bufnr on-dir]
+    (let [version (zig-version)]
+      (when (and (not= version nil)
+                 (= want-zigscient
+                    (vim.version.ge [version.major version.minor 0] [0 17 0])))
+        (on-dir (vim.fs.root bufnr [:zls.json :build.zig :.git]))))))
+
+(add-lsp-if-has [:zig :zls] :zls
+                {:root_dir (zig-root-dir false)
+                 :settings {:zls {:semantic_tokens :partial}}})
+
+(add-lsp-if-has [:zig :zigscient] :zigscient
+                {:cmd [:zigscient]
+                 :filetypes [:zig :zir]
+                 :root_dir (zig-root-dir true)})
+
 (add-lsp-if-has [:lua-language-server] :lua_ls)
 (add-lsp-if-has [:tsgo] :tsgo)
 (add-lsp-if-has [:latexmk] :texlab

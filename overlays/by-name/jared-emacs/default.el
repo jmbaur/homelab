@@ -263,6 +263,15 @@ if one already exists."
 (use-package zig-mode
   :after eglot
   :config
+  ;; zigscient supports zig >= 0.17, zls is pinned to zig 0.16
+  (add-to-list 'eglot-server-programs
+	       `(zig-mode . ,(lambda (&rest _)
+			       (let ((version (ignore-errors (car (process-lines "zig" "version")))))
+				 (if (and version
+					  (string-match "\\`[0-9]+\\.[0-9]+" version)
+					  (version<= "0.17" (match-string 0 version)))
+				     '("zigscient")
+				   '("zls"))))))
   (advice-add 'zig--run-cmd :around
 	      (lambda (f cmd &optional source &rest args)
 		"Disable zig build progress"
