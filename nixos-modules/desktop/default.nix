@@ -302,23 +302,21 @@ in
       };
 
       environment.systemPackages = [
+        desktopTheme
         pkgs.brightnessctl
         pkgs.clipman
-        desktopTheme
         pkgs.foot
         pkgs.gammastep
         pkgs.gnome-themes-extra
         pkgs.grim
+        pkgs.homelab-utils.swaybar-status
         pkgs.kanshi
         pkgs.libnotify
-        pkgs.luajit.pkgs.shevek
         pkgs.mako
         pkgs.pulseaudio
-        rofi
         pkgs.slurp
         pkgs.swaybg
         pkgs.swayidle
-        swaylock
         pkgs.wev
         pkgs.wf-recorder
         pkgs.wl-clipboard
@@ -327,6 +325,8 @@ in
         pkgs.wlr-randr
         pkgs.wmenu
         pkgs.zathura
+        rofi
+        swaylock
         (pkgs.symlinkJoin {
           name = "default-${pkgs.xcursor-chromeos.name}";
           paths = [ pkgs.xcursor-chromeos ];

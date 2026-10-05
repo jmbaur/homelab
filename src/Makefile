@@ -8,7 +8,7 @@ LDFLAGS += -L$(CHICKEN_PREFIX)/lib
 LDLIBS += -lchicken -lm
 
 PREFIX ?= $(out)
-PROGRAMS ?= copy homelab-backup-recv homelab-garage-door macgen networkd-dhcpv6-client-prefix nix-key nixos-kexec pb pomo swaybar
+PROGRAMS ?= copy homelab-backup-recv homelab-garage-door macgen networkd-dhcpv6-client-prefix nix-key nixos-kexec pb pomo swaybar-status
 
 MAKEFLAGS += --no-builtin-rules
 

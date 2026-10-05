@@ -129,7 +129,7 @@ lib.mapAttrs (name: args: mkChickenTool ({ inherit name; } // args)) {
     eggs.uri-common
   ];
   pomo = { };
-  swaybar = {
+  swaybar-status = {
     platforms = lib.platforms.linux;
     eggs = eggs: [
       eggs.dbus
