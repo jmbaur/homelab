@@ -354,8 +354,21 @@ in
 
       custom.yggdrasil.peers.onion.allowedTCPPorts = [ config.services.navidrome.settings.Port ];
 
+      sops.secrets."last_fm/api_key" = { };
+      sops.secrets."last_fm/secret" = { };
+
+      # Last.fm supplies album art that's missing from the music itself.
+      sops.templates."navidrome.env" = {
+        content = ''
+          ND_LASTFM_APIKEY=${config.sops.placeholder."last_fm/api_key"}
+          ND_LASTFM_SECRET=${config.sops.placeholder."last_fm/secret"}
+        '';
+        restartUnits = [ "navidrome.service" ];
+      };
+
       services.navidrome = {
         enable = true;
+        environmentFile = config.sops.templates."navidrome.env".path;
         settings = {
           Address = "[::1]";
           Port = 4533;
