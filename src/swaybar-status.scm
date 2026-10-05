@@ -16,7 +16,6 @@
   (chicken format)
   (chicken port)
   (chicken process-context)
-  (chicken process-context posix)
   (only (chicken tcp) tcp-accept tcp-read-timeout)
   (chicken time)
   (chicken time posix))
@@ -383,7 +382,7 @@
 	  (override override)
 	  (else
 	    (let ((runtime (get-environment-variable "XDG_RUNTIME_DIR")))
-	      (and runtime (string-append runtime (sprintf "/swaybar-repl.~a.sock" (current-process-id)))))))))
+	      (and runtime (string-append runtime "/swaybar-repl.sock")))))))
 
 ;; tcprepl evaluates in the program's global environment, so every top-level
 ;; definition here -- the handlers, swaybar-blocks and friends -- is
