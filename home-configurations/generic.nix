@@ -238,6 +238,7 @@
       xdg.configFile."tmux/tmux.conf".text = ''
         set-option -g allow-passthrough on
         set-option -g focus-events on
+        set-option -s set-clipboard on
         # Use ctrl+s as prefix
         unbind C-b
         set-option -g prefix C-s
