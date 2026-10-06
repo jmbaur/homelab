@@ -35,8 +35,9 @@ in
 
       environment.systemPackages = [
         pkgs.modprobed-db
-      ]
-      ++ lib.attrValues pkgs.homelab-utils;
+        pkgs.homelab-utils.nixos-kexec
+        pkgs.homelab-utils.copy
+      ];
 
       system.etc.overlay.enable = mkDefault true;
 
