@@ -372,11 +372,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791405986,
-        "narHash": "sha256-ZETmESwZGf0MbcwemilpO6Rg+8BNQYSEEojy1C3wRh8=",
+        "lastModified": 1791407297,
+        "narHash": "sha256-7oeRM95IoJpsZMhuQxOgQf4u2aV44jw1112gw3BjRY8=",
         "owner": "jmbaur",
         "repo": "openwrt-one.nix",
-        "rev": "a2065333618117dfc2d5a9f63e4af006d80c57c2",
+        "rev": "144a064e5fa8eee59d037cb60cf2c6a3cfaca621",
         "type": "github"
       },
       "original": {
