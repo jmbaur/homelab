@@ -166,6 +166,11 @@ in
 
       systemd.user.services.xdg-desktop-portal-wlr.path = [ rofi ];
 
+      # Sway doesn't run XDG autostart entries, so use the upstream user unit
+      # to create ~/Downloads, ~/Documents, etc.
+      systemd.packages = [ pkgs.xdg-user-dirs ];
+      systemd.user.services.xdg-user-dirs.wantedBy = [ "graphical-session-pre.target" ];
+
       systemd.user.services.swaybg = mkMerge [
         sessionUnit
         {
