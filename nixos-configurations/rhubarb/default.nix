@@ -62,7 +62,7 @@
         );
       };
 
-      networking.wireless.iwd.enable = true;
+      networking.wireless.enable = true;
       environment.systemPackages = [ pkgs.iw ];
 
       # Only one of wired or wireless needs to be up.

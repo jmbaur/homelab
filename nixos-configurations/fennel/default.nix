@@ -123,7 +123,7 @@ in
 
   custom.server.enable = true;
   custom.basicNetwork.enable = true;
-  networking.wireless.iwd.enable = true;
+  networking.wireless.enable = true;
 
   systemd.network.wait-online.anyInterface = true;
 

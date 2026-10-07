@@ -7,7 +7,7 @@
 let
   cfg = config.custom.basicNetwork;
 
-  hasWireless = with config.networking.wireless; enable || iwd.enable;
+  hasWireless = config.networking.wireless.enable;
 in
 {
   options.custom.basicNetwork.enable = lib.mkEnableOption "basic network setup";
@@ -15,9 +15,6 @@ in
   config = lib.mkIf cfg.enable (
     lib.mkMerge [
       {
-        # Randomize wireless card's MAC address for each connected network.
-        networking.wireless.iwd.settings.General.AddressRandomization = "network";
-
         # Enable networkmanager clat support by default
         networking.networkmanager.connectionConfig."ipv4.clat" = lib.mkDefault 1;
 
@@ -27,6 +24,13 @@ in
           5353 # mDNS
         ];
       }
+
+      (lib.mkIf (hasWireless && !config.networking.networkmanager.enable) {
+        # Without NetworkManager, networks are added with wpa_cli and saved
+        # to /etc/wpa_supplicant/imperative.conf.
+        networking.wireless.userControlled = lib.mkDefault true;
+        networking.wireless.allowAuxiliaryImperativeNetworks = lib.mkDefault true;
+      })
 
       (lib.mkIf (!config.systemd.network.enable && config.services.clatd.enable) {
         # Allow clatd to find dns server. See comment next to clatd config.

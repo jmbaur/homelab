@@ -394,7 +394,11 @@ in
 
       networking.networkmanager = {
         enable = mkDefault true;
-        wifi.backend = mkDefault "iwd";
+        # geoclue only reads nearby access points from wpa_supplicant.
+        # Without them, location lookups fall back to IP geolocation.
+        wifi.backend = mkDefault "wpa_supplicant";
+        # Random MAC address per network, stable across reconnects.
+        wifi.macAddress = mkDefault "stable";
       };
 
       hardware.bluetooth.enable = true;

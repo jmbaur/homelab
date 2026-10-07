@@ -52,7 +52,9 @@ let
     networking.hostName =
       config.networking.hostName + (optionalString (config.networking.hostName != "") "-") + "recovery";
 
-    networking.wireless.iwd = config.networking.wireless.iwd;
+    # Standalone wpa_supplicant, whether or not NetworkManager owns it in the
+    # base system.
+    networking.wireless.enable = config.networking.wireless.enable;
 
     # Reuse the substituters and trusted public keys from the parent config so
     # that nixos-install works.
