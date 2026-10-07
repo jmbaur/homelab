@@ -74,6 +74,11 @@
         enrollSecretPath = "/etc/fleet/enroll-secret";
         desktop.enable = true;
       };
+
+      # orbit launches fleet-desktop in the user's session via sudo. Upstream
+      # only resolves the wrapped sudo when /etc/NIXOS exists, which is a
+      # shitty heuristic.
+      systemd.services.orbit.path = [ "/run/wrappers" ];
     }
     {
       environment.systemPackages = [ pkgs.agentp ];

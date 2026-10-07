@@ -1,0 +1,52 @@
+From e7df9bd14005768464d56651c20479dfb5acc8d0 Mon Sep 17 00:00:00 2001
+From: Jared Baur <jaredbaur@fastmail.com>
+Date: Wed, 7 Oct 2026 09:04:54 -0700
+Subject: [PATCH] Set XDG_RUNTIME_DIR when launching processes in the Linux
+ user session
+
+Orbit launches Fleet Desktop and the setup experience browser through
+sudo, which does not set XDG_RUNTIME_DIR. Without it, Wayland clients
+cannot locate the compositor socket, so the browser exits immediately
+("Missing XDG_RUNTIME_DIR") and nothing opens.
+
+Fleet Desktop tries to recover the variable from a running
+xdg-desktop-portal or Xwayland process, but that fails when Xwayland is
+not running (e.g. sway, which starts it lazily) and the portal's process
+name does not match (on NixOS the wrapped binary appears as
+".xdg-desktop-po").
+
+Set XDG_RUNTIME_DIR=/run/user/<uid> in execuser, alongside the existing
+DBUS_SESSION_BUS_ADDRESS, which makes the same assumption.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ orbit/changes/orbit-execuser-xdg-runtime-dir | 1 +
+ orbit/pkg/execuser/execuser_linux.go         | 4 ++++
+ 2 files changed, 5 insertions(+)
+ create mode 100644 orbit/changes/orbit-execuser-xdg-runtime-dir
+
+diff --git a/orbit/changes/orbit-execuser-xdg-runtime-dir b/orbit/changes/orbit-execuser-xdg-runtime-dir
+new file mode 100644
+index 0000000000..dae4062e87
+--- /dev/null
++++ b/orbit/changes/orbit-execuser-xdg-runtime-dir
+@@ -0,0 +1 @@
++- Fixed Orbit on Linux not setting `XDG_RUNTIME_DIR` when launching Fleet Desktop and the setup experience browser in the user's session, which prevented the browser from opening on Wayland sessions.
+diff --git a/orbit/pkg/execuser/execuser_linux.go b/orbit/pkg/execuser/execuser_linux.go
+index e170b2a012..bcbd1e8b80 100644
+--- a/orbit/pkg/execuser/execuser_linux.go
++++ b/orbit/pkg/execuser/execuser_linux.go
+@@ -318,6 +318,10 @@ func getConfigForCommand(user string, path string) (args []string, env []string,
+ 		// This is required for Ubuntu 18, and not required for Ubuntu 21/22
+ 		// (because it's already part of the user).
+ 		fmt.Sprintf("DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/%s/bus", userID),
++		// XDG_RUNTIME_DIR is required by Wayland clients (e.g. the browser
++		// launched via xdg-open) to locate the compositor socket, and is not
++		// set by sudo.
++		fmt.Sprintf("XDG_RUNTIME_DIR=/run/user/%s", userID),
+ 	)
+ 
+ 	return args, env, nil
+-- 
+2.55.0
+

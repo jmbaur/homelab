@@ -101,6 +101,41 @@ inputs: {
         };
       };
 
+      # TODO: drop once nixpkgs packages an orbit release that includes
+      # https://github.com/fleetdm/fleet/pull/54098 (NixOS support).
+      fleet-orbit =
+        (prev.fleet-orbit.override { buildGoModule = final.buildGo127Module; }).overrideAttrs
+          (old: {
+            version = "1.61.0-unstable-2026-10-07";
+
+            src = final.fetchFromGitHub {
+              owner = "fleetdm";
+              repo = "fleet";
+              rev = "1bfc70f82a9f4f2347b05075bf9f233f96281cc6";
+              hash = "sha256-dHciCev0wt4Tx/9opi3lkews54inAJ7J1yks01DpqqE=";
+            };
+
+            vendorHash = "sha256-/Q1VjPi/ID3ApO5n8DdFcPK51+CAiTC0SO9RTsNw9BE=";
+
+            # Upstream now handles the NIX_ORBIT_* overrides, sudo and xdg-open
+            # on NixOS, so only the script interpreter patch is still needed.
+            patches =
+              builtins.filter (patch: final.lib.hasSuffix "-scripts-nixos.patch" (toString patch)) old.patches
+              ++ [
+                # TODO: drop once upstreamed to fleetdm/fleet
+                ./fleet-orbit-xdg-runtime-dir.patch
+              ];
+
+            postPatch = "";
+          });
+
+      # fleet-desktop takes its version and src from fleet-orbit
+      fleet-desktop =
+        (prev.fleet-desktop.override { buildGoModule = final.buildGo127Module; }).overrideAttrs
+          {
+            vendorHash = "sha256-/Q1VjPi/ID3ApO5n8DdFcPK51+CAiTC0SO9RTsNw9BE=";
+          };
+
       # Make dbus service file start the systemd service
       mako = prev.mako.overrideAttrs (old: {
         postInstall = (old.postInstall or "") + ''
