@@ -1,4 +1,19 @@
-{ pkgs, lib, ... }: {
+inputs:
+
+{ pkgs, lib, ... }:
+{
+  nixpkgs.pkgs = import inputs.nixpkgs {
+    localSystem = "x86_64-linux";
+    crossSystem = {
+      isStatic = false;
+      config = "armv7l-unknown-linux-gnueabihf";
+      gcc = {
+        arch = "armv7-a";
+        fpu = "vfpv3-d16";
+      };
+    };
+  };
+
   packages = [
     pkgs.kexec-tools
     pkgs.strace

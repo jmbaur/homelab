@@ -71,7 +71,7 @@
       (vim.api.nvim_create_autocmd [:BufWritePre]
                                    {:group format-on-save-group
                                     :buffer opts.buf
-                                    :callback (lambda []
+                                    :callback (λ []
                                                 (and (vim.lsp.buf_is_attached 0
                                                                               opts.data.client_id)
                                                      (not vim.w.no_format_on_save)
@@ -101,7 +101,7 @@
                               :callback lsp-detach})
 
 (vim.api.nvim_create_user_command :ToggleFormatOnSave
-                                  (lambda [opts]
+                                  (λ [opts]
                                     (if (or opts.bang vim.w.no_format_on_save)
                                         (set vim.w.no_format_on_save nil)
                                         (set vim.w.no_format_on_save true)))

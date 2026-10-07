@@ -1,4 +1,13 @@
-{ config, pkgs, ... }:
+{
+  config,
+  inputs,
+  pkgs,
+  ...
+}:
+
+let
+  channels = inputs.self.lib.wlan.channels.${config.networking.hostName};
+in
 
 {
   imports = [ ./router.nix ];
@@ -39,6 +48,7 @@
   services.hostapd = {
     radios.wlan0 = {
       band = "2g";
+      inherit (channels.wlan0) channel;
       countryCode = "US";
       wifi5.enable = false;
       wifi6.enable = false;
@@ -59,6 +69,11 @@
     };
     radios.wlan1 = {
       band = "5g";
+      inherit (channels.wlan1) channel;
+      settings = {
+        vht_oper_centr_freq_seg0_idx = channels.wlan1.centerChannel;
+        he_oper_centr_freq_seg0_idx = channels.wlan1.centerChannel;
+      };
       countryCode = "US";
       wifi7.enable = false;
       wifi4 = {
@@ -76,6 +91,7 @@
       };
       wifi5 = {
         enable = true;
+        operatingChannelWidth = "80";
         capabilities = [
           "MAX-MPDU-11454"
           "VHT160"

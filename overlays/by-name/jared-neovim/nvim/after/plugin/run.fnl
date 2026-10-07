@@ -10,7 +10,7 @@
 (local max-tarball-ttl (- (math.pow 2 32) 1))
 
 (fn nix-shell [attr command]
-  (lambda []
+  (λ []
     (if (nix-path-contains-nixpkgs)
         (string.format "nix shell --tarball-ttl %s nixpkgs\\#%s -c %s"
                        max-tarball-ttl attr command)
@@ -35,7 +35,7 @@
                      :chicken (nix-shell :chicken :csi)})
 
 (vim.api.nvim_create_user_command :Run
-                                  (lambda [opts]
+                                  (λ [opts]
                                     (local cmd {})
                                     (if (not= "" opts.mods)
                                         (table.insert cmd opts.mods))
@@ -59,9 +59,9 @@
                                     (vim.fn.execute (table.concat cmd " "))
                                     nil)
                                   {:nargs "?"
-                                   :complete (lambda [?arg-lead
-                                                      ?cmdline
-                                                      ?cursor-pos]
+                                   :complete (λ [?arg-lead
+                                                 ?cmdline
+                                                 ?cursor-pos]
                                                (local candidates {})
                                                (each [_index key (ipairs (vim.tbl_keys run-builtins))]
                                                  (if (= (vim.fn.match key

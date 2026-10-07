@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   ...
@@ -16,6 +17,17 @@ let
     mkForce
     nameValuePair
     ;
+
+  inherit (inputs.self.lib) wlan;
+
+  # Settings for each BSS that allow clients to roam to/from wired backhaul APs.
+  roamingSettings =
+    name:
+    wlan.roamingSettings
+    // {
+      mobility_domain = wlan.networks.${name}.mobilityDomain;
+      nas_identifier = "${config.networking.hostName}-${name}";
+    };
 in
 {
   boot.kernelParams = [ "cfg80211.ieee80211_regdom=US" ];
@@ -147,10 +159,13 @@ in
         bridge = config.router.lanInterface;
       };
       networks.wlan0 = {
-        ssid = "Silence of the LANs";
+        inherit (wlan.networks.wlan0) ssid;
         # NOTE: Add three authentication mechanisms to allow older
-        # devices that only support wpa2-sha1 to connect.
-        settings.wpa_key_mgmt = mkForce "WPA-PSK WPA-PSK-SHA256 SAE";
+        # devices that only support wpa2-sha1 to connect, plus FT-PSK for
+        # roaming between APs.
+        settings = roamingSettings "wlan0" // {
+          wpa_key_mgmt = mkForce "WPA-PSK WPA-PSK-SHA256 SAE FT-PSK";
+        };
         authentication = {
           mode = "wpa2-sha256";
           wpaPasswordFile = config.sops.secrets.wlan0.path;
@@ -161,7 +176,10 @@ in
     radios.wlan1 = {
       settings.bridge = config.router.lanInterface;
       networks.wlan1 = {
-        ssid = "SpiderLAN";
+        inherit (wlan.networks.wlan1) ssid;
+        settings = roamingSettings "wlan1" // {
+          wpa_key_mgmt = mkForce "WPA-PSK-SHA256 SAE FT-PSK";
+        };
         authentication = {
           mode = "wpa3-sae-transition";
           wpaPasswordFile = config.sops.secrets.wlan1.path;

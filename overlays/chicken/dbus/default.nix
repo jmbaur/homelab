@@ -26,12 +26,14 @@ eggDerivation rec {
   # propagated inputs reach the programs that use this egg, which is what
   # puts them in the wrapper's CHICKEN_REPOSITORY_PATH; the -L flag in the
   # egg file's link-options and the .so's runpath come from here too.
-  propagatedBuildInputs = [ dbus.lib ]
-    ++ (with chickenEggs; [
-      foreigners
-      miscmacros
-      srfi-18
-    ]);
+  propagatedBuildInputs = [
+    dbus.lib
+  ]
+  ++ (with chickenEggs; [
+    foreigners
+    miscmacros
+    srfi-18
+  ]);
   # The FFI code includes <dbus/dbus.h>, which lives in the dev output; a
   # build-time-only dependency, so it stays out of the runtime closure.
   depsBuildTarget = [ dbus.dev ];

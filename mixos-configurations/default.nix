@@ -6,6 +6,8 @@ let
     filterAttrs
     flip
     mapAttrs
+    mkOption
+    types
     ;
 in
 
@@ -14,20 +16,19 @@ mapAttrs (flip (
     name:
     inputs.mixos.lib.mixosSystem {
       modules = [
+        # Options for all mixos configurations within this flake.
         {
-          nixpkgs.pkgs = import inputs.nixpkgs {
-            localSystem = "x86_64-linux";
-            crossSystem = {
-              isStatic = false;
-              config = "armv7l-unknown-linux-gnueabihf";
-              gcc = {
-                arch = "armv7-a";
-                fpu = "vfpv3-d16";
-              };
-            };
+          options.custom.hydraJobs = mkOption {
+            type = types.listOf types.str;
+            default = [ "toplevel" ];
+            description = ''
+              Attributes of `system.build` to build in CI. Anything beyond
+              the toplevel is specific to the hardware a configuration runs
+              on, such as images used to update or install the machine.
+            '';
           };
         }
-        ./${name}
+        (import ./${name} inputs)
       ];
     }
   )

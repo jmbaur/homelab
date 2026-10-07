@@ -14,7 +14,7 @@
 ; line1_fmt: accepts 1 arg (line 1)
 ; line2_fmt: accepts 1 arg (line 2)
 (fn construct-url [base-url-fmt line1-fmt line2-fmt]
-  (lambda [args remote-url rev git-file]
+  (λ [args remote-url rev git-file]
     (let [(line1 line2) (unpack (get-range args))]
       (var url (string.format base-url-fmt remote-url rev git-file))
       (when (not= line1 nil)
@@ -52,7 +52,7 @@
       (. found-forge 1)))
 
 (vim.api.nvim_create_user_command :Permalink
-                                  (lambda [opts]
+                                  (λ [opts]
                                     (local current-file
                                            (vim.fs.normalize (vim.fn.expand "%")))
                                     (local repo-dir
@@ -77,7 +77,7 @@
                                         (error "working tree is dirty"
                                                vim.log.levels.ERROR))
                                     (local remote-refspecs
-                                           (vim.tbl_filter (lambda [value]
+                                           (vim.tbl_filter (λ [value]
                                                              (not= (vim.fn.match value
                                                                                  ".*\\/HEAD -> .*")
                                                                    0))

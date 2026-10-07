@@ -13,6 +13,7 @@
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     nix-index-database.url = "github:nix-community/nix-index-database";
     nixos-router.url = "github:jmbaur/nixos-router";
+    openwrt-one.url = "github:jmbaur/openwrt-one.nix";
     quartus-nix.url = "github:jmbaur/quartus-nix";
     sops-nix.url = "github:Mic92/sops-nix";
     tinyboot.url = "github:jmbaur/tinyboot";
@@ -30,6 +31,8 @@
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
     nixos-router.inputs.git-hooks.follows = "";
     nixos-router.inputs.nixpkgs.follows = "nixpkgs";
+    openwrt-one.inputs.mixos.follows = "mixos";
+    openwrt-one.inputs.nixpkgs.follows = "nixpkgs";
     quartus-nix.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     tinyboot.inputs.nixpkgs.follows = "nixpkgs";
@@ -46,6 +49,7 @@
     homeConfigurations = import ./home-configurations inputs;
     hydraJobs = import ./hydra-jobs inputs;
     legacyPackages = import ./legacy-packages.nix inputs;
+    lib = import ./lib;
     mixosConfigurations = import ./mixos-configurations inputs;
     nixosConfigurations = import ./nixos-configurations inputs;
     nixosModules = import ./nixos-modules inputs;
