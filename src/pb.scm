@@ -49,12 +49,35 @@
       (newline))
     (write-utf8-margin margin real-width)))
 
+(define (write-json-escape n)
+  (let ((hex (number->string n 16)))
+    (display "\\u")
+    (display (make-string (- 4 (string-length hex)) #\0))
+    (display hex)))
+
+;; http-client/intarweb compute Content-Length (and chunk sizes) in
+;; characters, not bytes, so any multi-byte UTF-8 truncates the body. Escaping
+;; non-ASCII as \uXXXX keeps the JSON pure ASCII, where the two agree.
+(define (json-ascii str)
+  (with-output-to-string
+    (lambda ()
+      (string-for-each
+	(lambda (c)
+	  (let ((n (char->integer c)))
+	    (cond ((< n #x80) (write-char c))
+		  ((< n #x10000) (write-json-escape n))
+		  (else (let ((m (- n #x10000)))
+			  (write-json-escape (+ #xd800 (quotient m #x400)))
+			  (write-json-escape (+ #xdc00 (remainder m #x400))))))))
+	str))))
+
 (let* ((uri-raw "https://paste.jmbaur.com")
        (uri (uri-reference uri-raw))
-       (post-data (with-output-to-string
-		    (lambda ()
-		      (json-write `((text . ,(read-string #f (current-input-port))))
-				  (current-output-port)))))
+       (post-data (json-ascii
+		    (with-output-to-string
+		      (lambda ()
+			(json-write `((text . ,(read-string #f (current-input-port))))
+				    (current-output-port))))))
        (req (make-request method: 'POST
 			  uri: uri
 			  headers: (headers '((content-type application/json)))))

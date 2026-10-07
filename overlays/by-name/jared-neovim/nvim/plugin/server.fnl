@@ -18,6 +18,30 @@
     (if (not= path vim.v.servername)
         (detached-server path))))
 
+;; Session-specific variables that go stale when the original UI's session ends
+;; (e.g. SSH_AUTH_SOCK, needed for git commit signing through the SSH agent).
+(local session-env [:SSH_AUTH_SOCK
+                    :SSH_CONNECTION
+                    :SSH_CLIENT
+                    :SSH_TTY
+                    :DISPLAY
+                    :WAYLAND_DISPLAY])
+
+(fn sync-env [path]
+  "Copy this session's environment into the server at `path`, unsetting
+  variables that aren't set here. Affects processes the server spawns
+  afterwards, not ones already running (e.g. existing :terminal shells)."
+  (let [env (collect [_ name (ipairs session-env)]
+              name
+              (. vim.env name))
+        (ok chan) (pcall vim.fn.sockconnect :pipe path {:rpc true})]
+    (when (and ok (> chan 0))
+      (pcall vim.rpcrequest chan :nvim_exec_lua
+             "local names, env = ...
+              for _, name in ipairs(names) do vim.env[name] = env[name] end"
+             [session-env env])
+      (vim.fn.chanclose chan))))
+
 (fn empty-startup? []
   ;; No files, stdin, or startup commands (e.g. MANPAGER="nvim +Man!") that
   ;; would be lost by connecting elsewhere.
@@ -40,5 +64,6 @@
                                                                (λ [server]
                                                                  ;; ! stops this (empty) server once the UI leaves it.
                                                                  (when server
+                                                                   (sync-env server.path)
                                                                    (vim.cmd.connect {:args [server.path]
                                                                                      :bang true}))))))))})

@@ -41,6 +41,30 @@
       services.cloudflare-warp.enable = true;
       nixpkgs.config.allowUnfree = true;
 
+      # warp-svc can't parse systemd's "261.3" version string, so it never
+      # registers its DNS proxy with resolved and falls back to writing
+      # /etc/resolv.conf, which nss-resolve ignores. Its connectivity check
+      # then can't resolve connectivity-check.warp-svc and it never leaves
+      # "Connecting". Do the registration it would have done.
+      systemd.services.cloudflare-warp-resolved = {
+        description = "Route DNS through the Cloudflare WARP resolver";
+        bindsTo = [ "sys-subsystem-net-devices-CloudflareWARP.device" ];
+        after = [
+          "sys-subsystem-net-devices-CloudflareWARP.device"
+          "systemd-resolved.service"
+        ];
+        wantedBy = [ "sys-subsystem-net-devices-CloudflareWARP.device" ];
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+          ExecStart = [
+            "${config.systemd.package}/bin/resolvectl dns CloudflareWARP 127.0.2.2 127.0.2.3"
+            "${config.systemd.package}/bin/resolvectl domain CloudflareWARP ~."
+            "${config.systemd.package}/bin/resolvectl default-route CloudflareWARP yes"
+          ];
+        };
+      };
+
       hardware.saleae-logic.enable = true;
       services.udev.packages = [ pkgs.kingstvis ];
       environment.systemPackages = [
