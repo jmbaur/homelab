@@ -1,8 +1,5 @@
 (vim.loader.enable)
 
-(if (. vim.env :SSH_CONNECTION)
-    (vim.cmd ":detach!"))
-
 (local is-dumb-term (not= (: (vim.regex "linux\\|vt220\\|vt202\\|dumb")
                              :match_str vim.env.TERM)
                           nil))
