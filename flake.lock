@@ -185,11 +185,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791396863,
-        "narHash": "sha256-a7y6QS0sAmrNekj68O3C4hPlBHAUbR/uosa9IPyTFZ4=",
+        "lastModified": 1791403455,
+        "narHash": "sha256-xnsHKyMvHCLxS1R+v4VNvZOkPPfh9V/rsbDG4TCn4+c=",
         "owner": "anduril",
         "repo": "jetpack-nixos",
-        "rev": "0272b57ffee0c7f45222a5b91000e4310c648a95",
+        "rev": "a6ddfe0a5ce07c711163abbfea0b8cf9c5d068d5",
         "type": "github"
       },
       "original": {
@@ -372,11 +372,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791397052,
-        "narHash": "sha256-F+n9R1axxBwrn7Cqm4o9OFUTa27O3/KymkKW/NQH3L0=",
+        "lastModified": 1791405986,
+        "narHash": "sha256-ZETmESwZGf0MbcwemilpO6Rg+8BNQYSEEojy1C3wRh8=",
         "owner": "jmbaur",
         "repo": "openwrt-one.nix",
-        "rev": "07222977eebf17a1351cf38b96c2fb8101972e8e",
+        "rev": "a2065333618117dfc2d5a9f63e4af006d80c57c2",
         "type": "github"
       },
       "original": {
