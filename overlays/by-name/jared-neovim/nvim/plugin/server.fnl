@@ -12,9 +12,14 @@
         (if (and ok (= 0 (length uis)))
             {: path : cwd})))))
 
+(fn server-glob []
+  (let [run (vim.fn.stdpath :run)]
+    (if (= run (vim.fs.dirname (vim.fn.tempname)))
+        (vim.fs.joinpath (vim.fs.dirname run) :* :nvim.*.0)
+        (vim.fs.joinpath run :nvim.*.0))))
+
 (fn detached-servers []
-  (icollect [_ path (ipairs (vim.fn.glob (.. (vim.fn.stdpath :run) :/nvim.*.0)
-                                         false true))]
+  (icollect [_ path (ipairs (vim.fn.glob (server-glob) false true))]
     (if (not= path vim.v.servername)
         (detached-server path))))
 
