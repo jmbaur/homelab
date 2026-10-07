@@ -197,6 +197,9 @@ let
       users.users.root.hashedPasswordFile = "${pkgs.writeText "hashed-password.root" ""}";
       users.mutableUsers = false;
 
+      # Allow the initrd emergency shell to work
+      boot.initrd.systemd.emergencyAccess = true;
+
       custom.basicNetwork.enable = true;
 
       # We don't care which interface gives us network connectivity in the

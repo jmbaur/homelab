@@ -19,6 +19,8 @@
         "xhci_pci"
         "thunderbolt"
         "nvme"
+        "usb_storage"
+        "uas"
       ];
       boot.initrd.kernelModules = [ ];
       boot.kernelModules = [ "kvm-intel" ];
