@@ -42,6 +42,12 @@ inputs: {
 
     # cross-compilation fixes
     (_final: prev: {
+      # The hotdoc docs run a freshly built tool (generate_md_opcodes_table),
+      # which needs an exe_wrapper when cross-compiling.
+      orc = prev.orc.override {
+        buildDevDoc = prev.stdenv.buildPlatform.canExecute prev.stdenv.hostPlatform;
+      };
+
       perlPackages = prev.perlPackages.overrideScope (
         _: perlPackagesPrev: {
           NetDNS = perlPackagesPrev.NetDNS.overrideAttrs (old: {
