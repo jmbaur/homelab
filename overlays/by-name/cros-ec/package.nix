@@ -14,12 +14,12 @@
 
 stdenv.mkDerivation {
   pname = "cros-ec-${board}";
-  version = "R139";
+  version = "R154";
 
   src = fetchFromGitiles {
     url = "https://chromium.googlesource.com/chromiumos/platform/ec";
-    rev = "24fb02dc0b0e62f0e40d5624aaed2bfa3b81b7f1"; # release-R139-16328.B-main
-    hash = "sha256-3uG7QZsMROD6nf6++mrHM2O7ekhY9X4B7wTX8Es69/I=";
+    rev = "ea43872eaadb3ab8d044fa6dbcc9a6b4ef72efc2"; # release-R154-16805.B-ec-legacy
+    hash = "sha256-YOnrhmjfN11fmgHRjLm4Jlg+XOhFzu4yXcY2PIkm3f8=";
   };
 
   postPatch = ''

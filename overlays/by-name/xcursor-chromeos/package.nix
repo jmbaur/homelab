@@ -8,7 +8,9 @@
 
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "xcursor-chromeos";
-  version = "136.0.7068.1";
+  # M140 is the last release with PNG pointers; M141+ only ships Lottie JSON
+  # under ui/resources/vector/common/pointers.
+  version = "140.0.7339.207";
 
   # The tarballs from gitiles are not reproducible, so fetch the tarball and
   # immediately unpack it so our FOD is reproducible.
@@ -20,7 +22,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         tar -C $tmp -xvf $downloadedFile
         rm -f $out; mv $tmp $out
       '';
-      hash = "sha256-KQf0Hz5pubo2NCPAoZH1v9mvLA3X0DPo4FWvrX6PJgo=";
+      hash = "sha256-5wsQ8KW+UIf/nupmhkcMJmOzdY4VWlVIEDdTQlSyYOA=";
     }).overrideAttrs
       {
         outputHashMode = "recursive";
