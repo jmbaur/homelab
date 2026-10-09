@@ -414,19 +414,6 @@ in
       # plus setting this to true means that geoclue will be dependent on avahi
       # being enabled, since NMEA support in geoclue uses avahi.
       services.geoclue2.enableNmea = mkDefault false;
-
-      # The module writes no [ip] section, so geoclue disables the source and
-      # wifi is the only one left. The url falls back to services.geoclue2.geoProviderUrl.
-      environment.etc."geoclue/conf.d/10-ip-source.conf".text = ''
-        [ip]
-        enable=true
-        method=ichnaea
-      '';
-
-      # The module only triggers off its own geoclue.conf.
-      systemd.services.geoclue.restartTriggers = [
-        config.environment.etc."geoclue/conf.d/10-ip-source.conf".source
-      ];
     }
   ]);
 }
