@@ -29,6 +29,10 @@ buildArmTrustedFirmware rec {
 
   enableParallelBuilding = true;
 
+  # gcc 16 catches unused-but-set variables in mv_ddr that older gccs missed,
+  # and mv_ddr builds with -Werror.
+  env.NIX_CFLAGS_COMPILE = "-Wno-error=unused-but-set-variable";
+
   filesToInstall = [ "build/${platform}/release/flash-image.bin" ];
 
   extraMeta.platforms = [ "aarch64-linux" ];
