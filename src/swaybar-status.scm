@@ -94,7 +94,8 @@
 
 ;; --- block handlers -------------------------------------------------------
 ;;
-;; Each handler takes no arguments and returns the text to display. A helper
+;; Each handler takes no arguments and returns an alist: text is what to
+;; display, and a true urgent has sway draw the block as urgent. A helper
 ;; a handler calls is captured when the handler is defined, so after changing
 ;; one, redefine the handler too.
 
@@ -107,12 +108,12 @@
     property))
 
 (define (battery-percentage)
-  (format "BAT: ~a%"
-	  (inexact->exact
-	    (floor (dbus-get-property 'org.freedesktop.UPower
-				      "/org/freedesktop/UPower/devices/DisplayDevice"
-				      'org.freedesktop.UPower.Device
-				      'Percentage)))))
+  (let ((percentage (inexact->exact
+		      (floor (dbus-get-property 'org.freedesktop.UPower
+						"/org/freedesktop/UPower/devices/DisplayDevice"
+						'org.freedesktop.UPower.Device
+						'Percentage)))))
+    (list (cons 'urgent (< percentage 20)) (cons 'text (format "BAT: ~a%" percentage)))))
 
 (define (network-state-name state)
   ;; https://www.networkmanager.dev/docs/api/latest/nm-dbus-types.html#NMState
@@ -129,17 +130,17 @@
 				  "/org/freedesktop/NetworkManager"
 				  'org.freedesktop.NetworkManager
 				  'State)))
-    (format "NET: ~a" (if state (network-state-name state) "unknown"))))
+    (list (cons 'text (format "NET: ~a" (if state (network-state-name state) "unknown"))))))
 
 (define (timezone)
   (let ((tz (dbus-get-property 'org.freedesktop.timedate1
 			       "/org/freedesktop/timedate1"
 			       'org.freedesktop.timedate1
 			       'Timezone)))
-    (format "TZ: ~a" tz)))
+    (list (cons 'text (format "TZ: ~a" tz)))))
 
 (define (clock)
-  (time->string (seconds->local-time (current-seconds)) "%D %T"))
+  (list (cons 'text (time->string (seconds->local-time (current-seconds)) "%D %T"))))
 
 ;; --- rendering ------------------------------------------------------------
 
@@ -180,7 +181,11 @@
 ;; replacing it:
 ;;
 ;;   (define plain-timezone timezone)
-;;   (define (timezone) (string-append "\U0001F552 " (plain-timezone)))
+;;   (define (timezone)
+;;     (let ((result (plain-timezone)))
+;;       (alist-update 'text
+;;                     (string-append "\U0001F552 " (alist-ref 'text result))
+;;                     result)))
 (define (block-fn block)
   (let ((handler (block-handler block)))
     (if (procedure? handler) handler (eval handler))))
@@ -195,7 +200,7 @@
     (json-object
       (cons 'name (symbol->string (block-name block)))
       (cons 'full_text (format "~a: error" (block-name block)))
-      (cons 'color "#ff0000"))))
+      (cons 'urgent #t))))
 
 (define (render-block block handler)
   (let ((result (catch-error (lambda () (handler)))))
@@ -205,7 +210,8 @@
 	(set-block-last-error! block #f)
 	(json-object
 	  (cons 'name (symbol->string (block-name block)))
-	  (cons 'full_text (textify result)))))))
+	  (cons 'full_text (textify (alist-ref 'text result)))
+	  (cons 'urgent (alist-ref 'urgent result)))))))
 
 ;; The frame a block contributes on this tick. A dbus-driven block keeps its
 ;; last value until a signal invalidates it, except that a handler or a path
@@ -301,7 +307,7 @@
 	    (list (json-object
 		    (cons 'name "swaybar")
 		    (cons 'full_text message)
-		    (cons 'color "#ff0000")))))
+		    (cons 'urgent #t)))))
 	(begin
 	  (set! last-tick-error #f)
 	  (emit-frame result))))
