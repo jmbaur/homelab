@@ -56,6 +56,10 @@ lib.extendMkDerivation {
       strictDeps = true;
       enableParallelBuilding = true;
 
+      # glibc's C23 strchr() and friends return a const pointer when given
+      # one, which vboot's -Werror host utilities don't account for yet.
+      env.NIX_CFLAGS_COMPILE_FOR_BUILD = "-Wno-error=discarded-qualifiers";
+
       inherit kconfig;
       passAsFile = [ "kconfig" ];
 
