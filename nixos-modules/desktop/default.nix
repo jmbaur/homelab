@@ -166,6 +166,13 @@ in
 
       systemd.user.services.xdg-desktop-portal-wlr.path = [ rofi ];
 
+      # org.freedesktop.secrets, unlocked with the login password (greetd's PAM
+      # stack includes login, which the oo7 module adds pam_oo7 to)
+      services.oo7.enable = true;
+      # Sway's portals.conf sends everything else to gtk, which has no Secret
+      # portal, and oo7-portal only declares itself for GNOME.
+      xdg.portal.config.sway."org.freedesktop.impl.portal.Secret" = "oo7-portal";
+
       # Sway doesn't run XDG autostart entries, so use the upstream user unit
       # to create ~/Downloads, ~/Documents, etc.
       systemd.packages = [ pkgs.xdg-user-dirs ];

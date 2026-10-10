@@ -1,9 +1,6 @@
 # general
 - recovery key enrollment
 
-# desktop
-- use https://github.com/ylxdzsw/dssd for org.freedesktop.secrets implementation
-
 # misc
 - multicast on celery: see https://forum.turris.cz/t/solved-mdns-avahi-zeroconf-on-bridges-e-g-br-lan/1150
 
