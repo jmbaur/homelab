@@ -48,6 +48,14 @@ inputs: {
         buildDevDoc = prev.stdenv.buildPlatform.canExecute prev.stdenv.hostPlatform;
       };
 
+      # rdma-core doesn't cross-compile (CMake's FindPython rejects the build
+      # platform's interpreter), and RDMA capture isn't something we need.
+      libpcap = prev.libpcap.override (
+        prev.lib.optionalAttrs (!prev.stdenv.buildPlatform.canExecute prev.stdenv.hostPlatform) {
+          withRdma = false;
+        }
+      );
+
       perlPackages = prev.perlPackages.overrideScope (
         _: perlPackagesPrev: {
           NetDNS = perlPackagesPrev.NetDNS.overrideAttrs (old: {
