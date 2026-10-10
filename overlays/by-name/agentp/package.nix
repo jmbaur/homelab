@@ -1,17 +1,29 @@
 {
   autoPatchelfHook,
+  dbus,
   dpkg,
   fetchurl,
-  libgcc,
   libglvnd,
+  libredirect,
   libuuid,
   libx11,
   libxcb,
   libxi,
+  makeWrapper,
   stdenv,
   zlib,
 }:
 
+let
+  # agentp hard-codes /var/agentp for everything (state, logs, unix sockets,
+  # per-user lock files). Use libredirect to move those to standard
+  # locations, which needs a few more wrappers than upstream has (most
+  # importantly lstat, without which the daemon resets its config on every
+  # start).
+  libredirect' = libredirect.overrideAttrs (old: {
+    patches = (old.patches or [ ]) ++ [ ./libredirect-more-wrappers.patch ];
+  });
+in
 stdenv.mkDerivation {
   pname = "agentp";
   version = "1.1.64";
@@ -27,39 +39,75 @@ stdenv.mkDerivation {
   nativeBuildInputs = [
     autoPatchelfHook
     dpkg
+    makeWrapper
   ];
 
-  # TODO(jared): this shouldn't be needed
-  autoPatchelfIgnoreMissingDeps = true;
-
-  runtimeDependencies = [
-    libgcc
+  buildInputs = [
+    stdenv.cc.cc.lib
     libglvnd
-    libuuid.lib
+    libuuid
     libx11
     libxcb
     libxi
     zlib
   ];
 
+  # dlopen'ed by the UI for its tray icon
+  runtimeDependencies = [ dbus.lib ];
+
   dontConfigure = true;
   dontBuild = true;
 
   installPhase = ''
     runHook preInstall
-    mkdir -p $out/share $out/lib $out/opt
-    install -D -t $out/bin usr/bin/agentp{,d}
-    cp -r usr/share/applications $out/share
-    cp -r lib/systemd $out/lib
-    cp -r opt/agentp $out/opt
-    substituteInPlace $out/lib/systemd/system/agentpd.service \
-      --replace-fail /usr/bin ${placeholder "out"}/bin
-    substituteInPlace $out/share/applications/agentp.desktop \
-      --replace-fail /opt ${placeholder "out"}/opt \
-      --replace-fail /usr/bin ${placeholder "out"}/bin
-    substituteInPlace $out/share/applications/agentp-handler.desktop \
-      --replace-fail /opt ${placeholder "out"}/opt \
-      --replace-fail /usr/bin ${placeholder "out"}/bin
+
+    install -D -t $out/libexec/agentp usr/bin/agentp{,d}
+    install -D -t $out/opt/agentp opt/agentp/agentp.ico
+
+    # The daemon (run as root by systemd) keeps its state and logs in
+    # /var/lib/agentp and /var/log/agentp.
+    makeWrapper $out/libexec/agentp/agentpd $out/libexec/agentp/agentpd-daemon \
+      --prefix LD_PRELOAD : ${libredirect'}/lib/libredirect.so \
+      --set NIX_REDIRECTS /var/agentp/logs=/var/log/agentp:/var/agentp=/var/lib/agentp
+
+    # Clients (UI and CLI, run as any user) talk to the daemon's sockets in
+    # /var/lib/agentp, and keep their own logs and single-instance locks in
+    # per-user directories instead of a world-writable /var/agentp.
+    for bin in agentp agentpd; do
+      makeWrapper $out/libexec/agentp/$bin $out/bin/$bin \
+        --prefix LD_PRELOAD : ${libredirect'}/lib/libredirect.so \
+        --run 'agentp_state=''${XDG_STATE_HOME:-$HOME/.local/state}/agentp' \
+        --run 'mkdir -p "$agentp_state"' \
+        --run 'export NIX_REDIRECTS="/var/agentp/logs=$agentp_state:/var/agentp/inst=''${XDG_RUNTIME_DIR:-/tmp}/agentp-inst:/var/agentp=/var/lib/agentp"'
+    done
+
+    install -D -m644 /dev/stdin $out/lib/systemd/system/agentpd.service <<EOF
+    [Unit]
+    Description=Portnox AgentP
+    After=network.target
+
+    [Service]
+    Type=simple
+    ExecStart=$out/libexec/agentp/agentpd-daemon -d
+    Restart=on-failure
+    RestartSec=5s
+    StateDirectory=agentp
+    LogsDirectory=agentp
+    PrivateTmp=true
+
+    [Install]
+    WantedBy=multi-user.target
+    EOF
+
+    mkdir -p $out/share/applications
+    for desktop in agentp agentp-handler; do
+      substitute usr/share/applications/$desktop.desktop $out/share/applications/$desktop.desktop \
+        --replace-fail /opt $out/opt \
+        --replace-fail /usr/bin $out/bin
+    done
+
     runHook postInstall
   '';
+
+  meta.platforms = [ "x86_64-linux" ];
 }

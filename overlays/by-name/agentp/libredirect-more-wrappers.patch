@@ -1,0 +1,117 @@
+--- a/libredirect.c	2026-10-10 18:17:48.054568365 -0500
++++ b/libredirect.c	2026-10-10 18:17:48.060646463 -0500
+@@ -599,6 +599,114 @@
+ }
+ WRAPPER_DEF(rmdir)
+ 
++#ifdef __linux__
++WRAPPER(int, __lxstat)(int ver, const char * path, struct stat * st)
++{
++    int (*__lxstat_real) (int ver, const char *, struct stat *) = LOOKUP_REAL(__lxstat);
++    char buf[PATH_MAX];
++    return __lxstat_real(ver, rewrite(path, buf), st);
++}
++WRAPPER_DEF(__lxstat)
++
++WRAPPER(int, __lxstat64)(int ver, const char * path, struct stat64 * st)
++{
++    int (*__lxstat64_real) (int ver, const char *, struct stat64 *) = LOOKUP_REAL(__lxstat64);
++    char buf[PATH_MAX];
++    return __lxstat64_real(ver, rewrite(path, buf), st);
++}
++WRAPPER_DEF(__lxstat64)
++#endif
++
++WRAPPER(int, lstat)(const char * path, struct stat * st)
++{
++    int (*lstat_real) (const char *, struct stat *) = LOOKUP_REAL(lstat);
++    char buf[PATH_MAX];
++    return lstat_real(rewrite(path, buf), st);
++}
++WRAPPER_DEF(lstat)
++
++// In musl libc, lstat64 is simply a macro for lstat
++#if !defined(__APPLE__) && !defined(lstat64)
++WRAPPER(int, lstat64)(const char * path, struct stat64 * st)
++{
++    int (*lstat64_real) (const char *, struct stat64 *) = LOOKUP_REAL(lstat64);
++    char buf[PATH_MAX];
++    return lstat64_real(rewrite(path, buf), st);
++}
++WRAPPER_DEF(lstat64)
++#endif
++
++WRAPPER(int, rename)(const char *oldpath, const char *newpath)
++{
++    int (*rename_real) (const char *, const char *) = LOOKUP_REAL(rename);
++    char oldbuf[PATH_MAX];
++    char newbuf[PATH_MAX];
++    return rename_real(rewrite(oldpath, oldbuf), rewrite(newpath, newbuf));
++}
++WRAPPER_DEF(rename)
++
++WRAPPER(int, renameat)(int olddirfd, const char *oldpath, int newdirfd, const char *newpath)
++{
++    int (*renameat_real) (int, const char *, int, const char *) = LOOKUP_REAL(renameat);
++    char oldbuf[PATH_MAX];
++    char newbuf[PATH_MAX];
++    return renameat_real(olddirfd, rewrite(oldpath, oldbuf), newdirfd, rewrite(newpath, newbuf));
++}
++WRAPPER_DEF(renameat)
++
++WRAPPER(int, link)(const char *oldpath, const char *newpath)
++{
++    int (*link_real) (const char *, const char *) = LOOKUP_REAL(link);
++    char oldbuf[PATH_MAX];
++    char newbuf[PATH_MAX];
++    return link_real(rewrite(oldpath, oldbuf), rewrite(newpath, newbuf));
++}
++WRAPPER_DEF(link)
++
++WRAPPER(int, symlink)(const char *target, const char *linkpath)
++{
++    int (*symlink_real) (const char *, const char *) = LOOKUP_REAL(symlink);
++    char targetbuf[PATH_MAX];
++    char linkbuf[PATH_MAX];
++    return symlink_real(rewrite(target, targetbuf), rewrite(linkpath, linkbuf));
++}
++WRAPPER_DEF(symlink)
++
++WRAPPER(ssize_t, readlink)(const char *path, char *out, size_t bufsiz)
++{
++    ssize_t (*readlink_real) (const char *, char *, size_t) = LOOKUP_REAL(readlink);
++    char buf[PATH_MAX];
++    return readlink_real(rewrite(path, buf), out, bufsiz);
++}
++WRAPPER_DEF(readlink)
++
++WRAPPER(char *, realpath)(const char *path, char *resolved_path)
++{
++    char * (*realpath_real) (const char *, char *) = LOOKUP_REAL(realpath);
++    char buf[PATH_MAX];
++    return realpath_real(rewrite(path, buf), resolved_path);
++}
++WRAPPER_DEF(realpath)
++
++WRAPPER(int, truncate)(const char *path, off_t length)
++{
++    int (*truncate_real) (const char *, off_t) = LOOKUP_REAL(truncate);
++    char buf[PATH_MAX];
++    return truncate_real(rewrite(path, buf), length);
++}
++WRAPPER_DEF(truncate)
++
++// In musl libc, truncate64 is simply a macro for truncate
++#if !defined(__APPLE__) && !defined(truncate64)
++WRAPPER(int, truncate64)(const char *path, off64_t length)
++{
++    int (*truncate64_real) (const char *, off64_t) = LOOKUP_REAL(truncate64);
++    char buf[PATH_MAX];
++    return truncate64_real(rewrite(path, buf), length);
++}
++WRAPPER_DEF(truncate64)
++#endif
++
+ static void copy_temp_wildcard(char * dest, char * src, int suffixlen) {
+     int dest_len = strnlen(dest, PATH_MAX);
+     int src_len = strnlen(src, PATH_MAX);

@@ -108,15 +108,30 @@
       environment.systemPackages = [ pkgs.agentp ];
 
       systemd.packages = [ pkgs.agentp ];
-      systemd.services.agentpd.path = [
-        "/run/wrappers" # sudo
-        pkgs.coreutils-full
-        pkgs.findutils
-        pkgs.gawk
-        pkgs.iproute2
-        pkgs.lsof
-      ]
-      ++ lib.optionals config.networking.networkmanager.enable [ pkgs.networkmanager ];
+      systemd.services.agentpd = {
+        wantedBy = [ "multi-user.target" ];
+        path = [
+          "/run/wrappers" # sudo
+          pkgs.coreutils-full
+          pkgs.dmidecode
+          pkgs.findutils
+          pkgs.gawk
+          pkgs.iproute2
+          pkgs.lshw
+          pkgs.lsof
+        ]
+        ++ lib.optionals config.networking.networkmanager.enable [ pkgs.networkmanager ];
+      };
+
+      # Sway doesn't run XDG autostart entries, which is how upstream starts
+      # the tray UI.
+      systemd.user.services.agentp = {
+        description = "Portnox AgentP tray";
+        wantedBy = [ "graphical-session.target" ];
+        partOf = [ "graphical-session.target" ];
+        after = [ "graphical-session.target" ];
+        serviceConfig.ExecStart = "${lib.getExe' pkgs.agentp "agentp"} -a";
+      };
     }
   ];
 }
