@@ -25,8 +25,8 @@ let
       src = fetchFromGitHub {
         owner = "mtk-openwrt";
         repo = "arm-trusted-firmware";
-        rev = "78a0dfd927bb00ce973a1f8eb4079df0f755887a"; # mtksoc-20250711 branch
-        hash = "sha256-m9ApkBVf0I11rNg68vxofGRJ+BcnlM6C+Zrn8TfMvbY=";
+        rev = "476cf6629f7675c9857b59458851dda64de88343"; # mtksoc-20260123 branch
+        hash = "sha256-YYDu8seFAgpiO0NHIJ2xXmaSETJx0AB8F5jbC8fN52s=";
       };
 
       strictDeps = true;

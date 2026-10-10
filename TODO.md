@@ -7,40 +7,6 @@
 # misc
 - multicast on celery: see https://forum.turris.cz/t/solved-mdns-avahi-zeroconf-on-bridges-e-g-br-lan/1150
 
-# celery
-solve issues at early boot
-
-```
-[    0.527711] mtk-socinfo mtk-socinfo.0.auto: error -ENOENT: Failed to get socinfo data
-[    0.527816] mtk-socinfo mtk-socinfo.0.auto: probe with driver mtk-socinfo failed with error -2
-[    1.266381] mtk_soc_eth 15100000.ethernet: generated random MAC address ba:1c:62:2c:c5:c5
-[    1.781750] mt7986a-pinctrl 1001f000.pinctrl: pin GPIO_4 already requested by 11280000.pcie; cannot claim for pinctrl_moore:521
-[    1.793267] mt7986a-pinctrl 1001f000.pinctrl: error -EINVAL: pin-9 (pinctrl_moore:521)
-[    1.801186] gpio-keys gpio-keys: error -EINVAL: failed to get gpio
-[    1.807369] gpio-keys gpio-keys: probe with driver gpio-keys failed with error -22
-```
-
-```
-Jan 12 02:12:48 celery kernel: mtdblock: MTD device 'reserved' is NAND, please consider using UBI block devices instead.
-Jan 12 02:12:48 celery kernel: mtdblock: MTD device 'bl2' is NAND, please consider using UBI block devices instead.
-Jan 12 02:12:48 celery kernel: mtdblock: MTD device 'ubi' is NAND, please consider using UBI block devices instead.
-Jan 12 02:12:48 celery kernel: mtdblock: MTD device 'fip' is NAND, please consider using UBI block devices instead.
-```
-
-solve reboot issues (hangs indefinitely) https://freedesktop.org/wiki/Software/systemd/Debugging/#diagnosingshutdownproblems
-
-```
-[  OK  ] Removed slice Slice /system/systemd-zram-setup.
-[  OK  ] Reached target System Shutdown.
-[  OK  ] Reached target Late Shutdown Services.
-[  OK  ] Finished System Reboot.
-[  OK  ] Reached target System Reboot.
-[   36.395811] watchdog: watchdog0: watchdog did not stop!
-[   36.640219] watchdog: watchdog0: watchdog did not stop!
-[   37.056180] watchdog: watchdog0: watchdog did not stop!
-[   37.084829] reboot: Restarting system
-```
-
 # radish
 solve panic on early boot
 ```

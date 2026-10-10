@@ -50,6 +50,11 @@
           NET_DSA_MT7530 = yes;
           NET_DSA_TAG_MTK = yes;
           NET_MEDIATEK_SOC = yes;
+          # Only knows about Chromebook/Genio SoCs, fails to probe on mt7986
+          MTK_SOCINFO = no;
+          # Nothing uses the mtdblock devices (UBI and flashcp use the MTD
+          # character devices), and it warns about each NAND partition.
+          MTD_BLOCK = no;
         };
       }
       {
@@ -90,12 +95,6 @@
     ];
 
     boot.kernelParams = [
-      # TODO(jared): There is an issue where uboot advertises the ability to
-      # perform a reset via the EFI runtime services, however the linux kernel
-      # hangs indefinitely when it attempts to use it, so in the meantime,
-      # don't use it!
-      "efi=noruntime"
-
       # TODO(jared): Sometimes the mt7530 MDIO bus will timeout. This seems to
       # prevent that from happening.
       "clk_ignore_unused"
@@ -108,10 +107,11 @@
       "ubi"
     ];
 
-    # WED only accelerates flows offloaded to the PPE via an nftables
-    # flowtable with "flags offload", see nftables-flow-offload below.
+    # TODO(jared): WED makes wifi clients flaky, even on 7.3-rc6 with the WCID
+    # fix. Wired flows are still offloaded via nftables-flow-offload below,
+    # wifi devices don't advertise hw-tc-offload without WED.
     boot.extraModprobeConfig = ''
-      options mt7915e wed_enable=Y
+      options mt7915e wed_enable=N
       options ubi mtd=ubi
     '';
 
@@ -219,7 +219,10 @@
     system.build = {
       uboot = pkgs.makeUBoot {
         boardName = "mt7986a_bpir3_emmc";
-        artifacts = [ "u-boot.bin" ];
+        artifacts = [
+          ".config"
+          "u-boot.bin"
+        ];
         meta.platforms = [ "aarch64-linux" ];
 
         patches = [ ./mt7986-persistent-mac-from-cpu-uid.patch ];
@@ -246,6 +249,11 @@
           DM_SPI = yes;
           DM_USB = yes;
           EFI_BOOTMGR = yes;
+          # The mt7986 u-boot device tree has no psci node, so the PSCI
+          # firmware driver never probes and the EFI runtime reset spins
+          # forever instead of resetting. Don't advertise it so linux resets
+          # via PSCI directly.
+          EFI_HAVE_RUNTIME_RESET = no;
           EFI_LOADER = yes;
           ENV_IS_IN_MMC = unset;
           ENV_IS_IN_UBI = yes;
