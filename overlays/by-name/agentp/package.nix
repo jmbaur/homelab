@@ -16,8 +16,11 @@ stdenv.mkDerivation {
   pname = "agentp";
   version = "1.1.64";
 
+  # NOTE: Portnox doesn't offer versioned download URLs, this always serves the
+  # latest release, so the hash will break when a new version is published.
   src = fetchurl {
-    url = "https://files.catbox.moe/asc5zv.deb";
+    name = "PortnoxAgentP.deb";
+    url = "https://clear.portnox.com/enduser/DownloadAgentPForOsAndPackageType?osType=5&packageType=Deb&architecture=X64";
     hash = "sha256-4oWWRMs/NRXMHoDoULDJ7Kqr6ASpgvcShtmF+K59AJI=";
   };
 
