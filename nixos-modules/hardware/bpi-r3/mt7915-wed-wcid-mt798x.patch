@@ -1,0 +1,23 @@
+From: Joshua Klinesmith
+Subject: [PATCH wireless] wifi: mt76: mt7915: fix WED WCID for MT7986/MT7981 wmac
+
+MT7986/MT7981 need the real station WCID in the WED forward path, otherwise
+WED TX offload is non-functional. Not yet merged upstream; rebased onto v7.3.
+
+Link: https://ratatoskr.run/linux-wireless/2026/04/15794044
+Fixes: f68d67623dec ("mt76: mt7915: add Wireless Ethernet Dispatch support")
+---
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/main.c b/drivers/net/wireless/mediatek/mt76/mt7915/main.c
+index a8286f8..a966bb0 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7915/main.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7915/main.c
+@@ -1753,7 +1753,8 @@ mt7915_net_fill_forward_path(struct ieee80211_hw *hw,
+ 	path->dev = ctx->dev;
+ 	path->mtk_wdma.wdma_idx = wed->wdma_idx;
+ 	path->mtk_wdma.bss = mvif->mt76.idx;
+-	path->mtk_wdma.wcid = is_mt7915(&dev->mt76) ? msta->wcid.idx : 0x3ff;
++	path->mtk_wdma.wcid = (is_mt7915(&dev->mt76) || is_mt798x(&dev->mt76)) ?
++			      msta->wcid.idx : 0x3ff;
+ 	path->mtk_wdma.queue = phy->mt76->band_idx;
+ 
+ 	ctx->dev = NULL;

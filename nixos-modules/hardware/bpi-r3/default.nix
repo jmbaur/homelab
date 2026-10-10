@@ -10,6 +10,11 @@
   config = lib.mkIf config.hardware.bpi-r3.enable {
     nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
 
+    # 7.3 has fixes needed for stable WED on mt7986 (WO firmware loading, WDMA
+    # TX hang).
+    # TODO(jared): switch to linuxPackages_7_3 once it is available
+    boot.kernelPackages = pkgs.linuxPackages_testing;
+
     hardware.firmware = [
       pkgs.wireless-regdb
       (pkgs.extractLinuxFirmwareDirectory "mediatek")
@@ -48,9 +53,14 @@
         };
       }
       {
-        name = "pcie-perst-fix";
-        patch = ./pcie-perst.patch;
+        name = "pcie-mediatek-gen3-builtin";
+        patch = null;
         structuredExtraConfig.PCIE_MEDIATEK_GEN3 = lib.kernel.yes; # TODO(jared): is this needed?
+      }
+      {
+        # TODO(jared): drop once upstreamed
+        name = "mt7915-wed-wcid-mt798x";
+        patch = ./mt7915-wed-wcid-mt798x.patch;
       }
       {
         name = "switch-reset-line-fix";
@@ -98,9 +108,10 @@
       "ubi"
     ];
 
-    # TODO(jared): disable mt7915e WED for now, causing instability
+    # WED only accelerates flows offloaded to the PPE via an nftables
+    # flowtable with "flags offload", see nftables-flow-offload below.
     boot.extraModprobeConfig = ''
-      options mt7915e wed_enable=N
+      options mt7915e wed_enable=Y
       options ubi mtd=ubi
     '';
 
@@ -108,6 +119,78 @@
       /dev/ubi0:ubootenv    0x0 0x1f000 0x1f000
       /dev/ubi0:ubootenvred 0x0 0x1f000 0x1f000
     '';
+
+    # Offload established forwarded flows to the mt7986 PPE, and with WED
+    # enabled, directly to/from the wifi radios. This lives outside of the main
+    # ruleset since the flowtable devices are only known at runtime, and a
+    # failure here should not take the firewall down with it.
+    #
+    # Only devices that currently support hw-tc-offload are added (similar to
+    # OpenWrt's fw4). The kernel refuses to register a device matching an
+    # offload flowtable's device list if it can't offload, so listing devices
+    # that can't (e.g. wifi when WED failed to attach) would break them.
+    systemd.services.nftables-flow-offload = lib.mkIf config.router.enable {
+      description = "nftables flow offloading";
+      wantedBy = [ "multi-user.target" ];
+      # wifi devices only advertise hw-tc-offload once WED is attached, which
+      # happens when the driver probes.
+      wants = [ "modprobe@mt7915e.service" ];
+      after = [
+        "nftables.service"
+        "network.target"
+        "modprobe@mt7915e.service"
+      ];
+      path = [
+        pkgs.ethtool
+        pkgs.jq
+        pkgs.nftables
+      ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStop = "${lib.getExe pkgs.nftables} destroy table inet flow-offload";
+      };
+      # The forward chain runs before the nixos-fw forward chain. Flows are only
+      # added once conntrack has confirmed them, so this only offloads
+      # connections the nixos-fw forward chain already accepted.
+      script = ''
+        devices=()
+        for path in /sys/class/net/*; do
+          device=''${path##*/}
+          # Only physical devices, the bridge is resolved by the kernel
+          [[ -e $path/device ]] || continue
+          # Skip DSA conduits, their user ports are added instead
+          [[ -e $path/dsa ]] && continue
+          if ethtool --json --show-features "$device" | jq --exit-status '.[0]."hw-tc-offload".active' >/dev/null; then
+            devices+=("\"$device\"")
+          fi
+        done
+
+        if [[ ''${#devices[@]} -eq 0 ]]; then
+          echo "No devices support hw-tc-offload, not offloading flows"
+          exit 0
+        fi
+
+        echo "Offloading flows on: ''${devices[*]}"
+
+        nft --file - <<EOF
+        destroy table inet flow-offload
+
+        table inet flow-offload {
+          flowtable ft {
+            hook ingress priority filter
+            devices = { $(IFS=,; echo "''${devices[*]}") }
+            flags offload
+          }
+
+          chain forward {
+            type filter hook forward priority filter - 1; policy accept;
+            meta l4proto { tcp, udp } flow add @ft
+          }
+        }
+        EOF
+      '';
+    };
 
     # bpi-r3 uses KEY_RESTART
     systemd.services.reset-button = {
