@@ -157,11 +157,6 @@ inputs: {
         rev = "b3d449e72196db5d48a2087c3df40b935834d304";
         hash = "sha256-m8NdvFSVo5+TPtpiGevyzXIMR1YcSQu5Xi5ewUX983Y=";
       };
-
-      jmbaur-keybase-pgp-keys = final.fetchurl {
-        url = "https://keybase.io/jaredbaur/pgp_keys.asc";
-        sha256 = "sha256-R2a+bF7E6Zogl5XWsjrK5dkCAvK6K2h/bje37aYSgGc=";
-      };
     })
   ];
 }
