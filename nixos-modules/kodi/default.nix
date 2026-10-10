@@ -44,7 +44,6 @@ let
       (p: [
         p.inputstream-adaptive
         p.jellyfin
-        p.typing_extensions # TODO(jared): missing from nixpkgs' jellyfin deps, contribute upstream
         p.joystick
         p.mediacccde
         p.netflix
