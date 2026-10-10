@@ -340,7 +340,10 @@ in
 
       services.nginx.virtualHosts."jellyfin.jmbaur.com" = {
         onlySSL = true;
-        locations."/".proxyPass = "http://[::1]:8096";
+        locations."/" = {
+          proxyPass = "http://[::1]:8096";
+          proxyWebsockets = true;
+        };
         sslCertificate = config.sops.secrets."cf-origin/cert".path;
         sslCertificateKey = config.sops.secrets."cf-origin/key".path;
       };
