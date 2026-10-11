@@ -43,7 +43,6 @@ in
     boot.consoleLogLevel = 7;
 
     boot.kernelParams = [
-      "cma=128M" # used on ubuntu
       "efi=noruntime" # used on ubuntu, efivars are provided by qcom_qseecom_uefisecapp
       "clk_ignore_unused"
       "pd_ignore_unused"
