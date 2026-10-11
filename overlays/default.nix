@@ -165,6 +165,33 @@ inputs: {
         rev = "b3d449e72196db5d48a2087c3df40b935834d304";
         hash = "sha256-m8NdvFSVo5+TPtpiGevyzXIMR1YcSQu5Xi5ewUX983Y=";
       };
+
+      # TODO: drop once nixpkgs has oo7 >= 0.7.0, which resolves aliases
+      # (e.g. /org/freedesktop/secrets/aliases/default, used by go-keyring) in
+      # Lock and Unlock. oo7-server, oo7-portal and oo7-pam inherit src and
+      # cargoDeps from here.
+      oo7 = prev.oo7.overrideAttrs (
+        finalAttrs: _: {
+          version = "0.7.0.beta";
+
+          src = final.fetchFromGitHub {
+            owner = "linux-credentials";
+            repo = "oo7";
+            tag = finalAttrs.version;
+            hash = "sha256-HdKWP+4A7pJpGRMTIm6ST1H5PZLdbPz2sbTZv5+2LaA=";
+          };
+
+          cargoDeps = final.rustPlatform.fetchCargoVendor {
+            inherit (finalAttrs) pname version src;
+            hash = "sha256-X+yNxuVqfOo9uSPx3FZ9RlIg7sQJTK6xNiLgsxENWac=";
+          };
+        }
+      );
+
+      # oo7-pam links against libpam since 0.7.0
+      oo7-pam = prev.oo7-pam.overrideAttrs (old: {
+        buildInputs = old.buildInputs ++ [ final.pam ];
+      });
     })
   ];
 }
