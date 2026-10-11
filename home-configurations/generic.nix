@@ -9,83 +9,78 @@
     {
       nixpkgs.config.allowUnfree = true;
 
-      home.packages =
-        with pkgs;
-        [
-          age-plugin-yubikey
-          ansifilter
-          as-tree
-          awscli2
-          bat
-          carapace
-          claude-code
-          comma
-          curl
-          difftastic
-          dig
-          direnv
-          fd
-          file
-          fsrx
-          gh
-          git
-          git-absorb
-          git-extras
-          git-gone
-          gnumake
-          grex
-          gron
-          hexyl
-          home-manager
-          htmlq
-          htop
-          jared-neovim
-          jq
-          just
-          killall
-          libarchive
-          linux-scripts
-          lrzsz
-          lsof
-          man-pages
-          man-pages-posix
-          moor
-          ncdu
-          nix-diff
-          nix-tree
-          nixos-shell
-          nmap
-          nurl
-          oils-for-unix
-          pciutils
-          pi-coding-agent
-          procs
-          pstree
-          pwgen
-          qemu
-          rage
-          renameutils
-          ripgrep
-          rsbkb
-          sd
-          tcpdump
-          tea
-          tinyxxd
-          tio
-          tmux
-          tokei
-          unzip
-          usbutils
-          watchexec
-          zip
-        ]
-        ++ (with pkgs.homelab-utils; [
-          copy
-          macgen
-          nix-key
-          pb
-          pomo
-        ]);
+      home.packages = [
+        pkgs.ansifilter
+        pkgs.as-tree
+        pkgs.awscli2
+        pkgs.bat
+        pkgs.carapace
+        pkgs.claude-code
+        pkgs.comma
+        pkgs.curl
+        pkgs.difftastic
+        pkgs.dig
+        pkgs.direnv
+        pkgs.fd
+        pkgs.file
+        pkgs.fsrx
+        pkgs.gh
+        pkgs.git
+        pkgs.git-absorb
+        pkgs.git-extras
+        pkgs.git-gone
+        pkgs.gnumake
+        pkgs.grex
+        pkgs.gron
+        pkgs.hexyl
+        pkgs.home-manager
+        pkgs.homelab-utils.copy
+        pkgs.homelab-utils.macgen
+        pkgs.homelab-utils.nix-key
+        pkgs.homelab-utils.pb
+        pkgs.homelab-utils.pomo
+        pkgs.htmlq
+        pkgs.htop
+        pkgs.jared-neovim
+        pkgs.jq
+        pkgs.just
+        pkgs.killall
+        pkgs.libarchive
+        pkgs.linux-scripts
+        pkgs.lrzsz
+        pkgs.lsof
+        pkgs.man-pages
+        pkgs.man-pages-posix
+        pkgs.moor
+        pkgs.ncdu
+        pkgs.nix-diff
+        pkgs.nix-tree
+        pkgs.nixos-shell
+        pkgs.nmap
+        pkgs.nurl
+        pkgs.oils-for-unix
+        pkgs.pciutils
+        pkgs.pi-coding-agent
+        pkgs.procs
+        pkgs.pstree
+        pkgs.pwgen
+        pkgs.qemu
+        pkgs.rage
+        pkgs.renameutils
+        pkgs.ripgrep
+        pkgs.rsbkb
+        pkgs.sd
+        pkgs.tcpdump
+        pkgs.tea
+        pkgs.tinyxxd
+        pkgs.tio
+        pkgs.tmux
+        pkgs.tokei
+        pkgs.unzip
+        pkgs.usbutils
+        pkgs.watchexec
+        pkgs.zip
+      ];
 
       home.sessionVariables.EDITOR = "vim";
 
@@ -256,16 +251,16 @@
       programs.ssh.settings."Host *.local".ProxyCommand =
         "${lib.getExe pkgs.ipv6-link-local-ssh-proxy-command} %h %p";
 
-      home.packages = with pkgs; [
-        _caffeine
-        bpftrace
-        cntr
-        hexdiff
-        inotify-tools
-        mac-vendor-lookup
-        pax-utils
-        poke
-        strace
+      home.packages = [
+        pkgs._caffeine
+        pkgs.bpftrace
+        pkgs.cntr
+        pkgs.hexdiff
+        pkgs.inotify-tools
+        pkgs.mac-vendor-lookup
+        pkgs.pax-utils
+        pkgs.poke
+        pkgs.strace
       ];
     })
   ];
