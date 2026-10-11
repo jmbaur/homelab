@@ -35,8 +35,6 @@ in
 
       nixpkgs.config.allowUnfree = true;
       services.xserver.videoDrivers = [ "nvidia" ];
-      # Populates /run/opengl-driver with libcuda etc., needed for NVENC/NVDEC
-      hardware.graphics.enable = true;
       hardware.nvidia = {
         nvidiaSettings = false;
         open = false;
@@ -81,6 +79,36 @@ in
         recommendedProxySettings = true;
         recommendedOptimisation = true;
         recommendedTlsSettings = true;
+        # Everything is proxied by Cloudflare, so take the client address from
+        # CF-Connecting-IP when (and only when) the request comes from
+        # Cloudflare. Ranges from https://www.cloudflare.com/ips/
+        commonHttpConfig = ''
+          ${lib.concatMapStrings (range: "set_real_ip_from ${range};\n") [
+            "173.245.48.0/20"
+            "103.21.244.0/22"
+            "103.22.200.0/22"
+            "103.31.4.0/22"
+            "141.101.64.0/18"
+            "108.162.192.0/18"
+            "190.93.240.0/20"
+            "188.114.96.0/20"
+            "197.234.240.0/22"
+            "198.41.128.0/17"
+            "162.158.0.0/15"
+            "104.16.0.0/13"
+            "104.24.0.0/14"
+            "172.64.0.0/13"
+            "131.0.72.0/22"
+            "2400:cb00::/32"
+            "2606:4700::/32"
+            "2803:f800::/32"
+            "2405:b500::/32"
+            "2405:8100::/32"
+            "2a06:98c0::/29"
+            "2c0f:f248::/32"
+          ]}
+          real_ip_header CF-Connecting-IP;
+        '';
         virtualHosts."${config.networking.hostName}.jmbaur.com" = {
           onlySSL = true;
           locations."/".return = 404;
@@ -366,66 +394,16 @@ in
 
       custom.yggdrasil.peers.onion.allowedTCPPorts = [ 8096 ];
 
-      services.jellyfin = {
+      custom.jellyfin = {
         enable = true;
-        # Overwrite the existing encoding.xml so these settings take effect
-        forceEncodingConfig = true;
-        hardwareAcceleration = {
-          enable = true;
-          type = "nvenc";
-          device = "/dev/nvidia0";
-        };
-        transcoding = {
-          enableToneMapping = true;
-          enableHardwareEncoding = true;
-          # NVIDIA T400 (TU117)
-          hardwareDecodingCodecs = {
-            h264 = true;
-            hevc = true;
-            hevc10bit = true;
-            vp9 = true;
-            mpeg2 = true;
-            vc1 = true;
-            vp8 = true;
-          };
-          # TU117 has no AV1 encoder
-          hardwareEncodingCodecs.hevc = true;
-        };
+        domain = "jellyfin.jmbaur.com";
+        uplinkMbps = 25;
+        localClients = [ config.custom.yggdrasil.peers.onion.ip ];
+        localUser = "living-room";
       };
 
-      systemd.services.jellyfin = {
-        # The jellyfin module only allows a single device
-        serviceConfig.DeviceAllow = [
-          "/dev/nvidiactl rw"
-          "/dev/nvidia-uvm rw"
-          "/dev/nvidia-uvm-tools rw"
-        ];
-
-        # The jellyfin module doesn't manage system.xml, so set the remote
-        # streaming bitrate limit (bits/s) here, leaving headroom on the
-        # uplink. mkBefore since the module's encoding.xml preStart may exit
-        # early.
-        preStart =
-          let
-            uplinkMbps = 25;
-            remoteBitrateLimit = uplinkMbps * 1000 * 1000 * 3 / 4;
-          in
-          lib.mkBefore ''
-            systemXml=${lib.escapeShellArg config.services.jellyfin.configDir}/system.xml
-            if [[ -e $systemXml ]]; then
-              ${lib.getExe pkgs.xmlstarlet} edit --inplace \
-                --update /ServerConfiguration/RemoteClientBitrateLimit \
-                --value ${toString remoteBitrateLimit} "$systemXml"
-            fi
-          '';
-      };
-
-      services.nginx.virtualHosts."jellyfin.jmbaur.com" = {
+      services.nginx.virtualHosts.${config.custom.jellyfin.domain} = {
         onlySSL = true;
-        locations."/" = {
-          proxyPass = "http://[::1]:8096";
-          proxyWebsockets = true;
-        };
         sslCertificate = config.sops.secrets."cf-origin/cert".path;
         sslCertificateKey = config.sops.secrets."cf-origin/key".path;
       };

@@ -30,7 +30,13 @@
       '';
     }
     {
-      services.kodi.enable = true;
+      services.kodi = {
+        enable = true;
+        jellyfin = {
+          server = "http://kale.internal:8096";
+          user = "living-room";
+        };
+      };
 
       hardware.graphics.extraPackages = with pkgs; [
         (intel-vaapi-driver.override { enableHybridCodec = true; })

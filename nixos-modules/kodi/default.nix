@@ -112,6 +112,25 @@ in
       ];
       default = "gbm";
     };
+
+    jellyfin = {
+      server = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        example = "http://jellyfin.internal:8096";
+        description = ''
+          Jellyfin server that the jellyfin add-on signs in to, without
+          prompting, as {option}`services.kodi.jellyfin.user`.
+        '';
+      };
+
+      user = mkOption {
+        type = types.str;
+        description = ''
+          Jellyfin user without a password to sign in as.
+        '';
+      };
+    };
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -187,6 +206,74 @@ in
         session required pam_env.so conffile=/etc/pam/environment readenv=0
         session required ${config.systemd.package}/lib/security/pam_systemd.so class=user
       '';
+    })
+
+    (mkIf (cfg.jellyfin.server != null) {
+      # Write the add-on's credentials (data.json) before kodi starts, unless
+      # the stored token still works for this server.
+      systemd.services.kodi-jellyfin-login = {
+        description = "Sign the kodi jellyfin add-on in to ${cfg.jellyfin.server}";
+        wantedBy = [
+          "kodi.service"
+          "cage-tty1.service"
+        ];
+        before = [
+          "kodi.service"
+          "cage-tty1.service"
+        ];
+        wants = [ "network-online.target" ];
+        after = [ "network-online.target" ];
+        path = [
+          pkgs.curl
+          pkgs.jq
+        ];
+        environment = {
+          SERVER = cfg.jellyfin.server;
+          JELLYFIN_USER = cfg.jellyfin.user;
+          ADDON_VERSION = pkgs.kodiPackages.jellyfin.version;
+        };
+        serviceConfig = {
+          Type = "oneshot";
+          User = config.users.users.kodi.name;
+          Group = config.users.users.kodi.group;
+        };
+        script = ''
+          dir=${config.users.users.kodi.home}/.kodi/userdata/addon_data/plugin.video.jellyfin
+          mkdir -p "$dir"
+
+          # The add-on identifies itself with this device ID
+          if [[ ! -s $dir/jellyfin_guid ]]; then
+            printf '%s' "$(</proc/sys/kernel/random/uuid)" >"$dir/jellyfin_guid"
+          fi
+          device_id=$(<"$dir/jellyfin_guid")
+
+          if token=$(jq -er --arg address "$SERVER" \
+            '.Servers[] | select(.address == $address) | .AccessToken' "$dir/data.json" 2>/dev/null) &&
+            curl -fsS -o /dev/null -H "Authorization: MediaBrowser Token=\"$token\"" "$SERVER/Users/Me"; then
+            exit 0
+          fi
+
+          info=$(curl -fsS --retry 30 --retry-delay 2 --retry-all-errors "$SERVER/System/Info/Public")
+          auth=$(curl -fsS \
+            -H "Authorization: MediaBrowser Client=\"Kodi\", Device=\"Kodi\", DeviceId=\"$device_id\", Version=\"$ADDON_VERSION\"" \
+            -H 'Content-Type: application/json' \
+            -d "$(jq -n --arg user "$JELLYFIN_USER" '{Username: $user, Pw: ""}')" \
+            "$SERVER/Users/AuthenticateByName")
+
+          jq -n --arg address "$SERVER" --argjson info "$info" --argjson auth "$auth" '{
+            Servers: [{
+              AccessToken: $auth.AccessToken,
+              DateLastAccessed: (now | todate),
+              Id: $auth.ServerId,
+              Name: $info.ServerName,
+              UserId: $auth.User.Id,
+              Users: [{ Id: $auth.User.Id, IsSignedInOffline: true }],
+              address: $address
+            }]
+          }' >"$dir/data.json.tmp"
+          mv "$dir/data.json.tmp" "$dir/data.json"
+        '';
+      };
     })
 
     (mkIf (cfg.backend == "wayland") {
