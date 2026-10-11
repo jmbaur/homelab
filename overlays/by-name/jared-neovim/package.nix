@@ -20,6 +20,7 @@
   rustfmt,
   shellcheck,
   shfmt,
+  sops,
   tex-fmt,
   texlab,
   texlive,
@@ -70,6 +71,7 @@ wrapNeovimUnstable neovim-unwrapped {
         rustfmt
         shellcheck
         shfmt
+        sops
         tex-fmt
         texlab
         texlive.pkgs.latexmk
