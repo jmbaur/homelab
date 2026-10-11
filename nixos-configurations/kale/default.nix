@@ -35,6 +35,8 @@ in
 
       nixpkgs.config.allowUnfree = true;
       services.xserver.videoDrivers = [ "nvidia" ];
+      # Populates /run/opengl-driver with libcuda etc., needed for NVENC/NVDEC
+      hardware.graphics.enable = true;
       hardware.nvidia = {
         nvidiaSettings = false;
         open = false;
