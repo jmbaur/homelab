@@ -187,6 +187,10 @@ in
       programs.sway = {
         enable = true;
         extraPackages = [ ];
+        # needed by soteria
+        extraSessionCommands = mkIf config.security.soteria.enable ''
+          systemctl --user import-environment XDG_SESSION_ID
+        '';
       };
 
       systemd.user.services.xdg-desktop-portal-wlr.path = [ rofi ];
@@ -198,8 +202,18 @@ in
       # portal, and oo7-portal only declares itself for GNOME.
       xdg.portal.config.sway."org.freedesktop.impl.portal.Secret" = "oo7-portal";
 
-      # Sway doesn't run XDG autostart entries, so use the upstream user unit
-      # to create ~/Downloads, ~/Documents, etc.
+      # Sway doesn't run XDG autostart entries itself, so have systemd's
+      # xdg-autostart-generator do it, like GNOME and KDE.
+      systemd.user.targets.sway-session.wants = [ "xdg-desktop-autostart.target" ];
+      # The geoclue2 module already runs this agent as geoclue-agent.service.
+      systemd.user.units."app-geoclue\\x2ddemo\\x2dagent@autostart.service".enable = false;
+
+      # Sway has no polkit authentication agent of its own.
+      security.soteria.enable = true;
+
+      # Use the upstream user unit rather than its autostart entry to create
+      # ~/Downloads, ~/Documents, etc., so it runs before the rest of the
+      # session.
       systemd.packages = [ pkgs.xdg-user-dirs ];
       systemd.user.services.xdg-user-dirs.wantedBy = [ "graphical-session-pre.target" ];
 
