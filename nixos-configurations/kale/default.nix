@@ -336,7 +336,59 @@ in
 
       custom.yggdrasil.peers.onion.allowedTCPPorts = [ 8096 ];
 
-      services.jellyfin.enable = true;
+      services.jellyfin = {
+        enable = true;
+        # Overwrite the existing encoding.xml so these settings take effect
+        forceEncodingConfig = true;
+        hardwareAcceleration = {
+          enable = true;
+          type = "nvenc";
+          device = "/dev/nvidia0";
+        };
+        transcoding = {
+          enableToneMapping = true;
+          enableHardwareEncoding = true;
+          # NVIDIA T400 (TU117)
+          hardwareDecodingCodecs = {
+            h264 = true;
+            hevc = true;
+            hevc10bit = true;
+            vp9 = true;
+            mpeg2 = true;
+            vc1 = true;
+            vp8 = true;
+          };
+          # TU117 has no AV1 encoder
+          hardwareEncodingCodecs.hevc = true;
+        };
+      };
+
+      systemd.services.jellyfin = {
+        # The jellyfin module only allows a single device
+        serviceConfig.DeviceAllow = [
+          "/dev/nvidiactl rw"
+          "/dev/nvidia-uvm rw"
+          "/dev/nvidia-uvm-tools rw"
+        ];
+
+        # The jellyfin module doesn't manage system.xml, so set the remote
+        # streaming bitrate limit (bits/s) here, leaving headroom on the
+        # uplink. mkBefore since the module's encoding.xml preStart may exit
+        # early.
+        preStart =
+          let
+            uplinkMbps = 25;
+            remoteBitrateLimit = uplinkMbps * 1000 * 1000 * 3 / 4;
+          in
+          lib.mkBefore ''
+            systemXml=${lib.escapeShellArg config.services.jellyfin.configDir}/system.xml
+            if [[ -e $systemXml ]]; then
+              ${lib.getExe pkgs.xmlstarlet} edit --inplace \
+                --update /ServerConfiguration/RemoteClientBitrateLimit \
+                --value ${toString remoteBitrateLimit} "$systemXml"
+            fi
+          '';
+      };
 
       services.nginx.virtualHosts."jellyfin.jmbaur.com" = {
         onlySSL = true;
