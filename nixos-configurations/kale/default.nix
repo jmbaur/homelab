@@ -113,6 +113,11 @@ in
         "github:"
       ];
 
+      # Hardlink identical files in the store. Run after GC so it doesn't
+      # optimise paths that are about to be deleted.
+      nix.optimise.automatic = true;
+      systemd.services.nix-optimise.after = [ "nix-gc.service" ];
+
       custom.recovery.swap = "zswap";
 
       system.stateVersion = "26.11";
