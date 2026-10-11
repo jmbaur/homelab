@@ -56,16 +56,6 @@ in
       };
       custom.recovery.targetDisk = "/dev/disk/by-path/pci-0000:41:00.0-nvme-1";
 
-      fileSystems."/var" = {
-        fsType = "btrfs";
-        device = "/dev/disk/by-partlabel/big";
-        options = [
-          "compress=zstd"
-          "noatime"
-          "discard=async"
-        ];
-      };
-
       fileSystems."/mnt/media" = {
         fsType = "btrfs";
         device = "/dev/disk/by-partlabel/media";
@@ -221,6 +211,25 @@ in
         };
         sslCertificate = config.sops.secrets."cf-origin/cert".path;
         sslCertificateKey = config.sops.secrets."cf-origin/key".path;
+      };
+
+      fileSystems."/mnt/garage" = {
+        fsType = "btrfs";
+        device = "/dev/disk/by-partlabel/big";
+        options = [
+          "compress=zstd"
+          "noatime"
+          "discard=async"
+          "subvol=/garage"
+        ];
+      };
+
+      # Garage's StateDirectory. With DynamicUser, /var/lib/garage is a symlink
+      # managed by systemd, so the bind mount must target the private path.
+      fileSystems."/var/lib/private/garage" = {
+        fsType = "none";
+        options = [ "bind" ];
+        device = "/mnt/garage";
       };
 
       services.garage = {
