@@ -155,7 +155,14 @@ in
     })
 
     (mkIf cfg.sender.enable {
-      systemd.tmpfiles.settings."10-backup"."/snapshots".v = { };
+      systemd.tmpfiles.settings."10-backup" = {
+        "/snapshots".v = { };
+        # Keep build directories out of snapshots.
+        "/nix/var/nix/builds".v = {
+          mode = "0755";
+          age = "7d";
+        };
+      };
 
       systemd.timers.backup-send = {
         wantedBy = [ "timers.target" ];
