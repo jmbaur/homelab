@@ -140,6 +140,9 @@ in
 
       hardware.graphics.enable = true;
 
+      # Used by libass to find fonts for subtitles
+      fonts.fontconfig.enable = true;
+
       networking.firewall = {
         allowedTCPPorts = [ 8080 ];
         allowedUDPPorts = [ 8080 ];
