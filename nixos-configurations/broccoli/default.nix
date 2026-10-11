@@ -20,7 +20,7 @@
       nix.settings.substituters = lib.mkForce [ "https://cache.nixos.org" ];
       nix.settings.extra-substituters = lib.mkForce [ ];
 
-      services.hydra-queue-builder-dev = {
+      services.hydra-builder = {
         enable = true;
         queueRunnerAddr = "http://kale.internal:50051";
         settings = {

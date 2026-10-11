@@ -140,7 +140,7 @@ in
 
       system.stateVersion = "26.11";
 
-      services.hydra-dev = {
+      services.hydra = {
         enable = true;
         logo = ./dr-doom.svg;
         hydraURL = "https://hydra.jmbaur.com";
@@ -152,57 +152,44 @@ in
           evaluator_max_memory_size = 8192
           binary_cache_public_uri = https://cache.jmbaur.com
           log_prefix = https://cache.jmbaur.com/
-          queue_runner_endpoint = http://[::1]:${toString config.services.hydra-queue-runner-dev.rest.port}
         '';
-      };
 
-      services.hydra-queue-runner-dev = {
-        enable = true;
+        # Nothing proxies to it
+        ws.enable = false;
 
-        grpc.address = "[::]";
-        grpc.port = 50051;
-        rest.port = 8080;
+        # The queue runner never removes the GC roots it adds for its outputs.
+        # They go in gcRootsDir by default, where hydra-update-gc-roots prunes
+        # the ones that don't belong to builds Hydra keeps.
+        queueRunner = {
+          grpc.address = "[::]";
 
-        awsCredentialsFile = "/var/lib/hydra/queue-runner/aws-credentials";
+          awsCredentialsFile = "/var/lib/hydra/queue-runner/aws-credentials";
 
-        settings = {
-          remoteStoreAddr = [
-            "s3://cache.jmbaur.com?endpoint=http://[::1]:3900&region=garage&scheme=http&compression=zstd&log-compression=br&secret-key=${config.sops.secrets.nix_signing_key.path}"
-          ];
+          settings = {
+            remoteStoreAddr = [
+              "s3://cache.jmbaur.com?endpoint=http://[::1]:3900&region=garage&scheme=http&compression=zstd&log-compression=br&secret-key=${config.sops.secrets.nix_signing_key.path}"
+            ];
 
-          useSubstitutes = true;
+            useSubstitutes = true;
 
-          maxOutputSize = 4 * 1024 * 1024 * 1024; # 4 GiB
+            maxOutputSize = 4 * 1024 * 1024 * 1024; # 4 GiB
+          };
         };
       };
 
-      systemd.services.hydra-queue-runner-dev = {
+      systemd.services.hydra-queue-runner = {
         requires = [ "garage-bootstrap.service" ];
         after = [ "garage-bootstrap.service" ];
       };
 
-      # Without presigned uploads, the queue runner adds a GC root for every
-      # output it builds ("until consumed" by builders) but never removes them,
-      # so nothing it built could be garbage collected. Outputs are uploaded to
-      # the binary cache, so age the roots out and let nix-gc reclaim the local
-      # copies.
-      #
-      # Presigned uploads would avoid the roots, but then broccoli would need
-      # to reach Garage's S3 API for uploads and substitute from the cache,
-      # rather than going through the queue runner.
-      #
-      # TODO: drop once the queue runner removes its own roots.
-      systemd.tmpfiles.settings."10-hydra-queue-runner-roots"."/nix/var/nix/gcroots/per-user/hydra-queue-runner/hydra-roots".e.age =
-        "7d";
-
-      services.hydra-queue-builder-dev = {
+      services.hydra-builder = {
         enable = true;
-        queueRunnerAddr = "http://[::1]:${toString config.services.hydra-queue-runner-dev.grpc.port}";
+        queueRunnerAddr = "http://[::1]:${toString config.services.hydra.queueRunner.grpc.port}";
         settings.maxJobs = 24;
       };
 
       custom.yggdrasil.peers.broccoli.allowedTCPPorts = [
-        config.services.hydra-queue-runner-dev.grpc.port
+        config.services.hydra.queueRunner.grpc.port
       ];
 
       services.nginx.virtualHosts."cache.jmbaur.com" = {

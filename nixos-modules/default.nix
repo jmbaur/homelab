@@ -6,10 +6,6 @@ in
   default = {
     nixpkgs.overlays = [ inputs.self.overlays.default ];
     imports = [
-      inputs.hydra.nixosModules.builder
-      inputs.hydra.nixosModules.evaluator
-      inputs.hydra.nixosModules.queue-runner
-      inputs.hydra.nixosModules.web-app
       inputs.jetpack-nixos.nixosModules.default
       inputs.nixos-router.nixosModules.default
       inputs.quartus-nix.nixosModules.default

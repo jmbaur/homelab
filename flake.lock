@@ -1,20 +1,5 @@
 {
   "nodes": {
-    "crane": {
-      "locked": {
-        "lastModified": 1790899423,
-        "narHash": "sha256-THGtz65UGJU+sonZidRboyCMk+9DclpMF7pwL4uDV4M=",
-        "owner": "ipetkov",
-        "repo": "crane",
-        "rev": "47b6b27ed9a3a9181415e4367d0c30ab2a0e0250",
-        "type": "github"
-      },
-      "original": {
-        "owner": "ipetkov",
-        "repo": "crane",
-        "type": "github"
-      }
-    },
     "cuda-legacy": {
       "inputs": {
         "flake-parts": [
@@ -134,28 +119,6 @@
         "type": "github"
       }
     },
-    "hydra": {
-      "inputs": {
-        "crane": "crane",
-        "nix": "nix",
-        "nix-eval-jobs": "nix-eval-jobs",
-        "nixpkgs": "nixpkgs",
-        "treefmt-nix": "treefmt-nix"
-      },
-      "locked": {
-        "lastModified": 1791473665,
-        "narHash": "sha256-or1nAWkxlPbKegdarYmXKjQfNixpxb4Dlrbp2jrUDdk=",
-        "owner": "NixOS",
-        "repo": "hydra",
-        "rev": "35d9058fa00edcc9c4a1d3489f929a9cbfc75208",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "repo": "hydra",
-        "type": "github"
-      }
-    },
     "ipwatch": {
       "inputs": {
         "git-hooks": [],
@@ -258,40 +221,6 @@
         "type": "github"
       }
     },
-    "nix": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1791037421,
-        "narHash": "sha256-xsLF4du2XzHgO7yZv+uTzLllVjHvpcsP4QVqOfJxnMY=",
-        "owner": "NixOS",
-        "repo": "nix",
-        "rev": "56f147d2e201c2f105e4570ca8303ed4a8a474c3",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "2.35-maintenance",
-        "repo": "nix",
-        "type": "github"
-      }
-    },
-    "nix-eval-jobs": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1789638029,
-        "narHash": "sha256-t1FbcjvTWQ1WO3hJNKN+viNXuz4BX9Pte5K4F+IJLDk=",
-        "owner": "NixOS",
-        "repo": "nix-eval-jobs",
-        "rev": "9f1553afabd95f9f59951f5c946e86005af7196a",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "v2.35.4",
-        "repo": "nix-eval-jobs",
-        "type": "github"
-      }
-    },
     "nix-index-database": {
       "inputs": {
         "nixpkgs": [
@@ -299,11 +228,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791105314,
-        "narHash": "sha256-oTM7QFgRQ+vxBpMBMc7hEYpqBtpXAzXu2xuB/tru84U=",
+        "lastModified": 1791711434,
+        "narHash": "sha256-LpIhxnuO0tYeZ4k7BbNMxsPs2zJpB4hWXO1jdhUuE7Q=",
         "owner": "nix-community",
         "repo": "nix-index-database",
-        "rev": "e740bc4e9d8918d7819a51486d5099930c65c72e",
+        "rev": "9a2dd40780eeab8543aa97c59c26f11267025616",
         "type": "github"
       },
       "original": {
@@ -334,19 +263,6 @@
       }
     },
     "nixpkgs": {
-      "locked": {
-        "lastModified": 1790635395,
-        "narHash": "sha256-6AXgcEB8kiYLV1aewneIGmpljLLQcd2Xo/gmDYxvKYc=",
-        "rev": "7fc6f2c20af09cdcaf48b92ec3121860139ec668",
-        "type": "tarball",
-        "url": "https://releases.nixos.org/nixos/26.05/nixos-26.05.10882.7fc6f2c20af0/nixexprs.tar.xz"
-      },
-      "original": {
-        "type": "tarball",
-        "url": "https://channels.nixos.org/nixos-26.05/nixexprs.tar.xz"
-      }
-    },
-    "nixpkgs_2": {
       "locked": {
         "lastModified": 1791674594,
         "narHash": "sha256-ud7nOqIVBckDW1R6/oWroL3aAY+d2/iPvk0GX/P85hA=",
@@ -431,14 +347,13 @@
       "inputs": {
         "git-hooks": "git-hooks",
         "home-manager": "home-manager",
-        "hydra": "hydra",
         "ipwatch": "ipwatch",
         "jetpack-nixos": "jetpack-nixos",
         "mixos": "mixos",
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "nix-index-database": "nix-index-database",
         "nixos-router": "nixos-router",
-        "nixpkgs": "nixpkgs_2",
+        "nixpkgs": "nixpkgs",
         "openwrt-one": "openwrt-one",
         "quartus-nix": "quartus-nix",
         "sops-nix": "sops-nix",
@@ -454,11 +369,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791639265,
-        "narHash": "sha256-51gxD0eLcJkxH2TYdhE+Qsf04yg3PRV7anCAqOFX70E=",
+        "lastModified": 1791710405,
+        "narHash": "sha256-mVD4XIc5JkqMW2K04IkFUzHgHmyJZlzw5ktfgMDCbKU=",
         "owner": "Mic92",
         "repo": "sops-nix",
-        "rev": "a8be3b14935d3532604c51c8dfe3021c73d1a885",
+        "rev": "ee48786c6f9160d2c1a084aac841f68195b8420c",
         "type": "github"
       },
       "original": {
@@ -484,27 +399,6 @@
       "original": {
         "owner": "jmbaur",
         "repo": "tinyboot",
-        "type": "github"
-      }
-    },
-    "treefmt-nix": {
-      "inputs": {
-        "nixpkgs": [
-          "hydra",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1790542030,
-        "narHash": "sha256-U6m0B5+ALyOLYG4OVvtguLdem7iYgN6cIP5Q1RhM+g8=",
-        "owner": "numtide",
-        "repo": "treefmt-nix",
-        "rev": "6aca3b3649eb1edf472eca3e91e6bcc0c84a6ad3",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "treefmt-nix",
         "type": "github"
       }
     },

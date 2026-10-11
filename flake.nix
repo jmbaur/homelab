@@ -6,7 +6,6 @@
 
     git-hooks.url = "github:cachix/git-hooks.nix";
     home-manager.url = "github:nix-community/home-manager";
-    hydra.url = "github:NixOS/hydra";
     ipwatch.url = "github:jmbaur/ipwatch";
     jetpack-nixos.url = "github:anduril/jetpack-nixos";
     mixos.url = "github:jmbaur/mixos";
