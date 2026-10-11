@@ -22,7 +22,8 @@ in
 
     hardware.firmware = [ pkgs.linux-firmware ];
 
-    boot.kernelPackages = pkgs.linuxPackages_7_2;
+    # TODO(jared): switch to linuxPackages_7_3 once it is available
+    boot.kernelPackages = pkgs.linuxPackages_testing;
 
     boot.kernelPatches = [
       {
