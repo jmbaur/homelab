@@ -153,6 +153,20 @@ in
         after = [ "garage-bootstrap.service" ];
       };
 
+      # Without presigned uploads, the queue runner adds a GC root for every
+      # output it builds ("until consumed" by builders) but never removes them,
+      # so nothing it built could be garbage collected. Outputs are uploaded to
+      # the binary cache, so age the roots out and let nix-gc reclaim the local
+      # copies.
+      #
+      # Presigned uploads would avoid the roots, but then broccoli would need
+      # to reach Garage's S3 API for uploads and substitute from the cache,
+      # rather than going through the queue runner.
+      #
+      # TODO: drop once the queue runner removes its own roots.
+      systemd.tmpfiles.settings."10-hydra-queue-runner-roots"."/nix/var/nix/gcroots/per-user/hydra-queue-runner/hydra-roots".e.age =
+        "7d";
+
       services.hydra-queue-builder-dev = {
         enable = true;
         queueRunnerAddr = "http://[::1]:${toString config.services.hydra-queue-runner-dev.grpc.port}";
