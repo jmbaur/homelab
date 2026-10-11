@@ -36,6 +36,7 @@ let
       pkgs.coreutils
       pkgs.dconf
       pkgs.procps
+      pkgs.systemd
     ];
     text = ''
       theme=''${1:-toggle}
@@ -65,6 +66,9 @@ let
 
       # New terminals read the file above, running ones need a signal.
       pkill --signal "$foot_signal" --exact foot || true
+
+      # swaybg can't swap images, so restart it to pick up the other one.
+      systemctl --user try-restart swaybg.service || true
     '';
   };
 
@@ -93,6 +97,27 @@ let
   # directory rather than writing into the user's home.
   gammastepConfig = pkgs.linkFarm "gammastep-config" {
     "gammastep/hooks/theme" = themeHook;
+  };
+
+  wallpaperLight = pkgs.runCommand "weston-pattern.png" { } ''
+    install -Dm0644 ${pkgs.weston}/share/weston/pattern.png $out
+  '';
+
+  wallpaperDark = pkgs.runCommand "weston-pattern-dark.png" { } ''
+    ${getExe' pkgs.imagemagick "magick"} ${wallpaperLight} -modulate 60 $out
+  '';
+
+  swaybgThemed = pkgs.writeShellApplication {
+    name = "swaybg-themed";
+    runtimeInputs = [ pkgs.dconf ];
+    text = ''
+      case "$(dconf read /org/gnome/desktop/interface/color-scheme)" in
+      *prefer-light*) image=${wallpaperLight} ;;
+      *) image=${wallpaperDark} ;;
+      esac
+
+      exec ${getExe pkgs.swaybg} --mode tile --image "$image"
+    '';
   };
 
   swaylockThemed = pkgs.writeShellApplication {
@@ -181,15 +206,7 @@ in
       systemd.user.services.swaybg = mkMerge [
         sessionUnit
         {
-          serviceConfig.ExecStart = toString [
-            (getExe pkgs.swaybg)
-            "--mode"
-            "tile"
-            "--image"
-            (pkgs.runCommand "weston-pattern.png" { } ''
-              install -Dm0644 ${pkgs.weston}/share/weston/pattern.png $out
-            '')
-          ];
+          serviceConfig.ExecStart = getExe swaybgThemed;
         }
       ];
 
