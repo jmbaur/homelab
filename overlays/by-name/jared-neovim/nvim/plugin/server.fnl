@@ -60,16 +60,19 @@
                                           (when (empty-startup?)
                                             (let [servers (detached-servers)]
                                               (when (> (length servers) 0)
-                                                (vim.ui.select servers
-                                                               {:prompt "Connect to detached Nvim server?"
-                                                                :format_item (λ [server]
-                                                                               (string.format "%s (%s)"
-                                                                                              server.cwd
-                                                                                              server.path))}
-                                                               ;; fn, not λ: server is nil when the prompt is cancelled.
-                                                               (fn [server]
-                                                                 ;; ! stops this (empty) server once the UI leaves it.
-                                                                 (when server
-                                                                   (sync-env server.path)
-                                                                   (vim.cmd.connect {:args [server.path]
-                                                                                     :bang true}))))))))})
+                                                ;; Deferred so the prompt opens after startup finishes; terminal-based
+                                                ;; vim.ui.select implementations otherwise miss terminal mode.
+                                                (vim.schedule (fn []
+                                                                (vim.ui.select servers
+                                                                               {:prompt "Connect to detached Nvim server?"
+                                                                                :format_item (λ [server]
+                                                                                               (string.format "%s (%s)"
+                                                                                                              server.cwd
+                                                                                                              server.path))}
+                                                                               ;; fn, not λ: server is nil when the prompt is cancelled.
+                                                                               (fn [server]
+                                                                                 ;; ! stops this (empty) server once the UI leaves it.
+                                                                                 (when server
+                                                                                   (sync-env server.path)
+                                                                                   (vim.cmd.connect {:args [server.path]
+                                                                                                     :bang true}))))))))))})
