@@ -246,6 +246,13 @@ in
         set-option -g prefix C-s
         bind-key C-s send-prefix
 
+        # Vim-style copy mode
+        set-option -g mode-keys vi
+        bind-key -T copy-mode-vi v send-keys -X rectangle-off \; send-keys -X begin-selection
+        bind-key -T copy-mode-vi V send-keys -X rectangle-off \; send-keys -X select-line
+        bind-key -T copy-mode-vi C-v send-keys -X rectangle-on \; send-keys -X begin-selection
+        bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel
+
         # Prompt for a project, creating (or switching to) its session. Each
         # project is registered as a "p/<name>" command alias so the prompt
         # can tab-complete it; the aliases are reset to tmux's defaults and
