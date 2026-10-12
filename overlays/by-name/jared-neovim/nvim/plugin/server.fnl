@@ -66,7 +66,8 @@
                                                                                (string.format "%s (%s)"
                                                                                               server.cwd
                                                                                               server.path))}
-                                                               (λ [server]
+                                                               ;; fn, not λ: server is nil when the prompt is cancelled.
+                                                               (fn [server]
                                                                  ;; ! stops this (empty) server once the UI leaves it.
                                                                  (when server
                                                                    (sync-env server.path)
