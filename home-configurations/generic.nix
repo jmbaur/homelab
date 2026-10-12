@@ -4,6 +4,10 @@
   pkgs,
   ...
 }:
+let
+  projectsDir = "${config.home.homeDirectory}/.local/state/projects";
+  tmuxAgentSock = "${config.home.homeDirectory}/.ssh/tmux-agent.sock";
+in
 {
   config = lib.mkMerge [
     {
@@ -144,7 +148,7 @@
             prune = true;
             prunetags = true;
           };
-          "git-extras \"get\"".clone-path = "${config.home.homeDirectory}/.local/state/projects";
+          "git-extras \"get\"".clone-path = projectsDir;
           gpg.format = "ssh";
           "gpg \"ssh\"".program = "ssh-keygen";
           init.defaultBranch = "main";
@@ -232,12 +236,37 @@
 
       xdg.configFile."tmux/tmux.conf".text = ''
         set-option -g allow-passthrough on
+        set-option -g detach-on-destroy off
         set-option -g focus-events on
         set-option -s set-clipboard on
+        # Fit full project names in the session name, the default is 10.
+        set-option -g status-left-length 50
         # Use ctrl+s as prefix
         unbind C-b
         set-option -g prefix C-s
         bind-key C-s send-prefix
+
+        # Prompt for a project, creating (or switching to) its session. Each
+        # project is registered as a "p/<name>" command alias so the prompt
+        # can tab-complete it; the aliases are reset to tmux's defaults and
+        # rebuilt every time so deleted projects go away. tmux doesn't allow
+        # '.' in session names. Switching between existing sessions is
+        # builtin as prefix+S-Tab.
+        bind-key -N "Switch to a project's session" P {
+          set-option -su command-alias
+          run-shell 'for d in ${projectsDir}/*/; do n=$(basename "$d"); tmux set-option -sa command-alias "p/$n=new-session -A -c $d -s $(echo $n | tr . _)"; done'
+          command-prompt -I p/
+        }
+
+        # Panes use a stable symlink to the most recently attached client's
+        # SSH agent, so long-lived shells keep working across reattaches.
+        set-option -g update-environment "DISPLAY KRB5CCNAME MSYSTEM SSH_ASKPASS SSH_AGENT_PID SSH_CONNECTION WAYLAND_DISPLAY WINDOWID XAUTHORITY XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_SESSION_TYPE"
+        set-environment -g SSH_AUTH_SOCK ${tmuxAgentSock}
+        set-hook -g client-session-changed {
+          if-shell -F "#{I/e:SSH_AUTH_SOCK}" {
+            run-shell 'ln -sfn #{q:#{I/e:SSH_AUTH_SOCK}} ${tmuxAgentSock}'
+          }
+        }
       '';
 
       xdg.configFile."ghostty/config.ghostty".text = ''
