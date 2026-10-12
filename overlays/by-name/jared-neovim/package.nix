@@ -4,6 +4,8 @@
   dts-lsp,
   fd,
   fennel-ls,
+  fetchFromGitea,
+  fzy,
   fnlfmt,
   go-tools,
   gofumpt,
@@ -83,6 +85,31 @@ wrapNeovimUnstable neovim-unwrapped {
         zigscient
         zls_0_16
       ];
+    })
+  ]
+  ++ [
+    (vimUtils.buildVimPlugin {
+      pname = "nvim-fzy";
+      version = "0-unstable-2025-03-26";
+      src = fetchFromGitea {
+        domain = "codeberg.org";
+        owner = "mfussenegger";
+        repo = "nvim-fzy";
+        rev = "cc41ba47d2f82c05cbf3a05b24dee325f8a96e1a";
+        hash = "sha256-XibxiD2ZPcipn3P9Ziiao2C0wZMLGZleBnHQe3xJoMA=";
+      };
+      runtimeDeps = [ fzy ];
+    })
+    (vimUtils.buildVimPlugin {
+      pname = "nvim-qwahl";
+      version = "0-unstable-2025-05-22";
+      src = fetchFromGitea {
+        domain = "codeberg.org";
+        owner = "mfussenegger";
+        repo = "nvim-qwahl";
+        rev = "3081cdd8fcbccfbe68381088ed0d6e1ff47da3a6";
+        hash = "sha256-3sb87m9Anb32CVNecr+2Y+XmqZ0GEUo84hervVmcjdM=";
+      };
     })
   ]
   ++ (with vimPlugins; [

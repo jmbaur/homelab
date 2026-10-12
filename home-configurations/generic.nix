@@ -7,6 +7,26 @@
 let
   projectsDir = "${config.home.homeDirectory}/.local/state/projects";
   tmuxAgentSock = "${config.home.homeDirectory}/.ssh/tmux-agent.sock";
+
+  # Pick a project with fzy and switch to its session, creating it if needed.
+  # tmux is taken from PATH so it matches the running server. '.' is replaced
+  # in session names since it separates the window in a target. fzy only uses
+  # the terminal's default colors, so it suits both light and dark themes.
+  tmuxProjectPicker = pkgs.writeShellApplication {
+    name = "tmux-project-picker";
+    runtimeInputs = [ pkgs.fzy ];
+    text = ''
+      # fzy shows 10 results by default, fill the pane instead.
+      lines=$(($(tmux display-message -p -t "$TMUX_PANE" '#{pane_height}') - 1))
+      cd ${projectsDir}
+      project=$(for d in */; do echo "''${d%/}"; done | fzy --lines="$lines") || exit 0
+      session=''${project//./_}
+      if ! tmux has-session -t "=$session" 2>/dev/null; then
+        tmux new-session -d -s "$session" -c "${projectsDir}/$project"
+      fi
+      tmux switch-client -t "=$session"
+    '';
+  };
 in
 {
   config = lib.mkMerge [
@@ -218,14 +238,9 @@ in
 
           bindkey \^U backward-kill-line
 
-          autoload -Uz vcs_info
-          precmd_vcs_info() { vcs_info }
           precmd_newline() { printf "\n" }
-          precmd_functions+=(precmd_vcs_info precmd_newline)
-          setopt prompt_subst
-          zstyle ':vcs_info:*' actionformats '[%b|%a]'
-          zstyle ':vcs_info:*' formats '[%b]'
-          PROMPT='%B%(?..%F{1}[%?]%f)%F{2}[%n@%m:%2~]''${vcs_info_msg_0_}%#%f%b '
+          precmd_functions+=(precmd_newline)
+          PROMPT='%B%(?..%F{1}[%?]%f)%F{2}[%n@%m:%2~]%#%f%b '
         '';
       };
 
@@ -239,6 +254,10 @@ in
         set-option -g detach-on-destroy off
         set-option -g focus-events on
         set-option -s set-clipboard on
+        # Start non-login shells so panes keep the PATH inherited from the
+        # server. On macOS, a login shell runs path_helper from /etc/zprofile,
+        # which moves the system directories ahead of the nix ones.
+        set-option -g default-command "$SHELL"
         # Fit full project names in the session name, the default is 10.
         set-option -g status-left-length 50
         # Use ctrl+s as prefix
@@ -253,16 +272,11 @@ in
         bind-key -T copy-mode-vi C-v send-keys -X rectangle-on \; send-keys -X begin-selection
         bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel
 
-        # Prompt for a project, creating (or switching to) its session. Each
-        # project is registered as a "p/<name>" command alias so the prompt
-        # can tab-complete it; the aliases are reset to tmux's defaults and
-        # rebuilt every time so deleted projects go away. tmux doesn't allow
-        # '.' in session names. Switching between existing sessions is
-        # builtin as prefix+S-Tab.
+        # Pick a project in a borderless modal floating pane along the bottom
+        # of the window, creating (or switching to) its session. Fuzzy
+        # switching between existing sessions is builtin as prefix+Tab.
         bind-key -N "Switch to a project's session" P {
-          set-option -su command-alias
-          run-shell 'for d in ${projectsDir}/*/; do n=$(basename "$d"); tmux set-option -sa command-alias "p/$n=new-session -A -c $d -s $(echo $n | tr . _)"; done'
-          command-prompt -I p/
+          new-pane -O -B none -x 100% -y 11 -X 0 -Y "#{e|-:#{window_height},11}" ${lib.getExe tmuxProjectPicker}
         }
 
         # Panes use a stable symlink to the most recently attached client's
