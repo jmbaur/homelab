@@ -99,12 +99,9 @@ let
     "gammastep/hooks/theme" = themeHook;
   };
 
-  wallpaperLight = pkgs.runCommand "weston-pattern.png" { } ''
-    install -Dm0644 ${pkgs.weston}/share/weston/pattern.png $out
-  '';
-
-  wallpaperDark = pkgs.runCommand "weston-pattern-dark.png" { } ''
-    ${getExe' pkgs.imagemagick "magick"} ${wallpaperLight} -modulate 60 $out
+  wallpapers = pkgs.runCommand "weston-wallpapers" { } ''
+    install -Dm0644 ${pkgs.weston}/share/weston/pattern.png $out/light.png
+    ${getExe' pkgs.imagemagick "magick"} $out/light.png -modulate 40 $out/dark.png
   '';
 
   swaybgThemed = pkgs.writeShellApplication {
@@ -112,8 +109,8 @@ let
     runtimeInputs = [ pkgs.dconf ];
     text = ''
       case "$(dconf read /org/gnome/desktop/interface/color-scheme)" in
-      *prefer-light*) image=${wallpaperLight} ;;
-      *) image=${wallpaperDark} ;;
+      *prefer-light*) image=${wallpapers}/light.png ;;
+      *) image=${wallpapers}/dark.png ;;
       esac
 
       exec ${getExe pkgs.swaybg} --mode tile --image "$image"
