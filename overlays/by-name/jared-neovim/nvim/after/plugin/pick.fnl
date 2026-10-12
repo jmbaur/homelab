@@ -18,6 +18,11 @@
                                                        :width vim.o.columns
                                                        :height picker-height})]
                        (vim.keymap.set :t :<Esc> "<C-\\><C-c>" {:buffer buf})
+                       ;; nvim-fzy's startinsert can outlive the popup when it
+                       ;; opens during startup, leaving insert mode behind.
+                       (vim.api.nvim_create_autocmd :TermClose
+                                                    {:buffer buf
+                                                     :callback #(vim.schedule vim.cmd.stopinsert)})
                        (set (. vim.bo buf :bufhidden) :wipe)
                        (values win buf))))
 
