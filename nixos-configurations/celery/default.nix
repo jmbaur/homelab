@@ -170,9 +170,9 @@ in
       sslCertificate = config.sops.secrets."cf-origin/cert".path;
       sslCertificateKey = config.sops.secrets."cf-origin/key".path;
       basicAuthFile = config.sops.secrets."garage-htpasswd".path;
-      locations."/".proxyPass = "http://rhubarb.internal:8080";
+      locations."/".proxyPass = "http://zucchini.internal:8080";
       locations."/cam" = {
-        proxyPass = "http://rhubarb.internal:8888";
+        proxyPass = "http://zucchini.internal:8888";
         # Low-latency HLS streams parts over long-lived chunked responses;
         # buffering them here just adds latency back.
         extraConfig = "proxy_buffering off;";

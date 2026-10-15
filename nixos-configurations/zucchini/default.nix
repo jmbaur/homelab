@@ -220,5 +220,15 @@ in
       custom.server.enable = true;
       custom.recovery.targetDisk = "/dev/disk/by-path/platform-a41000000.pcie-pci-0004:41:00.0-nvme-1";
     }
+    {
+      # Exposed publicly via celery (garage.jmbaur.com).
+      services.yggdrasil.settings.Peers = [ "tls://celery.jmbaur.com:3443" ];
+
+      custom.yggdrasil.peers.celery.allowedTCPPorts = [
+        8080 # homelab-garage-door
+        8888 # hls mediamtx
+        8889 # webrtc mediamtx
+      ];
+    }
   ];
 }
