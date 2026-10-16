@@ -229,6 +229,19 @@ in
         8888 # hls mediamtx
         8889 # webrtc mediamtx
       ];
+
+      systemd.sockets.garage-door = {
+        listenStreams = [ "[::]:8080" ];
+        wantedBy = [ "sockets.target" ];
+      };
+
+      systemd.services.garage-door.serviceConfig.ExecStart = toString [
+        (lib.getExe pkgs.homelab-utils.homelab-garage-door)
+        "/dev/gpiochip4"
+        # TODO(jared): use named lines with gpiocdev API
+        3 # set
+        4 # unset
+      ];
     }
   ];
 }
