@@ -39,22 +39,24 @@ let
   });
 
   # GStreamer needs the libcamerasrc element from our libcamera, plus the
-  # encoder and the RTSP sink.
+  # encoder (x264enc, from -ugly) and the RTSP sink.
   gstPlugins = [
     libcamera
     pkgs.gst_all_1.gstreamer
     pkgs.gst_all_1.gst-plugins-base
     pkgs.gst_all_1.gst-plugins-good
+    pkgs.gst_all_1.gst-plugins-ugly
     pkgs.gst_all_1.gst-rtsp-server
   ];
 
-  # Publishes the camera into mediamtx as MJPEG.
+  # Publishes the camera into mediamtx as H.264.
   #
-  # The RK3588's H.264/HEVC encoder (rkvenc2) has no mainline driver, but
-  # its vepu121 is registered as a hardware JPEG encoder, which keeps up
-  # with 1080p30 at ~10% of a core. x264 needed ~2.5 cores for the same.
-  # The cost is bandwidth: quality 75 is ~20 Mbit/s of a plain scene,
-  # against 4 Mbit/s of H.264; below that, gradients show blocking.
+  # The RK3588's H.264/HEVC encoder (rkvenc2) has no mainline driver; the
+  # only hardware encoder is vepu121, which does JPEG. MJPEG can't be muxed
+  # into HLS or sent over WebRTC though, so encode in software. With the
+  # ultrafast preset x264 costs well under a core at 1080p30 (the default
+  # preset needed ~2.5). A keyframe every second lets mediamtx cut short HLS
+  # segments and lets new viewers start quickly.
   cameraStream = pkgs.writeShellApplication {
     name = "camera-stream";
     runtimeInputs = [ pkgs.gst_all_1.gstreamer ];
@@ -65,8 +67,8 @@ let
         libcamerasrc \
         ! video/x-raw,format=NV12,width=1920,height=1080 \
         ! queue max-size-buffers=2 leaky=downstream \
-        ! v4l2jpegenc extra-controls="c,compression_quality=75" \
-        ! image/jpeg \
+        ! x264enc tune=zerolatency speed-preset=ultrafast bitrate=4000 key-int-max=30 \
+        ! video/x-h264,profile=constrained-baseline \
         ! rtspclientsink location="rtsp://127.0.0.1:8554/''${MTX_PATH:-cam}" protocols=tcp
     '';
   };
