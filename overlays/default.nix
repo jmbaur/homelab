@@ -91,13 +91,13 @@ inputs: {
       );
 
       fnlfmt = prev.fnlfmt.overrideAttrs rec {
-        version = "0.3.2-${builtins.substring 0 9 src.rev}";
+        version = "0.4.0";
 
         src = final.fetchFromSourcehut {
           owner = "~technomancy";
           repo = "fnlfmt";
-          rev = "e059775b9ce38cdcf3c1d5458ca2e5f2ecf698b3";
-          hash = "sha256-PG/bEkGkgaIBAlQGvDN9C+As3H6hGUskF8vhMD4mZmY=";
+          rev = version;
+          hash = "sha256-8ZDT7CVWWKaFclU4yCgT9JUR+jCwMrA+6F11os65JHQ=";
         };
       };
 

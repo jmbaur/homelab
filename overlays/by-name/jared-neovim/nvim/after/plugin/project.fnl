@@ -1,7 +1,7 @@
-(fn project-dir []
-  (vim.fs.joinpath (or vim.env.XDG_STATE_DIR
-                       (vim.fs.joinpath vim.env.HOME :.local :state))
-                   :projects))
+(macro project-dir []
+  `(vim.fs.joinpath (or vim.env.XDG_STATE_DIR
+                        (vim.fs.joinpath vim.env.HOME :.local :state))
+                    :projects))
 
 (fn collect-projects []
   (icollect [name entry-type (vim.fs.dir (project-dir) {:depth 1})]
@@ -9,13 +9,15 @@
       name)))
 
 (fn open-project [opts]
-  (let [project-path (vim.fs.joinpath (project-dir) opts.args)]
+  (let [base-path (project-dir)
+        project-path (vim.fs.joinpath base-path opts.args)]
     (if (vim.uv.fs_stat project-path)
-        (do
+        (let [do-edit (not (= (vim.fs.root 0 :.git) (vim.fn.getcwd)))]
           (if opts.bang
               (vim.cmd.tabnew project-path))
           (vim.cmd.tcd project-path)
-          (if (not opts.bang)
+          ;; assumes all entries in projects-dir is a git repository
+          (if do-edit
               (vim.cmd.edit project-path)))
         (let [candidates (vim.fn.matchfuzzy (collect-projects) opts.args)]
           (if (= (length candidates) 1)
