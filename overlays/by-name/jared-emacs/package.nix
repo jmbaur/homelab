@@ -30,7 +30,7 @@
   texlive,
   tofu-ls,
   ttags,
-  zig_0_16,
+  zig_0_17,
   zigscient,
   zls_0_16,
 }:
@@ -143,7 +143,7 @@ buildEnv {
     texlive.pkgs.latexmk
     tofu-ls
     ttags
-    zig_0_16
+    zig_0_17
     zigscient
     zls_0_16
   ];

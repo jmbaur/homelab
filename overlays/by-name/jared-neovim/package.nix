@@ -31,7 +31,7 @@
   vimPlugins,
   vimUtils,
   wrapNeovimUnstable,
-  zig_0_16,
+  zig_0_17,
   zigscient,
   zls_0_16,
 }:
@@ -79,7 +79,7 @@ wrapNeovimUnstable neovim-unwrapped {
         tree-sitter
         ttags
         typescript
-        zig_0_16
+        zig_0_17
         zigscient
         zls_0_16
       ];
