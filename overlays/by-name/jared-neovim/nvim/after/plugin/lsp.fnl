@@ -109,9 +109,6 @@
                                    ; forcefully enable format on save
                                    :desc "Toggle format on save for current buffer"})
 
-; NOTE: fnlfmt will attempt to resolve this unicode character
-
-;; fnlfmt: skip
 (local diagnostic-sign "\u{2759}")
 
 (vim.diagnostic.config {:signs {:text (doto []
