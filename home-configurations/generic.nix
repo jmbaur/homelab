@@ -45,6 +45,7 @@ in
         pkgs.homelab-utils.pomo
         pkgs.htmlq
         pkgs.htop
+        pkgs.jared-emacs
         pkgs.jared-neovim
         pkgs.jq
         pkgs.just

@@ -4,7 +4,7 @@
   clang,
   clang-tools,
   dts-lsp,
-  emacs31-pgtk,
+  emacs31-nox,
   emacsPackagesFor,
   fd,
   fennel-ls,
@@ -36,7 +36,7 @@
 }:
 
 let
-  emacsPackages = (emacsPackagesFor emacs31-pgtk).overrideScope (
+  emacsPackages = (emacsPackagesFor emacs31-nox).overrideScope (
     epkgsFinal: epkgsPrev: {
       ghostel = epkgsPrev.ghostel.overrideAttrs (old: {
         packageRequires = [ epkgsFinal.evil ];
