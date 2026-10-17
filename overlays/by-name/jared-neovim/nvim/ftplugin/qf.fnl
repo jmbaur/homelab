@@ -9,5 +9,5 @@
 (vim.keymap.set :n :g? (fn [_opts?]
                          (vim.print (qftitle))) {:buf 0})
 
-(vim.keymap.set :n :q (fn [_opts?]
-                        (vim.cmd.cclose)) {:buf 0})
+(vim.keymap.set :n :gq (fn [_opts?]
+                         (vim.cmd.cclose)) {:buf 0})
