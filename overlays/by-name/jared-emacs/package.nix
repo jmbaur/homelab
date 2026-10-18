@@ -37,13 +37,8 @@
 
 let
   emacsPackages = (emacsPackagesFor emacs31-nox).overrideScope (
-    epkgsFinal: epkgsPrev: {
-      ghostel = epkgsPrev.ghostel.overrideAttrs (old: {
-        packageRequires = [ epkgsFinal.evil ];
-        preBuild = (old.preBuild or "") + ''
-          cp extensions/evil-ghostel/evil-ghostel.el lisp
-        '';
-      });
+    epkgsFinal:
+    lib.const {
       rail = epkgsFinal.melpaBuild {
         pname = "rail";
         version = "0.4.0";
@@ -64,10 +59,6 @@ let
       epkgs.dts-mode
       epkgs.eat
       epkgs.envrc
-      epkgs.evil
-      epkgs.evil-commentary
-      epkgs.evil-numbers
-      epkgs.evil-surround
       epkgs.exec-path-from-shell
       epkgs.fennel-mode
       epkgs.geiser

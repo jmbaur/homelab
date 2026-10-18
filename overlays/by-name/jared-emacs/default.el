@@ -107,40 +107,6 @@
 (use-package envrc
   :config (envrc-global-mode))
 
-(defun evil-yank-pulse-hint (beg end &rest _)
-  "Flash a temporary highlight over the yanked region."
-  (when (and (called-interactively-p 'any)
-	     (derived-mode-p 'prog-mode 'text-mode)) ; Only pulse in text/code
-    (pulse-momentary-highlight-region beg end 'next-error)))
-
-(use-package evil
-  :init
-  ;; evil requires these to be set prior to loading the evil packages
-  (setq evil-symbol-word-search t)
-  (setq evil-want-C-u-scroll t)
-  (setq evil-want-Y-yank-to-eol t)
-  (setq evil-want-keybinding nil)
-  :config
-  (evil-mode 1)
-  (evil-set-undo-system 'undo-redo)
-  (advice-add 'evil-yank :after #'evil-yank-pulse-hint))
-
-(use-package evil-surround
-  :after evil
-  :config
-  (global-evil-surround-mode +1))
-
-(use-package evil-commentary
-  :after evil
-  :config
-  (evil-commentary-mode +1))
-
-(use-package evil-numbers
-  :after evil
-  :config
-  (define-key evil-normal-state-map (kbd "C-c +") #'evil-numbers/inc-at-pt)
-  (define-key evil-normal-state-map (kbd "C-c -") #'evil-numbers/dec-at-pt))
-
 (defun refresh-projects ()
   "Refresh projects file"
   (interactive)
@@ -215,8 +181,7 @@
 
 (if (not (eq system-type 'darwin))
     (use-package ghostel
-      :hook ((ghostel-mode . setup-term)
-	     (ghostel-mode . evil-ghostel-mode))))
+      :hook ((ghostel-mode . setup-term))))
 
 (defun my-project-shell ()
   "Start an inferior shell in the current project's root directory.
