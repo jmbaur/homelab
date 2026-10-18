@@ -32,7 +32,6 @@ in
         pkgs.git
         pkgs.git-absorb
         pkgs.git-extras
-        pkgs.git-gone
         pkgs.gnumake
         pkgs.grex
         pkgs.gron
