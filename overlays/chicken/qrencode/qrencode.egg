@@ -1,4 +1,0 @@
-((synopsis "Bindings to libqrencode")
- (components
-   (extension qrencode
-	      (link-options "-L" "-lqrencode"))))

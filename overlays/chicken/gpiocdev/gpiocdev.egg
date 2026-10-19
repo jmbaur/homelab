@@ -1,3 +1,0 @@
-((synopsis "Bindings to gpiocdev")
- (components
-   (extension gpiocdev)))

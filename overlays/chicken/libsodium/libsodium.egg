@@ -1,4 +1,0 @@
-((synopsis "Bindings to libsodium")
- (components
-   (extension libsodium
-	      (link-options "-L" "-lsodium"))))
